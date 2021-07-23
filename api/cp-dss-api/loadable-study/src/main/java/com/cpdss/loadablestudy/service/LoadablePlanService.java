@@ -712,7 +712,7 @@ public class LoadablePlanService {
     //    Create port operations table
     PortOperationTable portOperationTable =
         synopticService.buildPortOperationsTable(
-                request.getLoadableStudyId(), request.getLoadablePatternId());
+            request.getLoadableStudyId(), request.getLoadablePatternId());
     drawPortOperationTable(
         spreadsheet,
         portOperationTable,

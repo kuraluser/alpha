@@ -58,7 +58,7 @@ import com.cpdss.gateway.repository.RoleUserMappingRepository;
 import com.cpdss.gateway.repository.UserStatusRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.service.vesselinfo.VesselValveService;
-import com.cpdss.gateway.utility.Utility;
+import com.cpdss.gateway.utility.RuleUtility;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -192,27 +192,28 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
             .map(VesselDetail::getCaptainId)
             .collect(Collectors.toSet()));
     List<Users> userList = new ArrayList<Users>();
-    userIdList.forEach(userId -> {
-      Users user = new Users();
-      KeycloakUser kuser = this.getData(userId.toString());
-      log.debug("User data from cache: {}", kuser);
+    userIdList.forEach(
+        userId -> {
+          Users user = new Users();
+          KeycloakUser kuser = this.getData(userId.toString());
+          log.debug("User data from cache: {}", kuser);
 
-      if (null == kuser) {
-        //    Get user data from repository
-        user = this.usersRepository.findByIdAndIsActive(userId, true);
-      } else {
-        user.setId(kuser.getUserId());
-        user.setFirstName(kuser.getFirstName());
-        user.setLastName(kuser.getLastName());
-        user.setUsername(kuser.getUsername());
-        user.setEmail(kuser.getEmail());
-        user.setActive(true);
-      }
-      if(user != null){
-        userList.add(user);
-      }
-    });
-//    List<Users> userList = this.usersRepository.findByIdIn(new ArrayList<>(userIdList));
+          if (null == kuser) {
+            //    Get user data from repository
+            user = this.usersRepository.findByIdAndIsActive(userId, true);
+          } else {
+            user.setId(kuser.getUserId());
+            user.setFirstName(kuser.getFirstName());
+            user.setLastName(kuser.getLastName());
+            user.setUsername(kuser.getUsername());
+            user.setEmail(kuser.getEmail());
+            user.setActive(true);
+          }
+          if (user != null) {
+            userList.add(user);
+          }
+        });
+    //    List<Users> userList = this.usersRepository.findByIdIn(new ArrayList<>(userIdList));
     for (VesselDetail grpcReply : reply.getVesselsList()) {
       Vessel vessel = new Vessel();
       vessel.setId(grpcReply.getId());
@@ -1112,7 +1113,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     vesselRuleBuilder.setSectionId(sectionId);
     vesselRuleBuilder.setVesselId(vesselId);
     vesselRuleBuilder.setIsNoDefaultRule(false);
-    Utility.buildRuleListForSave(vesselRuleRequest, vesselRuleBuilder, null, null, true, false);
+    RuleUtility.buildRuleListForSave(vesselRuleRequest, vesselRuleBuilder, null, null, true, false);
     VesselRuleReply vesselRuleReply =
         this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
     RuleResponse ruleResponse = new RuleResponse();
@@ -1122,7 +1123,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
           vesselRuleReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
     }
-    ruleResponse.setPlan(Utility.buildAdminRulePlan(vesselRuleReply));
+    ruleResponse.setPlan(RuleUtility.buildAdminRulePlan(vesselRuleReply));
     ruleResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return ruleResponse;
