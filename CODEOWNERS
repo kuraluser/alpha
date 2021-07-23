@@ -7,10 +7,10 @@
 
 # API applications code owners
 
-/api/cp-dss-api/cargo-info/ @johnsoorajxavier @jeringeorgealpha @LincyIgnus
-/api/cp-dss-api/port-info/ @johnsoorajxavier @jeringeorgealpha @LincyIgnus
-/api/cp-dss-api/vessel-info/ @johnsoorajxavier @jeringeorgealpha @LincyIgnus
-/api/cp-dss-api/loadable-study/ @johnsoorajxavier @jeringeorgealpha @LincyIgnus
-/api/cp-dss-api/company-info/ @jeringeorgealpha @johnsoorajxavier @LincyIgnus
-/api/cp-dss-api/gateway/ @jeringeorgealpha @johnsoorajxavier @LincyIgnus
-/api/cp-dss-api/user-authorization/ @jeringeorgealpha @johnsoorajxavier @LincyIgnus
+/api/cp-dss-api/cargo-info/ @johnsoorajxavier @LincyIgnus
+/api/cp-dss-api/port-info/ @johnsoorajxavier @LincyIgnus
+/api/cp-dss-api/vessel-info/ @johnsoorajxavier @LincyIgnus
+/api/cp-dss-api/loadable-study/ @johnsoorajxavier @LincyIgnus
+/api/cp-dss-api/company-info/ @johnsoorajxavier @LincyIgnus
+/api/cp-dss-api/gateway/ @johnsoorajxavier @LincyIgnus
+/api/cp-dss-api/user-authorization/ @johnsoorajxavier @LincyIgnus
