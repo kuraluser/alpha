@@ -16,6 +16,7 @@ import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
 import com.cpdss.common.generated.VesselInfo.VesselRuleRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
+import com.cpdss.common.redis.CommonKeyValueStore;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -83,7 +84,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 @Service
 @Log4j2
-public class VesselInfoService {
+public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -190,7 +191,28 @@ public class VesselInfoService {
         reply.getVesselsList().stream()
             .map(VesselDetail::getCaptainId)
             .collect(Collectors.toSet()));
-    List<Users> userList = this.usersRepository.findByIdIn(new ArrayList<>(userIdList));
+    List<Users> userList = new ArrayList<Users>();
+    userIdList.forEach(userId -> {
+      Users user = new Users();
+      KeycloakUser kuser = this.getData(userId.toString());
+      log.debug("User data from cache: {}", kuser);
+
+      if (null == kuser) {
+        //    Get user data from repository
+        user = this.usersRepository.findByIdAndIsActive(userId, true);
+      } else {
+        user.setId(kuser.getUserId());
+        user.setFirstName(kuser.getFirstName());
+        user.setLastName(kuser.getLastName());
+        user.setUsername(kuser.getUsername());
+        user.setEmail(kuser.getEmail());
+        user.setActive(true);
+      }
+      if(user != null){
+        userList.add(user);
+      }
+    });
+//    List<Users> userList = this.usersRepository.findByIdIn(new ArrayList<>(userIdList));
     for (VesselDetail grpcReply : reply.getVesselsList()) {
       Vessel vessel = new Vessel();
       vessel.setId(grpcReply.getId());
