@@ -18,7 +18,7 @@ let swarmServiceUpdateFailureAction = process.env
   ? process.env.SWARM_SERVICE_UPDATE_FAILURE_ACTION
   : 'rollback';
 let appName = argv.client ? 'client' : argv.server ? 'server' : '';
-let imageName = `${dockerRegistry}/${appName}:${tagName}`;
+let imageName = `${dockerRegistry}/cpdss-envoy-${appName}:${tagName}`;
 let contextPath = path.join(__dirname, '/dist/apps/');
 let hostPortArr = val[1].split(':');
 let host = hostPortArr[0];
