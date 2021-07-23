@@ -74,8 +74,7 @@ public class CargoNominationService {
    */
   public List<CargoNomination> getCargoNominationByLoadableStudyId(Long loadableStudyId)
       throws GenericServiceException {
-    List<CargoNomination> cargos =
-        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+    List<CargoNomination> cargos = getCargoNominations(loadableStudyId);
     if (cargos.isEmpty()) {
       throw new GenericServiceException(
           "cargo nomination data missing",
@@ -83,6 +82,12 @@ public class CargoNominationService {
           HttpStatusCode.BAD_REQUEST);
     }
 
+    return cargos;
+  }
+
+  public List<CargoNomination> getCargoNominations(Long loadableStudyId) {
+    List<CargoNomination> cargos =
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
     return cargos;
   }
 

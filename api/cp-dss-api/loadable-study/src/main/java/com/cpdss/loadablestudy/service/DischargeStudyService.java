@@ -574,8 +574,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           cowDetailService.getCowDetailForThePort(dischargestudyId, portRotationIds);
       Map<Long, List<DischargeStudyPortInstruction>> portWiseInstructions =
           portInstructionService.getPortWiseInstructions(dischargestudyId, portRotationIds);
-      List<CargoNomination> dbCargos =
-          cargoNominationService.getCargoNominationByLoadableStudyId(dischargestudyId);
+      List<CargoNomination> dbCargos = cargoNominationService.getCargoNominations(dischargestudyId);
       Map<Long, List<BackLoading>> backloadingData =
           backLoadingService.getBackloadingDataByportIds(dischargestudyId, portRotationIds);
       List<DischargeStudyCowDetail> cowDetailsToSave = new ArrayList<>();
@@ -593,6 +592,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                   Long portId = portRotation.getId();
                   if (portCargoId == portId) {
                     portRotation.setMaxDraft(new BigDecimal(portRequestDetail.getMaxDraft()));
+                    portRotation.setIsbackloadingEnabled(
+                        portRequestDetail.getIsBackLoadingEnabled());
                   }
                 });
             updateCowDetails(cowDetailForThePort, cowDetailsToSave, portRequestDetail, portCargoId);
@@ -773,7 +774,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                   }
                   updateBackLoadingToSave(backLoadingRequest, backLoading.get(), backLoadingToSave);
                 } else {
-                  updateBackLoadingToSave(backLoadingRequest, new BackLoading(), backLoadingToSave);
+                  BackLoading backLoading = new BackLoading();
+                  backLoading.setDischargeStudyId(dischargestudyId);
+                  backLoading.setPortId(portCargoId);
+                  updateBackLoadingToSave(backLoadingRequest, backLoading, backLoadingToSave);
                 }
               });
 
