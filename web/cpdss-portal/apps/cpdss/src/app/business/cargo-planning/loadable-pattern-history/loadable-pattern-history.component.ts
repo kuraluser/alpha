@@ -11,7 +11,7 @@ import { LoadablePatternHistoryApiService } from '../services/loadable-pattern-h
 import { ILoadablePattern, ILoadablePatternCargoDetail, ILoadablePatternResponse, IStabilityParameter } from '../models/loadable-pattern.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
-import { ICargo, ICargoResponseModel, IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
