@@ -889,83 +889,6 @@ public final class VesselInfoServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getGetLoadingInfoRulesMethod(), getCallOptions()), request, responseObserver);
     }
-
-    /** */
-    public void getVesselInfoBytankIds(
-        com.cpdss.common.generated.VesselInfo.VesselTankRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselTankResponse>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetVesselInfoBytankIdsMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getDWTFromVesselByVesselId(
-        com.cpdss.common.generated.VesselInfo.VesselDWTRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselDWTResponse>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetDWTFromVesselByVesselIdMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getVesselInfoByVesselId(
-        com.cpdss.common.generated.VesselInfo.VesselIdRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselIdResponse>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetVesselInfoByVesselIdMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getVesselPumpsByVesselId(
-        com.cpdss.common.generated.VesselInfo.VesselIdRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselPumpsResponse>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetVesselPumpsByVesselIdMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getRulesByVesselIdAndSectionId(
-        com.cpdss.common.generated.VesselInfo.VesselRuleRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselRuleReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetRulesByVesselIdAndSectionIdMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getVesselValveSequence(
-        com.cpdss.common.generated.VesselInfo.VesselRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetVesselValveSequenceMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getLoadingInfoRules(
-        com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.LoadingInfoRulesReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetLoadingInfoRulesMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
   }
 
   /**
@@ -1315,52 +1238,6 @@ public final class VesselInfoServiceGrpc {
         case METHODID_GET_LOADING_INFO_RULES:
           serviceImpl.getLoadingInfoRules((com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.LoadingInfoRulesReply>) responseObserver);
-          break;
-        case METHODID_GET_VESSEL_INFO_BYTANK_IDS:
-          serviceImpl.getVesselInfoBytankIds(
-              (com.cpdss.common.generated.VesselInfo.VesselTankRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.VesselInfo.VesselTankResponse>)
-                  responseObserver);
-          break;
-        case METHODID_GET_DWTFROM_VESSEL_BY_VESSEL_ID:
-          serviceImpl.getDWTFromVesselByVesselId(
-              (com.cpdss.common.generated.VesselInfo.VesselDWTRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselDWTResponse>)
-                  responseObserver);
-          break;
-        case METHODID_GET_VESSEL_INFO_BY_VESSEL_ID:
-          serviceImpl.getVesselInfoByVesselId(
-              (com.cpdss.common.generated.VesselInfo.VesselIdRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselIdResponse>)
-                  responseObserver);
-          break;
-        case METHODID_GET_VESSEL_PUMPS_BY_VESSEL_ID:
-          serviceImpl.getVesselPumpsByVesselId(
-              (com.cpdss.common.generated.VesselInfo.VesselIdRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.VesselInfo.VesselPumpsResponse>)
-                  responseObserver);
-          break;
-        case METHODID_GET_RULES_BY_VESSEL_ID_AND_SECTION_ID:
-          serviceImpl.getRulesByVesselIdAndSectionId(
-              (com.cpdss.common.generated.VesselInfo.VesselRuleRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselRuleReply>)
-                  responseObserver);
-          break;
-        case METHODID_GET_VESSEL_VALVE_SEQUENCE:
-          serviceImpl.getVesselValveSequence(
-              (com.cpdss.common.generated.VesselInfo.VesselRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.VesselInfo.VesselValveSequenceReply>)
-                  responseObserver);
-          break;
-        case METHODID_GET_LOADING_INFO_RULES:
-          serviceImpl.getLoadingInfoRules(
-              (com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.VesselInfo.LoadingInfoRulesReply>)
-                  responseObserver);
           break;
         default:
           throw new AssertionError();

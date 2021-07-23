@@ -5,6 +5,7 @@ import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyRules;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -32,4 +33,9 @@ public interface LoadableStudyRuleRepository
   int updateDisplayInSettingInLoadbleStudyRules(
       @Param("displayInSettings") Boolean displayInSettings,
       @Param("vesselRuleXId") Set<Long> vesselRuleXId);
+
+  @Query(
+      "FROM LoadableStudyRules LSR WHERE LSR.loadableStudy.id = ?1 AND LSR.isActive = ?2 AND LSR.parentRuleXId = ?3")
+  Optional<LoadableStudyRules> checkIsRuleTemplateExist(
+      Long loadableStudyId, Boolean isActive, Long ruleTemplateId);
 }

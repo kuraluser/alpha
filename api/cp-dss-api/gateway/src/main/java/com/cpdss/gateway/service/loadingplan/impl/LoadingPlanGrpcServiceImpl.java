@@ -30,7 +30,7 @@ import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
-import com.cpdss.gateway.utility.Utility;
+import com.cpdss.gateway.utility.RuleUtility;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -313,7 +313,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
           loadingRuleReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(loadingRuleReply.getResponseStatus().getCode())));
     }
-    ruleResponse.setPlan(Utility.buildLoadingPlanRule(loadingRuleReply));
+    ruleResponse.setPlan(RuleUtility.buildLoadingPlanRule(loadingRuleReply));
     ruleResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return ruleResponse;

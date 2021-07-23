@@ -1874,6 +1874,7 @@ public final class TaskManager {
         return super.mergeUnknownFields(unknownFields);
       }
 
+
       // @@protoc_insertion_point(builder_scope:ScheduleTaskRequest)
     }
 
@@ -2438,6 +2439,7 @@ public final class TaskManager {
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
       }
+
 
       // @@protoc_insertion_point(builder_scope:ScheduleTaskDeleteRequest)
     }
@@ -3055,6 +3057,7 @@ public final class TaskManager {
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
       }
+
 
       // @@protoc_insertion_point(builder_scope:TaskManagerReply)
     }
@@ -3931,6 +3934,7 @@ public final class TaskManager {
         return super.mergeUnknownFields(unknownFields);
       }
 
+
       // @@protoc_insertion_point(builder_scope:ExecuteTaskRequest)
     }
 
@@ -4547,6 +4551,7 @@ public final class TaskManager {
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
       }
+
 
       // @@protoc_insertion_point(builder_scope:ExecuteTaskReply)
     }
