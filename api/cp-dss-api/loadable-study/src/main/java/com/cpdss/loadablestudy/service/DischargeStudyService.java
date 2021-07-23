@@ -773,7 +773,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                   }
                   updateBackLoadingToSave(backLoadingRequest, backLoading.get(), backLoadingToSave);
                 } else {
-                  updateBackLoadingToSave(backLoadingRequest, new BackLoading(), backLoadingToSave);
+                	 BackLoading backLoading = new BackLoading();
+                	 backLoading.setDischargeStudyId(dischargestudyId);
+                	 backLoading.setPortId(portCargoId);
+                  updateBackLoadingToSave(backLoadingRequest,backLoading, backLoadingToSave);
                 }
               });
 
