@@ -603,13 +603,14 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 portRequestDetail,
                 portCargoId);
 
-            createBackLoading(
-                backloadingData,
-                backLoadingToSave,
-                portRequestDetail,
-                portCargoId,
-                dischargestudyId);
-
+            if (portRequestDetail.getIsBackLoadingEnabled()) {
+              createBackLoading(
+                  backloadingData,
+                  backLoadingToSave,
+                  portRequestDetail,
+                  portCargoId,
+                  dischargestudyId);
+            }
             cargoNominations.forEach(
                 cargoRequest -> {
                   if (cargoRequest.getId() != -1) {
@@ -688,6 +689,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     cargoNomination.setCargoXId(cargoRequest.getCargoId());
     cargoNomination.setAbbreviation(cargoRequest.getAbbreviation());
     cargoNomination.setColor(cargoRequest.getColor());
+    cargoNomination.setApi(new BigDecimal(cargoRequest.getApi()));
+    cargoNomination.setTemperature(new BigDecimal(cargoRequest.getTemperature()));
     cargoNominationsToSave.add(cargoNomination);
   }
 
@@ -788,14 +791,16 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             backLoadingToSave.add(backLoading);
           });
     } else {
-      /** delete existing back loading */
-      backloadingData
-          .get(portCargoId)
-          .forEach(
-              backLoading -> {
-                backLoading.setActive(false);
-                backLoadingToSave.add(backLoading);
-              });
+      if (backloadingData != null && !backloadingData.isEmpty()) {
+        /** delete existing back loading */
+        backloadingData
+            .get(portCargoId)
+            .forEach(
+                backLoading -> {
+                  backLoading.setActive(false);
+                  backLoadingToSave.add(backLoading);
+                });
+      }
       portRequestDetail
           .getBackLoadingList()
           .forEach(
