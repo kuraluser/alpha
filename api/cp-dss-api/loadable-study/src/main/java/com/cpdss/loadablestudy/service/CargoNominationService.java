@@ -839,4 +839,8 @@ public class CargoNominationService {
           loadableStudy.getCargoNominationOperationDetails().add(cargoNominationOperationDetailDto);
         });
   }
+
+  public void saveAll(List<CargoNomination> entities) {
+    cargoNominationRepository.saveAll(entities);
+  }
 }

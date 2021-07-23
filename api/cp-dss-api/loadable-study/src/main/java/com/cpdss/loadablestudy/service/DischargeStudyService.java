@@ -657,6 +657,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       cowDetailService.saveAll(cowDetailsToSave);
       portInstructionService.saveAll(portInstructionsToSave);
       backLoadingService.saveAll(backLoadingToSave);
+      cargoNominationService.saveAll(cargoNominationsToSave);
       loadableStudyPortRotationRepository.saveAll(portRotations);
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       builder.setId(dischargestudyId);
