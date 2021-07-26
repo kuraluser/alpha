@@ -438,10 +438,8 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
       bmAndSF.setBendingMomentShearingForceType3(
           this.createBendingMomentShearingForceType3(vesselAlgoReply, correlationId));
     } else {
-      bmAndSF.setBendingMomentType1(
-          this.createBendingMomentResponse(vesselAlgoReply, correlationId));
-      bmAndSF.setShearingForceType1(
-          this.createShearingForceResponse(vesselAlgoReply, correlationId));
+      bmAndSF.setBendingMoment(this.createBendingMomentResponse(vesselAlgoReply, correlationId));
+      bmAndSF.setShearingForce(this.createShearingForceResponse(vesselAlgoReply, correlationId));
     }
 
     bmAndSF.setCalculationSheet(
