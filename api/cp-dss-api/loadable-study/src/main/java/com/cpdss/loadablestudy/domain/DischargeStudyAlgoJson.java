@@ -14,7 +14,7 @@ public class DischargeStudyAlgoJson {
   private String name;
   private List<CommingleCargo> commingleCargos;
   private List<LoadableStudyInstruction> instructionMaster;
-  private List<LoadableStudyPortRotationJson> dischargeStudyPortRotation;
+  private List<DischargeStudyPortRotationJson> dischargeStudyPortRotation;
   private List<CargoNomination> cargoNomination;
   private List<CargoNominationOperationDetails> cargoNominationOperationDetails;
   private List<OnHandQuantity> onHandQuantity;

@@ -9,14 +9,14 @@ import lombok.Data;
 /**
  * DTO for loadable study port rotation
  *
- * @author jerin.g
+ * @author Sanal
  */
 @Data
-public class LoadableStudyPortRotationJson {
+public class DischargeStudyPortRotationJson {
 
   private Long id;
 
-  private Long loadableStudyId;
+  private Long dischargeStudyId;
 
   private Long portId;
 
@@ -24,15 +24,15 @@ public class LoadableStudyPortRotationJson {
 
   private Long operationId;
 
-  private BigDecimal seaWaterDensity;
+  private String seaWaterDensity;
 
-  private BigDecimal distanceBetweenPorts;
+  private String distanceBetweenPorts;
 
-  private BigDecimal timeOfStay;
+  private String timeOfStay;
 
-  private BigDecimal maxDraft;
+  private String maxDraft;
 
-  private BigDecimal maxAirDraft;
+  private String maxAirDraft;
 
   private String eta;
 
@@ -40,8 +40,8 @@ public class LoadableStudyPortRotationJson {
 
   private Long portOrder;
   
-  private List<?> cowDetails;
+  private CowDetail cowDetails;
   
-  private List<?> instructions;
+  private List<DischargeStudyPortInstructionDetailsJson> instructions;
   
 }

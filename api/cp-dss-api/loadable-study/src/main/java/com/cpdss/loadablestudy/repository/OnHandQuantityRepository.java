@@ -63,4 +63,8 @@ public interface OnHandQuantityRepository extends CommonCrudRepository<OnHandQua
   @Modifying
   @Query("UPDATE OnHandQuantity SET isActive = false WHERE loadableStudy = ?1 AND portXId = ?2")
   public void deleteByLoadableStudyAndPortXId(LoadableStudy loadableStudy, Long requestPortId);
+
+  @Query("FROM OnHandQuantity OHQ where OHQ.loadableStudy.id = ?1 AND OHQ.isActive = true")
+  public List<OnHandQuantity> findByDischargeStudyIdAndActive(Long dischargeStudyId);
+
 }
