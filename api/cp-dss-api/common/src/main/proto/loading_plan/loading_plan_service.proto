@@ -53,8 +53,9 @@ service LoadingPlanService {
 
   rpc LoadingPlanSynchronization(LoadingPlanSyncDetails) returns (LoadingPlanSyncReply) {}
 
-  
   rpc SaveLoadingPlan(LoadingPlanSaveRequest) returns (LoadingPlanSaveResponse) {}
+
+  rpc GetLoadingPlan(LoadingPlanIdRequest) returns (LoadingPlanReply) {}
 
   rpc GetOrSaveRulesForLoadingPlan (LoadingPlanRuleRequest) returns (LoadingPlanRuleReply) {}
 

@@ -15,7 +15,7 @@ public interface PortLoadingPlanRobDetailsRepository
     extends CommonCrudRepository<PortLoadingPlanRobDetails, Long> {
 
   public List<PortLoadingPlanRobDetails> findByLoadingInformationAndIsActive(
-      LoadingInformation loadingInformatuion, Boolean isActive);
+      LoadingInformation loadingInformation, Boolean isActive);
 
   @Modifying
   @Transactional

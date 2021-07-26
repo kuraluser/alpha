@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.service.grpc;
 
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
@@ -86,6 +87,28 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
           ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
     } catch (Exception e) {
       log.error("Exception when saveLoadingPlan microservice is called", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(LoadingPlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadingPlan(
+      LoadableStudy.LoadingPlanIdRequest request,
+      StreamObserver<LoadingPlanModels.LoadingPlanReply> responseObserver) {
+    LoadingPlanModels.LoadingPlanReply.Builder builder =
+        LoadingPlanModels.LoadingPlanReply.newBuilder();
+    try {
+      loadingPlanService.getLoadingPlan(request, builder);
+    } catch (Exception e) {
+      e.printStackTrace();
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
