@@ -34,6 +34,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.BackLoading;
 import com.cpdss.loadablestudy.entity.CargoNomination;
+import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.DischargeStudyCowDetail;
 import com.cpdss.loadablestudy.entity.DischargeStudyPortInstruction;
@@ -58,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -587,6 +589,11 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             PortRotationDetail portRequestDetail = cargo.getPortDetails();
             List<CargoNominationDetail> cargoNominations = cargo.getPortCargoDetailsList();
             long portCargoId = portRequestDetail.getId();
+            LoadableStudyPortRotation dbPortRoation =
+                portRotations.stream()
+                    .filter(port -> port.getId() == portCargoId)
+                    .findFirst()
+                    .get();
             portRotations.forEach(
                 portRotation -> {
                   Long portId = portRotation.getId();
@@ -618,6 +625,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
 
             cargoNominations.forEach(
                 cargoRequest -> {
+                  Long portId = dbPortRoation.getPortXId();
                   if (cargoRequest.getId() != -1) {
                     Optional<CargoNomination> optionalCargoNomination =
                         dbCargos
@@ -629,24 +637,26 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                       return;
                     }
                     updateCargoNominationToSave(
-                        cargoRequest, optionalCargoNomination.get(), cargoNominationsToSave);
+                        cargoRequest,
+                        optionalCargoNomination.get(),
+                        cargoNominationsToSave,
+                        portId);
                   } else {
                     CargoNomination cargoNomination = new CargoNomination();
                     cargoNomination.setLoadableStudyXId(dischargestudyId);
                     cargoNomination.setPriority(1L);
+                    cargoNomination.setIsActive(true);
                     updateCargoNominationToSave(
-                        cargoRequest, cargoNomination, cargoNominationsToSave);
+                        cargoRequest, cargoNomination, cargoNominationsToSave, portId);
                   }
                 });
             /** delete existing cargo nomination */
-            List<Long> requestIds =
-                cargoNominations.stream()
-                    .map(CargoNominationDetail::getId)
-                    .collect(Collectors.toList());
-            List<CargoNomination> cargosToDisable =
+            Set<CargoNomination> cargosToDisable =
                 dbCargos.stream()
-                    .filter(dbId -> !requestIds.contains(dbId.getId()))
-                    .collect(Collectors.toList());
+                    .flatMap(x -> x.getCargoNominationPortDetails().stream())
+                    .filter(port -> port.getPortId() == dbPortRoation.getPortXId())
+                    .map(CargoNominationPortDetails::getCargoNomination)
+                    .collect(Collectors.toSet());
             cargosToDisable.forEach(
                 cargoToDisable -> {
                   cargoToDisable.setIsActive(false);
@@ -689,7 +699,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   private void updateCargoNominationToSave(
       CargoNominationDetail cargoRequest,
       CargoNomination cargoNomination,
-      List<CargoNomination> cargoNominationsToSave) {
+      List<CargoNomination> cargoNominationsToSave,
+      Long portId) {
     cargoNomination.setQuantity(new BigDecimal(cargoRequest.getQuantity()));
     cargoNomination.setMode(cargoRequest.getMode());
     cargoNomination.setCargoXId(cargoRequest.getCargoId());
@@ -697,6 +708,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     cargoNomination.setColor(cargoRequest.getColor());
     cargoNomination.setApi(new BigDecimal(cargoRequest.getApi()));
     cargoNomination.setTemperature(new BigDecimal(cargoRequest.getTemperature()));
+    cargoNomination.setCargoNominationPortDetails(
+        cargoNominationService.createCargoNominationPortDetails(cargoNomination, null, portId));
     cargoNominationsToSave.add(cargoNomination);
   }
 

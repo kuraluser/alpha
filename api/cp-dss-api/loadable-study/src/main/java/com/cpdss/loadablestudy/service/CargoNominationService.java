@@ -127,16 +127,20 @@ public class CargoNominationService {
     return dischargeStudyCargo;
   }
 
-  private Set<CargoNominationPortDetails> createCargoNominationPortDetails(
+  public Set<CargoNominationPortDetails> createCargoNominationPortDetails(
       CargoNomination dischargeStudyCargo, CargoNomination cargo, Long portId) {
     CargoNominationPortDetails portDetail = new CargoNominationPortDetails();
     portDetail.setPortId(portId);
     portDetail.setIsActive(true);
     portDetail.setCargoNomination(dischargeStudyCargo);
-    portDetail.setQuantity(
-        cargo.getCargoNominationPortDetails().stream()
-            .map(CargoNominationPortDetails::getQuantity)
-            .reduce(BigDecimal.ZERO, BigDecimal::add));
+    if (cargo != null) {
+      portDetail.setQuantity(
+          cargo.getCargoNominationPortDetails().stream()
+              .map(CargoNominationPortDetails::getQuantity)
+              .reduce(BigDecimal.ZERO, BigDecimal::add));
+    } else {
+      portDetail.setQuantity(new BigDecimal(0));
+    }
     return new HashSet<CargoNominationPortDetails>(Arrays.asList(portDetail));
   }
 
