@@ -619,18 +619,19 @@ public class LoadableStudyPortRotationService {
               builder.setMaxDraft(String.valueOf(port.getMaxDraft()));
               if (port.getIsbackloadingEnabled() != null) {
                 builder.setIsBackLoadingEnabled(port.getIsbackloadingEnabled());
-                if (backloadingDataByportIds.get(port.getPortXId()) != null) {
-                  backloadingDataByportIds
-                      .get(port.getPortXId())
-                      .forEach(
-                          backLoading -> {
-                            builder.addBackLoading(buildBackloading(backLoading));
-                          });
+                if (port.getIsbackloadingEnabled()) {
+                  if (backloadingDataByportIds.get(port.getId()) != null) {
+                    backloadingDataByportIds.get(port.getId()).stream()
+                        .forEach(
+                            backLoading -> {
+                              builder.addBackLoading(buildBackloading(backLoading));
+                            });
+                  }
                 }
               }
-              if (instructionsForThePort.get(port.getPortXId()) != null) {
+              if (instructionsForThePort.get(port.getId()) != null) {
                 builder.addAllInstructionId(
-                    instructionsForThePort.get(port.getPortXId()).stream()
+                    instructionsForThePort.get(port.getId()).stream()
                         .map(DischargeStudyPortInstruction::getId)
                         .collect(Collectors.toList()));
               }
