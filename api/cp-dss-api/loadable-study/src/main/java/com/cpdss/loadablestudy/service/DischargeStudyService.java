@@ -596,7 +596,12 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                         portRequestDetail.getIsBackLoadingEnabled());
                   }
                 });
-            updateCowDetails(cowDetailForThePort, cowDetailsToSave, portRequestDetail, portCargoId);
+            updateCowDetails(
+                cowDetailForThePort,
+                cowDetailsToSave,
+                portRequestDetail,
+                portCargoId,
+                dischargestudyId);
             updateInsrtuctions(
                 dischargestudyId,
                 portWiseInstructions,
@@ -604,14 +609,13 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 portRequestDetail,
                 portCargoId);
 
-            if (portRequestDetail.getIsBackLoadingEnabled()) {
-              createBackLoading(
-                  backloadingData,
-                  backLoadingToSave,
-                  portRequestDetail,
-                  portCargoId,
-                  dischargestudyId);
-            }
+            createBackLoading(
+                backloadingData,
+                backLoadingToSave,
+                portRequestDetail,
+                portCargoId,
+                dischargestudyId);
+
             cargoNominations.forEach(
                 cargoRequest -> {
                   if (cargoRequest.getId() != -1) {
@@ -759,8 +763,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       long dischargestudyId) {
     if (backloadingData.containsKey(portCargoId)) {
       List<BackLoading> dbBackLoadings = backloadingData.get(portCargoId);
-      portRequestDetail
-          .getBackLoadingList()
+      portRequestDetail.getBackLoadingList().stream()
           .forEach(
               backLoadingRequest -> {
                 if (backLoadingRequest.getId() != -1) {
@@ -798,13 +801,14 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     } else {
       if (backloadingData != null && !backloadingData.isEmpty()) {
         /** delete existing back loading */
-        backloadingData
-            .get(portCargoId)
-            .forEach(
-                backLoading -> {
-                  backLoading.setActive(false);
-                  backLoadingToSave.add(backLoading);
-                });
+        if (backloadingData.get(portCargoId) != null) {
+          backloadingData.get(portCargoId).stream()
+              .forEach(
+                  backLoading -> {
+                    backLoading.setActive(false);
+                    backLoadingToSave.add(backLoading);
+                  });
+        }
       }
       portRequestDetail
           .getBackLoadingList()
@@ -849,12 +853,15 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       Map<Long, DischargeStudyCowDetail> cowDetailForThePort,
       List<DischargeStudyCowDetail> cowDetailsToSave,
       PortRotationDetail portDetail,
-      long portCargoId) {
+      long portCargoId,
+      long dischargestudyId) {
     DischargeStudyCowDetail dischargeStudyCowDetail = null;
     if (cowDetailForThePort.containsKey(portCargoId)) {
       dischargeStudyCowDetail = cowDetailForThePort.get(portCargoId);
     } else {
       dischargeStudyCowDetail = new DischargeStudyCowDetail();
+      dischargeStudyCowDetail.setPortId(portCargoId);
+      dischargeStudyCowDetail.setDischargeStudyStudyId(dischargestudyId);
     }
     dischargeStudyCowDetail.setCowType(portDetail.getCowId());
     if (portDetail.getCowId() == 1) {
