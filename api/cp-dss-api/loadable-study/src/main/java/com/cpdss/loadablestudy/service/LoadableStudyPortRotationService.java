@@ -632,7 +632,7 @@ public class LoadableStudyPortRotationService {
               if (instructionsForThePort.get(port.getId()) != null) {
                 builder.addAllInstructionId(
                     instructionsForThePort.get(port.getId()).stream()
-                        .map(DischargeStudyPortInstruction::getId)
+                        .map(DischargeStudyPortInstruction::getPortInstructionId)
                         .collect(Collectors.toList()));
               }
               if (cowDetails.get(port.getId()) != null) {
