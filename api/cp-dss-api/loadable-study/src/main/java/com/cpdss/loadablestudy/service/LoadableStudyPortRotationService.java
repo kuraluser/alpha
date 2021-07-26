@@ -600,7 +600,7 @@ public class LoadableStudyPortRotationService {
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
         List<Long> portIds =
-            ports.stream().map(LoadableStudyPortRotation::getPortXId).collect(Collectors.toList());
+            ports.stream().map(LoadableStudyPortRotation::getId).collect(Collectors.toList());
         Map<Long, List<BackLoading>> backloadingDataByportIds =
             backLoadingService.getBackloadingDataByportIds(request.getLoadableStudyId(), portIds);
         Map<Long, List<DischargeStudyPortInstruction>> instructionsForThePort =
