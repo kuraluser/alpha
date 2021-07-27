@@ -8,6 +8,8 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
+import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.PortDetails;
@@ -859,5 +861,26 @@ public class LoadableStudyPortRotationService {
   public com.cpdss.common.generated.LoadableStudy.LoadableStudyReply getLoadableStudyList(
       com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
     return this.loadableStudyServiceBlockingStub.findLoadableStudiesByVesselAndVoyage(request);
+  }
+
+  public void getPortRotationByPortRotationId(
+      PortRotationRequest request,
+      com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply.Builder builder)
+      throws Exception {
+    LoadableStudyPortRotation portRotation =
+        this.loadableStudyPortRotationRepository.findByIdAndIsActive(request.getId(), true);
+    PortRotationDetail.Builder portDetailBuilder = PortRotationDetail.newBuilder();
+    if (portRotation == null) {
+      throw new Exception("Could not find port rotation with id " + request.getId());
+    }
+
+    Optional.ofNullable(portRotation.getPortXId()).ifPresent(portDetailBuilder::setPortId);
+    Optional.ofNullable(portRotation.getOperation())
+        .ifPresent(operation -> portDetailBuilder.setOperationId(operation.getId()));
+    Optional.of(portRotation.getEta())
+        .ifPresent(eta -> portDetailBuilder.setEta(portRotation.getEta().toString()));
+    Optional.of(portRotation.getEtd())
+        .ifPresent(etd -> portDetailBuilder.setEta(portRotation.getEtd().toString()));
+    builder.setPortRotationDetail(portDetailBuilder.build());
   }
 }

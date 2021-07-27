@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "port_loading_plan_stowage_details")
+@Table(name = "port_loading_plan_stability_parameters")
 @Getter
 @Setter
 @NoArgsConstructor

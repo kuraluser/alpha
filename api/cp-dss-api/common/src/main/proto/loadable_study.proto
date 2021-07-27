@@ -194,6 +194,8 @@ service LoadableStudyService {
 	rpc getLoadableCommingleByPatternId(LoadablePlanDetailsRequest) returns (LoadableCommingleDetailsReply){}
 
 	rpc GetLoadableStudyShore(LoadableStudyShoreRequest) returns (LoadableStudyShoreResponse){}
+	
+	rpc GetLoadableStudyPortRotationByPortRotationId(PortRotationRequest) returns (PortRotationDetailReply) {}
 }
 
 service DischargeStudyOperationService {
@@ -1474,4 +1476,9 @@ message DishargeStudyBackLoadingSaveRequest {
 message DishargeStudyBackLoadingDetail {
 	PortRotationDetail portDetails=1;
 	repeated CargoNominationDetail portCargoDetails= 2;
+}
+
+message PortRotationDetailReply {
+  PortRotationDetail portRotationDetail = 1;
+  ResponseStatus responseStatus = 2;
 }
