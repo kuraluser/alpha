@@ -18,6 +18,10 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest.Builder;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -317,5 +321,24 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     ruleResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return ruleResponse;
+  }
+
+  @Override
+  public LoadingSequenceReply getLoadingSequence(Builder builder) throws GenericServiceException {
+    LoadingSequenceReply reply =
+        this.loadingPlanServiceBlockingStub.getLoadingSequences(builder.build());
+    if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      throw new GenericServiceException(
+          "Failed to get loading sequences for loading information " + builder.getLoadingInfoId(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    return reply;
+  }
+
+  @Override
+  public LoadingPlanSaveResponse saveLoadingPlan(LoadingPlanSaveRequest request) {
+    return this.loadingPlanServiceBlockingStub.saveLoadingPlan(request);
   }
 }

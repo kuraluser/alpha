@@ -3374,6 +3374,60 @@ public final class LoadableStudyServiceGrpc {
     return getGetLoadableStudyShoreMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+          com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>
+      getGetLoadableStudyPortRotationByPortRotationIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadableStudyPortRotationByPortRotationId",
+      requestType = com.cpdss.common.generated.LoadableStudy.PortRotationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+          com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>
+      getGetLoadableStudyPortRotationByPortRotationIdMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+            com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>
+        getGetLoadableStudyPortRotationByPortRotationIdMethod;
+    if ((getGetLoadableStudyPortRotationByPortRotationIdMethod =
+            LoadableStudyServiceGrpc.getGetLoadableStudyPortRotationByPortRotationIdMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadableStudyPortRotationByPortRotationIdMethod =
+                LoadableStudyServiceGrpc.getGetLoadableStudyPortRotationByPortRotationIdMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadableStudyPortRotationByPortRotationIdMethod =
+              getGetLoadableStudyPortRotationByPortRotationIdMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+                          com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "GetLoadableStudyPortRotationByPortRotationId"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.PortRotationRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetLoadableStudyPortRotationByPortRotationId"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadableStudyPortRotationByPortRotationIdMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -3967,6 +4021,16 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetLoadableStudyShoreMethod(), responseObserver);
     }
 
+    /** */
+    public void getLoadableStudyPortRotationByPortRotationId(
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(
+          getGetLoadableStudyPortRotationByPortRotationIdMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -4434,6 +4498,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest,
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>(
                       this, METHODID_GET_LOADABLE_STUDY_SHORE)))
+          .addMethod(
+              getGetLoadableStudyPortRotationByPortRotationIdMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
+                      com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>(
+                      this, METHODID_GET_LOADABLE_STUDY_PORT_ROTATION_BY_PORT_ROTATION_ID)))
           .build();
     }
   }
@@ -5189,6 +5260,19 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getLoadableStudyPortRotationByPortRotationId(
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel()
+              .newCall(getGetLoadableStudyPortRotationByPortRotationIdMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -5681,6 +5765,17 @@ public final class LoadableStudyServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadableStudyShoreMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply
+        getLoadableStudyPortRotationByPortRotationId(
+            com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
+      return blockingUnaryCall(
+          getChannel(),
+          getGetLoadableStudyPortRotationByPortRotationIdMethod(),
+          getCallOptions(),
+          request);
     }
   }
 
@@ -6272,6 +6367,17 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetLoadableStudyShoreMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>
+        getLoadableStudyPortRotationByPortRotationId(
+            com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
+      return futureUnaryCall(
+          getChannel()
+              .newCall(getGetLoadableStudyPortRotationByPortRotationIdMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -6340,6 +6446,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_CARGO_NOMINATION_BY_CARGO_NOMINATION_ID = 63;
   private static final int METHODID_GET_LOADABLE_COMMINGLE_BY_PATTERN_ID = 64;
   private static final int METHODID_GET_LOADABLE_STUDY_SHORE = 65;
+  private static final int METHODID_GET_LOADABLE_STUDY_PORT_ROTATION_BY_PORT_ROTATION_ID = 66;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -6810,6 +6917,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADABLE_STUDY_PORT_ROTATION_BY_PORT_ROTATION_ID:
+          serviceImpl.getLoadableStudyPortRotationByPortRotationId(
+              (com.cpdss.common.generated.LoadableStudy.PortRotationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -6940,6 +7054,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetCargoNominationByCargoNominationIdMethod())
                       .addMethod(getGetLoadableCommingleByPatternIdMethod())
                       .addMethod(getGetLoadableStudyShoreMethod())
+                      .addMethod(getGetLoadableStudyPortRotationByPortRotationIdMethod())
                       .build();
         }
       }

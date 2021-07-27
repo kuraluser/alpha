@@ -58,5 +58,7 @@ service LoadingPlanService {
   rpc GetLoadingPlan(LoadingPlanIdRequest) returns (LoadingPlanReply) {}
 
   rpc GetOrSaveRulesForLoadingPlan (LoadingPlanRuleRequest) returns (LoadingPlanRuleReply) {}
+  
+  rpc GetLoadingSequences(LoadingSequenceRequest) returns (LoadingSequenceReply) {}
 
 }

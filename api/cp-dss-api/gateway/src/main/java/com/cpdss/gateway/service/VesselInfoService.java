@@ -438,10 +438,8 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
       bmAndSF.setBendingMomentShearingForceType3(
           this.createBendingMomentShearingForceType3(vesselAlgoReply, correlationId));
     } else {
-      bmAndSF.setBendingMomentType1(
-          this.createBendingMomentResponse(vesselAlgoReply, correlationId));
-      bmAndSF.setShearingForceType1(
-          this.createShearingForceResponse(vesselAlgoReply, correlationId));
+      bmAndSF.setBendingMoment(this.createBendingMomentResponse(vesselAlgoReply, correlationId));
+      bmAndSF.setShearingForce(this.createShearingForceResponse(vesselAlgoReply, correlationId));
     }
 
     bmAndSF.setCalculationSheet(
@@ -1113,6 +1111,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     vesselRuleBuilder.setSectionId(sectionId);
     vesselRuleBuilder.setVesselId(vesselId);
     vesselRuleBuilder.setIsNoDefaultRule(false);
+    vesselRuleBuilder.setIsFetchEnabledRules(false);
     RuleUtility.buildRuleListForSave(vesselRuleRequest, vesselRuleBuilder, null, null, true, false);
     VesselRuleReply vesselRuleReply =
         this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
