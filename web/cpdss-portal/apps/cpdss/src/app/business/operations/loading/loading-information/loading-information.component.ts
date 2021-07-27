@@ -126,17 +126,6 @@ export class LoadingInformationComponent implements OnInit {
     this.stageDurationList = this.loadingInformationData?.loadingStages.stageDurationList;
     this.stageDuration = this.stageDurationList?.find(duration => duration.id === this.loadingInformationData?.loadingStages?.stageDuration);
     this.stageOffset = this.stageOffsetList?.find(offset => offset.id === this.loadingInformationData?.loadingStages?.stageOffset);
-    this.loadingInformationData?.machineryInUses?.vesselPumps?.map((pump) => {
-      const machinaryUsed = this.loadingInformationData?.machineryInUses?.loadingMachinesInUses?.find((machine) => machine.pumpId === pump.id);
-      if (machinaryUsed) {
-        pump.capacity = machinaryUsed.capacity;
-      } else {
-        pump.capacity = pump.pumpCapacity;
-      }
-    })
-    this.loadingInformationData?.machineryInUses?.loadingMachinesInUses?.map((machine) => {
-      machine.isUsing = this.loadingInformationData?.machineryInUses?.vesselPumps?.some((pump) => pump.id === machine.pumpId)
-    })
   }
 
 

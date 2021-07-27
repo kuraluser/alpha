@@ -8,7 +8,7 @@ import com.cpdss.gateway.domain.*;
 import java.util.*;
 import org.springframework.util.CollectionUtils;
 
-public class Utility {
+public class RuleUtility {
 
   public static List<RulePlans> buildAdminRulePlan(VesselInfo.VesselRuleReply vesselRuleReply) {
     List<RulePlans> rulePlans = new ArrayList<>();
@@ -114,7 +114,9 @@ public class Utility {
             rulesInputs.setId(rInputsList.getId());
           }
           Optional.ofNullable(rInputsList.getIsMandatory()).ifPresent(rulesInputs::setIsMandatory);
-          Optional.ofNullable(rInputsList.getType()).ifPresent(rulesInputs::setType);
+          if (isBlankString(rInputsList.getType())) {
+            rulesInputs.setType(rInputsList.getType());
+          }
           if (rInputsList.getType() != null
               && (rInputsList.getType().trim().equalsIgnoreCase(TypeValue.DROPDOWN.getType())
                   || rInputsList.getType().trim().equalsIgnoreCase(TypeValue.MULTISELECT.getType()))

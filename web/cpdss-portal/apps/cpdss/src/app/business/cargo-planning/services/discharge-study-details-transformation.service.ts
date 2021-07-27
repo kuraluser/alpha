@@ -716,6 +716,17 @@ export class DischargeStudyDetailsTransformationService {
     this._ohqValiditySource.next(true);
   }
 
+    /**
+   * Set discharge study complete status
+   *
+   * @param {boolean} isValid
+   * @memberof DischargeStudyDetailsTransformationService
+    */
+    setDischargeStudyValidity(isValid: boolean) {
+      this._dischargeStudyValiditySource.next(isValid);
+    }
+      
+
   /**
    * Set ohq port complete status
    *
@@ -945,7 +956,8 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
   ]
   const actions: DATATABLE_ACTION[] = [];
   actions.push(DATATABLE_ACTION.DELETE);
-  actions.push(DATATABLE_ACTION.SAVE);
+  //Note:- need to confirm with BA
+  // actions.push(DATATABLE_ACTION.SAVE);
   const action: IDataTableColumn = {
     field: 'actions',
     header: '',
@@ -986,10 +998,10 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
         _portDetail.instruction = listData.instructions[0];
       }
       _portDetail.maxDraft = portDetail.maxDraft;
-      _portDetail.cargoDetail  = portDetail.cargoNominationList.map((cargoDetail) => {
+      _portDetail.cargoDetail  = portDetail.cargoNominationList ? portDetail.cargoNominationList?.map((cargoDetail) => {
         const storedKey = this.getStoreKey(portUniqueColorAbbrList,cargoDetail);
         return this.getCargoDetailsAsValueObject(cargoDetail,listData,storedKey,true);
-      })
+      }) : [];
       _portDetail.cow = listData.mode.find(modeDetails => modeDetails.id === portDetail.cowId);
       if(!_portDetail.cow) {
         _portDetail.cow = listData.mode[0];
@@ -1061,7 +1073,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       _cargoDetailValuObject.id = new ValueObject<string>(cargoDetail.id+''),
 
       //Note:- need to remove 25000 when actual value comes from BE.
-      _cargoDetailValuObject.maxKl = new ValueObject<number>(25000, false , false);
+      _cargoDetailValuObject.maxKl = new ValueObject<number>(2500000, false , false);
       _cargoDetailValuObject.mt = new ValueObject<string>(isKlEditable ? cargoDetail.quantity +'' : '-', true , false);
       _cargoDetailValuObject.mode = new ValueObject<IMode>(mode , true , false);
       _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true , false);
@@ -1115,8 +1127,8 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       _backLoadingDetailDetail.cargo = new ValueObject<ICargo>(cargoObj, true , isNewValue);
       _backLoadingDetailDetail.kl = new ValueObject<number>(unitConversion.kl , true , isNewValue);
       _backLoadingDetailDetail.mt = new ValueObject<number>(backLoadingDetail.quantity  , true , false);
-      _backLoadingDetailDetail.api = new ValueObject<number>(backLoadingDetail.api , true , isNewValue);
-      _backLoadingDetailDetail.temp = new ValueObject<number>(backLoadingDetail.temperature , true , isNewValue);
+      _backLoadingDetailDetail.api = new ValueObject<string>(backLoadingDetail.api?.toString() , true , isNewValue);
+      _backLoadingDetailDetail.temp = new ValueObject<string>(backLoadingDetail.temperature?.toString() , true , isNewValue);
       _backLoadingDetailDetail.isDelete = true;
       _backLoadingDetailDetail.isAdd = isNewValue;
       _backLoadingDetailDetail.storedKey = new ValueObject<string>(storedKey),
@@ -1216,8 +1228,10 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
           case 'mode':
             _cargoDetails.mode = cargoDetails.mode.value.id;
             break;
-          case 'id':
-            _cargoDetails.id = cargoDetails.id.value ? cargoDetails.id.value : '';
+          case 'id': 
+            if(cargoDetails.id.value) {
+              _cargoDetails.id = cargoDetails.id.value;
+            }
             break;
           case 'color':
             _cargoDetails.color = cargoDetails.color.value;
@@ -1263,14 +1277,17 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
           case 'abbreviation':
             _backLoading.abbreviation = backLoading.abbreviation.value;
             break;
-          case 'api':
-            _backLoading.api = backLoading.api.value;
+          case 'api': 
+            _backLoading.api = +backLoading.api.value;
             break;
-          case 'temp':
-            _backLoading.temperature = backLoading.temp.value;
+          case 'temp': 
+            _backLoading.temperature = +backLoading.temp.value;
             break;
           case 'id':
-            _backLoading.id = backLoading.id.value ? backLoading.id.value : '';
+            if(backLoading.id.value) {
+              _backLoading.id = backLoading.id.value
+            }
+            break;
         }
       }
     }

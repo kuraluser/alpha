@@ -469,6 +469,7 @@ message BendingMomentType1 {
 		int64 sectionId = 2;
 		repeated RulePlans rulePlan = 3;
 		bool isNoDefaultRule = 4;
+		bool isFetchEnabledRules = 5;
 	}
 
 	message VesselRuleReply{

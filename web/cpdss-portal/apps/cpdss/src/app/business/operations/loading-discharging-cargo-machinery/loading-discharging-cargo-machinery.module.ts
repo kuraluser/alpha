@@ -4,6 +4,8 @@ import { LoadingDischargingCargoMachineryComponent } from './loading-discharging
 import { TableModule } from 'primeng/table';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NumberDirectiveModule } from '../../../shared/directives/number-directive/number-directive.module';
+import { DropdownModule } from 'primeng/dropdown';
+import { TranslateModule } from '@ngx-translate/core';
 
 /**
  * Module for loading discharging cargo machinery module
@@ -19,7 +21,9 @@ import { NumberDirectiveModule } from '../../../shared/directives/number-directi
     TableModule,
     FormsModule,
     ReactiveFormsModule,
-    NumberDirectiveModule
+    NumberDirectiveModule,
+    DropdownModule,
+    TranslateModule
   ]
 })
 export class LoadingDischargingCargoMachineryModule { }

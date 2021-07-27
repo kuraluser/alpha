@@ -1,6 +1,6 @@
 
     <form [formGroup]="dischargeStudyForm">
-        <button (click)="saveDischargeStudy()">{{'DISCHARGE_STUDY_SAVE'  | translate}}</button>
+        <button (click)="saveDischargeStudy()" [disabled]="!editMode">{{'DISCHARGE_STUDY_SAVE'  | translate}}</button>
         <div formArrayName="portDetails">
         <div *ngFor="let portDetail of portDetails;let portIndex = index;let last = last" formGroupName="{{portIndex}}">
 
@@ -16,7 +16,7 @@
         <div class=" pr-15">
             {{ 'DISCHARGE_STUDY_DRAFT_RESTRICTION' | translate }}
         </div>
-        <div class="error-icon-wrapper"> <input type="text" class="form-control" formControlName="maxDraft" id="maxDraft" [disabled]="!editMode" (change)="onChange($event,'maxDraft',portIndex)"/>
+        <div class="error-icon-wrapper"> <input type="text" class="form-control" formControlName="maxDraft" cpdssPortalNumberDecimal  id="maxDraft" [readonly]="!editMode" (change)="onChange($event,'maxDraft',portIndex)"/>
             <cpdss-portal-validation-error
                 [errors]="fieldError(portIndex,'maxDraft')"
                 [errorMessages]="errorMessages.maxDraft">
@@ -40,7 +40,7 @@
                     <div class="pl-15">
                     <p-dropdown id="percentage_dropdown" styleClass="form-control" [options]="percentageList"
                         formControlName="percentage" filter="true" optionLabel="name"
-                        resetFilterOnHide="true" (onChange)="onChange($event,'percentage',portIndex)"></p-dropdown>
+                        resetFilterOnHide="true" (onChange)="onChange($event,'percentage',portIndex)" [readonly]="!editMode"></p-dropdown>
                     </div>
                 </ng-container>
                 <ng-container *ngIf="getFeild(portIndex,'cow').value?.id === 2">
@@ -87,7 +87,7 @@
                     <cpdss-portal-datatable [tableId]="'discharge_cargo_back_loading'" [form]="getFeild(portIndex,'backLoadingDetails')" [columns]="backLoadingColumns"
                     [value]="portDetail?.backLoadingDetails" [editMode]="editMode" [listData]="getListData(portDetail.port?.id)"
                     (deleteRow)="onDeleteRow($event,portIndex,'backLoadingDetails')" (editComplete)="onEditCompleteBackLoading($event,portIndex)" 
-                    (saveRow)="onSaveRow($event,portIndex,'backLoadingDetails')" [showTotal]="true">
+                    (saveRow)="onSaveRow($event,portIndex)" [showTotal]="true">
                 </cpdss-portal-datatable>
                    </div>
                </div>

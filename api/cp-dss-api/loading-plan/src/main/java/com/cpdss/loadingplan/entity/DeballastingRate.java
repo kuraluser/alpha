@@ -40,8 +40,8 @@ public class DeballastingRate extends EntityDoc {
   @Column(name = "tank_xid")
   private Long tankXId;
 
-  @Column(name = "loading_rate")
-  private BigDecimal loadingRate;
+  @Column(name = "deballasting_rate")
+  private BigDecimal deBallastingRate;
 
   @Column(name = "is_active")
   private Boolean isActive;
