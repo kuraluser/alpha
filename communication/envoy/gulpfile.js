@@ -134,7 +134,7 @@ async function dockerize(cb) {
     let stream = await dockerClient.buildImage(
       {
         context: contextPath,
-        src: ['Dockerfile', appName, 'nginx-conf'],
+        src: ['Dockerfile', appName, 'nginx-conf', 'supervisord.conf'],
       },
       {
         t: imageName,
