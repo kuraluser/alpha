@@ -52,7 +52,8 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
           + " ruleTemplateInput.defaultValue as templateInputDefaultValue, ruleTemplateInput.maxValue as templateInputMaxValue,"
           + " ruleTemplateInput.minValue as templateInputMinValue, ruleTemplateInput.typeValue as templateInputTypeValue, "
           + " ruleTemplate.isHardRule as isHardRule, ruleTemplateInput.isMandatory as isMandatory, ruleListMaster.ruleOrder as ruleOrder, "
-          + " ruleTemplate.numericPrecision as numericPrecision, ruleTemplate.numericScale as numericScale ) "
+          + " ruleTemplate.numericPrecision as numericPrecision, ruleTemplate.numericScale as numericScale,"
+          + " ruleTemplateInput.isActive as templateInputIsActive, ruleTemplate.isActive as templateIsActive  ) "
           + " FROM RuleMasterSection ruleMasterSection "
           + " INNER JOIN RuleListMaster ruleListMaster ON ruleMasterSection.id = ruleListMaster.ruleMasterSection "
           + " INNER JOIN RuleTemplate ruleTemplate ON ruleListMaster.id = ruleTemplate.ruleListMaster"
@@ -61,7 +62,7 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
           + " WHERE ruleMasterSection.id = :sectionId AND ruleListMaster.isActive = true AND ruleMasterSection.isActive = true"
           + " AND ruleTemplate.isActive = true AND ruleType.isActive = true AND ruleTemplateInput.isActive = true "
           + "  ORDER BY ruleListMaster.ruleOrder, ruleTemplateInput.id ASC")
-  public List<VesselRule> findRuleTemplateForNoVessel(@Param("sectionId") Long sectionId);
+  public List<VesselRule> findDefaultAdminRule(@Param("sectionId") Long sectionId);
 
   @Query(
       "SELECT new com.cpdss.vesselinfo.domain.VesselRule(ruleListMaster.ruleListMaster as header, "
@@ -72,7 +73,8 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
           + " ruleVesselInput.defaultValue as templateInputDefaultValue, ruleVesselInput.maxValue as templateInputMaxValue,"
           + " ruleVesselInput.minValue as templateInputMinValue, ruleVesselInput.typeValue as templateInputTypeValue, "
           + " ruleVesselMapping.isHardRule as isHardRule, ruleVesselInput.isMandatory as isMandatory, ruleListMaster.ruleOrder as ruleOrder, "
-          + " ruleVesselMapping.numericPrecision as numericPrecision, ruleVesselMapping.numericScale as numericScale ) "
+          + " ruleVesselMapping.numericPrecision as numericPrecision, ruleVesselMapping.numericScale as numericScale, "
+          + " ruleVesselInput.isActive as templateInputIsActive, ruleVesselMapping.isActive as templateIsActive ) "
           + " FROM Vessel vessel "
           + " INNER JOIN RuleVesselMapping ruleVesselMapping ON vessel.id = ruleVesselMapping.vessel "
           + " INNER JOIN RuleVesselMappingInput ruleVesselInput on ruleVesselMapping.id = ruleVesselInput.ruleVesselMapping "
@@ -83,17 +85,6 @@ public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
           + " WHERE vessel.id = :vesselId AND ruleMasterSection.id = :sectionId AND ruleVesselMapping.isActive = true AND "
           + " ruleVesselInput.isActive = true AND ruleType.isActive = true AND ruleTemplate.isActive = true AND ruleListMaster.isActive = true"
           + " AND ruleMasterSection.isActive = true  ORDER BY ruleListMaster.ruleOrder, ruleVesselInput.id ASC")
-  public List<VesselRule> findVesselRuleByVesselIdAndSectionId(
+  public List<VesselRule> findRulesAgainstVessel(
       @Param("vesselId") Long vesselId, @Param("sectionId") Long sectionId);
-
-  //  @Query(
-  //      "SELECT new com.cpdss.vesselinfo.domain.VesselRuleMappingVessel(vessel.id as vesselId )"
-  //          + " FROM Vessel vessel INNER JOIN RuleVesselMapping ruleVesselMapping ON vessel.id =
-  // ruleVesselMapping.vessel "
-  //          + " WHERE vessel.id = :vesselId AND vessel.isActive = :isVesselActive AND
-  // ruleVesselMapping.isActive = :isRuleActive")
-  //  public List<VesselRuleMappingVessel> findVesselInRuleVesselMapping(
-  //      @Param("vesselId") Long vesselId,
-  //      @Param("isVesselActive") boolean isVesselActive,
-  //      @Param("isRuleActive") boolean isRuleActive);
 }

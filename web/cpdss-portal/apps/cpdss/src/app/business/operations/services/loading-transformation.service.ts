@@ -11,9 +11,11 @@ import { Subject } from 'rxjs';
 export class LoadingTransformationService {
   private _loadingInformationSource: Subject<boolean> = new Subject();
   private _unitChangeSource: Subject<boolean> = new Subject();
+  private _loadingInstructionSource: Subject<boolean> = new Subject();
 
   loadingInformationValidity$ = this._loadingInformationSource.asObservable();
   unitChange$ = this._unitChangeSource.asObservable();
+  loadingInstructionValidity$ = this._loadingInstructionSource.asObservable();
   constructor() { }
 
   /** Set loading information complete status */
@@ -21,9 +23,14 @@ export class LoadingTransformationService {
     this._loadingInformationSource.next(isValid);
   }
 
-    /** Set unit changed */
-    setUnitChanged(unitChanged: boolean) {
-      this._unitChangeSource.next(unitChanged);
-    }
-  
+  /** Set unit changed */
+  setUnitChanged(unitChanged: boolean) {
+    this._unitChangeSource.next(unitChanged);
+  }
+
+  /** Set loading instruction complete status */
+  setLoadingInstructionValidity(value: boolean) {
+    this._loadingInstructionSource.next(value);
+  }
+
 }

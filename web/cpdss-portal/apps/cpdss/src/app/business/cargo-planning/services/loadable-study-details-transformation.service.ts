@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_BUTTON, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { ValueObject, ISubTotal } from '../../../shared/models/common.model';
+import { ValueObject, ISubTotal, IMonth } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IMonths, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
+import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
@@ -220,6 +220,7 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'abbreviation.value',
         fieldPlaceholder: 'ENTER_ABBREVIATION',
+        fieldHeaderClass: 'column-abbreviation',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'alphabetsOnly': 'CARGO_NOMINATION_FIELD_ALPHABETS_ONLY_ERROR',
@@ -511,7 +512,7 @@ export class LoadableStudyDetailsTransformationService {
    * @return {*}  {IMonths[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getMonthList(): IMonths[] {
+  getMonthList(): IMonth[] {
     return [
       {
         id: 1,

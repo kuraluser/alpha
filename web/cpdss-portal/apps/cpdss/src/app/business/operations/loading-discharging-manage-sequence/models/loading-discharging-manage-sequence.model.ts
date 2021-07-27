@@ -13,8 +13,9 @@ import { IReasonForDelays } from '../../models/loading-information.model';
     reasonForDelay: ValueObject<IReasonForDelays>;
     duration: ValueObject<string>;
     cargo: ValueObject<ILoadableQuantityCargo>;
-    quantity: ValueObject<number>;
+    quantity: number;
     isAdd: boolean;
+    colorCode: string;
  }
 
 /**

@@ -91,7 +91,7 @@
                 <div class="pr-20 inline-block">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}{{' (' + baseUnit +
                     ')'}}
                     <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button"
-                        (click)="showLoadableQuantityPopup()" [disabled]="showLoadableQuantityButton || !loadableQuantityPermission?.view">{{loadableQuantityNew | number :
+                        (click)="showLoadableQuantityPopup()" [disabled]="showLoadableQuantityButton || !loadableQuantityPermission?.view || !cargoNominationTabPermission?.view">{{loadableQuantityNew | number :
                         '1.2-2' }}</button>
                 </div>
 
@@ -124,7 +124,7 @@
         </div> -->
         
         <div class="pr-15">
-            <button id="rulesButton" [disabled]="isPatternGenerated || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING " class="btn btn-main  mr-10" (click)="isRuleModalVisible = !isRuleModalVisible">{{'CARGO_PLANNING_RULES'|translate}}</button>
+            <button id="rulesButton" [disabled]="isPatternGenerated || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING " class="btn btn-main  mr-10" (click)="isRuleModalVisible = !isRuleModalVisible">{{'RULES'|translate}}</button>
             <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
                 <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                     [ngClass]="{'disabled': !loadableStudies?.length || !cargoNominationTabPermission?.add || !cargoNominationTabPermission?.add === undefined}"
@@ -179,6 +179,17 @@
                     [loadableStudy]="selectedLoadableStudy" [permission]="obqTabPermission" [quantitySelectedUnit]="currentUnit">
                 </cpdss-portal-on-board-quantity>
 
+                <div class="row" *ngIf="selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && !this.dischargingPorts?.length">
+                    <div class="col-sm-12" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
+                        <p class="text-uppercase text-center text-danger">{{'DISCHARGE_PORTS_NOT_SELECTED' | translate}}</p>
+                    </div>
+                    <div class="col-sm-12" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ">
+                        <p class="text-uppercase text-center text-danger">{{'PORTS_DATA_NOT_FILLED_FOR_OHQ' | translate}}</p>
+                    </div>
+                    <div class="col-sm-12" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ">
+                        <p class="text-uppercase text-center text-danger">{{'PORTS_DATA_NOT_FILLED_FOR_OBQ' | translate}}</p>
+                    </div>
+                </div>
 
                 <div class="row"
                     *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION || selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">

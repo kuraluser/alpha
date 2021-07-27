@@ -1,79 +1,16 @@
-<div>
-    <button class="btn btn-main" id="btnAddBerth" (click)="addBerth()">
-        {{'PORT_MASTER_ADD_BERTH' | translate}}</button>
-</div>
-<ng-container *ngIf="berthDetailsFormArray.length">
-    <div *ngFor="let berthDetailsformGroup of berthDetailsFormArray.controls;let i = index">
-        <form *ngIf="berthDetailsformGroup" [formGroup]="berthDetailsformGroup">
-            <div class="containter">
-                <div class="row">
-                    <div class="col-1">
-                        <label id="lblBerthName">
-                            {{'PORTMASTER_BERTH_NAME' | translate
-                            }}
-                        </label>
-                        <input formControlName="berthName" type="text" id="inputBerthName" [placeholder]=""
-                            maxlength="100" (focusout)="setFormValues()" />
-                        <cpdss-portal-validation-error [errors]="fieldError('berthName',i)"
-                            [errorMessages]="errorMessages.berthName">
-                        </cpdss-portal-validation-error>
-
-                    </div>
-                    <div class="col-1">
-                        <label id="lblBerthDepth">{{'PORTMASTER_BERTH_DEPTH' | translate
-                            }}</label>
-                        <input id="inputBerthDepth" formControlName="berthDepth" type="number" [placeholder]=""
-                            maxlength="100" (focusout)="setFormValues()" />
-                        <cpdss-portal-validation-error [errors]="fieldError('berthDepth',i)"
-                            [errorMessages]="errorMessages.berthDepth">
-                        </cpdss-portal-validation-error>
-
-                    </div>
-                    <div class="col-1">
-                        <label id="lblMaxLoa">{{'PORTMASTER_BERTH_MAXIMUM_LOA' | translate
-                            }}</label>
-                        <input formControlName="maxLoa" id="inputMaxLoa" type="number" [placeholder]="" maxlength="100"
-                            (focusout)="setFormValues()" />
-                        <cpdss-portal-validation-error [errors]="fieldError('maxLoa',i)"
-                            [errorMessages]="errorMessages.maxLoa">
-                        </cpdss-portal-validation-error>
-                    </div>
-                    <div class="col-1">
-                        <label id="lblMaxDwt">{{'PORTMASTER_BERTH_MAXIMUM_DWT' | translate
-                            }}</label>
-                        <input id="inputMaxDwt" formControlName="maxDwt" type="number" [placeholder]="" maxlength="100"
-                            (focusout)="setFormValues()" />
-                        <cpdss-portal-validation-error [errors]="fieldError('maxDwt',i)"
-                            [errorMessages]="errorMessages.maxDwt">
-                        </cpdss-portal-validation-error>
-                    </div>
-                    <div class="col-1">
-                        <label id="lblManifoldHeight">{{'PORTMASTER_BERTH_MANIFOLD_HEIGHT' | translate
-                            }}</label>
-                        <input id="inputManifoldHeight" formControlName="maxManifoldHeight" type="number"
-                            [placeholder]="" maxlength="100" (focusout)="setFormValues()" />
-                        <cpdss-portal-validation-error [errors]="fieldError('maxManifoldHeight',i)"
-                            [errorMessages]="errorMessages.maxManifoldHeight">
-                        </cpdss-portal-validation-error>
-                    </div>
-                    <div class="col-1">
-                        <label id="lblMinUkc">{{'PORTMASTER_BERTH_MINIMUM_UKC' | translate
-                            }}</label>
-                        <input id="inputMinUkc" formControlName="minUkc" type="number" [placeholder]="" maxlength="100"
-                            (focusout)="setFormValues()" />
-                        <cpdss-portal-validation-error [errors]="fieldError('minUkc',i)"
-                            [errorMessages]="errorMessages.minUkc">
-                        </cpdss-portal-validation-error>
-                    </div>
-                    <div class="col-1">
-                        <label id="lblRestrictions">{{'PORTMASTER_BERTH_RESTRICTIONS' | translate
-                            }}</label>
-                        <input id="inputRestrictions" formControlName="restrictions" type="text" [placeholder]=""
-                            maxlength="100" (focusout)="setFormValues()" />
-                    </div>
-                </div>
-            </div>
-            <button id="btnDeleteBerth" (click)="deleteBerth(i)">{{'PORT_MASTER_DELETE_BERTH' | translate}}</button>
-        </form>
-    </div>
+<ng-container>
+    <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+        (click)="addBerth()">{{'ADD_BERTH_BUTTON_LABEL'|
+        translate}}</a>
 </ng-container>
+<div class="" *ngIf="berthDetailsForm">
+    <form [formGroup]="berthDetailsForm"></form>
+    <div class="form-group row">
+        <div class="col table-responsive-custom">
+            <cpdss-portal-datatable [tableId]="berth" [form]="berthDetailsForm" [columns]="columns" [value]="berthList"
+                [filterable]="true" [editMode]="editMode" (deleteRow)="onDeleteRow($event)">
+            </cpdss-portal-datatable>
+        </div>
+    </div>
+
+</div>

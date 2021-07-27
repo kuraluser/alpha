@@ -8,6 +8,6 @@ import java.util.List;
 public interface DischargeStudyPortInstructionRepository
     extends CommonCrudRepository<DischargeStudyPortInstruction, Long> {
 
-  public List<DischargeStudyPortInstruction> findByDischargeStudyIdAndPortIdIn(
-      Long dischargeStudyId, List<Long> portIds);
+  public List<DischargeStudyPortInstruction> findByDischargeStudyIdAndPortIdInAndIsActive(
+      Long dischargeStudyId, List<Long> portIds, boolean isActive);
 }

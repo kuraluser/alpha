@@ -1512,11 +1512,14 @@ public class SynopticService {
       LocalDate laycanFrom =
           this.getTimezoneConvertedDate(
               loadableStudyPortRotation.getLayCanFrom(),
-              Double.parseDouble(portMasterDetails.get().getOffset()));
+              Double.parseDouble(portMasterDetails.get().getOffset()),
+              true);
       LocalDate laycanTo =
           this.getTimezoneConvertedDate(
               loadableStudyPortRotation.getLayCanFrom(),
-              Double.parseDouble(portMasterDetails.get().getOffset()));
+              Double.parseDouble(portMasterDetails.get().getOffset()),
+              false);
+
       OperationsTable operationsTableData =
           OperationsTable.builder()
               .operation(loadableStudyPortRotation.getOperation().getName())
@@ -1552,11 +1555,11 @@ public class SynopticService {
     return PortOperationTable.builder().operationsTableList(operationsTableList).build();
   }
 
-  private LocalDate getTimezoneConvertedDate(LocalDate date, double offset) {
+  private LocalDate getTimezoneConvertedDate(LocalDate date, double offset, boolean from) {
     if (date == null) {
       return null;
     }
-    LocalDateTime dateTime = date.atTime(0, 0);
+    LocalDateTime dateTime = from ? date.atTime(0, 0, 0) : date.atTime(23, 59, 59);
     return getTimezoneConvertedDate(dateTime, offset).toLocalDate();
   }
 

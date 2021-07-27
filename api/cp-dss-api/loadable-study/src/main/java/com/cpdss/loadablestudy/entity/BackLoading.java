@@ -22,8 +22,6 @@ public class BackLoading extends EntityDoc {
 
   private static final long serialVersionUID = -5326537398456003514L;
 
-  private Long id;
-
   @Column(name = "discharge_study_xid")
   private Long dischargeStudyId;
 
@@ -49,5 +47,5 @@ public class BackLoading extends EntityDoc {
   private BigDecimal quantity;
 
   @Column(name = "is_active")
-  private boolean is_active;
+  private boolean isActive;
 }

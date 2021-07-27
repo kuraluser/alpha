@@ -10,7 +10,7 @@ import lombok.Data;
 @JsonInclude(Include.NON_EMPTY)
 public class BackLoading {
   private Long id;
-  private String colour;
+  private String color;
   private Long cargoId;
   private BigDecimal api;
   private BigDecimal temperature;

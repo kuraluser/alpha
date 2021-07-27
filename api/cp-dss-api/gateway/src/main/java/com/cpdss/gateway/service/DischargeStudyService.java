@@ -8,6 +8,10 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
+import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
+import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
+import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
@@ -435,7 +439,7 @@ public class DischargeStudyService {
           backLoading.setAbbreviation(loading.getAbbreviation());
           backLoading.setApi(new BigDecimal(loading.getApi()));
           backLoading.setCargoId(loading.getCargoId());
-          backLoading.setColour(loading.getColour());
+          backLoading.setColor(loading.getColour());
           backLoading.setId(loading.getId());
           backLoading.setQuantity(new BigDecimal(loading.getQuantity()));
           backLoading.setTemperature(new BigDecimal(loading.getTemperature()));
@@ -510,5 +514,102 @@ public class DischargeStudyService {
         new CommonSuccessResponse(
             valueOf(HttpStatus.OK.value()), headers.getFirst("correlationId")));
     return response;
+  }
+
+  public LoadableStudyResponse saveDischargeStudyWithBackloaing(
+      DischargeStudyCargoResponse request, String correlationId) throws GenericServiceException {
+    DishargeStudyBackLoadingSaveRequest.Builder builder =
+        DishargeStudyBackLoadingSaveRequest.newBuilder();
+    builder.setDischargeStudyId(request.getDischargeStudyId());
+    request
+        .getPortList()
+        .forEach(
+            portCargo -> {
+              createPortCargoRequest(portCargo, builder);
+            });
+    DischargeStudyReply reply =
+        this.dischargeStudyOperationServiceBlockingStub.saveDischargeStudyBackLoading(
+            builder.build());
+
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to save loadable studies",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
+    }
+    LoadableStudyResponse response = new LoadableStudyResponse();
+    response.setDischargeStudyId(reply.getId());
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  private void createPortCargoRequest(
+      PortRotation portCargo,
+      com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest.Builder
+          builder) {
+    DishargeStudyBackLoadingDetail.Builder dsBackLoadingDetail =
+        DishargeStudyBackLoadingDetail.newBuilder();
+    PortRotationDetail.Builder portDetails = PortRotationDetail.newBuilder();
+    portDetails.setId(portCargo.getId());
+    portDetails.setMaxDraft(
+        (portCargo.getMaxDraft() == null) ? null : portCargo.getMaxDraft().toString());
+    portDetails.setIsBackLoadingEnabled(portCargo.getIsBackLoadingEnabled());
+    if (portCargo.getIsBackLoadingEnabled()) {
+      portDetails.addAllBackLoading(createBackLoading(portCargo.getBackLoading()));
+    }
+    portDetails.setCowId(portCargo.getCowId());
+    portDetails.setPercentage(portCargo.getPercentage());
+    if (portCargo.getCowId() == 2) {
+      portDetails.addAllTanks(portCargo.getTanks());
+    }
+    portDetails.addAllInstructionId(portCargo.getInstructionId());
+    dsBackLoadingDetail.setPortDetails(portDetails.build());
+    dsBackLoadingDetail.addAllPortCargoDetails(
+        createPortWiseCargoNoination(portCargo.getCargoNominationList()));
+    builder.addDsBackLoading(dsBackLoadingDetail.build());
+  }
+
+  private List<CargoNominationDetail> createPortWiseCargoNoination(
+      List<CargoNomination> cargoNominationList) {
+    List<CargoNominationDetail> cargoList = new ArrayList<>();
+    cargoNominationList.forEach(
+        cargo -> {
+          CargoNominationDetail.Builder cargoNomination = CargoNominationDetail.newBuilder();
+          cargoNomination.setId(cargo.getId() == null ? -1 : cargo.getId());
+          cargoNomination.setQuantity(cargo.getQuantity().toString());
+          cargoNomination.setMode(cargo.getMode());
+          cargoNomination.setAbbreviation(cargo.getAbbreviation());
+          cargoNomination.setColor(cargo.getColor());
+          cargoNomination.setCargoId(cargo.getCargoId());
+          cargoNomination.setApi(cargo.getApi().toString());
+          cargoNomination.setTemperature(cargo.getTemperature().toString());
+          cargoList.add(cargoNomination.build());
+        });
+
+    return cargoList;
+  }
+
+  private List<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading>
+      createBackLoading(List<BackLoading> backLoading) {
+    List<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading> backLoadingList =
+        new ArrayList<>();
+    backLoading.forEach(
+        backLoad -> {
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading.Builder
+              backLoadRequest =
+                  com.cpdss.common.generated.loadableStudy.LoadableStudyModels.BackLoading
+                      .newBuilder();
+          backLoadRequest.setId(backLoad.getId() == null ? -1 : backLoad.getId());
+          backLoadRequest.setApi(backLoad.getApi().toString());
+          backLoadRequest.setCargoId(backLoad.getCargoId());
+          backLoadRequest.setQuantity(backLoad.getQuantity().toString());
+          backLoadRequest.setColour(backLoad.getColor());
+          backLoadRequest.setAbbreviation(backLoad.getAbbreviation());
+          backLoadRequest.setTemperature(backLoad.getTemperature().toString());
+          backLoadingList.add(backLoadRequest.build());
+        });
+
+    return backLoadingList;
   }
 }

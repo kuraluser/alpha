@@ -41,7 +41,7 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.service.loadingplan.LoadingSequenceService;
-import com.cpdss.gateway.utility.Utility;
+import com.cpdss.gateway.utility.RuleUtility;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -259,7 +259,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     builder.setVesselId(vesselId);
     builder.setSectionId(LOADING_RULE_MASTER_ID);
     builder.setLoadingInfoId(loadingInfoId);
-    Utility.buildRuleListForSave(ruleRequest, null, null, builder, false, true);
+    RuleUtility.buildRuleListForSave(ruleRequest, null, null, builder, false, true);
     RuleResponse ruleResponse = this.loadingPlanGrpcService.saveOrGetLoadingPlanRules(builder);
     return ruleResponse;
   }

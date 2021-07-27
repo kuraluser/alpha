@@ -15,12 +15,12 @@ import lombok.Setter;
 
 /** @author jerin.g */
 @Entity
-@Table(name = "shearing_force")
+@Table(name = "shearing_force_type1")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShearingForce extends EntityDoc {
+public class ShearingForceType1 extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 

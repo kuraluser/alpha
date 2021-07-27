@@ -10,7 +10,6 @@ import com.cpdss.loadingplan.service.LoadingMachineryInUseService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,44 +26,38 @@ public class LoadingMachineryInUseServiceImpl implements LoadingMachineryInUseSe
 
   @Override
   public void saveLoadingMachineryList(
-      List<LoadingMachinesInUse> loadingMachinesList, LoadingInformation loadingInformation)
+      List<LoadingMachinesInUse> saveRequest, LoadingInformation loadingInformation)
       throws Exception {
-    List<LoadingMachineryInUse> existingMachineries =
-        loadingMachineryInUseRepository.findByLoadingInformationIdAndIsActive(
-            loadingInformation.getId(), true);
-    List<Long> requestedMachineries =
-        loadingMachinesList.stream()
-            .map(machinery -> machinery.getId())
-            .collect(Collectors.toList());
-
-    existingMachineries.stream()
-        .filter(machinery -> !requestedMachineries.contains(machinery.getId()))
-        .forEach(
-            machinery -> {
-              loadingMachineryInUseRepository.deleteById(machinery.getId());
-            });
-
-    for (LoadingMachinesInUse machine : loadingMachinesList) {
-      log.info(
-          "Saving LoadingMachinery {} for LoadingInformation {}",
-          machine.getId(),
-          machine.getLoadingInfoId());
-      LoadingMachineryInUse loadingMachineryInUse = null;
-      if (machine.getId() == 0) {
-        loadingMachineryInUse = new LoadingMachineryInUse();
-      } else {
-        Optional<LoadingMachineryInUse> loadingMachineryOpt =
-            loadingMachineryInUseRepository.findByIdAndIsActiveTrue(machine.getId());
-        if (loadingMachineryOpt.isPresent()) {
-          loadingMachineryInUse = loadingMachineryOpt.get();
+    if (!saveRequest.isEmpty() && loadingInformation != null) {
+      for (LoadingMachinesInUse lm : saveRequest) {
+        Optional<LoadingMachineryInUse> lmVar1 =
+            this.loadingMachineryInUseRepository
+                .findByLoadingInformationAndMachineXIdAndMachineTypeXidAndIsActiveTrue(
+                    loadingInformation, lm.getMachineId(), lm.getMachineTypeValue());
+        if (lmVar1.isPresent()) {
+          // Update Record
+          lmVar1.get().setIsUsing(lm.getIsUsing());
+          lmVar1
+              .get()
+              .setCapacity(
+                  lm.getCapacity().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lm.getCapacity()));
+          lmVar1.get().setIsActive(lm.getIsUsing()); // If it using, make it Ture else False.
         } else {
-          log.error("Exception occured while saving LoadingMachineryInUse {}", machine.getId());
-          throw new Exception("Cannot find cargo machinery");
+          // New Record
+          lmVar1 = Optional.of(new LoadingMachineryInUse());
+          lmVar1.get().setMachineXId(lm.getMachineId());
+          lmVar1.get().setMachineTypeXid(lm.getMachineTypeValue());
+          lmVar1.get().setIsUsing(lm.getIsUsing());
+          lmVar1.get().setMachineXId(lm.getMachineId());
+          lmVar1.get().setLoadingInformation(loadingInformation);
+          lmVar1
+              .get()
+              .setCapacity(
+                  lm.getCapacity().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lm.getCapacity()));
+          lmVar1.get().setIsActive(true); // For new record always True.
         }
+        this.loadingMachineryInUseRepository.save(lmVar1.get());
       }
-
-      buildLoadingMachineryInUse(machine, loadingMachineryInUse);
-      loadingMachineryInUseRepository.save(loadingMachineryInUse);
     }
   }
 
@@ -78,8 +71,10 @@ public class LoadingMachineryInUseServiceImpl implements LoadingMachineryInUseSe
     } else {
       throw new Exception("Cannot find the loading information for the machinery");
     }
+    Optional.ofNullable(loadingMachinesInUse.getMachineId()).ifPresent(machinery::setMachineXId);
+    Optional.ofNullable(loadingMachinesInUse.getMachineType().getNumber())
+        .ifPresent(machinery::setMachineTypeXid);
 
-    Optional.ofNullable(loadingMachinesInUse.getPumpId()).ifPresent(machinery::setPumpXId);
     machinery.setCapacity(
         StringUtils.isEmpty(loadingMachinesInUse.getCapacity())
             ? null

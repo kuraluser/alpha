@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface BackLoadingRepository extends CommonCrudRepository<BackLoading, Long> {
 
-  public List<BackLoading> findByDischargeStudyIdAndPortIdIn(Long id, List<Long> portIds);
+  public List<BackLoading> findByDischargeStudyIdAndPortIdInAndIsActive(
+      Long id, List<Long> portIds, boolean isActive);
 }

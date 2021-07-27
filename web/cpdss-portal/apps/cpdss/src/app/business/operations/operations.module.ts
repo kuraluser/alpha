@@ -11,6 +11,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PortRotationRibbonModule } from '../core/components/port-rotation-ribbon/port-rotation-ribbon.module';
 import { AddPortPopupModule } from './add-port-popup/add-port-popup.module';
 import { LoadingTransformationService } from './services/loading-transformation.service';
+import {RulesModule} from './rules/rules.module';
+import { RulesService } from './services/rules/rules.service';
 
 @NgModule({
   declarations: [
@@ -24,8 +26,9 @@ import { LoadingTransformationService } from './services/loading-transformation.
     VesselInfoModule,
     UnitDropdownModule,
     PortRotationRibbonModule,
-    AddPortPopupModule
+    AddPortPopupModule,
+    RulesModule
   ],
-  providers: [VesselsApiService, LoadingTransformationService ]
+  providers: [VesselsApiService, LoadingTransformationService,RulesService ]
 })
 export class OperationsModule { }

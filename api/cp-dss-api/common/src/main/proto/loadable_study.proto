@@ -203,6 +203,7 @@ service DischargeStudyOperationService {
   rpc SaveDischargeStudy (DischargeStudyDetail) returns (DischargeStudyReply){}
   rpc UpdateDischargeStudy (DischargeStudyDetail) returns (UpdateDischargeStudyReply){}
   rpc getDischargeStudyPortWiseCargos(DischargeStudyRequest) returns (DishargeStudyCargoReply) {}
+  rpc SaveDischargeStudyBackLoading (DishargeStudyBackLoadingSaveRequest) returns (DischargeStudyReply){}
 }
 
 service PortInstructionService {
@@ -1466,6 +1467,15 @@ message	VoyagePorts{
 	string eta =9;
 	string lat =10;
 	string lon =11;
+}
+
+message DishargeStudyBackLoadingSaveRequest {
+	repeated DishargeStudyBackLoadingDetail dsBackLoading= 1;
+	int64 dischargeStudyId = 2;
+}
+message DishargeStudyBackLoadingDetail {
+	PortRotationDetail portDetails=1;
+	repeated CargoNominationDetail portCargoDetails= 2;
 }
 
 message PortRotationDetailReply {

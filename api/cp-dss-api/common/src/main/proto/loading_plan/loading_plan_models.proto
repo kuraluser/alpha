@@ -115,9 +115,10 @@ message StageDuration{
 message LoadingMachinesInUse{
   int64 id = 1;
   int64 loadingInfoId = 2;
-  int64 pumpId = 3;
+  int64 machineId = 3;
   string capacity = 4;
   bool isUsing = 5; // Not added in gateway
+  MachineType machineType = 6;
 }
 
 // Object message for hold, master and user data
@@ -486,6 +487,67 @@ message LoadingPlanSaveResponse {
   ResponseStatus responseStatus = 1;
 }
 
+message LoadingInstructionRequest {
+  int64 loadingInfoId = 1;
+  int64 vesselId = 2;
+  int64 portRotationId = 3; 
+}
+
+
+message LoadingInstructions {
+  int64 instructionTypeId = 1;
+  int64 instructionHeaderId = 2;
+  int64 instructionId =3;
+  string instruction = 4;
+  bool isChecked =5;
+  bool isEditable =6;
+}
+
+message LoadingInstructionSubHeader {
+  int64 instructionTypeId = 1;
+  int64 instructionHeaderId = 2;
+  int64 subHeaderId = 3;
+  string subHeaderName = 4;
+  bool isChecked =5;
+  repeated LoadingInstructions loadingInstructionsList =6;
+  bool isEditable =7;
+  bool IsHeaderInstruction = 8;
+  
+}
+
+message LoadingInstructionGroup {
+  int64 groupId =1;
+  string groupName = 2;
+}
+
+message LoadingInstructionDetails {
+  repeated LoadingInstructionSubHeader loadingInstructionSubHeader =1;
+  repeated LoadingInstructionGroup loadingInstructionGroupList =2;
+  ResponseStatus responseStatus = 3;
+}
+
+message LoadingInstructionsSave {
+  int64 headerId = 1;
+  int64 instructionTypeId = 2;
+  bool isChecked = 3;
+  bool isSingleHeader = 4;
+  int64 subHeaderId = 5;
+  string instruction = 6;
+  bool isSubHeader = 7;
+  int64 loadingInfoId = 8;
+  int64 vesselId = 9;
+  int64 portRotationId = 10;
+}
+
+message LoadingInstructionsUpdate{
+  repeated LoadingInstructionStatus instructionList = 1;
+}
+
+message LoadingInstructionStatus{
+  int64 instructionId = 1;
+  bool isChecked = 2;
+  string instruction =3;
+}
 message LoadingSequenceRequest {
   int64 loadingInfoId = 1;
 }

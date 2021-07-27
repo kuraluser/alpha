@@ -10,8 +10,8 @@ import com.cpdss.common.generated.Common.RulePlans;
 import com.cpdss.common.generated.Common.Rules;
 import com.cpdss.common.generated.Common.RulesInputs;
 import com.cpdss.common.generated.VesselInfo.BMAndSF;
-import com.cpdss.common.generated.VesselInfo.BendingMoment;
 import com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3;
+import com.cpdss.common.generated.VesselInfo.BendingMomentType1;
 import com.cpdss.common.generated.VesselInfo.BendingMomentType2;
 import com.cpdss.common.generated.VesselInfo.BendingMomentType4;
 import com.cpdss.common.generated.VesselInfo.CalculationSheet;
@@ -24,7 +24,7 @@ import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
 import com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf;
 import com.cpdss.common.generated.VesselInfo.ParameterValue;
 import com.cpdss.common.generated.VesselInfo.SelectableParameter;
-import com.cpdss.common.generated.VesselInfo.ShearingForce;
+import com.cpdss.common.generated.VesselInfo.ShearingForceType1;
 import com.cpdss.common.generated.VesselInfo.ShearingForceType2;
 import com.cpdss.common.generated.VesselInfo.ShearingForceType4;
 import com.cpdss.common.generated.VesselInfo.StationValues;
@@ -507,19 +507,21 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
             bendingMomentRepository
                 .findByVessel(vessel)
                 .forEach(
-                    bendingMoment -> {
-                      BendingMoment.Builder bendingMomentBuilder = BendingMoment.newBuilder();
-                      bMAndSFBuilder.addBendingMoment(
-                          createBendingMoment(bendingMoment, bendingMomentBuilder));
+                    bendingMomentType1 -> {
+                      BendingMomentType1.Builder bendingMomentBuilder =
+                          BendingMomentType1.newBuilder();
+                      bMAndSFBuilder.addBendingMomentType1(
+                          createBendingMomentType1(bendingMomentType1, bendingMomentBuilder));
                     });
 
             shearingForceRepository
                 .findByVessel(vessel)
                 .forEach(
-                    shearingForce -> {
-                      ShearingForce.Builder shearingForceBuilder = ShearingForce.newBuilder();
-                      bMAndSFBuilder.addShearingForce(
-                          createShearingForce(shearingForce, shearingForceBuilder));
+                    shearingForceType1 -> {
+                      ShearingForceType1.Builder shearingForceBuilder =
+                          ShearingForceType1.newBuilder();
+                      bMAndSFBuilder.addShearingForceType1(
+                          createShearingForce(shearingForceType1, shearingForceBuilder));
                     });
           }
           if (vessel.getBm_sf_model_type() == 2) {
@@ -967,25 +969,25 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   }
 
   /**
-   * @param shearingForce
+   * @param shearingForceType1
    * @param shearingForceBuilder
    * @return ShearingForce
    */
-  private ShearingForce createShearingForce(
-      com.cpdss.vesselinfo.entity.ShearingForce shearingForce,
-      com.cpdss.common.generated.VesselInfo.ShearingForce.Builder shearingForceBuilder) {
-    Optional.ofNullable(shearingForce.getId()).ifPresent(id -> shearingForceBuilder.setId(id));
-    Optional.ofNullable(shearingForce.getFrameNumber())
+  private ShearingForceType1 createShearingForce(
+      com.cpdss.vesselinfo.entity.ShearingForceType1 shearingForceType1,
+      com.cpdss.common.generated.VesselInfo.ShearingForceType1.Builder shearingForceBuilder) {
+    Optional.ofNullable(shearingForceType1.getId()).ifPresent(id -> shearingForceBuilder.setId(id));
+    Optional.ofNullable(shearingForceType1.getFrameNumber())
         .ifPresent(frameNumber -> shearingForceBuilder.setFrameNumber(String.valueOf(frameNumber)));
-    Optional.ofNullable(shearingForce.getBaseDraft())
+    Optional.ofNullable(shearingForceType1.getBaseDraft())
         .ifPresent(baseDraft -> shearingForceBuilder.setBaseDraft(String.valueOf(baseDraft)));
-    Optional.ofNullable(shearingForce.getBaseValue())
+    Optional.ofNullable(shearingForceType1.getBaseValue())
         .ifPresent(baseValue -> shearingForceBuilder.setBaseValue(String.valueOf(baseValue)));
-    Optional.ofNullable(shearingForce.getDraftCorrection())
+    Optional.ofNullable(shearingForceType1.getDraftCorrection())
         .ifPresent(
             draftCorrection ->
                 shearingForceBuilder.setDraftCorrection(String.valueOf(draftCorrection)));
-    Optional.ofNullable(shearingForce.getTrimCorrection())
+    Optional.ofNullable(shearingForceType1.getTrimCorrection())
         .ifPresent(
             trimCorrection ->
                 shearingForceBuilder.setTrimCorrection(String.valueOf(trimCorrection)));
@@ -1070,25 +1072,25 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   }
 
   /**
-   * @param bendingMoment
+   * @param bendingMomentType1
    * @param bendingMomentBuilder
    * @return BendingMoment
    */
-  private BendingMoment createBendingMoment(
-      com.cpdss.vesselinfo.entity.BendingMoment bendingMoment,
-      com.cpdss.common.generated.VesselInfo.BendingMoment.Builder bendingMomentBuilder) {
-    Optional.ofNullable(bendingMoment.getId()).ifPresent(id -> bendingMomentBuilder.setId(id));
-    Optional.ofNullable(bendingMoment.getFrameNumber())
+  private BendingMomentType1 createBendingMomentType1(
+      com.cpdss.vesselinfo.entity.BendingMomentType1 bendingMomentType1,
+      BendingMomentType1.Builder bendingMomentBuilder) {
+    Optional.ofNullable(bendingMomentType1.getId()).ifPresent(id -> bendingMomentBuilder.setId(id));
+    Optional.ofNullable(bendingMomentType1.getFrameNumber())
         .ifPresent(frameNumber -> bendingMomentBuilder.setFrameNumber(String.valueOf(frameNumber)));
-    Optional.ofNullable(bendingMoment.getBaseDraft())
+    Optional.ofNullable(bendingMomentType1.getBaseDraft())
         .ifPresent(baseDraft -> bendingMomentBuilder.setBaseDraft(String.valueOf(baseDraft)));
-    Optional.ofNullable(bendingMoment.getBaseValue())
+    Optional.ofNullable(bendingMomentType1.getBaseValue())
         .ifPresent(baseValue -> bendingMomentBuilder.setBaseValue(String.valueOf(baseValue)));
-    Optional.ofNullable(bendingMoment.getDraftCorrection())
+    Optional.ofNullable(bendingMomentType1.getDraftCorrection())
         .ifPresent(
             draftCorrection ->
                 bendingMomentBuilder.setDraftCorrection(String.valueOf(draftCorrection)));
-    Optional.ofNullable(bendingMoment.getTrimCorrection())
+    Optional.ofNullable(bendingMomentType1.getTrimCorrection())
         .ifPresent(
             trimCorrection ->
                 bendingMomentBuilder.setTrimCorrection(String.valueOf(trimCorrection)));
@@ -1759,40 +1761,59 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       // Fetch master records
       List<RuleVesselDropDownValues> listOfDropDownValue =
           ruleVesselDropDownValuesRepository.findByIsActive(true);
+      // fetch master for cargo tank dropdown
       List<CargoTankMaster> cargoTankMaster =
           vesselTankRepository.findCargoTankMaster(request.getVesselId(), true);
+      // fetch master for rule type
       List<RuleType> ruleTypeList = ruleTypeRepository.findByIsActive(true);
       if (!CollectionUtils.isEmpty(request.getRulePlanList())) {
         log.info("To save rule against vessel");
         saveRulesAgainstVessel(request, vessel, listOfDropDownValue, cargoTankMaster, ruleTypeList);
       }
-      // Fetch default or vessel rule
+      // Fetch rules against rule
       List<VesselRule> vesselRuleList =
-          vesselRepository.findVesselRuleByVesselIdAndSectionId(
-              request.getVesselId(), request.getSectionId());
-      //        List<VesselRuleMappingVessel> vesselRuleMappingVessel =
-      //            vesselRepository.findVesselInRuleVesselMapping(request.getVesselId(), true,
-      // true);
+          vesselRepository.findRulesAgainstVessel(request.getVesselId(), request.getSectionId());
       if (vesselRuleList != null && vesselRuleList.size() > 0) {
         if (!request.getIsNoDefaultRule()) {
-          log.info("Fetch vessel rule1");
+          log.info("Fetch vessel rule for admin");
           buildResponseForVesselRules(
-              builder, vesselRuleList, true, false, listOfDropDownValue, cargoTankMaster);
+              builder,
+              vesselRuleList,
+              true,
+              false,
+              listOfDropDownValue,
+              cargoTankMaster,
+              request.getIsFetchEnabledRules());
         } else {
-          log.info("Fetch vessel rule2");
+          log.info("Fetch vessel rule for loadable study");
+          // isDisplayId: false means primary key will be set null for all rules
+          // isDisplayVesselRuleXId: true  means primary key value set to foriegn key column for
+          // storing rules against loadable study
           buildResponseForVesselRules(
-              builder, vesselRuleList, false, true, listOfDropDownValue, cargoTankMaster);
+              builder,
+              vesselRuleList,
+              false,
+              true,
+              listOfDropDownValue,
+              cargoTankMaster,
+              request.getIsFetchEnabledRules());
         }
       } else {
         if (!request.getIsNoDefaultRule()) {
           log.info("Fetch default rule template");
-          vesselRuleList = vesselRepository.findRuleTemplateForNoVessel(request.getSectionId());
+          vesselRuleList = vesselRepository.findDefaultAdminRule(request.getSectionId());
           buildResponseForVesselRules(
-              builder, vesselRuleList, false, false, listOfDropDownValue, cargoTankMaster);
+              builder,
+              vesselRuleList,
+              false,
+              false,
+              listOfDropDownValue,
+              cargoTankMaster,
+              request.getIsFetchEnabledRules());
         }
       }
       buildCargoTankMaster(builder, cargoTankMaster);
-      buildRuleTypeMasterMaster(builder, listOfDropDownValue);
+      buildRuleDropDownMaster(builder, listOfDropDownValue);
       buildRuleTypeMaster(builder, ruleTypeList);
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
@@ -1818,6 +1839,12 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     }
   }
 
+  /**
+   * rule type master response
+   *
+   * @param builder
+   * @param ruleTypeList
+   */
   private void buildRuleTypeMaster(
       com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
       List<RuleType> ruleTypeList) {
@@ -1831,7 +1858,13 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         });
   }
 
-  private void buildRuleTypeMasterMaster(
+  /**
+   * rule master drop down response
+   *
+   * @param builder
+   * @param listOfDropDownValue
+   */
+  private void buildRuleDropDownMaster(
       com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
       List<RuleVesselDropDownValues> listOfDropDownValue) {
     com.cpdss.common.generated.VesselInfo.RuleDropDownValueMaster.Builder rBuilder =
@@ -1846,6 +1879,12 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         });
   }
 
+  /**
+   * cargo tank master response
+   *
+   * @param builder
+   * @param cargoTankMaster
+   */
   private void buildCargoTankMaster(
       com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
       List<CargoTankMaster> cargoTankMaster) {
@@ -1859,6 +1898,17 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         });
   }
 
+  /**
+   * To validate dropdown value while saving
+   *
+   * @param listOfDropDownValue
+   * @param cargoTankMaster
+   * @param isCargoTankMaster
+   * @param input
+   * @param ruleTemplateInput
+   * @param rule
+   * @throws GenericServiceException
+   */
   private void ruleMasterDropDownValidation(
       List<RuleVesselDropDownValues> listOfDropDownValue,
       List<CargoTankMaster> cargoTankMaster,
@@ -1867,93 +1917,115 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       RuleVesselMappingInput ruleTemplateInput,
       Rules rule)
       throws GenericServiceException {
-    String value = "";
-    List<RuleVesselDropDownValues> filterMasterByRule =
-        listOfDropDownValue.stream()
-            .filter(
-                rDropDown ->
-                    rDropDown.getRuleTemplateXid() != null
-                        && rule.getRuleTemplateId() != null
-                        && rDropDown
-                            .getRuleTemplateXid()
-                            .equals(Long.parseLong(rule.getRuleTemplateId().trim())))
-            .collect(Collectors.toList());
-    if (input.getDefaultValue().contains(",")) {
-      String[] masterIds = input.getDefaultValue().split(",");
-      for (int id = 0; id < masterIds.length; id++) {
-        int finalId = id;
-        if (isCargoTankMaster) {
-          if (cargoTankMaster.stream()
-              .map(CargoTankMaster::getId)
-              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
-              .findFirst()
-              .isPresent()) {
-            if (masterIds.length - 1 != id) {
-              value += masterIds[id] + ",";
+    Optional<String> isDefaultValueExist =
+        Optional.ofNullable(input.getDefaultValue()).filter(item -> item.trim().length() != 0);
+    if (isDefaultValueExist.isPresent()) {
+      String value = "";
+      List<RuleVesselDropDownValues> filterMasterByRule =
+          listOfDropDownValue.stream()
+              .filter(
+                  rDropDown ->
+                      rDropDown.getRuleTemplateXid() != null
+                          && rule.getRuleTemplateId() != null
+                          && rDropDown
+                              .getRuleTemplateXid()
+                              .equals(Long.parseLong(rule.getRuleTemplateId().trim())))
+              .collect(Collectors.toList());
+      if (input.getDefaultValue().contains(",")) {
+        String[] masterIds = input.getDefaultValue().split(",");
+        for (int id = 0; id < masterIds.length; id++) {
+          int finalId = id;
+          if (isCargoTankMaster) {
+            if (cargoTankMaster.stream()
+                .map(CargoTankMaster::getId)
+                .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
+                .findFirst()
+                .isPresent()) {
+              if (masterIds.length - 1 != id) {
+                value += masterIds[id] + ",";
+              } else {
+                value += masterIds[id];
+              }
             } else {
-              value += masterIds[id];
+              throw new GenericServiceException(
+                  "Rule master master with given id does not exist",
+                  CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                  HttpStatusCode.BAD_REQUEST);
             }
           } else {
+            if (filterMasterByRule.stream()
+                .map(RuleVesselDropDownValues::getId)
+                .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
+                .findFirst()
+                .isPresent()) {
+              if (masterIds.length - 1 != id) {
+                value += masterIds[id] + ",";
+              } else {
+                value += masterIds[id];
+              }
+            } else {
+              throw new GenericServiceException(
+                  "Rule master master with given id does not exist",
+                  CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                  HttpStatusCode.BAD_REQUEST);
+            }
+          }
+        }
+        ruleTemplateInput.setDefaultValue(value);
+      } else {
+        if (isCargoTankMaster) {
+          if (input.getDefaultValue() != null
+              && input.getDefaultValue().length() != 0
+              && !cargoTankMaster.stream()
+                  .map(CargoTankMaster::getId)
+                  .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
+                  .findFirst()
+                  .isPresent()) {
             throw new GenericServiceException(
-                "Rulemaster master with given id does not exist",
+                "Cargo master with given id does not exist",
                 CommonErrorCodes.E_HTTP_BAD_REQUEST,
                 HttpStatusCode.BAD_REQUEST);
           }
         } else {
-          if (filterMasterByRule.stream()
-              .map(RuleVesselDropDownValues::getId)
-              .filter(item -> item == Long.parseLong(masterIds[finalId].trim()))
-              .findFirst()
-              .isPresent()) {
-            if (masterIds.length - 1 != id) {
-              value += masterIds[id] + ",";
-            } else {
-              value += masterIds[id];
-            }
-          } else {
+          if (input.getDefaultValue() != null
+              && input.getDefaultValue().length() != 0
+              && !filterMasterByRule.stream()
+                  .map(RuleVesselDropDownValues::getId)
+                  .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
+                  .findFirst()
+                  .isPresent()) {
             throw new GenericServiceException(
-                "Rulemaster master with given id does not exist",
+                "Rule master master with given id does not exist",
                 CommonErrorCodes.E_HTTP_BAD_REQUEST,
                 HttpStatusCode.BAD_REQUEST);
           }
         }
+        ruleTemplateInput.setDefaultValue(input.getDefaultValue());
       }
-      ruleTemplateInput.setDefaultValue(value);
     } else {
-      if (isCargoTankMaster) {
-        if (!cargoTankMaster.stream()
-            .map(CargoTankMaster::getId)
-            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
-            .findFirst()
-            .isPresent()) {
-          throw new GenericServiceException(
-              "Cargo master with given id does not exist",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
-        }
-      } else {
-        if (!filterMasterByRule.stream()
-            .map(RuleVesselDropDownValues::getId)
-            .filter(item -> item == Long.parseLong(input.getDefaultValue().trim()))
-            .findFirst()
-            .isPresent()) {
-          throw new GenericServiceException(
-              "Rulemaster master with given id does not exist",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
-        }
-      }
-      ruleTemplateInput.setDefaultValue(input.getDefaultValue());
+      ruleTemplateInput.setDefaultValue(null);
     }
   }
 
+  /**
+   * Generate rule list
+   *
+   * @param builder
+   * @param vesselRuleList
+   * @param isDisplayId
+   * @param isDisplayVesselRuleXId
+   * @param listOfDropDownValue
+   * @param cargoTankMaster
+   * @param isFetchEnabledRules
+   */
   private void buildResponseForVesselRules(
-      com.cpdss.common.generated.VesselInfo.VesselRuleReply.Builder builder,
+      VesselRuleReply.Builder builder,
       List<VesselRule> vesselRuleList,
       boolean isDisplayId,
       boolean isDisplayVesselRuleXId,
       List<RuleVesselDropDownValues> listOfDropDownValue,
-      List<CargoTankMaster> cargoTankMaster) {
+      List<CargoTankMaster> cargoTankMaster,
+      boolean isFetchEnabledRules) {
     Map<String, List<VesselRule>> groupByHeader =
         vesselRuleList.stream()
             .collect(
@@ -1961,8 +2033,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                     VesselRule::getHeader, LinkedHashMap::new, Collectors.toList()));
     groupByHeader.forEach(
         (header, v) -> {
-          RulePlans.Builder rulePlanBuider = RulePlans.newBuilder();
-          Optional.ofNullable(header).ifPresent(rulePlanBuider::setHeader);
+          RulePlans.Builder rulePlanBuilder = RulePlans.newBuilder();
+          Optional.ofNullable(header).ifPresent(rulePlanBuilder::setHeader);
           Map<Long, List<VesselRule>> groupByRuleTemplateId =
               v.stream()
                   .collect(
@@ -1973,131 +2045,192 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                 RulesInputs.Builder ruleInput = RulesInputs.newBuilder();
                 Rules.Builder rulesBuilder = Rules.newBuilder();
                 for (int id = 0; id < value.size(); id++) {
-                  Optional.ofNullable(value.get(id).getTemplateInputDefaultValue())
-                      .ifPresent(ruleInput::setDefaultValue);
-                  Optional.ofNullable(value.get(id).getTemplateInputPrefix())
-                      .ifPresent(ruleInput::setPrefix);
-                  Optional.ofNullable(value.get(id).getTemplateInputMinValue())
-                      .ifPresent(ruleInput::setMin);
-                  Optional.ofNullable(value.get(id).getTemplateInputMaxValue())
-                      .ifPresent(ruleInput::setMax);
-                  Optional.ofNullable(value.get(id).getTemplateInputTypeValue())
-                      .ifPresent(ruleInput::setType);
-                  Optional.ofNullable(value.get(id).getTemplateInputSuffix())
-                      .ifPresent(ruleInput::setSuffix);
-                  Optional.ofNullable(value.get(id).getTemplateInputSuffix())
-                      .ifPresent(ruleInput::setSuffix);
-                  Optional.ofNullable(value.get(id).getIsMandatory())
-                      .ifPresent(ruleInput::setIsMandatory);
-                  if (value.get(id).getTemplateInputTypeValue() != null
-                      && value
-                          .get(id)
-                          .getTemplateInputTypeValue()
-                          .equalsIgnoreCase(TypeValue.BOOLEAN.getType())
-                      && (value.get(id).getTemplateInputDefaultValue() == null
-                          || !value
-                              .get(id)
-                              .getTemplateInputDefaultValue()
-                              .trim()
-                              .equalsIgnoreCase("true"))) {
-                    ruleInput.setDefaultValue("false");
-                  }
-                  if (value.get(id).getTemplateInputTypeValue() != null
-                      && (value
-                              .get(id)
-                              .getTemplateInputTypeValue()
-                              .equalsIgnoreCase(TypeValue.DROPDOWN.getType())
-                          || value
-                              .get(id)
-                              .getTemplateInputTypeValue()
-                              .equalsIgnoreCase(TypeValue.MULTISELECT.getType()))) {
-                    RuleDropDownMaster.Builder ruleDropDownMaster = RuleDropDownMaster.newBuilder();
-                    if (value.get(id).getTemplateInputSuffix() != null
-                        && value.get(id).getTemplateInputPrefix() != null
-                        && value
-                            .get(id)
-                            .getTemplateInputSuffix()
-                            .trim()
-                            .equalsIgnoreCase(RuleMasterData.CargoTank.getSuffix())
-                        && value
-                            .get(id)
-                            .getTemplateInputPrefix()
-                            .trim()
-                            .equalsIgnoreCase(RuleMasterData.CargoTank.getPrefix())) {
-                      cargoTankMaster.forEach(
-                          cargoTank -> {
-                            Optional.ofNullable(cargoTank.getId())
-                                .ifPresent(ruleDropDownMaster::setId);
-                            Optional.ofNullable(cargoTank.getValue())
-                                .ifPresent(ruleDropDownMaster::setValue);
-                            ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
-                          });
-                    } else {
-                      Optional<Long> ruleTempId;
-                      if (isDisplayId || isDisplayVesselRuleXId) {
-                        ruleTempId = Optional.ofNullable(value.get(id).getTemplateId());
-                      } else {
-                        ruleTempId = Optional.ofNullable(value.get(id).getTemplateFId());
-                      }
-                      if (ruleTempId.isPresent()) {
-                        List<RuleVesselDropDownValues> filterMasterByRule =
-                            listOfDropDownValue.stream()
-                                .filter(
-                                    rDropDown ->
-                                        rDropDown.getRuleTemplateXid() != null
-                                            && ruleTempId.get() != null
-                                            && rDropDown
-                                                .getRuleTemplateXid()
-                                                .equals(ruleTempId.get()))
-                                .collect(Collectors.toList());
-                        filterMasterByRule.forEach(
-                            masterDropDownRule -> {
-                              Optional.ofNullable(masterDropDownRule.getId())
-                                  .ifPresent(ruleDropDownMaster::setId);
-                              Optional.ofNullable(masterDropDownRule.getDropDownValue())
-                                  .ifPresent(ruleDropDownMaster::setValue);
-                              ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
-                            });
-                      }
+                  Optional<Boolean> isRuleEnabled =
+                      Optional.ofNullable(value.get(id).getTemplateIsEnable());
+                  if (!isFetchEnabledRules) {
+                    buildRuleListResponse(
+                        value.get(id),
+                        ruleInput,
+                        rulesBuilder,
+                        isDisplayId,
+                        isDisplayVesselRuleXId,
+                        listOfDropDownValue,
+                        cargoTankMaster,
+                        rulePlanBuilder,
+                        value,
+                        id);
+                  } else {
+                    if (isFetchEnabledRules && isRuleEnabled.isPresent() && isRuleEnabled.get()) {
+                      buildRuleListResponse(
+                          value.get(id),
+                          ruleInput,
+                          rulesBuilder,
+                          isDisplayId,
+                          isDisplayVesselRuleXId,
+                          listOfDropDownValue,
+                          cargoTankMaster,
+                          rulePlanBuilder,
+                          value,
+                          id);
                     }
-                  }
-                  if (isDisplayId) {
-                    Optional.ofNullable(value.get(id).getTemplateInputId())
-                        .ifPresent(item -> ruleInput.setId(String.valueOf(item)));
-                  }
-                  rulesBuilder.addInputs(ruleInput.build());
-                  if (id == value.size() - 1) {
-                    Optional.ofNullable(value.get(id).getNumericPrecision())
-                        .ifPresent(rulesBuilder::setNumericPrecision);
-                    Optional.ofNullable(value.get(id).getNumericScale())
-                        .ifPresent(rulesBuilder::setNumericScale);
-                    Optional.ofNullable(value.get(id).getTemplateIsEnable())
-                        .ifPresent(rulesBuilder::setEnable);
-                    Optional.ofNullable(value.get(id).getTemplateDisplayInSettings())
-                        .ifPresent(rulesBuilder::setDisplayInSettings);
-                    Optional.ofNullable(value.get(id).getTemplateId())
-                        .ifPresent(item -> rulesBuilder.setRuleTemplateId(String.valueOf(item)));
-                    if (isDisplayId) {
-                      Optional.ofNullable(value.get(id).getId())
-                          .ifPresent(item -> rulesBuilder.setId(String.valueOf(item)));
-                    }
-                    Optional.ofNullable(value.get(id).getTemplateRuleType())
-                        .ifPresent(rulesBuilder::setRuleType);
-                    Optional.ofNullable(value.get(id).getIsHardRule())
-                        .ifPresent(rulesBuilder::setIsHardRule);
-                    if (value.get(id).getIsHardRule() == null) {
-                      rulesBuilder.setIsHardRule(false);
-                    }
-                    if (isDisplayVesselRuleXId) {
-                      Optional.ofNullable(value.get(id).getId())
-                          .ifPresent(item -> rulesBuilder.setVesselRuleXId(String.valueOf(item)));
-                    }
-                    rulePlanBuider.addRules(rulesBuilder.build());
                   }
                 }
               });
-          builder.addRulePlan(rulePlanBuider.build());
+          builder.addRulePlan(rulePlanBuilder.build());
         });
+  }
+
+  /**
+   * @param vesselRule
+   * @param ruleInput
+   * @param rulesBuilder
+   * @param isDisplayId
+   * @param isDisplayVesselRuleXId
+   * @param listOfDropDownValue
+   * @param cargoTankMaster
+   * @param rulePlanBuilder
+   * @param value
+   * @param id
+   */
+  private void buildRuleListResponse(
+      VesselRule vesselRule,
+      RulesInputs.Builder ruleInput,
+      Rules.Builder rulesBuilder,
+      boolean isDisplayId,
+      boolean isDisplayVesselRuleXId,
+      List<RuleVesselDropDownValues> listOfDropDownValue,
+      List<CargoTankMaster> cargoTankMaster,
+      RulePlans.Builder rulePlanBuilder,
+      List<VesselRule> value,
+      int id) {
+    Optional.ofNullable(vesselRule.getTemplateInputDefaultValue())
+        .filter(item -> item.trim().length() != 0)
+        .ifPresentOrElse(ruleInput::setDefaultValue, () -> ruleInput.setDefaultValue(""));
+    Optional.ofNullable(vesselRule.getTemplateInputPrefix())
+        .filter(item -> item.trim().length() != 0)
+        .ifPresentOrElse(ruleInput::setPrefix, () -> ruleInput.setPrefix(""));
+    Optional.ofNullable(vesselRule.getTemplateInputMinValue())
+        .filter(item -> item.trim().length() != 0)
+        .ifPresentOrElse(ruleInput::setMin, () -> ruleInput.setMin(""));
+    Optional.ofNullable(vesselRule.getTemplateInputMaxValue())
+        .filter(item -> item.trim().length() != 0)
+        .ifPresentOrElse(ruleInput::setMax, () -> ruleInput.setMax(""));
+    Optional.ofNullable(vesselRule.getTemplateInputTypeValue())
+        .filter(item -> item.trim().length() != 0)
+        .ifPresentOrElse(ruleInput::setType, () -> ruleInput.setType(""));
+    Optional.ofNullable(vesselRule.getTemplateInputSuffix())
+        .filter(item -> item.trim().length() != 0)
+        .ifPresentOrElse(ruleInput::setSuffix, () -> ruleInput.setSuffix(""));
+    Optional.ofNullable(vesselRule.getIsMandatory())
+        .ifPresentOrElse(ruleInput::setIsMandatory, () -> ruleInput.setIsMandatory(false));
+    Optional<String> isTypeBoolean =
+        Optional.ofNullable(vesselRule.getTemplateInputTypeValue())
+            .filter(
+                item ->
+                    item.trim().length() != 0
+                        && item.trim().equalsIgnoreCase(TypeValue.BOOLEAN.getType()));
+    if (isTypeBoolean.isPresent()) {
+      Optional.ofNullable(vesselRule.getTemplateInputDefaultValue())
+          .filter(item -> item.trim().length() != 0 && item.trim().equalsIgnoreCase("true"))
+          .ifPresentOrElse(ruleInput::setDefaultValue, () -> ruleInput.setDefaultValue("false"));
+    }
+    Optional<String> isTypeDropDownOrMultiSelect =
+        Optional.ofNullable(vesselRule.getTemplateInputTypeValue())
+            .filter(
+                item ->
+                    item.trim().length() != 0
+                            && item.trim().equalsIgnoreCase(TypeValue.DROPDOWN.getType())
+                        || item.trim().equalsIgnoreCase(TypeValue.MULTISELECT.getType()));
+    if (isTypeDropDownOrMultiSelect.isPresent()) {
+      Optional<String> isPrefixExist =
+          Optional.ofNullable(vesselRule.getTemplateInputPrefix())
+              .filter(
+                  item ->
+                      item.trim().length() != 0
+                          && item.trim().equalsIgnoreCase(RuleMasterData.CargoTank.getPrefix()));
+      Optional<String> isSuffixExist =
+          Optional.ofNullable(vesselRule.getTemplateInputSuffix())
+              .filter(
+                  item ->
+                      item.trim().length() != 0
+                          && item.trim().equalsIgnoreCase(RuleMasterData.CargoTank.getSuffix()));
+      RuleDropDownMaster.Builder ruleDropDownMaster = RuleDropDownMaster.newBuilder();
+      if (isPrefixExist.isPresent() && isSuffixExist.isPresent()) {
+        cargoTankMaster.forEach(
+            cargoTank -> {
+              Optional.ofNullable(cargoTank.getId()).ifPresent(ruleDropDownMaster::setId);
+              Optional.ofNullable(cargoTank.getValue())
+                  .ifPresentOrElse(
+                      ruleDropDownMaster::setValue, () -> ruleDropDownMaster.setValue(""));
+              ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
+            });
+      } else {
+        Optional<Long> ruleTempId;
+        if (isDisplayId || isDisplayVesselRuleXId) {
+          ruleTempId = Optional.ofNullable(vesselRule.getTemplateId());
+        } else {
+          ruleTempId = Optional.ofNullable(vesselRule.getTemplateFId());
+        }
+        if (ruleTempId.isPresent()) {
+          List<RuleVesselDropDownValues> filterMasterByRule =
+              listOfDropDownValue.stream()
+                  .filter(
+                      rDropDown ->
+                          rDropDown.getRuleTemplateXid() != null
+                              && ruleTempId.get() != null
+                              && rDropDown.getRuleTemplateXid().equals(ruleTempId.get()))
+                  .collect(Collectors.toList());
+          filterMasterByRule.forEach(
+              masterDropDownRule -> {
+                Optional.ofNullable(masterDropDownRule.getId())
+                    .ifPresent(ruleDropDownMaster::setId);
+                Optional.ofNullable(masterDropDownRule.getDropDownValue())
+                    .ifPresentOrElse(
+                        ruleDropDownMaster::setValue, () -> ruleDropDownMaster.setValue(""));
+                ruleInput.addRuleDropDownMaster(ruleDropDownMaster.build());
+              });
+        }
+      }
+    }
+    if (isDisplayId) {
+      Optional.ofNullable(vesselRule.getTemplateInputId())
+          .ifPresentOrElse(
+              item -> ruleInput.setId(String.valueOf(item)), () -> ruleInput.setId(""));
+    }
+    rulesBuilder.addInputs(ruleInput.build());
+    if (id == value.size() - 1) {
+      Optional.ofNullable(vesselRule.getNumericPrecision())
+          .ifPresentOrElse(
+              rulesBuilder::setNumericPrecision, () -> rulesBuilder.setNumericPrecision(0));
+      Optional.ofNullable(vesselRule.getNumericScale())
+          .ifPresentOrElse(rulesBuilder::setNumericScale, () -> rulesBuilder.setNumericScale(0));
+      Optional.ofNullable(vesselRule.getTemplateIsEnable())
+          .ifPresentOrElse(rulesBuilder::setEnable, () -> rulesBuilder.setEnable(false));
+      Optional.ofNullable(vesselRule.getTemplateDisplayInSettings())
+          .ifPresentOrElse(
+              rulesBuilder::setDisplayInSettings, () -> rulesBuilder.setDisplayInSettings(false));
+      Optional.ofNullable(vesselRule.getTemplateId())
+          .ifPresentOrElse(
+              item -> rulesBuilder.setRuleTemplateId(String.valueOf(item)),
+              () -> rulesBuilder.setRuleTemplateId(""));
+      if (isDisplayId) {
+        Optional.ofNullable(vesselRule.getId())
+            .ifPresentOrElse(
+                item -> rulesBuilder.setId(String.valueOf(item)), () -> rulesBuilder.setId(""));
+      }
+      Optional.ofNullable(vesselRule.getTemplateRuleType())
+          .filter(item -> item.trim().length() != 0)
+          .ifPresentOrElse(rulesBuilder::setRuleType, () -> rulesBuilder.setRuleType(""));
+      Optional.ofNullable(vesselRule.getIsHardRule())
+          .ifPresentOrElse(rulesBuilder::setIsHardRule, () -> rulesBuilder.setIsHardRule(false));
+      if (isDisplayVesselRuleXId) {
+        Optional.ofNullable(vesselRule.getId())
+            .ifPresentOrElse(
+                item -> rulesBuilder.setVesselRuleXId(String.valueOf(item)),
+                () -> rulesBuilder.setVesselRuleXId(""));
+      }
+      rulePlanBuilder.addRules(rulesBuilder.build());
+    }
   }
 
   @Autowired VesselValveEducationProcessRepository educationProcessRepository;
@@ -2191,6 +2324,15 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     }
   }
 
+  /**
+   * To save Rules against vessel
+   *
+   * @param request
+   * @param vessel
+   * @param listOfDropDownValue
+   * @param cargoTankMaster
+   * @param ruleTypeList
+   */
   void saveRulesAgainstVessel(
       VesselRuleRequest request,
       Vessel vessel,
@@ -2208,92 +2350,158 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                   .forEach(
                       rule -> {
                         RuleVesselMapping ruleVesselMapping = new RuleVesselMapping();
-                        if (rule.getId() != null && rule.getId().trim() != "") {
+                        Optional<String> isRuleTemplateIdExist =
+                            Optional.ofNullable(rule.getRuleTemplateId())
+                                .filter(item -> item.trim().length() != 0);
+                        if (rule.getId() != null && rule.getId().trim().length() != 0) {
                           Optional<RuleVesselMapping> rVesselMapping =
                               ruleVesselMappingRepository.findById(Long.valueOf(rule.getId()));
                           if (rVesselMapping.isPresent()) {
                             ruleVesselMapping = rVesselMapping.get();
+                          } else {
+                            log.info("No record exist for this id in rule vessel mapping table");
+                            throw new RuntimeException(
+                                "No record exist for this id in rule vessel mapping table");
+                          }
+                        } else {
+                          if (isRuleTemplateIdExist.isPresent()) {
+                            Optional<RuleVesselMapping> ruleVesselMappingRecord =
+                                ruleVesselMappingRepository.checkIsRuleTemplateMapped(
+                                    vessel.getId(), true, Long.valueOf(rule.getRuleTemplateId()));
+                            if (ruleVesselMappingRecord.isPresent()) {
+                              log.info(
+                                  "Duplicate row can't insert for given vessel id and rule template");
+                              throw new RuntimeException(
+                                  "Duplicate row can't insert for given vessel id and rule template");
+                            }
                           }
                         }
                         ruleVesselMapping.setIsActive(true);
+                        RuleVesselMapping finalRuleVesselMapping = ruleVesselMapping;
                         Optional.ofNullable(rule.getDisplayInSettings())
-                            .ifPresent(ruleVesselMapping::setDisplayInSettings);
+                            .ifPresentOrElse(
+                                ruleVesselMapping::setDisplayInSettings,
+                                () -> finalRuleVesselMapping.setDisplayInSettings(false));
                         Optional.ofNullable(rule.getNumericPrecision())
                             .ifPresent(ruleVesselMapping::setNumericPrecision);
                         Optional.ofNullable(rule.getNumericScale())
                             .ifPresent(ruleVesselMapping::setNumericScale);
                         Optional.ofNullable(rule.getEnable())
-                            .ifPresent(ruleVesselMapping::setIsEnable);
+                            .ifPresentOrElse(
+                                ruleVesselMapping::setIsEnable,
+                                () -> finalRuleVesselMapping.setIsEnable(false));
                         Optional.ofNullable(rule.getIsHardRule())
-                            .ifPresent(ruleVesselMapping::setIsHardRule);
+                            .ifPresentOrElse(
+                                ruleVesselMapping::setIsHardRule,
+                                () -> finalRuleVesselMapping.setIsHardRule(false));
                         ruleVesselMapping.setVessel(vessel);
                         if (!CollectionUtils.isEmpty(ruleTypeList)
                             && rule.getRuleType() != null
                             && rule.getRuleType().trim() != "") {
-                          ruleTypeList.stream()
-                              .filter(
-                                  rType -> rType.getRuleType().equalsIgnoreCase(rule.getRuleType()))
-                              .findAny()
-                              .ifPresent(ruleVesselMapping::setRuleType);
+                          Optional<RuleType> ruleType =
+                              ruleTypeList.stream()
+                                  .filter(
+                                      rType ->
+                                          rType.getRuleType().equalsIgnoreCase(rule.getRuleType()))
+                                  .findAny();
+                          ruleType.orElseThrow(RuntimeException::new);
+                          ruleVesselMapping.setRuleType(ruleType.get());
+                        } else {
+                          log.info("Rule Type can't be null");
+                          throw new RuntimeException("Rule type can't be null");
                         }
                         if (!CollectionUtils.isEmpty(ruleTemplateList)
                             && rule.getRuleTemplateId() != null
-                            && rule.getRuleTemplateId().trim() != "") {
-                          ruleTemplateList.stream()
-                              .filter(
-                                  rTemplate ->
-                                      rTemplate.getId() == Long.parseLong(rule.getRuleTemplateId()))
-                              .findAny()
-                              .ifPresent(ruleVesselMapping::setRuleTemplate);
+                            && rule.getRuleTemplateId().trim().length() != 0) {
+                          Optional<RuleTemplate> ruleTemplate =
+                              ruleTemplateList.stream()
+                                  .filter(
+                                      rTemplate ->
+                                          rTemplate.getId()
+                                              == Long.parseLong(rule.getRuleTemplateId()))
+                                  .findAny();
+                          ruleTemplate.orElseThrow(RuntimeException::new);
+                          ruleVesselMapping.setRuleTemplate(ruleTemplate.get());
+                        } else {
+                          log.info("Template id can't be null");
+                          throw new RuntimeException("Template id can't be null");
                         }
                         List<RuleVesselMappingInput> ruleVesselMappingInputList = new ArrayList<>();
                         for (RulesInputs input : rule.getInputsList()) {
                           RuleVesselMappingInput ruleTemplateInput = new RuleVesselMappingInput();
-                          if (input.getId() != null && input.getId().trim() != "") {
+                          if (input.getId() != null && input.getId().trim().length() != 0) {
                             Optional<RuleVesselMappingInput> rTemplateInput =
                                 ruleVesselMappingInputRespository.findById(
                                     Long.valueOf(input.getId()));
                             if (rTemplateInput.isPresent()) {
                               ruleTemplateInput = rTemplateInput.get();
+                            } else {
+                              log.info(
+                                  "No record exist for this id in rule vessel mapping input table");
+                              throw new RuntimeException(
+                                  "No record exist for this id in rule vessel mapping input table");
                             }
                           }
+                          RuleVesselMappingInput finalRuleTemplateInput1 = ruleTemplateInput;
                           Optional.ofNullable(input.getDefaultValue())
-                              .ifPresent(ruleTemplateInput::setDefaultValue);
+                              .filter(item -> item.trim().length() != 0)
+                              .ifPresentOrElse(
+                                  ruleTemplateInput::setDefaultValue,
+                                  () -> finalRuleTemplateInput1.setDefaultValue(null));
                           Optional.ofNullable(input.getMax())
+                              .filter(item -> item.trim().length() != 0)
                               .ifPresent(ruleTemplateInput::setMaxValue);
                           Optional.ofNullable(input.getMin())
+                              .filter(item -> item.trim().length() != 0)
                               .ifPresent(ruleTemplateInput::setMinValue);
                           Optional.ofNullable(input.getSuffix())
+                              .filter(item -> item.trim().length() != 0)
                               .ifPresent(ruleTemplateInput::setSuffix);
                           Optional.ofNullable(input.getPrefix())
+                              .filter(item -> item.trim().length() != 0)
                               .ifPresent(ruleTemplateInput::setPrefix);
                           Optional.ofNullable(input.getType())
+                              .filter(item -> item.trim().length() != 0)
                               .ifPresent(ruleTemplateInput::setTypeValue);
+                          RuleVesselMappingInput finalRuleTemplateInput = ruleTemplateInput;
                           Optional.ofNullable(input.getIsMandatory())
-                              .ifPresent(ruleTemplateInput::setIsMandatory);
+                              .ifPresentOrElse(
+                                  ruleTemplateInput::setIsMandatory,
+                                  () -> finalRuleTemplateInput.setIsMandatory((false)));
+                          Optional<String> isTypeDropDownOrMultiSelect =
+                              Optional.ofNullable(input.getType())
+                                  .filter(
+                                      value ->
+                                          value.trim().length() != 0
+                                                  && value
+                                                      .trim()
+                                                      .equalsIgnoreCase(
+                                                          TypeValue.DROPDOWN.getType())
+                                              || value
+                                                  .trim()
+                                                  .equalsIgnoreCase(
+                                                      TypeValue.MULTISELECT.getType()));
 
-                          try {
-                            if (input.getType() != null
-                                && (input
-                                        .getType()
-                                        .trim()
-                                        .equalsIgnoreCase(TypeValue.DROPDOWN.getType())
-                                    || input
-                                        .getType()
-                                        .trim()
-                                        .equalsIgnoreCase(TypeValue.MULTISELECT.getType()))
-                                && input.getDefaultValue() != null
-                                && input.getDefaultValue().trim() != "") {
-                              if (input.getSuffix() != null
-                                  && input.getPrefix() != null
-                                  && input
-                                      .getSuffix()
-                                      .trim()
-                                      .equalsIgnoreCase(RuleMasterData.CargoTank.getSuffix())
-                                  && input
-                                      .getPrefix()
-                                      .equalsIgnoreCase(RuleMasterData.CargoTank.getPrefix())) {
+                          if (isTypeDropDownOrMultiSelect.isPresent()) {
+                            Optional<String> isPrefixExist =
+                                Optional.ofNullable(input.getPrefix())
+                                    .filter(
+                                        item ->
+                                            item.trim().length() != 0
+                                                && item.trim()
+                                                    .equalsIgnoreCase(
+                                                        RuleMasterData.CargoTank.getPrefix()));
+                            Optional<String> isSuffixExist =
+                                Optional.ofNullable(input.getSuffix())
+                                    .filter(
+                                        item ->
+                                            item.trim().length() != 0
+                                                && item.trim()
+                                                    .equalsIgnoreCase(
+                                                        RuleMasterData.CargoTank.getSuffix()));
 
+                            try {
+                              if (isPrefixExist.isPresent() && isSuffixExist.isPresent()) {
                                 this.ruleMasterDropDownValidation(
                                     listOfDropDownValue,
                                     cargoTankMaster,
@@ -2310,10 +2518,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                                     ruleTemplateInput,
                                     rule);
                               }
+                            } catch (GenericServiceException e) {
+                              throw new RuntimeException(
+                                  "Master rule drop down value does not exist");
                             }
-                          } catch (GenericServiceException e) {
-                            throw new RuntimeException(
-                                "Master rule drop down value does not exist");
                           }
                           ruleTemplateInput.setIsActive(true);
                           ruleTemplateInput.setRuleVesselMapping(ruleVesselMapping);

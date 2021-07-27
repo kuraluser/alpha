@@ -1,7 +1,7 @@
 import { SelectItem } from 'primeng/api';
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
-import { CPDSSDB, IFuelType, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
-import { ITank } from '../../core/models/common.model';
+import { CPDSSDB, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
+import { IFuelType, ITank } from '../../core/models/common.model';
 import { IPort, IPortList , IDischargeStudyPortList } from '../../core/models/common.model';
 
 /**
@@ -868,17 +868,6 @@ export interface IApiTempMonthWiseHistory {
     loadedMonth: number;
     api: number|string;
     temperature: number|string;
-}
-
-/**
- * Interface for list months.
- *
- * @export
- * @interface IMonths
- */
-export interface IMonths {
-    id: number;
-    month: string;
 }
 
 /**

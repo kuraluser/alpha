@@ -7,7 +7,7 @@ import { SecurityService } from '../../services/security/security.service';
 import { ThemeService } from '../../services/theme-service/theme.service';
 import { IMenuItem, IPermission, INotificationItem } from './navbar.component.model';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
-import { environment } from 'apps/cpdss/src/environments/environment';
+import { environment } from '../../../../environments/environment';
 import { NavbarApiService } from './navbar-api.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
@@ -126,7 +126,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
           { 'name': 'USER_ROLE_PERMISSION', 'subMenuLink': '/business/admin/user-role-permission', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserRoleListing'], 'isVisible': false },
           { 'name': 'ADMIN_USER_LABEL', 'subMenuLink': '/business/admin/user-listing', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserListingComponent'], 'isVisible': false },
           { 'name': 'PORT_MASTER', 'subMenuLink': '/business/admin/port-listing','permissionMapping': AppConfigurationService.settings.permissionMapping['PortListingComponent'],'isVisible': false },
-          { 'name': 'ADMIN_RULES', 'subMenuLink': '/business/admin/rules','permissionMapping': AppConfigurationService.settings.permissionMapping['AdminRuleComponent'],'isVisible': true },       
+          { 'name': 'ADMIN_RULES', 'subMenuLink': '/business/admin/rules','permissionMapping': AppConfigurationService.settings.permissionMapping['AdminRuleComponent'],'isVisible': true },
+          { 'name': 'CARGO_MASTER', 'subMenuLink': '/business/admin/cargo-master', 'permissionMapping': AppConfigurationService.settings.permissionMapping['CargoMasterComponent'], 'isVisible': true },
+
         ],
       },
       {
@@ -137,29 +139,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['OperationsComponent'],
         'subMenu': [],
-      },
-      /*
-      {
-        'menu': 'VOYAGES',
-        'menuIcon': 'voyages',
-        'menuLink': 'voyages',
-        'subMenu': [
-
-        ]
-      },
-      {
-        'menu': 'REPORTERS',
-        'menuIcon': 'voyages',
-        'menuLink': 'admin',
-        'subMenu': []
-      },
-      {
-        'menu': 'ADMIN',
-        'menuIcon': 'voyages',
-        'menuLink': 'admin',
-        'subMenu': []
-      } */
-
+      }
     ];
 
     if (this.isShore) {
@@ -309,19 +289,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * @memberof NavbarComponent
    */
   logout() {
-    try {
-      const redirectUrl = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
-      SecurityService.userLogoutAction();
-      if (environment.name === 'shore') {
-        this.keycloakService.logout(redirectUrl);
-      } else {
-        window.location.href = redirectUrl;
-      }
-
-    }
-    catch {
-      console.error('Something went wrong');
-    }
+    this.router.navigate(['logout']);
   }
 
   /**

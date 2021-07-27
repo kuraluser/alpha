@@ -1577,8 +1577,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     onBoardQuantityService.buildOnBoardQuantityDetails(
         loadableStudyOpt, loadableStudy, modelMapper);
     loadableStudyPortRotationService.buildportRotationDetails(loadableStudyOpt, loadableStudy);
-    loadableStudyRuleService.buildLoadableStudyRuleDetails(
-        loadableStudyOpt, loadableStudy, modelMapper);
+    loadableStudyRuleService.buildLoadableStudyRuleDetails(loadableStudyOpt, loadableStudy);
   }
 
   @Override

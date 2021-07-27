@@ -35,8 +35,8 @@ public class PortInstructionService extends PortInstructionServiceImplBase {
   public Map<Long, List<DischargeStudyPortInstruction>> getPortWiseInstructions(
       long dischargeStudyId, List<Long> portIds) {
     List<DischargeStudyPortInstruction> portInstructions =
-        dischargeStudyPortInstructionRepository.findByDischargeStudyIdAndPortIdIn(
-            dischargeStudyId, portIds);
+        dischargeStudyPortInstructionRepository.findByDischargeStudyIdAndPortIdInAndIsActive(
+            dischargeStudyId, portIds, true);
 
     return portInstructions.stream()
         .collect(Collectors.groupingBy(DischargeStudyPortInstruction::getPortId));
@@ -62,5 +62,10 @@ public class PortInstructionService extends PortInstructionServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  public void saveAll(List<DischargeStudyPortInstruction> portInstructionsToSave) {
+
+    dischargeStudyPortInstructionRepository.saveAll(portInstructionsToSave);
   }
 }

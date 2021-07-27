@@ -285,7 +285,7 @@
                   'Content-Type': 'application/json',
                   'Authorization': 'Bearer ' + token
                 }
-                const syncResponse = await fetch(`${apiUrl}/vessels/${port?.vesselId}/voyages/${port?.voyageId}/discharge-studies/${port?.loadableStudyId}/ports/${port?.id}`, {
+                const syncResponse = await fetch(`${apiUrl}/vessels/${port?.vesselId}/voyages/${port?.voyageId}/discharge-studies/${port?.dischargeStudyId}/ports/${port?.id}`, {
                   method: 'POST',
                   body: JSON.stringify(port),
                   headers: headers

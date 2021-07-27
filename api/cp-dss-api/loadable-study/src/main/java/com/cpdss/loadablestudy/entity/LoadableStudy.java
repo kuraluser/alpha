@@ -38,11 +38,11 @@ public class LoadableStudy extends EntityDoc {
   @Column(name = "vessel_xid")
   private Long vesselXId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "voyage_xid")
   private Voyage voyage;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "duplicated_from")
   private LoadableStudy duplicatedFrom;
 

@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service.loadingplan.impl;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
@@ -304,7 +305,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           dto.setAirDraftLimitation(
               bd.getAirDraftLimitation().isEmpty()
                   ? BigDecimal.ZERO
-                  : new BigDecimal(bd.getSeaDraftLimitation()));
+                  : new BigDecimal(bd.getAirDraftLimitation()));
           dto.setMaxManifoldHeight(
               bd.getMaxManifoldHeight().isEmpty()
                   ? BigDecimal.ZERO
@@ -367,6 +368,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     VesselInfo.VesselPumpsResponse grpcReply =
         vesselInfoService.getVesselPumpsFromVesselInfo(vesselId);
     CargoMachineryInUse machineryInUse = new CargoMachineryInUse();
+
+    // Setting master data
     if (grpcReply != null) {
       try {
         List<PumpType> pumpTypes = new ArrayList<>();
@@ -382,11 +385,54 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           for (VesselInfo.VesselPump vp : grpcReply.getVesselPumpList()) {
             VesselPump pump = new VesselPump();
             BeanUtils.copyProperties(vp, pump);
+            pump.setMachineType(Common.MachineType.VESSEL_PUMP_VALUE);
             vesselPumps.add(pump);
           }
         }
         machineryInUse.setPumpTypes(pumpTypes);
         machineryInUse.setVesselPumps(vesselPumps);
+
+        if (!grpcReply.getVesselManifoldList().isEmpty()) {
+          List<VesselComponent> list1 = new ArrayList<>();
+          for (VesselInfo.VesselComponent vc : grpcReply.getVesselManifoldList()) {
+            VesselComponent vcDto = new VesselComponent();
+            vcDto.setId(vc.getId());
+            vcDto.setComponentCode(vc.getComponentCode());
+            vcDto.setComponentName(vc.getComponentName());
+            vcDto.setVesselId(vc.getVesselId());
+            vcDto.setComponentType(vc.getComponentType());
+            vcDto.setMachineTypeId(Common.MachineType.MANIFOLD_VALUE);
+            list1.add(vcDto);
+          }
+          machineryInUse.setVesselManifold(list1);
+        }
+
+        if (!grpcReply.getVesselBottomLineList().isEmpty()) {
+          List<VesselComponent> list2 = new ArrayList<>();
+          for (VesselInfo.VesselComponent vc : grpcReply.getVesselBottomLineList()) {
+            VesselComponent vcDto = new VesselComponent();
+            vcDto.setId(vc.getId());
+            vcDto.setComponentCode(vc.getComponentCode());
+            vcDto.setComponentName(vc.getComponentName());
+            vcDto.setVesselId(vc.getVesselId());
+            vcDto.setComponentType(vc.getComponentType());
+            vcDto.setMachineTypeId(Common.MachineType.BOTTOM_LINE_VALUE);
+            list2.add(vcDto);
+          }
+          machineryInUse.setVesselBottomLine(list2);
+        }
+
+        if (!grpcReply.getTankTypeList().isEmpty()) {
+          List<PumpType> tankTypes = new ArrayList<>();
+          for (VesselInfo.TankType type : grpcReply.getTankTypeList()) {
+            PumpType type1 = new PumpType();
+            type1.setId(type.getId());
+            type1.setName(type.getTypeName());
+            tankTypes.add(type1);
+          }
+          machineryInUse.setTankTypes(tankTypes);
+        }
+
         log.info(
             "Get loading info, Cargo machines Pump List Size {}, Type Size {} from Vessel Info",
             vesselPumps.size(),
@@ -397,15 +443,18 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       }
     }
 
+    // Setting Loading info Data
     if (!var1.isEmpty()) {
       List<LoadingMachinesInUse> list2 = new ArrayList<>();
       for (LoadingPlanModels.LoadingMachinesInUse lm : var1) {
         LoadingMachinesInUse var2 = new LoadingMachinesInUse();
         var2.setId(lm.getId());
-        var2.setPumpId(lm.getPumpId());
+        var2.setMachineId(lm.getMachineId());
         var2.setLoadingInfoId(lm.getLoadingInfoId());
+        var2.setMachineTypeId(lm.getMachineType().getNumber());
         var2.setCapacity(
             lm.getCapacity().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lm.getCapacity()));
+        var2.setIsUsing(lm.getIsUsing());
         list2.add(var2);
       }
       log.info("Loading plan machine in use added, Size {}", var1.size());

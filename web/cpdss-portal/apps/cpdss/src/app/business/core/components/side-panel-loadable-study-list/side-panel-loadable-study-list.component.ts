@@ -12,6 +12,7 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
+import { Router } from '@angular/router';
 
 /**
  * Component class for side pane
@@ -74,7 +75,8 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
     private messageService: MessageService,
     private ngxSpinnerService: NgxSpinnerService,
     private confirmationService: ConfirmationService,
-    private permissionsService: PermissionsService) { }
+    private permissionsService: PermissionsService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.duplicateLoadableStudy = <LoadableStudy>{};
@@ -210,5 +212,15 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
         block: 'center'
       });
     }
+  }
+
+   /**
+   * Method to navigate loadable study list
+   *
+   * @param {number} rowIndex
+   * @memberof SidePanelLoadableStudyListComponent
+   */
+  navigateToLoadableStudyList(){
+    this.router.navigateByUrl('/business/cargo-planning/loadable-study-list')
   }
 }
