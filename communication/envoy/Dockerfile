@@ -8,4 +8,5 @@ COPY $app/package.json .
 COPY $app/yarn.lock .
 RUN yarn install --frozen-lockfile
 COPY $app .
+EXPOSE 81
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
