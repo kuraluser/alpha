@@ -11,6 +11,15 @@ export class UploadController {
 
   constructor(private configService: ConfigService, private readonly commonApiService: CommonUploadApiService) {
   }
+  
+  /**
+   * Health check API
+   */
+  @Get('health')
+  @HttpCode(204)
+  public healthCheck() {
+    return "OK";
+  }
 
   /**
    * Request method to upload a single file
