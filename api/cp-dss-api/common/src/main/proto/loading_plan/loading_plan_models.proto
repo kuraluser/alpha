@@ -439,6 +439,7 @@ message LoadingPlanStabilityParameters {
   string bm = 3;
   string sf = 4;
   int32 conditionType = 5;
+  int32 valueType = 6;
 }
 
 message LoadingPlanTankDetails {
@@ -451,6 +452,7 @@ message LoadingPlanTankDetails {
   string quantityM3 = 7;
   string sounding = 8;
   int32 conditionType = 9;
+  int32 valueType = 10;
 }
 
 message DeBallastingRate {

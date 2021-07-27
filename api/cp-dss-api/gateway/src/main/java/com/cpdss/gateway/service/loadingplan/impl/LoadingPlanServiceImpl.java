@@ -18,19 +18,7 @@ import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
-import com.cpdss.gateway.domain.loadingplan.BerthDetails;
-import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
-import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingBerthDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingRates;
-import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
-import com.cpdss.gateway.domain.loadingplan.LoadingStages;
-import com.cpdss.gateway.domain.loadingplan.ToppingOffSequence;
+import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
@@ -84,7 +72,6 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   }
 
   /**
-   * @param infoId
    * @param request
    * @param correlationId
    * @return LoadingInfoAlgoResponse
@@ -289,5 +276,57 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       algoResponse.setResponseStatus(new CommonSuccessResponse(GatewayConstants.FAILED, ""));
     }
     return algoResponse;
+  }
+
+  @Override
+  public LoadingPlanResponse getLoadingPlan(
+      Long vesselId, Long voyageId, Long infoId, Long portRotationId)
+      throws GenericServiceException {
+
+    LoadingPlanResponse loadingPlanResponse = new LoadingPlanResponse();
+
+    VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
+    log.info(
+        "Get Loading Plan, Active Voyage Number and Id {} ",
+        activeVoyage.getVoyageNumber(),
+        activeVoyage.getId());
+    Optional<PortRotation> portRotation =
+        activeVoyage.getPortRotations().stream()
+            .filter(v -> v.getId().equals(portRotationId))
+            .findFirst();
+
+    LoadingPlanModels.LoadingPlanReply planReply =
+        this.loadingPlanGrpcService.getLoadingPlan(
+            vesselId, voyageId, infoId, activeVoyage.getPatternId(), portRotation.get().getId());
+
+    LoadingInformation loadingInformation = new LoadingInformation();
+    // from loading info table, loading plan service
+    LoadingRates loadingRates =
+        this.loadingInformationService.getLoadingRateForVessel(
+            planReply.getLoadingInformation().getLoadingRate(), vesselId);
+
+    // Topping Off Sequence
+    List<ToppingOffSequence> toppingSequence =
+        this.loadingInformationService.getToppingOffSequence(
+            planReply.getLoadingInformation().getToppingOffSequenceList());
+    loadingInformation.setLoadingRates(loadingRates);
+    loadingInformation.setToppingOffSequence(toppingSequence);
+
+    loadingPlanResponse.setLoadingInformation(loadingInformation);
+
+    loadingPlanResponse.setPlanBallastDetails(
+        loadingPlanBuilderService.buildLoadingPlanBallastFromRpc(
+            planReply.getPortLoadingPlanBallastDetailsList()));
+    loadingPlanResponse.setPlanStowageDetails(
+        loadingPlanBuilderService.buildLoadingPlanStowageFromRpc(
+            planReply.getPortLoadingPlanStowageDetailsList()));
+    loadingPlanResponse.setPlanRobDetails(
+        loadingPlanBuilderService.buildLoadingPlanRobFromRpc(
+            planReply.getPortLoadingPlanRobDetailsList()));
+    loadingPlanResponse.setPlanStabilityParams(
+        loadingPlanBuilderService.buildLoadingPlanStabilityParamFromRpc(
+            planReply.getPortLoadingPlanStabilityParametersList()));
+
+    return null;
   }
 }

@@ -62610,6 +62610,13 @@ public final class LoadingPlanModels {
      * @return The conditionType.
      */
     int getConditionType();
+
+    /**
+     * <code>int32 valueType = 6;</code>
+     *
+     * @return The valueType.
+     */
+    int getValueType();
   }
   /** Protobuf type {@code LoadingPlanStabilityParameters} */
   public static final class LoadingPlanStabilityParameters
@@ -62691,6 +62698,11 @@ public final class LoadingPlanModels {
             case 40:
               {
                 conditionType_ = input.readInt32();
+                break;
+              }
+            case 48:
+              {
+                valueType_ = input.readInt32();
                 break;
               }
             default:
@@ -62880,6 +62892,17 @@ public final class LoadingPlanModels {
       return conditionType_;
     }
 
+    public static final int VALUETYPE_FIELD_NUMBER = 6;
+    private int valueType_;
+    /**
+     * <code>int32 valueType = 6;</code>
+     *
+     * @return The valueType.
+     */
+    public int getValueType() {
+      return valueType_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -62909,6 +62932,9 @@ public final class LoadingPlanModels {
       if (conditionType_ != 0) {
         output.writeInt32(5, conditionType_);
       }
+      if (valueType_ != 0) {
+        output.writeInt32(6, valueType_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -62932,6 +62958,9 @@ public final class LoadingPlanModels {
       }
       if (conditionType_ != 0) {
         size += com.google.protobuf.CodedOutputStream.computeInt32Size(5, conditionType_);
+      }
+      if (valueType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(6, valueType_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -62960,6 +62989,7 @@ public final class LoadingPlanModels {
       if (!getBm().equals(other.getBm())) return false;
       if (!getSf().equals(other.getSf())) return false;
       if (getConditionType() != other.getConditionType()) return false;
+      if (getValueType() != other.getValueType()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -62981,6 +63011,8 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + getSf().hashCode();
       hash = (37 * hash) + CONDITIONTYPE_FIELD_NUMBER;
       hash = (53 * hash) + getConditionType();
+      hash = (37 * hash) + VALUETYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getValueType();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -63154,6 +63186,8 @@ public final class LoadingPlanModels {
 
         conditionType_ = 0;
 
+        valueType_ = 0;
+
         return this;
       }
 
@@ -63196,6 +63230,7 @@ public final class LoadingPlanModels {
         result.bm_ = bm_;
         result.sf_ = sf_;
         result.conditionType_ = conditionType_;
+        result.valueType_ = valueType_;
         onBuilt();
         return result;
       }
@@ -63275,6 +63310,9 @@ public final class LoadingPlanModels {
         }
         if (other.getConditionType() != 0) {
           setConditionType(other.getConditionType());
+        }
+        if (other.getValueType() != 0) {
+          setValueType(other.getValueType());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -63646,6 +63684,39 @@ public final class LoadingPlanModels {
         return this;
       }
 
+      private int valueType_;
+      /**
+       * <code>int32 valueType = 6;</code>
+       *
+       * @return The valueType.
+       */
+      public int getValueType() {
+        return valueType_;
+      }
+      /**
+       * <code>int32 valueType = 6;</code>
+       *
+       * @param value The valueType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValueType(int value) {
+
+        valueType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 valueType = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearValueType() {
+
+        valueType_ = 0;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -63808,6 +63879,13 @@ public final class LoadingPlanModels {
      * @return The conditionType.
      */
     int getConditionType();
+
+    /**
+     * <code>int32 valueType = 10;</code>
+     *
+     * @return The valueType.
+     */
+    int getValueType();
   }
   /** Protobuf type {@code LoadingPlanTankDetails} */
   public static final class LoadingPlanTankDetails extends com.google.protobuf.GeneratedMessageV3
@@ -63913,6 +63991,11 @@ public final class LoadingPlanModels {
             case 72:
               {
                 conditionType_ = input.readInt32();
+                break;
+              }
+            case 80:
+              {
+                valueType_ = input.readInt32();
                 break;
               }
             default:
@@ -64194,6 +64277,17 @@ public final class LoadingPlanModels {
       return conditionType_;
     }
 
+    public static final int VALUETYPE_FIELD_NUMBER = 10;
+    private int valueType_;
+    /**
+     * <code>int32 valueType = 10;</code>
+     *
+     * @return The valueType.
+     */
+    public int getValueType() {
+      return valueType_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -64235,6 +64329,9 @@ public final class LoadingPlanModels {
       if (conditionType_ != 0) {
         output.writeInt32(9, conditionType_);
       }
+      if (valueType_ != 0) {
+        output.writeInt32(10, valueType_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -64271,6 +64368,9 @@ public final class LoadingPlanModels {
       if (conditionType_ != 0) {
         size += com.google.protobuf.CodedOutputStream.computeInt32Size(9, conditionType_);
       }
+      if (valueType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(10, valueType_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -64298,6 +64398,7 @@ public final class LoadingPlanModels {
       if (!getQuantityM3().equals(other.getQuantityM3())) return false;
       if (!getSounding().equals(other.getSounding())) return false;
       if (getConditionType() != other.getConditionType()) return false;
+      if (getValueType() != other.getValueType()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -64327,6 +64428,8 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + getSounding().hashCode();
       hash = (37 * hash) + CONDITIONTYPE_FIELD_NUMBER;
       hash = (53 * hash) + getConditionType();
+      hash = (37 * hash) + VALUETYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getValueType();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -64495,6 +64598,8 @@ public final class LoadingPlanModels {
 
         conditionType_ = 0;
 
+        valueType_ = 0;
+
         return this;
       }
 
@@ -64537,6 +64642,7 @@ public final class LoadingPlanModels {
         result.quantityM3_ = quantityM3_;
         result.sounding_ = sounding_;
         result.conditionType_ = conditionType_;
+        result.valueType_ = valueType_;
         onBuilt();
         return result;
       }
@@ -64627,6 +64733,9 @@ public final class LoadingPlanModels {
         }
         if (other.getConditionType() != 0) {
           setConditionType(other.getConditionType());
+        }
+        if (other.getValueType() != 0) {
+          setValueType(other.getValueType());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -65211,6 +65320,39 @@ public final class LoadingPlanModels {
       public Builder clearConditionType() {
 
         conditionType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int valueType_;
+      /**
+       * <code>int32 valueType = 10;</code>
+       *
+       * @return The valueType.
+       */
+      public int getValueType() {
+        return valueType_;
+      }
+      /**
+       * <code>int32 valueType = 10;</code>
+       *
+       * @param value The valueType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValueType(int value) {
+
+        valueType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 valueType = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearValueType() {
+
+        valueType_ = 0;
         onChanged();
         return this;
       }
@@ -82967,73 +83109,74 @@ public final class LoadingPlanModels {
           + "Details\022G\n\036loadingPlanStabilityParameter"
           + "s\030\004 \001(\0132\037.LoadingPlanStabilityParameters"
           + "\022:\n\031loadingPlanStowageDetails\030\005 \003(\0132\027.Lo"
-          + "adingPlanTankDetails\022\014\n\004time\030\006 \001(\005\"l\n\036Lo"
+          + "adingPlanTankDetails\022\014\n\004time\030\006 \001(\005\"\177\n\036Lo"
           + "adingPlanStabilityParameters\022\r\n\005draft\030\001 "
           + "\001(\t\022\014\n\004trim\030\002 \001(\t\022\n\n\002bm\030\003 \001(\t\022\n\n\002sf\030\004 \001("
-          + "\t\022\025\n\rconditionType\030\005 \001(\005\"\304\001\n\026LoadingPlan"
-          + "TankDetails\022\013\n\003api\030\001 \001(\t\022\031\n\021cargoNominat"
-          + "ionId\030\002 \001(\003\022\020\n\010quantity\030\003 \001(\t\022\016\n\006tankId\030"
-          + "\004 \001(\003\022\023\n\013temperature\030\005 \001(\t\022\016\n\006ullage\030\006 \001"
-          + "(\t\022\022\n\nquantityM3\030\007 \001(\t\022\020\n\010sounding\030\010 \001(\t"
-          + "\022\025\n\rconditionType\030\t \001(\005\"J\n\020DeBallastingR"
-          + "ate\022\030\n\020deBallastingRate\030\001 \001(\t\022\016\n\006tankId\030"
-          + "\002 \001(\003\022\014\n\004time\030\003 \001(\005\"V\n\013LoadingRate\022\023\n\013lo"
-          + "adingRate\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\021\n\tstart"
-          + "Time\030\003 \001(\005\022\017\n\007endTime\030\004 \001(\005\"_\n\005Valve\022\021\n\t"
-          + "operation\030\001 \001(\t\022\014\n\004time\030\002 \001(\005\022\021\n\tvalveCo"
-          + "de\030\003 \001(\t\022\021\n\tvalveType\030\004 \001(\t\022\017\n\007valveId\030\005"
-          + " \001(\003\"x\n\rPumpOperation\022\017\n\007endTime\030\001 \001(\005\022\020"
-          + "\n\010pumpName\030\002 \001(\t\022\017\n\007pumpXId\030\003 \001(\003\022\014\n\004rat"
-          + "e\030\004 \001(\t\022\021\n\tstartTime\030\005 \001(\005\022\022\n\nquantityM3"
-          + "\030\006 \001(\t\"B\n\027LoadingPlanSaveResponse\022\'\n\016res"
-          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\"\\\n\031Lo"
-          + "adingInstructionRequest\022\025\n\rloadingInfoId"
-          + "\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\026\n\016portRotation"
-          + "Id\030\003 \001(\003\"\240\001\n\023LoadingInstructions\022\031\n\021inst"
-          + "ructionTypeId\030\001 \001(\003\022\033\n\023instructionHeader"
-          + "Id\030\002 \001(\003\022\025\n\rinstructionId\030\003 \001(\003\022\023\n\013instr"
-          + "uction\030\004 \001(\t\022\021\n\tisChecked\030\005 \001(\010\022\022\n\nisEdi"
-          + "table\030\006 \001(\010\"\374\001\n\033LoadingInstructionSubHea"
-          + "der\022\031\n\021instructionTypeId\030\001 \001(\003\022\033\n\023instru"
-          + "ctionHeaderId\030\002 \001(\003\022\023\n\013subHeaderId\030\003 \001(\003"
-          + "\022\025\n\rsubHeaderName\030\004 \001(\t\022\021\n\tisChecked\030\005 \001"
-          + "(\010\0225\n\027loadingInstructionsList\030\006 \003(\0132\024.Lo"
-          + "adingInstructions\022\022\n\nisEditable\030\007 \001(\010\022\033\n"
-          + "\023IsHeaderInstruction\030\010 \001(\010\"=\n\027LoadingIns"
-          + "tructionGroup\022\017\n\007groupId\030\001 \001(\003\022\021\n\tgroupN"
-          + "ame\030\002 \001(\t\"\306\001\n\031LoadingInstructionDetails\022"
-          + "A\n\033loadingInstructionSubHeader\030\001 \003(\0132\034.L"
-          + "oadingInstructionSubHeader\022=\n\033loadingIns"
-          + "tructionGroupList\030\002 \003(\0132\030.LoadingInstruc"
-          + "tionGroup\022\'\n\016responseStatus\030\003 \001(\0132\017.Resp"
-          + "onseStatus\"\361\001\n\027LoadingInstructionsSave\022\020"
-          + "\n\010headerId\030\001 \001(\003\022\031\n\021instructionTypeId\030\002 "
-          + "\001(\003\022\021\n\tisChecked\030\003 \001(\010\022\026\n\016isSingleHeader"
-          + "\030\004 \001(\010\022\023\n\013subHeaderId\030\005 \001(\003\022\023\n\013instructi"
-          + "on\030\006 \001(\t\022\023\n\013isSubHeader\030\007 \001(\010\022\025\n\rloading"
-          + "InfoId\030\010 \001(\003\022\020\n\010vesselId\030\t \001(\003\022\026\n\016portRo"
-          + "tationId\030\n \001(\003\"O\n\031LoadingInstructionsUpd"
-          + "ate\0222\n\017instructionList\030\001 \003(\0132\031.LoadingIn"
-          + "structionStatus\"Y\n\030LoadingInstructionSta"
-          + "tus\022\025\n\rinstructionId\030\001 \001(\003\022\021\n\tisChecked\030"
-          + "\002 \001(\010\022\023\n\013instruction\030\003 \001(\t\"/\n\026LoadingSeq"
-          + "uenceRequest\022\025\n\rloadingInfoId\030\001 \001(\003\"\220\001\n\024"
-          + "LoadingSequenceReply\022\021\n\tstartDate\030\001 \001(\t\022"
-          + "\020\n\010interval\030\002 \001(\005\022*\n\020loadingSequences\030\003 "
-          + "\003(\0132\020.LoadingSequence\022\'\n\016responseStatus\030"
-          + "\004 \001(\0132\017.ResponseStatus\"\270\003\n\020LoadingPlanRe"
-          + "ply\022\'\n\016responseStatus\030\007 \001(\0132\017.ResponseSt"
-          + "atus\022\025\n\rloadingInfoId\030\001 \001(\003\022/\n\022loadingIn"
-          + "formation\030\010 \001(\0132\023.LoadingInformation\022*\n\020"
-          + "loadingSequences\030\002 \003(\0132\020.LoadingSequence"
-          + "\022>\n\035portLoadingPlanStowageDetails\030\003 \003(\0132"
-          + "\027.LoadingPlanTankDetails\022>\n\035portLoadingP"
-          + "lanBallastDetails\030\004 \003(\0132\027.LoadingPlanTan"
-          + "kDetails\022:\n\031portLoadingPlanRobDetails\030\005 "
-          + "\003(\0132\027.LoadingPlanTankDetails\022K\n\"portLoad"
-          + "ingPlanStabilityParameters\030\006 \003(\0132\037.Loadi"
-          + "ngPlanStabilityParametersB+\n\'com.cpdss.c"
-          + "ommon.generated.loading_planP\000b\006proto3"
+          + "\t\022\025\n\rconditionType\030\005 \001(\005\022\021\n\tvalueType\030\006 "
+          + "\001(\005\"\327\001\n\026LoadingPlanTankDetails\022\013\n\003api\030\001 "
+          + "\001(\t\022\031\n\021cargoNominationId\030\002 \001(\003\022\020\n\010quanti"
+          + "ty\030\003 \001(\t\022\016\n\006tankId\030\004 \001(\003\022\023\n\013temperature\030"
+          + "\005 \001(\t\022\016\n\006ullage\030\006 \001(\t\022\022\n\nquantityM3\030\007 \001("
+          + "\t\022\020\n\010sounding\030\010 \001(\t\022\025\n\rconditionType\030\t \001"
+          + "(\005\022\021\n\tvalueType\030\n \001(\005\"J\n\020DeBallastingRat"
+          + "e\022\030\n\020deBallastingRate\030\001 \001(\t\022\016\n\006tankId\030\002 "
+          + "\001(\003\022\014\n\004time\030\003 \001(\005\"V\n\013LoadingRate\022\023\n\013load"
+          + "ingRate\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\021\n\tstartTi"
+          + "me\030\003 \001(\005\022\017\n\007endTime\030\004 \001(\005\"_\n\005Valve\022\021\n\top"
+          + "eration\030\001 \001(\t\022\014\n\004time\030\002 \001(\005\022\021\n\tvalveCode"
+          + "\030\003 \001(\t\022\021\n\tvalveType\030\004 \001(\t\022\017\n\007valveId\030\005 \001"
+          + "(\003\"x\n\rPumpOperation\022\017\n\007endTime\030\001 \001(\005\022\020\n\010"
+          + "pumpName\030\002 \001(\t\022\017\n\007pumpXId\030\003 \001(\003\022\014\n\004rate\030"
+          + "\004 \001(\t\022\021\n\tstartTime\030\005 \001(\005\022\022\n\nquantityM3\030\006"
+          + " \001(\t\"B\n\027LoadingPlanSaveResponse\022\'\n\016respo"
+          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\"\\\n\031Load"
+          + "ingInstructionRequest\022\025\n\rloadingInfoId\030\001"
+          + " \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\026\n\016portRotationId"
+          + "\030\003 \001(\003\"\240\001\n\023LoadingInstructions\022\031\n\021instru"
+          + "ctionTypeId\030\001 \001(\003\022\033\n\023instructionHeaderId"
+          + "\030\002 \001(\003\022\025\n\rinstructionId\030\003 \001(\003\022\023\n\013instruc"
+          + "tion\030\004 \001(\t\022\021\n\tisChecked\030\005 \001(\010\022\022\n\nisEdita"
+          + "ble\030\006 \001(\010\"\374\001\n\033LoadingInstructionSubHeade"
+          + "r\022\031\n\021instructionTypeId\030\001 \001(\003\022\033\n\023instruct"
+          + "ionHeaderId\030\002 \001(\003\022\023\n\013subHeaderId\030\003 \001(\003\022\025"
+          + "\n\rsubHeaderName\030\004 \001(\t\022\021\n\tisChecked\030\005 \001(\010"
+          + "\0225\n\027loadingInstructionsList\030\006 \003(\0132\024.Load"
+          + "ingInstructions\022\022\n\nisEditable\030\007 \001(\010\022\033\n\023I"
+          + "sHeaderInstruction\030\010 \001(\010\"=\n\027LoadingInstr"
+          + "uctionGroup\022\017\n\007groupId\030\001 \001(\003\022\021\n\tgroupNam"
+          + "e\030\002 \001(\t\"\306\001\n\031LoadingInstructionDetails\022A\n"
+          + "\033loadingInstructionSubHeader\030\001 \003(\0132\034.Loa"
+          + "dingInstructionSubHeader\022=\n\033loadingInstr"
+          + "uctionGroupList\030\002 \003(\0132\030.LoadingInstructi"
+          + "onGroup\022\'\n\016responseStatus\030\003 \001(\0132\017.Respon"
+          + "seStatus\"\361\001\n\027LoadingInstructionsSave\022\020\n\010"
+          + "headerId\030\001 \001(\003\022\031\n\021instructionTypeId\030\002 \001("
+          + "\003\022\021\n\tisChecked\030\003 \001(\010\022\026\n\016isSingleHeader\030\004"
+          + " \001(\010\022\023\n\013subHeaderId\030\005 \001(\003\022\023\n\013instruction"
+          + "\030\006 \001(\t\022\023\n\013isSubHeader\030\007 \001(\010\022\025\n\rloadingIn"
+          + "foId\030\010 \001(\003\022\020\n\010vesselId\030\t \001(\003\022\026\n\016portRota"
+          + "tionId\030\n \001(\003\"O\n\031LoadingInstructionsUpdat"
+          + "e\0222\n\017instructionList\030\001 \003(\0132\031.LoadingInst"
+          + "ructionStatus\"Y\n\030LoadingInstructionStatu"
+          + "s\022\025\n\rinstructionId\030\001 \001(\003\022\021\n\tisChecked\030\002 "
+          + "\001(\010\022\023\n\013instruction\030\003 \001(\t\"/\n\026LoadingSeque"
+          + "nceRequest\022\025\n\rloadingInfoId\030\001 \001(\003\"\220\001\n\024Lo"
+          + "adingSequenceReply\022\021\n\tstartDate\030\001 \001(\t\022\020\n"
+          + "\010interval\030\002 \001(\005\022*\n\020loadingSequences\030\003 \003("
+          + "\0132\020.LoadingSequence\022\'\n\016responseStatus\030\004 "
+          + "\001(\0132\017.ResponseStatus\"\270\003\n\020LoadingPlanRepl"
+          + "y\022\'\n\016responseStatus\030\007 \001(\0132\017.ResponseStat"
+          + "us\022\025\n\rloadingInfoId\030\001 \001(\003\022/\n\022loadingInfo"
+          + "rmation\030\010 \001(\0132\023.LoadingInformation\022*\n\020lo"
+          + "adingSequences\030\002 \003(\0132\020.LoadingSequence\022>"
+          + "\n\035portLoadingPlanStowageDetails\030\003 \003(\0132\027."
+          + "LoadingPlanTankDetails\022>\n\035portLoadingPla"
+          + "nBallastDetails\030\004 \003(\0132\027.LoadingPlanTankD"
+          + "etails\022:\n\031portLoadingPlanRobDetails\030\005 \003("
+          + "\0132\027.LoadingPlanTankDetails\022K\n\"portLoadin"
+          + "gPlanStabilityParameters\030\006 \003(\0132\037.Loading"
+          + "PlanStabilityParametersB+\n\'com.cpdss.com"
+          + "mon.generated.loading_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -83546,7 +83689,7 @@ public final class LoadingPlanModels {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingPlanStabilityParameters_descriptor,
             new java.lang.String[] {
-              "Draft", "Trim", "Bm", "Sf", "ConditionType",
+              "Draft", "Trim", "Bm", "Sf", "ConditionType", "ValueType",
             });
     internal_static_LoadingPlanTankDetails_descriptor = getDescriptor().getMessageTypes().get(36);
     internal_static_LoadingPlanTankDetails_fieldAccessorTable =
@@ -83562,6 +83705,7 @@ public final class LoadingPlanModels {
               "QuantityM3",
               "Sounding",
               "ConditionType",
+              "ValueType",
             });
     internal_static_DeBallastingRate_descriptor = getDescriptor().getMessageTypes().get(37);
     internal_static_DeBallastingRate_fieldAccessorTable =

@@ -3,9 +3,12 @@ package com.cpdss.loadingplan.service;
 
 import static com.cpdss.loadingplan.common.LoadingPlanConstants.TIME_FORMATTER;
 
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.entity.CargoToppingOffSequence;
 import com.cpdss.loadingplan.entity.LoadingInformation;
@@ -244,7 +247,7 @@ public class LoadingInformationBuilderService {
   }
 
   public List<LoadingPlanTankDetails> buildLoadingPlanTankBallastMessage(
-      List<PortLoadingPlanBallastDetails> list) {
+      List<PortLoadingPlanBallastDetails> list) throws GenericServiceException {
     log.info("Loading Plan, Ballast Builder");
     List<LoadingPlanTankDetails> response = new ArrayList<>();
     for (PortLoadingPlanBallastDetails var1 : list) {
@@ -258,13 +261,14 @@ public class LoadingInformationBuilderService {
               null,
               var1.getQuantityM3(),
               var1.getSounding(),
-              null));
+              var1.getConditionType(),
+              var1.getValueType()));
     }
     return response;
   }
 
   public List<LoadingPlanTankDetails> buildLoadingPlanTankStowageMessage(
-      List<PortLoadingPlanStowageDetails> list) {
+      List<PortLoadingPlanStowageDetails> list) throws GenericServiceException {
     log.info("Loading Plan, Stowage Builder");
     List<LoadingPlanTankDetails> response = new ArrayList<>();
     for (PortLoadingPlanStowageDetails var1 : list) {
@@ -278,13 +282,14 @@ public class LoadingInformationBuilderService {
               var1.getUllage(),
               var1.getQuantityM3(),
               null,
-              null));
+              var1.getConditionType(),
+              var1.getValueType()));
     }
     return response;
   }
 
   public List<LoadingPlanTankDetails> buildLoadingPlanTankRobMessage(
-      List<PortLoadingPlanRobDetails> list) {
+      List<PortLoadingPlanRobDetails> list) throws GenericServiceException {
     log.info("Loading Plan, Rob Builder");
     List<LoadingPlanTankDetails> response = new ArrayList<>();
     for (PortLoadingPlanRobDetails var1 : list) {
@@ -298,13 +303,15 @@ public class LoadingInformationBuilderService {
               null,
               var1.getQuantityM3(),
               null,
-              null));
+              var1.getConditionType(),
+              var1.getValueType()));
     }
     return response;
   }
 
   public List<LoadingPlanModels.LoadingPlanStabilityParameters>
-      buildLoadingPlanTankStabilityMessage(List<PortLoadingPlanStabilityParameters> list) {
+      buildLoadingPlanTankStabilityMessage(List<PortLoadingPlanStabilityParameters> list)
+          throws GenericServiceException {
     log.info("Loading Plan, Rob Builder");
     List<LoadingPlanModels.LoadingPlanStabilityParameters> response = new ArrayList<>();
     for (PortLoadingPlanStabilityParameters var1 : list) {
@@ -314,20 +321,38 @@ public class LoadingInformationBuilderService {
               null,
               var1.getBendingMoment(),
               var1.getShearingForce(),
-              var1.getConditionType()));
+              var1.getConditionType(),
+              var1.getValueType()));
     }
     return response;
   }
 
   private LoadingPlanModels.LoadingPlanStabilityParameters buildLoadingPlanStabilityBuilder(
-      BigDecimal draft, BigDecimal trim, BigDecimal bm, BigDecimal sf, Integer type) {
-    return LoadingPlanModels.LoadingPlanStabilityParameters.newBuilder()
-        .setDraft(draft != null ? draft.toString() : "")
-        .setTrim(trim != null ? trim.toString() : "")
-        .setBm(bm != null ? bm.toString() : "")
-        .setSf(sf != null ? sf.toString() : "")
-        .setConditionType(type)
-        .build();
+      BigDecimal draft,
+      BigDecimal trim,
+      BigDecimal bm,
+      BigDecimal sf,
+      Integer conditionType,
+      Integer valueType)
+      throws GenericServiceException {
+    try {
+      LoadingPlanModels.LoadingPlanStabilityParameters builder =
+          LoadingPlanModels.LoadingPlanStabilityParameters.newBuilder()
+              .setDraft(draft != null ? draft.toString() : "")
+              .setTrim(trim != null ? trim.toString() : "")
+              .setBm(bm != null ? bm.toString() : "")
+              .setSf(sf != null ? sf.toString() : "")
+              .setConditionType(conditionType != null ? conditionType : 0)
+              .setValueType(valueType != null ? valueType : 0)
+              .build();
+      return builder;
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "LoadingPlanStabilityParameters Object Build failed",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
   }
 
   private LoadingPlanTankDetails buildLoadingPlanTankBuilder(
@@ -339,17 +364,31 @@ public class LoadingInformationBuilderService {
       BigDecimal ullage,
       BigDecimal quantityM3,
       BigDecimal sounding,
-      Integer conditionType) {
-    return LoadingPlanTankDetails.newBuilder()
-        .setApi(api != null ? api.toString() : "")
-        .setTemperature(temp != null ? temp.toString() : "")
-        .setCargoNominationId(nominationId)
-        .setQuantity(quantity != null ? quantity.toString() : "")
-        .setTankId(tankId)
-        .setUllage(ullage != null ? ullage.toString() : "")
-        .setQuantityM3(quantityM3 != null ? quantityM3.toString() : "")
-        .setSounding(sounding != null ? sounding.toString() : "")
-        .setConditionType(conditionType)
-        .build();
+      Integer conditionType,
+      Integer valueType)
+      throws GenericServiceException {
+
+    try {
+      LoadingPlanTankDetails builder =
+          LoadingPlanTankDetails.newBuilder()
+              .setApi(api != null ? api.toString() : "")
+              .setTemperature(temp != null ? temp.toString() : "")
+              .setCargoNominationId(nominationId != null ? nominationId : 0)
+              .setQuantity(quantity != null ? quantity.toString() : "")
+              .setTankId(tankId != null ? tankId : 0)
+              .setUllage(ullage != null ? ullage.toString() : "")
+              .setQuantityM3(quantityM3 != null ? quantityM3.toString() : "")
+              .setSounding(sounding != null ? sounding.toString() : "")
+              .setConditionType(conditionType != null ? conditionType : 0)
+              .setValueType(valueType != null ? valueType : 0)
+              .build();
+      return builder;
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "LoadingPlanTankDetails Object Build failed",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
   }
 }

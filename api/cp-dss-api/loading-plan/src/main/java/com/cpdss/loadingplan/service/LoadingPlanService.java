@@ -90,11 +90,8 @@ public class LoadingPlanService {
 
   public void getLoadingPlan(
       LoadableStudy.LoadingPlanIdRequest request,
-      LoadingPlanModels.LoadingPlanReply.Builder builder)
+      LoadingPlanModels.LoadingPlanReply.Builder masterBuilder)
       throws GenericServiceException {
-
-    LoadingPlanModels.LoadingPlanReply.Builder masterBuilder =
-        LoadingPlanModels.LoadingPlanReply.newBuilder();
     if (request.getId() > 0) {
       var var1 = loadingInformationService.getLoadingInformation(request.getId());
       if (var1.isPresent()) {
@@ -137,11 +134,21 @@ public class LoadingPlanService {
         List<PortLoadingPlanStabilityParameters> plpStabilityList =
             plpStabilityParametersRepository.findByLoadingInformationAndIsActive(var1.get(), true);
 
+        masterBuilder.addAllPortLoadingPlanBallastDetails(
+            this.informationBuilderService.buildLoadingPlanTankBallastMessage(plpBallastList));
+        masterBuilder.addAllPortLoadingPlanStowageDetails(
+            this.informationBuilderService.buildLoadingPlanTankStowageMessage(plpStowageList));
+        masterBuilder.addAllPortLoadingPlanRobDetails(
+            this.informationBuilderService.buildLoadingPlanTankRobMessage(plpRobList));
+        masterBuilder.addAllPortLoadingPlanStabilityParameters(
+            this.informationBuilderService.buildLoadingPlanTankStabilityMessage(plpStabilityList));
         // <---Loading Information End-->
       }
+    } else {
+      log.error("Failed to fetch Loading Plan, Loading info Id is 0");
+      throw new GenericServiceException(
+          "Loading Info Id Is 0", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
     }
-    log.error("Failed to fetch Loading Plan, Loading info Id is 0");
-    throw new GenericServiceException(
-        "Loading Info Id Is 0", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+    masterBuilder.build();
   }
 }
