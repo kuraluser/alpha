@@ -70072,36 +70072,43 @@ public final class LoadingPlanModels {
      */
     com.google.protobuf.ByteString getStartDateBytes();
 
-    /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+    /**
+     * <code>int32 interval = 2;</code>
+     *
+     * @return The interval.
+     */
+    int getInterval();
+
+    /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
     java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence>
         getLoadingSequencesList();
-    /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+    /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence getLoadingSequences(
         int index);
-    /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+    /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
     int getLoadingSequencesCount();
-    /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+    /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
     java.util.List<
             ? extends
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder>
         getLoadingSequencesOrBuilderList();
-    /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+    /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder
         getLoadingSequencesOrBuilder(int index);
 
     /**
-     * <code>.ResponseStatus responseStatus = 3;</code>
+     * <code>.ResponseStatus responseStatus = 4;</code>
      *
      * @return Whether the responseStatus field is set.
      */
     boolean hasResponseStatus();
     /**
-     * <code>.ResponseStatus responseStatus = 3;</code>
+     * <code>.ResponseStatus responseStatus = 4;</code>
      *
      * @return The responseStatus.
      */
     com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
-    /** <code>.ResponseStatus responseStatus = 3;</code> */
+    /** <code>.ResponseStatus responseStatus = 4;</code> */
     com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
   }
   /** Protobuf type {@code LoadingSequenceReply} */
@@ -70157,7 +70164,12 @@ public final class LoadingPlanModels {
                 startDate_ = s;
                 break;
               }
-            case 18:
+            case 16:
+              {
+                interval_ = input.readInt32();
+                break;
+              }
+            case 26:
               {
                 if (!((mutable_bitField0_ & 0x00000001) != 0)) {
                   loadingSequences_ =
@@ -70173,7 +70185,7 @@ public final class LoadingPlanModels {
                         extensionRegistry));
                 break;
               }
-            case 26:
+            case 34:
               {
                 com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
                 if (responseStatus_ != null) {
@@ -70263,41 +70275,52 @@ public final class LoadingPlanModels {
       }
     }
 
-    public static final int LOADINGSEQUENCES_FIELD_NUMBER = 2;
+    public static final int INTERVAL_FIELD_NUMBER = 2;
+    private int interval_;
+    /**
+     * <code>int32 interval = 2;</code>
+     *
+     * @return The interval.
+     */
+    public int getInterval() {
+      return interval_;
+    }
+
+    public static final int LOADINGSEQUENCES_FIELD_NUMBER = 3;
     private java.util.List<
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence>
         loadingSequences_;
-    /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+    /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
     public java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence>
         getLoadingSequencesList() {
       return loadingSequences_;
     }
-    /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+    /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
     public java.util.List<
             ? extends
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder>
         getLoadingSequencesOrBuilderList() {
       return loadingSequences_;
     }
-    /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+    /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
     public int getLoadingSequencesCount() {
       return loadingSequences_.size();
     }
-    /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+    /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence
         getLoadingSequences(int index) {
       return loadingSequences_.get(index);
     }
-    /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+    /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder
         getLoadingSequencesOrBuilder(int index) {
       return loadingSequences_.get(index);
     }
 
-    public static final int RESPONSESTATUS_FIELD_NUMBER = 3;
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 4;
     private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
     /**
-     * <code>.ResponseStatus responseStatus = 3;</code>
+     * <code>.ResponseStatus responseStatus = 4;</code>
      *
      * @return Whether the responseStatus field is set.
      */
@@ -70305,7 +70328,7 @@ public final class LoadingPlanModels {
       return responseStatus_ != null;
     }
     /**
-     * <code>.ResponseStatus responseStatus = 3;</code>
+     * <code>.ResponseStatus responseStatus = 4;</code>
      *
      * @return The responseStatus.
      */
@@ -70314,7 +70337,7 @@ public final class LoadingPlanModels {
           ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
           : responseStatus_;
     }
-    /** <code>.ResponseStatus responseStatus = 3;</code> */
+    /** <code>.ResponseStatus responseStatus = 4;</code> */
     public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
       return getResponseStatus();
     }
@@ -70336,11 +70359,14 @@ public final class LoadingPlanModels {
       if (!getStartDateBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, startDate_);
       }
+      if (interval_ != 0) {
+        output.writeInt32(2, interval_);
+      }
       for (int i = 0; i < loadingSequences_.size(); i++) {
-        output.writeMessage(2, loadingSequences_.get(i));
+        output.writeMessage(3, loadingSequences_.get(i));
       }
       if (responseStatus_ != null) {
-        output.writeMessage(3, getResponseStatus());
+        output.writeMessage(4, getResponseStatus());
       }
       unknownFields.writeTo(output);
     }
@@ -70354,12 +70380,15 @@ public final class LoadingPlanModels {
       if (!getStartDateBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, startDate_);
       }
+      if (interval_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(2, interval_);
+      }
       for (int i = 0; i < loadingSequences_.size(); i++) {
         size +=
-            com.google.protobuf.CodedOutputStream.computeMessageSize(2, loadingSequences_.get(i));
+            com.google.protobuf.CodedOutputStream.computeMessageSize(3, loadingSequences_.get(i));
       }
       if (responseStatus_ != null) {
-        size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, getResponseStatus());
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(4, getResponseStatus());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -70380,6 +70409,7 @@ public final class LoadingPlanModels {
           (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply) obj;
 
       if (!getStartDate().equals(other.getStartDate())) return false;
+      if (getInterval() != other.getInterval()) return false;
       if (!getLoadingSequencesList().equals(other.getLoadingSequencesList())) return false;
       if (hasResponseStatus() != other.hasResponseStatus()) return false;
       if (hasResponseStatus()) {
@@ -70398,6 +70428,8 @@ public final class LoadingPlanModels {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + STARTDATE_FIELD_NUMBER;
       hash = (53 * hash) + getStartDate().hashCode();
+      hash = (37 * hash) + INTERVAL_FIELD_NUMBER;
+      hash = (53 * hash) + getInterval();
       if (getLoadingSequencesCount() > 0) {
         hash = (37 * hash) + LOADINGSEQUENCES_FIELD_NUMBER;
         hash = (53 * hash) + getLoadingSequencesList().hashCode();
@@ -70559,6 +70591,8 @@ public final class LoadingPlanModels {
         super.clear();
         startDate_ = "";
 
+        interval_ = 0;
+
         if (loadingSequencesBuilder_ == null) {
           loadingSequences_ = java.util.Collections.emptyList();
           bitField0_ = (bitField0_ & ~0x00000001);
@@ -70606,6 +70640,7 @@ public final class LoadingPlanModels {
                 this);
         int from_bitField0_ = bitField0_;
         result.startDate_ = startDate_;
+        result.interval_ = interval_;
         if (loadingSequencesBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             loadingSequences_ = java.util.Collections.unmodifiableList(loadingSequences_);
@@ -70681,6 +70716,9 @@ public final class LoadingPlanModels {
         if (!other.getStartDate().isEmpty()) {
           startDate_ = other.startDate_;
           onChanged();
+        }
+        if (other.getInterval() != 0) {
+          setInterval(other.getInterval());
         }
         if (loadingSequencesBuilder_ == null) {
           if (!other.loadingSequences_.isEmpty()) {
@@ -70822,6 +70860,39 @@ public final class LoadingPlanModels {
         return this;
       }
 
+      private int interval_;
+      /**
+       * <code>int32 interval = 2;</code>
+       *
+       * @return The interval.
+       */
+      public int getInterval() {
+        return interval_;
+      }
+      /**
+       * <code>int32 interval = 2;</code>
+       *
+       * @param value The interval to set.
+       * @return This builder for chaining.
+       */
+      public Builder setInterval(int value) {
+
+        interval_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 interval = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearInterval() {
+
+        interval_ = 0;
+        onChanged();
+        return this;
+      }
+
       private java.util.List<
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence>
           loadingSequences_ = java.util.Collections.emptyList();
@@ -70842,7 +70913,7 @@ public final class LoadingPlanModels {
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder>
           loadingSequencesBuilder_;
 
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public java.util.List<
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence>
           getLoadingSequencesList() {
@@ -70852,7 +70923,7 @@ public final class LoadingPlanModels {
           return loadingSequencesBuilder_.getMessageList();
         }
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public int getLoadingSequencesCount() {
         if (loadingSequencesBuilder_ == null) {
           return loadingSequences_.size();
@@ -70860,7 +70931,7 @@ public final class LoadingPlanModels {
           return loadingSequencesBuilder_.getCount();
         }
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence
           getLoadingSequences(int index) {
         if (loadingSequencesBuilder_ == null) {
@@ -70869,7 +70940,7 @@ public final class LoadingPlanModels {
           return loadingSequencesBuilder_.getMessage(index);
         }
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public Builder setLoadingSequences(
           int index,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence value) {
@@ -70885,7 +70956,7 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public Builder setLoadingSequences(
           int index,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
@@ -70899,7 +70970,7 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public Builder addLoadingSequences(
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence value) {
         if (loadingSequencesBuilder_ == null) {
@@ -70914,7 +70985,7 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public Builder addLoadingSequences(
           int index,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence value) {
@@ -70930,7 +71001,7 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public Builder addLoadingSequences(
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
               builderForValue) {
@@ -70943,7 +71014,7 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public Builder addLoadingSequences(
           int index,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
@@ -70957,7 +71028,7 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public Builder addAllLoadingSequences(
           java.lang.Iterable<
                   ? extends
@@ -70972,7 +71043,7 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public Builder clearLoadingSequences() {
         if (loadingSequencesBuilder_ == null) {
           loadingSequences_ = java.util.Collections.emptyList();
@@ -70983,7 +71054,7 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public Builder removeLoadingSequences(int index) {
         if (loadingSequencesBuilder_ == null) {
           ensureLoadingSequencesIsMutable();
@@ -70994,12 +71065,12 @@ public final class LoadingPlanModels {
         }
         return this;
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
           getLoadingSequencesBuilder(int index) {
         return getLoadingSequencesFieldBuilder().getBuilder(index);
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceOrBuilder
           getLoadingSequencesOrBuilder(int index) {
         if (loadingSequencesBuilder_ == null) {
@@ -71008,7 +71079,7 @@ public final class LoadingPlanModels {
           return loadingSequencesBuilder_.getMessageOrBuilder(index);
         }
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public java.util.List<
               ? extends
                   com.cpdss.common.generated.loading_plan.LoadingPlanModels
@@ -71020,7 +71091,7 @@ public final class LoadingPlanModels {
           return java.util.Collections.unmodifiableList(loadingSequences_);
         }
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
           addLoadingSequencesBuilder() {
         return getLoadingSequencesFieldBuilder()
@@ -71028,7 +71099,7 @@ public final class LoadingPlanModels {
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence
                     .getDefaultInstance());
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
           addLoadingSequencesBuilder(int index) {
         return getLoadingSequencesFieldBuilder()
@@ -71037,7 +71108,7 @@ public final class LoadingPlanModels {
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence
                     .getDefaultInstance());
       }
-      /** <code>repeated .LoadingSequence loadingSequences = 2;</code> */
+      /** <code>repeated .LoadingSequence loadingSequences = 3;</code> */
       public java.util.List<
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder>
           getLoadingSequencesBuilderList() {
@@ -71072,7 +71143,7 @@ public final class LoadingPlanModels {
               com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
           responseStatusBuilder_;
       /**
-       * <code>.ResponseStatus responseStatus = 3;</code>
+       * <code>.ResponseStatus responseStatus = 4;</code>
        *
        * @return Whether the responseStatus field is set.
        */
@@ -71080,7 +71151,7 @@ public final class LoadingPlanModels {
         return responseStatusBuilder_ != null || responseStatus_ != null;
       }
       /**
-       * <code>.ResponseStatus responseStatus = 3;</code>
+       * <code>.ResponseStatus responseStatus = 4;</code>
        *
        * @return The responseStatus.
        */
@@ -71093,7 +71164,7 @@ public final class LoadingPlanModels {
           return responseStatusBuilder_.getMessage();
         }
       }
-      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      /** <code>.ResponseStatus responseStatus = 4;</code> */
       public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
         if (responseStatusBuilder_ == null) {
           if (value == null) {
@@ -71107,7 +71178,7 @@ public final class LoadingPlanModels {
 
         return this;
       }
-      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      /** <code>.ResponseStatus responseStatus = 4;</code> */
       public Builder setResponseStatus(
           com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
         if (responseStatusBuilder_ == null) {
@@ -71119,7 +71190,7 @@ public final class LoadingPlanModels {
 
         return this;
       }
-      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      /** <code>.ResponseStatus responseStatus = 4;</code> */
       public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
         if (responseStatusBuilder_ == null) {
           if (responseStatus_ != null) {
@@ -71137,7 +71208,7 @@ public final class LoadingPlanModels {
 
         return this;
       }
-      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      /** <code>.ResponseStatus responseStatus = 4;</code> */
       public Builder clearResponseStatus() {
         if (responseStatusBuilder_ == null) {
           responseStatus_ = null;
@@ -71149,13 +71220,13 @@ public final class LoadingPlanModels {
 
         return this;
       }
-      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      /** <code>.ResponseStatus responseStatus = 4;</code> */
       public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
 
         onChanged();
         return getResponseStatusFieldBuilder().getBuilder();
       }
-      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      /** <code>.ResponseStatus responseStatus = 4;</code> */
       public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
           getResponseStatusOrBuilder() {
         if (responseStatusBuilder_ != null) {
@@ -71166,7 +71237,7 @@ public final class LoadingPlanModels {
               : responseStatus_;
         }
       }
-      /** <code>.ResponseStatus responseStatus = 3;</code> */
+      /** <code>.ResponseStatus responseStatus = 4;</code> */
       private com.google.protobuf.SingleFieldBuilderV3<
               com.cpdss.common.generated.Common.ResponseStatus,
               com.cpdss.common.generated.Common.ResponseStatus.Builder,
@@ -71661,11 +71732,12 @@ public final class LoadingPlanModels {
           + "3\030\006 \001(\t\"B\n\027LoadingPlanSaveResponse\022\'\n\016re"
           + "sponseStatus\030\001 \001(\0132\017.ResponseStatus\"/\n\026L"
           + "oadingSequenceRequest\022\025\n\rloadingInfoId\030\001"
-          + " \001(\003\"~\n\024LoadingSequenceReply\022\021\n\tstartDat"
-          + "e\030\001 \001(\t\022*\n\020loadingSequences\030\002 \003(\0132\020.Load"
-          + "ingSequence\022\'\n\016responseStatus\030\003 \001(\0132\017.Re"
-          + "sponseStatusB+\n\'com.cpdss.common.generat"
-          + "ed.loading_planP\000b\006proto3"
+          + " \001(\003\"\220\001\n\024LoadingSequenceReply\022\021\n\tstartDa"
+          + "te\030\001 \001(\t\022\020\n\010interval\030\002 \001(\005\022*\n\020loadingSeq"
+          + "uences\030\003 \003(\0132\020.LoadingSequence\022\'\n\016respon"
+          + "seStatus\030\004 \001(\0132\017.ResponseStatusB+\n\'com.c"
+          + "pdss.common.generated.loading_planP\000b\006pr"
+          + "oto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -72242,7 +72314,7 @@ public final class LoadingPlanModels {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingSequenceReply_descriptor,
             new java.lang.String[] {
-              "StartDate", "LoadingSequences", "ResponseStatus",
+              "StartDate", "Interval", "LoadingSequences", "ResponseStatus",
             });
     com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.LoadableStudy.getDescriptor();

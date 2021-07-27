@@ -38,7 +38,7 @@ public class LoadingPlanBuilderService {
     loadingSequence.setEndTime(sequence.getEndTime());
     loadingSequence.setIsActive(true);
     loadingSequence.setLoadingInformation(loadingInformation);
-    loadingSequence.setPortXId(sequence.getPortId());
+    loadingSequence.setPortXId(loadingInformation.getPortXId());
     loadingSequence.setSequenceNumber(sequence.getSequenceNumber());
     loadingSequence.setStageName(sequence.getStageName());
     loadingSequence.setStartTime(sequence.getStartTime());
@@ -178,6 +178,8 @@ public class LoadingPlanBuilderService {
         StringUtils.isEmpty(loadingPlanStabilityParameters.getDraft())
             ? null
             : new BigDecimal(loadingPlanStabilityParameters.getDraft()));
+    parameters.setLoadingPlanPortWiseDetails(loadingPlanPortWiseDetails);
+    parameters.setIsActive(true);
   }
 
   public void buildCargoLoadingRate(
@@ -296,5 +298,6 @@ public class LoadingPlanBuilderService {
             ? null
             : new BigDecimal(pumpOperation.getRate()));
     ballastOperation.setStartTime(pumpOperation.getStartTime());
+    ballastOperation.setIsActive(true);
   }
 }

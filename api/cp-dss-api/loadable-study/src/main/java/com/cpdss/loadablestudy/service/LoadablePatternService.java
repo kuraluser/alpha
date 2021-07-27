@@ -15,7 +15,6 @@ import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -208,13 +207,9 @@ public class LoadablePatternService {
       loadablePlanService.buildLoadablePlanPortWiseDetails(
           loadablePatternOpt.get(), loadabalePatternValidateRequest);
       ObjectMapper mapper = new ObjectMapper();
-      mapper.setSerializationInclusion(Include.NON_EMPTY);
-      mapper.setDefaultPropertyInclusion(Include.NON_EMPTY);
-//      builder.setLoadablePatternDetails(
-//          mapper.writeValueAsString(
-//              loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
-      System.out.println(mapper.writeValueAsString(
-    		  loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
+      builder.setLoadablePatternDetails(
+          mapper.writeValueAsString(
+              loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
       builder.setLoadableStudyId(loadablePatternOpt.get().getLoadableStudy().getId());
       builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } else throw new Exception("Cannot find loadable pattern");

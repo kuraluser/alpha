@@ -4,9 +4,8 @@ package com.cpdss.gateway.domain.loadingplan.sequence;
 import lombok.Data;
 
 @Data
-public class PumpCategory {
+public class CargoValve {
 
-  private Long id;
-  private String pumpNo;
-  private String pumpType;
+  private String time;
+  private String operation;
 }

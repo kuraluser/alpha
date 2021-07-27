@@ -77,7 +77,7 @@ public class LoadingSequenceService {
 
     String startDate = this.getStartDate(loadingInfoOpt.get().getPortRotationXId());
     builder.setStartDate(startDate);
-
+    builder.setInterval(loadingInfoOpt.get().getStageOffset().getStageOffsetVal());
     List<LoadingSequence> loadingSequences =
         loadingSequenceRepository.findByLoadingInformationAndIsActiveOrderBySequenceNumber(
             loadingInfoOpt.get(), true);

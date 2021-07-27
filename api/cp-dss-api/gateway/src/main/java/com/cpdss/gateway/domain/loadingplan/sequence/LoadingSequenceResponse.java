@@ -1,14 +1,10 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan.sequence;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
+import java.util.Date;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -16,9 +12,11 @@ import lombok.Data;
 public class LoadingSequenceResponse {
 
   private Date minXAxisValue;
+  private Long maxXAxisValue;
+  private Integer interval;
   private List<Cargo> cargos;
   private List<Ballast> ballasts;
-  private List<BallastPump> gravity;
+  private BallastPump gravity;
   private List<BallastPump> ballastPumps;
   private List<CargoLoadingRate> cargoLoadingRates;
   private List<FlowRate> flowRates;

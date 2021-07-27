@@ -492,6 +492,7 @@ message LoadingSequenceRequest {
 
 message LoadingSequenceReply {
   string startDate = 1;
-  repeated LoadingSequence loadingSequences = 2;
-  ResponseStatus responseStatus = 3;
+  int32 interval = 2;
+  repeated LoadingSequence loadingSequences = 3;
+  ResponseStatus responseStatus = 4;
 }

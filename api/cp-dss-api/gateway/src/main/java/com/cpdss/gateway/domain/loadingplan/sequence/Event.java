@@ -1,12 +1,12 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan.sequence;
 
+import java.util.List;
 import lombok.Data;
 
 @Data
-public class PumpCategory {
+public class Event {
 
-  private Long id;
-  private String pumpNo;
-  private String pumpType;
+  private Long cargoNominationId;
+  private List<Sequence> sequence;
 }

@@ -290,6 +290,30 @@ public class LoadingPlanAlgoService {
         loadingSequence -> {
           log.info("Deleting Loading Sequence {}", loadingSequence.getId());
           loadingSequenceRepository.deleteById(loadingSequence.getId());
+          ballastOperationRepository.deleteByLoadingSequence(loadingSequence);
+          cargoLoadingRateRepository.deleteByLoadingSequence(loadingSequence);
+          deballastingRateRepository.deleteByLoadingSequence(loadingSequence);
+          deleteLoadingPlanPortWiseDetailsByLoadingSequence(loadingSequence);
+        });
+  }
+
+  private void deleteLoadingPlanPortWiseDetailsByLoadingSequence(
+      com.cpdss.loadingplan.entity.LoadingSequence loadingSequence) {
+    List<com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails> oldPortWiseDetails =
+        loadingPlanPortWiseDetailsRepository.findByLoadingSequenceAndIsActiveTrueOrderById(
+            loadingSequence);
+    oldPortWiseDetails.forEach(
+        loadingPlanPortWiseDetails -> {
+          loadingPlanPortWiseDetailsRepository.deleteById(loadingPlanPortWiseDetails.getId());
+          deballastingRateRepository.deleteByLoadingPlanPortWiseDetails(loadingPlanPortWiseDetails);
+          loadingPlanBallastDetailsRepository.deleteByLoadingPlanPortWiseDetails(
+              loadingPlanPortWiseDetails);
+          loadingPlanRobDetailsRepository.deleteByLoadingPlanPortWiseDetails(
+              loadingPlanPortWiseDetails);
+          loadingPlanStabilityParametersRepository.deleteByLoadingPlanPortWiseDetails(
+              loadingPlanPortWiseDetails);
+          loadingPlanStowageDetailsRepository.deleteByLoadingPlanPortWiseDetails(
+              loadingPlanPortWiseDetails);
         });
   }
 

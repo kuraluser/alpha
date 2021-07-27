@@ -6,11 +6,14 @@ import static com.cpdss.gateway.common.GatewayConstants.LOADING_RULE_MASTER_ID;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.RuleRequest;
@@ -28,10 +31,13 @@ import com.cpdss.gateway.domain.loadingplan.LoadingRates;
 import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
 import com.cpdss.gateway.domain.loadingplan.LoadingStages;
 import com.cpdss.gateway.domain.loadingplan.ToppingOffSequence;
+import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
+import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
+import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.service.loadingplan.LoadingSequenceService;
@@ -57,6 +63,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   @Autowired VesselInfoService vesselInfoService;
 
   @Autowired LoadingSequenceService loadingSequenceService;
+
+  @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
 
   /**
    * Port Rotation From Loading Plan DB
@@ -265,5 +273,21 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     LoadingSequenceResponse response = new LoadingSequenceResponse();
     loadingSequenceService.buildLoadingSequence(vesselId, reply, response);
     return response;
+  }
+
+  @Override
+  public LoadingPlanAlgoResponse saveLoadingPlan(
+      Long vesselId, Long voyageId, Long infoId, LoadingPlanAlgoRequest loadingPlanAlgoRequest)
+      throws GenericServiceException {
+    LoadingPlanAlgoResponse algoResponse = new LoadingPlanAlgoResponse();
+    LoadingPlanSaveRequest.Builder builder = LoadingPlanSaveRequest.newBuilder();
+    loadingSequenceService.buildLoadingPlanSaveRequest(loadingPlanAlgoRequest, infoId, builder);
+    LoadingPlanSaveResponse response = loadingPlanGrpcService.saveLoadingPlan(builder.build());
+    if (response.getResponseStatus().getStatus().equals(SUCCESS)) {
+      algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
+    } else {
+      algoResponse.setResponseStatus(new CommonSuccessResponse(GatewayConstants.FAILED, ""));
+    }
+    return algoResponse;
   }
 }
