@@ -363,7 +363,7 @@ public class LoadablePatternService {
               AtomicInteger displayOrder = new AtomicInteger(0);
               saveLoadableQuantityCommingleCargoPortwiseDetails(
                   lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern, displayOrder);
-              saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
+              //saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);//Coe added for UAT no need to persist in stabilityParameter table
               saveLoadablePlanStowageDetails(loadablePattern, lpd, displayOrder);
               saveLoadablePlanBallastDetails(loadablePattern, lpd);
               saveStabilityParameterForNonLodicator(
@@ -1069,7 +1069,7 @@ public class LoadablePatternService {
           LOADABLE_STUDY_REQUEST,
           objectMapper.writeValueAsString(loadableStudy));
       EnvoyWriter.WriterReply ewReply =
-          communicationService.passRequestPayloadToEnvoyWriter(loadableStudy);
+          communicationService.passRequestPayloadToEnvoyWriter(objectMapper.writeValueAsString(loadableStudy),loadableStudy.getVesselId(), MessageTypes.LOADABLESTUDY.getMessageType());
       if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
         LoadableStudyCommunicationStatus lsCommunicationStatus = new LoadableStudyCommunicationStatus();
         if(ewReply.getMessageId() != null){
@@ -1197,7 +1197,7 @@ public class LoadablePatternService {
 
             if (!patternStatus.isEmpty()) {
               if (stowageDetailsTempRepository
-                      .findByLoadablePatternAndIsActive(loadablePattern, true)
+                      .findByLoadablePattern_idAndIsActive(loadablePattern.getId(), true)
                       .isEmpty()
                   || VALIDATED_CONDITIONS.contains(
                       loadablePatternBuilder.getLoadablePatternStatusId())) {
@@ -1205,7 +1205,7 @@ public class LoadablePatternService {
               }
             } else {
               if (stowageDetailsTempRepository
-                  .findByLoadablePatternAndIsActive(loadablePattern, true)
+                  .findByLoadablePattern_idAndIsActive(loadablePattern.getId(), true)
                   .isEmpty()) {
                 loadablePatternBuilder.setValidated(true);
               }
@@ -1608,14 +1608,14 @@ public class LoadablePatternService {
 
       if (!patternStatus.isEmpty()) {
         if (stowageDetailsTempRepository
-                .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
+                .findByLoadablePattern_idAndIsActive(loadablePatternOpt.get().getId(), true)
                 .isEmpty()
             || VALIDATED_CONDITIONS.contains(replyBuilder.getLoadablePatternStatusId())) {
           replyBuilder.setValidated(true);
         }
       } else {
         if (stowageDetailsTempRepository
-            .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
+            .findByLoadablePattern_idAndIsActive(loadablePatternOpt.get().getId(), true)
             .isEmpty()) {
           replyBuilder.setValidated(true);
         }

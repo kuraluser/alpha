@@ -55,6 +55,6 @@ public interface LoadablePlanStowageDetailsTempRepository
   public LoadablePlanStowageDetailsTemp findByLoadablePlanCommingleDetailsAndIsActive(
       LoadablePlanCommingleDetails commingleDetails, boolean isActive);
 
-  public List<LoadablePlanStowageDetailsTemp> findByLoadablePatternAndIsActive(
-      LoadablePattern loadablePattern, boolean isActive);
+  public List<LoadablePlanStowageDetailsTemp> findByLoadablePattern_idAndIsActive(
+      Long loadablePatternId, boolean isActive);
 }

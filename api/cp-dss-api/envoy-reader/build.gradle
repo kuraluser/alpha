@@ -1,6 +1,7 @@
 ext{
     grpcPort = System.getenv('GRPC_PORT') ?: ""
 	salt = System.getenv('SALT') ?: ""
+    cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
 }
 
 appConfig {
@@ -21,7 +22,7 @@ docker {
       replicas = 1
       rollbackOnUpdateFailure = true
     }
-    environment = ['GRPC_PORT': grpcPort, 'SALT': salt]
+    environment = ['GRPC_PORT': grpcPort, 'SALT': salt,'CPDSS_BUILD_ENV': cpdssBuildEnv]
   }
 }
 

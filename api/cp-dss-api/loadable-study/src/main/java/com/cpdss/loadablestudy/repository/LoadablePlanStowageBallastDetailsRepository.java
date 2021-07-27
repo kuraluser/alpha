@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
+import com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
 import java.util.List;
 import java.util.Set;
@@ -42,4 +43,8 @@ public interface LoadablePlanStowageBallastDetailsRepository
   @Modifying
   @Query("UPDATE LoadablePlanStowageBallastDetails SET isActive = ?1 WHERE loadablePatternId = ?2")
   public void deleteLoadablePlanStowageBallastDetails(Boolean isActive, Long loadablePatternId);
+
+  @Query(
+          "FROM LoadablePlanStowageBallastDetails lp WHERE lp.loadablePatternId = ?1 AND lp.portXId = ?2 and lp.isActive = true")
+  List<LoadablePlanStowageBallastDetails> findAllByLoadablePatternIdAndPortXId(Long var1, Long var2);
 }

@@ -150,6 +150,8 @@ public class LoadicatorService {
               : new BigDecimal(stabilityParameter.getShearForce()));
       synopticalTableLoadicatorData.setActive(true);
       synopticalTableLoadicatorData.setSynopticalTable(synData.get());
+      synopticalTableLoadicatorData.setPortId(lsPortRotOption.getPortXId());
+      synopticalTableLoadicatorData.setOperationId(lsPortRotOption.getOperation().getId());
       synopticalTableLoadicatorDataRepository.save(synopticalTableLoadicatorData);
     }
   }

@@ -45,6 +45,9 @@ public class EnvoyReaderService {
   @Value("${cpdss.communucation.ship.reader.url}")
   private String downloadShipUrl;
 
+  @Value("${cpdss.build.env}")
+  private String env;
+
   public static final String FILE_PREFIX = "temp";
   public static final String FILE_SUFFIX = ".zip";
   private static final String SUCCESS = "SUCCESS";
@@ -148,7 +151,7 @@ public class EnvoyReaderService {
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
         .append(
-            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
+                env.equals("ship")
                 ? downloadShoreUrl
                 : downloadShipUrl)
         .append(separator)

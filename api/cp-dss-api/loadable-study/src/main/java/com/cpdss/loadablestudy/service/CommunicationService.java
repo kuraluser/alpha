@@ -15,9 +15,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
 import com.cpdss.loadablestudy.repository.LoadableStudyCommunicationStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import java.io.File;
@@ -256,25 +254,16 @@ public class CommunicationService {
   }
 
   public EnvoyWriter.WriterReply passRequestPayloadToEnvoyWriter(
-      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy)
-      throws GenericServiceException, IOException {
-    ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-    String loadableStudyJson = null;
-    try {
-      VesselInfo.VesselDetail vesselReply =
-          this.getVesselDetailsForEnvoy(loadableStudy.getVesselId());
-      loadableStudyJson = ow.writeValueAsString(loadableStudy);
-      EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
-          EnvoyWriter.EnvoyWriterRequest.newBuilder();
-      writerRequest.setJsonPayload(loadableStudyJson);
-      writerRequest.setClientId(vesselReply.getName());
-      writerRequest.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
-      writerRequest.setImoNumber(vesselReply.getImoNumber());
-      return this.envoyWriterService.getCommunicationServer(writerRequest.build());
-
-    } catch (JsonProcessingException e) {
-      log.error("Exception when when calling EnvoyWriter", e);
-    }
-    return null;
+          String requestJson, Long VesselId, String messageType)
+      throws GenericServiceException {
+    VesselInfo.VesselDetail vesselReply =
+        this.getVesselDetailsForEnvoy(VesselId);
+    EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
+        EnvoyWriter.EnvoyWriterRequest.newBuilder();
+    writerRequest.setJsonPayload(requestJson);
+    writerRequest.setClientId(vesselReply.getName());
+    writerRequest.setMessageType(messageType);
+    writerRequest.setImoNumber(vesselReply.getImoNumber());
+    return this.envoyWriterService.getCommunicationServer(writerRequest.build());
   }
 }

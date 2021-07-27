@@ -45,6 +45,8 @@ public class EnvoyWriterService {
   @Value("${cpdss.communucation.shore.writer.url}")
   private String writerShoreUrl;
 
+  @Value("${cpdss.build.env}")
+  private String env;
   @Autowired private SequenceNumberRepository sequenceNumberRepository;
   @Autowired private RestTemplate restTemplate;
 
@@ -187,7 +189,7 @@ public class EnvoyWriterService {
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
         .append(
-            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
+                env.equals("ship")
                 ? writerShipUrl
                 : writerShoreUrl)
         .append(separator)
@@ -196,11 +198,11 @@ public class EnvoyWriterService {
         .append(request.getClientId())
         .append(separator)
         .append(
-            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
+                env.equals("ship")
                 ? ""
                 : request.getImoNumber())
         .append(
-            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
+                env.equals("ship")
                 ? ""
                 : separator)
         .append(request.getMessageType())
@@ -243,7 +245,7 @@ public class EnvoyWriterService {
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
         .append(
-            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
+                env.equals("ship")
                 ? writerShipUrl
                 : writerShoreUrl)
         .append(separator)
