@@ -11,10 +11,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.entity.*;
-import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
+import com.cpdss.loadingplan.repository.*;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +29,13 @@ public class LoadingPlanService {
   @Autowired LoadablePlanCommingleDetailsService loadablePlanCommingleDetailsService;
   @Autowired LoadablePlanQuantityService loadablePlanQuantityService;
   @Autowired LoadablePlanStowageDetailsService loadablePlanStowageDetailsService;
+  @Autowired PortLoadingPlanBallastDetailsRepository plpBallastDetailsRepository;
+  @Autowired PortLoadingPlanStowageDetailsRepository plpStowageDetailsRepository;
+  @Autowired PortLoadingPlanRobDetailsRepository plpRobDetailsRepository;
+  @Autowired PortLoadingPlanStabilityParametersRepository plpStabilityParametersRepository;
+  @Autowired LoadingInformationBuilderService informationBuilderService;
+  @Autowired LoadingBerthDetailsRepository berthDetailsRepository;
+  @Autowired CargoToppingOffSequenceRepository cargoToppingOffSequenceRepository;
 
   /**
    * @param request
@@ -84,21 +88,46 @@ public class LoadingPlanService {
     }
   }
 
-  @Autowired PortLoadingPlanBallastDetailsRepository plpBallastDetailsRepository;
-
-  @Autowired PortLoadingPlanStowageDetailsRepository plpStowageDetailsRepository;
-
-  @Autowired PortLoadingPlanRobDetailsRepository plpRobDetailsRepository;
-
-  @Autowired PortLoadingPlanStabilityParametersRepository plpStabilityParametersRepository;
-
   public void getLoadingPlan(
       LoadableStudy.LoadingPlanIdRequest request,
       LoadingPlanModels.LoadingPlanReply.Builder builder)
       throws GenericServiceException {
+
+    LoadingPlanModels.LoadingPlanReply.Builder masterBuilder =
+        LoadingPlanModels.LoadingPlanReply.newBuilder();
     if (request.getId() > 0) {
       var var1 = loadingInformationService.getLoadingInformation(request.getId());
       if (var1.isPresent()) {
+
+        // <---Loading Information Start-->
+        LoadingPlanModels.LoadingInformation.Builder loadingInformation =
+            LoadingPlanModels.LoadingInformation.newBuilder();
+
+        // Loading Rate From Loading Info
+        LoadingPlanModels.LoadingRates rates =
+            this.informationBuilderService.buildLoadingRateMessage(var1.get());
+        loadingInformation.setLoadingRate(rates);
+
+        // Set Saved Berth Data
+        List<LoadingBerthDetail> list1 =
+            this.berthDetailsRepository.findAllByLoadingInformationAndIsActiveTrue(
+                var1.orElse(null));
+        List<LoadingPlanModels.LoadingBerths> berths =
+            this.informationBuilderService.buildLoadingBerthsMessage(list1);
+        loadingInformation.addAllLoadingBerths(berths);
+
+        // Topping Off Sequence
+        List<CargoToppingOffSequence> list2 =
+            this.cargoToppingOffSequenceRepository.findAllByLoadingInformationAndIsActiveTrue(
+                var1.orElse(null));
+        List<LoadingPlanModels.LoadingToppingOff> toppingOff =
+            this.informationBuilderService.buildToppingOffMessage(list2);
+        loadingInformation.addAllToppingOffSequence(toppingOff);
+        masterBuilder.setLoadingInformation(loadingInformation.build());
+
+        // <---Loading Information End-->
+
+        // <---Cargo Details Start-->
         List<PortLoadingPlanBallastDetails> plpBallastList =
             plpBallastDetailsRepository.findByLoadingInformationAndIsActive(var1.get(), true);
         List<PortLoadingPlanStowageDetails> plpStowageList =
@@ -107,6 +136,8 @@ public class LoadingPlanService {
             plpRobDetailsRepository.findByLoadingInformationAndIsActive(var1.get(), true);
         List<PortLoadingPlanStabilityParameters> plpStabilityList =
             plpStabilityParametersRepository.findByLoadingInformationAndIsActive(var1.get(), true);
+
+        // <---Loading Information End-->
       }
     }
     log.error("Failed to fetch Loading Plan, Loading info Id is 0");

@@ -242,4 +242,114 @@ public class LoadingInformationBuilderService {
     }
     return target;
   }
+
+  public List<LoadingPlanTankDetails> buildLoadingPlanTankBallastMessage(
+      List<PortLoadingPlanBallastDetails> list) {
+    log.info("Loading Plan, Ballast Builder");
+    List<LoadingPlanTankDetails> response = new ArrayList<>();
+    for (PortLoadingPlanBallastDetails var1 : list) {
+      response.add(
+          this.buildLoadingPlanTankBuilder(
+              null,
+              null,
+              null,
+              var1.getQuantity(),
+              var1.getTankXId(),
+              null,
+              var1.getQuantityM3(),
+              var1.getSounding(),
+              null));
+    }
+    return response;
+  }
+
+  public List<LoadingPlanTankDetails> buildLoadingPlanTankStowageMessage(
+      List<PortLoadingPlanStowageDetails> list) {
+    log.info("Loading Plan, Stowage Builder");
+    List<LoadingPlanTankDetails> response = new ArrayList<>();
+    for (PortLoadingPlanStowageDetails var1 : list) {
+      response.add(
+          this.buildLoadingPlanTankBuilder(
+              var1.getApi(),
+              var1.getTemperature(),
+              var1.getCargoNominationXId(),
+              var1.getQuantity(),
+              var1.getTankXId(),
+              var1.getUllage(),
+              var1.getQuantityM3(),
+              null,
+              null));
+    }
+    return response;
+  }
+
+  public List<LoadingPlanTankDetails> buildLoadingPlanTankRobMessage(
+      List<PortLoadingPlanRobDetails> list) {
+    log.info("Loading Plan, Rob Builder");
+    List<LoadingPlanTankDetails> response = new ArrayList<>();
+    for (PortLoadingPlanRobDetails var1 : list) {
+      response.add(
+          this.buildLoadingPlanTankBuilder(
+              null,
+              null,
+              null,
+              var1.getQuantity(),
+              var1.getTankXId(),
+              null,
+              var1.getQuantityM3(),
+              null,
+              null));
+    }
+    return response;
+  }
+
+  public List<LoadingPlanModels.LoadingPlanStabilityParameters>
+      buildLoadingPlanTankStabilityMessage(List<PortLoadingPlanStabilityParameters> list) {
+    log.info("Loading Plan, Rob Builder");
+    List<LoadingPlanModels.LoadingPlanStabilityParameters> response = new ArrayList<>();
+    for (PortLoadingPlanStabilityParameters var1 : list) {
+      response.add(
+          this.buildLoadingPlanStabilityBuilder(
+              var1.getDraft(),
+              null,
+              var1.getBendingMoment(),
+              var1.getShearingForce(),
+              var1.getConditionType()));
+    }
+    return response;
+  }
+
+  private LoadingPlanModels.LoadingPlanStabilityParameters buildLoadingPlanStabilityBuilder(
+      BigDecimal draft, BigDecimal trim, BigDecimal bm, BigDecimal sf, Integer type) {
+    return LoadingPlanModels.LoadingPlanStabilityParameters.newBuilder()
+        .setDraft(draft != null ? draft.toString() : "")
+        .setTrim(trim != null ? trim.toString() : "")
+        .setBm(bm != null ? bm.toString() : "")
+        .setSf(sf != null ? sf.toString() : "")
+        .setConditionType(type)
+        .build();
+  }
+
+  private LoadingPlanTankDetails buildLoadingPlanTankBuilder(
+      BigDecimal api,
+      BigDecimal temp,
+      Long nominationId,
+      BigDecimal quantity,
+      Long tankId,
+      BigDecimal ullage,
+      BigDecimal quantityM3,
+      BigDecimal sounding,
+      Integer conditionType) {
+    return LoadingPlanTankDetails.newBuilder()
+        .setApi(api != null ? api.toString() : "")
+        .setTemperature(temp != null ? temp.toString() : "")
+        .setCargoNominationId(nominationId)
+        .setQuantity(quantity != null ? quantity.toString() : "")
+        .setTankId(tankId)
+        .setUllage(ullage != null ? ullage.toString() : "")
+        .setQuantityM3(quantityM3 != null ? quantityM3.toString() : "")
+        .setSounding(sounding != null ? sounding.toString() : "")
+        .setConditionType(conditionType)
+        .build();
+  }
 }
