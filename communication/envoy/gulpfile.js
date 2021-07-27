@@ -114,7 +114,7 @@ function generateRSAKeys(cb) {
 }
 //Copy files
 function copyFiles(cb) {
-  copyfiles(['-f', 'Dockerfile', './nginx-conf/*.conf', './dist/apps/'], () => {
+  copyfiles(['-f', 'Dockerfile', 'supervisord.conf', './nginx-conf/*.conf', './dist/apps/'], () => {
     cb();
   });
 }
