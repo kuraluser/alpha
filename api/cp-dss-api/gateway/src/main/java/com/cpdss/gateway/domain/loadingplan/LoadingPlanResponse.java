@@ -22,4 +22,8 @@ public class LoadingPlanResponse {
   private List<LoadingPlanRobDetails> planRobDetails;
   private List<LoadingPlanStabilityParam> planStabilityParams;
   private LoadingInformation loadingInformation;
+
+  public LoadingPlanResponse(CommonSuccessResponse responseStatus) {
+    this.responseStatus = responseStatus;
+  }
 }
