@@ -42,44 +42,38 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Log4j2
 @Validated
 @RestController
-@RequestMapping({"/api/cloud", "/api/ship"})
+@RequestMapping({ "/api/cloud", "/api/ship" })
 public class DischargeStudyController {
 
-  private static final String CORRELATION_ID_HEADER = "correlationId";
+	private static final String CORRELATION_ID_HEADER = "correlationId";
 
-  @Autowired private DischargeStudyService dischargeStudyService;
+	@Autowired
+	private DischargeStudyService dischargeStudyService;
 
-  /**
-   * @param vesselId
-   * @param voyageId
-   * @param loadableStudiesId
-   * @param headers
-   * @throws CommonRestException void
-   */
-  @PostMapping(
-      "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudiesId}/generate-discharge-patterns")
-  public AlgoPatternResponse generateDischargePatterns(
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          Long loadableStudiesId,
-      @RequestHeader HttpHeaders headers)
-      throws CommonRestException {
-    try {
-      log.info("call Discharge study ALGO. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
-      return dischargeStudyService.generateDischargePatterns(vesselId,voyageId,
-          loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
-    } catch (GenericServiceException e) {
-      log.error("GenericServiceException in calling ALGO ", e);
-      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
-    } catch (Exception e) {
-      log.error("Error in calling ALGO ", e);
-      throw new CommonRestException(
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          headers,
-          HttpStatusCode.SERVICE_UNAVAILABLE,
-          e.getMessage(),
-          e);
-    }
-  }
+	/**
+	 * @param vesselId
+	 * @param voyageId
+	 * @param loadableStudiesId
+	 * @param headers
+	 * @throws CommonRestException void
+	 */
+	@PostMapping("/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudiesId}/generate-discharge-patterns")
+	public AlgoPatternResponse generateDischargePatterns(
+			@PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+			@PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+			@PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long dischargeStudiesId,
+			@RequestHeader HttpHeaders headers) throws CommonRestException {
+		try {
+			log.info("call Discharge study ALGO. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+			return dischargeStudyService.generateDischargePatterns(vesselId, voyageId, dischargeStudiesId,
+					headers.getFirst(CORRELATION_ID_HEADER));
+		} catch (GenericServiceException e) {
+			log.error("GenericServiceException in calling ALGO ", e);
+			throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+		} catch (Exception e) {
+			log.error("Error in calling ALGO ", e);
+			throw new CommonRestException(CommonErrorCodes.E_GEN_INTERNAL_ERR, headers,
+					HttpStatusCode.SERVICE_UNAVAILABLE, e.getMessage(), e);
+		}
+	}
 }
