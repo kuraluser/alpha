@@ -2158,4 +2158,35 @@ public class LoadableStudyController {
           e);
     }
   }
+
+  /**
+   * To retrieve rule against loadable study
+   *
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value = "/loading/ullage-bill-update",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public UllageBillReply saveRulesForLoadableStudy(
+      @RequestHeader HttpHeaders headers, @RequestBody UllageBillRequest inputData)
+      throws CommonRestException {
+    try {
+      return this.loadableStudyService.saveRulesForLoadableStudy(
+          headers.getFirst(CORRELATION_ID_HEADER), inputData);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when update bill rules", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when update bill rules", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
 }
