@@ -12,14 +12,12 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.*;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsSaveRequest;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsSaveResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsStatus;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsUpdateRequest;
+import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.service.AlgoErrorService;
 import com.cpdss.gateway.service.LoadableStudyCargoService;
 import com.cpdss.gateway.service.SyncRedisMasterService;
+import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
+import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingInstructionService;
 import com.cpdss.gateway.service.redis.RedisMasterSyncService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,7 +44,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @MockitoSettings
 @WebMvcTest(controllers = LoadingPlanController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = {GatewayTestConfiguration.class})
+@ContextConfiguration(classes = {GatewayTestConfiguration.class, LoadingInformationService.class})
 @TestPropertySource(properties = {"cpdss.build.env=none"})
 class LoadingPlanControllerTest {
 
@@ -63,6 +61,8 @@ class LoadingPlanControllerTest {
   @MockBean private VoyageStatusResponse voyageStatusResponse;
 
   @MockBean private LoadableStudyCargoService loadableStudyCargoService;
+
+  @MockBean private LoadingPlanService loadingPlanService;
 
   @MockBean AlgoErrorService algoErrorService;
 
@@ -100,7 +100,7 @@ class LoadingPlanControllerTest {
   private static final BigDecimal TEST_BIGDECIMAL_VALUE = new BigDecimal(100);
   // API URLS
   private static final String CLOUD_API_URL_PREFIX = "/api/cloud";
-  private static final String SHIP_API_URL_PREFIX = "/api/cloud";
+  private static final String SHIP_API_URL_PREFIX = "/api/ship";
 
   private static final String LOADING_INSTRUCTION_LIST_API_URL =
       "/vessels/{vesselId}/loading-info/{infoId}/port-rotation/{portRotationId}";
@@ -110,6 +110,9 @@ class LoadingPlanControllerTest {
       "/update-instruction/vessels/{vesselId}/loading-info/{infoId}/port-rotation/{portRotationId}";
   private static final String LOADING_INSTRUCTION_DELETE_API_URL =
       "/delete-instruction/vessels/{vesselId}/loading-info/{infoId}/port-rotation/{portRotationId}";
+
+  private static final String LOADING_GET_PLAN_API_URL =
+      "/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/loading-plan/{portRotationId}";
 
   private static final String AUTHORIZATION_HEADER = "Authorization";
 
@@ -433,5 +436,21 @@ class LoadingPlanControllerTest {
         "service exception",
         CommonErrorCodes.E_GEN_INTERNAL_ERR,
         HttpStatusCode.INTERNAL_SERVER_ERROR);
+  }
+
+  @ValueSource(
+      strings = {
+        CLOUD_API_URL_PREFIX + LOADING_GET_PLAN_API_URL,
+        SHIP_API_URL_PREFIX + LOADING_GET_PLAN_API_URL
+      })
+  @ParameterizedTest
+  public void getLoadingPlanTest(String url) throws Exception {
+    when(this.loadingPlanService.getLoadingPlan(anyLong(), anyLong(), anyLong(), anyLong()))
+        .thenReturn(new LoadingPlanResponse(new CommonSuccessResponse("SUCCESS", "")));
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(
+                url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_LOADING_INFO_ID, TEST_PORT_ROTATION_ID))
+        .andExpect(status().isOk());
   }
 }
