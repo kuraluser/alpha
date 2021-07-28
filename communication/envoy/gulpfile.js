@@ -18,7 +18,7 @@ let swarmServiceUpdateFailureAction = process.env
   ? process.env.SWARM_SERVICE_UPDATE_FAILURE_ACTION
   : 'rollback';
 let appName = argv.client ? 'client' : argv.server ? 'server' : '';
-let imageName = `${dockerRegistry}/${appName}:${tagName}`;
+let imageName = `${dockerRegistry}/cpdss-envoy-${appName}:${tagName}`;
 let contextPath = path.join(__dirname, '/dist/apps/');
 let hostPortArr = val[1].split(':');
 let host = hostPortArr[0];
@@ -114,7 +114,7 @@ function generateRSAKeys(cb) {
 }
 //Copy files
 function copyFiles(cb) {
-  copyfiles(['-f', 'Dockerfile', './nginx-conf/*.conf', './dist/apps/'], () => {
+  copyfiles(['-f', 'Dockerfile', 'supervisord.conf', './nginx-conf/*.conf', './dist/apps/'], () => {
     cb();
   });
 }
@@ -134,7 +134,7 @@ async function dockerize(cb) {
     let stream = await dockerClient.buildImage(
       {
         context: contextPath,
-        src: ['Dockerfile', appName, 'nginx-conf'],
+        src: ['Dockerfile', appName, 'nginx-conf', 'supervisord.conf'],
       },
       {
         t: imageName,

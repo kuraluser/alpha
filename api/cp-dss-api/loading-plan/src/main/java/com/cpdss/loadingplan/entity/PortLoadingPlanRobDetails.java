@@ -39,7 +39,7 @@ public class PortLoadingPlanRobDetails extends EntityDoc {
   @Column(name = "quantity_mt")
   private BigDecimal quantity;
 
-  @Column(name = "quantit_m3")
+  @Column(name = "quantity_m3")
   private BigDecimal quantityM3;
 
   @Column(name = "is_active")

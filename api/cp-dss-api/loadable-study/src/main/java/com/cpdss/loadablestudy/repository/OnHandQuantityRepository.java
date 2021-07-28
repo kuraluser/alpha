@@ -66,5 +66,4 @@ public interface OnHandQuantityRepository extends CommonCrudRepository<OnHandQua
 
   @Query("FROM OnHandQuantity OHQ where OHQ.loadableStudy.id = ?1 AND OHQ.isActive = true")
   public List<OnHandQuantity> findByDischargeStudyIdAndActive(Long dischargeStudyId);
-
 }

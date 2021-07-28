@@ -11,9 +11,8 @@ import lombok.Data;
 @Data
 public class CowDetail {
 
-	private Long id;
-	private Long type;
-	private Long percentage;
-	private String tanks;
-
+  private Long id;
+  private Long type;
+  private Long percentage;
+  private String tanks;
 }

@@ -59,6 +59,7 @@ import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
+import com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
@@ -1576,8 +1577,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     onBoardQuantityService.buildOnBoardQuantityDetails(
         loadableStudyOpt, loadableStudy, modelMapper);
     loadableStudyPortRotationService.buildportRotationDetails(loadableStudyOpt, loadableStudy);
-    loadableStudyRuleService.buildLoadableStudyRuleDetails(
-        loadableStudyOpt, loadableStudy, modelMapper);
+    loadableStudyRuleService.buildLoadableStudyRuleDetails(loadableStudyOpt, loadableStudy);
   }
 
   @Override
@@ -2847,6 +2847,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
     try {
       loadableStudyPortRotationService.getLoadableStudyShore(request, builder);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadableStudyPortRotationByPortRotationId(
+      PortRotationRequest request, StreamObserver<PortRotationDetailReply> responseObserver) {
+    PortRotationDetailReply.Builder builder = PortRotationDetailReply.newBuilder();
+    try {
+      loadableStudyPortRotationService.getPortRotationByPortRotationId(request, builder);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
       e.printStackTrace();
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());

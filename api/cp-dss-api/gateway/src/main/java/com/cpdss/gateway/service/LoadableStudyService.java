@@ -105,7 +105,7 @@ import com.cpdss.gateway.domain.keycloak.KeycloakUser;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
-import com.cpdss.gateway.utility.Utility;
+import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ProtocolStringList;
@@ -5801,7 +5801,7 @@ public class LoadableStudyService {
     loadableRuleRequestBuilder.setVesselId(vesselId);
     loadableRuleRequestBuilder.setSectionId(sectionId);
     loadableRuleRequestBuilder.setLoadableStudyId(loadableStudyId);
-    Utility.buildRuleListForSave(
+    RuleUtility.buildRuleListForSave(
         loadableRuleRequest, null, loadableRuleRequestBuilder, null, false, false);
     LoadableRuleReply loadableRuleReply =
         loadableStudyServiceBlockingStub.getOrSaveRulesForLoadableStudy(
@@ -5813,7 +5813,7 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(Integer.valueOf(loadableRuleReply.getResponseStatus().getCode())));
     }
     RuleResponse ruleResponse = new RuleResponse();
-    ruleResponse.setPlan(Utility.buildLoadableRulePlan(loadableRuleReply));
+    ruleResponse.setPlan(RuleUtility.buildLoadableRulePlan(loadableRuleReply));
     ruleResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return ruleResponse;

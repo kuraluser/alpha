@@ -63677,6 +63677,13 @@ public final class VesselInfo {
      * @return The isNoDefaultRule.
      */
     boolean getIsNoDefaultRule();
+
+    /**
+     * <code>bool isFetchEnabledRules = 5;</code>
+     *
+     * @return The isFetchEnabledRules.
+     */
+    boolean getIsFetchEnabledRules();
   }
   /** Protobuf type {@code VesselRuleRequest} */
   public static final class VesselRuleRequest extends com.google.protobuf.GeneratedMessageV3
@@ -63748,6 +63755,11 @@ public final class VesselInfo {
             case 32:
               {
                 isNoDefaultRule_ = input.readBool();
+                break;
+              }
+            case 40:
+              {
+                isFetchEnabledRules_ = input.readBool();
                 break;
               }
             default:
@@ -63843,6 +63855,17 @@ public final class VesselInfo {
       return isNoDefaultRule_;
     }
 
+    public static final int ISFETCHENABLEDRULES_FIELD_NUMBER = 5;
+    private boolean isFetchEnabledRules_;
+    /**
+     * <code>bool isFetchEnabledRules = 5;</code>
+     *
+     * @return The isFetchEnabledRules.
+     */
+    public boolean getIsFetchEnabledRules() {
+      return isFetchEnabledRules_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -63869,6 +63892,9 @@ public final class VesselInfo {
       if (isNoDefaultRule_ != false) {
         output.writeBool(4, isNoDefaultRule_);
       }
+      if (isFetchEnabledRules_ != false) {
+        output.writeBool(5, isFetchEnabledRules_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -63890,6 +63916,9 @@ public final class VesselInfo {
       if (isNoDefaultRule_ != false) {
         size += com.google.protobuf.CodedOutputStream.computeBoolSize(4, isNoDefaultRule_);
       }
+      if (isFetchEnabledRules_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(5, isFetchEnabledRules_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -63910,6 +63939,7 @@ public final class VesselInfo {
       if (getSectionId() != other.getSectionId()) return false;
       if (!getRulePlanList().equals(other.getRulePlanList())) return false;
       if (getIsNoDefaultRule() != other.getIsNoDefaultRule()) return false;
+      if (getIsFetchEnabledRules() != other.getIsFetchEnabledRules()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -63931,6 +63961,8 @@ public final class VesselInfo {
       }
       hash = (37 * hash) + ISNODEFAULTRULE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsNoDefaultRule());
+      hash = (37 * hash) + ISFETCHENABLEDRULES_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsFetchEnabledRules());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -64084,6 +64116,8 @@ public final class VesselInfo {
         }
         isNoDefaultRule_ = false;
 
+        isFetchEnabledRules_ = false;
+
         return this;
       }
 
@@ -64123,6 +64157,7 @@ public final class VesselInfo {
           result.rulePlan_ = rulePlanBuilder_.build();
         }
         result.isNoDefaultRule_ = isNoDefaultRule_;
+        result.isFetchEnabledRules_ = isFetchEnabledRules_;
         onBuilt();
         return result;
       }
@@ -64210,6 +64245,9 @@ public final class VesselInfo {
         }
         if (other.getIsNoDefaultRule() != false) {
           setIsNoDefaultRule(other.getIsNoDefaultRule());
+        }
+        if (other.getIsFetchEnabledRules() != false) {
+          setIsFetchEnabledRules(other.getIsFetchEnabledRules());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -64545,6 +64583,39 @@ public final class VesselInfo {
       public Builder clearIsNoDefaultRule() {
 
         isNoDefaultRule_ = false;
+        onChanged();
+        return this;
+      }
+
+      private boolean isFetchEnabledRules_;
+      /**
+       * <code>bool isFetchEnabledRules = 5;</code>
+       *
+       * @return The isFetchEnabledRules.
+       */
+      public boolean getIsFetchEnabledRules() {
+        return isFetchEnabledRules_;
+      }
+      /**
+       * <code>bool isFetchEnabledRules = 5;</code>
+       *
+       * @param value The isFetchEnabledRules to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsFetchEnabledRules(boolean value) {
+
+        isFetchEnabledRules_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isFetchEnabledRules = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsFetchEnabledRules() {
+
+        isFetchEnabledRules_ = false;
         onChanged();
         return this;
       }
@@ -75950,72 +76021,73 @@ public final class VesselInfo {
           + "\001(\t\"x\n\nVesselPump\022\n\n\002id\030\001 \001(\003\022\020\n\010vesselI"
           + "d\030\002 \001(\003\022\022\n\npumpTypeId\030\003 \001(\003\022\020\n\010pumpName\030"
           + "\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t\022\024\n\014pumpCapacity\030"
-          + "\006 \001(\t\"o\n\021VesselRuleRequest\022\020\n\010vesselId\030\001"
-          + " \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePlan\030\003 \003("
-          + "\0132\n.RulePlans\022\027\n\017isNoDefaultRule\030\004 \001(\010\"\347"
-          + "\001\n\017VesselRuleReply\022\'\n\016responseStatus\030\001 \001"
-          + "(\0132\017.ResponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n."
-          + "RulePlans\022)\n\017cargoTankMaster\030\003 \003(\0132\020.Car"
-          + "goTankMaster\0229\n\027ruleDropDownValueMaster\030"
-          + "\004 \003(\0132\030.RuleDropDownValueMaster\022\'\n\016ruleT"
-          + "ypeMaster\030\005 \003(\0132\017.RuleTypeMaster\"\260\001\n\030Ves"
-          + "selValveSequenceReply\022\'\n\016responseStatus\030"
-          + "\001 \001(\0132\017.ResponseStatus\0220\n\022vvSequenceEnti"
-          + "ties\030\002 \003(\0132\024.VesselValveSequence\0229\n\023vvEd"
-          + "ucationEntities\030\003 \003(\0132\034.VesselValveEduca"
-          + "tionProcess\"\255\004\n\023VesselValveSequence\022\n\n\002i"
-          + "d\030\001 \001(\003\022\025\n\risCommonValve\030\002 \001(\010\022\022\n\npipeli"
-          + "neId\030\003 \001(\005\022\025\n\rpipelineColor\030\004 \001(\t\022\024\n\014pip"
-          + "elineName\030\005 \001(\t\022\024\n\014pipelineType\030\006 \001(\t\022\026\n"
-          + "\016sequenceNumber\030\007 \001(\t\022\033\n\023sequenceOperati"
-          + "onId\030\010 \001(\005\022\035\n\025sequenceOperationName\030\t \001("
-          + "\t\022\026\n\016sequenceTypeId\030\n \001(\005\022\030\n\020sequenceTyp"
-          + "eName\030\013 \001(\t\022\037\n\027sequenceVesselMappingId\030\014"
-          + " \001(\005\022\025\n\rtankShortName\030\r \001(\t\022\025\n\rvalveCate"
-          + "gory\030\016 \001(\t\022\027\n\017valveCategoryId\030\017 \001(\005\022\023\n\013v"
-          + "alveNumber\030\020 \001(\t\022\021\n\tvalveSide\030\021 \001(\005\022\023\n\013v"
-          + "alveTypeId\030\022 \001(\005\022\025\n\rvalveTypeName\030\023 \001(\t\022"
-          + "\022\n\nvesselName\030\024 \001(\t\022\025\n\rvesselTankXid\030\025 \001"
-          + "(\005\022\034\n\024vesselValveMappingId\030\026 \001(\005\022\021\n\tvess"
-          + "elXid\030\027 \001(\003\"\261\001\n\033VesselValveEducationProc"
-          + "ess\022\n\n\002id\030\001 \001(\003\022\023\n\013eductorName\030\002 \001(\t\022\026\n\016"
-          + "sequenceNumber\030\003 \001(\005\022\020\n\010stepName\030\004 \001(\t\022\023"
-          + "\n\013valveNumber\030\005 \001(\t\022\021\n\teductorId\030\006 \001(\005\022\037"
-          + "\n\027eductionProcessMasterId\030\007 \001(\005\"+\n\027Loadi"
-          + "ngInfoRulesRequest\022\020\n\010vesselId\030\001 \001(\003\"W\n\025"
-          + "LoadingInfoRulesReply\022\025\n\005rules\030\001 \003(\0132\006.R"
-          + "ules\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseS"
-          + "tatus\"0\n\017CargoTankMaster\022\n\n\002id\030\001 \001(\003\022\021\n\t"
-          + "shortName\030\002 \001(\t\"L\n\027RuleDropDownValueMast"
-          + "er\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\022\026\n\016ruleTem"
-          + "plateId\030\003 \001(\003\".\n\016RuleTypeMaster\022\n\n\002id\030\001 "
-          + "\001(\003\022\020\n\010ruleType\030\002 \001(\t2\344\007\n\021VesselInfoServ"
-          + "ice\0228\n\026GetAllVesselsByCompany\022\016.VesselRe"
-          + "quest\032\014.VesselReply\"\000\0226\n\024GetVesselDetail"
-          + "sById\022\016.VesselRequest\032\014.VesselReply\"\000\0220\n"
-          + "\016GetVesselTanks\022\016.VesselRequest\032\014.Vessel"
-          + "Reply\"\000\0225\n\023GetVesselCargoTanks\022\016.VesselR"
-          + "equest\032\014.VesselReply\"\000\022A\n\027GetVesselDetai"
-          + "lsForAlgo\022\022.VesselAlgoRequest\032\020.VesselAl"
-          + "goReply\"\000\022C\n!GetVesselDetailForSynoptica"
-          + "lTable\022\016.VesselRequest\032\014.VesselReply\"\000\022;"
-          + "\n\031GetVesselDetailByVesselId\022\016.VesselRequ"
-          + "est\032\014.VesselReply\"\000\022A\n\025GetVesselInfoByPa"
-          + "ging\022\030.VesselRequestWithPaging\032\014.VesselR"
-          + "eply\"\000\022C\n\026GetVesselInfoBytankIds\022\022.Vesse"
-          + "lTankRequest\032\023.VesselTankResponse\"\000\022C\n\032G"
-          + "etDWTFromVesselByVesselId\022\021.VesselDWTReq"
-          + "uest\032\022.VesselDWTResponse\022@\n\027GetVesselInf"
-          + "oByVesselId\022\020.VesselIdRequest\032\021.VesselId"
-          + "Response\"\000\022D\n\030GetVesselPumpsByVesselId\022\020"
-          + ".VesselIdRequest\032\024.VesselPumpsResponse\"\000"
-          + "\022H\n\036GetRulesByVesselIdAndSectionId\022\022.Ves"
-          + "selRuleRequest\032\020.VesselRuleReply\"\000\022E\n\026Ge"
-          + "tVesselValveSequence\022\016.VesselRequest\032\031.V"
-          + "esselValveSequenceReply\"\000\022I\n\023GetLoadingI"
-          + "nfoRules\022\030.LoadingInfoRulesRequest\032\026.Loa"
-          + "dingInfoRulesReply\"\000B\036\n\032com.cpdss.common"
-          + ".generatedP\000b\006proto3"
+          + "\006 \001(\t\"\214\001\n\021VesselRuleRequest\022\020\n\010vesselId\030"
+          + "\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePlan\030\003 \003"
+          + "(\0132\n.RulePlans\022\027\n\017isNoDefaultRule\030\004 \001(\010\022"
+          + "\033\n\023isFetchEnabledRules\030\005 \001(\010\"\347\001\n\017VesselR"
+          + "uleReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
+          + "nseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.RulePlans\022"
+          + ")\n\017cargoTankMaster\030\003 \003(\0132\020.CargoTankMast"
+          + "er\0229\n\027ruleDropDownValueMaster\030\004 \003(\0132\030.Ru"
+          + "leDropDownValueMaster\022\'\n\016ruleTypeMaster\030"
+          + "\005 \003(\0132\017.RuleTypeMaster\"\260\001\n\030VesselValveSe"
+          + "quenceReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Re"
+          + "sponseStatus\0220\n\022vvSequenceEntities\030\002 \003(\013"
+          + "2\024.VesselValveSequence\0229\n\023vvEducationEnt"
+          + "ities\030\003 \003(\0132\034.VesselValveEducationProces"
+          + "s\"\255\004\n\023VesselValveSequence\022\n\n\002id\030\001 \001(\003\022\025\n"
+          + "\risCommonValve\030\002 \001(\010\022\022\n\npipelineId\030\003 \001(\005"
+          + "\022\025\n\rpipelineColor\030\004 \001(\t\022\024\n\014pipelineName\030"
+          + "\005 \001(\t\022\024\n\014pipelineType\030\006 \001(\t\022\026\n\016sequenceN"
+          + "umber\030\007 \001(\t\022\033\n\023sequenceOperationId\030\010 \001(\005"
+          + "\022\035\n\025sequenceOperationName\030\t \001(\t\022\026\n\016seque"
+          + "nceTypeId\030\n \001(\005\022\030\n\020sequenceTypeName\030\013 \001("
+          + "\t\022\037\n\027sequenceVesselMappingId\030\014 \001(\005\022\025\n\rta"
+          + "nkShortName\030\r \001(\t\022\025\n\rvalveCategory\030\016 \001(\t"
+          + "\022\027\n\017valveCategoryId\030\017 \001(\005\022\023\n\013valveNumber"
+          + "\030\020 \001(\t\022\021\n\tvalveSide\030\021 \001(\005\022\023\n\013valveTypeId"
+          + "\030\022 \001(\005\022\025\n\rvalveTypeName\030\023 \001(\t\022\022\n\nvesselN"
+          + "ame\030\024 \001(\t\022\025\n\rvesselTankXid\030\025 \001(\005\022\034\n\024vess"
+          + "elValveMappingId\030\026 \001(\005\022\021\n\tvesselXid\030\027 \001("
+          + "\003\"\261\001\n\033VesselValveEducationProcess\022\n\n\002id\030"
+          + "\001 \001(\003\022\023\n\013eductorName\030\002 \001(\t\022\026\n\016sequenceNu"
+          + "mber\030\003 \001(\005\022\020\n\010stepName\030\004 \001(\t\022\023\n\013valveNum"
+          + "ber\030\005 \001(\t\022\021\n\teductorId\030\006 \001(\005\022\037\n\027eduction"
+          + "ProcessMasterId\030\007 \001(\005\"+\n\027LoadingInfoRule"
+          + "sRequest\022\020\n\010vesselId\030\001 \001(\003\"W\n\025LoadingInf"
+          + "oRulesReply\022\025\n\005rules\030\001 \003(\0132\006.Rules\022\'\n\016re"
+          + "sponseStatus\030\002 \001(\0132\017.ResponseStatus\"0\n\017C"
+          + "argoTankMaster\022\n\n\002id\030\001 \001(\003\022\021\n\tshortName\030"
+          + "\002 \001(\t\"L\n\027RuleDropDownValueMaster\022\n\n\002id\030\001"
+          + " \001(\003\022\r\n\005value\030\002 \001(\t\022\026\n\016ruleTemplateId\030\003 "
+          + "\001(\003\".\n\016RuleTypeMaster\022\n\n\002id\030\001 \001(\003\022\020\n\010rul"
+          + "eType\030\002 \001(\t2\344\007\n\021VesselInfoService\0228\n\026Get"
+          + "AllVesselsByCompany\022\016.VesselRequest\032\014.Ve"
+          + "sselReply\"\000\0226\n\024GetVesselDetailsById\022\016.Ve"
+          + "sselRequest\032\014.VesselReply\"\000\0220\n\016GetVessel"
+          + "Tanks\022\016.VesselRequest\032\014.VesselReply\"\000\0225\n"
+          + "\023GetVesselCargoTanks\022\016.VesselRequest\032\014.V"
+          + "esselReply\"\000\022A\n\027GetVesselDetailsForAlgo\022"
+          + "\022.VesselAlgoRequest\032\020.VesselAlgoReply\"\000\022"
+          + "C\n!GetVesselDetailForSynopticalTable\022\016.V"
+          + "esselRequest\032\014.VesselReply\"\000\022;\n\031GetVesse"
+          + "lDetailByVesselId\022\016.VesselRequest\032\014.Vess"
+          + "elReply\"\000\022A\n\025GetVesselInfoByPaging\022\030.Ves"
+          + "selRequestWithPaging\032\014.VesselReply\"\000\022C\n\026"
+          + "GetVesselInfoBytankIds\022\022.VesselTankReque"
+          + "st\032\023.VesselTankResponse\"\000\022C\n\032GetDWTFromV"
+          + "esselByVesselId\022\021.VesselDWTRequest\032\022.Ves"
+          + "selDWTResponse\022@\n\027GetVesselInfoByVesselI"
+          + "d\022\020.VesselIdRequest\032\021.VesselIdResponse\"\000"
+          + "\022D\n\030GetVesselPumpsByVesselId\022\020.VesselIdR"
+          + "equest\032\024.VesselPumpsResponse\"\000\022H\n\036GetRul"
+          + "esByVesselIdAndSectionId\022\022.VesselRuleReq"
+          + "uest\032\020.VesselRuleReply\"\000\022E\n\026GetVesselVal"
+          + "veSequence\022\016.VesselRequest\032\031.VesselValve"
+          + "SequenceReply\"\000\022I\n\023GetLoadingInfoRules\022\030"
+          + ".LoadingInfoRulesRequest\032\026.LoadingInfoRu"
+          + "lesReply\"\000B\036\n\032com.cpdss.common.generated"
+          + "P\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -76500,7 +76572,7 @@ public final class VesselInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselRuleRequest_descriptor,
             new java.lang.String[] {
-              "VesselId", "SectionId", "RulePlan", "IsNoDefaultRule",
+              "VesselId", "SectionId", "RulePlan", "IsNoDefaultRule", "IsFetchEnabledRules",
             });
     internal_static_VesselRuleReply_descriptor = getDescriptor().getMessageTypes().get(42);
     internal_static_VesselRuleReply_fieldAccessorTable =

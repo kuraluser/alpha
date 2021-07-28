@@ -16,6 +16,7 @@ import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
 import com.cpdss.common.generated.VesselInfo.VesselRuleRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
+import com.cpdss.common.redis.CommonKeyValueStore;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -57,7 +58,7 @@ import com.cpdss.gateway.repository.RoleUserMappingRepository;
 import com.cpdss.gateway.repository.UserStatusRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.service.vesselinfo.VesselValveService;
-import com.cpdss.gateway.utility.Utility;
+import com.cpdss.gateway.utility.RuleUtility;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,7 +84,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 @Service
 @Log4j2
-public class VesselInfoService {
+public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -190,7 +191,29 @@ public class VesselInfoService {
         reply.getVesselsList().stream()
             .map(VesselDetail::getCaptainId)
             .collect(Collectors.toSet()));
-    List<Users> userList = this.usersRepository.findByIdIn(new ArrayList<>(userIdList));
+    List<Users> userList = new ArrayList<Users>();
+    userIdList.forEach(
+        userId -> {
+          Users user = new Users();
+          KeycloakUser kuser = this.getData(userId.toString());
+          log.debug("User data from cache: {}", kuser);
+
+          if (null == kuser) {
+            //    Get user data from repository
+            user = this.usersRepository.findByIdAndIsActive(userId, true);
+          } else {
+            user.setId(kuser.getUserId());
+            user.setFirstName(kuser.getFirstName());
+            user.setLastName(kuser.getLastName());
+            user.setUsername(kuser.getUsername());
+            user.setEmail(kuser.getEmail());
+            user.setActive(true);
+          }
+          if (user != null) {
+            userList.add(user);
+          }
+        });
+    //    List<Users> userList = this.usersRepository.findByIdIn(new ArrayList<>(userIdList));
     for (VesselDetail grpcReply : reply.getVesselsList()) {
       Vessel vessel = new Vessel();
       vessel.setId(grpcReply.getId());
@@ -415,10 +438,8 @@ public class VesselInfoService {
       bmAndSF.setBendingMomentShearingForceType3(
           this.createBendingMomentShearingForceType3(vesselAlgoReply, correlationId));
     } else {
-      bmAndSF.setBendingMomentType1(
-          this.createBendingMomentResponse(vesselAlgoReply, correlationId));
-      bmAndSF.setShearingForceType1(
-          this.createShearingForceResponse(vesselAlgoReply, correlationId));
+      bmAndSF.setBendingMoment(this.createBendingMomentResponse(vesselAlgoReply, correlationId));
+      bmAndSF.setShearingForce(this.createShearingForceResponse(vesselAlgoReply, correlationId));
     }
 
     bmAndSF.setCalculationSheet(
@@ -1090,7 +1111,8 @@ public class VesselInfoService {
     vesselRuleBuilder.setSectionId(sectionId);
     vesselRuleBuilder.setVesselId(vesselId);
     vesselRuleBuilder.setIsNoDefaultRule(false);
-    Utility.buildRuleListForSave(vesselRuleRequest, vesselRuleBuilder, null, null, true, false);
+    vesselRuleBuilder.setIsFetchEnabledRules(false);
+    RuleUtility.buildRuleListForSave(vesselRuleRequest, vesselRuleBuilder, null, null, true, false);
     VesselRuleReply vesselRuleReply =
         this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
     RuleResponse ruleResponse = new RuleResponse();
@@ -1100,7 +1122,7 @@ public class VesselInfoService {
           vesselRuleReply.getResponseStatus().getCode(),
           HttpStatusCode.valueOf(Integer.valueOf(vesselRuleReply.getResponseStatus().getCode())));
     }
-    ruleResponse.setPlan(Utility.buildAdminRulePlan(vesselRuleReply));
+    ruleResponse.setPlan(RuleUtility.buildAdminRulePlan(vesselRuleReply));
     ruleResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return ruleResponse;

@@ -36,11 +36,11 @@ public class LoadableStudyPortRotation extends EntityDoc {
   /** */
   private static final long serialVersionUID = 1L;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "loadable_study_xid")
   private LoadableStudy loadableStudy;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "operation_xid")
   private CargoOperation operation;
 

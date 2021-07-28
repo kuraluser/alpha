@@ -12,7 +12,6 @@ import lombok.Data;
 public class DischargeStudyPortInstructionDetailsJson {
 
   private Long id;
-  
+
   private String portInstruction;
-  
 }

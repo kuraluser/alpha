@@ -1659,24 +1659,29 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
    * @memberof SynopticalTableComponent
    */
   setTotal(colIndex: number) {
-    this.synopticalService.synopticalRecords[colIndex].totalDwtActual = this.synopticalService.synopticalRecords[colIndex].actualDOTotal
+    
+    this.synopticalService.synopticalRecords[colIndex].totalDwtPlanned = this.synopticalService.synopticalRecords[colIndex].plannedDOTotal
+    + this.synopticalService.synopticalRecords[colIndex].plannedFOTotal
+    + this.synopticalService.synopticalRecords[colIndex].plannedFWTotal
+    + this.synopticalService.synopticalRecords[colIndex].ballastPlannedTotal
+    + this.synopticalService.synopticalRecords[colIndex].cargoPlannedTotal
+    + this.synopticalService.synopticalRecords[colIndex].constantPlanned
+    + this.synopticalService.synopticalRecords[colIndex].othersPlanned;
+    this.synopticalService.synopticalRecords[colIndex].displacementPlanned = this.synopticalService.synopticalRecords[colIndex].totalDwtPlanned + this.vesselLightWeight;
+    
+    if(this.checkIfConfirmed()){
+      this.synopticalService.synopticalRecords[colIndex].totalDwtActual = this.synopticalService.synopticalRecords[colIndex].actualDOTotal
       + this.synopticalService.synopticalRecords[colIndex].actualFOTotal
       + this.synopticalService.synopticalRecords[colIndex].actualFWTotal
       + this.synopticalService.synopticalRecords[colIndex].ballastActualTotal
       + this.synopticalService.synopticalRecords[colIndex].cargoActualTotal
       + this.synopticalService.synopticalRecords[colIndex].constantActual
       + this.synopticalService.synopticalRecords[colIndex].othersActual;
-
-    this.synopticalService.synopticalRecords[colIndex].totalDwtPlanned = this.synopticalService.synopticalRecords[colIndex].plannedDOTotal
-      + this.synopticalService.synopticalRecords[colIndex].plannedFOTotal
-      + this.synopticalService.synopticalRecords[colIndex].plannedFWTotal
-      + this.synopticalService.synopticalRecords[colIndex].ballastPlannedTotal
-      + this.synopticalService.synopticalRecords[colIndex].cargoPlannedTotal
-      + this.synopticalService.synopticalRecords[colIndex].constantPlanned
-      + this.synopticalService.synopticalRecords[colIndex].othersPlanned;
-
-    this.synopticalService.synopticalRecords[colIndex].displacementActual = this.synopticalService.synopticalRecords[colIndex].totalDwtActual + this.vesselLightWeight;
-    this.synopticalService.synopticalRecords[colIndex].displacementPlanned = this.synopticalService.synopticalRecords[colIndex].totalDwtPlanned + this.vesselLightWeight;
+      this.synopticalService.synopticalRecords[colIndex].displacementActual = this.synopticalService.synopticalRecords[colIndex].totalDwtActual + this.vesselLightWeight;
+    } else {
+      this.synopticalService.synopticalRecords[colIndex].totalDwtActual = 0 ;
+      this.synopticalService.synopticalRecords[colIndex].displacementActual = 0;
+    }
   }
 
   /**
