@@ -173,6 +173,12 @@ public class PortInfoService extends PortInfoServiceImplBase {
               .ifPresent(item -> portDetail.setSunriseTime(timeFormatter.format(item)));
           Optional.ofNullable(port.getTimeOfSunSet())
               .ifPresent(item -> portDetail.setSunsetTime(timeFormatter.format(item)));
+
+          Optional.ofNullable(port.getControllingDepth())
+              .ifPresent(v -> portDetail.setControllingDepth(v.toString()));
+          Optional.ofNullable(port.getUnderKeelClearance())
+              .ifPresent(portDetail::setUnderKeelClearance);
+
           if (port.getTimezone() != null) {
             portDetail.setTimezone(port.getTimezone().getTimezone());
             portDetail.setTimezoneOffsetVal(port.getTimezone().getOffsetValue());
@@ -396,6 +402,50 @@ public class PortInfoService extends PortInfoServiceImplBase {
       replyBuilder.setResponseStatus(responseStatus);
     } finally {
       responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * In Request pass berth Ids, and return port data
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getLoadingPlanBerthData(
+      com.cpdss.common.generated.PortInfo.BerthIdsRequest request,
+      StreamObserver<com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData> responseObserver) {
+
+    com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.Builder builder =
+        com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.newBuilder();
+    try {
+      if (!request.getBerthIdsList().isEmpty()) {
+        Optional<BerthInfo> berthInfo =
+            berthInfoRepository.findByIdAndIsActiveTrue(request.getBerthIds(0));
+        if (berthInfo.isPresent()) {
+          log.info("RPC Call into getLoadingPlanBerthData with Ids {}", request.getBerthIdsList());
+          builder.setBerthId(berthInfo.get().getId());
+          if (berthInfo.get().getPortInfo() != null) {
+            Optional.ofNullable(berthInfo.get().getPortInfo().getId())
+                .ifPresent(v -> builder.setPortId(v));
+            Optional.ofNullable(berthInfo.get().getPortInfo().getControllingDepth())
+                .ifPresent(v -> builder.setControllingDepth(v.toString()));
+            Optional.ofNullable(berthInfo.get().getPortInfo().getUnderKeelClearance())
+                .ifPresent(v -> builder.setUnderKeelClearance(v));
+          }
+        }
+        ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+        responseStatus.setStatus(SUCCESS);
+        builder.setResponseStatus(responseStatus);
+      }
+    } catch (Exception e) {
+      log.error("Error in getLoadingPlanBerthData method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      builder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
   }
