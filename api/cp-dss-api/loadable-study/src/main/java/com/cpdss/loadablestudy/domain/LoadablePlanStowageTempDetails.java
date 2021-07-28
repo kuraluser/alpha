@@ -2,9 +2,8 @@
 package com.cpdss.loadablestudy.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
-
 import java.math.BigDecimal;
+import lombok.Data;
 
 /** @Author lincy.g */
 @Data
@@ -23,6 +22,4 @@ public class LoadablePlanStowageTempDetails {
   private Long ballastDetailsId;
   private Long loadablePatternId;
   private Long commingleDetailId;
-
-
 }

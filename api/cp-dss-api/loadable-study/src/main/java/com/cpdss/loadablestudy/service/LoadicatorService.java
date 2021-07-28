@@ -67,7 +67,9 @@ public class LoadicatorService {
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
 
   @Autowired private LoadableStudyRepository loadableStudyRepository;
-  @Autowired private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
+
+  @Autowired
+  private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
   @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
 
@@ -988,7 +990,8 @@ public class LoadicatorService {
       Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
           this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
-              this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
+          this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
+              request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
 
       if (loadableStudyCommunicationStatus.get().getMessageUUID() != null) {
         LoadableStudy.AlgoResponseCommunication.Builder algoRespComm =

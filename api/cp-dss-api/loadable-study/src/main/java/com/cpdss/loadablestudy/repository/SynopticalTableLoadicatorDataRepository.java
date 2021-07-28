@@ -33,5 +33,5 @@ public interface SynopticalTableLoadicatorDataRepository
       Long loadablePatternId, boolean isActive);
 
   public SynopticalTableLoadicatorData findByLoadablePatternIdAndPortIdAndOperationId(
-          Long loadablePatternId,Long portId,Long operationId);
+      Long loadablePatternId, Long portId, Long operationId);
 }

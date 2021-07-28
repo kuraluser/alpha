@@ -3,9 +3,7 @@ package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
 import com.cpdss.common.utils.EntityDoc;
-import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -128,5 +126,4 @@ public class LoadableStudy extends EntityDoc {
 
   @Column(name = "planning_type_xid")
   private Integer planningTypeXId = 1;
-
 }

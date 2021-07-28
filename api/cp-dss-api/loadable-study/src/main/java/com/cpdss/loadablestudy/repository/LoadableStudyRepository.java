@@ -66,6 +66,4 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
 
   public boolean existsByNameAndPlanningTypeXIdAndVoyageAndIsActive(
       String name, int i, Voyage voyage, boolean b);
-
-
 }

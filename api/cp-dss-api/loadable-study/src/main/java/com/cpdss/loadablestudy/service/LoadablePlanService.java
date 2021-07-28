@@ -103,7 +103,9 @@ public class LoadablePlanService {
   @Autowired private LoadableStudyRepository loadableStudyRepository;
   @Autowired private JsonDataService jsonDataService;
   @Autowired private CommunicationService communicationService;
-  @Autowired private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
+
+  @Autowired
+  private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -321,7 +323,8 @@ public class LoadablePlanService {
     log.info("Port Rotation Ids From Loadable Plan Quantity, Size {}", lpPortRotationIds.size());
     if (!lpPortRotationIds.isEmpty()) { // all unique, because it fetch by distinct query
       for (Long id : lpPortRotationIds) {
-        LoadableStudyPortRotation lsPR = loadableStudyPortRotationRepository.findByIdAndIsActive(id, true);
+        LoadableStudyPortRotation lsPR =
+            loadableStudyPortRotationRepository.findByIdAndIsActive(id, true);
         if (lsPR != null) {
           if (lsPR.getOperation().getId().equals(LOADING_OPERATION_ID)) {
             LoadableStudy.LoadingPortDetail.Builder a =
@@ -2477,48 +2480,48 @@ public class LoadablePlanService {
       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
     loadablePlanQuantities.forEach(
         lpq -> {
-            LoadableStudy.LoadableQuantityCargoDetails.Builder builder = getLoadablePlanQtyBuilder(lpq);
-            replyBuilder.addLoadableQuantityCargoDetails(builder);
+          LoadableStudy.LoadableQuantityCargoDetails.Builder builder =
+              getLoadablePlanQtyBuilder(lpq);
+          replyBuilder.addLoadableQuantityCargoDetails(builder);
         });
   }
 
-    private LoadableStudy.LoadableQuantityCargoDetails.Builder getLoadablePlanQtyBuilder(LoadablePlanQuantity lpq) {
-        LoadableStudy.LoadableQuantityCargoDetails.Builder builder =
-            LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
-        ofNullable(lpq.getId()).ifPresent(builder::setId);
-        ofNullable(lpq.getDifferenceColor()).ifPresent(builder::setDifferenceColor);
-        ofNullable(lpq.getDifferencePercentage())
-            .ifPresent(
-                diffPercentage ->
-                    builder.setDifferencePercentage(String.valueOf(diffPercentage)));
-        ofNullable(lpq.getEstimatedApi())
-            .ifPresent(estimatedApi -> builder.setEstimatedAPI(String.valueOf(estimatedApi)));
-        ofNullable(lpq.getCargoNominationTemperature())
-            .ifPresent(
-                estimatedTemperature ->
-                    builder.setEstimatedTemp(String.valueOf(estimatedTemperature)));
-        ofNullable(lpq.getGrade()).ifPresent(builder::setGrade);
-        ofNullable(lpq.getLoadableBbls60f()).ifPresent(builder::setLoadableBbls60F);
-        ofNullable(lpq.getLoadableBblsDbs()).ifPresent(builder::setLoadableBblsdbs);
-        ofNullable(lpq.getLoadableKl()).ifPresent(builder::setLoadableKL);
-        ofNullable(lpq.getLoadableLt()).ifPresent(builder::setLoadableLT);
-        ofNullable(lpq.getLoadableMt()).ifPresent(builder::setLoadableMT);
-        ofNullable(lpq.getMaxTolerence()).ifPresent(builder::setMaxTolerence);
-        ofNullable(lpq.getMinTolerence()).ifPresent(builder::setMinTolerence);
-        ofNullable(lpq.getOrderBbls60f()).ifPresent(builder::setOrderBbls60F);
-        ofNullable(lpq.getOrderBblsDbs()).ifPresent(builder::setOrderBblsdbs);
-        ofNullable(lpq.getCargoXId()).ifPresent(builder::setCargoId);
-        ofNullable(lpq.getOrderQuantity())
-            .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
-        Optional.of(lpq.getCargoColor()).ifPresent(builder::setColorCode);
-        Optional.of(lpq.getCargoAbbreviation()).ifPresent(builder::setCargoAbbreviation);
-        Optional.ofNullable(lpq.getTimeRequiredForLoading())
-            .ifPresent(builder::setTimeRequiredForLoading);
-        Optional.of(lpq.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
-        return builder;
-    }
+  private LoadableStudy.LoadableQuantityCargoDetails.Builder getLoadablePlanQtyBuilder(
+      LoadablePlanQuantity lpq) {
+    LoadableStudy.LoadableQuantityCargoDetails.Builder builder =
+        LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
+    ofNullable(lpq.getId()).ifPresent(builder::setId);
+    ofNullable(lpq.getDifferenceColor()).ifPresent(builder::setDifferenceColor);
+    ofNullable(lpq.getDifferencePercentage())
+        .ifPresent(
+            diffPercentage -> builder.setDifferencePercentage(String.valueOf(diffPercentage)));
+    ofNullable(lpq.getEstimatedApi())
+        .ifPresent(estimatedApi -> builder.setEstimatedAPI(String.valueOf(estimatedApi)));
+    ofNullable(lpq.getCargoNominationTemperature())
+        .ifPresent(
+            estimatedTemperature -> builder.setEstimatedTemp(String.valueOf(estimatedTemperature)));
+    ofNullable(lpq.getGrade()).ifPresent(builder::setGrade);
+    ofNullable(lpq.getLoadableBbls60f()).ifPresent(builder::setLoadableBbls60F);
+    ofNullable(lpq.getLoadableBblsDbs()).ifPresent(builder::setLoadableBblsdbs);
+    ofNullable(lpq.getLoadableKl()).ifPresent(builder::setLoadableKL);
+    ofNullable(lpq.getLoadableLt()).ifPresent(builder::setLoadableLT);
+    ofNullable(lpq.getLoadableMt()).ifPresent(builder::setLoadableMT);
+    ofNullable(lpq.getMaxTolerence()).ifPresent(builder::setMaxTolerence);
+    ofNullable(lpq.getMinTolerence()).ifPresent(builder::setMinTolerence);
+    ofNullable(lpq.getOrderBbls60f()).ifPresent(builder::setOrderBbls60F);
+    ofNullable(lpq.getOrderBblsDbs()).ifPresent(builder::setOrderBblsdbs);
+    ofNullable(lpq.getCargoXId()).ifPresent(builder::setCargoId);
+    ofNullable(lpq.getOrderQuantity())
+        .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
+    Optional.of(lpq.getCargoColor()).ifPresent(builder::setColorCode);
+    Optional.of(lpq.getCargoAbbreviation()).ifPresent(builder::setCargoAbbreviation);
+    Optional.ofNullable(lpq.getTimeRequiredForLoading())
+        .ifPresent(builder::setTimeRequiredForLoading);
+    Optional.of(lpq.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
+    return builder;
+  }
 
-    public LoadableStudy.AlgoReply.Builder validateLoadablePlan(
+  public LoadableStudy.AlgoReply.Builder validateLoadablePlan(
       LoadableStudy.LoadablePlanDetailsRequest request,
       LoadableStudy.AlgoReply.Builder replyBuilder)
       throws IOException, GenericServiceException {
@@ -2554,7 +2557,7 @@ public class LoadablePlanService {
       loadabalePatternValidateRequest.setLoadablePatternId(request.getLoadablePatternId());
       loadabalePatternValidateRequest.setCaseNumber(loadablePatternOpt.get().getCaseNumber());
       ObjectMapper objectMapper = new ObjectMapper();
-        jsonDataService.saveJsonToDatabase(
+      jsonDataService.saveJsonToDatabase(
           request.getLoadablePatternId(),
           LOADABLE_PATTERN_EDIT_REQUEST,
           objectMapper.writeValueAsString(loadabalePatternValidateRequest));
@@ -2565,164 +2568,243 @@ public class LoadablePlanService {
                   + request.getLoadablePatternId()
                   + ".json"),
           loadabalePatternValidateRequest);
-        LoadabalePatternValidateRequest communicationServiceRequest =
-                loadabalePatternValidateRequest;
-        buildCommunicationServiceRequest(communicationServiceRequest,loadablePatternOpt.get());
-        EnvoyWriter.WriterReply ewReply =
-                communicationService.passRequestPayloadToEnvoyWriter(objectMapper.writeValueAsString(communicationServiceRequest),loadableStudy.getVesselId(),MessageTypes.VALIDATEPLAN.getMessageType());
-        if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-            LoadableStudyCommunicationStatus lsCommunicationStatus = new LoadableStudyCommunicationStatus();
-            if(ewReply.getMessageId() != null){
-                lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-                lsCommunicationStatus.setCommunicationStatus(CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
-
-            }
-            lsCommunicationStatus.setReferenceId(request.getLoadablePatternId());
-            lsCommunicationStatus.setMessageType(String.valueOf(MessageTypes.VALIDATEPLAN));
-            lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-            this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
-        }else {
-            AlgoResponse algoResponse =
-                    restTemplate.postForObject(
-                            loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
-
-            updateProcessIdForLoadablePattern(
-                    algoResponse.getProcessId(),
-                    loadablePatternOpt.get(),
-                    LOADABLE_PATTERN_VALIDATION_STARTED_ID);
-            replyBuilder
-                    .setProcesssId(algoResponse.getProcessId())
-                    .setResponseStatus(
-                            Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+      LoadabalePatternValidateRequest communicationServiceRequest = loadabalePatternValidateRequest;
+      buildCommunicationServiceRequest(communicationServiceRequest, loadablePatternOpt.get());
+      EnvoyWriter.WriterReply ewReply =
+          communicationService.passRequestPayloadToEnvoyWriter(
+              objectMapper.writeValueAsString(communicationServiceRequest),
+              loadableStudy.getVesselId(),
+              MessageTypes.VALIDATEPLAN.getMessageType());
+      if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+        LoadableStudyCommunicationStatus lsCommunicationStatus =
+            new LoadableStudyCommunicationStatus();
+        if (ewReply.getMessageId() != null) {
+          lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+          lsCommunicationStatus.setCommunicationStatus(
+              CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
         }
+        lsCommunicationStatus.setReferenceId(request.getLoadablePatternId());
+        lsCommunicationStatus.setMessageType(String.valueOf(MessageTypes.VALIDATEPLAN));
+        lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+        this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
+      } else {
+        AlgoResponse algoResponse =
+            restTemplate.postForObject(
+                loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
+
+        updateProcessIdForLoadablePattern(
+            algoResponse.getProcessId(),
+            loadablePatternOpt.get(),
+            LOADABLE_PATTERN_VALIDATION_STARTED_ID);
+        replyBuilder
+            .setProcesssId(algoResponse.getProcessId())
+            .setResponseStatus(
+                Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+      }
     }
     return replyBuilder;
   }
 
-    private void buildCommunicationServiceRequest(LoadabalePatternValidateRequest loadabalePatternValidateRequest, LoadablePattern loadablePattern) {
-        Long patternId = loadablePattern.getId();
-        ModelMapper modelMapper = new ModelMapper();
-        buldLoadablPlanstowageTempDetails(loadabalePatternValidateRequest,patternId,modelMapper);
-        buldLoadablPlanStowageDetails(loadabalePatternValidateRequest,patternId,modelMapper);
-        buldLoadablPlanBallastDetails(loadabalePatternValidateRequest,patternId,modelMapper);
-        buldLoadablPlanStabilityDetails(loadabalePatternValidateRequest,patternId,modelMapper);
-        buldLoadablPlanQuantityCargoDetails(loadabalePatternValidateRequest,loadablePattern,modelMapper);
+  private void buildCommunicationServiceRequest(
+      LoadabalePatternValidateRequest loadabalePatternValidateRequest,
+      LoadablePattern loadablePattern) {
+    Long patternId = loadablePattern.getId();
+    ModelMapper modelMapper = new ModelMapper();
+    buldLoadablPlanstowageTempDetails(loadabalePatternValidateRequest, patternId, modelMapper);
+    buldLoadablPlanStowageDetails(loadabalePatternValidateRequest, patternId, modelMapper);
+    buldLoadablPlanBallastDetails(loadabalePatternValidateRequest, patternId, modelMapper);
+    buldLoadablPlanStabilityDetails(loadabalePatternValidateRequest, patternId, modelMapper);
+    buldLoadablPlanQuantityCargoDetails(
+        loadabalePatternValidateRequest, loadablePattern, modelMapper);
+  }
+
+  private void buldLoadablPlanQuantityCargoDetails(
+      LoadabalePatternValidateRequest loadabalePatternValidateRequest,
+      LoadablePattern pattern,
+      ModelMapper modelMapper) {
+    List<LoadablePlanQuantity> loadablePlanQuantities =
+        loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(pattern, true);
+
+    List<LoadablePatternCargoToppingOffSequence> loadablePatternCargoToppingOffSequences =
+        toppingOffSequenceRepository.findByLoadablePatternAndIsActive(pattern, true);
+    List<LoadableStudy.LoadableQuantityCargoDetails> loadableQuantityCargoDetails =
+        new ArrayList<>();
+    for (LoadablePlanQuantity loableqty : loadablePlanQuantities) {
+      LoadableStudy.LoadableQuantityCargoDetails.Builder builder =
+          getLoadablePlanQtyBuilder(loableqty);
+      for (LoadablePatternCargoToppingOffSequence toppingOff :
+          loadablePatternCargoToppingOffSequences) {
+        LoadableStudy.CargoToppingOffSequenceDetails.Builder toppingOffBuilder =
+            LoadableStudy.CargoToppingOffSequenceDetails.newBuilder();
+        toppingOffBuilder.setTankId(toppingOff.getTankXId());
+        toppingOffBuilder.setOrderNumber(toppingOff.getOrderNumber());
+        builder.addToppingOffSequences(toppingOffBuilder);
+      }
+      loadableQuantityCargoDetails.add(builder.build());
     }
-
-    private void buldLoadablPlanQuantityCargoDetails(LoadabalePatternValidateRequest loadabalePatternValidateRequest, LoadablePattern pattern, ModelMapper modelMapper) {
-        List<LoadablePlanQuantity> loadablePlanQuantities =
-                loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
-                        pattern, true);
-
-        List<LoadablePatternCargoToppingOffSequence> loadablePatternCargoToppingOffSequences =
-                toppingOffSequenceRepository.findByLoadablePatternAndIsActive(
-                        pattern, true);
-        List<LoadableStudy.LoadableQuantityCargoDetails> loadableQuantityCargoDetails = new ArrayList<>();
-        for (LoadablePlanQuantity loableqty : loadablePlanQuantities){
-            LoadableStudy.LoadableQuantityCargoDetails.Builder builder = getLoadablePlanQtyBuilder(loableqty);
-            for(LoadablePatternCargoToppingOffSequence toppingOff:loadablePatternCargoToppingOffSequences ){
-                LoadableStudy.CargoToppingOffSequenceDetails.Builder toppingOffBuilder = LoadableStudy.CargoToppingOffSequenceDetails.newBuilder();
-                toppingOffBuilder.setTankId(toppingOff.getTankXId());
-                toppingOffBuilder.setOrderNumber(toppingOff.getOrderNumber());
-                builder.addToppingOffSequences(toppingOffBuilder);
-            }
-            loadableQuantityCargoDetails.add(builder.build());
-        }
-        loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream().forEach(port->{
-            port.getArrivalCondition().setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
-            port.getDepartureCondition().setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
-        });
-    }
-
-    private void buldLoadablPlanStabilityDetails(LoadabalePatternValidateRequest loadabalePatternValidateRequest, Long patternId, ModelMapper modelMapper) {
-        loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream().forEach(port->{
-            port.getArrivalCondition().setStabilityParameter(new StabilityParameter());
-            SynopticalTableLoadicatorData synopticalTableLoadicatorDataArr=synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndPortIdAndOperationId(patternId,port.getPortId(), LOADING_OPERATION_ID);
-            SynopticalTableLoadicatorData synopticalTableLoadicatorDataDep=synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndPortIdAndOperationId(patternId,port.getPortId(), DISCHARGING_OPERATION_ID);
-            StabilityParameter stabilityParameter = modelMapper.map(
-                    synopticalTableLoadicatorDataArr,
-                    com.cpdss.loadablestudy.domain.StabilityParameter.class);
-            port.getArrivalCondition().setStabilityParameter(stabilityParameter);
-            StabilityParameter stabilityParameterDep = modelMapper.map(
-                    synopticalTableLoadicatorDataDep,
-                    com.cpdss.loadablestudy.domain.StabilityParameter.class);
-            port.getDepartureCondition().setStabilityParameter(stabilityParameterDep);
-        });
-    }
-
-    private void buldLoadablPlanBallastDetails(LoadabalePatternValidateRequest loadabalePatternValidateRequest, Long patternId, ModelMapper modelMapper) {
-        loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream().forEach(port->{
-            port.getArrivalCondition().setLoadablePlanBallastDetails(new ArrayList<>());
-            List<LoadablePlanStowageBallastDetails> ballastDetailsList = loadablePlanStowageBallastDetailsRepository.findAllByLoadablePatternIdAndPortXId(patternId,port.getPortId());
-            List<LoadablePlanStowageBallastDetails> ballastDetailsListPortwiseArr = ballastDetailsList.stream().filter(var->var.getOperationType().equals(OPERATION_TYPE_ARR)).collect(Collectors.toList());
-            List<LoadablePlanStowageBallastDetails> ballastDetailsListPortwiseDep = ballastDetailsList.stream().filter(var->var.getOperationType().equals(OPERATION_TYPE_DEP)).collect(Collectors.toList());
-            ballastDetailsListPortwiseArr.stream().forEach(lpcd->{
-                com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails ballastDetails =
-                        new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
-
-                ballastDetails = modelMapper.map(
-                        lpcd,
-                        com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails.class);
-                port.getArrivalCondition().getLoadablePlanBallastDetails().add(ballastDetails);
+    loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream()
+        .forEach(
+            port -> {
+              port.getArrivalCondition()
+                  .setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
+              port.getDepartureCondition()
+                  .setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
             });
-            ballastDetailsListPortwiseDep.stream().forEach(lpcd->{
-                com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails ballastDetails =
-                        new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
+  }
 
-                ballastDetails = modelMapper.map(
-                        lpcd,
-                        com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails.class);
-                port.getDepartureCondition().getLoadablePlanBallastDetails().add(ballastDetails);
+  private void buldLoadablPlanStabilityDetails(
+      LoadabalePatternValidateRequest loadabalePatternValidateRequest,
+      Long patternId,
+      ModelMapper modelMapper) {
+    loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream()
+        .forEach(
+            port -> {
+              port.getArrivalCondition().setStabilityParameter(new StabilityParameter());
+              SynopticalTableLoadicatorData synopticalTableLoadicatorDataArr =
+                  synopticalTableLoadicatorDataRepository
+                      .findByLoadablePatternIdAndPortIdAndOperationId(
+                          patternId, port.getPortId(), LOADING_OPERATION_ID);
+              SynopticalTableLoadicatorData synopticalTableLoadicatorDataDep =
+                  synopticalTableLoadicatorDataRepository
+                      .findByLoadablePatternIdAndPortIdAndOperationId(
+                          patternId, port.getPortId(), DISCHARGING_OPERATION_ID);
+              StabilityParameter stabilityParameter =
+                  modelMapper.map(
+                      synopticalTableLoadicatorDataArr,
+                      com.cpdss.loadablestudy.domain.StabilityParameter.class);
+              port.getArrivalCondition().setStabilityParameter(stabilityParameter);
+              StabilityParameter stabilityParameterDep =
+                  modelMapper.map(
+                      synopticalTableLoadicatorDataDep,
+                      com.cpdss.loadablestudy.domain.StabilityParameter.class);
+              port.getDepartureCondition().setStabilityParameter(stabilityParameterDep);
             });
+  }
 
-        });
-    }
+  private void buldLoadablPlanBallastDetails(
+      LoadabalePatternValidateRequest loadabalePatternValidateRequest,
+      Long patternId,
+      ModelMapper modelMapper) {
+    loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream()
+        .forEach(
+            port -> {
+              port.getArrivalCondition().setLoadablePlanBallastDetails(new ArrayList<>());
+              List<LoadablePlanStowageBallastDetails> ballastDetailsList =
+                  loadablePlanStowageBallastDetailsRepository.findAllByLoadablePatternIdAndPortXId(
+                      patternId, port.getPortId());
+              List<LoadablePlanStowageBallastDetails> ballastDetailsListPortwiseArr =
+                  ballastDetailsList.stream()
+                      .filter(var -> var.getOperationType().equals(OPERATION_TYPE_ARR))
+                      .collect(Collectors.toList());
+              List<LoadablePlanStowageBallastDetails> ballastDetailsListPortwiseDep =
+                  ballastDetailsList.stream()
+                      .filter(var -> var.getOperationType().equals(OPERATION_TYPE_DEP))
+                      .collect(Collectors.toList());
+              ballastDetailsListPortwiseArr.stream()
+                  .forEach(
+                      lpcd -> {
+                        com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails ballastDetails =
+                            new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
 
-    private void buldLoadablPlanStowageDetails(LoadabalePatternValidateRequest loadabalePatternValidateRequest
-            , Long patternId, ModelMapper modelMapper) {
-        loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream().forEach(port->{
-            port.getArrivalCondition().setLoadablePlanStowageDetails(new ArrayList<>());
-            List<LoadablePatternCargoDetails> stowageDetailsListPortwise = loadablePatternCargoDetailsRepository.findAllByPatternIdAndPortId(patternId,port.getPortId());
-            List<LoadablePatternCargoDetails> stowageDetailsListPortwiseArr = stowageDetailsListPortwise.stream().filter(var->var.getOperationType().equals(OPERATION_TYPE_ARR)).collect(Collectors.toList());
-            List<LoadablePatternCargoDetails> stowageDetailsListPortwiseDep = stowageDetailsListPortwise.stream().filter(var1->var1.getOperationType().equals(OPERATION_TYPE_DEP)).collect(Collectors.toList());
-            stowageDetailsListPortwiseArr.stream().forEach(lpcd->{
-                com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails stowageDetails =
-                        new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+                        ballastDetails =
+                            modelMapper.map(
+                                lpcd,
+                                com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails.class);
+                        port.getArrivalCondition()
+                            .getLoadablePlanBallastDetails()
+                            .add(ballastDetails);
+                      });
+              ballastDetailsListPortwiseDep.stream()
+                  .forEach(
+                      lpcd -> {
+                        com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails ballastDetails =
+                            new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
 
-                stowageDetails = modelMapper.map(
-                        lpcd,
-                        com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails.class);
-                port.getArrivalCondition().getLoadablePlanStowageDetails().add(stowageDetails);
+                        ballastDetails =
+                            modelMapper.map(
+                                lpcd,
+                                com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails.class);
+                        port.getDepartureCondition()
+                            .getLoadablePlanBallastDetails()
+                            .add(ballastDetails);
+                      });
             });
-            stowageDetailsListPortwiseDep.stream().forEach(lpcd->{
-                com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails stowageDetails =
-                        new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+  }
 
-                stowageDetails = modelMapper.map(
-                        lpcd,
-                        com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails.class);
-                port.getDepartureCondition().getLoadablePlanStowageDetails().add(stowageDetails);
+  private void buldLoadablPlanStowageDetails(
+      LoadabalePatternValidateRequest loadabalePatternValidateRequest,
+      Long patternId,
+      ModelMapper modelMapper) {
+    loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream()
+        .forEach(
+            port -> {
+              port.getArrivalCondition().setLoadablePlanStowageDetails(new ArrayList<>());
+              List<LoadablePatternCargoDetails> stowageDetailsListPortwise =
+                  loadablePatternCargoDetailsRepository.findAllByPatternIdAndPortId(
+                      patternId, port.getPortId());
+              List<LoadablePatternCargoDetails> stowageDetailsListPortwiseArr =
+                  stowageDetailsListPortwise.stream()
+                      .filter(var -> var.getOperationType().equals(OPERATION_TYPE_ARR))
+                      .collect(Collectors.toList());
+              List<LoadablePatternCargoDetails> stowageDetailsListPortwiseDep =
+                  stowageDetailsListPortwise.stream()
+                      .filter(var1 -> var1.getOperationType().equals(OPERATION_TYPE_DEP))
+                      .collect(Collectors.toList());
+              stowageDetailsListPortwiseArr.stream()
+                  .forEach(
+                      lpcd -> {
+                        com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails stowageDetails =
+                            new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+
+                        stowageDetails =
+                            modelMapper.map(
+                                lpcd,
+                                com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails.class);
+                        port.getArrivalCondition()
+                            .getLoadablePlanStowageDetails()
+                            .add(stowageDetails);
+                      });
+              stowageDetailsListPortwiseDep.stream()
+                  .forEach(
+                      lpcd -> {
+                        com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails stowageDetails =
+                            new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+
+                        stowageDetails =
+                            modelMapper.map(
+                                lpcd,
+                                com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails.class);
+                        port.getDepartureCondition()
+                            .getLoadablePlanStowageDetails()
+                            .add(stowageDetails);
+                      });
             });
+  }
 
-        });
-    }
+  private void buldLoadablPlanstowageTempDetails(
+      LoadabalePatternValidateRequest loadabalePatternValidateRequest,
+      Long patternId,
+      ModelMapper modelMapper) {
+    loadabalePatternValidateRequest.setLoadablePlanStowageTempDetails(new ArrayList<>());
+    List<LoadablePlanStowageDetailsTemp> stowageTempList =
+        stowageDetailsTempRepository.findByLoadablePattern_idAndIsActive(patternId, true);
+    stowageTempList.stream()
+        .forEach(
+            stowageTemp -> {
+              com.cpdss.loadablestudy.domain.LoadablePlanStowageTempDetails
+                  loadablePlanStowageTempDetails =
+                      new com.cpdss.loadablestudy.domain.LoadablePlanStowageTempDetails();
+              loadablePlanStowageTempDetails =
+                  modelMapper.map(
+                      stowageTemp,
+                      com.cpdss.loadablestudy.domain.LoadablePlanStowageTempDetails.class);
+              loadabalePatternValidateRequest
+                  .getLoadablePlanStowageTempDetails()
+                  .add(loadablePlanStowageTempDetails);
+            });
+  }
 
-    private void buldLoadablPlanstowageTempDetails(LoadabalePatternValidateRequest loadabalePatternValidateRequest, Long patternId, ModelMapper modelMapper) {
-        loadabalePatternValidateRequest.setLoadablePlanStowageTempDetails(new ArrayList<>());
-        List<LoadablePlanStowageDetailsTemp> stowageTempList = stowageDetailsTempRepository
-                .findByLoadablePattern_idAndIsActive(patternId, true);
-        stowageTempList.stream().forEach(stowageTemp->{
-            com.cpdss.loadablestudy.domain.LoadablePlanStowageTempDetails loadablePlanStowageTempDetails =
-                    new com.cpdss.loadablestudy.domain.LoadablePlanStowageTempDetails();
-            loadablePlanStowageTempDetails =
-                    modelMapper.map(
-                            stowageTemp,
-                            com.cpdss.loadablestudy.domain.LoadablePlanStowageTempDetails.class);
-            loadabalePatternValidateRequest.getLoadablePlanStowageTempDetails().add(loadablePlanStowageTempDetails);
-        });
-    }
-
-    /**
+  /**
    * @param processId
    * @param loadablePattern
    * @param loadablePatternProcessingStartedId void

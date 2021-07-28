@@ -61,7 +61,8 @@ public class LoadablePatternService {
 
   @Autowired private LoadableStudyRepository loadableStudyRepository;
 
-  @Autowired private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
+  @Autowired
+  private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
   @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
 
@@ -275,7 +276,8 @@ public class LoadablePatternService {
           HttpStatusCode.BAD_REQUEST);
     }
     Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
-            this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
+        this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
+            request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
     if (loadableStudyCommunicationStatus.get() != null) {
 
       AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
@@ -363,7 +365,8 @@ public class LoadablePatternService {
               AtomicInteger displayOrder = new AtomicInteger(0);
               saveLoadableQuantityCommingleCargoPortwiseDetails(
                   lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern, displayOrder);
-              //saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);//Coe added for UAT no need to persist in stabilityParameter table
+              // saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);//Coe added for UAT
+              // no need to persist in stabilityParameter table
               saveLoadablePlanStowageDetails(loadablePattern, lpd, displayOrder);
               saveLoadablePlanBallastDetails(loadablePattern, lpd);
               saveStabilityParameterForNonLodicator(
@@ -1069,13 +1072,17 @@ public class LoadablePatternService {
           LOADABLE_STUDY_REQUEST,
           objectMapper.writeValueAsString(loadableStudy));
       EnvoyWriter.WriterReply ewReply =
-          communicationService.passRequestPayloadToEnvoyWriter(objectMapper.writeValueAsString(loadableStudy),loadableStudy.getVesselId(), MessageTypes.LOADABLESTUDY.getMessageType());
+          communicationService.passRequestPayloadToEnvoyWriter(
+              objectMapper.writeValueAsString(loadableStudy),
+              loadableStudy.getVesselId(),
+              MessageTypes.LOADABLESTUDY.getMessageType());
       if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-        LoadableStudyCommunicationStatus lsCommunicationStatus = new LoadableStudyCommunicationStatus();
-        if(ewReply.getMessageId() != null){
+        LoadableStudyCommunicationStatus lsCommunicationStatus =
+            new LoadableStudyCommunicationStatus();
+        if (ewReply.getMessageId() != null) {
           lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-          lsCommunicationStatus.setCommunicationStatus(CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
-
+          lsCommunicationStatus.setCommunicationStatus(
+              CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
         }
         lsCommunicationStatus.setReferenceId(request.getLoadableStudyId());
         lsCommunicationStatus.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
@@ -1682,10 +1689,10 @@ public class LoadablePatternService {
           responseCommunication.getLoadablePatternAlgoRequest();
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByMessageUUID(
-                  Long.valueOf(responseCommunication.getMessageId()));
-        Optional<LoadableStudy> loadableStudyOpt =
-                (this.loadableStudyRepository.findById(
-                        loadableStudyCommunicationStatus.get().getReferenceId()));
+              Long.valueOf(responseCommunication.getMessageId()));
+      Optional<LoadableStudy> loadableStudyOpt =
+          (this.loadableStudyRepository.findById(
+              loadableStudyCommunicationStatus.get().getReferenceId()));
 
       if (!loadableStudyOpt.isPresent()) {
         throw new GenericServiceException(

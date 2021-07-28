@@ -21,10 +21,10 @@ import com.google.protobuf.util.JsonFormat;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -46,7 +46,9 @@ public class CommunicationService {
   @Autowired JsonDataService jsonDataService;
   @Autowired private RestTemplate restTemplate;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
-  @Autowired private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
+
+  @Autowired
+  private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -66,16 +68,66 @@ public class CommunicationService {
   @Value("${loadablestudy.communication.timelimit}")
   private Long timeLimit;
 
-  public void saveLoadableStudyShore(Map<String, String> taskReqParams) {
+  public void getDataFromCommInShoreSide(
+      Map<String, String> taskReqParams, EnumSet<MessageTypes> shore)
+      throws GenericServiceException {
+    for (MessageTypes messageType : shore) {
+      try {
+        EnvoyReader.EnvoyReaderResultReply erReply =
+            getResultFromEnvoyReaderShore(taskReqParams, messageType);
+        if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+          throw new GenericServiceException(
+              "Failed to get Result from Communication Server",
+              erReply.getResponseStatus().getCode(),
+              HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
+        }
+        if (String.valueOf(messageType).equals("LoadableStudy")) {
+          saveLoadableStudyShore(erReply);
+        } else if (messageType.equals("ValidatePlan")) {
+          saveValidatePlanRequestShore(erReply);
+        }
+      } catch (GenericServiceException e) {
+        throw new GenericServiceException(
+            e.getMessage(),
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR,
+            e);
+      }
+    }
+  }
+
+  private void saveValidatePlanRequestShore(EnvoyReader.EnvoyReaderResultReply erReply) {
+    String jsonResult = erReply.getPatternResultJson();
+  }
+
+  public void getDataFromCommInShipSide(
+      Map<String, String> taskReqParams, EnumSet<MessageTypes> ship)
+      throws GenericServiceException {
+    for (MessageTypes messageType : ship) {
+      try {
+        EnvoyReader.EnvoyReaderResultReply erReply =
+            getResultFromEnvoyReaderShore(taskReqParams, messageType);
+        if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+          throw new GenericServiceException(
+              "Failed to get Result from Communication Server",
+              erReply.getResponseStatus().getCode(),
+              HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
+        }
+        if (String.valueOf(messageType).equals("AlgoResult")) saveAlgoPatternFromShore(erReply);
+      } catch (GenericServiceException e) {
+        throw new GenericServiceException(
+            e.getMessage(),
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR,
+            e);
+      }
+    }
+  }
+
+  public void saveLoadableStudyShore(EnvoyReader.EnvoyReaderResultReply erReply) {
 
     try {
-      EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReaderShore(taskReqParams);
-      if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
-        throw new GenericServiceException(
-            "Failed to get Result from Communication Server",
-            erReply.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
-      }
+
       String jsonResult = erReply.getPatternResultJson();
       LoadableStudy loadableStudyEntity =
           loadableStudyServiceShore.setLoadablestudyShore(jsonResult, erReply.getMessageId());
@@ -132,44 +184,34 @@ public class CommunicationService {
   }
 
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore(
-      Map<String, String> taskReqParams) {
+      Map<String, String> taskReqParams, MessageTypes messageType) {
     EnvoyReader.EnvoyReaderResultRequest.Builder request =
         EnvoyReader.EnvoyReaderResultRequest.newBuilder();
-    request.setMessageType(taskReqParams.get("messageType"));
+    request.setMessageType(String.valueOf(messageType));
     request.setClientId(taskReqParams.get("ClientId"));
     request.setShipId(taskReqParams.get("ShipId"));
     return this.envoyReaderGrpcService.getResultFromCommServer(request.build());
   }
 
-  public void saveAlgoPatternFromShore(Map<String, String> taskReqParams) {
-    try {
-      EnvoyReader.EnvoyReaderResultReply erReply = getResultFromEnvoyReaderShore(taskReqParams);
-      if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
-        throw new GenericServiceException(
-            "Failed to get Result from Communication Server",
-            erReply.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
-      }
-      String jsonResult = erReply.getPatternResultJson();
-      com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication.Builder load =
-          com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication.newBuilder();
-      // load.setLoadableStudyId(request.getLoadableStudyId());
-      if (!jsonResult.isEmpty())
-        loadablePatternService.saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
-    } catch (GenericServiceException e) {
-      log.error("GenericServiceException when saving pattern", e);
-    }
+  public void saveAlgoPatternFromShore(EnvoyReader.EnvoyReaderResultReply erReply) {
+
+    String jsonResult = erReply.getPatternResultJson();
+    com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication.Builder load =
+        com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication.newBuilder();
+    if (!jsonResult.isEmpty())
+      loadablePatternService.saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
   }
 
   public void checkLoadableStudyStatus(Map<String, String> taskReqParams) {
     List<LoadableStudyCommunicationStatus> communicationStatusList =
-            loadableStudyCommunicationStatusRepository.findByCommunicationStatusOrderByCommunicationDateTimeASC(
-            CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+        loadableStudyCommunicationStatusRepository
+            .findByCommunicationStatusOrderByCommunicationDateTimeASC(
+                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
     if (!communicationStatusList.isEmpty()) {
       communicationStatusList
           .parallelStream()
           .forEach(
-                  communicationStatusRow -> {
+              communicationStatusRow -> {
                 try {
                   EnvoyWriter.EnvoyWriterRequest.Builder request =
                       EnvoyWriter.EnvoyWriterRequest.newBuilder();
@@ -185,7 +227,9 @@ public class CommunicationService {
                         CommonErrorCodes.E_HTTP_BAD_REQUEST,
                         HttpStatusCode.BAD_REQUEST);
                   }
-                  Optional<LoadableStudy> loadableStudy = loadableStudyRepository.findByIdAndIsActive(communicationStatusRow.getReferenceId(),true);
+                  Optional<LoadableStudy> loadableStudy =
+                      loadableStudyRepository.findByIdAndIsActive(
+                          communicationStatusRow.getReferenceId(), true);
 
                   if (!(statusReply.getEventDownloadStatus() != null
                       && statusReply
@@ -193,15 +237,18 @@ public class CommunicationService {
                           .equals(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId()))) {
                     processAlgoFromShip(loadableStudy.get());
                   } else {
-                    loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
-                        statusReply.getEventDownloadStatus(), loadableStudy.get().getId());
+                    loadableStudyCommunicationStatusRepository
+                        .updateLoadableStudyCommunicationStatus(
+                            statusReply.getEventDownloadStatus(), loadableStudy.get().getId());
                   }
                   long start =
-                      Timestamp.valueOf(communicationStatusRow.getCommunicationDateTime()).getTime();
+                      Timestamp.valueOf(communicationStatusRow.getCommunicationDateTime())
+                          .getTime();
                   long end = start + timeLimit * 1000; // 60 seconds * 1000 ms/sec
                   if (System.currentTimeMillis() > end) {
-                    loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
-                        CommunicationStatus.TIME_OUT.getId(), loadableStudy.get().getId());
+                    loadableStudyCommunicationStatusRepository
+                        .updateLoadableStudyCommunicationStatus(
+                            CommunicationStatus.TIME_OUT.getId(), loadableStudy.get().getId());
                   }
                 } catch (GenericServiceException | IOException e) {
                   e.printStackTrace();
@@ -254,10 +301,8 @@ public class CommunicationService {
   }
 
   public EnvoyWriter.WriterReply passRequestPayloadToEnvoyWriter(
-          String requestJson, Long VesselId, String messageType)
-      throws GenericServiceException {
-    VesselInfo.VesselDetail vesselReply =
-        this.getVesselDetailsForEnvoy(VesselId);
+      String requestJson, Long VesselId, String messageType) throws GenericServiceException {
+    VesselInfo.VesselDetail vesselReply = this.getVesselDetailsForEnvoy(VesselId);
     EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
         EnvoyWriter.EnvoyWriterRequest.newBuilder();
     writerRequest.setJsonPayload(requestJson);
