@@ -8,59 +8,17 @@ import lombok.Data;
 /** @Author jerin.g */
 @Data
 public class LoadablePlanStowageDetailsJson {
-  @JsonInclude(Include.NON_NULL)
-  private Long id;
 
-  private Long tankId;
-  private String cargoAbbreviation;
+	private Long id;
 
-  @JsonInclude(Include.NON_NULL)
-  private String weight; // MT to UI
+	private Long tankId;
 
-  private String correctedUllage; // ullage(M)
-  private String fillingRatio;
-  private String tankName;
-  private String rdgUllage;
-  private String correctionFactor;
+	private String api;
+	private String temperature;
+	private String quantity;
+	private String quantityM3;
+	private Long cargoNominationId;
+	private String sounding;
+	private String ullage;
 
-  @JsonInclude(Include.NON_NULL)
-  private String observedM3;
-
-  @JsonInclude(Include.NON_NULL)
-  private String observedBarrels;
-
-  @JsonInclude(Include.NON_NULL)
-  private String observedBarrelsAt60; // volume(BBLS)
-
-  private String api;
-  private String temperature;
-  private String colorCode;
-  private String quantityMT; // by ALGO
-  private Long cargoNominationId;
-
-  @JsonInclude(Include.NON_NULL)
-  private Boolean isCommingle;
-
-  @JsonInclude(Include.NON_NULL)
-  private String tankShortName;
-
-  @JsonInclude(Include.NON_NULL)
-  private Integer tankDisplayOrder;
-
-  @JsonInclude(Include.NON_NULL)
-  private String correctedUllageOrginal;
-
-  @JsonInclude(Include.NON_NULL)
-  private String correctionFactorOrginal;
-
-  @JsonInclude(Include.NON_NULL)
-  private String weightOrginal;
-
-  @JsonInclude(Include.NON_NULL)
-  private String fillingRatioOrginal;
-
-  @JsonInclude(Include.NON_NULL)
-  private String rdgUllageOrginal;
-
-  private String cargoNominationTemperature;
 }

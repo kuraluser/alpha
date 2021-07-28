@@ -6,15 +6,11 @@ import lombok.Data;
 
 /** @author Sanal */
 @Data
-public class LoadablePatternJson {
+public class ArrivalConditionJson {
 
-  private Long loadablePatternId;
-  private Long loadableStudyStatusId;
-  private Integer caseNumber;
   private List<LoadableQuantityCargoDetails> loadableQuantityCargoDetails;
   private List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetails;
   private List<LoadablePlanStowageDetailsJson> loadablePlanStowageDetails;
-  private List<LoadablePlanBallastDetails> loadablePlanBallastDetails;
+  private List<LoadablePlanStowageDetailsJson> loadablePlanBallastDetails;
   private StabilityParameter stabilityParameters;
-  private Boolean confirmPlanEligibility;
 }

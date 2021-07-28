@@ -13,4 +13,7 @@ public class StabilityParameter {
   private String heel;
   private String bendinMoment;
   private String shearForce;
+  private String bm;
+  private String sf;
+  private String draft;
 }
