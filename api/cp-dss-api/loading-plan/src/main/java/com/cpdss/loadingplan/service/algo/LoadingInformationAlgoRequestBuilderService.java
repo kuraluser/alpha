@@ -87,6 +87,7 @@ public class LoadingInformationAlgoRequestBuilderService {
   public LoadingInformationAlgoRequest createAlgoRequest(LoadingInfoAlgoRequest request)
       throws GenericServiceException {
     LoadingInformationAlgoRequest algoRequest = new LoadingInformationAlgoRequest();
+    algoRequest.setModule(LoadingPlanConstants.LOADING_INFORMATION_REQUEST_JSON_MODULE_NAME);
     Optional<com.cpdss.loadingplan.entity.LoadingInformation> loadingInfoOpt =
         this.loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingInfoId());
     if (loadingInfoOpt.isPresent()) {

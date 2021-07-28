@@ -5,6 +5,8 @@ import static com.cpdss.gateway.common.GatewayConstants.LOADING_RULE_MASTER_ID;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
+import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
@@ -42,10 +44,15 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.service.loadingplan.LoadingSequenceService;
 import com.cpdss.gateway.utility.RuleUtility;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +72,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   @Autowired LoadingSequenceService loadingSequenceService;
 
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
+
+  @Value("${gateway.attachement.rootFolder}")
+  private String rootFolder;
 
   /**
    * Port Rotation From Loading Plan DB
@@ -281,13 +291,51 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       throws GenericServiceException {
     LoadingPlanAlgoResponse algoResponse = new LoadingPlanAlgoResponse();
     LoadingPlanSaveRequest.Builder builder = LoadingPlanSaveRequest.newBuilder();
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      objectMapper.writeValue(
+          new File(this.rootFolder + "/json/loadingInformationResult_" + infoId + ".json"),
+          loadingPlanAlgoRequest);
+    } catch (IOException e) {
+      log.error("Exception encountered when saving Loading Information Response JSON");
+    }
+    try {
+      log.info("Saving Loading Information Response JSON");
+      StatusReply reply =
+          this.saveJson(
+              infoId,
+              GatewayConstants.LOADING_INFORMATION_RESPONSE_JSON_ID,
+              objectMapper.writeValueAsString(loadingPlanAlgoRequest));
+      if (!GatewayConstants.SUCCESS.equals(reply.getStatus())) {
+        log.error("Error occured  in gateway while writing JSON to database.");
+      }
+    } catch (JsonProcessingException e) {
+      log.error("Exception encountered when processing Loading Information Response JSON");
+    }
     loadingSequenceService.buildLoadingPlanSaveRequest(loadingPlanAlgoRequest, infoId, builder);
     LoadingPlanSaveResponse response = loadingPlanGrpcService.saveLoadingPlan(builder.build());
-    if (response.getResponseStatus().getStatus().equals(SUCCESS)) {
-      algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
-    } else {
-      algoResponse.setResponseStatus(new CommonSuccessResponse(GatewayConstants.FAILED, ""));
+    if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
+      log.error("Exception occured when saving loading plan");
+      throw new GenericServiceException(
+          "Unable to save loading plan for loading information " + infoId,
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
     }
+    algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
     return algoResponse;
+  }
+
+  /**
+   * @param request
+   * @return StatusReply
+   */
+  public StatusReply saveJson(Long referenceId, Long jsonTypeId, String json) {
+    JsonRequest jsonRequest =
+        JsonRequest.newBuilder()
+            .setReferenceId(referenceId)
+            .setJsonTypeId(jsonTypeId)
+            .setJson(json)
+            .build();
+    return this.loadingPlanGrpcService.saveJson(jsonRequest);
   }
 }

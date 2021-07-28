@@ -571,7 +571,7 @@ public class LoadingSequenceService {
               Optional.ofNullable(rob.getQuantityMT()).ifPresent(robBuilder::setQuantity);
               Optional.ofNullable(rob.getTankId()).ifPresent(robBuilder::setTankId);
               robBuilder.setConditionType(conditionType);
-              builder.addPortLoadingPlanBallastDetails(robBuilder.build());
+              builder.addPortLoadingPlanRobDetails(robBuilder.build());
             });
   }
 
@@ -705,7 +705,7 @@ public class LoadingSequenceService {
               Optional.ofNullable(rob.getQuantityM3()).ifPresent(robBuilder::setQuantityM3);
               Optional.ofNullable(rob.getQuantityMT()).ifPresent(robBuilder::setQuantity);
               Optional.ofNullable(rob.getTankId()).ifPresent(robBuilder::setTankId);
-              builder.addLoadingPlanBallastDetails(robBuilder.build());
+              builder.addLoadingPlanRobDetails(robBuilder.build());
             });
   }
 

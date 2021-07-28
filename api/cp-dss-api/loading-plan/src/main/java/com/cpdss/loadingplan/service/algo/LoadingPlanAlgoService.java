@@ -251,6 +251,19 @@ public class LoadingPlanAlgoService {
 
     log.info("Deleting Loading Plan of LoadingInformation {}", request.getLoadingInfoId());
     deleteLoadingPlan(oldStowageDetails, oldBallastDetails, oldRobDetails, oldStabilityParams);
+
+    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+        loadingInfoStatusRepository.findByIdAndIsActive(
+            LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
+    if (loadingInfoStatusOpt.isEmpty()) {
+      throw new GenericServiceException(
+          "Could not find loading information status with id "
+              + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
+    loadingInformationRepository.save(loadingInfoOpt.get());
   }
 
   private void deleteLoadingPlan(

@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class LoadingInformationAlgoRequest {
 
+  private String module;
   private Long portId;
   private List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails;
   private LoadingInformation loadingInformation;

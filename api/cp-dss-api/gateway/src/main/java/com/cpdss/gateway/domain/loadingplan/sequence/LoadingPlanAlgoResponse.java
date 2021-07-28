@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 public class LoadingPlanAlgoResponse {
-
+  private String processId;
   private CommonSuccessResponse responseStatus;
 }
