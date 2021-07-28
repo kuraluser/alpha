@@ -12,8 +12,8 @@ public class BMAndSF {
   private List<MinMaxValuesForBMAndSf> minMaxValuesForBMAndSfs;
   private List<StationValues> stationValues;
   private List<InnerBulkHeadValues> innerBulkHeadValues;
-  private List<BendingMomentType1> bendingMoment;
-  private List<ShearingForceType1> shearingForce;
+  private List<BendingMomentType1> bendingMomentType1;
+  private List<ShearingForceType1> shearingForceType1;
   private List<BendingMomentType2> bendingMomentType2;
   private List<BendingMomentType4> bendingMomentType4;
   private List<ShearingForceType2> shearingForceType2;
