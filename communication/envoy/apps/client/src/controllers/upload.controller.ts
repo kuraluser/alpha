@@ -1,4 +1,4 @@
-import { Controller, Post, Param, Headers, Req, Put } from '@nestjs/common';
+import { Controller, Post, Param, Headers, Req, Put, HttpCode, Get } from '@nestjs/common';
 import { CommonUploadApiService } from "@envoy/common";
 import { InboundEventUploadResponse } from '@envoy/common';
 import { ConfigService } from '@nestjs/config';
@@ -10,6 +10,15 @@ import { ConfigService } from '@nestjs/config';
 export class UploadController {
 
   constructor(private configService: ConfigService, private readonly commonApiService: CommonUploadApiService) {
+  }
+  
+  /**
+   * Health check API
+   */
+  @Get('health')
+  @HttpCode(204)
+  public healthCheck() {
+    return "OK";
   }
 
   /**
