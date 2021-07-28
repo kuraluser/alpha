@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_BUTTON, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { ValueObject, ISubTotal, IMonth } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
@@ -36,7 +36,7 @@ export class LoadableStudyDetailsTransformationService {
   private _ohqUpdate: Subject<any> = new Subject();
   private _portUpdate: Subject<any> = new Subject();
   private OPERATIONS: OPERATIONS;
-  private _loadLineChangeSource: Subject<any> = new Subject();
+  private _loadLineChangeSource: BehaviorSubject<any> = new BehaviorSubject(null);
   private _loadableStudyUpdate: Subject<any> = new Subject();
   private _loadablePatternBtnDisable: Subject<any> = new Subject();
 
@@ -223,7 +223,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldHeaderClass: 'column-abbreviation',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
-          'alphabetsOnly': 'CARGO_NOMINATION_FIELD_ALPHABETS_ONLY_ERROR',
+          'alphaNumericOnly': 'CARGO_NOMINATION_FIELD_ALPHA_NUMERIC_ONLY_ERROR',
           'duplicateAbbrevation': 'CARGO_NOMINATION_ABBREVIATION_ALREADY_USED_ERROR',
           'maxlength': 'CARGO_NOMINATION_FIELD_ABBREVIATION_MAX_LENGTH_ERROR'
         }
@@ -944,8 +944,8 @@ export class LoadableStudyDetailsTransformationService {
   }
 
    /** Set load line change status */
-   setLoadLineChange() {
-    this._loadLineChangeSource.next();
+   setLoadLineChange(value: boolean) {
+    this._loadLineChangeSource.next(value);
   }
 
   /**

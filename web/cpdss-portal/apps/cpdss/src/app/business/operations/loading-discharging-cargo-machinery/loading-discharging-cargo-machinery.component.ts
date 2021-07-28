@@ -28,7 +28,10 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-  this.selectedType = this.machineryInUses?.tankTypes[0];
+  this.machineryInUses.loadingMachinesInUses = this.machineryInUses?.loadingMachinesInUses ?? [];
+  const usedManifold = this.machineryInUses?.loadingMachinesInUses?.find(machine => machine.machineTypeId === this.machineryInUses.machineTypes.MANIFOLD);
+  const usedType = this.machineryInUses?.vesselManifold?.find(manifold => manifold.id === usedManifold?.machineId)
+  this.selectedType = usedType ? this.machineryInUses?.tankTypes?.find(type => type.id === usedType.componentType) : this.machineryInUses?.tankTypes[0];
   this.initMachinery();
   }
 

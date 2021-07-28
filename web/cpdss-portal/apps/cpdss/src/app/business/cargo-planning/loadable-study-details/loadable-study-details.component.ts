@@ -380,7 +380,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
     });
     this.loadableStudyDetailsTransformationService.loadLineChange$.subscribe((res) => {
-      this.displayLoadableQuntity = true;
+      this.displayLoadableQuntity = res;
     });
     this.loadableStudyDetailsTransformationService.loadablePatternBtnDisable$.subscribe(value=>{
       this.isServiceWorkerCallActive = value;

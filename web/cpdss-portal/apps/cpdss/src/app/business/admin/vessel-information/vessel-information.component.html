@@ -1,0 +1,14 @@
+<div class="conatiner-fluid">
+  <div class="row pl-10 pr-10">
+    <div class="col">
+        <h5 class="main-head inline-block">{{'VESSEL_MASTER_INFORMATION' | translate}}</h5>
+    </div>
+  </div>
+
+  <div class="row pl-10 pr-10">
+    <div class="col-12 user-listing-wrapper">
+      <cpdss-portal-datatable [tableId]="'vessel_info_master'" [columns]="columns" [value]="vesselInfoData" [paginator]="true" [rows]="10" [totalRecords]="totalRecords" [lazy]="true">
+      </cpdss-portal-datatable>
+    </div>
+  </div>
+</div>
