@@ -1386,7 +1386,7 @@ message ActiveVoyage{
 // Usage at LoadingPlanGrpcServiceImpl.fetchSynopticRecordForPortRotationArrivalCondition
 message LoadingPlanIdRequest {
 	int64 id = 1;
-	string idType = 2; // Expected values - PORT/PORT_ROTATION/LOADABLE_STUDY
+	string idType = 2; // Expected values - PORT/PORT_ROTATION/LOADABLE_STUDY/LOADING_INFO_ID
 	int64 patternId = 3;
 	string operationType = 4;
 	int64 portRotationId = 5;

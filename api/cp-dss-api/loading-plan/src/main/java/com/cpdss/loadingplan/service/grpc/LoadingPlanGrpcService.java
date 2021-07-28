@@ -126,4 +126,26 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  @Override
+  public void getLoadingPlan(
+      LoadingPlanModels.LoadingInformationRequest request,
+      StreamObserver<LoadingPlanModels.LoadingPlanReply> responseObserver) {
+    LoadingPlanModels.LoadingPlanReply.Builder builder =
+        LoadingPlanModels.LoadingPlanReply.newBuilder();
+    try {
+      loadingPlanService.getLoadingPlan(request, builder);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(LoadingPlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

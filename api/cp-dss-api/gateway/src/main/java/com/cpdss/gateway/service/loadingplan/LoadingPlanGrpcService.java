@@ -57,4 +57,8 @@ public interface LoadingPlanGrpcService {
   LoadingSequenceReply getLoadingSequence(Builder builder) throws GenericServiceException;
 
   LoadingPlanSaveResponse saveLoadingPlan(LoadingPlanSaveRequest request);
+
+  LoadingPlanModels.LoadingPlanReply getLoadingPlan(
+      Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
+      throws GenericServiceException;
 }

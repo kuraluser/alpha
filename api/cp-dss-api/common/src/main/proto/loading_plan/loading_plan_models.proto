@@ -439,6 +439,7 @@ message LoadingPlanStabilityParameters {
   string bm = 3;
   string sf = 4;
   int32 conditionType = 5;
+  int32 valueType = 6;
 }
 
 message LoadingPlanTankDetails {
@@ -451,6 +452,7 @@ message LoadingPlanTankDetails {
   string quantityM3 = 7;
   string sounding = 8;
   int32 conditionType = 9;
+  int32 valueType = 10;
 }
 
 message DeBallastingRate {
@@ -475,7 +477,7 @@ message Valve {
 }
 
 message PumpOperation {
-  int32 endTime = 1; 
+  int32 endTime = 1;
   string pumpName = 2;
   int64 pumpXId = 3;
   string rate = 4;
@@ -557,4 +559,15 @@ message LoadingSequenceReply {
   int32 interval = 2;
   repeated LoadingSequence loadingSequences = 3;
   ResponseStatus responseStatus = 4;
+}
+
+message LoadingPlanReply {
+  ResponseStatus responseStatus = 7;
+  int64 loadingInfoId = 1;
+  LoadingInformation loadingInformation = 8;
+  repeated LoadingSequence loadingSequences = 2;
+  repeated LoadingPlanTankDetails portLoadingPlanStowageDetails = 3;
+  repeated LoadingPlanTankDetails portLoadingPlanBallastDetails = 4;
+  repeated LoadingPlanTankDetails portLoadingPlanRobDetails = 5;
+  repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 6;
 }
