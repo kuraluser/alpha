@@ -2,7 +2,6 @@
 package com.cpdss.loadingplan.service.grpc;
 
 import com.cpdss.common.generated.Common.ResponseStatus;
-import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
@@ -130,7 +129,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
 
   @Override
   public void getLoadingPlan(
-      LoadableStudy.LoadingPlanIdRequest request,
+      LoadingPlanModels.LoadingInformationRequest request,
       StreamObserver<LoadingPlanModels.LoadingPlanReply> responseObserver) {
     LoadingPlanModels.LoadingPlanReply.Builder builder =
         LoadingPlanModels.LoadingPlanReply.newBuilder();

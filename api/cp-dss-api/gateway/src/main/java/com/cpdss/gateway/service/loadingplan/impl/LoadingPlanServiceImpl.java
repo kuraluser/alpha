@@ -327,6 +327,6 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         loadingPlanBuilderService.buildLoadingPlanStabilityParamFromRpc(
             planReply.getPortLoadingPlanStabilityParametersList()));
 
-    return null;
+    return loadingPlanResponse;
   }
 }

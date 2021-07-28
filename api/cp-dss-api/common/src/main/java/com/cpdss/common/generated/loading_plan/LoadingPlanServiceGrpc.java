@@ -128,22 +128,23 @@ public final class LoadingPlanServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply>
       getGetLoadingPlanMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetLoadingPlan",
-      requestType = com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest.class,
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest.class,
       responseType =
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply>
       getGetLoadingPlanMethod() {
     io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply>
         getGetLoadingPlanMethod;
     if ((getGetLoadingPlanMethod = LoadingPlanServiceGrpc.getGetLoadingPlanMethod) == null) {
@@ -152,7 +153,8 @@ public final class LoadingPlanServiceGrpc {
           LoadingPlanServiceGrpc.getGetLoadingPlanMethod =
               getGetLoadingPlanMethod =
                   io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest,
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformationRequest,
                           com.cpdss.common.generated.loading_plan.LoadingPlanModels
                               .LoadingPlanReply>
                           newBuilder()
@@ -161,8 +163,8 @@ public final class LoadingPlanServiceGrpc {
                       .setSampledToLocalTracing(true)
                       .setRequestMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest
-                                  .getDefaultInstance()))
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformationRequest.getDefaultInstance()))
                       .setResponseMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
                               com.cpdss.common.generated.loading_plan.LoadingPlanModels
@@ -351,7 +353,7 @@ public final class LoadingPlanServiceGrpc {
 
     /** */
     public void getLoadingPlan(
-        com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request,
         io.grpc.stub.StreamObserver<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply>
             responseObserver) {
@@ -399,7 +401,8 @@ public final class LoadingPlanServiceGrpc {
               getGetLoadingPlanMethod(),
               asyncUnaryCall(
                   new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInformationRequest,
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply>(
                       this, METHODID_GET_LOADING_PLAN)))
           .addMethod(
@@ -462,7 +465,7 @@ public final class LoadingPlanServiceGrpc {
 
     /** */
     public void getLoadingPlan(
-        com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request,
         io.grpc.stub.StreamObserver<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply>
             responseObserver) {
@@ -530,7 +533,9 @@ public final class LoadingPlanServiceGrpc {
 
     /** */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply
-        getLoadingPlan(com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request) {
+        getLoadingPlan(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest
+                request) {
       return blockingUnaryCall(getChannel(), getGetLoadingPlanMethod(), getCallOptions(), request);
     }
 
@@ -589,7 +594,9 @@ public final class LoadingPlanServiceGrpc {
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply>
-        getLoadingPlan(com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request) {
+        getLoadingPlan(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest
+                request) {
       return futureUnaryCall(
           getChannel().newCall(getGetLoadingPlanMethod(), getCallOptions()), request);
     }
@@ -658,7 +665,8 @@ public final class LoadingPlanServiceGrpc {
           break;
         case METHODID_GET_LOADING_PLAN:
           serviceImpl.getLoadingPlan(
-              (com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest) request,
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest)
+                  request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply>)
                   responseObserver);

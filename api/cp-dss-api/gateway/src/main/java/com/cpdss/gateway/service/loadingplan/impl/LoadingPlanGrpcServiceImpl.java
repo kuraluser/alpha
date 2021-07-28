@@ -346,10 +346,18 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   public LoadingPlanModels.LoadingPlanReply getLoadingPlan(
       Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
       throws GenericServiceException {
-    LoadableStudy.LoadingPlanIdRequest.Builder builder =
-        LoadableStudy.LoadingPlanIdRequest.newBuilder();
+
+    LoadingPlanModels.LoadingInformationRequest.Builder builder =
+        LoadingPlanModels.LoadingInformationRequest.newBuilder();
+    builder.setLoadingPlanId(loadingInfoId);
+    builder.setLoadingPatternId(patternId);
+    builder.setPortRotationId(portRotationId);
+    builder.setVoyageId(voyageId);
+    builder.setVesselId(vesselId);
+
     LoadingPlanModels.LoadingPlanReply reply =
         this.loadingPlanServiceBlockingStub.getLoadingPlan(builder.build());
+
     if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error("Failed to fetch Loading plan, Message {}", reply.getResponseStatus().getMessage());
       throw new GenericServiceException(
