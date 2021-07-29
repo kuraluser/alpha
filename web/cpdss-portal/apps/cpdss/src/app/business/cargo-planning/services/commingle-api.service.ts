@@ -59,6 +59,7 @@ export class CommingleApiService {
 
       preferredTanks: {
         'required': 'COMMINGLE_PREFERRED_TANK_REQUIRED',
+        'maxlength': 'COMMINGLE_POPUP_PREFERRED_TANK_MAX_LIMIT'
       },
       cargo1: {
         'required': 'COMMINGLE_CARGO_SELECT_ERROR',

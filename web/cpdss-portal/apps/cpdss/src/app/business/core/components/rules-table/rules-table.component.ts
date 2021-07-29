@@ -326,7 +326,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
               value = input?.ruleDropDownMaster?.find(r=>r.id===Number(input?.defaultValue))
             }
             let validationArray = [];
-            if (input.isMandatory && rule?.isHardRule == false) {
+            if (input.isMandatory && rule?.isHardRule == false && input.type) {
               validationArray.push(Validators.required);
             }
 

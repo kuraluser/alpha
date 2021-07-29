@@ -4,16 +4,16 @@
 
         <p-calendar appendTo="body" [showTime]="true" [showButtonBar]="true" [minDate]="mindate" [maxDate]="today" [readonlyInput]="true"
             inputId="actual_date_selector" id="actual_date_selector" dateFormat="{{popupDateFormat}}"
-            [hideOnDateTimeSelect]="false" [placeholder]="'VOYAGE_LIST_DATE_POPUP_ACTUAL_DATE_PLACEHOLDER' | translate" [(ngModel)]="defaultDate" #coldatetime></p-calendar>
+            [hideOnDateTimeSelect]="false" [placeholder]="'VOYAGE_LIST_DATE_POPUP_ACTUAL_DATE_PLACEHOLDER' | translate" [(ngModel)]="defaultDate" #coldatetime focusTrap></p-calendar>
     </div>
     <p-footer>
         <div class="row">
             <div class="col-sm-12 text-right">
                 <button type="button" class="btn btn-main"
-                    id="date-popup-cancel" (click)="closeDialog()">{{'VOYAGE_LIST_DATE_POPUP_CANCEL_BUTTON' |
+                    id="date-popup-cancel" (click)="closeDialog()"  focusTrap>{{'VOYAGE_LIST_DATE_POPUP_CANCEL_BUTTON' |
                     translate}}</button>
                     <button type="button" class="btn btn-main"
-                    id="date-popup-start" (click)="startStopVoyage()">{{startStopButtonLabel |
+                    id="date-popup-start" (click)="startStopVoyage()" autofocus focusTrap>{{startStopButtonLabel |
                     translate}}</button>
 
             </div>

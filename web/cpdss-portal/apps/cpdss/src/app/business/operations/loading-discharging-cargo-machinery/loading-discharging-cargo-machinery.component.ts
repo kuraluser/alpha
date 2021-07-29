@@ -127,8 +127,9 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
       this.machineryInUses.loadingMachinesInUses.push(machineInUse)
       this.updatemachineryInUses.emit(this.machineryInUses.loadingMachinesInUses);
     } else {
+      const machineTypeId = column?.machineType ?? column?.machineTypeId;
       this.machineryInUses?.loadingMachinesInUses?.map(machineUse => {
-        if (machineUse.machineId === column.id && machineUse.machineTypeId === column.machineTypeId) {
+        if (machineUse.machineId === column.id && machineUse.machineTypeId === machineTypeId) {
           machineUse.isUsing = false;
         }
       });

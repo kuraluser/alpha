@@ -7,7 +7,7 @@
 
   <div class="row pl-10 pr-10">
     <div class="col-12 user-listing-wrapper">
-      <cpdss-portal-datatable [tableId]="'vessel_info_master'" [columns]="columns" [value]="vesselInfoData" [paginator]="true" [rows]="10" [totalRecords]="totalRecords" [lazy]="true">
+      <cpdss-portal-datatable [tableId]="'vessel_info_master'" [columns]="columns" [value]="vesselInfoData" [paginator]="true" [rows]="10" [totalRecords]="totalRecords" [lazy]="true" (columnClick)="onRowClick($event)">
       </cpdss-portal-datatable>
     </div>
   </div>

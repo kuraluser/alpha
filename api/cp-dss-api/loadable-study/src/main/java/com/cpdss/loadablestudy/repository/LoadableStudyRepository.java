@@ -71,6 +71,9 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
   public Optional<LoadableStudy> findByIdAndIsActiveAndVesselXId(
       Long id, Boolean isActive, Long vesselId);
 
-  public boolean existsByNameAndPlanningTypeXIdAndVoyageAndIsActive(
+  public boolean existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
       String name, int i, Voyage voyage, boolean b);
+
+  public boolean existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActiveAndIdNot(
+      String name, int i, Voyage voyage, boolean b, Long id);
 }
