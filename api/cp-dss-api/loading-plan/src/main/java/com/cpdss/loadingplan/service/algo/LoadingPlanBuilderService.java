@@ -19,6 +19,7 @@ import com.cpdss.loadingplan.entity.LoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.LoadingPlanStowageDetails;
 import com.cpdss.loadingplan.entity.LoadingSequence;
+import com.cpdss.loadingplan.entity.LoadingSequenceStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
@@ -299,5 +300,26 @@ public class LoadingPlanBuilderService {
             : new BigDecimal(pumpOperation.getRate()));
     ballastOperation.setStartTime(pumpOperation.getStartTime());
     ballastOperation.setIsActive(true);
+  }
+
+  public void buildLoadingSequenceStabilityParams(
+      LoadingInformation loadingInformation,
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStabilityParameters
+          param,
+      LoadingSequenceStabilityParameters stabilityParameters) {
+    stabilityParameters.setAftDraft(
+        StringUtils.isEmpty(param.getAftDraft()) ? null : new BigDecimal(param.getAftDraft()));
+    stabilityParameters.setBendingMoment(
+        StringUtils.isEmpty(param.getBm()) ? null : new BigDecimal(param.getBm()));
+    stabilityParameters.setDraft(
+        StringUtils.isEmpty(param.getDraft()) ? null : new BigDecimal(param.getDraft()));
+    stabilityParameters.setForeDraft(
+        StringUtils.isEmpty(param.getForeDraft()) ? null : new BigDecimal(param.getForeDraft()));
+    stabilityParameters.setIsActive(true);
+    stabilityParameters.setLoadingInformation(loadingInformation);
+    stabilityParameters.setPortXId(loadingInformation.getPortXId());
+    stabilityParameters.setShearingForce(
+        StringUtils.isEmpty(param.getSf()) ? null : new BigDecimal(param.getSf()));
+    stabilityParameters.setTime(param.getTime());
   }
 }

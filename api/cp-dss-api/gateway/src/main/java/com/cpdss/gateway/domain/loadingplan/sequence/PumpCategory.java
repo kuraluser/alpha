@@ -7,6 +7,6 @@ import lombok.Data;
 public class PumpCategory {
 
   private Long id;
-  private String pumpNo;
+  private String pumpName;
   private String pumpType;
 }
