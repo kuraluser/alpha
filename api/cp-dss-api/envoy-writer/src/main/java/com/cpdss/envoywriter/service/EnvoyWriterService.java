@@ -10,7 +10,6 @@ import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriter.WriterReply;
 import com.cpdss.common.generated.EnvoyWriter.WriterReply.Builder;
 import com.cpdss.common.rest.CommonErrorCodes;
-import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.envoywriter.domain.StatusCheckResponse;
 import com.cpdss.envoywriter.domain.WriterResponse;
 import com.cpdss.envoywriter.entity.SequenceNumber;
@@ -44,6 +43,9 @@ public class EnvoyWriterService {
 
   @Value("${cpdss.communucation.shore.writer.url}")
   private String writerShoreUrl;
+
+  @Value("${cpdss.build.env}")
+  private String env;
 
   @Autowired private SequenceNumberRepository sequenceNumberRepository;
   @Autowired private RestTemplate restTemplate;
@@ -186,23 +188,14 @@ public class EnvoyWriterService {
     String separator = "/";
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
-        .append(
-            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
-                ? writerShipUrl
-                : writerShoreUrl)
+        .append(env.equals("ship") ? writerShipUrl : writerShoreUrl)
         .append(separator)
         .append("push")
         .append(separator)
         .append(request.getClientId())
         .append(separator)
-        .append(
-            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
-                ? ""
-                : request.getImoNumber())
-        .append(
-            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
-                ? ""
-                : separator)
+        .append(env.equals("ship") ? "" : request.getImoNumber())
+        .append(env.equals("ship") ? "" : separator)
         .append(request.getMessageType())
         .append(separator)
         .append(uuid)
@@ -242,10 +235,7 @@ public class EnvoyWriterService {
     String separator = "/";
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
-        .append(
-            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
-                ? writerShipUrl
-                : writerShoreUrl)
+        .append(env.equals("ship") ? writerShipUrl : writerShoreUrl)
         .append(separator)
         .append("status")
         .append(separator)

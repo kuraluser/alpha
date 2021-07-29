@@ -26,10 +26,12 @@ public class TaskListener implements ExecuteTaskListener {
     // To-Do Task Execution
     System.out.println("Executing task " + taskName);
     if (taskName.contains("DOWNLOAD_RESULT_")) {
-      if (taskReqParams.get("messageType").equals(String.valueOf(MessageTypes.LOADABLESTUDY)))
-        communicationService.saveLoadableStudyShore(taskReqParams);
-      else if (taskReqParams.get("messageType").equals(String.valueOf(MessageTypes.ALGORESULT)))
-        communicationService.saveAlgoPatternFromShore(taskReqParams);
+      if (taskReqParams.get("env").equals("ship")) {
+        communicationService.getDataFromCommInShipSide(taskReqParams, MessageTypes.ship);
+      } else {
+        communicationService.getDataFromCommInShoreSide(taskReqParams, MessageTypes.shore);
+      }
+
     } else if (taskName.contains("STATUS_CHECK_")) {
       communicationService.checkLoadableStudyStatus(taskReqParams);
     }

@@ -5,6 +5,7 @@ ext{
     dbPassword = System.getenv('DB_PASSWORD') ?: ""
     grpcPort = System.getenv('GRPC_PORT') ?: ""
 	salt = System.getenv('SALT') ?: ""
+    cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
 }
 
 appConfig {
@@ -25,7 +26,7 @@ docker {
       replicas = 1
       rollbackOnUpdateFailure = true
     }
-    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword, 'SALT': salt]
+    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword, 'SALT': salt,'CPDSS_BUILD_ENV': cpdssBuildEnv]
   }
 }
 

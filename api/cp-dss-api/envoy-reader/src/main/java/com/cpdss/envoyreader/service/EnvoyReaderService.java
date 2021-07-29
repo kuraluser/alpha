@@ -11,7 +11,6 @@ import com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply.Builder;
 import com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.envoyreader.domain.ReaderResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,6 +43,9 @@ public class EnvoyReaderService {
 
   @Value("${cpdss.communucation.ship.reader.url}")
   private String downloadShipUrl;
+
+  @Value("${cpdss.build.env}")
+  private String env;
 
   public static final String FILE_PREFIX = "temp";
   public static final String FILE_SUFFIX = ".zip";
@@ -147,10 +149,7 @@ public class EnvoyReaderService {
     String separator = "/";
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
-        .append(
-            request.getMessageType().equals(String.valueOf(MessageTypes.LOADABLESTUDY))
-                ? downloadShoreUrl
-                : downloadShipUrl)
+        .append(env.equals("ship") ? downloadShoreUrl : downloadShipUrl)
         .append(separator)
         .append("download")
         .append(separator)
