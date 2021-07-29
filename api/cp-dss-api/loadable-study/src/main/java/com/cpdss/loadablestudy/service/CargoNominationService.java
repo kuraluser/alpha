@@ -105,7 +105,7 @@ public class CargoNominationService {
     return cargoNominationRepository.saveAll(dischargeStudycargos);
   }
 
-  private CargoNomination createDsCargoNomination(
+  public CargoNomination createDsCargoNomination(
       Long dischargeStudyId, CargoNomination cargo, Long portId) {
     CargoNomination dischargeStudyCargo = new CargoNomination();
     dischargeStudyCargo.setAbbreviation(cargo.getAbbreviation());
