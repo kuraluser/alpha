@@ -4,6 +4,7 @@ ext{
   dbUser = System.getenv('DB_USER') ?: ""
   dbPassword = System.getenv('DB_PASSWORD') ?: ""
   grpcPort = System.getenv('GRPC_PORT') ?: ""
+  algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
 }
 
 appConfig {
@@ -23,7 +24,8 @@ docker {
       replicas = 1
       rollbackOnUpdateFailure = true
     }
-    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword]
+    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword,
+    'ALGO_BASE_URL': algoBaseURL]
   }
   javaMainClass = "com.cpdss.loadingplan.Application"
 }
