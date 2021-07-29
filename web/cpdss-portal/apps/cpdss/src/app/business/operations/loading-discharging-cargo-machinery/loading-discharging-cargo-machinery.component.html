@@ -2,33 +2,35 @@
     <div class="row">
 
         <div class="col">
-            <h5 class="text-uppercase">
+            <h5 class="text-uppercase heading-border pt-25 mb-10">
                 {{'LOADING_MACHINERY_MACHINERY_IN_USE_HEADER' | translate}}
             </h5>
         </div>
         <div class="col">
-            <h5 class="text-uppercase">
+            <h5 class="text-uppercase heading-border pt-25 mb-10">
                 {{'LOADING_MACHINERY_PUMP_IN_USE_HEADER' | translate}}
             </h5>
         </div>
     </div>
     <div class="row">
-        <div class="col" *ngFor="let key of machineriesKey; let i = index;">
+        <div class="col ml-30" *ngFor="let key of machineriesKey; let i = index;">
 
-            <p-table [value]="machineries[key]" styleClass="body-header-row-span-table">
+            <p-table [value]="machineries[key]" styleClass="body-header-row-span-table rowspan-no-border">
                 <ng-template pTemplate="colgroup">
                     <colgroup>
                         <col class="table-header-machinery">
+                        <col *ngIf="key === 'cargoMachineryValues'" class="type-column">
                         <col class="checkbox-column">
                         <col class="name-column">
-                        <col class="">
+                        <col *ngIf="key === 'pumpValues'" class="capacity-column">
                     </colgroup>
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <th>{{key === 'cargoMachineryValues' ? ('LOADING_MACHINERY_HEADER_MACHINERY' | translate) : ('LOADING_MACHINERY_HEADER_PUMP' | translate)}}</th>
+                        <th>{{key === 'cargoMachineryValues' ? ('LOADING_MACHINERY_HEADER_MACHINERY' | translate) :
+                            ('LOADING_MACHINERY_HEADER_PUMP' | translate)}}</th>
                         <th *ngIf="key === 'cargoMachineryValues'">{{'LOADING_MACHINERY_TYPE_HEADER' | translate}}</th>
-                        <th>{{'LOADING_MACHINERY_USING_HEADER' | translate}}</th>
+                        <th class="text-center">{{'LOADING_MACHINERY_USING_HEADER' | translate}}</th>
                         <th>{{'LOADING_MACHINERY_NAME_HEADER' | translate}}</th>
                         <th *ngIf="key === 'pumpValues'">{{'LOADING_MACHINERY_CAPACITY_HEADER' | translate}}</th>
                     </tr>
@@ -45,13 +47,22 @@
                                     resetFilterOnHide="true" (onChange)="onTypeChange($event)">
                                 </p-dropdown>
                             </td>
-                            <td>
-                                <input type="checkbox" [(ngModel)]="column.isUsing" (change)="onUse(column)">
+                            <td class="text-center">
+                                <label class="checkbox-custom">
+                                    <input type="checkbox" [(ngModel)]="column.isUsing" (change)="onUse(column)">
+                                    <span class="checkmark"></span>
+                                </label>
                             </td>
                             <td>{{column[row.field]}}</td>
                             <td *ngIf="key === 'pumpValues'">
                                 <input type="text" cpdssPortalNumberDecimal [(ngModel)]="column.capacity"
                                     class="form-control" [disabled]="!column.isUsing" (change)="onChange(column)">
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-container *ngIf="row?.columns?.length">
+                        <tr>
+                            <td colspan="4" class="row-border">
                             </td>
                         </tr>
                     </ng-container>

@@ -5,7 +5,7 @@
                 <div class="col col-form-label">{{'NEW_DISCHARGE_STUDY_POPUP_NAME' | translate}}</div>
                 <div class="col">
                     <input type="text" class="form-control" type="text" id="txt_enquiryDetails"
-                        formControlName="newDischargeStudyName"/>
+                        formControlName="newDischargeStudyName" focusTrap/>
                 </div>
                 <cpdss-portal-validation-error [errors]="fieldError('newDischargeStudyName')"
                     [errorMessages]="errorMessages.newDischargeStudyName">
@@ -15,7 +15,7 @@
                 <div class="col col-form-label">{{'NEW_DISCHARGE_STUDY_POPUP_ENQUIRY_DETAILS' | translate}}</div>
                 <div class="col">
                     <textarea class="form-control" type="text" id="txt_enquiryDetails"
-                        formControlName="enquiryDetails"></textarea>
+                        formControlName="enquiryDetails" focusTrap></textarea>
                 </div>
                 <cpdss-portal-validation-error [errors]="fieldError('enquiryDetails')"
                     [errorMessages]="errorMessages.enquiryDetails">
@@ -26,9 +26,9 @@
     <p-footer>
         <div class="row">
             <div class="col-sm-12 text-right">
-                <button type="button" class="btn btn-main" id="new-discharge-study-popup-cancel" (click)="closeDialogue()">
+                <button type="button" class="btn btn-main" id="new-discharge-study-popup-cancel" (click)="closeDialogue()" focusTrap>
                     {{'NEW_DISCHARGE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
-                <button type="submit" class="btn btn-main" form="fg_dischargeStudy" id="new-discharge-study-popup-save" autofocus>
+                <button type="submit" class="btn btn-main" form="fg_dischargeStudy" id="new-discharge-study-popup-save" autofocus focusTrap>
                     {{saveButtonLbl
                     | translate}}</button>
             </div>

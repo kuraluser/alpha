@@ -75,10 +75,10 @@
     <div class="row">
       <div class="col text-center">
         <button class="btn btn-main" (click)="closePopup()"
-          id="api-temp-popup-close">{{'API_TEMP_HISTORY_POPUP_CLOSE'|translate}}</button>
+          id="api-temp-popup-close" focusTrap>{{'API_TEMP_HISTORY_POPUP_CLOSE'|translate}}</button>
         <a class="btn btn-main" *ngIf="userPermission?.view" target="_blank"
           [routerLink]="['/business/cargo-planning/cargo-history']"
-          id="api-temp-popup-view-more">{{'API_TEMP_HISTORY_POPUP_VIEW_MORE'|translate}}</a>
+          id="api-temp-popup-view-more" autofocus focusTrap>{{'API_TEMP_HISTORY_POPUP_VIEW_MORE'|translate}}</a>
       </div>
     </div>
   </p-footer>

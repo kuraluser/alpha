@@ -14,6 +14,8 @@ import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
+import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesReply;
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
@@ -73,6 +75,9 @@ public class LoadingInformationAlgoRequestBuilderService {
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoService;
 
+  @GrpcClient("portInfoService")
+  private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoServiceBlockingStub;
+
   @Autowired LoadingInformationRepository loadingInformationRepository;
 
   @Autowired LoadingPortTideService loadingPortTideDetailsService;
@@ -101,8 +106,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       buildLoadingInformation(algoRequest, loadingInformation, loadingInfoOpt.get());
       buildLoadablePatternPortWiseDetails(algoRequest, loadingInfoOpt.get());
       buildLoadingRules(algoRequest, loadingInfoOpt.get().getVesselXId());
-      // Need confirmation on amount of data to share (whole data or high/low tide details)
-      // buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
+      buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
     } else {
       throw new GenericServiceException(
           "Could not find loading information " + request.getLoadingInfoId(),
@@ -561,10 +565,33 @@ public class LoadingInformationAlgoRequestBuilderService {
               : new BigDecimal(berth.getSeaDraftLimitation()));*/
           berthDetail.setRegulationAndRestriction(berth.getSpecialRegulationRestriction());
 
+          // Setting controllingDepth, underKeelClearance from port info
+          this.getPortInfoIntoBerthData(berth.getBerthId(), berthDetail);
+
           berthDetails.add(berthDetail);
         });
 
     loadingInfo.setBerthDetails(berthDetails);
+  }
+
+  /**
+   * grpc Call to port info, In future this data can get from berth table.
+   *
+   * @param berthId
+   * @param berthDetails
+   */
+  private void getPortInfoIntoBerthData(Long berthId, BerthDetails berthDetails) {
+    PortInfo.LoadingAlgoBerthData portReply =
+        this.portInfoServiceBlockingStub.getLoadingPlanBerthData(
+            PortInfo.BerthIdsRequest.newBuilder().addBerthIds(berthId).build());
+    if (portReply != null && portReply.getResponseStatus().getStatus().equals("SUCCESS")) {
+      if (!portReply.getControllingDepth().isEmpty()) {
+        berthDetails.setControllingDepth(portReply.getControllingDepth());
+      }
+      if (!portReply.getUnderKeelClearance().isEmpty()) {
+        berthDetails.setUnderKeelClearance(portReply.getUnderKeelClearance());
+      }
+    }
   }
 
   private LoadingInformation getLoadingInformation(

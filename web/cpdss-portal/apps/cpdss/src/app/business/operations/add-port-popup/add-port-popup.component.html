@@ -62,9 +62,9 @@
     <p-footer>
         <div class="row">
             <div class="col text-center">
-                <button class="btn btn-main mr-10" id="voyage_popup_cancel" (click)="cancel()">{{
+                <button class="btn btn-main mr-10" id="voyage_popup_cancel" (click)="cancel()" focusTrap>{{
                     'CANCEL_BUTTON_OPERATIONS_ADD_PORT_POPUP' | translate }}</button>
-                <button class="btn btn-main" type="submit" id="voyage_popup_submit" (click)="save()">{{
+                <button class="btn btn-main" type="submit" id="voyage_popup_submit" (click)="save()" autofocus focusTrap>{{
                     'SAVE_BUTTON_OPERATIONS_ADD_PORT_POPUP' | translate }}</button>
             </div>
         </div>

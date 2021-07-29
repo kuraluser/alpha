@@ -114,7 +114,7 @@ function generateRSAKeys(cb) {
 }
 //Copy files
 function copyFiles(cb) {
-  copyfiles(['-f', 'Dockerfile', './nginx-conf/*.conf', './dist/apps/'], () => {
+  copyfiles(['-f', 'Dockerfile', 'supervisord.conf', './nginx-conf/*.conf', './dist/apps/'], () => {
     cb();
   });
 }
@@ -134,7 +134,7 @@ async function dockerize(cb) {
     let stream = await dockerClient.buildImage(
       {
         context: contextPath,
-        src: ['Dockerfile', appName, 'nginx-conf'],
+        src: ['Dockerfile', appName, 'nginx-conf', 'supervisord.conf'],
       },
       {
         t: imageName,

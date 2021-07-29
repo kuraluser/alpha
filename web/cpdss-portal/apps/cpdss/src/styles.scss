@@ -977,7 +977,7 @@ input[type=number] {
   height: calc(100vh - 220px);
   padding-right: 15px;
   margin-right: 2px;
-  padding-bottom: 30px;
+  padding-bottom: 10px;
 }
 
 .p-datatable-wrapper, .p-datatable-scrollable-wrapper{
@@ -1018,8 +1018,9 @@ input[type=number] {
         max-width: 80px;
         height: 25px;
         line-height: 25px;
+        padding-right: 25px!important;
         .icon-api-temp{
-          right: -20px!important;
+          right: 0px!important;
           position: absolute;
           top: 5px;
         }
@@ -1275,7 +1276,7 @@ td.sl div{
 }
 
 .p-multiselect-label{
-  line-height: 25px;
+  line-height: 17px;
     height: 25px;
     padding: 0 5px!important;
 }
@@ -2456,6 +2457,7 @@ textarea{
   }
 }
 .carousel-card{
+  height: 138px;
   .p-calendar .p-inputtext{
     padding: 0 8px;
     margin-bottom: 2px;
@@ -2785,4 +2787,32 @@ textarea{
       margin-bottom: 0;
       padding:2px 0;
   }
+}
+
+.rowspan-no-border{
+  td{
+    border-bottom: 0!important;
+    vertical-align: baseline;
+    padding: 3px 2px !important;
+    &.row-border{
+     padding: 0!important;
+    }
+    &[rowspan]{
+      vertical-align: baseline;
+    }
+  }
+}
+
+.no-min-width{
+  min-width: 0px !important;
+}
+
+.text-right{
+  input{
+    text-align: right;
+  }
+}
+
+.no-ediable-field div{
+  padding-right: 0!important;
 }

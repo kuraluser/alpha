@@ -24,12 +24,15 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   pumpValues: any = [];
   machinery: any = [];
   selectedType: IMachineTankTypes;
-  
+
   constructor() { }
 
   ngOnInit(): void {
-  this.selectedType = this.machineryInUses?.tankTypes[0];
-  this.initMachinery();
+    this.machineryInUses.loadingMachinesInUses = this.machineryInUses?.loadingMachinesInUses ?? [];
+    const usedManifold = this.machineryInUses?.loadingMachinesInUses?.find(machine => machine.machineTypeId === this.machineryInUses.machineTypes.MANIFOLD);
+    const usedType = this.machineryInUses?.vesselManifold?.find(manifold => manifold.id === usedManifold?.machineId)
+    this.selectedType = usedType ? this.machineryInUses?.tankTypes?.find(type => type.id === usedType.componentType) : this.machineryInUses?.tankTypes[0];
+    this.initMachinery();
   }
 
   /**
@@ -37,7 +40,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   *
   * @memberof LoadingDischargingCargoMachineryComponent
   */
-  initMachinery(){
+  initMachinery() {
     this.machineries = [];
     this.machineryInUses?.vesselPumps?.map((vesselpump) => {
       vesselpump.isUsing = this.machineryInUses?.loadingMachinesInUses?.some(loadingmachine => loadingmachine.machineId === vesselpump.id && loadingmachine.machineTypeId === vesselpump.machineType);
@@ -124,7 +127,12 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
       this.machineryInUses.loadingMachinesInUses.push(machineInUse)
       this.updatemachineryInUses.emit(this.machineryInUses.loadingMachinesInUses);
     } else {
-      this.machineryInUses.loadingMachinesInUses = this.machineryInUses?.loadingMachinesInUses?.filter((machineUse) => machineUse.machineId !== column.id && machineUse.machineTypeId !== column.machineTypeId);
+      const machineTypeId = column?.machineType ?? column?.machineTypeId;
+      this.machineryInUses?.loadingMachinesInUses?.map(machineUse => {
+        if (machineUse.machineId === column.id && machineUse.machineTypeId === machineTypeId) {
+          machineUse.isUsing = false;
+        }
+      });
       this.updatemachineryInUses.emit(this.machineryInUses.loadingMachinesInUses);
     }
 
@@ -135,7 +143,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   *
   * @memberof LoadingDischargingCargoMachineryComponent
   */
-  onTypeChange(event){
+  onTypeChange(event) {
     this.initMachinery();
   }
 

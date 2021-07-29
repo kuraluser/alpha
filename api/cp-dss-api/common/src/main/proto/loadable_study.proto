@@ -196,6 +196,8 @@ service LoadableStudyService {
 	rpc GetLoadableStudyShore(LoadableStudyShoreRequest) returns (LoadableStudyShoreResponse){}
 	
 	rpc GetLoadableStudyPortRotationByPortRotationId(PortRotationRequest) returns (PortRotationDetailReply) {}
+
+	rpc GetLoadableStudyShoreTwo(UllageBillRequest) returns (UllageBillReply){}
 }
 
 service DischargeStudyOperationService {
@@ -204,6 +206,7 @@ service DischargeStudyOperationService {
   rpc UpdateDischargeStudy (DischargeStudyDetail) returns (UpdateDischargeStudyReply){}
   rpc getDischargeStudyPortWiseCargos(DischargeStudyRequest) returns (DishargeStudyCargoReply) {}
   rpc SaveDischargeStudyBackLoading (DishargeStudyBackLoadingSaveRequest) returns (DischargeStudyReply){}
+  rpc GenerateDischargePatterns (AlgoRequest) returns (AlgoReply) {}
 }
 
 service PortInstructionService {
@@ -1385,7 +1388,7 @@ message ActiveVoyage{
 // Usage at LoadingPlanGrpcServiceImpl.fetchSynopticRecordForPortRotationArrivalCondition
 message LoadingPlanIdRequest {
 	int64 id = 1;
-	string idType = 2; // Expected values - PORT/PORT_ROTATION/LOADABLE_STUDY
+	string idType = 2; // Expected values - PORT/PORT_ROTATION/LOADABLE_STUDY/LOADING_INFO_ID
 	int64 patternId = 3;
 	string operationType = 4;
 	int64 portRotationId = 5;
@@ -1481,4 +1484,46 @@ message DishargeStudyBackLoadingDetail {
 message PortRotationDetailReply {
   PortRotationDetail portRotationDetail = 1;
   ResponseStatus responseStatus = 2;
+}
+
+message BillOfLanding{
+	int64 id = 1;
+	int64 dischargeStudyId = 2;
+	int64 portId = 3;
+	int64 cargoId = 4;
+	string blRefNumber = 5;
+	string bblAt60f = 6;
+	int64 quantityLt = 7;
+	int64 quantityMt = 8;
+	int64 klAt15c = 9;
+	int64 api = 10;
+	int64 temperature = 11;
+	int64 isActive = 12;
+	int64 version = 13;
+}
+
+message UpdateUllage{
+	int64 id = 1;
+	int64 tankId = 2 ;
+	int64 correctedUllage = 3;
+	int64 correctionFactor = 4;
+	int64 quantityMt = 5;
+	bool isBallast = 6;
+	string fillingRatio = 7;
+	string api =8;
+	string temperature =9;
+	string observedM3 =10;
+	string sg =11;
+	bool isCommingle =12;
+}
+
+message UllageBillRequest{
+	repeated BillOfLanding billOfLanding = 1;
+	repeated UpdateUllage updateUllage = 2;
+}
+
+
+message UllageBillReply{
+	ResponseStatus responseStatus = 1;
+	repeated RulePlans rulePlan = 2;
 }

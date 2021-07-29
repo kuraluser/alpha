@@ -1,10 +1,14 @@
 .table-header-machinery{
-    width: 170px;
 }
 .checkbox-column{
-    width: 50px;
+    width: 70px;
 }
 
-.name-column{
-    width: 50px;
+.name-column, .type-column{
+    width: 26%;
+    max-width: 150px;
+}
+.capacity-column{
+    width: 24%;
+    max-width: 120px;
 }

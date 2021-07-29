@@ -345,6 +345,32 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   }
 
   @Override
+  public LoadingPlanModels.LoadingPlanReply getLoadingPlan(
+      Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
+      throws GenericServiceException {
+
+    LoadingPlanModels.LoadingInformationRequest.Builder builder =
+        LoadingPlanModels.LoadingInformationRequest.newBuilder();
+    builder.setLoadingPlanId(loadingInfoId);
+    builder.setLoadingPatternId(patternId);
+    builder.setPortRotationId(portRotationId);
+    builder.setVoyageId(voyageId);
+    builder.setVesselId(vesselId);
+
+    LoadingPlanModels.LoadingPlanReply reply =
+        this.loadingPlanServiceBlockingStub.getLoadingPlan(builder.build());
+
+    if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      log.error("Failed to fetch Loading plan, Message {}", reply.getResponseStatus().getMessage());
+      throw new GenericServiceException(
+          "Failed to get loading plan from loading info",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    return reply;
+  }
+
+  @Override
   public StatusReply saveJson(JsonRequest jsonRequest) {
     return this.loadableStudyServiceBlockingStub.saveJson(jsonRequest);
   }

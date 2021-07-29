@@ -1408,3 +1408,12 @@ header{
 .p-checkbox-icon.pi-check:before{
   border: solid $radio-btn;
 }
+
+.rowspan-no-border{
+  td{
+    border-bottom: 0!important;
+    &.row-border{
+      border-bottom: 1px solid $table-border!important;
+    }
+  }
+}

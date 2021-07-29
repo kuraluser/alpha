@@ -56,7 +56,7 @@ export class CargoDetailsComponent implements OnInit {
    * @memberof CargoDetailsComponent
    */
   ngOnInit(): void {
-
+    
     this.columns = this.voyageStatusTransformationService.getColumnFields();
   }
 
@@ -74,7 +74,9 @@ export class CargoDetailsComponent implements OnInit {
       newCargoList.colorCode = this.cargoQuantities?.find((cargoQuantities) => cargoQuantities.abbreviation === newCargoList.abbreviation).colorCode;
     })
     this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
-    this.convertQuantityToSelectedUnit();
+    if(this.currentQuantitySelectedUnit){
+      this.convertQuantityToSelectedUnit();
+    }
   }
 
   /**

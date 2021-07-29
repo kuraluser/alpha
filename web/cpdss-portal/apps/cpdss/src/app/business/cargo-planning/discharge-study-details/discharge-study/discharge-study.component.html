@@ -1,16 +1,19 @@
 
     <form [formGroup]="dischargeStudyForm">
-        <button (click)="saveDischargeStudy()" [disabled]="!editMode">{{'DISCHARGE_STUDY_SAVE'  | translate}}</button>
+        <div class="row">
+            <div class="col text-right btn-position"><button (click)="saveDischargeStudy()" [disabled]="!editMode" class="btn btn-main">{{'DISCHARGE_STUDY_SAVE'  | translate}}</button></div>
+        </div>
+        
         <div formArrayName="portDetails">
         <div *ngFor="let portDetail of portDetails;let portIndex = index;let last = last" formGroupName="{{portIndex}}">
 
-<div class="row align-items-center pb-10">
+<div class="row align-items-center pb-10 pt-10">
 
     <div class="pl-15 pr-5">{{ 'DISCHARGE_STUDY_PORT_NAME' | translate }}{{portIndex+1}}</div>
     <div class="sub-head-color  pr-15">{{portDetail.port?.name}}</div>
     <div class="pl-15 pr-5">{{ 'DISCHARGE_STUDY_INSTRUCTION' | translate }}</div>
     <div class="col-3">
-        <p-dropdown id="instruction_dropdown" styleClass="form-control" [options]="instructions"
+        <p-dropdown id="instruction_dropdown" appendTo="body" styleClass="form-control" [options]="instructions"
         formControlName="instruction" filter="true" optionLabel="instruction"
         resetFilterOnHide="true" [readonly]="!editMode" (onChange)="onChange($event,'instruction',portIndex)"></p-dropdown></div>
         <div class=" pr-15">
@@ -31,14 +34,14 @@
             <div class="row align-items-center pt-10">
                 <label class="mb-0 pl-15">{{ 'DISCHARGE_STUDY_COW' | translate }}</label>
                 <div class="pl-15">
-                <p-dropdown id="cow_dropdown" styleClass="form-control" [options]="mode"
+                <p-dropdown id="cow_dropdown" appendTo="body" styleClass="form-control" [options]="mode"
                     formControlName="cow" filter="true" optionLabel="name"
                     resetFilterOnHide="true" (onChange)="onChange($event,'cow',portIndex)" [readonly]="!editMode"></p-dropdown>
                 </div>
                 <ng-container *ngIf="getFeild(portIndex,'cow').value?.id === 1">
                     <label class="mb-0 pl-15">{{ 'DISCHARGE_STUDY_DISCHARGE_PERCENTAGE' | translate }}</label>
                     <div class="pl-15">
-                    <p-dropdown id="percentage_dropdown" styleClass="form-control" [options]="percentageList"
+                    <p-dropdown id="percentage_dropdown" appendTo="body" styleClass="form-control" [options]="percentageList"
                         formControlName="percentage" filter="true" optionLabel="name"
                         resetFilterOnHide="true" (onChange)="onChange($event,'percentage',portIndex)" [readonly]="!editMode"></p-dropdown>
                     </div>
@@ -46,7 +49,7 @@
                 <ng-container *ngIf="getFeild(portIndex,'cow').value?.id === 2">
                     <label class="mb-0 pl-15">{{ 'DISCHARGE_STUDY_DISCHARGE_TANK' | translate }}</label>
                     <div>
-                    <p-multiSelect id="tank_dropdown" styleClass="form-control" [options]="tank"
+                    <p-multiSelect id="tank_dropdown" styleClass="form-control" [options]="tank" appendTo="body"
                         formControlName="tank"  optionLabel="name"
                         resetFilterOnHide="true"  defaultLabel="DISCHARGE_STUDY_TANK_PLACEHOLDER | translate" [readonly]="!editMode" [filter]="true"
                         (onChange)="onChange($event,'tank',portIndex)"></p-multiSelect>

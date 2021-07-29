@@ -9,15 +9,7 @@ import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.UpdateUllage;
-import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsSaveRequest;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsSaveResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsStatus;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsUpdateRequest;
+import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
@@ -594,6 +586,49 @@ public class LoadingPlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in Save Loading Plan API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Get Loading Sequence API
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/loading-plan/{portRotationId}")
+  public LoadingPlanResponse getLoadingPlan(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Get Loading Plan API for vessel {}, voyage {}, loading information {}",
+          vesselId,
+          voyageId,
+          infoId);
+      return loadingPlanService.getLoadingPlan(vesselId, voyageId, infoId, portRotationId);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in Get Loading Plan API");
+      e.printStackTrace();
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in Get Loading Plan API");
       e.printStackTrace();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,

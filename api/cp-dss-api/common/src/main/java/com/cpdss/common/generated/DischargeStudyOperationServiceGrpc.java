@@ -351,6 +351,59 @@ public final class DischargeStudyOperationServiceGrpc {
     return getSaveDischargeStudyBackLoadingMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+      getGenerateDischargePatternsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GenerateDischargePatterns",
+      requestType = com.cpdss.common.generated.LoadableStudy.AlgoRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+      getGenerateDischargePatternsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.AlgoRequest,
+            com.cpdss.common.generated.LoadableStudy.AlgoReply>
+        getGenerateDischargePatternsMethod;
+    if ((getGenerateDischargePatternsMethod =
+            DischargeStudyOperationServiceGrpc.getGenerateDischargePatternsMethod)
+        == null) {
+      synchronized (DischargeStudyOperationServiceGrpc.class) {
+        if ((getGenerateDischargePatternsMethod =
+                DischargeStudyOperationServiceGrpc.getGenerateDischargePatternsMethod)
+            == null) {
+          DischargeStudyOperationServiceGrpc.getGenerateDischargePatternsMethod =
+              getGenerateDischargePatternsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.AlgoRequest,
+                          com.cpdss.common.generated.LoadableStudy.AlgoReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GenerateDischargePatterns"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeStudyOperationServiceMethodDescriptorSupplier(
+                              "GenerateDischargePatterns"))
+                      .build();
+        }
+      }
+    }
+    return getGenerateDischargePatternsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeStudyOperationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeStudyOperationServiceStub> factory =
@@ -452,6 +505,14 @@ public final class DischargeStudyOperationServiceGrpc {
       asyncUnimplementedUnaryCall(getSaveDischargeStudyBackLoadingMethod(), responseObserver);
     }
 
+    /** */
+    public void generateDischargePatterns(
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGenerateDischargePatternsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -531,6 +592,13 @@ public final class DischargeStudyOperationServiceGrpc {
                           .loadableStudy
                           .LoadableStudyModels
                           .DischargeStudyReply>(this, METHODID_SAVE_DISCHARGE_STUDY_BACK_LOADING)))
+          .addMethod(
+              getGenerateDischargePatternsMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.AlgoRequest,
+                      com.cpdss.common.generated.LoadableStudy.AlgoReply>(
+                      this, METHODID_GENERATE_DISCHARGE_PATTERNS)))
           .build();
     }
   }
@@ -618,6 +686,17 @@ public final class DischargeStudyOperationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void generateDischargePatterns(
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGenerateDischargePatternsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -676,6 +755,13 @@ public final class DischargeStudyOperationServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest request) {
       return blockingUnaryCall(
           getChannel(), getSaveDischargeStudyBackLoadingMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoReply generateDischargePatterns(
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGenerateDischargePatternsMethod(), getCallOptions(), request);
     }
   }
 
@@ -743,6 +829,14 @@ public final class DischargeStudyOperationServiceGrpc {
           getChannel().newCall(getSaveDischargeStudyBackLoadingMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoReply>
+        generateDischargePatterns(com.cpdss.common.generated.LoadableStudy.AlgoRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGenerateDischargePatternsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DELETE_DISCHARGE_STUDY = 0;
@@ -750,6 +844,7 @@ public final class DischargeStudyOperationServiceGrpc {
   private static final int METHODID_UPDATE_DISCHARGE_STUDY = 2;
   private static final int METHODID_GET_DISCHARGE_STUDY_PORT_WISE_CARGOS = 3;
   private static final int METHODID_SAVE_DISCHARGE_STUDY_BACK_LOADING = 4;
+  private static final int METHODID_GENERATE_DISCHARGE_PATTERNS = 5;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -833,6 +928,12 @@ public final class DischargeStudyOperationServiceGrpc {
                           .DischargeStudyReply>)
                   responseObserver);
           break;
+        case METHODID_GENERATE_DISCHARGE_PATTERNS:
+          serviceImpl.generateDischargePatterns(
+              (com.cpdss.common.generated.LoadableStudy.AlgoRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -903,6 +1004,7 @@ public final class DischargeStudyOperationServiceGrpc {
                       .addMethod(getUpdateDischargeStudyMethod())
                       .addMethod(getGetDischargeStudyPortWiseCargosMethod())
                       .addMethod(getSaveDischargeStudyBackLoadingMethod())
+                      .addMethod(getGenerateDischargePatternsMethod())
                       .build();
         }
       }
