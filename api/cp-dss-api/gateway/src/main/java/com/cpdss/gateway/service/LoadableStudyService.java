@@ -5819,7 +5819,7 @@ public class LoadableStudyService {
     return ruleResponse;
   }
 
-  public LoadableStudyShoreResponse getLoadableStudyShore(String first)
+  public LoadableStudyShoreResponse getLoadableStudyShore(String correlationId)
       throws GenericServiceException {
     com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.Builder
         loadableRuleRequestBuilder =
@@ -5873,6 +5873,8 @@ public class LoadableStudyService {
             });
 
     LoadableStudyShoreResponse response = new LoadableStudyShoreResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     response.setShoreList(shoreList);
     return response;
   }
