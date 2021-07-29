@@ -2,9 +2,9 @@
 package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ACTIVE_VOYAGE_STATUS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_JSON_MODULE_NAME;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_REQUEST;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_JSON_MODULE_NAME;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -136,7 +136,7 @@ public class GenerateDischargeStudyJson {
           DISCHARGE_STUDY_REQUEST,
           objectMapper.writeValueAsString(AlgoJsonPayload));
 
-      //Calling Algo Service
+      // Calling Algo Service
       AlgoResponse algoResponse = new AlgoResponse();
       algoResponse.setProcessId("123");
       // Uncomment when Algo actual API is ready
@@ -227,7 +227,7 @@ public class GenerateDischargeStudyJson {
 
     Optional<LoadableStudy> loadableStudyOpt =
         this.loadableStudyRepository.findByIdAndIsActive(dischargeStudyId, true);
-    
+
     if (loadableStudyOpt.isPresent()
         && loadableStudyOpt.get().getConfirmedLoadableStudyId() != null) {
       try {
