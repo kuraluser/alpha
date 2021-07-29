@@ -3,7 +3,7 @@ package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ACTIVE_VOYAGE_STATUS;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_REQUEST;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_REQUEST;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -49,8 +49,11 @@ import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PortInstructionRepository;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -72,6 +75,7 @@ public class GenerateDischargeStudyJson {
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
+  public static final String DISCHARGE = "DISCHARGE";
   public static final String INVALID_DISCHARGE_STUDY_ID = "INVALID_DISCHARGE_STUDY_ID";
   public static final String INVALID_DISCHARGE_QUANTITY = "INVALID_DISCHARGE_QUANTITY";
 
@@ -114,7 +118,7 @@ public class GenerateDischargeStudyJson {
 
   public AlgoReply.Builder generateDischargePatterns(
       AlgoRequest request, AlgoReply.Builder replyBuilder)
-      throws GenericServiceException, Exception {
+      throws GenericServiceException, JsonGenerationException, JsonMappingException, IOException {
     // Checking requested discharge Id validity
     Optional<LoadableStudy> loadableStudyOpt =
         loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
@@ -130,19 +134,19 @@ public class GenerateDischargeStudyJson {
           AlgoJsonPayload);
       loadableStudyService.saveJsonToDatabase(
           request.getLoadableStudyId(),
-          LOADABLE_STUDY_REQUEST, // TODO
+          DISCHARGE_STUDY_REQUEST, // TODO
           objectMapper.writeValueAsString(AlgoJsonPayload));
 
       // Calling Algo Service
-      AlgoResponse algoResponse =
-          restTemplate.postForObject(dischargeStudyUrl, AlgoJsonPayload, AlgoResponse.class);
-      updateProcessIdForDischargeStudy(
-          algoResponse.getProcessId(),
-          loadableStudyOpt.get(),
-          LOADABLE_STUDY_PROCESSING_STARTED_ID); // TODO
+      AlgoResponse algoResponse = new AlgoResponse();
+      algoResponse.setProcessId("123");
+      //Uncomment when Algo actual API is ready
+//		AlgoResponse algoResponse = restTemplate.postForObject(dischargeStudyUrl, AlgoJsonPayload, AlgoResponse.class);
+//		updateProcessIdForDischargeStudy(algoResponse.getProcessId(), loadableStudyOpt.get(),
+//				LOADABLE_STUDY_PROCESSING_STARTED_ID); // TODO
 
       loadableStudyRepository.updateLoadableStudyStatus(
-          LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
+          LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId()); //TODO
 
       replyBuilder
           .setProcesssId(algoResponse.getProcessId())
@@ -175,6 +179,7 @@ public class GenerateDischargeStudyJson {
     log.info("Generating Discharge study request Json for  :{}", dischargeStudyId);
     DischargeStudyAlgoJson dischargeStudyAlgoJson = new DischargeStudyAlgoJson();
 
+    dischargeStudyAlgoJson.setModule(DISCHARGE);
     dischargeStudyAlgoJson.setId(dischargeStudyId);
     dischargeStudyAlgoJson.setVoyageId(loadableStudy.getVoyage().getId());
     dischargeStudyAlgoJson.setVoyageNo(loadableStudy.getVoyage().getVoyageNo());
