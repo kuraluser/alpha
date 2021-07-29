@@ -538,6 +538,15 @@ public class LoadingPlanController {
       log.error("Exception in Get Loading Sequence API");
       e.printStackTrace();
       throw new CommonRestException(
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          headers,
+          HttpStatusCode.BAD_REQUEST,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Get Loading Sequence API");
+      e.printStackTrace();
+      throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
           HttpStatusCode.INTERNAL_SERVER_ERROR,
@@ -556,7 +565,7 @@ public class LoadingPlanController {
    * @return
    * @throws CommonRestException
    */
-  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/save-loading-plan")
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/loading-plan")
   public LoadingPlanAlgoResponse saveLoadingPlan(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,

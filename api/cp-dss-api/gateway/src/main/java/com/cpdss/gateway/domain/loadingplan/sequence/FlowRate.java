@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 public class FlowRate {
 
-  private String tankNo;
+  private String tankName;
   private List<List> data;
 }

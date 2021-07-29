@@ -9,6 +9,8 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
+import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
@@ -366,5 +368,10 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
           HttpStatusCode.BAD_REQUEST);
     }
     return reply;
+  }
+
+  @Override
+  public StatusReply saveJson(JsonRequest jsonRequest) {
+    return this.loadableStudyServiceBlockingStub.saveJson(jsonRequest);
   }
 }
