@@ -110,12 +110,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @GrpcClient("cargoService")
   private CargoInfoServiceBlockingStub cargoInfoGrpcService;
 
-  @GrpcClient("envoyWriterService")
-  private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterGrpcService;
-
-  @GrpcClient("envoyReaderService")
-  private EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
-
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 

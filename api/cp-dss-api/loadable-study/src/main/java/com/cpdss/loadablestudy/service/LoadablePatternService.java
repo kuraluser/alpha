@@ -132,6 +132,9 @@ public class LoadablePatternService {
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
   /**
    * @param loadableStudy
    * @throws GenericServiceException
@@ -273,15 +276,17 @@ public class LoadablePatternService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
-        this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
-            request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
-    if (loadableStudyCommunicationStatus.get() != null) {
+    if (enableCommunication) {
+      Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
+              this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
+                      request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
+      if (loadableStudyCommunicationStatus.get() != null) {
 
-      AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
-      algoRespComm.setLoadablePatternAlgoRequest(request);
-      algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
-      communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
+        AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
+        algoRespComm.setLoadablePatternAlgoRequest(request);
+        algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
+        communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
+      }
     }
     if (request.getLoadablePlanDetailsList().isEmpty()) {
       log.info("saveLoadablePatternDetails - loadable study micro service - no plans available");
@@ -1068,35 +1073,26 @@ public class LoadablePatternService {
           request.getLoadableStudyId(),
           LOADABLE_STUDY_REQUEST,
           objectMapper.writeValueAsString(loadableStudy));
-      EnvoyWriter.WriterReply ewReply =
-          communicationService.passRequestPayloadToEnvoyWriter(loadableStudy);
-      if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-        LoadableStudyCommunicationStatus lsCommunicationStatus =
-            new LoadableStudyCommunicationStatus();
-        if (ewReply.getMessageId() != null) {
-          lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-          lsCommunicationStatus.setCommunicationStatus(
-              CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+      if (enableCommunication) {
+        EnvoyWriter.WriterReply ewReply =
+                communicationService.passRequestPayloadToEnvoyWriter(objectMapper.writeValueAsString(loadableStudy), loadableStudy.getVesselId(), MessageTypes.LOADABLESTUDY.getMessageType());
+        if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+          LoadableStudyCommunicationStatus lsCommunicationStatus =
+                  new LoadableStudyCommunicationStatus();
+          if (ewReply.getMessageId() != null) {
+            lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+            lsCommunicationStatus.setCommunicationStatus(
+                    CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+          }
+          lsCommunicationStatus.setReferenceId(request.getLoadableStudyId());
+          lsCommunicationStatus.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
+          lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+          this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
+        } else {
+          getAlgoCall(replyBuilder, loadableStudyOpt, loadableStudy);
         }
-        lsCommunicationStatus.setReferenceId(request.getLoadableStudyId());
-        lsCommunicationStatus.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
-        lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-        this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
       } else {
-        AlgoResponse algoResponse =
-            restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
-        updateProcessIdForLoadableStudy(
-            algoResponse.getProcessId(),
-            loadableStudyOpt.get(),
-            LOADABLE_STUDY_PROCESSING_STARTED_ID);
-
-        loadableStudyRepository.updateLoadableStudyStatus(
-            LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
-
-        replyBuilder
-            .setProcesssId(algoResponse.getProcessId())
-            .setResponseStatus(
-                Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+        getAlgoCall(replyBuilder, loadableStudyOpt, loadableStudy);
       }
     } else {
       log.info("INVALID_LOADABLE_STUDY {} - ", request.getLoadableStudyId());
@@ -1110,6 +1106,23 @@ public class LoadablePatternService {
     replyBuilder.setResponseStatus(
         Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
     return replyBuilder;
+  }
+
+  private void getAlgoCall(com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder replyBuilder, Optional<LoadableStudy> loadableStudyOpt, com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+    AlgoResponse algoResponse =
+        restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
+    updateProcessIdForLoadableStudy(
+        algoResponse.getProcessId(),
+        loadableStudyOpt.get(),
+        LOADABLE_STUDY_PROCESSING_STARTED_ID);
+
+    loadableStudyRepository.updateLoadableStudyStatus(
+        LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
+
+    replyBuilder
+        .setProcesssId(algoResponse.getProcessId())
+        .setResponseStatus(
+            Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
   }
 
   private void validateLoadableStudyWithLQ(LoadableStudy ls) throws GenericServiceException {
