@@ -206,6 +206,7 @@ service DischargeStudyOperationService {
   rpc UpdateDischargeStudy (DischargeStudyDetail) returns (UpdateDischargeStudyReply){}
   rpc getDischargeStudyPortWiseCargos(DischargeStudyRequest) returns (DishargeStudyCargoReply) {}
   rpc SaveDischargeStudyBackLoading (DishargeStudyBackLoadingSaveRequest) returns (DischargeStudyReply){}
+  rpc GenerateDischargePatterns (AlgoRequest) returns (AlgoReply) {}
 }
 
 service PortInstructionService {

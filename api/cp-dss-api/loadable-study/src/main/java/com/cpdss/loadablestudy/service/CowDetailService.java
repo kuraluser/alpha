@@ -25,6 +25,12 @@ public class CowDetailService {
                 DischargeStudyCowDetail::getPortId, (DischargeStudyCowDetail cow) -> cow));
   }
 
+  public DischargeStudyCowDetail getCowDetailForOnePort(long dischargestudyId, Long portId) {
+
+    return dischargeStudyCowDetailRepository.findByDischargeStudyStudyIdAndPortIdAndIsActive(
+        dischargestudyId, portId, true);
+  }
+
   public void saveAll(List<DischargeStudyCowDetail> cowDetailsToSave) {
     dischargeStudyCowDetailRepository.saveAll(cowDetailsToSave);
   }
