@@ -207,6 +207,12 @@ public class PortInfoService extends PortInfoServiceImplBase {
               portDetail.setMaxAirDraft(minAirDraftOfBerths.get().toString());
             }
           }
+
+          Optional.ofNullable(port.getLattitude())
+              .ifPresent(item -> portDetail.setLat(String.valueOf(item)));
+          Optional.ofNullable(port.getLongitude())
+              .ifPresent(item -> portDetail.setLon(String.valueOf(item)));
+
           portReply.addPorts(portDetail);
         });
   }

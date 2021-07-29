@@ -96,4 +96,10 @@ public class PortInfo extends EntityDoc {
 
   @Column(name = "under_keel_clearence")
   private String underKeelClearance;
+
+  @Column(name = "lattitude")
+  private String lattitude;
+
+  @Column(name = "longitude")
+  private String longitude;
 }
