@@ -2134,7 +2134,6 @@ public class LoadableStudyController {
   /**
    * To retrieve rule against loadable study
    *
-   * @param vesselId
    * @param headers
    * @return
    * @throws CommonRestException
