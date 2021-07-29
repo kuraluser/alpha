@@ -41,6 +41,7 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { RulesTableModule } from '../../core/components/rules-table/rules-table.module'
 import { RulesModule } from './rules/rules.module'
+import { FocusTrapModule } from 'primeng/focustrap';
 
 /**
  * Routing Module for Loadable Study Details Screen
@@ -78,8 +79,8 @@ import { RulesModule } from './rules/rules.module'
     ErrorLogPopupModule,
     InputSwitchModule,
     RulesTableModule,
-    RulesModule
-
+    RulesModule,
+    FocusTrapModule
 
 
   ],
