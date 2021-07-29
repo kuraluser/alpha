@@ -116,7 +116,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      if (dischargeStudyRepository.existsByNameAndPlanningTypeXIdAndVoyageAndIsActive(
+      if (dischargeStudyRepository.existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
           request.getName(), 2, voyage, true)) {
         throw new GenericServiceException(
             "name already exists",
@@ -347,6 +347,16 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+
+      if (dischargeStudyRepository
+          .existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActiveAndIdNot(
+              request.getName(), 2, loadable.getVoyage(), true, loadable.getId())) {
+        throw new GenericServiceException(
+            "name already exists",
+            CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
       loadable.setName(request.getName());
       loadable.setDetails(request.getEnquiryDetails());
       LoadableStudy updatedDischarge = this.dischargeStudyRepository.save(loadable);
