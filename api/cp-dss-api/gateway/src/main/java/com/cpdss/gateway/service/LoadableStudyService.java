@@ -3400,7 +3400,7 @@ public class LoadableStudyService {
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
-    request.setHasLodicator(loadablePlanRequest.getHasLodicator());
+    request.setHasLodicator(loadablePlanRequest.getHasLoadicator());
     buildLoadablePlanDetails(loadablePlanRequest, request);
 
     if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
