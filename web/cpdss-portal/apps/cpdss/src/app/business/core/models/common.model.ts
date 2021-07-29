@@ -384,7 +384,7 @@ export enum VOYAGE_STATUS {
  */
 export enum VOYAGE_STATUS_LABEL {
     OPEN = "Open",
-    CLOSE = "Close",
+    CLOSE = "Closed",
     ACTIVE = "Active"
 }
 

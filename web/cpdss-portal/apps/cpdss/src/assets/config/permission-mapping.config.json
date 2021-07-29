@@ -47,6 +47,7 @@
     "DischargeStudyComponentTab": "CARGOPLANNING_DISCHARGE_STUDY_TAB",
     "DischargeStudyViewPlan": "CARGOPLANNING_DISCHARGE_STUDY_VIEW_PLAN",
     "DischargeStudyGeneratePlan": "CARGOPLANNING_DISCHARGE_STUDY_GENERATE_PLAN",
-    "CargoMasterComponent":"USER_ROLE_LISTING"
+    "CargoMasterComponent":"USER_ROLE_LISTING",
+    "VesselInformationComponent":"VESSEL_INFORMATION"
 
 }

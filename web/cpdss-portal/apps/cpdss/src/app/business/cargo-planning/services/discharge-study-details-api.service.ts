@@ -10,7 +10,7 @@ import { IResponse } from '../../../shared/models/common.model';
 
 import { ICargoNominationDetailsResponse , IDischargeStudyDetailsResponse , IPortCargoResponse , ICargoHistoryDetails  } from '../models/discharge-study-list.model'
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-
+import { IGeneratePatternResponse } from '../models/cargo-planning.model';
 
 @Injectable()
 
@@ -225,5 +225,18 @@ export class DischargeStudyDetailsApiService {
       */
       saveDischargeStudy(dischargeStudy: any): Observable<IResponse> {
         return this.commonApiService.post<any, IResponse>(`discharge-studies`, dischargeStudy);
-    }
+      }
+
+      /**
+     * Method for generate patten id
+     *
+     * @param {number} vesselId
+     * @param {number} voyageId
+     * @param {number} dischargeStudyId
+     * @returns {Observable<IResponse>}
+     * @memberof DischargeStudyDetailsApiService
+     */
+      generateDischargePattern(vesselId: number, voyageId: number, dischargeStudyId: number): Observable<IGeneratePatternResponse> {
+        return this.commonApiService.post<any, IGeneratePatternResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${dischargeStudyId}/generate-loadable-patterns`,{});
+      }
 }

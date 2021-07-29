@@ -956,8 +956,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
   ]
   const actions: DATATABLE_ACTION[] = [];
   actions.push(DATATABLE_ACTION.DELETE);
-  //Note:- need to confirm with BA
-  // actions.push(DATATABLE_ACTION.SAVE);
+  actions.push(DATATABLE_ACTION.SAVE);
   const action: IDataTableColumn = {
     field: 'actions',
     header: '',
@@ -1063,8 +1062,8 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       const cargoObj = listData.cargoList.find(cargo => cargo.id === cargoDetail.cargoId);
       const isKlEditable = mode?.id === 2 ? true : false;
       const unitConversion = {
-        kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature),
-        bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature),
+        kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature , -1),
+        bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature, -1),
       }
       _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color , true , false);
       _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? unitConversion.bbls+'' : '-', true , false);
@@ -1072,8 +1071,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       _cargoDetailValuObject.kl = new ValueObject<string>(isKlEditable ? unitConversion.kl+'' : '-', true , false , false , isKlEditable);
       _cargoDetailValuObject.id = new ValueObject<string>(cargoDetail.id+''),
 
-      //Note:- need to remove 25000 when actual value comes from BE.
-      _cargoDetailValuObject.maxKl = new ValueObject<number>(2500000, false , false);
+      _cargoDetailValuObject.maxKl = new ValueObject<number>(Number(cargoDetail.maxQuantity), false , false);
       _cargoDetailValuObject.mt = new ValueObject<string>(isKlEditable ? cargoDetail.quantity +'' : '-', true , false);
       _cargoDetailValuObject.mode = new ValueObject<IMode>(mode , true , false);
       _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true , false);
@@ -1118,8 +1116,8 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
     getBackLoadingDetailAsValueObject(backLoadingDetail: IDischargeStudyBackLoadingDetails, listData:IDischargeStudyDropdownData ,storedKey: string ,isNewValue = true): IBackLoadingDetails {
       const _backLoadingDetailDetail = <IBackLoadingDetails>{};
       const unitConversion = {
-        kl: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature),
-        bbls: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, backLoadingDetail.api, backLoadingDetail.temperature),
+        kl: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature , -1),
+        bbls: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, backLoadingDetail.api, backLoadingDetail.temperature , -1),
       }
       const cargoObj: ICargo = backLoadingDetail.cargoId ? listData.cargoList.find(cargo => cargo.id === backLoadingDetail.cargoId) : null;
       _backLoadingDetailDetail.color = new ValueObject<string>(backLoadingDetail.color , true , isNewValue);
@@ -1131,6 +1129,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       _backLoadingDetailDetail.temp = new ValueObject<string>(backLoadingDetail.temperature?.toString() , true , isNewValue);
       _backLoadingDetailDetail.isDelete = true;
       _backLoadingDetailDetail.isAdd = isNewValue;
+      _backLoadingDetailDetail.isNew = isNewValue;
       _backLoadingDetailDetail.storedKey = new ValueObject<string>(storedKey),
       _backLoadingDetailDetail.id = new ValueObject<number>(Number(backLoadingDetail.id)),
       _backLoadingDetailDetail.abbreviation = new ValueObject<string>(backLoadingDetail.abbreviation);

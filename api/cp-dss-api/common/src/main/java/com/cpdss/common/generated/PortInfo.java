@@ -10,6 +10,1715 @@ public final class PortInfo {
     registerAllExtensions((com.google.protobuf.ExtensionRegistryLite) registry);
   }
 
+  public interface BerthIdsRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:BerthIdsRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated int64 berthIds = 1;</code>
+     *
+     * @return A list containing the berthIds.
+     */
+    java.util.List<java.lang.Long> getBerthIdsList();
+    /**
+     * <code>repeated int64 berthIds = 1;</code>
+     *
+     * @return The count of berthIds.
+     */
+    int getBerthIdsCount();
+    /**
+     * <code>repeated int64 berthIds = 1;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The berthIds at the given index.
+     */
+    long getBerthIds(int index);
+  }
+  /** Protobuf type {@code BerthIdsRequest} */
+  public static final class BerthIdsRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:BerthIdsRequest)
+      BerthIdsRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use BerthIdsRequest.newBuilder() to construct.
+    private BerthIdsRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private BerthIdsRequest() {
+      berthIds_ = emptyLongList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new BerthIdsRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private BerthIdsRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  berthIds_ = newLongList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                berthIds_.addLong(input.readInt64());
+                break;
+              }
+            case 10:
+              {
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
+                if (!((mutable_bitField0_ & 0x00000001) != 0) && input.getBytesUntilLimit() > 0) {
+                  berthIds_ = newLongList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                while (input.getBytesUntilLimit() > 0) {
+                  berthIds_.addLong(input.readInt64());
+                }
+                input.popLimit(limit);
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          berthIds_.makeImmutable(); // C
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.PortInfo.internal_static_BerthIdsRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.PortInfo.internal_static_BerthIdsRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.PortInfo.BerthIdsRequest.class,
+              com.cpdss.common.generated.PortInfo.BerthIdsRequest.Builder.class);
+    }
+
+    public static final int BERTHIDS_FIELD_NUMBER = 1;
+    private com.google.protobuf.Internal.LongList berthIds_;
+    /**
+     * <code>repeated int64 berthIds = 1;</code>
+     *
+     * @return A list containing the berthIds.
+     */
+    public java.util.List<java.lang.Long> getBerthIdsList() {
+      return berthIds_;
+    }
+    /**
+     * <code>repeated int64 berthIds = 1;</code>
+     *
+     * @return The count of berthIds.
+     */
+    public int getBerthIdsCount() {
+      return berthIds_.size();
+    }
+    /**
+     * <code>repeated int64 berthIds = 1;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The berthIds at the given index.
+     */
+    public long getBerthIds(int index) {
+      return berthIds_.getLong(index);
+    }
+
+    private int berthIdsMemoizedSerializedSize = -1;
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      getSerializedSize();
+      if (getBerthIdsList().size() > 0) {
+        output.writeUInt32NoTag(10);
+        output.writeUInt32NoTag(berthIdsMemoizedSerializedSize);
+      }
+      for (int i = 0; i < berthIds_.size(); i++) {
+        output.writeInt64NoTag(berthIds_.getLong(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < berthIds_.size(); i++) {
+          dataSize +=
+              com.google.protobuf.CodedOutputStream.computeInt64SizeNoTag(berthIds_.getLong(i));
+        }
+        size += dataSize;
+        if (!getBerthIdsList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+        }
+        berthIdsMemoizedSerializedSize = dataSize;
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.PortInfo.BerthIdsRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.PortInfo.BerthIdsRequest other =
+          (com.cpdss.common.generated.PortInfo.BerthIdsRequest) obj;
+
+      if (!getBerthIdsList().equals(other.getBerthIdsList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getBerthIdsCount() > 0) {
+        hash = (37 * hash) + BERTHIDS_FIELD_NUMBER;
+        hash = (53 * hash) + getBerthIdsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.PortInfo.BerthIdsRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code BerthIdsRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:BerthIdsRequest)
+        com.cpdss.common.generated.PortInfo.BerthIdsRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.PortInfo.internal_static_BerthIdsRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.PortInfo
+            .internal_static_BerthIdsRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.PortInfo.BerthIdsRequest.class,
+                com.cpdss.common.generated.PortInfo.BerthIdsRequest.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.PortInfo.BerthIdsRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        berthIds_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.PortInfo.internal_static_BerthIdsRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.BerthIdsRequest getDefaultInstanceForType() {
+        return com.cpdss.common.generated.PortInfo.BerthIdsRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.BerthIdsRequest build() {
+        com.cpdss.common.generated.PortInfo.BerthIdsRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.BerthIdsRequest buildPartial() {
+        com.cpdss.common.generated.PortInfo.BerthIdsRequest result =
+            new com.cpdss.common.generated.PortInfo.BerthIdsRequest(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          berthIds_.makeImmutable();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.berthIds_ = berthIds_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.PortInfo.BerthIdsRequest) {
+          return mergeFrom((com.cpdss.common.generated.PortInfo.BerthIdsRequest) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.PortInfo.BerthIdsRequest other) {
+        if (other == com.cpdss.common.generated.PortInfo.BerthIdsRequest.getDefaultInstance())
+          return this;
+        if (!other.berthIds_.isEmpty()) {
+          if (berthIds_.isEmpty()) {
+            berthIds_ = other.berthIds_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureBerthIdsIsMutable();
+            berthIds_.addAll(other.berthIds_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.PortInfo.BerthIdsRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.PortInfo.BerthIdsRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.google.protobuf.Internal.LongList berthIds_ = emptyLongList();
+
+      private void ensureBerthIdsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          berthIds_ = mutableCopy(berthIds_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+      /**
+       * <code>repeated int64 berthIds = 1;</code>
+       *
+       * @return A list containing the berthIds.
+       */
+      public java.util.List<java.lang.Long> getBerthIdsList() {
+        return ((bitField0_ & 0x00000001) != 0)
+            ? java.util.Collections.unmodifiableList(berthIds_)
+            : berthIds_;
+      }
+      /**
+       * <code>repeated int64 berthIds = 1;</code>
+       *
+       * @return The count of berthIds.
+       */
+      public int getBerthIdsCount() {
+        return berthIds_.size();
+      }
+      /**
+       * <code>repeated int64 berthIds = 1;</code>
+       *
+       * @param index The index of the element to return.
+       * @return The berthIds at the given index.
+       */
+      public long getBerthIds(int index) {
+        return berthIds_.getLong(index);
+      }
+      /**
+       * <code>repeated int64 berthIds = 1;</code>
+       *
+       * @param index The index to set the value at.
+       * @param value The berthIds to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBerthIds(int index, long value) {
+        ensureBerthIdsIsMutable();
+        berthIds_.setLong(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 berthIds = 1;</code>
+       *
+       * @param value The berthIds to add.
+       * @return This builder for chaining.
+       */
+      public Builder addBerthIds(long value) {
+        ensureBerthIdsIsMutable();
+        berthIds_.addLong(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 berthIds = 1;</code>
+       *
+       * @param values The berthIds to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllBerthIds(java.lang.Iterable<? extends java.lang.Long> values) {
+        ensureBerthIdsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, berthIds_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 berthIds = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearBerthIds() {
+        berthIds_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:BerthIdsRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:BerthIdsRequest)
+    private static final com.cpdss.common.generated.PortInfo.BerthIdsRequest DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.PortInfo.BerthIdsRequest();
+    }
+
+    public static com.cpdss.common.generated.PortInfo.BerthIdsRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<BerthIdsRequest> PARSER =
+        new com.google.protobuf.AbstractParser<BerthIdsRequest>() {
+          @java.lang.Override
+          public BerthIdsRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new BerthIdsRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<BerthIdsRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BerthIdsRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.PortInfo.BerthIdsRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface LoadingAlgoBerthDataOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:LoadingAlgoBerthData)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /**
+     * <code>int64 portId = 2;</code>
+     *
+     * @return The portId.
+     */
+    long getPortId();
+
+    /**
+     * <code>int64 berthId = 3;</code>
+     *
+     * @return The berthId.
+     */
+    long getBerthId();
+
+    /**
+     * <code>string controllingDepth = 4;</code>
+     *
+     * @return The controllingDepth.
+     */
+    java.lang.String getControllingDepth();
+    /**
+     * <code>string controllingDepth = 4;</code>
+     *
+     * @return The bytes for controllingDepth.
+     */
+    com.google.protobuf.ByteString getControllingDepthBytes();
+
+    /**
+     * <code>string underKeelClearance = 5;</code>
+     *
+     * @return The underKeelClearance.
+     */
+    java.lang.String getUnderKeelClearance();
+    /**
+     * <code>string underKeelClearance = 5;</code>
+     *
+     * @return The bytes for underKeelClearance.
+     */
+    com.google.protobuf.ByteString getUnderKeelClearanceBytes();
+  }
+  /** Protobuf type {@code LoadingAlgoBerthData} */
+  public static final class LoadingAlgoBerthData extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:LoadingAlgoBerthData)
+      LoadingAlgoBerthDataOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use LoadingAlgoBerthData.newBuilder() to construct.
+    private LoadingAlgoBerthData(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private LoadingAlgoBerthData() {
+      controllingDepth_ = "";
+      underKeelClearance_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new LoadingAlgoBerthData();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private LoadingAlgoBerthData(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            case 16:
+              {
+                portId_ = input.readInt64();
+                break;
+              }
+            case 24:
+              {
+                berthId_ = input.readInt64();
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                controllingDepth_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                underKeelClearance_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.PortInfo.internal_static_LoadingAlgoBerthData_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.PortInfo
+          .internal_static_LoadingAlgoBerthData_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.class,
+              com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    public static final int PORTID_FIELD_NUMBER = 2;
+    private long portId_;
+    /**
+     * <code>int64 portId = 2;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+
+    public static final int BERTHID_FIELD_NUMBER = 3;
+    private long berthId_;
+    /**
+     * <code>int64 berthId = 3;</code>
+     *
+     * @return The berthId.
+     */
+    public long getBerthId() {
+      return berthId_;
+    }
+
+    public static final int CONTROLLINGDEPTH_FIELD_NUMBER = 4;
+    private volatile java.lang.Object controllingDepth_;
+    /**
+     * <code>string controllingDepth = 4;</code>
+     *
+     * @return The controllingDepth.
+     */
+    public java.lang.String getControllingDepth() {
+      java.lang.Object ref = controllingDepth_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        controllingDepth_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string controllingDepth = 4;</code>
+     *
+     * @return The bytes for controllingDepth.
+     */
+    public com.google.protobuf.ByteString getControllingDepthBytes() {
+      java.lang.Object ref = controllingDepth_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        controllingDepth_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int UNDERKEELCLEARANCE_FIELD_NUMBER = 5;
+    private volatile java.lang.Object underKeelClearance_;
+    /**
+     * <code>string underKeelClearance = 5;</code>
+     *
+     * @return The underKeelClearance.
+     */
+    public java.lang.String getUnderKeelClearance() {
+      java.lang.Object ref = underKeelClearance_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        underKeelClearance_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string underKeelClearance = 5;</code>
+     *
+     * @return The bytes for underKeelClearance.
+     */
+    public com.google.protobuf.ByteString getUnderKeelClearanceBytes() {
+      java.lang.Object ref = underKeelClearance_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        underKeelClearance_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      if (portId_ != 0L) {
+        output.writeInt64(2, portId_);
+      }
+      if (berthId_ != 0L) {
+        output.writeInt64(3, berthId_);
+      }
+      if (!getControllingDepthBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, controllingDepth_);
+      }
+      if (!getUnderKeelClearanceBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, underKeelClearance_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      if (portId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, portId_);
+      }
+      if (berthId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, berthId_);
+      }
+      if (!getControllingDepthBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, controllingDepth_);
+      }
+      if (!getUnderKeelClearanceBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, underKeelClearance_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData other =
+          (com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (getPortId() != other.getPortId()) return false;
+      if (getBerthId() != other.getBerthId()) return false;
+      if (!getControllingDepth().equals(other.getControllingDepth())) return false;
+      if (!getUnderKeelClearance().equals(other.getUnderKeelClearance())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      hash = (37 * hash) + PORTID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
+      hash = (37 * hash) + BERTHID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getBerthId());
+      hash = (37 * hash) + CONTROLLINGDEPTH_FIELD_NUMBER;
+      hash = (53 * hash) + getControllingDepth().hashCode();
+      hash = (37 * hash) + UNDERKEELCLEARANCE_FIELD_NUMBER;
+      hash = (53 * hash) + getUnderKeelClearance().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code LoadingAlgoBerthData} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:LoadingAlgoBerthData)
+        com.cpdss.common.generated.PortInfo.LoadingAlgoBerthDataOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.PortInfo.internal_static_LoadingAlgoBerthData_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.PortInfo
+            .internal_static_LoadingAlgoBerthData_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.class,
+                com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        portId_ = 0L;
+
+        berthId_ = 0L;
+
+        controllingDepth_ = "";
+
+        underKeelClearance_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.PortInfo.internal_static_LoadingAlgoBerthData_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData getDefaultInstanceForType() {
+        return com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData build() {
+        com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData buildPartial() {
+        com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData result =
+            new com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData(this);
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        result.portId_ = portId_;
+        result.berthId_ = berthId_;
+        result.controllingDepth_ = controllingDepth_;
+        result.underKeelClearance_ = underKeelClearance_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData) {
+          return mergeFrom((com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData other) {
+        if (other == com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.getDefaultInstance())
+          return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        if (other.getPortId() != 0L) {
+          setPortId(other.getPortId());
+        }
+        if (other.getBerthId() != 0L) {
+          setBerthId(other.getBerthId());
+        }
+        if (!other.getControllingDepth().isEmpty()) {
+          controllingDepth_ = other.controllingDepth_;
+          onChanged();
+        }
+        if (!other.getUnderKeelClearance().isEmpty()) {
+          underKeelClearance_ = other.underKeelClearance_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      private long portId_;
+      /**
+       * <code>int64 portId = 2;</code>
+       *
+       * @return The portId.
+       */
+      public long getPortId() {
+        return portId_;
+      }
+      /**
+       * <code>int64 portId = 2;</code>
+       *
+       * @param value The portId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortId(long value) {
+
+        portId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portId = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortId() {
+
+        portId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long berthId_;
+      /**
+       * <code>int64 berthId = 3;</code>
+       *
+       * @return The berthId.
+       */
+      public long getBerthId() {
+        return berthId_;
+      }
+      /**
+       * <code>int64 berthId = 3;</code>
+       *
+       * @param value The berthId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBerthId(long value) {
+
+        berthId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 berthId = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearBerthId() {
+
+        berthId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object controllingDepth_ = "";
+      /**
+       * <code>string controllingDepth = 4;</code>
+       *
+       * @return The controllingDepth.
+       */
+      public java.lang.String getControllingDepth() {
+        java.lang.Object ref = controllingDepth_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          controllingDepth_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string controllingDepth = 4;</code>
+       *
+       * @return The bytes for controllingDepth.
+       */
+      public com.google.protobuf.ByteString getControllingDepthBytes() {
+        java.lang.Object ref = controllingDepth_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          controllingDepth_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string controllingDepth = 4;</code>
+       *
+       * @param value The controllingDepth to set.
+       * @return This builder for chaining.
+       */
+      public Builder setControllingDepth(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        controllingDepth_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string controllingDepth = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearControllingDepth() {
+
+        controllingDepth_ = getDefaultInstance().getControllingDepth();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string controllingDepth = 4;</code>
+       *
+       * @param value The bytes for controllingDepth to set.
+       * @return This builder for chaining.
+       */
+      public Builder setControllingDepthBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        controllingDepth_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object underKeelClearance_ = "";
+      /**
+       * <code>string underKeelClearance = 5;</code>
+       *
+       * @return The underKeelClearance.
+       */
+      public java.lang.String getUnderKeelClearance() {
+        java.lang.Object ref = underKeelClearance_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          underKeelClearance_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string underKeelClearance = 5;</code>
+       *
+       * @return The bytes for underKeelClearance.
+       */
+      public com.google.protobuf.ByteString getUnderKeelClearanceBytes() {
+        java.lang.Object ref = underKeelClearance_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          underKeelClearance_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string underKeelClearance = 5;</code>
+       *
+       * @param value The underKeelClearance to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnderKeelClearance(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        underKeelClearance_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string underKeelClearance = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearUnderKeelClearance() {
+
+        underKeelClearance_ = getDefaultInstance().getUnderKeelClearance();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string underKeelClearance = 5;</code>
+       *
+       * @param value The bytes for underKeelClearance to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnderKeelClearanceBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        underKeelClearance_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:LoadingAlgoBerthData)
+    }
+
+    // @@protoc_insertion_point(class_scope:LoadingAlgoBerthData)
+    private static final com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData();
+    }
+
+    public static com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<LoadingAlgoBerthData> PARSER =
+        new com.google.protobuf.AbstractParser<LoadingAlgoBerthData>() {
+          @java.lang.Override
+          public LoadingAlgoBerthData parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new LoadingAlgoBerthData(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<LoadingAlgoBerthData> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<LoadingAlgoBerthData> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   public interface CargoInfosOrBuilder
       extends
       // @@protoc_insertion_point(interface_extends:CargoInfos)
@@ -3761,6 +5470,58 @@ public final class PortInfo {
      * @return The bytes for countryName.
      */
     com.google.protobuf.ByteString getCountryNameBytes();
+
+    /**
+     * <code>string controllingDepth = 24;</code>
+     *
+     * @return The controllingDepth.
+     */
+    java.lang.String getControllingDepth();
+    /**
+     * <code>string controllingDepth = 24;</code>
+     *
+     * @return The bytes for controllingDepth.
+     */
+    com.google.protobuf.ByteString getControllingDepthBytes();
+
+    /**
+     * <code>string underKeelClearance = 25;</code>
+     *
+     * @return The underKeelClearance.
+     */
+    java.lang.String getUnderKeelClearance();
+    /**
+     * <code>string underKeelClearance = 25;</code>
+     *
+     * @return The bytes for underKeelClearance.
+     */
+    com.google.protobuf.ByteString getUnderKeelClearanceBytes();
+
+    /**
+     * <code>string lat = 26;</code>
+     *
+     * @return The lat.
+     */
+    java.lang.String getLat();
+    /**
+     * <code>string lat = 26;</code>
+     *
+     * @return The bytes for lat.
+     */
+    com.google.protobuf.ByteString getLatBytes();
+
+    /**
+     * <code>string lon = 27;</code>
+     *
+     * @return The lon.
+     */
+    java.lang.String getLon();
+    /**
+     * <code>string lon = 27;</code>
+     *
+     * @return The bytes for lon.
+     */
+    com.google.protobuf.ByteString getLonBytes();
   }
   /** Protobuf type {@code PortDetail} */
   public static final class PortDetail extends com.google.protobuf.GeneratedMessageV3
@@ -3795,6 +5556,10 @@ public final class PortInfo {
       timezoneOffsetVal_ = "";
       timezoneAbbreviation_ = "";
       countryName_ = "";
+      controllingDepth_ = "";
+      underKeelClearance_ = "";
+      lat_ = "";
+      lon_ = "";
     }
 
     @java.lang.Override
@@ -3981,6 +5746,34 @@ public final class PortInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 countryName_ = s;
+                break;
+              }
+            case 194:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                controllingDepth_ = s;
+                break;
+              }
+            case 202:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                underKeelClearance_ = s;
+                break;
+              }
+            case 210:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lat_ = s;
+                break;
+              }
+            case 218:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                lon_ = s;
                 break;
               }
             default:
@@ -4772,6 +6565,146 @@ public final class PortInfo {
       }
     }
 
+    public static final int CONTROLLINGDEPTH_FIELD_NUMBER = 24;
+    private volatile java.lang.Object controllingDepth_;
+    /**
+     * <code>string controllingDepth = 24;</code>
+     *
+     * @return The controllingDepth.
+     */
+    public java.lang.String getControllingDepth() {
+      java.lang.Object ref = controllingDepth_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        controllingDepth_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string controllingDepth = 24;</code>
+     *
+     * @return The bytes for controllingDepth.
+     */
+    public com.google.protobuf.ByteString getControllingDepthBytes() {
+      java.lang.Object ref = controllingDepth_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        controllingDepth_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int UNDERKEELCLEARANCE_FIELD_NUMBER = 25;
+    private volatile java.lang.Object underKeelClearance_;
+    /**
+     * <code>string underKeelClearance = 25;</code>
+     *
+     * @return The underKeelClearance.
+     */
+    public java.lang.String getUnderKeelClearance() {
+      java.lang.Object ref = underKeelClearance_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        underKeelClearance_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string underKeelClearance = 25;</code>
+     *
+     * @return The bytes for underKeelClearance.
+     */
+    public com.google.protobuf.ByteString getUnderKeelClearanceBytes() {
+      java.lang.Object ref = underKeelClearance_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        underKeelClearance_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LAT_FIELD_NUMBER = 26;
+    private volatile java.lang.Object lat_;
+    /**
+     * <code>string lat = 26;</code>
+     *
+     * @return The lat.
+     */
+    public java.lang.String getLat() {
+      java.lang.Object ref = lat_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lat_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lat = 26;</code>
+     *
+     * @return The bytes for lat.
+     */
+    public com.google.protobuf.ByteString getLatBytes() {
+      java.lang.Object ref = lat_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lat_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LON_FIELD_NUMBER = 27;
+    private volatile java.lang.Object lon_;
+    /**
+     * <code>string lon = 27;</code>
+     *
+     * @return The lon.
+     */
+    public java.lang.String getLon() {
+      java.lang.Object ref = lon_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lon_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string lon = 27;</code>
+     *
+     * @return The bytes for lon.
+     */
+    public com.google.protobuf.ByteString getLonBytes() {
+      java.lang.Object ref = lon_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lon_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -4855,6 +6788,18 @@ public final class PortInfo {
       if (!getCountryNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 23, countryName_);
       }
+      if (!getControllingDepthBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 24, controllingDepth_);
+      }
+      if (!getUnderKeelClearanceBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 25, underKeelClearance_);
+      }
+      if (!getLatBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 26, lat_);
+      }
+      if (!getLonBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 27, lon_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -4933,6 +6878,18 @@ public final class PortInfo {
       if (!getCountryNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(23, countryName_);
       }
+      if (!getControllingDepthBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(24, controllingDepth_);
+      }
+      if (!getUnderKeelClearanceBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, underKeelClearance_);
+      }
+      if (!getLatBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(26, lat_);
+      }
+      if (!getLonBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(27, lon_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -4972,6 +6929,10 @@ public final class PortInfo {
       if (getTimezoneId() != other.getTimezoneId()) return false;
       if (!getTimezoneAbbreviation().equals(other.getTimezoneAbbreviation())) return false;
       if (!getCountryName().equals(other.getCountryName())) return false;
+      if (!getControllingDepth().equals(other.getControllingDepth())) return false;
+      if (!getUnderKeelClearance().equals(other.getUnderKeelClearance())) return false;
+      if (!getLat().equals(other.getLat())) return false;
+      if (!getLon().equals(other.getLon())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -5029,6 +6990,14 @@ public final class PortInfo {
       hash = (53 * hash) + getTimezoneAbbreviation().hashCode();
       hash = (37 * hash) + COUNTRYNAME_FIELD_NUMBER;
       hash = (53 * hash) + getCountryName().hashCode();
+      hash = (37 * hash) + CONTROLLINGDEPTH_FIELD_NUMBER;
+      hash = (53 * hash) + getControllingDepth().hashCode();
+      hash = (37 * hash) + UNDERKEELCLEARANCE_FIELD_NUMBER;
+      hash = (53 * hash) + getUnderKeelClearance().hashCode();
+      hash = (37 * hash) + LAT_FIELD_NUMBER;
+      hash = (53 * hash) + getLat().hashCode();
+      hash = (37 * hash) + LON_FIELD_NUMBER;
+      hash = (53 * hash) + getLon().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5212,6 +7181,14 @@ public final class PortInfo {
 
         countryName_ = "";
 
+        controllingDepth_ = "";
+
+        underKeelClearance_ = "";
+
+        lat_ = "";
+
+        lon_ = "";
+
         return this;
       }
 
@@ -5261,6 +7238,10 @@ public final class PortInfo {
         result.timezoneId_ = timezoneId_;
         result.timezoneAbbreviation_ = timezoneAbbreviation_;
         result.countryName_ = countryName_;
+        result.controllingDepth_ = controllingDepth_;
+        result.underKeelClearance_ = underKeelClearance_;
+        result.lat_ = lat_;
+        result.lon_ = lon_;
         onBuilt();
         return result;
       }
@@ -5401,6 +7382,22 @@ public final class PortInfo {
         }
         if (!other.getCountryName().isEmpty()) {
           countryName_ = other.countryName_;
+          onChanged();
+        }
+        if (!other.getControllingDepth().isEmpty()) {
+          controllingDepth_ = other.controllingDepth_;
+          onChanged();
+        }
+        if (!other.getUnderKeelClearance().isEmpty()) {
+          underKeelClearance_ = other.underKeelClearance_;
+          onChanged();
+        }
+        if (!other.getLat().isEmpty()) {
+          lat_ = other.lat_;
+          onChanged();
+        }
+        if (!other.getLon().isEmpty()) {
+          lon_ = other.lon_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -7090,6 +9087,310 @@ public final class PortInfo {
         checkByteStringIsUtf8(value);
 
         countryName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object controllingDepth_ = "";
+      /**
+       * <code>string controllingDepth = 24;</code>
+       *
+       * @return The controllingDepth.
+       */
+      public java.lang.String getControllingDepth() {
+        java.lang.Object ref = controllingDepth_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          controllingDepth_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string controllingDepth = 24;</code>
+       *
+       * @return The bytes for controllingDepth.
+       */
+      public com.google.protobuf.ByteString getControllingDepthBytes() {
+        java.lang.Object ref = controllingDepth_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          controllingDepth_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string controllingDepth = 24;</code>
+       *
+       * @param value The controllingDepth to set.
+       * @return This builder for chaining.
+       */
+      public Builder setControllingDepth(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        controllingDepth_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string controllingDepth = 24;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearControllingDepth() {
+
+        controllingDepth_ = getDefaultInstance().getControllingDepth();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string controllingDepth = 24;</code>
+       *
+       * @param value The bytes for controllingDepth to set.
+       * @return This builder for chaining.
+       */
+      public Builder setControllingDepthBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        controllingDepth_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object underKeelClearance_ = "";
+      /**
+       * <code>string underKeelClearance = 25;</code>
+       *
+       * @return The underKeelClearance.
+       */
+      public java.lang.String getUnderKeelClearance() {
+        java.lang.Object ref = underKeelClearance_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          underKeelClearance_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string underKeelClearance = 25;</code>
+       *
+       * @return The bytes for underKeelClearance.
+       */
+      public com.google.protobuf.ByteString getUnderKeelClearanceBytes() {
+        java.lang.Object ref = underKeelClearance_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          underKeelClearance_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string underKeelClearance = 25;</code>
+       *
+       * @param value The underKeelClearance to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnderKeelClearance(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        underKeelClearance_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string underKeelClearance = 25;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearUnderKeelClearance() {
+
+        underKeelClearance_ = getDefaultInstance().getUnderKeelClearance();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string underKeelClearance = 25;</code>
+       *
+       * @param value The bytes for underKeelClearance to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnderKeelClearanceBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        underKeelClearance_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lat_ = "";
+      /**
+       * <code>string lat = 26;</code>
+       *
+       * @return The lat.
+       */
+      public java.lang.String getLat() {
+        java.lang.Object ref = lat_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lat_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lat = 26;</code>
+       *
+       * @return The bytes for lat.
+       */
+      public com.google.protobuf.ByteString getLatBytes() {
+        java.lang.Object ref = lat_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lat_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lat = 26;</code>
+       *
+       * @param value The lat to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLat(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lat_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lat = 26;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLat() {
+
+        lat_ = getDefaultInstance().getLat();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lat = 26;</code>
+       *
+       * @param value The bytes for lat to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLatBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lat_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object lon_ = "";
+      /**
+       * <code>string lon = 27;</code>
+       *
+       * @return The lon.
+       */
+      public java.lang.String getLon() {
+        java.lang.Object ref = lon_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          lon_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string lon = 27;</code>
+       *
+       * @return The bytes for lon.
+       */
+      public com.google.protobuf.ByteString getLonBytes() {
+        java.lang.Object ref = lon_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          lon_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string lon = 27;</code>
+       *
+       * @param value The lon to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLon(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        lon_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lon = 27;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLon() {
+
+        lon_ = getDefaultInstance().getLon();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string lon = 27;</code>
+       *
+       * @param value The bytes for lon to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLonBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        lon_ = value;
         onChanged();
         return this;
       }
@@ -15462,6 +17763,14 @@ public final class PortInfo {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_BerthIdsRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_BerthIdsRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_LoadingAlgoBerthData_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_LoadingAlgoBerthData_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_CargoInfos_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_CargoInfos_fieldAccessorTable;
@@ -15530,64 +17839,72 @@ public final class PortInfo {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\017port_info.proto\032\014common.proto\"\\\n\nCargo"
-          + "Infos\022%\n\ncargoPorts\030\001 \003(\0132\021.CargoPortMap"
-          + "ping\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseS"
-          + "tatus\"3\n\020CargoPortMapping\022\017\n\007cargoId\030\001 \001"
-          + "(\003\022\016\n\006portId\030\002 \001(\003\")\n\033GetPortInfoByPortI"
-          + "dsRequest\022\n\n\002id\030\001 \003(\003\"]\n\013PortRequest\022\021\n\t"
-          + "companyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voy"
-          + "ageId\030\003 \001(\003\022\027\n\017loadableStudyId\030\004 \001(\003\"6\n\025"
-          + "PortRequestWithPaging\022\016\n\006offset\030\001 \001(\003\022\r\n"
-          + "\005limit\030\002 \001(\003\"\345\003\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022"
-          + "\014\n\004name\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022\024\n\014waterDens"
-          + "ity\030\004 \001(\t\022\020\n\010maxDraft\030\005 \001(\t\022\023\n\013maxAirDra"
-          + "ft\030\006 \001(\t\022\031\n\021averageTideHeight\030\007 \001(\t\022\022\n\nt"
-          + "ideHeight\030\010 \001(\t\022\022\n\nhwTideFrom\030\t \001(\t\022\020\n\010h"
-          + "wTideTo\030\n \001(\t\022\022\n\nlwTideFrom\030\013 \001(\t\022\020\n\010lwT"
-          + "ideTo\030\014 \001(\t\022\026\n\016hwTideTimeFrom\030\r \001(\t\022\024\n\014h"
-          + "wTideTimeTo\030\016 \001(\t\022\026\n\016lwTideTimeFrom\030\017 \001("
-          + "\t\022\024\n\014lwTideTimeTo\030\020 \001(\t\022\023\n\013sunriseTime\030\021"
-          + " \001(\t\022\022\n\nsunsetTime\030\022 \001(\t\022\020\n\010timezone\030\023 \001"
-          + "(\t\022\031\n\021timezoneOffsetVal\030\024 \001(\t\022\022\n\ntimezon"
-          + "eId\030\025 \001(\003\022\034\n\024timezoneAbbreviation\030\026 \001(\t\022"
-          + "\023\n\013countryName\030\027 \001(\t\"P\n\tPortReply\022\'\n\016res"
-          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\022\032\n\005po"
-          + "rts\030\002 \003(\0132\013.PortDetail\".\n\033GetPortInfoByC"
-          + "argoIdRequest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetPor"
-          + "tInfoByCargoIdReply\022\'\n\016responseStatus\030\001 "
-          + "\001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013.Po"
-          + "rtDetail\"\022\n\020PortEmptyRequest\"S\n\010Timezone"
-          + "\022\n\n\002id\030\001 \001(\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013offset"
-          + "Value\030\003 \001(\t\022\024\n\014abbreviation\030\004 \001(\t\"Y\n\020Tim"
-          + "ezoneResponse\022\'\n\016responseStatus\030\001 \001(\0132\017."
-          + "ResponseStatus\022\034\n\ttimezones\030\002 \003(\0132\t.Time"
-          + "zone\"\037\n\rPortIdRequest\022\016\n\006portId\030\001 \001(\003\"Z\n"
-          + "\021BerthInfoResponse\022\'\n\016responseStatus\030\001 \001"
-          + "(\0132\017.ResponseStatus\022\034\n\006berths\030\002 \003(\0132\014.Be"
-          + "rthDetail\"\262\002\n\013BerthDetail\022\n\n\002id\030\001 \001(\003\022\016\n"
-          + "\006portId\030\002 \001(\003\022\025\n\rloadingInfoId\030\014 \001(\003\022\026\n\016"
-          + "maxShipChannel\030\003 \001(\t\022\021\n\tberthName\030\004 \001(\t\022"
-          + "\024\n\014maxShipDepth\030\005 \001(\t\022\032\n\022seaDraftLimitat"
-          + "ion\030\006 \001(\t\022\032\n\022airDraftLimitation\030\007 \001(\t\022\031\n"
-          + "\021maxManifoldHeight\030\010 \001(\t\022 \n\030regulationAn"
-          + "dRestriction\030\t \001(\t\022\016\n\006maxLoa\030\n \001(\t\022\020\n\010ma"
-          + "xDraft\030\013 \001(\t\022\030\n\020lineDisplacement\030\r \001(\t2\230"
-          + "\004\n\017PortInfoService\022)\n\013GetPortInfo\022\014.Port"
-          + "Request\032\n.PortReply\"\000\022R\n\024GetPortInfoByCa"
-          + "rgoId\022\034.GetPortInfoByCargoIdRequest\032\032.Ge"
-          + "tPortInfoByCargoIdReply\"\000\022B\n\024GetPortInfo"
-          + "ByPortIds\022\034.GetPortInfoByPortIdsRequest\032"
-          + "\n.PortReply\"\000\022G\n\031GetPortInfoDetailsForAl"
-          + "go\022\034.GetPortInfoByPortIdsRequest\032\n.PortR"
-          + "eply\"\000\0225\n\013GetTimezone\022\021.PortEmptyRequest"
-          + "\032\021.TimezoneResponse\"\000\022;\n\023GetPortInfoByPa"
-          + "ging\022\026.PortRequestWithPaging\032\n.PortReply"
-          + "\"\000\022?\n\027GetBerthDetailsByPortId\022\016.PortIdRe"
-          + "quest\032\022.BerthInfoResponse\"\000\022D\n\025GetCargoI"
-          + "nfoByPortIds\022\034.GetPortInfoByPortIdsReque"
-          + "st\032\013.CargoInfos\"\000B\036\n\032com.cpdss.common.ge"
-          + "neratedP\000b\006proto3"
+      "\n\017port_info.proto\032\014common.proto\"#\n\017Berth"
+          + "IdsRequest\022\020\n\010berthIds\030\001 \003(\003\"\226\001\n\024Loading"
+          + "AlgoBerthData\022\'\n\016responseStatus\030\001 \001(\0132\017."
+          + "ResponseStatus\022\016\n\006portId\030\002 \001(\003\022\017\n\007berthI"
+          + "d\030\003 \001(\003\022\030\n\020controllingDepth\030\004 \001(\t\022\032\n\022und"
+          + "erKeelClearance\030\005 \001(\t\"\\\n\nCargoInfos\022%\n\nc"
+          + "argoPorts\030\001 \003(\0132\021.CargoPortMapping\022\'\n\016re"
+          + "sponseStatus\030\002 \001(\0132\017.ResponseStatus\"3\n\020C"
+          + "argoPortMapping\022\017\n\007cargoId\030\001 \001(\003\022\016\n\006port"
+          + "Id\030\002 \001(\003\")\n\033GetPortInfoByPortIdsRequest\022"
+          + "\n\n\002id\030\001 \003(\003\"]\n\013PortRequest\022\021\n\tcompanyId\030"
+          + "\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001("
+          + "\003\022\027\n\017loadableStudyId\030\004 \001(\003\"6\n\025PortReques"
+          + "tWithPaging\022\016\n\006offset\030\001 \001(\003\022\r\n\005limit\030\002 \001"
+          + "(\003\"\265\004\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 "
+          + "\001(\t\022\014\n\004code\030\003 \001(\t\022\024\n\014waterDensity\030\004 \001(\t\022"
+          + "\020\n\010maxDraft\030\005 \001(\t\022\023\n\013maxAirDraft\030\006 \001(\t\022\031"
+          + "\n\021averageTideHeight\030\007 \001(\t\022\022\n\ntideHeight\030"
+          + "\010 \001(\t\022\022\n\nhwTideFrom\030\t \001(\t\022\020\n\010hwTideTo\030\n "
+          + "\001(\t\022\022\n\nlwTideFrom\030\013 \001(\t\022\020\n\010lwTideTo\030\014 \001("
+          + "\t\022\026\n\016hwTideTimeFrom\030\r \001(\t\022\024\n\014hwTideTimeT"
+          + "o\030\016 \001(\t\022\026\n\016lwTideTimeFrom\030\017 \001(\t\022\024\n\014lwTid"
+          + "eTimeTo\030\020 \001(\t\022\023\n\013sunriseTime\030\021 \001(\t\022\022\n\nsu"
+          + "nsetTime\030\022 \001(\t\022\020\n\010timezone\030\023 \001(\t\022\031\n\021time"
+          + "zoneOffsetVal\030\024 \001(\t\022\022\n\ntimezoneId\030\025 \001(\003\022"
+          + "\034\n\024timezoneAbbreviation\030\026 \001(\t\022\023\n\013country"
+          + "Name\030\027 \001(\t\022\030\n\020controllingDepth\030\030 \001(\t\022\032\n\022"
+          + "underKeelClearance\030\031 \001(\t\022\013\n\003lat\030\032 \001(\t\022\013\n"
+          + "\003lon\030\033 \001(\t\"P\n\tPortReply\022\'\n\016responseStatu"
+          + "s\030\001 \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132"
+          + "\013.PortDetail\".\n\033GetPortInfoByCargoIdRequ"
+          + "est\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetPortInfoByCar"
+          + "goIdReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
+          + "onseStatus\022\032\n\005ports\030\002 \003(\0132\013.PortDetail\"\022"
+          + "\n\020PortEmptyRequest\"S\n\010Timezone\022\n\n\002id\030\001 \001"
+          + "(\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013offsetValue\030\003 \001("
+          + "\t\022\024\n\014abbreviation\030\004 \001(\t\"Y\n\020TimezoneRespo"
+          + "nse\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSt"
+          + "atus\022\034\n\ttimezones\030\002 \003(\0132\t.Timezone\"\037\n\rPo"
+          + "rtIdRequest\022\016\n\006portId\030\001 \001(\003\"Z\n\021BerthInfo"
+          + "Response\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
+          + "nseStatus\022\034\n\006berths\030\002 \003(\0132\014.BerthDetail\""
+          + "\262\002\n\013BerthDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 "
+          + "\001(\003\022\025\n\rloadingInfoId\030\014 \001(\003\022\026\n\016maxShipCha"
+          + "nnel\030\003 \001(\t\022\021\n\tberthName\030\004 \001(\t\022\024\n\014maxShip"
+          + "Depth\030\005 \001(\t\022\032\n\022seaDraftLimitation\030\006 \001(\t\022"
+          + "\032\n\022airDraftLimitation\030\007 \001(\t\022\031\n\021maxManifo"
+          + "ldHeight\030\010 \001(\t\022 \n\030regulationAndRestricti"
+          + "on\030\t \001(\t\022\016\n\006maxLoa\030\n \001(\t\022\020\n\010maxDraft\030\013 \001"
+          + "(\t\022\030\n\020lineDisplacement\030\r \001(\t2\334\004\n\017PortInf"
+          + "oService\022)\n\013GetPortInfo\022\014.PortRequest\032\n."
+          + "PortReply\"\000\022R\n\024GetPortInfoByCargoId\022\034.Ge"
+          + "tPortInfoByCargoIdRequest\032\032.GetPortInfoB"
+          + "yCargoIdReply\"\000\022B\n\024GetPortInfoByPortIds\022"
+          + "\034.GetPortInfoByPortIdsRequest\032\n.PortRepl"
+          + "y\"\000\022G\n\031GetPortInfoDetailsForAlgo\022\034.GetPo"
+          + "rtInfoByPortIdsRequest\032\n.PortReply\"\000\0225\n\013"
+          + "GetTimezone\022\021.PortEmptyRequest\032\021.Timezon"
+          + "eResponse\"\000\022;\n\023GetPortInfoByPaging\022\026.Por"
+          + "tRequestWithPaging\032\n.PortReply\"\000\022?\n\027GetB"
+          + "erthDetailsByPortId\022\016.PortIdRequest\032\022.Be"
+          + "rthInfoResponse\"\000\022D\n\025GetCargoInfoByPortI"
+          + "ds\022\034.GetPortInfoByPortIdsRequest\032\013.Cargo"
+          + "Infos\"\000\022B\n\027GetLoadingPlanBerthData\022\020.Ber"
+          + "thIdsRequest\032\025.LoadingAlgoBerthDataB\036\n\032c"
+          + "om.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -15595,14 +17912,28 @@ public final class PortInfo {
             new com.google.protobuf.Descriptors.FileDescriptor[] {
               com.cpdss.common.generated.Common.getDescriptor(),
             });
-    internal_static_CargoInfos_descriptor = getDescriptor().getMessageTypes().get(0);
+    internal_static_BerthIdsRequest_descriptor = getDescriptor().getMessageTypes().get(0);
+    internal_static_BerthIdsRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_BerthIdsRequest_descriptor,
+            new java.lang.String[] {
+              "BerthIds",
+            });
+    internal_static_LoadingAlgoBerthData_descriptor = getDescriptor().getMessageTypes().get(1);
+    internal_static_LoadingAlgoBerthData_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_LoadingAlgoBerthData_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus", "PortId", "BerthId", "ControllingDepth", "UnderKeelClearance",
+            });
+    internal_static_CargoInfos_descriptor = getDescriptor().getMessageTypes().get(2);
     internal_static_CargoInfos_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoInfos_descriptor,
             new java.lang.String[] {
               "CargoPorts", "ResponseStatus",
             });
-    internal_static_CargoPortMapping_descriptor = getDescriptor().getMessageTypes().get(1);
+    internal_static_CargoPortMapping_descriptor = getDescriptor().getMessageTypes().get(3);
     internal_static_CargoPortMapping_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoPortMapping_descriptor,
@@ -15610,28 +17941,28 @@ public final class PortInfo {
               "CargoId", "PortId",
             });
     internal_static_GetPortInfoByPortIdsRequest_descriptor =
-        getDescriptor().getMessageTypes().get(2);
+        getDescriptor().getMessageTypes().get(4);
     internal_static_GetPortInfoByPortIdsRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_GetPortInfoByPortIdsRequest_descriptor,
             new java.lang.String[] {
               "Id",
             });
-    internal_static_PortRequest_descriptor = getDescriptor().getMessageTypes().get(3);
+    internal_static_PortRequest_descriptor = getDescriptor().getMessageTypes().get(5);
     internal_static_PortRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortRequest_descriptor,
             new java.lang.String[] {
               "CompanyId", "VesselId", "VoyageId", "LoadableStudyId",
             });
-    internal_static_PortRequestWithPaging_descriptor = getDescriptor().getMessageTypes().get(4);
+    internal_static_PortRequestWithPaging_descriptor = getDescriptor().getMessageTypes().get(6);
     internal_static_PortRequestWithPaging_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortRequestWithPaging_descriptor,
             new java.lang.String[] {
               "Offset", "Limit",
             });
-    internal_static_PortDetail_descriptor = getDescriptor().getMessageTypes().get(5);
+    internal_static_PortDetail_descriptor = getDescriptor().getMessageTypes().get(7);
     internal_static_PortDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortDetail_descriptor,
@@ -15659,8 +17990,12 @@ public final class PortInfo {
               "TimezoneId",
               "TimezoneAbbreviation",
               "CountryName",
+              "ControllingDepth",
+              "UnderKeelClearance",
+              "Lat",
+              "Lon",
             });
-    internal_static_PortReply_descriptor = getDescriptor().getMessageTypes().get(6);
+    internal_static_PortReply_descriptor = getDescriptor().getMessageTypes().get(8);
     internal_static_PortReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortReply_descriptor,
@@ -15668,53 +18003,54 @@ public final class PortInfo {
               "ResponseStatus", "Ports",
             });
     internal_static_GetPortInfoByCargoIdRequest_descriptor =
-        getDescriptor().getMessageTypes().get(7);
+        getDescriptor().getMessageTypes().get(9);
     internal_static_GetPortInfoByCargoIdRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_GetPortInfoByCargoIdRequest_descriptor,
             new java.lang.String[] {
               "CargoId",
             });
-    internal_static_GetPortInfoByCargoIdReply_descriptor = getDescriptor().getMessageTypes().get(8);
+    internal_static_GetPortInfoByCargoIdReply_descriptor =
+        getDescriptor().getMessageTypes().get(10);
     internal_static_GetPortInfoByCargoIdReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_GetPortInfoByCargoIdReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "Ports",
             });
-    internal_static_PortEmptyRequest_descriptor = getDescriptor().getMessageTypes().get(9);
+    internal_static_PortEmptyRequest_descriptor = getDescriptor().getMessageTypes().get(11);
     internal_static_PortEmptyRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortEmptyRequest_descriptor, new java.lang.String[] {});
-    internal_static_Timezone_descriptor = getDescriptor().getMessageTypes().get(10);
+    internal_static_Timezone_descriptor = getDescriptor().getMessageTypes().get(12);
     internal_static_Timezone_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_Timezone_descriptor,
             new java.lang.String[] {
               "Id", "Timezone", "OffsetValue", "Abbreviation",
             });
-    internal_static_TimezoneResponse_descriptor = getDescriptor().getMessageTypes().get(11);
+    internal_static_TimezoneResponse_descriptor = getDescriptor().getMessageTypes().get(13);
     internal_static_TimezoneResponse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_TimezoneResponse_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "Timezones",
             });
-    internal_static_PortIdRequest_descriptor = getDescriptor().getMessageTypes().get(12);
+    internal_static_PortIdRequest_descriptor = getDescriptor().getMessageTypes().get(14);
     internal_static_PortIdRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortIdRequest_descriptor,
             new java.lang.String[] {
               "PortId",
             });
-    internal_static_BerthInfoResponse_descriptor = getDescriptor().getMessageTypes().get(13);
+    internal_static_BerthInfoResponse_descriptor = getDescriptor().getMessageTypes().get(15);
     internal_static_BerthInfoResponse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_BerthInfoResponse_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "Berths",
             });
-    internal_static_BerthDetail_descriptor = getDescriptor().getMessageTypes().get(14);
+    internal_static_BerthDetail_descriptor = getDescriptor().getMessageTypes().get(16);
     internal_static_BerthDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_BerthDetail_descriptor,

@@ -18,7 +18,7 @@
                 {{portRotationService.voyageDistance? (portRotationService.voyageDistance | number) :
                 0}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
             </div>
-            <div class=" text-right" *ngIf="vesselInfo">
+            <div class="" *ngIf="vesselInfo">
                
                 <ng-container *ngIf="selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">
 

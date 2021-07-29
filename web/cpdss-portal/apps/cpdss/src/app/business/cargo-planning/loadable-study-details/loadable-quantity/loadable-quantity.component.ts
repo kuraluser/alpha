@@ -354,6 +354,7 @@ export class LoadableQuantityComponent implements OnInit {
    * Cancel popup
    */
   cancel() {
+    this.loadableStudyDetailsTransformationService.setLoadLineChange(false);
     this.displayPopUp.emit(false);
   }
 

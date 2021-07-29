@@ -22,4 +22,7 @@ public class BerthDetails {
   private BigDecimal maxLoa;
   private BigDecimal maxDraft;
   private String itemsToBeAgreedWith;
+
+  private String controllingDepth; // Get from port
+  private String underKeelClearance; // Get from port
 }

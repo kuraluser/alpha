@@ -459,10 +459,9 @@ export class InstructionCheckListComponent implements OnInit {
           this.instructionListData.splice(index, 1);
         }
       }
-      this.instructionForm.controls.name.setValue('');
-      this.instructionForm.reset();
       this.instructionListData = [...this.instructionListData];
     }
+    this.instructionForm.reset();
   }
 
   /**

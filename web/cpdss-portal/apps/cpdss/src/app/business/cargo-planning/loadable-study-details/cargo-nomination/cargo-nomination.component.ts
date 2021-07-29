@@ -7,7 +7,7 @@ import { LoadableStudyDetailsTransformationService } from '../../services/loadab
 import { cargoNominationColorValidator } from '../../directives/validator/cargo-nomination-color.directive'
 import { cargoNominationAbbreviationValidator } from '../../directives/validator/cargo-nomination-abbreviation.directive'
 import { cargoNominationLoadingPortValidator } from '../../directives/validator/cargo-nomination-loading-port.directive'
-import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nomination-alphabets-only.directive'
+import { alphaNumericOnlyValidator } from '../../../core/directives/alpha-numeric-only-validator.directive'
 import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { takeUntil } from 'rxjs/operators';
@@ -653,7 +653,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       priority: this.fb.control(cargoNomination.priority.value, Validators.required),
       color: this.fb.control(cargoNomination.color.value, [Validators.required, cargoNominationColorValidator]),
       cargo: this.fb.control(cargoNomination.cargo.value, Validators.required),
-      abbreviation: this.fb.control(cargoNomination.abbreviation.value, [Validators.required, alphabetsOnlyValidator, cargoNominationAbbreviationValidator, Validators.maxLength(6)]),
+      abbreviation: this.fb.control(cargoNomination.abbreviation.value, [Validators.required, alphaNumericOnlyValidator, cargoNominationAbbreviationValidator, Validators.maxLength(6)]),
       loadingPorts: this.fb.control(cargoNomination.loadingPorts.value, [Validators.required, cargoNominationLoadingPortValidator]),
       quantity: this.fb.control({ value: Number(cargoNomination.quantity.value), disabled: true }),
       api: this.fb.control(cargoNomination.api.value, [Validators.required, Validators.min(8), Validators.max(99.99), numberValidator(2, 2)]),
