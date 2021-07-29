@@ -17,11 +17,21 @@ public class CowDetailService {
       long dischargestudyId, List<Long> portIds) {
 
     List<DischargeStudyCowDetail> cowDetails =
-        dischargeStudyCowDetailRepository.findByDischargeStudyStudyIdAndPortIdIn(
-            dischargestudyId, portIds);
+        dischargeStudyCowDetailRepository.findByDischargeStudyStudyIdAndPortIdInAndIsActive(
+            dischargestudyId, portIds, true);
     return cowDetails.stream()
         .collect(
             Collectors.toMap(
                 DischargeStudyCowDetail::getPortId, (DischargeStudyCowDetail cow) -> cow));
+  }
+
+  public DischargeStudyCowDetail getCowDetailForOnePort(long dischargestudyId, Long portId) {
+
+    return dischargeStudyCowDetailRepository.findByDischargeStudyStudyIdAndPortIdAndIsActive(
+        dischargestudyId, portId, true);
+  }
+
+  public void saveAll(List<DischargeStudyCowDetail> cowDetailsToSave) {
+    dischargeStudyCowDetailRepository.saveAll(cowDetailsToSave);
   }
 }

@@ -13,4 +13,7 @@ public class PortDetails {
   private String tideHeight;
   private String densitySeaWater;
   private String countryName;
+  private Long timezoneId;
+  private String timezoneAbbr;
+  private String offset;
 }

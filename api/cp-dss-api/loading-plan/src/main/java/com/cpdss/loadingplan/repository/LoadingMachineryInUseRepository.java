@@ -17,6 +17,10 @@ public interface LoadingMachineryInUseRepository
 
   Optional<LoadingMachineryInUse> findByIdAndIsActiveTrue(Long id);
 
+  Optional<LoadingMachineryInUse>
+      findByLoadingInformationAndMachineXIdAndMachineTypeXidAndIsActiveTrue(
+          LoadingInformation var1, Long var2, Integer var3);
+
   @Transactional
   @Modifying
   @Query("UPDATE LoadingMachineryInUse SET isActive = false WHERE loadingInformation.id = ?1")

@@ -66,6 +66,7 @@ export class SynopticalComponent implements OnInit {
     this.synopticalService.selectedLoadablePattern = null;
     this.synopticalService.loadablePatternId = null; 
     this.synopticalService.loadablePatternsList = [];
+    localStorage.setItem("voyageId", this.synopticalService.selectedVoyage.id.toString())
     this.router.navigateByUrl('/business/synoptical/' + this.synopticalService.vesselInfo.id + '/' + this.synopticalService.selectedVoyage.id)
     this.synopticalService.getLoadableStudyInfo(this.synopticalService.vesselInfo.id, this.synopticalService.selectedVoyage.id);
   }
@@ -105,4 +106,12 @@ export class SynopticalComponent implements OnInit {
     return this.synopticalService?.selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE;
   }
 
+    /**
+   * Method to navigate Loadable study
+   *
+   * @memberof SynopticalTableComponent
+   */
+  navigateToLoadableStudy(){
+    this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.synopticalService.vesselInfo.id}/${this.synopticalService.selectedVoyage.id}/${this.synopticalService.selectedLoadableStudy?.id}`]);
+  }
 }

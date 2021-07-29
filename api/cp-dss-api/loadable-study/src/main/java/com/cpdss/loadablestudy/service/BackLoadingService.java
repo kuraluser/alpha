@@ -18,10 +18,15 @@ public class BackLoadingService {
       long loadableStudyId, List<Long> portIds) {
 
     List<BackLoading> backLoadings =
-        backLoadingRepository.findByDischargeStudyIdAndPortIdIn(loadableStudyId, portIds);
+        backLoadingRepository.findByDischargeStudyIdAndPortIdInAndIsActive(
+            loadableStudyId, portIds, true);
     Map<Long, List<BackLoading>> BackLoadingByPort =
         backLoadings.stream()
             .collect(Collectors.groupingBy(backLoading -> backLoading.getPortId()));
     return BackLoadingByPort;
+  }
+
+  public void saveAll(List<BackLoading> backLoadingToSave) {
+    backLoadingRepository.saveAll(backLoadingToSave);
   }
 }

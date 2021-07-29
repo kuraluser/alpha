@@ -102,77 +102,12 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockin
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.AlgoError;
-import com.cpdss.gateway.domain.AlgoErrorResponse;
-import com.cpdss.gateway.domain.AlgoPatternResponse;
-import com.cpdss.gateway.domain.AlgoStatusRequest;
-import com.cpdss.gateway.domain.AlgoStatusResponse;
-import com.cpdss.gateway.domain.BunkerConditions;
-import com.cpdss.gateway.domain.Cargo;
-import com.cpdss.gateway.domain.CargoGroup;
-import com.cpdss.gateway.domain.CargoHistory;
-import com.cpdss.gateway.domain.CargoHistoryRequest;
-import com.cpdss.gateway.domain.CargoHistoryResponse;
-import com.cpdss.gateway.domain.CargoNomination;
-import com.cpdss.gateway.domain.CargoNominationResponse;
-import com.cpdss.gateway.domain.Comment;
-import com.cpdss.gateway.domain.CommingleCargo;
-import com.cpdss.gateway.domain.CommingleCargoResponse;
-import com.cpdss.gateway.domain.CommonResponse;
-import com.cpdss.gateway.domain.ConfirmPlanStatusResponse;
-import com.cpdss.gateway.domain.DischargingPortRequest;
-import com.cpdss.gateway.domain.LoadOnTopRequest;
-import com.cpdss.gateway.domain.LoadablePattern;
-import com.cpdss.gateway.domain.LoadablePatternCargoDetails;
-import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
-import com.cpdss.gateway.domain.LoadablePatternResponse;
-import com.cpdss.gateway.domain.LoadablePlanBallastDetails;
-import com.cpdss.gateway.domain.LoadablePlanComments;
-import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
-import com.cpdss.gateway.domain.LoadablePlanRequest;
-import com.cpdss.gateway.domain.LoadablePlanStowageDetails;
-import com.cpdss.gateway.domain.LoadablePlanSynopticalRecord;
-import com.cpdss.gateway.domain.LoadableQuantity;
-import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
-import com.cpdss.gateway.domain.LoadableQuantityResponse;
-import com.cpdss.gateway.domain.LoadableStudy;
-import com.cpdss.gateway.domain.LoadableStudyAttachmentData;
-import com.cpdss.gateway.domain.LoadableStudyAttachmentResponse;
-import com.cpdss.gateway.domain.LoadableStudyResponse;
-import com.cpdss.gateway.domain.LoadableStudyStatusResponse;
-import com.cpdss.gateway.domain.LoadicatorResultsRequest;
-import com.cpdss.gateway.domain.LoadingPort;
-import com.cpdss.gateway.domain.OnBoardQuantity;
-import com.cpdss.gateway.domain.OnBoardQuantityResponse;
-import com.cpdss.gateway.domain.OnHandQuantity;
-import com.cpdss.gateway.domain.OnHandQuantityResponse;
-import com.cpdss.gateway.domain.PatternValidateResultRequest;
-import com.cpdss.gateway.domain.Port;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.PortRotationResponse;
-import com.cpdss.gateway.domain.Purpose;
-import com.cpdss.gateway.domain.RuleRequest;
-import com.cpdss.gateway.domain.RuleResponse;
-import com.cpdss.gateway.domain.SaveCommentResponse;
-import com.cpdss.gateway.domain.StabilityConditions;
-import com.cpdss.gateway.domain.SynopticalCargoBallastRecord;
-import com.cpdss.gateway.domain.SynopticalOhqRecord;
-import com.cpdss.gateway.domain.SynopticalRecord;
-import com.cpdss.gateway.domain.SynopticalTableResponse;
-import com.cpdss.gateway.domain.UpdateUllage;
-import com.cpdss.gateway.domain.ValveSegregation;
-import com.cpdss.gateway.domain.VesselTank;
-import com.cpdss.gateway.domain.Voyage;
-import com.cpdss.gateway.domain.VoyageActionRequest;
-import com.cpdss.gateway.domain.VoyageActionResponse;
-import com.cpdss.gateway.domain.VoyageResponse;
-import com.cpdss.gateway.domain.VoyageStatusRequest;
-import com.cpdss.gateway.domain.VoyageStatusResponse;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
-import com.cpdss.gateway.utility.Utility;
+import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
@@ -5929,7 +5864,8 @@ public class LoadableStudyService {
     loadableRuleRequestBuilder.setVesselId(vesselId);
     loadableRuleRequestBuilder.setSectionId(sectionId);
     loadableRuleRequestBuilder.setLoadableStudyId(loadableStudyId);
-    Utility.buildRuleListForSave(loadableRuleRequest, null, loadableRuleRequestBuilder, false);
+    RuleUtility.buildRuleListForSave(
+        loadableRuleRequest, null, loadableRuleRequestBuilder, null, false, false);
     LoadableRuleReply loadableRuleReply =
         loadableStudyServiceBlockingStub.getOrSaveRulesForLoadableStudy(
             loadableRuleRequestBuilder.build());
@@ -5940,9 +5876,184 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(Integer.valueOf(loadableRuleReply.getResponseStatus().getCode())));
     }
     RuleResponse ruleResponse = new RuleResponse();
-    ruleResponse.setPlan(Utility.buildLoadableRulePlan(loadableRuleReply));
+    ruleResponse.setPlan(RuleUtility.buildLoadableRulePlan(loadableRuleReply));
     ruleResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return ruleResponse;
+  }
+
+  public LoadableStudyShoreResponse getLoadableStudyShore(String correlationId)
+      throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.Builder
+        loadableRuleRequestBuilder =
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.newBuilder();
+
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse responseShore =
+        loadableStudyServiceBlockingStub.getLoadableStudyShore(loadableRuleRequestBuilder.build());
+    List<LoadableStudyShore> shoreList = new ArrayList<LoadableStudyShore>();
+
+    responseShore
+        .getShoreListList()
+        .forEach(
+            vesselDetail -> {
+              LoadableStudyShore shore = new LoadableStudyShore();
+              shore.setId(vesselDetail.getId());
+              shore.setVesselName(vesselDetail.getVesselName());
+              shore.setImoNo(vesselDetail.getImoNo());
+              shore.setFlagName(vesselDetail.getFlagName());
+              shore.setEta(vesselDetail.getEta());
+              shore.setAtd(vesselDetail.getAtd());
+              shore.setVoyageName(vesselDetail.getVoyageName());
+
+              List<VoyagePorts> portList = new ArrayList<>();
+
+              vesselDetail
+                  .getVoyagePortsList()
+                  .forEach(
+                      voPorts -> {
+                        VoyagePorts ports = new VoyagePorts();
+                        ports.setAtd(voPorts.getAtd() == null ? "" : voPorts.getAtd());
+                        ports.setEta(voPorts.getEta() == null ? "" : voPorts.getEta());
+                        ports.setEtd(voPorts.getEtd() == null ? "" : voPorts.getEtd());
+                        ports.setPortOrder(
+                            voPorts.getPortOrder() == null ? "" : voPorts.getPortOrder());
+                        ports.setPortName(
+                            voPorts.getPortName() == null ? "" : voPorts.getPortName());
+                        ports.setAnchorage(
+                            voPorts.getAnchorage() == null ? "" : voPorts.getAnchorage());
+                        ports.setIconUrl(voPorts.getIconUrl() == null ? "" : voPorts.getIconUrl());
+                        ports.setPortType(
+                            voPorts.getPortType() == null ? "" : voPorts.getPortType());
+                        ports.setAta(voPorts.getAta() == null ? "" : voPorts.getAta());
+                        ports.setLat(voPorts.getLat() == null ? "" : voPorts.getLat());
+                        ports.setLon(voPorts.getLon() == null ? "" : voPorts.getLon());
+                        portList.add(ports);
+                      });
+
+              shore.setVoyagePorts(portList);
+
+              shoreList.add(shore);
+            });
+
+    LoadableStudyShoreResponse response = new LoadableStudyShoreResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    response.setShoreList(shoreList);
+    return response;
+  }
+
+  public UllageBillReply saveRulesForLoadableStudy(String first, UllageBillRequest inputData)
+      throws GenericServiceException {
+
+    String errorValidationLandingMsg = "";
+    String errorValidationUllageMsg = "";
+
+    com.cpdss.common.generated.LoadableStudy.UllageBillRequest.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.UllageBillRequest.newBuilder();
+
+    com.cpdss.common.generated.LoadableStudy.BillOfLanding.Builder billOfLandingBuilder =
+        com.cpdss.common.generated.LoadableStudy.BillOfLanding.newBuilder();
+
+    com.cpdss.common.generated.LoadableStudy.UpdateUllage.Builder updateUllageBuilder =
+        com.cpdss.common.generated.LoadableStudy.UpdateUllage.newBuilder();
+
+    try {
+
+      if (inputData.getBillOfLandingList().size() > 0) {
+        inputData
+            .getBillOfLandingList()
+            .forEach(
+                billLanding -> {
+                  billOfLandingBuilder
+                      .setBblAt60F(
+                          billLanding.getBblAt60f() == null ? "" : billLanding.getBblAt60f())
+                      .setId(billLanding.getId() == null ? 0 : billLanding.getId())
+                      .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
+                      .setCargoId(billLanding.getCargoId() == null ? 0 : billLanding.getCargoId())
+                      .setBlRefNumber(
+                          billLanding.getBlRefNumber() == null ? "" : billLanding.getBlRefNumber())
+                      .setQuantityLt(
+                          billLanding.getQuantityLt() == null
+                              ? 0
+                              : billLanding.getQuantityLt().longValue())
+                      .setKlAt15C(
+                          billLanding.getKlAt15c() == null
+                              ? 0
+                              : billLanding.getKlAt15c().longValue())
+                      .setApi(billLanding.getApi() == null ? 0 : billLanding.getApi().longValue())
+                      .setTemperature(
+                          billLanding.getTemperature() == null
+                              ? 0
+                              : billLanding.getApi().longValue())
+                      .setIsActive(
+                          billLanding.getIsActive() == null
+                              ? 0
+                              : billLanding.getIsActive().longValue())
+                      .setVersion(
+                          billLanding.getVersion() == null
+                              ? 0
+                              : billLanding.getVersion().longValue())
+                      .build();
+                });
+      } else {
+        errorValidationLandingMsg = "Required data for Update is missing";
+      }
+      if (inputData.getUllageUpdList().size() > 0) {
+        inputData
+            .getUllageUpdList()
+            .forEach(
+                ullageList -> {
+                  updateUllageBuilder
+                      .setId(ullageList.getId() == null ? 0 : ullageList.getId())
+                      .setTankId(ullageList.getTankId() == null ? 0 : ullageList.getTankId())
+                      .setCorrectedUllage(
+                          ullageList.getCorrectedUllage() == null
+                              ? 0
+                              : ullageList.getCorrectedUllage().longValue())
+                      .setCorrectionFactor(
+                          ullageList.getCorrectionFactor() == null
+                              ? 0
+                              : ullageList.getCorrectionFactor().longValue())
+                      .setQuantityMt(
+                          ullageList.getQuantityMt() == null
+                              ? 0
+                              : ullageList.getQuantityMt().longValue())
+                      .setIsBallast(
+                          ullageList.getIsBallast() == null ? false : ullageList.getIsBallast())
+                      .setFillingRatio(
+                          ullageList.getFillingRatio() == null ? "" : ullageList.getFillingRatio())
+                      .setApi(ullageList.getApi() == null ? "" : ullageList.getApi())
+                      .setTemperature(
+                          ullageList.getTemperature() == null ? "" : ullageList.getTemperature())
+                      .setObservedM3(
+                          ullageList.getObservedM3() == null ? "" : ullageList.getObservedM3())
+                      .setObservedM3(ullageList.getSg() == null ? "" : ullageList.getSg())
+                      .build();
+                });
+
+        // builder.setBillOfLanding(0, billOfLandingBuilder.build());
+
+        builder.addBillOfLanding(billOfLandingBuilder.build());
+        builder.addUpdateUllage(updateUllageBuilder.build());
+
+      } else {
+        errorValidationUllageMsg = "Required data for Update is missing";
+      }
+    } catch (Exception e) {
+      log.error("GenericServiceException when update LoadableStudy", e);
+    }
+
+    ResponseStatus.Builder ruleResponse = ResponseStatus.newBuilder();
+    if (errorValidationLandingMsg == "Required data for Update is missing"
+        && errorValidationUllageMsg == "Required data for Update is missing") {
+      ruleResponse.setCode("200").setStatus("Invalid Input Error");
+    } else {
+      loadableStudyServiceBlockingStub.getLoadableStudyShoreTwo(builder.build());
+      // ruleResponse.setCode(status.getCode()).setStatus(status.getStatus());
+    }
+
+    UllageBillReply replays = new UllageBillReply();
+    replays.setResponseStatus(ruleResponse.build());
+    return replays;
   }
 }

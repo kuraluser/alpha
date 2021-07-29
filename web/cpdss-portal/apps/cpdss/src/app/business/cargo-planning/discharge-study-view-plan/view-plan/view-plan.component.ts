@@ -6,8 +6,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { Voyage } from '../../../core/models/common.model';
-import { QUANTITY_UNIT, ITankDetails, IPercentage, IInstruction, IMode, ICargo } from '../../../../shared/models/common.model';
+import { Voyage , ITankDetails , IInstruction, ICargo } from '../../../core/models/common.model';
+import { QUANTITY_UNIT, IPercentage , IMode } from '../../../../shared/models/common.model';
 
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 import { DischargeStudyViewPlanTransformationService } from '../../services/discharge-study-view-plan-transformation.service';
@@ -39,7 +39,7 @@ export class ViewPlanComponent implements OnInit {
   dischargeStudyForm: FormGroup;
   portDetails: any[];
   instructions: IInstruction[];
-  cowList: IInstruction[];
+  cowList: IMode[];
   mode: IMode[];
   percentageList: IPercentage[];
   tank: ITankDetails[];
@@ -192,10 +192,6 @@ export class ViewPlanComponent implements OnInit {
    * @memberof ViewPlanComponent
    */
   setDummyDetails() {
-    this.instructions = [
-      { value: 'Instruction 1' },
-      { value: 'Instruction 2' },
-    ];
     this.cargoList = [
       {
         abbreviation: "ARL",
@@ -272,14 +268,14 @@ export class ViewPlanComponent implements OnInit {
       { name: 'manual', id: 2 }
     ]
     this.cowList = [
-      { value: 'Instruction 1' },
-      { value: 'Instruction 2' },
+      { name: 'auto', id: 1 },
+      { name: 'manual', id: 2 }
     ];
     this.percentageList = [
-      { value: '25', name: '25%' },
-      { value: '50', name: '50%' },
-      { value: '75', name: '75%' },
-      { value: '100', name: '100%' },
+      { value: 25, name: '25%' },
+      { value: 50, name: '50%' },
+      { value: 75, name: '75%' },
+      { value: 100, name: '100%' },
     ]
   }
 
@@ -318,7 +314,7 @@ export class ViewPlanComponent implements OnInit {
   }
 
   /**
-  * Method for back loading 
+  * Method for back loading
   *
   * @private
   * @param {*} backLoading

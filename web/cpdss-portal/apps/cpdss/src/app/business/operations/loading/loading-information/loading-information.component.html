@@ -1,3 +1,10 @@
+<div class="row">
+    <div class="col text-right">
+        <button class="btn btn-main mr-10" id="save_loading_information" (click)="saveLoadingInformationData()">
+            {{'LOADING_INFORMATION_SAVE_BUTTON_LABEL' |translate}}
+        </button>
+    </div>
+</div>
 <div class="row pt-15" *ngIf="loadingInformationData">
     <div class="col sidebar-loading-and-discharging">
         <div class="row ">
@@ -11,8 +18,7 @@
         </div>
         <div class="row pt-30">
             <div class="col">
-                <cpdss-portal-loading-rate [editMode]="true"
-                    [loadingRates]="loadingInformationData.loadingRates"
+                <cpdss-portal-loading-rate [editMode]="true" [loadingRates]="loadingInformationData.loadingRates"
                     (loadingRateChange)="onLoadingRateChange($event)"></cpdss-portal-loading-rate>
             </div>
         </div>
@@ -25,20 +31,13 @@
                 </cpdss-portal-loading-discharging-berth>
             </div>
         </div>
-        <div class="row pt-30">
-            <div class="col">
-                <cpdss-portal-loading-discharging-cargo-machinery [loadingInfoId]="loadingInfoId"
-                    [machineryInUses]="loadingInformationData?.machineryInUses"
-                    (updatemachineryInUses)="onUpdatemachineryInUses($event)">
-                </cpdss-portal-loading-discharging-cargo-machinery>
-            </div>
-        </div>
     </div>
     <div class="col">
         <div class="row">
             <div class="col">
                 <h5 class="text-uppercase heading-border">Cargo Details</h5>
-                <cpdss-portal-loading-discharging-cargo-details [prevQuantitySelectedUnit]="prevQuantitySelectedUnit" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
+                <cpdss-portal-loading-discharging-cargo-details [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
+                    [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
                     [cargoVesselTankDetails]="cargoVesselTankDetails">
                 </cpdss-portal-loading-discharging-cargo-details>
             </div>
@@ -92,12 +91,17 @@
                     <div class="col ml-30 ">
                         <div class="row no-gutters row-divider border-bottom">
                             <div class="col pl-10 offset-3 mt-10">
-                                <label class="checkbox-custom pr-20">{{'LOADING_INFORMATION_TRACK_START_AND_END_STAGE_LABEL' | translate}}
-                                    <input type="checkbox" [(ngModel)]="trackStartEndStage" (change)="onTrackStageChange()">
+                                <label
+                                    class="checkbox-custom pr-20">{{'LOADING_INFORMATION_TRACK_START_AND_END_STAGE_LABEL'
+                                    | translate}}
+                                    <input type="checkbox" [(ngModel)]="trackStartEndStage"
+                                        (change)="onTrackStageChange()">
                                     <span class="checkmark"></span>
                                 </label>
-                                <label class="checkbox-custom pr-20">{{'LOADING_INFORMATION_TRACK_GRADE_SWITCHING_LABEL' | translate}}
-                                    <input type="checkbox" [(ngModel)]="trackGradeSwitch" (change)="onTrackStageChange()">
+                                <label class="checkbox-custom pr-20">{{'LOADING_INFORMATION_TRACK_GRADE_SWITCHING_LABEL'
+                                    | translate}}
+                                    <input type="checkbox" [(ngModel)]="trackGradeSwitch"
+                                        (change)="onTrackStageChange()">
                                     <span class="checkmark"></span>
                                 </label>
 
@@ -114,7 +118,7 @@
             [loadingSequences]="loadingInformationData?.loadingSequences" [loadingInfoId]="loadingInfoId"
             (updateLoadingDelays)="onUpdateLoadingDelays($event)">
         </cpdss-portal-loading-discharging-manage-sequence>
-
+        <!-- TODO : Comment the code as per user story DSS-3373
         <div class="row pt-30">
             <div class="col">
                 <h5 class="text-uppercase heading-border">{{'LOADING_INFORMATION_TOPPING_OFF_SEQUENCE_HEADER' |
@@ -129,6 +133,14 @@
                     [cargoTanks]="loadingInformationData?.cargoVesselTankDetails?.cargoTanks">
                 </cpdss-portal-topping-off-tank-table>
 
+            </div>
+        </div> -->
+        <div class="row">
+            <div class="col pt-5">
+                <cpdss-portal-loading-discharging-cargo-machinery [loadingInfoId]="loadingInfoId"
+                    [machineryInUses]="loadingInformationData?.machineryInUses"
+                    (updatemachineryInUses)="onUpdatemachineryInUses($event)">
+                </cpdss-portal-loading-discharging-cargo-machinery>
             </div>
         </div>
     </div>

@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 import { ValueObject } from '../../../shared/models/common.model';
 
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_BUTTON, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, ISubTotal , IMode , ICargo } from '../../../shared/models/common.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, ISubTotal , IMode } from '../../../shared/models/common.model';
 import { IPortDetailValueObject , IBackLoadingDetails , IPortCargo , IDischargeStudyDropdownData } from '../models/discharge-study-view-plan.model';
+import { ICargo } from '../../core/models/common.model';
 
 @Injectable()
 

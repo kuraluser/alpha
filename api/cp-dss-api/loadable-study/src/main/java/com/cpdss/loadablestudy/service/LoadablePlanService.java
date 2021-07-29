@@ -14,6 +14,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.CargoNomination;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
@@ -1485,12 +1486,13 @@ public class LoadablePlanService {
             operationsValueCell.setCellValue(portOperationDetails.getDepDisp());
             break;
         }
+
         XSSFCellStyle cellStyle =
             getCellStyle(
                 spreadsheet,
                 TableCellStyle.PORT_OPERATIONS_VALUES,
                 Optional.empty(),
-                Optional.empty());
+                Optional.of(portOperationsTableTitle.getFormat()));
         operationsValueCell.setCellStyle(cellStyle);
         portColumnIndex++;
       }
@@ -2548,7 +2550,7 @@ public class LoadablePlanService {
       loadabalePatternValidateRequest.setLoadablePatternId(request.getLoadablePatternId());
       loadabalePatternValidateRequest.setCaseNumber(loadablePatternOpt.get().getCaseNumber());
       ObjectMapper objectMapper = new ObjectMapper();
-        jsonDataService.saveJsonToDatabase(
+      jsonDataService.saveJsonToDatabase(
           request.getLoadablePatternId(),
           LOADABLE_PATTERN_EDIT_REQUEST,
           objectMapper.writeValueAsString(loadabalePatternValidateRequest));

@@ -5,8 +5,9 @@ import { ICargoNominationValueObject, ICargoNominationAllDropdownData, ICargoNom
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { cargoNominationColorValidator } from '../../directives/validator/cargo-nomination-color.directive'
+import { cargoNominationAbbreviationValidator } from '../../directives/validator/cargo-nomination-abbreviation.directive'
 import { cargoNominationLoadingPortValidator } from '../../directives/validator/cargo-nomination-loading-port.directive'
-import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nomination-alphabets-only.directive'
+import { alphaNumericOnlyValidator } from '../../../core/directives/alpha-numeric-only-validator.directive'
 import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { takeUntil } from 'rxjs/operators';
@@ -72,16 +73,18 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   }
   set cargoNominations(cargoNominations: ICargoNominationValueObject[]) {
     this.totalQuantity = 0;
+    let totQtyWithMinTolerance = 0;
     const unitFrom = <QUANTITY_UNIT>localStorage.getItem('unit');
     const unitTo = this.loadableStudyDetailsApiService.baseUnit
     this.loadableStudyDetailsApiService.cargoNominations = cargoNominations.map((cargoNomination, _index) => {
       const _cargoNomination = this.loadableStudyDetailsTransformationService.formatCargoNomination(cargoNomination);
       let value = _cargoNomination?.isDelete ? 0 : Number(_cargoNomination.quantity.value);
-      value = this.loadableStudyDetailsApiService.updateQuantityByUnit(value, unitFrom, unitTo, _cargoNomination.api.value, _cargoNomination.temperature.value)
+      value = this.loadableStudyDetailsApiService.updateQuantityByUnit(value, unitFrom, unitTo, _cargoNomination.api.value, _cargoNomination.temperature.value);
+      totQtyWithMinTolerance += this.calcualtedTotQuantityWithMinTolereance(value, _cargoNomination.minTolerance.value);
       this.totalQuantity += value;
       return _cargoNomination
     });
-    this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(this.totalQuantity);
+    this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(totQtyWithMinTolerance);
     this.updatePriorityDropdown();
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
   }
@@ -255,7 +258,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     if (event.field === 'loadingPorts' || event.field === 'quantity') {
       if (event.data?.cargo?.value) {
         const portsResponse: IPortsDetailsResponse = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
-        const loadableStudyPorts: number[] = portsResponse?.portList ? portsResponse.portList.map( port => (port.portId)) : [];
+        const loadableStudyPorts: number[] = portsResponse?.portList ? portsResponse.portList.map(port => (port.portId)) : [];
         const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
         event.data.cargo.value.ports = result?.ports;
         this.cargoNominations[valueIndex]['cargo'].value = event?.data?.cargo?.value;
@@ -578,7 +581,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    * @memberof CargoNominationComponent
    */
   private async addCargoNomination(cargoNomination: ICargoNomination = null) {
-    if(AppConfigurationService.settings.restrictMaxNumberOfCargo && this.loadableStudyDetailsApiService.cargoNominations.length >= AppConfigurationService.settings.maxCargoLimit){
+    if (AppConfigurationService.settings.restrictMaxNumberOfCargo && this.loadableStudyDetailsApiService.cargoNominations.length >= AppConfigurationService.settings.maxCargoLimit) {
       const translationKeys = await this.translateService.get(['MAXIMUM_CARGO_WARNING', 'MAXIMUM_CARGO_LIMIT_REACHED']).toPromise();
       this.messageService.add({ severity: 'warn', summary: translationKeys['MAXIMUM_CARGO_WARNING'], detail: translationKeys['MAXIMUM_CARGO_LIMIT_REACHED'] });
       return;
@@ -650,11 +653,11 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       priority: this.fb.control(cargoNomination.priority.value, Validators.required),
       color: this.fb.control(cargoNomination.color.value, [Validators.required, cargoNominationColorValidator]),
       cargo: this.fb.control(cargoNomination.cargo.value, Validators.required),
-      abbreviation: this.fb.control(cargoNomination.abbreviation.value, [Validators.required, alphabetsOnlyValidator, Validators.maxLength(6)]),
+      abbreviation: this.fb.control(cargoNomination.abbreviation.value, [Validators.required, alphaNumericOnlyValidator, cargoNominationAbbreviationValidator, Validators.maxLength(6)]),
       loadingPorts: this.fb.control(cargoNomination.loadingPorts.value, [Validators.required, cargoNominationLoadingPortValidator]),
       quantity: this.fb.control({ value: Number(cargoNomination.quantity.value), disabled: true }),
-      api: this.fb.control(cargoNomination.api.value, [Validators.required, Validators.min(0), numberValidator(2, 3)]),
-      temperature: this.fb.control(cargoNomination.temperature.value, [Validators.required, numberValidator(2, 3)]),
+      api: this.fb.control(cargoNomination.api.value, [Validators.required, Validators.min(8), Validators.max(99.99), numberValidator(2, 2)]),
+      temperature: this.fb.control(cargoNomination.temperature.value, [Validators.required, Validators.min(40), Validators.max(160), numberValidator(2, 3)]),
       minTolerance: this.fb.control(cargoNomination.minTolerance.value, [Validators.required, Validators.max(0), Validators.min(-25), numberValidator(2, 2)]),
       maxTolerance: this.fb.control(cargoNomination.maxTolerance.value, [Validators.required, Validators.max(25), Validators.min(0), numberValidator(2, 2)]),
       segregation: this.fb.control(cargoNomination.segregation.value, Validators.required),
@@ -926,5 +929,18 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    */
   async portOhqTabStatusUpdate(event) {
     this.portOhqStatusUpdate.emit(event);
+  }
+
+  /**
+   * function to calculate cargo quntity based min-tolerance
+   * @param {number} cargoQuantity
+   * @param {number} minTolerance
+   * @return {*}
+   * @memberof CargoNominationComponent
+   */
+  calcualtedTotQuantityWithMinTolereance(cargoQuantity: number, minTolerance: number): number {
+    let calcualtedQty = 0;
+    calcualtedQty = cargoQuantity + ((cargoQuantity * minTolerance) / 100);
+    return calcualtedQty;
   }
 }

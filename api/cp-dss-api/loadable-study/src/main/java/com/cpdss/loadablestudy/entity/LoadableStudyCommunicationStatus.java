@@ -3,17 +3,14 @@ package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
+import java.time.LocalDateTime;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
-
-/**
- * author:Lincy Ignus
- */
+/** author:Lincy Ignus */
 @Entity
 @Table(name = "communication_status_update")
 @Getter

@@ -24,7 +24,7 @@
                     <th *ngFor="let col of columns" [pSortableColumn]="col?.sortField ? col?.sortField : col.field"
                         [pSortableColumnDisabled]="!col.sortable" [colSpan]="col?.columns?.length"
                         [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)"
-                        [class]="col?.fieldColumnClass">
+                        [class]="col?.fieldColumnClass" [ngClass]="{'text-right': col.fieldType === 'NUMBER'}">
                         <span>{{col.header| translate}}</span>
                         <span *ngIf="col?.fieldHeaderTooltipIcon && col?.fieldHeaderTooltipText" class="inline-block ml-5 v-middle pointer pi" [ngClass]="col?.fieldHeaderTooltipIcon" pTooltip="{{col?.fieldHeaderTooltipText | translate}}" tooltipPosition="top"></span>
                         <p-sortIcon [field]="col?.sortField ? col?.sortField : col.field" *ngIf="col.sortable">
@@ -49,7 +49,7 @@
                         <th *ngIf="progress"></th>
                         <th *ngIf="tableRowReOrder"></th>
                         <th *ngFor="let col of columns" [colSpan]="col?.columns?.length"
-                            [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)">
+                            [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)" [ngClass]="{'text-right': col.fieldType === 'NUMBER'}">
                             <ng-container *ngTemplateOutlet="filterTemplate;context:{column:col}">
                             </ng-container>
                         </th>
@@ -133,9 +133,10 @@
                         let-rowIndex="rowIndex" let-columns="columns">
                         <td [class]="col.fieldClass" [ngSwitch]="col.fieldType" [pEditableColumn]="rowData"
                             [pEditableColumnField]="col.field" [pEditableColumnRowIndex]="rowIndex"
-                            (click)="onClick($event, rowData, rowIndex, col)">
+                            (click)="onClick($event, rowData, rowIndex, col)" [ngClass]="{'text-right': col.fieldType === 'NUMBER','no-ediable-field': col.fieldType === 'NUMBER' && (!editMode || !rowData[col.field]?.isEditMode)}">
                             <div [attr.tabindex]="col.field !== 'actions' && col.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+rowIndex : null"
-                                (keyup)="onFocus($event, rowData, col, colIndex, rowIndex)"
+                                (keyup)="onKeyChange($event, rowData, col, colIndex, rowIndex)"
+                                (keydown.enter)="onKeyChange($event, rowData, col, colIndex, rowIndex)"
                                 id="{{'cell'+col.field + '_' + rowIndex}}" (keydown)="onFocusKeyDown($event, rowData, col, colIndex, rowIndex)">
 
                                 <ng-container *ngIf="!lazy;else lazyRef">
@@ -201,6 +202,7 @@
                                             [formControlName]="col.field"
                                             [placeholder]="col.fieldPlaceholder| translate"
                                             (change)="onChange($event, rowData, rowIndex, col)"
+                                            (keydown.enter)="onChange($event, rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}">
                                         <i *ngIf="rowData[col.field]?.value && col.fieldValueIcon"
                                             class="{{col.fieldValueIcon}}"
@@ -261,7 +263,7 @@
                                 <ng-container *ngSwitchCase="fieldType.COLOR" class="col no-left-padding"
                                     style="max-width: 20px;">
                                     <div class="color-rounded mt-5"
-                                        [ngStyle]="rowData[col.field].value && {'background' : rowData[col.field].value}">
+                                        [ngStyle]="rowData[col.field] && {'background' : rowData[col.field]}">
                                     </div>
                                 </ng-container>
 
@@ -385,7 +387,7 @@
                     <td *ngIf="progress">
 
                     </td>
-                    <td *ngFor="let col of columns; let i = index">
+                    <td *ngFor="let col of columns; let i = index" class="text-right">
                         <ng-container *ngIf="i !== 0;else totalRef">
                             {{ col?.numberType === 'quantity' ? (getTotal(col, i) | quantityDecimalFormat: col?.unit) :
                             (getTotal(col, i) | number: col?.numberFormat)}}

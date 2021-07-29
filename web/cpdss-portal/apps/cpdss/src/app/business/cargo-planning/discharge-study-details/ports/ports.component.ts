@@ -259,8 +259,8 @@ export class PortsComponent implements OnInit, OnDestroy {
       seaWaterDensity: this.fb.control(ports.seaWaterDensity.value, [Validators.required, Validators.min(0), numberValidator(4, 1), seaWaterDensityRangeValidator()]),
       maxDraft: this.fb.control(ports.maxDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
       maxAirDraft: this.fb.control(ports.maxAirDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
-      eta: this.fb.control({ value: this.dateStringToDate(ports.eta.value), disabled: !required }, this.getValidators('eta', index, false)),
-      etd: this.fb.control({ value: this.dateStringToDate(ports.etd.value), disabled: !required }, this.getValidators('etd', index, false))
+      eta: this.fb.control({ value: this.dateStringToDate(ports.eta.value), disabled: !required }, this.getValidators('eta', index, required)),
+      etd: this.fb.control({ value: this.dateStringToDate(ports.etd.value), disabled: !required }, this.getValidators('etd', index, required))
     });
 
   }
@@ -713,11 +713,42 @@ export class PortsComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Event handler for row re order complete event
+   * @param {*} event
+   * @memberof PortsComponent
+ */
+  async onRowReorder(event: any) {
+    const translationKeys = await this.translateService.get(['DISCHARGE_STUDY_PORTS_REORDER_SUMMARY', 'DISCHARGE_STUDY_PORT_CHANGE_CONFIRM_DETAILS', 'DISCHARGE_STUDY_PORT_CHANGE_CONFIRM_LABEL', 'DISCHARGE_STUDY_PORT_CHANGE_REJECT_LABEL']).toPromise();
+
+        this.confirmationService.confirm({
+          key: 'confirmation-alert',
+          header: translationKeys['DISCHARGE_STUDY_PORTS_REORDER_SUMMARY'],
+          message: translationKeys['DISCHARGE_STUDY_PORT_CHANGE_CONFIRM_DETAILS'],
+          icon: 'pi pi-exclamation-triangle',
+          acceptLabel: translationKeys['DISCHARGE_STUDY_PORT_CHANGE_CONFIRM_LABEL'],
+          acceptIcon: 'pi',
+          acceptButtonStyleClass: 'btn btn-main mr-5',
+          rejectVisible: true,
+          rejectLabel: translationKeys['DISCHARGE_STUDY_PORT_CHANGE_REJECT_LABEL'],
+          rejectIcon: 'pi',
+          rejectButtonStyleClass: 'btn btn-main',
+          accept: async () => {
+              await this.portReorder(event);
+          },
+          reject: () => {
+            const dropData = this.portsLists[event.dropIndex];
+            this.portsLists.splice(event.dropIndex, 1);
+            this.portsLists.splice(event.dragIndex, 0, dropData);
+          }
+        });
+  }
+
+  /**
  * Event handler for row re order complete event
  *
  * @memberof PortsComponent
  */
-  async onRowReorder(event) {
+  async portReorder(event) {
     const isPortOrderCorrect = this.isPortOrderCorrect(event.dropIndex, event.dragIndex);
 
 

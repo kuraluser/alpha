@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_BUTTON, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { ValueObject, ISubTotal } from '../../../shared/models/common.model';
+import { ValueObject, ISubTotal, IMonth } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IMonths, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
+import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation, OPERATIONS } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
@@ -36,7 +36,7 @@ export class LoadableStudyDetailsTransformationService {
   private _ohqUpdate: Subject<any> = new Subject();
   private _portUpdate: Subject<any> = new Subject();
   private OPERATIONS: OPERATIONS;
-  private _loadLineChangeSource: Subject<any> = new Subject();
+  private _loadLineChangeSource: BehaviorSubject<any> = new BehaviorSubject(null);
   private _loadableStudyUpdate: Subject<any> = new Subject();
   private _loadablePatternBtnDisable: Subject<any> = new Subject();
 
@@ -220,9 +220,11 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'abbreviation.value',
         fieldPlaceholder: 'ENTER_ABBREVIATION',
+        fieldHeaderClass: 'column-abbreviation',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
-          'alphabetsOnly': 'CARGO_NOMINATION_FIELD_ALPHABETS_ONLY_ERROR',
+          'alphaNumericOnly': 'CARGO_NOMINATION_FIELD_ALPHA_NUMERIC_ONLY_ERROR',
+          'duplicateAbbrevation': 'CARGO_NOMINATION_ABBREVIATION_ALREADY_USED_ERROR',
           'maxlength': 'CARGO_NOMINATION_FIELD_ABBREVIATION_MAX_LENGTH_ERROR'
         }
       },
@@ -316,6 +318,7 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
           'min': 'CARGO_NOMINATION_API_MIN_ERROR',
+          'max': 'CARGO_NOMINATION_API_MAX_ERROR',
           'invalidNumber': 'CARGO_NOMINATION_FIELD_INVALID_ERROR'
         }
       },
@@ -335,6 +338,8 @@ export class LoadableStudyDetailsTransformationService {
         numberFormat: '1.2-2',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR',
+          'min': 'CARGO_NOMINATION_TEMPERATURE_MIN_ERROR',
+          'max': 'CARGO_NOMINATION_TEMPERATURE_MAX_ERROR',
           'invalidNumber': 'CARGO_NOMINATION_FIELD_INVALID_ERROR'
         }
       },
@@ -507,7 +512,7 @@ export class LoadableStudyDetailsTransformationService {
    * @return {*}  {IMonths[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getMonthList(): IMonths[] {
+  getMonthList(): IMonth[] {
     return [
       {
         id: 1,
@@ -939,8 +944,8 @@ export class LoadableStudyDetailsTransformationService {
   }
 
    /** Set load line change status */
-   setLoadLineChange() {
-    this._loadLineChangeSource.next();
+   setLoadLineChange(value: boolean) {
+    this._loadLineChangeSource.next(value);
   }
 
   /**

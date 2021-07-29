@@ -1,6 +1,11 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ConfirmationService, TreeNode } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { InstructionCheckListApiService } from './services/instruction-check-list-api.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { MessageService } from 'primeng/api';
+import { IInstructionDetails, IDeleteData, ISaveStatusData } from './models/instruction-check-list.model';
 @Component({
   selector: 'cpdss-portal-instruction-check-list',
   templateUrl: './instruction-check-list.component.html',
@@ -16,29 +21,84 @@ import { TranslateService } from '@ngx-translate/core';
  */
 export class InstructionCheckListComponent implements OnInit {
 
-  @ViewChild('editField') editElement : ElementRef;
+  @ViewChild('editField') editElement: ElementRef;
   @Input() set instructionList(value: TreeNode[]) {
     this.instructionListData = [];
     this.instructionListData = value && [...this.setInstructionList(value)];
+    this.hasUnsavedChanges = false;
+    this.setSelectedData();
   }
 
   get instructionList(): TreeNode[] {
     return this.instructionListData;
   }
 
+  @Output() updateData: EventEmitter<any> = new EventEmitter();
+  @Output() tabStatus: EventEmitter<any> = new EventEmitter();
+  @Input() vesselId: number;
+  @Input() voyageId: number;
+  @Input() portRotationId: number;
+  @Input() groupId: number;
+  @Input() loadingInfoId: number;
+
   selectAll: boolean;
   instructionListData: TreeNode[];
   selectedData: TreeNode[];
   textFieldLength: number;
   oldData: any;
+  instructionForm: FormGroup;
+  hasUnsavedChanges = false;
 
   constructor(
     private translateService: TranslateService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private instructionCheckListApiService: InstructionCheckListApiService,
+    private ngxSpinnerService: NgxSpinnerService,
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
+    this.formGroupInit();
+  }
 
+  /**
+   * Initialize formGroup
+   *
+   * @memberof InstructionCheckListComponent
+   */
+  formGroupInit() {
+    this.instructionForm = new FormGroup({
+      name: new FormControl(''),
+    });
+  }
+
+  /**
+   * Formating the selected data
+   *
+   * @memberof InstructionCheckListComponent
+   */
+  setSelectedData() {
+    this.selectedData = [];
+    this.instructionListData.map(item => {
+      if (item.children?.length) {
+        let selectedCount = 0;
+        item.children.map(child => {
+          if (child.data?.isChecked) {
+            this.selectedData.push(child);
+            selectedCount++;
+          }
+        });
+        if (selectedCount && selectedCount === item.children?.length) {
+          this.selectedData.push(item);
+        } else if (selectedCount && selectedCount !== item.children?.length) {
+          item.partialSelected = true;
+        }
+      } else {
+        if (item.data?.isChecked) {
+          this.selectedData.push(item);
+        }
+      }
+    });
   }
 
   /**
@@ -51,15 +111,15 @@ export class InstructionCheckListComponent implements OnInit {
     const list = [];
     value.map(item => {
       list.push({
-        label: item.label,
+        label: item.subHeaderName,
         expanded: true,
         data: item,
         children: [],
       });
-      if (item.subList && item.subList.length) {
-        item.subList.map(subList => {
+      if (item?.loadingInstructionsList?.length) {
+        item.loadingInstructionsList.map(subList => {
           list[list.length - 1].children.push({
-            label: subList.label,
+            label: subList.instruction,
             data: subList,
           });
         });
@@ -69,48 +129,122 @@ export class InstructionCheckListComponent implements OnInit {
   }
 
   /**
-  * check box change event
-  *
-  * @param rowNode
-  * @param rowData
-  * @memberof InstructionCheckListComponent
-  */
-  parentNodeChange(rowNode, rowData) {
-
-  }
-  /**
    * check box uncheck event
    *
    * @param {Event}
    * @memberof InstructionCheckListComponent
    */
   nodeUnselect(event) {
+    this.hasUnsavedChanges = true;
   }
 
+  /**
+   * check box check event
+   *
+   * @param {Event}
+   * @memberof InstructionCheckListComponent
+   */
+  nodeSelect(event) {
+    this.hasUnsavedChanges = true;
+  }
+
+  /**
+   * check box select all event
+   *
+   * @param {Event}
+   * @memberof InstructionCheckListComponent
+   */
+  selectAllData(event) {
+    this.hasUnsavedChanges = true;
+  }
   /**
    * Save function for user created check function
    *
    * @param {Event}
    * @memberof InstructionCheckListComponent
    */
-  saveData(event) {
-    this.instructionListData.map(item => {
+  async saveData(event) {
+    if (!this.instructionForm.controls.name.value || this.instructionForm.controls.name.value.toString().trim() === '') {
+      return;
+    }
+    let data: IInstructionDetails = {};
+    const translationKeys = await this.translateService.get(['LOADING_INSTRUCTION_SUCCESS', 'LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_MESSAGE', 'LOADING_INSTRUCTION_SUCCESS_SUBHEADER_MESSAGE', 'LOADING_INSTRUCTION_ERROR', 'LOADING_INSTRUCTION_ERROR_MESSAGE']).toPromise();
+    if (event.node?.data?.addFlag) {
       if (event.level === 1) {
-        if (item.data.id === event.parent.data.id) {
-          item.children.map(child => {
-            child.data.editable = false;
-            child.data.addFlag = false;
-            child.data.label = child.label;
-          });
+        const childIsSelected = this.selectedData.filter(element => element.data?.instructionId === event.node?.data?.instructionId);
+        data = {
+          instructionHeaderId: this.groupId,
+          isSingleHeader: false,
+          isSubHeader: false,
+          subHeaderId: event?.parent?.data?.subHeaderId,
+          instruction: this.instructionForm.controls.name.value,
+          isChecked: childIsSelected?.length ? true : false
         }
       } else {
-        if (item.data.id === event.node.data.id) {
-          item.data.editable = false;
-          item.data.addFlag = false;
-          item.data.label = item.label;
+        const isSelected = this.selectedData.filter(element => element.data?.subHeaderId === event.node?.data?.subHeaderId);
+        data = {
+          instructionHeaderId: this.groupId,
+          isChecked: isSelected?.length ? true : false,
+          isSingleHeader: event?.node?.data?.isSingleHeader,
+          isSubHeader: true,
+          instruction: this.instructionForm.controls.name.value
         }
       }
-    });
+      this.ngxSpinnerService.show();
+      const result = await this.instructionCheckListApiService.saveInstruction(this.vesselId, this.loadingInfoId, this.portRotationId, data).toPromise();
+      this.ngxSpinnerService.hide();
+      if (result?.responseStatus?.status === 'SUCCESS') {
+        this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: event.level === 1 || event?.node?.data?.isSingleHeader ? translationKeys['LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_MESSAGE'] : translationKeys['LOADING_INSTRUCTION_SUCCESS_SUBHEADER_MESSAGE'] });
+        this.updateData.emit(true);
+        this.instructionForm.controls.name.setValue('');
+        this.instructionForm.reset();
+      } else {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INSTRUCTION_ERROR'], detail: translationKeys['LOADING_INSTRUCTION_ERROR_MESSAGE'] });
+      }
+
+    } else {
+      data = {
+        instructionId: event.level === 0 ? event?.node?.data?.subHeaderId : event?.node?.data?.instructionId,
+        instruction: this.instructionForm.controls.name.value
+      };
+
+      this.ngxSpinnerService.show();
+      const result = await this.instructionCheckListApiService.updateInstruction(this.vesselId, this.loadingInfoId, this.portRotationId, data).toPromise();
+      this.ngxSpinnerService.hide();
+      if (result?.responseStatus?.status === 'SUCCESS') {
+        this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: translationKeys['LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_MESSAGE'] });
+        this.updateData.emit(true);
+        this.instructionForm.controls.name.setValue('');
+        this.instructionForm.reset();
+      } else {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INSTRUCTION_ERROR'], detail: translationKeys['LOADING_INSTRUCTION_ERROR_MESSAGE'] });
+      }
+    }
+  }
+
+  /**
+   * check if any edit is currenlty active.
+   *
+   * @param row
+   * @memberof InstructionCheckListComponent
+   */
+  isEditActive() {
+    let editEnabled = false;
+    for (let i = 0; i < this.instructionListData.length; i++) {
+      if (this.instructionListData[i].data?.editable) {
+        editEnabled = true;
+        break;
+      }
+      if (this.instructionListData[i]?.children?.length) {
+        this.instructionListData[i].children.map(item => {
+          if (item.data.editable) {
+            editEnabled = true;
+          }
+        });
+      }
+      if (editEnabled) { break; }
+    }
+    return editEnabled;
   }
 
   /**
@@ -120,15 +254,11 @@ export class InstructionCheckListComponent implements OnInit {
    * @memberof InstructionCheckListComponent
    */
   addChild(row) {
-    this.instructionListData.map(item => {
-      if (row.node.data.id === item.data.id) {
-        let isEditActive = false;
-        item.children.map(child => {
-          if (child.data.editable) {
-            isEditActive = true;
-          }
-        });
-        if (isEditActive) { return; }
+    if (this.isEditActive()) { return; }
+    let rowIndex = null;
+    this.instructionListData.map((item, index) => {
+      if (row.node.data.subHeaderId === item.data.subHeaderId) {
+        rowIndex = index;
         item.children.push(
           {
             label: '',
@@ -136,15 +266,20 @@ export class InstructionCheckListComponent implements OnInit {
             data: {
               label: '',
               editable: true,
-              userCreated: true,
-              id: new Date().getTime(),
+              isEditable: true,
+              instructionId: new Date().getTime(),
               addFlag: true
             },
           }
-        )
+        );
       }
     });
     this.textFieldLength = 500;
+    const itemIndex = this.selectedData.findIndex(item => item?.data?.subHeaderId === row?.node?.data?.subHeaderId);
+    if (itemIndex > -1) {
+      this.selectedData.splice(itemIndex, 1);
+      this.instructionListData[rowIndex].partialSelected = true;
+    }
     this.instructionListData = [...this.instructionListData];
     setTimeout(() => {
       this.editElement.nativeElement.scrollIntoView();
@@ -157,13 +292,7 @@ export class InstructionCheckListComponent implements OnInit {
    * @memberof InstructionCheckListComponent
    */
   addParent() {
-    let isEditActive = false;
-    this.instructionListData.map(item => {
-      if (item.data.editable) {
-        isEditActive = true;
-      }
-    });
-    if (isEditActive) { return; }
+    if (this.isEditActive()) { return; }
     this.instructionListData.push(
       {
         label: '',
@@ -172,9 +301,10 @@ export class InstructionCheckListComponent implements OnInit {
         data: {
           label: '',
           editable: true,
-          userCreated: true,
-          id: new Date().getTime(),
-          addFlag: true
+          isEditable: true,
+          subHeaderId: new Date().getTime(),
+          addFlag: true,
+          isSingleHeader: false
         },
       }
     )
@@ -190,14 +320,8 @@ export class InstructionCheckListComponent implements OnInit {
    *
    * @memberof InstructionCheckListComponent
    */
-  addNewInstruction(){
-    let isEditActive = false;
-    this.instructionListData.map(item => {
-      if (item.data.editable) {
-        isEditActive = true;
-      }
-    });
-    if (isEditActive) { return; }
+  addNewInstruction() {
+    if (this.isEditActive()) { return; }
     this.instructionListData.push(
       {
         label: '',
@@ -206,10 +330,10 @@ export class InstructionCheckListComponent implements OnInit {
         data: {
           label: '',
           editable: true,
-          userCreated: true,
-          id: new Date().getTime(),
+          isEditable: true,
+          subHeaderId: new Date().getTime(),
           addFlag: true,
-          type: 2
+          isSingleHeader: true
         },
       }
     )
@@ -227,52 +351,76 @@ export class InstructionCheckListComponent implements OnInit {
    * @memberof InstructionCheckListComponent
    */
   editData(data) {
+    if (this.isEditActive()) { return; }
     this.oldData = data.node.data;
     data.node.data.editable = true;
+    this.instructionForm.controls.name.setValue(data.node?.label);
     this.textFieldLength = data.level === 0 ? 250 : 500;
+  }
 
+  /**
+   * Delete confirmation for user created check lists
+   *
+   * @param {Event}
+   * @memberof InstructionCheckListComponent
+   */
+  deleteConfirm(data) {
+    const translationKeys = this.translateService.instant(['LOADING_INSTRUCTION_DELETE_SUMMARY', 'LOADING_INSTRUCTION_DELETE_DETAILS', 'LOADING_INSTRUCTION_DELETE_CONFIRM_LABEL', 'LOADING_INSTRUCTION_DELETE_REJECT_LABEL']);
+
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['LOADING_INSTRUCTION_DELETE_SUMMARY'],
+      message: translationKeys['LOADING_INSTRUCTION_DELETE_DETAILS'],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['LOADING_INSTRUCTION_DELETE_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: true,
+      rejectLabel: translationKeys['LOADING_INSTRUCTION_DELETE_REJECT_LABEL'],
+      rejectIcon: 'pi',
+      rejectButtonStyleClass: 'btn btn-main',
+      accept: async () => {
+        this.deleteData(data);
+      }
+    });
   }
 
   /**
    * Delete function for user created check lists
    *
-   * @param {Event}
+   * @param {data}
    * @memberof InstructionCheckListComponent
    */
-  deleteData(data) {
-    const translationKeys = this.translateService.instant(['USER_DELETE_SUMMARY', 'USER_DELETE_DETAILS', 'USER_DELETE_CONFIRM_LABEL', 'USER_DELETE_REJECT_LABEL']);
+  async deleteData(data) {
+    const translationKeys = await this.translateService.get(['LOADING_INSTRUCTION_SUCCESS', 'LOADING_INSTRUCTION_DELETE_MESSAGE', 'LOADING_INSTRUCTION_ERROR', 'LOADING_INSTRUCTION_ERROR_MESSAGE']).toPromise();
+    const payload: IDeleteData = {
+      instructionId: data.level === 1 ? data?.node?.data?.instructionId : data?.node?.data?.subHeaderId
+    };
+    this.ngxSpinnerService.show();
+    const result = await this.instructionCheckListApiService.deleteInstruction(this.vesselId, this.loadingInfoId, this.portRotationId, payload).toPromise();
+    this.ngxSpinnerService.hide();
+    if (result?.responseStatus?.status === 'SUCCESS') {
+      this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: translationKeys['LOADING_INSTRUCTION_DELETE_MESSAGE'] });
+      this.updateData.emit(true);
+    } else {
+      this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INSTRUCTION_ERROR'], detail: translationKeys['LOADING_INSTRUCTION_ERROR_MESSAGE'] });
+    }
+  }
 
-    this.confirmationService.confirm({
-      key: 'confirmation-alert',
-      header: translationKeys['USER_DELETE_SUMMARY'],
-      message: translationKeys['USER_DELETE_DETAILS'],
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: translationKeys['USER_DELETE_CONFIRM_LABEL'],
-      acceptIcon: 'pi',
-      acceptButtonStyleClass: 'btn btn-main mr-5',
-      rejectVisible: true,
-      rejectLabel: translationKeys['USER_DELETE_REJECT_LABEL'],
-      rejectIcon: 'pi',
-      rejectButtonStyleClass: 'btn btn-main',
-      accept: async () => {
-        if (data.level === 1) {
-          this.instructionListData.map(item => {
-            if (item.data.id === data.parent.data.id) {
-              const index = item.children.findIndex(child => child.data.id === data.node.data.id);
-              if (index > -1) {
-                item.children.splice(index, 1);
-              }
-            }
-          });
-        } else {
-          const index = this.instructionListData.findIndex(item => item.data.id === data.node.data.id);
-          if (index > -1) {
-            this.instructionListData.splice(index, 1);
-          }
-        }
-        this.instructionListData = [...this.instructionListData];
+  /**
+   * select/partial select parent based on child selection
+   *
+   * @param {children} 
+   * @memberof InstructionCheckListComponent
+   */
+  checkParentSelection(children) {
+    let childCheckCount = 0;
+    children.map(child => {
+      if (child.data?.isChecked) {
+        childCheckCount++;
       }
     });
+    return (childCheckCount && childCheckCount === children?.length);
   }
 
   /**
@@ -285,24 +433,77 @@ export class InstructionCheckListComponent implements OnInit {
     if (!data.node.data.addFlag) {
       data.node.data.editable = false;
       data.node.data = this.oldData;
-      data.node.label = this.oldData.label;
     } else {
       if (data.level === 1) {
         this.instructionListData.map(item => {
-          if (item.data.id === data.parent.data.id) {
-            const index = item.children.findIndex(child => child.data.id === data.node.data.id);
-            if (index > -1) {
-              item.children.splice(index, 1);
+          if (item.data.subHeaderId === data.parent.data.subHeaderId) {
+            item.children.splice(item?.children?.length - 1, 1);
+          }
+          if (item?.children?.length) {
+            const selectParent = this.checkParentSelection(item.children);
+            if (selectParent) {
+              item.partialSelected = false;
+              this.selectedData.push(item);
+            }
+          } else {
+            if (item?.data?.isChecked) {
+              item.partialSelected = false;
+              this.selectedData.push(item);
             }
           }
         });
+
       } else {
-        const index = this.instructionListData.findIndex(item => item.data.id === data.node.data.id);
+        const index = this.instructionListData.findIndex(item => item.data.subHeaderId === data.node.data.subHeaderId);
         if (index > -1) {
           this.instructionListData.splice(index, 1);
         }
       }
       this.instructionListData = [...this.instructionListData];
+    }
+    this.instructionForm.reset();
+  }
+
+  /**
+   * Save instruction states - checked/unchecked
+   *
+   * @memberof InstructionCheckListComponent
+   */
+  async saveAll() {
+    if (this.isEditActive()) { return; }
+    const data : ISaveStatusData = {
+      instructionList: []
+    };
+    const translationKeys = await this.translateService.get(['LOADING_INSTRUCTION_SUCCESS', 'LOADING_INSTRUCTION_SAVEALL_SUCCESS', 'LOADING_INSTRUCTION_ERROR', 'LOADING_INSTRUCTION_ERROR_MESSAGE']).toPromise();
+    this.instructionListData.map(item => {
+      const isSelected = this.selectedData.filter(element => element.data?.subHeaderId === item.data?.subHeaderId);
+      if (isSelected?.length) {
+        data.instructionList.push({ instructionId: item.data?.subHeaderId, isChecked: true });
+        if (item?.children?.length) {
+          item?.children.map(child => {
+            data.instructionList.push({ instructionId: child.data?.instructionId, isChecked: true });
+          });
+        }
+      } else {
+        data.instructionList.push({ instructionId: item.data?.subHeaderId, isChecked: false });
+        if (item?.children?.length) {
+          item?.children.map(child => {
+            const childIsSelected = this.selectedData.filter(element => element.data?.instructionId === child.data?.instructionId);
+            data.instructionList.push({ instructionId: child.data?.instructionId, isChecked: childIsSelected?.length ? true : false });
+          });
+        }
+      }
+    });
+    this.ngxSpinnerService.show();
+    const result = await this.instructionCheckListApiService.updateCheckListStatus(this.vesselId, this.loadingInfoId, this.portRotationId, data).toPromise();
+    this.ngxSpinnerService.hide();
+    if (result?.responseStatus?.status === 'SUCCESS') {
+      this.tabStatus.emit(true);
+      this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: translationKeys['LOADING_INSTRUCTION_SAVEALL_SUCCESS'] });
+      this.hasUnsavedChanges = false;
+      this.updateData.emit(true);
+    } else {
+      this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INSTRUCTION_ERROR'], detail: translationKeys['LOADING_INSTRUCTION_ERROR_MESSAGE'] });
     }
   }
 

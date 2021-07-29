@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ICargoResponseModel } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse } from '../models/loading-information.model';
 

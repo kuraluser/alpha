@@ -115,9 +115,10 @@ message StageDuration{
 message LoadingMachinesInUse{
   int64 id = 1;
   int64 loadingInfoId = 2;
-  int64 pumpId = 3;
+  int64 machineId = 3;
   string capacity = 4;
   bool isUsing = 5; // Not added in gateway
+  MachineType machineType = 6;
 }
 
 // Object message for hold, master and user data
@@ -139,6 +140,7 @@ message LoadingDelays{
   string duration = 4;
   int64 cargoId = 5;
   string quantity = 6; // was added in gateway
+  int64 cargoNominationId = 7;
 }
 
 // pure cargo details based on the port rotation
@@ -383,4 +385,189 @@ message LoadingInfoSaveResponse {
   ResponseStatus responseStatus = 6;
 }
 
+message LoadingPlanRuleRequest{
+  int64 vesselId = 1;
+  int64 sectionId = 2;
+  repeated RulePlans rulePlan = 3;
+  int64 loadingInfoId = 4;
+  bool isNoDefaultRule = 5;
+}
 
+message LoadingPlanRuleReply{
+  ResponseStatus responseStatus = 1;
+  repeated RulePlans rulePlan = 2;
+}
+message LoadingPlanSaveRequest {
+  int64 loadingInfoId = 1;
+  repeated LoadingSequence loadingSequences = 2;
+  repeated LoadingPlanTankDetails portLoadingPlanStowageDetails = 3;
+  repeated LoadingPlanTankDetails portLoadingPlanBallastDetails = 4;
+  repeated LoadingPlanTankDetails portLoadingPlanRobDetails = 5;
+  repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 6;
+}
+
+message LoadingSequence {
+  int64 cargoNominationId = 1;
+  int32 startTime = 2;
+  int32 endTime = 3;
+  int64 portId = 4;
+  int32 sequenceNumber = 5;
+  string stageName = 6;
+  bool toLoadicator = 7;
+  repeated Valve cargoValves = 8;
+  repeated Valve ballastValves = 9;
+  repeated LoadingRate loadingRates = 10;
+  repeated DeBallastingRate deBallastingRates = 11;
+  repeated LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;
+  string cargoLoadingRate1 = 13;
+  string cargoLoadingRate2 = 14;
+  repeated PumpOperation ballastOperations = 15;
+}
+
+message LoadingPlanPortWiseDetails {
+  repeated DeBallastingRate deballastingRates = 1;
+  repeated LoadingPlanTankDetails loadingPlanBallastDetails = 2;
+  repeated LoadingPlanTankDetails loadingPlanRobDetails = 3;
+  LoadingPlanStabilityParameters loadingPlanStabilityParameters = 4;
+  repeated LoadingPlanTankDetails loadingPlanStowageDetails = 5;
+  int32 time = 6;
+}
+
+message LoadingPlanStabilityParameters {
+  string draft = 1;
+  string trim = 2;
+  string bm = 3;
+  string sf = 4;
+  int32 conditionType = 5;
+  int32 valueType = 6;
+}
+
+message LoadingPlanTankDetails {
+  string api = 1;
+  int64 cargoNominationId = 2;
+  string quantity = 3;
+  int64 tankId = 4;
+  string temperature = 5;
+  string ullage = 6;
+  string quantityM3 = 7;
+  string sounding = 8;
+  int32 conditionType = 9;
+  int32 valueType = 10;
+}
+
+message DeBallastingRate {
+  string deBallastingRate = 1;
+  int64 tankId = 2;
+  int32 time = 3;
+}
+
+message LoadingRate {
+  string loadingRate = 1;
+  int64 tankId = 2;
+  int32 startTime = 3;
+  int32 endTime = 4;
+}
+
+message Valve {
+  string operation = 1;
+  int32 time = 2;
+  string valveCode = 3;
+  string valveType = 4;
+  int64 valveId = 5;
+}
+
+message PumpOperation {
+  int32 endTime = 1;
+  string pumpName = 2;
+  int64 pumpXId = 3;
+  string rate = 4;
+  int32 startTime = 5;
+  string quantityM3 = 6;
+}
+
+message LoadingPlanSaveResponse {
+  ResponseStatus responseStatus = 1;
+}
+
+message LoadingInstructionRequest {
+  int64 loadingInfoId = 1;
+  int64 vesselId = 2;
+  int64 portRotationId = 3; 
+}
+
+
+message LoadingInstructions {
+  int64 instructionTypeId = 1;
+  int64 instructionHeaderId = 2;
+  int64 instructionId =3;
+  string instruction = 4;
+  bool isChecked =5;
+  bool isEditable =6;
+}
+
+message LoadingInstructionSubHeader {
+  int64 instructionTypeId = 1;
+  int64 instructionHeaderId = 2;
+  int64 subHeaderId = 3;
+  string subHeaderName = 4;
+  bool isChecked =5;
+  repeated LoadingInstructions loadingInstructionsList =6;
+  bool isEditable =7;
+  bool IsHeaderInstruction = 8;
+  
+}
+
+message LoadingInstructionGroup {
+  int64 groupId =1;
+  string groupName = 2;
+}
+
+message LoadingInstructionDetails {
+  repeated LoadingInstructionSubHeader loadingInstructionSubHeader =1;
+  repeated LoadingInstructionGroup loadingInstructionGroupList =2;
+  ResponseStatus responseStatus = 3;
+}
+
+message LoadingInstructionsSave {
+  int64 headerId = 1;
+  int64 instructionTypeId = 2;
+  bool isChecked = 3;
+  bool isSingleHeader = 4;
+  int64 subHeaderId = 5;
+  string instruction = 6;
+  bool isSubHeader = 7;
+  int64 loadingInfoId = 8;
+  int64 vesselId = 9;
+  int64 portRotationId = 10;
+}
+
+message LoadingInstructionsUpdate{
+  repeated LoadingInstructionStatus instructionList = 1;
+}
+
+message LoadingInstructionStatus{
+  int64 instructionId = 1;
+  bool isChecked = 2;
+  string instruction =3;
+}
+message LoadingSequenceRequest {
+  int64 loadingInfoId = 1;
+}
+
+message LoadingSequenceReply {
+  string startDate = 1;
+  int32 interval = 2;
+  repeated LoadingSequence loadingSequences = 3;
+  ResponseStatus responseStatus = 4;
+}
+
+message LoadingPlanReply {
+  ResponseStatus responseStatus = 7;
+  int64 loadingInfoId = 1;
+  LoadingInformation loadingInformation = 8;
+  repeated LoadingSequence loadingSequences = 2;
+  repeated LoadingPlanTankDetails portLoadingPlanStowageDetails = 3;
+  repeated LoadingPlanTankDetails portLoadingPlanBallastDetails = 4;
+  repeated LoadingPlanTankDetails portLoadingPlanRobDetails = 5;
+  repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 6;
+}

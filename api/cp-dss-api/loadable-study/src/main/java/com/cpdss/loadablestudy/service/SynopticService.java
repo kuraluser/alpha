@@ -18,8 +18,7 @@ import com.cpdss.loadablestudy.domain.PortOperationTable;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -1288,14 +1287,32 @@ public class SynopticService {
                         CommonErrorCodes.E_HTTP_BAD_REQUEST,
                         HttpStatusCode.BAD_REQUEST));
 
+    // GRPC call to Vessel Info
+    VesselInfo.VesselRequest replyBuilder =
+        VesselInfo.VesselRequest.newBuilder()
+            .setVesselId(loadableStudyDetails.getVesselXId())
+            .setVesselDraftConditionId(loadableStudyDetails.getLoadLineXId())
+            .setDraftExtreme(loadableStudyDetails.getDraftMark().toString())
+            .build();
+    VesselInfo.VesselReply vesselReply =
+        this.vesselInfoGrpcService.getVesselDetailsById(replyBuilder);
+    double vesselLwt =
+        Double.parseDouble(vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight());
+
     //    Get port rotation details
     loadableStudyPortRotationService.buildportRotationDetails(loadableStudyDetails, loadableStudy);
 
-    // Get loadicator data detail
-    List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataList =
-        this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
+    // Get cargo details
+    List<LoadablePatternCargoDetails> cargoes =
+        loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
             loadablePatterId, true);
-
+    // Get on hand quantities
+    List<OnHandQuantity> onHandQuantities =
+        onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyDetails, true);
+    // Get ballast details
+    List<LoadablePlanStowageBallastDetails> ballastDetails =
+        loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdAndIsActive(
+            loadablePatterId, true);
     //    Set OperationsTable details
     List<OperationsTable> operationsTableList = new ArrayList<>();
     for (com.cpdss.loadablestudy.domain.LoadableStudyPortRotation portDetails :
@@ -1307,10 +1324,17 @@ public class SynopticService {
               .filter(rotation -> rotation.getPortXId().equals(portDetails.getPortId()))
               .findFirst()
               .orElse(new LoadableStudyPortRotation());
+
+      // Get timezone
+      Optional<PortDetails> portMasterDetails =
+          loadableStudy.getPortDetails().stream()
+              .filter(port -> port.getId().longValue() == portDetails.getPortId().longValue())
+              .findFirst();
+      System.out.println(portMasterDetails.get().getOffset());
       Optional<SynopticalTable> arrSynopticRecord =
           this.synopticalTableRepository
               .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
-                  loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
+                  loadableStudyId, loadableStudyPortRotation.getId(), OPERATION_TYPE_ARR, true);
       SynopticalTableLoadicatorData arrSynopticalTableLoadicatorData =
           this.synopticalTableLoadicatorDataRepository
               .findBySynopticalTableAndLoadablePatternIdAndIsActive(
@@ -1318,11 +1342,184 @@ public class SynopticService {
       Optional<SynopticalTable> depSynopticRecord =
           this.synopticalTableRepository
               .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
-                  loadableStudyId, loadableStudyPortRotation.getId(), "ARR", true);
+                  loadableStudyId, loadableStudyPortRotation.getId(), OPERATION_TYPE_DEP, true);
       SynopticalTableLoadicatorData depSynopticalTableLoadicatorData =
           this.synopticalTableLoadicatorDataRepository
               .findBySynopticalTableAndLoadablePatternIdAndIsActive(
                   depSynopticRecord.get(), loadablePatterId, true);
+      // Calculating displacement
+      // Get the port-wise cargo total
+      double cargoArrTotal =
+          cargoes.stream()
+              .filter(
+                  cargo ->
+                      cargo.getPortRotationId().doubleValue()
+                              == loadableStudyPortRotation.getId().doubleValue()
+                          && cargo.getOperationType().equalsIgnoreCase(OPERATION_TYPE_ARR))
+              .mapToDouble(
+                  cargo ->
+                      cargo.getPlannedQuantity() != null
+                          ? cargo.getPlannedQuantity().doubleValue()
+                          : 0)
+              .sum();
+      double cargoDepTotal =
+          cargoes.stream()
+              .filter(
+                  cargo ->
+                      cargo.getPortRotationId().doubleValue()
+                              == loadableStudyPortRotation.getId().doubleValue()
+                          && cargo.getOperationType().equalsIgnoreCase(OPERATION_TYPE_DEP))
+              .mapToDouble(
+                  cargo ->
+                      cargo.getPlannedQuantity() != null
+                          ? cargo.getPlannedQuantity().doubleValue()
+                          : 0)
+              .sum();
+      // Get portwise ohq totals
+      double foArrTotal =
+          onHandQuantities.stream()
+              .filter(
+                  ohq ->
+                      ohq.getPortRotation().getId() == loadableStudyPortRotation.getId()
+                          && ohq.getFuelTypeXId() == FUEL_OIL_TANK_CATEGORY_ID)
+              .mapToDouble(ohq -> ohq.getArrivalQuantity().doubleValue())
+              .sum();
+      double foDepTotal =
+          onHandQuantities.stream()
+              .filter(
+                  ohq ->
+                      ohq.getPortRotation().getId() == loadableStudyPortRotation.getId()
+                          && ohq.getFuelTypeXId() == FUEL_OIL_TANK_CATEGORY_ID)
+              .mapToDouble(ohq -> ohq.getDepartureQuantity().doubleValue())
+              .sum();
+      double doArrTotal =
+          onHandQuantities.stream()
+              .filter(
+                  ohq ->
+                      ohq.getPortRotation().getId() == loadableStudyPortRotation.getId()
+                          && ohq.getFuelTypeXId() == DIESEL_OIL_TANK_CATEGORY_ID)
+              .mapToDouble(ohq -> ohq.getArrivalQuantity().doubleValue())
+              .sum();
+      double doDepTotal =
+          onHandQuantities.stream()
+              .filter(
+                  ohq ->
+                      ohq.getPortRotation().getId() == loadableStudyPortRotation.getId()
+                          && ohq.getFuelTypeXId() == DIESEL_OIL_TANK_CATEGORY_ID)
+              .mapToDouble(ohq -> ohq.getDepartureQuantity().doubleValue())
+              .sum();
+      double fwArrTotal =
+          onHandQuantities.stream()
+              .filter(
+                  ohq ->
+                      ohq.getPortRotation().getId() == loadableStudyPortRotation.getId()
+                          && ohq.getFuelTypeXId() == FRESH_WATER_TANK_CATEGORY_ID)
+              .mapToDouble(ohq -> ohq.getArrivalQuantity().doubleValue())
+              .sum();
+      double fwDepTotal =
+          onHandQuantities.stream()
+              .filter(
+                  ohq ->
+                      ohq.getPortRotation().getId() == loadableStudyPortRotation.getId()
+                          && ohq.getFuelTypeXId() == FRESH_WATER_TANK_CATEGORY_ID)
+              .mapToDouble(ohq -> ohq.getDepartureQuantity().doubleValue())
+              .sum();
+      // Get ballast total
+      double ballastArrTotal =
+          ballastDetails.stream()
+              .filter(
+                  ballast ->
+                      ballast.getPortRotationId().doubleValue()
+                              == loadableStudyPortRotation.getId().doubleValue()
+                          && ballast.getOperationType().equalsIgnoreCase(OPERATION_TYPE_ARR))
+              .mapToDouble(
+                  ballast ->
+                      ballast.getQuantity() != null ? ballast.getQuantity().doubleValue() : 0)
+              .sum();
+      double ballastDepTotal =
+          ballastDetails.stream()
+              .filter(
+                  ballast ->
+                      ballast.getPortRotationId().doubleValue()
+                              == loadableStudyPortRotation.getId().doubleValue()
+                          && ballast.getOperationType().equalsIgnoreCase(OPERATION_TYPE_DEP))
+              .mapToDouble(
+                  ballast ->
+                      ballast.getQuantity() != null ? ballast.getQuantity().doubleValue() : 0)
+              .sum();
+      double arrDisplacement =
+          cargoArrTotal
+              + arrSynopticRecord.get().getConstantPlanned().doubleValue()
+              + arrSynopticRecord.get().getOthersPlanned().doubleValue()
+              + foArrTotal
+              + doArrTotal
+              + fwArrTotal
+              + ballastArrTotal
+              + vesselLwt;
+      double depDisplacement =
+          cargoDepTotal
+              + depSynopticRecord.get().getConstantPlanned().doubleValue()
+              + depSynopticRecord.get().getOthersPlanned().doubleValue()
+              + foDepTotal
+              + doDepTotal
+              + fwDepTotal
+              + ballastDepTotal
+              + vesselLwt;
+      BigDecimal depDeflection =
+          depSynopticalTableLoadicatorData.getDeflection() != null
+              ? depSynopticalTableLoadicatorData.getDeflection()
+              : BigDecimal.ZERO;
+      BigDecimal arrDeflection =
+          arrSynopticalTableLoadicatorData.getDeflection() != null
+              ? arrSynopticalTableLoadicatorData.getDeflection()
+              : BigDecimal.ZERO;
+      BigDecimal depAft =
+          depSynopticalTableLoadicatorData.getCalculatedDraftAftActual() != null
+              ? depSynopticalTableLoadicatorData.getCalculatedDraftAftActual()
+              : (depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
+                  ? depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned()
+                  : BigDecimal.ZERO);
+      BigDecimal arrAft =
+          arrSynopticalTableLoadicatorData.getCalculatedDraftAftActual() != null
+              ? arrSynopticalTableLoadicatorData.getCalculatedDraftAftActual()
+              : (arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
+                  ? arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned()
+                  : BigDecimal.ZERO);
+      BigDecimal depFwd =
+          depSynopticalTableLoadicatorData.getCalculatedDraftFwdActual() != null
+              ? depSynopticalTableLoadicatorData.getCalculatedDraftFwdActual()
+              : (depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
+                  ? depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned()
+                  : BigDecimal.ZERO);
+      BigDecimal arrFwd =
+          arrSynopticalTableLoadicatorData.getCalculatedDraftAftActual() != null
+              ? arrSynopticalTableLoadicatorData.getCalculatedDraftFwdActual()
+              : (arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
+                  ? arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned()
+                  : BigDecimal.ZERO);
+
+      // Setting timezone converted dates
+      String eta =
+          this.getTimezoneConvertedString(
+              loadableStudyPortRotation.getEta(),
+              Double.parseDouble(portMasterDetails.get().getOffset()),
+              portMasterDetails.get().getTimezoneAbbr());
+      String etd =
+          this.getTimezoneConvertedString(
+              loadableStudyPortRotation.getEtd(),
+              Double.parseDouble(portMasterDetails.get().getOffset()),
+              portMasterDetails.get().getTimezoneAbbr());
+      LocalDate laycanFrom =
+          this.getTimezoneConvertedDate(
+              loadableStudyPortRotation.getLayCanFrom(),
+              Double.parseDouble(portMasterDetails.get().getOffset()),
+              true);
+      LocalDate laycanTo =
+          this.getTimezoneConvertedDate(
+              loadableStudyPortRotation.getLayCanFrom(),
+              Double.parseDouble(portMasterDetails.get().getOffset()),
+              false);
+
       OperationsTable operationsTableData =
           OperationsTable.builder()
               .operation(loadableStudyPortRotation.getOperation().getName())
@@ -1332,16 +1529,8 @@ public class SynopticService {
                       .findFirst()
                       .orElse(new PortDetails())
                       .getName())
-              .eta(
-                  loadableStudyPortRotation.getEta() != null
-                      ? DateTimeFormatter.ofPattern(ET_FORMAT)
-                          .format(loadableStudyPortRotation.getEta())
-                      : "")
-              .etd(
-                  loadableStudyPortRotation.getEtd() != null
-                      ? DateTimeFormatter.ofPattern(ET_FORMAT)
-                          .format(loadableStudyPortRotation.getEtd())
-                      : "")
+              .eta(eta)
+              .etd(etd)
               .country(
                   loadableStudy.getPortDetails().stream()
                       .filter(rotationObj -> rotationObj.getId().equals(portDetails.getPortId()))
@@ -1349,42 +1538,58 @@ public class SynopticService {
                       .orElse(new PortDetails())
                       .getCountryName())
               .laycanRange(
-                  String.format(
-                      "%s / %s",
-                      null != loadableStudyPortRotation.getLayCanFrom()
-                          ? loadableStudyPortRotation.getLayCanFrom()
-                          : "",
-                      null != loadableStudyPortRotation.getLayCanTo()
-                          ? loadableStudyPortRotation.getLayCanTo()
-                          : ""))
-              .arrFwdDraft(
-                  arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
-                      ? arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned().toString()
+                  null != laycanFrom && null != laycanTo
+                      ? DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).format(laycanFrom)
+                          + "/"
+                          + DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).format(laycanTo)
                       : "")
-              .depFwdDraft(
-                  depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
-                      ? depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned().toString()
-                      : "")
-              .arrAftDraft(
-                  arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
-                      ? arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned().toString()
-                      : "")
-              .depAftDraft(
-                  depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
-                      ? depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned().toString()
-                      : "")
-              .arrDisplacement(
-                  arrSynopticRecord.get().getDisplacementPlanned() != null
-                      ? arrSynopticRecord.get().getDisplacementPlanned().toString()
-                      : "")
-              .depDisp(
-                  depSynopticRecord.get().getDisplacementPlanned() != null
-                      ? depSynopticRecord.get().getDisplacementPlanned().toString()
-                      : "")
+              .arrFwdDraft(arrFwd.doubleValue() + arrDeflection.doubleValue())
+              .depFwdDraft(depFwd.doubleValue() + depDeflection.doubleValue())
+              .arrAftDraft(arrAft.doubleValue() + arrDeflection.doubleValue())
+              .depAftDraft(depAft.doubleValue() + depDeflection.doubleValue())
+              .arrDisplacement(arrDisplacement)
+              .depDisp(depDisplacement)
               .build();
       operationsTableList.add(operationsTableData);
     }
     return PortOperationTable.builder().operationsTableList(operationsTableList).build();
+  }
+
+  private LocalDate getTimezoneConvertedDate(LocalDate date, double offset, boolean from) {
+    if (date == null) {
+      return null;
+    }
+    LocalDateTime dateTime = from ? date.atTime(0, 0, 0) : date.atTime(23, 59, 59);
+    return getTimezoneConvertedDate(dateTime, offset).toLocalDate();
+  }
+
+  private LocalDateTime getTimezoneConvertedDate(LocalDateTime dateTime, double offset) {
+    long hours = (long) offset;
+    long minutes = (long) ((offset * 10) % 10) * 6;
+    LocalDateTime newDateTime = dateTime.plusHours(hours);
+    newDateTime = newDateTime.plusMinutes(minutes);
+    return newDateTime;
+  }
+
+  private String getTimezoneConvertedString(LocalDateTime dateTime, double offset, String abbr) {
+    if (dateTime == null) {
+      return "";
+    }
+    LocalDateTime newDateTime = this.getTimezoneConvertedDate(dateTime, offset);
+    DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
+    String formattedDate = newDateTime.format(format);
+    if (offset == 0) {
+      formattedDate.concat(" UTC");
+    } else {
+      int hours = (int) Math.abs(offset);
+      int minutes = (int) Math.abs(((offset * 10) % 10) * 6);
+      String formattedOffset = String.format("%02d", hours) + ":" + String.format("%02d", minutes);
+      formattedDate =
+          formattedDate.concat(
+              " " + abbr + " (UTC " + (offset > 0 ? "+" : "-") + formattedOffset + ")");
+    }
+
+    return formattedDate;
   }
 
   public void getSynopticalTable(
@@ -1902,17 +2107,18 @@ public class SynopticService {
             CONFIRMED_STATUS_ID, loadablestudy, true);
     if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty())
         && ((null != entity.getOthersPlanned()
-                && !Integer.toString(entity.getOthersPlanned().intValue())
-                    .equals(record.getOthersPlanned()))
+                && entity.getOthersPlanned().doubleValue()
+                    != Double.parseDouble(record.getOthersPlanned()))
             || (null != entity.getConstantPlanned()
-                && !Integer.toString(entity.getConstantPlanned().intValue())
-                    .equals(record.getConstantPlanned()))
-            || (null != entity.getDeadWeightPlanned()
-                && !Integer.toString(entity.getDeadWeightPlanned().intValue())
-                    .equals(record.getTotalDwtPlanned()))
-            || (null != entity.getDisplacementPlanned()
-                && !Integer.toString(entity.getDisplacementPlanned().intValue())
-                    .equals(record.getDisplacementPlanned())))) {
+                && entity.getConstantPlanned().doubleValue()
+                    != Double.parseDouble(record.getConstantPlanned()))
+        //            || (null != entity.getDeadWeightPlanned()
+        //            && entity.getDeadWeightPlanned().doubleValue() !=
+        //            Double.parseDouble(record.getTotalDwtPlanned()))
+        //            || (null != entity.getDisplacementPlanned()
+        //            && entity.getDisplacementPlanned().doubleValue() !=
+        //            Double.parseDouble(record.getDisplacementPlanned()))
+        )) {
       throw new GenericServiceException(
           "Cannot update planned values for plan generated loadable study",
           CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED,

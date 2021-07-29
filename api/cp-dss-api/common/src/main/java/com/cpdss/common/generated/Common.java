@@ -106,6 +106,117 @@ public final class Common {
     // @@protoc_insertion_point(enum_scope:PLANNING_TYPE)
   }
 
+  /**
+   *
+   *
+   * <pre>
+   * In loading information, machine in use
+   * </pre>
+   *
+   * Protobuf enum {@code MachineType}
+   */
+  public enum MachineType implements com.google.protobuf.ProtocolMessageEnum {
+    /** <code>EMPTY = 0;</code> */
+    EMPTY(0),
+    /** <code>VESSEL_PUMP = 1;</code> */
+    VESSEL_PUMP(1),
+    /** <code>MANIFOLD = 2;</code> */
+    MANIFOLD(2),
+    /** <code>BOTTOM_LINE = 3;</code> */
+    BOTTOM_LINE(3),
+    UNRECOGNIZED(-1),
+    ;
+
+    /** <code>EMPTY = 0;</code> */
+    public static final int EMPTY_VALUE = 0;
+    /** <code>VESSEL_PUMP = 1;</code> */
+    public static final int VESSEL_PUMP_VALUE = 1;
+    /** <code>MANIFOLD = 2;</code> */
+    public static final int MANIFOLD_VALUE = 2;
+    /** <code>BOTTOM_LINE = 3;</code> */
+    public static final int BOTTOM_LINE_VALUE = 3;
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static MachineType valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static MachineType forNumber(int value) {
+      switch (value) {
+        case 0:
+          return EMPTY;
+        case 1:
+          return VESSEL_PUMP;
+        case 2:
+          return MANIFOLD;
+        case 3:
+          return BOTTOM_LINE;
+        default:
+          return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<MachineType> internalGetValueMap() {
+      return internalValueMap;
+    }
+
+    private static final com.google.protobuf.Internal.EnumLiteMap<MachineType> internalValueMap =
+        new com.google.protobuf.Internal.EnumLiteMap<MachineType>() {
+          public MachineType findValueByNumber(int number) {
+            return MachineType.forNumber(number);
+          }
+        };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor getValueDescriptor() {
+      return getDescriptor().getValues().get(ordinal());
+    }
+
+    public final com.google.protobuf.Descriptors.EnumDescriptor getDescriptorForType() {
+      return getDescriptor();
+    }
+
+    public static final com.google.protobuf.Descriptors.EnumDescriptor getDescriptor() {
+      return com.cpdss.common.generated.Common.getDescriptor().getEnumTypes().get(1);
+    }
+
+    private static final MachineType[] VALUES = values();
+
+    public static MachineType valueOf(com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException("EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private MachineType(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:MachineType)
+  }
+
   public interface ResponseStatusOrBuilder
       extends
       // @@protoc_insertion_point(interface_extends:ResponseStatus)
@@ -8522,8 +8633,10 @@ public final class Common {
           + "RuleDropDownMaster\022\023\n\013isMandatory\030\n \001(\010\""
           + "/\n\022RuleDropDownMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005val"
           + "ue\030\002 \001(\t*E\n\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022"
-          + "\n\016LOADABLE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002B"
-          + "\036\n\032com.cpdss.common.generatedP\000b\006proto3"
+          + "\n\016LOADABLE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002*"
+          + "H\n\013MachineType\022\t\n\005EMPTY\020\000\022\017\n\013VESSEL_PUMP"
+          + "\020\001\022\014\n\010MANIFOLD\020\002\022\017\n\013BOTTOM_LINE\020\003B\036\n\032com"
+          + ".cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

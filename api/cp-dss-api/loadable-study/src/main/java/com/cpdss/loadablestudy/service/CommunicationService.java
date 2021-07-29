@@ -26,7 +26,6 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -48,7 +47,9 @@ public class CommunicationService {
   @Autowired JsonDataService jsonDataService;
   @Autowired private RestTemplate restTemplate;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
-  @Autowired private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
+
+  @Autowired
+  private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -165,13 +166,14 @@ public class CommunicationService {
 
   public void checkLoadableStudyStatus(Map<String, String> taskReqParams) {
     List<LoadableStudyCommunicationStatus> communicationStatusList =
-            loadableStudyCommunicationStatusRepository.findByCommunicationStatusOrderByCommunicationDateTimeASC(
-            CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+        loadableStudyCommunicationStatusRepository
+            .findByCommunicationStatusOrderByCommunicationDateTimeASC(
+                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
     if (!communicationStatusList.isEmpty()) {
       communicationStatusList
           .parallelStream()
           .forEach(
-                  communicationStatusRow -> {
+              communicationStatusRow -> {
                 try {
                   EnvoyWriter.EnvoyWriterRequest.Builder request =
                       EnvoyWriter.EnvoyWriterRequest.newBuilder();
@@ -187,7 +189,9 @@ public class CommunicationService {
                         CommonErrorCodes.E_HTTP_BAD_REQUEST,
                         HttpStatusCode.BAD_REQUEST);
                   }
-                  Optional<LoadableStudy> loadableStudy = loadableStudyRepository.findByIdAndIsActive(communicationStatusRow.getReferenceId(),true);
+                  Optional<LoadableStudy> loadableStudy =
+                      loadableStudyRepository.findByIdAndIsActive(
+                          communicationStatusRow.getReferenceId(), true);
 
                   if (!(statusReply.getEventDownloadStatus() != null
                       && statusReply
@@ -195,15 +199,18 @@ public class CommunicationService {
                           .equals(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId()))) {
                     processAlgoFromShip(loadableStudy.get());
                   } else {
-                    loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
-                        statusReply.getEventDownloadStatus(), loadableStudy.get().getId());
+                    loadableStudyCommunicationStatusRepository
+                        .updateLoadableStudyCommunicationStatus(
+                            statusReply.getEventDownloadStatus(), loadableStudy.get().getId());
                   }
                   long start =
-                      Timestamp.valueOf(communicationStatusRow.getCommunicationDateTime()).getTime();
+                      Timestamp.valueOf(communicationStatusRow.getCommunicationDateTime())
+                          .getTime();
                   long end = start + timeLimit * 1000; // 60 seconds * 1000 ms/sec
                   if (System.currentTimeMillis() > end) {
-                    loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
-                        CommunicationStatus.TIME_OUT.getId(), loadableStudy.get().getId());
+                    loadableStudyCommunicationStatusRepository
+                        .updateLoadableStudyCommunicationStatus(
+                            CommunicationStatus.TIME_OUT.getId(), loadableStudy.get().getId());
                   }
                 } catch (GenericServiceException | IOException e) {
                   e.printStackTrace();

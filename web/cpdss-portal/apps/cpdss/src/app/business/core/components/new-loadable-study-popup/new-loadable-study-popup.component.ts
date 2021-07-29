@@ -177,7 +177,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           if (result.responseStatus.status === "200") {
             if (this.isEdit) {
               if (this.isLoadlineChanged()) {
-                this.loadableStudyDetailsTransformationService.setLoadLineChange();
+                this.loadableStudyDetailsTransformationService.setLoadLineChange(true);
               }
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
               this.loadableStudyDetailsTransformationService.updateLoadableStudyData(true);

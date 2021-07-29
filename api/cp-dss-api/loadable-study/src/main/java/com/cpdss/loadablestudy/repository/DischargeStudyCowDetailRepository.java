@@ -7,6 +7,9 @@ import java.util.List;
 
 public interface DischargeStudyCowDetailRepository
     extends CommonCrudRepository<DischargeStudyCowDetail, Long> {
-  public List<DischargeStudyCowDetail> findByDischargeStudyStudyIdAndPortIdIn(
-      Long dischargestudyId, List<Long> portIds);
+  public List<DischargeStudyCowDetail> findByDischargeStudyStudyIdAndPortIdInAndIsActive(
+      Long dischargestudyId, List<Long> portIds, Boolean isActive);
+
+  public DischargeStudyCowDetail findByDischargeStudyStudyIdAndPortIdAndIsActive(
+      Long dischargestudyId, Long portId, Boolean isActive);
 }

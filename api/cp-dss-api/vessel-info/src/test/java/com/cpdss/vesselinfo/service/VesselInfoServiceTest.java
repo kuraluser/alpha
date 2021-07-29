@@ -11,13 +11,13 @@ import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
-import com.cpdss.vesselinfo.entity.BendingMoment;
+import com.cpdss.vesselinfo.entity.BendingMomentType1;
 import com.cpdss.vesselinfo.entity.CalculationSheet;
 import com.cpdss.vesselinfo.entity.CalculationSheetTankgroup;
 import com.cpdss.vesselinfo.entity.HydrostaticTable;
 import com.cpdss.vesselinfo.entity.InnerBulkHeadValues;
 import com.cpdss.vesselinfo.entity.MinMaxValuesForBmsf;
-import com.cpdss.vesselinfo.entity.ShearingForce;
+import com.cpdss.vesselinfo.entity.ShearingForceType1;
 import com.cpdss.vesselinfo.entity.StationValues;
 import com.cpdss.vesselinfo.entity.TankCategory;
 import com.cpdss.vesselinfo.entity.UllageTableData;
@@ -165,9 +165,9 @@ class VesselInfoServiceTest {
     when(this.vesselTankTcgRepository.findByVesselIdAndIsActive(any(), anyBoolean()))
         .thenReturn(Arrays.asList(new VesselTankTcg()));
     when(this.bendingMomentRepository.findByVessel(any(Vessel.class)))
-        .thenReturn(Arrays.asList(new BendingMoment()));
+        .thenReturn(Arrays.asList(new BendingMomentType1()));
     when(this.shearingForceRepository.findByVessel(any(Vessel.class)))
-        .thenReturn(Arrays.asList(new ShearingForce()));
+        .thenReturn(Arrays.asList(new ShearingForceType1()));
     when(this.calculationSheetRepository.findByVessel(any(Vessel.class)))
         .thenReturn(Arrays.asList(new CalculationSheet()));
     when(this.calculationSheetTankgroupRepository.findByVessel(any(Vessel.class)))

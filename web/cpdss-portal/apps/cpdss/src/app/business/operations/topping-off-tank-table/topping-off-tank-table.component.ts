@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { ICargo } from '../../../shared/models/common.model';
-import { IShipCargoTank } from '../../core/models/common.model';
+import { ICargo, IShipCargoTank } from '../../core/models/common.model';
 import { IToppingOffSequence } from '../models/loading-information.model';
 import { ToppingOffTankTableTransformationService } from './topping-off-tank-table-transformation.service';
 

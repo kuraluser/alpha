@@ -27,6 +27,8 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
         vesselXId, voyage, planningId);
   }
 
+  public List<LoadableStudy> findByVesselXId(final Long vesselXId);
+
   public List<LoadableStudy> findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
       final Long vesselXId, final Voyage voyage, final boolean isActive, Long id);
 
@@ -66,6 +68,4 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
 
   public boolean existsByNameAndPlanningTypeXIdAndVoyageAndIsActive(
       String name, int i, Voyage voyage, boolean b);
-
-
 }

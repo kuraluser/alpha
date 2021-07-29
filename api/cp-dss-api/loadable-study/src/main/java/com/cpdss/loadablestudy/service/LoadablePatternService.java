@@ -20,7 +20,6 @@ import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
@@ -61,7 +60,8 @@ public class LoadablePatternService {
 
   @Autowired private LoadableStudyRepository loadableStudyRepository;
 
-  @Autowired private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
+  @Autowired
+  private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
   @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
 
@@ -219,7 +219,6 @@ public class LoadablePatternService {
       loadablePlanService.buildLoadablePlanPortWiseDetails(
           loadablePatternOpt.get(), loadabalePatternValidateRequest);
       ObjectMapper mapper = new ObjectMapper();
-      mapper.setDefaultPropertyInclusion(Include.NON_NULL);
       builder.setLoadablePatternDetails(
           mapper.writeValueAsString(
               loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails()));
@@ -275,7 +274,8 @@ public class LoadablePatternService {
           HttpStatusCode.BAD_REQUEST);
     }
     Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
-            this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
+        this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
+            request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
     if (loadableStudyCommunicationStatus.get() != null) {
 
       AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
@@ -1071,11 +1071,12 @@ public class LoadablePatternService {
       EnvoyWriter.WriterReply ewReply =
           communicationService.passRequestPayloadToEnvoyWriter(loadableStudy);
       if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-        LoadableStudyCommunicationStatus lsCommunicationStatus = new LoadableStudyCommunicationStatus();
-        if(ewReply.getMessageId() != null){
+        LoadableStudyCommunicationStatus lsCommunicationStatus =
+            new LoadableStudyCommunicationStatus();
+        if (ewReply.getMessageId() != null) {
           lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-          lsCommunicationStatus.setCommunicationStatus(CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
-
+          lsCommunicationStatus.setCommunicationStatus(
+              CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
         }
         lsCommunicationStatus.setReferenceId(request.getLoadableStudyId());
         lsCommunicationStatus.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
@@ -1682,10 +1683,10 @@ public class LoadablePatternService {
           responseCommunication.getLoadablePatternAlgoRequest();
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByMessageUUID(
-                  Long.valueOf(responseCommunication.getMessageId()));
-        Optional<LoadableStudy> loadableStudyOpt =
-                (this.loadableStudyRepository.findById(
-                        loadableStudyCommunicationStatus.get().getReferenceId()));
+              Long.valueOf(responseCommunication.getMessageId()));
+      Optional<LoadableStudy> loadableStudyOpt =
+          (this.loadableStudyRepository.findById(
+              loadableStudyCommunicationStatus.get().getReferenceId()));
 
       if (!loadableStudyOpt.isPresent()) {
         throw new GenericServiceException(

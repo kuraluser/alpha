@@ -14,7 +14,8 @@ import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
-import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesReply;
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
@@ -42,13 +43,9 @@ import com.cpdss.loadingplan.domain.algo.LoadingRule;
 import com.cpdss.loadingplan.domain.algo.LoadingSequences;
 import com.cpdss.loadingplan.domain.algo.OnBoardQuantity;
 import com.cpdss.loadingplan.domain.algo.OnHandQuantity;
-import com.cpdss.loadingplan.domain.algo.PumpType;
 import com.cpdss.loadingplan.domain.algo.ReasonForDelay;
-import com.cpdss.loadingplan.domain.algo.StageDuration;
-import com.cpdss.loadingplan.domain.algo.StageOffset;
 import com.cpdss.loadingplan.domain.algo.ToppingOffSequence;
 import com.cpdss.loadingplan.domain.algo.TrimAllowed;
-import com.cpdss.loadingplan.domain.algo.VesselPump;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.projections.PortTideAlgo;
 import com.cpdss.loadingplan.service.LoadingPortTideService;
@@ -78,6 +75,9 @@ public class LoadingInformationAlgoRequestBuilderService {
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoService;
 
+  @GrpcClient("portInfoService")
+  private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoServiceBlockingStub;
+
   @Autowired LoadingInformationRepository loadingInformationRepository;
 
   @Autowired LoadingPortTideService loadingPortTideDetailsService;
@@ -106,8 +106,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       buildLoadingInformation(algoRequest, loadingInformation, loadingInfoOpt.get());
       buildLoadablePatternPortWiseDetails(algoRequest, loadingInfoOpt.get());
       buildLoadingRules(algoRequest, loadingInfoOpt.get().getVesselXId());
-      // Need confirmation on amount of data to share (whole data or high/low tide details)
-      // buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
+      buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
     } else {
       throw new GenericServiceException(
           "Could not find loading information " + request.getLoadingInfoId(),
@@ -305,7 +304,7 @@ public class LoadingInformationAlgoRequestBuilderService {
     log.info("Populating loading stage details");
     com.cpdss.loadingplan.domain.algo.LoadingStages loadingStages =
         new com.cpdss.loadingplan.domain.algo.LoadingStages();
-    List<StageOffset> stageOffsetList = new ArrayList<StageOffset>();
+    /*    List<StageOffset> stageOffsetList = new ArrayList<StageOffset>();
     loadingStage
         .getStageOffsetsList()
         .forEach(
@@ -327,7 +326,7 @@ public class LoadingInformationAlgoRequestBuilderService {
               stageDuration.setDuration(duration.getDuration());
               stageDurationList.add(stageDuration);
             });
-    loadingStages.setStageDurationList(stageDurationList);
+    loadingStages.setStageDurationList(stageDurationList);*/
 
     loadingStages.setStageDuration(loadingStage.getStageDuration());
     loadingStages.setStageOffset(loadingStage.getStageOffset());
@@ -369,7 +368,7 @@ public class LoadingInformationAlgoRequestBuilderService {
     log.info("Populating loading machineries in use");
     CargoMachineryInUse cargoMachineryInUse = new CargoMachineryInUse();
 
-    VesselInfo.VesselPumpsResponse grpcReply =
+    /*     VesselInfo.VesselPumpsResponse grpcReply =
         this.vesselInfoService.getVesselPumpsByVesselId(
             VesselInfo.VesselIdRequest.newBuilder()
                 .setVesselId(loadingInformation.getVesselXId())
@@ -411,7 +410,7 @@ public class LoadingInformationAlgoRequestBuilderService {
               Optional.ofNullable(vp.getVesselId()).ifPresent(vesselPump::setVesselId);
               vesselPumps.add(vesselPump);
             });
-    cargoMachineryInUse.setVesselPumps(vesselPumps);
+    cargoMachineryInUse.setVesselPumps(vesselPumps);*/
 
     List<com.cpdss.loadingplan.domain.algo.LoadingMachinesInUse> machineList =
         new ArrayList<com.cpdss.loadingplan.domain.algo.LoadingMachinesInUse>();
@@ -426,7 +425,8 @@ public class LoadingInformationAlgoRequestBuilderService {
           loadingMachine.setId(machine.getId());
           loadingMachine.setIsUsing(machine.getIsUsing());
           loadingMachine.setLoadingInfoId(machine.getLoadingInfoId());
-          loadingMachine.setPumpId(machine.getPumpId());
+          loadingMachine.setMachineId(machine.getMachineId());
+          loadingMachine.setMachineTypeId(machine.getMachineType().getNumber());
           machineList.add(loadingMachine);
         });
     cargoMachineryInUse.setLoadingMachinesInUses(machineList);
@@ -519,6 +519,7 @@ public class LoadingInformationAlgoRequestBuilderService {
             delay -> {
               LoadingDelays ld = new LoadingDelays();
               ld.setCargoId(delay.getCargoId());
+              ld.setCargoNominationId(delay.getCargoNominationId());
               ld.setDuration(
                   StringUtils.isEmpty(delay.getDuration())
                       ? null
@@ -558,16 +559,39 @@ public class LoadingInformationAlgoRequestBuilderService {
               StringUtils.isEmpty(berth.getMaxManifoldHeight())
                   ? null
                   : new BigDecimal(berth.getMaxManifoldHeight()));
-          berthDetail.setSeaDraftLimitation(
-              StringUtils.isEmpty(berth.getSeaDraftLimitation())
-                  ? null
-                  : new BigDecimal(berth.getSeaDraftLimitation()));
+          /*berthDetail.setSeaDraftLimitation(
+          StringUtils.isEmpty(berth.getSeaDraftLimitation())
+              ? null
+              : new BigDecimal(berth.getSeaDraftLimitation()));*/
           berthDetail.setRegulationAndRestriction(berth.getSpecialRegulationRestriction());
+
+          // Setting controllingDepth, underKeelClearance from port info
+          this.getPortInfoIntoBerthData(berth.getBerthId(), berthDetail);
 
           berthDetails.add(berthDetail);
         });
 
     loadingInfo.setBerthDetails(berthDetails);
+  }
+
+  /**
+   * grpc Call to port info, In future this data can get from berth table.
+   *
+   * @param berthId
+   * @param berthDetails
+   */
+  private void getPortInfoIntoBerthData(Long berthId, BerthDetails berthDetails) {
+    PortInfo.LoadingAlgoBerthData portReply =
+        this.portInfoServiceBlockingStub.getLoadingPlanBerthData(
+            PortInfo.BerthIdsRequest.newBuilder().addBerthIds(berthId).build());
+    if (portReply != null && portReply.getResponseStatus().getStatus().equals("SUCCESS")) {
+      if (!portReply.getControllingDepth().isEmpty()) {
+        berthDetails.setControllingDepth(portReply.getControllingDepth());
+      }
+      if (!portReply.getUnderKeelClearance().isEmpty()) {
+        berthDetails.setUnderKeelClearance(portReply.getUnderKeelClearance());
+      }
+    }
   }
 
   private LoadingInformation getLoadingInformation(

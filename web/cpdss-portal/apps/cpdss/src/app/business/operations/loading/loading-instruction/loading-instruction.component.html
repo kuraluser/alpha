@@ -1,9 +1,11 @@
-<div class="row">
-    <div class="col-4">
+<div class="content-outer-instruction">
+    <div class="sidebar relative">
+        <div class="sidebar-content">
         <cpdss-portal-instruction-side-panel [panelList]="panelList"
             (selectedInstructionChange)="sidePanelInstructionChange($event)"></cpdss-portal-instruction-side-panel>
+        </div>
     </div>
-    <div class="col-8">
-        <cpdss-portal-instruction-check-list [instructionList]="instructionList"></cpdss-portal-instruction-check-list>
+    <div class="pl-30">
+        <cpdss-portal-instruction-check-list #instructionCheckList (tabStatus)="setTabStatus($event)" (updateData)="updateData()" [vesselId]="vesselId" [voyageId]="voyageId" [portRotationId]="portRotationId" [groupId]="groupId" [instructionList]="instructionList" [loadingInfoId]="loadingInfoId"></cpdss-portal-instruction-check-list>
     </div>
 </div>

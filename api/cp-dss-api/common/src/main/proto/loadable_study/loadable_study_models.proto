@@ -57,3 +57,20 @@ message InstructionDetail{
 
 message EmptyRequest{
 }
+
+message DishargeStudyCargoDetail {
+	int64 id = 1;
+	string crudeType = 2;
+	string abbreviation = 3;
+	string api = 4;
+	bool isCondensateCargo = 5;
+	bool isHrvpCargo = 6;
+}
+message DishargeStudyPortCargoMapping{
+	int64 portId=1;
+	repeated DishargeStudyCargoDetail cargos = 2;
+}
+message DishargeStudyCargoReply {
+	ResponseStatus responseStatus = 1;
+	repeated DishargeStudyPortCargoMapping portCargos= 2;
+}

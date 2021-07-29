@@ -1,11 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ICargoQuantities, IShipCargoTank, ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
+import { ICargoQuantities, IFuelType, IShipCargoTank, ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
 import { VoyageStatusTransformationService } from '../services/voyage-status-transformation.service';
 import { IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../models/voyage-status.model';
 import { IVoyageStatus } from '../models/voyage-status.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { IFuelType, QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
 /**

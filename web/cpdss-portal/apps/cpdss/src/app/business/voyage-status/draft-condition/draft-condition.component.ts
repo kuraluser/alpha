@@ -26,6 +26,7 @@ export class DraftConditionComponent implements OnInit {
     this.setConditions();
   }
 
+  @Input() hasLoadicator = false;
   columns: IDataTableColumn[];
   value = [];
 
@@ -43,8 +44,10 @@ export class DraftConditionComponent implements OnInit {
    * @memberof DraftConditionComponent
    */
   setConditions() {
+    let deflection;
+    deflection = this.hasLoadicator ?  this.draftCondition?.deflection : 0;    
     this.value = [
-      { header: 'VOYAGE_STATUS_DRAFT_CONDITION_CALCULATED', aft: this.draftCondition?.finalDraftAft - this.draftCondition?.hogSag , mid: this.draftCondition?.finalDraftMid - this.draftCondition?.hogSag, fore: this.draftCondition?.finalDraftFwd - this.draftCondition?.hogSag},
+      { header: 'VOYAGE_STATUS_DRAFT_CONDITION_CALCULATED', aft: this.draftCondition?.finalDraftAft - deflection, mid: this.draftCondition?.finalDraftMid - deflection, fore: this.draftCondition?.finalDraftFwd - deflection},
       { header: 'VOYAGE_STATUS_DRAFT_CONDITION_CORRECTED', aft: this.draftCondition?.finalDraftAft, mid: this.draftCondition?.finalDraftMid, fore: this.draftCondition?.finalDraftFwd }
     ]
   }

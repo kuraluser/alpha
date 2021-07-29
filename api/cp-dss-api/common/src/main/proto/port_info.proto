@@ -26,6 +26,33 @@ service PortInfoService {
 	rpc GetPortInfoByPaging(PortRequestWithPaging) returns (PortReply){}
 
 	rpc GetBerthDetailsByPortId(PortIdRequest) returns (BerthInfoResponse) {}
+	
+	rpc GetCargoInfoByPortIds(GetPortInfoByPortIdsRequest) returns (CargoInfos) {}
+
+	rpc GetLoadingPlanBerthData(BerthIdsRequest) returns (LoadingAlgoBerthData);
+	
+}
+
+message BerthIdsRequest {
+	repeated int64 berthIds = 1;
+}
+
+message LoadingAlgoBerthData {
+	ResponseStatus responseStatus = 1;
+	int64 portId = 2;
+	int64 berthId = 3;
+	string controllingDepth = 4;
+	string underKeelClearance = 5;
+}
+
+message CargoInfos {
+	repeated CargoPortMapping cargoPorts = 1;
+	ResponseStatus responseStatus = 2;
+	
+}
+message CargoPortMapping {
+	int64 cargoId = 1;
+	int64 portId= 2;
 }
 
 message GetPortInfoByPortIdsRequest {
@@ -68,6 +95,10 @@ message PortDetail {
 	int64 timezoneId = 21;
 	string timezoneAbbreviation = 22;
 	string countryName = 23;
+	string controllingDepth = 24;
+	string underKeelClearance = 25;
+	string lat = 26;
+	string lon = 27;
 }
 
 message PortReply {

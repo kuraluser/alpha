@@ -79,6 +79,13 @@ export class LoadingRateComponent implements OnInit {
 
   }
 
+    /**
+ * Return the form controlls of the loading rate form
+ */
+     get loadingRatesFormGroupControl() {
+      return this.loadingRatesFormGroup.controls;
+    }
+
   /**
    *Method to check for field errors
    *

@@ -3,6 +3,7 @@ package com.cpdss.portinfo.service;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.PortInfo.CargoInfos;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
@@ -14,6 +15,7 @@ import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.portinfo.entity.BerthInfo;
 import com.cpdss.portinfo.entity.BerthManifold;
+import com.cpdss.portinfo.entity.CargoPortMapping;
 import com.cpdss.portinfo.entity.PortInfo;
 import com.cpdss.portinfo.entity.Timezone;
 import com.cpdss.portinfo.repository.*;
@@ -171,6 +173,12 @@ public class PortInfoService extends PortInfoServiceImplBase {
               .ifPresent(item -> portDetail.setSunriseTime(timeFormatter.format(item)));
           Optional.ofNullable(port.getTimeOfSunSet())
               .ifPresent(item -> portDetail.setSunsetTime(timeFormatter.format(item)));
+
+          Optional.ofNullable(port.getControllingDepth())
+              .ifPresent(v -> portDetail.setControllingDepth(v.toString()));
+          Optional.ofNullable(port.getUnderKeelClearance())
+              .ifPresent(portDetail::setUnderKeelClearance);
+
           if (port.getTimezone() != null) {
             portDetail.setTimezone(port.getTimezone().getTimezone());
             portDetail.setTimezoneOffsetVal(port.getTimezone().getOffsetValue());
@@ -199,6 +207,12 @@ public class PortInfoService extends PortInfoServiceImplBase {
               portDetail.setMaxAirDraft(minAirDraftOfBerths.get().toString());
             }
           }
+
+          Optional.ofNullable(port.getLattitude())
+              .ifPresent(item -> portDetail.setLat(String.valueOf(item)));
+          Optional.ofNullable(port.getLongitude())
+              .ifPresent(item -> portDetail.setLon(String.valueOf(item)));
+
           portReply.addPorts(portDetail);
         });
   }
@@ -361,5 +375,84 @@ public class PortInfoService extends PortInfoServiceImplBase {
       log.error("Failed to get manifold data for berth Id {}, {}", berth.getId(), e.getMessage());
     }
     return BigDecimal.ZERO;
+  }
+
+  @Override
+  public void getCargoInfoByPortIds(
+      GetPortInfoByPortIdsRequest request, StreamObserver<CargoInfos> responseObserver) {
+
+    CargoInfos.Builder replyBuilder = CargoInfos.newBuilder();
+    try {
+      if (request.getIdList() == null || request.getIdList().isEmpty()) {
+        throw new GenericServiceException(
+            INVALID_PORTID, CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+      }
+      List<CargoPortMapping> cargoIds =
+          this.cargoPortMappingRepository.findByportInfo_idIn(request.getIdList());
+      cargoIds.forEach(
+          cargo -> {
+            com.cpdss.common.generated.PortInfo.CargoPortMapping.Builder mapping =
+                com.cpdss.common.generated.PortInfo.CargoPortMapping.newBuilder();
+            mapping.setCargoId(cargo.getCargoXId());
+            mapping.setPortId(cargo.getPortInfo().getId());
+            replyBuilder.addCargoPorts(mapping.build());
+          });
+
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      replyBuilder.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getPortInfoByCargoId method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      replyBuilder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * In Request pass berth Ids, and return port data
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getLoadingPlanBerthData(
+      com.cpdss.common.generated.PortInfo.BerthIdsRequest request,
+      StreamObserver<com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData> responseObserver) {
+
+    com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.Builder builder =
+        com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.newBuilder();
+    try {
+      if (!request.getBerthIdsList().isEmpty()) {
+        Optional<BerthInfo> berthInfo =
+            berthInfoRepository.findByIdAndIsActiveTrue(request.getBerthIds(0));
+        if (berthInfo.isPresent()) {
+          log.info("RPC Call into getLoadingPlanBerthData with Ids {}", request.getBerthIdsList());
+          builder.setBerthId(berthInfo.get().getId());
+          if (berthInfo.get().getPortInfo() != null) {
+            Optional.ofNullable(berthInfo.get().getPortInfo().getId())
+                .ifPresent(v -> builder.setPortId(v));
+            Optional.ofNullable(berthInfo.get().getPortInfo().getControllingDepth())
+                .ifPresent(v -> builder.setControllingDepth(v.toString()));
+            Optional.ofNullable(berthInfo.get().getPortInfo().getUnderKeelClearance())
+                .ifPresent(v -> builder.setUnderKeelClearance(v));
+          }
+        }
+        ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+        responseStatus.setStatus(SUCCESS);
+        builder.setResponseStatus(responseStatus);
+      }
+    } catch (Exception e) {
+      log.error("Error in getLoadingPlanBerthData method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      builder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

@@ -3,7 +3,7 @@ import { AdminModule } from '../admin.module';
 import { Observable, of} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { IPort,IPortsResponse } from '../../../../app/shared/models/common.model'
+import { IPort, IPortsResponse } from '../../core/models/common.model';
 
 
 
@@ -43,7 +43,7 @@ export class PortMasterApiService {
   }
   /**
    * Method to get country list
-   * @return {*} 
+   * @return {*}
    * @memberof PortMasterApiService
    */
   async getCountryList() {

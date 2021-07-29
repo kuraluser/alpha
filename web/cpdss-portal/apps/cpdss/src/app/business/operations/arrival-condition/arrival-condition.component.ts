@@ -3,7 +3,7 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
 import { IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../voyage-status/models/voyage-status.model';
 import { ArrivalConditionTransformationService } from './arrival-condition-transformation.service';
-import { IFuelType, QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 
 /**
  * Component class for arrival condition block
@@ -3316,7 +3316,7 @@ export class ArrivalConditionComponent implements OnInit {
       ],
       "stabilityConditions": {
         "list": 0,
-        "hogSag": 0,
+        "deflection": 0,
         "finalDraftFwd": 0,
         "finalDraftAft": 0,
         "finalDraftMid": 0,

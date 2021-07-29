@@ -8,3 +8,14 @@
     top: 22px;
     z-index: 2;
 }
+.view-details-btn{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 15px;
+    margin: auto;
+}
+
+.sidebar-table-scroll{
+    max-height: calc(100vh - 263px);
+}

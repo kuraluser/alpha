@@ -20,7 +20,6 @@ import lombok.Setter;
 public class DischargeStudyPortInstruction extends EntityDoc {
 
   private static final long serialVersionUID = 6722941798154545445L;
-  private Long id;
 
   @Column(name = "discharge_xid")
   private Long dischargeStudyId;

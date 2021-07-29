@@ -13,4 +13,5 @@ public class VesselPump {
   private String pumpName;
   private String pumpCode;
   private BigDecimal pumpCapacity;
+  private Integer machineType;
 }

@@ -1,5 +1,5 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
-import { ICargo, QUANTITY_UNIT } from 'apps/cpdss/src/app/shared/models/common.model';
+import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { ICargoVesselTankDetails, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset } from '../../models/loading-information.model';
 import { LoadingInformationApiService } from '../../services/loading-information-api.service';
 import { GlobalErrorHandler } from 'apps/cpdss/src/app/shared/services/error-handlers/global-error-handler';
@@ -9,6 +9,8 @@ import { LoadingTransformationService } from '../../services/loading-transformat
 import { AppConfigurationService } from 'apps/cpdss/src/app/shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ComponentCanDeactivate } from 'apps/cpdss/src/app/shared/services/guards/component-can-deactivate';
+import { ICargo } from '../../../core/models/common.model';
+import {RulesService}from '../../services/rules/rules.service';
 @Component({
   selector: 'cpdss-portal-loading-information',
   templateUrl: './loading-information.component.html',
@@ -22,7 +24,7 @@ import { ComponentCanDeactivate } from 'apps/cpdss/src/app/shared/services/guard
  * @class LoadingInformationComponent
  * @implements {OnInit}
  */
-export class LoadingInformationComponent extends ComponentCanDeactivate implements OnInit {
+export class LoadingInformationComponent implements OnInit {
   @Input() voyageId: number;
   @Input() vesselId: number;
   @Input() get cargos(): ICargo[] {
@@ -41,6 +43,7 @@ export class LoadingInformationComponent extends ComponentCanDeactivate implemen
     this.getLoadingInformation()
   }
 
+  @Output() loadingInformationId: EventEmitter<any> = new EventEmitter();
   private _portRotationId: number;
   private _cargos: ICargo[];
 
@@ -62,19 +65,10 @@ export class LoadingInformationComponent extends ComponentCanDeactivate implemen
     private translateService: TranslateService,
     private messageService: MessageService,
     private loadingTransformationService: LoadingTransformationService,
-    private ngxSpinnerService: NgxSpinnerService) { 
-      super();
-    }
+    private rulesService : RulesService,
+    private ngxSpinnerService: NgxSpinnerService) {}
 
-  @HostListener('window:beforeunload', ['$event'])
-  public onPageUnload($event: BeforeUnloadEvent) {
-    if (this.hasUnSavedData) {
-      $event.returnValue = true;
-    }
-  }
-  hasUnsavedData():boolean{
-    return this.hasUnSavedData;
-  }
+  
   async ngOnInit(): Promise<void> {
     this.initSubscriptions();
   }
@@ -102,6 +96,7 @@ export class LoadingInformationComponent extends ComponentCanDeactivate implemen
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_NO_ACTIVE_VOYAGE', 'LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE']).toPromise();
     try {
       this.loadingInformationData = await this.loadingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
+      this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
     }
     catch (error) {
@@ -123,6 +118,7 @@ export class LoadingInformationComponent extends ComponentCanDeactivate implemen
     }
     this.loadingTransformationService.setLoadingInformationValidity(this.loadingInformationData?.isLoadingInfoComplete)
     this.loadingInfoId = this.loadingInformationData?.loadingInfoId;
+    this.loadingInformationId.emit(this.loadingInfoId);
     this.trackStartEndStage = this.loadingInformationData?.loadingStages?.trackStartEndStage;
     this.trackGradeSwitch = this.loadingInformationData?.loadingStages?.trackGradeSwitch;
     this.cargoVesselTankDetails = this.loadingInformationData?.cargoVesselTankDetails;
@@ -130,17 +126,6 @@ export class LoadingInformationComponent extends ComponentCanDeactivate implemen
     this.stageDurationList = this.loadingInformationData?.loadingStages.stageDurationList;
     this.stageDuration = this.stageDurationList?.find(duration => duration.id === this.loadingInformationData?.loadingStages?.stageDuration);
     this.stageOffset = this.stageOffsetList?.find(offset => offset.id === this.loadingInformationData?.loadingStages?.stageOffset);
-    this.loadingInformationData?.machineryInUses?.vesselPumps?.map((pump) => {
-      const machinaryUsed = this.loadingInformationData?.machineryInUses?.loadingMachinesInUses?.find((machine) => machine.pumpId === pump.id);
-      if (machinaryUsed) {
-        pump.capacity = machinaryUsed.capacity;
-      } else {
-        pump.capacity = pump.pumpCapacity;
-      }
-    })
-    this.loadingInformationData?.machineryInUses?.loadingMachinesInUses?.map((machine) => {
-      machine.isUsing = this.loadingInformationData?.machineryInUses?.vesselPumps?.some((pump) => pump.id === machine.pumpId)
-    })
   }
 
 
@@ -268,14 +253,20 @@ export class LoadingInformationComponent extends ComponentCanDeactivate implemen
 * @memberof LoadingInformationComponent
 */
   async saveLoadingInformationData() {
-    this.ngxSpinnerService.show();
-    const result: ILoadingInformationSaveResponse = await this.loadingInformationApiService.saveLoadingInformation(this.vesselId, this.voyageId, this.loadingInformationPostData).toPromise();
-    if (result?.responseStatus?.status === '200') {
-      this.loadingInformationData = result?.loadingInformation;
-      await this.updateGetData();
-      this.hasUnSavedData = false;
+    const translationKeys = await this.translateService.get(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY']).toPromise();
+    if(this.hasUnSavedData){
+      this.ngxSpinnerService.show();
+      const result: ILoadingInformationSaveResponse = await this.loadingInformationApiService.saveLoadingInformation(this.vesselId, this.voyageId, this.loadingInformationPostData).toPromise();
+      if (result?.responseStatus?.status === '200') {
+        this.loadingInformationData = result?.loadingInformation;
+        await this.updateGetData();
+        this.hasUnSavedData = false;
+        this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INFORMATION_SAVE_SUCCESS'], detail: translationKeys['LOADING_INFORMATION_SAVED_SUCCESSFULLY'] });
+      }
+      this.ngxSpinnerService.hide();
+    }else{
+      this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_SAVE_NO_DATA_ERROR'] });
     }
-    this.ngxSpinnerService.hide();
   }
 
 

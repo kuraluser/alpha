@@ -244,6 +244,8 @@ public class LoadingInformationBuilderService {
           Optional.ofNullable(delay.getQuantity())
               .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
           Optional.ofNullable(delay.getReasonForDelayId()).ifPresent(builder::setReasonForDelayId);
+          Optional.ofNullable(delay.getCargoNominationId())
+              .ifPresent(builder::setCargoNominationId);
           delayList.add(builder.build());
         });
     return delayList;
@@ -259,7 +261,9 @@ public class LoadingInformationBuilderService {
               .ifPresent(capacity -> builder.setCapacity(String.valueOf(capacity)));
           Optional.ofNullable(machine.getId()).ifPresent(builder::setId);
           Optional.ofNullable(machine.getLoadingInfoId()).ifPresent(builder::setLoadingInfoId);
-          Optional.ofNullable(machine.getPumpId()).ifPresent(builder::setPumpId);
+          Optional.ofNullable(machine.getMachineId()).ifPresent(builder::setMachineId);
+          Optional.ofNullable(machine.getMachineTypeId())
+              .ifPresent(v -> builder.setMachineTypeValue(v));
           // isUsing missing added to domain
           Optional.ofNullable(machine.getIsUsing()).ifPresent(builder::setIsUsing);
           machineries.add(builder.build());

@@ -6,6 +6,8 @@ import static com.cpdss.loadingplan.common.LoadingPlanConstants.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
@@ -17,7 +19,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformat
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.loadingplan.service.*;
-import com.cpdss.loadingplan.service.algo.LoadingInformationAlgoService;
+import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingInformationDischargeService;
 import io.grpc.stub.StreamObserver;
 import java.util.Optional;
@@ -39,7 +41,7 @@ public class LoadingInformationGrpcService
   @Autowired LoadingInformationService loadingInformationService;
   @Autowired CargoToppingOffSequenceService toppingOffSequenceService;
   @Autowired LoadingInformationDischargeService loadingInfoService;
-  @Autowired LoadingInformationAlgoService loadingInfoAlgoService;
+  @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
 
   @Autowired LoadingMachineryInUseService loadingMachineryInUseService;
 
@@ -379,12 +381,50 @@ public class LoadingInformationGrpcService
   }
 
   @Override
+  public void saveAlgoLoadingPlanStatus(
+      AlgoStatusRequest request, StreamObserver<AlgoStatusReply> responseObserver) {
+    log.info("Inside saveAlgoLoadingPlanStatus in LP MS");
+    AlgoStatusReply.Builder builder = AlgoStatusReply.newBuilder();
+    try {
+
+      this.loadingPlanAlgoService.saveAlgoLoadingPlanStatus(request);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saveAlgoLoadingPlanStatus")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+    } catch (GenericServiceException e) {
+      log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
   public void generateLoadingPlan(
       LoadingInfoAlgoRequest request, StreamObserver<ResponseStatus> responseObserver) {
     log.info("Inside generateLoadingPlan in LP MS");
     ResponseStatus.Builder builder = ResponseStatus.newBuilder();
     try {
-      this.loadingInfoAlgoService.generateLoadingPlan(request);
+      this.loadingPlanAlgoService.generateLoadingPlan(request);
       builder.setStatus(SUCCESS);
     } catch (GenericServiceException e) {
       log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);

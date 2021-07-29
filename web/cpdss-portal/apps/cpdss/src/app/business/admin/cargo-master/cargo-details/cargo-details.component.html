@@ -1,0 +1,252 @@
+<div class="container-fluid" *ngIf="cargoDetailsForm">
+  <form [formGroup]="cargoDetailsForm">
+    <div class="row">
+      <div class="col-6">
+        <h5 class="main-head inline-block">{{(cargoId ? 'EDIT_CARGO_TITLE' : 'ADD_CARGO_TITLE')| translate}}</h5>
+      </div>
+      <div class="col-6">
+        <button id="cargo_save" class="btn btn-main float-right">{{'CARGO_DETAILS_SAVE_BUTTON'|
+          translate}}</button>
+        <button id="cargo_save_cancel" class="btn btn-main mr-10 float-right"
+          (click)="cancel()">{{'CARGO_DETAILS_CANCEL_BUTTON'|
+          translate}}</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <p class="text-secondary text-uppercase">{{'CARGO_MASTER_GRADE_INFORMATION'| translate }}</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_type" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_CARGO_TYPE' | translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_type" formControlName="type">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_abbreviation" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_CARGO_ABBREVIATION' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_abbreviation" formControlName="abbreviation">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_assay_date" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_CARGO_ASSAY_DATE' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_assay_date" formControlName="assay_date">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_api" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_CARGO_API' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_api" formControlName="api">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_reid_vapour_pressure" class="col-sm-5 col-form-label">{{
+            'CARGO_DETAILS_REID_VAPOUR_PRESSURE'
+            |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_reid_vapour_pressure"
+              formControlName="reid_vapour_pressure">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_gas" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_GAS' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_gas" formControlName="gas">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_total_wax" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_TOTAL_WAX' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_total_wax" formControlName="total_wax">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_pour_point" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_POUR_POINT' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_pour_point" formControlName="pour_point">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_cloud_point" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_CLOUD_POINT' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_cloud_point" formControlName="cloud_point">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_viscosity" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_VISCOSITY' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_viscosity" formControlName="viscosity">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_min_temperature" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_MIN_TEMPERATURE' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_min_temperature" formControlName="temp">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_cow_codes" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_COW_CODES' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_cow_codes" formControlName="cow_codes">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_hydrogen_sulfide_oil" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_HYDROGEN_SULFIDE' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_hydrogen_sulfide_oil"
+              formControlName="hydrogen_sulfide_oil">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_hydrogen_sulfide_vapour" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_HYDROGEN_SULFIDE'
+            |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_hydrogen_sulfide_vapour"
+              formControlName="hydrogen_sulfide_vapour">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="cargo_benzene" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_BENZENE' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="cargo_benzene" formControlName="benzene">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group row">
+          <label for="cargo_special_instrictions_remark" class="col-sm-2 col-form-label">{{
+            'CARGO_DETAILS_SPECIAL_INSTRUCTIONS_REMARK' |
+            translate}}</label>
+          <div class="col-sm-10">
+            <textarea class="form-control" id="cargo_special_instrictions_remark" [rows]="5"
+              formControlName="special_instrictions_remark"
+              placeholder="{{'CARGO_DETAILS_SPECIAL_INSTRUCTIONS_REMARK_PLACEHOLDER' | translate}}"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="container">
+        <div class="row">
+          <div class="col-6">
+            <p class="text-secondary text-uppercase">{{'CARGO_MASTER_LOADING_INFORMATION'| translate }}</p>
+          </div>
+          <div class="col-6">
+            <button id="add_new_loading_info" class="btn btn-main float-right"
+              (click)="addLoadingInfo()">{{'CARGO_MASTER_LOADING_INFORMATION_ADD'|
+              translate}}</button>
+          </div>
+        </div>
+        <div class="row" formArrayName="loadingInformation">
+          <div class="col-12">
+            <p-table [value]="cargo?.loadingInformation" class="loading-information-table"
+              id="loading-information-table" [scrollable]="true" scrollHeight="flex">
+              <ng-template pTemplate="colgroup">
+                <colgroup>
+                  <col>
+                  <col>
+                  <col class="column-button">
+                  <col class="column-action">
+                </colgroup>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>
+                    {{ 'CARGO_LOADING_INFO_COUNTRY' | translate}}
+                  </th>
+                  <th>
+                    {{ 'CARGO_LOADING_INFO_PORT' | translate}}
+                  </th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+                <tr formGroupName="{{rowIndex}}">
+                  <td>
+                    <p-dropdown id="country_dropdown_{{rowIndex}}" styleClass="form-control" appendTo="body"
+                      [placeholder]="'CARGO_LOADING_INFO_COUNTRY_PLACEHOLDER'| translate" [filter]="true" [options]="countries"
+                      optionLabel="name" resetFilterOnHide="true" formControlName="country">
+                    </p-dropdown>
+                  </td>
+                  <td>
+                    <p-dropdown id="port_dropdown_{{rowIndex}}" styleClass="form-control" appendTo="body"
+                      [placeholder]="'CARGO_LOADING_INFO_PORT_PLACEHOLDER' | translate" [filter]="true" [options]="ports"
+                      optionLabel="name" resetFilterOnHide="true" formControlName="port">
+                    </p-dropdown>
+                  </td>
+                  <td>
+                    <button id="view_api_temp_{{rowIndex}}" class="btn btn-main btn-sm"
+                      (click)="openAPITemperaturePopup()">
+                      {{'CARGO_LOADING_INFO_VIEW_API_TEMP' | translate}}</button>
+                  </td>
+                  <td>
+                    <a type="button" id="delete_button_{{rowIndex}}" class="delete-icon"></a>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                  <td [attr.colspan]="4">
+                    {{'NO_RECORDS_FOUND'| translate}}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<cpdss-portal-api-temperature-history-popup *ngIf="apiTempPopupData" [(apiTempHistoryPopupData)]="apiTempPopupData"
+  [(visible)]="openAPITemperatureHistoryPopup">
+</cpdss-portal-api-temperature-history-popup>

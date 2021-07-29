@@ -6,6 +6,7 @@ option java_package = "com.cpdss.common.generated.loading_plan";
 import "common.proto";
 // Messages for the Service related to Loading Plan
 import "loading_plan/loading_plan_models.proto";
+import "loadable_study.proto";
 
 service LoadingInformationService {
 
@@ -34,15 +35,30 @@ service LoadingInformationService {
 
   rpc UpdateUllage(UpdateUllageLoadingRequest) returns (UpdateUllageLoadingReplay) {}
   
+  rpc SaveAlgoLoadingPlanStatus(AlgoStatusRequest) returns (AlgoStatusReply) {}
+  
   rpc GenerateLoadingPlan(LoadingInfoAlgoRequest) returns (ResponseStatus) {}
 }
 
 service LoadingInstructionService {
 
+	rpc GetLoadingInstructions(LoadingInstructionRequest) returns (LoadingInstructionDetails) {}
+	rpc AddLoadingInstruction(LoadingInstructionsSave) returns (ResponseStatus) {}
+	rpc UpdateLoadingInstructions(LoadingInstructionsUpdate) returns (ResponseStatus) {}
+	rpc DeleteLoadingInstructions(LoadingInstructionStatus) returns (ResponseStatus) {}
+	rpc EditInstructions(LoadingInstructionStatus) returns (ResponseStatus) {}
 }
 
 service LoadingPlanService {
 
   rpc LoadingPlanSynchronization(LoadingPlanSyncDetails) returns (LoadingPlanSyncReply) {}
+
+  rpc SaveLoadingPlan(LoadingPlanSaveRequest) returns (LoadingPlanSaveResponse) {}
+
+  rpc GetLoadingPlan(LoadingInformationRequest) returns (LoadingPlanReply) {}
+
+  rpc GetOrSaveRulesForLoadingPlan (LoadingPlanRuleRequest) returns (LoadingPlanRuleReply) {}
+  
+  rpc GetLoadingSequences(LoadingSequenceRequest) returns (LoadingSequenceReply) {}
 
 }

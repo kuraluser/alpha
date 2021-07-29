@@ -1,26 +1,28 @@
 
     <form [formGroup]="dischargeStudyForm">
+        <div class="row">
+            <div class="col text-right btn-position"><button (click)="saveDischargeStudy()" [disabled]="!editMode" class="btn btn-main">{{'DISCHARGE_STUDY_SAVE'  | translate}}</button></div>
+        </div>
+        
         <div formArrayName="portDetails">
         <div *ngFor="let portDetail of portDetails;let portIndex = index;let last = last" formGroupName="{{portIndex}}">
-<div class="row">
-    <div class="col">
-        <h5 class="text-uppercase sub-head-color"> {{ 'DISCHARGE_STUDY' | translate }} </h5>
-    </div>
-</div>
-<div class="row align-items-center pb-10">
+
+<div class="row align-items-center pb-10 pt-10">
+
     <div class="pl-15 pr-5">{{ 'DISCHARGE_STUDY_PORT_NAME' | translate }}{{portIndex+1}}</div>
-    <div class="sub-head-color  pr-15">{{portDetail.portName}}</div>
+    <div class="sub-head-color  pr-15">{{portDetail.port?.name}}</div>
     <div class="pl-15 pr-5">{{ 'DISCHARGE_STUDY_INSTRUCTION' | translate }}</div>
-    <div class="col-3"><p-dropdown id="instruction_dropdown" styleClass="form-control" [options]="instructions"
-        formControlName="instruction" filter="true" optionLabel="value"
-        resetFilterOnHide="true"></p-dropdown></div>
+    <div class="col-3">
+        <p-dropdown id="instruction_dropdown" appendTo="body" styleClass="form-control" [options]="instructions"
+        formControlName="instruction" filter="true" optionLabel="instruction"
+        resetFilterOnHide="true" [readonly]="!editMode" (onChange)="onChange($event,'instruction',portIndex)"></p-dropdown></div>
         <div class=" pr-15">
             {{ 'DISCHARGE_STUDY_DRAFT_RESTRICTION' | translate }}
         </div>
-        <div class="error-icon-wrapper"> <input type="text" class="form-control" formControlName="draftRestriction" id="draftRestriction"/>
+        <div class="error-icon-wrapper"> <input type="text" class="form-control" formControlName="maxDraft" cpdssPortalNumberDecimal  id="maxDraft" [readonly]="!editMode" (change)="onChange($event,'maxDraft',portIndex)"/>
             <cpdss-portal-validation-error
-                [errors]="fieldError(portIndex,'draftRestriction')"
-                [errorMessages]="errorMessages.draftRestriction">
+                [errors]="fieldError(portIndex,'maxDraft')"
+                [errorMessages]="errorMessages.maxDraft">
             </cpdss-portal-validation-error></div>
 </div>
            
@@ -32,29 +34,34 @@
             <div class="row align-items-center pt-10">
                 <label class="mb-0 pl-15">{{ 'DISCHARGE_STUDY_COW' | translate }}</label>
                 <div class="pl-15">
-                <p-dropdown id="cow_dropdown" styleClass="form-control" [options]="mode"
+                <p-dropdown id="cow_dropdown" appendTo="body" styleClass="form-control" [options]="mode"
                     formControlName="cow" filter="true" optionLabel="name"
-                    resetFilterOnHide="true"></p-dropdown>
+                    resetFilterOnHide="true" (onChange)="onChange($event,'cow',portIndex)" [readonly]="!editMode"></p-dropdown>
                 </div>
                 <ng-container *ngIf="getFeild(portIndex,'cow').value?.id === 1">
                     <label class="mb-0 pl-15">{{ 'DISCHARGE_STUDY_DISCHARGE_PERCENTAGE' | translate }}</label>
                     <div class="pl-15">
-                    <p-dropdown id="percentage_dropdown" styleClass="form-control" [options]="percentageList"
+                    <p-dropdown id="percentage_dropdown" appendTo="body" styleClass="form-control" [options]="percentageList"
                         formControlName="percentage" filter="true" optionLabel="name"
-                        resetFilterOnHide="true"></p-dropdown>
+                        resetFilterOnHide="true" (onChange)="onChange($event,'percentage',portIndex)" [readonly]="!editMode"></p-dropdown>
                     </div>
                 </ng-container>
                 <ng-container *ngIf="getFeild(portIndex,'cow').value?.id === 2">
                     <label class="mb-0 pl-15">{{ 'DISCHARGE_STUDY_DISCHARGE_TANK' | translate }}</label>
                     <div>
-                    <p-dropdown id="tank_dropdown" styleClass="form-control" [options]="tank"
-                        formControlName="tank" filter="true" optionLabel="name"
-                        resetFilterOnHide="true"></p-dropdown>
+                    <p-multiSelect id="tank_dropdown" styleClass="form-control" [options]="tank" appendTo="body"
+                        formControlName="tank"  optionLabel="name"
+                        resetFilterOnHide="true"  defaultLabel="DISCHARGE_STUDY_TANK_PLACEHOLDER | translate" [readonly]="!editMode" [filter]="true"
+                        (onChange)="onChange($event,'tank',portIndex)"></p-multiSelect>
                     </div>
+                    <cpdss-portal-validation-error
+                        [errors]="fieldError(portIndex,'tank')"
+                        [errorMessages]="errorMessages.tank">
+                    </cpdss-portal-validation-error>
                 </ng-container>
                 <ng-container *ngIf="!last">
                     <label class="checkbox-custom mb-0 ml-15">{{ 'DISCHARGE_STUDY_ENABLE_BACK_LOADING' | translate }}
-                        <input type="checkbox" id="enable_back_loading" styleClass="form-control" [attr.disabled]="last ? 'disabled' : null" formControlName="enableBackToLoading"
+                        <input type="checkbox" id="enable_back_loading" styleClass="form-control" [attr.disabled]="!editMode ? 'disabled' : null" formControlName="enableBackToLoading"
                     (change)="resetBackLoading($event,portIndex)"/>
 
                         <span class="checkmark"></span>
@@ -73,16 +80,17 @@
                     </div>
                     <div class="col">
                         <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
-                        (click)="addBackLoading(portIndex,'backLoadingDetails')">{{'ADD_BACK_LOADING'| translate}}</a>
+                        (click)="addBackLoading(portIndex,'backLoadingDetails')"
+                        [ngClass]="{'disabled': (!permission?.add || !permission?.add === undefined)}">{{'ADD_BACK_LOADING'| translate}}</a>
                     </div>
                 </div>
                 
                <div class="row">
                    <div class="col">
                     <cpdss-portal-datatable [tableId]="'discharge_cargo_back_loading'" [form]="getFeild(portIndex,'backLoadingDetails')" [columns]="backLoadingColumns"
-                    [value]="portDetail?.backLoadingDetails" [editMode]="editMode" [listData]="listData"
+                    [value]="portDetail?.backLoadingDetails" [editMode]="editMode" [listData]="getListData(portDetail.port?.id)"
                     (deleteRow)="onDeleteRow($event,portIndex,'backLoadingDetails')" (editComplete)="onEditCompleteBackLoading($event,portIndex)" 
-                    (saveRow)="onSaveRow($event,portIndex,'backLoadingDetails')" [showTotal]="true">
+                    (saveRow)="onSaveRow($event,portIndex)" [showTotal]="true">
                 </cpdss-portal-datatable>
                    </div>
                </div>

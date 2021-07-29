@@ -7,30 +7,21 @@ import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.Common;
-import com.cpdss.common.generated.PortInfo;
-import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
+import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.PortDetails;
-import com.cpdss.loadablestudy.entity.BackLoading;
-import com.cpdss.loadablestudy.entity.CargoOperation;
-import com.cpdss.loadablestudy.entity.DischargeStudyCowDetail;
-import com.cpdss.loadablestudy.entity.DischargeStudyPortInstruction;
-import com.cpdss.loadablestudy.entity.LoadableQuantity;
+import com.cpdss.loadablestudy.domain.VoyagePorts;
+import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +35,7 @@ import org.springframework.util.StringUtils;
 /**
  * Master Service for Voyage Related Operations
  *
- * @author vinothkumar m @Since 07-07-2021
+ * @author vinothkumar m @Since 07-07-2021 ravi.r
  */
 @Slf4j
 @Service
@@ -71,8 +62,15 @@ public class LoadableStudyPortRotationService {
   @Autowired private PortInstructionService portInstructionService;
   @Autowired private CowDetailService cowDetailService;
 
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
+
+  @GrpcClient("loadableStudyService")
+  private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
+      loadableStudyServiceBlockingStub;
 
   /**
    * Get max port order for a LS
@@ -348,6 +346,9 @@ public class LoadableStudyPortRotationService {
               portDetails.setName(portList.getName());
               portDetails.setTideHeight(portList.getTideHeight());
               portDetails.setCountryName(portList.getCountryName());
+              portDetails.setTimezoneId(portList.getTimezoneId());
+              portDetails.setOffset(portList.getTimezoneOffsetVal());
+              portDetails.setTimezoneAbbr(portList.getTimezoneAbbreviation());
               loadableStudy.getPortDetails().add(portDetails);
             });
   }
@@ -636,7 +637,9 @@ public class LoadableStudyPortRotationService {
               if (cowDetails.get(port.getId()) != null) {
                 DischargeStudyCowDetail cow = cowDetails.get(port.getId());
                 builder.setCowId(cow.getCowType());
-                builder.setPercentage(cow.getPercentage());
+                if (cow.getPercentage() != null) {
+                  builder.setPercentage(cow.getPercentage());
+                }
                 if (cow.getTankIds() != null && !cow.getTankIds().isEmpty()) {
                   List<String> tanks = Arrays.asList(cow.getTankIds().split(","));
                   builder.addAllTanks(
@@ -726,5 +729,168 @@ public class LoadableStudyPortRotationService {
     this.loadableStudyPortRotationRepository.save(entity);
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
+  }
+
+  public void getLoadableStudyShore(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.Builder builder) {
+
+    VesselInfo.VesselRequest vesselAlgoRequest = VesselInfo.VesselRequest.newBuilder().build();
+    VesselInfo.VesselReply replyBuilder =
+        vesselInfoGrpcService.getAllVesselsByCompany(vesselAlgoRequest);
+
+    replyBuilder
+        .getVesselsList()
+        .forEach(
+            vesselDetail -> {
+              com.cpdss.common.generated.LoadableStudy.LoadableStudyShore.Builder shoreBuilder =
+                  com.cpdss.common.generated.LoadableStudy.LoadableStudyShore.newBuilder();
+              shoreBuilder.setId(vesselDetail.getId());
+              shoreBuilder.setVesselName(vesselDetail.getName());
+              shoreBuilder.setImoNo(Long.parseLong(vesselDetail.getImoNumber()));
+              shoreBuilder.setFlagName(vesselDetail.getFlag());
+
+              // Gettting Lodablestudy detaild from Vessel
+              Set<Long> distinctLodableStudyId = new HashSet<>();
+              loadableStudyRepository
+                  .findByVesselXId(vesselDetail.getId())
+                  .forEach(
+                      det -> {
+                        if (det.getLoadableStudyStatus() != null
+                            && det.getLoadableStudyStatus().getName() != null
+                            && det.getVesselXId() != null
+                            && det.getLoadableStudyStatus().getName().trim().equals("Confirmed")
+                            && det.getVesselXId() == vesselDetail.getId())
+                          distinctLodableStudyId.add(det.getId());
+                      });
+
+              List<VoyagePorts> dataMap = new ArrayList<>();
+              Set<Long> portId = new HashSet<>();
+
+              // Getting all the port id from Lodable study
+              distinctLodableStudyId.forEach(
+                  detail -> {
+                    List<LoadableStudyPortRotation> loadableStudyPortRotations =
+                        loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+                            detail, true);
+
+                    if (!loadableStudyPortRotations.isEmpty()) {
+                      loadableStudyPortRotations.forEach(
+                          loadableStudyPortRotation -> {
+                            if (!portId.contains(loadableStudyPortRotation.getPortXId())) {
+
+                              // Getting port name and lat and long detials
+                              PortInfo.PortReply reply =
+                                  portInfoGrpcService.getPortInfoByPortIds(
+                                      PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
+                                          .addId(loadableStudyPortRotation.getPortXId())
+                                          .build());
+
+                              dataMap.add(
+                                  new VoyagePorts(
+                                      String.valueOf(loadableStudyPortRotation.getPortXId()),
+                                      String.valueOf(loadableStudyPortRotation.getEta()),
+                                      String.valueOf(loadableStudyPortRotation.getEtd()),
+                                      String.valueOf(loadableStudyPortRotation.getPortOrder()),
+                                      String.valueOf(
+                                          loadableStudyPortRotation.getOperation().getName()),
+                                      null,
+                                      null,
+                                      String.valueOf(
+                                          (loadableStudyPortRotation.getSynopticalTable() != null
+                                                  && loadableStudyPortRotation
+                                                          .getSynopticalTable()
+                                                          .size()
+                                                      > 0)
+                                              ? loadableStudyPortRotation
+                                                          .getSynopticalTable()
+                                                          .get(0)
+                                                          .getEtaActual()
+                                                      == null
+                                                  ? ""
+                                                  : loadableStudyPortRotation
+                                                      .getSynopticalTable()
+                                                      .get(0)
+                                                      .getEtaActual()
+                                              : ""),
+                                      String.valueOf(
+                                          (loadableStudyPortRotation.getSynopticalTable() != null
+                                                  && loadableStudyPortRotation
+                                                          .getSynopticalTable()
+                                                          .size()
+                                                      > 0)
+                                              ? loadableStudyPortRotation
+                                                          .getSynopticalTable()
+                                                          .get(0)
+                                                          .getEtdActual()
+                                                      == null
+                                                  ? ""
+                                                  : loadableStudyPortRotation
+                                                      .getSynopticalTable()
+                                                      .get(0)
+                                                      .getEtdActual()
+                                              : ""),
+                                      reply.getPortsCount() > 0 ? reply.getPorts(0).getLat() : "",
+                                      reply.getPortsCount() > 0 ? reply.getPorts(0).getLon() : "",
+                                      reply.getPortsCount() > 0
+                                          ? reply.getPorts(0).getName()
+                                          : ""));
+                            }
+                            portId.add(loadableStudyPortRotation.getPortXId());
+                          });
+                    }
+                  });
+
+              // Building final Map
+              for (int i = 0; i < dataMap.size(); i++) {
+                shoreBuilder
+                    .addVoyagePortsBuilder()
+                    .setAnchorage(
+                        dataMap.get(i).getAnchorage() == null ? "" : dataMap.get(i).getAnchorage())
+                    .setPortName(
+                        dataMap.get(i).getPortName() == null ? "" : dataMap.get(i).getPortName())
+                    .setEta(dataMap.get(i).getEtd() == null ? "" : dataMap.get(i).getEtd())
+                    .setEtd(dataMap.get(i).getEta() == null ? "" : dataMap.get(i).getEta())
+                    .setPortType(
+                        dataMap.get(i).getPortType() == null ? "" : dataMap.get(i).getPortType())
+                    .setAta(dataMap.get(i).getAta() == null ? "" : dataMap.get(i).getAta())
+                    .setAtd(dataMap.get(i).getAtd() == null ? "" : dataMap.get(i).getAtd())
+                    .setLat(dataMap.get(i).getLat() == null ? "" : dataMap.get(i).getLat())
+                    .setLon(dataMap.get(i).getLon() == null ? "" : dataMap.get(i).getLon())
+                    .setPortOrder(
+                        dataMap.get(i).getPortOrder() == null ? "" : dataMap.get(i).getPortOrder())
+                    .build();
+              }
+
+              builder.addShoreList(shoreBuilder);
+            });
+
+    builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+  }
+
+  public com.cpdss.common.generated.LoadableStudy.LoadableStudyReply getLoadableStudyList(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
+    return this.loadableStudyServiceBlockingStub.findLoadableStudiesByVesselAndVoyage(request);
+  }
+
+  public void getPortRotationByPortRotationId(
+      PortRotationRequest request,
+      com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply.Builder builder)
+      throws Exception {
+    LoadableStudyPortRotation portRotation =
+        this.loadableStudyPortRotationRepository.findByIdAndIsActive(request.getId(), true);
+    PortRotationDetail.Builder portDetailBuilder = PortRotationDetail.newBuilder();
+    if (portRotation == null) {
+      throw new Exception("Could not find port rotation with id " + request.getId());
+    }
+
+    Optional.ofNullable(portRotation.getPortXId()).ifPresent(portDetailBuilder::setPortId);
+    Optional.ofNullable(portRotation.getOperation())
+        .ifPresent(operation -> portDetailBuilder.setOperationId(operation.getId()));
+    Optional.of(portRotation.getEta())
+        .ifPresent(eta -> portDetailBuilder.setEta(portRotation.getEta().toString()));
+    Optional.of(portRotation.getEtd())
+        .ifPresent(etd -> portDetailBuilder.setEta(portRotation.getEtd().toString()));
+    builder.setPortRotationDetail(portDetailBuilder.build());
   }
 }

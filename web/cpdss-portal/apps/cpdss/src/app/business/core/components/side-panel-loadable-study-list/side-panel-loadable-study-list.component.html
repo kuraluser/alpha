@@ -2,13 +2,21 @@
     <button class="btn btn-main btn-sm btn-new-loadable-study" (click)="openLoadableStudyPopup()"
     id="btn_new_loadable_study" *cpdssPortalPermission="addLSBtnPermissionContext">{{'LOADABLE_STUDY_DETAILS_LOADABLE_NEW_BUTTON_LABEL' | translate}}</button>
 </ng-container>
-<div style="height: 100%;" #sidepaneDatatable>
-    <cpdss-portal-datatable *ngIf="loadableStudies" [tableId]="'loadable_studies'" [columns]="columns" [value]="loadableStudies"
+
+<div class="row">
+    <div class="col sidebar-table-scroll">
+    <cpdss-portal-datatable #sidepaneDatatable *ngIf="loadableStudies" [tableId]="'loadable_studies'" [columns]="columns" [value]="loadableStudies"
     [selectionMode]="selectionMode" [selection]="selectedLoadableStudy" [filterable]="true" (duplicateRow)="onDuplicate($event)"
     (deleteRow)="onDelete($event)" (rowSelection)="onRowSelection($event)" (editRow)="onEdit($event)">
 </cpdss-portal-datatable>
 </div>
-
+</div>
+<ng-container>
+    <div class="text-center pt-10">
+    <button class="btn btn-main btn-sm" 
+    id="btn_view_details" (click)="navigateToLoadableStudyList()">{{'LOADABLE_STUDY_DETAILS_VIEW_DETAILS_BUTTON_LABEL' | translate}}</button>
+</div>
+</ng-container>
 <cpdss-portal-new-loadable-study-popup *ngIf="loadableStudies && voyage && vesselInfo && display" [display]="display"
     (displayPopup)="closeLoadableStudyPopup($event)" [loadableStudyList]="loadableStudies" [vesselInfoList]="vesselInfo"
     [voyage]="voyage" [duplicateLoadableStudy]="duplicateLoadableStudy" (addedNewLoadableStudy)="onNewLoadableStudyAdded($event)" [isEdit]="isEdit" [selectedLoadableStudy]="selectedLoadableStudy">

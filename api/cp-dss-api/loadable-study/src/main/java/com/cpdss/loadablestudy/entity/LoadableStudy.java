@@ -3,9 +3,7 @@ package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
 import com.cpdss.common.utils.EntityDoc;
-import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -40,11 +38,11 @@ public class LoadableStudy extends EntityDoc {
   @Column(name = "vessel_xid")
   private Long vesselXId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "voyage_xid")
   private Voyage voyage;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "duplicated_from")
   private LoadableStudy duplicatedFrom;
 
@@ -128,5 +126,4 @@ public class LoadableStudy extends EntityDoc {
 
   @Column(name = "planning_type_xid")
   private Integer planningTypeXId = 1;
-
 }
