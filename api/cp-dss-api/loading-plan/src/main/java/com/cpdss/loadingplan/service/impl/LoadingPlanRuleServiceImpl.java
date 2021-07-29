@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.impl;
 
+import static com.cpdss.loadingplan.common.LoadingPlanConstants.LOADING_RULE_MASTER_ID;
 import static com.cpdss.loadingplan.common.LoadingPlanConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -18,6 +19,7 @@ import com.cpdss.loadingplan.entity.LoadingRuleInput;
 import com.cpdss.loadingplan.repository.LoadingRuleInputRepository;
 import com.cpdss.loadingplan.repository.LoadingRuleRepository;
 import com.cpdss.loadingplan.service.LoadingInformationService;
+import com.cpdss.loadingplan.service.LoadingPlanRuleService;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +32,7 @@ import org.springframework.util.CollectionUtils;
 @Slf4j
 @Service
 @Transactional
-public class LoadingPlanRuleServiceImpl {
+public class LoadingPlanRuleServiceImpl implements LoadingPlanRuleService {
 
   @Autowired LoadingInformationService loadingInformationService;
 
@@ -551,5 +553,22 @@ public class LoadingPlanRuleServiceImpl {
       rulePlanBuider.addRules(rulesBuilder.build());
     }
     builder.addRulePlan(rulePlanBuider);
+  }
+
+  @Override
+  public LoadingPlanModels.LoadingPlanRuleReply getLoadingPlanRuleForAlgo(
+      Long vesselId, Long loadingInfoId) {
+    LoadingPlanModels.LoadingPlanRuleRequest.Builder request =
+        LoadingPlanModels.LoadingPlanRuleRequest.newBuilder();
+    request.setLoadingInfoId(loadingInfoId);
+    request.setSectionId(LOADING_RULE_MASTER_ID);
+    LoadingPlanModels.LoadingPlanRuleReply.Builder builder =
+        LoadingPlanModels.LoadingPlanRuleReply.newBuilder();
+    try {
+      this.getOrSaveRulesForLoadingPlan(request.build(), builder);
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+    return builder.build();
   }
 }

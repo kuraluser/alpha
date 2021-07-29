@@ -46,9 +46,13 @@ import com.cpdss.loadingplan.domain.algo.OnHandQuantity;
 import com.cpdss.loadingplan.domain.algo.ReasonForDelay;
 import com.cpdss.loadingplan.domain.algo.ToppingOffSequence;
 import com.cpdss.loadingplan.domain.algo.TrimAllowed;
+import com.cpdss.loadingplan.domain.rules.RulePlans;
+import com.cpdss.loadingplan.domain.rules.RuleResponse;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.projections.PortTideAlgo;
+import com.cpdss.loadingplan.service.LoadingPlanRuleService;
 import com.cpdss.loadingplan.service.LoadingPortTideService;
+import com.cpdss.loadingplan.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
@@ -82,6 +86,8 @@ public class LoadingInformationAlgoRequestBuilderService {
 
   @Autowired LoadingPortTideService loadingPortTideDetailsService;
 
+  @Autowired LoadingPlanRuleService loadingPlanRuleService;
+
   /**
    * Creates the ALGO request
    *
@@ -105,8 +111,9 @@ public class LoadingInformationAlgoRequestBuilderService {
               loadingInfoOpt.get().getPortRotationXId());
       buildLoadingInformation(algoRequest, loadingInformation, loadingInfoOpt.get());
       buildLoadablePatternPortWiseDetails(algoRequest, loadingInfoOpt.get());
-      buildLoadingRules(algoRequest, loadingInfoOpt.get().getVesselXId());
+      buildLoadingRulesFromVessel(algoRequest, loadingInfoOpt.get().getVesselXId());
       buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
+      buildLoadingRules(algoRequest, loadingInfoOpt.get());
     } else {
       throw new GenericServiceException(
           "Could not find loading information " + request.getLoadingInfoId(),
@@ -114,6 +121,18 @@ public class LoadingInformationAlgoRequestBuilderService {
           HttpStatusCode.BAD_REQUEST);
     }
     return algoRequest;
+  }
+
+  private void buildLoadingRules(
+      LoadingInformationAlgoRequest algoRequest,
+      com.cpdss.loadingplan.entity.LoadingInformation loadingInformation) {
+    LoadingPlanModels.LoadingPlanRuleReply rpcReply =
+        loadingPlanRuleService.getLoadingPlanRuleForAlgo(
+            loadingInformation.getVesselXId(), loadingInformation.getId());
+    if (rpcReply != null) {
+      List<RulePlans> rulePlans = RuleUtility.buildLoadingPlanRule(rpcReply);
+      algoRequest.setLoadingRules(new RuleResponse(rulePlans));
+    }
   }
 
   private void buildPortTideDetails(LoadingInformationAlgoRequest algoRequest, Long portXId) {
@@ -124,7 +143,8 @@ public class LoadingInformationAlgoRequestBuilderService {
     }
   }
 
-  private void buildLoadingRules(LoadingInformationAlgoRequest algoRequest, Long vesselXId)
+  private void buildLoadingRulesFromVessel(
+      LoadingInformationAlgoRequest algoRequest, Long vesselXId)
       throws NumberFormatException, GenericServiceException {
     log.info("Populating loading rules");
     LoadingInfoRulesRequest.Builder requestBuilder = LoadingInfoRulesRequest.newBuilder();
@@ -160,7 +180,7 @@ public class LoadingInformationAlgoRequestBuilderService {
               loadingRules.add(loadingRule);
             });
 
-    algoRequest.setLoadingRules(loadingRules);
+    // algoRequest.setLoadingRules(loadingRules);
   }
 
   private void buildLoadingInformation(

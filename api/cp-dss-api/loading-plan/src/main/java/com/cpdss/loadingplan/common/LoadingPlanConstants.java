@@ -27,4 +27,6 @@ public final class LoadingPlanConstants {
   // Loading Plan Value Types
   public static final Integer LOADING_PLAN_ACTUAL_TYPE_VALUE = 1;
   public static final Integer LOADING_PLAN_PLANNED_TYPE_VALUE = 2;
+
+  public static final Long LOADING_RULE_MASTER_ID = 2l;
 }
