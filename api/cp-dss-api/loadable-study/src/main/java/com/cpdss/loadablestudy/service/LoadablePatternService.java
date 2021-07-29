@@ -1107,6 +1107,8 @@ public class LoadablePatternService {
               .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
               .build());
     }
+    replyBuilder.setResponseStatus(
+        Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
     return replyBuilder;
   }
 

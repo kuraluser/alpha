@@ -1,5 +1,5 @@
 /* Licensed at AlphaOri Technologies */
-package com.cpdss.gateway.domain;
+package com.cpdss.loadablestudy.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

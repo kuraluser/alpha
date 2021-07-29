@@ -63,7 +63,7 @@ public class CommunicationService {
   @GrpcClient("envoyReaderService")
   private EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
 
-  @GrpcClient("envoyReaderService")
+  @GrpcClient("envoyWriterService")
   private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterService;
 
   @Value("${loadablestudy.communication.timelimit}")
