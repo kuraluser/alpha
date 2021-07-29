@@ -1,5 +1,5 @@
 /* Licensed at AlphaOri Technologies */
-package com.cpdss.gateway.service;
+package com.cpdss.loadablestudy.service;
 
 import com.cpdss.common.generated.*;
 import lombok.extern.slf4j.Slf4j;
