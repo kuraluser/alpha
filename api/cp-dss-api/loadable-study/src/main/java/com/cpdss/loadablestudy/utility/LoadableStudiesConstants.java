@@ -177,6 +177,6 @@ public class LoadableStudiesConstants {
   public static final Long LOADABLE_PATTERN_EDIT_LOADICATOR_RESPONSE = 8L;
 
   public static final String TYPE_DEPARTURE = "Departure";
-  
+
   public static final Long DISCHARGE_STUDY_REQUEST = 11L;
 }

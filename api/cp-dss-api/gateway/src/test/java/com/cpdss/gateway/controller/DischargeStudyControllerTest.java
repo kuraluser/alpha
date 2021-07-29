@@ -100,11 +100,12 @@ class DischargeStudyControllerTest {
       })
   @ParameterizedTest
   void testGeneratePattern(String url) throws Exception {
-    when(this.dischargeStudyService.generateDischargePatterns(anyLong(), anyLong(), anyLong(),any(String.class)))
+    when(this.dischargeStudyService.generateDischargePatterns(
+            anyLong(), anyLong(), anyLong(), any(String.class)))
         .thenReturn(new AlgoPatternResponse());
     this.mockMvc
         .perform(
-            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID,TEST_VOYAGE_ID, TEST_DISCHARGE_STUDY_ID )
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_DISCHARGE_STUDY_ID)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -118,22 +119,23 @@ class DischargeStudyControllerTest {
    * @throws Exception
    */
   @ValueSource(
-	      strings = {
-	        CLOUD_API_URL_PREFIX + DISCHARGE_STUDY_GENERATE_PATTERN_URL,
-	        SHIP_API_URL_PREFIX + DISCHARGE_STUDY_GENERATE_PATTERN_URL
-	      })
-	  @ParameterizedTest
-	  void testGeneratePatternException(String url) throws Exception {
-	    when(this.dischargeStudyService.generateDischargePatterns(anyLong(), anyLong(), anyLong(),any(String.class)))
-	    .thenThrow(this.getGenericException());
-	    this.mockMvc
-	        .perform(
-	            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID,TEST_VOYAGE_ID, TEST_DISCHARGE_STUDY_ID )
-	                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
-	                .contentType(MediaType.APPLICATION_JSON_VALUE)
-	                .accept(MediaType.APPLICATION_JSON_VALUE))
-	        .andExpect(status().isInternalServerError());
-	  }
+      strings = {
+        CLOUD_API_URL_PREFIX + DISCHARGE_STUDY_GENERATE_PATTERN_URL,
+        SHIP_API_URL_PREFIX + DISCHARGE_STUDY_GENERATE_PATTERN_URL
+      })
+  @ParameterizedTest
+  void testGeneratePatternException(String url) throws Exception {
+    when(this.dischargeStudyService.generateDischargePatterns(
+            anyLong(), anyLong(), anyLong(), any(String.class)))
+        .thenThrow(this.getGenericException());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_DISCHARGE_STUDY_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
 
   /**
    * Negative test case. Test method for generic service exception scenario
@@ -142,23 +144,23 @@ class DischargeStudyControllerTest {
    * @throws Exception
    */
   @ValueSource(
-	      strings = {
-	        CLOUD_API_URL_PREFIX + DISCHARGE_STUDY_GENERATE_PATTERN_URL,
-	        SHIP_API_URL_PREFIX + DISCHARGE_STUDY_GENERATE_PATTERN_URL
-	      })
-	  @ParameterizedTest
-	  void testGeneratePatternRuntimeException(String url) throws Exception {
-	    when(this.dischargeStudyService.generateDischargePatterns(anyLong(), anyLong(), anyLong(),any(String.class)))
-	    .thenThrow(RuntimeException.class);
-	    this.mockMvc
-	        .perform(
-	            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID,TEST_VOYAGE_ID, TEST_DISCHARGE_STUDY_ID )
-	                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
-	                .contentType(MediaType.APPLICATION_JSON_VALUE)
-	                .accept(MediaType.APPLICATION_JSON_VALUE))
-	        .andExpect(status().isInternalServerError());
-	  }
-
+      strings = {
+        CLOUD_API_URL_PREFIX + DISCHARGE_STUDY_GENERATE_PATTERN_URL,
+        SHIP_API_URL_PREFIX + DISCHARGE_STUDY_GENERATE_PATTERN_URL
+      })
+  @ParameterizedTest
+  void testGeneratePatternRuntimeException(String url) throws Exception {
+    when(this.dischargeStudyService.generateDischargePatterns(
+            anyLong(), anyLong(), anyLong(), any(String.class)))
+        .thenThrow(RuntimeException.class);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_DISCHARGE_STUDY_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
 
   private GenericServiceException getGenericException() {
     return new GenericServiceException(
