@@ -156,7 +156,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             HttpStatusCode.BAD_REQUEST);
       }
 
-      LoadableStudy savedDischargeStudy = saveDischargeStudy(request, voyage);
+      LoadableStudy savedDischargeStudy = saveDischargeStudy(request, voyage, loadableStudy);
       LoadableStudyPortRotation dischargeStudyPortRotation =
           createDischargeStudyPortRotationData(loadableStudyPortRotation, savedDischargeStudy);
       LoadableStudyPortRotation savedDischargeport =
@@ -278,9 +278,11 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
    *
    * @param request data to set to discharge study
    * @param voyage current voyage
+   * @param loadableStudy
    * @return
    */
-  private LoadableStudy saveDischargeStudy(DischargeStudyDetail request, Voyage voyage) {
+  private LoadableStudy saveDischargeStudy(
+      DischargeStudyDetail request, Voyage voyage, LoadableStudy loadableStudy) {
     LoadableStudy dischargeStudy = new LoadableStudy();
     dischargeStudy.setName(request.getName());
     dischargeStudy.setDetails(request.getEnquiryDetails());
@@ -290,6 +292,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     dischargeStudy.setPlanningTypeXId(2);
     dischargeStudy.setLoadableStudyStatus(
         loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
+    dischargeStudy.setConfirmedLoadableStudyId(loadableStudy.getId());
     LoadableStudy savedDischargeStudy = dischargeStudyRepository.save(dischargeStudy);
     return savedDischargeStudy;
   }
