@@ -11,7 +11,7 @@ import lombok.Data;
 public class TankCategory {
 
   private Long id;
-  private String tankNo;
+  private String tankName;
   private BigDecimal quantity;
   private BigDecimal ullage;
 }

@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.service;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ACTIVE_VOYAGE_STATUS;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_REQUEST;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_JSON_MODULE_NAME;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -74,7 +75,6 @@ public class GenerateDischargeStudyJson {
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
-  public static final String DISCHARGE = "DISCHARGE";
   public static final String INVALID_DISCHARGE_STUDY_ID = "INVALID_DISCHARGE_STUDY_ID";
   public static final String INVALID_DISCHARGE_QUANTITY = "INVALID_DISCHARGE_QUANTITY";
 
@@ -136,7 +136,7 @@ public class GenerateDischargeStudyJson {
           DISCHARGE_STUDY_REQUEST,
           objectMapper.writeValueAsString(AlgoJsonPayload));
 
-      //			 Calling Algo Service
+      //Calling Algo Service
       AlgoResponse algoResponse = new AlgoResponse();
       algoResponse.setProcessId("123");
       // Uncomment when Algo actual API is ready
@@ -182,7 +182,7 @@ public class GenerateDischargeStudyJson {
     log.info("Generating Discharge study request Json for  :{}", dischargeStudyId);
     DischargeStudyAlgoJson dischargeStudyAlgoJson = new DischargeStudyAlgoJson();
 
-    dischargeStudyAlgoJson.setModule(DISCHARGE);
+    dischargeStudyAlgoJson.setModule(DISCHARGE_STUDY_JSON_MODULE_NAME);
     dischargeStudyAlgoJson.setId(dischargeStudyId);
     dischargeStudyAlgoJson.setVoyageId(loadableStudy.getVoyage().getId());
     dischargeStudyAlgoJson.setVoyageNo(loadableStudy.getVoyage().getVoyageNo());
@@ -227,11 +227,9 @@ public class GenerateDischargeStudyJson {
 
     Optional<LoadableStudy> loadableStudyOpt =
         this.loadableStudyRepository.findByIdAndIsActive(dischargeStudyId, true);
+    
     if (loadableStudyOpt.isPresent()
         && loadableStudyOpt.get().getConfirmedLoadableStudyId() != null) {
-
-      Long confirmedLoadableStudyId = loadableStudyOpt.get().getConfirmedLoadableStudyId();
-
       try {
         this.voyageService.fetchActiveVoyageByVesselId(builder, vesselId, ACTIVE_VOYAGE_STATUS);
       } catch (Exception e) {
