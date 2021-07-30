@@ -812,7 +812,6 @@ message CargoNominationDetail {
 	string api = 17;
 	string temperature = 18;
 	int64 mode = 19;
-	string maxQuantity = 20;
 }
 
 message CargoNominationRequest {

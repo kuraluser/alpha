@@ -346,65 +346,6 @@ public final class LoadingPlanServiceGrpc {
     return getGetUpdateUllageDetailsMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest,
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels
-              .LoadingInformationSynopticalReply>
-      getGetBillOfLaddingDetailsMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "GetBillOfLaddingDetails",
-      requestType =
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest.class,
-      responseType =
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels
-              .LoadingInformationSynopticalReply.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest,
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels
-              .LoadingInformationSynopticalReply>
-      getGetBillOfLaddingDetailsMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest,
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                .LoadingInformationSynopticalReply>
-        getGetBillOfLaddingDetailsMethod;
-    if ((getGetBillOfLaddingDetailsMethod = LoadingPlanServiceGrpc.getGetBillOfLaddingDetailsMethod)
-        == null) {
-      synchronized (LoadingPlanServiceGrpc.class) {
-        if ((getGetBillOfLaddingDetailsMethod =
-                LoadingPlanServiceGrpc.getGetBillOfLaddingDetailsMethod)
-            == null) {
-          LoadingPlanServiceGrpc.getGetBillOfLaddingDetailsMethod =
-              getGetBillOfLaddingDetailsMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                              .BillOfLaddingRequest,
-                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                              .LoadingInformationSynopticalReply>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "GetBillOfLaddingDetails"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                                  .BillOfLaddingRequest.getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                                  .LoadingInformationSynopticalReply.getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadingPlanServiceMethodDescriptorSupplier("GetBillOfLaddingDetails"))
-                      .build();
-        }
-      }
-    }
-    return getGetBillOfLaddingDetailsMethod;
-  }
-
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingPlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingPlanServiceStub> factory =
@@ -505,16 +446,6 @@ public final class LoadingPlanServiceGrpc {
       asyncUnimplementedUnaryCall(getGetUpdateUllageDetailsMethod(), responseObserver);
     }
 
-    /** */
-    public void getBillOfLaddingDetails(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                    .LoadingInformationSynopticalReply>
-            responseObserver) {
-      asyncUnimplementedUnaryCall(getGetBillOfLaddingDetailsMethod(), responseObserver);
-    }
-
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -567,15 +498,6 @@ public final class LoadingPlanServiceGrpc {
                           .UpdateUllageDetailsRequest,
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .UpdateUllageDetailsResponse>(this, METHODID_GET_UPDATE_ULLAGE_DETAILS)))
-          .addMethod(
-              getGetBillOfLaddingDetailsMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                          .BillOfLaddingRequest,
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                          .LoadingInformationSynopticalReply>(
-                      this, METHODID_GET_BILL_OF_LADDING_DETAILS)))
           .build();
     }
   }
@@ -666,19 +588,6 @@ public final class LoadingPlanServiceGrpc {
           request,
           responseObserver);
     }
-
-    /** */
-    public void getBillOfLaddingDetails(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                    .LoadingInformationSynopticalReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetBillOfLaddingDetailsMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
   }
 
   /** */
@@ -745,16 +654,6 @@ public final class LoadingPlanServiceGrpc {
                 request) {
       return blockingUnaryCall(
           getChannel(), getGetUpdateUllageDetailsMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels
-            .LoadingInformationSynopticalReply
-        getBillOfLaddingDetails(
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest
-                request) {
-      return blockingUnaryCall(
-          getChannel(), getGetBillOfLaddingDetailsMethod(), getCallOptions(), request);
     }
   }
 
@@ -830,17 +729,6 @@ public final class LoadingPlanServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetUpdateUllageDetailsMethod(), getCallOptions()), request);
     }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                .LoadingInformationSynopticalReply>
-        getBillOfLaddingDetails(
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest
-                request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetBillOfLaddingDetailsMethod(), getCallOptions()), request);
-    }
   }
 
   private static final int METHODID_LOADING_PLAN_SYNCHRONIZATION = 0;
@@ -849,7 +737,6 @@ public final class LoadingPlanServiceGrpc {
   private static final int METHODID_GET_OR_SAVE_RULES_FOR_LOADING_PLAN = 3;
   private static final int METHODID_GET_LOADING_SEQUENCES = 4;
   private static final int METHODID_GET_UPDATE_ULLAGE_DETAILS = 5;
-  private static final int METHODID_GET_BILL_OF_LADDING_DETAILS = 6;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -919,15 +806,6 @@ public final class LoadingPlanServiceGrpc {
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .UpdateUllageDetailsResponse>)
-                  responseObserver);
-          break;
-        case METHODID_GET_BILL_OF_LADDING_DETAILS:
-          serviceImpl.getBillOfLaddingDetails(
-              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest)
-                  request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                          .LoadingInformationSynopticalReply>)
                   responseObserver);
           break;
         default:
@@ -1000,7 +878,6 @@ public final class LoadingPlanServiceGrpc {
                       .addMethod(getGetOrSaveRulesForLoadingPlanMethod())
                       .addMethod(getGetLoadingSequencesMethod())
                       .addMethod(getGetUpdateUllageDetailsMethod())
-                      .addMethod(getGetBillOfLaddingDetailsMethod())
                       .build();
         }
       }
