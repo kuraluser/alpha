@@ -12,6 +12,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -741,6 +742,27 @@ public class LoadableQuantityService {
 
             loadableStudy.setLoadableQuantity(loadableQuantityDto);
           });
+    }
+  }
+
+  public void validateLoadableStudyWithLQ(LoadableStudy ls) throws GenericServiceException {
+    List<PortRotationIdAndPortId> ports =
+        loadableStudyPortRotationRepository.findAllIdAndPortIdsByLSId(ls.getId(), true);
+    boolean valid = false;
+    for (PortRotationIdAndPortId port : ports) {
+      Optional<LoadableQuantity> lQs =
+          loadableQuantityRepository.findByLSIdAndPortRotationId(ls.getId(), port.getId(), true);
+      if (lQs.isPresent()) {
+        valid = true;
+        break;
+      }
+    }
+    if (!valid) {
+      log.info("Loadable Study Validation, No Loadable Quantity Found for Ls Id - {}", ls.getId());
+      throw new GenericServiceException(
+          "No Loadable Quantity Found for Loadable Study, Id " + ls.getId(),
+          CommonErrorCodes.E_CPDSS_LS_INVALID_LQ,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
   }
 }

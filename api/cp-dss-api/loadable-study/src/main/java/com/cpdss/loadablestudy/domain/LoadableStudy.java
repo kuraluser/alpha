@@ -1,12 +1,15 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.domain;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_JSON_MODULE_NAME;
+
 import java.util.List;
 import lombok.Data;
 
 /** @Author jerin.g */
 @Data
 public class LoadableStudy {
+  private String module = LOADABLE_STUDY_JSON_MODULE_NAME;
   private Long id;
   private Long voyageId;
   private String voyageNo;
@@ -35,4 +38,6 @@ public class LoadableStudy {
   private Boolean feedbackLoop;
   private Integer feedbackLoopCount;
   private List<RulePlans> loadableStudyRuleList;
+  private List<LoadableStudyAttachment> LoadableStudyAttachment;
+  private List<SynopticalTable> synopticalTableDetails;
 }

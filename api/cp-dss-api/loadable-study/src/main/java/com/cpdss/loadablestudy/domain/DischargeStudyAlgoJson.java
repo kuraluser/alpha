@@ -7,6 +7,8 @@ import lombok.Data;
 /** @Author arun.j */
 @Data
 public class DischargeStudyAlgoJson {
+
+  private String module;
   private Long id;
   private Long voyageId;
   private String voyageNo;

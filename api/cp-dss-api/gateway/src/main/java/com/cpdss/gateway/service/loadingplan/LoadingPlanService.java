@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.gateway.domain.LoadingUpdateUllageResponse;
 import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
@@ -38,4 +39,7 @@ public interface LoadingPlanService {
 
   LoadingPlanResponse getLoadingPlan(Long vesselId, Long voyageId, Long infoId, Long portRotationId)
       throws GenericServiceException;
+
+  public LoadingUpdateUllageResponse getUpdateUllageDetails(
+      Long vesselId, Long patternId, Long portId) throws GenericServiceException;
 }

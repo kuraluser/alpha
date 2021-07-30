@@ -1,6 +1,9 @@
 ext{
     grpcPort = System.getenv('GRPC_PORT') ?: ""
 	salt = System.getenv('SALT') ?: ""
+    cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
+    shipUrl = System.getenv('SHIP_URL')?:""
+    shoreUrl = System.getenv('SHORE_URL')?:""
 }
 
 appConfig {
@@ -21,11 +24,13 @@ docker {
       replicas = 1
       rollbackOnUpdateFailure = true
     }
-    environment = ['GRPC_PORT': grpcPort, 'SALT': salt]
+    environment = ['GRPC_PORT': grpcPort, 'SALT': salt,'CPDSS_BUILD_ENV': cpdssBuildEnv, 'SHIP_URL': shipUrl,'SHORE_URL':shoreUrl]
   }
 }
 
 dependencies {
     implementation project(':common')
     compile group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE'
+        compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
+	  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
 }

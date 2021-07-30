@@ -43,6 +43,7 @@ message LoadingAlgoBerthData {
 	int64 berthId = 3;
 	string controllingDepth = 4;
 	string underKeelClearance = 5;
+	string seawaterDensity = 6;
 }
 
 message CargoInfos {
@@ -155,5 +156,6 @@ message BerthDetail{
 	string maxLoa = 10;
 	string maxDraft = 11;
 	string lineDisplacement = 13;
+	string hoseConnection = 14;
 }
 // <------ end loading plan, by john -------->

@@ -341,8 +341,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
       Optional.ofNullable(bi.getPortInfo().getId()).ifPresent(builder2::setPortId);
       Optional.ofNullable(bi.getMaxShipChannel())
           .ifPresent(v -> builder2.setMaxShipChannel(String.valueOf(v)));
-      Optional.ofNullable(bi.getBerthName())
-          .ifPresent(v -> builder2.setBerthName(String.valueOf(v)));
+      Optional.ofNullable(bi.getBerthName()).ifPresent(v -> builder2.setBerthName(v));
       Optional.ofNullable(bi.getMaxShipDepth())
           .ifPresent(v -> builder2.setMaxShipDepth(String.valueOf(v)));
 
@@ -358,6 +357,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
 
       Optional.ofNullable(bi.getLineDisplacement())
           .ifPresent(v -> builder2.setLineDisplacement(String.valueOf(v)));
+
+      Optional.ofNullable(bi.getHoseConnection()).ifPresent(builder2::setHoseConnection);
       builder.addBerths(builder2);
     }
   }
@@ -413,7 +414,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
   }
 
   /**
-   * In Request pass berth Ids, and return port data
+   * In Request pass berth Ids, and return port/berth data for loading plan algo
    *
    * @param request
    * @param responseObserver
@@ -439,6 +440,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
                 .ifPresent(v -> builder.setControllingDepth(v.toString()));
             Optional.ofNullable(berthInfo.get().getPortInfo().getUnderKeelClearance())
                 .ifPresent(v -> builder.setUnderKeelClearance(v));
+            Optional.ofNullable(berthInfo.get().getPortInfo().getDensitySeaWater())
+                .ifPresent(v -> builder.setSeawaterDensity(v.toString()));
           }
         }
         ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();

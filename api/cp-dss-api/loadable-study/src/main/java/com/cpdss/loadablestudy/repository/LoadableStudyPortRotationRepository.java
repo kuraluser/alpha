@@ -151,4 +151,7 @@ public interface LoadableStudyPortRotationRepository
 
   public List<LoadableStudyPortRotation> findByLoadableStudyAndPortXIdAndIsActiveAndOperation(
       LoadableStudy loadableStudy, Long portId, boolean isActive, CargoOperation operation);
+
+  public LoadableStudyPortRotation findByLoadableStudyAndPortXIdAndIsActive(
+      LoadableStudy loadableStudy, Long portId, boolean isActive);
 }

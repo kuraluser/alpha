@@ -52,7 +52,7 @@ public final class LoadingPlanServiceOuterClass {
           + "eStatus\"\000\022I\n\031DeleteLoadingInstructions\022\031"
           + ".LoadingInstructionStatus\032\017.ResponseStat"
           + "us\"\000\022@\n\020EditInstructions\022\031.LoadingInstru"
-          + "ctionStatus\032\017.ResponseStatus\"\0002\212\003\n\022Loadi"
+          + "ctionStatus\032\017.ResponseStatus\"\0002\271\004\n\022Loadi"
           + "ngPlanService\022N\n\032LoadingPlanSynchronizat"
           + "ion\022\027.LoadingPlanSyncDetails\032\025.LoadingPl"
           + "anSyncReply\"\000\022F\n\017SaveLoadingPlan\022\027.Loadi"
@@ -62,8 +62,13 @@ public final class LoadingPlanServiceOuterClass {
           + "rSaveRulesForLoadingPlan\022\027.LoadingPlanRu"
           + "leRequest\032\025.LoadingPlanRuleReply\"\000\022G\n\023Ge"
           + "tLoadingSequences\022\027.LoadingSequenceReque"
-          + "st\032\025.LoadingSequenceReply\"\000B+\n\'com.cpdss"
-          + ".common.generated.loading_planP\000b\006proto3"
+          + "st\032\025.LoadingSequenceReply\"\000\022U\n\026GetUpdate"
+          + "UllageDetails\022\033.UpdateUllageDetailsReque"
+          + "st\032\034.UpdateUllageDetailsResponse\"\000\022V\n\027Ge"
+          + "tBillOfLaddingDetails\022\025.BillOfLaddingReq"
+          + "uest\032\".LoadingInformationSynopticalReply"
+          + "\"\000B+\n\'com.cpdss.common.generated.loading"
+          + "_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

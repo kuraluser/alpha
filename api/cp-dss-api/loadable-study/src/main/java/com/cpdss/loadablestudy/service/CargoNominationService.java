@@ -8,6 +8,9 @@ import static java.util.Optional.ofNullable;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.*;
@@ -63,8 +66,12 @@ public class CargoNominationService {
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceBlockingStub loadingPlanGrpcService;
+
   @GrpcClient("cargoService")
   private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
+
   /**
    * fetch cargo nomination based on the loadable study id
    *
@@ -594,6 +601,7 @@ public class CargoNominationService {
             ofNullable(cargoNomination.getMinTolerance())
                 .ifPresent(minTolerance -> builder.setMinTolerance(String.valueOf(minTolerance)));
             ofNullable(cargoNomination.getSegregationXId()).ifPresent(builder::setSegregationId);
+            builder.setMaxQuantity(getMaxQuantityFromBillOfLadding(cargoNomination.getId()));
             cargoNominationReplyBuilder.addCargoNominations(builder);
 
             if (!CollectionUtils.isEmpty(apiTempHistoriesAll)) {
@@ -627,6 +635,29 @@ public class CargoNominationService {
             }
           });
     }
+  }
+
+  // Get max Quantity in a Cargo Nomination
+  public String getMaxQuantityFromBillOfLadding(Long cargoNominationId) {
+    log.info(
+        "Getting max quantity of each cargo nomination, from loading plan {}", cargoNominationId);
+    BillOfLaddingRequest request =
+        BillOfLaddingRequest.newBuilder().setCargoNominationId(cargoNominationId).build();
+    LoadingInformationSynopticalReply reply =
+        loadingPlanGrpcService.getBillOfLaddingDetails(request);
+    if (SUCCESS.equals(reply.getResponseStatus().getStatus())
+        && !CollectionUtils.isEmpty(reply.getBillOfLaddingList())) {
+      if (reply.getBillOfLaddingList().size() == 1) {
+        return reply.getBillOfLaddingList().get(0).getQuantityMt();
+      } else {
+        return String.valueOf(
+            reply.getBillOfLaddingList().stream()
+                .map(item -> new BigDecimal(item.getQuantityMt()))
+                .reduce(BigDecimal::add));
+      }
+    }
+    log.info("No Bill of ladding data present for cargo nomination {}", cargoNominationId);
+    return null;
   }
 
   public LoadableStudy.ValveSegregationReply.Builder getValveSegregation(

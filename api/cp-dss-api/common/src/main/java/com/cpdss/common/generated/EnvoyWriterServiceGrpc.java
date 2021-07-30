@@ -70,6 +70,53 @@ public final class EnvoyWriterServiceGrpc {
     return getGetCommunicationServerMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest,
+          com.cpdss.common.generated.EnvoyWriter.WriterReply>
+      getStatusCheckMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "StatusCheck",
+      requestType = com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest.class,
+      responseType = com.cpdss.common.generated.EnvoyWriter.WriterReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest,
+          com.cpdss.common.generated.EnvoyWriter.WriterReply>
+      getStatusCheckMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest,
+            com.cpdss.common.generated.EnvoyWriter.WriterReply>
+        getStatusCheckMethod;
+    if ((getStatusCheckMethod = EnvoyWriterServiceGrpc.getStatusCheckMethod) == null) {
+      synchronized (EnvoyWriterServiceGrpc.class) {
+        if ((getStatusCheckMethod = EnvoyWriterServiceGrpc.getStatusCheckMethod) == null) {
+          EnvoyWriterServiceGrpc.getStatusCheckMethod =
+              getStatusCheckMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest,
+                          com.cpdss.common.generated.EnvoyWriter.WriterReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "StatusCheck"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.EnvoyWriter.WriterReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new EnvoyWriterServiceMethodDescriptorSupplier("StatusCheck"))
+                      .build();
+        }
+      }
+    }
+    return getStatusCheckMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static EnvoyWriterServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<EnvoyWriterServiceStub> factory =
@@ -122,6 +169,14 @@ public final class EnvoyWriterServiceGrpc {
       asyncUnimplementedUnaryCall(getGetCommunicationServerMethod(), responseObserver);
     }
 
+    /** */
+    public void statusCheck(
+        com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyWriter.WriterReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getStatusCheckMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -132,6 +187,13 @@ public final class EnvoyWriterServiceGrpc {
                       com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest,
                       com.cpdss.common.generated.EnvoyWriter.WriterReply>(
                       this, METHODID_GET_COMMUNICATION_SERVER)))
+          .addMethod(
+              getStatusCheckMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest,
+                      com.cpdss.common.generated.EnvoyWriter.WriterReply>(
+                      this, METHODID_STATUS_CHECK)))
           .build();
     }
   }
@@ -159,6 +221,17 @@ public final class EnvoyWriterServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void statusCheck(
+        com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyWriter.WriterReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getStatusCheckMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -180,6 +253,12 @@ public final class EnvoyWriterServiceGrpc {
         com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetCommunicationServerMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.EnvoyWriter.WriterReply statusCheck(
+        com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request) {
+      return blockingUnaryCall(getChannel(), getStatusCheckMethod(), getCallOptions(), request);
     }
   }
 
@@ -203,9 +282,18 @@ public final class EnvoyWriterServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetCommunicationServerMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.EnvoyWriter.WriterReply>
+        statusCheck(com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getStatusCheckMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_COMMUNICATION_SERVER = 0;
+  private static final int METHODID_STATUS_CHECK = 1;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -226,6 +314,12 @@ public final class EnvoyWriterServiceGrpc {
       switch (methodId) {
         case METHODID_GET_COMMUNICATION_SERVER:
           serviceImpl.getCommunicationServer(
+              (com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyWriter.WriterReply>)
+                  responseObserver);
+          break;
+        case METHODID_STATUS_CHECK:
+          serviceImpl.statusCheck(
               (com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyWriter.WriterReply>)
                   responseObserver);
@@ -295,6 +389,7 @@ public final class EnvoyWriterServiceGrpc {
                   io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
                       .setSchemaDescriptor(new EnvoyWriterServiceFileDescriptorSupplier())
                       .addMethod(getGetCommunicationServerMethod())
+                      .addMethod(getStatusCheckMethod())
                       .build();
         }
       }

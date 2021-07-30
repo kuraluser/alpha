@@ -11,6 +11,8 @@ import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.EnvoyReader;
+import com.cpdss.common.generated.EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub;
 import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
@@ -107,11 +109,15 @@ import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ProtocolStringList;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -157,6 +163,9 @@ public class LoadableStudyService {
 
   @GrpcClient("envoywritersrvice")
   private EnvoyWriterServiceBlockingStub envoyWriterGrpcService;
+
+  @GrpcClient("envoyreadersrvice")
+  private EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
 
   @Autowired UserService userService;
 
@@ -5771,8 +5780,62 @@ public class LoadableStudyService {
   /** @return Object */
   public Object test() {
     EnvoyWriterRequest.Builder error = EnvoyWriterRequest.newBuilder();
-    error.setImoNumber("123");
-    this.envoyWriterGrpcService.getCommunicationServer(error.build());
+    error.setClientId("kazusa");
+    error.setMessageType("ls");
+    error.setJsonPayload("test data");
+    error.setImoNumber("9513402");
+    error.setMessageId("3638b5aa-1cd0-4e47-b1b7-5a7039f830f9");
+    // this.envoyWriterGrpcService.getCommunicationServer(error.build());
+    this.envoyWriterGrpcService.statusCheck(error.build());
+    return null;
+  }
+
+  /** @return Object */
+  public Object test1() {
+    EnvoyReader.EnvoyReaderResultRequest.Builder error =
+        EnvoyReader.EnvoyReaderResultRequest.newBuilder();
+    error.setClientId("KAZUSA");
+    error.setMessageType("LOADABLESTUDY");
+    error.setShipId("9513402");
+    EnvoyReader.EnvoyReaderResultReply jsonResult =
+        this.envoyReaderGrpcService.getResultFromCommServer(error.build());
+    return null;
+    /*com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.Builder req =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.newBuilder();
+    req.setJsonResult(jsonResult.getPatternResultJson());
+    return loadableStudyServiceBlockingStub.saveLoadableStudyShore(req.build());*/
+  }
+
+  public Object test2() {
+    Long loadableStudiesId = 7258L;
+    try {
+      LoadablePlanRequest loadablePlanrequest =
+          new Gson()
+              .fromJson(
+                  new String(
+                      Files.readAllBytes(
+                          Paths.get(
+                              this.rootFolder
+                                  + "/json/loadableStudyResult_"
+                                  + loadableStudiesId
+                                  + ".json"))),
+                  LoadablePlanRequest.class);
+      LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
+      request.setLoadableStudyId(loadableStudiesId);
+      request.setHasLodicator(loadablePlanrequest.getHasLoadicator());
+      buildLoadablePlanDetails(loadablePlanrequest, request);
+
+      if (loadablePlanrequest.getErrors() != null && !loadablePlanrequest.getErrors().isEmpty()) {
+        this.buildAlgoError(loadablePlanrequest.getErrors(), request);
+      }
+
+      AlgoReply algoReply = this.saveLoadablePatterns(request);
+
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     return null;
   }
 

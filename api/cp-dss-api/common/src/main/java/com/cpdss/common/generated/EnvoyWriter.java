@@ -29,31 +29,68 @@ public final class EnvoyWriter {
     com.google.protobuf.ByteString getJsonPayloadBytes();
 
     /**
-     * <code>string imoNumber = 2;</code>
+     * <code>string messageType = 2;</code>
+     *
+     * @return The messageType.
+     */
+    java.lang.String getMessageType();
+    /**
+     * <code>string messageType = 2;</code>
+     *
+     * @return The bytes for messageType.
+     */
+    com.google.protobuf.ByteString getMessageTypeBytes();
+
+    /**
+     * <code>string clientId = 3;</code>
+     *
+     * @return The clientId.
+     */
+    java.lang.String getClientId();
+    /**
+     * <code>string clientId = 3;</code>
+     *
+     * @return The bytes for clientId.
+     */
+    com.google.protobuf.ByteString getClientIdBytes();
+
+    /**
+     * <code>string imoNumber = 4;</code>
      *
      * @return The imoNumber.
      */
     java.lang.String getImoNumber();
     /**
-     * <code>string imoNumber = 2;</code>
+     * <code>string imoNumber = 4;</code>
      *
      * @return The bytes for imoNumber.
      */
     com.google.protobuf.ByteString getImoNumberBytes();
 
     /**
-     * <code>int64 vesselId = 3;</code>
      *
-     * @return The vesselId.
+     *
+     * <pre>
+     * uuid
+     * </pre>
+     *
+     * <code>string messageId = 5;</code>
+     *
+     * @return The messageId.
      */
-    long getVesselId();
-
+    java.lang.String getMessageId();
     /**
-     * <code>int32 requestType = 4;</code>
      *
-     * @return The requestType.
+     *
+     * <pre>
+     * uuid
+     * </pre>
+     *
+     * <code>string messageId = 5;</code>
+     *
+     * @return The bytes for messageId.
      */
-    int getRequestType();
+    com.google.protobuf.ByteString getMessageIdBytes();
   }
   /** Protobuf type {@code EnvoyWriterRequest} */
   public static final class EnvoyWriterRequest extends com.google.protobuf.GeneratedMessageV3
@@ -68,7 +105,10 @@ public final class EnvoyWriter {
 
     private EnvoyWriterRequest() {
       jsonPayload_ = "";
+      messageType_ = "";
+      clientId_ = "";
       imoNumber_ = "";
+      messageId_ = "";
     }
 
     @java.lang.Override
@@ -111,17 +151,28 @@ public final class EnvoyWriter {
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
+                messageType_ = s;
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                clientId_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
                 imoNumber_ = s;
                 break;
               }
-            case 24:
+            case 42:
               {
-                vesselId_ = input.readInt64();
-                break;
-              }
-            case 32:
-              {
-                requestType_ = input.readInt32();
+                java.lang.String s = input.readStringRequireUtf8();
+
+                messageId_ = s;
                 break;
               }
             default:
@@ -192,10 +243,80 @@ public final class EnvoyWriter {
       }
     }
 
-    public static final int IMONUMBER_FIELD_NUMBER = 2;
+    public static final int MESSAGETYPE_FIELD_NUMBER = 2;
+    private volatile java.lang.Object messageType_;
+    /**
+     * <code>string messageType = 2;</code>
+     *
+     * @return The messageType.
+     */
+    public java.lang.String getMessageType() {
+      java.lang.Object ref = messageType_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        messageType_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string messageType = 2;</code>
+     *
+     * @return The bytes for messageType.
+     */
+    public com.google.protobuf.ByteString getMessageTypeBytes() {
+      java.lang.Object ref = messageType_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        messageType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CLIENTID_FIELD_NUMBER = 3;
+    private volatile java.lang.Object clientId_;
+    /**
+     * <code>string clientId = 3;</code>
+     *
+     * @return The clientId.
+     */
+    public java.lang.String getClientId() {
+      java.lang.Object ref = clientId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        clientId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string clientId = 3;</code>
+     *
+     * @return The bytes for clientId.
+     */
+    public com.google.protobuf.ByteString getClientIdBytes() {
+      java.lang.Object ref = clientId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        clientId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int IMONUMBER_FIELD_NUMBER = 4;
     private volatile java.lang.Object imoNumber_;
     /**
-     * <code>string imoNumber = 2;</code>
+     * <code>string imoNumber = 4;</code>
      *
      * @return The imoNumber.
      */
@@ -211,7 +332,7 @@ public final class EnvoyWriter {
       }
     }
     /**
-     * <code>string imoNumber = 2;</code>
+     * <code>string imoNumber = 4;</code>
      *
      * @return The bytes for imoNumber.
      */
@@ -227,26 +348,51 @@ public final class EnvoyWriter {
       }
     }
 
-    public static final int VESSELID_FIELD_NUMBER = 3;
-    private long vesselId_;
+    public static final int MESSAGEID_FIELD_NUMBER = 5;
+    private volatile java.lang.Object messageId_;
     /**
-     * <code>int64 vesselId = 3;</code>
      *
-     * @return The vesselId.
+     *
+     * <pre>
+     * uuid
+     * </pre>
+     *
+     * <code>string messageId = 5;</code>
+     *
+     * @return The messageId.
      */
-    public long getVesselId() {
-      return vesselId_;
+    public java.lang.String getMessageId() {
+      java.lang.Object ref = messageId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        messageId_ = s;
+        return s;
+      }
     }
-
-    public static final int REQUESTTYPE_FIELD_NUMBER = 4;
-    private int requestType_;
     /**
-     * <code>int32 requestType = 4;</code>
      *
-     * @return The requestType.
+     *
+     * <pre>
+     * uuid
+     * </pre>
+     *
+     * <code>string messageId = 5;</code>
+     *
+     * @return The bytes for messageId.
      */
-    public int getRequestType() {
-      return requestType_;
+    public com.google.protobuf.ByteString getMessageIdBytes() {
+      java.lang.Object ref = messageId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        messageId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -266,14 +412,17 @@ public final class EnvoyWriter {
       if (!getJsonPayloadBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, jsonPayload_);
       }
+      if (!getMessageTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, messageType_);
+      }
+      if (!getClientIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, clientId_);
+      }
       if (!getImoNumberBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, imoNumber_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, imoNumber_);
       }
-      if (vesselId_ != 0L) {
-        output.writeInt64(3, vesselId_);
-      }
-      if (requestType_ != 0) {
-        output.writeInt32(4, requestType_);
+      if (!getMessageIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, messageId_);
       }
       unknownFields.writeTo(output);
     }
@@ -287,14 +436,17 @@ public final class EnvoyWriter {
       if (!getJsonPayloadBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, jsonPayload_);
       }
+      if (!getMessageTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, messageType_);
+      }
+      if (!getClientIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, clientId_);
+      }
       if (!getImoNumberBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, imoNumber_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, imoNumber_);
       }
-      if (vesselId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, vesselId_);
-      }
-      if (requestType_ != 0) {
-        size += com.google.protobuf.CodedOutputStream.computeInt32Size(4, requestType_);
+      if (!getMessageIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, messageId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -313,9 +465,10 @@ public final class EnvoyWriter {
           (com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest) obj;
 
       if (!getJsonPayload().equals(other.getJsonPayload())) return false;
+      if (!getMessageType().equals(other.getMessageType())) return false;
+      if (!getClientId().equals(other.getClientId())) return false;
       if (!getImoNumber().equals(other.getImoNumber())) return false;
-      if (getVesselId() != other.getVesselId()) return false;
-      if (getRequestType() != other.getRequestType()) return false;
+      if (!getMessageId().equals(other.getMessageId())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -329,12 +482,14 @@ public final class EnvoyWriter {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + JSONPAYLOAD_FIELD_NUMBER;
       hash = (53 * hash) + getJsonPayload().hashCode();
+      hash = (37 * hash) + MESSAGETYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getMessageType().hashCode();
+      hash = (37 * hash) + CLIENTID_FIELD_NUMBER;
+      hash = (53 * hash) + getClientId().hashCode();
       hash = (37 * hash) + IMONUMBER_FIELD_NUMBER;
       hash = (53 * hash) + getImoNumber().hashCode();
-      hash = (37 * hash) + VESSELID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVesselId());
-      hash = (37 * hash) + REQUESTTYPE_FIELD_NUMBER;
-      hash = (53 * hash) + getRequestType();
+      hash = (37 * hash) + MESSAGEID_FIELD_NUMBER;
+      hash = (53 * hash) + getMessageId().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -476,11 +631,13 @@ public final class EnvoyWriter {
         super.clear();
         jsonPayload_ = "";
 
+        messageType_ = "";
+
+        clientId_ = "";
+
         imoNumber_ = "";
 
-        vesselId_ = 0L;
-
-        requestType_ = 0;
+        messageId_ = "";
 
         return this;
       }
@@ -509,9 +666,10 @@ public final class EnvoyWriter {
         com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest result =
             new com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest(this);
         result.jsonPayload_ = jsonPayload_;
+        result.messageType_ = messageType_;
+        result.clientId_ = clientId_;
         result.imoNumber_ = imoNumber_;
-        result.vesselId_ = vesselId_;
-        result.requestType_ = requestType_;
+        result.messageId_ = messageId_;
         onBuilt();
         return result;
       }
@@ -568,15 +726,21 @@ public final class EnvoyWriter {
           jsonPayload_ = other.jsonPayload_;
           onChanged();
         }
+        if (!other.getMessageType().isEmpty()) {
+          messageType_ = other.messageType_;
+          onChanged();
+        }
+        if (!other.getClientId().isEmpty()) {
+          clientId_ = other.clientId_;
+          onChanged();
+        }
         if (!other.getImoNumber().isEmpty()) {
           imoNumber_ = other.imoNumber_;
           onChanged();
         }
-        if (other.getVesselId() != 0L) {
-          setVesselId(other.getVesselId());
-        }
-        if (other.getRequestType() != 0) {
-          setRequestType(other.getRequestType());
+        if (!other.getMessageId().isEmpty()) {
+          messageId_ = other.messageId_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -684,9 +848,161 @@ public final class EnvoyWriter {
         return this;
       }
 
+      private java.lang.Object messageType_ = "";
+      /**
+       * <code>string messageType = 2;</code>
+       *
+       * @return The messageType.
+       */
+      public java.lang.String getMessageType() {
+        java.lang.Object ref = messageType_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          messageType_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string messageType = 2;</code>
+       *
+       * @return The bytes for messageType.
+       */
+      public com.google.protobuf.ByteString getMessageTypeBytes() {
+        java.lang.Object ref = messageType_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          messageType_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string messageType = 2;</code>
+       *
+       * @param value The messageType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMessageType(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        messageType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string messageType = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMessageType() {
+
+        messageType_ = getDefaultInstance().getMessageType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string messageType = 2;</code>
+       *
+       * @param value The bytes for messageType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMessageTypeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        messageType_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object clientId_ = "";
+      /**
+       * <code>string clientId = 3;</code>
+       *
+       * @return The clientId.
+       */
+      public java.lang.String getClientId() {
+        java.lang.Object ref = clientId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          clientId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string clientId = 3;</code>
+       *
+       * @return The bytes for clientId.
+       */
+      public com.google.protobuf.ByteString getClientIdBytes() {
+        java.lang.Object ref = clientId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          clientId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string clientId = 3;</code>
+       *
+       * @param value The clientId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setClientId(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        clientId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string clientId = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearClientId() {
+
+        clientId_ = getDefaultInstance().getClientId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string clientId = 3;</code>
+       *
+       * @param value The bytes for clientId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setClientIdBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        clientId_ = value;
+        onChanged();
+        return this;
+      }
+
       private java.lang.Object imoNumber_ = "";
       /**
-       * <code>string imoNumber = 2;</code>
+       * <code>string imoNumber = 4;</code>
        *
        * @return The imoNumber.
        */
@@ -702,7 +1018,7 @@ public final class EnvoyWriter {
         }
       }
       /**
-       * <code>string imoNumber = 2;</code>
+       * <code>string imoNumber = 4;</code>
        *
        * @return The bytes for imoNumber.
        */
@@ -718,7 +1034,7 @@ public final class EnvoyWriter {
         }
       }
       /**
-       * <code>string imoNumber = 2;</code>
+       * <code>string imoNumber = 4;</code>
        *
        * @param value The imoNumber to set.
        * @return This builder for chaining.
@@ -733,7 +1049,7 @@ public final class EnvoyWriter {
         return this;
       }
       /**
-       * <code>string imoNumber = 2;</code>
+       * <code>string imoNumber = 4;</code>
        *
        * @return This builder for chaining.
        */
@@ -744,7 +1060,7 @@ public final class EnvoyWriter {
         return this;
       }
       /**
-       * <code>string imoNumber = 2;</code>
+       * <code>string imoNumber = 4;</code>
        *
        * @param value The bytes for imoNumber to set.
        * @return This builder for chaining.
@@ -760,68 +1076,108 @@ public final class EnvoyWriter {
         return this;
       }
 
-      private long vesselId_;
+      private java.lang.Object messageId_ = "";
       /**
-       * <code>int64 vesselId = 3;</code>
        *
-       * @return The vesselId.
+       *
+       * <pre>
+       * uuid
+       * </pre>
+       *
+       * <code>string messageId = 5;</code>
+       *
+       * @return The messageId.
        */
-      public long getVesselId() {
-        return vesselId_;
+      public java.lang.String getMessageId() {
+        java.lang.Object ref = messageId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          messageId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>int64 vesselId = 3;</code>
        *
-       * @param value The vesselId to set.
+       *
+       * <pre>
+       * uuid
+       * </pre>
+       *
+       * <code>string messageId = 5;</code>
+       *
+       * @return The bytes for messageId.
+       */
+      public com.google.protobuf.ByteString getMessageIdBytes() {
+        java.lang.Object ref = messageId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          messageId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * uuid
+       * </pre>
+       *
+       * <code>string messageId = 5;</code>
+       *
+       * @param value The messageId to set.
        * @return This builder for chaining.
        */
-      public Builder setVesselId(long value) {
+      public Builder setMessageId(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
 
-        vesselId_ = value;
+        messageId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 vesselId = 3;</code>
+       *
+       *
+       * <pre>
+       * uuid
+       * </pre>
+       *
+       * <code>string messageId = 5;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearVesselId() {
+      public Builder clearMessageId() {
 
-        vesselId_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private int requestType_;
-      /**
-       * <code>int32 requestType = 4;</code>
-       *
-       * @return The requestType.
-       */
-      public int getRequestType() {
-        return requestType_;
-      }
-      /**
-       * <code>int32 requestType = 4;</code>
-       *
-       * @param value The requestType to set.
-       * @return This builder for chaining.
-       */
-      public Builder setRequestType(int value) {
-
-        requestType_ = value;
+        messageId_ = getDefaultInstance().getMessageId();
         onChanged();
         return this;
       }
       /**
-       * <code>int32 requestType = 4;</code>
        *
+       *
+       * <pre>
+       * uuid
+       * </pre>
+       *
+       * <code>string messageId = 5;</code>
+       *
+       * @param value The bytes for messageId to set.
        * @return This builder for chaining.
        */
-      public Builder clearRequestType() {
+      public Builder setMessageIdBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
 
-        requestType_ = 0;
+        messageId_ = value;
         onChanged();
         return this;
       }
@@ -899,30 +1255,82 @@ public final class EnvoyWriter {
     com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
 
     /**
-     * <code>string lsUUID = 2;</code>
+     * <code>string messageId = 2;</code>
      *
-     * @return The lsUUID.
+     * @return The messageId.
      */
-    java.lang.String getLsUUID();
+    java.lang.String getMessageId();
     /**
-     * <code>string lsUUID = 2;</code>
+     * <code>string messageId = 2;</code>
      *
-     * @return The bytes for lsUUID.
+     * @return The bytes for messageId.
      */
-    com.google.protobuf.ByteString getLsUUIDBytes();
+    com.google.protobuf.ByteString getMessageIdBytes();
 
     /**
-     * <code>string sequenceNo = 3;</code>
+     * <code>string shipId = 3;</code>
      *
-     * @return The sequenceNo.
+     * @return The shipId.
      */
-    java.lang.String getSequenceNo();
+    java.lang.String getShipId();
     /**
-     * <code>string sequenceNo = 3;</code>
+     * <code>string shipId = 3;</code>
      *
-     * @return The bytes for sequenceNo.
+     * @return The bytes for shipId.
      */
-    com.google.protobuf.ByteString getSequenceNoBytes();
+    com.google.protobuf.ByteString getShipIdBytes();
+
+    /**
+     * <code>string message = 4;</code>
+     *
+     * @return The message.
+     */
+    java.lang.String getMessage();
+    /**
+     * <code>string message = 4;</code>
+     *
+     * @return The bytes for message.
+     */
+    com.google.protobuf.ByteString getMessageBytes();
+
+    /**
+     * <code>string statusCode = 5;</code>
+     *
+     * @return The statusCode.
+     */
+    java.lang.String getStatusCode();
+    /**
+     * <code>string statusCode = 5;</code>
+     *
+     * @return The bytes for statusCode.
+     */
+    com.google.protobuf.ByteString getStatusCodeBytes();
+
+    /**
+     * <code>string eventUploadStatus = 6;</code>
+     *
+     * @return The eventUploadStatus.
+     */
+    java.lang.String getEventUploadStatus();
+    /**
+     * <code>string eventUploadStatus = 6;</code>
+     *
+     * @return The bytes for eventUploadStatus.
+     */
+    com.google.protobuf.ByteString getEventUploadStatusBytes();
+
+    /**
+     * <code>string eventDownloadStatus = 7;</code>
+     *
+     * @return The eventDownloadStatus.
+     */
+    java.lang.String getEventDownloadStatus();
+    /**
+     * <code>string eventDownloadStatus = 7;</code>
+     *
+     * @return The bytes for eventDownloadStatus.
+     */
+    com.google.protobuf.ByteString getEventDownloadStatusBytes();
   }
   /** Protobuf type {@code WriterReply} */
   public static final class WriterReply extends com.google.protobuf.GeneratedMessageV3
@@ -936,8 +1344,12 @@ public final class EnvoyWriter {
     }
 
     private WriterReply() {
-      lsUUID_ = "";
-      sequenceNo_ = "";
+      messageId_ = "";
+      shipId_ = "";
+      message_ = "";
+      statusCode_ = "";
+      eventUploadStatus_ = "";
+      eventDownloadStatus_ = "";
     }
 
     @java.lang.Override
@@ -990,14 +1402,42 @@ public final class EnvoyWriter {
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                lsUUID_ = s;
+                messageId_ = s;
                 break;
               }
             case 26:
               {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                sequenceNo_ = s;
+                shipId_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                message_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                statusCode_ = s;
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                eventUploadStatus_ = s;
+                break;
+              }
+            case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                eventDownloadStatus_ = s;
                 break;
               }
             default:
@@ -1057,70 +1497,210 @@ public final class EnvoyWriter {
       return getResponseStatus();
     }
 
-    public static final int LSUUID_FIELD_NUMBER = 2;
-    private volatile java.lang.Object lsUUID_;
+    public static final int MESSAGEID_FIELD_NUMBER = 2;
+    private volatile java.lang.Object messageId_;
     /**
-     * <code>string lsUUID = 2;</code>
+     * <code>string messageId = 2;</code>
      *
-     * @return The lsUUID.
+     * @return The messageId.
      */
-    public java.lang.String getLsUUID() {
-      java.lang.Object ref = lsUUID_;
+    public java.lang.String getMessageId() {
+      java.lang.Object ref = messageId_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        lsUUID_ = s;
+        messageId_ = s;
         return s;
       }
     }
     /**
-     * <code>string lsUUID = 2;</code>
+     * <code>string messageId = 2;</code>
      *
-     * @return The bytes for lsUUID.
+     * @return The bytes for messageId.
      */
-    public com.google.protobuf.ByteString getLsUUIDBytes() {
-      java.lang.Object ref = lsUUID_;
+    public com.google.protobuf.ByteString getMessageIdBytes() {
+      java.lang.Object ref = messageId_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        lsUUID_ = b;
+        messageId_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
 
-    public static final int SEQUENCENO_FIELD_NUMBER = 3;
-    private volatile java.lang.Object sequenceNo_;
+    public static final int SHIPID_FIELD_NUMBER = 3;
+    private volatile java.lang.Object shipId_;
     /**
-     * <code>string sequenceNo = 3;</code>
+     * <code>string shipId = 3;</code>
      *
-     * @return The sequenceNo.
+     * @return The shipId.
      */
-    public java.lang.String getSequenceNo() {
-      java.lang.Object ref = sequenceNo_;
+    public java.lang.String getShipId() {
+      java.lang.Object ref = shipId_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        sequenceNo_ = s;
+        shipId_ = s;
         return s;
       }
     }
     /**
-     * <code>string sequenceNo = 3;</code>
+     * <code>string shipId = 3;</code>
      *
-     * @return The bytes for sequenceNo.
+     * @return The bytes for shipId.
      */
-    public com.google.protobuf.ByteString getSequenceNoBytes() {
-      java.lang.Object ref = sequenceNo_;
+    public com.google.protobuf.ByteString getShipIdBytes() {
+      java.lang.Object ref = shipId_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        sequenceNo_ = b;
+        shipId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MESSAGE_FIELD_NUMBER = 4;
+    private volatile java.lang.Object message_;
+    /**
+     * <code>string message = 4;</code>
+     *
+     * @return The message.
+     */
+    public java.lang.String getMessage() {
+      java.lang.Object ref = message_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        message_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string message = 4;</code>
+     *
+     * @return The bytes for message.
+     */
+    public com.google.protobuf.ByteString getMessageBytes() {
+      java.lang.Object ref = message_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        message_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int STATUSCODE_FIELD_NUMBER = 5;
+    private volatile java.lang.Object statusCode_;
+    /**
+     * <code>string statusCode = 5;</code>
+     *
+     * @return The statusCode.
+     */
+    public java.lang.String getStatusCode() {
+      java.lang.Object ref = statusCode_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        statusCode_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string statusCode = 5;</code>
+     *
+     * @return The bytes for statusCode.
+     */
+    public com.google.protobuf.ByteString getStatusCodeBytes() {
+      java.lang.Object ref = statusCode_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        statusCode_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int EVENTUPLOADSTATUS_FIELD_NUMBER = 6;
+    private volatile java.lang.Object eventUploadStatus_;
+    /**
+     * <code>string eventUploadStatus = 6;</code>
+     *
+     * @return The eventUploadStatus.
+     */
+    public java.lang.String getEventUploadStatus() {
+      java.lang.Object ref = eventUploadStatus_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        eventUploadStatus_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string eventUploadStatus = 6;</code>
+     *
+     * @return The bytes for eventUploadStatus.
+     */
+    public com.google.protobuf.ByteString getEventUploadStatusBytes() {
+      java.lang.Object ref = eventUploadStatus_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        eventUploadStatus_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int EVENTDOWNLOADSTATUS_FIELD_NUMBER = 7;
+    private volatile java.lang.Object eventDownloadStatus_;
+    /**
+     * <code>string eventDownloadStatus = 7;</code>
+     *
+     * @return The eventDownloadStatus.
+     */
+    public java.lang.String getEventDownloadStatus() {
+      java.lang.Object ref = eventDownloadStatus_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        eventDownloadStatus_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string eventDownloadStatus = 7;</code>
+     *
+     * @return The bytes for eventDownloadStatus.
+     */
+    public com.google.protobuf.ByteString getEventDownloadStatusBytes() {
+      java.lang.Object ref = eventDownloadStatus_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        eventDownloadStatus_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -1144,11 +1724,23 @@ public final class EnvoyWriter {
       if (responseStatus_ != null) {
         output.writeMessage(1, getResponseStatus());
       }
-      if (!getLsUUIDBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, lsUUID_);
+      if (!getMessageIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, messageId_);
       }
-      if (!getSequenceNoBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, sequenceNo_);
+      if (!getShipIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, shipId_);
+      }
+      if (!getMessageBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, message_);
+      }
+      if (!getStatusCodeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, statusCode_);
+      }
+      if (!getEventUploadStatusBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, eventUploadStatus_);
+      }
+      if (!getEventDownloadStatusBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, eventDownloadStatus_);
       }
       unknownFields.writeTo(output);
     }
@@ -1162,11 +1754,23 @@ public final class EnvoyWriter {
       if (responseStatus_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
       }
-      if (!getLsUUIDBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, lsUUID_);
+      if (!getMessageIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, messageId_);
       }
-      if (!getSequenceNoBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, sequenceNo_);
+      if (!getShipIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, shipId_);
+      }
+      if (!getMessageBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, message_);
+      }
+      if (!getStatusCodeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, statusCode_);
+      }
+      if (!getEventUploadStatusBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, eventUploadStatus_);
+      }
+      if (!getEventDownloadStatusBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, eventDownloadStatus_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1188,8 +1792,12 @@ public final class EnvoyWriter {
       if (hasResponseStatus()) {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
-      if (!getLsUUID().equals(other.getLsUUID())) return false;
-      if (!getSequenceNo().equals(other.getSequenceNo())) return false;
+      if (!getMessageId().equals(other.getMessageId())) return false;
+      if (!getShipId().equals(other.getShipId())) return false;
+      if (!getMessage().equals(other.getMessage())) return false;
+      if (!getStatusCode().equals(other.getStatusCode())) return false;
+      if (!getEventUploadStatus().equals(other.getEventUploadStatus())) return false;
+      if (!getEventDownloadStatus().equals(other.getEventDownloadStatus())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1205,10 +1813,18 @@ public final class EnvoyWriter {
         hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
         hash = (53 * hash) + getResponseStatus().hashCode();
       }
-      hash = (37 * hash) + LSUUID_FIELD_NUMBER;
-      hash = (53 * hash) + getLsUUID().hashCode();
-      hash = (37 * hash) + SEQUENCENO_FIELD_NUMBER;
-      hash = (53 * hash) + getSequenceNo().hashCode();
+      hash = (37 * hash) + MESSAGEID_FIELD_NUMBER;
+      hash = (53 * hash) + getMessageId().hashCode();
+      hash = (37 * hash) + SHIPID_FIELD_NUMBER;
+      hash = (53 * hash) + getShipId().hashCode();
+      hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
+      hash = (53 * hash) + getMessage().hashCode();
+      hash = (37 * hash) + STATUSCODE_FIELD_NUMBER;
+      hash = (53 * hash) + getStatusCode().hashCode();
+      hash = (37 * hash) + EVENTUPLOADSTATUS_FIELD_NUMBER;
+      hash = (53 * hash) + getEventUploadStatus().hashCode();
+      hash = (37 * hash) + EVENTDOWNLOADSTATUS_FIELD_NUMBER;
+      hash = (53 * hash) + getEventDownloadStatus().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1352,9 +1968,17 @@ public final class EnvoyWriter {
           responseStatus_ = null;
           responseStatusBuilder_ = null;
         }
-        lsUUID_ = "";
+        messageId_ = "";
 
-        sequenceNo_ = "";
+        shipId_ = "";
+
+        message_ = "";
+
+        statusCode_ = "";
+
+        eventUploadStatus_ = "";
+
+        eventDownloadStatus_ = "";
 
         return this;
       }
@@ -1387,8 +2011,12 @@ public final class EnvoyWriter {
         } else {
           result.responseStatus_ = responseStatusBuilder_.build();
         }
-        result.lsUUID_ = lsUUID_;
-        result.sequenceNo_ = sequenceNo_;
+        result.messageId_ = messageId_;
+        result.shipId_ = shipId_;
+        result.message_ = message_;
+        result.statusCode_ = statusCode_;
+        result.eventUploadStatus_ = eventUploadStatus_;
+        result.eventDownloadStatus_ = eventDownloadStatus_;
         onBuilt();
         return result;
       }
@@ -1444,12 +2072,28 @@ public final class EnvoyWriter {
         if (other.hasResponseStatus()) {
           mergeResponseStatus(other.getResponseStatus());
         }
-        if (!other.getLsUUID().isEmpty()) {
-          lsUUID_ = other.lsUUID_;
+        if (!other.getMessageId().isEmpty()) {
+          messageId_ = other.messageId_;
           onChanged();
         }
-        if (!other.getSequenceNo().isEmpty()) {
-          sequenceNo_ = other.sequenceNo_;
+        if (!other.getShipId().isEmpty()) {
+          shipId_ = other.shipId_;
+          onChanged();
+        }
+        if (!other.getMessage().isEmpty()) {
+          message_ = other.message_;
+          onChanged();
+        }
+        if (!other.getStatusCode().isEmpty()) {
+          statusCode_ = other.statusCode_;
+          onChanged();
+        }
+        if (!other.getEventUploadStatus().isEmpty()) {
+          eventUploadStatus_ = other.eventUploadStatus_;
+          onChanged();
+        }
+        if (!other.getEventDownloadStatus().isEmpty()) {
+          eventDownloadStatus_ = other.eventDownloadStatus_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -1601,154 +2245,458 @@ public final class EnvoyWriter {
         return responseStatusBuilder_;
       }
 
-      private java.lang.Object lsUUID_ = "";
+      private java.lang.Object messageId_ = "";
       /**
-       * <code>string lsUUID = 2;</code>
+       * <code>string messageId = 2;</code>
        *
-       * @return The lsUUID.
+       * @return The messageId.
        */
-      public java.lang.String getLsUUID() {
-        java.lang.Object ref = lsUUID_;
+      public java.lang.String getMessageId() {
+        java.lang.Object ref = messageId_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          lsUUID_ = s;
+          messageId_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string lsUUID = 2;</code>
+       * <code>string messageId = 2;</code>
        *
-       * @return The bytes for lsUUID.
+       * @return The bytes for messageId.
        */
-      public com.google.protobuf.ByteString getLsUUIDBytes() {
-        java.lang.Object ref = lsUUID_;
+      public com.google.protobuf.ByteString getMessageIdBytes() {
+        java.lang.Object ref = messageId_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          lsUUID_ = b;
+          messageId_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string lsUUID = 2;</code>
+       * <code>string messageId = 2;</code>
        *
-       * @param value The lsUUID to set.
+       * @param value The messageId to set.
        * @return This builder for chaining.
        */
-      public Builder setLsUUID(java.lang.String value) {
+      public Builder setMessageId(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        lsUUID_ = value;
+        messageId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string lsUUID = 2;</code>
+       * <code>string messageId = 2;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearLsUUID() {
+      public Builder clearMessageId() {
 
-        lsUUID_ = getDefaultInstance().getLsUUID();
+        messageId_ = getDefaultInstance().getMessageId();
         onChanged();
         return this;
       }
       /**
-       * <code>string lsUUID = 2;</code>
+       * <code>string messageId = 2;</code>
        *
-       * @param value The bytes for lsUUID to set.
+       * @param value The bytes for messageId to set.
        * @return This builder for chaining.
        */
-      public Builder setLsUUIDBytes(com.google.protobuf.ByteString value) {
+      public Builder setMessageIdBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        lsUUID_ = value;
+        messageId_ = value;
         onChanged();
         return this;
       }
 
-      private java.lang.Object sequenceNo_ = "";
+      private java.lang.Object shipId_ = "";
       /**
-       * <code>string sequenceNo = 3;</code>
+       * <code>string shipId = 3;</code>
        *
-       * @return The sequenceNo.
+       * @return The shipId.
        */
-      public java.lang.String getSequenceNo() {
-        java.lang.Object ref = sequenceNo_;
+      public java.lang.String getShipId() {
+        java.lang.Object ref = shipId_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          sequenceNo_ = s;
+          shipId_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string sequenceNo = 3;</code>
+       * <code>string shipId = 3;</code>
        *
-       * @return The bytes for sequenceNo.
+       * @return The bytes for shipId.
        */
-      public com.google.protobuf.ByteString getSequenceNoBytes() {
-        java.lang.Object ref = sequenceNo_;
+      public com.google.protobuf.ByteString getShipIdBytes() {
+        java.lang.Object ref = shipId_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          sequenceNo_ = b;
+          shipId_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string sequenceNo = 3;</code>
+       * <code>string shipId = 3;</code>
        *
-       * @param value The sequenceNo to set.
+       * @param value The shipId to set.
        * @return This builder for chaining.
        */
-      public Builder setSequenceNo(java.lang.String value) {
+      public Builder setShipId(java.lang.String value) {
         if (value == null) {
           throw new NullPointerException();
         }
 
-        sequenceNo_ = value;
+        shipId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string sequenceNo = 3;</code>
+       * <code>string shipId = 3;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearSequenceNo() {
+      public Builder clearShipId() {
 
-        sequenceNo_ = getDefaultInstance().getSequenceNo();
+        shipId_ = getDefaultInstance().getShipId();
         onChanged();
         return this;
       }
       /**
-       * <code>string sequenceNo = 3;</code>
+       * <code>string shipId = 3;</code>
        *
-       * @param value The bytes for sequenceNo to set.
+       * @param value The bytes for shipId to set.
        * @return This builder for chaining.
        */
-      public Builder setSequenceNoBytes(com.google.protobuf.ByteString value) {
+      public Builder setShipIdBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
 
-        sequenceNo_ = value;
+        shipId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object message_ = "";
+      /**
+       * <code>string message = 4;</code>
+       *
+       * @return The message.
+       */
+      public java.lang.String getMessage() {
+        java.lang.Object ref = message_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          message_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string message = 4;</code>
+       *
+       * @return The bytes for message.
+       */
+      public com.google.protobuf.ByteString getMessageBytes() {
+        java.lang.Object ref = message_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          message_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string message = 4;</code>
+       *
+       * @param value The message to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMessage(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        message_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string message = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMessage() {
+
+        message_ = getDefaultInstance().getMessage();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string message = 4;</code>
+       *
+       * @param value The bytes for message to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMessageBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        message_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object statusCode_ = "";
+      /**
+       * <code>string statusCode = 5;</code>
+       *
+       * @return The statusCode.
+       */
+      public java.lang.String getStatusCode() {
+        java.lang.Object ref = statusCode_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          statusCode_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string statusCode = 5;</code>
+       *
+       * @return The bytes for statusCode.
+       */
+      public com.google.protobuf.ByteString getStatusCodeBytes() {
+        java.lang.Object ref = statusCode_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          statusCode_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string statusCode = 5;</code>
+       *
+       * @param value The statusCode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStatusCode(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        statusCode_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string statusCode = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearStatusCode() {
+
+        statusCode_ = getDefaultInstance().getStatusCode();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string statusCode = 5;</code>
+       *
+       * @param value The bytes for statusCode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setStatusCodeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        statusCode_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object eventUploadStatus_ = "";
+      /**
+       * <code>string eventUploadStatus = 6;</code>
+       *
+       * @return The eventUploadStatus.
+       */
+      public java.lang.String getEventUploadStatus() {
+        java.lang.Object ref = eventUploadStatus_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          eventUploadStatus_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string eventUploadStatus = 6;</code>
+       *
+       * @return The bytes for eventUploadStatus.
+       */
+      public com.google.protobuf.ByteString getEventUploadStatusBytes() {
+        java.lang.Object ref = eventUploadStatus_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          eventUploadStatus_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string eventUploadStatus = 6;</code>
+       *
+       * @param value The eventUploadStatus to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEventUploadStatus(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        eventUploadStatus_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string eventUploadStatus = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEventUploadStatus() {
+
+        eventUploadStatus_ = getDefaultInstance().getEventUploadStatus();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string eventUploadStatus = 6;</code>
+       *
+       * @param value The bytes for eventUploadStatus to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEventUploadStatusBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        eventUploadStatus_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object eventDownloadStatus_ = "";
+      /**
+       * <code>string eventDownloadStatus = 7;</code>
+       *
+       * @return The eventDownloadStatus.
+       */
+      public java.lang.String getEventDownloadStatus() {
+        java.lang.Object ref = eventDownloadStatus_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          eventDownloadStatus_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string eventDownloadStatus = 7;</code>
+       *
+       * @return The bytes for eventDownloadStatus.
+       */
+      public com.google.protobuf.ByteString getEventDownloadStatusBytes() {
+        java.lang.Object ref = eventDownloadStatus_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          eventDownloadStatus_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string eventDownloadStatus = 7;</code>
+       *
+       * @param value The eventDownloadStatus to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEventDownloadStatus(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        eventDownloadStatus_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string eventDownloadStatus = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEventDownloadStatus() {
+
+        eventDownloadStatus_ = getDefaultInstance().getEventDownloadStatus();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string eventDownloadStatus = 7;</code>
+       *
+       * @param value The bytes for eventDownloadStatus to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEventDownloadStatusBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        eventDownloadStatus_ = value;
         onChanged();
         return this;
       }
@@ -1822,15 +2770,19 @@ public final class EnvoyWriter {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\022envoy_writer.proto\032\014common.proto\"c\n\022En"
-          + "voyWriterRequest\022\023\n\013jsonPayload\030\001 \001(\t\022\021\n"
-          + "\timoNumber\030\002 \001(\t\022\020\n\010vesselId\030\003 \001(\003\022\023\n\013re"
-          + "questType\030\004 \001(\005\"Z\n\013WriterReply\022\'\n\016respon"
-          + "seStatus\030\001 \001(\0132\017.ResponseStatus\022\016\n\006lsUUI"
-          + "D\030\002 \001(\t\022\022\n\nsequenceNo\030\003 \001(\t2S\n\022EnvoyWrit"
-          + "erService\022=\n\026GetCommunicationServer\022\023.En"
-          + "voyWriterRequest\032\014.WriterReply\"\000B\036\n\032com."
-          + "cpdss.common.generatedP\000b\006proto3"
+      "\n\022envoy_writer.proto\032\014common.proto\"v\n\022En"
+          + "voyWriterRequest\022\023\n\013jsonPayload\030\001 \001(\t\022\023\n"
+          + "\013messageType\030\002 \001(\t\022\020\n\010clientId\030\003 \001(\t\022\021\n\t"
+          + "imoNumber\030\004 \001(\t\022\021\n\tmessageId\030\005 \001(\t\"\266\001\n\013W"
+          + "riterReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Res"
+          + "ponseStatus\022\021\n\tmessageId\030\002 \001(\t\022\016\n\006shipId"
+          + "\030\003 \001(\t\022\017\n\007message\030\004 \001(\t\022\022\n\nstatusCode\030\005 "
+          + "\001(\t\022\031\n\021eventUploadStatus\030\006 \001(\t\022\033\n\023eventD"
+          + "ownloadStatus\030\007 \001(\t2\207\001\n\022EnvoyWriterServi"
+          + "ce\022=\n\026GetCommunicationServer\022\023.EnvoyWrit"
+          + "erRequest\032\014.WriterReply\"\000\0222\n\013StatusCheck"
+          + "\022\023.EnvoyWriterRequest\032\014.WriterReply\"\000B\036\n"
+          + "\032com.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -1843,14 +2795,20 @@ public final class EnvoyWriter {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_EnvoyWriterRequest_descriptor,
             new java.lang.String[] {
-              "JsonPayload", "ImoNumber", "VesselId", "RequestType",
+              "JsonPayload", "MessageType", "ClientId", "ImoNumber", "MessageId",
             });
     internal_static_WriterReply_descriptor = getDescriptor().getMessageTypes().get(1);
     internal_static_WriterReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_WriterReply_descriptor,
             new java.lang.String[] {
-              "ResponseStatus", "LsUUID", "SequenceNo",
+              "ResponseStatus",
+              "MessageId",
+              "ShipId",
+              "Message",
+              "StatusCode",
+              "EventUploadStatus",
+              "EventDownloadStatus",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }
