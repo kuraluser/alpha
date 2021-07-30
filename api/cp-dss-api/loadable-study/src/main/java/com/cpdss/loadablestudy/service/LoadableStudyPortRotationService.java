@@ -900,7 +900,7 @@ public class LoadableStudyPortRotationService {
                   vyogeName =
                       dataMap.get(i).getPortName() == null
                           ? ""
-                          : vyogeName + " " + dataMap.get(i).getPortName();
+                          : vyogeName + " - " + dataMap.get(i).getPortName();
                 }
               }
 
