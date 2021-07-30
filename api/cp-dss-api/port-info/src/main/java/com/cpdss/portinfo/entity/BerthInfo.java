@@ -55,6 +55,9 @@ public class BerthInfo extends EntityDoc {
   @Column(name = "line_content_displacement")
   private BigDecimal lineDisplacement;
 
+  @Column(name = "hose_connections")
+  private String hoseConnection;
+
   @ManyToOne
   @JoinColumn(name = "port_xid")
   private PortInfo portInfo;
