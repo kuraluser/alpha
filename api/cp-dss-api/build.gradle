@@ -40,19 +40,19 @@ subprojects {
     mavenCentral()
   }
 
-  /*applyplugin: 'name.remal.sonarlint'*/
+  apply plugin: 'name.remal.sonarlint'
   apply plugin: 'io.spring.dependency-management'
   apply plugin: 'io.freefair.lombok'
   apply plugin: 'com.diffplug.gradle.spotless'
   
   // Applying sonarlint plugin
- /* sonarlint {
+  sonarlint {
      ignoreFailures = true
 	 excludes {
 	      source 'com/cpdss/common/generated/*'
 	 }
    }
-   */
+
   // Applying spotless plugin with google java formatter
    spotless {
     java {

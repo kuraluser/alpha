@@ -38,10 +38,10 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class EnvoyWriterService {
 
-  @Value("${cpdss.communucation.ship.writer.url}")
+  @Value("${cpdss.communication.ship.writer.url}")
   private String writerShipUrl;
 
-  @Value("${cpdss.communucation.shore.writer.url}")
+  @Value("${cpdss.communication.shore.writer.url}")
   private String writerShoreUrl;
 
   @Value("${cpdss.build.env}")
