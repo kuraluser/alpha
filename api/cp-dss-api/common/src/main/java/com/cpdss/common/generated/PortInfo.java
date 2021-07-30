@@ -706,6 +706,19 @@ public final class PortInfo {
      * @return The bytes for underKeelClearance.
      */
     com.google.protobuf.ByteString getUnderKeelClearanceBytes();
+
+    /**
+     * <code>string seawaterDensity = 6;</code>
+     *
+     * @return The seawaterDensity.
+     */
+    java.lang.String getSeawaterDensity();
+    /**
+     * <code>string seawaterDensity = 6;</code>
+     *
+     * @return The bytes for seawaterDensity.
+     */
+    com.google.protobuf.ByteString getSeawaterDensityBytes();
   }
   /** Protobuf type {@code LoadingAlgoBerthData} */
   public static final class LoadingAlgoBerthData extends com.google.protobuf.GeneratedMessageV3
@@ -721,6 +734,7 @@ public final class PortInfo {
     private LoadingAlgoBerthData() {
       controllingDepth_ = "";
       underKeelClearance_ = "";
+      seawaterDensity_ = "";
     }
 
     @java.lang.Override
@@ -791,6 +805,13 @@ public final class PortInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 underKeelClearance_ = s;
+                break;
+              }
+            case 50:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                seawaterDensity_ = s;
                 break;
               }
             default:
@@ -943,6 +964,41 @@ public final class PortInfo {
       }
     }
 
+    public static final int SEAWATERDENSITY_FIELD_NUMBER = 6;
+    private volatile java.lang.Object seawaterDensity_;
+    /**
+     * <code>string seawaterDensity = 6;</code>
+     *
+     * @return The seawaterDensity.
+     */
+    public java.lang.String getSeawaterDensity() {
+      java.lang.Object ref = seawaterDensity_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        seawaterDensity_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string seawaterDensity = 6;</code>
+     *
+     * @return The bytes for seawaterDensity.
+     */
+    public com.google.protobuf.ByteString getSeawaterDensityBytes() {
+      java.lang.Object ref = seawaterDensity_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        seawaterDensity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -972,6 +1028,9 @@ public final class PortInfo {
       if (!getUnderKeelClearanceBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, underKeelClearance_);
       }
+      if (!getSeawaterDensityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, seawaterDensity_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -995,6 +1054,9 @@ public final class PortInfo {
       }
       if (!getUnderKeelClearanceBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, underKeelClearance_);
+      }
+      if (!getSeawaterDensityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, seawaterDensity_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1020,6 +1082,7 @@ public final class PortInfo {
       if (getBerthId() != other.getBerthId()) return false;
       if (!getControllingDepth().equals(other.getControllingDepth())) return false;
       if (!getUnderKeelClearance().equals(other.getUnderKeelClearance())) return false;
+      if (!getSeawaterDensity().equals(other.getSeawaterDensity())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -1043,6 +1106,8 @@ public final class PortInfo {
       hash = (53 * hash) + getControllingDepth().hashCode();
       hash = (37 * hash) + UNDERKEELCLEARANCE_FIELD_NUMBER;
       hash = (53 * hash) + getUnderKeelClearance().hashCode();
+      hash = (37 * hash) + SEAWATERDENSITY_FIELD_NUMBER;
+      hash = (53 * hash) + getSeawaterDensity().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1196,6 +1261,8 @@ public final class PortInfo {
 
         underKeelClearance_ = "";
 
+        seawaterDensity_ = "";
+
         return this;
       }
 
@@ -1231,6 +1298,7 @@ public final class PortInfo {
         result.berthId_ = berthId_;
         result.controllingDepth_ = controllingDepth_;
         result.underKeelClearance_ = underKeelClearance_;
+        result.seawaterDensity_ = seawaterDensity_;
         onBuilt();
         return result;
       }
@@ -1298,6 +1366,10 @@ public final class PortInfo {
         }
         if (!other.getUnderKeelClearance().isEmpty()) {
           underKeelClearance_ = other.underKeelClearance_;
+          onChanged();
+        }
+        if (!other.getSeawaterDensity().isEmpty()) {
+          seawaterDensity_ = other.seawaterDensity_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -1663,6 +1735,82 @@ public final class PortInfo {
         checkByteStringIsUtf8(value);
 
         underKeelClearance_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object seawaterDensity_ = "";
+      /**
+       * <code>string seawaterDensity = 6;</code>
+       *
+       * @return The seawaterDensity.
+       */
+      public java.lang.String getSeawaterDensity() {
+        java.lang.Object ref = seawaterDensity_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          seawaterDensity_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string seawaterDensity = 6;</code>
+       *
+       * @return The bytes for seawaterDensity.
+       */
+      public com.google.protobuf.ByteString getSeawaterDensityBytes() {
+        java.lang.Object ref = seawaterDensity_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          seawaterDensity_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string seawaterDensity = 6;</code>
+       *
+       * @param value The seawaterDensity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSeawaterDensity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        seawaterDensity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string seawaterDensity = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSeawaterDensity() {
+
+        seawaterDensity_ = getDefaultInstance().getSeawaterDensity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string seawaterDensity = 6;</code>
+       *
+       * @param value The bytes for seawaterDensity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSeawaterDensityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        seawaterDensity_ = value;
         onChanged();
         return this;
       }
@@ -17544,71 +17692,71 @@ public final class PortInfo {
   static {
     java.lang.String[] descriptorData = {
       "\n\017port_info.proto\032\014common.proto\"#\n\017Berth"
-          + "IdsRequest\022\020\n\010berthIds\030\001 \003(\003\"\226\001\n\024Loading"
+          + "IdsRequest\022\020\n\010berthIds\030\001 \003(\003\"\257\001\n\024Loading"
           + "AlgoBerthData\022\'\n\016responseStatus\030\001 \001(\0132\017."
           + "ResponseStatus\022\016\n\006portId\030\002 \001(\003\022\017\n\007berthI"
           + "d\030\003 \001(\003\022\030\n\020controllingDepth\030\004 \001(\t\022\032\n\022und"
-          + "erKeelClearance\030\005 \001(\t\"\\\n\nCargoInfos\022%\n\nc"
-          + "argoPorts\030\001 \003(\0132\021.CargoPortMapping\022\'\n\016re"
-          + "sponseStatus\030\002 \001(\0132\017.ResponseStatus\"3\n\020C"
-          + "argoPortMapping\022\017\n\007cargoId\030\001 \001(\003\022\016\n\006port"
-          + "Id\030\002 \001(\003\")\n\033GetPortInfoByPortIdsRequest\022"
-          + "\n\n\002id\030\001 \003(\003\"]\n\013PortRequest\022\021\n\tcompanyId\030"
-          + "\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001("
-          + "\003\022\027\n\017loadableStudyId\030\004 \001(\003\"6\n\025PortReques"
-          + "tWithPaging\022\016\n\006offset\030\001 \001(\003\022\r\n\005limit\030\002 \001"
-          + "(\003\"\233\004\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 "
-          + "\001(\t\022\014\n\004code\030\003 \001(\t\022\024\n\014waterDensity\030\004 \001(\t\022"
-          + "\020\n\010maxDraft\030\005 \001(\t\022\023\n\013maxAirDraft\030\006 \001(\t\022\031"
-          + "\n\021averageTideHeight\030\007 \001(\t\022\022\n\ntideHeight\030"
-          + "\010 \001(\t\022\022\n\nhwTideFrom\030\t \001(\t\022\020\n\010hwTideTo\030\n "
-          + "\001(\t\022\022\n\nlwTideFrom\030\013 \001(\t\022\020\n\010lwTideTo\030\014 \001("
-          + "\t\022\026\n\016hwTideTimeFrom\030\r \001(\t\022\024\n\014hwTideTimeT"
-          + "o\030\016 \001(\t\022\026\n\016lwTideTimeFrom\030\017 \001(\t\022\024\n\014lwTid"
-          + "eTimeTo\030\020 \001(\t\022\023\n\013sunriseTime\030\021 \001(\t\022\022\n\nsu"
-          + "nsetTime\030\022 \001(\t\022\020\n\010timezone\030\023 \001(\t\022\031\n\021time"
-          + "zoneOffsetVal\030\024 \001(\t\022\022\n\ntimezoneId\030\025 \001(\003\022"
-          + "\034\n\024timezoneAbbreviation\030\026 \001(\t\022\023\n\013country"
-          + "Name\030\027 \001(\t\022\030\n\020controllingDepth\030\030 \001(\t\022\032\n\022"
-          + "underKeelClearance\030\031 \001(\t\"P\n\tPortReply\022\'\n"
-          + "\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022\032"
-          + "\n\005ports\030\002 \003(\0132\013.PortDetail\".\n\033GetPortInf"
-          + "oByCargoIdRequest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031Ge"
-          + "tPortInfoByCargoIdReply\022\'\n\016responseStatu"
-          + "s\030\001 \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132"
-          + "\013.PortDetail\"\022\n\020PortEmptyRequest\"S\n\010Time"
-          + "zone\022\n\n\002id\030\001 \001(\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013of"
-          + "fsetValue\030\003 \001(\t\022\024\n\014abbreviation\030\004 \001(\t\"Y\n"
-          + "\020TimezoneResponse\022\'\n\016responseStatus\030\001 \001("
-          + "\0132\017.ResponseStatus\022\034\n\ttimezones\030\002 \003(\0132\t."
-          + "Timezone\"\037\n\rPortIdRequest\022\016\n\006portId\030\001 \001("
-          + "\003\"Z\n\021BerthInfoResponse\022\'\n\016responseStatus"
-          + "\030\001 \001(\0132\017.ResponseStatus\022\034\n\006berths\030\002 \003(\0132"
-          + "\014.BerthDetail\"\262\002\n\013BerthDetail\022\n\n\002id\030\001 \001("
-          + "\003\022\016\n\006portId\030\002 \001(\003\022\025\n\rloadingInfoId\030\014 \001(\003"
-          + "\022\026\n\016maxShipChannel\030\003 \001(\t\022\021\n\tberthName\030\004 "
-          + "\001(\t\022\024\n\014maxShipDepth\030\005 \001(\t\022\032\n\022seaDraftLim"
-          + "itation\030\006 \001(\t\022\032\n\022airDraftLimitation\030\007 \001("
-          + "\t\022\031\n\021maxManifoldHeight\030\010 \001(\t\022 \n\030regulati"
-          + "onAndRestriction\030\t \001(\t\022\016\n\006maxLoa\030\n \001(\t\022\020"
-          + "\n\010maxDraft\030\013 \001(\t\022\030\n\020lineDisplacement\030\r \001"
-          + "(\t2\334\004\n\017PortInfoService\022)\n\013GetPortInfo\022\014."
-          + "PortRequest\032\n.PortReply\"\000\022R\n\024GetPortInfo"
-          + "ByCargoId\022\034.GetPortInfoByCargoIdRequest\032"
-          + "\032.GetPortInfoByCargoIdReply\"\000\022B\n\024GetPort"
-          + "InfoByPortIds\022\034.GetPortInfoByPortIdsRequ"
-          + "est\032\n.PortReply\"\000\022G\n\031GetPortInfoDetailsF"
-          + "orAlgo\022\034.GetPortInfoByPortIdsRequest\032\n.P"
-          + "ortReply\"\000\0225\n\013GetTimezone\022\021.PortEmptyReq"
-          + "uest\032\021.TimezoneResponse\"\000\022;\n\023GetPortInfo"
-          + "ByPaging\022\026.PortRequestWithPaging\032\n.PortR"
-          + "eply\"\000\022?\n\027GetBerthDetailsByPortId\022\016.Port"
-          + "IdRequest\032\022.BerthInfoResponse\"\000\022D\n\025GetCa"
-          + "rgoInfoByPortIds\022\034.GetPortInfoByPortIdsR"
-          + "equest\032\013.CargoInfos\"\000\022B\n\027GetLoadingPlanB"
-          + "erthData\022\020.BerthIdsRequest\032\025.LoadingAlgo"
-          + "BerthDataB\036\n\032com.cpdss.common.generatedP"
-          + "\000b\006proto3"
+          + "erKeelClearance\030\005 \001(\t\022\027\n\017seawaterDensity"
+          + "\030\006 \001(\t\"\\\n\nCargoInfos\022%\n\ncargoPorts\030\001 \003(\013"
+          + "2\021.CargoPortMapping\022\'\n\016responseStatus\030\002 "
+          + "\001(\0132\017.ResponseStatus\"3\n\020CargoPortMapping"
+          + "\022\017\n\007cargoId\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\")\n\033Get"
+          + "PortInfoByPortIdsRequest\022\n\n\002id\030\001 \003(\003\"]\n\013"
+          + "PortRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vessel"
+          + "Id\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loadableSt"
+          + "udyId\030\004 \001(\003\"6\n\025PortRequestWithPaging\022\016\n\006"
+          + "offset\030\001 \001(\003\022\r\n\005limit\030\002 \001(\003\"\233\004\n\nPortDeta"
+          + "il\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\014\n\004code\030\003 \001"
+          + "(\t\022\024\n\014waterDensity\030\004 \001(\t\022\020\n\010maxDraft\030\005 \001"
+          + "(\t\022\023\n\013maxAirDraft\030\006 \001(\t\022\031\n\021averageTideHe"
+          + "ight\030\007 \001(\t\022\022\n\ntideHeight\030\010 \001(\t\022\022\n\nhwTide"
+          + "From\030\t \001(\t\022\020\n\010hwTideTo\030\n \001(\t\022\022\n\nlwTideFr"
+          + "om\030\013 \001(\t\022\020\n\010lwTideTo\030\014 \001(\t\022\026\n\016hwTideTime"
+          + "From\030\r \001(\t\022\024\n\014hwTideTimeTo\030\016 \001(\t\022\026\n\016lwTi"
+          + "deTimeFrom\030\017 \001(\t\022\024\n\014lwTideTimeTo\030\020 \001(\t\022\023"
+          + "\n\013sunriseTime\030\021 \001(\t\022\022\n\nsunsetTime\030\022 \001(\t\022"
+          + "\020\n\010timezone\030\023 \001(\t\022\031\n\021timezoneOffsetVal\030\024"
+          + " \001(\t\022\022\n\ntimezoneId\030\025 \001(\003\022\034\n\024timezoneAbbr"
+          + "eviation\030\026 \001(\t\022\023\n\013countryName\030\027 \001(\t\022\030\n\020c"
+          + "ontrollingDepth\030\030 \001(\t\022\032\n\022underKeelCleara"
+          + "nce\030\031 \001(\t\"P\n\tPortReply\022\'\n\016responseStatus"
+          + "\030\001 \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013"
+          + ".PortDetail\".\n\033GetPortInfoByCargoIdReque"
+          + "st\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetPortInfoByCarg"
+          + "oIdReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
+          + "nseStatus\022\032\n\005ports\030\002 \003(\0132\013.PortDetail\"\022\n"
+          + "\020PortEmptyRequest\"S\n\010Timezone\022\n\n\002id\030\001 \001("
+          + "\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013offsetValue\030\003 \001(\t"
+          + "\022\024\n\014abbreviation\030\004 \001(\t\"Y\n\020TimezoneRespon"
+          + "se\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSta"
+          + "tus\022\034\n\ttimezones\030\002 \003(\0132\t.Timezone\"\037\n\rPor"
+          + "tIdRequest\022\016\n\006portId\030\001 \001(\003\"Z\n\021BerthInfoR"
+          + "esponse\022\'\n\016responseStatus\030\001 \001(\0132\017.Respon"
+          + "seStatus\022\034\n\006berths\030\002 \003(\0132\014.BerthDetail\"\262"
+          + "\002\n\013BerthDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001"
+          + "(\003\022\025\n\rloadingInfoId\030\014 \001(\003\022\026\n\016maxShipChan"
+          + "nel\030\003 \001(\t\022\021\n\tberthName\030\004 \001(\t\022\024\n\014maxShipD"
+          + "epth\030\005 \001(\t\022\032\n\022seaDraftLimitation\030\006 \001(\t\022\032"
+          + "\n\022airDraftLimitation\030\007 \001(\t\022\031\n\021maxManifol"
+          + "dHeight\030\010 \001(\t\022 \n\030regulationAndRestrictio"
+          + "n\030\t \001(\t\022\016\n\006maxLoa\030\n \001(\t\022\020\n\010maxDraft\030\013 \001("
+          + "\t\022\030\n\020lineDisplacement\030\r \001(\t2\334\004\n\017PortInfo"
+          + "Service\022)\n\013GetPortInfo\022\014.PortRequest\032\n.P"
+          + "ortReply\"\000\022R\n\024GetPortInfoByCargoId\022\034.Get"
+          + "PortInfoByCargoIdRequest\032\032.GetPortInfoBy"
+          + "CargoIdReply\"\000\022B\n\024GetPortInfoByPortIds\022\034"
+          + ".GetPortInfoByPortIdsRequest\032\n.PortReply"
+          + "\"\000\022G\n\031GetPortInfoDetailsForAlgo\022\034.GetPor"
+          + "tInfoByPortIdsRequest\032\n.PortReply\"\000\0225\n\013G"
+          + "etTimezone\022\021.PortEmptyRequest\032\021.Timezone"
+          + "Response\"\000\022;\n\023GetPortInfoByPaging\022\026.Port"
+          + "RequestWithPaging\032\n.PortReply\"\000\022?\n\027GetBe"
+          + "rthDetailsByPortId\022\016.PortIdRequest\032\022.Ber"
+          + "thInfoResponse\"\000\022D\n\025GetCargoInfoByPortId"
+          + "s\022\034.GetPortInfoByPortIdsRequest\032\013.CargoI"
+          + "nfos\"\000\022B\n\027GetLoadingPlanBerthData\022\020.Bert"
+          + "hIdsRequest\032\025.LoadingAlgoBerthDataB\036\n\032co"
+          + "m.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -17628,7 +17776,12 @@ public final class PortInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadingAlgoBerthData_descriptor,
             new java.lang.String[] {
-              "ResponseStatus", "PortId", "BerthId", "ControllingDepth", "UnderKeelClearance",
+              "ResponseStatus",
+              "PortId",
+              "BerthId",
+              "ControllingDepth",
+              "UnderKeelClearance",
+              "SeawaterDensity",
             });
     internal_static_CargoInfos_descriptor = getDescriptor().getMessageTypes().get(2);
     internal_static_CargoInfos_fieldAccessorTable =

@@ -9,7 +9,8 @@ public class LoadingMachinesInUse {
   private Long id;
   private Long loadingInfoId;
   private Long machineId;
+  private String machineName;
   private BigDecimal capacity;
-  private Boolean isUsing;
   private Integer machineTypeId;
+  private String machineTypeName;
 }

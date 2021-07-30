@@ -101,9 +101,9 @@ public class LoadingPlanAlgoService {
   private LoadableStudyServiceBlockingStub loadableStudyService;
 
   /**
-   * Generates Loading plan
+   * CALL TO ALGO - for LOADING PLAN Generates Loading plan from Algo
    *
-   * @param request
+   * @param request Loading Information Id Only
    * @throws GenericServiceException
    */
   public void generateLoadingPlan(LoadingInfoAlgoRequest request) throws GenericServiceException {
@@ -118,15 +118,19 @@ public class LoadingPlanAlgoService {
           HttpStatusCode.BAD_REQUEST);
     }
 
+    // Create JSON To Algo
     LoadingInformationAlgoRequest algoRequest =
         loadingInfoAlgoRequestBuilderService.createAlgoRequest(request);
 
+    // Save Above JSON In LS json data Table
     saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
 
+    // Call To Algo End Point for Loading
     LoadingInformationAlgoResponse response =
         restTemplate.postForObject(
             planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
 
+    // Set Loading Status
     Optional<LoadingInformationStatus> loadingInfoStatusOpt =
         loadingInfoStatusRepository.findByIdAndIsActive(
             LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID, true);
@@ -186,7 +190,7 @@ public class LoadingPlanAlgoService {
   private void saveLoadingInformationRequestJson(
       LoadingInformationAlgoRequest algoRequest, Long loadingInfoId)
       throws GenericServiceException {
-    log.info("Saving Loading Information ALGO request to DB");
+    log.info("Saving Loading Information ALGO request to Loadable study DB");
     JsonRequest.Builder jsonBuilder = JsonRequest.newBuilder();
     jsonBuilder.setReferenceId(loadingInfoId);
     jsonBuilder.setJsonTypeId(LoadingPlanConstants.LOADING_INFORMATION_REQUEST_JSON_TYPE_ID);

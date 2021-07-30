@@ -561,6 +561,7 @@ public class LoadingPlanRuleServiceImpl implements LoadingPlanRuleService {
     LoadingPlanModels.LoadingPlanRuleRequest.Builder request =
         LoadingPlanModels.LoadingPlanRuleRequest.newBuilder();
     request.setLoadingInfoId(loadingInfoId);
+    request.setVesselId(vesselId);
     request.setSectionId(LOADING_RULE_MASTER_ID);
     LoadingPlanModels.LoadingPlanRuleReply.Builder builder =
         LoadingPlanModels.LoadingPlanRuleReply.newBuilder();

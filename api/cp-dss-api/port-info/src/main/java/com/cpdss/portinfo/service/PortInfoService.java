@@ -407,7 +407,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
   }
 
   /**
-   * In Request pass berth Ids, and return port data
+   * In Request pass berth Ids, and return port/berth data for loading plan algo
    *
    * @param request
    * @param responseObserver
@@ -433,6 +433,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
                 .ifPresent(v -> builder.setControllingDepth(v.toString()));
             Optional.ofNullable(berthInfo.get().getPortInfo().getUnderKeelClearance())
                 .ifPresent(v -> builder.setUnderKeelClearance(v));
+            Optional.ofNullable(berthInfo.get().getPortInfo().getDensitySeaWater())
+                .ifPresent(v -> builder.setSeawaterDensity(v.toString()));
           }
         }
         ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();

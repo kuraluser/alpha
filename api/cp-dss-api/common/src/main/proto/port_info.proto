@@ -43,6 +43,7 @@ message LoadingAlgoBerthData {
 	int64 berthId = 3;
 	string controllingDepth = 4;
 	string underKeelClearance = 5;
+	string seawaterDensity = 6;
 }
 
 message CargoInfos {
