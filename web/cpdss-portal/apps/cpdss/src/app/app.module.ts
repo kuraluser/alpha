@@ -29,8 +29,7 @@ import { HasUnsavedDataGuard } from './shared/services/guards/has-unsaved-data.g
 
 let providers: any = [
   { provide: HTTP_INTERCEPTORS, useClass: HttpAuthInterceptor, multi: true },
-  { provide: ErrorHandler, useClass: GlobalErrorHandler },
-  HasUnsavedDataGuard
+  { provide: ErrorHandler, useClass: GlobalErrorHandler }
 ];
 
 if (environment.name === 'shore') {

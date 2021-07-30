@@ -3,6 +3,7 @@ package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGING_OPERATION_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ERRO_CALLING_ALGO;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_INITIAL_STATUS_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
@@ -14,6 +15,8 @@ import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceImplBase;
+import com.cpdss.common.generated.LoadableStudy.AlgoReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
@@ -69,6 +72,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.ResourceAccessException;
 
 /** @author arun.j */
 @Log4j2
@@ -92,6 +96,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private CowDetailService cowDetailService;
   @Autowired private PortInstructionService portInstructionService;
   @Autowired private BackLoadingService backLoadingService;
+  @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
 
   @GrpcClient("cargoService")
   private CargoInfoServiceBlockingStub cargoInfoGrpcService;
@@ -111,7 +116,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      if (dischargeStudyRepository.existsByNameAndPlanningTypeXIdAndVoyageAndIsActive(
+      if (dischargeStudyRepository.existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
           request.getName(), 2, voyage, true)) {
         throw new GenericServiceException(
             "name already exists",
@@ -151,7 +156,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             HttpStatusCode.BAD_REQUEST);
       }
 
-      LoadableStudy savedDischargeStudy = saveDischargeStudy(request, voyage);
+      LoadableStudy savedDischargeStudy = saveDischargeStudy(request, voyage, loadableStudy);
       LoadableStudyPortRotation dischargeStudyPortRotation =
           createDischargeStudyPortRotationData(loadableStudyPortRotation, savedDischargeStudy);
       LoadableStudyPortRotation savedDischargeport =
@@ -267,14 +272,17 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
 
     return dischargeSynopticalList;
   }
+
   /**
    * discharge study save
    *
    * @param request data to set to discharge study
    * @param voyage current voyage
+   * @param loadableStudy
    * @return
    */
-  private LoadableStudy saveDischargeStudy(DischargeStudyDetail request, Voyage voyage) {
+  private LoadableStudy saveDischargeStudy(
+      DischargeStudyDetail request, Voyage voyage, LoadableStudy loadableStudy) {
     LoadableStudy dischargeStudy = new LoadableStudy();
     dischargeStudy.setName(request.getName());
     dischargeStudy.setDetails(request.getEnquiryDetails());
@@ -284,6 +292,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     dischargeStudy.setPlanningTypeXId(2);
     dischargeStudy.setLoadableStudyStatus(
         loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
+    dischargeStudy.setConfirmedLoadableStudyId(loadableStudy.getId());
     LoadableStudy savedDischargeStudy = dischargeStudyRepository.save(dischargeStudy);
     return savedDischargeStudy;
   }
@@ -319,7 +328,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     portRotation.setLoadableStudy(savedDischargeStudy);
     portRotation.setMaxDraft(loadableStudyPortRotation.getMaxDraft());
     portRotation.setOperation(loadableStudyPortRotation.getOperation());
-    portRotation.setPortOrder(loadableStudyPortRotation.getPortOrder());
+    portRotation.setPortOrder(1L);
     portRotation.setPortXId(loadableStudyPortRotation.getPortXId());
     portRotation.setSeaWaterDensity(loadableStudyPortRotation.getSeaWaterDensity());
     portRotation.setSynopticalTable(loadableStudyPortRotation.getSynopticalTable());
@@ -341,6 +350,16 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+
+      if (dischargeStudyRepository
+          .existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActiveAndIdNot(
+              request.getName(), 2, loadable.getVoyage(), true, loadable.getId())) {
+        throw new GenericServiceException(
+            "name already exists",
+            CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
       loadable.setName(request.getName());
       loadable.setDetails(request.getEnquiryDetails());
       LoadableStudy updatedDischarge = this.dischargeStudyRepository.save(loadable);
@@ -993,5 +1012,104 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           cargoDetail.setCrudeType(cargo.getCrudeType());
           replyBuilder.addCargos(cargoDetail.build());
         });
+  }
+
+  @Override
+  public void generateDischargePatterns(
+      AlgoRequest request, StreamObserver<AlgoReply> responseObserver) {
+    log.info("Inside generateLoadablePatterns service");
+    com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder replyBuilder =
+        AlgoReply.newBuilder();
+    try {
+      generateDischargeStudyJson.generateDischargePatterns(request, replyBuilder);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when generating pattern", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
+              .build());
+    } catch (ResourceAccessException e) {
+      log.info("Error calling ALGO ", request.getLoadableStudyId());
+      replyBuilder =
+          AlgoReply.newBuilder()
+              .setResponseStatus(
+                  ResponseStatus.newBuilder()
+                      .setStatus(FAILED)
+                      .setMessage(ERRO_CALLING_ALGO)
+                      .setCode(CommonErrorCodes.E_CPDSS_ALGO_ISSUE)
+                      .build());
+    } catch (Exception e) {
+      log.error("Exception when when calling algo  ", e);
+      replyBuilder =
+          AlgoReply.newBuilder()
+              .setResponseStatus(
+                  ResponseStatus.newBuilder()
+                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                      .setMessage("Error when calling algo ")
+                      .setHttpStatusCode(Integer.valueOf(CommonErrorCodes.E_GEN_INTERNAL_ERR))
+                      .setStatus(FAILED)
+                      .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  public void addCargoNominationForPortRotation(long portRotationId, long loadableStudyId) {
+
+    log.info("Inside addCargoNominationForPortRotation service");
+    try {
+      LoadableStudy loadableStudy = loadableStudyRepository.findById(loadableStudyId).get();
+      /**
+       * if the loadable study is a discharge study then add cargo nominations of the previous port
+       * no the newly created one else return
+       */
+      if (loadableStudy.getPlanningTypeXId() != 2) {
+        return;
+      }
+      List<LoadableStudyPortRotation> portRotations =
+          loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
+              loadableStudy.getId(), true);
+      portRotations.sort(Comparator.comparing(LoadableStudyPortRotation::getPortOrder));
+      if (portRotations.get(portRotations.size() - 1).getId() != portRotationId) {
+        return;
+      }
+      LoadableStudyPortRotation loadableStudyPortRotation =
+          portRotations.get(portRotations.size() - 2);
+      List<CargoNomination> cargos =
+          cargoNominationService.getCargoNominationByLoadableStudyId(loadableStudyId);
+      Set<CargoNomination> previousPortCargos =
+          cargos.stream()
+              .flatMap(x -> x.getCargoNominationPortDetails().stream())
+              .filter(port -> port.getPortId().equals(loadableStudyPortRotation.getPortXId()))
+              .map(CargoNominationPortDetails::getCargoNomination)
+              .collect(Collectors.toSet());
+      List<CargoNomination> cargoNominations = new ArrayList<>();
+      previousPortCargos.stream()
+          .forEach(
+              cargo -> {
+                CargoNomination newCargo =
+                    cargoNominationService.createDsCargoNomination(
+                        loadableStudyId,
+                        cargo,
+                        portRotations.get(portRotations.size() - 1).getPortXId());
+                newCargo.setQuantity(new BigDecimal(0));
+                newCargo
+                    .getCargoNominationPortDetails()
+                    .parallelStream()
+                    .forEach(
+                        portDetail -> {
+                          portDetail.setQuantity(new BigDecimal(0));
+                        });
+                cargoNominations.add(newCargo);
+              });
+      cargoNominationService.saveAll(cargoNominations);
+    } catch (Exception e) {
+      log.error("Exception when when calling algo  ", e);
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+    }
   }
 }

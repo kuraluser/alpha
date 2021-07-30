@@ -14,7 +14,7 @@
                         <p-dropdown id="commingle_purpose_dropdown" styleClass="form-control" appendTo="body"
                             [options]="purposeOfCommingle" optionLabel="name" id="purpose_commingle"
                             (onChange)="selectPurpose($event)" formControlName="purpose" [readonly]="!editMode"
-                            resetFilterOnHide="true">
+                            resetFilterOnHide="true"  focusTrap>
                         </p-dropdown>
                     </div>
                 </div>
@@ -34,9 +34,9 @@
                         class=" col-form-label">{{'COMMINGLE_PREFERRED_TANK' | translate}}</label></div>
                 <div class="col pr-10" *ngIf="!isVolumeMaximum">
                     <p-multiSelect [options]="preferredTankList" styleClass="w-100" appendTo="body"
-                        defaultLabel="{{'COMMINGLE_SELECT_PREFERRED_TANK' | translate}}" (onChange)="onPreferredTankSelect()"
+                        defaultLabel="{{'COMMINGLE_SELECT_PREFERRED_TANK' | translate}}" 
                         id="commingle_preferred_tank" optionLabel="shortName" formControlName="preferredTanks"
-                        [readonly]="!editMode" [selectionLimit]="5">
+                        [readonly]="!editMode">
                     </p-multiSelect>
                     <div class="text-danger" *ngIf="isMaxPreferredTank">{{'COMMINGLE_POPUP_PREFERRED_TANK_MAX_LIMIT' | translate}}</div>
                 </div>
@@ -130,7 +130,7 @@
                         <cpdss-portal-datatable [tableId]="'commingle'" [scrollable]="false" [listData]="listData"
                             [form]="commingleManualForm" [columns]="columns" [editMode]="editMode"
                             [value]="manualCommingleList" [filterable]="true" (editComplete)="onEditComplete($event)"
-                            (deleteRow)="onDeleteRow($event)" (columnClick)="dropDownInit($event)">
+                            (deleteRow)="onDeleteRow($event)">
                         </cpdss-portal-datatable>
                         <div class="text-danger" *ngIf="isMaxCargo">{{'COMMINGLE_POPUP_CARGO_MAX_LIMIT'  | translate }}</div>
                     </div>
@@ -142,11 +142,11 @@
     </form>
     <p-footer>
         <div class="float-right">
-            <button class="btn btn-main mr-10" id="commingle_cancel" (click)="close()">{{'COMMINGLE_CANCEL' |
+            <button class="btn btn-main mr-10" id="commingle_cancel" (click)="close()" autofocus focusTrap>{{'COMMINGLE_CANCEL' |
                 translate}}
             </button>
             <ng-container *ngIf="editMode">
-                <button class="btn btn-main" type="submit" id="commingle_submit" form="commingle_form" *cpdssPortalPermission="cargoNominationPermissionContext">{{'COMMINGLE_SAVE' | translate}}</button>
+                <button class="btn btn-main" type="submit" id="commingle_submit" form="commingle_form" *cpdssPortalPermission="cargoNominationPermissionContext" focusTrap>{{'COMMINGLE_SAVE' | translate}}</button>
             </ng-container>
         </div>
     </p-footer>

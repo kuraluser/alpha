@@ -21,7 +21,7 @@
                                 [filter]="true" [options]="ports" formControlName="portName" optionLabel="name"
                                 (click)="clearFilter(dd)" (onChange)="onPortChange($event)"
                                 placeholder="{{ 'LOADABLE_QUANTITY_SELECT_PORT_NAME'  | translate }}"
-                                 resetFilterOnHide="true">
+                                 resetFilterOnHide="true"  focusTrap>
                             </p-dropdown>
                         </div>
                         <div class="col error-column">
@@ -86,7 +86,7 @@
                         <div class="col pt-5">
                             <input type="text" *ngIf="isEditable && isEditableSeaWaterDensity;else seaWaterDensityRef" cpdssPortalNumberDecimal [negative]="false" class="form-control"
                                 id="loadable_quantity_sea_water_density" formControlName="estSeaDensity"
-                                (change)="getSgCorrectionOnChange()">
+                                (change)="getSgCorrectionOnChange()" focusTrap>
                                 <ng-template #seaWaterDensityRef>
                                     <label id="loadable_quantity_sea_water_density_label" >{{getControlLabel('estSeaDensity') | number :
                                     '1.4-4'}}</label>
@@ -117,10 +117,10 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false"
                                 id="loadable_quantity_estimate_sag" class="form-control" formControlName="estimateSag"
-                                (change)="getSagCorrectionOnChange()" *ngIf="isEditable; else estimateRef">
+                                (change)="getSagCorrectionOnChange()" *ngIf="isEditable; else estimateRef" focusTrap>
                                 <ng-template #estimateRef>
                                     <input type="text" class="form-control" id="loadable_quantity_estimate_sag_label" [value]="getControlLabel('estimateSag')| number :'1.2-2'"
-                                     [disabled]="true">
+                                     [disabled]="true" focusTrap>
                                 </ng-template>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_CM' | translate }}</div>
@@ -148,7 +148,7 @@
                         <div class="col">
                             <input type="text"
                                 id="loadable_quantity_fo_onboard" class="form-control" [value]="getControlLabel('foOnboard')| number :'1.2-2'"
-                                (change)="getSubTotal()" [disabled]="true">
+                                (change)="getSubTotal()" [disabled]="true" focusTrap>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -162,7 +162,7 @@
                         <div class="col">
                             <input type="text"
                                 id="loadable_quantity_do_onboard" class="form-control" [value]="getControlLabel('doOnboard')| number :'1.2-2'"
-                                (change)="getSubTotal()"  [disabled]="true">
+                                (change)="getSubTotal()"  [disabled]="true" focusTrap>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -177,7 +177,7 @@
                         <div class="col">
                             <input type="text"  class="form-control"
                                 id="loadable_quantity_fresh_water_onboard" [value]="getControlLabel('freshWaterOnboard')| number :'1.2-2'"
-                                (change)="getSubTotal()"  [disabled]="true">
+                                (change)="getSubTotal()"  [disabled]="true" focusTrap>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -191,7 +191,7 @@
                         <div class="col">
                             <input type="text" class="form-control"
                                 id="loadable_quantity_boiler_water_onboard" [value]="getControlLabel('boilerWaterOnboard')| number :'1.2-2'"
-                                (change)="getSubTotal()" [disabled]="true">
+                                (change)="getSubTotal()" [disabled]="true" focusTrap>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
@@ -205,10 +205,10 @@
                         <div class="col">
                             <input *ngIf="isEditable; else labelRef" type="text" cpdssPortalNumberDecimal [negative]="false"
                                 id="loadable_quantity_ballast" class="form-control" formControlName="ballast"
-                                (change)="getSubTotal()">
+                                (change)="getSubTotal()" focusTrap>
                                 <ng-template #labelRef>
                                     <input type="text" class="form-control" id="loadable_quantity_ballast_label" [value]="getControlLabel('ballast')| number :'1.2-2'"
-                                (change)="getSubTotal()" [disabled]="true">
+                                (change)="getSubTotal()" [disabled]="true" focusTrap>
                                 </ng-template>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -234,10 +234,10 @@
                         <div class="col">
                             <input type="text" *ngIf="isEditable; else constLabelRef" cpdssPortalNumberDecimal [negative]="false" id="loadable_quantity_others"
                                 class="form-control" formControlName="others" (change)="getSubTotal()"
-                                >
+                                focusTrap>
                                 <ng-template #constLabelRef>
                                     <input type="text" class="form-control" id="loadable_quantity_others" [value]="getControlLabel('others')| number :'1.2-2'"
-                                 [disabled]="true">
+                                 [disabled]="true" focusTrap>
                                 </ng-template>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
@@ -318,7 +318,7 @@
                         <div class="col">
                             <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
                                 id="loadable_quantity_dist_in_summery" formControlName="distanceInSummerzone"
-                                (change)="getRunningHours()" *ngIf="isEditable; else distanceInRef">
+                                (change)="getRunningHours()" *ngIf="isEditable; else distanceInRef" focusTrap>
                                 <ng-template #distanceInRef>
                                     <label id="loadable_quantity_dist_in_summery_label">{{getControlLabel('distanceInSummerzone')| number :'1.2-2'}}</label>
                                     
@@ -337,7 +337,7 @@
                         <div class="col">
                             <input type="text" *ngIf="isEditable;else spedInSzRef" cpdssPortalNumberDecimal [negative]="false"
                                 id="loadable_quantity_speed_in_sz" class="form-control" formControlName="speedInSz"
-                                (change)="getRunningHours()">
+                                (change)="getRunningHours()" focusTrap>
                                 <ng-template #spedInSzRef>
                                     <label id="loadable_quantity_fo_con_day_label" >{{getControlLabel('speedInSz') | number :
                                     '1.2-2'}}</label>
@@ -384,7 +384,7 @@
                         <div class="col">
                             <input type="text" *ngIf="isEditable;else foConRef" cpdssPortalNumberDecimal [negative]="false"
                                 id="loadable_quantity_fo_con_day" class="form-control" formControlName="foConday"
-                                (change)="getFoConsumptionInSz()">
+                                (change)="getFoConsumptionInSz()" focusTrap>
                                 <ng-template #foConRef>
                                     <label id="loadable_quantity_fo_con_day_label" >{{getControlLabel('foConday') | number :
                                     '1.2-2'}}</label>
@@ -417,11 +417,11 @@
     <p-footer>
         <div class="float-right">
             <button class="btn btn-main mr-10" id="lodable_quantity_cancel"
-                (click)="cancel()">{{'LOADABLE_QUANTITY_CANCEL' | translate}}
+                (click)="cancel()" autofocus focusTrap>{{'LOADABLE_QUANTITY_CANCEL' | translate}}
             </button>
             <ng-container *ngIf="isEditable && ports && buttonLabel">
                 <button class="btn btn-main" type="submit" id="lodable_quantity_submit" form="fg_loadableQunatity"
-                    *cpdssPortalPermission="loadableQuantityBtnPermissionContext">{{ buttonLabel | translate}}</button>
+                    *cpdssPortalPermission="loadableQuantityBtnPermissionContext"  focusTrap>{{ buttonLabel | translate}}</button>
             </ng-container>
         </div>
     </p-footer>

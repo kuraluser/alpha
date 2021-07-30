@@ -19,7 +19,9 @@ import { PercentageValidator } from '../../directives/validator/percentage-valid
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
-import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service'
+import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service';
+import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
+
 /**
  * Component class of commingle pop up
  *
@@ -92,6 +94,7 @@ export class CommingleComponent implements OnInit {
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
     private permissionsService: PermissionsService,
     private confirmationService: ConfirmationService,
+    private quantityPipe: QuantityPipe,
     private loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private quantityDecimalService: QuantityDecimalService
   ) { }
@@ -169,7 +172,7 @@ export class CommingleComponent implements OnInit {
       this.preferredTankList = this.commingleData.vesselTanks;
       this.disableAddNewBtn = (this.cargoNominationsCargo.length <= 2 && this.manualCommingleList && this.manualCommingleList?.length >= 1) ? true : false;
       if (this.manualCommingleList && this.manualCommingleList?.length) {
-        this.commingleForm.controls['preferredTanks'].setValidators([Validators.required]),
+        this.commingleForm.controls['preferredTanks'].setValidators([Validators.required, Validators.maxLength(5)]),
         this.commingleForm.controls['preferredTanks'].updateValueAndValidity()
         this.resetSlNo();
       }
@@ -186,7 +189,7 @@ export class CommingleComponent implements OnInit {
   async createVolumeMaximisationFormGroup() {
     this.commingleForm = this.fb.group({
       purpose: this.fb.control(null, Validators.required),
-      preferredTanks: this.fb.control(null),
+      preferredTanks: this.fb.control(null, [Validators.maxLength(5)]),
       slopOnly: this.fb.control({ value: false, disabled: !this.editMode }, [Validators.required]),
       cargo1: this.fb.control(null, []),
       cargo2: this.fb.control(null, []),
@@ -275,19 +278,6 @@ export class CommingleComponent implements OnInit {
 
   // returns form-controls of commingleForm
   get form() { return this.commingleForm.controls; }
-
-  /**
-   * Event handler for cargo dropdown init.
-   * @param event
-   */
-  dropDownInit(event){
-    if(event.field === 'cargo1'){
-      this.listData.cargoNominationsCargo1 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event?.data?.cargo2?.value?.id);
-    }
-    if(event.field === 'cargo2'){
-      this.listData.cargoNominationsCargo2 = this.cargoNominationsCargo.filter(cargos => cargos.id !== event?.data?.cargo1?.value?.id);
-    }
-  }
 
   /**
    * Event handler for edit complete event
@@ -423,7 +413,7 @@ export class CommingleComponent implements OnInit {
       this.manualCommingleList = [_commingle, ...this.manualCommingleList];
       const dataTableControl = <FormArray>this.commingleManualForm.get('dataTable');
       dataTableControl.insert(0, this.initCommingleManualFormGroup(_commingle));
-      this.commingleForm.controls['preferredTanks'].setValidators([Validators.required]);
+      this.commingleForm.controls['preferredTanks'].setValidators([Validators.required, Validators.maxLength(5)]);
       this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
       this.resetSlNo();
     }
@@ -480,7 +470,7 @@ export class CommingleComponent implements OnInit {
           this.resetSlNo();
           this.cargoFieldsUpdateValue();        
           if (!this.manualCommingleList?.length) {
-            this.commingleForm.controls['preferredTanks'].setValidators([]);
+            this.commingleForm.controls['preferredTanks'].setValidators([Validators.maxLength(5)]);
             this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
           }
           this.disableAddNewBtn = false;
@@ -515,7 +505,7 @@ export class CommingleComponent implements OnInit {
         this.saveVolumeMaximisation()
       }
     } else {
-      if(this.commingleManualForm.valid && this.commingleCargo && this.commingleCargo?.cargoGroups[0]?.cargo1Id && this.commingleCargo?.cargoGroups[0]?.cargo2Id && ((this.commingleForm.value.purpose.id !== this.commingleCargo.purposeId) || !this.manualCommingleList?.length)){
+      if(this.commingleForm.controls['preferredTanks'].valid && this.commingleManualForm.valid && this.commingleCargo && this.commingleCargo?.cargoGroups[0]?.cargo1Id && this.commingleCargo?.cargoGroups[0]?.cargo2Id && ((this.commingleForm.value.purpose.id !== this.commingleCargo.purposeId) || !this.manualCommingleList?.length)){
         this.confirmationService.confirm({
           key: 'confirmation-alert',
           header: translationKeys['COMMINGLE_CARGO_SAVE_LABEL'],
@@ -630,10 +620,9 @@ export class CommingleComponent implements OnInit {
       }
     }
     else {
-      if (this.manualCommingleList && this.manualCommingleList?.length) {
-        this.commingleForm.controls['preferredTanks'].setValidators([Validators.required]),
-        this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
-      }
+      this.manualCommingleList && this.manualCommingleList?.length ? 
+        this.commingleForm.controls['preferredTanks'].setValidators([Validators.required, Validators.maxLength(5)]) : this.commingleForm.controls['preferredTanks'].setValidators([Validators.maxLength(5)]);
+      this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
       this.commingleForm.controls['cargo1'].clearValidators();
       this.commingleForm.controls['cargo2'].clearValidators();
       this.commingleForm.controls['cargo1'].updateValueAndValidity();
@@ -761,7 +750,7 @@ export class CommingleComponent implements OnInit {
     row.cargo2.value.loadingPorts.forEach(port => {
       port.quantity = this.loadableStudyDetailsApiService.updateQuantityByUnit(port.quantity, unitFrom, unitTo, netApi)
     });
-    row.quantity.value = Number(this.loadableStudyDetailsApiService.convertToNumber(this.loadableStudyDetailsApiService.decimalQuantiy(row.quantity.value, unitFrom, unitTo, netApi)));
+    row.quantity.value = this.quantityPipe.transform(row.quantity.value, unitFrom, unitTo, netApi , '' , -1)
     return row;
   }
 

@@ -8,6 +8,7 @@ import { ValidationErrorModule } from '../../../../shared/components/validation-
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { VoyageService } from '../../services/voyage.service';
+import { FocusTrapModule } from 'primeng/focustrap';
 
 /**
  *  Module for port ribbon component
@@ -22,7 +23,8 @@ import { VoyageService } from '../../services/voyage.service';
     CalendarModule,
     DialogModule,
     DropdownModule,
-    TranslateModule
+    TranslateModule,
+    FocusTrapModule
   ],
   providers: [VoyageService],
   exports: [NewVoyagePopupComponent]

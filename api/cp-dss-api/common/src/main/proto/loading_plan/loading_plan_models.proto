@@ -404,6 +404,7 @@ message LoadingPlanSaveRequest {
   repeated LoadingPlanTankDetails portLoadingPlanBallastDetails = 4;
   repeated LoadingPlanTankDetails portLoadingPlanRobDetails = 5;
   repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 6;
+  repeated LoadingPlanStabilityParameters loadingSequenceStabilityParameters = 7;
 }
 
 message LoadingSequence {
@@ -440,6 +441,9 @@ message LoadingPlanStabilityParameters {
   string sf = 4;
   int32 conditionType = 5;
   int32 valueType = 6;
+  string foreDraft = 7;
+  string aftDraft = 8;
+  int32 time = 9;
 }
 
 message LoadingPlanTankDetails {
@@ -555,10 +559,15 @@ message LoadingSequenceRequest {
 }
 
 message LoadingSequenceReply {
-  string startDate = 1;
-  int32 interval = 2;
-  repeated LoadingSequence loadingSequences = 3;
-  ResponseStatus responseStatus = 4;
+  int64 vesselId = 1;
+  int64 voyageId = 2;
+  int64 loadablePatternId = 3;
+  int64 portId = 4;
+  string startDate = 5;
+  int32 interval = 6;
+  repeated LoadingSequence loadingSequences = 7;
+  repeated LoadingPlanStabilityParameters loadingSequenceStabilityParameters = 8;
+  ResponseStatus responseStatus = 9;
 }
 
 message LoadingPlanReply {
