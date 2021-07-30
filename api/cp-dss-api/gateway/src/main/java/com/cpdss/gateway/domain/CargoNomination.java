@@ -49,6 +49,4 @@ public class CargoNomination {
   private Boolean isCargoNominationComplete;
 
   private Long mode;
-
-  private BigDecimal maxQuantity;
 }

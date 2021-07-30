@@ -647,14 +647,10 @@ public class LoadingPlanController {
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long patternId,
-      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          Long portRotationId)
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portRotationId)
       throws CommonRestException {
     try {
-      log.info(
-          "Getting all update ullage details of vesselID: {} on port: {}",
-          vesselId,
-          portRotationId);
+      log.info("Getting all update ullage details of vesselID: {} on port: {}", vesselId, portRotationId);
       LoadingUpdateUllageResponse response =
           loadingPlanService.getUpdateUllageDetails(vesselId, patternId, portRotationId);
       return response;
@@ -678,4 +674,5 @@ public class LoadingPlanController {
           e);
     }
   }
+
 }

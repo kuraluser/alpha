@@ -659,7 +659,3 @@ message LoadingPlanReply {
   repeated LoadingPlanTankDetails portLoadingPlanRobDetails = 5;
   repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 6;
 }
-
-message BillOfLaddingRequest{
-  int64 cargoNominationId = 1;
-}
