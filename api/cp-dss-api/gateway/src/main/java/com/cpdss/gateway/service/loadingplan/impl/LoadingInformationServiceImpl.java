@@ -318,6 +318,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           dto.setMaxShipDepth(
               bd.getMaxDraft().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxDraft()));
           dto.setLineDisplacement(bd.getLineDisplacement());
+          dto.setHoseConnections(bd.getHoseConnection());
           berthDetails.add(dto);
         }
       } catch (Exception e) {
@@ -383,10 +384,13 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         List<VesselPump> vesselPumps = new ArrayList<>();
         if (grpcReply.getVesselPumpCount() > 0) {
           for (VesselInfo.VesselPump vp : grpcReply.getVesselPumpList()) {
-            VesselPump pump = new VesselPump();
-            BeanUtils.copyProperties(vp, pump);
-            pump.setMachineType(Common.MachineType.VESSEL_PUMP_VALUE);
-            vesselPumps.add(pump);
+            // Cargo pumps not needed in loading
+            if (vp.getPumpTypeId() != GatewayConstants.VESSEL_PUMP_CARGO_TYPE_ID) {
+              VesselPump pump = new VesselPump();
+              BeanUtils.copyProperties(vp, pump);
+              pump.setMachineType(Common.MachineType.VESSEL_PUMP_VALUE);
+              vesselPumps.add(pump);
+            }
           }
         }
         machineryInUse.setPumpTypes(pumpTypes);
