@@ -134,12 +134,14 @@ public class CargoNominationService {
     portDetail.setIsActive(true);
     portDetail.setCargoNomination(dischargeStudyCargo);
     if (cargo != null) {
+      portDetail.setVersion(cargo.getVersion());
       portDetail.setQuantity(
           cargo.getCargoNominationPortDetails().stream()
               .map(CargoNominationPortDetails::getQuantity)
               .reduce(BigDecimal.ZERO, BigDecimal::add));
     } else {
       portDetail.setQuantity(new BigDecimal(0));
+      portDetail.setVersion(1L);
     }
     return new HashSet<CargoNominationPortDetails>(Arrays.asList(portDetail));
   }

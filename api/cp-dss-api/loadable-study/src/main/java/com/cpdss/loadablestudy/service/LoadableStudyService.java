@@ -883,6 +883,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study - port data", e);
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(e.getCode())
@@ -892,6 +893,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .build());
     } catch (Exception e) {
       log.error("Exception when saving loadable study port data", e);
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
