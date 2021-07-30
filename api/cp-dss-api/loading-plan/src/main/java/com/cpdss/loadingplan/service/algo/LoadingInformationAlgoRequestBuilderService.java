@@ -278,20 +278,14 @@ public class LoadingInformationAlgoRequestBuilderService {
         .forEach(
             cargo -> {
               LoadableQuantityCargoDetails loadableQuantity = new LoadableQuantityCargoDetails();
-              Optional.ofNullable(cargo.getCargoAbbreviation())
+              // Commenting because algo not needed it
+              /*Optional.ofNullable(cargo.getCargoAbbreviation())
                   .ifPresent(loadableQuantity::setCargoAbbreviation);
-              Optional.ofNullable(cargo.getCargoId()).ifPresent(loadableQuantity::setCargoId);
-              Optional.ofNullable(cargo.getCargoNominationId())
-                  .ifPresent(loadableQuantity::setCargoNominationId);
               Optional.ofNullable(cargo.getColorCode()).ifPresent(loadableQuantity::setColorCode);
               Optional.ofNullable(cargo.getDifferenceColor())
                   .ifPresent(loadableQuantity::setDifferenceColor);
               Optional.ofNullable(cargo.getDifferencePercentage())
                   .ifPresent(loadableQuantity::setDifferencePercentage);
-              Optional.ofNullable(cargo.getEstimatedAPI())
-                  .ifPresent(loadableQuantity::setEstimatedAPI);
-              Optional.ofNullable(cargo.getEstimatedTemp())
-                  .ifPresent(loadableQuantity::setEstimatedTemp);
               Optional.ofNullable(cargo.getGrade()).ifPresent(loadableQuantity::setGrade);
               Optional.ofNullable(cargo.getId()).ifPresent(loadableQuantity::setId);
               Optional.ofNullable(cargo.getLoadableBbls60F())
@@ -317,7 +311,15 @@ public class LoadingInformationAlgoRequestBuilderService {
               Optional.ofNullable(cargo.getSlopQuantity())
                   .ifPresent(loadableQuantity::setSlopQuantity);
               Optional.ofNullable(cargo.getTimeRequiredForLoading())
-                  .ifPresent(loadableQuantity::setTimeRequiredForLoading);
+                  .ifPresent(loadableQuantity::setTimeRequiredForLoading);*/
+
+              Optional.ofNullable(cargo.getCargoId()).ifPresent(loadableQuantity::setCargoId);
+              Optional.ofNullable(cargo.getCargoNominationId())
+                  .ifPresent(loadableQuantity::setCargoNominationId);
+              Optional.ofNullable(cargo.getEstimatedAPI())
+                  .ifPresent(loadableQuantity::setEstimatedAPI);
+              Optional.ofNullable(cargo.getEstimatedTemp())
+                  .ifPresent(loadableQuantity::setEstimatedTemp);
               loadableQuantityCargoDetails.add(loadableQuantity);
             });
     loadingInfo.setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
@@ -383,6 +385,10 @@ public class LoadingInformationAlgoRequestBuilderService {
             ? null
             : new BigDecimal(loadingRate.getMinDeBallastingRate()));
     loadingInfo.setLoadingRates(loadingRates);
+    loadingRates.setShoreLoadingRate(
+        loadingRate.getShoreLoadingRate().isEmpty()
+            ? null
+            : new BigDecimal(loadingRate.getShoreLoadingRate()));
   }
 
   private void buildLoadingMachines(
