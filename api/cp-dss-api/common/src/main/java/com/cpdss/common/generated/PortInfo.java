@@ -15944,19 +15944,6 @@ public final class PortInfo {
      * @return The bytes for lineDisplacement.
      */
     com.google.protobuf.ByteString getLineDisplacementBytes();
-
-    /**
-     * <code>string hoseConnection = 14;</code>
-     *
-     * @return The hoseConnection.
-     */
-    java.lang.String getHoseConnection();
-    /**
-     * <code>string hoseConnection = 14;</code>
-     *
-     * @return The bytes for hoseConnection.
-     */
-    com.google.protobuf.ByteString getHoseConnectionBytes();
   }
   /** Protobuf type {@code BerthDetail} */
   public static final class BerthDetail extends com.google.protobuf.GeneratedMessageV3
@@ -15980,7 +15967,6 @@ public final class PortInfo {
       maxLoa_ = "";
       maxDraft_ = "";
       lineDisplacement_ = "";
-      hoseConnection_ = "";
     }
 
     @java.lang.Override
@@ -16095,13 +16081,6 @@ public final class PortInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 lineDisplacement_ = s;
-                break;
-              }
-            case 114:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                hoseConnection_ = s;
                 break;
               }
             default:
@@ -16519,41 +16498,6 @@ public final class PortInfo {
       }
     }
 
-    public static final int HOSECONNECTION_FIELD_NUMBER = 14;
-    private volatile java.lang.Object hoseConnection_;
-    /**
-     * <code>string hoseConnection = 14;</code>
-     *
-     * @return The hoseConnection.
-     */
-    public java.lang.String getHoseConnection() {
-      java.lang.Object ref = hoseConnection_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        hoseConnection_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string hoseConnection = 14;</code>
-     *
-     * @return The bytes for hoseConnection.
-     */
-    public com.google.protobuf.ByteString getHoseConnectionBytes() {
-      java.lang.Object ref = hoseConnection_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        hoseConnection_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -16607,9 +16551,6 @@ public final class PortInfo {
       if (!getLineDisplacementBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 13, lineDisplacement_);
       }
-      if (!getHoseConnectionBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 14, hoseConnection_);
-      }
       unknownFields.writeTo(output);
     }
 
@@ -16659,9 +16600,6 @@ public final class PortInfo {
       if (!getLineDisplacementBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, lineDisplacement_);
       }
-      if (!getHoseConnectionBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, hoseConnection_);
-      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -16691,7 +16629,6 @@ public final class PortInfo {
       if (!getMaxLoa().equals(other.getMaxLoa())) return false;
       if (!getMaxDraft().equals(other.getMaxDraft())) return false;
       if (!getLineDisplacement().equals(other.getLineDisplacement())) return false;
-      if (!getHoseConnection().equals(other.getHoseConnection())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -16729,8 +16666,6 @@ public final class PortInfo {
       hash = (53 * hash) + getMaxDraft().hashCode();
       hash = (37 * hash) + LINEDISPLACEMENT_FIELD_NUMBER;
       hash = (53 * hash) + getLineDisplacement().hashCode();
-      hash = (37 * hash) + HOSECONNECTION_FIELD_NUMBER;
-      hash = (53 * hash) + getHoseConnection().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -16894,8 +16829,6 @@ public final class PortInfo {
 
         lineDisplacement_ = "";
 
-        hoseConnection_ = "";
-
         return this;
       }
 
@@ -16935,7 +16868,6 @@ public final class PortInfo {
         result.maxLoa_ = maxLoa_;
         result.maxDraft_ = maxDraft_;
         result.lineDisplacement_ = lineDisplacement_;
-        result.hoseConnection_ = hoseConnection_;
         onBuilt();
         return result;
       }
@@ -17035,10 +16967,6 @@ public final class PortInfo {
         }
         if (!other.getLineDisplacement().isEmpty()) {
           lineDisplacement_ = other.lineDisplacement_;
-          onChanged();
-        }
-        if (!other.getHoseConnection().isEmpty()) {
-          hoseConnection_ = other.hoseConnection_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -17930,82 +17858,6 @@ public final class PortInfo {
         return this;
       }
 
-      private java.lang.Object hoseConnection_ = "";
-      /**
-       * <code>string hoseConnection = 14;</code>
-       *
-       * @return The hoseConnection.
-       */
-      public java.lang.String getHoseConnection() {
-        java.lang.Object ref = hoseConnection_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          hoseConnection_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string hoseConnection = 14;</code>
-       *
-       * @return The bytes for hoseConnection.
-       */
-      public com.google.protobuf.ByteString getHoseConnectionBytes() {
-        java.lang.Object ref = hoseConnection_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          hoseConnection_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string hoseConnection = 14;</code>
-       *
-       * @param value The hoseConnection to set.
-       * @return This builder for chaining.
-       */
-      public Builder setHoseConnection(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        hoseConnection_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string hoseConnection = 14;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearHoseConnection() {
-
-        hoseConnection_ = getDefaultInstance().getHoseConnection();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string hoseConnection = 14;</code>
-       *
-       * @param value The bytes for hoseConnection to set.
-       * @return This builder for chaining.
-       */
-      public Builder setHoseConnectionBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        hoseConnection_ = value;
-        onChanged();
-        return this;
-      }
-
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -18177,7 +18029,7 @@ public final class PortInfo {
           + "es\030\002 \003(\0132\t.Timezone\"\037\n\rPortIdRequest\022\016\n\006"
           + "portId\030\001 \001(\003\"Z\n\021BerthInfoResponse\022\'\n\016res"
           + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\006be"
-          + "rths\030\002 \003(\0132\014.BerthDetail\"\312\002\n\013BerthDetail"
+          + "rths\030\002 \003(\0132\014.BerthDetail\"\262\002\n\013BerthDetail"
           + "\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\025\n\rloadingI"
           + "nfoId\030\014 \001(\003\022\026\n\016maxShipChannel\030\003 \001(\t\022\021\n\tb"
           + "erthName\030\004 \001(\t\022\024\n\014maxShipDepth\030\005 \001(\t\022\032\n\022"
@@ -18185,24 +18037,23 @@ public final class PortInfo {
           + "tation\030\007 \001(\t\022\031\n\021maxManifoldHeight\030\010 \001(\t\022"
           + " \n\030regulationAndRestriction\030\t \001(\t\022\016\n\006max"
           + "Loa\030\n \001(\t\022\020\n\010maxDraft\030\013 \001(\t\022\030\n\020lineDispl"
-          + "acement\030\r \001(\t\022\026\n\016hoseConnection\030\016 \001(\t2\334\004"
-          + "\n\017PortInfoService\022)\n\013GetPortInfo\022\014.PortR"
-          + "equest\032\n.PortReply\"\000\022R\n\024GetPortInfoByCar"
-          + "goId\022\034.GetPortInfoByCargoIdRequest\032\032.Get"
-          + "PortInfoByCargoIdReply\"\000\022B\n\024GetPortInfoB"
-          + "yPortIds\022\034.GetPortInfoByPortIdsRequest\032\n"
-          + ".PortReply\"\000\022G\n\031GetPortInfoDetailsForAlg"
-          + "o\022\034.GetPortInfoByPortIdsRequest\032\n.PortRe"
-          + "ply\"\000\0225\n\013GetTimezone\022\021.PortEmptyRequest\032"
-          + "\021.TimezoneResponse\"\000\022;\n\023GetPortInfoByPag"
-          + "ing\022\026.PortRequestWithPaging\032\n.PortReply\""
-          + "\000\022?\n\027GetBerthDetailsByPortId\022\016.PortIdReq"
-          + "uest\032\022.BerthInfoResponse\"\000\022D\n\025GetCargoIn"
-          + "foByPortIds\022\034.GetPortInfoByPortIdsReques"
-          + "t\032\013.CargoInfos\"\000\022B\n\027GetLoadingPlanBerthD"
-          + "ata\022\020.BerthIdsRequest\032\025.LoadingAlgoBerth"
-          + "DataB\036\n\032com.cpdss.common.generatedP\000b\006pr"
-          + "oto3"
+          + "acement\030\r \001(\t2\334\004\n\017PortInfoService\022)\n\013Get"
+          + "PortInfo\022\014.PortRequest\032\n.PortReply\"\000\022R\n\024"
+          + "GetPortInfoByCargoId\022\034.GetPortInfoByCarg"
+          + "oIdRequest\032\032.GetPortInfoByCargoIdReply\"\000"
+          + "\022B\n\024GetPortInfoByPortIds\022\034.GetPortInfoBy"
+          + "PortIdsRequest\032\n.PortReply\"\000\022G\n\031GetPortI"
+          + "nfoDetailsForAlgo\022\034.GetPortInfoByPortIds"
+          + "Request\032\n.PortReply\"\000\0225\n\013GetTimezone\022\021.P"
+          + "ortEmptyRequest\032\021.TimezoneResponse\"\000\022;\n\023"
+          + "GetPortInfoByPaging\022\026.PortRequestWithPag"
+          + "ing\032\n.PortReply\"\000\022?\n\027GetBerthDetailsByPo"
+          + "rtId\022\016.PortIdRequest\032\022.BerthInfoResponse"
+          + "\"\000\022D\n\025GetCargoInfoByPortIds\022\034.GetPortInf"
+          + "oByPortIdsRequest\032\013.CargoInfos\"\000\022B\n\027GetL"
+          + "oadingPlanBerthData\022\020.BerthIdsRequest\032\025."
+          + "LoadingAlgoBerthDataB\036\n\032com.cpdss.common"
+          + ".generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -18371,7 +18222,6 @@ public final class PortInfo {
               "MaxLoa",
               "MaxDraft",
               "LineDisplacement",
-              "HoseConnection",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }

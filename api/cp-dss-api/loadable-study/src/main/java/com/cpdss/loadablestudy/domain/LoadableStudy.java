@@ -38,4 +38,6 @@ public class LoadableStudy {
   private Boolean feedbackLoop;
   private Integer feedbackLoopCount;
   private List<RulePlans> loadableStudyRuleList;
+  private List<LoadableStudyAttachment> LoadableStudyAttachment;
+  private List<SynopticalTable> synopticalTableDetails;
 }

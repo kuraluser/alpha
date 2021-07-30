@@ -115,6 +115,8 @@ public class GenerateDischargeStudyJson {
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceBlockingStub loadingPlanGrpcService;
 
+  @Autowired JsonDataService jsonDataService;
+
   public AlgoReply.Builder generateDischargePatterns(
       AlgoRequest request, AlgoReply.Builder replyBuilder)
       throws GenericServiceException, JsonGenerationException, JsonMappingException, IOException {
@@ -131,7 +133,7 @@ public class GenerateDischargeStudyJson {
           new File(
               this.rootFolder + "/json/dischargeStudy_" + request.getLoadableStudyId() + ".json"),
           AlgoJsonPayload);
-      loadableStudyService.saveJsonToDatabase(
+      jsonDataService.saveJsonToDatabase(
           request.getLoadableStudyId(),
           DISCHARGE_STUDY_REQUEST,
           objectMapper.writeValueAsString(AlgoJsonPayload));
@@ -520,10 +522,7 @@ public class GenerateDischargeStudyJson {
     return null;
   }
 
-  /**
-   * @param build
-   * @return PortReply
-   */
+  /** @return PortReply */
   public PortInfo.PortReply getPortInfo(List<Long> portIds) {
     PortInfo.GetPortInfoByPortIdsRequest request =
         PortInfo.GetPortInfoByPortIdsRequest.newBuilder().addAllId(portIds).build();
