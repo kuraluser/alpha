@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaskListener implements ExecuteTaskListener {
   @Autowired private CommunicationService communicationService;
+
   @Value("${cpdss.communication.enable}")
   private boolean enableCommunication;
   /**
@@ -40,6 +41,5 @@ public class TaskListener implements ExecuteTaskListener {
         communicationService.checkLoadableStudyStatus(taskReqParams);
       }
     }
-
   }
 }

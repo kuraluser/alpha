@@ -1075,14 +1075,17 @@ public class LoadablePatternService {
           objectMapper.writeValueAsString(loadableStudy));
       if (enableCommunication) {
         EnvoyWriter.WriterReply ewReply =
-                communicationService.passRequestPayloadToEnvoyWriter(objectMapper.writeValueAsString(loadableStudy), loadableStudy.getVesselId(), MessageTypes.LOADABLESTUDY.getMessageType());
+            communicationService.passRequestPayloadToEnvoyWriter(
+                objectMapper.writeValueAsString(loadableStudy),
+                loadableStudy.getVesselId(),
+                MessageTypes.LOADABLESTUDY.getMessageType());
         if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
           LoadableStudyCommunicationStatus lsCommunicationStatus =
-                  new LoadableStudyCommunicationStatus();
+              new LoadableStudyCommunicationStatus();
           if (ewReply.getMessageId() != null) {
             lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
             lsCommunicationStatus.setCommunicationStatus(
-                    CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
           }
           lsCommunicationStatus.setReferenceId(request.getLoadableStudyId());
           lsCommunicationStatus.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
@@ -1108,13 +1111,14 @@ public class LoadablePatternService {
     return replyBuilder;
   }
 
-  private void getAlgoCall(com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder replyBuilder, Optional<LoadableStudy> loadableStudyOpt, com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+  private void getAlgoCall(
+      com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder replyBuilder,
+      Optional<LoadableStudy> loadableStudyOpt,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
     AlgoResponse algoResponse =
         restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
     updateProcessIdForLoadableStudy(
-        algoResponse.getProcessId(),
-        loadableStudyOpt.get(),
-        LOADABLE_STUDY_PROCESSING_STARTED_ID);
+        algoResponse.getProcessId(), loadableStudyOpt.get(), LOADABLE_STUDY_PROCESSING_STARTED_ID);
 
     loadableStudyRepository.updateLoadableStudyStatus(
         LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
