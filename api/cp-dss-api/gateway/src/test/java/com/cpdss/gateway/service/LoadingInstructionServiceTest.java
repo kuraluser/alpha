@@ -77,7 +77,7 @@ class LoadingInstructionServiceTest {
             TEST_PORT_ROTATION_ID,
             new LoadingInstructionsSaveRequest());
 
-    assertEquals(SUCCESS, response.getResponseStatus().getStatus(), "Invalid response status");
+    assertEquals(SUCCESS, response.getResponseStatus().getStatus(), "SUCCESS");
   }
 
   /**
@@ -135,7 +135,7 @@ class LoadingInstructionServiceTest {
             TEST_PORT_ROTATION_ID,
             new LoadingInstructionsUpdateRequest());
 
-    assertEquals(SUCCESS, response.getResponseStatus().getStatus(), "Invalid response status");
+    assertEquals(SUCCESS, response.getResponseStatus().getStatus(), "SUCCESS");
   }
 
   /**
@@ -193,7 +193,7 @@ class LoadingInstructionServiceTest {
             TEST_PORT_ROTATION_ID,
             new LoadingInstructionsStatus());
 
-    assertEquals(SUCCESS, response.getResponseStatus().getStatus(), "Invalid response status");
+    assertEquals(SUCCESS, response.getResponseStatus().getStatus(), "SUCCESS");
   }
 
   /**
@@ -251,7 +251,7 @@ class LoadingInstructionServiceTest {
             TEST_PORT_ROTATION_ID,
             new LoadingInstructionsStatus());
 
-    assertEquals(SUCCESS, response.getResponseStatus().getStatus(), "Invalid response status");
+    assertEquals(SUCCESS, response.getResponseStatus().getStatus(), "SUCCESS");
   }
 
   /**

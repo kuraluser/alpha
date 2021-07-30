@@ -1022,6 +1022,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         AlgoReply.newBuilder();
     try {
       generateDischargeStudyJson.generateDischargePatterns(request, replyBuilder);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when generating pattern", e);
       replyBuilder.setResponseStatus(

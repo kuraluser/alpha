@@ -179,4 +179,6 @@ public class LoadableStudiesConstants {
   public static final String TYPE_DEPARTURE = "Departure";
 
   public static final String LOADABLE_STUDY_JSON_MODULE_NAME = "LOADABLE";
+  public static final String DISCHARGE_STUDY_JSON_MODULE_NAME = "DISCHARGE";
+  public static final Long DISCHARGE_STUDY_REQUEST = 11L;
 }
