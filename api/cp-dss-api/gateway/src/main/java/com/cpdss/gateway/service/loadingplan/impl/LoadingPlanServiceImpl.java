@@ -41,7 +41,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -273,7 +272,6 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     return ruleResponse;
   }
 
-
   @Override
   public LoadingSequenceResponse getLoadingSequence(Long vesselId, Long voyageId, Long infoId)
       throws GenericServiceException {
@@ -378,8 +376,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   }
 
   @Override
-  public LoadingUpdateUllageResponse getUpdateUllageDetails(Long vesselId, Long patternId, Long portRotationId)
-      throws GenericServiceException {
+  public LoadingUpdateUllageResponse getUpdateUllageDetails(
+      Long vesselId, Long patternId, Long portRotationId) throws GenericServiceException {
     LoadingPlanModels.UpdateUllageDetailsRequest.Builder requestBuilder =
         LoadingPlanModels.UpdateUllageDetailsRequest.newBuilder();
     requestBuilder.setPatternId(patternId).setPortRotationId(portRotationId).setVesselId(vesselId);
@@ -388,10 +386,13 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info("Active Voyage {} For Vessel Id {}", activeVoyage.getVoyageNumber(), vesselId);
 
-    activeVoyage.getPortRotations().stream().forEach( portRotation -> System.out.println(portRotation.getId()));
+    activeVoyage.getPortRotations().stream()
+        .forEach(portRotation -> System.out.println(portRotation.getId()));
 
     Optional<PortRotation> portRotation =
-            activeVoyage.getPortRotations().stream().filter(v -> v.getId().doubleValue() == portRotationId.doubleValue()).findFirst();
+        activeVoyage.getPortRotations().stream()
+            .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
+            .findFirst();
 
     Long loadableStudyId = activeVoyage.getActiveLs().getId();
 
@@ -410,48 +411,57 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     // Get Update Ullage Data
     LoadingPlanModels.UpdateUllageDetailsResponse response =
-            this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
+        this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
 
     LoadingUpdateUllageResponse outResponse = new LoadingUpdateUllageResponse();
 
     // Call No. 1 To synoptic table api (voyage-status)
     final String OPERATION_TYPE = "DEP";
     CargoVesselTankDetails vesselTankDetails =
-            this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
-                    vesselId,
-                    activeVoyage.getId(),
-                    activeVoyage.getActiveLs().getId(),
-                    portRotation.get().getPortId(),
-                    portRotation.get().getPortOrder(),
-                    portRotation.get().getId(),
-                    OPERATION_TYPE);
+        this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
+            vesselId,
+            activeVoyage.getId(),
+            activeVoyage.getActiveLs().getId(),
+            portRotation.get().getPortId(),
+            portRotation.get().getPortOrder(),
+            portRotation.get().getId(),
+            OPERATION_TYPE);
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
     vesselTankDetails.setLoadableQuantityCargoDetails(
-            this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
-                    vesselId,
-                    activeVoyage.getPatternId(),
-                    OPERATION_TYPE,
-                    portRotation.get().getId(),
-                    portRotation.get().getPortId()));
+        this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
+            vesselId,
+            activeVoyage.getPatternId(),
+            OPERATION_TYPE,
+            portRotation.get().getId(),
+            portRotation.get().getPortId()));
     outResponse.setVesselTankDetails(vesselTankDetails);
 
     // group cargo nomination ids
     List<Long> cargoNominationIds =
-            cargoNominationReply.getCargoNominationsList().stream()
+        cargoNominationReply.getCargoNominationsList().stream()
             .map(cargoNomination -> cargoNomination.getId())
             .collect(Collectors.toList());
     cargoNominationIds = removeDuplicates(cargoNominationIds);
     System.out.println(cargoNominationIds);
 
-    List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails = this.buildPortLoadablePlanStowageDetails(response);
+    List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails =
+        this.buildPortLoadablePlanStowageDetails(response);
     outResponse.setPortLoadablePlanStowageDetails(portLoadablePlanStowageDetails);
-    List<PortLoadablePlanBallastDetails> portLoadablePlanBallastDetails = this.buildPortLoadablePlanBallastDetails(response);
+    List<PortLoadablePlanBallastDetails> portLoadablePlanBallastDetails =
+        this.buildPortLoadablePlanBallastDetails(response);
     outResponse.setPortLoadablePlanBallastDetails(portLoadablePlanBallastDetails);
-    List<PortLoadablePlanRobDetails> portLoadablePlanRobDetails = this.buildPortLoadablePlanRobDetails(response);
+    List<PortLoadablePlanRobDetails> portLoadablePlanRobDetails =
+        this.buildPortLoadablePlanRobDetails(response);
     outResponse.setPortLoadablePlanRobDetails(portLoadablePlanRobDetails);
-    this.buildUpdateUllageDetails(response,outResponse, cargoNominationIds, cargoNominationReply, portLoadablePlanStowageDetails);
+    this.buildUpdateUllageDetails(
+        response,
+        outResponse,
+        cargoNominationIds,
+        cargoNominationReply,
+        portLoadablePlanStowageDetails);
 
-    outResponse.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
+    outResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return outResponse;
     //    } catch (Exception e) {
     //      log.error(
@@ -465,35 +475,41 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     //    }
   }
 
-
   private LoadingUpdateUllageResponse buildUpdateUllageDetails(
-          LoadingPlanModels.UpdateUllageDetailsResponse response, LoadingUpdateUllageResponse outResponse, List<Long> cargoNominationIds, LoadableStudy.CargoNominationReply cargoNominationReply, List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails) {
+      LoadingPlanModels.UpdateUllageDetailsResponse response,
+      LoadingUpdateUllageResponse outResponse,
+      List<Long> cargoNominationIds,
+      LoadableStudy.CargoNominationReply cargoNominationReply,
+      List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails) {
     List<CargoBillOfLadding> billOfLaddingList = new ArrayList<CargoBillOfLadding>();
-    List<UpdateUllageCargoQuantityDetail> cargoQuantityDetailList = new ArrayList<UpdateUllageCargoQuantityDetail>();
+    List<UpdateUllageCargoQuantityDetail> cargoQuantityDetailList =
+        new ArrayList<UpdateUllageCargoQuantityDetail>();
     for (Long cargoNominationId : cargoNominationIds) {
       CargoBillOfLadding cargoBillOfLadding = new CargoBillOfLadding();
       UpdateUllageCargoQuantityDetail cargoQuantityDetail = new UpdateUllageCargoQuantityDetail();
 
       // get cargonomination details
       LoadableStudy.CargoNominationDetail cargoNomination =
-              cargoNominationReply.getCargoNominationsList().stream()
-                      .filter(
-                              cargoNominationDetail ->
-                                      cargoNominationDetail.getId() == cargoNominationId.longValue())
-                      .findFirst()
-                      .get();
+          cargoNominationReply.getCargoNominationsList().stream()
+              .filter(
+                  cargoNominationDetail ->
+                      cargoNominationDetail.getId() == cargoNominationId.longValue())
+              .findFirst()
+              .get();
 
       // get the bill of laddings for the cargo nomination
       List<Common.BillOfLadding> cargoBills =
-              response.getBillOfLaddingList().stream()
-                      .filter(billOfLadding -> billOfLadding.getCargoNominationId() == cargoNominationId.longValue())
-                      .collect(Collectors.toList());
+          response.getBillOfLaddingList().stream()
+              .filter(
+                  billOfLadding ->
+                      billOfLadding.getCargoNominationId() == cargoNominationId.longValue())
+              .collect(Collectors.toList());
       List<BillOfLadding> billOfLaddings = new ArrayList<BillOfLadding>();
-      if(cargoBills.size() > 0) {
+      if (cargoBills.size() > 0) {
         billOfLaddings =
-                cargoBills.stream()
-                        .<BillOfLadding>map(cargoBill -> this.buildBillOfLadding(cargoBill))
-                        .collect(Collectors.toList());
+            cargoBills.stream()
+                .<BillOfLadding>map(cargoBill -> this.buildBillOfLadding(cargoBill))
+                .collect(Collectors.toList());
       }
       cargoBillOfLadding.setCargoId(cargoNomination.getCargoId());
       cargoBillOfLadding.setCargoColor(cargoNomination.getColor());
@@ -502,34 +518,52 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       cargoBillOfLadding.setBillOfLaddings(billOfLaddings);
       billOfLaddingList.add(cargoBillOfLadding);
 
-      //Setting Cargo Quantity Table values
+      // Setting Cargo Quantity Table values
       cargoQuantityDetail.setCargoId(cargoNomination.getCargoId());
       cargoQuantityDetail.setCargoColor(cargoNomination.getColor());
       cargoQuantityDetail.setCargoName(cargoNomination.getCargoName());
       cargoQuantityDetail.setCargoAbbrevation(cargoNomination.getAbbreviation());
       cargoQuantityDetail.setApi(cargoNomination.getApi());
       cargoQuantityDetail.setTemperature(cargoNomination.getTemperature());
-      Double nominationQuantity = cargoNomination.getQuantity() != null ? Double.parseDouble(cargoNomination.getQuantity()) : null;
+      Double nominationQuantity =
+          cargoNomination.getQuantity() != null
+              ? Double.parseDouble(cargoNomination.getQuantity())
+              : null;
       cargoQuantityDetail.setNominationTotal(nominationQuantity);
-      Double minTolerance = cargoNomination.getMinTolerance() != null ? Double.parseDouble(cargoNomination.getMinTolerance()) : null;
+      Double minTolerance =
+          cargoNomination.getMinTolerance() != null
+              ? Double.parseDouble(cargoNomination.getMinTolerance())
+              : null;
       cargoQuantityDetail.setMinTolerance(minTolerance);
-      Double maxTolerance = cargoNomination.getMaxTolerance() != null ? Double.parseDouble(cargoNomination.getMaxTolerance()) : null;
+      Double maxTolerance =
+          cargoNomination.getMaxTolerance() != null
+              ? Double.parseDouble(cargoNomination.getMaxTolerance())
+              : null;
       cargoQuantityDetail.setMaxTolerance(maxTolerance);
-      Double minQuantity = nominationQuantity * (100 + minTolerance) / 100 ;
+      Double minQuantity = nominationQuantity * (100 + minTolerance) / 100;
       cargoQuantityDetail.setMinQuantity(minQuantity);
-      Double maxQuantity = nominationQuantity * (100 + maxTolerance) / 100 ;
+      Double maxQuantity = nominationQuantity * (100 + maxTolerance) / 100;
       cargoQuantityDetail.setMaxQuantity(maxQuantity);
-      Double actualQuantityTotal = portLoadablePlanStowageDetails.stream()
-              .filter(stowage -> stowage.getCargoNominationId().doubleValue() == cargoNominationId && stowage.getActualPlanned().equalsIgnoreCase("1"))
+      Double actualQuantityTotal =
+          portLoadablePlanStowageDetails.stream()
+              .filter(
+                  stowage ->
+                      stowage.getCargoNominationId().doubleValue() == cargoNominationId
+                          && stowage.getActualPlanned().equalsIgnoreCase("1"))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
               .reduce(0, (subtotal, element) -> subtotal + element);
       cargoQuantityDetail.setActualQuantityTotal(actualQuantityTotal);
-      Double plannedQuantityTotal = portLoadablePlanStowageDetails.stream()
-              .filter(stowage -> stowage.getCargoNominationId().doubleValue() == cargoNominationId && stowage.getActualPlanned().equalsIgnoreCase("2"))
+      Double plannedQuantityTotal =
+          portLoadablePlanStowageDetails.stream()
+              .filter(
+                  stowage ->
+                      stowage.getCargoNominationId().doubleValue() == cargoNominationId
+                          && stowage.getActualPlanned().equalsIgnoreCase("2"))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
               .reduce(0, (subtotal, element) -> subtotal + element);
       cargoQuantityDetail.setPlannedQuantityTotal(plannedQuantityTotal);
-      Double blQuantityTotal = billOfLaddings.stream()
+      Double blQuantityTotal =
+          billOfLaddings.stream()
               .mapToDouble(billOfLadding -> billOfLadding.getQuantityMt().doubleValue())
               .reduce(0, (subtotal, element) -> subtotal + element);
       cargoQuantityDetail.setBlQuantityTotal(blQuantityTotal);
@@ -554,80 +588,93 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         .ifPresent(temp -> billOfLadding.setTemperature(new BigDecimal(temp)));
     Optional.ofNullable(cargoBill.getQuantityMt())
         .ifPresent(quantity -> billOfLadding.setQuantityMt(new BigDecimal(quantity)));
-//    Optional.ofNullable(cargoBill.getQuantityBbls())
-//        .ifPresent(quantity -> billOfLadding.setQuantityBbls(new BigDecimal(quantity)));
-//    Optional.ofNullable(cargoBill.getQuantityKl())
-//        .ifPresent(quantity -> billOfLadding.setQuantityKl(new BigDecimal(quantity)));
+    //    Optional.ofNullable(cargoBill.getQuantityBbls())
+    //        .ifPresent(quantity -> billOfLadding.setQuantityBbls(new BigDecimal(quantity)));
+    //    Optional.ofNullable(cargoBill.getQuantityKl())
+    //        .ifPresent(quantity -> billOfLadding.setQuantityKl(new BigDecimal(quantity)));
     //    Optional.ofNullable(cargoBill.getBL()).ifPresent(ref -> billOfLadding.setBlRefNo(ref));
     return billOfLadding;
   }
 
-  private List<PortLoadablePlanStowageDetails> buildPortLoadablePlanStowageDetails(LoadingPlanModels.UpdateUllageDetailsResponse response) {
-    List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetailsList = new ArrayList<PortLoadablePlanStowageDetails>();
-    if(response.getPortLoadablePlanStowageDetailsCount() > 0){
-      response.getPortLoadablePlanStowageDetailsList().stream().forEach( portWiseStowageDetail -> {
-        PortLoadablePlanStowageDetails stowageDetail = new PortLoadablePlanStowageDetails();
-        stowageDetail.setAbbreviation(portWiseStowageDetail.getAbbreviation());
-        stowageDetail.setApi(portWiseStowageDetail.getApi());
-        stowageDetail.setCargoNominationId(portWiseStowageDetail.getCargoNominationId());
-        stowageDetail.setCargoId(portWiseStowageDetail.getCargoId());
-        stowageDetail.setColorCode(portWiseStowageDetail.getColorCode());
-        stowageDetail.setCorrectedUllage(portWiseStowageDetail.getCorrectedUllage());
-        stowageDetail.setCorrectionFactor(portWiseStowageDetail.getCorrectionFactor());
-        stowageDetail.setFillingPercentage(portWiseStowageDetail.getFillingPercentage());
-        stowageDetail.setId(portWiseStowageDetail.getId());
-        stowageDetail.setLoadablePatternId(portWiseStowageDetail.getLoadablePatternId());
-        stowageDetail.setRdgUllage(portWiseStowageDetail.getRdgUllage());
-        stowageDetail.setTankId(portWiseStowageDetail.getTankId());
-        stowageDetail.setTemperature(portWiseStowageDetail.getTemperature());
-        stowageDetail.setWeight(portWiseStowageDetail.getWeight());
-        stowageDetail.setQuantity(portWiseStowageDetail.getQuantity());
-        stowageDetail.setArrivalDeparture(portWiseStowageDetail.getArrivalDeparture());
-        stowageDetail.setActualPlanned(portWiseStowageDetail.getActualPlanned());
-        stowageDetail.setUllage(portWiseStowageDetail.getUllage());
-        portLoadablePlanStowageDetailsList.add(stowageDetail);
-      });
+  private List<PortLoadablePlanStowageDetails> buildPortLoadablePlanStowageDetails(
+      LoadingPlanModels.UpdateUllageDetailsResponse response) {
+    List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetailsList =
+        new ArrayList<PortLoadablePlanStowageDetails>();
+    if (response.getPortLoadablePlanStowageDetailsCount() > 0) {
+      response.getPortLoadablePlanStowageDetailsList().stream()
+          .forEach(
+              portWiseStowageDetail -> {
+                PortLoadablePlanStowageDetails stowageDetail = new PortLoadablePlanStowageDetails();
+                stowageDetail.setAbbreviation(portWiseStowageDetail.getAbbreviation());
+                stowageDetail.setApi(portWiseStowageDetail.getApi());
+                stowageDetail.setCargoNominationId(portWiseStowageDetail.getCargoNominationId());
+                stowageDetail.setCargoId(portWiseStowageDetail.getCargoId());
+                stowageDetail.setColorCode(portWiseStowageDetail.getColorCode());
+                stowageDetail.setCorrectedUllage(portWiseStowageDetail.getCorrectedUllage());
+                stowageDetail.setCorrectionFactor(portWiseStowageDetail.getCorrectionFactor());
+                stowageDetail.setFillingPercentage(portWiseStowageDetail.getFillingPercentage());
+                stowageDetail.setId(portWiseStowageDetail.getId());
+                stowageDetail.setLoadablePatternId(portWiseStowageDetail.getLoadablePatternId());
+                stowageDetail.setRdgUllage(portWiseStowageDetail.getRdgUllage());
+                stowageDetail.setTankId(portWiseStowageDetail.getTankId());
+                stowageDetail.setTemperature(portWiseStowageDetail.getTemperature());
+                stowageDetail.setWeight(portWiseStowageDetail.getWeight());
+                stowageDetail.setQuantity(portWiseStowageDetail.getQuantity());
+                stowageDetail.setArrivalDeparture(portWiseStowageDetail.getArrivalDeparture());
+                stowageDetail.setActualPlanned(portWiseStowageDetail.getActualPlanned());
+                stowageDetail.setUllage(portWiseStowageDetail.getUllage());
+                portLoadablePlanStowageDetailsList.add(stowageDetail);
+              });
     }
     return portLoadablePlanStowageDetailsList;
   }
 
-  private List<PortLoadablePlanBallastDetails> buildPortLoadablePlanBallastDetails(LoadingPlanModels.UpdateUllageDetailsResponse response) {
-    List<PortLoadablePlanBallastDetails> portLoadablePlanBallastDetailsList = new ArrayList<PortLoadablePlanBallastDetails>();
-    if(response.getPortLoadingPlanBallastDetailsCount() > 0){
-      response.getPortLoadingPlanBallastDetailsList().stream().forEach(portWiseBallastDetail -> {
-        PortLoadablePlanBallastDetails ballastDetails = new PortLoadablePlanBallastDetails();
-        ballastDetails.setCargoId(portWiseBallastDetail.getCargoId());
-        ballastDetails.setColorCode(portWiseBallastDetail.getColorCode());
-        ballastDetails.setCorrectedUllage(portWiseBallastDetail.getCorrectedUllage());
-        ballastDetails.setCorrectionFactor(portWiseBallastDetail.getCorrectionFactor());
-        ballastDetails.setFillingPercentage(portWiseBallastDetail.getFillingPercentage());
-        ballastDetails.setId(portWiseBallastDetail.getId());
-        ballastDetails.setLoadablePatternId(portWiseBallastDetail.getLoadablePatternId());
-        ballastDetails.setTankId(portWiseBallastDetail.getTankId());
-        ballastDetails.setTemperature(portWiseBallastDetail.getTemperature());
-        ballastDetails.setQuantity(portWiseBallastDetail.getQuantity());
-        ballastDetails.setArrivalDeparture(portWiseBallastDetail.getArrivalDeparture());
-        ballastDetails.setActualPlanned(portWiseBallastDetail.getActualPlanned());
-        ballastDetails.setSounding(portWiseBallastDetail.getSounding());
-        portLoadablePlanBallastDetailsList.add(ballastDetails);
-      });
+  private List<PortLoadablePlanBallastDetails> buildPortLoadablePlanBallastDetails(
+      LoadingPlanModels.UpdateUllageDetailsResponse response) {
+    List<PortLoadablePlanBallastDetails> portLoadablePlanBallastDetailsList =
+        new ArrayList<PortLoadablePlanBallastDetails>();
+    if (response.getPortLoadingPlanBallastDetailsCount() > 0) {
+      response.getPortLoadingPlanBallastDetailsList().stream()
+          .forEach(
+              portWiseBallastDetail -> {
+                PortLoadablePlanBallastDetails ballastDetails =
+                    new PortLoadablePlanBallastDetails();
+                ballastDetails.setCargoId(portWiseBallastDetail.getCargoId());
+                ballastDetails.setColorCode(portWiseBallastDetail.getColorCode());
+                ballastDetails.setCorrectedUllage(portWiseBallastDetail.getCorrectedUllage());
+                ballastDetails.setCorrectionFactor(portWiseBallastDetail.getCorrectionFactor());
+                ballastDetails.setFillingPercentage(portWiseBallastDetail.getFillingPercentage());
+                ballastDetails.setId(portWiseBallastDetail.getId());
+                ballastDetails.setLoadablePatternId(portWiseBallastDetail.getLoadablePatternId());
+                ballastDetails.setTankId(portWiseBallastDetail.getTankId());
+                ballastDetails.setTemperature(portWiseBallastDetail.getTemperature());
+                ballastDetails.setQuantity(portWiseBallastDetail.getQuantity());
+                ballastDetails.setArrivalDeparture(portWiseBallastDetail.getArrivalDeparture());
+                ballastDetails.setActualPlanned(portWiseBallastDetail.getActualPlanned());
+                ballastDetails.setSounding(portWiseBallastDetail.getSounding());
+                portLoadablePlanBallastDetailsList.add(ballastDetails);
+              });
     }
     return portLoadablePlanBallastDetailsList;
   }
 
-  private List<PortLoadablePlanRobDetails> buildPortLoadablePlanRobDetails(LoadingPlanModels.UpdateUllageDetailsResponse response) {
-    List<PortLoadablePlanRobDetails> portLoadablePlanRobDetailsList = new ArrayList<PortLoadablePlanRobDetails>();
-    if(response.getPortLoadingPlanRobDetailsCount() > 0){
-      response.getPortLoadingPlanRobDetailsList().stream().forEach(portWiseRobDetail -> {
-        PortLoadablePlanRobDetails robDetail = new PortLoadablePlanRobDetails();
-        robDetail.setId(portWiseRobDetail.getId());
-        robDetail.setLoadablePatternId(portWiseRobDetail.getLoadablePatternId());
-        robDetail.setTankId(portWiseRobDetail.getTankId());
-        robDetail.setQuantity(portWiseRobDetail.getQuantity());
-        robDetail.setArrivalDeparture(portWiseRobDetail.getArrivalDeparture());
-        robDetail.setActualPlanned(portWiseRobDetail.getActualPlanned());
-        portLoadablePlanRobDetailsList.add(robDetail);
-      });
+  private List<PortLoadablePlanRobDetails> buildPortLoadablePlanRobDetails(
+      LoadingPlanModels.UpdateUllageDetailsResponse response) {
+    List<PortLoadablePlanRobDetails> portLoadablePlanRobDetailsList =
+        new ArrayList<PortLoadablePlanRobDetails>();
+    if (response.getPortLoadingPlanRobDetailsCount() > 0) {
+      response.getPortLoadingPlanRobDetailsList().stream()
+          .forEach(
+              portWiseRobDetail -> {
+                PortLoadablePlanRobDetails robDetail = new PortLoadablePlanRobDetails();
+                robDetail.setId(portWiseRobDetail.getId());
+                robDetail.setLoadablePatternId(portWiseRobDetail.getLoadablePatternId());
+                robDetail.setTankId(portWiseRobDetail.getTankId());
+                robDetail.setQuantity(portWiseRobDetail.getQuantity());
+                robDetail.setArrivalDeparture(portWiseRobDetail.getArrivalDeparture());
+                robDetail.setActualPlanned(portWiseRobDetail.getActualPlanned());
+                portLoadablePlanRobDetailsList.add(robDetail);
+              });
     }
     return portLoadablePlanRobDetailsList;
   }
@@ -650,7 +697,6 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     // return the list
     return list;
   }
-
 
   /**
    * @param referenceId

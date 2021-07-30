@@ -1957,7 +1957,24 @@ public class LoadableStudyController {
   public void test(@RequestHeader HttpHeaders headers) throws CommonRestException {
     try {
       log.info("getAlgoError: {}", getClientIp());
-      this.loadableStudyService.test();
+      this.loadableStudyService.test2();
+
+    } catch (Exception e) {
+      log.error("Error when getAlgoError", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @GetMapping(value = "test1")
+  public void test1(@RequestHeader HttpHeaders headers) throws CommonRestException {
+    try {
+      log.info("getAlgoError: {}", getClientIp());
+      this.loadableStudyService.test1();
 
     } catch (Exception e) {
       log.error("Error when getAlgoError", e);

@@ -5,6 +5,9 @@ ext{
     dbPassword = System.getenv('DB_PASSWORD') ?: ""
     grpcPort = System.getenv('GRPC_PORT') ?: ""
 	salt = System.getenv('SALT') ?: ""
+    cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
+    shipUrl = System.getenv('SHIP_URL')?:""
+    shoreUrl = System.getenv('SHORE_URL')?:""
 }
 
 appConfig {
@@ -25,11 +28,14 @@ docker {
       replicas = 1
       rollbackOnUpdateFailure = true
     }
-    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword, 'SALT': salt]
+    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword, 'SALT': salt,'CPDSS_BUILD_ENV': cpdssBuildEnv,'SHIP_URL': shipUrl,'SHORE_URL':shoreUrl ]
   }
 }
 
 dependencies {
     implementation project(':common')
     compile group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE'
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+   compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
 }

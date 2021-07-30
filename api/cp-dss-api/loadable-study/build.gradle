@@ -7,6 +7,9 @@ ext{
     grpcPort = System.getenv('GRPC_PORT') ?: ""
 	algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
 	hostRootPath = System.getenv('HOST_ROOT_PATH')?:""
+    enableComm = System.getenv('ENABLE_COMM') ?: ""
+    cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
+    commTimeLimit = System.getenv('COMM_TIME_LIMIT')?:""
 }
 
 appConfig {
@@ -30,7 +33,7 @@ appConfig {
           rollbackOnUpdateFailure = true
       }
       environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 
-	  'DB_PASSWORD': dbPassword, 'ATTACHMENT_ROOT_PATH': '/data', 'ALGO_BASE_URL': algoBaseURL]
+	  'DB_PASSWORD': dbPassword, 'ATTACHMENT_ROOT_PATH': '/data', 'ALGO_BASE_URL': algoBaseURL, 'ENABLE_COMM': enableComm, 'CPDSS_BUILD_ENV': cpdssBuildEnv,'COMM_TIME_LIMIT':commTimeLimit]
   }
   javaMainClass = "com.cpdss.loadablestudy.Application"
   grpc = 'y'

@@ -370,7 +370,6 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     return reply;
   }
 
-
   @Override
   public LoadingPlanModels.UpdateUllageDetailsResponse getUpdateUllageDetails(
       LoadingPlanModels.UpdateUllageDetailsRequest.Builder requestBuilder)
@@ -397,10 +396,8 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     return grpcResponse;
   }
 
-
   @Override
   public StatusReply saveJson(JsonRequest jsonRequest) {
     return this.loadableStudyServiceBlockingStub.saveJson(jsonRequest);
   }
-
 }
