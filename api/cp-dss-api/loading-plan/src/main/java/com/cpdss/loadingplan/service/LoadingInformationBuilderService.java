@@ -12,6 +12,8 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.entity.CargoToppingOffSequence;
 import com.cpdss.loadingplan.entity.LoadingInformation;
+import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.ArrayList;

@@ -370,8 +370,37 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     return reply;
   }
 
+
+  @Override
+  public LoadingPlanModels.UpdateUllageDetailsResponse getUpdateUllageDetails(
+      LoadingPlanModels.UpdateUllageDetailsRequest.Builder requestBuilder)
+      throws GenericServiceException {
+    log.info("Calling getLoadingInstructions in loading-plan microservice via GRPC");
+
+    LoadingPlanModels.UpdateUllageDetailsResponse grpcResponse =
+        loadingPlanServiceBlockingStub.getUpdateUllageDetails(requestBuilder.build());
+
+    //      if (grpcResponse.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
+    //        log.info("GRPC call successfull");
+    //        return this.buildResponseModel(grpcResponse);
+    //      } else {
+    //        log.error(
+    //                "Failed to retrieve update ullage details of  vesselID: {} on port: {}",
+    //                vesselId,
+    //                portId);
+    //        throw new GenericServiceException(
+    //                "Failed to retrieve update ullage details",
+    //                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+    //                HttpStatusCode.BAD_REQUEST);
+    //      }
+    System.out.println(grpcResponse.getMessage());
+    return grpcResponse;
+  }
+
+
   @Override
   public StatusReply saveJson(JsonRequest jsonRequest) {
     return this.loadableStudyServiceBlockingStub.saveJson(jsonRequest);
   }
+
 }

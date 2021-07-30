@@ -17,6 +17,11 @@ public interface PortLoadingPlanRobDetailsRepository
   public List<PortLoadingPlanRobDetails> findByLoadingInformationAndIsActive(
       LoadingInformation loadingInformation, Boolean isActive);
 
+  @Query(
+      "FROM PortLoadingPlanRobDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
+  public List<PortLoadingPlanRobDetails> findByPatternIdAndPortRotationIdAndIsActive(
+      Long patternId, Long portRotationId, Boolean isActive);
+
   @Modifying
   @Transactional
   @Query("UPDATE PortLoadingPlanRobDetails SET isActive = false WHERE id = ?1")
