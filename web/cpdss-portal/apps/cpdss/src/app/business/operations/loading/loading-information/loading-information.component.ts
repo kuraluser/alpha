@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { LoadingTransformationService } from '../../services/loading-transformation.service';
 import { AppConfigurationService } from 'apps/cpdss/src/app/shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ComponentCanDeactivate } from 'apps/cpdss/src/app/shared/services/guards/component-can-deactivate';
 import { ICargo } from '../../../core/models/common.model';
 import {RulesService}from '../../services/rules/rules.service';
 @Component({

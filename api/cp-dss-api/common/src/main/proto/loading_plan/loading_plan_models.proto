@@ -404,6 +404,7 @@ message LoadingPlanSaveRequest {
   repeated LoadingPlanTankDetails portLoadingPlanBallastDetails = 4;
   repeated LoadingPlanTankDetails portLoadingPlanRobDetails = 5;
   repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 6;
+  repeated LoadingPlanStabilityParameters loadingSequenceStabilityParameters = 7;
 }
 
 message LoadingSequence {
@@ -440,6 +441,9 @@ message LoadingPlanStabilityParameters {
   string sf = 4;
   int32 conditionType = 5;
   int32 valueType = 6;
+  string foreDraft = 7;
+  string aftDraft = 8;
+  int32 time = 9;
 }
 
 message LoadingPlanTankDetails {
@@ -550,15 +554,99 @@ message LoadingInstructionStatus{
   bool isChecked = 2;
   string instruction =3;
 }
+
+message UpdateUllageDetailsRequest{
+  int64 vesselId = 1;
+  int64 patternId = 2;
+  int64 portRotationId = 3;
+}
+
+message UpdateUllageDetailsResponse{
+  string message = 1;
+  repeated BillOfLadding billOfLadding = 2;
+  repeated PortLoadablePlanStowageDetail portLoadablePlanStowageDetails = 3;
+  repeated PortLoadingPlanBallastDetails portLoadingPlanBallastDetails = 4;
+  repeated PortLoadingPlanRobDetails portLoadingPlanRobDetails = 5;
+}
+
+message UllageCargoQuantityDetail{
+    int64 cargoNominationId = 1;
+    string plannedQuantity = 2;
+    string actualQuantity = 3;
+}
+
+message PortLoadablePlanStowageDetail {
+  string abbreviation = 1;
+  string api = 2;
+  int64 cargoNominationId = 3;
+  int64 cargoId = 4;
+  string colorCode = 5;
+  string correctedUllage = 6;
+  string correctionFactor = 7;
+  string fillingPercentage = 8;
+  int64 id = 9;
+  bool isActive = 10;
+  int64 loadablePatternId  = 11;
+  string observedBarrels = 12;
+  string observedBarrelsAt60 = 13;
+  string observedM3 = 14;
+  string rdgUllage = 15;
+  int64 tankId = 16;
+  string tankname = 17;
+  string temperature = 18;
+  string weight = 19;
+  string quantity = 20;
+  string arrivalDeparture = 21;
+  string actualPlanned = 22;
+  string ullage = 23;
+}
+
+message PortLoadingPlanBallastDetails {
+  string api = 1;
+  int64 cargoNominationId = 2;
+  int64 cargoId = 3;
+  string colorCode = 4;
+  string correctedUllage = 5;
+  string correctionFactor = 6;
+  string fillingPercentage = 7;
+  int64 id = 8;
+  bool isActive = 9;
+  int64 loadablePatternId  = 10;
+  int64 tankId = 11;
+  string tankname = 12;
+  string temperature = 13;
+  string quantity = 14;
+  string arrivalDeparture = 15;
+  string actualPlanned = 16;
+  string ullage = 17;
+  string sounding = 18;
+}
+
+message PortLoadingPlanRobDetails {
+  int64 id = 1;
+  bool isActive = 2;
+  int64 loadablePatternId  = 3;
+  int64 tankId = 4;
+  string tankname = 5;
+  string quantity = 6;
+  string arrivalDeparture = 7;
+  string actualPlanned = 8;
+}
+
 message LoadingSequenceRequest {
   int64 loadingInfoId = 1;
 }
 
 message LoadingSequenceReply {
-  string startDate = 1;
-  int32 interval = 2;
-  repeated LoadingSequence loadingSequences = 3;
-  ResponseStatus responseStatus = 4;
+  int64 vesselId = 1;
+  int64 voyageId = 2;
+  int64 loadablePatternId = 3;
+  int64 portId = 4;
+  string startDate = 5;
+  int32 interval = 6;
+  repeated LoadingSequence loadingSequences = 7;
+  repeated LoadingPlanStabilityParameters loadingSequenceStabilityParameters = 8;
+  ResponseStatus responseStatus = 9;
 }
 
 message LoadingPlanReply {

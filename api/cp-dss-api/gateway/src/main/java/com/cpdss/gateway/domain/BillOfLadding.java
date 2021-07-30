@@ -21,5 +21,6 @@ public class BillOfLadding {
   private String cargoColor;
   private String cargoName;
   private String cargoAbbrevation;
+  private String blRefNo;
   private List<Long> loadingPort;
 }

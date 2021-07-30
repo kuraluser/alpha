@@ -40,5 +40,5 @@ public class DischargeStudyPortRotationJson {
 
   private CowDetail cowDetails;
 
-  private List<DischargeStudyPortInstructionDetailsJson> instructions;
+  private List<LoadableStudyInstruction> instructions;
 }

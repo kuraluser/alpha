@@ -11,6 +11,7 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.VoyagePorts;
@@ -52,6 +53,8 @@ public class LoadableStudyPortRotationService {
   @Autowired private VoyageService voyageService;
 
   @Autowired private SynopticService synopticService;
+
+  @Autowired private LoadableStudyService studyService;
 
   @Autowired private LoadablePatternService loadablePatternService;
 
@@ -750,19 +753,39 @@ public class LoadableStudyPortRotationService {
               shoreBuilder.setImoNo(Long.parseLong(vesselDetail.getImoNumber()));
               shoreBuilder.setFlagName(vesselDetail.getFlag());
 
+              com.cpdss.common.generated.LoadableStudy.VoyageRequest requests =
+                  com.cpdss.common.generated.LoadableStudy.VoyageRequest.newBuilder()
+                      .setVesselId(vesselDetail.getId())
+                      .build();
+              com.cpdss.common.generated.LoadableStudy.VoyageListReply.Builder builders =
+                  com.cpdss.common.generated.LoadableStudy.VoyageListReply.newBuilder();
+              List<com.cpdss.common.generated.LoadableStudy.VoyageDetail> de =
+                  voyageService.getVoyagesByVessel(requests, builders).getVoyagesList().stream()
+                      .filter(list -> list.getStatus().trim().equals("Active"))
+                      .collect(Collectors.toList());
+
               // Gettting Lodablestudy detaild from Vessel
-              Set<Long> distinctLodableStudyId = new HashSet<>();
-              loadableStudyRepository
-                  .findByVesselXId(vesselDetail.getId())
-                  .forEach(
-                      det -> {
-                        if (det.getLoadableStudyStatus() != null
-                            && det.getLoadableStudyStatus().getName() != null
-                            && det.getVesselXId() != null
-                            && det.getLoadableStudyStatus().getName().trim().equals("Confirmed")
-                            && det.getVesselXId() == vesselDetail.getId())
-                          distinctLodableStudyId.add(det.getId());
-                      });
+              Set<Long> distinctLodableStudyId =
+                  loadableStudyRepository.findByVesselXId(vesselDetail.getId()).stream()
+                      .filter(
+                          det ->
+                              det.getLoadableStudyStatus() != null
+                                  && det.getLoadableStudyStatus().getName() != null
+                                  && det.getVesselXId() != null
+                                  && det.getLoadableStudyStatus()
+                                      .getName()
+                                      .trim()
+                                      .equals("Confirmed")
+                                  && det.getVesselXId() == vesselDetail.getId()
+                                  && det.getVoyage() != null
+                                  && det.getVoyage().getId() == de.get(0).getId())
+                      .map(EntityDoc::getId)
+                      .collect(Collectors.toSet());
+              /* Voyage voy = new Voyage();
+              voy.setId(de.get(0).getId());
+              voy.setVesselXId(vesselDetail.getId());
+              List<LoadableStudy> study = loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
+                      request.getVesselId(), voy, true, CONFIRMED_STATUS_ID);*/
 
               List<VoyagePorts> dataMap = new ArrayList<>();
               Set<Long> portId = new HashSet<>();
@@ -821,13 +844,13 @@ public class LoadableStudyPortRotationService {
                                                       > 0)
                                               ? loadableStudyPortRotation
                                                           .getSynopticalTable()
-                                                          .get(0)
+                                                          .get(1)
                                                           .getEtdActual()
                                                       == null
                                                   ? ""
                                                   : loadableStudyPortRotation
                                                       .getSynopticalTable()
-                                                      .get(0)
+                                                      .get(1)
                                                       .getEtdActual()
                                               : ""),
                                       reply.getPortsCount() > 0 ? reply.getPorts(0).getLat() : "",
@@ -842,6 +865,7 @@ public class LoadableStudyPortRotationService {
                   });
 
               // Building final Map
+              String vyogeName = "";
               for (int i = 0; i < dataMap.size(); i++) {
                 shoreBuilder
                     .addVoyagePortsBuilder()
@@ -849,23 +873,53 @@ public class LoadableStudyPortRotationService {
                         dataMap.get(i).getAnchorage() == null ? "" : dataMap.get(i).getAnchorage())
                     .setPortName(
                         dataMap.get(i).getPortName() == null ? "" : dataMap.get(i).getPortName())
-                    .setEta(dataMap.get(i).getEtd() == null ? "" : dataMap.get(i).getEtd())
-                    .setEtd(dataMap.get(i).getEta() == null ? "" : dataMap.get(i).getEta())
+                    .setEta(
+                        dataMap.get(i).getEtd() == null ? "" : dateFormat(dataMap.get(i).getEtd()))
+                    .setEtd(
+                        dataMap.get(i).getEta() == null ? "" : dateFormat(dataMap.get(i).getEta()))
                     .setPortType(
                         dataMap.get(i).getPortType() == null ? "" : dataMap.get(i).getPortType())
-                    .setAta(dataMap.get(i).getAta() == null ? "" : dataMap.get(i).getAta())
-                    .setAtd(dataMap.get(i).getAtd() == null ? "" : dataMap.get(i).getAtd())
+                    .setAta(
+                        dataMap.get(i).getAta() == null ? "" : dateFormat(dataMap.get(i).getAta()))
+                    .setAtd(
+                        dataMap.get(i).getAtd() == null ? "" : dateFormat(dataMap.get(i).getAtd()))
                     .setLat(dataMap.get(i).getLat() == null ? "" : dataMap.get(i).getLat())
                     .setLon(dataMap.get(i).getLon() == null ? "" : dataMap.get(i).getLon())
                     .setPortOrder(
                         dataMap.get(i).getPortOrder() == null ? "" : dataMap.get(i).getPortOrder())
                     .build();
+                if (i == 0) {
+                  shoreBuilder.setAtd(
+                      dataMap.get(i).getAtd() == null ? "" : dateFormat(dataMap.get(i).getAtd()));
+                  vyogeName =
+                      dataMap.get(i).getPortName() == null ? "" : dataMap.get(i).getPortName();
+                }
+                if (i == dataMap.size() - 1) {
+                  shoreBuilder.setEta(
+                      dataMap.get(i).getEta() == null ? "" : dateFormat(dataMap.get(i).getEta()));
+                  vyogeName =
+                      dataMap.get(i).getPortName() == null
+                          ? ""
+                          : vyogeName + " - " + dataMap.get(i).getPortName();
+                }
               }
+
+              shoreBuilder.setVoyageName(vyogeName);
 
               builder.addShoreList(shoreBuilder);
             });
 
     builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+  }
+
+  private String dateFormat(String date) {
+    return date.substring(8, 10)
+        + "-"
+        + date.substring(5, 7)
+        + "-"
+        + date.substring(0, 4)
+        + " "
+        + date.substring(11, 16);
   }
 
   public com.cpdss.common.generated.LoadableStudy.LoadableStudyReply getLoadableStudyList(

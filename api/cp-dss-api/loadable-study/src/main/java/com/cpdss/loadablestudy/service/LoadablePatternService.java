@@ -278,8 +278,8 @@ public class LoadablePatternService {
     }
     if (enableCommunication) {
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
-              this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
-                      request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
+          this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
+              request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
       if (loadableStudyCommunicationStatus.get() != null) {
 
         AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();

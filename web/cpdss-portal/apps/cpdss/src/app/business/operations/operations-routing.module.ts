@@ -8,7 +8,7 @@ const routes: Routes = [
   {
     path: '', component: OperationsComponent,
     children: [
-      { path: 'loading/:vesselId/:voyageId/:portRotationId', loadChildren: () => import('./loading/loading.module').then(m => m.LoadingModule) , canDeactivate: [HasUnsavedDataGuard]},
+      { path: 'loading/:vesselId/:voyageId/:portRotationId', loadChildren: () => import('./loading/loading.module').then(m => m.LoadingModule) },
       { path: 'discharging/:vesselId/:voyageId', loadChildren: () => import('./discharging/discharging.module').then(m => m.DischargingModule) },
       { path: 'bunkering', loadChildren: () => import('./bunkering/bunkering.module').then(m => m.BunkeringModule) }
     ]

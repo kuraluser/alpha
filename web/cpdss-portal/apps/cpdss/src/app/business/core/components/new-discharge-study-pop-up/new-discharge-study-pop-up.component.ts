@@ -170,7 +170,7 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
     if (this.dischargeStudyForm.valid) {
       let newModel = {
         name: this.dischargeStudyForm.value.newDischargeStudyName,
-        detail: this.dischargeStudyForm.value.enquiryDetails
+        detail: this.dischargeStudyForm.value.enquiryDetails ? this.dischargeStudyForm.value.enquiryDetails : ''
       }
 
       const translationKeys = await this.translateService.get(['NEW_DISCHARGE_STUDY_POPUP__NAME_EXIST', 'DISCHARGE_STUDY_CREATE_SUCCESS', 'DISCHARGE_STUDY_CREATE_SUCCESS','DISCHARGE_STUDY_CREATED_SUCCESSFULLY', 'DISCHARGE_STUDY_CREATE_ERROR', 'DISCHARGE_STUDY_ALREADY_EXIST', 'DISCHARGE_STUDY_UPDATE_SUCCESS', 'DISCHARGE_STUDY_UPDATED_SUCCESSFULLY']).toPromise();

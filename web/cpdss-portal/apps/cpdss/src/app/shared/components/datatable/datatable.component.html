@@ -263,7 +263,8 @@
                                 <ng-container *ngSwitchCase="fieldType.COLOR" class="col no-left-padding"
                                     style="max-width: 20px;">
                                     <div class="color-rounded mt-5"
-                                        [ngStyle]="rowData[col.field] && {'background' : rowData[col.field]}">
+                                        [ngStyle]="(rowData[col.field]) && 
+                                        {'background' : rowData[col.field]?.value ? rowData[col.field]?.value : rowData[col.field]}">
                                     </div>
                                 </ng-container>
 

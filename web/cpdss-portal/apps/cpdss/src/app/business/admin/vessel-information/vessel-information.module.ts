@@ -9,6 +9,7 @@ import { DatatableModule } from './../../../shared/components/datatable/datatabl
 import { PermissionDirectiveModule } from './../../../shared/directives/permission/permission-directive.module';
 import { VesselInformationRoutingModule } from './vessel-information-routing.module';
 import { VesselInformationComponent } from './vessel-information.component';
+import { VesselManagementComponent } from './Vessel-management/vessel-management/vessel-management.component';
 
 /**
  * Module for Vessel Information
@@ -16,7 +17,7 @@ import { VesselInformationComponent } from './vessel-information.component';
  * @class VesselInformationModule
  */
 @NgModule({
-  declarations: [VesselInformationComponent],
+  declarations: [VesselInformationComponent, VesselManagementComponent],
   imports: [
     CommonModule,
     FormsModule,

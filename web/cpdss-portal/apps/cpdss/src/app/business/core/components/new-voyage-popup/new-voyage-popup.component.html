@@ -26,7 +26,7 @@
               <div class="row">
                 <div class="col-6">
                   <input type="text" class="form-control" id="voyage_no" formControlName="voyageNo"
-                    (change)="trimVoyageNo($event)">
+                    (change)="trimVoyageNo($event)" autofocus focusTrap>
                 </div>
                 <div class="pt-5">
                   <cpdss-portal-validation-error *ngIf="fieldError('voyageNo')" [errors]="fieldError('voyageNo')"
@@ -47,7 +47,7 @@
                       <p-calendar appendTo="body" inputId="start_date" formControlName="start_date"
                         dateFormat="{{createVoyageDateFormat}}" #startDateTime [minDate]="date" showTime="true"
                         [hideOnDateTimeSelect]="false" (onClose)="onDateSelect(startDateTime)"
-                        (onInput)="onDateSelect(startDateTime)" [readonlyInput]="true">
+                        (onInput)="onDateSelect(startDateTime)" [readonlyInput]="true" focusTrap>
                         <p-footer>
                           <button class="btn btn-main" (click)="onDateSelect(startDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
                             | translate}}</button>
@@ -97,7 +97,7 @@
                       <p-calendar appendTo="body" inputId="end_date" formControlName="end_date"
                         dateFormat="{{createVoyageDateFormat}}" #endDateTime [minDate]="date" showTime="true"
                         [hideOnDateTimeSelect]="false" (onClose)="onDateSelect(endDateTime)"
-                        (onInput)="onDateSelect(endDateTime)" [readonlyInput]="true">
+                        (onInput)="onDateSelect(endDateTime)" [readonlyInput]="true" focusTrap>
                         <p-footer>
                           <button class="btn btn-main" (click)="onDateSelect(endDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
                             | translate}}</button>

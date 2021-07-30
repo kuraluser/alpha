@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { VesselInformationTransformationService } from './../services/vessel-information-transformation.service';
@@ -76,6 +77,8 @@ export class VesselInformationComponent implements OnInit {
   constructor(
     private vesselInformationTransformationService: VesselInformationTransformationService,
     private timeZoneTransformationService: TimeZoneTransformationService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
     private ngxSpinnerService: NgxSpinnerService
   ) { }
 
@@ -100,6 +103,15 @@ export class VesselInformationComponent implements OnInit {
     this.totalRecords = tempVesselInfoData.length;
     this.loading = false;
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Function to navigate to selected Vessel
+   * @param {*} event
+   * @memberof VesselInformationComponent
+   */
+  onRowClick(event): void {
+    this.router.navigate(['vessel', event?.data?.vesselId], { relativeTo: this.activatedRoute });
   }
 
 }

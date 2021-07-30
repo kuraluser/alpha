@@ -9,7 +9,7 @@
             <label for="new_user_role" class="col-md-2 col-form-label text-secondary">{{'ADD_NEW_ROLE' | translate}}</label>
             <div class="col-md-6">
               <input type="text" class="form-control" id="new_user_role" formControlName="roleName"
-               (change)="trimFormControl('roleName')" (input)="isExisting = false" maxlength="10">
+               (change)="trimFormControl('roleName')" (input)="isExisting = false" maxlength="10" focusTrap>
             </div>
             <cpdss-portal-validation-error [errors]="fieldError('roleName')" [errorMessages]="errorMessages.roleName">
             </cpdss-portal-validation-error>
@@ -19,7 +19,7 @@
             <label for="role_description" class="col-md-2 col-form-label text-secondary">{{'ADD_NEW_DESCRIPTION' | translate}}</label>
             <div class="col-md-10">
               <textarea type="text" class="form-control" id="role_description" maxlength="100" formControlName="roleDescription"
-              (change)="trimFormControl('roleDescription')" ></textarea>
+              (change)="trimFormControl('roleDescription')" focusTrap ></textarea>
             </div>
             <cpdss-portal-validation-error  [errors]="fieldError('roleDescription')" [errorMessages]="errorMessages.roleDescription">
             </cpdss-portal-validation-error>
@@ -39,9 +39,9 @@
   <p-footer>
     <div class="row">
       <div class="col text-right">
-        <button class="btn btn-main mr-10" id="role_user_popup_cancel" (click)="cancel()">{{
+        <button class="btn btn-main mr-10" id="role_user_popup_cancel" (click)="cancel()" focusTrap>{{
           'CANCEL_BUTTON_NEW_ROLE_POPUP' | translate }}</button>
-        <button class="btn btn-main" type="submit" id="role_user_popup_submit" (click)="saveNewUserRole()">{{
+        <button class="btn btn-main" type="submit" id="role_user_popup_submit" (click)="saveNewUserRole()" autofocus focusTrap>{{
           'SAVE_BUTTON_NEW_ROLE_POPUP' | translate }}</button>
       </div>
     </div>

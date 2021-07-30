@@ -12,6 +12,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
+import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.service.LoadingPlanService;
 import com.cpdss.loadingplan.service.LoadingSequenceService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
@@ -31,6 +32,8 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   @Autowired LoadingSequenceService loadingSequenceService;
 
   @Autowired LoadingPlanRuleServiceImpl loadingPlanRuleService;
+
+  @Autowired PortLoadingPlanStowageDetailsRepository portLoadingPlanStowageDetailsRepository;
 
   @Override
   public void loadingPlanSynchronization(
@@ -143,6 +146,35 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
               .setMessage(e.getMessage())
               .setStatus(LoadingPlanConstants.FAILED)
               .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getUpdateUllageDetails(
+      LoadingPlanModels.UpdateUllageDetailsRequest request,
+      io.grpc.stub.StreamObserver<LoadingPlanModels.UpdateUllageDetailsResponse> responseObserver) {
+    log.info("Inside saveLoadingPlan");
+    LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder =
+        LoadingPlanModels.UpdateUllageDetailsResponse.newBuilder();
+    try {
+      builder.setMessage("Working");
+      loadingPlanService.getBillOfLaddingDetails(request, builder);
+      loadingPlanService.getPortWiseStowageDetails(request, builder);
+      loadingPlanService.getPortWiseBallastDetails(request, builder);
+      loadingPlanService.getPortWiseRobDetails(request, builder);
+      //      builder.setResponseStatus(
+      //              ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Exception when saveLoadingPlan microservice is called", e);
+      //      builder.setResponseStatus(
+      //              ResponseStatus.newBuilder()
+      //                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+      //                      .setMessage(e.getMessage())
+      //                      .setStatus(LoadingPlanConstants.FAILED)
+      //                      .build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

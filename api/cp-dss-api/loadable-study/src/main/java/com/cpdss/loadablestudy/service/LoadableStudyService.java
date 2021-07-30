@@ -11,8 +11,73 @@ import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
 import com.cpdss.common.generated.Common.ResponseStatus;
-import com.cpdss.common.generated.LoadableStudy.*;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
+import com.cpdss.common.generated.LoadableStudy.AlgoReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.CargoHistoryReply;
+import com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
+import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
+import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
+import com.cpdss.common.generated.LoadableStudy.LatestCargoReply;
+import com.cpdss.common.generated.LoadableStudy.LatestCargoRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachment;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply;
+import com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest;
+import com.cpdss.common.generated.LoadableStudy.OhqPorts;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
+import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
+import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
+import com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply;
+import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
+import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
+import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
+import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveCommentReply;
+import com.cpdss.common.generated.LoadableStudy.SaveCommentRequest;
+import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply;
+import com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
+import com.cpdss.common.generated.LoadableStudy.UpdateUllageReply;
+import com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest;
+import com.cpdss.common.generated.LoadableStudy.ValveSegregationReply;
+import com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest;
+import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
+import com.cpdss.common.generated.LoadableStudy.VoyageReply;
+import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceImplBase;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.PortReply;
@@ -21,9 +86,41 @@ import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.entity.CargoNomination;
+import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
+import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
+import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
+import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.LoadableStudyRuleInput;
+import com.cpdss.loadablestudy.entity.LoadableStudyRules;
+import com.cpdss.loadablestudy.entity.OnBoardQuantity;
+import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
+import com.cpdss.loadablestudy.repository.CargoNominationRepository;
+import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.JsonDataRepository;
+import com.cpdss.loadablestudy.repository.JsonTypeRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRuleInputRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRuleRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
+import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
+import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
+import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
@@ -33,7 +130,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import lombok.extern.log4j.Log4j2;
@@ -495,7 +598,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   /**
    * * Set case number in loadable study entity
    *
-   * @param request
    * @param entity
    */
   private void setCaseNo(LoadableStudy entity) {
@@ -761,6 +863,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     PortRotationReply.Builder replyBuilder = PortRotationReply.newBuilder();
     try {
       loadableStudyPortRotationService.saveLoadableStudyPortRotation(request, replyBuilder);
+      if (request.getId() == 0) {
+        dischargeStudyService.addCargoNominationForPortRotation(
+            replyBuilder.getPortRotationId(), request.getLoadableStudyId());
+      } else {
+
+      }
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study - port data", e);
       replyBuilder.setResponseStatus(

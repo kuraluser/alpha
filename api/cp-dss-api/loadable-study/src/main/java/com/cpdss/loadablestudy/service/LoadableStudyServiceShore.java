@@ -617,7 +617,7 @@ public class LoadableStudyServiceShore {
 
   private boolean checkIfLoadableStudyExist(String name, Voyage voyage) {
     boolean duplicate =
-        this.loadableStudyRepository.existsByNameAndPlanningTypeXIdAndVoyageAndIsActive(
+        this.loadableStudyRepository.existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
             name, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE, voyage, true);
     return duplicate;
   }

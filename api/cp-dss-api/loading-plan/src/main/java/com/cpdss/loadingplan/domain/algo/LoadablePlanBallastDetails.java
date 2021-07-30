@@ -9,4 +9,10 @@ public class LoadablePlanBallastDetails {
   private Long id;
   private Long tankId;
   private String quantityMT; // for saving result
+  private String rdgLevel;
+  private String correctionFactor;
+  private String correctedUllage;
+  private String sg;
+  private String tankName;
+  private String fillingRatio;
 }
