@@ -15,9 +15,13 @@ import io.grpc.stub.StreamObserver;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /** Grpc Service for TaskScheduler */
 @Log4j2
@@ -134,5 +138,48 @@ public class TaskManagerService extends TaskManagerServiceImplBase {
   private LocalDateTime getLocalDateTime(com.google.protobuf.Timestamp timeStamp) {
     return LocalDateTime.ofInstant(
         Instant.ofEpochSecond(timeStamp.getSeconds(), timeStamp.getNanos()), ZoneId.of("UTC"));
+  }
+  /**
+   * Method to get schedule Tasks
+   *
+   * @param request
+   * @return
+   */
+  @Override
+  public void getScheduledTasks(
+      TaskManager.SchedulededTaskRequest request,
+      StreamObserver<TaskManager.SchedulededTaskReply> responseObserver) {
+    TaskManager.SchedulededTaskReply.Builder replyBuilder =
+        TaskManager.SchedulededTaskReply.newBuilder();
+    try {
+      final Page<ScheduledTaskProperties> jobInfoList =
+          schedulerService.findAll(Pageable.unpaged());
+      List<String> taskNameList =
+          jobInfoList
+              .get()
+              .map(
+                  jobInfo -> {
+                    return jobInfo.getTaskName();
+                  })
+              .collect(Collectors.toList());
+
+      replyBuilder.addAllTaskName(taskNameList);
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setMessage("TaskName Listed successfully")
+              .setStatus(Utils.STATUS.SUCCESS.name())
+              .build());
+    } catch (Exception e) {
+      log.error("Exception when getting scheduled tasks", e);
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when getting scheduled tasks")
+              .setStatus(Utils.STATUS.FAILED.name())
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

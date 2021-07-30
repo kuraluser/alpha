@@ -52,7 +52,7 @@ subprojects {
 	      source 'com/cpdss/common/generated/*'
 	 }
    }
-   
+
   // Applying spotless plugin with google java formatter
    spotless {
     java {

@@ -19,6 +19,7 @@ import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
@@ -102,6 +103,7 @@ public class LoadablePlanService {
   @Autowired private SynopticalTableRepository synopticalTableRepository;
 
   @Autowired private LoadableStudyRepository loadableStudyRepository;
+  @Autowired private JsonDataService jsonDataService;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -2548,7 +2550,7 @@ public class LoadablePlanService {
       loadabalePatternValidateRequest.setLoadablePatternId(request.getLoadablePatternId());
       loadabalePatternValidateRequest.setCaseNumber(loadablePatternOpt.get().getCaseNumber());
       ObjectMapper objectMapper = new ObjectMapper();
-      loadableStudyService.saveJsonToDatabase(
+      jsonDataService.saveJsonToDatabase(
           request.getLoadablePatternId(),
           LOADABLE_PATTERN_EDIT_REQUEST,
           objectMapper.writeValueAsString(loadabalePatternValidateRequest));

@@ -9,16 +9,23 @@ import "common.proto";
 service EnvoyWriterService {
   rpc GetCommunicationServer(EnvoyWriterRequest) returns (WriterReply) {
   }
+  rpc StatusCheck(EnvoyWriterRequest) returns (WriterReply) {
+  }
 
 }
 message EnvoyWriterRequest {
   string jsonPayload = 1;
-  string imoNumber = 2;
-  int64 vesselId = 3;
-  int32 requestType = 4;
+  string messageType = 2;
+  string clientId = 3;
+  string imoNumber = 4;
+  string messageId = 5; //uuid
 }
 message WriterReply {
   ResponseStatus responseStatus = 1;
-  string lsUUID = 2;
-  string sequenceNo = 3;
+  string messageId = 2;
+  string shipId = 3;
+  string message = 4;
+  string statusCode = 5;
+  string eventUploadStatus = 6;
+  string eventDownloadStatus = 7;
 }

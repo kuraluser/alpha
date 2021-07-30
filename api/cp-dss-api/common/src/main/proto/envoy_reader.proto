@@ -8,11 +8,27 @@ import "common.proto";
 
 service EnvoyReaderService {
   rpc getResultFromCommServer(EnvoyReaderResultRequest) returns (EnvoyReaderResultReply){}
+  rpc getStatusFromCommServer(EnvoyReaderResultRequest) returns (EnvoyReaderResultReply){}
 }
 message EnvoyReaderResultRequest{
-  string lsUUID = 1;
+  string messageType = 1;
+  string clientId = 2;
+  string shipId = 3;
+  int64 vesselId = 4;
 }
 message EnvoyReaderResultReply{
   string patternResultJson = 1;
   ResponseStatus responseStatus = 2;
+  string messageType = 3;
+  string clientId = 4;
+  string messageId = 5;
+}
+
+message EnvoyReaderStatusReply{
+  string downloadStatus = 1;
+  ResponseStatus responseStatus = 2;
+  string shipId = 3; //imoNumber
+  string clientId = 4;
+  string messageType = 5;
+  string uuid = 6;
 }

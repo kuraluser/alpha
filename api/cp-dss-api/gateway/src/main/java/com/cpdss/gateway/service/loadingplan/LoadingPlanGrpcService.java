@@ -65,7 +65,7 @@ public interface LoadingPlanGrpcService {
       throws GenericServiceException;
 
   StatusReply saveJson(JsonRequest jsonRequest);
+
   LoadingPlanModels.UpdateUllageDetailsResponse getUpdateUllageDetails(
       LoadingPlanModels.UpdateUllageDetailsRequest.Builder builder) throws GenericServiceException;
-
 }

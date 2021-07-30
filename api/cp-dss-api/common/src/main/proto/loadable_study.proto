@@ -194,7 +194,7 @@ service LoadableStudyService {
 	rpc getLoadableCommingleByPatternId(LoadablePlanDetailsRequest) returns (LoadableCommingleDetailsReply){}
 
 	rpc GetLoadableStudyShore(LoadableStudyShoreRequest) returns (LoadableStudyShoreResponse){}
-	
+
 	rpc GetLoadableStudyPortRotationByPortRotationId(PortRotationRequest) returns (PortRotationDetailReply) {}
 
 	rpc GetLoadableStudyShoreTwo(UllageBillRequest) returns (UllageBillReply){}
@@ -1527,4 +1527,9 @@ message UllageBillRequest{
 message UllageBillReply{
 	ResponseStatus responseStatus = 1;
 	repeated RulePlans rulePlan = 2;
+}
+message AlgoResponseCommunication{
+		LoadablePatternAlgoRequest loadablePatternAlgoRequest = 1;
+		LoadicatorResultsRequest loadicatorResultsRequest = 2;
+	  string messageId = 3;
 }
