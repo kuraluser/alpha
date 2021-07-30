@@ -62,5 +62,7 @@ service LoadingPlanService {
   rpc GetLoadingSequences(LoadingSequenceRequest) returns (LoadingSequenceReply) {}
 
   rpc GetUpdateUllageDetails (UpdateUllageDetailsRequest) returns (UpdateUllageDetailsResponse) {}
+  
+  rpc GetBillOfLaddingDetails (BillOfLaddingRequest) returns (LoadingInformationSynopticalReply) {}
 
 }

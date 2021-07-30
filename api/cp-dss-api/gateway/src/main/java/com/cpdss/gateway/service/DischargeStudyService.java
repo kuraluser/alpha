@@ -431,6 +431,9 @@ public class DischargeStudyService {
               }
               response.getPortList().add(portRotation);
             });
+    response.setPortList(response.getPortList().stream()
+    		.sorted((i1,i2)-> i2.getPortOrder().compareTo(i1.getPortOrder()))
+    		.collect(Collectors.toList()));
   }
 
   private List<BackLoading> buildBackLoading(
@@ -471,6 +474,7 @@ public class DischargeStudyService {
               cargoNomination.setTemperature(
                   new BigDecimal(cargoNominationDetail.getTemperature()));
               cargoNomination.setMode(cargoNominationDetail.getMode());
+              cargoNomination.setMaxQuantity(new BigDecimal(cargoNominationDetail.getMaxQuantity()));
               cargoNominations.add(cargoNomination);
             });
     portRotation.setCargoNominationList(cargoNominations);
