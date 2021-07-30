@@ -52,7 +52,7 @@ public class LoadableStudySchedulerService {
                       Thread.sleep(15 * 1000);
                       System.out.println("EXECUTING");
                       LocalDateTime dateTime = LocalDateTime.now();
-                      LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(2));
+                      LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
                       ScheduledTaskProperties properties = new ScheduledTaskProperties();
                       properties.setTaskName(
                           "DOWNLOAD_RESULT_" + environment + "_" + vesssel.getVesselId());
@@ -83,7 +83,7 @@ public class LoadableStudySchedulerService {
                       Thread.sleep(15 * 1000);
                       System.out.println("EXECUTING STATUS");
                       LocalDateTime dateTime = LocalDateTime.now();
-                      LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(4));
+                      LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
                       ScheduledTaskProperties properties = new ScheduledTaskProperties();
                       properties.setTaskName(
                           "STATUS_CHECK_" + environment + "_" + vesssel.getVesselId());
