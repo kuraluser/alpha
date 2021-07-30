@@ -38,10 +38,10 @@ public class EnvoyReaderService {
 
   @Autowired private RestTemplate restTemplate;
 
-  @Value("${cpdss.communucation.shore.reader.url}")
+  @Value("${cpdss.communication.shore.reader.url}")
   private String downloadShoreUrl;
 
-  @Value("${cpdss.communucation.ship.reader.url}")
+  @Value("${cpdss.communication.ship.reader.url}")
   private String downloadShipUrl;
 
   @Value("${cpdss.build.env}")
