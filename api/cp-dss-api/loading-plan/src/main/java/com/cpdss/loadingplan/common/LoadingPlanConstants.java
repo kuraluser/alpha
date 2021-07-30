@@ -31,4 +31,6 @@ public final class LoadingPlanConstants {
 
   // Loading Information Request Module Name
   public static final String LOADING_INFORMATION_REQUEST_JSON_MODULE_NAME = "LOADING";
+
+  public static final Long LOADING_RULE_MASTER_ID = 2l;
 }

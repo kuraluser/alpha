@@ -25,4 +25,5 @@ public class BerthDetails {
 
   private String controllingDepth; // Get from port
   private String underKeelClearance; // Get from port
+  private String seawaterDensity; // Get from port
 }
