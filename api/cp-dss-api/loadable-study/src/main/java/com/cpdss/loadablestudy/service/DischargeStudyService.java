@@ -1185,10 +1185,18 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               }
             });
     cargoNominationService.saveAll(cargos);
-    List<BackLoading> backLoadings = backLoadingService.getBackLoadings(loadableStudyId, dischargeStudyPortRotations.stream().map(LoadableStudyPortRotation::getId).collect(Collectors.toList()));
-    backLoadings.parallelStream().forEach(backLoading->{
-    	backLoading.setActive(false);
-    });
+    List<BackLoading> backLoadings =
+        backLoadingService.getBackLoadings(
+            loadableStudyId,
+            dischargeStudyPortRotations.stream()
+                .map(LoadableStudyPortRotation::getId)
+                .collect(Collectors.toList()));
+    backLoadings
+        .parallelStream()
+        .forEach(
+            backLoading -> {
+              backLoading.setActive(false);
+            });
     backLoadingService.saveAll(backLoadings);
   }
 }

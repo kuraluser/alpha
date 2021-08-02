@@ -24,12 +24,12 @@ public class BackLoadingService {
     return BackLoadingByPort;
   }
 
-	public List<BackLoading> getBackLoadings(long loadableStudyId, List<Long> portIds) {
-		List<BackLoading> backLoadings =
-	        backLoadingRepository.findByDischargeStudyIdAndPortIdInAndIsActive(
-	            loadableStudyId, portIds, true);
-		return backLoadings;
-	}
+  public List<BackLoading> getBackLoadings(long loadableStudyId, List<Long> portIds) {
+    List<BackLoading> backLoadings =
+        backLoadingRepository.findByDischargeStudyIdAndPortIdInAndIsActive(
+            loadableStudyId, portIds, true);
+    return backLoadings;
+  }
 
   public void saveAll(List<BackLoading> backLoadingToSave) {
     backLoadingRepository.saveAll(backLoadingToSave);
