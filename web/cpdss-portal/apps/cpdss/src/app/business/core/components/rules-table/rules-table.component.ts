@@ -52,7 +52,9 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   @Input() displaySettings = true;
   @Output() isSaveClicked: EventEmitter<any> = new EventEmitter();
   @Output() formChanges: EventEmitter<any> = new EventEmitter();
-  @Input()isCancelChanges = false;
+  @Input()isCancelChanges = false;  
+  @Input() pageName = "Admin"
+
   rulesFormTemp :any;
   rules: any;
 
@@ -121,9 +123,12 @@ export class RulesTableComponent implements OnInit, OnDestroy {
       
       this.initForm(); 
       this.selectedIndex = 0;
+      
       this.rulesJson[this.data] = changes?.rulesJson?.currentValue?.plan;
-      this.rules = this.rulesJson[this.data][this.selectedIndex].rules;  
-      this.disableForm();     
+      if (this.rulesJson[this.data]?.length>0) {
+        this.rules = this.rulesJson[this.data][this.selectedIndex].rules;
+        this.disableForm();
+      }
     }
   }
  
@@ -163,7 +168,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
       this.rules = [];
     }
     else {
-      if (this.rulesJson[this.data]) {
+     if (this.rulesJson[this.data]?.length>0) {
         this.rules = this.rulesJson[this.data][this.selectedIndex].rules;
       }
     }

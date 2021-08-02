@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { numberValidator } from '../../core/directives/number-validator.directive';
-import { IBerth } from '../models/loading-information.model';
-import { LoadingDischargingBerthTransformationService } from './loading-discharging-berth-transformation.service';
+import { IBerth } from '../models/loading-discharging.model';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
  * Component class for loading discharging berth component
@@ -19,6 +19,7 @@ import { LoadingDischargingBerthTransformationService } from './loading-discharg
 export class LoadingDischargingBerthComponent implements OnInit {
   @Input() editMode = true;
   @Input() loadingInfoId: number;
+  @Input() dischargingInfoId: number;
   @Input() availableBerths: IBerth[];
 
   @Input() get selectedBerths(): IBerth[] {
@@ -45,15 +46,15 @@ export class LoadingDischargingBerthComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private loadingDischargingBerthTransformationService: LoadingDischargingBerthTransformationService
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService
   ) { }
 
   ngOnInit(): void {
-    this.errorMesages = this.loadingDischargingBerthTransformationService.setValidationErrorMessage();
+    this.errorMesages = this.loadingDischargingTransformationService.setBerthValidationErrorMessage();
     this.initBerths();
   }
 
-  
+
   /**
 * initialise berth details
 */
@@ -79,6 +80,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
       regulationAndRestriction: this.fb.control('', [Validators.maxLength(500)]),
       itemsToBeAgreedWith: this.fb.control('', [Validators.maxLength(500)]),
       loadingInfoId: '',
+      dischargingInfoId: '',
       maxShpChannel: '',
       loadingBerthId: 0,
       maxLoa: '',
@@ -159,7 +161,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
   }
 
   /**
-   * Berth change 
+   * Berth change
    * @param {Event}
    * @memberof LoadingDischargingBerthComponent
    */
@@ -186,7 +188,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
   }
 
   /**
-   * choose berth 
+   * choose berth
    * @param berth
    * @memberof LoadingDischargingBerthComponent
    */
@@ -213,9 +215,11 @@ export class LoadingDischargingBerthComponent implements OnInit {
       maxManifoldHeight: berthInfo.maxManifoldHeight,
       regulationAndRestriction: berthInfo.regulationAndRestriction,
       itemsToBeAgreedWith: berthInfo.itemsToBeAgreedWith,
-      loadingInfoId: berthInfo.loadingInfoId,
+      loadingInfoId: berthInfo?.loadingInfoId,
+      dischargingInfoId: berthInfo?.dischargingInfoId,
       maxShpChannel: berthInfo.maxShpChannel,
-      loadingBerthId: berthInfo.loadingBerthId ? berthInfo.loadingBerthId : 0,
+      loadingBerthId: berthInfo?.loadingBerthId ? berthInfo?.loadingBerthId : 0,
+      dischargingBerthId: berthInfo?.dischargingBerthId ? berthInfo?.dischargingBerthId : 0,
       maxLoa: berthInfo.maxLoa,
       maxDraft: berthInfo.maxDraft,
       lineDisplacement: berthInfo.lineDisplacement

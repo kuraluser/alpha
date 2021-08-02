@@ -2816,3 +2816,32 @@ textarea{
 .no-ediable-field div{
   padding-right: 0!important;
 }
+
+.ol-control{
+  width: 20px;
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  opacity: 0.8;
+  button{
+      margin: 6px 0;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 2px;
+      width: 28px;
+      height: 28px;
+  }
+}
+
+.ol-rotate, .ol-attribution{
+  display: none;
+}
+
+.vessel-card-container {
+  &.collapsed{
+    .vessel-card-fleet-container{
+      height: 100px;
+      overflow: hidden;
+    }
+  }
+}

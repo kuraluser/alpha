@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ICargo, ILoadableQuantityCargo, IShipCargoTank } from '../../../core/models/common.model';
-import { ILoadingSequences, IToppingOffSequence } from '../../models/loading-information.model';
+import { ILoadingSequences, IToppingOffSequence } from '../../models/loading-discharging.model';
 
 @Component({
   selector: 'cpdss-portal-loading-plan',

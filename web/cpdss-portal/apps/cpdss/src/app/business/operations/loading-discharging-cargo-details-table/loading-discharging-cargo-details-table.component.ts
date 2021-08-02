@@ -4,7 +4,7 @@ import { ICargoConditions, QUANTITY_UNIT } from '../../../shared/models/common.m
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ICargoQuantities } from '../../core/models/common.model';
-import { LoadingDischargingCargoDetailsTableTransformationService } from './loading-discharging-cargo-details-table-transformation.service';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 @Component({
   selector: 'cpdss-portal-loading-discharging-cargo-details-table',
@@ -56,8 +56,8 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _cargoQuantities: any[];
   constructor(
-    private loadingDischargingCargoDetailsTableTransformationService: LoadingDischargingCargoDetailsTableTransformationService,
-    private quantityPipe: QuantityPipe
+    private quantityPipe: QuantityPipe,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService
   ) { }
 
   /**
@@ -66,7 +66,7 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
    * @memberof LoadingDischargingCargoDetailsTableComponent
    */
   ngOnInit(): void {
-    this.columns = this.loadingDischargingCargoDetailsTableTransformationService.getColumnFields();
+    this.columns = this.loadingDischargingTransformationService.getLoadingDischargingCargoDetailTableColumn();
   }
 
   /**

@@ -1,8 +1,9 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ValidationErrors, FormControl, Validators } from '@angular/forms';
-import { ILoadingRates } from '../models/loading-information.model';
+import { ILoadingRates } from '../models/loading-discharging.model';
 import { compareNumberValidator } from '../directives/validator/compare-number-validator.directive';
 import { numberValidator } from '../../core/directives/number-validator.directive';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 @Component({
   selector: 'cpdss-portal-loading-rate',
   templateUrl: './loading-rate.component.html',
@@ -61,11 +62,12 @@ export class LoadingRateComponent implements OnInit {
     }
   ]
   constructor(
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService
   ) { }
 
   ngOnInit(): void {
-    this.errorMesages = this.setValidationMessageForLoadingRate();
+    this.errorMesages = this.loadingDischargingTransformationService.setValidationMessageForLoadingRate();
     this.loadingRatesFormGroup = this.fb.group({
       id: this.loadingRates?.id ? this.loadingRates?.id : 0,
       maxLoadingRate: this.fb.control(this.loadingRates.maxLoadingRate, [compareNumberValidator('minLoadingRate', '<'), Validators.min(4000), Validators.max(21000)]),
@@ -109,50 +111,6 @@ export class LoadingRateComponent implements OnInit {
   field(formControlName: string): FormControl {
     const formControl = <FormControl>this.loadingRatesFormGroup.get(formControlName);
     return formControl;
-  }
-
-  /**
- *
- * Method to set validation message for loading rate
- * @return {*} 
- * @memberof LoadingRateComponent
- */
-  setValidationMessageForLoadingRate() {
-    return {
-      maxLoadingRate: {
-        'required': 'LOADING_RATE_REQUIRED',
-        'failedCompare': 'MAX_LOADING_COMPARE',
-        'min': 'MAX_LOADING_MIN',
-        'max': 'MAX_LOADING_MAX'
-      },
-      shoreLoadingRate: {
-        'required': 'LOADING_RATE_REQUIRED',
-        'min': 'MAX_LOADING_MIN',
-        'max': 'MAX_LOADING_MAX'
-      },
-      minLoadingRate: {
-        'required': 'LOADING_RATE_REQUIRED',
-        'failedCompare': 'MIN_LOADING_COMPARE',
-        'min': 'MIN_LOADING_MIN',
-        'max': 'MIN_LOADING_MAX'
-      },
-      minDeBallastingRate: {
-        'required': 'LOADING_RATE_REQUIRED',
-        'min': "MIN_DEBALLAST_MINIMUM",
-        'max': "MIN_DEBALLAST_MAXIMUM"
-      },
-      maxDeBallastingRate: {
-        'required': 'LOADING_RATE_REQUIRED',
-        'min': "MAX_DEBALLAST_MINIMUM",
-        'max': "MAX_DEBALLAST_MAXIMUM"
-      },
-      noticeTimeRateReduction: {
-        'required': 'LOADING_RATE_REQUIRED'
-      },
-      noticeTimeStopLoading: {
-        'required': 'LOADING_RATE_REQUIRED'
-      }
-    }
   }
 
 

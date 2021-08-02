@@ -1,0 +1,121 @@
+<div class="row">
+  <div class="col text-right">
+    <button class="btn btn-main mr-10" id="save_discharging_information" (click)="saveDischargingInformationData()">
+      {{'DISCHARGING_INFORMATION_SAVE_BUTTON_LABEL' | translate}}
+    </button>
+  </div>
+</div>
+<div class="row pt-15" *ngIf="dischargingInformationData">
+  <div class="col sidebar-loading-and-discharging">
+    <div class="row ">
+      <div class="col">
+        <h5 class="text-uppercase heading-border">{{'DISCHARGING_INFORMATION_LOADING_DETAILS_HEADER' | translate }}
+        </h5>
+        <cpdss-portal-loading-discharging-details
+          [loadingDischargingDetails]="dischargingInformationData?.dischargingDetails"
+          (updateLoadingDischargingDetails)="onUpdateDischargingDetails($event)">
+        </cpdss-portal-loading-discharging-details>
+      </div>
+    </div>
+    <div class="row pt-30">
+      <div class="col">
+        <cpdss-portal-discharging-rates [editMode]="true"
+          [dischargingRates]="dischargingInformationData.dischargingRates"
+          (dischargingRateChange)="onDischargingRateChange($event)"></cpdss-portal-discharging-rates>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <cpdss-portal-loading-discharging-berth [dischargingInfoId]="dischargingInfoId"
+          [availableBerths]="dischargingInformationData?.berthDetails.availableBerths"
+          [selectedBerths]="dischargingInformationData?.berthDetails.selectedBerths"
+          (berthChange)="onBerthChange($event)">
+        </cpdss-portal-loading-discharging-berth>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="row">
+      <div class="col">
+        <h5 class="text-uppercase heading-border">{{ 'DISCHARGING_INFORMATION_CARGO_DETAILS_HEADER' | translate }}</h5>
+        <cpdss-portal-loading-discharging-cargo-details [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
+          [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
+          [cargoVesselTankDetails]="cargoVesselTankDetails">
+        </cpdss-portal-loading-discharging-cargo-details>
+      </div>
+    </div>
+
+    <!-- TODO: Need to integrate below componets later -->
+    <!-- <div class="row">
+      <div class="col-md-12 pt-30">
+        <div class="row">
+          <div class="col">
+            <h5 class="text-uppercase heading-border">{{'LOADING_INFORMATION_NO_OF_STAGES_HEADER' |
+              translate}}</h5>
+          </div>
+        </div>
+        <div class="row no-gutters">
+          <div class="col ml-30 border-bottom row-divider">
+
+            <div class="row">
+              <label for="min_amount_stages" class="col-3">{{'LOADING_INFORMATION_MIN_AMOUNT_STAGES' |
+                translate}}</label>
+              <div class="col-3">
+                <p-dropdown id="min_amount_stages" styleClass="form-control" [(ngModel)]="stageOffset"
+                  placeholder="{{'LOADING_INFORMATION_MIN_AMOUNT_STAGES' | translate}}" [options]="stageOffsetList"
+                  optionLabel="stageOffsetVal" (onChange)="onStageOffsetValChange($event)"></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row no-gutters">
+          <div class="col ml-30 border-bottom row-divider">
+            <div class="row">
+              <label for="duration_stages" class="col-3">{{'LOADING_INFORMATION_DURATION_STAGES' |
+                translate}}</label>
+              <div class="col-3">
+                <p-dropdown id="duration_stages" styleClass="form-control" [(ngModel)]="stageDuration"
+                  placeholder="{{'LOADING_INFORMATION_DURATION_STAGES' | translate}}" [options]="stageDurationList"
+                  optionLabel="duration" (onChange)="onStageDurationValChange($event)"></p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col ml-30 ">
+            <div class="row no-gutters row-divider border-bottom">
+              <div class="col pl-10 offset-3 mt-10">
+                <label class="checkbox-custom pr-20">{{'LOADING_INFORMATION_TRACK_START_AND_END_STAGE_LABEL'
+                  | translate}}
+                  <input type="checkbox" [(ngModel)]="trackStartEndStage" (change)="onTrackStageChange()">
+                  <span class="checkmark"></span>
+                </label>
+                <label class="checkbox-custom pr-20">{{'LOADING_INFORMATION_TRACK_GRADE_SWITCHING_LABEL'
+                  | translate}}
+                  <input type="checkbox" [(ngModel)]="trackGradeSwitch" (change)="onTrackStageChange()">
+                  <span class="checkmark"></span>
+                </label>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <cpdss-portal-loading-discharging-manage-sequence [cargos]="cargos"
+      [loadableQuantityCargo]="dischargingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails"
+      [dischargingSequences]="dischargingInformationData?.dischargingSequences" [dischargingInfoId]="dischargingInfoId"
+      (updateLoadingDelays)="onUpdateLoadingDelays($event)">
+    </cpdss-portal-loading-discharging-manage-sequence>
+    <div class="row">
+      <div class="col pt-5">
+        <cpdss-portal-loading-discharging-cargo-machinery [dischargingInfoId]="dischargingInfoId"
+          [machineryInUses]="dischargingInformationData?.machineryInUses"
+          (updatemachineryInUses)="onUpdateMachineryInUses($event)">
+        </cpdss-portal-loading-discharging-cargo-machinery>
+      </div>
+    </div> -->
+  </div>
+</div>

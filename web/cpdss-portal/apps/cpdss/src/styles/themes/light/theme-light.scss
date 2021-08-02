@@ -1417,3 +1417,44 @@ header{
     }
   }
 }
+
+.vessel-card-submenu {
+  background: url($images-theme + 'vessel-card-menu-bg.png') no-repeat center center;
+}
+
+.vessel-card, .notification-panel{
+  background: $body-bg;
+}
+.vessel-card-heading{
+  color:  $main-head;
+}
+
+.vessel-card {
+  .progress {
+    background: $card-distance;
+  }
+}
+
+.notification-list{
+  border-top: 1px solid $table-border;
+  border-bottom: 1px solid $table-border;
+}
+
+.notification-item:not(:last-child) {
+  border-bottom: 1px solid $table-border;
+}
+
+.notification-item:hover {
+  background: $selected-bg;
+}
+
+.ol-control{
+  button{
+      border: 1px solid $body-bg;
+  }
+}
+
+.vessel-card-expand-collapse-btn{
+  background: $body-bg;
+  color: $text-primary;
+}

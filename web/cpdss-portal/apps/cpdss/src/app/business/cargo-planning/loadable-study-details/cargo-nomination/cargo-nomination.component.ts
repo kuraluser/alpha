@@ -367,12 +367,14 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     } else if (event.field === 'loadingPorts') {
       const cargoId = event.data.cargo.value.id;
       const ports = event.data.loadingPorts.value;
-      const portId = ports[ports.length - 1].id
-      const result = await this.loadableStudyDetailsApiService.getApiFromCargoPorts(this.vesselId, portId, cargoId).toPromise();
-      this.updateField(event.index, 'api', result.api);
-      this.updateField(event.index, 'temperature', result.temperature);
-      this.cargoNominations[valueIndex]['api'].value = result.api;
-      this.cargoNominations[valueIndex]['temperature'].value = result.temperature;
+      const portId = ports[ports.length - 1].id;
+      if(!event.data.api.value || event.data.api.value?.toString() === '' || !event.data.temperature.value || event.data.temperature.value?.toString() === '') {
+        const result = await this.loadableStudyDetailsApiService.getApiFromCargoPorts(this.vesselId, portId, cargoId).toPromise();
+        this.updateField(event.index, 'api', result.api);
+        this.updateField(event.index, 'temperature', result.temperature);
+        this.cargoNominations[valueIndex]['api'].value = result.api;
+        this.cargoNominations[valueIndex]['temperature'].value = result.temperature;
+      }
     }
     if (!event.data?.isAdd) {
       if (fromGroup.valid) {

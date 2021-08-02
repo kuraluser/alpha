@@ -14,14 +14,15 @@
                 <cpdss-portal-rules-table *ngIf="rulesJson" [rulesJson]="rulesJson"  [displaySettings]="false"
                  [rulesService]="rulesService" [isCancelChanges]="isCancelChanges"
                   (isSaveClicked)="saveChanges($event)"
-                  (formChanges)="updateCancelChangesButton($event)">
+                  (formChanges)="updateCancelChangesButton($event)" [pageName]="pageName">
                 </cpdss-portal-rules-table>
     </div>
 </div>
-<p-footer>
+
+<p-footer *ngIf="this.rulesJson[data]?.length>0">
     <div class="row">
       <div class="col text-right">
-        <button class="btn btn-main mr-10" *ngIf="formChanges"  id ="cancelBtn" (click)="cancelChanges()">{{'RULES_CANCEL' | translate}}</button>
+        <button  class="btn btn-main mr-10" *ngIf="formChanges"  id ="cancelBtn" (click)="cancelChanges()">{{'RULES_CANCEL' | translate}}</button>
                 <button class="btn btn-main mr-10" id="saveBtn" (click)="triggerSaveChanges()">{{'RULES_SAVE' | translate}}</button>
       </div>
     </div>

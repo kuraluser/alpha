@@ -7,7 +7,7 @@ import { IVoyagePortDetails, Voyage, VOYAGE_STATUS } from '../core/models/common
 import { IVessel } from '../core/models/vessel-details.model';
 import { VesselsApiService } from '../core/services/vessels-api.service';
 import { VoyageService } from '../core/services/voyage.service';
-import { LoadingTransformationService } from './services/loading-transformation.service';
+import { LoadingDischargingTransformationService } from './services/loading-discharging-transformation.service';
 
 @Component({
   selector: 'cpdss-portal-operations',
@@ -39,7 +39,7 @@ export class OperationsComponent implements OnInit {
     private messageService: MessageService,
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService,
-    private loadingTransformationService: LoadingTransformationService) { }
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
 
 
   ngOnInit(): void {
@@ -155,7 +155,7 @@ export class OperationsComponent implements OnInit {
   * @memberof OperationsComponent
   */
      onUnitChange() {
-       this.loadingTransformationService.setUnitChanged(true);
+       this.loadingDischargingTransformationService.setUnitChanged(true);
      }
 
      /**

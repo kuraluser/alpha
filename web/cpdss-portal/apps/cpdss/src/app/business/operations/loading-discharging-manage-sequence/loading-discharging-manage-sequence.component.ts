@@ -2,13 +2,12 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { ICargo, ILoadableQuantityCargo } from '../../core/models/common.model';
-import { ILoadingDelays, ILoadingSequences } from '../models/loading-information.model';
-import { LoadingDischargingManageSequenceTransformationService } from './services/loading-discharging-manage-sequence-transformation.service';
-import { ILoadingSequenceListData, ILoadingSequenceValueObject } from './models/loading-discharging-manage-sequence.model';
-import { durationValidator } from './validators/duration-validator.directive';
+import { ILoadingDelays, ILoadingSequenceDropdownData, ILoadingSequences, ILoadingSequenceValueObject } from '../models/loading-discharging.model';
+import { durationValidator } from '../validators/duration-validator.directive';
 import { ConfirmationService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { LoadingCargoDuplicateValidator } from './validators/loading-cargo-duplicate-validator.directive';
+import { LoadingCargoDuplicateValidator } from '../validators/loading-cargo-duplicate-validator.directive';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
  * Component class for loading discharging manage sequence component
@@ -54,7 +53,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
 
   loadingSequenceForm: FormGroup;
   columns: IDataTableColumn[];
-  listData = <ILoadingSequenceListData>{};
+  listData = <ILoadingSequenceDropdownData>{};
   cargoTobeLoaded: ILoadableQuantityCargo[];
   loadingDelays: ILoadingSequenceValueObject[] = [];
   editMode: DATATABLE_EDITMODE = DATATABLE_EDITMODE.CELL;
@@ -64,10 +63,10 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private translateService: TranslateService,
     private fb: FormBuilder,
-    private loadingDischargingManageSequenceTransformationService: LoadingDischargingManageSequenceTransformationService) { }
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
 
   async ngOnInit(): Promise<void> {
-    this.columns = this.loadingDischargingManageSequenceTransformationService.getDatatableColumns();
+    this.columns = this.loadingDischargingTransformationService.getLoadingDelayDatatableColumns();
     await this.initiLoadingSequenceArray();
   }
 
@@ -85,7 +84,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       this.loadingSequences.loadingDelays.unshift(initialDelay)
     }
     const _loadingDelays = this.loadingSequences.loadingDelays?.map((loadingDelay) => {
-      const loadingSequenceData = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValueObject(loadingDelay, false, this.editable, this.listData);
+      const loadingSequenceData = this.loadingDischargingTransformationService.getLoadingDelayAsValueObject(loadingDelay, false, this.editable, this.listData);
       if (!loadingDelay.cargoId && !loadingDelay.quantity) {
         this.addInitialDelay = true;
       }
@@ -103,17 +102,17 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   /**
   * Get all lookups for loading sequence screen
   *
-  * @returns {Promise<ILoadingSequenceListData>}
+  * @returns {Promise<ILoadingSequenceDropdownData>}
   * @memberof LoadingDischargingManageSequenceComponent
   */
-  async getDropdownData(): Promise<ILoadingSequenceListData> {
+  async getDropdownData(): Promise<ILoadingSequenceDropdownData> {
     const cargoTobeLoaded = this.loadableQuantityCargo?.map(loadable => {
       if (loadable) {
         loadable.grade = this.findCargo(loadable);
       }
       return loadable;
     })
-    this.listData = <ILoadingSequenceListData>{};
+    this.listData = <ILoadingSequenceDropdownData>{};
     this.listData.loadableQuantityCargo = cargoTobeLoaded;
     return this.listData;
   }
@@ -163,7 +162,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
    */
   addLoadingSequence(loadingDelay: ILoadingDelays = null) {
     loadingDelay = loadingDelay ?? <ILoadingDelays>{ id: 0, loadingInfoId: null, reasonForDelayId: null, duration: null, cargoId: null, quantity: null };
-    const _loadingDelays = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValueObject(loadingDelay, true, true, this.listData);
+    const _loadingDelays = this.loadingDischargingTransformationService.getLoadingDelayAsValueObject(loadingDelay, true, true, this.listData);
     const dataTableControl = <FormArray>this.loadingSequenceForm.get('dataTable');
     dataTableControl.push(this.initLoadingSequenceFormGroup(_loadingDelays, this.loadingDelays.length, false));
     this.loadingDelays = [...this.loadingDelays, _loadingDelays];
@@ -185,7 +184,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       this.updateField(index, 'colorCode', event.data.cargo.value.colorCode);
     }
     if (form.valid) {
-      const loadingDelaysList = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValue(this.loadingDelays, this.loadingInfoId)
+      const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDelayAsValue(this.loadingDelays, this.loadingInfoId)
       this.updateLoadingDelays.emit(loadingDelaysList);
       for (const key in this.loadingDelays[index]) {
         if (this.loadingDelays[index]?.hasOwnProperty(key) && this.loadingDelays[index][key]?.hasOwnProperty('_isEditMode')) {
@@ -218,7 +217,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     const dataTableControl = <FormArray>this.loadingSequenceForm.get('dataTable');
     if (this.addInitialDelay) {
       loadingDelay = loadingDelay ?? <ILoadingDelays>{ id: 0, loadingInfoId: null, reasonForDelayId: null, duration: null, cargoId: null, quantity: null };
-      const _loadingDelays = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValueObject(loadingDelay, true, !this.addInitialDelay, this.listData);
+      const _loadingDelays = this.loadingDischargingTransformationService.getLoadingDelayAsValueObject(loadingDelay, true, !this.addInitialDelay, this.listData);
       dataTableControl.insert(0, this.initLoadingSequenceFormGroup(_loadingDelays, this.loadingDelays.length, true));
       this.loadingDelays = [_loadingDelays, ...this.loadingDelays];
     } else {
@@ -271,7 +270,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     const dataTableControl = <FormArray>this.loadingSequenceForm.get('dataTable');
     dataTableControl.removeAt(event?.index);
     if (!event.data.isAdd) {
-      const loadingDelaysList = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValue(this.loadingDelays, this.loadingInfoId);
+      const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDelayAsValue(this.loadingDelays, this.loadingInfoId);
       this.updateLoadingDelays.emit(loadingDelaysList);
     }
     if (event.index === 0) {

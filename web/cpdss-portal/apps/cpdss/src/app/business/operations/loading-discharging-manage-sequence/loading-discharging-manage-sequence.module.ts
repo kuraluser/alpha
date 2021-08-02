@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoadingDischargingManageSequenceComponent } from './loading-discharging-manage-sequence.component';
 import { DatatableModule } from '../../../shared/components/datatable/datatable.module';
-import { LoadingDischargingManageSequenceTransformationService } from './services/loading-discharging-manage-sequence-transformation.service';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,7 +22,6 @@ import { TranslateModule } from '@ngx-translate/core';
     ReactiveFormsModule,
     TranslateModule
   ],
-  exports: [LoadingDischargingManageSequenceComponent],
-  providers: [LoadingDischargingManageSequenceTransformationService]
+  exports: [LoadingDischargingManageSequenceComponent]
 })
 export class LoadingDischargingManageSequenceModule { }

@@ -115,7 +115,7 @@ export class StowageComponent implements OnInit {
 
   @Input()
   set ballastDetails(ballastStowageDetails: IBallastStowageDetails[]) {
-    this.ballastTankDetails = ballastStowageDetails.map((ballast: IBallastStowageDetails) => this.loadablePlanTransformationService.getBallastTankDetailAsValueObject(ballast));
+    this.ballastTankDetails = ballastStowageDetails?.map((ballast: IBallastStowageDetails) => this.loadablePlanTransformationService.getBallastTankDetailAsValueObject(ballast));
     this.initLoadablePlanBallastForm();
   }
 

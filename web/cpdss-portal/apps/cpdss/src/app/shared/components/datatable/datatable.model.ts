@@ -56,6 +56,7 @@ export interface IDataTableColumn {
     numberType?: string;
     maskFormat?: string;
     badgeColorField?: string;
+    filterClass?: string;
 }
 
 /**

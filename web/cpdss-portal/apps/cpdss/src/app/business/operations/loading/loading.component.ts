@@ -4,10 +4,10 @@ import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ICargo, ICargoResponseModel } from '../../core/models/common.model';
 import { OPERATION_TAB } from '../models/operations.model';
-import { LoadingApiService } from '../services/loading-api.service';
-import { LoadingTransformationService } from '../services/loading-transformation.service';
 import { LoadingInformationComponent } from './loading-information/loading-information.component';
 import { UnsavedChangesGuard, ComponentCanDeactivate } from './../../../shared/services/guards/unsaved-data-guard';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { OperationsApiService } from '../services/operations-api.service';
 
 /**
  * Component class for loading component
@@ -48,8 +48,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private loadingTransformationService: LoadingTransformationService,
-    private loadingApiService: LoadingApiService,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService,
+    private operationsApiService: OperationsApiService,
     private unsavedChangesGuard: UnsavedChangesGuard
     ) {
   }
@@ -83,10 +83,10 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @memberof LoadingComponent
    */
   private async initSubsciptions() {
-    this.loadingTransformationService.loadingInformationValidity$.subscribe((res) => {
+    this.loadingDischargingTransformationService.loadingInformationValidity$.subscribe((res) => {
       this.loadingInformationComplete = res;
     });
-    this.loadingTransformationService.loadingInstructionValidity$.subscribe((res)=>{
+    this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((res)=>{
       this.loadingInstructionComplete = res;
     });
   }
@@ -98,7 +98,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 * @memberof LoadingComponent
 */
   async getCargos() {
-    const cargos: ICargoResponseModel = await this.loadingApiService.getCargos().toPromise();
+    const cargos: ICargoResponseModel = await this.operationsApiService.getCargos().toPromise();
     if (cargos.responseStatus.status === '200') {
       this.cargos = cargos.cargos;
     }

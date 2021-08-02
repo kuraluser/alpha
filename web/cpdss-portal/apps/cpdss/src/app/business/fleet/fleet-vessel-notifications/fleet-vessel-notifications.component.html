@@ -6,11 +6,11 @@
       <input type="text" id="search_vessel" (input)="searchVessel()" placeholder="Search Vessel" class="p-column-filter"
         [(ngModel)]="searchKey">
     </div>
-    <div class="calender-control-multi-date">
+    <div class="">
       <p-calendar selectionMode="range" [showButtonBar]="true" [readonlyInput]="true" inputId="range"
         (onSelect)="onDateRangeSelect()" (onClearClick)="resetDateFilter()" dateFormat="dd-M-yy"
         placeholder="{{ 'CARGO_HISTORY_DATE_RANGE_LABEL' | translate }}" id="fleet_date_range_filter"
-        [(ngModel)]="filteredDates" [maxDate]="today" #fleetNotificationDateRange></p-calendar>
+        [(ngModel)]="filteredDates" [maxDate]="today" #fleetNotificationDateRange ></p-calendar>
     </div>
   </div>
 
