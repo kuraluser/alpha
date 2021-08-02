@@ -31,15 +31,8 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.CargoHistory;
-import com.cpdss.loadablestudy.entity.ApiTempHistory;
-import com.cpdss.loadablestudy.entity.CargoNomination;
-import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
-import com.cpdss.loadablestudy.entity.LoadablePattern;
-import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.entity.SynopticalTable;
-import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.entity.VoyageHistory;
-import com.cpdss.loadablestudy.entity.VoyageStatus;
+import com.cpdss.loadablestudy.domain.VoyageDto;
+import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
@@ -63,6 +56,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -879,5 +874,16 @@ public class VoyageService {
 
   public CargoInfo.CargoReply getCargoInfo(CargoInfo.CargoRequest build) {
     return cargoInfoGrpcService.getCargoInfo(build);
+  }
+
+  public void builVoyageDetails(
+      ModelMapper modelMapper,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+    loadableStudy.setVoyage(new VoyageDto());
+    Voyage voyage = this.voyageRepository.findByIdAndIsActive(loadableStudy.getVoyageId(), true);
+    modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+    VoyageDto voyageDDto = new VoyageDto();
+    voyageDDto = modelMapper.map(voyage, VoyageDto.class);
+    loadableStudy.setVoyage(voyageDDto);
   }
 }

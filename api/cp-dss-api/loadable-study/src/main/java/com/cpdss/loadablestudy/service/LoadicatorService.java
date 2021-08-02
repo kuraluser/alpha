@@ -989,7 +989,7 @@ public class LoadicatorService {
           this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
-              request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
+              request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
 
       if (loadableStudyCommunicationStatus.get().getMessageUUID() != null) {
         LoadableStudy.AlgoResponseCommunication.Builder algoRespComm =

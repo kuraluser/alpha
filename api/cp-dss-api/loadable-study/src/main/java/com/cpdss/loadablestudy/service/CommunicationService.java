@@ -81,11 +81,11 @@ public class CommunicationService {
               erReply.getResponseStatus().getCode(),
               HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
         }
-        if (String.valueOf(messageType).equals("LoadableStudy")) {
+        if (messageType.getMessageType().equals("LoadableStudy")) {
           saveLoadableStudyShore(erReply);
-        } else if (messageType.equals("ValidatePlan")) {
-          saveValidatePlanRequestShore(erReply);
-        }
+        } /*else if (messageType.getMessageType().equals("ValidatePlan")) {
+            saveValidatePlanRequestShore(erReply);
+          }*/
       } catch (GenericServiceException e) {
         throw new GenericServiceException(
             e.getMessage(),
@@ -187,7 +187,7 @@ public class CommunicationService {
       Map<String, String> taskReqParams, MessageTypes messageType) {
     EnvoyReader.EnvoyReaderResultRequest.Builder request =
         EnvoyReader.EnvoyReaderResultRequest.newBuilder();
-    request.setMessageType(String.valueOf(messageType));
+    request.setMessageType(messageType.getMessageType());
     request.setClientId(taskReqParams.get("ClientId"));
     request.setShipId(taskReqParams.get("ShipId"));
     return this.envoyReaderGrpcService.getResultFromCommServer(request.build());
@@ -274,7 +274,7 @@ public class CommunicationService {
       writerRequest.setJsonPayload(jsonPayload);
       writerRequest.setClientId(vesselReply.getName());
       writerRequest.setImoNumber(vesselReply.getImoNumber());
-      writerRequest.setMessageType(String.valueOf(MessageTypes.ALGORESULT));
+      writerRequest.setMessageType(MessageTypes.ALGORESULT.getMessageType());
       writerRequest.setMessageId(algoResponseCommunication.getMessageId());
       return this.envoyWriterService.getCommunicationServer(writerRequest.build());
 

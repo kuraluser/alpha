@@ -80,7 +80,7 @@ public class LoadableStudyServiceShore {
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         new Gson().fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadableStudy.class);
 
-    Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyageNo());
+   Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyage());
     if (!checkIfLoadableStudyExist(loadableStudy.getName(), voyage)) {
 
       try {
@@ -102,7 +102,7 @@ public class LoadableStudyServiceShore {
     lsCommunicationStatus.setCommunicationStatus(
         CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId());
     lsCommunicationStatus.setReferenceId(loadableStudyEntity.getId());
-    lsCommunicationStatus.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
+    lsCommunicationStatus.setMessageType(MessageTypes.LOADABLESTUDY.getMessageType());
     lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
     this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
   }
@@ -622,15 +622,22 @@ public class LoadableStudyServiceShore {
     return duplicate;
   }
 
-  private Voyage saveVoyageShore(Long vesselId, String voyageNo) {
+  private Voyage saveVoyageShore(Long vesselId, VoyageDto voyageDto) {
     List<Voyage> voyageList =
-        voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(1L, vesselId, voyageNo);
+        voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(1L, vesselId, voyageDto.getVoyageNo());
     if (voyageList != null && voyageList.get(0) != null) {
       return voyageList.get(0);
     } else {
       Voyage voyage = new Voyage();
-      voyage.setVoyageNo(voyageNo);
+      voyage.setVoyageNo(voyageDto.getVoyageNo());
       voyage.setVesselXId(vesselId);
+      voyage.setIsActive(true);
+      voyage.setCompanyXId(1L);
+      voyage.setCaptainXId(voyageDto.getCaptainId());
+      voyage.setChiefOfficerXId(voyageDto.getChiefOfficerId());
+      voyage.setStartTimezoneId(voyageDto.getStartTimezoneId());
+      voyage.setVoyageStartDate(LocalDateTime.from(voyageDto.getPlannedStartDate()));
+      voyage.setVoyageEndDate(LocalDateTime.from(voyageDto.getPlannedEndDate()));
       voyage = voyageRepository.save(voyage);
       return voyage;
     }
