@@ -663,3 +663,17 @@ message LoadingPlanReply {
 message BillOfLaddingRequest{
   int64 cargoNominationId = 1;
 }
+message MaxQuantityRequest{
+  repeated int64 cargoNominationId = 1;
+}
+
+message MaxQuantityResponse{
+  repeated MaxQuantityDetails cargoMaxQuantity = 1;
+  ResponseStatus responseStatus = 2;  
+ }
+ 
+message MaxQuantityDetails{
+  	int64 cargoNominationId = 1;
+    string maxQuantity = 2;
+  
+}

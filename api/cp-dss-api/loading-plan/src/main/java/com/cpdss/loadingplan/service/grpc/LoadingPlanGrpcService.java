@@ -12,6 +12,9 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSync
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
@@ -23,7 +26,9 @@ import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingPlanRuleServiceImpl;
 import io.grpc.stub.StreamObserver;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -222,6 +227,50 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
               Optional.ofNullable(item.getTemperature())
                   .ifPresent(value -> billOfLadding.setTemperature(String.valueOf(value)));
               reply.addBillOfLadding(billOfLadding);
+            });
+      }
+      reply.setResponseStatus(
+          ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Exception when getting bill of ladding details agianst cargonomination Id", e);
+      reply.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(LoadingPlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(reply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getCargoNominationMaxQuantity(
+      MaxQuantityRequest request, StreamObserver<MaxQuantityResponse> responseObserver) {
+
+    log.info(
+        "Inside getCargoNominationMaxQuantity - getting max quantity agianst each cargonomination Id {}",
+        request.getCargoNominationIdList());
+    MaxQuantityResponse.Builder reply = MaxQuantityResponse.newBuilder();
+    try {
+      List<com.cpdss.loadingplan.entity.BillOfLadding> billOfLaddingList =
+          billOfLaddingRepository.findByCargoNominationIdInAndIsActive(
+              request.getCargoNominationIdList(), true);
+      if (!CollectionUtils.isEmpty(billOfLaddingList)) {
+        Map<Long, Double> cargoWiseQuantity =
+            billOfLaddingList.stream()
+                .collect(
+                    Collectors.groupingBy(
+                        com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId,
+                        Collectors.summingDouble(
+                            a -> Double.parseDouble(String.valueOf(a.getQuantityMt())))));
+        cargoWiseQuantity.forEach(
+            (key, quantity) -> {
+              MaxQuantityDetails.Builder maxQuantity = MaxQuantityDetails.newBuilder();
+              maxQuantity.setCargoNominationId(key);
+              maxQuantity.setMaxQuantity(quantity.toString());
+              reply.addCargoMaxQuantity(maxQuantity);
             });
       }
       reply.setResponseStatus(

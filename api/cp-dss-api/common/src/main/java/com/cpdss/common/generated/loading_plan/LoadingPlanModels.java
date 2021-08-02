@@ -96040,6 +96040,2394 @@ public final class LoadingPlanModels {
     }
   }
 
+  public interface MaxQuantityRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:MaxQuantityRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated int64 cargoNominationId = 1;</code>
+     *
+     * @return A list containing the cargoNominationId.
+     */
+    java.util.List<java.lang.Long> getCargoNominationIdList();
+    /**
+     * <code>repeated int64 cargoNominationId = 1;</code>
+     *
+     * @return The count of cargoNominationId.
+     */
+    int getCargoNominationIdCount();
+    /**
+     * <code>repeated int64 cargoNominationId = 1;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The cargoNominationId at the given index.
+     */
+    long getCargoNominationId(int index);
+  }
+  /** Protobuf type {@code MaxQuantityRequest} */
+  public static final class MaxQuantityRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:MaxQuantityRequest)
+      MaxQuantityRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use MaxQuantityRequest.newBuilder() to construct.
+    private MaxQuantityRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private MaxQuantityRequest() {
+      cargoNominationId_ = emptyLongList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new MaxQuantityRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private MaxQuantityRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  cargoNominationId_ = newLongList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                cargoNominationId_.addLong(input.readInt64());
+                break;
+              }
+            case 10:
+              {
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
+                if (!((mutable_bitField0_ & 0x00000001) != 0) && input.getBytesUntilLimit() > 0) {
+                  cargoNominationId_ = newLongList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                while (input.getBytesUntilLimit() > 0) {
+                  cargoNominationId_.addLong(input.readInt64());
+                }
+                input.popLimit(limit);
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          cargoNominationId_.makeImmutable(); // C
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+          .internal_static_MaxQuantityRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+          .internal_static_MaxQuantityRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest.class,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest.Builder
+                  .class);
+    }
+
+    public static final int CARGONOMINATIONID_FIELD_NUMBER = 1;
+    private com.google.protobuf.Internal.LongList cargoNominationId_;
+    /**
+     * <code>repeated int64 cargoNominationId = 1;</code>
+     *
+     * @return A list containing the cargoNominationId.
+     */
+    public java.util.List<java.lang.Long> getCargoNominationIdList() {
+      return cargoNominationId_;
+    }
+    /**
+     * <code>repeated int64 cargoNominationId = 1;</code>
+     *
+     * @return The count of cargoNominationId.
+     */
+    public int getCargoNominationIdCount() {
+      return cargoNominationId_.size();
+    }
+    /**
+     * <code>repeated int64 cargoNominationId = 1;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The cargoNominationId at the given index.
+     */
+    public long getCargoNominationId(int index) {
+      return cargoNominationId_.getLong(index);
+    }
+
+    private int cargoNominationIdMemoizedSerializedSize = -1;
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      getSerializedSize();
+      if (getCargoNominationIdList().size() > 0) {
+        output.writeUInt32NoTag(10);
+        output.writeUInt32NoTag(cargoNominationIdMemoizedSerializedSize);
+      }
+      for (int i = 0; i < cargoNominationId_.size(); i++) {
+        output.writeInt64NoTag(cargoNominationId_.getLong(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < cargoNominationId_.size(); i++) {
+          dataSize +=
+              com.google.protobuf.CodedOutputStream.computeInt64SizeNoTag(
+                  cargoNominationId_.getLong(i));
+        }
+        size += dataSize;
+        if (!getCargoNominationIdList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+        }
+        cargoNominationIdMemoizedSerializedSize = dataSize;
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj
+          instanceof
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest other =
+          (com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest) obj;
+
+      if (!getCargoNominationIdList().equals(other.getCargoNominationIdList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getCargoNominationIdCount() > 0) {
+        hash = (37 * hash) + CARGONOMINATIONID_FIELD_NUMBER;
+        hash = (53 * hash) + getCargoNominationIdList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        parseFrom(java.nio.ByteBuffer data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        parseFrom(
+            java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        parseFrom(com.google.protobuf.ByteString data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        parseFrom(
+            com.google.protobuf.ByteString data,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        parseFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        parseFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        parseFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code MaxQuantityRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:MaxQuantityRequest)
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_MaxQuantityRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_MaxQuantityRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest.class,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest.Builder
+                    .class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        cargoNominationId_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_MaxQuantityRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest build() {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest result =
+            buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+          buildPartial() {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest result =
+            new com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          cargoNominationId_.makeImmutable();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.cargoNominationId_ = cargoNominationId_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other
+            instanceof
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest) {
+          return mergeFrom(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest other) {
+        if (other
+            == com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+                .getDefaultInstance()) return this;
+        if (!other.cargoNominationId_.isEmpty()) {
+          if (cargoNominationId_.isEmpty()) {
+            cargoNominationId_ = other.cargoNominationId_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureCargoNominationIdIsMutable();
+            cargoNominationId_.addAll(other.cargoNominationId_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest parsedMessage =
+            null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.google.protobuf.Internal.LongList cargoNominationId_ = emptyLongList();
+
+      private void ensureCargoNominationIdIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          cargoNominationId_ = mutableCopy(cargoNominationId_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+      /**
+       * <code>repeated int64 cargoNominationId = 1;</code>
+       *
+       * @return A list containing the cargoNominationId.
+       */
+      public java.util.List<java.lang.Long> getCargoNominationIdList() {
+        return ((bitField0_ & 0x00000001) != 0)
+            ? java.util.Collections.unmodifiableList(cargoNominationId_)
+            : cargoNominationId_;
+      }
+      /**
+       * <code>repeated int64 cargoNominationId = 1;</code>
+       *
+       * @return The count of cargoNominationId.
+       */
+      public int getCargoNominationIdCount() {
+        return cargoNominationId_.size();
+      }
+      /**
+       * <code>repeated int64 cargoNominationId = 1;</code>
+       *
+       * @param index The index of the element to return.
+       * @return The cargoNominationId at the given index.
+       */
+      public long getCargoNominationId(int index) {
+        return cargoNominationId_.getLong(index);
+      }
+      /**
+       * <code>repeated int64 cargoNominationId = 1;</code>
+       *
+       * @param index The index to set the value at.
+       * @param value The cargoNominationId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoNominationId(int index, long value) {
+        ensureCargoNominationIdIsMutable();
+        cargoNominationId_.setLong(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 cargoNominationId = 1;</code>
+       *
+       * @param value The cargoNominationId to add.
+       * @return This builder for chaining.
+       */
+      public Builder addCargoNominationId(long value) {
+        ensureCargoNominationIdIsMutable();
+        cargoNominationId_.addLong(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 cargoNominationId = 1;</code>
+       *
+       * @param values The cargoNominationId to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllCargoNominationId(java.lang.Iterable<? extends java.lang.Long> values) {
+        ensureCargoNominationIdIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, cargoNominationId_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 cargoNominationId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoNominationId() {
+        cargoNominationId_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:MaxQuantityRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:MaxQuantityRequest)
+    private static final com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .MaxQuantityRequest
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE =
+          new com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest();
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<MaxQuantityRequest> PARSER =
+        new com.google.protobuf.AbstractParser<MaxQuantityRequest>() {
+          @java.lang.Override
+          public MaxQuantityRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new MaxQuantityRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<MaxQuantityRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<MaxQuantityRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface MaxQuantityResponseOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:MaxQuantityResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+    java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails>
+        getCargoMaxQuantityList();
+    /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+    com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        getCargoMaxQuantity(int index);
+    /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+    int getCargoMaxQuantityCount();
+    /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+    java.util.List<
+            ? extends
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .MaxQuantityDetailsOrBuilder>
+        getCargoMaxQuantityOrBuilderList();
+    /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+    com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetailsOrBuilder
+        getCargoMaxQuantityOrBuilder(int index);
+
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 2;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+  }
+  /** Protobuf type {@code MaxQuantityResponse} */
+  public static final class MaxQuantityResponse extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:MaxQuantityResponse)
+      MaxQuantityResponseOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use MaxQuantityResponse.newBuilder() to construct.
+    private MaxQuantityResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private MaxQuantityResponse() {
+      cargoMaxQuantity_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new MaxQuantityResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private MaxQuantityResponse(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  cargoMaxQuantity_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .MaxQuantityDetails>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                cargoMaxQuantity_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+                            .parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 18:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          cargoMaxQuantity_ = java.util.Collections.unmodifiableList(cargoMaxQuantity_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+          .internal_static_MaxQuantityResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+          .internal_static_MaxQuantityResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse.class,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse.Builder
+                  .class);
+    }
+
+    public static final int CARGOMAXQUANTITY_FIELD_NUMBER = 1;
+    private java.util.List<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails>
+        cargoMaxQuantity_;
+    /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+    public java.util.List<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails>
+        getCargoMaxQuantityList() {
+      return cargoMaxQuantity_;
+    }
+    /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+    public java.util.List<
+            ? extends
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .MaxQuantityDetailsOrBuilder>
+        getCargoMaxQuantityOrBuilderList() {
+      return cargoMaxQuantity_;
+    }
+    /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+    public int getCargoMaxQuantityCount() {
+      return cargoMaxQuantity_.size();
+    }
+    /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        getCargoMaxQuantity(int index) {
+      return cargoMaxQuantity_.get(index);
+    }
+    /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetailsOrBuilder
+        getCargoMaxQuantityOrBuilder(int index) {
+      return cargoMaxQuantity_.get(index);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 2;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 2;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      for (int i = 0; i < cargoMaxQuantity_.size(); i++) {
+        output.writeMessage(1, cargoMaxQuantity_.get(i));
+      }
+      if (responseStatus_ != null) {
+        output.writeMessage(2, getResponseStatus());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < cargoMaxQuantity_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(1, cargoMaxQuantity_.get(i));
+      }
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getResponseStatus());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj
+          instanceof
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse other =
+          (com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse) obj;
+
+      if (!getCargoMaxQuantityList().equals(other.getCargoMaxQuantityList())) return false;
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getCargoMaxQuantityCount() > 0) {
+        hash = (37 * hash) + CARGOMAXQUANTITY_FIELD_NUMBER;
+        hash = (53 * hash) + getCargoMaxQuantityList().hashCode();
+      }
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        parseFrom(java.nio.ByteBuffer data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        parseFrom(
+            java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        parseFrom(com.google.protobuf.ByteString data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        parseFrom(
+            com.google.protobuf.ByteString data,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        parseFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        parseFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        parseFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code MaxQuantityResponse} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:MaxQuantityResponse)
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_MaxQuantityResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_MaxQuantityResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse.class,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+                    .Builder.class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getCargoMaxQuantityFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (cargoMaxQuantityBuilder_ == null) {
+          cargoMaxQuantity_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          cargoMaxQuantityBuilder_.clear();
+        }
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_MaxQuantityResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse build() {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse result =
+            buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+          buildPartial() {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse result =
+            new com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse(this);
+        int from_bitField0_ = bitField0_;
+        if (cargoMaxQuantityBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            cargoMaxQuantity_ = java.util.Collections.unmodifiableList(cargoMaxQuantity_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.cargoMaxQuantity_ = cargoMaxQuantity_;
+        } else {
+          result.cargoMaxQuantity_ = cargoMaxQuantityBuilder_.build();
+        }
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other
+            instanceof
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse) {
+          return mergeFrom(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse)
+                  other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse other) {
+        if (other
+            == com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+                .getDefaultInstance()) return this;
+        if (cargoMaxQuantityBuilder_ == null) {
+          if (!other.cargoMaxQuantity_.isEmpty()) {
+            if (cargoMaxQuantity_.isEmpty()) {
+              cargoMaxQuantity_ = other.cargoMaxQuantity_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureCargoMaxQuantityIsMutable();
+              cargoMaxQuantity_.addAll(other.cargoMaxQuantity_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.cargoMaxQuantity_.isEmpty()) {
+            if (cargoMaxQuantityBuilder_.isEmpty()) {
+              cargoMaxQuantityBuilder_.dispose();
+              cargoMaxQuantityBuilder_ = null;
+              cargoMaxQuantity_ = other.cargoMaxQuantity_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              cargoMaxQuantityBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getCargoMaxQuantityFieldBuilder()
+                      : null;
+            } else {
+              cargoMaxQuantityBuilder_.addAllMessages(other.cargoMaxQuantity_);
+            }
+          }
+        }
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+            parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private java.util.List<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails>
+          cargoMaxQuantity_ = java.util.Collections.emptyList();
+
+      private void ensureCargoMaxQuantityIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          cargoMaxQuantity_ =
+              new java.util.ArrayList<
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails>(
+                  cargoMaxQuantity_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.Builder,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetailsOrBuilder>
+          cargoMaxQuantityBuilder_;
+
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public java.util.List<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails>
+          getCargoMaxQuantityList() {
+        if (cargoMaxQuantityBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(cargoMaxQuantity_);
+        } else {
+          return cargoMaxQuantityBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public int getCargoMaxQuantityCount() {
+        if (cargoMaxQuantityBuilder_ == null) {
+          return cargoMaxQuantity_.size();
+        } else {
+          return cargoMaxQuantityBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+          getCargoMaxQuantity(int index) {
+        if (cargoMaxQuantityBuilder_ == null) {
+          return cargoMaxQuantity_.get(index);
+        } else {
+          return cargoMaxQuantityBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public Builder setCargoMaxQuantity(
+          int index,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails value) {
+        if (cargoMaxQuantityBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoMaxQuantityIsMutable();
+          cargoMaxQuantity_.set(index, value);
+          onChanged();
+        } else {
+          cargoMaxQuantityBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public Builder setCargoMaxQuantity(
+          int index,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.Builder
+              builderForValue) {
+        if (cargoMaxQuantityBuilder_ == null) {
+          ensureCargoMaxQuantityIsMutable();
+          cargoMaxQuantity_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          cargoMaxQuantityBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public Builder addCargoMaxQuantity(
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails value) {
+        if (cargoMaxQuantityBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoMaxQuantityIsMutable();
+          cargoMaxQuantity_.add(value);
+          onChanged();
+        } else {
+          cargoMaxQuantityBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public Builder addCargoMaxQuantity(
+          int index,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails value) {
+        if (cargoMaxQuantityBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoMaxQuantityIsMutable();
+          cargoMaxQuantity_.add(index, value);
+          onChanged();
+        } else {
+          cargoMaxQuantityBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public Builder addCargoMaxQuantity(
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.Builder
+              builderForValue) {
+        if (cargoMaxQuantityBuilder_ == null) {
+          ensureCargoMaxQuantityIsMutable();
+          cargoMaxQuantity_.add(builderForValue.build());
+          onChanged();
+        } else {
+          cargoMaxQuantityBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public Builder addCargoMaxQuantity(
+          int index,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.Builder
+              builderForValue) {
+        if (cargoMaxQuantityBuilder_ == null) {
+          ensureCargoMaxQuantityIsMutable();
+          cargoMaxQuantity_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          cargoMaxQuantityBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public Builder addAllCargoMaxQuantity(
+          java.lang.Iterable<
+                  ? extends
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails>
+              values) {
+        if (cargoMaxQuantityBuilder_ == null) {
+          ensureCargoMaxQuantityIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, cargoMaxQuantity_);
+          onChanged();
+        } else {
+          cargoMaxQuantityBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public Builder clearCargoMaxQuantity() {
+        if (cargoMaxQuantityBuilder_ == null) {
+          cargoMaxQuantity_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          cargoMaxQuantityBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public Builder removeCargoMaxQuantity(int index) {
+        if (cargoMaxQuantityBuilder_ == null) {
+          ensureCargoMaxQuantityIsMutable();
+          cargoMaxQuantity_.remove(index);
+          onChanged();
+        } else {
+          cargoMaxQuantityBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.Builder
+          getCargoMaxQuantityBuilder(int index) {
+        return getCargoMaxQuantityFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetailsOrBuilder
+          getCargoMaxQuantityOrBuilder(int index) {
+        if (cargoMaxQuantityBuilder_ == null) {
+          return cargoMaxQuantity_.get(index);
+        } else {
+          return cargoMaxQuantityBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public java.util.List<
+              ? extends
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .MaxQuantityDetailsOrBuilder>
+          getCargoMaxQuantityOrBuilderList() {
+        if (cargoMaxQuantityBuilder_ != null) {
+          return cargoMaxQuantityBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(cargoMaxQuantity_);
+        }
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.Builder
+          addCargoMaxQuantityBuilder() {
+        return getCargoMaxQuantityFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.Builder
+          addCargoMaxQuantityBuilder(int index) {
+        return getCargoMaxQuantityFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+                    .getDefaultInstance());
+      }
+      /** <code>repeated .MaxQuantityDetails cargoMaxQuantity = 1;</code> */
+      public java.util.List<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.Builder>
+          getCargoMaxQuantityBuilderList() {
+        return getCargoMaxQuantityFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.Builder,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetailsOrBuilder>
+          getCargoMaxQuantityFieldBuilder() {
+        if (cargoMaxQuantityBuilder_ == null) {
+          cargoMaxQuantityBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails,
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+                      .Builder,
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .MaxQuantityDetailsOrBuilder>(
+                  cargoMaxQuantity_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          cargoMaxQuantity_ = null;
+        }
+        return cargoMaxQuantityBuilder_;
+      }
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 2;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 2;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:MaxQuantityResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:MaxQuantityResponse)
+    private static final com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .MaxQuantityResponse
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE =
+          new com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse();
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<MaxQuantityResponse> PARSER =
+        new com.google.protobuf.AbstractParser<MaxQuantityResponse>() {
+          @java.lang.Override
+          public MaxQuantityResponse parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new MaxQuantityResponse(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<MaxQuantityResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<MaxQuantityResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface MaxQuantityDetailsOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:MaxQuantityDetails)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 cargoNominationId = 1;</code>
+     *
+     * @return The cargoNominationId.
+     */
+    long getCargoNominationId();
+
+    /**
+     * <code>string maxQuantity = 2;</code>
+     *
+     * @return The maxQuantity.
+     */
+    java.lang.String getMaxQuantity();
+    /**
+     * <code>string maxQuantity = 2;</code>
+     *
+     * @return The bytes for maxQuantity.
+     */
+    com.google.protobuf.ByteString getMaxQuantityBytes();
+  }
+  /** Protobuf type {@code MaxQuantityDetails} */
+  public static final class MaxQuantityDetails extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:MaxQuantityDetails)
+      MaxQuantityDetailsOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use MaxQuantityDetails.newBuilder() to construct.
+    private MaxQuantityDetails(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private MaxQuantityDetails() {
+      maxQuantity_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new MaxQuantityDetails();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private MaxQuantityDetails(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                cargoNominationId_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxQuantity_ = s;
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+          .internal_static_MaxQuantityDetails_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+          .internal_static_MaxQuantityDetails_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.class,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.Builder
+                  .class);
+    }
+
+    public static final int CARGONOMINATIONID_FIELD_NUMBER = 1;
+    private long cargoNominationId_;
+    /**
+     * <code>int64 cargoNominationId = 1;</code>
+     *
+     * @return The cargoNominationId.
+     */
+    public long getCargoNominationId() {
+      return cargoNominationId_;
+    }
+
+    public static final int MAXQUANTITY_FIELD_NUMBER = 2;
+    private volatile java.lang.Object maxQuantity_;
+    /**
+     * <code>string maxQuantity = 2;</code>
+     *
+     * @return The maxQuantity.
+     */
+    public java.lang.String getMaxQuantity() {
+      java.lang.Object ref = maxQuantity_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxQuantity_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxQuantity = 2;</code>
+     *
+     * @return The bytes for maxQuantity.
+     */
+    public com.google.protobuf.ByteString getMaxQuantityBytes() {
+      java.lang.Object ref = maxQuantity_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxQuantity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (cargoNominationId_ != 0L) {
+        output.writeInt64(1, cargoNominationId_);
+      }
+      if (!getMaxQuantityBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, maxQuantity_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (cargoNominationId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, cargoNominationId_);
+      }
+      if (!getMaxQuantityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, maxQuantity_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj
+          instanceof
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails other =
+          (com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails) obj;
+
+      if (getCargoNominationId() != other.getCargoNominationId()) return false;
+      if (!getMaxQuantity().equals(other.getMaxQuantity())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + CARGONOMINATIONID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoNominationId());
+      hash = (37 * hash) + MAXQUANTITY_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxQuantity().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        parseFrom(java.nio.ByteBuffer data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        parseFrom(
+            java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        parseFrom(com.google.protobuf.ByteString data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        parseFrom(
+            com.google.protobuf.ByteString data,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        parseFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        parseFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        parseFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code MaxQuantityDetails} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:MaxQuantityDetails)
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetailsOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_MaxQuantityDetails_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_MaxQuantityDetails_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.class,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.Builder
+                    .class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        cargoNominationId_ = 0L;
+
+        maxQuantity_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .internal_static_MaxQuantityDetails_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails build() {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails result =
+            buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+          buildPartial() {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails result =
+            new com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails(this);
+        result.cargoNominationId_ = cargoNominationId_;
+        result.maxQuantity_ = maxQuantity_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other
+            instanceof
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails) {
+          return mergeFrom(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails other) {
+        if (other
+            == com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+                .getDefaultInstance()) return this;
+        if (other.getCargoNominationId() != 0L) {
+          setCargoNominationId(other.getCargoNominationId());
+        }
+        if (!other.getMaxQuantity().isEmpty()) {
+          maxQuantity_ = other.maxQuantity_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails parsedMessage =
+            null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long cargoNominationId_;
+      /**
+       * <code>int64 cargoNominationId = 1;</code>
+       *
+       * @return The cargoNominationId.
+       */
+      public long getCargoNominationId() {
+        return cargoNominationId_;
+      }
+      /**
+       * <code>int64 cargoNominationId = 1;</code>
+       *
+       * @param value The cargoNominationId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoNominationId(long value) {
+
+        cargoNominationId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 cargoNominationId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoNominationId() {
+
+        cargoNominationId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object maxQuantity_ = "";
+      /**
+       * <code>string maxQuantity = 2;</code>
+       *
+       * @return The maxQuantity.
+       */
+      public java.lang.String getMaxQuantity() {
+        java.lang.Object ref = maxQuantity_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxQuantity_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxQuantity = 2;</code>
+       *
+       * @return The bytes for maxQuantity.
+       */
+      public com.google.protobuf.ByteString getMaxQuantityBytes() {
+        java.lang.Object ref = maxQuantity_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          maxQuantity_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxQuantity = 2;</code>
+       *
+       * @param value The maxQuantity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxQuantity(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        maxQuantity_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxQuantity = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxQuantity() {
+
+        maxQuantity_ = getDefaultInstance().getMaxQuantity();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxQuantity = 2;</code>
+       *
+       * @param value The bytes for maxQuantity to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxQuantityBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        maxQuantity_ = value;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:MaxQuantityDetails)
+    }
+
+    // @@protoc_insertion_point(class_scope:MaxQuantityDetails)
+    private static final com.cpdss.common.generated.loading_plan.LoadingPlanModels
+            .MaxQuantityDetails
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE =
+          new com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails();
+    }
+
+    public static com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<MaxQuantityDetails> PARSER =
+        new com.google.protobuf.AbstractParser<MaxQuantityDetails>() {
+          @java.lang.Override
+          public MaxQuantityDetails parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new MaxQuantityDetails(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<MaxQuantityDetails> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<MaxQuantityDetails> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_LoadingInformationRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -96279,6 +98667,18 @@ public final class LoadingPlanModels {
       internal_static_BillOfLaddingRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_BillOfLaddingRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_MaxQuantityRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_MaxQuantityRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_MaxQuantityResponse_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_MaxQuantityResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_MaxQuantityDetails_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_MaxQuantityDetails_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -96618,9 +99018,14 @@ public final class LoadingPlanModels {
           + "\027.LoadingPlanTankDetails\022K\n\"portLoadingP"
           + "lanStabilityParameters\030\006 \003(\0132\037.LoadingPl"
           + "anStabilityParameters\"1\n\024BillOfLaddingRe"
-          + "quest\022\031\n\021cargoNominationId\030\001 \001(\003B+\n\'com."
-          + "cpdss.common.generated.loading_planP\000b\006p"
-          + "roto3"
+          + "quest\022\031\n\021cargoNominationId\030\001 \001(\003\"/\n\022MaxQ"
+          + "uantityRequest\022\031\n\021cargoNominationId\030\001 \003("
+          + "\003\"m\n\023MaxQuantityResponse\022-\n\020cargoMaxQuan"
+          + "tity\030\001 \003(\0132\023.MaxQuantityDetails\022\'\n\016respo"
+          + "nseStatus\030\002 \001(\0132\017.ResponseStatus\"D\n\022MaxQ"
+          + "uantityDetails\022\031\n\021cargoNominationId\030\001 \001("
+          + "\003\022\023\n\013maxQuantity\030\002 \001(\tB+\n\'com.cpdss.comm"
+          + "on.generated.loading_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -97416,6 +99821,27 @@ public final class LoadingPlanModels {
             internal_static_BillOfLaddingRequest_descriptor,
             new java.lang.String[] {
               "CargoNominationId",
+            });
+    internal_static_MaxQuantityRequest_descriptor = getDescriptor().getMessageTypes().get(60);
+    internal_static_MaxQuantityRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_MaxQuantityRequest_descriptor,
+            new java.lang.String[] {
+              "CargoNominationId",
+            });
+    internal_static_MaxQuantityResponse_descriptor = getDescriptor().getMessageTypes().get(61);
+    internal_static_MaxQuantityResponse_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_MaxQuantityResponse_descriptor,
+            new java.lang.String[] {
+              "CargoMaxQuantity", "ResponseStatus",
+            });
+    internal_static_MaxQuantityDetails_descriptor = getDescriptor().getMessageTypes().get(62);
+    internal_static_MaxQuantityDetails_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_MaxQuantityDetails_descriptor,
+            new java.lang.String[] {
+              "CargoNominationId", "MaxQuantity",
             });
     com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.LoadableStudy.getDescriptor();

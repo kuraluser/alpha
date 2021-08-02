@@ -10,6 +10,9 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -888,5 +891,35 @@ public class CargoNominationService {
 
   public void saveAll(List<CargoNomination> entities) {
     cargoNominationRepository.saveAll(entities);
+  }
+
+  public List<CargoNomination> getMaxQuantityForCargoNomination(
+      List<Long> cargoNominations, Set<CargoNomination> firstPortCargos)
+      throws GenericServiceException {
+    MaxQuantityRequest.Builder request = MaxQuantityRequest.newBuilder();
+    request.addAllCargoNominationId(cargoNominations);
+    MaxQuantityResponse cargoNominationMaxQuantityResponse =
+        loadingPlanGrpcService.getCargoNominationMaxQuantity(request.build());
+    if (!SUCCESS.equals(cargoNominationMaxQuantityResponse.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "max quantity from loading plan is not available",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    List<MaxQuantityDetails> cargoMaxQuantityList =
+        cargoNominationMaxQuantityResponse.getCargoMaxQuantityList();
+    cargoMaxQuantityList
+        .parallelStream()
+        .forEach(
+            quantity -> {
+              Optional<CargoNomination> cargoNomination =
+                  firstPortCargos.stream()
+                      .filter(cargo -> cargo.getId().equals(quantity.getCargoNominationId()))
+                      .findFirst();
+              if (cargoNomination.isPresent()) {
+                cargoNomination.get().setQuantity(new BigDecimal(quantity.getMaxQuantity()));
+              }
+            });
+    return new ArrayList<CargoNomination>(firstPortCargos);
   }
 }

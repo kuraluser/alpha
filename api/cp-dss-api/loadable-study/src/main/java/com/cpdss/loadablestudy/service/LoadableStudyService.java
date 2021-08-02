@@ -867,7 +867,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         dischargeStudyService.addCargoNominationForPortRotation(
             replyBuilder.getPortRotationId(), request.getLoadableStudyId());
       } else {
-
+        dischargeStudyService.resetCargoNominationQuantity(
+            replyBuilder.getPortRotationId(), request.getLoadableStudyId());
       }
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study - port data", e);
