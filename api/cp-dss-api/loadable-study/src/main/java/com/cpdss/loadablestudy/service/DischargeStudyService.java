@@ -1061,23 +1061,14 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
 
   public void addCargoNominationForPortRotation(long portRotationId, long loadableStudyId)
       throws GenericServiceException {
-
     log.info("Inside addCargoNominationForPortRotation service");
 
-    LoadableStudy loadableStudy = loadableStudyRepository.findById(loadableStudyId).get();
-    /**
-     * if the loadable study is a discharge study then add cargo nominations of the previous port no
-     * the newly created one else return
-     */
-    if (loadableStudy.getPlanningTypeXId() != 2) {
-      return;
-    }
-    List<LoadableStudyPortRotation> portRotations =
-        loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
-            loadableStudy.getId(), true);
-    portRotations.sort(Comparator.comparing(LoadableStudyPortRotation::getPortOrder));
+    List<LoadableStudyPortRotation> portRotations = getDischargeStudyPortRotations(loadableStudyId);
     if (portRotations.get(portRotations.size() - 1).getId() != portRotationId) {
-      return;
+      throw new GenericServiceException(
+          "port rotaion data mis match",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
     }
     LoadableStudyPortRotation loadableStudyPortRotation =
         portRotations.get(portRotations.size() - 2);
@@ -1146,5 +1137,52 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               });
     }
     cargoNominationService.saveAll(cargoNominations);
+  }
+
+  private List<LoadableStudyPortRotation> getDischargeStudyPortRotations(Long loadableStudyId)
+      throws GenericServiceException {
+    LoadableStudy loadableStudy = loadableStudyRepository.findById(loadableStudyId).get();
+    /**
+     * if the loadable study is a discharge study then add cargo nominations of the previous port t
+     * the newly created one else return
+     */
+    if (loadableStudy.getPlanningTypeXId() != 2) {
+      throw new GenericServiceException(
+          "no ds found",
+          CommonErrorCodes.E_CPDSS_NO_DISCHARGE_STUDY_FOUND,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    List<LoadableStudyPortRotation> portRotations =
+        loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
+            loadableStudy.getId(), true);
+    portRotations.sort(Comparator.comparing(LoadableStudyPortRotation::getPortOrder));
+    return portRotations;
+  }
+
+  public void resetCargoNominationQuantity(long portRotationId, long loadableStudyId)
+      throws GenericServiceException {
+    List<LoadableStudyPortRotation> dischargeStudyPortRotations =
+        getDischargeStudyPortRotations(loadableStudyId);
+    List<CargoNomination> cargos =
+        cargoNominationService.getCargoNominationByLoadableStudyId(loadableStudyId);
+    LoadableStudyPortRotation dischargeStudyPortRotation = dischargeStudyPortRotations.get(0);
+    Set<CargoNomination> firstPortCargos =
+        cargos.stream()
+            .flatMap(x -> x.getCargoNominationPortDetails().stream())
+            .filter(port -> port.getPortId().equals(dischargeStudyPortRotation.getPortXId()))
+            .map(CargoNominationPortDetails::getCargoNomination)
+            .collect(Collectors.toSet());
+    List<Long> firstPortCargoIds =
+        firstPortCargos.parallelStream().map(CargoNomination::getId).collect(Collectors.toList());
+    cargoNominationService.getMaxQuantityForCargoNomination(firstPortCargoIds, firstPortCargos);
+    cargos
+        .parallelStream()
+        .forEach(
+            cargo -> {
+              if (!firstPortCargoIds.contains(cargo.getId())) {
+                cargo.setQuantity(new BigDecimal(0));
+              }
+            });
+    cargoNominationService.saveAll(cargos);
   }
 }

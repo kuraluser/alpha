@@ -64,5 +64,7 @@ service LoadingPlanService {
   rpc GetUpdateUllageDetails (UpdateUllageDetailsRequest) returns (UpdateUllageDetailsResponse) {}
   
   rpc GetBillOfLaddingDetails (BillOfLaddingRequest) returns (LoadingInformationSynopticalReply) {}
+  
+  rpc GetCargoNominationMaxQuantity (MaxQuantityRequest) returns (MaxQuantityResponse) {}
 
 }

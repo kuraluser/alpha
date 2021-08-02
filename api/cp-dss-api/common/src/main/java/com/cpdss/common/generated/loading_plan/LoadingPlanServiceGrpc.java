@@ -405,6 +405,63 @@ public final class LoadingPlanServiceGrpc {
     return getGetBillOfLaddingDetailsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
+      getGetCargoNominationMaxQuantityMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetCargoNominationMaxQuantity",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
+      getGetCargoNominationMaxQuantityMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
+        getGetCargoNominationMaxQuantityMethod;
+    if ((getGetCargoNominationMaxQuantityMethod =
+            LoadingPlanServiceGrpc.getGetCargoNominationMaxQuantityMethod)
+        == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getGetCargoNominationMaxQuantityMethod =
+                LoadingPlanServiceGrpc.getGetCargoNominationMaxQuantityMethod)
+            == null) {
+          LoadingPlanServiceGrpc.getGetCargoNominationMaxQuantityMethod =
+              getGetCargoNominationMaxQuantityMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .MaxQuantityRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .MaxQuantityResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetCargoNominationMaxQuantity"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .MaxQuantityRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .MaxQuantityResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier(
+                              "GetCargoNominationMaxQuantity"))
+                      .build();
+        }
+      }
+    }
+    return getGetCargoNominationMaxQuantityMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingPlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingPlanServiceStub> factory =
@@ -515,6 +572,15 @@ public final class LoadingPlanServiceGrpc {
       asyncUnimplementedUnaryCall(getGetBillOfLaddingDetailsMethod(), responseObserver);
     }
 
+    /** */
+    public void getCargoNominationMaxQuantity(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetCargoNominationMaxQuantityMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -576,6 +642,13 @@ public final class LoadingPlanServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingInformationSynopticalReply>(
                       this, METHODID_GET_BILL_OF_LADDING_DETAILS)))
+          .addMethod(
+              getGetCargoNominationMaxQuantityMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .MaxQuantityResponse>(this, METHODID_GET_CARGO_NOMINATION_MAX_QUANTITY)))
           .build();
     }
   }
@@ -679,6 +752,18 @@ public final class LoadingPlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getCargoNominationMaxQuantity(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetCargoNominationMaxQuantityMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -755,6 +840,14 @@ public final class LoadingPlanServiceGrpc {
                 request) {
       return blockingUnaryCall(
           getChannel(), getGetBillOfLaddingDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        getCargoNominationMaxQuantity(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetCargoNominationMaxQuantityMethod(), getCallOptions(), request);
     }
   }
 
@@ -841,6 +934,16 @@ public final class LoadingPlanServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetBillOfLaddingDetailsMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
+        getCargoNominationMaxQuantity(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetCargoNominationMaxQuantityMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_LOADING_PLAN_SYNCHRONIZATION = 0;
@@ -850,6 +953,7 @@ public final class LoadingPlanServiceGrpc {
   private static final int METHODID_GET_LOADING_SEQUENCES = 4;
   private static final int METHODID_GET_UPDATE_ULLAGE_DETAILS = 5;
   private static final int METHODID_GET_BILL_OF_LADDING_DETAILS = 6;
+  private static final int METHODID_GET_CARGO_NOMINATION_MAX_QUANTITY = 7;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -930,6 +1034,15 @@ public final class LoadingPlanServiceGrpc {
                           .LoadingInformationSynopticalReply>)
                   responseObserver);
           break;
+        case METHODID_GET_CARGO_NOMINATION_MAX_QUANTITY:
+          serviceImpl.getCargoNominationMaxQuantity(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .MaxQuantityResponse>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1001,6 +1114,7 @@ public final class LoadingPlanServiceGrpc {
                       .addMethod(getGetLoadingSequencesMethod())
                       .addMethod(getGetUpdateUllageDetailsMethod())
                       .addMethod(getGetBillOfLaddingDetailsMethod())
+                      .addMethod(getGetCargoNominationMaxQuantityMethod())
                       .build();
         }
       }
