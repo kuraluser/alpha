@@ -1458,3 +1458,9 @@ header{
   background: $body-bg;
   color: $text-primary;
 }
+.port-popup{
+  background: $body-bg;
+  &:after{
+    border-right:10px solid $body-bg;
+  }
+}

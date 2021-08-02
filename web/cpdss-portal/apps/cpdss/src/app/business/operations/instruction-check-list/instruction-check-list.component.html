@@ -51,6 +51,8 @@
                             <div class="col">
                                 <input #editField *ngIf="rowNode.node.data.editable" [maxlength]="textFieldLength"
                                     formControlName="name" type="text" class="form-control">
+                                    <cpdss-portal-validation-error [errors]="fieldError('name')" [errorMessages]="errorMessages">
+                                    </cpdss-portal-validation-error>
                             </div>
                             <div>
                                 <button *ngIf="rowNode.node.data.editable" (click)="saveData(rowNode)"

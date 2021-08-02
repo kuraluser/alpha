@@ -6,21 +6,34 @@
 .port-popup {
   min-width: 330px;
   width: auto;
-  height: 120px;
   padding: 1%;
-  z-index: 999;
   border-radius: 10px;
-  background-color: #c1c8d3;
   font-size: 12px;
   position: absolute;
   padding: 10px;
-  border: 1px solid black;
   margin-top: -40px;
   margin-left: 25px;
+  &:after{
+    content: "";
+    width: 0; 
+    height: 0; 
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;  
+    position: absolute;
+    left: -10px;
+    top: 0;
+    bottom: 29px;
+    margin: auto;
+  }
 }
 
-.vessel-card-notification-container, .vessel-card-container {
+.vessel-card-container {
   z-index: 1;
+  position: absolute;
+}
+
+.vessel-card-notification-container {
+  z-index: 2;
   position: absolute;
 }
 

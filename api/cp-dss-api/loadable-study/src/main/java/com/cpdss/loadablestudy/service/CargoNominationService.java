@@ -74,7 +74,6 @@ public class CargoNominationService {
 
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceBlockingStub loadingPlanGrpcService;
-
   /**
    * fetch cargo nomination based on the loadable study id
    *

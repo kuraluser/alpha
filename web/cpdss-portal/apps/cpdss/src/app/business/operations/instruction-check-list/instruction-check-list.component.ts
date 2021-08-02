@@ -1,11 +1,12 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl , ValidationErrors } from '@angular/forms';
 import { ConfirmationService, TreeNode } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { InstructionCheckListApiService } from './services/instruction-check-list-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { IInstructionDetails, IDeleteData, ISaveStatusData } from './models/instruction-check-list.model';
+import { whiteSpaceValidator } from '../../core/directives/space-validator.directive';
 @Component({
   selector: 'cpdss-portal-instruction-check-list',
   templateUrl: './instruction-check-list.component.html',
@@ -47,6 +48,9 @@ export class InstructionCheckListComponent implements OnInit {
   textFieldLength: number;
   oldData: any;
   instructionForm: FormGroup;
+  errorMessages: any = {
+  'whitespace': 'INSTRUCTION_HEAD_REQUIRED'
+  };
   hasUnsavedChanges = false;
 
   constructor(
@@ -68,7 +72,7 @@ export class InstructionCheckListComponent implements OnInit {
    */
   formGroupInit() {
     this.instructionForm = new FormGroup({
-      name: new FormControl(''),
+      name: new FormControl('', [whiteSpaceValidator]),
     });
   }
 
@@ -165,6 +169,8 @@ export class InstructionCheckListComponent implements OnInit {
    */
   async saveData(event) {
     if (!this.instructionForm.controls.name.value || this.instructionForm.controls.name.value.toString().trim() === '') {
+      this.instructionForm.markAllAsTouched();
+      this.instructionForm.markAsDirty();
       return;
     }
     let data: IInstructionDetails = {};
@@ -470,7 +476,11 @@ export class InstructionCheckListComponent implements OnInit {
    * @memberof InstructionCheckListComponent
    */
   async saveAll() {
-    if (this.isEditActive()) { return; }
+    if (this.isEditActive()) { 
+      this.instructionForm.markAllAsTouched();
+      this.instructionForm.markAsDirty();
+      return; 
+    }
     const data: ISaveStatusData = {
       instructionList: []
     };
@@ -506,5 +516,27 @@ export class InstructionCheckListComponent implements OnInit {
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INSTRUCTION_ERROR'], detail: translationKeys['LOADING_INSTRUCTION_ERROR_MESSAGE'] });
     }
   }
+
+    /**
+   * Get field errors
+   * @param {string} formControlName
+   * @returns {ValidationErrors}
+   * @memberof InstructionCheckListComponent
+  */
+     fieldError(formControlName: string): ValidationErrors {
+      const formControl = this.field(formControlName);
+      return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
+    }
+  
+    /**
+    * Get form control of instructionForm 
+    * @param {string} formControlName
+    * @returns {FormControl}
+    * @memberof InstructionCheckListComponent
+    */
+    field(formControlName: string): FormControl {
+      const formControl = <FormControl>this.instructionForm.get(formControlName);
+      return formControl;
+    }
 
 }

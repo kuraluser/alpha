@@ -1688,5 +1688,6 @@
   "DISCHARGE_STUDY_CARO_NOMINATION_DISCHARGE_STUDY_NOT_AVAILABLE": "Cannot view caro nomination details for the selected voyage since no discharge study available.",
   "DISCHARGE_STUDY_PORTS_DISCHARGE_STUDY_NOT_AVAILABLE": "Cannot view port details for the selected voyage since no discharge study available.",
 	"DISCHARGE_STUDY_OHQ_DISCHARGE_STUDY_NOT_AVAILABLE": "Cannot view ohq nomination details for the selected voyage since no discharge study available.",
-	"DISCHARGE_STUDY_NOT_AVAILABLE": "Cannot view discharge study details for the selected voyage since no discharge study available."
+	"DISCHARGE_STUDY_NOT_AVAILABLE": "Cannot view discharge study details for the selected voyage since no discharge study available.",
+  "INSTRUCTION_HEAD_REQUIRED": "Required"
 }

@@ -2840,8 +2840,25 @@ textarea{
 .vessel-card-container {
   &.collapsed{
     .vessel-card-fleet-container{
-      height: 100px;
+      height: 92px;
       overflow: hidden;
+    }
+  }
+}
+
+.calendar-f-w {
+  span.p-calendar {
+    width: 100%;
+  }
+}
+
+.calendar-f-w {
+  span.p-calendar {
+    width: 100%;
+  } 
+  &.fleet-calendar {
+    input.p-inputtext {
+      font-size: 11px;
     }
   }
 }
