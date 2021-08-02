@@ -182,7 +182,8 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
       this.ngxSpinnerService.show();
       const res = await this.vesselsApiService.getVesselsInfo().toPromise();
       this.vesselInfo = res[0] ?? <IVessel>{};
-      this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
+      const voyages = await this.getVoyages(this.vesselId, this.voyageId);
+      this.voyages = voyages.filter(voy => voy.statusId === VOYAGE_STATUS.ACTIVE || voy.statusId === VOYAGE_STATUS.CLOSE);
       const result = await this.dischargeStudyListApiService.getDischargeStudies(vesselId, voyageId).toPromise();
       const dischargeStudies = result?.dischargeStudies ?? [];
       if (dischargeStudies.length) {

@@ -430,10 +430,6 @@ public class DischargeStudyService {
               }
               response.getPortList().add(portRotation);
             });
-    response.setPortList(
-        response.getPortList().stream()
-            .sorted((i1, i2) -> i2.getPortOrder().compareTo(i1.getPortOrder()))
-            .collect(Collectors.toList()));
   }
 
   private List<BackLoading> buildBackLoading(

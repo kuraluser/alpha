@@ -2,14 +2,11 @@
   width: 100%;
   height: calc(100vh - 100px);
   border-radius: 10px;
-  background-color: #c1c8d3f5;
   padding: 10px;
 }
 
 .notification-list {
   max-height: calc(100vh - 270px);
-  border-top: 1px solid gray;
-  border-bottom: 1px solid gray;
   overflow-y: auto;
 }
 
@@ -37,14 +34,10 @@
   }
 }
 
-.notification-item:not(:last-child) {
-  border-bottom: 1px solid rgb(56, 56, 56);
-  border-bottom-width: thin;
-}
+
 
 .notification-item:hover {
   cursor: pointer;
-  background-color: #aec4e0;
 }
 
 .switch-tabs {
@@ -60,10 +53,7 @@
   }
 }
 
-.switch-tabs div:not(:last-child) {
-  border-right: 1px solid rgb(56, 56, 56);
-  border-right-width: thin;
-}
+
 
 .filters {
   display: flex;
@@ -71,7 +61,6 @@
   width: 100%;
 
   div input {
-    border-bottom: 1px solid #005397;
     width: 100%;
   }
 }

@@ -1,15 +1,15 @@
 import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
-import { ICargoVesselTankDetails, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset } from '../../models/loading-information.model';
-import { LoadingInformationApiService } from '../../services/loading-information-api.service';
-import { GlobalErrorHandler } from 'apps/cpdss/src/app/shared/services/error-handlers/global-error-handler';
+import { ICargoVesselTankDetails, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset } from '../../models/loading-discharging.model';
+import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { LoadingTransformationService } from '../../services/loading-transformation.service';
-import { AppConfigurationService } from 'apps/cpdss/src/app/shared/services/app-configuration/app-configuration.service';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ICargo } from '../../../core/models/common.model';
 import {RulesService}from '../../services/rules/rules.service';
+import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
+
 @Component({
   selector: 'cpdss-portal-loading-information',
   templateUrl: './loading-information.component.html',
@@ -59,15 +59,14 @@ export class LoadingInformationComponent implements OnInit {
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   hasUnSavedData = false;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
-  constructor(private loadingInformationApiService: LoadingInformationApiService,
-    private globalErrorHandler: GlobalErrorHandler,
+  constructor(private loadingDischargingInformationApiService: LoadingDischargingInformationApiService,
     private translateService: TranslateService,
     private messageService: MessageService,
-    private loadingTransformationService: LoadingTransformationService,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private rulesService : RulesService,
     private ngxSpinnerService: NgxSpinnerService) {}
 
-  
+
   async ngOnInit(): Promise<void> {
     this.initSubscriptions();
   }
@@ -79,7 +78,7 @@ export class LoadingInformationComponent implements OnInit {
   * @memberof LoadingInformationComponent
   */
   private async initSubscriptions() {
-    this.loadingTransformationService.unitChange$.subscribe((res) => {
+    this.loadingDischargingTransformationService.unitChange$.subscribe((res) => {
       this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
     })
@@ -94,7 +93,7 @@ export class LoadingInformationComponent implements OnInit {
     this.ngxSpinnerService.show();
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_NO_ACTIVE_VOYAGE', 'LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE']).toPromise();
     try {
-      this.loadingInformationData = await this.loadingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
+      this.loadingInformationData = await this.loadingDischargingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
       this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
     }
@@ -115,7 +114,7 @@ export class LoadingInformationComponent implements OnInit {
     if (this.loadingInformationData) {
       await this.updatePostData();
     }
-    this.loadingTransformationService.setLoadingInformationValidity(this.loadingInformationData?.isLoadingInfoComplete)
+    this.loadingDischargingTransformationService.setLoadingInformationValidity(this.loadingInformationData?.isLoadingInfoComplete)
     this.loadingInfoId = this.loadingInformationData?.loadingInfoId;
     this.loadingInformationId.emit(this.loadingInfoId);
     this.trackStartEndStage = this.loadingInformationData?.loadingStages?.trackStartEndStage;
@@ -255,7 +254,7 @@ export class LoadingInformationComponent implements OnInit {
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY']).toPromise();
     if(this.hasUnSavedData){
       this.ngxSpinnerService.show();
-      const result: ILoadingInformationSaveResponse = await this.loadingInformationApiService.saveLoadingInformation(this.vesselId, this.voyageId, this.loadingInformationPostData).toPromise();
+      const result: ILoadingInformationSaveResponse = await this.loadingDischargingInformationApiService.saveLoadingInformation(this.vesselId, this.voyageId, this.loadingInformationPostData).toPromise();
       if (result?.responseStatus?.status === '200') {
         this.loadingInformationData = result?.loadingInformation;
         await this.updateGetData();

@@ -22,10 +22,12 @@ import com.cpdss.loadingplan.service.LoadingSequenceService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingPlanRuleServiceImpl;
 import io.grpc.stub.StreamObserver;
-import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -41,7 +43,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   @Autowired LoadingPlanRuleServiceImpl loadingPlanRuleService;
 
   @Autowired PortLoadingPlanStowageDetailsRepository portLoadingPlanStowageDetailsRepository;
-
+  
   @Autowired BillOfLaddingRepository billOfLaddingRepository;
 
   @Override
@@ -174,16 +176,16 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       loadingPlanService.getPortWiseStowageDetails(request, builder);
       loadingPlanService.getPortWiseBallastDetails(request, builder);
       loadingPlanService.getPortWiseRobDetails(request, builder);
-      // builder.setResponseStatus(
-      // ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
+      //      builder.setResponseStatus(
+      //              ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
     } catch (Exception e) {
       log.error("Exception when saveLoadingPlan microservice is called", e);
-      // builder.setResponseStatus(
-      // ResponseStatus.newBuilder()
-      // .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-      // .setMessage(e.getMessage())
-      // .setStatus(LoadingPlanConstants.FAILED)
-      // .build());
+      //      builder.setResponseStatus(
+      //              ResponseStatus.newBuilder()
+      //                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+      //                      .setMessage(e.getMessage())
+      //                      .setStatus(LoadingPlanConstants.FAILED)
+      //                      .build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

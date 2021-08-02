@@ -5,6 +5,14 @@ import { DischargingComponent } from './discharging.component';
 import { DischargingRoutingModule } from './discharging-routing.module';
 import { InstructionSidePanelModule } from '../instruction-side-panel/instruction-side-panel.module';
 import { InstructionCheckListModule } from '../instruction-check-list/instruction-check-list.module';
+import { TranslateModule } from '@ngx-translate/core';
+import { DischargingInformationComponent } from './discharging-information/discharging-information.component';
+import { LoadingDischargingInformationApiService } from '../services/loading-discharging-information-api.service'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LoadingDischargingDetailsModule } from '../loading-discharging-details/loading-discharging-details.module';
+import { DischargingRatesModule } from '../discharging-rates/discharging-rates.module';
+import { LoadingDischargingBerthModule } from '../loading-discharging-berth/loading-discharging-berth.module';
+import { LoadingDischargingCargoDetailsModule } from '../loading-discharging-cargo-details/loading-discharging-cargo-details.module';
 
 /**
  * Module for discharging operations
@@ -13,12 +21,20 @@ import { InstructionCheckListModule } from '../instruction-check-list/instructio
  * @class DischargingModule
  */
 @NgModule({
-  declarations: [DischargingComponent],
+  declarations: [DischargingComponent, DischargingInformationComponent],
   imports: [
     CommonModule,
     DischargingRoutingModule,
     InstructionSidePanelModule,
-    InstructionCheckListModule
-  ]
+    InstructionCheckListModule,
+    TranslateModule,
+    FormsModule,
+    ReactiveFormsModule,
+    LoadingDischargingDetailsModule,
+    DischargingRatesModule,
+    LoadingDischargingBerthModule,
+    LoadingDischargingCargoDetailsModule
+  ],
+  providers: [LoadingDischargingInformationApiService]
 })
 export class DischargingModule { }

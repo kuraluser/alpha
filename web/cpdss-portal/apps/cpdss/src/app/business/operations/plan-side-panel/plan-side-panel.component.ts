@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
-import { IBerth, ILoadingRates } from '../models/loading-information.model';
+import { IBerth, ILoadingRates } from '../models/loading-discharging.model';
 import { PlanSidePanelTransformationService } from './plan-side-panel-transformation.service';
 
 /**

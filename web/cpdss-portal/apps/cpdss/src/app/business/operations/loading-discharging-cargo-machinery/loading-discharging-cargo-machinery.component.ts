@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ILoadingMachinesInUses, IMachineryInUses, IMachineTankTypes } from '../models/loading-information.model';
+import { ILoadingMachinesInUses, IMachineryInUses, IMachineTankTypes } from '../models/loading-discharging.model';
 
 @Component({
   selector: 'cpdss-portal-loading-discharging-cargo-machinery',

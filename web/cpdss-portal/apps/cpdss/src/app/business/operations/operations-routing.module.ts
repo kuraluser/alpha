@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { OperationsComponent } from './operations.component';
-import { HasUnsavedDataGuard } from '../../shared/services/guards/has-unsaved-data.guard';
 
 const routes: Routes = [
   {

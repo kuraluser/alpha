@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { ILoadingDetails } from '../models/loading-information.model';
-import { LoadingDischargingDetailsTransformationService } from './loading-discharging-details-transformation.service';
+import { ILoadingDischargingDetails } from '../models/loading-discharging.model';
 import { loadingDetailsValidator } from '../directives/validator/loading-details-time-validator.directive';
 import { numberValidator } from '../../core/directives/number-validator.directive';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 @Component({
   selector: 'cpdss-portal-loading-discharging-details',
@@ -19,25 +19,25 @@ import { numberValidator } from '../../core/directives/number-validator.directiv
  * @implements {OnInit}
  */
 export class LoadingDischargingDetailsComponent implements OnInit {
-  @Input() loadingDetails: ILoadingDetails;
+  @Input() loadingDischargingDetails: ILoadingDischargingDetails;
 
-  @Output() updateLoadingDetails: EventEmitter<ILoadingDetails> = new EventEmitter();
+  @Output() updateLoadingDischargingDetails: EventEmitter<ILoadingDischargingDetails> = new EventEmitter();
 
-  loadingDetailsForm: FormGroup;
+  loadingDischargingDetailsForm: FormGroup;
   errorMessages: any;
-  loadingDetailsResponse: ILoadingDetails;
-  constructor(private fb: FormBuilder, private loadingDischargingDetailsTransformationService: LoadingDischargingDetailsTransformationService) { }
+  loadingDischargingDetailsResponse: ILoadingDischargingDetails;
+  constructor(private fb: FormBuilder, private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
 
   ngOnInit(): void {
-    this.errorMessages = this.loadingDischargingDetailsTransformationService.setValidationMessageForLoadingDetails();
-    this.loadingDetailsResponse = this.loadingDetails;
-    this.loadingDetailsForm = this.fb.group({
-      timeOfSunrise: this.fb.control(this.getDateByDate(this.loadingDetails?.timeOfSunrise), [Validators.required, loadingDetailsValidator('timeOfSunset','<')]),
-      timeOfSunset: this.fb.control(this.getDateByDate(this.loadingDetails?.timeOfSunset), [Validators.required, loadingDetailsValidator('timeOfSunrise','>')]),
-      startTime: this.fb.control(this.getDateByDate(this.loadingDetails?.startTime), [Validators.required]),
-      initialTrim: this.fb.control(this.loadingDetails.trimAllowed?.initialTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(4)]),
-      maximumTrim: this.fb.control(this.loadingDetails.trimAllowed?.maximumTrim, [Validators.required, numberValidator(2, 1), Validators.min(1), Validators.max(3)]),
-      finalTrim: this.fb.control(this.loadingDetails.trimAllowed?.finalTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)])
+    this.errorMessages = this.loadingDischargingTransformationService.setValidationMessageForLoadingDetails();
+    this.loadingDischargingDetailsResponse = this.loadingDischargingDetails;
+    this.loadingDischargingDetailsForm = this.fb.group({
+      timeOfSunrise: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunrise), [Validators.required, loadingDetailsValidator('timeOfSunset','<')]),
+      timeOfSunset: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunset), [Validators.required, loadingDetailsValidator('timeOfSunrise','>')]),
+      startTime: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.startTime), [Validators.required]),
+      initialTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.initialTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(4)]),
+      maximumTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.maximumTrim, [Validators.required, numberValidator(2, 1), Validators.min(1), Validators.max(3)]),
+      finalTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.finalTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)])
     })
   }
 
@@ -77,7 +77,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 * @memberof LoadingDischargingDetailsComponent
 */
   field(formControlName: string): FormControl {
-    const formControl = <FormControl>this.loadingDetailsForm?.get(formControlName);
+    const formControl = <FormControl>this.loadingDischargingDetailsForm?.get(formControlName);
     return formControl;
   }
 
@@ -92,11 +92,11 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 * @memberof LoadingDischargingDetailsComponent
 */
   onTimeChange(field) {
-    if (this.loadingDetailsForm.value[field]) {
-      const selectedTime = new Date(this.loadingDetailsForm.value[field]);
-      this.loadingDetailsResponse[field] = ((selectedTime.getHours() < 10 ? ('0' + selectedTime.getHours()) : selectedTime.getHours())) + ":" + ((selectedTime.getMinutes() < 10 ? ('0' + selectedTime.getMinutes()) : selectedTime.getMinutes()));
+    if (this.loadingDischargingDetailsForm.value[field]) {
+      const selectedTime = new Date(this.loadingDischargingDetailsForm.value[field]);
+      this.loadingDischargingDetailsResponse[field] = ((selectedTime.getHours() < 10 ? ('0' + selectedTime.getHours()) : selectedTime.getHours())) + ":" + ((selectedTime.getMinutes() < 10 ? ('0' + selectedTime.getMinutes()) : selectedTime.getMinutes()));
       if(!this.fieldError(field)){
-        this.updateLoadingDetails.emit(this.loadingDetailsResponse);
+        this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
       }
 
     }
@@ -108,9 +108,9 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 * @memberof LoadingDischargingDetailsComponent
 */
   trimValueChange(field) {
-    if (this.loadingDetailsForm.value[field]) {
-      this.loadingDetailsResponse.trimAllowed[field] = this.loadingDetailsForm.value[field];
-      this.updateLoadingDetails.emit(this.loadingDetailsResponse);
+    if (this.loadingDischargingDetailsForm.value[field]) {
+      this.loadingDischargingDetailsResponse.trimAllowed[field] = this.loadingDischargingDetailsForm.value[field];
+      this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
     }
   }
 

@@ -35,11 +35,15 @@
 
   <div class="vessel-card-notification-container vessel-notification">
     <cpdss-portal-fleet-vessel-notifications></cpdss-portal-fleet-vessel-notifications>
+   
   </div>
 
-  <div class="vessel-card-notification-container vessel-card">
+   <div class="vessel-card-container expanded"><!-- change class to   collapsed-->
     <cpdss-portal-fleet-vessel-card *ngIf="vessels" [vesselValues]="vessels" (selectVessel)="onSelectVessel($event)">
     </cpdss-portal-fleet-vessel-card>
+    <div class="vessel-card-expand-collapse-btn">
+      <div class="pi pi-angle-up"></div> <!-- change class to   pi-angle-down-->
+    </div>
   </div>
 
 </div>

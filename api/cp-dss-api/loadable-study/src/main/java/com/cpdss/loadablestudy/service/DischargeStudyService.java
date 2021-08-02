@@ -1059,58 +1059,92 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     }
   }
 
-  public void addCargoNominationForPortRotation(long portRotationId, long loadableStudyId) {
+  public void addCargoNominationForPortRotation(long portRotationId, long loadableStudyId)
+      throws GenericServiceException {
 
     log.info("Inside addCargoNominationForPortRotation service");
-    try {
-      LoadableStudy loadableStudy = loadableStudyRepository.findById(loadableStudyId).get();
-      /**
-       * if the loadable study is a discharge study then add cargo nominations of the previous port
-       * no the newly created one else return
-       */
-      if (loadableStudy.getPlanningTypeXId() != 2) {
-        return;
-      }
-      List<LoadableStudyPortRotation> portRotations =
-          loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
-              loadableStudy.getId(), true);
-      portRotations.sort(Comparator.comparing(LoadableStudyPortRotation::getPortOrder));
-      if (portRotations.get(portRotations.size() - 1).getId() != portRotationId) {
-        return;
-      }
-      LoadableStudyPortRotation loadableStudyPortRotation =
-          portRotations.get(portRotations.size() - 2);
-      List<CargoNomination> cargos =
-          cargoNominationService.getCargoNominationByLoadableStudyId(loadableStudyId);
-      Set<CargoNomination> previousPortCargos =
-          cargos.stream()
-              .flatMap(x -> x.getCargoNominationPortDetails().stream())
-              .filter(port -> port.getPortId().equals(loadableStudyPortRotation.getPortXId()))
-              .map(CargoNominationPortDetails::getCargoNomination)
-              .collect(Collectors.toSet());
-      List<CargoNomination> cargoNominations = new ArrayList<>();
-      previousPortCargos.stream()
-          .forEach(
-              cargo -> {
-                CargoNomination newCargo =
-                    cargoNominationService.createDsCargoNomination(
-                        loadableStudyId,
-                        cargo,
-                        portRotations.get(portRotations.size() - 1).getPortXId());
-                newCargo.setQuantity(new BigDecimal(0));
-                newCargo
-                    .getCargoNominationPortDetails()
-                    .parallelStream()
-                    .forEach(
-                        portDetail -> {
-                          portDetail.setQuantity(new BigDecimal(0));
-                        });
-                cargoNominations.add(newCargo);
-              });
-      cargoNominationService.saveAll(cargoNominations);
-    } catch (Exception e) {
-      log.error("Exception when when calling algo  ", e);
-      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+
+    LoadableStudy loadableStudy = loadableStudyRepository.findById(loadableStudyId).get();
+    /**
+     * if the loadable study is a discharge study then add cargo nominations of the previous port no
+     * the newly created one else return
+     */
+    if (loadableStudy.getPlanningTypeXId() != 2) {
+      return;
     }
+    List<LoadableStudyPortRotation> portRotations =
+        loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
+            loadableStudy.getId(), true);
+    portRotations.sort(Comparator.comparing(LoadableStudyPortRotation::getPortOrder));
+    if (portRotations.get(portRotations.size() - 1).getId() != portRotationId) {
+      return;
+    }
+    LoadableStudyPortRotation loadableStudyPortRotation =
+        portRotations.get(portRotations.size() - 2);
+    List<CargoNomination> cargos =
+        cargoNominationService.getCargoNominationByLoadableStudyId(loadableStudyId);
+    Set<CargoNomination> previousPortCargos =
+        cargos.stream()
+            .flatMap(x -> x.getCargoNominationPortDetails().stream())
+            .filter(port -> port.getPortId().equals(loadableStudyPortRotation.getPortXId()))
+            .map(CargoNominationPortDetails::getCargoNomination)
+            .collect(Collectors.toSet());
+    List<CargoNomination> cargoNominations = new ArrayList<>();
+    previousPortCargos.stream()
+        .forEach(
+            cargo -> {
+              CargoNomination newCargo =
+                  cargoNominationService.createDsCargoNomination(
+                      loadableStudyId,
+                      cargo,
+                      portRotations.get(portRotations.size() - 1).getPortXId());
+              newCargo.setQuantity(new BigDecimal(0));
+              newCargo.setMode(1L);
+
+              newCargo
+                  .getCargoNominationPortDetails()
+                  .parallelStream()
+                  .forEach(
+                      portDetail -> {
+                        portDetail.setQuantity(new BigDecimal(0));
+                      });
+              cargoNominations.add(newCargo);
+            });
+
+    Map<Long, List<BackLoading>> backloadingDataByportIds =
+        backLoadingService.getBackloadingDataByportIds(
+            loadableStudyId, Arrays.asList(loadableStudyPortRotation.getId()));
+    List<BackLoading> backLoadingList =
+        backloadingDataByportIds.get(loadableStudyPortRotation.getId());
+    if (backLoadingList != null && !backLoadingList.isEmpty()) {
+      backLoadingList.stream()
+          .forEach(
+              backloading -> {
+                CargoNomination cargoBackloading = new CargoNomination();
+                cargoBackloading.setAbbreviation(backloading.getAbbreviation());
+                cargoBackloading.setCargoXId(backloading.getCargoId());
+                cargoBackloading.setApi(backloading.getApi());
+                cargoBackloading.setColor(backloading.getColour());
+                cargoBackloading.setLoadableStudyXId(backloading.getDischargeStudyId());
+                cargoBackloading.setQuantity(new BigDecimal(0L));
+                cargoBackloading.setIsActive(true);
+                cargoBackloading.setMode(1L);
+                cargoBackloading.setTemperature(backloading.getTemperature());
+                CargoNominationPortDetails portDetail = new CargoNominationPortDetails();
+                portDetail.setPortId(portRotations.get(portRotations.size() - 1).getPortXId());
+                portDetail.setQuantity(new BigDecimal(0));
+                portDetail.setIsActive(true);
+                portDetail.setVersion(1L);
+                cargoBackloading.setVersion(1L);
+                cargoBackloading.setCargoNominationPortDetails(
+                    cargoNominationService.createCargoNominationPortDetails(
+                        cargoBackloading,
+                        null,
+                        portRotations.get(portRotations.size() - 1).getPortXId()));
+                cargoBackloading.setPriority(1L);
+                cargoNominations.add(cargoBackloading);
+              });
+    }
+    cargoNominationService.saveAll(cargoNominations);
   }
 }

@@ -25,9 +25,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoadingInstructionComponent } from './loading-instruction/loading-instruction.component';
 import { ToppingOffTankTableModule } from './../topping-off-tank-table/topping-off-tank-table.module';
 import { CheckboxModule } from 'primeng/checkbox';
-import { LoadingInformationApiService } from '../services/loading-information-api.service';
+import { LoadingDischargingInformationApiService } from '../services/loading-discharging-information-api.service';
 import { LoadingDischargingManageSequenceModule } from '../loading-discharging-manage-sequence/loading-discharging-manage-sequence.module';
-import { LoadingApiService } from '../services/loading-api.service';
 import { LoadingInstructionApiService } from './../services/loading-instruction-api.service';
 
 /**
@@ -69,6 +68,6 @@ import { LoadingInstructionApiService } from './../services/loading-instruction-
     LoadingDischargingManageSequenceModule
 
   ],
-  providers: [LoadingInformationApiService, LoadingApiService, LoadingInstructionApiService],
+  providers: [LoadingDischargingInformationApiService, LoadingInstructionApiService],
 })
 export class LoadingModule { }

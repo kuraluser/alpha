@@ -19,21 +19,36 @@
   margin-left: 25px;
 }
 
-.vessel-card-notification-container {
-  z-index: 9999;
+.vessel-card-notification-container, .vessel-card-container {
+  z-index: 1;
   position: absolute;
 }
 
 .vessel-notification {
-  width: 27%;
+  width: 360px;
   padding-left: 10px;
   padding-top: 10px;
   margin-right: 15px;
 }
 
-.vessel-card {
-  left: 27%;
-  width: 73%;
+.vessel-card-container {
+  left: 380px;
+  right: 0px;
   padding-left: 15px;
   padding-top: 10px;
+  padding-right: 15px;
+}
+
+.vessel-card-expand-collapse-btn{
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: inline-block;
+    text-align: center;
+    line-height: 25px;
+    margin: auto;
+    left: 0;
+    right: 0;
+    position: absolute;
+    cursor: pointer;
 }

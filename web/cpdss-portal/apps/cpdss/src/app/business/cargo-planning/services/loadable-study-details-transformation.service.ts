@@ -259,6 +259,9 @@ export class LoadableStudyDetailsTransformationService {
         showTotal: true,
         numberType: 'quantity',
         fieldHeaderClass: 'column-qty',
+        fieldClass: 'text-right no-ediable-field',
+        fieldColumnClass: 'text-right',
+        filterClass: 'text-right',
         errorMessages: {
           'required': 'CARGO_NOMINATION_FIELD_REQUIRED_ERROR'
         }

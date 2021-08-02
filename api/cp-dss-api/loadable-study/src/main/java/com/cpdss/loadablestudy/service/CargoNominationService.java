@@ -66,12 +66,11 @@ public class CargoNominationService {
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
-  @GrpcClient("loadingPlanService")
-  private LoadingPlanServiceBlockingStub loadingPlanGrpcService;
-
   @GrpcClient("cargoService")
   private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
-
+  
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceBlockingStub loadingPlanGrpcService;
   /**
    * fetch cargo nomination based on the loadable study id
    *
@@ -141,12 +140,14 @@ public class CargoNominationService {
     portDetail.setIsActive(true);
     portDetail.setCargoNomination(dischargeStudyCargo);
     if (cargo != null) {
+      portDetail.setVersion(cargo.getVersion());
       portDetail.setQuantity(
           cargo.getCargoNominationPortDetails().stream()
               .map(CargoNominationPortDetails::getQuantity)
               .reduce(BigDecimal.ZERO, BigDecimal::add));
     } else {
       portDetail.setQuantity(new BigDecimal(0));
+      portDetail.setVersion(1L);
     }
     return new HashSet<CargoNominationPortDetails>(Arrays.asList(portDetail));
   }
@@ -634,6 +635,7 @@ public class CargoNominationService {
           });
     }
   }
+  
 
   // Get max Quantity in a Cargo Nomination
   public String getMaxQuantityFromBillOfLadding(Long cargoNominationId) {

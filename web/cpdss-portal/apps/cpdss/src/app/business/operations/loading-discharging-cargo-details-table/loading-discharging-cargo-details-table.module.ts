@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoadingDischargingCargoDetailsTableComponent } from './loading-discharging-cargo-details-table.component';
-import { LoadingDischargingCargoDetailsTableTransformationService } from './loading-discharging-cargo-details-table-transformation.service';
 import { TableModule } from 'primeng/table';
 import { TranslateModule } from '@ngx-translate/core';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
@@ -24,6 +23,6 @@ import { TooltipModule } from 'primeng/tooltip';
     TooltipModule
   ],
   exports: [LoadingDischargingCargoDetailsTableComponent],
-  providers: [LoadingDischargingCargoDetailsTableTransformationService, QuantityDecimalFormatPipe]
+  providers: [QuantityDecimalFormatPipe]
 })
 export class LoadingDischargingCargoDetailsTableModule { }

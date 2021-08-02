@@ -16,7 +16,7 @@ import { LoadableQuantityApiService } from '../services/loadable-quantity-api.se
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
 import { DatatableModule } from '../../../shared/components/datatable/datatable.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BallastStowageComponent } from './stowage/ballast-stowage/ballast-stowage.component';
 import { BallastLayoutModule } from '../../core/components/ballast-layout/ballast-layout.module';
 import { SaveStowagePopupComponent } from './stowage/save-stowage-popup/save-stowage-popup.component';
@@ -28,6 +28,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'; 
 import { PortRotationPopupModule } from '../../core/components/port-rotation-popup/port-rotation-popup.module';
+import { UserRoleSelectionPopupComponent } from './user-role-selection-popup/user-role-selection-popup.component';
 /**
  * Module for loadable plan
  *
@@ -35,7 +36,7 @@ import { PortRotationPopupModule } from '../../core/components/port-rotation-pop
  * @class LoadablePlanModule
  */
 @NgModule({
-  declarations: [LoadablePlanComponent, LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent, BallastStowageComponent, SaveStowagePopupComponent],
+  declarations: [LoadablePlanComponent, LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent, BallastStowageComponent, SaveStowagePopupComponent, UserRoleSelectionPopupComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -51,11 +52,12 @@ import { PortRotationPopupModule } from '../../core/components/port-rotation-pop
     ValidationErrorModule,
     TooltipModule,
     QuantityDecimalFormatPipeModule,
-    PortRotationPopupModule
+    PortRotationPopupModule,
+    FormsModule
   ],
   providers: [QuantityDecimalFormatPipe , LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService , DatePipe, LoadableStudyListApiService ],
   exports: [
-    LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent
+    LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent, UserRoleSelectionPopupComponent
   ]
 })
 export class LoadablePlanModule { }

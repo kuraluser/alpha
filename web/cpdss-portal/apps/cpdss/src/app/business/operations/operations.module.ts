@@ -10,10 +10,19 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { PortRotationRibbonModule } from '../core/components/port-rotation-ribbon/port-rotation-ribbon.module';
 import { AddPortPopupModule } from './add-port-popup/add-port-popup.module';
-import { LoadingTransformationService } from './services/loading-transformation.service';
-import {RulesModule} from './rules/rules.module';
+import { RulesModule } from './rules/rules.module';
 import { RulesService } from './services/rules/rules.service';
+import { LoadingDischargingTransformationService } from './services/loading-discharging-transformation.service';
+import { QuantityPipeModule } from '../../shared/pipes/quantity/quantity-pipe.module';
+import { QuantityPipe } from '../../shared/pipes/quantity/quantity.pipe';
+import { OperationsApiService } from './services/operations-api.service';
 
+/**
+ * Module class for operations module
+ *
+ * @export
+ * @class OperationsModule
+ */
 @NgModule({
   declarations: [
     OperationsComponent
@@ -27,8 +36,9 @@ import { RulesService } from './services/rules/rules.service';
     UnitDropdownModule,
     PortRotationRibbonModule,
     AddPortPopupModule,
-    RulesModule
+    RulesModule,
+    QuantityPipeModule
   ],
-  providers: [VesselsApiService, LoadingTransformationService,RulesService ]
+  providers: [VesselsApiService, RulesService, LoadingDischargingTransformationService, QuantityPipe, OperationsApiService ]
 })
 export class OperationsModule { }

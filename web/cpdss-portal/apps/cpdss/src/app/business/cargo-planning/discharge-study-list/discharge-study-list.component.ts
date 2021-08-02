@@ -95,8 +95,11 @@ export class DischargeStudyListComponent implements OnInit {
       this.vesselDetails = res[0] ?? <IVessel>{};
       localStorage.setItem("vesselId", this.vesselDetails?.id.toString())
       const result = await this.voyageService.getVoyagesByVesselId(this.vesselDetails?.id).toPromise();
-      this.voyages = result;
-      this.selectedVoyage = this.voyages.find(voy => voy.status === "Active")
+      this.voyages = result.filter(voy => voy.statusId === VOYAGE_STATUS.ACTIVE || voy.statusId === VOYAGE_STATUS.CLOSE);
+      this.selectedVoyage = this.voyages.find(voy => voy.status === "Active");
+      if(!this.selectedVoyage) {
+        this.selectedVoyage = this.voyages[0];
+      }
       this.getPagePermission();
       this.showDischargeStudyList();    
       this.ngxSpinnerService.hide();

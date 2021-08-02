@@ -6,7 +6,6 @@ import { NumberDirectiveModule } from '../../../shared/directives/number-directi
 import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
-import { LoadingDischargingBerthTransformationService } from './loading-discharging-berth-transformation.service';
 
 /**
  * Module for loading discharging berth module
@@ -25,7 +24,6 @@ import { LoadingDischargingBerthTransformationService } from './loading-discharg
     DropdownModule,
     TranslateModule,
     ValidationErrorModule
-  ],
-  providers: [LoadingDischargingBerthTransformationService]
+  ]
 })
 export class LoadingDischargingBerthModule { }

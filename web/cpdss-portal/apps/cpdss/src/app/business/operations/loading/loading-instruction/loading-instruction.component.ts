@@ -4,7 +4,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
 import { UnsavedChangesGuard, ComponentCanDeactivate } from './../../../../shared/services/guards/unsaved-data-guard';
 import { ILoadingInstructionGroup, ILoadingInstructionSubHeaderData } from './../../models/loading-instruction.model';
-import { LoadingTransformationService } from './../../services/loading-transformation.service';
+import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 @Component({
   selector: 'cpdss-portal-loading-instruction',
   templateUrl: './loading-instruction.component.html',
@@ -37,7 +37,7 @@ export class LoadingInstructionComponent implements OnInit, ComponentCanDeactiva
     private loadingInstructionApiService: LoadingInstructionApiService,
     private ngxSpinnerService: NgxSpinnerService,
     private unsavedChangesGuard: UnsavedChangesGuard,
-    private loadingTransformationService: LoadingTransformationService
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService
   ) { }
 
   ngOnInit(): void {
@@ -151,7 +151,7 @@ export class LoadingInstructionComponent implements OnInit, ComponentCanDeactiva
    * @memberof LoadingInstructionComponent
    */
   setTabStatus(event){
-    this.loadingTransformationService.setLoadingInstructionValidity(event);
+    this.loadingDischargingTransformationService.setLoadingInstructionValidity(event);
   }
 
 }
