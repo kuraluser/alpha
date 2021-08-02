@@ -195,7 +195,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       BillOfLaddingRequest request,
       StreamObserver<LoadingInformationSynopticalReply> responseObserver) {
     log.info(
-        "Inside getBillOfLaddingDetails - getting bill of ladding details agianst cargonomination Id");
+        "Inside getBillOfLaddingDetails - getting bill of ladding details agianst cargonomination Id {}",request.getCargoNominationId());
     LoadingInformationSynopticalReply.Builder reply =
         LoadingInformationSynopticalReply.newBuilder();
     try {

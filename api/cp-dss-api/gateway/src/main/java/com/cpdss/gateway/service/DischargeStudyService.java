@@ -395,7 +395,6 @@ public class DischargeStudyService {
       DischargeStudyCargoResponse response,
       LoadableStudy.PortRotationReply portRotationReply,
       LoadableStudy.CargoNominationReply grpcReply) {
-
     Map<Long, List<LoadableStudy.CargoNominationDetail>> portIdsToCargoNominationMap =
         grpcReply.getCargoNominationsList().stream()
             .flatMap(
@@ -475,8 +474,8 @@ public class DischargeStudyService {
               cargoNomination.setTemperature(
                   new BigDecimal(cargoNominationDetail.getTemperature()));
               cargoNomination.setMode(cargoNominationDetail.getMode());
-              cargoNomination.setMaxQuantity(
-                  new BigDecimal(cargoNominationDetail.getMaxQuantity()));
+              cargoNomination.setMaxQuantity(cargoNominationDetail.getMaxQuantity()!=null ?
+                  new BigDecimal(cargoNominationDetail.getMaxQuantity()):null);
               cargoNominations.add(cargoNomination);
             });
     portRotation.setCargoNominationList(cargoNominations);
