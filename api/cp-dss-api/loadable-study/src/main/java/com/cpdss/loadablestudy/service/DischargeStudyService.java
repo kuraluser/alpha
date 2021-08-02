@@ -1159,7 +1159,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     return portRotations;
   }
 
-  public void resetCargoNominationQuantity(long portRotationId, long loadableStudyId)
+  public void resetCargoNominationQuantityAndBackLoading(long portRotationId, long loadableStudyId)
       throws GenericServiceException {
     List<LoadableStudyPortRotation> dischargeStudyPortRotations =
         getDischargeStudyPortRotations(loadableStudyId);
@@ -1181,8 +1181,22 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             cargo -> {
               if (!firstPortCargoIds.contains(cargo.getId())) {
                 cargo.setQuantity(new BigDecimal(0));
+                cargo.setMode(1L);
               }
             });
     cargoNominationService.saveAll(cargos);
+    List<BackLoading> backLoadings =
+        backLoadingService.getBackLoadings(
+            loadableStudyId,
+            dischargeStudyPortRotations.stream()
+                .map(LoadableStudyPortRotation::getId)
+                .collect(Collectors.toList()));
+    backLoadings
+        .parallelStream()
+        .forEach(
+            backLoading -> {
+              backLoading.setActive(false);
+            });
+    backLoadingService.saveAll(backLoadings);
   }
 }
