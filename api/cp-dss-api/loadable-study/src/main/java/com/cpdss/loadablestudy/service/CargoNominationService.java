@@ -71,6 +71,7 @@ public class CargoNominationService {
 
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceBlockingStub loadingPlanGrpcService;
+
   /**
    * fetch cargo nomination based on the loadable study id
    *
@@ -639,21 +640,24 @@ public class CargoNominationService {
 
   // Get max Quantity in a Cargo Nomination
   public String getMaxQuantityFromBillOfLadding(Long cargoNominationId) {
-    log.info(
-        "Getting max quantity of each cargo nomination, from loading plan {}", cargoNominationId);
-    BillOfLaddingRequest request =
-        BillOfLaddingRequest.newBuilder().setCargoNominationId(cargoNominationId).build();
-    LoadingInformationSynopticalReply reply =
-        loadingPlanGrpcService.getBillOfLaddingDetails(request);
-    if (SUCCESS.equals(reply.getResponseStatus().getStatus())
-        && !CollectionUtils.isEmpty(reply.getBillOfLaddingList())) {
-      if (reply.getBillOfLaddingList().size() == 1) {
-        return reply.getBillOfLaddingList().get(0).getQuantityMt();
-      } else {
-        return String.valueOf(
-            reply.getBillOfLaddingList().stream()
-                .map(item -> new BigDecimal(item.getQuantityMt()))
-                .reduce(BigDecimal::add));
+    if (cargoNominationId != null) {
+
+      log.info(
+          "Getting max quantity of each cargo nomination, from loading plan {}", cargoNominationId);
+      BillOfLaddingRequest request =
+          BillOfLaddingRequest.newBuilder().setCargoNominationId(cargoNominationId).build();
+      LoadingInformationSynopticalReply reply =
+          loadingPlanGrpcService.getBillOfLaddingDetails(request);
+      if (SUCCESS.equals(reply.getResponseStatus().getStatus())
+          && !CollectionUtils.isEmpty(reply.getBillOfLaddingList())) {
+        if (reply.getBillOfLaddingList().size() == 1) {
+          return reply.getBillOfLaddingList().get(0).getQuantityMt();
+        } else {
+          return String.valueOf(
+              reply.getBillOfLaddingList().stream()
+                  .map(item -> new BigDecimal(item.getQuantityMt()))
+                  .reduce(BigDecimal::add));
+        }
       }
     }
     log.info("No Bill of ladding data present for cargo nomination {}", cargoNominationId);

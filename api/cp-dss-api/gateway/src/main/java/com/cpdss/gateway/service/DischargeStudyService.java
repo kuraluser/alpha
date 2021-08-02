@@ -472,8 +472,9 @@ public class DischargeStudyService {
               cargoNomination.setMode(cargoNominationDetail.getMode());
               cargoNomination.setMaxQuantity(
                   cargoNominationDetail.getMaxQuantity() != null
+                          && !cargoNominationDetail.getMaxQuantity().isBlank()
                       ? new BigDecimal(cargoNominationDetail.getMaxQuantity())
-                      : null);
+                      : new BigDecimal(0));
               cargoNominations.add(cargoNomination);
             });
     portRotation.setCargoNominationList(cargoNominations);
