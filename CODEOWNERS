@@ -12,10 +12,10 @@
 
 # API applications code owners
 
-/api/cp-dss-api/cargo-info/ @johnsoorajxavier @LincyIgnus @sreekumar-ao
-/api/cp-dss-api/port-info/ @johnsoorajxavier @LincyIgnus @sreekumar-ao
-/api/cp-dss-api/vessel-info/ @johnsoorajxavier @LincyIgnus @sreekumar-ao
-/api/cp-dss-api/loadable-study/ @johnsoorajxavier @LincyIgnus @sreekumar-ao
-/api/cp-dss-api/company-info/ @johnsoorajxavier @LincyIgnus @sreekumar-ao
-/api/cp-dss-api/gateway/ @johnsoorajxavier @LincyIgnus @sreekumar-ao
-/api/cp-dss-api/user-authorization/ @johnsoorajxavier @LincyIgnus @sreekumar-ao
+/api/cp-dss-api/cargo-info/ @johnsoorajxavier @LincyIgnus @sreekumar-ao @vinothkumarbit
+/api/cp-dss-api/port-info/ @johnsoorajxavier @LincyIgnus @sreekumar-ao @vinothkumarbit
+/api/cp-dss-api/vessel-info/ @johnsoorajxavier @LincyIgnus @sreekumar-ao @vinothkumarbit
+/api/cp-dss-api/loadable-study/ @johnsoorajxavier @LincyIgnus @sreekumar-ao @vinothkumarbit
+/api/cp-dss-api/company-info/ @johnsoorajxavier @LincyIgnus @sreekumar-ao @vinothkumarbit
+/api/cp-dss-api/gateway/ @johnsoorajxavier @LincyIgnus @sreekumar-ao @vinothkumarbit
+/api/cp-dss-api/user-authorization/ @johnsoorajxavier @LincyIgnus @sreekumar-ao @vinothkumarbit
