@@ -867,7 +867,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         dischargeStudyService.addCargoNominationForPortRotation(
             replyBuilder.getPortRotationId(), request.getLoadableStudyId());
       } else {
-        dischargeStudyService.resetCargoNominationQuantity(
+        dischargeStudyService.resetCargoNominationQuantityAndBackLoading(
             replyBuilder.getPortRotationId(), request.getLoadableStudyId());
       }
     } catch (GenericServiceException e) {

@@ -17,14 +17,19 @@ public class BackLoadingService {
   public Map<Long, List<BackLoading>> getBackloadingDataByportIds(
       long loadableStudyId, List<Long> portIds) {
 
-    List<BackLoading> backLoadings =
-        backLoadingRepository.findByDischargeStudyIdAndPortIdInAndIsActive(
-            loadableStudyId, portIds, true);
+    List<BackLoading> backLoadings = getBackLoadings(loadableStudyId, portIds);
     Map<Long, List<BackLoading>> BackLoadingByPort =
         backLoadings.stream()
             .collect(Collectors.groupingBy(backLoading -> backLoading.getPortId()));
     return BackLoadingByPort;
   }
+
+	public List<BackLoading> getBackLoadings(long loadableStudyId, List<Long> portIds) {
+		List<BackLoading> backLoadings =
+	        backLoadingRepository.findByDischargeStudyIdAndPortIdInAndIsActive(
+	            loadableStudyId, portIds, true);
+		return backLoadings;
+	}
 
   public void saveAll(List<BackLoading> backLoadingToSave) {
     backLoadingRepository.saveAll(backLoadingToSave);
