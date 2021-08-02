@@ -68,7 +68,7 @@ public class CargoNominationService {
 
   @GrpcClient("cargoService")
   private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
-  
+
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceBlockingStub loadingPlanGrpcService;
   /**
@@ -600,7 +600,8 @@ public class CargoNominationService {
             ofNullable(cargoNomination.getMinTolerance())
                 .ifPresent(minTolerance -> builder.setMinTolerance(String.valueOf(minTolerance)));
             ofNullable(cargoNomination.getSegregationXId()).ifPresent(builder::setSegregationId);
-            ofNullable(getMaxQuantityFromBillOfLadding(cargoNomination.getId())).ifPresent(builder::setMaxQuantity);
+            ofNullable(getMaxQuantityFromBillOfLadding(cargoNomination.getId()))
+                .ifPresent(builder::setMaxQuantity);
             cargoNominationReplyBuilder.addCargoNominations(builder);
 
             if (!CollectionUtils.isEmpty(apiTempHistoriesAll)) {
@@ -635,7 +636,6 @@ public class CargoNominationService {
           });
     }
   }
-  
 
   // Get max Quantity in a Cargo Nomination
   public String getMaxQuantityFromBillOfLadding(Long cargoNominationId) {

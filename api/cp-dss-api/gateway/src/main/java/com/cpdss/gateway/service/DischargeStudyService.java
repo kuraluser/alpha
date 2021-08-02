@@ -470,8 +470,10 @@ public class DischargeStudyService {
               cargoNomination.setTemperature(
                   new BigDecimal(cargoNominationDetail.getTemperature()));
               cargoNomination.setMode(cargoNominationDetail.getMode());
-              cargoNomination.setMaxQuantity(cargoNominationDetail.getMaxQuantity()!=null ?
-                  new BigDecimal(cargoNominationDetail.getMaxQuantity()):null);
+              cargoNomination.setMaxQuantity(
+                  cargoNominationDetail.getMaxQuantity() != null
+                      ? new BigDecimal(cargoNominationDetail.getMaxQuantity())
+                      : null);
               cargoNominations.add(cargoNomination);
             });
     portRotation.setCargoNominationList(cargoNominations);

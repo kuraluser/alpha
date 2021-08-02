@@ -22,12 +22,10 @@ import com.cpdss.loadingplan.service.LoadingSequenceService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingPlanRuleServiceImpl;
 import io.grpc.stub.StreamObserver;
-import lombok.extern.slf4j.Slf4j;
-import net.devh.boot.grpc.server.service.GrpcService;
-
 import java.util.List;
 import java.util.Optional;
-
+import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -43,7 +41,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   @Autowired LoadingPlanRuleServiceImpl loadingPlanRuleService;
 
   @Autowired PortLoadingPlanStowageDetailsRepository portLoadingPlanStowageDetailsRepository;
-  
+
   @Autowired BillOfLaddingRepository billOfLaddingRepository;
 
   @Override
@@ -197,7 +195,8 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       BillOfLaddingRequest request,
       StreamObserver<LoadingInformationSynopticalReply> responseObserver) {
     log.info(
-        "Inside getBillOfLaddingDetails - getting bill of ladding details agianst cargonomination Id {}",request.getCargoNominationId());
+        "Inside getBillOfLaddingDetails - getting bill of ladding details agianst cargonomination Id {}",
+        request.getCargoNominationId());
     LoadingInformationSynopticalReply.Builder reply =
         LoadingInformationSynopticalReply.newBuilder();
     try {
