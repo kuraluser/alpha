@@ -149,7 +149,7 @@ public class EnvoyReaderService {
     String separator = "/";
     StringBuilder urlBuilder = new StringBuilder();
     urlBuilder
-        .append(env.equals("ship") ? downloadShoreUrl : downloadShipUrl)
+        .append(env.equals("ship") ? downloadShipUrl : downloadShoreUrl)
         .append(separator)
         .append("download")
         .append(separator)

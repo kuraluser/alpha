@@ -279,7 +279,7 @@ public class LoadablePatternService {
     if (enableCommunication) {
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
-              request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
+              request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
       if (loadableStudyCommunicationStatus.get() != null) {
 
         AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
@@ -1074,6 +1074,8 @@ public class LoadablePatternService {
           LOADABLE_STUDY_REQUEST,
           objectMapper.writeValueAsString(loadableStudy));
       if (enableCommunication) {
+        this.voyageService.builVoyageDetails(
+             modelMapper, loadableStudy);
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(
                 objectMapper.writeValueAsString(loadableStudy),
@@ -1088,7 +1090,7 @@ public class LoadablePatternService {
                 CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
           }
           lsCommunicationStatus.setReferenceId(request.getLoadableStudyId());
-          lsCommunicationStatus.setMessageType(String.valueOf(MessageTypes.LOADABLESTUDY));
+          lsCommunicationStatus.setMessageType(MessageTypes.LOADABLESTUDY.getMessageType());
           lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
           this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
         } else {

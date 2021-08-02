@@ -3,6 +3,7 @@ package com.cpdss.loadablestudy.domain;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_JSON_MODULE_NAME;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import lombok.Data;
 
@@ -38,6 +39,13 @@ public class LoadableStudy {
   private Boolean feedbackLoop;
   private Integer feedbackLoopCount;
   private List<RulePlans> loadableStudyRuleList;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<LoadableStudyAttachment> LoadableStudyAttachment;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<SynopticalTable> synopticalTableDetails;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private VoyageDto voyage;
 }
