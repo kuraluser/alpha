@@ -1061,17 +1061,19 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       const mode = listData.mode.find(modeDetails => modeDetails.id === cargoDetail.mode);
       const cargoObj = listData.cargoList.find(cargo => cargo.id === cargoDetail.cargoId);
       const isKlEditable = mode?.id === 2 ? true : false;
+      
       const unitConversion = {
         kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature , -1),
         bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature, -1),
+        maxQuantity: this.quantityPipe.transform(cargoDetail.maxQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature , -1),
       }
       _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color , true , false);
-      _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? unitConversion.bbls+'' : '-', true , false);
+      _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? (unitConversion.bbls ? unitConversion.bbls+'' : '0') : '-', true , false);
       _cargoDetailValuObject.cargo = new ValueObject<ICargo>(cargoObj,true , false);
-      _cargoDetailValuObject.kl = new ValueObject<string>(isKlEditable ? unitConversion.kl+'' : '-', true , false , false , isKlEditable);
+      _cargoDetailValuObject.kl = new ValueObject<string>(isKlEditable ? (unitConversion.kl ? unitConversion.kl+'' : '0'): '-', true , false , false , isKlEditable);
       _cargoDetailValuObject.id = new ValueObject<string>(cargoDetail.id+''),
 
-      _cargoDetailValuObject.maxKl = new ValueObject<number>(Number(cargoDetail.maxQuantity), false , false);
+      _cargoDetailValuObject.maxKl = new ValueObject<number>(Number(unitConversion.maxQuantity), false , false);
       _cargoDetailValuObject.mt = new ValueObject<string>(isKlEditable ? cargoDetail.quantity +'' : '-', true , false);
       _cargoDetailValuObject.mode = new ValueObject<IMode>(mode , true , false);
       _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true , false);
@@ -1121,9 +1123,9 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       }
       const cargoObj: ICargo = backLoadingDetail.cargoId ? listData.cargoList.find(cargo => cargo.id === backLoadingDetail.cargoId) : null;
       _backLoadingDetailDetail.color = new ValueObject<string>(backLoadingDetail.color , true , isNewValue);
-      _backLoadingDetailDetail.bbls = new ValueObject<number>(unitConversion.bbls , true , false);
+      _backLoadingDetailDetail.bbls = new ValueObject<number>(unitConversion.bbls ? unitConversion.bbls : 0, true , false);
       _backLoadingDetailDetail.cargo = new ValueObject<ICargo>(cargoObj, true , isNewValue);
-      _backLoadingDetailDetail.kl = new ValueObject<number>(unitConversion.kl , true , isNewValue);
+      _backLoadingDetailDetail.kl = new ValueObject<number>(unitConversion.kl ? unitConversion.kl : 0 , true , isNewValue);
       _backLoadingDetailDetail.mt = new ValueObject<number>(backLoadingDetail.quantity  , true , false);
       _backLoadingDetailDetail.api = new ValueObject<string>(backLoadingDetail.api?.toString() , true , isNewValue);
       _backLoadingDetailDetail.temp = new ValueObject<string>(backLoadingDetail.temperature?.toString() , true , isNewValue);

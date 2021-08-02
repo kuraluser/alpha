@@ -2,6 +2,8 @@ import { Component, OnInit , OnDestroy , HostListener , ViewChild, ElementRef } 
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject , Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -66,6 +68,7 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
   selectedVoyage: Voyage;
   dischargeStudies: IDischargeStudy[];
   portsComplete: boolean;
+  cargoNominationComplete: boolean;
   ohqComplete: boolean;
   dischargeStudyComplete: boolean;
   dischargeStudyTabPermissionContext:IPermissionContext;
@@ -73,6 +76,7 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
   dischargeStudyViewPlanPermission: IPermission;
   dischargeStudyGeneratePermission: IPermission;
   cargos: ICargo[];
+  disableGeneratePlan: boolean;
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
@@ -89,6 +93,8 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
     private unsavedChangesGuard: UnsavedChangesGuard,
     private dischargeStudyDetailsApiService: DischargeStudyDetailsApiService,
     private dischargeStudyListApiService: DischargeStudyListApiService,
+    private messageService: MessageService,
+    private translateService: TranslateService,
     private dischargeStudyDetailsTransformationService: DischargeStudyDetailsTransformationService
   ) { }
 
@@ -103,6 +109,7 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
     this.activatedRoute.paramMap
     .pipe(takeUntil(this.ngUnsubscribe))
     .subscribe(params => {
+      this.disableGeneratePlan = true;
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.dischargeStudyId = Number(params.get('dischargeStudyId'));
@@ -186,18 +193,21 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
       this.voyages = voyages.filter(voy => voy.statusId === VOYAGE_STATUS.ACTIVE || voy.statusId === VOYAGE_STATUS.CLOSE);
       const result = await this.dischargeStudyListApiService.getDischargeStudies(vesselId, voyageId).toPromise();
       const dischargeStudies = result?.dischargeStudies ?? [];
+      this.cargoNominationComplete = true;
       if (dischargeStudies.length) {
         this.dischargeStudies = dischargeStudies;
         this.selectedDischargeStudy = dischargeStudyId ? this.dischargeStudies.find(dischargeStudy => dischargeStudy.id === dischargeStudyId) : this.dischargeStudies[0];
         this.dischargeStudyId = this.selectedDischargeStudy.id;
         this.dischargeStudyDetailsTransformationService.setOHQValidity(this.selectedDischargeStudy?.ohqPorts ?? []);
       } else {
+        this.cargoNominationComplete = false;
         this.selectedDischargeStudy = null;
         this.dischargeStudies = [];
       }
       this.ports = await this.getPorts();
       const cargos = await this.dischargeStudyDetailsApiService.getCargoDetails().toPromise();
       this.cargos = cargos.cargos;
+      this.disableGeneratePlan =  false;
       this.ngxSpinnerService.hide();
     }
 
@@ -323,5 +333,51 @@ export class DischargeStudyDetailsComponent implements OnInit , OnDestroy {
     const dischargeStudyId = event.value.id;
     this.router.navigate([`business/cargo-planning/discharge-study-details/${this.vesselId}/${this.voyageId}/${dischargeStudyId}`]);
   }
+
+    /**
+    * Handler for Generate discharge pattern
+    *
+    * @param {number} vesselId
+    * @param {number} voyageId
+    * @param {number} dischargeStudyId
+    * @memberof DischargeStudyDetailsComponent
+    */
+    async generateLoadablePattern() {
+      this.ngxSpinnerService.show();
+      const data = {
+        vesselId: this.vesselId,
+        voyageId: this.voyageId,
+        dischargeStudyId: this.dischargeStudyId,
+        selectedVoyageNo: this.selectedVoyage?.voyageNo,
+        selectedLoadableStudyName: this.selectedDischargeStudy?.name,
+        processId: null
+      }
+
+      try {
+        const res = await this.dischargeStudyDetailsApiService.generateDischargePattern(this.vesselId, this.voyageId, this.dischargeStudyId).toPromise();
+        if (res.responseStatus.status === '200') {
+
+          this.selectedDischargeStudy.statusId = 4;
+          data.processId = res.processId;
+          if (res.processId) {
+            navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
+            this.selectedDischargeStudy = { ...this.selectedDischargeStudy };
+          } 
+        } 
+      }
+      catch (errorResponse) {
+      }
+      this.ngxSpinnerService.hide();
+    }
+
+    /**
+      * Handler for discharge study view 
+      * @memberof DischargeStudyDetailsComponent
+    */
+    async dischargeStudyView() {
+      const value = await this.unsavedChangesGuard.canDeactivate(this);
+      if(!value) { return };
+      this.router.navigate([`business/cargo-planning/discharge-study-plan/${this.vesselId}/${this.voyageId}/${this.dischargeStudyId}`]);
+    }
 
 }

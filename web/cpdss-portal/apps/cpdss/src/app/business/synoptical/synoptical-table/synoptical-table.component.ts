@@ -1773,25 +1773,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         col.fields.forEach(field => {
           this.onBlur(field, portIndex, false)
         })
-      })
-      // check loadable quantity validation
-      this.cols.forEach(col => {
-        if (col.dynamicKey) {
-          const dynamicKey = col.dynamicKey;
-          const totalCols = this.getAllColumns(col.subHeaders)
-          totalCols.forEach(totalCol => {
-            totalCol.fields.forEach(field => {
-              const totalKey = field.key
-              const totalValue = this.synopticalService.synopticalRecords[portIndex][totalKey]
-              if (totalValue > this.loadableQuantityValue) {
-                valid = false;
-                msgkeys = ['TOTAL_QUANTITY_ERROR', 'TOTAL_QUANTITY_ERROR_DETAILS']
-                severity = 'warn';
-              }
-            })
-          })
-        }
-      })
+      })    
     })
     //check if valid and save
     if (valid) {

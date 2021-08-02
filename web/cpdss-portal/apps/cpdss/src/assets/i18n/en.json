@@ -1589,6 +1589,8 @@
   "LOADING_INSTRUCTION_ERROR": "Error",
   "LOADING_INSTRUCTION_ERROR_MESSAGE": "Error Occured",
   "LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_MESSAGE": "Instruction Added Successfully",
+  "LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_UPDATE_MESSAGE": "Instruction Updated Successfully",
+  "LOADING_INSTRUCTION_SUCCESS_SUBHEADER_UPDATE_MESSAGE": "Subheader Updated Successfully",
   "LOADING_INSTRUCTION_SUCCESS_SUBHEADER_MESSAGE": "Subheader Added Successfully",
   "LOADING_INSTRUCTION_DELETE_SUMMARY": "Do you want to delete?",
   "LOADING_INSTRUCTION_DELETE_DETAILS": "Please click on yes to proceed",
@@ -1668,5 +1670,9 @@
   "LOADABLE_PLAN_USER_ROLE_SELECT_VIEWER_LABEL": "Viewer",
   "LOADABLE_PLAN_USER_ROLE_SELECT_CANCEL_BUTTON_LABEL": "Cancel",
   "LOADABLE_PLAN_USER_ROLE_SELECT_OK_BUTTON_LABEL": "Ok",
-  "NO_RULES_MAPPED":"No rules mapped against this loadable study"
+  "NO_RULES_MAPPED":"No rules mapped against this loadable study",
+  "DISCHARGE_STUDY_CARO_NOMINATION_DISCHARGE_STUDY_NOT_AVAILABLE": "Cannot view caro nomination details for the selected voyage since no discharge study available.",
+  "DISCHARGE_STUDY_PORTS_DISCHARGE_STUDY_NOT_AVAILABLE": "Cannot view port details for the selected voyage since no discharge study available.",
+	"DISCHARGE_STUDY_OHQ_DISCHARGE_STUDY_NOT_AVAILABLE": "Cannot view ohq nomination details for the selected voyage since no discharge study available.",
+	"DISCHARGE_STUDY_NOT_AVAILABLE": "Cannot view discharge study details for the selected voyage since no discharge study available."
 }

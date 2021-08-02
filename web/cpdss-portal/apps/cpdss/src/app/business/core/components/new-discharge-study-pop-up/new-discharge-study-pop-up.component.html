@@ -5,7 +5,7 @@
                 <div class="col col-form-label">{{'NEW_DISCHARGE_STUDY_POPUP_NAME' | translate}}</div>
                 <div class="col">
                     <input type="text" class="form-control" type="text" id="txt_enquiryDetails"
-                        formControlName="newDischargeStudyName" focusTrap/>
+                        formControlName="newDischargeStudyName" focusTrap autofocus />
                 </div>
                 <cpdss-portal-validation-error [errors]="fieldError('newDischargeStudyName')"
                     [errorMessages]="errorMessages.newDischargeStudyName">

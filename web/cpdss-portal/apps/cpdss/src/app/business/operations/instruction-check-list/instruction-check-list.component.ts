@@ -168,7 +168,7 @@ export class InstructionCheckListComponent implements OnInit {
       return;
     }
     let data: IInstructionDetails = {};
-    const translationKeys = await this.translateService.get(['LOADING_INSTRUCTION_SUCCESS', 'LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_MESSAGE', 'LOADING_INSTRUCTION_SUCCESS_SUBHEADER_MESSAGE', 'LOADING_INSTRUCTION_ERROR', 'LOADING_INSTRUCTION_ERROR_MESSAGE']).toPromise();
+    const translationKeys = await this.translateService.get(['LOADING_INSTRUCTION_SUCCESS', 'LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_MESSAGE', 'LOADING_INSTRUCTION_SUCCESS_SUBHEADER_MESSAGE', 'LOADING_INSTRUCTION_ERROR', 'LOADING_INSTRUCTION_ERROR_MESSAGE', 'LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_UPDATE_MESSAGE', 'LOADING_INSTRUCTION_SUCCESS_SUBHEADER_UPDATE_MESSAGE']).toPromise();
     if (event.node?.data?.addFlag) {
       if (event.level === 1) {
         const childIsSelected = this.selectedData.filter(element => element.data?.instructionId === event.node?.data?.instructionId);
@@ -212,7 +212,7 @@ export class InstructionCheckListComponent implements OnInit {
       const result = await this.instructionCheckListApiService.updateInstruction(this.vesselId, this.loadingInfoId, this.portRotationId, data).toPromise();
       this.ngxSpinnerService.hide();
       if (result?.responseStatus?.status === 'SUCCESS') {
-        this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: translationKeys['LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_MESSAGE'] });
+        this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: event.level === 1 || event?.node?.data?.isSingleHeader ? translationKeys['LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_UPDATE_MESSAGE'] : translationKeys['LOADING_INSTRUCTION_SUCCESS_SUBHEADER_UPDATE_MESSAGE'] });
         this.updateData.emit(true);
         this.instructionForm.controls.name.setValue('');
         this.instructionForm.reset();
@@ -471,7 +471,7 @@ export class InstructionCheckListComponent implements OnInit {
    */
   async saveAll() {
     if (this.isEditActive()) { return; }
-    const data : ISaveStatusData = {
+    const data: ISaveStatusData = {
       instructionList: []
     };
     const translationKeys = await this.translateService.get(['LOADING_INSTRUCTION_SUCCESS', 'LOADING_INSTRUCTION_SAVEALL_SUCCESS', 'LOADING_INSTRUCTION_ERROR', 'LOADING_INSTRUCTION_ERROR_MESSAGE']).toPromise();

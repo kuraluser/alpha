@@ -54,10 +54,17 @@ export class AccessDeniedComponent implements OnInit {
   * @memberof AccessDeniedComponent
  */
   goBackToHome() {
+    const logOutUrl = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
     if(localStorage.getItem('_USER_PERMISSIONS')) {
       this.router.navigate(['/']);
     } else {
-      window.location.href = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
+      SecurityService.userLogoutAction();
+      if(environment.name === 'shore'){
+        this.keycloakService.logout(logOutUrl);
+      } else {
+        window.location.href = logOutUrl;
+      }
+      
     }
     
   }

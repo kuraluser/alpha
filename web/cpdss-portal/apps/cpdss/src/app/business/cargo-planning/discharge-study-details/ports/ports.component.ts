@@ -105,7 +105,7 @@ export class PortsComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     await this.getTimeZoneList();
-    this.portEtaEtdPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortTabEtaEtd'], false);
+    this.portEtaEtdPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyPortETAETD'], false);
     this.columns = this.dischargeStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.portEtaEtdPermission, this.dischargeStudy?.statusId, this.voyage?.statusId);
     this.initSubscriptions();
     this.getPortDetails();

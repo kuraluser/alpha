@@ -237,6 +237,6 @@ export class DischargeStudyDetailsApiService {
      * @memberof DischargeStudyDetailsApiService
      */
       generateDischargePattern(vesselId: number, voyageId: number, dischargeStudyId: number): Observable<IGeneratePatternResponse> {
-        return this.commonApiService.post<any, IGeneratePatternResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${dischargeStudyId}/generate-loadable-patterns`,{});
+        return this.commonApiService.post<any, IGeneratePatternResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-studies/${dischargeStudyId}/generate-discharge-patterns`,{});
       }
 }
