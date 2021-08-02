@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ICargo, ILoadableQuantityCargo, IShipCargoTank } from '../../../core/models/common.model';
-import { ILoadingSequences, IToppingOffSequence } from '../../models/loading-discharging.model';
+import { ILoadingDischargingSequences, IToppingOffSequence } from '../../models/loading-discharging.model';
 
 @Component({
   selector: 'cpdss-portal-loading-plan',
@@ -28,7 +28,7 @@ export class LoadingPlanComponent implements OnInit {
   toppingOffSequence: IToppingOffSequence[];
   cargoTanks: IShipCargoTank[][];
   loadableQuantityCargoDetails: ILoadableQuantityCargo[];
-  loadingSequences: ILoadingSequences;
+  loadingSequences: ILoadingDischargingSequences;
   constructor() { }
 
   ngOnInit(): void {
@@ -106,7 +106,7 @@ export class LoadingPlanComponent implements OnInit {
           "reason": "test"
         }
       ],
-      "loadingDelays": [
+      "loadingDischargingDelays": [
         {
           "id": 94,
           "loadingInfoId": 119,

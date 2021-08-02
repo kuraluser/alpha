@@ -1,11 +1,11 @@
 import { ValidationErrors, ValidatorFn } from '@angular/forms';
-import { OPERATIONS } from '../../models/cargo-planning.model';
+import { OPERATIONS } from '../../../core/models/common.model';
 import * as moment from 'moment';
 
 
 /**
  * Validator Function for eta and etd
- * @param index 
+ * @param index
  */
 export function portEtaEtdValidator(key: string, index: number): ValidatorFn {
   return (control): ValidationErrors | null => {

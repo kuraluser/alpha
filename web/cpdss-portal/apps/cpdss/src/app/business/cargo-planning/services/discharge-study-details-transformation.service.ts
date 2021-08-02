@@ -14,10 +14,10 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { IPortAllDropdownData, IDischargeStudyPortOHQTankDetail , IPortOHQTankDetailValueObject, IDischargeStudyPortsValueObject , OPERATIONS } from '../models/cargo-planning.model';
+import { IPortAllDropdownData, IDischargeStudyPortOHQTankDetail , IPortOHQTankDetailValueObject, IDischargeStudyPortsValueObject } from '../models/cargo-planning.model';
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, IMode } from '../../../shared/models/common.model';
 import { IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo , IDischargeStudyPortListDetails , IDischargeStudyCargoNominationList , IDischargeStudyBackLoadingDetails  } from '../models/discharge-study-list.model';
-import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , VOYAGE_STATUS, ICargo } from '../../core/models/common.model';
+import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , VOYAGE_STATUS, ICargo, OPERATIONS } from '../../core/models/common.model';
 
 
 
@@ -725,7 +725,7 @@ export class DischargeStudyDetailsTransformationService {
     setDischargeStudyValidity(isValid: boolean) {
       this._dischargeStudyValiditySource.next(isValid);
     }
-      
+
 
   /**
    * Set ohq port complete status
@@ -1229,7 +1229,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
           case 'mode':
             _cargoDetails.mode = cargoDetails.mode.value.id;
             break;
-          case 'id': 
+          case 'id':
             if(cargoDetails.id.value) {
               _cargoDetails.id = cargoDetails.id.value;
             }
@@ -1278,10 +1278,10 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
           case 'abbreviation':
             _backLoading.abbreviation = backLoading.abbreviation.value;
             break;
-          case 'api': 
+          case 'api':
             _backLoading.api = +backLoading.api.value;
             break;
-          case 'temp': 
+          case 'temp':
             _backLoading.temperature = +backLoading.temp.value;
             break;
           case 'id':

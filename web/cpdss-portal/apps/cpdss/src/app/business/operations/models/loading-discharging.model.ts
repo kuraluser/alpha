@@ -14,7 +14,7 @@ export interface ILoadingInformationResponse {
   berthDetails: IBerthDetails;
   machineryInUses: IMachineryInUses;
   loadingStages: ILoadingDischargingStages;
-  loadingSequences: ILoadingSequences;
+  loadingSequences: ILoadingDischargingSequences;
   toppingOffSequence: IToppingOffSequence[];
   cargoVesselTankDetails: ICargoVesselTankDetails;
   loadingInfoId: number;
@@ -35,7 +35,7 @@ export interface IDischargingInformationResponse {
   berthDetails: IBerthDetails;
   machineryInUses: IMachineryInUses;
   dischargingStages: ILoadingDischargingStages;
-  dischargingSequences: IDischargingSequences;
+  dischargingSequences: ILoadingDischargingSequences;
   toppingOffSequence: IToppingOffSequence[];
   cargoVesselTankDetails: ICargoVesselTankDetails;
   dischargingInfoId: number;
@@ -333,22 +333,12 @@ export interface IToppingOffSequence {
 * Interface for loading sequence
 *
 * @export
-* @interface ILoadingSequences
+* @interface ILoadingDischargingSequences
 */
-export interface ILoadingSequences {
+export interface ILoadingDischargingSequences {
   reasonForDelays: IReasonForDelays[];
-  loadingDelays: ILoadingDelays[];
-}
-
-/**
-* Interface for discharging sequence
-*
-* @export
-* @interface IDischargingSequences
-*/
-export interface IDischargingSequences {
-  reasonForDelays: IReasonForDelays[];
-  dischargingDelays: IDischargingDelays[];
+  loadingDischargingDelays?: ILoadingDischargingDelays[];
+  dischargingDelays?: ILoadingDischargingDelays[];//TODO: need to be removed
 }
 
 /**
@@ -368,28 +358,15 @@ export interface IReasonForDelays {
 * @export
 * @interface ILoadingDelays
 */
-export interface ILoadingDelays {
+export interface ILoadingDischargingDelays {
   id: number;
-  loadingInfoId: number;
+  loadingInfoId?: number;
+  dischargingInfoId?: number;
   reasonForDelayId: number;
   duration: number;
   cargoId: number;
   quantity: number;
-}
-
-/**
- * Interface for discharging delay data
- *
- * @export
- * @interface IDischargingDelays
- */
-export interface IDischargingDelays {
-  id: number;
-  dischargingInfoId: number;
-  reasonForDelayId: number;
-  duration: number;
-  cargoId: number;
-  quantity: number;
+  cargoNominationId?: number;
 }
 
 /**
@@ -418,8 +395,8 @@ export interface ILoadingInformation {
   loadingRates: ILoadingRates;
   loadingBerths: IBerth[];
   loadingMachineries: ILoadingMachinesInUses[];
-  loadingStages: ILoadingStagesDetails;
-  loadingDelays: ILoadingDelays[];
+  loadingStages: ILoadingDischargingStagesDetails;
+  loadingDelays: ILoadingDischargingDelays[];
   toppingOffSequence: IToppingOffSequence[];
   vesselId?: number;
   voyageId?: number;
@@ -438,8 +415,8 @@ export interface IDischargingInformation {
   dischargingRates: IDischargingRates;
   dischargingBerths: IBerth[];
   dischargingMachineries: IDischargingMachinesInUses[];
-  dischargingStages: ILoadingStagesDetails;
-  dischargingDelays: IDischargingDelays[];
+  dischargingStages: ILoadingDischargingStagesDetails;
+  dischargingDelays: ILoadingDischargingDelays[];
   toppingOffSequence: IToppingOffSequence[];
   vesselId?: number;
   voyageId?: number;
@@ -449,9 +426,9 @@ export interface IDischargingInformation {
  * Interface for loading stages for save
  *
  * @export
- * @interface ILoadingStagesDetails
+ * @interface ILoadingDischargingStagesDetails
  */
-export interface ILoadingStagesDetails {
+export interface ILoadingDischargingStagesDetails {
   trackStartEndStage: boolean;
   trackGradeSwitch: boolean;
   stageOffset: IStageOffset;

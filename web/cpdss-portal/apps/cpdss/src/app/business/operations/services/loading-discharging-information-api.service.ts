@@ -384,23 +384,8 @@ export class LoadingDischargingInformationApiService {
           }
         ],
         "dischargingDelays": [
-          {
-            "id": 101,
-            "dischargingInfoId": 136,
-            "reasonForDelayId": 1,
-            "duration": 671.0000,
-            "cargoId": 0,
-            "quantity": null
-          },
-          {
-            "id": 102,
-            "dischargingInfoId": 136,
-            "reasonForDelayId": 1,
-            "duration": 671.0000,
-            "cargoId": 252,
-            "quantity": 2103234.3544
-          }
-        ]
+          { "id": 106, "dischargingInfoId": 141, "reasonForDelayId": 1, "duration": 111, "cargoId": 33, "cargoNominationId": 0, "quantity": 27500 },
+          { "id": 107, "dischargingInfoId": 141, "reasonForDelayId": 1, "duration": 1320, "cargoId": 0, "cargoNominationId": 0, "quantity": null }]
       },
       "toppingOffSequence": [
         {
@@ -1224,51 +1209,33 @@ export class LoadingDischargingInformationApiService {
             "grade": "",
             "estimatedAPI": "29.2000",
             "estimatedTemp": "105.0000",
-            "orderBblsdbs": "",
-            "orderBbls60f": "",
-            "minTolerence": "-10.0",
-            "maxTolerence": "10.0",
-            "loadableBblsdbs": "",
-            "loadableBbls60f": "",
-            "loadableLT": "",
-            "loadableMT": "127108.7",
-            "loadableKL": "",
-            "differencePercentage": "7.06",
-            "differenceColor": "",
             "cargoId": 33,
-            "orderedQuantity": "",
             "cargoAbbreviation": "ARM",
             "colorCode": "#f6ef0e",
             "cargoNominationId": 17375,
-            "timeRequiredForLoading": "8.7",
-            "orderQuantity": "118729.5000",
-            "maxLoadingRate": "20500.0000"
+            "shipFigure": "127108.7",
+            "timeRequiredForDischarging": "8.7",
+            "blFigure": "118729.5000",
+            "maxDischargingRate": "20500.0000",
+            "protested": true,
+            "isCommingled": true
           },
           {
             "id": 9253,
             "grade": "",
             "estimatedAPI": "33.0000",
             "estimatedTemp": "120.0000",
-            "orderBblsdbs": "",
-            "orderBbls60f": "",
-            "minTolerence": "-10.0",
-            "maxTolerence": "10.0",
-            "loadableBblsdbs": "",
-            "loadableBbls60f": "",
-            "loadableLT": "",
-            "loadableMT": "94952.3",
-            "loadableKL": "",
-            "differencePercentage": "7.06",
-            "differenceColor": "",
             "cargoId": 32,
-            "orderedQuantity": "",
             "cargoAbbreviation": "ARL",
             "colorCode": "#f91010",
             "cargoNominationId": 17376,
             "slopQuantity": 1308.7,
-            "timeRequiredForLoading": "7.05",
-            "orderQuantity": "88692.9000",
-            "maxLoadingRate": "20500.0000"
+            "shipFigure": "94952.3",
+            "timeRequiredForDischarging": "7.05",
+            "blFigure": "88692.9000",
+            "maxDischargingRate": "20500.0000",
+            "protested": true,
+            "isCommingled": false
           }
         ],
         "cargoConditions": [

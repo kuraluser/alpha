@@ -4,8 +4,9 @@ import { DATATABLE_BUTTON, DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../
 import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { ICargoQuantities, ILoadableQuantityCargo, IShipCargoTank } from '../../core/models/common.model';
-import { ILoadingDelays, ILoadingSequenceDropdownData, ILoadingSequenceValueObject, IReasonForDelays } from '../models/loading-discharging.model';
+import { ICargoQuantities, ILoadableQuantityCargo, IShipCargoTank, OPERATIONS } from '../../core/models/common.model';
+import { IPumpData, IPump, ILoadingRate, ISequenceData } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
+import { ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingSequenceValueObject, IReasonForDelays } from '../models/loading-discharging.model';
 
 /**
  * Transformation Service for Loading  and Discharging
@@ -127,7 +128,7 @@ export class LoadingDischargingTransformationService {
 * @returns {IDataTableColumn[]}
 * @memberof LoadingDischargingTransformationService
 */
-  getLoadingDelayDatatableColumns(): IDataTableColumn[] {
+  getLoadingDischargingDelayDatatableColumns(): IDataTableColumn[] {
     return [
       {
         field: 'cargo',
@@ -192,52 +193,56 @@ export class LoadingDischargingTransformationService {
   /**
   * Method for converting loading sequence data to value object model
   *
-  * @param {ILoadingDelays} loadingDelay
+  * @param {ILoadingDischargingDelays} loadingDischargingDelay
   * @param {boolean} [isNewValue=true]
   * @param {ILoadingSequenceDropdownData} listData
   * @returns {ILoadingSequenceValueObject}
   * @memberof LoadingDischargingTransformationService
   */
-  getLoadingDelayAsValueObject(loadingDelay: ILoadingDelays, isNewValue = true, isEditable = true, listData: ILoadingSequenceDropdownData): ILoadingSequenceValueObject {
-    const _loadingDelay = <ILoadingSequenceValueObject>{};
-    const reasonDelayObj: IReasonForDelays = listData?.reasonForDelays?.find(reason => reason.id === loadingDelay.reasonForDelayId);
-    const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === loadingDelay.cargoId);
-    _loadingDelay.id = loadingDelay.id;
-    let hourDuration = (loadingDelay.duration / 60).toString();
+  getLoadingDischargingDelayAsValueObject(loadingDischargingDelay: ILoadingDischargingDelays, isNewValue = true, isEditable = true, listData: ILoadingSequenceDropdownData): ILoadingSequenceValueObject {
+    const _loadingDischargingDelay = <ILoadingSequenceValueObject>{};
+    const reasonDelayObj: IReasonForDelays = listData?.reasonForDelays?.find(reason => reason.id === loadingDischargingDelay.reasonForDelayId);
+    const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === loadingDischargingDelay.cargoId);
+    _loadingDischargingDelay.id = loadingDischargingDelay.id;
+    let hourDuration = (loadingDischargingDelay.duration / 60).toString();
     hourDuration = hourDuration.includes('.') ? hourDuration.split('.')[0] : hourDuration;
     hourDuration = Number(hourDuration) < 10 ? ('0' + hourDuration) : hourDuration
-    const minuteDuration = loadingDelay.duration % 60;
-    _loadingDelay.duration = new ValueObject<string>(hourDuration + ':' + minuteDuration, true, isNewValue, false, true);
-    _loadingDelay.quantity = loadingDelay.quantity;
-    _loadingDelay.colorCode = cargoObj?.colorCode;
-    _loadingDelay.cargo = new ValueObject<ILoadableQuantityCargo>(cargoObj, true, isEditable ? isNewValue : false, false, isEditable);
-    _loadingDelay.reasonForDelay = new ValueObject<IReasonForDelays>(reasonDelayObj, true, isNewValue, false, true);
-    _loadingDelay.isAdd = isNewValue;
-    return _loadingDelay;
+    const minuteDuration = loadingDischargingDelay.duration % 60;
+    _loadingDischargingDelay.duration = new ValueObject<string>(hourDuration + ':' + minuteDuration, true, isNewValue, false, true);
+    _loadingDischargingDelay.quantity = loadingDischargingDelay.quantity;
+    _loadingDischargingDelay.colorCode = cargoObj?.colorCode;
+    _loadingDischargingDelay.cargo = new ValueObject<ILoadableQuantityCargo>(cargoObj, true, isEditable ? isNewValue : false, false, isEditable);
+    _loadingDischargingDelay.reasonForDelay = new ValueObject<IReasonForDelays>(reasonDelayObj, true, isNewValue, false, true);
+    _loadingDischargingDelay.isAdd = isNewValue;
+    return _loadingDischargingDelay;
   }
 
 
   /**
    * Method for converting from loading delay value object model
    *
-   * @param {ILoadingSequenceValueObject} loadingDelayValueObject
-   * @returns {ILoadingDelays}
+   * @param {ILoadingSequenceValueObject} loadingDischargingDelayValueObject
+   * @returns {ILoadingDischargingDelays}
    * @memberof LoadingDischargingTransformationService
    */
-  getLoadingDelayAsValue(loadingDelayValueObject: ILoadingSequenceValueObject[], loadingInfoId: number): ILoadingDelays[] {
-    let loadingDelays: ILoadingDelays[] = [];
-    loadingDelayValueObject.forEach((loadingValueObject) => {
-      let _loadingDelays = <ILoadingDelays>{};
-      _loadingDelays.id = loadingValueObject?.id;
-      _loadingDelays.loadingInfoId = loadingInfoId;
-      _loadingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
-      _loadingDelays.reasonForDelayId = loadingValueObject?.reasonForDelay?.value?.id;
-      _loadingDelays.quantity = loadingValueObject?.quantity;
+  getLoadingDischargingDelayAsValue(loadingDischargingDelayValueObject: ILoadingSequenceValueObject[], infoId: number, operation: OPERATIONS): ILoadingDischargingDelays[] {
+    const loadingDischargingDelays: ILoadingDischargingDelays[] = [];
+    loadingDischargingDelayValueObject.forEach((loadingValueObject) => {
+      const _loadingDischargingDelays = <ILoadingDischargingDelays>{};
+      _loadingDischargingDelays.id = loadingValueObject?.id;
+      if(operation === OPERATIONS.LOADING) {
+        _loadingDischargingDelays.loadingInfoId = infoId;
+      } else {
+        _loadingDischargingDelays.dischargingInfoId = infoId;
+      }
+      _loadingDischargingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
+      _loadingDischargingDelays.reasonForDelayId = loadingValueObject?.reasonForDelay?.value?.id;
+      _loadingDischargingDelays.quantity = loadingValueObject?.quantity;
       const minuteDuration = loadingValueObject?.duration?.value.split(':');
-      _loadingDelays.duration = (Number(minuteDuration[0]) * 60) + Number(minuteDuration[1]);
-      loadingDelays.push(_loadingDelays);
+      _loadingDischargingDelays.duration = (Number(minuteDuration[0]) * 60) + Number(minuteDuration[1]);
+      loadingDischargingDelays.push(_loadingDischargingDelays);
     })
-    return loadingDelays;
+    return loadingDischargingDelays;
   }
 
 
@@ -274,12 +279,12 @@ export class LoadingDischargingTransformationService {
 
 
   /**
-* Method for setting cargo to be loaded grid columns
-*
-* @returns {IDataTableColumn[]}
-* @memberof LoadingDischargingTransformationService
-*/
-  getCargotobeLoadedDatatableColumns(quantityUnit: QUANTITY_UNIT): IDataTableColumn[] {
+   * Method for setting cargo to be loaded grid columns
+   *
+   * @returns {IDataTableColumn[]}
+   * @memberof LoadingDischargingTransformationService
+   */
+  getCargoToBeLoadedDatatableColumns(quantityUnit: QUANTITY_UNIT): IDataTableColumn[] {
     const quantityNumberFormat = AppConfigurationService.settings['quantityNumberFormat' + quantityUnit];
 
     return [
@@ -333,6 +338,74 @@ export class LoadingDischargingTransformationService {
     ]
   }
 
+  /**
+   * Method for setting cargo to be discharged grid columns
+   *
+   * @returns {IDataTableColumn[]}
+   * @memberof LoadingDischargingTransformationService
+   */
+  getCargoToBeDischargedDatatableColumns(quantityUnit: QUANTITY_UNIT): IDataTableColumn[] {
+    const quantityNumberFormat = AppConfigurationService.settings['quantityNumberFormat' + quantityUnit];
+
+    return [
+      {
+        field: 'grade',
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_GRADE',
+        fieldType: DATATABLE_FIELD_TYPE.BADGE,
+        badgeColorField: 'colorCode'
+      },
+      {
+        field: 'estimatedAPI',
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_API',
+        numberFormat: '1.2-2'
+      },
+      {
+        field: 'estimatedTemp',
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_TEMP',
+        numberFormat: '1.2-2'
+      },
+      {
+        field: 'loadingPortsLabel',
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_LOADING_PORT'
+      },
+      {
+        field: 'maxDischargingRate',
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_MAX_DISCHARGE_RATE'
+      },
+      {
+        field: 'blFigure',
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_BL_FIGURE'
+      },
+      {
+        field: 'shipFigure',
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SHIP_FIGURE'
+      },
+      {
+        field: 'timeRequiredForDischarging',
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_DISCHARGE_TIME'
+      },
+      {
+        field: 'protested',
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_IF_PROTESTED',
+        fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        listName: 'protestedOptions',
+        filterField: 'protested.value.name',
+        fieldPlaceholder: 'DISCHARGING_SELECT_PROTESTED',
+        fieldOptionLabel: 'name'
+      },
+      {
+        field: 'slopQuantity',
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY',
+        numberFormat: quantityNumberFormat
+      },
+      {
+        field: 'isCommingled',
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_COMMINGLED',
+        fieldType: DATATABLE_FIELD_TYPE.CHECKBOX,
+        filterField: 'protested.value'
+      },
+    ]
+  }
 
   /**
   * Method for formatting ballast tanks data
@@ -398,5 +471,111 @@ export class LoadingDischargingTransformationService {
     ];
 
     return columns;
+  }
+
+  /**
+   * Set ballast pumbp gravity operation
+   *
+   * @param {IPumpData[]} ballastPumps
+   * @param {IPumpData} gravity
+   * @param {IPump[]} ballastPumpCategories
+   * @return {*}
+   * @memberof LoadingDischargingTransformationService
+   */
+  setBallastPumpGravity(ballastPumps: IPumpData[], gravity: IPumpData, ballastPumpCategories: IPump[]) {
+    ballastPumpCategories.forEach(pump => {
+      const data = {
+        "pumpId": pump.id,
+        "start": gravity.start,
+        "end": gravity.end,
+        "quantityM3": gravity.quantityM3,
+        "rate": gravity.rate,
+        "id": "gravity"
+      }
+      ballastPumps.push(data);
+    });
+
+    return ballastPumps;
+  }
+
+  /**
+   * Set cargo loading rate data
+   *
+   * @param {*} stageTickPositions
+   * @param {*} cargoLoadingRates
+   * @return {*}
+   * @memberof LoadingDischargingTransformationService
+   */
+  setCargoLoadingRate(stageTickPositions, cargoLoadingRates: ILoadingRate[]) {
+    const _cargoLoadingRates = []
+    for (let index = 0; index < stageTickPositions.length - 1; index++) {
+      const start = stageTickPositions[index];
+      const end = stageTickPositions[index + 1];
+      const rate = new Set();
+      cargoLoadingRates.forEach(element => {
+        if ((element.startTime >= start && element.endTime <= end) || (start >= element.startTime && start < element.endTime) || (end > element.startTime && end <= element.endTime)) {
+          element.loadingRates.forEach(rate.add, rate);
+        }
+      });
+
+      _cargoLoadingRates.push(Array.from(rate));
+    }
+    return _cargoLoadingRates;
+  }
+
+  /**
+   * Set tickpositions
+   *
+   * @param {*} minXAxisValue
+   * @param {*} maxXAxisValue
+   * @return {*}
+   * @memberof LoadingDischargingTransformationService
+   */
+  setTickPositions(minXAxisValue, maxXAxisValue) {
+    const lastMinute = (maxXAxisValue - minXAxisValue) / (60 * 1000);
+
+    const totalHours = Math.trunc(lastMinute / 60) + 1;
+    return [...Array(totalHours).keys()].map((item) => minXAxisValue + (item * 60 * 60 * 1000));
+  }
+
+  /**
+   * Set plotline data for each stage
+   *
+   * @param {*} minXAxisValue
+   * @param {*} maxXAxisValue
+   * @param {*} stageInterval
+   * @return {*}  {Highcharts.XAxisPlotLinesOptions[]}
+   * @memberof LoadingDischargingTransformationService
+   */
+  setPlotLines(stageTickPositions: number[]): Highcharts.XAxisPlotLinesOptions[] {
+    return stageTickPositions.map((item) => {
+      return {
+        value: item,
+        color: '#000d20',
+        width: 1,
+        dashStyle: 'Dash',
+        zIndex: 1
+      }
+    });
+  }
+
+  /**
+   * Transform sequence data
+   *
+   * @return {*}
+   * @memberof LoadingDischargingTransformationService
+   */
+  transformSequenceData(sequenceData: ISequenceData) {
+
+    sequenceData.cargoStages = [];
+    sequenceData.cargoStageTickPositions = [];
+    sequenceData.ballastPumps = this.setBallastPumpGravity(sequenceData.ballastPumps, sequenceData.gravity, sequenceData.ballastPumpCategories);
+
+
+    sequenceData.stagePlotLines = this.setPlotLines(sequenceData.stageTickPositions);
+    sequenceData.tickPositions = this.setTickPositions(sequenceData.minXAxisValue, sequenceData.maxXAxisValue);
+    sequenceData.cargoLoadingRates = this.setCargoLoadingRate(sequenceData.stageTickPositions, sequenceData.cargoLoadingRates);
+
+    return sequenceData;
   }
 }

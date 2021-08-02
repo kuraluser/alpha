@@ -13,6 +13,9 @@ import { LoadingDischargingDetailsModule } from '../loading-discharging-details/
 import { DischargingRatesModule } from '../discharging-rates/discharging-rates.module';
 import { LoadingDischargingBerthModule } from '../loading-discharging-berth/loading-discharging-berth.module';
 import { LoadingDischargingCargoDetailsModule } from '../loading-discharging-cargo-details/loading-discharging-cargo-details.module';
+import { CargoToBeLoadedDischargedModule } from '../cargo-to-be-loaded-discharged/cargo-to-be-loaded-discharged.module';
+import { DropdownModule } from 'primeng/dropdown';
+import { LoadingDischargingManageSequenceModule } from '../loading-discharging-manage-sequence/loading-discharging-manage-sequence.module';
 
 /**
  * Module for discharging operations
@@ -30,10 +33,13 @@ import { LoadingDischargingCargoDetailsModule } from '../loading-discharging-car
     TranslateModule,
     FormsModule,
     ReactiveFormsModule,
+    DropdownModule,
     LoadingDischargingDetailsModule,
     DischargingRatesModule,
     LoadingDischargingBerthModule,
-    LoadingDischargingCargoDetailsModule
+    LoadingDischargingCargoDetailsModule,
+    CargoToBeLoadedDischargedModule,
+    LoadingDischargingManageSequenceModule
   ],
   providers: [LoadingDischargingInformationApiService]
 })

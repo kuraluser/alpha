@@ -1,4 +1,4 @@
-import { ICountry, IResponse, IResponseStatus } from '../../../shared/models/common.model';
+import { ICountry, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
 
 /**
  *  model for new-loadable-study-list-names
@@ -617,35 +617,52 @@ export interface ICargoQuantities {
  * @interface ILoadableQuantityCargo
  */
  export interface ILoadableQuantityCargo {
-    id: number,
-    grade: string,
-    estimatedAPI: string,
-    estimatedTemp: string,
-    orderBblsdbs: string,
-    orderBbls60f: string,
-    orderQuantity?: string,
-    maxLoadingRate?: string,
-    orderedQuantity: string,
-    minTolerence: string,
-    maxTolerence: string,
-    loadableBblsdbs: string,
-    loadableBbls60f: string,
-    loadableLT: string,
-    loadableMT: string,
-    loadableKL: string,
-    differencePercentage: string,
-    differencePercentageValue?: number;
-    differenceColor: string
-    cargoId?: number;
-    apiTemp?: string;
-    minMaxTolerance?: string;
-    slopQuantity?: number;
-    timeRequiredForLoading?: string;
-    loadingPorts?: string[];
-    loadingPort?: string;
-    cargoAbbreviation?: string;
-    cargoNominationId? : number;
-    colorCode?: string;
+   id: number,
+   grade: string,
+   estimatedAPI: string,
+   estimatedTemp: string,
+   orderBblsdbs?: string,
+   orderBbls60f?: string,
+   orderQuantity?: string,
+   maxLoadingRate?: string,
+   orderedQuantity?: string,
+   minTolerence?: string,
+   maxTolerence?: string,
+   loadableBblsdbs?: string,
+   loadableBbls60f?: string,
+   loadableLT?: string,
+   loadableMT?: string,
+   loadableKL?: string,
+   differencePercentage?: string,
+   differencePercentageValue?: number;
+   differenceColor?: string
+   cargoId?: number;
+   minMaxTolerance?: string;
+   slopQuantity?: number;
+   timeRequiredForLoading?: string;
+   loadingPorts?: string[];
+   loadingPortsLabels?: string;
+   cargoAbbreviation?: string;
+   cargoNominationId?: number;
+   colorCode?: string;
+   maxDischargingRate?: string;
+   blFigure?: string;
+   shipFigure?: string;
+   timeRequiredForDischarging?: string;
+   protested?: ValueObject<IProtested>| any;
+   isCommingled?: ValueObject<boolean> | any;
+   isAdd?: boolean;
+}
+
+/**
+ * Interface for protested object
+ *
+ * @export
+ * @interface IProtested
+ */
+export interface IProtested {
+  id: number;
+  name: string;
 }
 
 /**
@@ -772,4 +789,30 @@ export interface ITankDetails {
 export interface IPortsResponse {
   responseStatus: IResponseStatus;
   ports: IPort[];
+}
+
+/**
+ * ENUM for operations
+ *
+ * @export
+ * @enum {number}
+ */
+export enum OPERATIONS {
+  LOADING = 1,
+  DISCHARGING = 2,
+  BUNKERING = 3,
+  TRANSIT = 4,
+  STSLOADING = 5,
+  STSDISCHARGING = 6
+}
+
+/**
+ * Enum for operation mode labels
+ *
+ * @export
+ * @enum {number}
+ */
+export enum OPERATIONS_LABEL {
+  LOADING = 'LOADING',
+  DISCHARGING = 'DISCHARGING'
 }
