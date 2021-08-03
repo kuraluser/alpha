@@ -877,8 +877,7 @@ public class VoyageService {
   }
 
   public void builVoyageDetails(
-      ModelMapper modelMapper,
-      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+      ModelMapper modelMapper, com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
     loadableStudy.setVoyage(new VoyageDto());
     Voyage voyage = this.voyageRepository.findByIdAndIsActive(loadableStudy.getVoyageId(), true);
     modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
