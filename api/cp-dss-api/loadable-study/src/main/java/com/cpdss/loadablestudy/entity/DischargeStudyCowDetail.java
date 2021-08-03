@@ -32,7 +32,7 @@ public class DischargeStudyCowDetail extends EntityDoc {
   private Long percentage;
 
   @Column(name = "is_active")
-  private Boolean isActive=true;
+  private Boolean isActive = true;
 
   @Column(name = "tank_xid")
   private String tankIds;
