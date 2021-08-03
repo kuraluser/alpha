@@ -694,7 +694,7 @@ public class CargoNominationService {
           return String.valueOf(
               reply.getBillOfLaddingList().stream()
                   .map(item -> new BigDecimal(item.getQuantityKl()))
-                  .reduce(BigDecimal::add));
+                  .reduce(BigDecimal::add).get());
         }
       }
     }

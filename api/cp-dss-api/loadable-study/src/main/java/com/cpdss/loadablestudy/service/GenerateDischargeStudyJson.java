@@ -139,11 +139,11 @@ public class GenerateDischargeStudyJson {
           objectMapper.writeValueAsString(AlgoJsonPayload));
 
       // Calling Algo Service
-      AlgoResponse algoResponse = new AlgoResponse();
-      algoResponse.setProcessId("123");
-      // Uncomment when Algo actual API is ready
-      //		AlgoResponse algoResponse = restTemplate.postForObject(dischargeStudyUrl, AlgoJsonPayload,
-      // AlgoResponse.class);
+//      AlgoResponse algoResponse = new AlgoResponse();
+//      algoResponse.setProcessId("123");
+//       Uncomment when Algo actual API is ready
+      		AlgoResponse algoResponse = restTemplate.postForObject(dischargeStudyUrl, AlgoJsonPayload,
+       AlgoResponse.class);
 
       updateProcessIdForDischargeStudy(
           algoResponse.getProcessId(),
