@@ -55,5 +55,4 @@ public class BillOfLadding extends EntityDoc {
 
   @Column(name = "bl_ref_number")
   private String blRefNo;
-
 }
