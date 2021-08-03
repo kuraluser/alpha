@@ -665,8 +665,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     cargoNomination.setLoadableStudyXId(dischargestudyId);
                     cargoNomination.setPriority(1L);
                     cargoNomination.setIsActive(true);
-                    updateCargoNominationToSave(
-                        cargoRequest, cargoNomination, cargoNominationsToSave, portId);
+                    cargoNominationService.createCargoNominationPortDetails(cargoNomination, null, portId);
                   }
                 });
             /** delete existing cargo nomination */
@@ -727,8 +726,6 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     cargoNomination.setColor(cargoRequest.getColor());
     cargoNomination.setApi(new BigDecimal(cargoRequest.getApi()));
     cargoNomination.setTemperature(new BigDecimal(cargoRequest.getTemperature()));
-    cargoNomination.setCargoNominationPortDetails(
-        cargoNominationService.createCargoNominationPortDetails(cargoNomination, null, portId));
     cargoNominationsToSave.add(cargoNomination);
   }
 
