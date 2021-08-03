@@ -74,6 +74,7 @@ public class CargoNominationService {
 
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceBlockingStub loadingPlanGrpcService;
+
   /**
    * fetch cargo nomination based on the loadable study id
    *
@@ -111,6 +112,8 @@ public class CargoNominationService {
             cargo -> {
               dischargeStudycargos.add(createDsCargoNomination(dischargeStudyId, cargo, portId));
             });
+    getMaxQuantityMTFromBillofLadding(dischargeStudycargos);
+
     return cargoNominationRepository.saveAll(dischargeStudycargos);
   }
 
@@ -126,7 +129,7 @@ public class CargoNominationService {
     dischargeStudyCargo.setMaxTolerance(cargo.getMaxTolerance());
     dischargeStudyCargo.setMinTolerance(cargo.getMinTolerance());
     dischargeStudyCargo.setPriority(cargo.getPriority());
-    dischargeStudyCargo.setQuantity(cargo.getQuantity());
+    // dischargeStudyCargo.setQuantity(cargo.getQuantity());
     dischargeStudyCargo.setSegregationXId(cargo.getSegregationXId());
     dischargeStudyCargo.setTemperature(cargo.getTemperature());
     dischargeStudyCargo.setVersion(cargo.getVersion());
@@ -134,6 +137,39 @@ public class CargoNominationService {
         createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId));
     dischargeStudyCargo.setMode(2L);
     return dischargeStudyCargo;
+  }
+
+  private void getMaxQuantityMTFromBillofLadding(List<CargoNomination> dischargeStudycargos)
+      throws GenericServiceException {
+
+    List<Long> cargoIds =
+        dischargeStudycargos
+            .parallelStream()
+            .map(CargoNomination::getId)
+            .collect(Collectors.toList());
+    MaxQuantityRequest.Builder request = MaxQuantityRequest.newBuilder();
+    request.addAllCargoNominationId(cargoIds);
+    MaxQuantityResponse cargoNominationMaxQuantityResponse =
+        loadingPlanGrpcService.getCargoNominationMaxQuantity(request.build());
+    if (!SUCCESS.equals(cargoNominationMaxQuantityResponse.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "max quantity from loading plan is not available",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    List<MaxQuantityDetails> cargoMaxQuantityList =
+        cargoNominationMaxQuantityResponse.getCargoMaxQuantityList();
+    dischargeStudycargos.forEach(
+        item -> {
+          Optional<MaxQuantityDetails> itemQuantity =
+              cargoMaxQuantityList.stream()
+                  .filter(quantity -> item.getId().equals(quantity.getCargoNominationId()))
+                  .findFirst();
+          item.setQuantity(
+              itemQuantity.isPresent()
+                  ? new BigDecimal(itemQuantity.get().getMaxQuantity())
+                  : null);
+        });
   }
 
   public Set<CargoNominationPortDetails> createCargoNominationPortDetails(
@@ -653,12 +689,13 @@ public class CargoNominationService {
       if (SUCCESS.equals(reply.getResponseStatus().getStatus())
           && !CollectionUtils.isEmpty(reply.getBillOfLaddingList())) {
         if (reply.getBillOfLaddingList().size() == 1) {
-          return reply.getBillOfLaddingList().get(0).getQuantityMt();
+          return reply.getBillOfLaddingList().get(0).getQuantityKl();
         } else {
           return String.valueOf(
               reply.getBillOfLaddingList().stream()
-                  .map(item -> new BigDecimal(item.getQuantityMt()))
-                  .reduce(BigDecimal::add));
+                  .map(item -> new BigDecimal(item.getQuantityKl()))
+                  .reduce(BigDecimal::add)
+                  .get());
         }
       }
     }
