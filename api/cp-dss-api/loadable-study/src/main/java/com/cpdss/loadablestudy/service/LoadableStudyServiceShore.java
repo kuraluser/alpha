@@ -80,7 +80,7 @@ public class LoadableStudyServiceShore {
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         new Gson().fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadableStudy.class);
 
-   Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyage());
+    Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyage());
     if (!checkIfLoadableStudyExist(loadableStudy.getName(), voyage)) {
 
       try {
@@ -624,7 +624,8 @@ public class LoadableStudyServiceShore {
 
   private Voyage saveVoyageShore(Long vesselId, VoyageDto voyageDto) {
     List<Voyage> voyageList =
-        voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(1L, vesselId, voyageDto.getVoyageNo());
+        voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
+            1L, vesselId, voyageDto.getVoyageNo());
     if (voyageList != null && voyageList.get(0) != null) {
       return voyageList.get(0);
     } else {
