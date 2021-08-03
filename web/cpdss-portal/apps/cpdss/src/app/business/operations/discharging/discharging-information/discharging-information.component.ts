@@ -1,15 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
+import { QUANTITY_UNIT, ValueObject } from '../../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
-import { ICargo } from '../../../core/models/common.model';
+import { ICargo, ILoadableQuantityCargo, IProtested, OPERATIONS } from '../../../core/models/common.model';
 import { IStageOffset, IStageDuration, ICargoVesselTankDetails, IDischargingInformationResponse, IDischargingInformation, IDischargingInformationSaveResponse } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 import { RulesService } from '../../services/rules/rules.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 /**
  * Component class for discharge information component
@@ -44,8 +44,6 @@ export class DischargingInformationComponent implements OnInit {
   }
 
   @Output() dischargingInformationId: EventEmitter<any> = new EventEmitter();
-  private _portRotationId: number;
-  private _cargos: ICargo[];
 
   dischargingInformationData?: IDischargingInformationResponse;
   stageOffsetList: IStageOffset[];
@@ -60,15 +58,20 @@ export class DischargingInformationComponent implements OnInit {
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   hasUnSavedData = false;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+  readonly OPERATIONS = OPERATIONS;
+  dischargingInformationForm: FormGroup;
+  listData = { protestedOptions: [{ name: 'Yes', id: 1 }, { name: 'No', id: 2 }] };
 
+  private _portRotationId: number;
+  private _cargos: ICargo[];
 
   constructor(private loadingDischargingInformationApiService: LoadingDischargingInformationApiService,
-    private globalErrorHandler: GlobalErrorHandler,
     private translateService: TranslateService,
     private messageService: MessageService,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private rulesService: RulesService,
-    private ngxSpinnerService: NgxSpinnerService) { }
+    private ngxSpinnerService: NgxSpinnerService,
+    private fb: FormBuilder) { }
 
 
   async ngOnInit(): Promise<void> {
@@ -98,6 +101,28 @@ export class DischargingInformationComponent implements OnInit {
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_NO_ACTIVE_VOYAGE', 'LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE']).toPromise();
     try {
       this.dischargingInformationData = await this.loadingDischargingInformationApiService.getDischargingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
+      const loadableQuantityCargoDetails: ILoadableQuantityCargo[] = this.dischargingInformationData?.cargoVesselTankDetails?.loadableQuantityCargoDetails.map(cargo => {
+        const _cargo = <ILoadableQuantityCargo>{};
+        _cargo.isAdd = true;
+        for (const key in cargo) {
+          if (Object.prototype.hasOwnProperty.call(cargo, key)) {
+            if (key === 'protested') {
+              const _protested = cargo.protested ? this.listData?.protestedOptions[0] : this.listData?.protestedOptions[1];
+              _cargo.protested = new ValueObject<IProtested>(_protested, true, true, false);
+            } else if (key === 'isCommingled') {
+              const _isCommingled = cargo.isCommingled ?? false;
+              _cargo.isCommingled = new ValueObject<boolean>(_isCommingled, true, true, false);
+            } else {
+              _cargo[key] = cargo[key];
+            }
+          }
+        }
+        return _cargo;
+      });
+      this.dischargingInformationData.cargoVesselTankDetails.loadableQuantityCargoDetails = loadableQuantityCargoDetails;
+      this.dischargingInformationData.dischargingSequences.loadingDischargingDelays = this.dischargingInformationData.dischargingSequences['dischargingDelays']
+
+      this.initFormArray(this.dischargingInformationData);
       // this.rulesService.dischargingInfoId.next(this.dischargingInformationData.dischargingInfoId);
       await this.updateGetData();
     }
@@ -107,6 +132,26 @@ export class DischargingInformationComponent implements OnInit {
       }
     }
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Method for initialising form
+   *
+   * @param {IDischargingInformationResponse} dischargingInformationData
+   * @memberof DischargingInformationComponent
+   */
+  initFormArray(dischargingInformationData: IDischargingInformationResponse) {
+    const cargoToBeDischarged = dischargingInformationData?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(cargo => {
+      return this.fb.group({
+        protested: this.fb.control(cargo.protested.value),
+        isCommingled: this.fb.control(cargo?.isCommingled.value)
+      })
+    });
+    this.dischargingInformationForm = this.fb.group({
+      cargoTobeLoadedDischarged: this.fb.group({
+        dataTable: this.fb.array([...cargoToBeDischarged])
+      })
+    })
   }
 
   /**
@@ -189,7 +234,7 @@ export class DischargingInformationComponent implements OnInit {
   *
   * @memberof DischargingInformationComponent
   */
-  onUpdateLoadingDelays(event) {
+  onUpdateDischargingDelays(event) {
     this.dischargingInformationPostData.dischargingDelays = event;
     this.hasUnSavedData = true;
   }

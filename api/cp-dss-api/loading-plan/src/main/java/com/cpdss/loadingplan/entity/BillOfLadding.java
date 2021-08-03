@@ -52,4 +52,8 @@ public class BillOfLadding extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "bl_ref_number")
+  private String blRefNo;
+
 }

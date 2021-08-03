@@ -11,9 +11,9 @@ import { portDateCompareValidator } from '../../../cargo-planning/directives/val
 import { portDateRangeValidator } from '../../../cargo-planning/directives/validator/port-daterange-validator.directive';
 import { portDuplicationValidator } from '../../../cargo-planning/directives/validator/port-duplication-validator.directive';
 import { portEtaEtdValidator } from '../../../cargo-planning/directives/validator/port-eta-etd-validator.directive';
-import { IPortAllDropdownData, IPortsEvent, OPERATIONS } from '../../../cargo-planning/models/cargo-planning.model';
+import { IPortAllDropdownData, IPortsEvent } from '../../../cargo-planning/models/cargo-planning.model';
 import { LoadableStudyDetailsApiService } from '../../../cargo-planning/services/loadable-study-details-api.service';
-import { IEditPortRotationModel } from '../../models/common.model';
+import { IEditPortRotationModel, OPERATIONS } from '../../models/common.model';
 import { PortRotationPopupTransformationService } from './services/port-rotation-popup-transformation.service';
 import { IPortRotationValueObject } from './port-rotation-popup.model';
 import { IPortList, IPortsDetailsResponse } from '../../../core/models/common.model';

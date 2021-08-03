@@ -41,5 +41,6 @@ public interface LoadingPlanService {
       throws GenericServiceException;
 
   public LoadingUpdateUllageResponse getUpdateUllageDetails(
-      Long vesselId, Long patternId, Long portId) throws GenericServiceException;
+      Long vesselId, Long patternId, Long portId, String operationType)
+      throws GenericServiceException;
 }

@@ -170,11 +170,10 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   public void getUpdateUllageDetails(
       LoadingPlanModels.UpdateUllageDetailsRequest request,
       io.grpc.stub.StreamObserver<LoadingPlanModels.UpdateUllageDetailsResponse> responseObserver) {
-    log.info("Inside saveLoadingPlan");
+    log.info("Inside get Update Ullage details");
     LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder =
         LoadingPlanModels.UpdateUllageDetailsResponse.newBuilder();
     try {
-      builder.setMessage("Working");
       loadingPlanService.getBillOfLaddingDetails(request, builder);
       loadingPlanService.getPortWiseStowageDetails(request, builder);
       loadingPlanService.getPortWiseBallastDetails(request, builder);

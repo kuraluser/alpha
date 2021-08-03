@@ -642,21 +642,25 @@ public class LoadingPlanController {
    * @return
    * @throws CommonRestException
    */
-  @GetMapping("/vessels/{vesselId}/pattern/{patternId}/port/{portRotationId}/update-ullage")
+  @GetMapping(
+      "/vessels/{vesselId}/pattern/{patternId}/port/{portRotationId}/update-ullage/{operationType}")
   public LoadingUpdateUllageResponse getUpdateUllageDetails(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long patternId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          Long portRotationId)
+          Long portRotationId,
+      @PathVariable String operationType)
       throws CommonRestException {
     try {
       log.info(
-          "Getting all update ullage details of vesselID: {} on port: {}",
+          "Getting all update ullage details of vesselID: {} of pattern: {} with port rotation id: {}",
           vesselId,
+          patternId,
           portRotationId);
       LoadingUpdateUllageResponse response =
-          loadingPlanService.getUpdateUllageDetails(vesselId, patternId, portRotationId);
+          loadingPlanService.getUpdateUllageDetails(
+              vesselId, patternId, portRotationId, operationType);
       return response;
     } catch (GenericServiceException e) {
       log.error("Getting update ullage details Failed error");
@@ -668,7 +672,7 @@ public class LoadingPlanController {
           e.getMessage(),
           e);
     } catch (Exception e) {
-      log.error("Exception in Getting all Loading instructions");
+      log.error("Exception in \"Getting update ullage details");
       e.printStackTrace();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,

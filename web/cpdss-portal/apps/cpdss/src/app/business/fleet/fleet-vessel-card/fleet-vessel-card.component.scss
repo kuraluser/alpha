@@ -68,7 +68,11 @@
   }
 }
 
-.vessel-card-fleet-wrapper:hover .vessel-card-submenu {
+.vessel-card:hover {
+  cursor: pointer;
+}
+
+.vessel-card:hover .vessel-card-submenu {
   display: block;
 }
 

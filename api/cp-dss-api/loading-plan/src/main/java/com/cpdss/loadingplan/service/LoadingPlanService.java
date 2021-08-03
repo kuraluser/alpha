@@ -180,11 +180,11 @@ public class LoadingPlanService {
 
     List<BillOfLadding> billOfLaddingDetails =
         this.billOfLaddingRepo.findByLoadablePatternXIdAndIsActive(request.getPatternId(), true);
-    System.out.println(billOfLaddingDetails.size());
     billOfLaddingDetails.stream()
         .forEach(
             bill -> {
               Common.BillOfLadding.Builder blBuilder = Common.BillOfLadding.newBuilder();
+              blBuilder.setBlRefNo(bill.getBlRefNo());
               blBuilder.setApi(bill.getApi() != null ? bill.getApi().toString() : "");
               blBuilder.setTemperature(
                   bill.getTemperature() != null ? bill.getTemperature().toString() : "");
@@ -192,6 +192,10 @@ public class LoadingPlanService {
               blBuilder.setPortId(bill.getPortId());
               blBuilder.setQuantityMt(
                   bill.getQuantityMt() != null ? bill.getQuantityMt().toString() : "");
+              blBuilder.setQuantityBbls(
+                      bill.getQuantityMt() != null ? bill.getQuantityBbls().toString() : "");
+              blBuilder.setQuantityKl(
+                      bill.getQuantityMt() != null ? bill.getQuantityKl().toString() : "");
               blBuilder.setCargoNominationId(bill.getCargoNominationId());
               builder.addBillOfLadding(blBuilder);
             });
@@ -207,7 +211,6 @@ public class LoadingPlanService {
     for (PortLoadingPlanStowageDetails portWiseStowageDetail : portWiseStowageDetails) {
       LoadingPlanModels.PortLoadablePlanStowageDetail.Builder newBuilder =
           LoadingPlanModels.PortLoadablePlanStowageDetail.newBuilder();
-      System.out.println(portWiseStowageDetail.getAbbreviation());
       newBuilder.setAbbreviation(
           portWiseStowageDetail.getAbbreviation() != null
               ? portWiseStowageDetail.getAbbreviation()

@@ -6,7 +6,7 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ICargo } from '../../../core/models/common.model';
+import { ICargo, OPERATIONS } from '../../../core/models/common.model';
 import {RulesService}from '../../services/rules/rules.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 
@@ -59,6 +59,8 @@ export class LoadingInformationComponent implements OnInit {
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   hasUnSavedData = false;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+  readonly OPERATIONS = OPERATIONS;
+
   constructor(private loadingDischargingInformationApiService: LoadingDischargingInformationApiService,
     private translateService: TranslateService,
     private messageService: MessageService,
@@ -94,6 +96,7 @@ export class LoadingInformationComponent implements OnInit {
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_NO_ACTIVE_VOYAGE', 'LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE']).toPromise();
     try {
       this.loadingInformationData = await this.loadingDischargingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
+      this.loadingInformationData.loadingSequences.loadingDischargingDelays = this.loadingInformationData.loadingSequences['loadingDelays'];
       this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
     }

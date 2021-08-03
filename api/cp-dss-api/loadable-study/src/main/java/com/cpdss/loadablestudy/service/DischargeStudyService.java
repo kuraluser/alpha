@@ -1064,6 +1064,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     log.info("Inside addCargoNominationForPortRotation service");
 
     List<LoadableStudyPortRotation> portRotations = getDischargeStudyPortRotations(loadableStudyId);
+    if (portRotations == null) {
+      return;
+    }
     if (portRotations.get(portRotations.size() - 1).getId() != portRotationId) {
       throw new GenericServiceException(
           "port rotaion data mis match",
@@ -1147,10 +1150,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
      * the newly created one else return
      */
     if (loadableStudy.getPlanningTypeXId() != 2) {
-      throw new GenericServiceException(
-          "no ds found",
-          CommonErrorCodes.E_CPDSS_NO_DISCHARGE_STUDY_FOUND,
-          HttpStatusCode.BAD_REQUEST);
+      return null;
     }
     List<LoadableStudyPortRotation> portRotations =
         loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
@@ -1159,10 +1159,13 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     return portRotations;
   }
 
-  public void resetCargoNominationQuantity(long portRotationId, long loadableStudyId)
+  public void resetCargoNominationQuantityAndBackLoading(long portRotationId, long loadableStudyId)
       throws GenericServiceException {
     List<LoadableStudyPortRotation> dischargeStudyPortRotations =
         getDischargeStudyPortRotations(loadableStudyId);
+    if (dischargeStudyPortRotations == null) {
+      return;
+    }
     List<CargoNomination> cargos =
         cargoNominationService.getCargoNominationByLoadableStudyId(loadableStudyId);
     LoadableStudyPortRotation dischargeStudyPortRotation = dischargeStudyPortRotations.get(0);
@@ -1181,8 +1184,22 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             cargo -> {
               if (!firstPortCargoIds.contains(cargo.getId())) {
                 cargo.setQuantity(new BigDecimal(0));
+                cargo.setMode(1L);
               }
             });
     cargoNominationService.saveAll(cargos);
+    List<BackLoading> backLoadings =
+        backLoadingService.getBackLoadings(
+            loadableStudyId,
+            dischargeStudyPortRotations.stream()
+                .map(LoadableStudyPortRotation::getId)
+                .collect(Collectors.toList()));
+    backLoadings
+        .parallelStream()
+        .forEach(
+            backLoading -> {
+              backLoading.setActive(false);
+            });
+    backLoadingService.saveAll(backLoadings);
   }
 }

@@ -28,6 +28,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { LoadingDischargingInformationApiService } from '../services/loading-discharging-information-api.service';
 import { LoadingDischargingManageSequenceModule } from '../loading-discharging-manage-sequence/loading-discharging-manage-sequence.module';
 import { LoadingInstructionApiService } from './../services/loading-instruction-api.service';
+import { CargoToBeLoadedDischargedModule } from '../cargo-to-be-loaded-discharged/cargo-to-be-loaded-discharged.module';
 
 /**
  * Module for loading operation
@@ -65,7 +66,8 @@ import { LoadingInstructionApiService } from './../services/loading-instruction-
     ReactiveFormsModule,
     ToppingOffTankTableModule,
     CheckboxModule,
-    LoadingDischargingManageSequenceModule
+    LoadingDischargingManageSequenceModule,
+    CargoToBeLoadedDischargedModule
 
   ],
   providers: [LoadingDischargingInformationApiService, LoadingInstructionApiService],

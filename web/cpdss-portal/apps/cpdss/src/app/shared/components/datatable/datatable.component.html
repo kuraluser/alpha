@@ -257,7 +257,7 @@
                                                 <span>{{
                                                 rowData[col.field]?.value}}</span>
                                             </ng-template>
-         
+
                                     </ng-container>
                                 </ng-container>
 
@@ -265,7 +265,7 @@
                                 <ng-container *ngSwitchCase="fieldType.COLOR" class="col no-left-padding"
                                     style="max-width: 20px;">
                                     <div class="color-rounded mt-5"
-                                        [ngStyle]="(rowData[col.field]) && 
+                                        [ngStyle]="(rowData[col.field]) &&
                                         {'background' : rowData[col.field]?.value ? rowData[col.field]?.value : rowData[col.field]}">
                                     </div>
                                 </ng-container>
@@ -377,6 +377,22 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.BADGE" >
                                     <span class="badge-custom"  [ngStyle]="{'background': rowData[col.badgeColorField]}">{{rowData[col.field]}}</span>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="fieldType.CHECKBOX">
+                                  <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
+                                    <label class="checkbox-custom pr-20">
+                                      <input type="checkbox" [formControlName]="col.field" (change)="onChange($event, rowData, rowIndex, col)" id="{{col.field+'_'+rowIndex}}" [readonly]="!rowData[col.field]?.isEditable">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                    <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)" [errorMessages]="col.errorMessages">
+                                    </cpdss-portal-validation-error>
+                                  </ng-container>
+                                  <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
+                                    <label class="checkbox-custom pr-20">
+                                      <input type="checkbox" [formControlName]="col.field" (change)="onChange($event, rowData, rowIndex, col)" id="{{col.field+'_'+rowIndex}}" readonly="true">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </ng-container>
                                 </ng-container>
                                 <span *ngSwitchDefault>
                                     {{col?.numberFormat ? (rowData[col.field] | number: col?.numberFormat) : rowData[col.field]}}</span>
