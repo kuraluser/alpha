@@ -1,14 +1,12 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
-import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -306,7 +304,7 @@ public class LoadableStudyServiceShore {
 
       this.loadableQuantityRepository.save(loadableQuantity);
     }
-    if (!loadableStudy.getLoadableStudyRuleList().isEmpty()) {
+    /* if (!loadableStudy.getLoadableStudyRuleList().isEmpty()) {
       VesselInfo.VesselRuleRequest.Builder vesselRuleBuilder =
           VesselInfo.VesselRuleRequest.newBuilder();
       vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
@@ -414,7 +412,7 @@ public class LoadableStudyServiceShore {
                         });
               });
       this.loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
-    }
+    }*/
   }
 
   private LoadableStudyPortRotation buildLoadableStudyPortRotation(
@@ -626,7 +624,7 @@ public class LoadableStudyServiceShore {
     List<Voyage> voyageList =
         voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
             1L, vesselId, voyageDto.getVoyageNo());
-    if (voyageList != null && voyageList.get(0) != null) {
+    if (voyageList != null && voyageList.size() != 0) {
       return voyageList.get(0);
     } else {
       Voyage voyage = new Voyage();
@@ -634,11 +632,11 @@ public class LoadableStudyServiceShore {
       voyage.setVesselXId(vesselId);
       voyage.setIsActive(true);
       voyage.setCompanyXId(1L);
-      voyage.setCaptainXId(voyageDto.getCaptainId());
-      voyage.setChiefOfficerXId(voyageDto.getChiefOfficerId());
+      voyage.setCaptainXId(voyageDto.getCaptainXId());
+      voyage.setChiefOfficerXId(voyageDto.getChiefOfficerXId());
       voyage.setStartTimezoneId(voyageDto.getStartTimezoneId());
-      voyage.setVoyageStartDate(LocalDateTime.from(voyageDto.getPlannedStartDate()));
-      voyage.setVoyageEndDate(LocalDateTime.from(voyageDto.getPlannedEndDate()));
+      // voyage.setVoyageStartDate(LocalDateTime.from(voyageDto.getVoyageStartDate()));
+      // voyage.setVoyageEndDate(LocalDateTime.from(voyageDto.getVoyageEndDate()));
       voyage = voyageRepository.save(voyage);
       return voyage;
     }

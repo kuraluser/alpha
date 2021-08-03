@@ -91,7 +91,8 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 *
 * @memberof LoadingDischargingDetailsComponent
 */
-  onTimeChange(field) {
+  onTimeChange(fieldReferenceName,field) {
+    fieldReferenceName.hideOverlay();
     if (this.loadingDischargingDetailsForm.value[field]) {
       const selectedTime = new Date(this.loadingDischargingDetailsForm.value[field]);
       this.loadingDischargingDetailsResponse[field] = ((selectedTime.getHours() < 10 ? ('0' + selectedTime.getHours()) : selectedTime.getHours())) + ":" + ((selectedTime.getMinutes() < 10 ? ('0' + selectedTime.getMinutes()) : selectedTime.getMinutes()));
@@ -100,6 +101,17 @@ export class LoadingDischargingDetailsComponent implements OnInit {
       }
 
     }
+  }
+
+  /**
+   * Method to clear time input.
+   *
+   * @param {*} field
+   * @memberof LoadingDischargingDetailsComponent
+   */
+  clearTimeInput(fieldReferenceName, field) {
+    fieldReferenceName.hideOverlay();
+    this.loadingDischargingDetailsForm.controls[field].setValue(null);
   }
 
   /**

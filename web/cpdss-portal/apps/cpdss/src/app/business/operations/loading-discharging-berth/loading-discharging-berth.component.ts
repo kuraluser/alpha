@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 import { IBerth } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
@@ -39,6 +41,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
   berthFormArray: FormArray;
   selectedIndex: number;
   errorMesages: any;
+  disableAddBtn = false; 
 
   get berths(): FormArray {
     return this.berthForm.get("berth") as FormArray
@@ -46,7 +49,10 @@ export class LoadingDischargingBerthComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private loadingDischargingTransformationService: LoadingDischargingTransformationService
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService,
+    private confirmationService: ConfirmationService,
+    private translateService: TranslateService,
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
@@ -72,7 +78,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
     this.berthDetailsForm = this.fb.group({
       berthId: 0,
       berthName: '',
-      maxShipDepth: '',
+      maxShipDepth: this.fb.control('', [numberValidator(4, 2)]),
       hoseConnections: this.fb.control('', [Validators.maxLength(100)]),
       seaDraftLimitation: this.fb.control(null, [numberValidator(4, 2)]),
       airDraftLimitation: this.fb.control('', [numberValidator(4, 2)]),
@@ -156,8 +162,13 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @memberof LoadingDischargingBerthComponent
    */
   addBerth(berth: IBerth) {
-    this.berthFormArray = this.berthForm.get('berth') as FormArray;
-    this.berthFormArray.push(this.createBerth(berth));
+    if (this.berthFormArray?.controls?.length >= 4) {
+     this.disableAddBtn = false;
+    }
+    else {
+      this.berthFormArray = this.berthForm.get('berth') as FormArray;
+      this.berthFormArray.push(this.createBerth(berth));
+    }
   }
 
   /**
@@ -242,16 +253,37 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @param berth
    * @memberof LoadingDischargingBerthComponent
    */
-  deleteBerth(event, index: number) {
-    this.selectedBerths = this.selectedBerths?.filter((berth) => berth.berthId !== event.value.name.berthId) ?? [];
-    this.berths.removeAt(index);
-    if (this.selectedBerths?.length > 0) {
-      this.setBerthDetails(this.selectedBerths[0])
-    } else {
-      this.berthDetailsForm.reset();
-      this.berthDetailsForm.disable();
-    }
-    this.berthChange.emit(this.selectedBerths);
+  async deleteBerth(event, index: number) {
+    const translationKeys = await this.translateService.get(['BERTH_DELETE_HEADER', 'BERTH_DELETE_SUMMARY', 'BERTH_DELETE_CONFIRM_LABEL', 'BERTH_DELETE_SUCCESS', 'BERTH_DELETE_SUCCESSFULLY', 'BERTH_DELETE_ERROR', 'BERTH_ERROR_SUMMARY']).toPromise();
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['BERTH_DELETE_HEADER'],
+      message: translationKeys['BERTH_DELETE_SUMMARY'],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['BERTH_DELETE_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: true,
+      rejectIcon: 'pi',
+      rejectButtonStyleClass: 'btn btn-main',
+      accept: async () => {
+        if (this.selectedBerths?.length > 1) {
+          this.selectedBerths = this.selectedBerths?.filter((berth) => berth.berthId !== event.value.name.berthId) ?? [];
+          this.berths.removeAt(index);
+          if (this.selectedBerths?.length > 0) {
+            this.setBerthDetails(this.selectedBerths[0])
+          } else {
+            this.berthDetailsForm.reset();
+            this.berthDetailsForm.disable();
+          }
+          this.berthChange.emit(this.selectedBerths);
+        }
+        else {
+          this.messageService.add({ severity: 'warn', summary: translationKeys['BERTH_DELETE_ERROR'], detail: translationKeys['BERTH_ERROR_SUMMARY'] });
+        }
+      }
+
+    });
   }
 
   /**
