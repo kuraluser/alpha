@@ -18,6 +18,10 @@ public class UpdateUllageCargoQuantityDetail {
   private Double actualQuantityTotal;
   private Double blQuantityTotal;
   private Double difference;
-  private String api;
-  private String temperature;
+  private String nominationApi;
+  private String nominationTemp;
+  private String actualAvgApi;
+  private String actualAvgTemp;
+  private String blAvgApi;
+  private String blAvgTemp;
 }
