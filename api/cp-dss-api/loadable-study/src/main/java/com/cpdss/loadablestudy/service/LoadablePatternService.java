@@ -1074,8 +1074,7 @@ public class LoadablePatternService {
           LOADABLE_STUDY_REQUEST,
           objectMapper.writeValueAsString(loadableStudy));
       if (enableCommunication) {
-        this.voyageService.builVoyageDetails(
-             modelMapper, loadableStudy);
+        this.voyageService.builVoyageDetails(modelMapper, loadableStudy);
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(
                 objectMapper.writeValueAsString(loadableStudy),
