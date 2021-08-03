@@ -6,9 +6,21 @@
                     <label for="timeOfSunrise" class="col-5 no-left-padding">{{'LOADING_DETAILS_SUNRISE_SUNSET' |
                         translate}}</label>
                     <div class="col error-icon-wrapper">
-                        <p-calendar  formControlName="timeOfSunrise" [timeOnly]="true"
+                        <p-calendar  formControlName="timeOfSunrise" [timeOnly]="true" appendTo="body"
                             inputId="timeOfSunrise" placeholder="{{'LOADING_DETAILS_SUNRISE_LABEL' | translate}}"
-                            showTime="true" hourFormat="12" (onClose)="onTimeChange('timeOfSunrise')" ></p-calendar>
+                            hourFormat="24" [readonlyInput]="true"
+                            [showButtonBar]="false" todayButtonStyleClass="hide" #timeOfSunRiseCalender >
+                            <p-footer>
+                                <div class="row">
+                                    <div class="col">
+                                        <button class="btn btn-default" (click)="clearTimeInput(timeOfSunRiseCalender,'timeOfSunrise')">{{'DATA_TABLE_CLEAR_BUTTON_LABEL' | translate}}</button>
+                                    </div>
+                                    <div class="col text-right">
+                                        <button class="btn btn-default" (click)="onTimeChange(timeOfSunRiseCalender,'timeOfSunrise')">{{'DATA_TABLE_OK_BUTTON_LABEL' | translate}}</button>
+                                    </div>
+                                </div>
+                            </p-footer>
+                        </p-calendar>
                         <cpdss-portal-validation-error [errors]="fieldError('timeOfSunrise')"
                             [errorMessages]="errorMessages.timeOfSunrise">
                         </cpdss-portal-validation-error>
@@ -17,9 +29,20 @@
                         /
                     </div>
                     <div class="col error-icon-wrapper">
-                        <p-calendar  formControlName="timeOfSunset" [timeOnly]="true"
+                        <p-calendar  formControlName="timeOfSunset" [timeOnly]="true" appendTo="body"
                             inputId="timeOfSunset" placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}"
-                            showTime="true" hourFormat="12" (onClose)="onTimeChange('timeOfSunset')"></p-calendar>
+                            hourFormat="24" #timeOfSunSetCalender>
+                            <p-footer>
+                                <div class="row">
+                                    <div class="col">
+                                        <button class="btn btn-default" (click)="clearTimeInput(timeOfSunSetCalender,'timeOfSunset')">{{'DATA_TABLE_CLEAR_BUTTON_LABEL' | translate}}</button>
+                                    </div>
+                                    <div class="col text-right">
+                                        <button class="btn btn-default" (click)="onTimeChange(timeOfSunSetCalender,'timeOfSunset')">{{'DATA_TABLE_OK_BUTTON_LABEL' | translate}}</button>
+                                    </div>
+                                </div>
+                            </p-footer> 
+                        </p-calendar>
                         <cpdss-portal-validation-error [errors]="fieldError('timeOfSunset')"
                             [errorMessages]="errorMessages.timeOfSunset">
                         </cpdss-portal-validation-error>
@@ -29,10 +52,21 @@
                     <label for="startTime" class="col-5 no-left-padding">{{'LOADING_DETAILS_START_TIME_LABEL' |
                         translate}}</label>
                     <div class="col error-icon-wrapper">
-                        <p-calendar  formControlName="startTime" styleClass="full-width-field" [timeOnly]="true"
+                        <p-calendar  formControlName="startTime" styleClass="full-width-field" [timeOnly]="true" appendTo="body"
                             inputId="startTime"
                             placeholder="{{'LOADING_DETAILS_START_TIME_CALENDER_LABEL' | translate}}" showTime="true"
-                            hourFormat="12" (onClose)="onTimeChange('startTime')"></p-calendar>
+                            hourFormat="24"  #startTimeCalender>
+                            <p-footer>
+                                <div class="row">
+                                    <div class="col">
+                                        <button class="btn btn-default" (click)="clearTimeInput(startTimeCalender,'startTime')">{{'DATA_TABLE_CLEAR_BUTTON_LABEL' | translate}}</button>
+                                    </div>
+                                    <div class="col text-right">
+                                        <button class="btn btn-default" (click)="onTimeChange(startTimeCalender,'startTime')">{{'DATA_TABLE_OK_BUTTON_LABEL' | translate}}</button>
+                                    </div>
+                                </div>
+                            </p-footer> 
+                        </p-calendar>
                             <cpdss-portal-validation-error [errors]="fieldError('startTime')"
                             [errorMessages]="errorMessages.startTime">
                         </cpdss-portal-validation-error>

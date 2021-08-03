@@ -131,6 +131,13 @@ export class LoadingDischargingTransformationService {
   getLoadingDischargingDelayDatatableColumns(): IDataTableColumn[] {
     return [
       {
+        field: 'slNo',
+        header: 'SL',
+        fieldType: DATATABLE_FIELD_TYPE.SLNO,
+        fieldHeaderClass: 'column-sl',
+        fieldClass: 'sl'
+      },
+      {
         field: 'cargo',
         header: 'Cargo',
         listName: 'loadableQuantityCargo',
