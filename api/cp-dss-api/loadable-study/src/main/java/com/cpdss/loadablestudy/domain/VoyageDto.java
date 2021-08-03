@@ -10,9 +10,9 @@ import lombok.Data;
 @Data
 @JsonInclude(Include.NON_EMPTY)
 public class VoyageDto {
-  private Long captainId;
+  private Long captainXId;
 
-  private Long chiefOfficerId;
+  private Long chiefOfficerXId;
 
   private String voyageNo;
 
@@ -26,9 +26,9 @@ public class VoyageDto {
 
   private String charterer;
 
-  private LocalDate plannedStartDate;
+  private LocalDate voyageStartDate;
 
-  private LocalDate plannedEndDate;
+  private LocalDate voyageEndDate;
 
   private LocalDate actualStartDate;
 
@@ -37,6 +37,4 @@ public class VoyageDto {
   private Long startTimezoneId;
 
   private Long endTimezoneId;
-
-  private Long noOfDays;
 }

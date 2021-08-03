@@ -73,15 +73,16 @@ public class CommunicationService {
       throws GenericServiceException {
     for (MessageTypes messageType : shore) {
       try {
-        EnvoyReader.EnvoyReaderResultReply erReply =
-            getResultFromEnvoyReaderShore(taskReqParams, messageType);
-        if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
-          throw new GenericServiceException(
-              "Failed to get Result from Communication Server",
-              erReply.getResponseStatus().getCode(),
-              HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
-        }
         if (messageType.getMessageType().equals("LoadableStudy")) {
+          EnvoyReader.EnvoyReaderResultReply erReply =
+              getResultFromEnvoyReaderShore(taskReqParams, messageType);
+          if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+            throw new GenericServiceException(
+                "Failed to get Result from Communication Server",
+                erReply.getResponseStatus().getCode(),
+                HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
+          }
+
           saveLoadableStudyShore(erReply);
         } /*else if (messageType.getMessageType().equals("ValidatePlan")) {
             saveValidatePlanRequestShore(erReply);
