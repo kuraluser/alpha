@@ -665,8 +665,11 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     cargoNomination.setLoadableStudyXId(dischargestudyId);
                     cargoNomination.setPriority(1L);
                     cargoNomination.setIsActive(true);
-                    cargoNominationService.createCargoNominationPortDetails(
-                        cargoNomination, null, portId);
+                    cargoNomination.setCargoNominationPortDetails(
+                        cargoNominationService.createCargoNominationPortDetails(
+                            cargoNomination, null, portId));
+                    updateCargoNominationToSave(
+                        cargoRequest, cargoNomination, cargoNominationsToSave, portId);
                   }
                 });
             List<Long> requestIds =
