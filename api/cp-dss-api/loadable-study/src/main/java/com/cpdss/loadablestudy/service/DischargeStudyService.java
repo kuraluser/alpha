@@ -673,7 +673,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             Set<CargoNomination> cargosToDisable =
                 dbCargos.stream()
                     .flatMap(x -> x.getCargoNominationPortDetails().stream())
-                    .filter(port -> port.getPortId() == dbPortRoation.getPortXId())
+                    .filter(port -> port.getPortId().equals(dbPortRoation.getPortXId()))
                     .map(CargoNominationPortDetails::getCargoNomination)
                     .collect(Collectors.toSet());
             cargosToDisable.forEach(
