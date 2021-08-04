@@ -623,7 +623,6 @@ export interface ICargoQuantities {
    estimatedTemp: string,
    orderBblsdbs?: string,
    orderBbls60f?: string,
-   orderQuantity?: string,
    maxLoadingRate?: string,
    orderedQuantity?: string,
    minTolerence?: string,

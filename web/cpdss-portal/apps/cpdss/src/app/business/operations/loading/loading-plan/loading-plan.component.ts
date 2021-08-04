@@ -90,12 +90,11 @@ export class LoadingPlanComponent implements OnInit {
         "differencePercentage": "10.0",
         "differenceColor": "",
         "cargoId": 252,
-        "orderedQuantity": "",
         "cargoAbbreviation": "MBN",
         "cargoNominationId": 17163,
         "slopQuantity": 6355.200000000001,
         "timeRequiredForLoading": "",
-        "orderQuantity": "250000.1000",
+        "orderedQuantity": "250000.1000",
         "maxLoadingRate": "20500.0000"
       }
     ]

@@ -11,10 +11,10 @@ export function LoadingCargoDuplicateValidator(index): ValidatorFn {
         }
         const dataTableArray = control.root.value.dataTable;
         if(dataTableArray){
-            dataTableArray.splice(index,1);
+            dataTableArray.splice(index - 1,1);
         }
         if (control?.value ) {
-            const found = dataTableArray.some(data => data.cargo.cargoNominationId === control?.value?.cargoNominationId );
+            const found = dataTableArray.some(data => data?.cargo?.cargoNominationId === control?.value?.cargoNominationId );
             if(found){
                 return {duplicateCargo: true}
             }else{

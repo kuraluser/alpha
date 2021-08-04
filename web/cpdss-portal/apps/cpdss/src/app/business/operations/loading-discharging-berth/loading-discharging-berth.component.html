@@ -27,7 +27,7 @@
                     <span>{{(i+1) + '. '}}</span><label class="mb-0">{{berth.controls.name.value.berthName}}</label>
                     <div class="pull-right">
                         <span *ngIf="editMode"><a type="button" id="edit-berth-btn" class="pencil-icon mr-5"
-                                (click)="editBerth(i)"></a></span>
+                                (click)="editBerth(berth, i)"></a></span>
                         <span *ngIf="editMode"><a type="button" id="delete-berth-btn" class="delete-icon"
                                 (click)="deleteBerth(berth, i)"></a></span>
                     </div>
@@ -54,7 +54,7 @@
                                 <input type="text" *ngIf="editMode;else berthName" [negative]="false"
                                     class="form-control" id="berth-name" formControlName="berthName"
                                     placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_NAME_PLACE_HOLDER' | translate}}"
-                                    (change)="change('berthName')">
+                                    (change)="change('berthName')" readonly>
                                 <ng-template #berthName><div class="text-right">{{berthDetailsFormControl?.berthName?.value}}</div>
                                 </ng-template>
                             </div>

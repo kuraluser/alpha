@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
-import { ICargoVesselTankDetails, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset } from '../../models/loading-discharging.model';
+import { ICargoVesselTankDetails, ILoadingDischargingStagesDetails, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
@@ -120,6 +120,7 @@ export class LoadingInformationComponent implements OnInit {
     this.loadingDischargingTransformationService.setLoadingInformationValidity(this.loadingInformationData?.isLoadingInfoComplete)
     this.loadingInfoId = this.loadingInformationData?.loadingInfoId;
     this.loadingInformationId.emit(this.loadingInfoId);
+    this.loadingInformationData.loadingSequences.loadingDischargingDelays = this.loadingInformationData.loadingSequences['loadingDelays'];
     this.trackStartEndStage = this.loadingInformationData?.loadingStages?.trackStartEndStage;
     this.trackGradeSwitch = this.loadingInformationData?.loadingStages?.trackGradeSwitch;
     this.cargoVesselTankDetails = this.loadingInformationData?.cargoVesselTankDetails;
@@ -190,6 +191,7 @@ export class LoadingInformationComponent implements OnInit {
 * @memberof LoadingInformationComponent
 */
   onUpdateLoadingStages() {
+    this.loadingInformationPostData.loadingStages = <ILoadingDischargingStagesDetails>{};
     this.loadingInformationPostData.loadingStages.stageOffset = this.stageOffset;
     this.loadingInformationPostData.loadingStages.stageDuration = this.stageDuration;
     this.loadingInformationPostData.loadingStages.trackStartEndStage = this.trackStartEndStage;
@@ -254,17 +256,27 @@ export class LoadingInformationComponent implements OnInit {
 * @memberof LoadingInformationComponent
 */
   async saveLoadingInformationData() {
-    const translationKeys = await this.translateService.get(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY']).toPromise();
+    const translationKeys = await this.translateService.get(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY']).toPromise();
     if(this.hasUnSavedData){
-      this.ngxSpinnerService.show();
-      const result: ILoadingInformationSaveResponse = await this.loadingDischargingInformationApiService.saveLoadingInformation(this.vesselId, this.voyageId, this.loadingInformationPostData).toPromise();
-      if (result?.responseStatus?.status === '200') {
-        this.loadingInformationData = result?.loadingInformation;
-        await this.updateGetData();
-        this.hasUnSavedData = false;
-        this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INFORMATION_SAVE_SUCCESS'], detail: translationKeys['LOADING_INFORMATION_SAVED_SUCCESSFULLY'] });
+      const isLoadingMachinery = this.loadingInformationPostData?.loadingMachineries?.some(machinery => machinery.isUsing) ?? true;
+      if(!isLoadingMachinery){
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_NO_MACHINERY'] });
       }
-      this.ngxSpinnerService.hide();
+      if(this.loadingInformationPostData?.loadingBerths && this.loadingInformationPostData?.loadingBerths.length === 0){
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_NO_BERTHS'] });
+      }
+      else{
+        this.ngxSpinnerService.show();
+        const result: ILoadingInformationSaveResponse = await this.loadingDischargingInformationApiService.saveLoadingInformation(this.vesselId, this.voyageId, this.loadingInformationPostData).toPromise();
+        if (result?.responseStatus?.status === '200') {
+          this.loadingInformationData = result?.loadingInformation;
+          await this.updateGetData();
+          this.hasUnSavedData = false;
+          this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INFORMATION_SAVE_SUCCESS'], detail: translationKeys['LOADING_INFORMATION_SAVED_SUCCESSFULLY'] });
+        }
+        this.ngxSpinnerService.hide();
+      }
+      
     }else{
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_SAVE_NO_DATA_ERROR'] });
     }

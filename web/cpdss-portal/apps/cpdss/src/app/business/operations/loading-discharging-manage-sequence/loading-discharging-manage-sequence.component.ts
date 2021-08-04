@@ -91,8 +91,13 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       }
       return loadingSequenceData;
     });
-    const loadingDischargingDelayArray = _loadingDischargingDelays?.map((loadingDischargingDelay, index) =>
-      this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, false)
+    const loadingDischargingDelayArray = _loadingDischargingDelays?.map((loadingDischargingDelay, index) =>{
+      if (loadingDischargingDelay?.cargo?.value?.cargoId && loadingDischargingDelay?.quantity) {
+        return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, false)
+      }else{
+        return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, true)
+      }
+    }
     );
     this.loadingDischargingDelays = _loadingDischargingDelays;
     this.loadingDischargingSequenceForm = this.fb.group({

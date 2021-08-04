@@ -265,6 +265,15 @@ public final class Loadicator {
       if (loadablePatternId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, loadablePatternId_);
       }
+      if (isPattern_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(2, isPattern_);
+      }
+      if (loadableStudyId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, loadableStudyId_);
+      }
+      if (loadablePatternId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, loadablePatternId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2275,6 +2284,9 @@ public final class Loadicator {
       }
       for (int i = 0; i < ballastInfo_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(24, ballastInfo_.get(i));
+      }
+      if (!getSeaWaterDensityBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, seaWaterDensity_);
       }
       if (!getSeaWaterDensityBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, seaWaterDensity_);

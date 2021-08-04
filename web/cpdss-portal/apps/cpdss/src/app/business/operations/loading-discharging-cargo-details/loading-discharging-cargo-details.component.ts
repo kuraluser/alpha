@@ -30,12 +30,13 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
   set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
     this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
     this._currentQuantitySelectedUnit = value;
+    this.cargoTankOptions.weightUnit = value;
   }
 
   cargoTanks: IShipCargoTank[][];
   cargoConditions: any = [];
   cargoQuantities: ICargoQuantities[];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, showFillingPercentage: true, weightField: 'quantity', showWeight: true, weightUnit: 'MT', commodityNameField: 'cargoAbbreviation', ullageField: 'rdgUllage', ullageUnit: 'CM', densityField: 'api' }
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, showFillingPercentage: true, weightField: 'actualWeight', showWeight: true, weightUnit: 'MT', commodityNameField: 'cargoAbbreviation', ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api' }
 
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
 

@@ -377,6 +377,28 @@ public final class CargoInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getCargoInfoById(
+        com.cpdss.common.generated.CargoInfo.CargoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoDetailReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetCargoInfoByIdMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getCargoInfosByCargoIds(
+        com.cpdss.common.generated.CargoInfo.CargoListRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetCargoInfosByCargoIdsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -497,6 +519,18 @@ public final class CargoInfoServiceGrpc {
         case METHODID_GET_CARGO_INFO_BY_PAGING:
           serviceImpl.getCargoInfoByPaging(
               (com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_CARGO_INFO_BY_ID:
+          serviceImpl.getCargoInfoById(
+              (com.cpdss.common.generated.CargoInfo.CargoRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoDetailReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_CARGO_INFOS_BY_CARGO_IDS:
+          serviceImpl.getCargoInfosByCargoIds(
+              (com.cpdss.common.generated.CargoInfo.CargoListRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>)
                   responseObserver);
           break;

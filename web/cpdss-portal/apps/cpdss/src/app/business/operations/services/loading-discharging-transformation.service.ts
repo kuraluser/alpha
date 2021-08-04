@@ -71,6 +71,7 @@ export class LoadingDischargingTransformationService {
         'maxlength': 'LOADING_DISCHARGING_BERTH_ITEMS_TO_BE_AGREED_WITH_CHARACTER_LIMIT'
       },
       lineDisplacement: {
+        'required': 'LOADING_DISCHARGING_BERTH_LINE_DIPLACEMENT_MIN',
         'min': 'LOADING_DISCHARGING_BERTH_LINE_DIPLACEMENT_MIN',
         'max': 'LOADING_DISCHARGING_BERTH_LINE_DIPLACEMENT_MAX'
       }
@@ -84,24 +85,24 @@ export class LoadingDischargingTransformationService {
   * @return {*}
   * @memberof LoadingDischargingTransformationService
   */
-  setValidationMessageForLoadingRate() {
+  setValidationMessageForLoadingRate(unit: string = '') {
     return {
       maxLoadingRate: {
         'required': 'LOADING_RATE_REQUIRED',
         'failedCompare': 'MAX_LOADING_COMPARE',
-        'min': 'MAX_LOADING_MIN',
-        'max': 'MAX_LOADING_MAX'
+        'min': `MIN_LOADING_RATE_MAX_${unit}`,
+        'max': `MAX_LOADING_RATE_MAX_${unit}`
       },
       shoreLoadingRate: {
-        'required': 'LOADING_RATE_REQUIRED',
-        'min': 'MAX_LOADING_MIN',
-        'max': 'MAX_LOADING_MAX'
+        'required': `MIN_SHORE_LOADING_RATE_${unit}`,
+        'min': `MIN_SHORE_LOADING_RATE_${unit}`,
+        'max': `MAX_SHORE_LOADING_RATE_${unit}`
       },
       minLoadingRate: {
         'required': 'LOADING_RATE_REQUIRED',
         'failedCompare': 'MIN_LOADING_COMPARE',
-        'min': 'MIN_LOADING_MIN',
-        'max': 'MIN_LOADING_MAX'
+        'min': `MIN_LOADING_RATE_MIN_${unit}`,
+        'max': `MAX_LOADING_RATE_MIN_${unit}`
       },
       minDeBallastingRate: {
         'required': 'LOADING_RATE_REQUIRED',
@@ -114,10 +115,14 @@ export class LoadingDischargingTransformationService {
         'max': "MAX_DEBALLAST_MAXIMUM"
       },
       noticeTimeRateReduction: {
-        'required': 'LOADING_RATE_REQUIRED'
+        'required': 'LOADING_RATE_REQUIRED',
+        'min': 'LOADING_RATE_MIN_NOTICE_TIME_RATE_REDUCTION',
+        'max': 'LOADING_RATE_MAX_NOTICE_TIME_RATE_REDUCTION'
       },
       noticeTimeStopLoading: {
-        'required': 'LOADING_RATE_REQUIRED'
+        'required': 'LOADING_RATE_REQUIRED',
+        'min': 'LOADING_RATE_MIN_NOTICE_TIME_RATE_STOP',
+        'max': 'LOADING_RATE_MAX_NOTICE_TIME_RATE_STOP'
       }
     }
   }
@@ -214,7 +219,8 @@ export class LoadingDischargingTransformationService {
     let hourDuration = (loadingDischargingDelay.duration / 60).toString();
     hourDuration = hourDuration.includes('.') ? hourDuration.split('.')[0] : hourDuration;
     hourDuration = Number(hourDuration) < 10 ? ('0' + hourDuration) : hourDuration
-    const minuteDuration = loadingDischargingDelay.duration % 60;
+    const minute = loadingDischargingDelay.duration % 60;
+    const minuteDuration = minute <= 0 ?  '0' + minute : minute;
     _loadingDischargingDelay.duration = new ValueObject<string>(hourDuration + ':' + minuteDuration, true, isNewValue, false, true);
     _loadingDischargingDelay.quantity = loadingDischargingDelay.quantity;
     _loadingDischargingDelay.colorCode = cargoObj?.colorCode;
