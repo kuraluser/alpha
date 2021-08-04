@@ -1092,6 +1092,11 @@ public class LoadablePatternService {
           lsCommunicationStatus.setMessageType(MessageTypes.LOADABLESTUDY.getMessageType());
           lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
           this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
+          updateProcessIdForLoadableStudy(
+              "", loadableStudyOpt.get(), LOADABLE_STUDY_PROCESSING_STARTED_ID);
+
+          loadableStudyRepository.updateLoadableStudyStatus(
+              LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
         } else {
           getAlgoCall(replyBuilder, loadableStudyOpt, loadableStudy);
         }
