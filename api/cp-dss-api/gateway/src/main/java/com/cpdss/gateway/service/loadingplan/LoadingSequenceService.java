@@ -193,7 +193,12 @@ public class LoadingSequenceService {
     }
 
     this.updateCargoLoadingRateIntervals(cargoLoadingRates, stageTickPositions);
-
+    this.buildStabilityParamSequence(reply, portEta, stabilityParams);
+    this.buildFlowRates(loadingRates, vesselTanks, portEta, response);
+    this.buildCargoTankCategories(reply, vesselTanks, response);
+    this.buildBallastTankCategories(reply, vesselTanks, response);
+    this.buildBallastPumpCategories(vesselId, response);
+    
     response.setCargos(cargos);
     response.setBallasts(ballasts);
     response.setBallastPumps(ballastPumps);
@@ -201,16 +206,6 @@ public class LoadingSequenceService {
     response.setCargoLoadingRates(cargoLoadingRates);
     response.setStageTickPositions(stageTickPositions);
     response.setStabilityParams(stabilityParams);
-
-    this.buildStabilityParamSequence(reply, portEta, stabilityParams);
-
-    this.buildFlowRates(loadingRates, vesselTanks, portEta, response);
-
-    this.buildCargoTankCategories(reply, vesselTanks, response);
-
-    this.buildBallastTankCategories(reply, vesselTanks, response);
-
-    this.buildBallastPumpCategories(vesselId, response);
   }
 
   private void updateCargoLoadingRateIntervals(

@@ -599,7 +599,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setMinTolerence(lqcd.getMinTolerence());
       cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());
       cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
-      cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
+      cargoDetails.setOrderedQuantity(lqcd.getOrderQuantity());
 
       cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
       cargoDetails.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
