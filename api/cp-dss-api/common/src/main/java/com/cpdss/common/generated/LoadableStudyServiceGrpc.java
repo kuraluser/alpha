@@ -5352,168 +5352,6 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
-
-    /** */
-    public void saveAlgoErrors(
-        com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getSaveAlgoErrorsMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void fetchAllAlgoErrors(
-        com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getFetchAllAlgoErrorsMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getCargoHistoryByCargo(
-        com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LatestCargoReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetCargoHistoryByCargoMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getActiveVoyagesByVessel(
-        com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ActiveVoyage>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetActiveVoyagesByVesselMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getSynopticDataForLoadingPlan(
-        com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetSynopticDataForLoadingPlanMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void saveLoadingInfoToSynopticData(
-        com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getSaveLoadingInfoToSynopticDataMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getOrSaveRulesForLoadableStudy(
-        com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetOrSaveRulesForLoadableStudyMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getLoadablePatternDetailsJson(
-        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetLoadablePatternDetailsJsonMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getLoadablePatternByVoyageAndStatus(
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetLoadablePatternByVoyageAndStatusMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getCargoNominationByCargoNominationId(
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetCargoNominationByCargoNominationIdMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getLoadableCommingleByPatternId(
-        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetLoadableCommingleByPatternIdMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getLoadableStudyShore(
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetLoadableStudyShoreMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getLoadableStudyPortRotationByPortRotationId(
-        com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel()
-              .newCall(getGetLoadableStudyPortRotationByPortRotationIdMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getLoadableStudyShoreTwo(
-        com.cpdss.common.generated.LoadableStudy.UllageBillRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.UllageBillReply>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetLoadableStudyShoreTwoMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
   }
 
   /** */
@@ -5713,7 +5551,7 @@ public final class LoadableStudyServiceGrpc {
     public com.cpdss.common.generated.LoadableStudy.AlgoReply generateLoadablePatterns(
         com.cpdss.common.generated.LoadableStudy.AlgoRequest request) {
       return blockingUnaryCall(
-          getChannel(), getValidateLoadablePlanMethod(), getCallOptions(), request);
+          getChannel(), getGenerateLoadablePatternsMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -5913,117 +5751,6 @@ public final class LoadableStudyServiceGrpc {
     public com.cpdss.common.generated.LoadableStudy.StatusReply saveJson(
         com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
       return blockingUnaryCall(getChannel(), getSaveJsonMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.AlgoErrors saveAlgoErrors(
-        com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
-      return blockingUnaryCall(getChannel(), getSaveAlgoErrorsMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.AlgoErrors fetchAllAlgoErrors(
-        com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
-      return blockingUnaryCall(
-          getChannel(), getFetchAllAlgoErrorsMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.LatestCargoReply getCargoHistoryByCargo(
-        com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getGetCargoHistoryByCargoMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.ActiveVoyage getActiveVoyagesByVessel(
-        com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getGetActiveVoyagesByVesselMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse
-        getSynopticDataForLoadingPlan(
-            com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getGetSynopticDataForLoadingPlanMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.Common.ResponseStatus saveLoadingInfoToSynopticData(
-        com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getSaveLoadingInfoToSynopticDataMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadableRuleReply
-        getOrSaveRulesForLoadableStudy(
-            com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getGetOrSaveRulesForLoadableStudyMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson
-        getLoadablePatternDetailsJson(
-            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getGetLoadablePatternDetailsJsonMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply
-        getLoadablePatternByVoyageAndStatus(
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getGetLoadablePatternByVoyageAndStatusMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply
-        getCargoNominationByCargoNominationId(
-            com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
-      return blockingUnaryCall(
-          getChannel(),
-          getGetCargoNominationByCargoNominationIdMethod(),
-          getCallOptions(),
-          request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply
-        getLoadableCommingleByPatternId(
-            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getGetLoadableCommingleByPatternIdMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse
-        getLoadableStudyShore(
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getGetLoadableStudyShoreMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply
-        getLoadableStudyPortRotationByPortRotationId(
-            com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return blockingUnaryCall(
-          getChannel(),
-          getGetLoadableStudyPortRotationByPortRotationIdMethod(),
-          getCallOptions(),
-          request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.UllageBillReply getLoadableStudyShoreTwo(
-        com.cpdss.common.generated.LoadableStudy.UllageBillRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getGetLoadableStudyShoreTwoMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -6746,138 +6473,6 @@ public final class LoadableStudyServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetLoadableStudyShoreTwoMethod(), getCallOptions()), request);
     }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.AlgoErrors>
-        saveAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
-      return futureUnaryCall(
-          getChannel().newCall(getSaveAlgoErrorsMethod(), getCallOptions()), request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.AlgoErrors>
-        fetchAllAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
-      return futureUnaryCall(
-          getChannel().newCall(getFetchAllAlgoErrorsMethod(), getCallOptions()), request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LatestCargoReply>
-        getCargoHistoryByCargo(
-            com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetCargoHistoryByCargoMethod(), getCallOptions()), request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.ActiveVoyage>
-        getActiveVoyagesByVessel(com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetActiveVoyagesByVesselMethod(), getCallOptions()), request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
-        getSynopticDataForLoadingPlan(
-            com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetSynopticDataForLoadingPlanMethod(), getCallOptions()),
-          request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.Common.ResponseStatus>
-        saveLoadingInfoToSynopticData(
-            com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getSaveLoadingInfoToSynopticDataMethod(), getCallOptions()),
-          request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>
-        getOrSaveRulesForLoadableStudy(
-            com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetOrSaveRulesForLoadableStudyMethod(), getCallOptions()),
-          request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson>
-        getLoadablePatternDetailsJson(
-            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetLoadablePatternDetailsJsonMethod(), getCallOptions()),
-          request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply>
-        getLoadablePatternByVoyageAndStatus(
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetLoadablePatternByVoyageAndStatusMethod(), getCallOptions()),
-          request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply>
-        getCargoNominationByCargoNominationId(
-            com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetCargoNominationByCargoNominationIdMethod(), getCallOptions()),
-          request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
-        getLoadableCommingleByPatternId(
-            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetLoadableCommingleByPatternIdMethod(), getCallOptions()),
-          request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
-        getLoadableStudyShore(
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetLoadableStudyShoreMethod(), getCallOptions()), request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>
-        getLoadableStudyPortRotationByPortRotationId(
-            com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return futureUnaryCall(
-          getChannel()
-              .newCall(getGetLoadableStudyPortRotationByPortRotationIdMethod(), getCallOptions()),
-          request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.UllageBillReply>
-        getLoadableStudyShoreTwo(
-            com.cpdss.common.generated.LoadableStudy.UllageBillRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetLoadableStudyShoreTwoMethod(), getCallOptions()), request);
-    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -7153,12 +6748,6 @@ public final class LoadableStudyServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>)
                   responseObserver);
           break;
-        case METHODID_VALIDATE_LOADABLE_PLAN:
-          serviceImpl.validateLoadablePlan(
-              (com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>)
-                  responseObserver);
-          break;
         case METHODID_GET_LOADABLE_PATTERN_LIST:
           serviceImpl.getLoadablePatternList(
               (com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest) request,
@@ -7206,12 +6795,6 @@ public final class LoadableStudyServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>)
                   responseObserver);
           break;
-        case METHODID_SAVE_PATTERN_VALIDATE_RESULT:
-          serviceImpl.savePatternValidateResult(
-              (com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>)
-                  responseObserver);
-          break;
         case METHODID_SAVE_SYNOPTICAL_TABLE:
           serviceImpl.saveSynopticalTable(
               (com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) request,
@@ -7235,13 +6818,6 @@ public final class LoadableStudyServiceGrpc {
           break;
         case METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID:
           serviceImpl.getSynopticalPortDataByPortId(
-              (com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>)
-                  responseObserver);
-          break;
-        case METHODID_GET_SYNOPTIC_DATA_BY_LOADABLE_STUDY_ID:
-          serviceImpl.getSynopticDataByLoadableStudyId(
               (com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>)
@@ -7330,19 +6906,6 @@ public final class LoadableStudyServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>)
                   responseObserver);
           break;
-        case METHODID_GET_LOADABLE_PLAN_REPORT:
-          serviceImpl.getLoadablePlanReport(
-              (com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>)
-                  responseObserver);
-          break;
-        case METHODID_GET_ALGO_ERRORS:
-          serviceImpl.getAlgoErrors(
-              (com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>)
-                  responseObserver);
-          break;
         case METHODID_SAVE_VOYAGE_STATUS:
           serviceImpl.saveVoyageStatus(
               (com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest) request,
@@ -7368,100 +6931,6 @@ public final class LoadableStudyServiceGrpc {
           serviceImpl.saveJson(
               (com.cpdss.common.generated.LoadableStudy.JsonRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.StatusReply>)
-                  responseObserver);
-          break;
-        case METHODID_SAVE_ALGO_ERRORS:
-          serviceImpl.saveAlgoErrors(
-              (com.cpdss.common.generated.LoadableStudy.AlgoErrors) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>)
-                  responseObserver);
-          break;
-        case METHODID_FETCH_ALL_ALGO_ERRORS:
-          serviceImpl.fetchAllAlgoErrors(
-              (com.cpdss.common.generated.LoadableStudy.AlgoErrors) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors>)
-                  responseObserver);
-          break;
-        case METHODID_GET_CARGO_HISTORY_BY_CARGO:
-          serviceImpl.getCargoHistoryByCargo(
-              (com.cpdss.common.generated.LoadableStudy.LatestCargoRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LatestCargoReply>)
-                  responseObserver);
-          break;
-        case METHODID_GET_ACTIVE_VOYAGES_BY_VESSEL:
-          serviceImpl.getActiveVoyagesByVessel(
-              (com.cpdss.common.generated.LoadableStudy.VoyageRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ActiveVoyage>)
-                  responseObserver);
-          break;
-        case METHODID_GET_SYNOPTIC_DATA_FOR_LOADING_PLAN:
-          serviceImpl.getSynopticDataForLoadingPlan(
-              (com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>)
-                  responseObserver);
-          break;
-        case METHODID_SAVE_LOADING_INFO_TO_SYNOPTIC_DATA:
-          serviceImpl.saveLoadingInfoToSynopticData(
-              (com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
-                  responseObserver);
-          break;
-        case METHODID_GET_OR_SAVE_RULES_FOR_LOADABLE_STUDY:
-          serviceImpl.getOrSaveRulesForLoadableStudy(
-              (com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>)
-                  responseObserver);
-          break;
-        case METHODID_GET_LOADABLE_PATTERN_DETAILS_JSON:
-          serviceImpl.getLoadablePatternDetailsJson(
-              (com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson>)
-                  responseObserver);
-          break;
-        case METHODID_GET_LOADABLE_PATTERN_BY_VOYAGE_AND_STATUS:
-          serviceImpl.getLoadablePatternByVoyageAndStatus(
-              (com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply>)
-                  responseObserver);
-          break;
-        case METHODID_GET_CARGO_NOMINATION_BY_CARGO_NOMINATION_ID:
-          serviceImpl.getCargoNominationByCargoNominationId(
-              (com.cpdss.common.generated.LoadableStudy.CargoNominationRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply>)
-                  responseObserver);
-          break;
-        case METHODID_GET_LOADABLE_COMMINGLE_BY_PATTERN_ID:
-          serviceImpl.getLoadableCommingleByPatternId(
-              (com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>)
-                  responseObserver);
-          break;
-        case METHODID_GET_LOADABLE_STUDY_SHORE:
-          serviceImpl.getLoadableStudyShore(
-              (com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>)
-                  responseObserver);
-          break;
-        case METHODID_GET_LOADABLE_STUDY_PORT_ROTATION_BY_PORT_ROTATION_ID:
-          serviceImpl.getLoadableStudyPortRotationByPortRotationId(
-              (com.cpdss.common.generated.LoadableStudy.PortRotationRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>)
-                  responseObserver);
-          break;
-        case METHODID_GET_LOADABLE_STUDY_SHORE_TWO:
-          serviceImpl.getLoadableStudyShoreTwo(
-              (com.cpdss.common.generated.LoadableStudy.UllageBillRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.UllageBillReply>)
                   responseObserver);
           break;
         case METHODID_SAVE_ALGO_ERRORS:

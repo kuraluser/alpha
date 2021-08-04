@@ -693,8 +693,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                   cargoToDisable.setIsActive(false);
                   cargoNominationsToSave.add(cargoToDisable);
                 });
-            if (cargoNominations.isEmpty() && !dbCargos.isEmpty()) {
-              dbCargos.forEach(
+            if (cargoNominations.isEmpty() && !cargosForPort.isEmpty()) {
+              cargosForPort.forEach(
                   dbCargo -> {
                     dbCargo.setIsActive(false);
                   });
