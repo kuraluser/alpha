@@ -755,39 +755,6 @@ public final class PortInfoServiceGrpc {
           request,
           responseObserver);
     }
-
-    /** */
-    public void getBerthDetailsByPortId(
-        com.cpdss.common.generated.PortInfo.PortIdRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.BerthInfoResponse>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetBerthDetailsByPortIdMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getCargoInfoByPortIds(
-        com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoInfos>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetCargoInfoByPortIdsMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
-    public void getLoadingPlanBerthData(
-        com.cpdss.common.generated.PortInfo.BerthIdsRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetLoadingPlanBerthDataMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
   }
 
   /** */
@@ -1017,25 +984,6 @@ public final class PortInfoServiceGrpc {
           serviceImpl.getPortInfoByPaging(
               (com.cpdss.common.generated.PortInfo.PortRequestWithPaging) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>)
-                  responseObserver);
-          break;
-        case METHODID_GET_BERTH_DETAILS_BY_PORT_ID:
-          serviceImpl.getBerthDetailsByPortId(
-              (com.cpdss.common.generated.PortInfo.PortIdRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.BerthInfoResponse>)
-                  responseObserver);
-          break;
-        case METHODID_GET_CARGO_INFO_BY_PORT_IDS:
-          serviceImpl.getCargoInfoByPortIds(
-              (com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoInfos>)
-                  responseObserver);
-          break;
-        case METHODID_GET_LOADING_PLAN_BERTH_DATA:
-          serviceImpl.getLoadingPlanBerthData(
-              (com.cpdss.common.generated.PortInfo.BerthIdsRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData>)
                   responseObserver);
           break;
         case METHODID_GET_BERTH_DETAILS_BY_PORT_ID:
