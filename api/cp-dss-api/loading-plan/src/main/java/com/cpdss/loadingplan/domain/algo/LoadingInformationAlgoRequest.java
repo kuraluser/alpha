@@ -11,6 +11,8 @@ import lombok.Data;
 public class LoadingInformationAlgoRequest {
 
   private String module = LoadingPlanConstants.LOADING_INFORMATION_REQUEST_JSON_MODULE_NAME;
+  private Long vesselId;
+  private Long voyageId;
   private Long portId;
   private List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails;
   private LoadingInformation loadingInformation;

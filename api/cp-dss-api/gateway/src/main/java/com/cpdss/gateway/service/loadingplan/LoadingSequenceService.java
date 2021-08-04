@@ -198,7 +198,7 @@ public class LoadingSequenceService {
     this.buildCargoTankCategories(reply, vesselTanks, response);
     this.buildBallastTankCategories(reply, vesselTanks, response);
     this.buildBallastPumpCategories(vesselId, response);
-    
+
     response.setCargos(cargos);
     response.setBallasts(ballasts);
     response.setBallastPumps(ballastPumps);
