@@ -604,16 +604,14 @@ public class LoadableStudyPortRotationService {
                 .setMessage(INVALID_LOADABLE_STUDY_ID)
                 .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
       } else {
-        List<Long> portIds =
-            ports.stream().map(LoadableStudyPortRotation::getPortXId).collect(Collectors.toList());
+        List<Long> lsprIds =
+            ports.stream().map(LoadableStudyPortRotation::getId).collect(Collectors.toList());
         Map<Long, List<BackLoading>> backloadingDataByportIds =
-            backLoadingService.getBackloadingDataByportIds(request.getLoadableStudyId(), portIds);
+            backLoadingService.getBackloadingDataByportIds(request.getLoadableStudyId(), lsprIds);
         Map<Long, List<DischargeStudyPortInstruction>> instructionsForThePort =
-            portInstructionService.getPortWiseInstructions(request.getLoadableStudyId(), portIds);
+            portInstructionService.getPortWiseInstructions(request.getLoadableStudyId(), lsprIds);
         Map<Long, DischargeStudyCowDetail> cowDetails =
-            cowDetailService.getCowDetailForThePort(
-                request.getLoadableStudyId(),
-                ports.stream().map(LoadableStudyPortRotation::getId).collect(Collectors.toList()));
+            cowDetailService.getCowDetailForThePort(request.getLoadableStudyId(), lsprIds);
 
         ports.forEach(
             port -> {
@@ -624,19 +622,19 @@ public class LoadableStudyPortRotationService {
               builder.setMaxDraft(String.valueOf(port.getMaxDraft()));
               if (port.getIsbackloadingEnabled() != null) {
                 builder.setIsBackLoadingEnabled(port.getIsbackloadingEnabled());
-                if (backloadingDataByportIds.get(port.getPortXId()) != null) {
+                if (backloadingDataByportIds.get(port.getId()) != null) {
                   backloadingDataByportIds
-                      .get(port.getPortXId())
+                      .get(port.getId())
                       .forEach(
                           backLoading -> {
                             builder.addBackLoading(buildBackloading(backLoading));
                           });
                 }
               }
-              if (instructionsForThePort.get(port.getPortXId()) != null) {
+              if (instructionsForThePort.get(port.getId()) != null) {
                 builder.addAllInstructionId(
-                    instructionsForThePort.get(port.getPortXId()).stream()
-                        .map(DischargeStudyPortInstruction::getId)
+                    instructionsForThePort.get(port.getId()).stream()
+                        .map(DischargeStudyPortInstruction::getPortInstructionId)
                         .collect(Collectors.toList()));
               }
               if (cowDetails.get(port.getId()) != null) {
