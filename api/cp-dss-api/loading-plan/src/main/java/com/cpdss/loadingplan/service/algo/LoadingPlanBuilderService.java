@@ -191,6 +191,7 @@ public class LoadingPlanBuilderService {
             ? null
             : new BigDecimal(loadingRate.getLoadingRate()));
     cargoLoadingRate.setTankXId(loadingRate.getTankId());
+    cargoLoadingRate.setLoadingSequence(loadingSequence);
   }
 
   public void buildPortBallast(

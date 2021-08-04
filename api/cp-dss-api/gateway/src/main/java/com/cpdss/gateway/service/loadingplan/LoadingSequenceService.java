@@ -14,6 +14,7 @@ import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.VesselInfo.PumpType;
 import com.cpdss.common.generated.VesselInfo.VesselIdRequest;
+import com.cpdss.common.generated.VesselInfo.VesselPump;
 import com.cpdss.common.generated.VesselInfo.VesselPumpsResponse;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
@@ -585,15 +586,27 @@ public class LoadingSequenceService {
   }
 
   public void buildLoadingPlanSaveRequest(
-      LoadingPlanAlgoRequest loadingPlanAlgoRequest, Long loadingInfoId, Builder builder) {
+      LoadingPlanAlgoRequest loadingPlanAlgoRequest,
+      Long vesselId,
+      Long loadingInfoId,
+      Builder builder) {
     builder.setLoadingInfoId(loadingInfoId);
     AtomicInteger sequenceNumber = new AtomicInteger(0);
+    VesselIdRequest.Builder vesselReqBuilder = VesselIdRequest.newBuilder();
+    vesselReqBuilder.setVesselId(vesselId);
+    VesselPumpsResponse pumpsResponse =
+        vesselInfoGrpcService.getVesselPumpsByVesselId(vesselReqBuilder.build());
+    Optional.ofNullable(loadingPlanAlgoRequest.getProcessId()).ifPresent(builder::setProcessId);
+    if (!pumpsResponse.getResponseStatus().getStatus().equals(GatewayConstants.SUCCESS)) {
+      log.error("Failed to fetch Vessel Pumps from Vessel Info MS of vessel {}", vesselId);
+    }
     if (loadingPlanAlgoRequest.getEvents() != null) {
       loadingPlanAlgoRequest
           .getEvents()
           .forEach(
               event -> {
-                this.buildSequences(event, sequenceNumber, builder);
+                this.buildSequences(
+                    event, sequenceNumber, pumpsResponse.getVesselPumpList(), builder);
               });
     }
 
@@ -709,7 +722,8 @@ public class LoadingSequenceService {
             });
   }
 
-  private void buildSequences(Event event, AtomicInteger sequenceNumber, Builder builder) {
+  private void buildSequences(
+      Event event, AtomicInteger sequenceNumber, List<VesselPump> pumps, Builder builder) {
     event
         .getSequence()
         .forEach(
@@ -722,7 +736,7 @@ public class LoadingSequenceService {
               if (sequence.getStageWiseCargoLoadingRates().size() > 1)
                 Optional.ofNullable(sequence.getStageWiseCargoLoadingRates().get("1"))
                     .ifPresent(sequenceBuilder::setCargoLoadingRate2);
-              this.buildBallastOperations(sequence.getBallast(), sequenceBuilder);
+              this.buildBallastOperations(sequence.getBallast(), pumps, sequenceBuilder);
               this.buildDeballastingRates(sequence.getDeballastingRates(), sequenceBuilder);
               this.buildLoadingRates(sequence.getTankWiseCargoLoadingRates(), sequenceBuilder);
               this.buildLoadingPlanPortWiseDetails(
@@ -885,6 +899,37 @@ public class LoadingSequenceService {
 
   private void buildBallastOperations(
       Map<String, List<Pump>> ballasts,
+      List<VesselPump> pumps,
       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
-          sequenceBuilder) {}
+          sequenceBuilder) {
+    if (ballasts != null) {
+      for (Entry<String, List<Pump>> entry : ballasts.entrySet()) {
+        long pumpId = 0;
+        if (entry.getKey().equalsIgnoreCase("Gravity")) {
+          pumpId = 0;
+        } else {
+          pumpId = Long.valueOf(entry.getKey());
+        }
+
+        if (entry.getValue() != null) {
+          for (Pump ballastOperation : entry.getValue()) {
+            PumpOperation.Builder builder = PumpOperation.newBuilder();
+            Optional.ofNullable(ballastOperation.getQuantityM3())
+                .ifPresent(quantityM3 -> builder.setQuantityM3(quantityM3));
+            Optional.ofNullable(ballastOperation.getRate())
+                .ifPresent(rate -> builder.setRate(rate));
+            Optional.ofNullable(ballastOperation.getTimeEnd())
+                .ifPresent(timeEnd -> builder.setEndTime(Integer.valueOf(timeEnd)));
+            Optional.ofNullable(ballastOperation.getTimeStart())
+                .ifPresent(timeStart -> builder.setStartTime(Integer.valueOf(timeStart)));
+            builder.setPumpXId(pumpId);
+            Optional<VesselPump> vesselPumpOpt =
+                pumps.stream().filter(pump -> pump.getId() == builder.getPumpXId()).findFirst();
+            vesselPumpOpt.ifPresent(vesselPump -> builder.setPumpName(vesselPump.getPumpName()));
+            sequenceBuilder.addBallastOperations(builder.build());
+          }
+        }
+      }
+    }
+  }
 }

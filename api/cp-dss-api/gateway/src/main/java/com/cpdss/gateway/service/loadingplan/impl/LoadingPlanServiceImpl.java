@@ -361,7 +361,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     } catch (JsonProcessingException e) {
       log.error("Exception encountered when processing Loading Information Response JSON");
     }
-    loadingSequenceService.buildLoadingPlanSaveRequest((LoadingPlanAlgoRequest) loadingPlanAlgoRequest, infoId, builder);
+    loadingSequenceService.buildLoadingPlanSaveRequest(
+        (LoadingPlanAlgoRequest) loadingPlanAlgoRequest, vesselId, infoId, builder);
     LoadingPlanSaveResponse response = loadingPlanGrpcService.saveLoadingPlan(builder.build());
     if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error("Exception occured when saving loading plan");

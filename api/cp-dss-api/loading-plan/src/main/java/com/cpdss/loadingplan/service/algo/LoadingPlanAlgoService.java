@@ -146,7 +146,7 @@ public class LoadingPlanAlgoService {
     }
     loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
     loadingInformationRepository.save(loadingInfoOpt.get());
-    updateLoadingInformationAlgoStatus(
+    createLoadingInformationAlgoStatus(
         loadingInfoOpt.get(), response.getProcessId(), loadingInfoStatusOpt.get());
   }
 
@@ -172,7 +172,7 @@ public class LoadingPlanAlgoService {
    * @param processId
    * @param status
    */
-  public void updateLoadingInformationAlgoStatus(
+  public void createLoadingInformationAlgoStatus(
       LoadingInformation loadingInformation, String processId, LoadingInformationStatus status) {
     LoadingInformationAlgoStatus algoStatus = new LoadingInformationAlgoStatus();
     algoStatus.setIsActive(true);
@@ -281,6 +281,26 @@ public class LoadingPlanAlgoService {
     }
     loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
     loadingInformationRepository.save(loadingInfoOpt.get());
+    updateLoadingInfoAlgoStatus(
+        loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+  }
+
+  private void updateLoadingInfoAlgoStatus(
+      LoadingInformation loadingInformation,
+      String processId,
+      LoadingInformationStatus loadingInformationStatus)
+      throws GenericServiceException {
+    Optional<LoadingInformationAlgoStatus> algoStatus =
+        this.loadingInfoAlgoStatusRepository.findByProcessIdAndIsActiveTrue(processId);
+    if (algoStatus.isEmpty()) {
+      throw new GenericServiceException(
+          "Could not find loading information algo status with process id " + processId,
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    algoStatus.get().setLoadingInformationStatus(loadingInformationStatus);
+    this.loadingInfoAlgoStatusRepository.save(algoStatus.get());
   }
 
   private void deleteLoadingSequenceStabilityParams(

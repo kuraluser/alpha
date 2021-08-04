@@ -9,7 +9,6 @@ import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
-import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 
