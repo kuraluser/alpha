@@ -1,7 +1,7 @@
 
     <form [formGroup]="dischargeStudyForm">
         <div class="row">
-            <div class="col text-right btn-position"><button (click)="saveDischargeStudy()" [disabled]="!editMode" class="btn btn-main">{{'DISCHARGE_STUDY_SAVE'  | translate}}</button></div>
+            <div class="col text-right btn-position"><button (click)="saveDischargeStudy()" [disabled]="!editMode" class="btn btn-main btn-primary">{{'DISCHARGE_STUDY_SAVE'  | translate}}</button></div>
         </div>
         
         <div formArrayName="portDetails">

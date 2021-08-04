@@ -1464,3 +1464,21 @@ header{
     border-right:10px solid $body-bg;
   }
 }
+
+.btn{
+  &.btn-main.btn-primary{
+    border: 1px solid $login-btn!important;
+    background:  $login-btn!important;
+    color: $active-color;
+    &:hover{
+      color:$active-color!important;
+      background:  lighten($login-btn, 10%)!important;
+      
+    }
+    &:focus{
+      box-shadow: 0 0 0 2px rgba($login-btn, 0.25);
+      background:  $login-btn!important;
+      color: $active-color;
+    }
+  }
+}

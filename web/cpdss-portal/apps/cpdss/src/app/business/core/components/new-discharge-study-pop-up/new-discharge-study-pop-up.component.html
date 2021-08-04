@@ -1,15 +1,16 @@
-<p-dialog header="{{popUpHeader |translate}}" [(visible)]="display"  [draggable]="false"(onHide)="closeDialogue()" >
+<p-dialog header="{{popUpHeader |translate}}" [(visible)]="display"  [draggable]="false" [closable]="false"  (onHide)="closeDialogue()"  styleClass="discharge-study-pop-up">
     <form [formGroup]="dischargeStudyForm" id="fg_dischargeStudy" *ngIf="dischargeStudyForm" (submit)="saveOrUpdateDischargeStudy()">
         <div class="container-fluid">
             <div class="row form-group">
-                <div class="col col-form-label">{{'NEW_DISCHARGE_STUDY_POPUP_NAME' | translate}}</div>
-                <div class="col">
+                <div class="col">{{'NEW_DISCHARGE_STUDY_POPUP_NAME' | translate}}</div>
+                <div class="col error-icon-wrapper">
                     <input type="text" class="form-control" type="text" id="txt_enquiryDetails"
                         formControlName="newDischargeStudyName" focusTrap autofocus />
-                </div>
-                <cpdss-portal-validation-error [errors]="fieldError('newDischargeStudyName')"
+                        <cpdss-portal-validation-error [errors]="fieldError('newDischargeStudyName')"
                     [errorMessages]="errorMessages.newDischargeStudyName">
                 </cpdss-portal-validation-error>
+                </div>
+                
             </div>
             <div class="row form-group">
                 <div class="col col-form-label">{{'NEW_DISCHARGE_STUDY_POPUP_ENQUIRY_DETAILS' | translate}}</div>
