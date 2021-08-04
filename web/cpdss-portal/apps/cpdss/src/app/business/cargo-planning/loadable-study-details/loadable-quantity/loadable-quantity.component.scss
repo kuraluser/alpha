@@ -29,3 +29,15 @@
 .error-container{
     max-width: 410px;
 }
+
+.border-head {
+    border-top: 1px solid #bebebe!important;
+}
+
+.second-column-lq {
+    margin-top: -1px;
+    div:first-child {
+        padding-top: 0;
+        padding-bottom: 4px;
+    }
+}
