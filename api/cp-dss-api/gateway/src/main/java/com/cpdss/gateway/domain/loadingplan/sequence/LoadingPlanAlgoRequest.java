@@ -11,6 +11,7 @@ import lombok.Data;
 @JsonInclude(Include.NON_EMPTY)
 public class LoadingPlanAlgoRequest {
 
+  private String processId;
   private List<Event> events;
   private Map<String, LoadingPlan> plans;
 

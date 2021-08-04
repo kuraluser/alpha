@@ -399,12 +399,13 @@ message LoadingPlanRuleReply{
 }
 message LoadingPlanSaveRequest {
   int64 loadingInfoId = 1;
-  repeated LoadingSequence loadingSequences = 2;
-  repeated LoadingPlanTankDetails portLoadingPlanStowageDetails = 3;
-  repeated LoadingPlanTankDetails portLoadingPlanBallastDetails = 4;
-  repeated LoadingPlanTankDetails portLoadingPlanRobDetails = 5;
-  repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 6;
-  repeated LoadingPlanStabilityParameters loadingSequenceStabilityParameters = 7;
+  string processId = 2;
+  repeated LoadingSequence loadingSequences = 3;
+  repeated LoadingPlanTankDetails portLoadingPlanStowageDetails = 4;
+  repeated LoadingPlanTankDetails portLoadingPlanBallastDetails = 5;
+  repeated LoadingPlanTankDetails portLoadingPlanRobDetails = 6;
+  repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 7;
+  repeated LoadingPlanStabilityParameters loadingSequenceStabilityParameters = 8;
 }
 
 message LoadingSequence {
