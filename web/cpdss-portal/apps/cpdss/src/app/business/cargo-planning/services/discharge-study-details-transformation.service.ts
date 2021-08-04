@@ -58,20 +58,21 @@ export class DischargeStudyDetailsTransformationService {
   */
   public getBFTableColumns(): IDataTableColumn[] {
     return [
-      { field: '', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_SL' , fieldType: DATATABLE_FIELD_TYPE.SLNO},
+      { field: '', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_SL' , fieldType: DATATABLE_FIELD_TYPE.SLNO , fieldHeaderClass: 'column-sl'},
       {
         field: 'cargoColor',
         header: 'DISCHARGE_STUDY_DISCHARGE_COLOR_BACK_LOADING',
         fieldType: DATATABLE_FIELD_TYPE.COLORPICKER,
-        editable: false
+        editable: false,
+        fieldHeaderClass: 'column-color'
       },
       { field: 'cargoName', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_CARGO_NAME' },
-      { field: 'cargoAbbrevation', header: 'ABBREVIATION' },
+      { field: 'cargoAbbrevation', header: 'ABBREVIATION' , fieldHeaderClass: 'column-abbreviation' },
       { field: 'port', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_LOADING_PORT' },
-      { field: 'quantityBbls', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_BBLS' , numberType: 'quantity' , unit: QUANTITY_UNIT.BBLS , showTotal: true , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'quantityMt', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_MT' , numberType: 'quantity' , unit: QUANTITY_UNIT.MT, showTotal: true, fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'quantityKl', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_KL' , numberType: 'quantity' , unit: QUANTITY_UNIT.KL, showTotal: true, fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'api', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_API' , numberFormat: '1.2-2' , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
+      { field: 'quantityBbls', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_BBLS' , numberType: 'quantity' , unit: QUANTITY_UNIT.BBLS , showTotal: true , fieldType: DATATABLE_FIELD_TYPE.NUMBER , fieldHeaderClass: 'column-qty'},
+      { field: 'quantityMt', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_MT' , numberType: 'quantity' , unit: QUANTITY_UNIT.MT, showTotal: true, fieldType: DATATABLE_FIELD_TYPE.NUMBER , fieldHeaderClass: 'column-qty'},
+      { field: 'quantityKl', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_KL' , numberType: 'quantity' , unit: QUANTITY_UNIT.KL, showTotal: true, fieldType: DATATABLE_FIELD_TYPE.NUMBER , fieldHeaderClass: 'column-qty'},
+      { field: 'api', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_API' , numberFormat: '1.2-2' , fieldType: DATATABLE_FIELD_TYPE.NUMBER , fieldHeaderClass: 'column-api'},
       { field: 'temperature', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_TEMP', numberFormat: '1.2-2', fieldType: DATATABLE_FIELD_TYPE.NUMBER }
     ]
   }
@@ -1064,8 +1065,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       
       const unitConversion = {
         kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature , -1),
-        bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature, -1),
-        maxQuantity: this.quantityPipe.transform(cargoDetail.maxQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature , -1),
+        bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature, -1)
       }
       _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color , true , false);
       _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? (unitConversion.bbls ? unitConversion.bbls+'' : '0') : '-', true , false);
@@ -1073,7 +1073,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       _cargoDetailValuObject.kl = new ValueObject<string>(isKlEditable ? (unitConversion.kl ? unitConversion.kl+'' : '0'): '-', true , false , false , isKlEditable);
       _cargoDetailValuObject.id = new ValueObject<string>(cargoDetail.id+''),
 
-      _cargoDetailValuObject.maxKl = new ValueObject<number>(Number(unitConversion.maxQuantity), false , false);
+      _cargoDetailValuObject.maxKl = new ValueObject<number>(Number(cargoDetail.maxQuantity), false , false);
       _cargoDetailValuObject.mt = new ValueObject<string>(isKlEditable ? cargoDetail.quantity +'' : '-', true , false);
       _cargoDetailValuObject.mode = new ValueObject<IMode>(mode , true , false);
       _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true , false);

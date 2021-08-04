@@ -658,7 +658,7 @@
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + await getToken()
         }
-        const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/discharge-studies/${data?.dischargeStudyId}/loadable-pattern-status`, {
+        const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/discharge-studies/${data?.dischargeStudyId}/discharge-pattern-status`, {
           method: 'POST',
           body: JSON.stringify({ processId: data?.processId }),
           headers: headers

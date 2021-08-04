@@ -500,7 +500,12 @@ export class DischargeStudyComponent implements OnInit {
                     field.updateValueAndValidity();
                     field.markAsTouched();
                     field.markAsDirty();
-                    this.getFormControl(portIndex, key, itemIndex, innerKey)?.valid ? item[innerKey].isEditMode = false : item[innerKey].isEditMode = true;
+                    const mode = this.getFormControl(portIndex, key, itemIndex, 'mode');
+                    if(this.getFormControl(portIndex, key, itemIndex, innerKey)?.valid || (mode.value?.id === 1 && innerKey === 'kl')) {
+                      item[innerKey].isEditMode = false;
+                    } else {
+                      item[innerKey].isEditMode = true;
+                    }
                   }
                 }
               }
