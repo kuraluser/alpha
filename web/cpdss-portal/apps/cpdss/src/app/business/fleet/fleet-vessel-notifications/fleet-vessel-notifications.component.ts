@@ -1,3 +1,4 @@
+import { AppConfigurationService } from './../../../shared/services/app-configuration/app-configuration.service';
 import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
 import { TimeZoneTransformationService } from './../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
@@ -120,6 +121,7 @@ export class FleetVesselNotificationsComponent implements OnInit {
   searchKey: string;
   filteredDates: Date[];
   today = new Date();
+  dateFormat: string;
 
   constructor(
     private timeZoneTransformationService: TimeZoneTransformationService
@@ -127,6 +129,7 @@ export class FleetVesselNotificationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.initNotifications();
+    this.dateFormat = AppConfigurationService?.settings?.dateFormat;
   }
 
   /**

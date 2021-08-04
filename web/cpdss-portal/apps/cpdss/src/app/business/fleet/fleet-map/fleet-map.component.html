@@ -7,9 +7,9 @@
     </div>
     <div class="col">
       <div class="row">
-        <div class="col text-lead vessel-card-heading">{{'FLEET_POPUP_PORT_OF' | translate}} {{cardValues?.portName}}
+        <div class="col text-lead vessel-card-heading">
+          {{cardValues?.portOrder + '.'}} {{'FLEET_POPUP_PORT_OF' | translate}} {{cardValues?.portName}}
         </div>
-        <div class="pr-15">{{cardValues?.portOrder}}</div>
       </div>
       <div class="row">
         <div class="col">

@@ -7,10 +7,11 @@
         [(ngModel)]="searchKey">
     </div>
     <div class="calendar-f-w fleet-calendar">
+      <label for="fleet_date_range_filter">{{ 'CARGO_HISTORY_DATE_RANGE_LABEL' | translate }}</label>
       <p-calendar selectionMode="range" [showButtonBar]="true" [readonlyInput]="true" inputId="range"
         (onSelect)="onDateRangeSelect()" (onClearClick)="resetDateFilter()" dateFormat="dd-M-yy"
-        placeholder="{{ 'CARGO_HISTORY_DATE_RANGE_LABEL' | translate }}" id="fleet_date_range_filter"
-        [(ngModel)]="filteredDates" [maxDate]="today" #fleetNotificationDateRange ></p-calendar>
+        placeholder="{{ 'FLEET_DATE_RANGE_PLACEHOLDER' | translate }}" id="fleet_date_range_filter"
+        [(ngModel)]="filteredDates" [maxDate]="today" #fleetNotificationDateRange class="calendar"></p-calendar>
     </div>
   </div>
 
@@ -33,13 +34,13 @@
       </div>
       <div class="notification-details">
         <p class="main-head">{{vessel?.vesselName}} <span
-            class="pull-right text-medium">{{vessel.dateTime | momentFormat: 'DD-MMM-YYYY HH:mm'}} UTC</span></p>
-        <p class="text-medium">{{vessel?.status}}</p>
+            class="pull-right text-medium">{{vessel.dateTime | momentFormat: dateFormat}} UTC</span></p>
+        <p class="">{{vessel?.status}}</p>
       </div>
     </div>
     <div class="notification-item" *ngIf="currentNotifications?.length === 0">
       <div class="notification-details">
-        <p class="text-medium">No data found</p>
+        <p class="">No data found</p>
       </div>
     </div>
   </div>
@@ -50,7 +51,7 @@
       </div>
       <div class="notification-details">
         <p class="main-head">{{vessel?.vesselName}} <span
-            class="pull-right text-medium">{{vessel.dateTime | momentFormat: 'DD-MMM-YYYY HH:mm'}} UTC</span></p>
+            class="pull-right text-medium">{{vessel.dateTime | momentFormat: dateFormat}} UTC</span></p>
         <p class="text-medium">{{vessel?.status}}</p>
       </div>
     </div>
