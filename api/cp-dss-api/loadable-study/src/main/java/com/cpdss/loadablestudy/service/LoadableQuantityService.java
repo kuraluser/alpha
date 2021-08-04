@@ -130,12 +130,18 @@ public class LoadableQuantityService {
         log.info(
             "Loadable Quantity, Port Rotation Operation Type - {}",
             portRotation.getOperation().getId());
-        minDraftValue.add(portRotation.getMaxDraft());
+        if(portRotation.getMaxDraft() != null){
+          minDraftValue.add(portRotation.getMaxDraft());
+        }
         // minDraftValue.add(loadableStudy.get().getDraftMark());
         Optional<BigDecimal> minVal =
             minDraftValue.stream().min(Comparator.comparing(BigDecimal::doubleValue));
-        log.info("Minimum draft value among 2 {}", minVal.get());
-        draftRestriction1 = minVal.isPresent() ? String.valueOf(minVal.get()) : "";
+        if(minVal.isPresent()){
+          log.info("Minimum draft value among 2 {}", minVal.get());
+          draftRestriction1 =  String.valueOf(minVal.get());
+        } else {
+          draftRestriction1 = "";
+        }
         seaWaterDensity =
             portRotation.getSeaWaterDensity() != null
                 ? String.valueOf(portRotation.getSeaWaterDensity())
