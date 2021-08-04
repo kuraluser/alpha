@@ -10,7 +10,7 @@ ext{
     enableComm = System.getenv('ENABLE_COMM') ?: ""
     cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
     commTimeLimit = System.getenv('COMM_TIME_LIMIT')?:""
-    taskPort = System.getenv('TASK_PORT')?:""
+    schedulerTaskUrl = System.getenv('SCHEDULER_TASK_URL')?:""
 }
 
 appConfig {
@@ -34,7 +34,7 @@ appConfig {
           rollbackOnUpdateFailure = true
       }
       environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 
-	  'DB_PASSWORD': dbPassword, 'ATTACHMENT_ROOT_PATH': '/data', 'ALGO_BASE_URL': algoBaseURL, 'ENABLE_COMM': enableComm, 'CPDSS_BUILD_ENV': cpdssBuildEnv,'COMM_TIME_LIMIT':commTimeLimit,'TASK_PORT':taskPort]
+	  'DB_PASSWORD': dbPassword, 'ATTACHMENT_ROOT_PATH': '/data', 'ALGO_BASE_URL': algoBaseURL, 'ENABLE_COMM': enableComm, 'CPDSS_BUILD_ENV': cpdssBuildEnv,'COMM_TIME_LIMIT':commTimeLimit,'SCHEDULER_TASK_URL':schedulerTaskUrl]
   }
   javaMainClass = "com.cpdss.loadablestudy.Application"
   grpc = 'y'

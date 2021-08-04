@@ -130,15 +130,15 @@ public class LoadableQuantityService {
         log.info(
             "Loadable Quantity, Port Rotation Operation Type - {}",
             portRotation.getOperation().getId());
-        if(portRotation.getMaxDraft() != null){
+        if (portRotation.getMaxDraft() != null) {
           minDraftValue.add(portRotation.getMaxDraft());
         }
         // minDraftValue.add(loadableStudy.get().getDraftMark());
         Optional<BigDecimal> minVal =
             minDraftValue.stream().min(Comparator.comparing(BigDecimal::doubleValue));
-        if(minVal.isPresent()){
+        if (minVal.isPresent()) {
           log.info("Minimum draft value among 2 {}", minVal.get());
-          draftRestriction1 =  String.valueOf(minVal.get());
+          draftRestriction1 = String.valueOf(minVal.get());
         } else {
           draftRestriction1 = "";
         }
