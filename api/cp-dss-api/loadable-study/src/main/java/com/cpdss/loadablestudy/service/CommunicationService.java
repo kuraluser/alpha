@@ -114,7 +114,7 @@ public class CommunicationService {
               erReply.getResponseStatus().getCode(),
               HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
         }
-        if (String.valueOf(messageType).equals("AlgoResult")) saveAlgoPatternFromShore(erReply);
+        if (messageType.getMessageType().equals("AlgoResult")) saveAlgoPatternFromShore(erReply);
       } catch (GenericServiceException e) {
         throw new GenericServiceException(
             e.getMessage(),

@@ -1703,7 +1703,7 @@ public class LoadablePatternService {
           responseCommunication.getLoadablePatternAlgoRequest();
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByMessageUUID(
-              Long.valueOf(responseCommunication.getMessageId()));
+              responseCommunication.getMessageId());
       Optional<LoadableStudy> loadableStudyOpt =
           (this.loadableStudyRepository.findById(
               loadableStudyCommunicationStatus.get().getReferenceId()));
@@ -1736,7 +1736,7 @@ public class LoadablePatternService {
         }
       }
       if (patternResult.getAlgoErrorsCount() > 0) {
-        algoErrorsRepository.deleteAlgoErrorByLSId(false, patternResult.getLoadableStudyId());
+        algoErrorsRepository.deleteAlgoErrorByLSId(false, loadableStudyOpt.get().getId());
         algoErrorHeadingRepository.deleteAlgoErrorHeadingByLSId(
             false, patternResult.getLoadableStudyId());
         algoService.saveAlgoErrorToDB(
