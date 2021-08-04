@@ -96,6 +96,8 @@ public class LoadingInformationAlgoRequestBuilderService {
     Optional<com.cpdss.loadingplan.entity.LoadingInformation> loadingInfoOpt =
         this.loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingInfoId());
     if (loadingInfoOpt.isPresent()) {
+      algoRequest.setVesselId(loadingInfoOpt.get().getVesselXId());
+      algoRequest.setVoyageId(loadingInfoOpt.get().getVoyageId());
       algoRequest.setPortId(loadingInfoOpt.get().getPortXId());
 
       // Self Call of GRPC to get loading info, need to change in future.
