@@ -427,4 +427,20 @@ public class OnHandQuantityService {
           loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
         });
   }
+
+  public void deletePortRotationDetails(
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
+      LoadableStudyPortRotation entity) {
+    List<OnHandQuantity> ohqs =
+        onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+            loadableStudy, entity, true);
+    if (!ohqs.isEmpty()) {
+      ohqs.parallelStream()
+          .forEach(
+              ohq -> {
+                ohq.setIsActive(false);
+              });
+      onHandQuantityRepository.saveAll(ohqs);
+    }
+  }
 }

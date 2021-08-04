@@ -64,6 +64,7 @@ public class LoadableStudyPortRotationService {
 
   @Autowired private PortInstructionService portInstructionService;
   @Autowired private CowDetailService cowDetailService;
+  @Autowired private OnHandQuantityService onHandQuantityService;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -731,6 +732,10 @@ public class LoadableStudyPortRotationService {
       entity.getSynopticalTable().forEach(portRecord -> portRecord.setIsActive(false));
     }
     this.loadableStudyPortRotationRepository.save(entity);
+    if (loadableStudy.getPlanningTypeXId() != null
+        && loadableStudy.getPlanningTypeXId().equals(2)) {
+      onHandQuantityService.deletePortRotationDetails(loadableStudy, entity);
+    }
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
   }
