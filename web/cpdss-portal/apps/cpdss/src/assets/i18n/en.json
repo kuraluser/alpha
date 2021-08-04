@@ -1698,5 +1698,6 @@
   "BERTH_DELETE_SUCCESS":"Success",
   "BERTH_DELETE_SUCCESSFULLY":"Berth details deleted successfully",
   "BERTH_ERROR_SUMMARY":"Cannot  delete since there is only one berth",
-  "BERTH_DELETE_ERROR":"Error"
+  "BERTH_DELETE_ERROR":"Error",
+  "CARGO_NOMINATION_ADD_PORT_NOTE": "Note: On clicking Save the Api and Temp values will be reset to default."
 }

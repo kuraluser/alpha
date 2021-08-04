@@ -68,6 +68,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         localStorage.setItem("vesselId", this.vesselId.toString());
         localStorage.setItem("voyageId", this.voyageId.toString());
         this.selectedPortName = localStorage.getItem('selectedPortName');
+        this.currentTab = OPERATION_TAB.INFORMATION;
       });
   }
 

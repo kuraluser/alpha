@@ -80,6 +80,8 @@ export class LoadingInstructionComponent implements OnInit, ComponentCanDeactiva
         });
         return;
       }
+      this.instructionCheckList.hasUnsavedChanges = false;
+      this.instructionCheckList.instructionForm.reset();
       this.setInstructionList(event.groupId);
       this.groupId = event.groupId;
     }
