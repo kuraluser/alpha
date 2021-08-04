@@ -105,14 +105,14 @@ public class CargoNominationService {
       Long dischargeStudyId, Long loadableStudyId, Long portId) throws GenericServiceException {
     List<CargoNomination> cargos = getCargoNominationByLoadableStudyId(loadableStudyId);
     List<CargoNomination> dischargeStudycargos = new ArrayList<>();
-
+    // Fetching max quantity from Bill of Ladding
+    getMaxQuantityMTFromBillofLadding(cargos);
     cargos
         .parallelStream()
         .forEach(
             cargo -> {
               dischargeStudycargos.add(createDsCargoNomination(dischargeStudyId, cargo, portId));
             });
-    getMaxQuantityMTFromBillofLadding(dischargeStudycargos);
 
     return cargoNominationRepository.saveAll(dischargeStudycargos);
   }
@@ -129,7 +129,7 @@ public class CargoNominationService {
     dischargeStudyCargo.setMaxTolerance(cargo.getMaxTolerance());
     dischargeStudyCargo.setMinTolerance(cargo.getMinTolerance());
     dischargeStudyCargo.setPriority(cargo.getPriority());
-    // dischargeStudyCargo.setQuantity(cargo.getQuantity());
+    dischargeStudyCargo.setQuantity(cargo.getQuantity());
     dischargeStudyCargo.setSegregationXId(cargo.getSegregationXId());
     dischargeStudyCargo.setTemperature(cargo.getTemperature());
     dischargeStudyCargo.setVersion(cargo.getVersion());
