@@ -9,8 +9,8 @@ export const cargoNominationAbbreviationValidator: ValidatorFn = (control: FormC
     return null;
   }
   const cargoNominations = control.root.get('dataTable') as FormArray;
-  const cargoAbbreviations = cargoNominations?.value.filter(item => item !== control.parent.value && !item?.isDelete && item.abbreviation).map(item => item.abbreviation.toLowerCase());
-  const cargoAbbreviation = control?.value.toLowerCase();
+  const cargoAbbreviations = cargoNominations?.value.filter(item => item !== control.parent.value && !item?.isDelete && item.abbreviation).map(item => item?.abbreviation?.toLowerCase());
+  const cargoAbbreviation = control?.value?.toLowerCase();
 
   return cargoAbbreviations?.includes(cargoAbbreviation) ? { duplicateAbbrevation: true } : null;
 }
