@@ -693,8 +693,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                   cargoToDisable.setIsActive(false);
                   cargoNominationsToSave.add(cargoToDisable);
                 });
-            if (cargoNominations.isEmpty() && !dbCargos.isEmpty()) {
-              dbCargos.forEach(
+            if (cargoNominations.isEmpty() && !cargosForPort.isEmpty()) {
+              cargosForPort.forEach(
                   dbCargo -> {
                     dbCargo.setIsActive(false);
                   });
@@ -1086,7 +1086,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     LoadableStudyPortRotation loadableStudyPortRotation =
         portRotations.get(portRotations.size() - 2);
     List<CargoNomination> cargos =
-        cargoNominationService.getCargoNominationByLoadableStudyId(loadableStudyId);
+        cargoNominationService.getCargoNominations(loadableStudyId);
     Set<CargoNomination> previousPortCargos =
         cargos.stream()
             .flatMap(x -> x.getCargoNominationPortDetails().stream())
@@ -1177,7 +1177,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       return;
     }
     List<CargoNomination> cargos =
-        cargoNominationService.getCargoNominationByLoadableStudyId(loadableStudyId);
+        cargoNominationService.getCargoNominations(loadableStudyId);
     LoadableStudyPortRotation dischargeStudyPortRotation = dischargeStudyPortRotations.get(0);
     Set<CargoNomination> firstPortCargos =
         cargos.stream()
