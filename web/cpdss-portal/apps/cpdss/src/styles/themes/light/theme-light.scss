@@ -184,6 +184,15 @@ a {
         background: url($images-menu-icons + 'operation-icon-hover.png') no-repeat;
     }
   }
+  &.fleet {
+    &:before {
+        background: url($images-menu-icons + 'fleet-icon.png') no-repeat;
+    }
+
+    &:after {
+        background: url($images-menu-icons + 'fleet-icon-hover.png') no-repeat;
+    }
+  }
 }
 
 header .header-nav .nav li.active {
@@ -1480,5 +1489,11 @@ header{
       background:  $login-btn!important;
       color: $active-color;
     }
+  }
+}
+
+.search-wrapper{
+  .pi-search{
+    color: $heading-color;
   }
 }

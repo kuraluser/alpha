@@ -2866,3 +2866,17 @@ textarea{
 .discharge-study-pop-up{
   width: 540px;
 }
+
+.search-wrapper{
+  position: relative;
+  input{
+    width: 100%;
+    padding-left: 17px;
+  }
+  .pi-search{
+    position: absolute;
+    left: 0px;
+    top: 5px;
+  }
+}
+
