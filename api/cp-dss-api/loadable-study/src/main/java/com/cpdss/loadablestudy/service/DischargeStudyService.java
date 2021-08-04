@@ -669,13 +669,22 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                         cargoNomination, null, portId);
                   }
                 });
+            List<Long> requestIds =
+                cargoNominations.stream()
+                    .map(CargoNominationDetail::getId)
+                    .collect(Collectors.toList());
             /** delete existing cargo nomination */
-            Set<CargoNomination> cargosToDisable =
+            List<CargoNomination> cargosForPort =
                 dbCargos.stream()
                     .flatMap(x -> x.getCargoNominationPortDetails().stream())
                     .filter(port -> port.getPortId().equals(dbPortRoation.getPortXId()))
                     .map(CargoNominationPortDetails::getCargoNomination)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
+            List<CargoNomination> cargosToDisable =
+                cargosForPort
+                    .parallelStream()
+                    .filter(cn -> !requestIds.contains(cn.getId()))
+                    .collect(Collectors.toList());
             cargosToDisable.forEach(
                 cargoToDisable -> {
                   cargoToDisable.setIsActive(false);
