@@ -570,7 +570,7 @@ public class LoadingInformationAlgoRequestBuilderService {
                   StringUtils.isEmpty(delay.getQuantity())
                       ? null
                       : new BigDecimal(delay.getQuantity()));
-              ld.setReasonForDelayId(delay.getReasonForDelayId());
+              ld.setReasonForDelayIds(delay.getReasonForDelayIdsList());
               loadingDelaysList.add(ld);
             });
     loadingSequences.setLoadingDelays(loadingDelaysList);

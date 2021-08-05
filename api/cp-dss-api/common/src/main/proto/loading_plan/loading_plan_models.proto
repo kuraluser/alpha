@@ -136,7 +136,7 @@ message DelayReasons{
 message LoadingDelays{
   int64 id = 1;
   int64 loadingInfoId = 2;
-  int64 reasonForDelayId = 3;
+  repeated int64 reasonForDelayIds = 3;
   string duration = 4;
   int64 cargoId = 5;
   string quantity = 6; // was added in gateway

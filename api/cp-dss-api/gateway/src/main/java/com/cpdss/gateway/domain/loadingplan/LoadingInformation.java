@@ -12,22 +12,14 @@ import lombok.Data;
  * @author Johnsooraj.x
  * @since 20-05-2021
  */
-
-// loading details
-// loading rates
-// berth details
-// cargo machine in use
-// cargo details
-// no of stages
-// manage sequence
-// topping off sequence
-
 @Data
 @CPDSSJsonParser
 public class LoadingInformation {
 
   private CommonSuccessResponse responseStatus;
   private Long loadingInfoId;
+  private String loadableStudyName;
+  private Long loadableStudyId;
   private Long synopticTableId;
   private Boolean isLoadingInfoComplete;
   private LoadingDetails loadingDetails;

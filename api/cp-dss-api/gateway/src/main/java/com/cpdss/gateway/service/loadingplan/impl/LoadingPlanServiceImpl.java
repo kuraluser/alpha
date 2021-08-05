@@ -212,6 +212,16 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         "Get Loading Info, Port rotation id is available in Active Voyage, Port Id is {}",
         portRotation.get().getPortId());
 
+    // Set LS name and id
+    if (activeVoyage.getLoadableStudy() != null) {
+      var1.setLoadableStudyId(activeVoyage.getLoadableStudy().getId());
+      var1.setLoadableStudyName(activeVoyage.getLoadableStudy().getName());
+      log.info(
+          "Setting Loadable Study Name {} and Id {}",
+          var1.getLoadableStudyName(),
+          var1.getLoadableStudyId());
+    }
+
     // call to synoptic/port master table for sunrise/sunset data
     LoadingDetails loadingDetails =
         this.loadingInformationService.getLoadingDetailsByPortRotationId(
@@ -234,7 +244,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         this.loadingInformationService.buildLoadingPlanBerthDetails(
             loadingInfo.getLoadingBerthsList());
 
-    // Call to vessel and set value from loading plan
+    // Machine In use master and selected data setting
     CargoMachineryInUse machineryInUse =
         this.loadingInformationService.getCargoMachinesInUserFromVessel(
             loadingInfo.getLoadingMachinesList(), vesselId);
@@ -267,6 +277,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             portRotation.get().getId(),
             portRotation.get().getPortId()));
 
+    // Manage Sequence
     LoadingSequences loadingSequences =
         this.loadingInformationService.getLoadingSequence(loadingInfo.getLoadingDelays());
 
