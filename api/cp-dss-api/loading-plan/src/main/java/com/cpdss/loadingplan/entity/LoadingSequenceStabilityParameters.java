@@ -42,6 +42,15 @@ public class LoadingSequenceStabilityParameters extends EntityDoc {
   @Column(name = "aft_draft")
   private BigDecimal aftDraft;
 
+  @Column(name = "mean_draft")
+  private BigDecimal meanDraft;
+
+  @Column(name = "trim")
+  private BigDecimal trim;
+
+  @Column(name = "list")
+  private BigDecimal list;
+
   @Column(name = "bending_moment")
   private BigDecimal bendingMoment;
 

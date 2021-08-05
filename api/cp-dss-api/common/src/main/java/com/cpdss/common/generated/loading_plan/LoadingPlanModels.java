@@ -63277,6 +63277,32 @@ public final class LoadingPlanModels {
      * @return The time.
      */
     int getTime();
+
+    /**
+     * <code>string meanDraft = 10;</code>
+     *
+     * @return The meanDraft.
+     */
+    java.lang.String getMeanDraft();
+    /**
+     * <code>string meanDraft = 10;</code>
+     *
+     * @return The bytes for meanDraft.
+     */
+    com.google.protobuf.ByteString getMeanDraftBytes();
+
+    /**
+     * <code>string list = 11;</code>
+     *
+     * @return The list.
+     */
+    java.lang.String getList();
+    /**
+     * <code>string list = 11;</code>
+     *
+     * @return The bytes for list.
+     */
+    com.google.protobuf.ByteString getListBytes();
   }
   /** Protobuf type {@code LoadingPlanStabilityParameters} */
   public static final class LoadingPlanStabilityParameters
@@ -63298,6 +63324,8 @@ public final class LoadingPlanModels {
       sf_ = "";
       foreDraft_ = "";
       aftDraft_ = "";
+      meanDraft_ = "";
+      list_ = "";
     }
 
     @java.lang.Override
@@ -63384,6 +63412,20 @@ public final class LoadingPlanModels {
             case 72:
               {
                 time_ = input.readInt32();
+                break;
+              }
+            case 82:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                meanDraft_ = s;
+                break;
+              }
+            case 90:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                list_ = s;
                 break;
               }
             default:
@@ -63665,6 +63707,76 @@ public final class LoadingPlanModels {
       return time_;
     }
 
+    public static final int MEANDRAFT_FIELD_NUMBER = 10;
+    private volatile java.lang.Object meanDraft_;
+    /**
+     * <code>string meanDraft = 10;</code>
+     *
+     * @return The meanDraft.
+     */
+    public java.lang.String getMeanDraft() {
+      java.lang.Object ref = meanDraft_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        meanDraft_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string meanDraft = 10;</code>
+     *
+     * @return The bytes for meanDraft.
+     */
+    public com.google.protobuf.ByteString getMeanDraftBytes() {
+      java.lang.Object ref = meanDraft_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        meanDraft_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int LIST_FIELD_NUMBER = 11;
+    private volatile java.lang.Object list_;
+    /**
+     * <code>string list = 11;</code>
+     *
+     * @return The list.
+     */
+    public java.lang.String getList() {
+      java.lang.Object ref = list_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        list_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string list = 11;</code>
+     *
+     * @return The bytes for list.
+     */
+    public com.google.protobuf.ByteString getListBytes() {
+      java.lang.Object ref = list_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        list_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -63706,6 +63818,12 @@ public final class LoadingPlanModels {
       if (time_ != 0) {
         output.writeInt32(9, time_);
       }
+      if (!getMeanDraftBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 10, meanDraft_);
+      }
+      if (!getListBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, list_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -63742,6 +63860,12 @@ public final class LoadingPlanModels {
       if (time_ != 0) {
         size += com.google.protobuf.CodedOutputStream.computeInt32Size(9, time_);
       }
+      if (!getMeanDraftBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, meanDraft_);
+      }
+      if (!getListBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, list_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -63773,6 +63897,8 @@ public final class LoadingPlanModels {
       if (!getForeDraft().equals(other.getForeDraft())) return false;
       if (!getAftDraft().equals(other.getAftDraft())) return false;
       if (getTime() != other.getTime()) return false;
+      if (!getMeanDraft().equals(other.getMeanDraft())) return false;
+      if (!getList().equals(other.getList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -63802,6 +63928,10 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + getAftDraft().hashCode();
       hash = (37 * hash) + TIME_FIELD_NUMBER;
       hash = (53 * hash) + getTime();
+      hash = (37 * hash) + MEANDRAFT_FIELD_NUMBER;
+      hash = (53 * hash) + getMeanDraft().hashCode();
+      hash = (37 * hash) + LIST_FIELD_NUMBER;
+      hash = (53 * hash) + getList().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -63983,6 +64113,10 @@ public final class LoadingPlanModels {
 
         time_ = 0;
 
+        meanDraft_ = "";
+
+        list_ = "";
+
         return this;
       }
 
@@ -64029,6 +64163,8 @@ public final class LoadingPlanModels {
         result.foreDraft_ = foreDraft_;
         result.aftDraft_ = aftDraft_;
         result.time_ = time_;
+        result.meanDraft_ = meanDraft_;
+        result.list_ = list_;
         onBuilt();
         return result;
       }
@@ -64122,6 +64258,14 @@ public final class LoadingPlanModels {
         }
         if (other.getTime() != 0) {
           setTime(other.getTime());
+        }
+        if (!other.getMeanDraft().isEmpty()) {
+          meanDraft_ = other.meanDraft_;
+          onChanged();
+        }
+        if (!other.getList().isEmpty()) {
+          list_ = other.list_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -64707,6 +64851,158 @@ public final class LoadingPlanModels {
       public Builder clearTime() {
 
         time_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object meanDraft_ = "";
+      /**
+       * <code>string meanDraft = 10;</code>
+       *
+       * @return The meanDraft.
+       */
+      public java.lang.String getMeanDraft() {
+        java.lang.Object ref = meanDraft_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          meanDraft_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string meanDraft = 10;</code>
+       *
+       * @return The bytes for meanDraft.
+       */
+      public com.google.protobuf.ByteString getMeanDraftBytes() {
+        java.lang.Object ref = meanDraft_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          meanDraft_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string meanDraft = 10;</code>
+       *
+       * @param value The meanDraft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMeanDraft(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        meanDraft_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string meanDraft = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMeanDraft() {
+
+        meanDraft_ = getDefaultInstance().getMeanDraft();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string meanDraft = 10;</code>
+       *
+       * @param value The bytes for meanDraft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMeanDraftBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        meanDraft_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object list_ = "";
+      /**
+       * <code>string list = 11;</code>
+       *
+       * @return The list.
+       */
+      public java.lang.String getList() {
+        java.lang.Object ref = list_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          list_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string list = 11;</code>
+       *
+       * @return The bytes for list.
+       */
+      public com.google.protobuf.ByteString getListBytes() {
+        java.lang.Object ref = list_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          list_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string list = 11;</code>
+       *
+       * @param value The list to set.
+       * @return This builder for chaining.
+       */
+      public Builder setList(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        list_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string list = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearList() {
+
+        list_ = getDefaultInstance().getList();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string list = 11;</code>
+       *
+       * @param value The bytes for list to set.
+       * @return This builder for chaining.
+       */
+      public Builder setListBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        list_ = value;
         onChanged();
         return this;
       }
@@ -99055,126 +99351,127 @@ public final class LoadingPlanModels {
           + "abilityParameters\030\004 \001(\0132\037.LoadingPlanSta"
           + "bilityParameters\022:\n\031loadingPlanStowageDe"
           + "tails\030\005 \003(\0132\027.LoadingPlanTankDetails\022\014\n\004"
-          + "time\030\006 \001(\005\"\262\001\n\036LoadingPlanStabilityParam"
+          + "time\030\006 \001(\005\"\323\001\n\036LoadingPlanStabilityParam"
           + "eters\022\r\n\005draft\030\001 \001(\t\022\014\n\004trim\030\002 \001(\t\022\n\n\002bm"
           + "\030\003 \001(\t\022\n\n\002sf\030\004 \001(\t\022\025\n\rconditionType\030\005 \001("
           + "\005\022\021\n\tvalueType\030\006 \001(\005\022\021\n\tforeDraft\030\007 \001(\t\022"
-          + "\020\n\010aftDraft\030\010 \001(\t\022\014\n\004time\030\t \001(\005\"\327\001\n\026Load"
-          + "ingPlanTankDetails\022\013\n\003api\030\001 \001(\t\022\031\n\021cargo"
-          + "NominationId\030\002 \001(\003\022\020\n\010quantity\030\003 \001(\t\022\016\n\006"
-          + "tankId\030\004 \001(\003\022\023\n\013temperature\030\005 \001(\t\022\016\n\006ull"
-          + "age\030\006 \001(\t\022\022\n\nquantityM3\030\007 \001(\t\022\020\n\010soundin"
-          + "g\030\010 \001(\t\022\025\n\rconditionType\030\t \001(\005\022\021\n\tvalueT"
-          + "ype\030\n \001(\005\"J\n\020DeBallastingRate\022\030\n\020deBalla"
-          + "stingRate\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\014\n\004time\030"
-          + "\003 \001(\005\"V\n\013LoadingRate\022\023\n\013loadingRate\030\001 \001("
-          + "\t\022\016\n\006tankId\030\002 \001(\003\022\021\n\tstartTime\030\003 \001(\005\022\017\n\007"
-          + "endTime\030\004 \001(\005\"_\n\005Valve\022\021\n\toperation\030\001 \001("
-          + "\t\022\014\n\004time\030\002 \001(\005\022\021\n\tvalveCode\030\003 \001(\t\022\021\n\tva"
-          + "lveType\030\004 \001(\t\022\017\n\007valveId\030\005 \001(\003\"x\n\rPumpOp"
-          + "eration\022\017\n\007endTime\030\001 \001(\005\022\020\n\010pumpName\030\002 \001"
-          + "(\t\022\017\n\007pumpXId\030\003 \001(\003\022\014\n\004rate\030\004 \001(\t\022\021\n\tsta"
-          + "rtTime\030\005 \001(\005\022\022\n\nquantityM3\030\006 \001(\t\"B\n\027Load"
-          + "ingPlanSaveResponse\022\'\n\016responseStatus\030\001 "
-          + "\001(\0132\017.ResponseStatus\"\\\n\031LoadingInstructi"
-          + "onRequest\022\025\n\rloadingInfoId\030\001 \001(\003\022\020\n\010vess"
-          + "elId\030\002 \001(\003\022\026\n\016portRotationId\030\003 \001(\003\"\240\001\n\023L"
-          + "oadingInstructions\022\031\n\021instructionTypeId\030"
-          + "\001 \001(\003\022\033\n\023instructionHeaderId\030\002 \001(\003\022\025\n\rin"
-          + "structionId\030\003 \001(\003\022\023\n\013instruction\030\004 \001(\t\022\021"
-          + "\n\tisChecked\030\005 \001(\010\022\022\n\nisEditable\030\006 \001(\010\"\374\001"
-          + "\n\033LoadingInstructionSubHeader\022\031\n\021instruc"
-          + "tionTypeId\030\001 \001(\003\022\033\n\023instructionHeaderId\030"
-          + "\002 \001(\003\022\023\n\013subHeaderId\030\003 \001(\003\022\025\n\rsubHeaderN"
-          + "ame\030\004 \001(\t\022\021\n\tisChecked\030\005 \001(\010\0225\n\027loadingI"
-          + "nstructionsList\030\006 \003(\0132\024.LoadingInstructi"
-          + "ons\022\022\n\nisEditable\030\007 \001(\010\022\033\n\023IsHeaderInstr"
-          + "uction\030\010 \001(\010\"=\n\027LoadingInstructionGroup\022"
-          + "\017\n\007groupId\030\001 \001(\003\022\021\n\tgroupName\030\002 \001(\t\"\306\001\n\031"
-          + "LoadingInstructionDetails\022A\n\033loadingInst"
-          + "ructionSubHeader\030\001 \003(\0132\034.LoadingInstruct"
-          + "ionSubHeader\022=\n\033loadingInstructionGroupL"
-          + "ist\030\002 \003(\0132\030.LoadingInstructionGroup\022\'\n\016r"
-          + "esponseStatus\030\003 \001(\0132\017.ResponseStatus\"\361\001\n"
-          + "\027LoadingInstructionsSave\022\020\n\010headerId\030\001 \001"
-          + "(\003\022\031\n\021instructionTypeId\030\002 \001(\003\022\021\n\tisCheck"
-          + "ed\030\003 \001(\010\022\026\n\016isSingleHeader\030\004 \001(\010\022\023\n\013subH"
-          + "eaderId\030\005 \001(\003\022\023\n\013instruction\030\006 \001(\t\022\023\n\013is"
-          + "SubHeader\030\007 \001(\010\022\025\n\rloadingInfoId\030\010 \001(\003\022\020"
-          + "\n\010vesselId\030\t \001(\003\022\026\n\016portRotationId\030\n \001(\003"
-          + "\"O\n\031LoadingInstructionsUpdate\0222\n\017instruc"
-          + "tionList\030\001 \003(\0132\031.LoadingInstructionStatu"
-          + "s\"Y\n\030LoadingInstructionStatus\022\025\n\rinstruc"
-          + "tionId\030\001 \001(\003\022\021\n\tisChecked\030\002 \001(\010\022\023\n\013instr"
-          + "uction\030\003 \001(\t\"Y\n\032UpdateUllageDetailsReque"
-          + "st\022\020\n\010vesselId\030\001 \001(\003\022\021\n\tpatternId\030\002 \001(\003\022"
-          + "\026\n\016portRotationId\030\003 \001(\003\"\243\002\n\033UpdateUllage"
-          + "DetailsResponse\022\017\n\007message\030\001 \001(\t\022%\n\rbill"
-          + "OfLadding\030\002 \003(\0132\016.BillOfLadding\022F\n\036portL"
-          + "oadablePlanStowageDetails\030\003 \003(\0132\036.PortLo"
-          + "adablePlanStowageDetail\022E\n\035portLoadingPl"
-          + "anBallastDetails\030\004 \003(\0132\036.PortLoadingPlan"
-          + "BallastDetails\022=\n\031portLoadingPlanRobDeta"
-          + "ils\030\005 \003(\0132\032.PortLoadingPlanRobDetails\"g\n"
-          + "\031UllageCargoQuantityDetail\022\031\n\021cargoNomin"
-          + "ationId\030\001 \001(\003\022\027\n\017plannedQuantity\030\002 \001(\t\022\026"
-          + "\n\016actualQuantity\030\003 \001(\t\"\377\003\n\035PortLoadableP"
-          + "lanStowageDetail\022\024\n\014abbreviation\030\001 \001(\t\022\013"
-          + "\n\003api\030\002 \001(\t\022\031\n\021cargoNominationId\030\003 \001(\003\022\017"
-          + "\n\007cargoId\030\004 \001(\003\022\021\n\tcolorCode\030\005 \001(\t\022\027\n\017co"
-          + "rrectedUllage\030\006 \001(\t\022\030\n\020correctionFactor\030"
-          + "\007 \001(\t\022\031\n\021fillingPercentage\030\010 \001(\t\022\n\n\002id\030\t"
-          + " \001(\003\022\020\n\010isActive\030\n \001(\010\022\031\n\021loadablePatter"
-          + "nId\030\013 \001(\003\022\027\n\017observedBarrels\030\014 \001(\t\022\033\n\023ob"
-          + "servedBarrelsAt60\030\r \001(\t\022\022\n\nobservedM3\030\016 "
-          + "\001(\t\022\021\n\trdgUllage\030\017 \001(\t\022\016\n\006tankId\030\020 \001(\003\022\020"
-          + "\n\010tankname\030\021 \001(\t\022\023\n\013temperature\030\022 \001(\t\022\016\n"
-          + "\006weight\030\023 \001(\t\022\020\n\010quantity\030\024 \001(\t\022\030\n\020arriv"
-          + "alDeparture\030\025 \001(\t\022\025\n\ractualPlanned\030\026 \001(\t"
-          + "\022\016\n\006ullage\030\027 \001(\t\"\216\003\n\035PortLoadingPlanBall"
-          + "astDetails\022\013\n\003api\030\001 \001(\t\022\031\n\021cargoNominati"
-          + "onId\030\002 \001(\003\022\017\n\007cargoId\030\003 \001(\003\022\021\n\tcolorCode"
-          + "\030\004 \001(\t\022\027\n\017correctedUllage\030\005 \001(\t\022\030\n\020corre"
-          + "ctionFactor\030\006 \001(\t\022\031\n\021fillingPercentage\030\007"
-          + " \001(\t\022\n\n\002id\030\010 \001(\003\022\020\n\010isActive\030\t \001(\010\022\031\n\021lo"
-          + "adablePatternId\030\n \001(\003\022\016\n\006tankId\030\013 \001(\003\022\020\n"
-          + "\010tankname\030\014 \001(\t\022\023\n\013temperature\030\r \001(\t\022\020\n\010"
-          + "quantity\030\016 \001(\t\022\030\n\020arrivalDeparture\030\017 \001(\t"
-          + "\022\025\n\ractualPlanned\030\020 \001(\t\022\016\n\006ullage\030\021 \001(\t\022"
-          + "\020\n\010sounding\030\022 \001(\t\"\271\001\n\031PortLoadingPlanRob"
-          + "Details\022\n\n\002id\030\001 \001(\003\022\020\n\010isActive\030\002 \001(\010\022\031\n"
-          + "\021loadablePatternId\030\003 \001(\003\022\016\n\006tankId\030\004 \001(\003"
-          + "\022\020\n\010tankname\030\005 \001(\t\022\020\n\010quantity\030\006 \001(\t\022\030\n\020"
-          + "arrivalDeparture\030\007 \001(\t\022\025\n\ractualPlanned\030"
-          + "\010 \001(\t\"/\n\026LoadingSequenceRequest\022\025\n\rloadi"
-          + "ngInfoId\030\001 \001(\003\"\254\002\n\024LoadingSequenceReply\022"
-          + "\020\n\010vesselId\030\001 \001(\003\022\020\n\010voyageId\030\002 \001(\003\022\031\n\021l"
-          + "oadablePatternId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022\021"
-          + "\n\tstartDate\030\005 \001(\t\022\020\n\010interval\030\006 \001(\005\022*\n\020l"
-          + "oadingSequences\030\007 \003(\0132\020.LoadingSequence\022"
-          + "K\n\"loadingSequenceStabilityParameters\030\010 "
-          + "\003(\0132\037.LoadingPlanStabilityParameters\022\'\n\016"
-          + "responseStatus\030\t \001(\0132\017.ResponseStatus\"\270\003"
-          + "\n\020LoadingPlanReply\022\'\n\016responseStatus\030\007 \001"
-          + "(\0132\017.ResponseStatus\022\025\n\rloadingInfoId\030\001 \001"
-          + "(\003\022/\n\022loadingInformation\030\010 \001(\0132\023.Loading"
-          + "Information\022*\n\020loadingSequences\030\002 \003(\0132\020."
-          + "LoadingSequence\022>\n\035portLoadingPlanStowag"
-          + "eDetails\030\003 \003(\0132\027.LoadingPlanTankDetails\022"
-          + ">\n\035portLoadingPlanBallastDetails\030\004 \003(\0132\027"
-          + ".LoadingPlanTankDetails\022:\n\031portLoadingPl"
-          + "anRobDetails\030\005 \003(\0132\027.LoadingPlanTankDeta"
-          + "ils\022K\n\"portLoadingPlanStabilityParameter"
-          + "s\030\006 \003(\0132\037.LoadingPlanStabilityParameters"
-          + "\"1\n\024BillOfLaddingRequest\022\031\n\021cargoNominat"
-          + "ionId\030\001 \001(\003\"/\n\022MaxQuantityRequest\022\031\n\021car"
-          + "goNominationId\030\001 \003(\003\"m\n\023MaxQuantityRespo"
-          + "nse\022-\n\020cargoMaxQuantity\030\001 \003(\0132\023.MaxQuant"
-          + "ityDetails\022\'\n\016responseStatus\030\002 \001(\0132\017.Res"
-          + "ponseStatus\"D\n\022MaxQuantityDetails\022\031\n\021car"
-          + "goNominationId\030\001 \001(\003\022\023\n\013maxQuantity\030\002 \001("
-          + "\tB+\n\'com.cpdss.common.generated.loading_"
-          + "planP\000b\006proto3"
+          + "\020\n\010aftDraft\030\010 \001(\t\022\014\n\004time\030\t \001(\005\022\021\n\tmeanD"
+          + "raft\030\n \001(\t\022\014\n\004list\030\013 \001(\t\"\327\001\n\026LoadingPlan"
+          + "TankDetails\022\013\n\003api\030\001 \001(\t\022\031\n\021cargoNominat"
+          + "ionId\030\002 \001(\003\022\020\n\010quantity\030\003 \001(\t\022\016\n\006tankId\030"
+          + "\004 \001(\003\022\023\n\013temperature\030\005 \001(\t\022\016\n\006ullage\030\006 \001"
+          + "(\t\022\022\n\nquantityM3\030\007 \001(\t\022\020\n\010sounding\030\010 \001(\t"
+          + "\022\025\n\rconditionType\030\t \001(\005\022\021\n\tvalueType\030\n \001"
+          + "(\005\"J\n\020DeBallastingRate\022\030\n\020deBallastingRa"
+          + "te\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\014\n\004time\030\003 \001(\005\"V"
+          + "\n\013LoadingRate\022\023\n\013loadingRate\030\001 \001(\t\022\016\n\006ta"
+          + "nkId\030\002 \001(\003\022\021\n\tstartTime\030\003 \001(\005\022\017\n\007endTime"
+          + "\030\004 \001(\005\"_\n\005Valve\022\021\n\toperation\030\001 \001(\t\022\014\n\004ti"
+          + "me\030\002 \001(\005\022\021\n\tvalveCode\030\003 \001(\t\022\021\n\tvalveType"
+          + "\030\004 \001(\t\022\017\n\007valveId\030\005 \001(\003\"x\n\rPumpOperation"
+          + "\022\017\n\007endTime\030\001 \001(\005\022\020\n\010pumpName\030\002 \001(\t\022\017\n\007p"
+          + "umpXId\030\003 \001(\003\022\014\n\004rate\030\004 \001(\t\022\021\n\tstartTime\030"
+          + "\005 \001(\005\022\022\n\nquantityM3\030\006 \001(\t\"B\n\027LoadingPlan"
+          + "SaveResponse\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
+          + "esponseStatus\"\\\n\031LoadingInstructionReque"
+          + "st\022\025\n\rloadingInfoId\030\001 \001(\003\022\020\n\010vesselId\030\002 "
+          + "\001(\003\022\026\n\016portRotationId\030\003 \001(\003\"\240\001\n\023LoadingI"
+          + "nstructions\022\031\n\021instructionTypeId\030\001 \001(\003\022\033"
+          + "\n\023instructionHeaderId\030\002 \001(\003\022\025\n\rinstructi"
+          + "onId\030\003 \001(\003\022\023\n\013instruction\030\004 \001(\t\022\021\n\tisChe"
+          + "cked\030\005 \001(\010\022\022\n\nisEditable\030\006 \001(\010\"\374\001\n\033Loadi"
+          + "ngInstructionSubHeader\022\031\n\021instructionTyp"
+          + "eId\030\001 \001(\003\022\033\n\023instructionHeaderId\030\002 \001(\003\022\023"
+          + "\n\013subHeaderId\030\003 \001(\003\022\025\n\rsubHeaderName\030\004 \001"
+          + "(\t\022\021\n\tisChecked\030\005 \001(\010\0225\n\027loadingInstruct"
+          + "ionsList\030\006 \003(\0132\024.LoadingInstructions\022\022\n\n"
+          + "isEditable\030\007 \001(\010\022\033\n\023IsHeaderInstruction\030"
+          + "\010 \001(\010\"=\n\027LoadingInstructionGroup\022\017\n\007grou"
+          + "pId\030\001 \001(\003\022\021\n\tgroupName\030\002 \001(\t\"\306\001\n\031Loading"
+          + "InstructionDetails\022A\n\033loadingInstruction"
+          + "SubHeader\030\001 \003(\0132\034.LoadingInstructionSubH"
+          + "eader\022=\n\033loadingInstructionGroupList\030\002 \003"
+          + "(\0132\030.LoadingInstructionGroup\022\'\n\016response"
+          + "Status\030\003 \001(\0132\017.ResponseStatus\"\361\001\n\027Loadin"
+          + "gInstructionsSave\022\020\n\010headerId\030\001 \001(\003\022\031\n\021i"
+          + "nstructionTypeId\030\002 \001(\003\022\021\n\tisChecked\030\003 \001("
+          + "\010\022\026\n\016isSingleHeader\030\004 \001(\010\022\023\n\013subHeaderId"
+          + "\030\005 \001(\003\022\023\n\013instruction\030\006 \001(\t\022\023\n\013isSubHead"
+          + "er\030\007 \001(\010\022\025\n\rloadingInfoId\030\010 \001(\003\022\020\n\010vesse"
+          + "lId\030\t \001(\003\022\026\n\016portRotationId\030\n \001(\003\"O\n\031Loa"
+          + "dingInstructionsUpdate\0222\n\017instructionLis"
+          + "t\030\001 \003(\0132\031.LoadingInstructionStatus\"Y\n\030Lo"
+          + "adingInstructionStatus\022\025\n\rinstructionId\030"
+          + "\001 \001(\003\022\021\n\tisChecked\030\002 \001(\010\022\023\n\013instruction\030"
+          + "\003 \001(\t\"Y\n\032UpdateUllageDetailsRequest\022\020\n\010v"
+          + "esselId\030\001 \001(\003\022\021\n\tpatternId\030\002 \001(\003\022\026\n\016port"
+          + "RotationId\030\003 \001(\003\"\243\002\n\033UpdateUllageDetails"
+          + "Response\022\017\n\007message\030\001 \001(\t\022%\n\rbillOfLaddi"
+          + "ng\030\002 \003(\0132\016.BillOfLadding\022F\n\036portLoadable"
+          + "PlanStowageDetails\030\003 \003(\0132\036.PortLoadableP"
+          + "lanStowageDetail\022E\n\035portLoadingPlanBalla"
+          + "stDetails\030\004 \003(\0132\036.PortLoadingPlanBallast"
+          + "Details\022=\n\031portLoadingPlanRobDetails\030\005 \003"
+          + "(\0132\032.PortLoadingPlanRobDetails\"g\n\031Ullage"
+          + "CargoQuantityDetail\022\031\n\021cargoNominationId"
+          + "\030\001 \001(\003\022\027\n\017plannedQuantity\030\002 \001(\t\022\026\n\016actua"
+          + "lQuantity\030\003 \001(\t\"\377\003\n\035PortLoadablePlanStow"
+          + "ageDetail\022\024\n\014abbreviation\030\001 \001(\t\022\013\n\003api\030\002"
+          + " \001(\t\022\031\n\021cargoNominationId\030\003 \001(\003\022\017\n\007cargo"
+          + "Id\030\004 \001(\003\022\021\n\tcolorCode\030\005 \001(\t\022\027\n\017corrected"
+          + "Ullage\030\006 \001(\t\022\030\n\020correctionFactor\030\007 \001(\t\022\031"
+          + "\n\021fillingPercentage\030\010 \001(\t\022\n\n\002id\030\t \001(\003\022\020\n"
+          + "\010isActive\030\n \001(\010\022\031\n\021loadablePatternId\030\013 \001"
+          + "(\003\022\027\n\017observedBarrels\030\014 \001(\t\022\033\n\023observedB"
+          + "arrelsAt60\030\r \001(\t\022\022\n\nobservedM3\030\016 \001(\t\022\021\n\t"
+          + "rdgUllage\030\017 \001(\t\022\016\n\006tankId\030\020 \001(\003\022\020\n\010tankn"
+          + "ame\030\021 \001(\t\022\023\n\013temperature\030\022 \001(\t\022\016\n\006weight"
+          + "\030\023 \001(\t\022\020\n\010quantity\030\024 \001(\t\022\030\n\020arrivalDepar"
+          + "ture\030\025 \001(\t\022\025\n\ractualPlanned\030\026 \001(\t\022\016\n\006ull"
+          + "age\030\027 \001(\t\"\216\003\n\035PortLoadingPlanBallastDeta"
+          + "ils\022\013\n\003api\030\001 \001(\t\022\031\n\021cargoNominationId\030\002 "
+          + "\001(\003\022\017\n\007cargoId\030\003 \001(\003\022\021\n\tcolorCode\030\004 \001(\t\022"
+          + "\027\n\017correctedUllage\030\005 \001(\t\022\030\n\020correctionFa"
+          + "ctor\030\006 \001(\t\022\031\n\021fillingPercentage\030\007 \001(\t\022\n\n"
+          + "\002id\030\010 \001(\003\022\020\n\010isActive\030\t \001(\010\022\031\n\021loadableP"
+          + "atternId\030\n \001(\003\022\016\n\006tankId\030\013 \001(\003\022\020\n\010tankna"
+          + "me\030\014 \001(\t\022\023\n\013temperature\030\r \001(\t\022\020\n\010quantit"
+          + "y\030\016 \001(\t\022\030\n\020arrivalDeparture\030\017 \001(\t\022\025\n\ract"
+          + "ualPlanned\030\020 \001(\t\022\016\n\006ullage\030\021 \001(\t\022\020\n\010soun"
+          + "ding\030\022 \001(\t\"\271\001\n\031PortLoadingPlanRobDetails"
+          + "\022\n\n\002id\030\001 \001(\003\022\020\n\010isActive\030\002 \001(\010\022\031\n\021loadab"
+          + "lePatternId\030\003 \001(\003\022\016\n\006tankId\030\004 \001(\003\022\020\n\010tan"
+          + "kname\030\005 \001(\t\022\020\n\010quantity\030\006 \001(\t\022\030\n\020arrival"
+          + "Departure\030\007 \001(\t\022\025\n\ractualPlanned\030\010 \001(\t\"/"
+          + "\n\026LoadingSequenceRequest\022\025\n\rloadingInfoI"
+          + "d\030\001 \001(\003\"\254\002\n\024LoadingSequenceReply\022\020\n\010vess"
+          + "elId\030\001 \001(\003\022\020\n\010voyageId\030\002 \001(\003\022\031\n\021loadable"
+          + "PatternId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022\021\n\tstart"
+          + "Date\030\005 \001(\t\022\020\n\010interval\030\006 \001(\005\022*\n\020loadingS"
+          + "equences\030\007 \003(\0132\020.LoadingSequence\022K\n\"load"
+          + "ingSequenceStabilityParameters\030\010 \003(\0132\037.L"
+          + "oadingPlanStabilityParameters\022\'\n\016respons"
+          + "eStatus\030\t \001(\0132\017.ResponseStatus\"\270\003\n\020Loadi"
+          + "ngPlanReply\022\'\n\016responseStatus\030\007 \001(\0132\017.Re"
+          + "sponseStatus\022\025\n\rloadingInfoId\030\001 \001(\003\022/\n\022l"
+          + "oadingInformation\030\010 \001(\0132\023.LoadingInforma"
+          + "tion\022*\n\020loadingSequences\030\002 \003(\0132\020.Loading"
+          + "Sequence\022>\n\035portLoadingPlanStowageDetail"
+          + "s\030\003 \003(\0132\027.LoadingPlanTankDetails\022>\n\035port"
+          + "LoadingPlanBallastDetails\030\004 \003(\0132\027.Loadin"
+          + "gPlanTankDetails\022:\n\031portLoadingPlanRobDe"
+          + "tails\030\005 \003(\0132\027.LoadingPlanTankDetails\022K\n\""
+          + "portLoadingPlanStabilityParameters\030\006 \003(\013"
+          + "2\037.LoadingPlanStabilityParameters\"1\n\024Bil"
+          + "lOfLaddingRequest\022\031\n\021cargoNominationId\030\001"
+          + " \001(\003\"/\n\022MaxQuantityRequest\022\031\n\021cargoNomin"
+          + "ationId\030\001 \003(\003\"m\n\023MaxQuantityResponse\022-\n\020"
+          + "cargoMaxQuantity\030\001 \003(\0132\023.MaxQuantityDeta"
+          + "ils\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseSt"
+          + "atus\"D\n\022MaxQuantityDetails\022\031\n\021cargoNomin"
+          + "ationId\030\001 \001(\003\022\023\n\013maxQuantity\030\002 \001(\tB+\n\'co"
+          + "m.cpdss.common.generated.loading_planP\000b"
+          + "\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -99698,6 +99995,8 @@ public final class LoadingPlanModels {
               "ForeDraft",
               "AftDraft",
               "Time",
+              "MeanDraft",
+              "List",
             });
     internal_static_LoadingPlanTankDetails_descriptor = getDescriptor().getMessageTypes().get(36);
     internal_static_LoadingPlanTankDetails_fieldAccessorTable =
