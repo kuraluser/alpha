@@ -62,7 +62,8 @@ export class LoadingDischargingTransformationService {
         'duplicateBerth': 'LOADING_INFORMATION_BERTH_DUPLICATION',
       },
       hoseConnections: {
-        'maxlength': 'LOADING_DISCHARGING_BERTH_HOSECONNECTION_CHARACTER_LIMIT'
+        'maxlength': 'LOADING_DISCHARGING_BERTH_HOSECONNECTION_CHARACTER_LIMIT',
+        'pattern':"LOADING_BETH_HOSE_CONNECTION_ERROR"
       },
       regulationAndRestriction: {
         'maxlength': 'LOADING_DISCHARGING_BERTH_REGULATION_RESTRICTION_CHARACTER_LIMIT'
