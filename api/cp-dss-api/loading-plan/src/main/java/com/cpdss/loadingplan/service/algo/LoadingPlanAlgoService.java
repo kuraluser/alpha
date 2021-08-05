@@ -56,6 +56,7 @@ import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersReposi
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -322,6 +323,8 @@ public class LoadingPlanAlgoService {
         "Saving Loading Sequence Stability Params for LoadingInformation {}, PortRotation",
         loadingInformation.getId(),
         loadingInformation.getPortRotationXId());
+    List<LoadingSequenceStabilityParameters> loadingSequenceStabilityParams =
+        new ArrayList<LoadingSequenceStabilityParameters>();
     request
         .getLoadingSequenceStabilityParametersList()
         .forEach(
@@ -330,8 +333,9 @@ public class LoadingPlanAlgoService {
                   new LoadingSequenceStabilityParameters();
               loadingPlanBuilderService.buildLoadingSequenceStabilityParams(
                   loadingInformation, param, stabilityParameters);
-              loadingSequenceStabilityParamsRepository.save(stabilityParameters);
+              loadingSequenceStabilityParams.add(stabilityParameters);
             });
+    loadingSequenceStabilityParamsRepository.saveAll(loadingSequenceStabilityParams);
   }
 
   private void deleteLoadingPlan(
@@ -414,12 +418,15 @@ public class LoadingPlanAlgoService {
         "Saving Loading Plan Stowage Details for LoadingInformation {}, PortRotation",
         loadingInformation.getId(),
         loadingInformation.getPortRotationXId());
+    List<PortLoadingPlanStowageDetails> portLoadingPlanStowages =
+        new ArrayList<PortLoadingPlanStowageDetails>();
     portLoadingPlanStowageDetailsList.forEach(
         stowage -> {
           PortLoadingPlanStowageDetails stowageDetails = new PortLoadingPlanStowageDetails();
           loadingPlanBuilderService.buildPortStowage(loadingInformation, stowageDetails, stowage);
-          portStowageDetailsRepository.save(stowageDetails);
+          portLoadingPlanStowages.add(stowageDetails);
         });
+    portStowageDetailsRepository.saveAll(portLoadingPlanStowages);
   }
 
   private void savePortStabilityParams(
@@ -429,14 +436,17 @@ public class LoadingPlanAlgoService {
         "Saving Loading Plan Stability Parameters for LoadingInformation {}, PortRotation",
         loadingInformation.getId(),
         loadingInformation.getPortRotationXId());
+    List<PortLoadingPlanStabilityParameters> portLoadingPlanStabilityParams =
+        new ArrayList<PortLoadingPlanStabilityParameters>();
     portLoadingPlanStabilityParametersList.forEach(
         params -> {
           PortLoadingPlanStabilityParameters stabilityParams =
               new PortLoadingPlanStabilityParameters();
           loadingPlanBuilderService.buildPortStabilityParams(
               loadingInformation, stabilityParams, params);
-          portStabilityParamsRepository.save(stabilityParams);
+          portLoadingPlanStabilityParams.add(stabilityParams);
         });
+    portStabilityParamsRepository.saveAll(portLoadingPlanStabilityParams);
   }
 
   private void savePortRobDetails(
@@ -446,12 +456,15 @@ public class LoadingPlanAlgoService {
         "Saving Loading Plan ROB Details for LoadingInformation {}, PortRotation",
         loadingInformation.getId(),
         loadingInformation.getPortRotationXId());
+    List<PortLoadingPlanRobDetails> portLoadingPlanRobDetails =
+        new ArrayList<PortLoadingPlanRobDetails>();
     portLoadingPlanRobDetailsList.forEach(
         rob -> {
           PortLoadingPlanRobDetails robDetails = new PortLoadingPlanRobDetails();
           loadingPlanBuilderService.buildPortRob(loadingInformation, robDetails, rob);
-          portRobDetailsRepository.save(robDetails);
+          portLoadingPlanRobDetails.add(robDetails);
         });
+    portRobDetailsRepository.saveAll(portLoadingPlanRobDetails);
   }
 
   private void savePortBallastDetails(
@@ -461,12 +474,15 @@ public class LoadingPlanAlgoService {
         "Saving Loading Plan Ballast Details for LoadingInformation {}, PortRotation",
         loadingInformation.getId(),
         loadingInformation.getPortRotationXId());
+    List<PortLoadingPlanBallastDetails> portLoadingPlanBallastDetails =
+        new ArrayList<PortLoadingPlanBallastDetails>();
     portLoadingPlanBallastDetailsList.forEach(
         ballast -> {
           PortLoadingPlanBallastDetails ballastDetails = new PortLoadingPlanBallastDetails();
           loadingPlanBuilderService.buildPortBallast(loadingInformation, ballastDetails, ballast);
-          portBallastDetailsRepository.save(ballastDetails);
+          portLoadingPlanBallastDetails.add(ballastDetails);
         });
+    portBallastDetailsRepository.saveAll(portLoadingPlanBallastDetails);
   }
 
   /**
@@ -497,26 +513,30 @@ public class LoadingPlanAlgoService {
       com.cpdss.loadingplan.entity.LoadingSequence loadingSequence,
       List<PumpOperation> ballastOperationsList) {
     log.info("Saving Ballast Pumps for Loading Sequence {}", loadingSequence.getId());
+    List<BallastOperation> ballastOperations = new ArrayList<BallastOperation>();
     ballastOperationsList.forEach(
         pumpOperation -> {
           BallastOperation ballastOperation = new BallastOperation();
           loadingPlanBuilderService.buildBallastOperation(
               loadingSequence, ballastOperation, pumpOperation);
-          ballastOperationRepository.save(ballastOperation);
+          ballastOperations.add(ballastOperation);
         });
+    ballastOperationRepository.saveAll(ballastOperations);
   }
 
   private void saveCargoLoadingRates(
       com.cpdss.loadingplan.entity.LoadingSequence loadingSequence,
       List<LoadingRate> loadingRatesList) {
     log.info("Saving Cargo Loading Rates for Loading Sequence {}", loadingSequence.getId());
+    List<CargoLoadingRate> cargoLoadingRates = new ArrayList<CargoLoadingRate>();
     loadingRatesList.forEach(
         loadingRate -> {
           CargoLoadingRate cargoLoadingRate = new CargoLoadingRate();
           loadingPlanBuilderService.buildCargoLoadingRate(
               loadingSequence, cargoLoadingRate, loadingRate);
-          cargoLoadingRateRepository.save(cargoLoadingRate);
+          cargoLoadingRates.add(cargoLoadingRate);
         });
+    cargoLoadingRateRepository.saveAll(cargoLoadingRates);
   }
 
   private void saveLoadingPlanPortWiseDetails(
@@ -562,14 +582,17 @@ public class LoadingPlanAlgoService {
     log.info(
         "Saving Loading Plan Stowage Details for LoadingPlanPortWiseDetails {}",
         loadingPlanPortWiseDetails.getId());
+    List<com.cpdss.loadingplan.entity.LoadingPlanStowageDetails> loadingPlanStowageDetails =
+        new ArrayList<com.cpdss.loadingplan.entity.LoadingPlanStowageDetails>();
     loadingPlanStowageDetailsList.forEach(
         stowage -> {
           com.cpdss.loadingplan.entity.LoadingPlanStowageDetails stowageDetails =
               new com.cpdss.loadingplan.entity.LoadingPlanStowageDetails();
           loadingPlanBuilderService.buildLoadingPlanStowageDetails(
               loadingPlanPortWiseDetails, stowageDetails, stowage);
-          loadingPlanStowageDetailsRepository.save(stowageDetails);
+          loadingPlanStowageDetails.add(stowageDetails);
         });
+    loadingPlanStowageDetailsRepository.saveAll(loadingPlanStowageDetails);
   }
 
   private void saveLoadingPlanRobDetails(
@@ -578,13 +601,15 @@ public class LoadingPlanAlgoService {
     log.info(
         "Saving Loading Plan ROB Details for LoadingPlanPortWiseDetails {}",
         loadingPlanPortWiseDetails.getId());
+    List<LoadingPlanRobDetails> loadingPlanRobDetails = new ArrayList<LoadingPlanRobDetails>();
     loadingPlanRobDetailsList.forEach(
         rob -> {
           LoadingPlanRobDetails robDetails = new LoadingPlanRobDetails();
           loadingPlanBuilderService.buildLoadingPlanRobDetails(
               loadingPlanPortWiseDetails, robDetails, rob);
-          loadingPlanRobDetailsRepository.save(robDetails);
+          loadingPlanRobDetails.add(robDetails);
         });
+    loadingPlanRobDetailsRepository.saveAll(loadingPlanRobDetails);
   }
 
   private void saveLoadingPlanBallastDetails(
@@ -593,13 +618,16 @@ public class LoadingPlanAlgoService {
     log.info(
         "Saving Loading Plan Ballast Details for LoadingPlanPortWiseDetails {}",
         loadingPlanPortWiseDetails.getId());
+    List<LoadingPlanBallastDetails> loadingPlanBallastDetails =
+        new ArrayList<LoadingPlanBallastDetails>();
     loadingPlanBallastDetailsList.forEach(
         ballast -> {
           LoadingPlanBallastDetails ballastDetails = new LoadingPlanBallastDetails();
           loadingPlanBuilderService.buildLoadingPlanBallastDetails(
               loadingPlanPortWiseDetails, ballastDetails, ballast);
-          loadingPlanBallastDetailsRepository.save(ballastDetails);
+          loadingPlanBallastDetails.add(ballastDetails);
         });
+    loadingPlanBallastDetailsRepository.saveAll(loadingPlanBallastDetails);
   }
 
   private void saveDeBallastingRates(
@@ -608,46 +636,54 @@ public class LoadingPlanAlgoService {
     log.info(
         "Saving DeBallastingRates for LoadingPlanPortWiseDetails {}",
         loadingPlanPortWiseDetails.getId());
+    List<DeballastingRate> deballastingRates = new ArrayList<DeballastingRate>();
     deballastingRatesList.forEach(
         rate -> {
           DeballastingRate deballastingRate = new DeballastingRate();
           loadingPlanBuilderService.buildDeBallastingRate(
               loadingPlanPortWiseDetails, deballastingRate, rate);
-          deballastingRateRepository.save(deballastingRate);
+          deballastingRates.add(deballastingRate);
         });
+    deballastingRateRepository.saveAll(deballastingRates);
   }
 
   private void saveDeBallastingRates(
       com.cpdss.loadingplan.entity.LoadingSequence loadingSequence,
       List<DeBallastingRate> deBallastingRatesList) {
     log.info("Saving DeBallastingRates for LoadingSequence {}", loadingSequence.getId());
+    List<DeballastingRate> deballastingRates = new ArrayList<DeballastingRate>();
     deBallastingRatesList.forEach(
         rate -> {
           DeballastingRate deballastingRate = new DeballastingRate();
           loadingPlanBuilderService.buildDeBallastingRate(loadingSequence, deballastingRate, rate);
-          deballastingRateRepository.save(deballastingRate);
+          deballastingRates.add(deballastingRate);
         });
+    deballastingRateRepository.saveAll(deballastingRates);
   }
 
   private void saveCargoValves(
       com.cpdss.loadingplan.entity.LoadingSequence loadingSequence, List<Valve> cargoValvesList) {
     log.info("Saving CargoValves for LoadingSequence {}", loadingSequence.getId());
+    List<CargoValve> cargoValves = new ArrayList<CargoValve>();
     cargoValvesList.forEach(
         valve -> {
           CargoValve cargoValve = new CargoValve();
           loadingPlanBuilderService.buildCargoValve(loadingSequence, cargoValve, valve);
-          cargoValveRepository.save(cargoValve);
+          cargoValves.add(cargoValve);
         });
+    cargoValveRepository.saveAll(cargoValves);
   }
 
   private void saveBallastValves(
       com.cpdss.loadingplan.entity.LoadingSequence loadingSequence, List<Valve> ballastValvesList) {
     log.info("Saving BallastValves for LoadingSequence {}", loadingSequence.getId());
+    List<BallastValve> ballastValves = new ArrayList<BallastValve>();
     ballastValvesList.forEach(
         valve -> {
           BallastValve ballastValve = new BallastValve();
           loadingPlanBuilderService.buildBallastValve(loadingSequence, ballastValve, valve);
-          this.ballastValveRepository.save(ballastValve);
+          ballastValves.add(ballastValve);
         });
+    this.ballastValveRepository.saveAll(ballastValves);
   }
 }
