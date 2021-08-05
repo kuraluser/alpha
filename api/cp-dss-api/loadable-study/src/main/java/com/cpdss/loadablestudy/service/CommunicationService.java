@@ -82,8 +82,8 @@ public class CommunicationService {
                 erReply.getResponseStatus().getCode(),
                 HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
           }
-
-          saveLoadableStudyShore(erReply);
+          if (erReply != null && !erReply.getPatternResultJson().isEmpty())
+            saveLoadableStudyShore(erReply);
         } /*else if (messageType.getMessageType().equals("ValidatePlan")) {
             saveValidatePlanRequestShore(erReply);
           }*/

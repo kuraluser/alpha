@@ -1085,8 +1085,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     }
     LoadableStudyPortRotation loadableStudyPortRotation =
         portRotations.get(portRotations.size() - 2);
-    List<CargoNomination> cargos =
-        cargoNominationService.getCargoNominations(loadableStudyId);
+    List<CargoNomination> cargos = cargoNominationService.getCargoNominations(loadableStudyId);
     Set<CargoNomination> previousPortCargos =
         cargos.stream()
             .flatMap(x -> x.getCargoNominationPortDetails().stream())
@@ -1176,8 +1175,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     if (dischargeStudyPortRotations == null) {
       return;
     }
-    List<CargoNomination> cargos =
-        cargoNominationService.getCargoNominations(loadableStudyId);
+    List<CargoNomination> cargos = cargoNominationService.getCargoNominations(loadableStudyId);
     LoadableStudyPortRotation dischargeStudyPortRotation = dischargeStudyPortRotations.get(0);
     Set<CargoNomination> firstPortCargos =
         cargos.stream()
