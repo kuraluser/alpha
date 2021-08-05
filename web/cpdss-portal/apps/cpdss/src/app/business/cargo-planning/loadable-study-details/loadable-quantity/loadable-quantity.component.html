@@ -8,6 +8,7 @@
         <div class="header-info-pop-up"><span class="info-icon mr-5">!</span> {{'LOADABLE_QUANTITY_INFO' | translate}}
         </div>
     </p-header>
+
     <form [formGroup]="loadableQuantityForm" id="fg_loadableQunatity" (ngSubmit)="onSubmit()"
         *ngIf="loadableQuantityForm">
         <div class="container-fluid">
@@ -29,6 +30,7 @@
                                 [errorMessages]="errorMesages.portName"></cpdss-portal-validation-error>
                         </div>
                     </div>
+
                     <div class="row  form-group">
                         <label for="loadable_quantity_max_draft"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_MAX_DRAFT' | translate}}</label>
@@ -41,8 +43,8 @@
                             <cpdss-portal-validation-error [hidden]="!loadableQuantityForm?.controls?.portName.value" [errors]="isNoArrivalMaxDraft"
                             [errorMessages]="errorMesages.arrivalMaxDraft"></cpdss-portal-validation-error>
                         </div>
-
                     </div>
+
                     <div class="row form-group" >
                         <label for="loadable_quantity_displacement"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DISPLACEMENT' | translate}}</label>
@@ -52,6 +54,7 @@
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                     </div>
+
                     <div class="row form-group" >
                         <label for="loadable_quantity_lwt" class="col col-form-label">{{'LOADABLE_QUANTITY_LWT' |
                             translate}}</label>
@@ -60,6 +63,7 @@
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                     </div>
+
                     <div class="row form-group no-border mb-5 sub-heading-size strong">
                         <label for="loadable_quantity_dwt"
                             class="col col-form-label strong ">{{'LOADABLE_QUANTITY_DWT' | translate}}</label>
@@ -70,16 +74,17 @@
                             }}</div>
                             <div class="col error-column text-center"></div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_tpc" class="col col-form-label">{{'LOADABLE_QUANTITY_TPC' |
                             translate}}</label>
                         <div class="col pt-5">
                             <label id="loadable_quantity_tpc">{{getControlLabel('tpc') | number : '1.2-2'}}</label>
-
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_TONNE' | translate }}</div>
                         <div class="col error-column text-center"></div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_sea_water_density"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SEA_WATER_DENSITY' | translate}}</label>
@@ -98,7 +103,8 @@
                                 [errorMessages]="errorMesages.estSeaDensity"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div class="row form-group" >
+
+                    <div class="row form-group">
                         <label for="loadable_quantity_sg_correction"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SG_CORRECTION' | translate}}</label>
                         <div class="col pt-5">
@@ -111,6 +117,7 @@
                                 [errorMessages]="errorMesages.sgCorrection"></cpdss-portal-validation-error>
                         </div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_estimate_sag"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_ESTIMATE_SAG' | translate}}</label>
@@ -129,6 +136,7 @@
                                 [errorMessages]="errorMesages.estimateSag"></cpdss-portal-validation-error>
                         </div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_sag_correction"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SAG_CORRECTION' | translate}}</label>
@@ -142,6 +150,7 @@
                                 [errorMessages]="errorMesages.safCorrection"></cpdss-portal-validation-error>
                         </div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_fo_onboard"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_ONBOARD' | translate}}</label>
@@ -156,6 +165,7 @@
                                 [errorMessages]="errorMesages.foOnboard"></cpdss-portal-validation-error>
                         </div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_do_onboard"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_DO_ONBOARD' | translate}}</label>
@@ -185,6 +195,7 @@
                                 [errorMessages]="errorMesages.freshWaterOnboard"></cpdss-portal-validation-error>
                         </div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_boiler_water_onboard"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_BOILER_WATER_ON_BOARD' | translate}}</label>
@@ -199,6 +210,7 @@
                                 [errorMessages]="errorMesages.boilerWaterOnboard"></cpdss-portal-validation-error>
                         </div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_ballast" class="col col-form-label">{{'LOADABLE_QUANTITY_BALLAST'
                             | translate }}</label>
@@ -228,6 +240,7 @@
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center"></div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_others" class="col col-form-label">{{'LOADABLE_QUANTITY_OTHERS' |
                             translate}}</label>
@@ -246,70 +259,8 @@
                                 [errorMessages]="errorMesages.others"></cpdss-portal-validation-error>
                         </div>
                     </div>
-                    <div class="row form-group no-border sub-heading-size strong text-secondary">
-                        <label for="loadable_quantity_sub_total"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_SUB_TOTAL' | translate}}</label>
-                        <div class="col pt-5">
-                            <label id="loadable_quantity_sub_total">{{getControlLabel('subTotal')| number :
-                                '1.2-2'}}</label>
-                        </div>
-                        <div class="col unit-column pt-5">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column text-center">
-                            <cpdss-portal-validation-error [errors]="fieldError('subTotal')"
-                                [errorMessages]="errorMesages.subTotal"></cpdss-portal-validation-error>
-                        </div>
-                    </div>
-                    <div class="row form-group no-border sub-heading-size strong text-secondary" *ngIf="caseNo !== 1">
-                        <div class="col text-uppercase col-form-label">{{'LOADABLE_QUANTITY' | translate}}</div>
-                        <label id="loadable_quantity_totalQuantity" class="col pt-5">{{getControlLabel('totalQuantity') |
-                            number : '1.2-2'}}</label>
-                        <div class="col unit-column ">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column">
-
-                        </div>
-                    </div>
-                    <div class="row form-group no-border sub-heading-size strong text-secondary" *ngIf="caseNo === 1">
-                        <label for="" class="col col-form-label">{{'LOADABLE_QUANTITY' | translate}} </label>
-                        <div class="col pt-5">
-                            <label id="loadable_quantity_totalQuantity">{{getControlLabel('totalQuantity') | number :
-                                '1.2-2'}}</label>
-
-                        </div>
-                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column">
-                            <cpdss-portal-validation-error [errors]="fieldError('totalQuantity')"
-                                [errorMessages]="errorMesages.totalQuantity"></cpdss-portal-validation-error>
-                        </div>
-                    </div>
-                    <div class="row" *ngIf="caseNo !== 1">
-                        <div class="col error-container">
-                            <div class="text-danger" *ngIf="isNegative">
-                                {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNoTpc">
-                                {{'LOADABLE_QUANTITY_TPC_REQUIRED' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNoDwt">
-                                {{'LOADABLE_QUANTITY_DWT_REQUIRED' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNodisplacement">
-                                {{'LOADABLE_QUANTITY_DISPLACEMENT_REQUIRED' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNoLwt">
-                                {{'LOADABLE_QUANTITY_LWT_REQUIRED' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNoConstant">
-                                {{'LOADABLE_QUANTITY_CONSTANT_REQUIRED' | translate}}</div>
-                        </div>
-                    </div>
-                    <div class="row" *ngIf="caseNo === 1">
-                        <div class="col error-container">
-                            <div class="pt-5 text-danger" *ngIf="isNegative">
-                                {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNoTpc">
-                                {{'LOADABLE_QUANTITY_TPC_REQUIRED' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNoDwt">
-                                {{'LOADABLE_QUANTITY_DWT_REQUIRED' | translate}}</div>
-                            <div class="text-danger" *ngIf="isNoConstant">
-                                {{'LOADABLE_QUANTITY_CONSTANT_REQUIRED' | translate}}</div>
-                        </div>
-                    </div>
                 </div>
+
                 <div class="col second-column" *ngIf="caseNo === 1">
                     <div class="row form-group">
                         <label for="loadable_quantity_dist_in_summery"
@@ -321,7 +272,6 @@
                                 (change)="getRunningHours()" *ngIf="isEditable; else distanceInRef" focusTrap>
                                 <ng-template #distanceInRef>
                                     <label id="loadable_quantity_dist_in_summery_label">{{getControlLabel('distanceInSummerzone')| number :'1.2-2'}}</label>
-                                    
                                 </ng-template>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MILES' | translate }}</div>
@@ -330,6 +280,7 @@
                                 [errorMessages]="errorMesages.distanceInSummerzone"></cpdss-portal-validation-error>
                         </div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_speed_in_sz"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_SPEED_IN' | translate}}
@@ -349,6 +300,7 @@
                                 [errorMessages]="errorMesages.speedInSz"></cpdss-portal-validation-error>
                         </div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_running_hours"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_HOURS' | translate}}</label>
@@ -364,6 +316,7 @@
                                 [errorMessages]="errorMesages.runningHours"></cpdss-portal-validation-error>
                         </div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_running_days"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_DAYS' | translate}}</label>
@@ -378,6 +331,7 @@
                                 [errorMessages]="errorMesages.runningDays"></cpdss-portal-validation-error>
                         </div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_fo_con_day"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CON_/_DAY' | translate}}</label>
@@ -396,6 +350,7 @@
                                 [errorMessages]="errorMesages.foConday"></cpdss-portal-validation-error>
                         </div>
                     </div>
+
                     <div class="row form-group">
                         <label for="loadable_quantity_fo_cons_in_sz"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_FO_CONS_IN' | translate}}
@@ -408,6 +363,78 @@
                         <div class="col error-column">
                             <cpdss-portal-validation-error [errors]="fieldError('foConsInSz')"
                                 [errorMessages]="errorMesages.foConsInSz"></cpdss-portal-validation-error>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row item-row-wrapper">
+                <div class="col">
+                    <div class="row form-group sub-heading-size strong text-secondary" [ngClass]="{'no-border': caseNo !== 1}">
+                        <label for="loadable_quantity_sub_total"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_SUB_TOTAL' | translate}}</label>
+                        <div class="col pt-5">
+                            <label id="loadable_quantity_sub_total">{{getControlLabel('subTotal')| number :
+                                '1.2-2'}}</label>
+                        </div>
+                        <div class="col unit-column pt-5">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('subTotal')"
+                                [errorMessages]="errorMesages.subTotal"></cpdss-portal-validation-error>
+                        </div>
+                    </div>
+
+                    <div class="row form-group no-border sub-heading-size strong text-secondary" *ngIf="caseNo !== 1">
+                        <div class="col text-uppercase col-form-label">{{'LOADABLE_QUANTITY' | translate}}</div>
+                        <label id="loadable_quantity_totalQuantity_label" class="col pt-5">{{getControlLabel('totalQuantity') |
+                            number : '1.2-2'}}</label>
+                        <div class="col unit-column ">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column">
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="caseNo !== 1">
+                        <div class="col error-container">
+                            <div class="text-danger" *ngIf="isNegative">
+                                {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' | translate}}</div>
+                            <div class="text-danger" *ngIf="isNoTpc">
+                                {{'LOADABLE_QUANTITY_TPC_REQUIRED' | translate}}</div>
+                            <div class="text-danger" *ngIf="isNoDwt">
+                                {{'LOADABLE_QUANTITY_DWT_REQUIRED' | translate}}</div>
+                            <div class="text-danger" *ngIf="isNodisplacement">
+                                {{'LOADABLE_QUANTITY_DISPLACEMENT_REQUIRED' | translate}}</div>
+                            <div class="text-danger" *ngIf="isNoLwt">
+                                {{'LOADABLE_QUANTITY_LWT_REQUIRED' | translate}}</div>
+                            <div class="text-danger" *ngIf="isNoConstant">
+                                {{'LOADABLE_QUANTITY_CONSTANT_REQUIRED' | translate}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col second-column second-column-lq" *ngIf="caseNo === 1">
+                    <div class="row form-group border-head sub-heading-size strong text-secondary" [ngClass]="{'no-border': (isNegative || isNoTpc || isNoDwt || isNoConstant)}">
+                        <label for="loadable_quantity_totalQuantity" class="col col-form-label">{{'LOADABLE_QUANTITY' | translate}} </label>
+                        <div class="col pt-5">
+                            <label id="loadable_quantity_totalQuantity">{{getControlLabel('totalQuantity') | number :
+                                '1.2-2'}}</label>
+                        </div>
+                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column">
+                            <cpdss-portal-validation-error [errors]="fieldError('totalQuantity')"
+                                [errorMessages]="errorMesages.totalQuantity"></cpdss-portal-validation-error>
+                        </div>
+                    </div>
+
+                    <div class="row" [ngClass]="{'no-border': (!isNegative && !isNoTpc && !isNoDwt && !isNoConstant)}">
+                        <div class="col error-container">
+                            <div class="pt-5 text-danger" *ngIf="isNegative">
+                                {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' | translate}}</div>
+                            <div class="text-danger" *ngIf="isNoTpc">
+                                {{'LOADABLE_QUANTITY_TPC_REQUIRED' | translate}}</div>
+                            <div class="text-danger" *ngIf="isNoDwt">
+                                {{'LOADABLE_QUANTITY_DWT_REQUIRED' | translate}}</div>
+                            <div class="text-danger" *ngIf="isNoConstant">
+                                {{'LOADABLE_QUANTITY_CONSTANT_REQUIRED' | translate}}</div>
                         </div>
                     </div>
                 </div>

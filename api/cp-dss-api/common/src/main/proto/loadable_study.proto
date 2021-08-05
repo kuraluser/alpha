@@ -198,6 +198,8 @@ service LoadableStudyService {
 	rpc GetLoadableStudyPortRotationByPortRotationId(PortRotationRequest) returns (PortRotationDetailReply) {}
 
 	rpc GetLoadableStudyShoreTwo(UllageBillRequest) returns (UllageBillReply){}
+
+	rpc GetLoadableStudySimulatorJsonData(SimulatorJsonRequest) returns (SimulatorJsonReply){}
 }
 
 service DischargeStudyOperationService {
@@ -1532,4 +1534,15 @@ message AlgoResponseCommunication{
 		LoadablePatternAlgoRequest loadablePatternAlgoRequest = 1;
 		LoadicatorResultsRequest loadicatorResultsRequest = 2;
 	  string messageId = 3;
+}
+
+message SimulatorJsonRequest{
+    int64 vesselId = 1;
+    int64 loadableStudyId = 2;
+    int64 caseNumber = 3;
+}
+
+message SimulatorJsonReply{
+    ResponseStatus responseStatus = 1;
+    string departureCondition = 2;
 }

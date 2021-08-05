@@ -62,7 +62,8 @@ export class LoadingDischargingTransformationService {
         'duplicateBerth': 'LOADING_INFORMATION_BERTH_DUPLICATION',
       },
       hoseConnections: {
-        'maxlength': 'LOADING_DISCHARGING_BERTH_HOSECONNECTION_CHARACTER_LIMIT'
+        'maxlength': 'LOADING_DISCHARGING_BERTH_HOSECONNECTION_CHARACTER_LIMIT',
+        'pattern':"LOADING_BETH_HOSE_CONNECTION_ERROR"
       },
       regulationAndRestriction: {
         'maxlength': 'LOADING_DISCHARGING_BERTH_REGULATION_RESTRICTION_CHARACTER_LIMIT'
@@ -243,7 +244,7 @@ export class LoadingDischargingTransformationService {
     loadingDischargingDelayValueObject.forEach((loadingValueObject) => {
       const _loadingDischargingDelays = <ILoadingDischargingDelays>{};
       _loadingDischargingDelays.id = loadingValueObject?.id;
-      if(operation === OPERATIONS.LOADING) {
+      if (operation === OPERATIONS.LOADING) {
         _loadingDischargingDelays.loadingInfoId = infoId;
       } else {
         _loadingDischargingDelays.dischargingInfoId = infoId;
@@ -583,8 +584,10 @@ export class LoadingDischargingTransformationService {
     sequenceData.cargoStages = [];
     sequenceData.cargoStageTickPositions = [];
     sequenceData.ballastPumps = this.setBallastPumpGravity(sequenceData.ballastPumps, sequenceData.gravity, sequenceData.ballastPumpCategories);
-
-
+    sequenceData.stabilityParams = sequenceData.stabilityParams?.map(param => {
+      param.data = param?.data?.map((value) => [value[0], Number(value[1])]);
+      return param;
+    });
     sequenceData.stagePlotLines = this.setPlotLines(sequenceData.stageTickPositions);
     sequenceData.tickPositions = this.setTickPositions(sequenceData.minXAxisValue, sequenceData.maxXAxisValue);
     sequenceData.cargoLoadingRates = this.setCargoLoadingRate(sequenceData.stageTickPositions, sequenceData.cargoLoadingRates);

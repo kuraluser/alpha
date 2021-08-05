@@ -3,50 +3,92 @@
         <div class="row item-row-wrapper">
             <div class="col  no-right-padding">
                 <div class="row form-group">
-                    <label for="timeOfSunrise" class="col-5 no-left-padding">{{'LOADING_DETAILS_SUNRISE_SUNSET' |
-                        translate}}</label>
-                    <div class="col error-icon-wrapper">
-                        <p-calendar  formControlName="timeOfSunrise" [timeOnly]="true" appendTo="body"
-                            inputId="timeOfSunrise" placeholder="{{'LOADING_DETAILS_SUNRISE_LABEL' | translate}}"
-                            hourFormat="24" [readonlyInput]="true"
-                            [showButtonBar]="false" todayButtonStyleClass="hide" #timeOfSunRiseCalender >
+                    <ng-container *ngIf="timeOfSunrisePermission?.view && timeOfSunsetPermission?.view;then single else multi">
+                    </ng-container>
+                    <ng-template #multi>
+                        <label *ngIf="timeOfSunrisePermission?.view" for="timeOfSunrise"
+                            class="col-5 no-left-padding">{{'LOADING_DETAILS_SUNRISE' |
+                            translate}}</label>
+                        <label *ngIf="timeOfSunsetPermission?.view" for="timeOfSunrise"
+                            class="col-5 no-left-padding">{{'LOADING_DETAILS_SUNSET' |
+                            translate}}</label>
+                    </ng-template>
+                    <ng-template #single>
+                        <label for="timeOfSunrise" class="col-5 no-left-padding">{{'LOADING_DETAILS_SUNRISE_SUNSET' |
+                            translate}}</label>
+                    </ng-template>
+                    <div class="col error-icon-wrapper" *ngIf="timeOfSunrisePermission?.view">
+                        <ng-template *ngIf="timeOfSunrisePermission?.edit;then editable else nonEditable">
+                            
+                        </ng-template>
+                       
+                            <ng-template #editable>
+                        
+                                <p-calendar formControlName="timeOfSunrise" [timeOnly]="true" appendTo="body" inputId="timeOfSunrise"
+                                    placeholder="{{'LOADING_DETAILS_SUNRISE_LABEL' | translate}}" hourFormat="24" [readonlyInput]="true"
+                                    [showButtonBar]="false" todayButtonStyleClass="hide" #timeOfSunRiseCalender>
+                                    <p-footer>
+                                        <div class="row">
+                                            <div class="col">
+                                                <button class="btn btn-default"
+                                                    (click)="clearTimeInput(timeOfSunRiseCalender,'timeOfSunrise')">{{'DATA_TABLE_CLEAR_BUTTON_LABEL'
+                                                    | translate}}</button>
+                                            </div>
+                                            <div class="col text-right">
+                                                <button class="btn btn-default"
+                                                    (click)="onTimeChange(timeOfSunRiseCalender,'timeOfSunrise')">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                                                    |
+                                                    translate}}</button>
+                                            </div>
+                                        </div>
+                                    </p-footer>
+                                </p-calendar>
+                                <cpdss-portal-validation-error [errors]="fieldError('timeOfSunrise')"
+                                    [errorMessages]="errorMessages.timeOfSunrise">
+                                </cpdss-portal-validation-error>
+                        
+                            </ng-template>
+                        
+                            <ng-template #nonEditable>
+                                <label>{{this.loadingDischargingDetailsResponse?.timeOfSunrise}}</label>
+                            </ng-template>
+
+                        </div>           
+                    
+                    <div class="pt-5" *ngIf="timeOfSunrisePermission?.view && timeOfSunsetPermission?.view">
+                        /
+                    </div>
+                    <div class="col error-icon-wrapper" *ngIf="timeOfSunsetPermission?.view">
+                    <ng-template  *ngIf="timeOfSunsetPermission?.edit;then editSunSet else nonEditableSunSet">
+                    </ng-template>
+                    <ng-template #editSunSet>
+                        <p-calendar formControlName="timeOfSunset" [timeOnly]="true" appendTo="body" readonly="true"
+                            *ngIf="timeOfSunsetPermission?.edit" inputId="timeOfSunset"
+                            placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}" hourFormat="24" #timeOfSunSetCalender>
                             <p-footer>
                                 <div class="row">
                                     <div class="col">
-                                        <button class="btn btn-default" (click)="clearTimeInput(timeOfSunRiseCalender,'timeOfSunrise')">{{'DATA_TABLE_CLEAR_BUTTON_LABEL' | translate}}</button>
+                                        <button class="btn btn-default"
+                                            (click)="clearTimeInput(timeOfSunSetCalender,'timeOfSunset')">{{'DATA_TABLE_CLEAR_BUTTON_LABEL'
+                                            | translate}}</button>
                                     </div>
                                     <div class="col text-right">
-                                        <button class="btn btn-default" (click)="onTimeChange(timeOfSunRiseCalender,'timeOfSunrise')">{{'DATA_TABLE_OK_BUTTON_LABEL' | translate}}</button>
+                                        <button class="btn btn-default"
+                                            (click)="onTimeChange(timeOfSunSetCalender,'timeOfSunset')">{{'DATA_TABLE_OK_BUTTON_LABEL' |
+                                            translate}}</button>
                                     </div>
                                 </div>
                             </p-footer>
+                            <cpdss-portal-validation-error [errors]="fieldError('timeOfSunset')"
+                                [errorMessages]="errorMessages.timeOfSunset">
+                            </cpdss-portal-validation-error>
                         </p-calendar>
-                        <cpdss-portal-validation-error [errors]="fieldError('timeOfSunrise')"
-                            [errorMessages]="errorMessages.timeOfSunrise">
-                        </cpdss-portal-validation-error>
-                    </div>
-                    <div class="pt-5">
-                        /
-                    </div>
-                    <div class="col error-icon-wrapper">
-                        <p-calendar  formControlName="timeOfSunset" [timeOnly]="true" appendTo="body"
-                            inputId="timeOfSunset" placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}"
-                            hourFormat="24" #timeOfSunSetCalender>
-                            <p-footer>
-                                <div class="row">
-                                    <div class="col">
-                                        <button class="btn btn-default" (click)="clearTimeInput(timeOfSunSetCalender,'timeOfSunset')">{{'DATA_TABLE_CLEAR_BUTTON_LABEL' | translate}}</button>
-                                    </div>
-                                    <div class="col text-right">
-                                        <button class="btn btn-default" (click)="onTimeChange(timeOfSunSetCalender,'timeOfSunset')">{{'DATA_TABLE_OK_BUTTON_LABEL' | translate}}</button>
-                                    </div>
-                                </div>
-                            </p-footer> 
-                        </p-calendar>
-                        <cpdss-portal-validation-error [errors]="fieldError('timeOfSunset')"
-                            [errorMessages]="errorMessages.timeOfSunset">
-                        </cpdss-portal-validation-error>
-                    </div>
+                    </ng-template>
+                    <ng-template #nonEditableSunSet>
+                       <label> {{this.loadingDischargingDetailsResponse?.timeOfSunset}}</label>
+                    </ng-template>                       
+                </div>
+               
                 </div>
                 <div class="row form-group">
                     <label for="startTime" class="col-5 no-left-padding">{{'LOADING_DETAILS_START_TIME_LABEL' |
@@ -127,8 +169,6 @@
                     </div> -->
                 </div>
             </div>
-
-
         </div>
     </div>
 </form>

@@ -1535,6 +1535,7 @@
   "DISCHARGE_STUDY_PORT_CHANGE_REJECT_LABEL": "No",
   "DISCHARGE_STUDY_MAX_ERROR": "Error",
   "DISCHARGE_STUDY_MAX_ERROR_SUMMERY": "Maximum port count exceeded",
+  "OPERATIONS_VOYAGE_DISTANCE": "Voyage Distance",
   "OPERATIONS_ADD_PORT_BUTTON_LABEL": "Add Port",
   "OPERATIONS_ADD_PORT_POPUP_HEADER": "ADD PORT",
   "OPERATIONS_ADD_PORT_PORT_LABEL": "PORT",
@@ -1698,11 +1699,14 @@
   "LOADING_RATE_MAX_NOTICE_TIME_RATE_STOP": "Maximum 60 minute allowed",
   "BERTH_DELETE_SUMMARY":"Please click on yes to proceed",
   "BERTH_DELETE_HEADER":"DO YOU WANT TO DELETE?",
-  "BERTH_DELETE_CONFIRM_LABEL":"Ok",
+  "BERTH_DELETE_CONFIRM_LABEL":"Yes",
   "BERTH_DELETE_SUCCESS":"Success",
   "BERTH_DELETE_SUCCESSFULLY":"Berth details deleted successfully",
   "BERTH_ERROR_SUMMARY":"Cannot  delete since there is only one berth",
   "BERTH_DELETE_ERROR":"Error",
+  "LOADING_DETAILS_SUNSET":"Sunset",
+  "LOADING_DETAILS_SUNRISE":"Sunrise",
+
   "LOADING_INFORMATION_NO_MACHINERY": "Atleast one machinery is required",
   "MIN_SHORE_LOADING_RATE_M3": "Minimum 1000 required",
   "MIN_SHORE_LOADING_RATE_BBLS": "Minimum 6,289 required",
@@ -1717,5 +1721,6 @@
   "MAX_LOADING_RATE_MIN_M3": "Maximum 3000 is allowed",
   "MAX_LOADING_RATE_MIN_BBLS": "Maximum 18,869 is allowed",
   "LOADING_INFORMATION_NO_BERTHS": "Atleast one berth is needed",
-  "CARGO_NOMINATION_ADD_PORT_NOTE": "Note: On clicking Save the Api and Temp values will be reset to default."
+  "CARGO_NOMINATION_ADD_PORT_NOTE": "Note: On clicking Save the Api and Temp values will be reset to default.",
+  "LOADING_BETH_HOSE_CONNECTION_ERROR":"Hose connection must contain atleast one letter and allowed special characters are # , & ,( , ) , / , : , - , = , + ,*"
 }

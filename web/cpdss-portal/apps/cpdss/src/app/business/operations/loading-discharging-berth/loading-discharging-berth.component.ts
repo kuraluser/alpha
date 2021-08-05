@@ -5,6 +5,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 import { IBerth } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+ 
 
 /**
  * Component class for loading discharging berth component
@@ -75,11 +76,11 @@ export class LoadingDischargingBerthComponent implements OnInit {
     this.berthForm = this.fb.group({
       berth: this.fb.array([])
     });
-    this.berthDetailsForm = this.fb.group({
+  this.berthDetailsForm = this.fb.group({     
       berthId: 0,
       berthName: '',
       maxShipDepth: this.fb.control('', [numberValidator(4, 2)]),
-      hoseConnections: this.fb.control('', [Validators.maxLength(100)]),
+      hoseConnections: this.fb.control('', [Validators.maxLength(100),Validators.pattern(new RegExp(/(w*[a-zA-Z]w*)+[0-9#&*()/=\[\]':"-]*$/))]),
       seaDraftLimitation: this.fb.control(null, [numberValidator(4, 2)]),
       airDraftLimitation: this.fb.control('', [numberValidator(4, 2)]),
       maxManifoldHeight: this.fb.control('', [numberValidator(4, 2)]),

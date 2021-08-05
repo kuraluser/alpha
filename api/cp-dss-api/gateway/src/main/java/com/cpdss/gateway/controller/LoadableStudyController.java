@@ -2205,4 +2205,40 @@ public class LoadableStudyController {
           e);
     }
   }
+
+  /**
+   * To retrieve simulator json data against loadable study and case number
+   *
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      value =
+          "/simulator-json/vessels/{vesselId}/loadableStudyId/{loadableStudyId}/caseNumber/{caseNumber}",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public SimulatorJsonResponse getSimulatorJsonDataForLoadableStudy(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long caseNumber,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.loadableStudyService.getSimulatorJsonDataForLoadableStudy(
+          vesselId, loadableStudyId, caseNumber, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error(
+          "GenericServiceException when fetching simulator json data against loadable study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when fetching simulator json data for loadable study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
 }

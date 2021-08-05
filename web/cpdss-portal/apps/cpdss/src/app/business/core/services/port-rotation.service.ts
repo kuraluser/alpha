@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IEditPortRotation, IEditPortRotationModel, IPort, IPortList, IPortResponseModel, IPortsDetailsResponse, IPortsResponse } from '../../core/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
@@ -11,11 +11,13 @@ import { CommonApiService } from '../../../shared/services/common/common-api.ser
 export class PortRotationService {
 
   public portOrderChange = new Subject();
-  voyageDistance: number;
+  private _voyageDistance = new BehaviorSubject<number>(0);
+
+  voyageDistance$ = this._voyageDistance.asObservable();
 
   constructor(private commonApiService: CommonApiService) { }
   /**
-   * Save edit port rotation popup 
+   * Save edit port rotation popup
    * @param vesselId
    * @param voyageId
    * @param loadableStudyId
@@ -60,4 +62,13 @@ export class PortRotationService {
     return this.commonApiService.post<IEditPortRotation, IPortResponseModel>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports/${ports.id}`, ports);
   }
 
+  /**
+   * Update voyage distance
+   *
+   * @param {number} voyageDistance
+   * @memberof PortRotationService
+   */
+  updateVoyageDistance(voyageDistance: number) {
+    this._voyageDistance.next(voyageDistance);
+  }
 }

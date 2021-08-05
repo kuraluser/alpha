@@ -4,6 +4,9 @@ import { ILoadingDischargingDetails } from '../models/loading-discharging.model'
 import { loadingDetailsValidator } from '../directives/validator/loading-details-time-validator.directive';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { IPermission } from '../../../shared/models/user-profile.model';
 
 @Component({
   selector: 'cpdss-portal-loading-discharging-details',
@@ -26,9 +29,14 @@ export class LoadingDischargingDetailsComponent implements OnInit {
   loadingDischargingDetailsForm: FormGroup;
   errorMessages: any;
   loadingDischargingDetailsResponse: ILoadingDischargingDetails;
-  constructor(private fb: FormBuilder, private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
+  timeOfSunrisePermission: IPermission;
+  timeOfSunsetPermission: IPermission;
+  constructor(private fb: FormBuilder,
+    private permissionsService: PermissionsService,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
 
   ngOnInit(): void {
+    this.getPagePermission();
     this.errorMessages = this.loadingDischargingTransformationService.setValidationMessageForLoadingDetails();
     this.loadingDischargingDetailsResponse = this.loadingDischargingDetails;
     this.loadingDischargingDetailsForm = this.fb.group({
@@ -39,7 +47,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
       maximumTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.maximumTrim, [Validators.required, numberValidator(2, 1), Validators.min(1), Validators.max(3)]),
       finalTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.finalTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)])
     })
-  }
+   }
 
   /**
 * Method for converting time string to date
@@ -113,6 +121,18 @@ export class LoadingDischargingDetailsComponent implements OnInit {
     fieldReferenceName.hideOverlay();
     this.loadingDischargingDetailsForm.controls[field].setValue(null);
   }
+
+/**
+  * Get page permission
+  *
+  * @memberof SynopticalComponent
+  */
+ getPagePermission() {
+  this.timeOfSunrisePermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadingInfoSunRise'], false);
+  this.timeOfSunsetPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadingInfoSunSet'], false);
+}
+
+
 
   /**
 * Method for when trim value update

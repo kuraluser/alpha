@@ -146,7 +146,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.isShore) {
       menuList.push({
         'menu': 'FLEET',
-        'menuIcon': '',
+        'menuIcon': 'fleet',
         'menuLink': 'fleet',
         'routerLinkActive': 'fleet',
         'subMenu': [],

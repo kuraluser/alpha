@@ -310,6 +310,13 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
         const result = await this.editPortRotationApiService.savePortRotationRibbon(this.vesselDetails.id, this.voyageId, this.loadableStudyId, port).toPromise();
         if (result.responseStatus.status === "200") {
           this.messageService.add({ severity: 'success', summary: translationKeys['PORT_ROTATION_RIBBON_SUCCESS'], detail: translationKeys['PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY'] });
+          let voyageDistance = 0;
+          for (let i = 0; i < this.portList?.length; i++) {
+            if(this.portList[i]?.type === 'Departure'){
+              voyageDistance += this.portList[i].distanceBetweenPorts;
+            }
+          }
+          this.editPortRotationApiService.updateVoyageDistance(voyageDistance);
         }
       }
       catch (errorResponse) {
@@ -396,10 +403,11 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     const result = await this.editPortRotationApiService.getPorts().toPromise();
     const portsFormData: IPortsDetailsResponse = await this.editPortRotationApiService.getPortsDetails(this.vesselDetails.id, this.voyageId, this.loadableStudyId).toPromise();
     this.portCarousel = [];
-    this.editPortRotationApiService.voyageDistance = 0
+    let voyageDistance = 0;
     for (let i = 0; i < portsFormData?.portList?.length; i++) {
-      this.editPortRotationApiService.voyageDistance = portsFormData?.portList[i].distanceBetweenPorts + this.editPortRotationApiService.voyageDistance;
+      voyageDistance += portsFormData?.portList[i].distanceBetweenPorts;
     }
+    this.editPortRotationApiService.updateVoyageDistance(voyageDistance);
     const portData: IEditPortRotation[] = portsFormData?.portList?.map(itm => ({
       ...result.find((item) => (item.id === itm.portId) && item),
       ...itm
