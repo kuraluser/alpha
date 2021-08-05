@@ -9,8 +9,12 @@ public class LoadingSequenceStabilityParam {
 
   private String time;
   private String foreDraft;
-  private String aftDraft;
-  private String draft;
+  private String afterDraft;
+  private String meanDraft;
+  private String trim;
+
+  @JsonProperty("heel")
+  private String list;
 
   @JsonProperty("BM")
   private String bendingMoment;

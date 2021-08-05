@@ -445,6 +445,8 @@ message LoadingPlanStabilityParameters {
   string foreDraft = 7;
   string aftDraft = 8;
   int32 time = 9;
+  string meanDraft = 10;
+  string list = 11;
 }
 
 message LoadingPlanTankDetails {

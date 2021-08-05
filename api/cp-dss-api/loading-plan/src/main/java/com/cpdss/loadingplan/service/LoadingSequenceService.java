@@ -113,6 +113,10 @@ public class LoadingSequenceService {
               .ifPresent(foreDraft -> paramBuilder.setForeDraft(String.valueOf(foreDraft)));
           Optional.ofNullable(param.getShearingForce())
               .ifPresent(sf -> paramBuilder.setSf(String.valueOf(sf)));
+          Optional.ofNullable(param.getTrim())
+              .ifPresent(trim -> paramBuilder.setTrim(String.valueOf(trim)));
+          Optional.ofNullable(param.getList())
+              .ifPresent(list -> paramBuilder.setList(String.valueOf(list)));
           Optional.ofNullable(param.getTime()).ifPresent(paramBuilder::setTime);
           builder.addLoadingSequenceStabilityParameters(paramBuilder.build());
         });
