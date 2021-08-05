@@ -108,6 +108,7 @@ import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import com.cpdss.gateway.utility.RuleUtility;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
@@ -6055,5 +6056,33 @@ public class LoadableStudyService {
     UllageBillReply replays = new UllageBillReply();
     replays.setResponseStatus(ruleResponse.build());
     return replays;
+  }
+
+  public SimulatorJsonResponse getSimulatorJsonDataForLoadableStudy(
+      Long vesselId, Long loadableStudyId, Long caseNumber, String correlationId)
+      throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest.Builder requestBuilder =
+        com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest.newBuilder();
+    requestBuilder.setVesselId(vesselId);
+    requestBuilder.setLoadableStudyId(loadableStudyId);
+    requestBuilder.setCaseNumber(caseNumber);
+    com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply reply =
+        loadableStudyServiceBlockingStub.getLoadableStudySimulatorJsonData(requestBuilder.build());
+    ArrivalDepartureConditionJson departureConditionJson = null;
+    SimulatorJsonResponse jsonResponse = new SimulatorJsonResponse();
+    try {
+      departureConditionJson =
+          new ObjectMapper()
+              .readValue(reply.getDepartureCondition(), ArrivalDepartureConditionJson.class);
+      jsonResponse.setDepartureCondition(departureConditionJson);
+      jsonResponse.setResponseStatus(
+          new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    } catch (JsonProcessingException e) {
+      jsonResponse.setResponseStatus(
+          new CommonSuccessResponse(
+              String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()), correlationId));
+    }
+
+    return jsonResponse;
   }
 }
