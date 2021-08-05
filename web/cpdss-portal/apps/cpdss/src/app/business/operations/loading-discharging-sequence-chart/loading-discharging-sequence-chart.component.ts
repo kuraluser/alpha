@@ -106,7 +106,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     this.ngxSpinnerService.show();
 
     const sequenceDataResponse = await this.loadingDischargingSequenceService.getSequenceData(0, 0, 0).toPromise();
-    const sequenceData =  this.loadingDischargingTransformationService.transformSequenceData(sequenceDataResponse);
+    const sequenceData = this.loadingDischargingTransformationService.transformSequenceData(sequenceDataResponse);
     LoadingDischargingSequenceChartComponent.cargos = sequenceData.cargos;
     LoadingDischargingSequenceChartComponent.ballasts = sequenceData.ballasts;
     LoadingDischargingSequenceChartComponent.cargoStages = sequenceData.cargoStages;
@@ -1298,62 +1298,65 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
    * @memberof LoadingDischargingSequenceChartComponent
    */
   setStabilityData() {
-    this.stabilityChartSeries = [{
-      yAxis: 0,
-      type: 'areaspline',
-      name: "FORE DRAFT",
-      custom: {
-        showFinalValue: true
+    this.stabilityChartSeries = [
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "FORE DRAFT",
+        custom: {
+          showFinalValue: true
+        },
+        data: this.stabilityParams.find(item => item.name === 'fore_draft')?.data,
       },
-      data: this.stabilityParams.find(item => item.name === 'fore_draft')?.data,
-    }, {
-      yAxis: 0,
-      type: 'areaspline',
-      name: "AFT DRAFT",
-      custom: {
-        showFinalValue: true
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "AFT DRAFT",
+        custom: {
+          showFinalValue: true
+        },
+        data: this.stabilityParams.find(item => item.name === 'aft_draft')?.data,
       },
-      data: this.stabilityParams.find(item => item.name === 'aft_draft')?.data,
-    },
-    {
-      yAxis: 0,
-      type: 'areaspline',
-      name: "TRIM",
-      custom: {
-        showFinalValue: true
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "TRIM",
+        custom: {
+          showFinalValue: true
+        },
+        data: this.stabilityParams.find(item => item.name === 'trim')?.data,
       },
-      data: this.stabilityParams.find(item => item.name === 'trim')?.data,
-    },
-    {
-      yAxis: 0,
-      type: 'areaspline',
-      name: "UKC",
-      custom: {
-        showFinalValue: true
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "UKC",
+        custom: {
+          showFinalValue: true
+        },
+        data: this.stabilityParams.find(item => item.name === 'ukc')?.data,
       },
-      data: this.stabilityParams.find(item => item.name === 'ukc')?.data,
-    },
-    {
-      yAxis: 0,
-      type: 'areaspline',
-      name: "GM (M)",
-      custom: {
-        showFinalValue: true
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "GM (M)",
+        custom: {
+          showFinalValue: true
+        },
+        data: this.stabilityParams.find(item => item.name === 'gm')?.data,
       },
-      data: this.stabilityParams.find(item => item.name === 'gm')?.data,
-    },
-    {
-      yAxis: 0,
-      type: 'areaspline',
-      name: "MAX. SHEARING FORCE (FR.NO./%)",
-      data: this.stabilityParams.find(item => item.name === 'sf')?.data,
-    },
-    {
-      yAxis: 0,
-      type: 'areaspline',
-      name: "MAX. BENDING MOMENT (FR.NO./%)",
-      data: this.stabilityParams.find(item => item.name === 'bm')?.data,
-    }];
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "MAX. SHEARING FORCE (FR.NO./%)",
+        data: this.stabilityParams.find(item => item.name === 'sf')?.data,
+      },
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "MAX. BENDING MOMENT (FR.NO./%)",
+        data: this.stabilityParams.find(item => item.name === 'bm')?.data,
+      }
+    ];
     this.stabilityGanttChart = {
       credits: {
         enabled: false

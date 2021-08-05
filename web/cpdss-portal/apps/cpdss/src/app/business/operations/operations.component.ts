@@ -1,10 +1,13 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { IVoyagePortDetails, Voyage, VOYAGE_STATUS } from '../core/models/common.model';
 import { IVessel } from '../core/models/vessel-details.model';
+import { PortRotationService } from '../core/services/port-rotation.service';
 import { VesselsApiService } from '../core/services/vessels-api.service';
 import { VoyageService } from '../core/services/voyage.service';
 import { LoadingDischargingTransformationService } from './services/loading-discharging-transformation.service';
@@ -14,7 +17,7 @@ import { LoadingDischargingTransformationService } from './services/loading-disc
   templateUrl: './operations.component.html',
   styleUrls: ['./operations.component.scss']
 })
-export class OperationsComponent implements OnInit {
+export class OperationsComponent implements OnInit, OnDestroy {
   vessel: IVessel;
   voyages: Voyage[];
   showAddPortPopup = false;
@@ -30,7 +33,10 @@ export class OperationsComponent implements OnInit {
     localStorage.removeItem("loadablePatternId")
   }
 
+  voyageDistance: number;
+
   private _selectedVoyage: Voyage;
+  private _ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
@@ -39,11 +45,20 @@ export class OperationsComponent implements OnInit {
     private messageService: MessageService,
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService,
-    private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService,
+    private portRotationService: PortRotationService) { }
 
 
   ngOnInit(): void {
     this.getVesselInfo();
+    this.portRotationService.voyageDistance$.pipe(takeUntil(this._ngUnsubscribe)).subscribe((voyageDistance) => {
+      this.voyageDistance = voyageDistance;
+    });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   /**
@@ -77,7 +92,7 @@ export class OperationsComponent implements OnInit {
     }else{
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_NO_ACTIVE_VOYAGE'], detail: translationKeys['LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE'] });
     }
-    
+
   }
 
   /**

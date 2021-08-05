@@ -15,6 +15,8 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { IPermission } from '../../shared/models/user-profile.model';
 import { ICargoConditions, IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../shared/models/common.model';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 /**
  * Component for voyage status
@@ -50,6 +52,8 @@ export class VoyageStatusComponent implements OnInit {
     this._selectedVoyage = voyage;
   }
 
+  private _ngUnsubscribe: Subject<any> = new Subject();
+
   constructor(private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
     private voyageApiService: VoyageApiService,
@@ -57,7 +61,7 @@ export class VoyageStatusComponent implements OnInit {
     public voyageStatusTransformationService: VoyageStatusTransformationService,
     private messageService: MessageService,
     private translateService: TranslateService,
-    public portRotationService: PortRotationService,
+    private portRotationService: PortRotationService,
     public permissionsService: PermissionsService) { }
 
   ngOnInit() {
@@ -65,6 +69,14 @@ export class VoyageStatusComponent implements OnInit {
     this.display = false;
     this.showData = false;
     this.getVesselInfo();
+    this.portRotationService.voyageDistance$.pipe(takeUntil(this._ngUnsubscribe)).subscribe((voyageDistance) => {
+      this.voyageDistance = voyageDistance;
+    });
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   /**
@@ -230,7 +242,7 @@ export class VoyageStatusComponent implements OnInit {
     }
   }
 
-      
+
   /**
   * Show loadable study list based on selected voyage id
   */

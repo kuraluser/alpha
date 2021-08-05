@@ -10,16 +10,16 @@
                 <p-dropdown styleClass="dropdown-w-180" [options]="voyageInfo" optionLabel="voyageNo"
                     [(ngModel)]="selectedVoyage" resetFilterOnHide="true"  (onChange)="onVoyageSelected()"></p-dropdown>
             </div>
-            
+
             <div class="pr-15 pt-10 col text-right">
                 {{'SHIP_LANDING_VOYAGE_DISTANCE' | translate}}
             </div>
             <div class="pr-30 pt-10 ">
-                {{portRotationService.voyageDistance? (portRotationService.voyageDistance | number) :
+                {{voyageDistance? (voyageDistance | number) :
                 0}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
             </div>
             <div class="" *ngIf="vesselInfo">
-               
+
                 <ng-container *ngIf="selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">
 
             <!--
