@@ -231,7 +231,7 @@ public class LoadingSequenceService {
       cargoStage.setAbbreviation(cargoNomination.getAbbreviation());
       cargoStage.setCargoNominationId(cargoNomination.getId());
       cargoStage.setColor(cargoNomination.getColor());
-      cargoStage.setName(cargoNomination.getCargoName());
+      cargoStage.setName("Stage " + stageNumber.incrementAndGet());
       BigDecimal total =
           portWiseDetails.getLoadingPlanStowageDetailsList().stream()
               .filter(stowage -> !StringUtils.isEmpty(stowage.getQuantity()))
