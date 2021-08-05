@@ -7,6 +7,7 @@ import lombok.Data;
 
 /** @Author jerin.g */
 @Data
+@JsonInclude(Include.NON_NULL)
 public class LoadablePlanStowageDetails {
   @JsonInclude(Include.NON_NULL)
   private Long id;
@@ -63,4 +64,9 @@ public class LoadablePlanStowageDetails {
   private String rdgUllageOrginal;
 
   private String cargoNominationTemperature;
+  
+  //DS fields
+  private String onboard;
+
+  private String maxTankVolume;
 }

@@ -10,68 +10,54 @@ import lombok.Data;
 
 /** @Author jerin.g */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoadablePlanDetailsResponse {
-  @JsonInclude(Include.NON_NULL)
-  private Long id;
+	private Long id;
+	private String caseNumber;
+	private String date;
+	private String voyageNumber;
+	private List<LoadableQuantityCargoDetails> loadableQuantityCargoDetails;
+	private List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetails;
+	private List<List<VesselTank>> tankLists;
+	private List<LoadablePlanStowageDetails> loadablePlanStowageDetails;
+	private List<List<VesselTank>> frontBallastTanks;
 
-  @JsonInclude(Include.NON_NULL)
-  private String caseNumber;
+	private List<List<VesselTank>> centerBallastTanks;
 
-  @JsonInclude(Include.NON_NULL)
-  private String date;
+	private List<List<VesselTank>> rearBallastTanks;
 
-  @JsonInclude(Include.NON_NULL)
-  private String voyageNumber;
+	private List<LoadablePlanBallastDetails> loadablePlanBallastDetails;
 
-  private List<LoadableQuantityCargoDetails> loadableQuantityCargoDetails;
+	private List<LoadablePlanSynopticalRecord> loadablePlanSynopticalRecords;
 
-  private List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetails;
+	private List<LoadablePlanComments> loadablePlanComments;
 
-  @JsonInclude(Include.NON_NULL)
-  private List<List<VesselTank>> tankLists;
+	private CommonSuccessResponse responseStatus;
 
-  private List<LoadablePlanStowageDetails> loadablePlanStowageDetails;
+	private Long loadablePatternStatusId;
 
-  @JsonInclude(Include.NON_NULL)
-  private List<List<VesselTank>> frontBallastTanks;
+	private Long voyageStatusId;
 
-  @JsonInclude(Include.NON_NULL)
-  private List<List<VesselTank>> centerBallastTanks;
+	private Boolean validated;
 
-  @JsonInclude(Include.NON_NULL)
-  private List<List<VesselTank>> rearBallastTanks;
+	private StabilityParameter stabilityParameters;
 
-  private List<LoadablePlanBallastDetails> loadablePlanBallastDetails;
+	private Long loadableStudyStatusId;
 
-  @JsonInclude(Include.NON_NULL)
-  private List<LoadablePlanSynopticalRecord> loadablePlanSynopticalRecords;
+	private BigDecimal loadableQuantity;
 
-  @JsonInclude(Include.NON_NULL)
-  private List<LoadablePlanComments> loadablePlanComments;
+	private Long lastModifiedPort;
 
-  @JsonInclude(Include.NON_NULL)
-  private CommonSuccessResponse responseStatus;
+	private boolean confirmPlanEligibility;
 
-  @JsonInclude(Include.NON_NULL)
-  private Long loadablePatternStatusId;
+	//DS fields
+	private List<DischargePlanRoBDetails> dischargePlanRoBDetails;
 
-  @JsonInclude(Include.NON_NULL)
-  private Long voyageStatusId;
+	private List<LoadableQuantityCargoDetails> dischargeQuantityCargoDetails;
 
-  @JsonInclude(Include.NON_NULL)
-  private Boolean validated;
+	private List<LoadableQuantityCommingleCargoDetails> dischargeQuantityCommingleCargoDetails;
 
-  @JsonInclude(Include.NON_NULL)
-  private StabilityParameter stabilityParameters;
+	private List<LoadablePlanBallastDetails> dischargePlanBallastDetails;
 
-  @JsonInclude(Include.NON_NULL)
-  private Long loadableStudyStatusId;
-
-  @JsonInclude(Include.NON_NULL)
-  private BigDecimal loadableQuantity;
-
-  @JsonInclude(Include.NON_NULL)
-  private Long lastModifiedPort;
-
-  private boolean confirmPlanEligibility;
+	private List<LoadablePlanStowageDetails> dischargePlanStowageDetails;
 }
