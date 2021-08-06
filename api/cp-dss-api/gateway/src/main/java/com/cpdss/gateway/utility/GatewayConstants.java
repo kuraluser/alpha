@@ -1,10 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.utility;
 
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-
 public class GatewayConstants {
 
   public static final String SUCCESS = "SUCCESS";
@@ -21,6 +17,4 @@ public class GatewayConstants {
 
   public static final String LOADABLE_STUDY_SAVE_REQUEST = "LS_SAVE";
   public static final String DISCHARGE_STUDY_SAVE_REQUEST = "DS_SAVE";
-
-  
 }

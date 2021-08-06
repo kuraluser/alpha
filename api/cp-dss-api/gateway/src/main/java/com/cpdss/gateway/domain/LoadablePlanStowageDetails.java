@@ -64,8 +64,8 @@ public class LoadablePlanStowageDetails {
   private String rdgUllageOrginal;
 
   private String cargoNominationTemperature;
-  
-  //DS fields
+
+  // DS fields
   private String onboard;
 
   private String maxTankVolume;

@@ -135,6 +135,7 @@ public class LoadablePatternService {
 
   @Value("${cpdss.communication.enable}")
   private boolean enableCommunication;
+
   /**
    * @param loadableStudy
    * @throws GenericServiceException
@@ -373,6 +374,8 @@ public class LoadablePatternService {
               saveLoadablePlanBallastDetails(loadablePattern, lpd);
               saveStabilityParameterForNonLodicator(
                   request.getHasLodicator(), loadablePattern, lpd);
+              // TODO ROB details
+              //TODO cargodetails
             });
     return loadablePatterns;
   }
@@ -774,6 +777,9 @@ public class LoadablePatternService {
     loadablePatternCargoDetails.setCargoNominationTemperature(
         new BigDecimal(lpsd.getCargoNominationTemperature()));
     loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
+//    DS field
+    loadablePatternCargoDetails.setOnboard(lpsd.getOnboard());
+    loadablePatternCargoDetails.setMaxTankVolume(lpsd.geMaxTankVolume());
     loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
   }
 
@@ -832,6 +838,10 @@ public class LoadablePatternService {
     loadablePlanStowageBallastDetails.setCorrectionFactor(lpbd.getCorrectionFactor());
     loadablePlanStowageBallastDetails.setRdgUllage(lpbd.getRdgLevel());
     loadablePlanStowageBallastDetails.setFillingPercentage(lpbd.getPercentage());
+    
+    //DS fields
+    loadablePlanStowageBallastDetails.setVolume(lpbd.getVolume());
+    loadablePlanStowageBallastDetails.setMaxTankVolume(lpbd.getMaxTankVolume());
     loadablePlanStowageBallastDetailsRepository.save(loadablePlanStowageBallastDetails);
   }
 
@@ -906,7 +916,7 @@ public class LoadablePatternService {
                     .cargo2NominationId(it.getCargo2NominationId())
                     .portRotationXid(portRotationXid)
                     .tankName(it.getTankShortName())
-                    // .actualQuantity(it.getActualQuantity()!=  null ? new
+                    // .actualQuantity(it.getActualQuantity()!= null ? new
                     // BigDecimal(it.getActualQuantity()): null)
                     .build();
 
@@ -914,20 +924,23 @@ public class LoadablePatternService {
                 loadablePlanComminglePortwiseDetails);
 
             if (operationType.equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
-              it.getToppingOffSequencesList()
-                  .forEach(
-                      toppingSequence -> {
-                        LoadablePatternCargoToppingOffSequence lpctos =
-                            new LoadablePatternCargoToppingOffSequence();
-                        lpctos.setCargoXId(toppingSequence.getCargoId());
-                        lpctos.setTankXId(toppingSequence.getTankId());
-                        lpctos.setOrderNumber(toppingSequence.getOrderNumber());
-                        lpctos.setLoadablePattern(loadablePattern);
-                        lpctos.setDisplayOrder(displayOrder.incrementAndGet());
-                        lpctos.setPortRotationXId(portRotationXid);
-                        lpctos.setIsActive(true);
-                        toppingOffSequenceRepository.save(lpctos);
-                      });
+              if (Optional.ofNullable(it.getToppingOffSequencesList())
+                  .isPresent()) { // Added null check
+                it.getToppingOffSequencesList()
+                    .forEach(
+                        toppingSequence -> {
+                          LoadablePatternCargoToppingOffSequence lpctos =
+                              new LoadablePatternCargoToppingOffSequence();
+                          lpctos.setCargoXId(toppingSequence.getCargoId());
+                          lpctos.setTankXId(toppingSequence.getTankId());
+                          lpctos.setOrderNumber(toppingSequence.getOrderNumber());
+                          lpctos.setLoadablePattern(loadablePattern);
+                          lpctos.setDisplayOrder(displayOrder.incrementAndGet());
+                          lpctos.setPortRotationXId(portRotationXid);
+                          lpctos.setIsActive(true);
+                          toppingOffSequenceRepository.save(lpctos);
+                        });
+              }
             }
           });
     }
@@ -954,6 +967,8 @@ public class LoadablePatternService {
     stabilityParameter.setShearingForce(lpd.getStabilityParameters().getShearForce());
     stabilityParameter.setTrimValue(lpd.getStabilityParameters().getTrim());
     stabilityParameter.setIsActive(true);
+    //DS field 
+    stabilityParameter.setAirDraft(lpd.getStabilityParameters().getAirDraft());
     stabilityParameterRepository.save(stabilityParameter);
   }
 
@@ -1208,9 +1223,9 @@ public class LoadablePatternService {
                 .ifPresent(builder::setLoadablePatternCreatedDate);
             ofNullable(loadablePattern.getLoadableStudyStatus())
                 .ifPresent(loadablePatternBuilder::setLoadableStudyStatusId);
-            //              if (stowageDetailsTempRepository
-            //                  .findByLoadablePatternAndIsActive(loadablePattern, true)
-            //                  .isEmpty()) loadablePatternBuilder.setValidated(true);
+            // if (stowageDetailsTempRepository
+            // .findByLoadablePatternAndIsActive(loadablePattern, true)
+            // .isEmpty()) loadablePatternBuilder.setValidated(true);
             ofNullable(loadablePattern.getCaseNumber())
                 .ifPresent(loadablePatternBuilder::setCaseNumber);
             List<LoadablePatternAlgoStatus> patternStatus =

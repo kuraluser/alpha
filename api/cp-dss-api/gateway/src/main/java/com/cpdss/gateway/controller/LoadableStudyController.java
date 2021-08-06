@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.controller;
 
+import static com.cpdss.gateway.utility.GatewayConstants.*;
+
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
@@ -722,8 +724,11 @@ public class LoadableStudyController {
       log.info("saveLoadablePatterns : {}", getClientIp());
       log.info(
           "saveLoadablePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
-      return loadableStudyService.saveLoadablePatterns(
-          loadablePlanRequest, loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.saveAlgoPatterns(
+          loadablePlanRequest,
+          loadableStudiesId,
+          LOADABLE_STUDY_SAVE_REQUEST,
+          headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in saveLoadablePatterns ", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

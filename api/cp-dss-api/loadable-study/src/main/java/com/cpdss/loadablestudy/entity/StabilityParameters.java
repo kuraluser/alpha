@@ -53,4 +53,8 @@ public class StabilityParameters extends EntityDoc {
   @JoinColumn(name = "loadable_pattern_xid", referencedColumnName = "id")
   @ManyToOne
   private LoadablePattern loadablePattern;
+  
+  //DS field
+  @Column(name = "air_draft")
+  private String airDraft;
 }

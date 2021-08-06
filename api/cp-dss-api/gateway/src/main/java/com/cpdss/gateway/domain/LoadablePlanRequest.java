@@ -1,10 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
+import java.util.List;
 import lombok.Data;
 
 /** @Author jerin.g */
@@ -18,8 +16,8 @@ public class LoadablePlanRequest {
   private Long loadablePatternId;
   private Boolean validated;
   private Boolean hasLoadicator;
- 
-  //DS fields
+
+  // DS fields
   private List<LoadablePlanDetails> dischargePlanDetails;
   private Boolean feedbackLoop;
   private Long feedbackLoopCount;

@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.controller;
 
+import static com.cpdss.gateway.utility.GatewayConstants.*;
+
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -12,7 +14,6 @@ import com.cpdss.gateway.domain.LoadablePlanRequest;
 import com.cpdss.gateway.domain.LoadableStudyStatusResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.LoadableStudyService;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
@@ -152,15 +153,15 @@ public class DischargeStudyController {
           e);
     }
   }
-  
+
   /**
    * @param vesselId
    * @param voyageId
    * @param loadableStudiesId
    * @param headers
    * @return
-   * @throws CommonRestException LoadablePatternResponse
-   * Save Algo reply to data base API - This API is consumed by Algo
+   * @throws CommonRestException LoadablePatternResponse Save Algo reply to data base API - This API
+   *     is consumed by Algo
    */
   @PostMapping(
       "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudiesId}/discharge-patterns")
@@ -176,8 +177,11 @@ public class DischargeStudyController {
       log.info("saveDischargePatterns : {}", getClientIp());
       log.info(
           "saveDischargePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
-      return loadableStudyService.saveLoadablePatterns(
-    		  dischargePlanRequest, dischargetudiesId, headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.saveAlgoPatterns(
+          dischargePlanRequest,
+          dischargetudiesId,
+          DISCHARGE_STUDY_SAVE_REQUEST,
+          headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in saveLoadablePatterns ", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
@@ -191,7 +195,6 @@ public class DischargeStudyController {
           e);
     }
   }
-  
 
   /**
    * Returns the caller ip for debugging

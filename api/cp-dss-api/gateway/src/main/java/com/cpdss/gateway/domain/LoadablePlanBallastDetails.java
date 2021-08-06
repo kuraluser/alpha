@@ -71,11 +71,11 @@ public class LoadablePlanBallastDetails {
 
   @JsonInclude(Include.NON_NULL)
   private String percentageOrginal;
-  
-  //DS fields
+
+  // DS fields
   @JsonInclude(Include.NON_NULL)
   private String volume;
-  
+
   @JsonInclude(Include.NON_NULL)
   private String maxTankVolume;
 }

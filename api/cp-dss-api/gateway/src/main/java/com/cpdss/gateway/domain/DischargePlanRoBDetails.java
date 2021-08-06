@@ -1,10 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
-import java.math.BigDecimal;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.Data;
 
 /** @Author jerin.g */

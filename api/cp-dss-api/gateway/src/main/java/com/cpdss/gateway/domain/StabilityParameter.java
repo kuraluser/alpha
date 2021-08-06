@@ -2,12 +2,10 @@
 package com.cpdss.gateway.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.Data;
 
 /** @Author jerin.g */
 @Data
-
 public class StabilityParameter {
   private String forwardDraft;
   private String meanDraft;
@@ -16,9 +14,8 @@ public class StabilityParameter {
   private String heel;
   private String bendinMoment;
   private String shearForce;
-  
-  //DS fields
+
+  // DS fields
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private String airDraft;
-  
 }
