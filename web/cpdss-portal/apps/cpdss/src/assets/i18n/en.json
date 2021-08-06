@@ -1722,5 +1722,9 @@
   "MAX_LOADING_RATE_MIN_BBLS": "Maximum 18,869 is allowed",
   "LOADING_INFORMATION_NO_BERTHS": "Atleast one berth is needed",
   "CARGO_NOMINATION_ADD_PORT_NOTE": "Note: On clicking Save the Api and Temp values will be reset to default.",
+  "LOADING_DETAILS_INITIAL_TRIM_MAX": "Maximum 4 is allowed",
+  "LOADING_DETAILS_MAX_TRIM_MIN": "Minimum 1 required",
+  "LOADING_DETAILS_MAX_TRIM_MAX": "Maximum 3 is allowed",
+  "LOADING_DETAILS_FINAL_TRIM_MAX": "Maximum 2 is allowed",
   "LOADING_BETH_HOSE_CONNECTION_ERROR":"Hose connection must contain atleast one letter and allowed special characters are # , & ,( , ) , / , : , - , = , + ,*"
 }

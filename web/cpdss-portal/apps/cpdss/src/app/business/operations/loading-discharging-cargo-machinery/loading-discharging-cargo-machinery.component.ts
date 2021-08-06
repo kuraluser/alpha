@@ -16,8 +16,22 @@ import { ILoadingMachinesInUses, IMachineryInUses, IMachineTankTypes } from '../
  */
 export class LoadingDischargingCargoMachineryComponent implements OnInit {
   @Input() loadingInfoId: number;
-  @Input() machineryInUses: IMachineryInUses;
+
+  @Input() get machineryInUses(): IMachineryInUses {
+    return this._machineryInUses;
+  }
+
+  set machineryInUses(machineryInUses: IMachineryInUses) {
+    this._machineryInUses = machineryInUses;
+    if(machineryInUses){
+      this.initMachinery();
+    }
+  }
+
   @Output() updatemachineryInUses: EventEmitter<ILoadingMachinesInUses[]> = new EventEmitter();
+
+  private _machineryInUses: IMachineryInUses;
+
   machineries: any = [];
   machineriesKey: string[] = [];
   cargoMachineryValues: any = [];
@@ -28,11 +42,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.machineryInUses.loadingMachinesInUses = this.machineryInUses?.loadingMachinesInUses ?? [];
-    const usedManifold = this.machineryInUses?.loadingMachinesInUses?.find(machine => machine.machineTypeId === this.machineryInUses.machineTypes.MANIFOLD);
-    const usedType = this.machineryInUses?.vesselManifold?.find(manifold => manifold.id === usedManifold?.machineId)
-    this.selectedType = usedType ? this.machineryInUses?.tankTypes?.find(type => type.id === usedType.componentType) : this.machineryInUses?.tankTypes[0];
-    this.initMachinery();
+    
   }
 
   /**
@@ -40,7 +50,20 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   *
   * @memberof LoadingDischargingCargoMachineryComponent
   */
-  initMachinery() {
+   initMachinery() {
+    this.machineryInUses.loadingMachinesInUses = this.machineryInUses?.loadingMachinesInUses ?? [];
+    const usedManifold = this.machineryInUses?.loadingMachinesInUses?.find(machine => machine.machineTypeId === this.machineryInUses.machineTypes.MANIFOLD);
+    const usedType = this.machineryInUses?.vesselManifold?.find(manifold => manifold.id === usedManifold?.machineId)
+    this.selectedType = usedType ? this.machineryInUses?.tankTypes?.find(type => type.id === usedType.componentType) : this.machineryInUses?.tankTypes[0];
+    this.updateMachinery();
+   }
+
+  /**
+  * Method for Update machinery
+  *
+  * @memberof LoadingDischargingCargoMachineryComponent
+  */
+  updateMachinery() {
     this.machineries = [];
     this.machineryInUses?.vesselPumps?.map((vesselpump) => {
       vesselpump.isUsing = this.machineryInUses?.loadingMachinesInUses?.some(loadingmachine => loadingmachine.machineId === vesselpump.id && loadingmachine.machineTypeId === vesselpump.machineType);
@@ -144,7 +167,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   * @memberof LoadingDischargingCargoMachineryComponent
   */
   onTypeChange(event) {
-    this.initMachinery();
+    this.updateMachinery();
   }
 
 

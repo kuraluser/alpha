@@ -25,6 +25,7 @@ export class LoadingRateComponent implements OnInit {
 
   set loadingRates(loadingRates: ILoadingRates) {
     this._loadingRates = loadingRates;
+    this.initLoadingRatesForm();
     if (this.selectedConversion.id === 2) {
       this.onConversionChange();
     }
@@ -70,6 +71,15 @@ export class LoadingRateComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+  }
+
+  /**
+   *
+   * Method for initialise loading rate array
+   * @return {*} 
+   * @memberof LoadingRateComponent
+   */
+  initLoadingRatesForm(){
     this.errorMesages = this.loadingDischargingTransformationService.setValidationMessageForLoadingRate(this.selectedConversion.unit);
     this.loadingRatesFormGroup = this.fb.group({
       id: this.loadingRates?.id ? this.loadingRates?.id : 0,
@@ -81,15 +91,14 @@ export class LoadingRateComponent implements OnInit {
       noticeTimeRateReduction: this.fb.control(this.loadingRates.noticeTimeRateReduction, [Validators.required, numberValidator(0, 2), Validators.min(30), Validators.max(60)]),
       noticeTimeStopLoading: this.fb.control(this.loadingRates.noticeTimeStopLoading, [Validators.required, numberValidator(0, 2), Validators.min(30), Validators.max(60)])
     })
-
   }
 
-    /**
- * Return the form controlls of the loading rate form
- */
-     get loadingRatesFormGroupControl() {
-      return this.loadingRatesFormGroup.controls;
-    }
+  /**
+  * Return the form controlls of the loading rate form
+  */
+  get loadingRatesFormGroupControl() {
+    return this.loadingRatesFormGroup.controls;
+  }
 
   /**
    *Method to check for field errors
@@ -118,11 +127,11 @@ export class LoadingRateComponent implements OnInit {
 
 
   /**
- *
- * Method for change fied value
- * @return {*} 
- * @memberof LoadingRateComponent
- */
+   *
+   * Method for change fied value
+   * @return {*} 
+   * @memberof LoadingRateComponent
+   */
   onChange(field) {
     if (!this.fieldError(field)) {
       if (this.selectedConversion?.id === 2) {
@@ -169,7 +178,7 @@ export class LoadingRateComponent implements OnInit {
       })
     } else {
       this.loadingRatesFormGroup?.controls['maxLoadingRate'].setValidators([numberValidator(0, 5), compareNumberValidator('minLoadingRate', '<'), Validators.min(4000), Validators.max(21000)]);
-      this.loadingRatesFormGroup?.controls['shoreLoadingRate'].setValidators([ numberValidator(0, 4), Validators.min(1000), Validators.max(20000)]);
+      this.loadingRatesFormGroup?.controls['shoreLoadingRate'].setValidators([numberValidator(0, 4), Validators.min(1000), Validators.max(20000)]);
       this.loadingRatesFormGroup?.controls['minLoadingRate'].setValidators([numberValidator(0, 4), compareNumberValidator('maxLoadingrate', '>'), Validators.min(1000), Validators.max(3000)]);
       this.loadingRatesFormGroup?.controls['minDeBallastingRate'].setValidators([numberValidator(0, 4), Validators.min(2500), Validators.max(4000)]);
       this.loadingRatesFormGroup?.controls['maxDeBallastingRate'].setValidators([numberValidator(0, 4), Validators.min(6000), Validators.max(7500)]);

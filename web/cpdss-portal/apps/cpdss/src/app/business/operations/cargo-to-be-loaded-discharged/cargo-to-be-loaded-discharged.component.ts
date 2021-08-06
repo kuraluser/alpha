@@ -24,7 +24,6 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
 export class CargoToBeLoadedDischargedComponent implements OnInit {
 
   @Input() cargos: ICargo[];
-  @Input() cargoVesselTankDetails: ICargoVesselTankDetails;
   @Input() prevQuantitySelectedUnit: QUANTITY_UNIT;
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
@@ -33,6 +32,15 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
     this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
     this._currentQuantitySelectedUnit = value;
     if (this.cargoVesselTankDetails?.loadableQuantityCargoDetails) {
+      this.updateCargoTobeLoadedDischargedData();
+    }
+  }
+  @Input() get cargoVesselTankDetails(): ICargoVesselTankDetails {
+    return this._cargoVesselTankDetails;
+  }
+  set cargoVesselTankDetails(cargoVesselTankDetails: ICargoVesselTankDetails) {
+    this._cargoVesselTankDetails = cargoVesselTankDetails;
+    if (cargoVesselTankDetails?.loadableQuantityCargoDetails) {
       this.updateCargoTobeLoadedDischargedData();
     }
   }
@@ -60,6 +68,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
 
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _operation: OPERATIONS;
+  private _cargoVesselTankDetails: ICargoVesselTankDetails;
 
   constructor(
     private _decimalPipe: DecimalPipe,

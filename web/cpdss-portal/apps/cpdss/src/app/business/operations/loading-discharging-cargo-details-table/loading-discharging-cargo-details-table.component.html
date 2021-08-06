@@ -24,7 +24,7 @@
                     
                 </ng-container>
                 <ng-container *ngIf="col.field === 'difference'">
-                    <span *ngIf="rowData[col.field]!==0" class="badge-custom content-ellipsis"  [pTooltip]="rowData?.isPositive ? ('+'+(rowData[col.field] | number :'1.2-2')+'%') : (rowData[col.field] | number :'1.2-2')+'%'" tooltipPosition="top"
+                    <span *ngIf="rowData[col.field]!==0" class="badge-custom content-ellipsis"  [pTooltip]="rowData?.isPositive ? ('+'+(rowData[col.field] | quantityDecimalFormat: currentQuantitySelectedUnit)+'%') : (rowData[col.field] | quantityDecimalFormat: currentQuantitySelectedUnit)+'%'" tooltipPosition="top"
                         [ngStyle]="{'background': rowData?.isPositive?  'green' : 'red' }"> <span
                             *ngIf="rowData?.isPositive">+</span> {{rowData[col.field] | quantityDecimalFormat: currentQuantitySelectedUnit}}%
                     </span>
