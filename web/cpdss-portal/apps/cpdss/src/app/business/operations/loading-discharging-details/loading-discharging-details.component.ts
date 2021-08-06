@@ -22,9 +22,19 @@ import { IPermission } from '../../../shared/models/user-profile.model';
  * @implements {OnInit}
  */
 export class LoadingDischargingDetailsComponent implements OnInit {
-  @Input() loadingDischargingDetails: ILoadingDischargingDetails;
+  @Input()
+  get loadingDischargingDetails(): ILoadingDischargingDetails {
+    return this._loadingDischargingDetails;
+  }
+
+  set loadingDischargingDetails(loadingDischargingDetails: ILoadingDischargingDetails) {
+    this._loadingDischargingDetails = loadingDischargingDetails;
+    this.initLoadingDischargingDetailsForm();
+  }
 
   @Output() updateLoadingDischargingDetails: EventEmitter<ILoadingDischargingDetails> = new EventEmitter();
+
+  private _loadingDischargingDetails: ILoadingDischargingDetails;
 
   loadingDischargingDetailsForm: FormGroup;
   errorMessages: any;
@@ -38,10 +48,18 @@ export class LoadingDischargingDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.getPagePermission();
     this.errorMessages = this.loadingDischargingTransformationService.setValidationMessageForLoadingDetails();
+  }
+
+  /**
+  * Method for initialise loading discharging details form
+  *
+  * @memberof LoadingDischargingDetailsComponent
+  */
+  initLoadingDischargingDetailsForm() {
     this.loadingDischargingDetailsResponse = this.loadingDischargingDetails;
     this.loadingDischargingDetailsForm = this.fb.group({
-      timeOfSunrise: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunrise), [Validators.required, loadingDetailsValidator('timeOfSunset','<')]),
-      timeOfSunset: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunset), [Validators.required, loadingDetailsValidator('timeOfSunrise','>')]),
+      timeOfSunrise: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunrise), [Validators.required, loadingDetailsValidator('timeOfSunset', '<')]),
+      timeOfSunset: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunset), [Validators.required, loadingDetailsValidator('timeOfSunrise', '>')]),
       startTime: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.startTime), [Validators.required]),
       initialTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.initialTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(4)]),
       maximumTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.maximumTrim, [Validators.required, numberValidator(2, 1), Validators.min(1), Validators.max(3)]),
@@ -99,12 +117,12 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 *
 * @memberof LoadingDischargingDetailsComponent
 */
-  onTimeChange(fieldReferenceName,field) {
+  onTimeChange(fieldReferenceName, field) {
     fieldReferenceName.hideOverlay();
     if (this.loadingDischargingDetailsForm.value[field]) {
       const selectedTime = new Date(this.loadingDischargingDetailsForm.value[field]);
       this.loadingDischargingDetailsResponse[field] = ((selectedTime.getHours() < 10 ? ('0' + selectedTime.getHours()) : selectedTime.getHours())) + ":" + ((selectedTime.getMinutes() < 10 ? ('0' + selectedTime.getMinutes()) : selectedTime.getMinutes()));
-      if(!this.fieldError(field)){
+      if (!this.fieldError(field)) {
         this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
       }
 
@@ -140,7 +158,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 * @memberof LoadingDischargingDetailsComponent
 */
   trimValueChange(field) {
-    if (this.loadingDischargingDetailsForm.value[field]) {
+    if (this.loadingDischargingDetailsForm.valid && this.loadingDischargingDetailsForm.value[field]) {
       this.loadingDischargingDetailsResponse.trimAllowed[field] = this.loadingDischargingDetailsForm.value[field];
       this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
     }

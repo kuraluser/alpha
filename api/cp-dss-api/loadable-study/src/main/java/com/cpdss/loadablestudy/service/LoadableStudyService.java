@@ -2844,6 +2844,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               departureCondition.setLoadablePlanBallastDetails(portWiseDetails.getDepartureCondition().getLoadablePlanBallastDetails());
               departureCondition.setLoadableQuantityCargoDetails(portWiseDetails.getDepartureCondition().getLoadableQuantityCargoDetails());
               departureCondition.setLoadableQuantityCommingleCargoDetails(portWiseDetails.getDepartureCondition().getLoadableQuantityCommingleCargoDetails());
+              departureCondition.setStabilityParameters(portWiseDetails.getDepartureCondition().getStabilityParameters());
+              departureCondition.setConfirmPlanEligibility(portWiseDetails.getDepartureCondition().getConfirmPlanEligibility());
             }
           });
         }

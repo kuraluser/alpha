@@ -95,7 +95,9 @@ export class LoadingInformationComponent implements OnInit {
     this.ngxSpinnerService.show();
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_NO_ACTIVE_VOYAGE', 'LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE']).toPromise();
     try {
-      this.loadingInformationData = await this.loadingDischargingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
+      this.hasUnSavedData = false;
+      this.loadingInformationPostData = <ILoadingInformation>{};
+      this.loadingInformationData = await this.loadingDischargingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();   
       this.loadingInformationData.loadingSequences.loadingDischargingDelays = this.loadingInformationData.loadingSequences['loadingDelays'];
       this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
@@ -256,13 +258,13 @@ export class LoadingInformationComponent implements OnInit {
 * @memberof LoadingInformationComponent
 */
   async saveLoadingInformationData() {
-    const translationKeys = await this.translateService.get(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY']).toPromise();
+    const translationKeys = await this.translateService.get(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY', 'LOADING_INFORMATION_NO_BERTHS']).toPromise();
     if(this.hasUnSavedData){
       const isLoadingMachinery = this.loadingInformationPostData?.loadingMachineries?.some(machinery => machinery.isUsing) ?? true;
       if(!isLoadingMachinery){
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_NO_MACHINERY'] });
       }
-      if(this.loadingInformationPostData?.loadingBerths && this.loadingInformationPostData?.loadingBerths.length === 0){
+      if((this.loadingInformationPostData?.loadingBerths && this.loadingInformationPostData?.loadingBerths.length === 0) || (!this.loadingInformationPostData?.loadingBerths && this.loadingInformationData.berthDetails.selectedBerths.length === 0)){
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_NO_BERTHS'] });
       }
       else{

@@ -3,9 +3,9 @@ import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Valid
 import { TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { numberValidator } from '../../core/directives/number-validator.directive';
-import { IBerth } from '../models/loading-discharging.model';
+import { IBerth, IBerthDetails } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
- 
+import { LoadingBerthDuplicateValidator } from '../validators/loading-berth-duplicate-validator.directive';
 
 /**
  * Component class for loading discharging berth component
@@ -23,31 +23,31 @@ export class LoadingDischargingBerthComponent implements OnInit {
   @Input() editMode = true;
   @Input() loadingInfoId: number;
   @Input() dischargingInfoId: number;
-  @Input() availableBerths: IBerth[];
-
-  @Input() get selectedBerths(): IBerth[] {
-    return this._selectedBerths;
+  @Input() get berthDetails(): IBerthDetails {
+    return this._berthDetails;
   }
 
-  set selectedBerths(selectedBerths: IBerth[]) {
-    this._selectedBerths = selectedBerths;
+  set berthDetails(berthDetails: IBerthDetails) {
+    this._berthDetails = berthDetails;
+    if (berthDetails) {
+      this.availableBerths = berthDetails.availableBerths ?? [];
+      this.selectedBerths = berthDetails.selectedBerths ?? [];
+      this.initBerths();
+    }
   }
+
 
   @Output() berthChange: EventEmitter<IBerth[]> = new EventEmitter();
 
-  private _selectedBerths: IBerth[];
+  private _berthDetails: IBerthDetails;
 
   berthDetailsForm: FormGroup;
   berthForm: FormGroup;
-  berthFormArray: FormArray;
   selectedIndex: number;
   errorMesages: any;
   disableAddBtn = false;
-
-  get berths(): FormArray {
-    return this.berthForm.get("berth") as FormArray
-  }
-
+  selectedBerths: IBerth[]
+  availableBerths: IBerth[]
   constructor(
     private fb: FormBuilder,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
@@ -63,20 +63,10 @@ export class LoadingDischargingBerthComponent implements OnInit {
 
 
   /**
-* initialise berth details
-*/
+  * initialise berth details
+  */
   initBerths() {
-    this.availableBerths = this.availableBerths.map(berth => {
-      const found = this.selectedBerths.find(selectedBerth => selectedBerth.berthId === berth.berthId);
-      if (found) {
-        found.berthName = berth.berthName;
-      }
-      return found ?? berth;
-    });
-    this.berthForm = this.fb.group({
-      berth: this.fb.array([])
-    });
-  this.berthDetailsForm = this.fb.group({     
+    this.berthDetailsForm = this.fb.group({
       berthId: 0,
       berthName: '',
       maxShipDepth: this.fb.control('', [numberValidator(4, 2)]),
@@ -99,6 +89,13 @@ export class LoadingDischargingBerthComponent implements OnInit {
   }
 
   /**
+ * Return the form controlls of the berth form array
+ */
+  get berthFormArray(): FormArray {
+    return this.berthForm?.get("berth") as FormArray
+  }
+
+/**
  * Return the form controlls of the berth details form
  */
   get berthDetailsFormControl() {
@@ -109,17 +106,23 @@ export class LoadingDischargingBerthComponent implements OnInit {
 * initialise berth details form
 */
   initFormArray() {
-    if (this.selectedBerths.length > 0) {
+    if (this.selectedBerths.length && this.availableBerths.length) {
       this.selectedBerths = this.selectedBerths.map((berth) => {
         const foundedBerth = this.availableBerths.find((availBerth) => availBerth.berthId === berth.berthId);
         berth.berthName = foundedBerth.berthName;
         return berth;
-      })
-      this.selectedBerths.forEach((selectedBerth) => {
-        this.addBerth(selectedBerth);
-      })
+      });
+      this.availableBerths = this.availableBerths.map(availBerth => this.selectedBerths.find(selectedBerth => selectedBerth.berthId === availBerth.berthId) || availBerth);
+      const initialBerthArray = this.selectedBerths.map((selectedBerth, i) => this.createBerth(selectedBerth, i));
+      this.berthForm = this.fb.group({
+        berth: this.fb.array([...initialBerthArray])
+      });
       this.setBerthDetails(this.selectedBerths[0], 0)
       this.selectedIndex = 0;
+    } else {
+      this.berthForm = this.fb.group({
+        berth: this.fb.array([])
+      });
     }
 
   }
@@ -129,9 +132,9 @@ export class LoadingDischargingBerthComponent implements OnInit {
   *
   * @memberof LoadingDischargingBerthComponent
   */
-  createBerth(berth: IBerth): FormGroup {
+  createBerth(berth: IBerth, index: number): FormGroup {
     return this.fb.group({
-      name: [berth],
+      name: this.fb.control(berth, [LoadingBerthDuplicateValidator(index)]),
       edit: berth ? false : true
     });
   }
@@ -170,13 +173,12 @@ export class LoadingDischargingBerthComponent implements OnInit {
    *
    * @memberof LoadingDischargingBerthComponent
    */
-  addBerth(berth: IBerth) {
+  addBerth(berth: IBerth, index: number) {
     if (this.berthFormArray?.controls?.length >= 4) {
       this.disableAddBtn = false;
     }
     else {
-      this.berthFormArray = this.berthForm.get('berth') as FormArray;
-      this.berthFormArray.push(this.createBerth(berth));
+      this.berthFormArray.push(this.createBerth(berth, index));
     }
   }
 
@@ -186,12 +188,9 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @memberof LoadingDischargingBerthComponent
    */
   onBerthChange(event, index) {
-    const duplicate = this.selectedBerths.some((berth) => berth?.berthId === event?.value?.berthId)
-    if (duplicate) {
-      const formControl = this.field(index, 'name');
-      formControl.setErrors({ duplicateBerth: true });
-    } else {
-      this.selectedBerths.push(event.value)
+    const formControl = this.field(index, 'name');
+    if (formControl.valid) {
+      this.selectedBerths.push(event.value);
       this.setBerthDetails(event.value, index);
       this.selectedBerths = this.selectedBerths.map((berth) => {
         if (!berth.loadingBerthId) {
@@ -199,14 +198,8 @@ export class LoadingDischargingBerthComponent implements OnInit {
         }
         return berth;
       })
-      this.berthFormArray.controls.forEach((element, index) => {
-        this.berthFormArray.at(index).patchValue({
-          edit: false
-        })
-      });
       this.berthChange.emit(this.selectedBerths);
     }
-
   }
 
   /**
@@ -214,9 +207,9 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @param berth
    * @memberof LoadingDischargingBerthComponent
    */
-  selectBerth(berth, index) {
+  selectBerth(berth, index, edit: boolean = false) {
     this.selectedIndex = index;
-    this.setBerthDetails(berth.value.name, index);
+    this.setBerthDetails(berth.value.name, index, edit);
     this.berthDetailsForm.markAllAsTouched();
   }
 
@@ -225,7 +218,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @param berthInfo
    * @memberof LoadingDischargingBerthComponent
    */
-  setBerthDetails(berthInfo: IBerth, index: number) {
+  setBerthDetails(berthInfo: IBerth, index: number, edit: boolean = false) {
     this.berthDetailsForm.patchValue({
       berthId: berthInfo.berthId,
       portId: berthInfo.portId,
@@ -246,23 +239,32 @@ export class LoadingDischargingBerthComponent implements OnInit {
       maxDraft: berthInfo.maxDraft,
       lineDisplacement: berthInfo.lineDisplacement
     });
-    if (!this.berthDetailsForm.valid) {
-      this.berthFormArray.at(index).patchValue({
-        edit: true
-      })
-      this.berthDetailsForm.enable();
-    }
-    this.berthFormArray.controls.forEach((element, i) => {
-      if (i !== index) {
-        this.berthFormArray.at(i).patchValue({
-          edit: false
-        })
+    setTimeout(() => {
+      if (!edit) {
+        if (this.berthDetailsForm.valid) {
+          this.berthFormArray.at(index).patchValue({
+            edit: false
+          })
+          this.berthDetailsForm.disable();
+        } else {
+          this.berthFormArray.at(index).patchValue({
+            edit: true
+          })
+          this.berthDetailsForm.enable();
+          this.berthDetailsForm.markAsTouched();
+          this.berthDetailsForm.markAllAsTouched();
+          this.berthDetailsForm.markAsDirty();
+          this.berthDetailsForm.updateValueAndValidity();
+        }
+        this.berthFormArray.controls.forEach((berth, i) => {
+          if (i !== index && berth?.value?.name) {
+            this.berthFormArray.at(i).patchValue({
+              edit: false
+            })
+          }
+        });
       }
-    });
-    this.berthDetailsForm.markAsTouched();
-    this.berthDetailsForm.markAllAsTouched();
-    this.berthDetailsForm.markAsDirty();
-    this.berthDetailsForm.updateValueAndValidity();
+    }, 200);
   }
 
   /**
@@ -271,7 +273,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @memberof LoadingDischargingBerthComponent
    */
   editBerth(berth, index) {
-    this.selectBerth(berth, index);
+    this.selectBerth(berth, index, true);
     this.berthFormArray.at(index).patchValue({
       edit: true
     })
@@ -306,7 +308,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
       accept: async () => {
         if (this.selectedBerths?.length > 1) {
           this.selectedBerths = this.selectedBerths?.filter((berth) => berth.berthId !== event.value.name.berthId) ?? [];
-          this.berths.removeAt(index);
+          this.berthFormArray.removeAt(index);
           if (this.selectedBerths?.length > 0) {
             this.setBerthDetails(this.selectedBerths[0], 0)
           } else {

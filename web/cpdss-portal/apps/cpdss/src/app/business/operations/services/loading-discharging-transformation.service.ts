@@ -212,7 +212,7 @@ export class LoadingDischargingTransformationService {
   * @returns {ILoadingSequenceValueObject}
   * @memberof LoadingDischargingTransformationService
   */
-  getLoadingDischargingDelayAsValueObject(loadingDischargingDelay: ILoadingDischargingDelays, isNewValue = true, isEditable = true, listData: ILoadingSequenceDropdownData): ILoadingSequenceValueObject {
+  getLoadingDischargingDelayAsValueObject(loadingDischargingDelay: ILoadingDischargingDelays, isNewValue = true, isEditable = true, listData: ILoadingSequenceDropdownData, prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT): ILoadingSequenceValueObject {
     const _loadingDischargingDelay = <ILoadingSequenceValueObject>{};
     const reasonDelayObj: IReasonForDelays = listData?.reasonForDelays?.find(reason => reason.id === loadingDischargingDelay.reasonForDelayId);
     const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === loadingDischargingDelay.cargoId);
@@ -223,7 +223,7 @@ export class LoadingDischargingTransformationService {
     const minute = loadingDischargingDelay.duration % 60;
     const minuteDuration = minute <= 0 ?  '0' + minute : minute;
     _loadingDischargingDelay.duration = new ValueObject<string>(hourDuration + ':' + minuteDuration, true, isNewValue, false, true);
-    _loadingDischargingDelay.quantity = loadingDischargingDelay.quantity;
+    _loadingDischargingDelay.quantity = this.quantityPipe.transform(loadingDischargingDelay.quantity, prevUnit, currUnit, cargoObj?.estimatedAPI);
     _loadingDischargingDelay.colorCode = cargoObj?.colorCode;
     _loadingDischargingDelay.cargo = new ValueObject<ILoadableQuantityCargo>(cargoObj, true, isEditable ? isNewValue : false, false, isEditable);
     _loadingDischargingDelay.reasonForDelay = new ValueObject<IReasonForDelays>(reasonDelayObj, true, isNewValue, false, true);
@@ -254,6 +254,7 @@ export class LoadingDischargingTransformationService {
       _loadingDischargingDelays.quantity = loadingValueObject?.quantity;
       const minuteDuration = loadingValueObject?.duration?.value.split(':');
       _loadingDischargingDelays.duration = (Number(minuteDuration[0]) * 60) + Number(minuteDuration[1]);
+      _loadingDischargingDelays.cargoNominationId = loadingValueObject?.cargo?.value?.cargoNominationId;
       loadingDischargingDelays.push(_loadingDischargingDelays);
     })
     return loadingDischargingDelays;
@@ -280,13 +281,17 @@ export class LoadingDischargingTransformationService {
         'required': 'LOADING_DETAILS_START_TIME_REQUIRED'
       },
       initialTrim: {
-        'required': 'LOADING_DETAILS_INITIAL_TRIM_REQUIRED'
+        'required': 'LOADING_DETAILS_INITIAL_TRIM_REQUIRED',
+        'max': 'LOADING_DETAILS_INITIAL_TRIM_MAX'
       },
       maximumTrim: {
-        'required': 'LOADING_DETAILS_MAX_TRIM_REQUIRED'
+        'required': 'LOADING_DETAILS_MAX_TRIM_REQUIRED',
+        'min': 'LOADING_DETAILS_MAX_TRIM_MIN',
+        'max': 'LOADING_DETAILS_MAX_TRIM_MAX'
       },
       finalTrim: {
-        'required': 'LOADING_DETAILS_FINAL_TRIM_REQUIRED'
+        'required': 'LOADING_DETAILS_FINAL_TRIM_REQUIRED',
+        'max': 'LOADING_DETAILS_FINAL_TRIM_MAX'
       }
     }
   }
