@@ -9,5 +9,9 @@ import java.util.List;
 public class LoadableStudyAlgoJson {
     private String processId;
     private List<LoadablePlanDetailsAlgoJson> loadablePlanDetails;
-    private String errors;
+    private Object errors;
+    private boolean hasLodicator;
+    private Object validated;
+    private Object loadablePatternId;
+    private Object hasLoadicator;
 }
