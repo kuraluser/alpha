@@ -16,9 +16,6 @@ public class LoadingSequenceStabilityParam {
   @JsonProperty("heel")
   private String list;
 
-  @JsonProperty("BM")
-  private String bendingMoment;
-
-  @JsonProperty("SF")
-  private String shearingForce;
+  private String bendinMoment;
+  private String shearForce;
 }

@@ -696,11 +696,11 @@ public class LoadingSequenceService {
         LoadingPlanStabilityParameters.newBuilder();
     Optional.ofNullable(stage.getAfterDraft())
         .ifPresent(aftDraft -> paramBuilder.setAftDraft(String.valueOf(aftDraft)));
-    Optional.ofNullable(stage.getBendingMoment())
+    Optional.ofNullable(stage.getBendinMoment())
         .ifPresent(bm -> paramBuilder.setBm(String.valueOf(bm)));
     Optional.ofNullable(stage.getForeDraft())
         .ifPresent(foreDraft -> paramBuilder.setForeDraft(String.valueOf(foreDraft)));
-    Optional.ofNullable(stage.getShearingForce())
+    Optional.ofNullable(stage.getShearForce())
         .ifPresent(sf -> paramBuilder.setSf(String.valueOf(sf)));
     Optional.ofNullable(stage.getTime())
         .ifPresent(time -> paramBuilder.setTime(Integer.valueOf(time)));
@@ -730,8 +730,8 @@ public class LoadingSequenceService {
   private void buildPortStability(LoadingPlan value, Integer conditionType, Builder builder) {
     LoadingPlanStabilityParameters.Builder paramBuilder =
         LoadingPlanStabilityParameters.newBuilder();
-    Optional.ofNullable(value.getBm()).ifPresent(paramBuilder::setBm);
-    Optional.ofNullable(value.getSf()).ifPresent(paramBuilder::setSf);
+    Optional.ofNullable(value.getBendinMoment()).ifPresent(paramBuilder::setBm);
+    Optional.ofNullable(value.getShearForce()).ifPresent(paramBuilder::setSf);
     Optional.ofNullable(value.getForeDraft()).ifPresent(paramBuilder::setForeDraft);
     Optional.ofNullable(value.getAfterDraft()).ifPresent(paramBuilder::setAftDraft);
     Optional.ofNullable(value.getMeanDraft()).ifPresent(paramBuilder::setMeanDraft);
@@ -868,8 +868,8 @@ public class LoadingSequenceService {
           builder) {
     LoadingPlanStabilityParameters.Builder paramBuilder =
         LoadingPlanStabilityParameters.newBuilder();
-    Optional.ofNullable(portWiseDetails.getBm()).ifPresent(paramBuilder::setBm);
-    Optional.ofNullable(portWiseDetails.getSf()).ifPresent(paramBuilder::setSf);
+    Optional.ofNullable(portWiseDetails.getBendinMoment()).ifPresent(paramBuilder::setBm);
+    Optional.ofNullable(portWiseDetails.getShearForce()).ifPresent(paramBuilder::setSf);
     Optional.ofNullable(portWiseDetails.getForeDraft()).ifPresent(paramBuilder::setForeDraft);
     Optional.ofNullable(portWiseDetails.getAfterDraft()).ifPresent(paramBuilder::setAftDraft);
     Optional.ofNullable(portWiseDetails.getMeanDraft()).ifPresent(paramBuilder::setMeanDraft);

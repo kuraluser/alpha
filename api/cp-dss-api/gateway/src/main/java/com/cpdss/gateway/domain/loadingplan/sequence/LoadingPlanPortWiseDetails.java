@@ -28,9 +28,6 @@ public class LoadingPlanPortWiseDetails {
   @JsonProperty("heel")
   private String list;
 
-  @JsonProperty("BM")
-  private String bm;
-
-  @JsonProperty("SF")
-  private String sf;
+  private String bendinMoment;
+  private String shearForce;
 }
