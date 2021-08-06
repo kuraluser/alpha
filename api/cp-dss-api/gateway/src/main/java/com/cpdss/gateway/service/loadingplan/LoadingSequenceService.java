@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
@@ -32,6 +33,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.common.GatewayConstants;
+import com.cpdss.gateway.domain.AlgoError;
 import com.cpdss.gateway.domain.loadingplan.sequence.Ballast;
 import com.cpdss.gateway.domain.loadingplan.sequence.BallastPump;
 import com.cpdss.gateway.domain.loadingplan.sequence.Cargo;
@@ -671,6 +673,21 @@ public class LoadingSequenceService {
                 this.buildLoadingSequenceStabilityParam(stage, builder);
               });
     }
+
+    if (loadingPlanAlgoRequest.getErrors() != null
+        && !loadingPlanAlgoRequest.getErrors().isEmpty()) {
+      this.buildAlgoErrors(loadingPlanAlgoRequest.getErrors(), builder);
+    }
+  }
+
+  private void buildAlgoErrors(List<AlgoError> errors, Builder builder) {
+    errors.forEach(
+        error -> {
+          AlgoErrors.Builder errorBuilder = AlgoErrors.newBuilder();
+          errorBuilder.setErrorHeading(error.getErrorHeading());
+          errorBuilder.addAllErrorMessages(error.getErrorDetails());
+          builder.addAlgoErrors(errorBuilder.build());
+        });
   }
 
   private void buildLoadingSequenceStabilityParam(

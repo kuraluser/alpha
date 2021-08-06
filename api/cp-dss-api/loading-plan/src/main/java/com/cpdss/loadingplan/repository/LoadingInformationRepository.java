@@ -3,6 +3,7 @@ package com.cpdss.loadingplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadingplan.entity.LoadingInformation;
+import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
@@ -31,4 +32,10 @@ public interface LoadingInformationRepository
 
   Optional<LoadingInformation> findByVesselXIdAndVoyageIdAndPortRotationXIdAndIsActiveTrue(
       Long var1, Long var2, Long var3);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadingInformation SET loadingInformationStatus = ?1 WHERE id = ?2")
+  public void updateLoadingInformationStatus(
+      LoadingInformationStatus loadingInformationStatus, Long id);
 }

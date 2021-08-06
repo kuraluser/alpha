@@ -54331,6 +54331,18 @@ public final class LoadingPlanModels {
     com.cpdss.common.generated.loading_plan.LoadingPlanModels
             .LoadingPlanStabilityParametersOrBuilder
         getLoadingSequenceStabilityParametersOrBuilder(int index);
+
+    /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+    java.util.List<com.cpdss.common.generated.LoadableStudy.AlgoErrors> getAlgoErrorsList();
+    /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+    com.cpdss.common.generated.LoadableStudy.AlgoErrors getAlgoErrors(int index);
+    /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+    int getAlgoErrorsCount();
+    /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+    java.util.List<? extends com.cpdss.common.generated.LoadableStudy.AlgoErrorsOrBuilder>
+        getAlgoErrorsOrBuilderList();
+    /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+    com.cpdss.common.generated.LoadableStudy.AlgoErrorsOrBuilder getAlgoErrorsOrBuilder(int index);
   }
   /** Protobuf type {@code LoadingPlanSaveRequest} */
   public static final class LoadingPlanSaveRequest extends com.google.protobuf.GeneratedMessageV3
@@ -54351,6 +54363,7 @@ public final class LoadingPlanModels {
       portLoadingPlanRobDetails_ = java.util.Collections.emptyList();
       portLoadingPlanStabilityParameters_ = java.util.Collections.emptyList();
       loadingSequenceStabilityParameters_ = java.util.Collections.emptyList();
+      algoErrors_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -54491,6 +54504,20 @@ public final class LoadingPlanModels {
                         extensionRegistry));
                 break;
               }
+            case 74:
+              {
+                if (!((mutable_bitField0_ & 0x00000040) != 0)) {
+                  algoErrors_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.LoadableStudy.AlgoErrors>();
+                  mutable_bitField0_ |= 0x00000040;
+                }
+                algoErrors_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.LoadableStudy.AlgoErrors.parser(),
+                        extensionRegistry));
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -54527,6 +54554,9 @@ public final class LoadingPlanModels {
         if (((mutable_bitField0_ & 0x00000020) != 0)) {
           loadingSequenceStabilityParameters_ =
               java.util.Collections.unmodifiableList(loadingSequenceStabilityParameters_);
+        }
+        if (((mutable_bitField0_ & 0x00000040) != 0)) {
+          algoErrors_ = java.util.Collections.unmodifiableList(algoErrors_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -54818,6 +54848,31 @@ public final class LoadingPlanModels {
       return loadingSequenceStabilityParameters_.get(index);
     }
 
+    public static final int ALGOERRORS_FIELD_NUMBER = 9;
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.AlgoErrors> algoErrors_;
+    /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.AlgoErrors> getAlgoErrorsList() {
+      return algoErrors_;
+    }
+    /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.LoadableStudy.AlgoErrorsOrBuilder>
+        getAlgoErrorsOrBuilderList() {
+      return algoErrors_;
+    }
+    /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+    public int getAlgoErrorsCount() {
+      return algoErrors_.size();
+    }
+    /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+    public com.cpdss.common.generated.LoadableStudy.AlgoErrors getAlgoErrors(int index) {
+      return algoErrors_.get(index);
+    }
+    /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+    public com.cpdss.common.generated.LoadableStudy.AlgoErrorsOrBuilder getAlgoErrorsOrBuilder(
+        int index) {
+      return algoErrors_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -54855,6 +54910,9 @@ public final class LoadingPlanModels {
       }
       for (int i = 0; i < loadingSequenceStabilityParameters_.size(); i++) {
         output.writeMessage(8, loadingSequenceStabilityParameters_.get(i));
+      }
+      for (int i = 0; i < algoErrors_.size(); i++) {
+        output.writeMessage(9, algoErrors_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -54900,6 +54958,9 @@ public final class LoadingPlanModels {
             com.google.protobuf.CodedOutputStream.computeMessageSize(
                 8, loadingSequenceStabilityParameters_.get(i));
       }
+      for (int i = 0; i < algoErrors_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(9, algoErrors_.get(i));
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -54931,6 +54992,7 @@ public final class LoadingPlanModels {
           .equals(other.getPortLoadingPlanStabilityParametersList())) return false;
       if (!getLoadingSequenceStabilityParametersList()
           .equals(other.getLoadingSequenceStabilityParametersList())) return false;
+      if (!getAlgoErrorsList().equals(other.getAlgoErrorsList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -54969,6 +55031,10 @@ public final class LoadingPlanModels {
       if (getLoadingSequenceStabilityParametersCount() > 0) {
         hash = (37 * hash) + LOADINGSEQUENCESTABILITYPARAMETERS_FIELD_NUMBER;
         hash = (53 * hash) + getLoadingSequenceStabilityParametersList().hashCode();
+      }
+      if (getAlgoErrorsCount() > 0) {
+        hash = (37 * hash) + ALGOERRORS_FIELD_NUMBER;
+        hash = (53 * hash) + getAlgoErrorsList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -55121,6 +55187,7 @@ public final class LoadingPlanModels {
           getPortLoadingPlanRobDetailsFieldBuilder();
           getPortLoadingPlanStabilityParametersFieldBuilder();
           getLoadingSequenceStabilityParametersFieldBuilder();
+          getAlgoErrorsFieldBuilder();
         }
       }
 
@@ -55166,6 +55233,12 @@ public final class LoadingPlanModels {
           bitField0_ = (bitField0_ & ~0x00000020);
         } else {
           loadingSequenceStabilityParametersBuilder_.clear();
+        }
+        if (algoErrorsBuilder_ == null) {
+          algoErrors_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000040);
+        } else {
+          algoErrorsBuilder_.clear();
         }
         return this;
       }
@@ -55263,6 +55336,15 @@ public final class LoadingPlanModels {
         } else {
           result.loadingSequenceStabilityParameters_ =
               loadingSequenceStabilityParametersBuilder_.build();
+        }
+        if (algoErrorsBuilder_ == null) {
+          if (((bitField0_ & 0x00000040) != 0)) {
+            algoErrors_ = java.util.Collections.unmodifiableList(algoErrors_);
+            bitField0_ = (bitField0_ & ~0x00000040);
+          }
+          result.algoErrors_ = algoErrors_;
+        } else {
+          result.algoErrors_ = algoErrorsBuilder_.build();
         }
         onBuilt();
         return result;
@@ -55492,6 +55574,33 @@ public final class LoadingPlanModels {
             } else {
               loadingSequenceStabilityParametersBuilder_.addAllMessages(
                   other.loadingSequenceStabilityParameters_);
+            }
+          }
+        }
+        if (algoErrorsBuilder_ == null) {
+          if (!other.algoErrors_.isEmpty()) {
+            if (algoErrors_.isEmpty()) {
+              algoErrors_ = other.algoErrors_;
+              bitField0_ = (bitField0_ & ~0x00000040);
+            } else {
+              ensureAlgoErrorsIsMutable();
+              algoErrors_.addAll(other.algoErrors_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.algoErrors_.isEmpty()) {
+            if (algoErrorsBuilder_.isEmpty()) {
+              algoErrorsBuilder_.dispose();
+              algoErrorsBuilder_ = null;
+              algoErrors_ = other.algoErrors_;
+              bitField0_ = (bitField0_ & ~0x00000040);
+              algoErrorsBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getAlgoErrorsFieldBuilder()
+                      : null;
+            } else {
+              algoErrorsBuilder_.addAllMessages(other.algoErrors_);
             }
           }
         }
@@ -57286,6 +57395,222 @@ public final class LoadingPlanModels {
           loadingSequenceStabilityParameters_ = null;
         }
         return loadingSequenceStabilityParametersBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.LoadableStudy.AlgoErrors> algoErrors_ =
+          java.util.Collections.emptyList();
+
+      private void ensureAlgoErrorsIsMutable() {
+        if (!((bitField0_ & 0x00000040) != 0)) {
+          algoErrors_ =
+              new java.util.ArrayList<com.cpdss.common.generated.LoadableStudy.AlgoErrors>(
+                  algoErrors_);
+          bitField0_ |= 0x00000040;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+              com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder,
+              com.cpdss.common.generated.LoadableStudy.AlgoErrorsOrBuilder>
+          algoErrorsBuilder_;
+
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+          getAlgoErrorsList() {
+        if (algoErrorsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(algoErrors_);
+        } else {
+          return algoErrorsBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public int getAlgoErrorsCount() {
+        if (algoErrorsBuilder_ == null) {
+          return algoErrors_.size();
+        } else {
+          return algoErrorsBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public com.cpdss.common.generated.LoadableStudy.AlgoErrors getAlgoErrors(int index) {
+        if (algoErrorsBuilder_ == null) {
+          return algoErrors_.get(index);
+        } else {
+          return algoErrorsBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public Builder setAlgoErrors(
+          int index, com.cpdss.common.generated.LoadableStudy.AlgoErrors value) {
+        if (algoErrorsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAlgoErrorsIsMutable();
+          algoErrors_.set(index, value);
+          onChanged();
+        } else {
+          algoErrorsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public Builder setAlgoErrors(
+          int index, com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder builderForValue) {
+        if (algoErrorsBuilder_ == null) {
+          ensureAlgoErrorsIsMutable();
+          algoErrors_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          algoErrorsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public Builder addAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors value) {
+        if (algoErrorsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAlgoErrorsIsMutable();
+          algoErrors_.add(value);
+          onChanged();
+        } else {
+          algoErrorsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public Builder addAlgoErrors(
+          int index, com.cpdss.common.generated.LoadableStudy.AlgoErrors value) {
+        if (algoErrorsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAlgoErrorsIsMutable();
+          algoErrors_.add(index, value);
+          onChanged();
+        } else {
+          algoErrorsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public Builder addAlgoErrors(
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder builderForValue) {
+        if (algoErrorsBuilder_ == null) {
+          ensureAlgoErrorsIsMutable();
+          algoErrors_.add(builderForValue.build());
+          onChanged();
+        } else {
+          algoErrorsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public Builder addAlgoErrors(
+          int index, com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder builderForValue) {
+        if (algoErrorsBuilder_ == null) {
+          ensureAlgoErrorsIsMutable();
+          algoErrors_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          algoErrorsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public Builder addAllAlgoErrors(
+          java.lang.Iterable<? extends com.cpdss.common.generated.LoadableStudy.AlgoErrors>
+              values) {
+        if (algoErrorsBuilder_ == null) {
+          ensureAlgoErrorsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, algoErrors_);
+          onChanged();
+        } else {
+          algoErrorsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public Builder clearAlgoErrors() {
+        if (algoErrorsBuilder_ == null) {
+          algoErrors_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000040);
+          onChanged();
+        } else {
+          algoErrorsBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public Builder removeAlgoErrors(int index) {
+        if (algoErrorsBuilder_ == null) {
+          ensureAlgoErrorsIsMutable();
+          algoErrors_.remove(index);
+          onChanged();
+        } else {
+          algoErrorsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder getAlgoErrorsBuilder(
+          int index) {
+        return getAlgoErrorsFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public com.cpdss.common.generated.LoadableStudy.AlgoErrorsOrBuilder getAlgoErrorsOrBuilder(
+          int index) {
+        if (algoErrorsBuilder_ == null) {
+          return algoErrors_.get(index);
+        } else {
+          return algoErrorsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.LoadableStudy.AlgoErrorsOrBuilder>
+          getAlgoErrorsOrBuilderList() {
+        if (algoErrorsBuilder_ != null) {
+          return algoErrorsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(algoErrors_);
+        }
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder addAlgoErrorsBuilder() {
+        return getAlgoErrorsFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.LoadableStudy.AlgoErrors.getDefaultInstance());
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder addAlgoErrorsBuilder(
+          int index) {
+        return getAlgoErrorsFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.LoadableStudy.AlgoErrors.getDefaultInstance());
+      }
+      /** <code>repeated .AlgoErrors algoErrors = 9;</code> */
+      public java.util.List<com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder>
+          getAlgoErrorsBuilderList() {
+        return getAlgoErrorsFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+              com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder,
+              com.cpdss.common.generated.LoadableStudy.AlgoErrorsOrBuilder>
+          getAlgoErrorsFieldBuilder() {
+        if (algoErrorsBuilder_ == null) {
+          algoErrorsBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.LoadableStudy.AlgoErrors,
+                  com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder,
+                  com.cpdss.common.generated.LoadableStudy.AlgoErrorsOrBuilder>(
+                  algoErrors_, ((bitField0_ & 0x00000040) != 0), getParentForChildren(), isClean());
+          algoErrors_ = null;
+        }
+        return algoErrorsBuilder_;
       }
 
       @java.lang.Override
@@ -99319,7 +99644,7 @@ public final class LoadingPlanModels {
           + "lans\022\025\n\rloadingInfoId\030\004 \001(\003\022\027\n\017isNoDefau"
           + "ltRule\030\005 \001(\010\"]\n\024LoadingPlanRuleReply\022\'\n\016"
           + "responseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n"
-          + "\010rulePlan\030\002 \003(\0132\n.RulePlans\"\304\003\n\026LoadingP"
+          + "\010rulePlan\030\002 \003(\0132\n.RulePlans\"\345\003\n\026LoadingP"
           + "lanSaveRequest\022\025\n\rloadingInfoId\030\001 \001(\003\022\021\n"
           + "\tprocessId\030\002 \001(\t\022*\n\020loadingSequences\030\003 \003"
           + "(\0132\020.LoadingSequence\022>\n\035portLoadingPlanS"
@@ -99331,147 +99656,147 @@ public final class LoadingPlanModels {
           + "meters\030\007 \003(\0132\037.LoadingPlanStabilityParam"
           + "eters\022K\n\"loadingSequenceStabilityParamet"
           + "ers\030\010 \003(\0132\037.LoadingPlanStabilityParamete"
-          + "rs\"\321\003\n\017LoadingSequence\022\031\n\021cargoNominatio"
-          + "nId\030\001 \001(\003\022\021\n\tstartTime\030\002 \001(\005\022\017\n\007endTime\030"
-          + "\003 \001(\005\022\016\n\006portId\030\004 \001(\003\022\026\n\016sequenceNumber\030"
-          + "\005 \001(\005\022\021\n\tstageName\030\006 \001(\t\022\024\n\014toLoadicator"
-          + "\030\007 \001(\010\022\033\n\013cargoValves\030\010 \003(\0132\006.Valve\022\035\n\rb"
-          + "allastValves\030\t \003(\0132\006.Valve\022\"\n\014loadingRat"
-          + "es\030\n \003(\0132\014.LoadingRate\022,\n\021deBallastingRa"
-          + "tes\030\013 \003(\0132\021.DeBallastingRate\022?\n\032loadingP"
-          + "lanPortWiseDetails\030\014 \003(\0132\033.LoadingPlanPo"
-          + "rtWiseDetails\022\031\n\021cargoLoadingRate1\030\r \001(\t"
-          + "\022\031\n\021cargoLoadingRate2\030\016 \001(\t\022)\n\021ballastOp"
-          + "erations\030\017 \003(\0132\016.PumpOperation\"\321\002\n\032Loadi"
-          + "ngPlanPortWiseDetails\022,\n\021deballastingRat"
-          + "es\030\001 \003(\0132\021.DeBallastingRate\022:\n\031loadingPl"
-          + "anBallastDetails\030\002 \003(\0132\027.LoadingPlanTank"
-          + "Details\0226\n\025loadingPlanRobDetails\030\003 \003(\0132\027"
-          + ".LoadingPlanTankDetails\022G\n\036loadingPlanSt"
-          + "abilityParameters\030\004 \001(\0132\037.LoadingPlanSta"
-          + "bilityParameters\022:\n\031loadingPlanStowageDe"
-          + "tails\030\005 \003(\0132\027.LoadingPlanTankDetails\022\014\n\004"
-          + "time\030\006 \001(\005\"\323\001\n\036LoadingPlanStabilityParam"
-          + "eters\022\r\n\005draft\030\001 \001(\t\022\014\n\004trim\030\002 \001(\t\022\n\n\002bm"
-          + "\030\003 \001(\t\022\n\n\002sf\030\004 \001(\t\022\025\n\rconditionType\030\005 \001("
-          + "\005\022\021\n\tvalueType\030\006 \001(\005\022\021\n\tforeDraft\030\007 \001(\t\022"
-          + "\020\n\010aftDraft\030\010 \001(\t\022\014\n\004time\030\t \001(\005\022\021\n\tmeanD"
-          + "raft\030\n \001(\t\022\014\n\004list\030\013 \001(\t\"\327\001\n\026LoadingPlan"
-          + "TankDetails\022\013\n\003api\030\001 \001(\t\022\031\n\021cargoNominat"
-          + "ionId\030\002 \001(\003\022\020\n\010quantity\030\003 \001(\t\022\016\n\006tankId\030"
-          + "\004 \001(\003\022\023\n\013temperature\030\005 \001(\t\022\016\n\006ullage\030\006 \001"
-          + "(\t\022\022\n\nquantityM3\030\007 \001(\t\022\020\n\010sounding\030\010 \001(\t"
-          + "\022\025\n\rconditionType\030\t \001(\005\022\021\n\tvalueType\030\n \001"
-          + "(\005\"J\n\020DeBallastingRate\022\030\n\020deBallastingRa"
-          + "te\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\014\n\004time\030\003 \001(\005\"V"
-          + "\n\013LoadingRate\022\023\n\013loadingRate\030\001 \001(\t\022\016\n\006ta"
-          + "nkId\030\002 \001(\003\022\021\n\tstartTime\030\003 \001(\005\022\017\n\007endTime"
-          + "\030\004 \001(\005\"_\n\005Valve\022\021\n\toperation\030\001 \001(\t\022\014\n\004ti"
-          + "me\030\002 \001(\005\022\021\n\tvalveCode\030\003 \001(\t\022\021\n\tvalveType"
-          + "\030\004 \001(\t\022\017\n\007valveId\030\005 \001(\003\"x\n\rPumpOperation"
-          + "\022\017\n\007endTime\030\001 \001(\005\022\020\n\010pumpName\030\002 \001(\t\022\017\n\007p"
-          + "umpXId\030\003 \001(\003\022\014\n\004rate\030\004 \001(\t\022\021\n\tstartTime\030"
-          + "\005 \001(\005\022\022\n\nquantityM3\030\006 \001(\t\"B\n\027LoadingPlan"
-          + "SaveResponse\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
-          + "esponseStatus\"\\\n\031LoadingInstructionReque"
-          + "st\022\025\n\rloadingInfoId\030\001 \001(\003\022\020\n\010vesselId\030\002 "
-          + "\001(\003\022\026\n\016portRotationId\030\003 \001(\003\"\240\001\n\023LoadingI"
-          + "nstructions\022\031\n\021instructionTypeId\030\001 \001(\003\022\033"
-          + "\n\023instructionHeaderId\030\002 \001(\003\022\025\n\rinstructi"
-          + "onId\030\003 \001(\003\022\023\n\013instruction\030\004 \001(\t\022\021\n\tisChe"
-          + "cked\030\005 \001(\010\022\022\n\nisEditable\030\006 \001(\010\"\374\001\n\033Loadi"
-          + "ngInstructionSubHeader\022\031\n\021instructionTyp"
-          + "eId\030\001 \001(\003\022\033\n\023instructionHeaderId\030\002 \001(\003\022\023"
-          + "\n\013subHeaderId\030\003 \001(\003\022\025\n\rsubHeaderName\030\004 \001"
-          + "(\t\022\021\n\tisChecked\030\005 \001(\010\0225\n\027loadingInstruct"
-          + "ionsList\030\006 \003(\0132\024.LoadingInstructions\022\022\n\n"
-          + "isEditable\030\007 \001(\010\022\033\n\023IsHeaderInstruction\030"
-          + "\010 \001(\010\"=\n\027LoadingInstructionGroup\022\017\n\007grou"
-          + "pId\030\001 \001(\003\022\021\n\tgroupName\030\002 \001(\t\"\306\001\n\031Loading"
-          + "InstructionDetails\022A\n\033loadingInstruction"
-          + "SubHeader\030\001 \003(\0132\034.LoadingInstructionSubH"
-          + "eader\022=\n\033loadingInstructionGroupList\030\002 \003"
-          + "(\0132\030.LoadingInstructionGroup\022\'\n\016response"
-          + "Status\030\003 \001(\0132\017.ResponseStatus\"\361\001\n\027Loadin"
-          + "gInstructionsSave\022\020\n\010headerId\030\001 \001(\003\022\031\n\021i"
-          + "nstructionTypeId\030\002 \001(\003\022\021\n\tisChecked\030\003 \001("
-          + "\010\022\026\n\016isSingleHeader\030\004 \001(\010\022\023\n\013subHeaderId"
-          + "\030\005 \001(\003\022\023\n\013instruction\030\006 \001(\t\022\023\n\013isSubHead"
-          + "er\030\007 \001(\010\022\025\n\rloadingInfoId\030\010 \001(\003\022\020\n\010vesse"
-          + "lId\030\t \001(\003\022\026\n\016portRotationId\030\n \001(\003\"O\n\031Loa"
-          + "dingInstructionsUpdate\0222\n\017instructionLis"
-          + "t\030\001 \003(\0132\031.LoadingInstructionStatus\"Y\n\030Lo"
-          + "adingInstructionStatus\022\025\n\rinstructionId\030"
-          + "\001 \001(\003\022\021\n\tisChecked\030\002 \001(\010\022\023\n\013instruction\030"
-          + "\003 \001(\t\"Y\n\032UpdateUllageDetailsRequest\022\020\n\010v"
-          + "esselId\030\001 \001(\003\022\021\n\tpatternId\030\002 \001(\003\022\026\n\016port"
-          + "RotationId\030\003 \001(\003\"\243\002\n\033UpdateUllageDetails"
-          + "Response\022\017\n\007message\030\001 \001(\t\022%\n\rbillOfLaddi"
-          + "ng\030\002 \003(\0132\016.BillOfLadding\022F\n\036portLoadable"
-          + "PlanStowageDetails\030\003 \003(\0132\036.PortLoadableP"
-          + "lanStowageDetail\022E\n\035portLoadingPlanBalla"
-          + "stDetails\030\004 \003(\0132\036.PortLoadingPlanBallast"
-          + "Details\022=\n\031portLoadingPlanRobDetails\030\005 \003"
-          + "(\0132\032.PortLoadingPlanRobDetails\"g\n\031Ullage"
-          + "CargoQuantityDetail\022\031\n\021cargoNominationId"
-          + "\030\001 \001(\003\022\027\n\017plannedQuantity\030\002 \001(\t\022\026\n\016actua"
-          + "lQuantity\030\003 \001(\t\"\377\003\n\035PortLoadablePlanStow"
-          + "ageDetail\022\024\n\014abbreviation\030\001 \001(\t\022\013\n\003api\030\002"
-          + " \001(\t\022\031\n\021cargoNominationId\030\003 \001(\003\022\017\n\007cargo"
-          + "Id\030\004 \001(\003\022\021\n\tcolorCode\030\005 \001(\t\022\027\n\017corrected"
-          + "Ullage\030\006 \001(\t\022\030\n\020correctionFactor\030\007 \001(\t\022\031"
-          + "\n\021fillingPercentage\030\010 \001(\t\022\n\n\002id\030\t \001(\003\022\020\n"
-          + "\010isActive\030\n \001(\010\022\031\n\021loadablePatternId\030\013 \001"
-          + "(\003\022\027\n\017observedBarrels\030\014 \001(\t\022\033\n\023observedB"
-          + "arrelsAt60\030\r \001(\t\022\022\n\nobservedM3\030\016 \001(\t\022\021\n\t"
-          + "rdgUllage\030\017 \001(\t\022\016\n\006tankId\030\020 \001(\003\022\020\n\010tankn"
-          + "ame\030\021 \001(\t\022\023\n\013temperature\030\022 \001(\t\022\016\n\006weight"
-          + "\030\023 \001(\t\022\020\n\010quantity\030\024 \001(\t\022\030\n\020arrivalDepar"
-          + "ture\030\025 \001(\t\022\025\n\ractualPlanned\030\026 \001(\t\022\016\n\006ull"
-          + "age\030\027 \001(\t\"\216\003\n\035PortLoadingPlanBallastDeta"
-          + "ils\022\013\n\003api\030\001 \001(\t\022\031\n\021cargoNominationId\030\002 "
-          + "\001(\003\022\017\n\007cargoId\030\003 \001(\003\022\021\n\tcolorCode\030\004 \001(\t\022"
-          + "\027\n\017correctedUllage\030\005 \001(\t\022\030\n\020correctionFa"
-          + "ctor\030\006 \001(\t\022\031\n\021fillingPercentage\030\007 \001(\t\022\n\n"
-          + "\002id\030\010 \001(\003\022\020\n\010isActive\030\t \001(\010\022\031\n\021loadableP"
-          + "atternId\030\n \001(\003\022\016\n\006tankId\030\013 \001(\003\022\020\n\010tankna"
-          + "me\030\014 \001(\t\022\023\n\013temperature\030\r \001(\t\022\020\n\010quantit"
-          + "y\030\016 \001(\t\022\030\n\020arrivalDeparture\030\017 \001(\t\022\025\n\ract"
-          + "ualPlanned\030\020 \001(\t\022\016\n\006ullage\030\021 \001(\t\022\020\n\010soun"
-          + "ding\030\022 \001(\t\"\271\001\n\031PortLoadingPlanRobDetails"
-          + "\022\n\n\002id\030\001 \001(\003\022\020\n\010isActive\030\002 \001(\010\022\031\n\021loadab"
-          + "lePatternId\030\003 \001(\003\022\016\n\006tankId\030\004 \001(\003\022\020\n\010tan"
-          + "kname\030\005 \001(\t\022\020\n\010quantity\030\006 \001(\t\022\030\n\020arrival"
-          + "Departure\030\007 \001(\t\022\025\n\ractualPlanned\030\010 \001(\t\"/"
-          + "\n\026LoadingSequenceRequest\022\025\n\rloadingInfoI"
-          + "d\030\001 \001(\003\"\254\002\n\024LoadingSequenceReply\022\020\n\010vess"
-          + "elId\030\001 \001(\003\022\020\n\010voyageId\030\002 \001(\003\022\031\n\021loadable"
-          + "PatternId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022\021\n\tstart"
-          + "Date\030\005 \001(\t\022\020\n\010interval\030\006 \001(\005\022*\n\020loadingS"
-          + "equences\030\007 \003(\0132\020.LoadingSequence\022K\n\"load"
-          + "ingSequenceStabilityParameters\030\010 \003(\0132\037.L"
-          + "oadingPlanStabilityParameters\022\'\n\016respons"
-          + "eStatus\030\t \001(\0132\017.ResponseStatus\"\270\003\n\020Loadi"
-          + "ngPlanReply\022\'\n\016responseStatus\030\007 \001(\0132\017.Re"
-          + "sponseStatus\022\025\n\rloadingInfoId\030\001 \001(\003\022/\n\022l"
-          + "oadingInformation\030\010 \001(\0132\023.LoadingInforma"
-          + "tion\022*\n\020loadingSequences\030\002 \003(\0132\020.Loading"
-          + "Sequence\022>\n\035portLoadingPlanStowageDetail"
-          + "s\030\003 \003(\0132\027.LoadingPlanTankDetails\022>\n\035port"
-          + "LoadingPlanBallastDetails\030\004 \003(\0132\027.Loadin"
-          + "gPlanTankDetails\022:\n\031portLoadingPlanRobDe"
-          + "tails\030\005 \003(\0132\027.LoadingPlanTankDetails\022K\n\""
-          + "portLoadingPlanStabilityParameters\030\006 \003(\013"
-          + "2\037.LoadingPlanStabilityParameters\"1\n\024Bil"
-          + "lOfLaddingRequest\022\031\n\021cargoNominationId\030\001"
-          + " \001(\003\"/\n\022MaxQuantityRequest\022\031\n\021cargoNomin"
-          + "ationId\030\001 \003(\003\"m\n\023MaxQuantityResponse\022-\n\020"
-          + "cargoMaxQuantity\030\001 \003(\0132\023.MaxQuantityDeta"
-          + "ils\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseSt"
-          + "atus\"D\n\022MaxQuantityDetails\022\031\n\021cargoNomin"
-          + "ationId\030\001 \001(\003\022\023\n\013maxQuantity\030\002 \001(\tB+\n\'co"
-          + "m.cpdss.common.generated.loading_planP\000b"
-          + "\006proto3"
+          + "rs\022\037\n\nalgoErrors\030\t \003(\0132\013.AlgoErrors\"\321\003\n\017"
+          + "LoadingSequence\022\031\n\021cargoNominationId\030\001 \001"
+          + "(\003\022\021\n\tstartTime\030\002 \001(\005\022\017\n\007endTime\030\003 \001(\005\022\016"
+          + "\n\006portId\030\004 \001(\003\022\026\n\016sequenceNumber\030\005 \001(\005\022\021"
+          + "\n\tstageName\030\006 \001(\t\022\024\n\014toLoadicator\030\007 \001(\010\022"
+          + "\033\n\013cargoValves\030\010 \003(\0132\006.Valve\022\035\n\rballastV"
+          + "alves\030\t \003(\0132\006.Valve\022\"\n\014loadingRates\030\n \003("
+          + "\0132\014.LoadingRate\022,\n\021deBallastingRates\030\013 \003"
+          + "(\0132\021.DeBallastingRate\022?\n\032loadingPlanPort"
+          + "WiseDetails\030\014 \003(\0132\033.LoadingPlanPortWiseD"
+          + "etails\022\031\n\021cargoLoadingRate1\030\r \001(\t\022\031\n\021car"
+          + "goLoadingRate2\030\016 \001(\t\022)\n\021ballastOperation"
+          + "s\030\017 \003(\0132\016.PumpOperation\"\321\002\n\032LoadingPlanP"
+          + "ortWiseDetails\022,\n\021deballastingRates\030\001 \003("
+          + "\0132\021.DeBallastingRate\022:\n\031loadingPlanBalla"
+          + "stDetails\030\002 \003(\0132\027.LoadingPlanTankDetails"
+          + "\0226\n\025loadingPlanRobDetails\030\003 \003(\0132\027.Loadin"
+          + "gPlanTankDetails\022G\n\036loadingPlanStability"
+          + "Parameters\030\004 \001(\0132\037.LoadingPlanStabilityP"
+          + "arameters\022:\n\031loadingPlanStowageDetails\030\005"
+          + " \003(\0132\027.LoadingPlanTankDetails\022\014\n\004time\030\006 "
+          + "\001(\005\"\323\001\n\036LoadingPlanStabilityParameters\022\r"
+          + "\n\005draft\030\001 \001(\t\022\014\n\004trim\030\002 \001(\t\022\n\n\002bm\030\003 \001(\t\022"
+          + "\n\n\002sf\030\004 \001(\t\022\025\n\rconditionType\030\005 \001(\005\022\021\n\tva"
+          + "lueType\030\006 \001(\005\022\021\n\tforeDraft\030\007 \001(\t\022\020\n\010aftD"
+          + "raft\030\010 \001(\t\022\014\n\004time\030\t \001(\005\022\021\n\tmeanDraft\030\n "
+          + "\001(\t\022\014\n\004list\030\013 \001(\t\"\327\001\n\026LoadingPlanTankDet"
+          + "ails\022\013\n\003api\030\001 \001(\t\022\031\n\021cargoNominationId\030\002"
+          + " \001(\003\022\020\n\010quantity\030\003 \001(\t\022\016\n\006tankId\030\004 \001(\003\022\023"
+          + "\n\013temperature\030\005 \001(\t\022\016\n\006ullage\030\006 \001(\t\022\022\n\nq"
+          + "uantityM3\030\007 \001(\t\022\020\n\010sounding\030\010 \001(\t\022\025\n\rcon"
+          + "ditionType\030\t \001(\005\022\021\n\tvalueType\030\n \001(\005\"J\n\020D"
+          + "eBallastingRate\022\030\n\020deBallastingRate\030\001 \001("
+          + "\t\022\016\n\006tankId\030\002 \001(\003\022\014\n\004time\030\003 \001(\005\"V\n\013Loadi"
+          + "ngRate\022\023\n\013loadingRate\030\001 \001(\t\022\016\n\006tankId\030\002 "
+          + "\001(\003\022\021\n\tstartTime\030\003 \001(\005\022\017\n\007endTime\030\004 \001(\005\""
+          + "_\n\005Valve\022\021\n\toperation\030\001 \001(\t\022\014\n\004time\030\002 \001("
+          + "\005\022\021\n\tvalveCode\030\003 \001(\t\022\021\n\tvalveType\030\004 \001(\t\022"
+          + "\017\n\007valveId\030\005 \001(\003\"x\n\rPumpOperation\022\017\n\007end"
+          + "Time\030\001 \001(\005\022\020\n\010pumpName\030\002 \001(\t\022\017\n\007pumpXId\030"
+          + "\003 \001(\003\022\014\n\004rate\030\004 \001(\t\022\021\n\tstartTime\030\005 \001(\005\022\022"
+          + "\n\nquantityM3\030\006 \001(\t\"B\n\027LoadingPlanSaveRes"
+          + "ponse\022\'\n\016responseStatus\030\001 \001(\0132\017.Response"
+          + "Status\"\\\n\031LoadingInstructionRequest\022\025\n\rl"
+          + "oadingInfoId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\026\n\016"
+          + "portRotationId\030\003 \001(\003\"\240\001\n\023LoadingInstruct"
+          + "ions\022\031\n\021instructionTypeId\030\001 \001(\003\022\033\n\023instr"
+          + "uctionHeaderId\030\002 \001(\003\022\025\n\rinstructionId\030\003 "
+          + "\001(\003\022\023\n\013instruction\030\004 \001(\t\022\021\n\tisChecked\030\005 "
+          + "\001(\010\022\022\n\nisEditable\030\006 \001(\010\"\374\001\n\033LoadingInstr"
+          + "uctionSubHeader\022\031\n\021instructionTypeId\030\001 \001"
+          + "(\003\022\033\n\023instructionHeaderId\030\002 \001(\003\022\023\n\013subHe"
+          + "aderId\030\003 \001(\003\022\025\n\rsubHeaderName\030\004 \001(\t\022\021\n\ti"
+          + "sChecked\030\005 \001(\010\0225\n\027loadingInstructionsLis"
+          + "t\030\006 \003(\0132\024.LoadingInstructions\022\022\n\nisEdita"
+          + "ble\030\007 \001(\010\022\033\n\023IsHeaderInstruction\030\010 \001(\010\"="
+          + "\n\027LoadingInstructionGroup\022\017\n\007groupId\030\001 \001"
+          + "(\003\022\021\n\tgroupName\030\002 \001(\t\"\306\001\n\031LoadingInstruc"
+          + "tionDetails\022A\n\033loadingInstructionSubHead"
+          + "er\030\001 \003(\0132\034.LoadingInstructionSubHeader\022="
+          + "\n\033loadingInstructionGroupList\030\002 \003(\0132\030.Lo"
+          + "adingInstructionGroup\022\'\n\016responseStatus\030"
+          + "\003 \001(\0132\017.ResponseStatus\"\361\001\n\027LoadingInstru"
+          + "ctionsSave\022\020\n\010headerId\030\001 \001(\003\022\031\n\021instruct"
+          + "ionTypeId\030\002 \001(\003\022\021\n\tisChecked\030\003 \001(\010\022\026\n\016is"
+          + "SingleHeader\030\004 \001(\010\022\023\n\013subHeaderId\030\005 \001(\003\022"
+          + "\023\n\013instruction\030\006 \001(\t\022\023\n\013isSubHeader\030\007 \001("
+          + "\010\022\025\n\rloadingInfoId\030\010 \001(\003\022\020\n\010vesselId\030\t \001"
+          + "(\003\022\026\n\016portRotationId\030\n \001(\003\"O\n\031LoadingIns"
+          + "tructionsUpdate\0222\n\017instructionList\030\001 \003(\013"
+          + "2\031.LoadingInstructionStatus\"Y\n\030LoadingIn"
+          + "structionStatus\022\025\n\rinstructionId\030\001 \001(\003\022\021"
+          + "\n\tisChecked\030\002 \001(\010\022\023\n\013instruction\030\003 \001(\t\"Y"
+          + "\n\032UpdateUllageDetailsRequest\022\020\n\010vesselId"
+          + "\030\001 \001(\003\022\021\n\tpatternId\030\002 \001(\003\022\026\n\016portRotatio"
+          + "nId\030\003 \001(\003\"\243\002\n\033UpdateUllageDetailsRespons"
+          + "e\022\017\n\007message\030\001 \001(\t\022%\n\rbillOfLadding\030\002 \003("
+          + "\0132\016.BillOfLadding\022F\n\036portLoadablePlanSto"
+          + "wageDetails\030\003 \003(\0132\036.PortLoadablePlanStow"
+          + "ageDetail\022E\n\035portLoadingPlanBallastDetai"
+          + "ls\030\004 \003(\0132\036.PortLoadingPlanBallastDetails"
+          + "\022=\n\031portLoadingPlanRobDetails\030\005 \003(\0132\032.Po"
+          + "rtLoadingPlanRobDetails\"g\n\031UllageCargoQu"
+          + "antityDetail\022\031\n\021cargoNominationId\030\001 \001(\003\022"
+          + "\027\n\017plannedQuantity\030\002 \001(\t\022\026\n\016actualQuanti"
+          + "ty\030\003 \001(\t\"\377\003\n\035PortLoadablePlanStowageDeta"
+          + "il\022\024\n\014abbreviation\030\001 \001(\t\022\013\n\003api\030\002 \001(\t\022\031\n"
+          + "\021cargoNominationId\030\003 \001(\003\022\017\n\007cargoId\030\004 \001("
+          + "\003\022\021\n\tcolorCode\030\005 \001(\t\022\027\n\017correctedUllage\030"
+          + "\006 \001(\t\022\030\n\020correctionFactor\030\007 \001(\t\022\031\n\021filli"
+          + "ngPercentage\030\010 \001(\t\022\n\n\002id\030\t \001(\003\022\020\n\010isActi"
+          + "ve\030\n \001(\010\022\031\n\021loadablePatternId\030\013 \001(\003\022\027\n\017o"
+          + "bservedBarrels\030\014 \001(\t\022\033\n\023observedBarrelsA"
+          + "t60\030\r \001(\t\022\022\n\nobservedM3\030\016 \001(\t\022\021\n\trdgUlla"
+          + "ge\030\017 \001(\t\022\016\n\006tankId\030\020 \001(\003\022\020\n\010tankname\030\021 \001"
+          + "(\t\022\023\n\013temperature\030\022 \001(\t\022\016\n\006weight\030\023 \001(\t\022"
+          + "\020\n\010quantity\030\024 \001(\t\022\030\n\020arrivalDeparture\030\025 "
+          + "\001(\t\022\025\n\ractualPlanned\030\026 \001(\t\022\016\n\006ullage\030\027 \001"
+          + "(\t\"\216\003\n\035PortLoadingPlanBallastDetails\022\013\n\003"
+          + "api\030\001 \001(\t\022\031\n\021cargoNominationId\030\002 \001(\003\022\017\n\007"
+          + "cargoId\030\003 \001(\003\022\021\n\tcolorCode\030\004 \001(\t\022\027\n\017corr"
+          + "ectedUllage\030\005 \001(\t\022\030\n\020correctionFactor\030\006 "
+          + "\001(\t\022\031\n\021fillingPercentage\030\007 \001(\t\022\n\n\002id\030\010 \001"
+          + "(\003\022\020\n\010isActive\030\t \001(\010\022\031\n\021loadablePatternI"
+          + "d\030\n \001(\003\022\016\n\006tankId\030\013 \001(\003\022\020\n\010tankname\030\014 \001("
+          + "\t\022\023\n\013temperature\030\r \001(\t\022\020\n\010quantity\030\016 \001(\t"
+          + "\022\030\n\020arrivalDeparture\030\017 \001(\t\022\025\n\ractualPlan"
+          + "ned\030\020 \001(\t\022\016\n\006ullage\030\021 \001(\t\022\020\n\010sounding\030\022 "
+          + "\001(\t\"\271\001\n\031PortLoadingPlanRobDetails\022\n\n\002id\030"
+          + "\001 \001(\003\022\020\n\010isActive\030\002 \001(\010\022\031\n\021loadablePatte"
+          + "rnId\030\003 \001(\003\022\016\n\006tankId\030\004 \001(\003\022\020\n\010tankname\030\005"
+          + " \001(\t\022\020\n\010quantity\030\006 \001(\t\022\030\n\020arrivalDepartu"
+          + "re\030\007 \001(\t\022\025\n\ractualPlanned\030\010 \001(\t\"/\n\026Loadi"
+          + "ngSequenceRequest\022\025\n\rloadingInfoId\030\001 \001(\003"
+          + "\"\254\002\n\024LoadingSequenceReply\022\020\n\010vesselId\030\001 "
+          + "\001(\003\022\020\n\010voyageId\030\002 \001(\003\022\031\n\021loadablePattern"
+          + "Id\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022\021\n\tstartDate\030\005 "
+          + "\001(\t\022\020\n\010interval\030\006 \001(\005\022*\n\020loadingSequence"
+          + "s\030\007 \003(\0132\020.LoadingSequence\022K\n\"loadingSequ"
+          + "enceStabilityParameters\030\010 \003(\0132\037.LoadingP"
+          + "lanStabilityParameters\022\'\n\016responseStatus"
+          + "\030\t \001(\0132\017.ResponseStatus\"\270\003\n\020LoadingPlanR"
+          + "eply\022\'\n\016responseStatus\030\007 \001(\0132\017.ResponseS"
+          + "tatus\022\025\n\rloadingInfoId\030\001 \001(\003\022/\n\022loadingI"
+          + "nformation\030\010 \001(\0132\023.LoadingInformation\022*\n"
+          + "\020loadingSequences\030\002 \003(\0132\020.LoadingSequenc"
+          + "e\022>\n\035portLoadingPlanStowageDetails\030\003 \003(\013"
+          + "2\027.LoadingPlanTankDetails\022>\n\035portLoading"
+          + "PlanBallastDetails\030\004 \003(\0132\027.LoadingPlanTa"
+          + "nkDetails\022:\n\031portLoadingPlanRobDetails\030\005"
+          + " \003(\0132\027.LoadingPlanTankDetails\022K\n\"portLoa"
+          + "dingPlanStabilityParameters\030\006 \003(\0132\037.Load"
+          + "ingPlanStabilityParameters\"1\n\024BillOfLadd"
+          + "ingRequest\022\031\n\021cargoNominationId\030\001 \001(\003\"/\n"
+          + "\022MaxQuantityRequest\022\031\n\021cargoNominationId"
+          + "\030\001 \003(\003\"m\n\023MaxQuantityResponse\022-\n\020cargoMa"
+          + "xQuantity\030\001 \003(\0132\023.MaxQuantityDetails\022\'\n\016"
+          + "responseStatus\030\002 \001(\0132\017.ResponseStatus\"D\n"
+          + "\022MaxQuantityDetails\022\031\n\021cargoNominationId"
+          + "\030\001 \001(\003\022\023\n\013maxQuantity\030\002 \001(\tB+\n\'com.cpdss"
+          + ".common.generated.loading_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -99945,6 +100270,7 @@ public final class LoadingPlanModels {
               "PortLoadingPlanRobDetails",
               "PortLoadingPlanStabilityParameters",
               "LoadingSequenceStabilityParameters",
+              "AlgoErrors",
             });
     internal_static_LoadingSequence_descriptor = getDescriptor().getMessageTypes().get(33);
     internal_static_LoadingSequence_fieldAccessorTable =

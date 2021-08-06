@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan.sequence;
 
+import com.cpdss.gateway.domain.AlgoError;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
@@ -17,4 +18,5 @@ public class LoadingPlanAlgoRequest {
 
   // stability parameters per stage
   private List<LoadingSequenceStabilityParam> stages;
+  private List<AlgoError> errors;
 }

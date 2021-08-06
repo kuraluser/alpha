@@ -406,6 +406,7 @@ message LoadingPlanSaveRequest {
   repeated LoadingPlanTankDetails portLoadingPlanRobDetails = 6;
   repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 7;
   repeated LoadingPlanStabilityParameters loadingSequenceStabilityParameters = 8;
+  repeated AlgoErrors algoErrors = 9;
 }
 
 message LoadingSequence {
