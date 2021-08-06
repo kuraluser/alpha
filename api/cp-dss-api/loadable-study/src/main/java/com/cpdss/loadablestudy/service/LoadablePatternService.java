@@ -276,7 +276,7 @@ public class LoadablePatternService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    if (enableCommunication) {
+    if (enableCommunication && !request.getHasLodicator()){
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
               request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
