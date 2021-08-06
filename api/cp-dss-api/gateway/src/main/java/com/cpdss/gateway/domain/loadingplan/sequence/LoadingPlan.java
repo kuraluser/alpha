@@ -20,9 +20,7 @@ public class LoadingPlan {
   @JsonProperty("heel")
   private String list;
 
-  @JsonProperty("BM")
-  private String bm;
+  private String bendinMoment;
 
-  @JsonProperty("SF")
-  private String sf;
+  private String shearForce;
 }

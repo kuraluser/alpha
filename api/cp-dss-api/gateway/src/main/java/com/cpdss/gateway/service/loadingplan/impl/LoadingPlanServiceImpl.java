@@ -347,7 +347,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Override
   public LoadingPlanAlgoResponse saveLoadingPlan(
-      Long vesselId, Long voyageId, Long infoId, Object loadingPlanAlgoRequest)
+      Long vesselId, Long voyageId, Long infoId, LoadingPlanAlgoRequest loadingPlanAlgoRequest)
       throws GenericServiceException {
     LoadingPlanAlgoResponse algoResponse = new LoadingPlanAlgoResponse();
     LoadingPlanSaveRequest.Builder builder = LoadingPlanSaveRequest.newBuilder();
@@ -373,7 +373,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       log.error("Exception encountered when processing Loading Information Response JSON");
     }
     loadingSequenceService.buildLoadingPlanSaveRequest(
-        (LoadingPlanAlgoRequest) loadingPlanAlgoRequest, vesselId, infoId, builder);
+        loadingPlanAlgoRequest, vesselId, infoId, builder);
     LoadingPlanSaveResponse response = loadingPlanGrpcService.saveLoadingPlan(builder.build());
     if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error("Exception occured when saving loading plan");
