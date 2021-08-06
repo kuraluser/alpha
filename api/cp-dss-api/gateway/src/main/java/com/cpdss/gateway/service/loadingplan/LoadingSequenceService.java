@@ -191,7 +191,7 @@ public class LoadingSequenceService {
               });
       loadingRates.addAll(loadingSequence.getLoadingRatesList());
     }
-    log.info("size: {}", gravityList.size());
+
     if (gravityList.size() > 0) {
       gravity.setPumpId(0L);
       gravity.setQuantityM3(null);
@@ -227,25 +227,39 @@ public class LoadingSequenceService {
       List<CargoStage> cargoStages) {
     CargoStage cargoStage = new CargoStage();
     if (portWiseDetails.getLoadingPlanStowageDetailsCount() > 0) {
-      LoadingPlanTankDetails tankDetails = portWiseDetails.getLoadingPlanStowageDetails(0);
-      CargoNominationDetail cargoNomination =
-          cargoNomDetails.get(tankDetails.getCargoNominationId());
-      cargoStage.setAbbreviation(cargoNomination.getAbbreviation());
-      cargoStage.setCargoNominationId(cargoNomination.getId());
-      cargoStage.setColor(cargoNomination.getColor());
-      cargoStage.setName("Stage " + stageNumber.incrementAndGet());
-      BigDecimal total =
+      List<Cargo> cargos = new ArrayList<Cargo>();
+      Set<Long> cargoNomIds =
           portWiseDetails.getLoadingPlanStowageDetailsList().stream()
-              .filter(stowage -> !StringUtils.isEmpty(stowage.getQuantity()))
-              .map(stowage -> new BigDecimal(stowage.getQuantity()))
-              .reduce(
-                  new BigDecimal(0),
-                  (val1, val2) -> {
-                    return val1.add(val2);
-                  });
-      cargoStage.setQuantity(total);
+              .map(stowage -> stowage.getCargoNominationId())
+              .collect(Collectors.toSet());
+      cargoNomIds.forEach(
+          cargoNominationId -> {
+            Cargo cargo = new Cargo();
+            CargoNominationDetail cargoNomination = cargoNomDetails.get(cargoNominationId);
+            cargo.setName(cargoNomination.getCargoName());
+            cargo.setCargoId(cargoNomination.getCargoId());
+            cargo.setAbbreviation(cargoNomination.getAbbreviation());
+            cargo.setCargoNominationId(cargoNomination.getId());
+            cargo.setColor(cargoNomination.getColor());
+            BigDecimal total =
+                portWiseDetails.getLoadingPlanStowageDetailsList().stream()
+                    .filter(
+                        stowage ->
+                            (stowage.getCargoNominationId() == cargoNominationId)
+                                && !StringUtils.isEmpty(stowage.getQuantity()))
+                    .map(stowage -> new BigDecimal(stowage.getQuantity()))
+                    .reduce(
+                        new BigDecimal(0),
+                        (val1, val2) -> {
+                          return val1.add(val2);
+                        });
+            cargo.setQuantity(total);
+            cargos.add(cargo);
+          });
+      cargoStage.setName("Stage " + stageNumber.incrementAndGet());
       cargoStage.setStart(portEta + (start * 60 * 1000));
       cargoStage.setEnd(portEta + (end * 60 * 1000));
+      cargoStage.setCargos(cargos);
       cargoStages.add(cargoStage);
     }
   }
@@ -617,6 +631,7 @@ public class LoadingSequenceService {
       Integer start,
       Integer end) {
     cargo.setCargoNominationId(stowage.getCargoNominationId());
+    cargo.setCargoId(cargoNomination.getCargoId());
     cargo.setQuantity(
         StringUtils.isEmpty(stowage.getQuantity()) ? null : new BigDecimal(stowage.getQuantity()));
     cargo.setTankId(stowage.getTankId());

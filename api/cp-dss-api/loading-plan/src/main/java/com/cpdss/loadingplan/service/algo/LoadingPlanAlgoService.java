@@ -20,6 +20,8 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoRequest;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoResponse;
+import com.cpdss.loadingplan.entity.AlgoErrorHeading;
+import com.cpdss.loadingplan.entity.AlgoErrors;
 import com.cpdss.loadingplan.entity.BallastOperation;
 import com.cpdss.loadingplan.entity.BallastValve;
 import com.cpdss.loadingplan.entity.CargoLoadingRate;
@@ -35,6 +37,8 @@ import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
+import com.cpdss.loadingplan.repository.AlgoErrorHeadingRepository;
+import com.cpdss.loadingplan.repository.AlgoErrorsRepository;
 import com.cpdss.loadingplan.repository.BallastOperationRepository;
 import com.cpdss.loadingplan.repository.BallastValveRepository;
 import com.cpdss.loadingplan.repository.CargoLoadingRateRepository;
@@ -97,6 +101,8 @@ public class LoadingPlanAlgoService {
   @Autowired PortLoadingPlanStowageDetailsRepository portStowageDetailsRepository;
   @Autowired BallastOperationRepository ballastOperationRepository;
   @Autowired LoadingSequenceStabiltyParametersRepository loadingSequenceStabilityParamsRepository;
+  @Autowired AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @Autowired AlgoErrorsRepository algoErrorsRepository;
 
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
@@ -317,6 +323,30 @@ public class LoadingPlanAlgoService {
     log.info(
         "ALGO returned errors while generating loading plan for loading information {}",
         loadingInformation.getId());
+
+    algoErrorHeadingRepository.deleteByLoadingInformation(loadingInformation);
+    algoErrorsRepository.deleteByLoadingInformation(loadingInformation);
+
+    request
+        .getAlgoErrorsList()
+        .forEach(
+            algoError -> {
+              AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+              algoErrorHeading.setErrorHeading(algoError.getErrorHeading());
+              algoErrorHeading.setLoadingInformation(loadingInformation);
+              algoErrorHeading.setIsActive(true);
+              algoErrorHeadingRepository.save(algoErrorHeading);
+              algoError
+                  .getErrorMessagesList()
+                  .forEach(
+                      error -> {
+                        AlgoErrors algoErrors = new AlgoErrors();
+                        algoErrors.setAlgoErrorHeading(algoErrorHeading);
+                        algoErrors.setErrorMessage(error);
+                        algoErrors.setIsActive(true);
+                        algoErrorsRepository.save(algoErrors);
+                      });
+            });
     Optional<LoadingInformationStatus> errorOccurredStatusOpt =
         loadingInfoStatusRepository.findByIdAndIsActive(
             LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID, true);
