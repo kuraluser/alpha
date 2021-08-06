@@ -2,13 +2,14 @@
   <div id="fleetMap" class="map"></div>
 
   <div class="row port-popup" id="portPopup" #portPopup [hidden]="hidePortPopUp">
-    <div class="col-md-2">
-      <img src="{{cardValues?.iconUrl}}" width="30" height="30">
+    <div>
+      <img src="{{cardValues?.portTypeIconUrl}}">
     </div>
-    <div class="col-md-10">
+    <div class="col">
       <div class="row">
-        <div class="col text-lead">{{'FLEET_POPUP_PORT_OF' | translate}} {{cardValues?.portname}} <span
-            class="pull-right">{{cardValues?.portOrder}}</span></div>
+        <div class="col text-lead vessel-card-heading">
+          {{cardValues?.portOrder + '.'}} {{'FLEET_POPUP_PORT_OF' | translate}} {{cardValues?.portName}}
+        </div>
       </div>
       <div class="row">
         <div class="col">
@@ -16,17 +17,18 @@
         </div>
       </div>
       <div class="row">
-        <div class="col"> &nbsp; </div>
-      </div>
-      <div class="row">
         <div class="col-6">
-          <div *ngIf="cardValues?.ata">{{'FLEET_PORT_ATA' | translate}} {{cardValues?.ata | momentFormat: 'DD-MMM-YYYY'}}</div>
-          <div *ngIf="!cardValues?.ata && cardValues?.eta">{{'FLEET_PORT_ETA' | translate}} {{cardValues?.eta | momentFormat: 'DD-MMM-YYYY'}}</div>
+          <div *ngIf="cardValues?.ata">{{'FLEET_PORT_ATA' | translate}}
+            {{cardValues?.ata | momentFormat: 'DD-MMM-YYYY'}}</div>
+          <div *ngIf="!cardValues?.ata && cardValues?.eta">{{'FLEET_PORT_ETA' | translate}}
+            {{cardValues?.eta | momentFormat: 'DD-MMM-YYYY'}}</div>
           <div *ngIf="!cardValues?.ata && !cardValues?.eta">-</div>
         </div>
         <div class="col-6 text-right">
-          <div *ngIf="cardValues?.atd">{{'FLEET_PORT_ATD' | translate}} {{cardValues?.atd | momentFormat: 'DD-MMM-YYYY'}}</div>
-          <div *ngIf="!cardValues?.atd && cardValues?.etd">{{'FLEET_PORT_ETD' | translate}} {{cardValues?.etd | momentFormat: 'DD-MMM-YYYY'}}</div>
+          <div *ngIf="cardValues?.atd">{{'FLEET_PORT_ATD' | translate}}
+            {{cardValues?.atd | momentFormat: 'DD-MMM-YYYY'}}</div>
+          <div *ngIf="!cardValues?.atd && cardValues?.etd">{{'FLEET_PORT_ETD' | translate}}
+            {{cardValues?.etd | momentFormat: 'DD-MMM-YYYY'}}</div>
           <div *ngIf="!cardValues?.atd && !cardValues?.etd">-</div>
         </div>
       </div>
@@ -37,9 +39,12 @@
     <cpdss-portal-fleet-vessel-notifications></cpdss-portal-fleet-vessel-notifications>
   </div>
 
-  <div class="vessel-card-notification-container vessel-card">
+  <div #vesselCardContainer class="vessel-card-container" [ngClass]="showALlVessel == true ? 'expanded': 'collapsed'">
     <cpdss-portal-fleet-vessel-card *ngIf="vessels" [vesselValues]="vessels" (selectVessel)="onSelectVessel($event)">
     </cpdss-portal-fleet-vessel-card>
+    <div [hidden]="voyagePorts?.length < 4" class="vessel-card-expand-collapse-btn" (click)="toggleViewShowAllVessel()">
+      <div class="pi" [ngClass]="showALlVessel == true ? 'pi-angle-up': 'pi-angle-down'">
+      </div>
+    </div>
   </div>
-
 </div>

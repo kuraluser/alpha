@@ -629,21 +629,6 @@ export class PatternHistory {
 }
 
 /**
- * ENUM for operations
- *
- * @export
- * @enum {number}
- */
-export enum OPERATIONS {
-    LOADING = 1,
-    DISCHARGING = 2,
-    BUNKERING = 3,
-    TRANSIT = 4,
-    STSLOADING = 5,
-    STSDISCHARGING = 6
-}
-
-/**
  * Interface for commingle cargo details
  *
  * @export
@@ -921,42 +906,6 @@ export interface ICargoHistoryDetails {
     api: number;
     temperature: number;
 }
-
-/**
- * Interface for loadable quality
- *
- * @export
- * @interface ILoadableQuantityCargo
- */
- export interface ILoadableQuantityCargo {
-    id: number,
-    grade: string,
-    estimatedAPI: string,
-    estimatedTemp: string,
-    orderBblsdbs: string,
-    orderBbls60f: string,
-    orderedQuantity: string,
-    minTolerence: string,
-    maxTolerence: string,
-    loadableBblsdbs: string,
-    loadableBbls60f: string,
-    loadableLT: string,
-    loadableMT: string,
-    loadableKL: string,
-    differencePercentage: string,
-    differencePercentageValue?: number;
-    differenceColor: string
-    cargoId?: number;
-    apiTemp?: string;
-    minMaxTolerance?: string;
-    slopQuantity?: number;
-    timeRequiredForLoading?: string;
-    loadingPorts?: string[];
-    loadingPort?: string;
-    cargoAbbreviation?: string;
-    cargoNominationId?: number;
-}
-
 
 /**
  * Interface for  Synoptical Records

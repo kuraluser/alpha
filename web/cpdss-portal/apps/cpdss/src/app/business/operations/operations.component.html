@@ -5,13 +5,17 @@
         </div>
         <div *ngIf="vessel && voyages">
             <label for="">Voyage</label>
-            <p-dropdown styleClass="dropdown-w-100" [options]="voyages" optionLabel="voyageNo"
-                [(ngModel)]="selectedVoyage" resetFilterOnHide="true"></p-dropdown>
+                {{selectedVoyage?.voyageNo}}
         </div>
         <div class="col">
             <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
         </div>
-        <div class="pr-15">Voyage Distance</div>
+        <div class="pr-15 pt-10 col text-right">
+          {{'OPERATIONS_VOYAGE_DISTANCE' | translate}}
+        </div>
+        <div class="pr-30 pt-10 ">
+          {{voyageDistance? (voyageDistance | number) : 0}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
+        </div>
         <cpdss-portal-rules [visible]="true" *ngIf="isRuleModalVisible" (popUpClosed)="onRulesPopUpClose($event)"></cpdss-portal-rules>
         <!-- TODO : Remove comment after get confirmation -->
         <!-- <div class="float-right">

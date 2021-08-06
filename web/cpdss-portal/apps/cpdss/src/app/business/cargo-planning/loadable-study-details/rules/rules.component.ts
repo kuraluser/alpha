@@ -43,6 +43,9 @@ export class RulesComponent implements OnInit {
   vessels:any;
   selectedVessel: any;
   formChanges:boolean = false;
+  pageName = "LoadableStudy";
+  data: any;
+
 
   constructor(
     public rulesService: RuleService, private commonApiService: CommonApiService,
@@ -58,13 +61,15 @@ export class RulesComponent implements OnInit {
   */
  async ngOnInit(): Promise<void> {
    this.ngxSpinner.show();
+   this.rulesService.selectedTab$.next('plan');
+   this.data = 'plan';
    await this.rulesService.init();
    this.vessels= await this.rulesService.vessels;
    this.vesselId = await this.rulesService.vessels[0].id;
    this.selectedVessel = this.vessels[0];
    
    this.rulesJson = await this.rulesService.getRules(this.vesselId,this.tabIndex,this.selectedLoadableStudyId).toPromise();   
-   this.rulesService.selectedTab$.next('plan');
+   
    this.ngxSpinner.hide();
   }
 

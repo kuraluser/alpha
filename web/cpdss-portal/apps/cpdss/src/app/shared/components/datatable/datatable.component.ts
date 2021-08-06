@@ -552,6 +552,47 @@ export class DatatableComponent implements OnInit {
     });
   }
 
+  /**
+   * Method for options for icon 
+   *
+   * @param {*} rowData
+   * @param {*} col
+   * @returns
+   * @memberof DatatableComponent
+   */
+  isIconVisible(rowData: any,col) {
+    const action = col.actions?.length ? col.actions[0] : null;
+    if(!action) { return false };
+    let iconVisible;
+    switch(action) {
+      case DATATABLE_ACTION.SAVE: {
+        if (rowData?.isAdd) {
+          iconVisible =  true;
+        }
+      }
+      break;
+      case DATATABLE_ACTION.EDIT: {
+        if (rowData?.isEditable === undefined || rowData?.isEditable) {
+          iconVisible =  true;
+        }
+      }
+      break;
+      case DATATABLE_ACTION.DELETE: {
+        if (rowData?.isDeletable === undefined || rowData?.isDeletable) {
+          iconVisible =  true;
+        }
+      }
+      break;
+      case DATATABLE_ACTION.DUPLICATE: {
+        if (rowData?.isDuplicate === undefined || rowData?.isDuplicate) {
+          iconVisible =  true;
+        }
+      }
+      break;
+    }
+    return iconVisible;
+  }
+
   // private methods
   /**
    * Method for setting actions for data table

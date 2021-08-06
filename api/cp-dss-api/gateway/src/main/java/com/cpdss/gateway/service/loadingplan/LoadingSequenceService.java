@@ -5,9 +5,16 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.VesselInfo.PumpType;
 import com.cpdss.common.generated.VesselInfo.VesselIdRequest;
+import com.cpdss.common.generated.VesselInfo.VesselPump;
 import com.cpdss.common.generated.VesselInfo.VesselPumpsResponse;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
@@ -29,11 +36,13 @@ import com.cpdss.gateway.domain.loadingplan.sequence.Ballast;
 import com.cpdss.gateway.domain.loadingplan.sequence.BallastPump;
 import com.cpdss.gateway.domain.loadingplan.sequence.Cargo;
 import com.cpdss.gateway.domain.loadingplan.sequence.CargoLoadingRate;
+import com.cpdss.gateway.domain.loadingplan.sequence.CargoStage;
 import com.cpdss.gateway.domain.loadingplan.sequence.Event;
 import com.cpdss.gateway.domain.loadingplan.sequence.FlowRate;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlan;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
+import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceStabilityParam;
 import com.cpdss.gateway.domain.loadingplan.sequence.Pump;
 import com.cpdss.gateway.domain.loadingplan.sequence.PumpCategory;
 import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParam;
@@ -78,15 +87,27 @@ public class LoadingSequenceService {
             .collect(Collectors.toSet());
     Map<Long, CargoNominationDetail> cargoNomDetails =
         this.getCargoNominationDetails(cargoNominationIds);
+
+    List<SynopticalBallastRecord> ballastDetails = new ArrayList<>();
+    SynopticalTableReply synopticalReply =
+        this.getSynopticalTableDetails(
+            reply.getVesselId(), reply.getVoyageId(), reply.getLoadablePatternId());
+    synopticalReply
+        .getSynopticalRecordsList()
+        .forEach(
+            record -> {
+              ballastDetails.addAll(record.getBallastList());
+            });
     List<Cargo> cargos = new ArrayList<Cargo>();
     List<Ballast> ballasts = new ArrayList<Ballast>();
     List<BallastPump> ballastPumps = new ArrayList<BallastPump>();
     List<BallastPump> gravityList = new ArrayList<BallastPump>();
     BallastPump gravity = new BallastPump();
     List<CargoLoadingRate> cargoLoadingRates = new ArrayList<>();
-    List<LoadingRate> loadingRates = new ArrayList<>();
-    List<Long> stageTickPositions = new ArrayList<>();
-    List<StabilityParam> stabilityParams = new ArrayList<>();
+    List<LoadingRate> loadingRates = new ArrayList<LoadingRate>();
+    List<Long> stageTickPositions = new ArrayList<Long>();
+    List<StabilityParam> stabilityParams = new ArrayList<StabilityParam>();
+    List<CargoStage> cargoStages = new ArrayList<CargoStage>();
 
     StabilityParam foreDraft = new StabilityParam();
     foreDraft.setName("fore_draft");
@@ -126,6 +147,7 @@ public class LoadingSequenceService {
 
     log.info("Populating Loading Sequences");
     for (LoadingSequence loadingSequence : reply.getLoadingSequencesList()) {
+      AtomicInteger stageNumber = new AtomicInteger(0);
       for (LoadingPlanPortWiseDetails portWiseDetails :
           loadingSequence.getLoadingPlanPortWiseDetailsList()) {
         for (LoadingPlanTankDetails stowage : portWiseDetails.getLoadingPlanStowageDetailsList()) {
@@ -137,11 +159,12 @@ public class LoadingSequenceService {
         for (LoadingPlanTankDetails ballast : portWiseDetails.getLoadingPlanBallastDetailsList()) {
           // Adding ballasts
           this.buildBallastSequence(
-              ballast, vesselTanks, portEta, start, portWiseDetails, ballasts);
+              ballast, vesselTanks, portEta, start, portWiseDetails, ballastDetails, ballasts);
         }
-        start = temp;
 
-        this.buildStabilityParamSequence(portWiseDetails, portEta, start, stabilityParams);
+        addCargoStage(
+            portWiseDetails, cargoNomDetails, stageNumber, portEta, start, temp, cargoStages);
+        start = temp;
         stageTickPositions.add(portEta + (temp * 60 * 1000));
       }
 
@@ -164,18 +187,23 @@ public class LoadingSequenceService {
                   ballastPumps.add(ballastPump);
                 }
               });
-
-      if (gravityList.size() > 0) {
-        gravity.setPumpId(0L);
-        gravity.setQuantityM3(null);
-        gravity.setRate(null);
-        gravity.setStart(gravityList.get(0).getStart());
-        gravity.setEnd(gravityList.get(gravityList.size() - 1).getEnd());
-      }
       loadingRates.addAll(loadingSequence.getLoadingRatesList());
+    }
+    log.info("size: {}", gravityList.size());
+    if (gravityList.size() > 0) {
+      gravity.setPumpId(0L);
+      gravity.setQuantityM3(null);
+      gravity.setRate(null);
+      gravity.setStart(gravityList.get(0).getStart());
+      gravity.setEnd(gravityList.get(gravityList.size() - 1).getEnd());
     }
 
     this.updateCargoLoadingRateIntervals(cargoLoadingRates, stageTickPositions);
+    this.buildStabilityParamSequence(reply, portEta, stabilityParams);
+    this.buildFlowRates(loadingRates, vesselTanks, portEta, response);
+    this.buildCargoTankCategories(reply, vesselTanks, response);
+    this.buildBallastTankCategories(reply, vesselTanks, response);
+    this.buildBallastPumpCategories(vesselId, response);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);
@@ -184,14 +212,40 @@ public class LoadingSequenceService {
     response.setCargoLoadingRates(cargoLoadingRates);
     response.setStageTickPositions(stageTickPositions);
     response.setStabilityParams(stabilityParams);
+    response.setCargoStages(cargoStages);
+  }
 
-    this.buildFlowRates(loadingRates, vesselTanks, portEta, response);
-
-    this.buildCargoTankCategories(reply, vesselTanks, response);
-
-    this.buildBallastTankCategories(reply, vesselTanks, response);
-
-    this.buildBallastPumpCategories(vesselId, response);
+  private void addCargoStage(
+      LoadingPlanPortWiseDetails portWiseDetails,
+      Map<Long, CargoNominationDetail> cargoNomDetails,
+      AtomicInteger stageNumber,
+      Long portEta,
+      Integer start,
+      Integer end,
+      List<CargoStage> cargoStages) {
+    CargoStage cargoStage = new CargoStage();
+    if (portWiseDetails.getLoadingPlanStowageDetailsCount() > 0) {
+      LoadingPlanTankDetails tankDetails = portWiseDetails.getLoadingPlanStowageDetails(0);
+      CargoNominationDetail cargoNomination =
+          cargoNomDetails.get(tankDetails.getCargoNominationId());
+      cargoStage.setAbbreviation(cargoNomination.getAbbreviation());
+      cargoStage.setCargoNominationId(cargoNomination.getId());
+      cargoStage.setColor(cargoNomination.getColor());
+      cargoStage.setName("Stage " + stageNumber.incrementAndGet());
+      BigDecimal total =
+          portWiseDetails.getLoadingPlanStowageDetailsList().stream()
+              .filter(stowage -> !StringUtils.isEmpty(stowage.getQuantity()))
+              .map(stowage -> new BigDecimal(stowage.getQuantity()))
+              .reduce(
+                  new BigDecimal(0),
+                  (val1, val2) -> {
+                    return val1.add(val2);
+                  });
+      cargoStage.setQuantity(total);
+      cargoStage.setStart(portEta + (start * 60 * 1000));
+      cargoStage.setEnd(portEta + (end * 60 * 1000));
+      cargoStages.add(cargoStage);
+    }
   }
 
   private void updateCargoLoadingRateIntervals(
@@ -213,26 +267,54 @@ public class LoadingSequenceService {
   }
 
   private void buildStabilityParamSequence(
-      LoadingPlanPortWiseDetails portWiseDetails,
-      Long portEta,
-      Integer start,
-      List<StabilityParam> stabilityParams) {
-    LoadingPlanStabilityParameters params = portWiseDetails.getLoadingPlanStabilityParameters();
-    stabilityParams.stream()
-        .filter(param -> param.getName().equals("fore_draft"))
-        .forEach(
-            foreDraft ->
-                foreDraft
-                    .getData()
-                    .add(Arrays.asList(portEta + (start * 60 * 1000), params.getDraft())));
-    stabilityParams.stream()
-        .filter(param -> param.getName().equals("bm"))
-        .forEach(
-            bm -> bm.getData().add(Arrays.asList(portEta + (start * 60 * 1000), params.getBm())));
-    stabilityParams.stream()
-        .filter(param -> param.getName().equals("sf"))
-        .forEach(
-            sf -> sf.getData().add(Arrays.asList(portEta + (start * 60 * 1000), params.getSf())));
+      LoadingSequenceReply reply, Long portEta, List<StabilityParam> stabilityParams) {
+    List<LoadingPlanStabilityParameters> params = reply.getLoadingSequenceStabilityParametersList();
+    log.info("Populating stability parameters");
+    params.forEach(
+        param -> {
+          stabilityParams.stream()
+              .filter(stabilityParam -> stabilityParam.getName().equals("fore_draft"))
+              .forEach(
+                  foreDraft ->
+                      foreDraft
+                          .getData()
+                          .add(
+                              Arrays.asList(
+                                  portEta + (param.getTime() * 60 * 1000), param.getForeDraft())));
+          stabilityParams.stream()
+              .filter(stabilityParam -> stabilityParam.getName().equals("aft_draft"))
+              .forEach(
+                  aftDraft ->
+                      aftDraft
+                          .getData()
+                          .add(
+                              Arrays.asList(
+                                  portEta + (param.getTime() * 60 * 1000), param.getAftDraft())));
+          stabilityParams.stream()
+              .filter(stabilityParam -> stabilityParam.getName().equals("bm"))
+              .forEach(
+                  bm ->
+                      bm.getData()
+                          .add(
+                              Arrays.asList(
+                                  portEta + (param.getTime() * 60 * 1000), param.getBm())));
+          stabilityParams.stream()
+              .filter(stabilityParam -> stabilityParam.getName().equals("sf"))
+              .forEach(
+                  sf ->
+                      sf.getData()
+                          .add(
+                              Arrays.asList(
+                                  portEta + (param.getTime() * 60 * 1000), param.getSf())));
+          stabilityParams.stream()
+              .filter(stabilityParam -> stabilityParam.getName().equals("trim"))
+              .forEach(
+                  sf ->
+                      sf.getData()
+                          .add(
+                              Arrays.asList(
+                                  portEta + (param.getTime() * 60 * 1000), param.getTrim())));
+        });
   }
 
   private void buildBallastSequence(
@@ -241,12 +323,18 @@ public class LoadingSequenceService {
       Long portEta,
       Integer start,
       LoadingPlanPortWiseDetails portWiseDetails,
+      List<SynopticalBallastRecord> ballastDetails,
       List<Ballast> ballasts) {
     Ballast ballastDto = new Ballast();
     Optional<VesselTankDetail> tankDetailOpt =
         vesselTanks.stream().filter(tank -> tank.getTankId() == ballast.getTankId()).findAny();
+    Optional<SynopticalBallastRecord> ballastDetailsOpt =
+        ballastDetails.stream()
+            .filter(details -> details.getTankId() == ballast.getTankId())
+            .findAny();
     buildBallast(ballast, ballastDto, portEta, start, portWiseDetails.getTime());
     tankDetailOpt.ifPresent(tank -> ballastDto.setTankName(tank.getShortName()));
+    ballastDetailsOpt.ifPresent(details -> ballastDto.setColor(details.getColorCode()));
     ballasts.add(ballastDto);
   }
 
@@ -303,7 +391,7 @@ public class LoadingSequenceService {
               vesselPump -> {
                 PumpCategory pumpCategory = new PumpCategory();
                 pumpCategory.setId(vesselPump.getId());
-                pumpCategory.setPumpNo(vesselPump.getPumpCode());
+                pumpCategory.setPumpName(vesselPump.getPumpCode());
                 Optional<PumpType> pumpTypeOpt =
                     pumpsResponse.getPumpTypeList().stream()
                         .filter(pumpType -> pumpType.getId() == vesselPump.getId())
@@ -336,7 +424,7 @@ public class LoadingSequenceService {
                       vesselTanks.stream()
                           .filter(tank -> tank.getTankId() == ballast.getTankId())
                           .findAny();
-                  tankDetailOpt.ifPresent(tank -> tankCategory.setTankNo(tank.getShortName()));
+                  tankDetailOpt.ifPresent(tank -> tankCategory.setTankName(tank.getShortName()));
                   ballastTankCategories.add(tankCategory);
                 });
       }
@@ -366,7 +454,7 @@ public class LoadingSequenceService {
                       vesselTanks.stream()
                           .filter(tank -> tank.getTankId() == stowage.getTankId())
                           .findAny();
-                  tankDetailOpt.ifPresent(tank -> tankCategory.setTankNo(tank.getShortName()));
+                  tankDetailOpt.ifPresent(tank -> tankCategory.setTankName(tank.getShortName()));
                   tankCategory.setId(stowage.getTankId());
                   tankCategory.setQuantity(
                       StringUtils.isEmpty(stowage.getQuantity())
@@ -397,7 +485,7 @@ public class LoadingSequenceService {
           FlowRate flowRate = new FlowRate();
           Optional<VesselTankDetail> tankDetailOpt =
               vesselTanks.stream().filter(tank -> tank.getTankId() == tankId).findAny();
-          tankDetailOpt.ifPresent(tank -> flowRate.setTankNo(tank.getShortName()));
+          tankDetailOpt.ifPresent(tank -> flowRate.setTankName(tank.getShortName()));
           flowRate.setData(
               loadingRates.stream()
                   .filter(loadingRate -> loadingRate.getTankId() == tankId)
@@ -447,6 +535,33 @@ public class LoadingSequenceService {
         });
 
     return details;
+  }
+
+  private SynopticalTableReply getSynopticalTableDetails(
+      Long vesselId, Long voyageId, long loadablePatternId) throws GenericServiceException {
+    LoadableStudyRequest.Builder builder = LoadableStudyRequest.newBuilder();
+    builder.setVesselId(vesselId);
+    builder.setVoyageId(voyageId);
+    LoadablePatternConfirmedReply confirmedReply =
+        loadableStudyGrpcService.getLoadablePatternByVoyageAndStatus(builder.build());
+    LoadablePatternRequest.Builder patternReqBuilder = LoadablePatternRequest.newBuilder();
+    patternReqBuilder.setLoadableStudyId(confirmedReply.getLoadableStudyId());
+    SynopticalTableRequest.Builder synopticalBuilder = SynopticalTableRequest.newBuilder();
+    synopticalBuilder.setLoadableStudyId(confirmedReply.getLoadableStudyId());
+    synopticalBuilder.setOperationType("ARR");
+    synopticalBuilder.setPortId(504);
+    synopticalBuilder.setVesselId(vesselId);
+    synopticalBuilder.setVoyageId(voyageId);
+    SynopticalTableReply reply =
+        loadableStudyGrpcService.getSynopticalDataByPortId(synopticalBuilder.build());
+    if (!reply.getResponseStatus().getStatus().equals(GatewayConstants.SUCCESS)) {
+      throw new GenericServiceException(
+          "Failed to get synoptical table ",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    log.info("Fetched Synoptical Table {}", reply.getId());
+    return reply;
   }
 
   private List<VesselTankDetail> getVesselTanks(Long vesselId) throws GenericServiceException {
@@ -514,15 +629,27 @@ public class LoadingSequenceService {
   }
 
   public void buildLoadingPlanSaveRequest(
-      LoadingPlanAlgoRequest loadingPlanAlgoRequest, Long loadingInfoId, Builder builder) {
+      LoadingPlanAlgoRequest loadingPlanAlgoRequest,
+      Long vesselId,
+      Long loadingInfoId,
+      Builder builder) {
     builder.setLoadingInfoId(loadingInfoId);
     AtomicInteger sequenceNumber = new AtomicInteger(0);
+    VesselIdRequest.Builder vesselReqBuilder = VesselIdRequest.newBuilder();
+    vesselReqBuilder.setVesselId(vesselId);
+    VesselPumpsResponse pumpsResponse =
+        vesselInfoGrpcService.getVesselPumpsByVesselId(vesselReqBuilder.build());
+    Optional.ofNullable(loadingPlanAlgoRequest.getProcessId()).ifPresent(builder::setProcessId);
+    if (!pumpsResponse.getResponseStatus().getStatus().equals(GatewayConstants.SUCCESS)) {
+      log.error("Failed to fetch Vessel Pumps from Vessel Info MS of vessel {}", vesselId);
+    }
     if (loadingPlanAlgoRequest.getEvents() != null) {
       loadingPlanAlgoRequest
           .getEvents()
           .forEach(
               event -> {
-                this.buildSequences(event, sequenceNumber, builder);
+                this.buildSequences(
+                    event, sequenceNumber, pumpsResponse.getVesselPumpList(), builder);
               });
     }
 
@@ -535,6 +662,38 @@ public class LoadingSequenceService {
                 this.buildLoadingPlan(entry, builder);
               });
     }
+
+    if (loadingPlanAlgoRequest.getStages() != null) {
+      loadingPlanAlgoRequest
+          .getStages()
+          .forEach(
+              stage -> {
+                this.buildLoadingSequenceStabilityParam(stage, builder);
+              });
+    }
+  }
+
+  private void buildLoadingSequenceStabilityParam(
+      LoadingSequenceStabilityParam stage, Builder builder) {
+    LoadingPlanStabilityParameters.Builder paramBuilder =
+        LoadingPlanStabilityParameters.newBuilder();
+    Optional.ofNullable(stage.getAfterDraft())
+        .ifPresent(aftDraft -> paramBuilder.setAftDraft(String.valueOf(aftDraft)));
+    Optional.ofNullable(stage.getBendingMoment())
+        .ifPresent(bm -> paramBuilder.setBm(String.valueOf(bm)));
+    Optional.ofNullable(stage.getForeDraft())
+        .ifPresent(foreDraft -> paramBuilder.setForeDraft(String.valueOf(foreDraft)));
+    Optional.ofNullable(stage.getShearingForce())
+        .ifPresent(sf -> paramBuilder.setSf(String.valueOf(sf)));
+    Optional.ofNullable(stage.getTime())
+        .ifPresent(time -> paramBuilder.setTime(Integer.valueOf(time)));
+    Optional.ofNullable(stage.getMeanDraft())
+        .ifPresent(meanDraft -> paramBuilder.setMeanDraft(String.valueOf(meanDraft)));
+    Optional.ofNullable(stage.getTrim())
+        .ifPresent(trim -> paramBuilder.setTrim(String.valueOf(trim)));
+    Optional.ofNullable(stage.getList())
+        .ifPresent(list -> paramBuilder.setList(String.valueOf(list)));
+    builder.addLoadingSequenceStabilityParameters(paramBuilder.build());
   }
 
   private void buildLoadingPlan(Entry<String, LoadingPlan> entry, Builder builder) {
@@ -556,7 +715,11 @@ public class LoadingSequenceService {
         LoadingPlanStabilityParameters.newBuilder();
     Optional.ofNullable(value.getBm()).ifPresent(paramBuilder::setBm);
     Optional.ofNullable(value.getSf()).ifPresent(paramBuilder::setSf);
-    Optional.ofNullable(value.getDraft()).ifPresent(paramBuilder::setDraft);
+    Optional.ofNullable(value.getForeDraft()).ifPresent(paramBuilder::setForeDraft);
+    Optional.ofNullable(value.getAfterDraft()).ifPresent(paramBuilder::setAftDraft);
+    Optional.ofNullable(value.getMeanDraft()).ifPresent(paramBuilder::setMeanDraft);
+    Optional.ofNullable(value.getTrim()).ifPresent(paramBuilder::setTrim);
+    Optional.ofNullable(value.getList()).ifPresent(paramBuilder::setList);
     paramBuilder.setConditionType(conditionType);
     builder.addPortLoadingPlanStabilityParameters(paramBuilder.build());
   }
@@ -571,7 +734,7 @@ public class LoadingSequenceService {
               Optional.ofNullable(rob.getQuantityMT()).ifPresent(robBuilder::setQuantity);
               Optional.ofNullable(rob.getTankId()).ifPresent(robBuilder::setTankId);
               robBuilder.setConditionType(conditionType);
-              builder.addPortLoadingPlanBallastDetails(robBuilder.build());
+              builder.addPortLoadingPlanRobDetails(robBuilder.build());
             });
   }
 
@@ -610,7 +773,8 @@ public class LoadingSequenceService {
             });
   }
 
-  private void buildSequences(Event event, AtomicInteger sequenceNumber, Builder builder) {
+  private void buildSequences(
+      Event event, AtomicInteger sequenceNumber, List<VesselPump> pumps, Builder builder) {
     event
         .getSequence()
         .forEach(
@@ -623,7 +787,7 @@ public class LoadingSequenceService {
               if (sequence.getStageWiseCargoLoadingRates().size() > 1)
                 Optional.ofNullable(sequence.getStageWiseCargoLoadingRates().get("1"))
                     .ifPresent(sequenceBuilder::setCargoLoadingRate2);
-              this.buildBallastOperations(sequence.getBallast(), sequenceBuilder);
+              this.buildBallastOperations(sequence.getBallast(), pumps, sequenceBuilder);
               this.buildDeballastingRates(sequence.getDeballastingRates(), sequenceBuilder);
               this.buildLoadingRates(sequence.getTankWiseCargoLoadingRates(), sequenceBuilder);
               this.buildLoadingPlanPortWiseDetails(
@@ -689,7 +853,11 @@ public class LoadingSequenceService {
         LoadingPlanStabilityParameters.newBuilder();
     Optional.ofNullable(portWiseDetails.getBm()).ifPresent(paramBuilder::setBm);
     Optional.ofNullable(portWiseDetails.getSf()).ifPresent(paramBuilder::setSf);
-    Optional.ofNullable(portWiseDetails.getDraft()).ifPresent(paramBuilder::setDraft);
+    Optional.ofNullable(portWiseDetails.getForeDraft()).ifPresent(paramBuilder::setForeDraft);
+    Optional.ofNullable(portWiseDetails.getAfterDraft()).ifPresent(paramBuilder::setAftDraft);
+    Optional.ofNullable(portWiseDetails.getMeanDraft()).ifPresent(paramBuilder::setMeanDraft);
+    Optional.ofNullable(portWiseDetails.getTrim()).ifPresent(paramBuilder::setTrim);
+    Optional.ofNullable(portWiseDetails.getList()).ifPresent(paramBuilder::setList);
     builder.setLoadingPlanStabilityParameters(paramBuilder.build());
   }
 
@@ -705,7 +873,7 @@ public class LoadingSequenceService {
               Optional.ofNullable(rob.getQuantityM3()).ifPresent(robBuilder::setQuantityM3);
               Optional.ofNullable(rob.getQuantityMT()).ifPresent(robBuilder::setQuantity);
               Optional.ofNullable(rob.getTankId()).ifPresent(robBuilder::setTankId);
-              builder.addLoadingPlanBallastDetails(robBuilder.build());
+              builder.addLoadingPlanRobDetails(robBuilder.build());
             });
   }
 
@@ -786,6 +954,37 @@ public class LoadingSequenceService {
 
   private void buildBallastOperations(
       Map<String, List<Pump>> ballasts,
+      List<VesselPump> pumps,
       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
-          sequenceBuilder) {}
+          sequenceBuilder) {
+    if (ballasts != null) {
+      for (Entry<String, List<Pump>> entry : ballasts.entrySet()) {
+        long pumpId = 0;
+        if (entry.getKey().equalsIgnoreCase("Gravity")) {
+          pumpId = 0;
+        } else {
+          pumpId = Long.valueOf(entry.getKey());
+        }
+
+        if (entry.getValue() != null) {
+          for (Pump ballastOperation : entry.getValue()) {
+            PumpOperation.Builder builder = PumpOperation.newBuilder();
+            Optional.ofNullable(ballastOperation.getQuantityM3())
+                .ifPresent(quantityM3 -> builder.setQuantityM3(quantityM3));
+            Optional.ofNullable(ballastOperation.getRate())
+                .ifPresent(rate -> builder.setRate(rate));
+            Optional.ofNullable(ballastOperation.getTimeEnd())
+                .ifPresent(timeEnd -> builder.setEndTime(Integer.valueOf(timeEnd)));
+            Optional.ofNullable(ballastOperation.getTimeStart())
+                .ifPresent(timeStart -> builder.setStartTime(Integer.valueOf(timeStart)));
+            builder.setPumpXId(pumpId);
+            Optional<VesselPump> vesselPumpOpt =
+                pumps.stream().filter(pump -> pump.getId() == builder.getPumpXId()).findFirst();
+            vesselPumpOpt.ifPresent(vesselPump -> builder.setPumpName(vesselPump.getPumpName()));
+            sequenceBuilder.addBallastOperations(builder.build());
+          }
+        }
+      }
+    }
+  }
 }

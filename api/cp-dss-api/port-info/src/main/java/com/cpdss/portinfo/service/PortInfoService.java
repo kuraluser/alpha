@@ -173,6 +173,12 @@ public class PortInfoService extends PortInfoServiceImplBase {
               .ifPresent(item -> portDetail.setSunriseTime(timeFormatter.format(item)));
           Optional.ofNullable(port.getTimeOfSunSet())
               .ifPresent(item -> portDetail.setSunsetTime(timeFormatter.format(item)));
+
+          Optional.ofNullable(port.getControllingDepth())
+              .ifPresent(v -> portDetail.setControllingDepth(v.toString()));
+          Optional.ofNullable(port.getUnderKeelClearance())
+              .ifPresent(portDetail::setUnderKeelClearance);
+
           if (port.getTimezone() != null) {
             portDetail.setTimezone(port.getTimezone().getTimezone());
             portDetail.setTimezoneOffsetVal(port.getTimezone().getOffsetValue());
@@ -201,6 +207,12 @@ public class PortInfoService extends PortInfoServiceImplBase {
               portDetail.setMaxAirDraft(minAirDraftOfBerths.get().toString());
             }
           }
+
+          Optional.ofNullable(port.getLattitude())
+              .ifPresent(item -> portDetail.setLat(String.valueOf(item)));
+          Optional.ofNullable(port.getLongitude())
+              .ifPresent(item -> portDetail.setLon(String.valueOf(item)));
+
           portReply.addPorts(portDetail);
         });
   }
@@ -329,8 +341,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
       Optional.ofNullable(bi.getPortInfo().getId()).ifPresent(builder2::setPortId);
       Optional.ofNullable(bi.getMaxShipChannel())
           .ifPresent(v -> builder2.setMaxShipChannel(String.valueOf(v)));
-      Optional.ofNullable(bi.getBerthName())
-          .ifPresent(v -> builder2.setBerthName(String.valueOf(v)));
+      Optional.ofNullable(bi.getBerthName()).ifPresent(v -> builder2.setBerthName(v));
       Optional.ofNullable(bi.getMaxShipDepth())
           .ifPresent(v -> builder2.setMaxShipDepth(String.valueOf(v)));
 
@@ -346,6 +357,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
 
       Optional.ofNullable(bi.getLineDisplacement())
           .ifPresent(v -> builder2.setLineDisplacement(String.valueOf(v)));
+
+      Optional.ofNullable(bi.getHoseConnection()).ifPresent(builder2::setHoseConnection);
       builder.addBerths(builder2);
     }
   }
@@ -396,6 +409,52 @@ public class PortInfoService extends PortInfoServiceImplBase {
       replyBuilder.setResponseStatus(responseStatus);
     } finally {
       responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * In Request pass berth Ids, and return port/berth data for loading plan algo
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getLoadingPlanBerthData(
+      com.cpdss.common.generated.PortInfo.BerthIdsRequest request,
+      StreamObserver<com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData> responseObserver) {
+
+    com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.Builder builder =
+        com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData.newBuilder();
+    try {
+      if (!request.getBerthIdsList().isEmpty()) {
+        Optional<BerthInfo> berthInfo =
+            berthInfoRepository.findByIdAndIsActiveTrue(request.getBerthIds(0));
+        if (berthInfo.isPresent()) {
+          log.info("RPC Call into getLoadingPlanBerthData with Ids {}", request.getBerthIdsList());
+          builder.setBerthId(berthInfo.get().getId());
+          if (berthInfo.get().getPortInfo() != null) {
+            Optional.ofNullable(berthInfo.get().getPortInfo().getId())
+                .ifPresent(v -> builder.setPortId(v));
+            Optional.ofNullable(berthInfo.get().getPortInfo().getControllingDepth())
+                .ifPresent(v -> builder.setControllingDepth(v.toString()));
+            Optional.ofNullable(berthInfo.get().getPortInfo().getUnderKeelClearance())
+                .ifPresent(v -> builder.setUnderKeelClearance(v));
+            Optional.ofNullable(berthInfo.get().getPortInfo().getDensitySeaWater())
+                .ifPresent(v -> builder.setSeawaterDensity(v.toString()));
+          }
+        }
+        ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+        responseStatus.setStatus(SUCCESS);
+        builder.setResponseStatus(responseStatus);
+      }
+    } catch (Exception e) {
+      log.error("Error in getLoadingPlanBerthData method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      builder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
   }

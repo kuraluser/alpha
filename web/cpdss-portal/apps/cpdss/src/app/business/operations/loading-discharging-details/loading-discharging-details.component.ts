@@ -1,9 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { ILoadingDetails } from '../models/loading-information.model';
-import { LoadingDischargingDetailsTransformationService } from './loading-discharging-details-transformation.service';
+import { ILoadingDischargingDetails } from '../models/loading-discharging.model';
 import { loadingDetailsValidator } from '../directives/validator/loading-details-time-validator.directive';
 import { numberValidator } from '../../core/directives/number-validator.directive';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { IPermission } from '../../../shared/models/user-profile.model';
 
 @Component({
   selector: 'cpdss-portal-loading-discharging-details',
@@ -19,27 +22,50 @@ import { numberValidator } from '../../core/directives/number-validator.directiv
  * @implements {OnInit}
  */
 export class LoadingDischargingDetailsComponent implements OnInit {
-  @Input() loadingDetails: ILoadingDetails;
+  @Input()
+  get loadingDischargingDetails(): ILoadingDischargingDetails {
+    return this._loadingDischargingDetails;
+  }
 
-  @Output() updateLoadingDetails: EventEmitter<ILoadingDetails> = new EventEmitter();
+  set loadingDischargingDetails(loadingDischargingDetails: ILoadingDischargingDetails) {
+    this._loadingDischargingDetails = loadingDischargingDetails;
+    this.initLoadingDischargingDetailsForm();
+  }
 
-  loadingDetailsForm: FormGroup;
+  @Output() updateLoadingDischargingDetails: EventEmitter<ILoadingDischargingDetails> = new EventEmitter();
+
+  private _loadingDischargingDetails: ILoadingDischargingDetails;
+
+  loadingDischargingDetailsForm: FormGroup;
   errorMessages: any;
-  loadingDetailsResponse: ILoadingDetails;
-  constructor(private fb: FormBuilder, private loadingDischargingDetailsTransformationService: LoadingDischargingDetailsTransformationService) { }
+  loadingDischargingDetailsResponse: ILoadingDischargingDetails;
+  timeOfSunrisePermission: IPermission;
+  timeOfSunsetPermission: IPermission;
+  constructor(private fb: FormBuilder,
+    private permissionsService: PermissionsService,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
 
   ngOnInit(): void {
-    this.errorMessages = this.loadingDischargingDetailsTransformationService.setValidationMessageForLoadingDetails();
-    this.loadingDetailsResponse = this.loadingDetails;
-    this.loadingDetailsForm = this.fb.group({
-      timeOfSunrise: this.fb.control(this.getDateByDate(this.loadingDetails?.timeOfSunrise), [Validators.required, loadingDetailsValidator('timeOfSunset','<')]),
-      timeOfSunset: this.fb.control(this.getDateByDate(this.loadingDetails?.timeOfSunset), [Validators.required, loadingDetailsValidator('timeOfSunrise','>')]),
-      startTime: this.fb.control(this.getDateByDate(this.loadingDetails?.startTime), [Validators.required]),
-      initialTrim: this.fb.control(this.loadingDetails.trimAllowed?.initialTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(4)]),
-      maximumTrim: this.fb.control(this.loadingDetails.trimAllowed?.maximumTrim, [Validators.required, numberValidator(2, 1), Validators.min(1), Validators.max(3)]),
-      finalTrim: this.fb.control(this.loadingDetails.trimAllowed?.finalTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)])
-    })
+    this.getPagePermission();
+    this.errorMessages = this.loadingDischargingTransformationService.setValidationMessageForLoadingDetails();
   }
+
+  /**
+  * Method for initialise loading discharging details form
+  *
+  * @memberof LoadingDischargingDetailsComponent
+  */
+  initLoadingDischargingDetailsForm() {
+    this.loadingDischargingDetailsResponse = this.loadingDischargingDetails;
+    this.loadingDischargingDetailsForm = this.fb.group({
+      timeOfSunrise: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunrise), [Validators.required, loadingDetailsValidator('timeOfSunset', '<')]),
+      timeOfSunset: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunset), [Validators.required, loadingDetailsValidator('timeOfSunrise', '>')]),
+      startTime: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.startTime), [Validators.required]),
+      initialTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.initialTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(4)]),
+      maximumTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.maximumTrim, [Validators.required, numberValidator(2, 1), Validators.min(1), Validators.max(3)]),
+      finalTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.finalTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)])
+    })
+   }
 
   /**
 * Method for converting time string to date
@@ -77,7 +103,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 * @memberof LoadingDischargingDetailsComponent
 */
   field(formControlName: string): FormControl {
-    const formControl = <FormControl>this.loadingDetailsForm?.get(formControlName);
+    const formControl = <FormControl>this.loadingDischargingDetailsForm?.get(formControlName);
     return formControl;
   }
 
@@ -91,16 +117,40 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 *
 * @memberof LoadingDischargingDetailsComponent
 */
-  onTimeChange(field) {
-    if (this.loadingDetailsForm.value[field]) {
-      const selectedTime = new Date(this.loadingDetailsForm.value[field]);
-      this.loadingDetailsResponse[field] = ((selectedTime.getHours() < 10 ? ('0' + selectedTime.getHours()) : selectedTime.getHours())) + ":" + ((selectedTime.getMinutes() < 10 ? ('0' + selectedTime.getMinutes()) : selectedTime.getMinutes()));
-      if(!this.fieldError(field)){
-        this.updateLoadingDetails.emit(this.loadingDetailsResponse);
+  onTimeChange(fieldReferenceName, field) {
+    fieldReferenceName.hideOverlay();
+    if (this.loadingDischargingDetailsForm.value[field]) {
+      const selectedTime = new Date(this.loadingDischargingDetailsForm.value[field]);
+      this.loadingDischargingDetailsResponse[field] = ((selectedTime.getHours() < 10 ? ('0' + selectedTime.getHours()) : selectedTime.getHours())) + ":" + ((selectedTime.getMinutes() < 10 ? ('0' + selectedTime.getMinutes()) : selectedTime.getMinutes()));
+      if (!this.fieldError(field)) {
+        this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
       }
 
     }
   }
+
+  /**
+   * Method to clear time input.
+   *
+   * @param {*} field
+   * @memberof LoadingDischargingDetailsComponent
+   */
+  clearTimeInput(fieldReferenceName, field) {
+    fieldReferenceName.hideOverlay();
+    this.loadingDischargingDetailsForm.controls[field].setValue(null);
+  }
+
+/**
+  * Get page permission
+  *
+  * @memberof SynopticalComponent
+  */
+ getPagePermission() {
+  this.timeOfSunrisePermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadingInfoSunRise'], false);
+  this.timeOfSunsetPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadingInfoSunSet'], false);
+}
+
+
 
   /**
 * Method for when trim value update
@@ -108,9 +158,9 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 * @memberof LoadingDischargingDetailsComponent
 */
   trimValueChange(field) {
-    if (this.loadingDetailsForm.value[field]) {
-      this.loadingDetailsResponse.trimAllowed[field] = this.loadingDetailsForm.value[field];
-      this.updateLoadingDetails.emit(this.loadingDetailsResponse);
+    if (this.loadingDischargingDetailsForm.valid && this.loadingDischargingDetailsForm.value[field]) {
+      this.loadingDischargingDetailsResponse.trimAllowed[field] = this.loadingDischargingDetailsForm.value[field];
+      this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
     }
   }
 

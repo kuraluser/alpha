@@ -21,6 +21,7 @@ import com.cpdss.loadingplan.entity.LoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.LoadingPlanStowageDetails;
 import com.cpdss.loadingplan.entity.LoadingSequence;
+import com.cpdss.loadingplan.entity.LoadingSequenceStabilityParameters;
 import com.cpdss.loadingplan.repository.BallastOperationRepository;
 import com.cpdss.loadingplan.repository.CargoLoadingRateRepository;
 import com.cpdss.loadingplan.repository.DeballastingRateRepository;
@@ -31,6 +32,7 @@ import com.cpdss.loadingplan.repository.LoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanStabilityParametersRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceRepository;
+import com.cpdss.loadingplan.repository.LoadingSequenceStabiltyParametersRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +56,7 @@ public class LoadingSequenceService {
   @Autowired LoadingPlanRobDetailsRepository robDetailsRepository;
   @Autowired LoadingPlanStabilityParametersRepository stabilityParametersRepository;
   @Autowired LoadingPlanStowageDetailsRepository stowageDetailsRepository;
+  @Autowired LoadingSequenceStabiltyParametersRepository loadingSequenceStabilityParamsRepository;
 
   @GrpcClient("loadableStudyService")
   LoadableStudyServiceBlockingStub loadableStudyGrpcService;
@@ -78,10 +81,45 @@ public class LoadingSequenceService {
     String startDate = this.getStartDate(loadingInfoOpt.get().getPortRotationXId());
     builder.setStartDate(startDate);
     builder.setInterval(loadingInfoOpt.get().getStageOffset().getStageOffsetVal());
+    builder.setVesselId(loadingInfoOpt.get().getVesselXId());
+    builder.setVoyageId(loadingInfoOpt.get().getVoyageId());
+    builder.setLoadablePatternId(loadingInfoOpt.get().getLoadablePatternXId());
     List<LoadingSequence> loadingSequences =
         loadingSequenceRepository.findByLoadingInformationAndIsActiveOrderBySequenceNumber(
             loadingInfoOpt.get(), true);
     buildLoadingSequences(loadingSequences, builder);
+
+    List<LoadingSequenceStabilityParameters> stabilityParameters =
+        loadingSequenceStabilityParamsRepository.findByLoadingInformationAndIsActiveOrderByTime(
+            loadingInfoOpt.get(), true);
+    buildLoadingSequenceStabilityParameters(stabilityParameters, builder);
+  }
+
+  private void buildLoadingSequenceStabilityParameters(
+      List<LoadingSequenceStabilityParameters> stabilityParameters, Builder builder) {
+    log.info("Populating Loading sequence stability parameters");
+    stabilityParameters.forEach(
+        param -> {
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStabilityParameters
+                  .Builder
+              paramBuilder =
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .LoadingPlanStabilityParameters.newBuilder();
+          Optional.ofNullable(param.getAftDraft())
+              .ifPresent(aftDraft -> paramBuilder.setAftDraft(String.valueOf(aftDraft)));
+          Optional.ofNullable(param.getBendingMoment())
+              .ifPresent(bm -> paramBuilder.setBm(String.valueOf(bm)));
+          Optional.ofNullable(param.getForeDraft())
+              .ifPresent(foreDraft -> paramBuilder.setForeDraft(String.valueOf(foreDraft)));
+          Optional.ofNullable(param.getShearingForce())
+              .ifPresent(sf -> paramBuilder.setSf(String.valueOf(sf)));
+          Optional.ofNullable(param.getTrim())
+              .ifPresent(trim -> paramBuilder.setTrim(String.valueOf(trim)));
+          Optional.ofNullable(param.getList())
+              .ifPresent(list -> paramBuilder.setList(String.valueOf(list)));
+          Optional.ofNullable(param.getTime()).ifPresent(paramBuilder::setTime);
+          builder.addLoadingSequenceStabilityParameters(paramBuilder.build());
+        });
   }
 
   private String getStartDate(Long portRotationXId) throws Exception {

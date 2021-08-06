@@ -193,7 +193,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
         const slopQuantity = loadable?.slopQuantity ? this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.slopQuantity.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1) : 0;
         loadable.slopQuantity = slopQuantity;
 
-          loadable.loadingPort = loadable?.loadingPorts?.join(',');
+          loadable.loadingPortsLabels = loadable?.loadingPorts?.join(',');
       }
       return loadable;
     })

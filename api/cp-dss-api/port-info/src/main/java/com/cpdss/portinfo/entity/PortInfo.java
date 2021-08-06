@@ -90,4 +90,16 @@ public class PortInfo extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "timezone_xid")
   private Timezone timezone;
+
+  @Column(name = "controlling_depth")
+  private BigDecimal controllingDepth;
+
+  @Column(name = "under_keel_clearence")
+  private String underKeelClearance;
+
+  @Column(name = "lattitude")
+  private String lattitude;
+
+  @Column(name = "longitude")
+  private String longitude;
 }

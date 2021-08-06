@@ -14,10 +14,10 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { IPortAllDropdownData, IDischargeStudyPortOHQTankDetail , IPortOHQTankDetailValueObject, IDischargeStudyPortsValueObject , OPERATIONS } from '../models/cargo-planning.model';
+import { IPortAllDropdownData, IDischargeStudyPortOHQTankDetail , IPortOHQTankDetailValueObject, IDischargeStudyPortsValueObject } from '../models/cargo-planning.model';
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, IMode } from '../../../shared/models/common.model';
 import { IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo , IDischargeStudyPortListDetails , IDischargeStudyCargoNominationList , IDischargeStudyBackLoadingDetails  } from '../models/discharge-study-list.model';
-import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , VOYAGE_STATUS, ICargo } from '../../core/models/common.model';
+import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , VOYAGE_STATUS, ICargo, OPERATIONS } from '../../core/models/common.model';
 
 
 
@@ -58,20 +58,21 @@ export class DischargeStudyDetailsTransformationService {
   */
   public getBFTableColumns(): IDataTableColumn[] {
     return [
-      { field: '', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_SL' , fieldType: DATATABLE_FIELD_TYPE.SLNO},
+      { field: '', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_SL' , fieldType: DATATABLE_FIELD_TYPE.SLNO , fieldHeaderClass: 'column-sl'},
       {
         field: 'cargoColor',
         header: 'DISCHARGE_STUDY_DISCHARGE_COLOR_BACK_LOADING',
         fieldType: DATATABLE_FIELD_TYPE.COLORPICKER,
-        editable: false
+        editable: false,
+        fieldHeaderClass: 'column-color'
       },
       { field: 'cargoName', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_CARGO_NAME' },
-      { field: 'cargoAbbrevation', header: 'ABBREVIATION' },
+      { field: 'cargoAbbrevation', header: 'ABBREVIATION' , fieldHeaderClass: 'column-abbreviation' },
       { field: 'port', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_LOADING_PORT' },
-      { field: 'quantityBbls', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_BBLS' , numberType: 'quantity' , unit: QUANTITY_UNIT.BBLS , showTotal: true , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'quantityMt', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_MT' , numberType: 'quantity' , unit: QUANTITY_UNIT.MT, showTotal: true, fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'quantityKl', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_KL' , numberType: 'quantity' , unit: QUANTITY_UNIT.KL, showTotal: true, fieldType: DATATABLE_FIELD_TYPE.NUMBER},
-      { field: 'api', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_API' , numberFormat: '1.2-2' , fieldType: DATATABLE_FIELD_TYPE.NUMBER},
+      { field: 'quantityBbls', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_BBLS' , numberType: 'quantity' , unit: QUANTITY_UNIT.BBLS , showTotal: true , fieldType: DATATABLE_FIELD_TYPE.NUMBER , fieldHeaderClass: 'column-qty'},
+      { field: 'quantityMt', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_MT' , numberType: 'quantity' , unit: QUANTITY_UNIT.MT, showTotal: true, fieldType: DATATABLE_FIELD_TYPE.NUMBER , fieldHeaderClass: 'column-qty'},
+      { field: 'quantityKl', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_KL' , numberType: 'quantity' , unit: QUANTITY_UNIT.KL, showTotal: true, fieldType: DATATABLE_FIELD_TYPE.NUMBER , fieldHeaderClass: 'column-qty'},
+      { field: 'api', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_API' , numberFormat: '1.2-2' , fieldType: DATATABLE_FIELD_TYPE.NUMBER , fieldHeaderClass: 'column-api'},
       { field: 'temperature', header: 'DISCHARGE_STUDY_CARGO_NOMINATION_BL_FIGURE_TEMP', numberFormat: '1.2-2', fieldType: DATATABLE_FIELD_TYPE.NUMBER }
     ]
   }
@@ -725,7 +726,7 @@ export class DischargeStudyDetailsTransformationService {
     setDischargeStudyValidity(isValid: boolean) {
       this._dischargeStudyValiditySource.next(isValid);
     }
-      
+
 
   /**
    * Set ohq port complete status
@@ -956,8 +957,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
   ]
   const actions: DATATABLE_ACTION[] = [];
   actions.push(DATATABLE_ACTION.DELETE);
-  //Note:- need to confirm with BA
-  // actions.push(DATATABLE_ACTION.SAVE);
+  actions.push(DATATABLE_ACTION.SAVE);
   const action: IDataTableColumn = {
     field: 'actions',
     header: '',
@@ -1062,18 +1062,18 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       const mode = listData.mode.find(modeDetails => modeDetails.id === cargoDetail.mode);
       const cargoObj = listData.cargoList.find(cargo => cargo.id === cargoDetail.cargoId);
       const isKlEditable = mode?.id === 2 ? true : false;
+      
       const unitConversion = {
-        kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature),
-        bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature),
+        kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature , -1),
+        bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature, -1)
       }
       _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color , true , false);
-      _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? unitConversion.bbls+'' : '-', true , false);
+      _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? (unitConversion.bbls ? unitConversion.bbls+'' : '0') : '-', true , false);
       _cargoDetailValuObject.cargo = new ValueObject<ICargo>(cargoObj,true , false);
-      _cargoDetailValuObject.kl = new ValueObject<string>(isKlEditable ? unitConversion.kl+'' : '-', true , false , false , isKlEditable);
+      _cargoDetailValuObject.kl = new ValueObject<string>(isKlEditable ? (unitConversion.kl ? unitConversion.kl+'' : '0'): '-', true , false , false , isKlEditable);
       _cargoDetailValuObject.id = new ValueObject<string>(cargoDetail.id+''),
 
-      //Note:- need to remove 25000 when actual value comes from BE.
-      _cargoDetailValuObject.maxKl = new ValueObject<number>(2500000, false , false);
+      _cargoDetailValuObject.maxKl = new ValueObject<number>(Number(cargoDetail.maxQuantity), false , false);
       _cargoDetailValuObject.mt = new ValueObject<string>(isKlEditable ? cargoDetail.quantity +'' : '-', true , false);
       _cargoDetailValuObject.mode = new ValueObject<IMode>(mode , true , false);
       _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true , false);
@@ -1118,19 +1118,20 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
     getBackLoadingDetailAsValueObject(backLoadingDetail: IDischargeStudyBackLoadingDetails, listData:IDischargeStudyDropdownData ,storedKey: string ,isNewValue = true): IBackLoadingDetails {
       const _backLoadingDetailDetail = <IBackLoadingDetails>{};
       const unitConversion = {
-        kl: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature),
-        bbls: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, backLoadingDetail.api, backLoadingDetail.temperature),
+        kl: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature , -1),
+        bbls: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, backLoadingDetail.api, backLoadingDetail.temperature , -1),
       }
       const cargoObj: ICargo = backLoadingDetail.cargoId ? listData.cargoList.find(cargo => cargo.id === backLoadingDetail.cargoId) : null;
       _backLoadingDetailDetail.color = new ValueObject<string>(backLoadingDetail.color , true , isNewValue);
-      _backLoadingDetailDetail.bbls = new ValueObject<number>(unitConversion.bbls , true , false);
+      _backLoadingDetailDetail.bbls = new ValueObject<number>(unitConversion.bbls ? unitConversion.bbls : 0, true , false);
       _backLoadingDetailDetail.cargo = new ValueObject<ICargo>(cargoObj, true , isNewValue);
-      _backLoadingDetailDetail.kl = new ValueObject<number>(unitConversion.kl , true , isNewValue);
+      _backLoadingDetailDetail.kl = new ValueObject<number>(unitConversion.kl ? unitConversion.kl : 0 , true , isNewValue);
       _backLoadingDetailDetail.mt = new ValueObject<number>(backLoadingDetail.quantity  , true , false);
       _backLoadingDetailDetail.api = new ValueObject<string>(backLoadingDetail.api?.toString() , true , isNewValue);
       _backLoadingDetailDetail.temp = new ValueObject<string>(backLoadingDetail.temperature?.toString() , true , isNewValue);
       _backLoadingDetailDetail.isDelete = true;
       _backLoadingDetailDetail.isAdd = isNewValue;
+      _backLoadingDetailDetail.isNew = isNewValue;
       _backLoadingDetailDetail.storedKey = new ValueObject<string>(storedKey),
       _backLoadingDetailDetail.id = new ValueObject<number>(Number(backLoadingDetail.id)),
       _backLoadingDetailDetail.abbreviation = new ValueObject<string>(backLoadingDetail.abbreviation);
@@ -1228,7 +1229,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
           case 'mode':
             _cargoDetails.mode = cargoDetails.mode.value.id;
             break;
-          case 'id': 
+          case 'id':
             if(cargoDetails.id.value) {
               _cargoDetails.id = cargoDetails.id.value;
             }
@@ -1277,10 +1278,10 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
           case 'abbreviation':
             _backLoading.abbreviation = backLoading.abbreviation.value;
             break;
-          case 'api': 
+          case 'api':
             _backLoading.api = +backLoading.api.value;
             break;
-          case 'temp': 
+          case 'temp':
             _backLoading.temperature = +backLoading.temp.value;
             break;
           case 'id':

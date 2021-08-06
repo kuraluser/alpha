@@ -20,7 +20,13 @@ public class LoadingPlanPortWiseDetails {
   @JsonProperty("deballastingRateM3_Hr")
   private Map<String, String> deballastingRates;
 
-  private String draft;
+  private String foreDraft;
+  private String afterDraft;
+  private String meanDraft;
+  private String trim;
+
+  @JsonProperty("heel")
+  private String list;
 
   @JsonProperty("BM")
   private String bm;

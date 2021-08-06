@@ -1,11 +1,12 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl , ValidationErrors } from '@angular/forms';
 import { ConfirmationService, TreeNode } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { InstructionCheckListApiService } from './services/instruction-check-list-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { IInstructionDetails, IDeleteData, ISaveStatusData } from './models/instruction-check-list.model';
+import { whiteSpaceValidator } from '../../core/directives/space-validator.directive';
 @Component({
   selector: 'cpdss-portal-instruction-check-list',
   templateUrl: './instruction-check-list.component.html',
@@ -47,6 +48,9 @@ export class InstructionCheckListComponent implements OnInit {
   textFieldLength: number;
   oldData: any;
   instructionForm: FormGroup;
+  errorMessages: any = {
+  'whitespace': 'INSTRUCTION_HEAD_REQUIRED'
+  };
   hasUnsavedChanges = false;
 
   constructor(
@@ -68,7 +72,7 @@ export class InstructionCheckListComponent implements OnInit {
    */
   formGroupInit() {
     this.instructionForm = new FormGroup({
-      name: new FormControl(''),
+      name: new FormControl('', [whiteSpaceValidator]),
     });
   }
 
@@ -165,10 +169,12 @@ export class InstructionCheckListComponent implements OnInit {
    */
   async saveData(event) {
     if (!this.instructionForm.controls.name.value || this.instructionForm.controls.name.value.toString().trim() === '') {
+      this.instructionForm.markAllAsTouched();
+      this.instructionForm.markAsDirty();
       return;
     }
     let data: IInstructionDetails = {};
-    const translationKeys = await this.translateService.get(['LOADING_INSTRUCTION_SUCCESS', 'LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_MESSAGE', 'LOADING_INSTRUCTION_SUCCESS_SUBHEADER_MESSAGE', 'LOADING_INSTRUCTION_ERROR', 'LOADING_INSTRUCTION_ERROR_MESSAGE']).toPromise();
+    const translationKeys = await this.translateService.get(['LOADING_INSTRUCTION_SUCCESS', 'LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_MESSAGE', 'LOADING_INSTRUCTION_SUCCESS_SUBHEADER_MESSAGE', 'LOADING_INSTRUCTION_ERROR', 'LOADING_INSTRUCTION_ERROR_MESSAGE', 'LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_UPDATE_MESSAGE', 'LOADING_INSTRUCTION_SUCCESS_SUBHEADER_UPDATE_MESSAGE']).toPromise();
     if (event.node?.data?.addFlag) {
       if (event.level === 1) {
         const childIsSelected = this.selectedData.filter(element => element.data?.instructionId === event.node?.data?.instructionId);
@@ -212,7 +218,7 @@ export class InstructionCheckListComponent implements OnInit {
       const result = await this.instructionCheckListApiService.updateInstruction(this.vesselId, this.loadingInfoId, this.portRotationId, data).toPromise();
       this.ngxSpinnerService.hide();
       if (result?.responseStatus?.status === 'SUCCESS') {
-        this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: translationKeys['LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_MESSAGE'] });
+        this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: event.level === 1 || event?.node?.data?.isSingleHeader ? translationKeys['LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_UPDATE_MESSAGE'] : translationKeys['LOADING_INSTRUCTION_SUCCESS_SUBHEADER_UPDATE_MESSAGE'] });
         this.updateData.emit(true);
         this.instructionForm.controls.name.setValue('');
         this.instructionForm.reset();
@@ -459,10 +465,9 @@ export class InstructionCheckListComponent implements OnInit {
           this.instructionListData.splice(index, 1);
         }
       }
-      this.instructionForm.controls.name.setValue('');
-      this.instructionForm.reset();
       this.instructionListData = [...this.instructionListData];
     }
+    this.instructionForm.reset();
   }
 
   /**
@@ -471,8 +476,12 @@ export class InstructionCheckListComponent implements OnInit {
    * @memberof InstructionCheckListComponent
    */
   async saveAll() {
-    if (this.isEditActive()) { return; }
-    const data : ISaveStatusData = {
+    if (this.isEditActive()) { 
+      this.instructionForm.markAllAsTouched();
+      this.instructionForm.markAsDirty();
+      return; 
+    }
+    const data: ISaveStatusData = {
       instructionList: []
     };
     const translationKeys = await this.translateService.get(['LOADING_INSTRUCTION_SUCCESS', 'LOADING_INSTRUCTION_SAVEALL_SUCCESS', 'LOADING_INSTRUCTION_ERROR', 'LOADING_INSTRUCTION_ERROR_MESSAGE']).toPromise();
@@ -507,5 +516,27 @@ export class InstructionCheckListComponent implements OnInit {
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INSTRUCTION_ERROR'], detail: translationKeys['LOADING_INSTRUCTION_ERROR_MESSAGE'] });
     }
   }
+
+    /**
+   * Get field errors
+   * @param {string} formControlName
+   * @returns {ValidationErrors}
+   * @memberof InstructionCheckListComponent
+  */
+     fieldError(formControlName: string): ValidationErrors {
+      const formControl = this.field(formControlName);
+      return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
+    }
+  
+    /**
+    * Get form control of instructionForm 
+    * @param {string} formControlName
+    * @returns {FormControl}
+    * @memberof InstructionCheckListComponent
+    */
+    field(formControlName: string): FormControl {
+      const formControl = <FormControl>this.instructionForm.get(formControlName);
+      return formControl;
+    }
 
 }

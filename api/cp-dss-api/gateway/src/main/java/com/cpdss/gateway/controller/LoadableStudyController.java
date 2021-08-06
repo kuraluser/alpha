@@ -1957,7 +1957,24 @@ public class LoadableStudyController {
   public void test(@RequestHeader HttpHeaders headers) throws CommonRestException {
     try {
       log.info("getAlgoError: {}", getClientIp());
-      this.loadableStudyService.test();
+      this.loadableStudyService.test2();
+
+    } catch (Exception e) {
+      log.error("Error when getAlgoError", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @GetMapping(value = "test1")
+  public void test1(@RequestHeader HttpHeaders headers) throws CommonRestException {
+    try {
+      log.info("getAlgoError: {}", getClientIp());
+      this.loadableStudyService.test1();
 
     } catch (Exception e) {
       log.error("Error when getAlgoError", e);
@@ -2134,7 +2151,6 @@ public class LoadableStudyController {
   /**
    * To retrieve rule against loadable study
    *
-   * @param vesselId
    * @param headers
    * @return
    * @throws CommonRestException
@@ -2150,6 +2166,73 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when fetching rules for loadable study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * To retrieve rule against loadable study
+   *
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value = "/loading/ullage-bill-update",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public UllageBillReply saveRulesForLoadableStudy(
+      @RequestHeader HttpHeaders headers, @RequestBody UllageBillRequest inputData)
+      throws CommonRestException {
+    try {
+      return this.loadableStudyService.saveRulesForLoadableStudy(
+          headers.getFirst(CORRELATION_ID_HEADER), inputData);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when update bill rules", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when update bill rules", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * To retrieve simulator json data against loadable study and case number
+   *
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      value =
+          "/simulator-json/vessels/{vesselId}/loadableStudyId/{loadableStudyId}/caseNumber/{caseNumber}",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public SimulatorJsonResponse getSimulatorJsonDataForLoadableStudy(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long caseNumber,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.loadableStudyService.getSimulatorJsonDataForLoadableStudy(
+          vesselId, loadableStudyId, caseNumber, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error(
+          "GenericServiceException when fetching simulator json data against loadable study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when fetching simulator json data for loadable study", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

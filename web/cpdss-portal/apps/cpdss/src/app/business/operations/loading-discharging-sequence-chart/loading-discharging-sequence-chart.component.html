@@ -6,7 +6,7 @@
       [callbackFunction]="cargoSequenceGanttChartCallback" style="width: 100%; display: flex; padding: 0px">
     </highcharts-chart>
   </div>
-  <div class="col-12">
+  <div class="col-12" *ngIf="operation === OPERATIONS.DISCHARGING">
     <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
       *ngIf="cargoPumpSequenceGanttChart && cargoPumpSequenceChartSeries" [options]="cargoPumpSequenceGanttChart"
       style="width: 100%; display: flex; padding: 0px">

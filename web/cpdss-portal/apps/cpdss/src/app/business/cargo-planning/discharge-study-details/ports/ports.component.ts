@@ -7,12 +7,11 @@ import { IPortAllDropdownData, IDischargeStudyPortsValueObject , IPortsEvent } f
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { OPERATIONS } from '../../models/cargo-planning.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { portDateRangeValidator } from '../../directives/validator/port-daterange-validator.directive';
 import { portDateCompareValidator } from '../../directives/validator/port-date-compare-validator.directive';
 import { portDuplicationValidator } from '../../directives/validator/port-duplication-validator.directive';
-import { IDischargeStudyPortList , IDischargePortsDetailsResponse , Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { IDischargeStudyPortList , IDischargePortsDetailsResponse , Voyage, VOYAGE_STATUS, OPERATIONS } from '../../../core/models/common.model';
 import { portEtaEtdValidator } from '../../directives/validator/port-eta-etd-validator.directive'
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
@@ -105,7 +104,7 @@ export class PortsComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     await this.getTimeZoneList();
-    this.portEtaEtdPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortTabEtaEtd'], false);
+    this.portEtaEtdPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyPortETAETD'], false);
     this.columns = this.dischargeStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.portEtaEtdPermission, this.dischargeStudy?.statusId, this.voyage?.statusId);
     this.initSubscriptions();
     this.getPortDetails();
@@ -250,7 +249,7 @@ export class PortsComponent implements OnInit, OnDestroy {
   */
   private initPortsFormGroup(ports: IDischargeStudyPortsValueObject, index: number) {
     const required = this.dischargeStudyDetailsTransformationService.isEtaEtdViewable(this.portEtaEtdPermission, ports.isAdd);
-    
+
     return this.fb.group({
       port: this.fb.control(ports.port.value, [Validators.required, portDuplicationValidator('port')]),
       portOrder: this.fb.control(ports.portOrder),
@@ -437,13 +436,13 @@ export class PortsComponent implements OnInit, OnDestroy {
       const operationId = event.data.operation.value.id;
 
       form.controls.port.updateValueAndValidity();
-      
+
       this.updateValidityAndEditMode(index, 'eta');
       this.updateValidityAndEditMode(index, 'etd');
 
       this.updateValuesIfBunkering(event.data, form, index);
     }
-    
+
     if (event.field === 'etd') {
       for (let i = 0; i < this.portsLists.length; i++) {
         this.updateValidityAndEditMode(i, 'eta')
@@ -499,7 +498,7 @@ export class PortsComponent implements OnInit, OnDestroy {
               }
             }
           }
-          
+
         }
       }
     });
@@ -590,7 +589,7 @@ export class PortsComponent implements OnInit, OnDestroy {
         }
         this.dischargeStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0 && !this.portOrderValidation());
       }
-      
+
 
     } else {
       this.row(event.index).markAllAsTouched();
@@ -633,7 +632,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     if (!event?.data?.isAdd && event?.data?.id === 0) {
       this.getPorts();
     }
-    
+
     if (event?.data?.isDelete) {
       if (!event?.data?.isAdd) {
         const translationKeys = await this.translateService.get(['DISCHARGE_STUDY_PORTS_DELETE_SUMMARY', 'DISCHARGE_STUDY_PORT_CHANGE_CONFIRM_DETAILS', 'DISCHARGE_STUDY_PORT_CHANGE_CONFIRM_LABEL', 'DISCHARGE_STUDY_PORT_CHANGE_REJECT_LABEL']).toPromise();
@@ -713,11 +712,42 @@ export class PortsComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Event handler for row re order complete event
+   * @param {*} event
+   * @memberof PortsComponent
+ */
+  async onRowReorder(event: any) {
+    const translationKeys = await this.translateService.get(['DISCHARGE_STUDY_PORTS_REORDER_SUMMARY', 'DISCHARGE_STUDY_PORT_CHANGE_CONFIRM_DETAILS', 'DISCHARGE_STUDY_PORT_CHANGE_CONFIRM_LABEL', 'DISCHARGE_STUDY_PORT_CHANGE_REJECT_LABEL']).toPromise();
+
+        this.confirmationService.confirm({
+          key: 'confirmation-alert',
+          header: translationKeys['DISCHARGE_STUDY_PORTS_REORDER_SUMMARY'],
+          message: translationKeys['DISCHARGE_STUDY_PORT_CHANGE_CONFIRM_DETAILS'],
+          icon: 'pi pi-exclamation-triangle',
+          acceptLabel: translationKeys['DISCHARGE_STUDY_PORT_CHANGE_CONFIRM_LABEL'],
+          acceptIcon: 'pi',
+          acceptButtonStyleClass: 'btn btn-main mr-5',
+          rejectVisible: true,
+          rejectLabel: translationKeys['DISCHARGE_STUDY_PORT_CHANGE_REJECT_LABEL'],
+          rejectIcon: 'pi',
+          rejectButtonStyleClass: 'btn btn-main',
+          accept: async () => {
+              await this.portReorder(event);
+          },
+          reject: () => {
+            const dropData = this.portsLists[event.dropIndex];
+            this.portsLists.splice(event.dropIndex, 1);
+            this.portsLists.splice(event.dragIndex, 0, dropData);
+          }
+        });
+  }
+
+  /**
  * Event handler for row re order complete event
  *
  * @memberof PortsComponent
  */
-  async onRowReorder(event) {
+  async portReorder(event) {
     const isPortOrderCorrect = this.isPortOrderCorrect(event.dropIndex, event.dragIndex);
 
 

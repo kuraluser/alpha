@@ -1,9 +1,8 @@
 import { FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { OPERATIONS } from '../../models/cargo-planning.model';
 
 /**
- * Validator Function for date range 
- * @param control 
+ * Validator Function for date range
+ * @param control
  */
 export function portDateCompareValidator(field, compareOperation): ValidatorFn {
     return (control: FormControl): ValidationErrors | null => {

@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ValidationErrorModule } from './../../shared/components/validation-error/validation-error.module';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
+import { TooltipModule } from 'primeng/tooltip';
 import { PermissionDirectiveModule } from './../../shared/directives/permission/permission-directive.module';
 import { MomentFormatPipe } from '../../shared/pipes/moment-pipe/moment-format.pipe';
 import { MomentFormatModule } from './../../shared/pipes/moment-pipe/moment-format.module';
@@ -30,6 +31,7 @@ import { MomentFormatModule } from './../../shared/pipes/moment-pipe/moment-form
     CalendarModule,
     ValidationErrorModule,
     DropdownModule,
+    TooltipModule,
     PermissionDirectiveModule,
     FleetRoutingModule,
     MomentFormatModule,

@@ -509,6 +509,10 @@
       const id = event.data.data.loadablePatternId;
       syncStore[id] = event.data;
       self.registration.sync.register(id);
+    } else if(event.data.type === 'discharge-study-pattern-status') {
+      const id = event.data.data.dischargeStudyId;
+      syncStore[id] = event.data;
+      self.registration.sync.register(id);
     }
   })
 
@@ -518,6 +522,8 @@
       event.waitUntil(checkLoadableStudyStatus(syncStore[event.tag].data));
     } else if (syncStore[event.tag].type === 'validate-and-save') {
       event.waitUntil(checkSaveAndValidateStatus(syncStore[event.tag].data));
+    } else if (syncStore[event.tag].type === 'discharge-study-pattern-status') {
+      event.waitUntil(checkDischargeStudyStatus(syncStore[event.tag].data));
     }
   });
 
@@ -637,6 +643,78 @@
       }
     }, 7200000);
   }
+
+    /**
+   * Method for monitoring discharge study status after plan generetion is started
+   *
+   * @param {*} data
+   */
+     async function checkDischargeStudyStatus(data) {
+      let currentStatus;
+      const sync = {};
+      const timer = setInterval(async () => {
+        var headers = {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + await getToken()
+        }
+        const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/discharge-studies/${data?.dischargeStudyId}/discharge-pattern-status`, {
+          method: 'POST',
+          body: JSON.stringify({ processId: data?.processId }),
+          headers: headers
+        });
+        const syncView = await syncResponse.json();
+        const refreshedToken = syncResponse.headers.get('token');
+        sync.refreshedToken = refreshedToken;
+        sync.pattern = data;
+        if (syncView?.responseStatus?.status === '200') {
+          sync.status = syncView?.responseStatus?.status;
+          currentStatus = syncView?.dischargeStudyId;
+          if (syncView?.dischargeStudyId === 4 || syncView?.dischargeStudyId === 5) {
+            sync.type = 'discharge-pattern-processing';
+            sync.statusId = syncView?.dischargeStudyId;
+            notifyClients(sync);
+          }
+          if (syncView?.dischargeStudyId === 7) {
+            sync.type = 'discharge-pattern-loadicator-checking';
+            sync.statusId = syncView?.dischargeStudyId;
+            notifyClients(sync);
+          }
+          if (syncView?.dischargeStudyId === 3) {
+            clearInterval(timer);
+            sync.type = 'discharge-pattern-completed';
+            sync.statusId = syncView?.dischargeStudyId;
+            notifyClients(sync);
+          }
+          if (syncView?.dischargeStudyId === 6) {
+            clearInterval(timer);
+            sync.type = 'discharge-pattern-no-solution';
+            sync.statusId = syncView?.dischargeStudyId;
+            notifyClients(sync);
+          }
+          if (syncView?.loadableStudyStatusId === 11) {
+            clearInterval(timer);
+            sync.type = 'discharge-pattern-error-occured';
+            sync.statusId = syncView?.dischargeStudyId;
+            notifyClients(sync);
+          }
+        } else if (syncView?.status === '401' || syncView?.status === '400') {
+          notifyClients(syncView);
+        }
+        else if (syncView?.responseStatus?.status === '500') {
+          clearInterval(timer);
+        }
+      }, 3500);
+      setTimeout(() => {
+        if (currentStatus === 4) {
+          sync.type = 'discharge-pattern-no-response';
+          // sending default status
+          sync.statusId = 1;
+          notifyClients(sync);
+          clearInterval(timer);
+        }
+      }, 7200000);
+    }
 
 
 }());

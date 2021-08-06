@@ -91,6 +91,7 @@ export class LoadablePlanComponent implements OnInit {
   LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
   VOYAGE_STATUS = VOYAGE_STATUS;
   showPortRotationPopup = false;
+  showUserRolePopup = false;
   public loadablePlanSynopticalRecords: ILoadablePlanSynopticalRecord[];
   public loadablePlanComments: ILoadablePlanCommentsDetails[];
   public voyageNumber: string;
@@ -178,10 +179,10 @@ export class LoadablePlanComponent implements OnInit {
  */
   private swMessageHandler = async event => {
     let isValidStatus = false;
-    if([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED , VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED ,  VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS].includes(event.data.statusId)) {
+    if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS].includes(event.data.statusId)) {
       isValidStatus = true;
     }
-    if(isValidStatus) {
+    if (isValidStatus) {
       if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
         this.globalErrorHandler.sessionOutMessage();
       } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200')) {
@@ -189,8 +190,8 @@ export class LoadablePlanComponent implements OnInit {
       }
       if (event.data.type === 'loadable-pattern-validation-started' && this.router.url.includes('loadable-plan')) {
         const urlsplit = this.router.url?.split('/');
-        let  loadablePatternId;
-        if(urlsplit?.length) {
+        let loadablePatternId;
+        if (urlsplit?.length) {
           loadablePatternId = urlsplit[urlsplit.length - 1];
         }
         if (event.data.pattern?.loadablePatternId === this.loadablePatternId && (loadablePatternId && this.loadablePatternId === Number(loadablePatternId))) {
@@ -436,7 +437,7 @@ export class LoadablePlanComponent implements OnInit {
     if (loadableQuantityResult.responseStatus.status === "200") {
       loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantity = Number(loadableQuantityResult.loadableQuantity.totalQuantity);
       this.vesselLightWeight = Number(loadableQuantityResult?.loadableQuantity?.vesselLightWeight);
-	}
+    }
   }
 
   /**
@@ -705,6 +706,286 @@ export class LoadablePlanComponent implements OnInit {
       this.confirmPlanEligibility = false;
       this.confirmPlan();
     }
+  }
+
+
+  /**
+   * Method for on click simulator
+   *
+   * @memberof LoadablePlanComponent
+   */
+  simulatorLoad() {
+    this.showUserRolePopup = true;
+  }
+
+  /**
+   * Method for choose/cancel user role select
+   *
+   * @memberof LoadablePlanComponent
+   */
+  closeUserRoleSelection(event) {
+    this.showUserRolePopup = event.visible;
+    if (event.role) {
+      this.onLoadSimulator(event.role)
+    }
+  }
+
+  /**
+   * Method to load simulator
+   *
+   * @memberof LoadablePlanComponent
+   */
+  onLoadSimulator(role) {
+    //TODO : Refactoring the code after actual api gets
+    const json = {
+      "loadablePlanDetails": [
+        {
+          "caseNumber": "1",
+          "loadablePlanPortWiseDetails": [
+            {
+              "departureCondition": {
+                "loadableQuantityCargoDetails": [
+                  {
+                    "cargoId": "21",
+                    "cargoAbbreviation": "LSC",
+                    "estimatedAPI": "58.75",
+                    "estimatedTemp": "103.5",
+                    "loadableMT": "57333.3",
+                    "priority": "1",
+                    "colorCode": "#cc2d2d",
+                    "orderedQuantity": "58126.0",
+                    "differencePercentage": "-1.36",
+                    "loadingOrder": "1",
+                    "maxTolerance": "0",
+                    "minTolerance": "-10"
+                  }
+                ],
+                "loadableQuantityCommingleCargoDetails": [
+
+                ],
+                "loadablePlanStowageDetails": [
+                  {
+                    "tank": "2P",
+                    "quantityMT": "14354.9",
+                    "cargoAbbreviation": "LSC",
+                    "tankId": "25587",
+                    "fillingRatio": "98.0",
+                    "tankName": "NO.2 WING CARGO OIL TANK",
+                    "temperature": "103.5",
+                    "colorCode": "#cc2d2d",
+                    "api": "58.75",
+                    "cargoNominationId": "11",
+                    "onboard": 0,
+                    "rdgUllage": "1.38"
+                  },
+                  {
+                    "tank": "2S",
+                    "quantityMT": "14354.9",
+                    "cargoAbbreviation": "LSC",
+                    "tankId": "25588",
+                    "fillingRatio": "98.0",
+                    "tankName": "NO.2 WING CARGO OIL TANK",
+                    "temperature": "103.5",
+                    "colorCode": "#cc2d2d",
+                    "api": "58.75",
+                    "cargoNominationId": "11",
+                    "onboard": 0,
+                    "rdgUllage": "1.38"
+                  },
+                  {
+                    "tank": "3P",
+                    "quantityMT": "14268.6",
+                    "cargoAbbreviation": "LSC",
+                    "tankId": "25589",
+                    "fillingRatio": "97.4",
+                    "tankName": "NO.3 WING CARGO OIL TANK",
+                    "temperature": "103.5",
+                    "colorCode": "#cc2d2d",
+                    "api": "58.75",
+                    "cargoNominationId": "11",
+                    "onboard": 0,
+                    "rdgUllage": "1.53"
+                  },
+                  {
+                    "tank": "3S",
+                    "quantityMT": "14354.9",
+                    "cargoAbbreviation": "LSC",
+                    "tankId": "25590",
+                    "fillingRatio": "98.0",
+                    "tankName": "NO.3 WING CARGO OIL TANK",
+                    "temperature": "103.5",
+                    "colorCode": "#cc2d2d",
+                    "api": "58.75",
+                    "cargoNominationId": "11",
+                    "onboard": 0,
+                    "rdgUllage": "1.38"
+                  },
+                  {
+                    "tank": "4C",
+                    "quantityMT": "50.0",
+                    "cargoAbbreviation": null,
+                    "tankId": "25583",
+                    "fillingRatio": "0.2",
+                    "tankName": "NO.4 CENTER CARGO OIL TANK",
+                    "temperature": null,
+                    "colorCode": null,
+                    "api": null,
+                    "rdgUllage": "27.94",
+                    "cargoNominationId": "",
+                    "onboard": 50
+                  }
+                ],
+                "loadablePlanBallastDetails": [
+                  {
+                    "tank": "FPTL",
+                    "quantityMT": "3994.97",
+                    "fillingRatio": "71.6",
+                    "sg": "1.025",
+                    "tankId": "25597",
+                    "tankName": "FORE PEAK TANK",
+                    "rdgLevel": "19.06"
+                  },
+                  {
+                    "tank": "WB1P",
+                    "quantityMT": "685.55",
+                    "fillingRatio": "7.5",
+                    "sg": "1.025",
+                    "tankId": "25598",
+                    "tankName": "NO.1 WATER BALLAST TANK",
+                    "rdgLevel": "28.71"
+                  },
+                  {
+                    "tank": "WB1S",
+                    "quantityMT": "8776.1",
+                    "fillingRatio": "96.2",
+                    "sg": "1.025",
+                    "tankId": "25599",
+                    "tankName": "NO.1 WATER BALLAST TANK",
+                    "rdgLevel": "2.08"
+                  },
+                  {
+                    "tank": "WB2P",
+                    "quantityMT": "8553.82",
+                    "fillingRatio": "94.0",
+                    "sg": "1.025",
+                    "tankId": "25600",
+                    "tankName": "NO.2 WATER BALLAST TANK",
+                    "rdgLevel": "3.69"
+                  },
+                  {
+                    "tank": "WB2S",
+                    "quantityMT": "290.69",
+                    "fillingRatio": "3.2",
+                    "sg": "1.025",
+                    "tankId": "25601",
+                    "tankName": "NO.2 WATER BALLAST TANK",
+                    "rdgLevel": "29.09"
+                  },
+                  {
+                    "tank": "WB3P",
+                    "quantityMT": "221.09",
+                    "fillingRatio": "2.4",
+                    "sg": "1.025",
+                    "tankId": "25602",
+                    "tankName": "NO.3 WATER BALLAST TANK",
+                    "rdgLevel": "29.14"
+                  },
+                  {
+                    "tank": "WB3S",
+                    "quantityMT": "100.0",
+                    "fillingRatio": "1.1",
+                    "sg": "1.025",
+                    "tankId": "25603",
+                    "tankName": "NO.3 WATER BALLAST TANK",
+                    "rdgLevel": "29.2"
+                  },
+                  {
+                    "tank": "WB4P",
+                    "quantityMT": "7935.89",
+                    "fillingRatio": "88.5",
+                    "sg": "1.025",
+                    "tankId": "25604",
+                    "tankName": "NO.4 WATER BALLAST TANK",
+                    "rdgLevel": "6.66"
+                  },
+                  {
+                    "tank": "WB4S",
+                    "quantityMT": "8761.6",
+                    "fillingRatio": "97.8",
+                    "sg": "1.025",
+                    "tankId": "25605",
+                    "tankName": "NO.4 WATER BALLAST TANK",
+                    "rdgLevel": "1.6"
+                  },
+                  {
+                    "tank": "WB5P",
+                    "quantityMT": "7600.0",
+                    "fillingRatio": "86.6",
+                    "sg": "1.025",
+                    "tankId": "25606",
+                    "tankName": "NO.5 WATER BALLAST TANK",
+                    "rdgLevel": "6.33"
+                  },
+                  {
+                    "tank": "WB5S",
+                    "quantityMT": "7200.0",
+                    "fillingRatio": "82.1",
+                    "sg": "1.025",
+                    "tankId": "25607",
+                    "tankName": "NO.5 WATER BALLAST TANK",
+                    "rdgLevel": "8.36"
+                  }
+                ],
+                "loadablePlanRoBDetails": [
+
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "responseStatus": {
+        "status": "SUCCESS",
+        "message": "",
+        "code": "",
+        "httpStatusCode": 0
+      }
+    }
+
+    const data = {
+      ship: this.vesselInfo.name,
+      path: `$.loadablePlanDetails[0].loadablePlanPortWiseDetails[0].departureCondition`,
+      json: json,
+      user: 'Tester',
+      role: role
+    }
+    //TODO : This need to be configurable in config file
+    var url = "https://ec2-13-250-56-222.ap-southeast-1.compute.amazonaws.com/sims/cargo/embedded.html";
+    var child = window.open(url, "_blank", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no");
+    self.addEventListener('message', function (event) {
+      var msg = event.data;
+      try {
+        msg = JSON.parse(msg);
+        switch (msg.method) {
+          case 'onLoad': {
+            var request = {
+              method: 'loadStowagePlan',
+              args: {
+                ship: data.ship,
+                json: data.json,
+                path: data.path,
+                user: data.user,
+                role: data.role
+              }
+            };
+            child.postMessage(JSON.stringify(request), '*');
+          }
+        }
+      }
+      catch (err) {
+        console.log(err);
+      }
+    });
   }
 
 }

@@ -1,12 +1,24 @@
 <form>
-   
-    <div class="content-outer-rule" *ngIf="rulesService?.vessels ">
-        <div class="sidebar  relative" *ngIf="rulesJson&&rulesJson[data]?.length>0">   
+    <ng-container *ngIf="rulesService?.vessels && rulesJson[data].length>0; else empty">
+    </ng-container>
+    <ng-template #empty>
+        <ng-template *ngIf="rulesPageName=='LoadableStudy';then loadableStudy;else genericMessage"> </ng-template>
+    </ng-template>
+    <ng-template #loadableStudy>
+        {{'NO_RULES_MAPPED' | translate}}
+    </ng-template>
+    <ng-template #genericMessage>
+        {{'NO_RECORDS_FOUND' | translate}}
+    </ng-template>
+    <div class="content-outer-rule" *ngIf="rulesJson[data].length>0">
+        <div class="sidebar  relative">
             <div class="sidebar-content">
                 <p>{{'RULES_LIST' | translate}}</p>
-                <ul class="list-unstyled sidebar-menu">                    
-                    <li *ngFor="let header of rulesJson[this.selectedTab] let i=index" (click)="setIndex(i)" [ngClass]="{'active': selectedIndex === i}">
-                        <a>{{header.header | translate}}<span *ngIf="error && error[i]" class="error-icon ml-10">!</span></a>
+                <ul class="list-unstyled sidebar-menu">
+                    <li *ngFor="let header of rulesJson[this.selectedTab] let i=index" (click)="setIndex(i)"
+                        [ngClass]="{'active': selectedIndex === i}">
+                        <a>{{header.header | translate}}<span *ngIf="error && error[i]"
+                                class="error-icon ml-10">!</span></a>
                     </li>
 
                 </ul>
@@ -14,10 +26,10 @@
         </div>
         <div class="pl-30">
             <div class="pl-10 table-rules pt-15" *ngIf="rulesJson ">
-                <p-table *ngIf="rules?.length && rulesJson[data].length>0 ; else empty" [columns]="columns" [value]="rules"
+                <p-table *ngIf="rules?.length && rulesJson[data].length>0" [columns]="columns" [value]="rules"
                     dataKey="header" id="rules-table" styleClass="body-header-row-span-table">
                     <ng-template pTemplate="colgroup">
-                        <colgroup >
+                        <colgroup>
                             <col class="column-checkbox" *ngIf="displaySettings">
                             <col>
                             <col class="column-dropdown">
@@ -26,20 +38,20 @@
                     </ng-template>
                     <ng-template pTemplate="header" let-columns let-rowData>
                         <tr>
-                            <th *ngFor="let column of columns">{{column.header  |translate}}</th>
+                            <th *ngFor="let column of columns">{{column.header |translate}}</th>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
                         <tr>
 
-                            <td class="text-center" *ngIf="displaySettings" >
-                                <label class="checkbox-custom" >
-                                    <input type="checkbox"  [formControl]="getControl('displayInSettings',rowIndex)" >
-                                    <span class="checkmark" ></span>
+                            <td class="text-center" *ngIf="displaySettings">
+                                <label class="checkbox-custom">
+                                    <input type="checkbox" [formControl]="getControl('displayInSettings',rowIndex)">
+                                    <span class="checkmark"></span>
                                 </label>
                             </td>
 
-                                                         
+
 
                             <td *ngIf="rowData.inputs.length>0">
                                 <ng-container *ngFor="let input of rowData.inputs; let inputIndex = index">
@@ -49,15 +61,17 @@
                                     <ng-container *ngIf="input?.type=='Boolean'">
                                         <label class="radio-custom">{{'RULES_TRUE' | translate}}
                                             <input type="radio" [name]="radio + '_' + rowIndex + '_' + inputIndex"
-                                            [formControl]="getControl('inputs',rowIndex,inputIndex)" value="true" (change)="checkForFormValueChanges()" >
+                                                [formControl]="getControl('inputs',rowIndex,inputIndex)" value="true"
+                                                (change)="checkForFormValueChanges()">
                                             <span class="checkmark"></span>
                                         </label>
 
-                                        
-                                        
-                                            <label class="radio-custom">{{'RULES_FALSE' | translate}}
-                                        <input type="radio" [name]="radio + '_' + rowIndex + '_' + inputIndex"
-                                            [formControl]="getControl('inputs',rowIndex,inputIndex)" value="false" (change)="checkForFormValueChanges()">
+
+
+                                        <label class="radio-custom">{{'RULES_FALSE' | translate}}
+                                            <input type="radio" [name]="radio + '_' + rowIndex + '_' + inputIndex"
+                                                [formControl]="getControl('inputs',rowIndex,inputIndex)" value="false"
+                                                (change)="checkForFormValueChanges()">
                                             <span class="checkmark"></span>
                                         </label>
                                     </ng-container>
@@ -66,22 +80,27 @@
                                         <input *ngIf="input?.type=='string'" [id]="rowIndex + 'input' + inputIndex"
                                             class="form-control"
                                             [formControl]="getControl('inputs',rowIndex,inputIndex)"
-                                            (blur)="checkForFormValueChanges()"
-                                            >
-                                            <input *ngIf="input?.type=='Number' || input?.type=='number'" type="text" cpdssPortalNumberDecimal [id]="rowIndex + 'input' + inputIndex"
+                                            (blur)="checkForFormValueChanges()">
+                                        <input *ngIf="input?.type=='Number' || input?.type=='number'" type="text"
+                                            cpdssPortalNumberDecimal [id]="rowIndex + 'input' + inputIndex"
                                             class="form-control"
                                             [formControl]="getControl('inputs',rowIndex,inputIndex)"
-                                            (blur)="checkForFormValueChanges()"
-                                            >   
-                                            <cpdss-portal-validation-error *ngIf="input?.type" [errors]="fieldError('inputs',rowIndex,inputIndex)"
-                                                [errorMessages]="errorMessages">
-                                            </cpdss-portal-validation-error>
-                                            <p-multiSelect *ngIf="input.type==='MultiSelect' && input.ruleDropDownMaster!='null'"
-                                                [options]="input.ruleDropDownMaster" optionLabel="value" [formControl]="getControl('inputs',rowIndex,inputIndex)">
-                                            </p-multiSelect>
-                                            <p-dropdown *ngIf="input.type==='Dropdown'" [options]="input.ruleDropDownMaster" styleClass="form-control"
-                                                [formControl]="getControl('inputs',rowIndex,inputIndex)" optionLabel="value" resetFilterOnHide="true">
-                                            </p-dropdown>
+                                            (blur)="checkForFormValueChanges()">
+
+                                        <p-multiSelect
+                                            *ngIf="input.type==='MultiSelect' && input.ruleDropDownMaster!='null'"
+                                            [options]="input.ruleDropDownMaster" optionLabel="value"
+                                            [formControl]="getControl('inputs',rowIndex,inputIndex)">
+                                        </p-multiSelect>
+                                        <cpdss-portal-validation-error *ngIf="input?.type"
+                                            [errors]="fieldError('inputs',rowIndex,inputIndex)"
+                                            [errorMessages]="errorMessages">
+                                        </cpdss-portal-validation-error>
+                                        <p-dropdown *ngIf="input.type==='Dropdown'" [options]="input.ruleDropDownMaster"
+                                            styleClass="form-control"
+                                            [formControl]="getControl('inputs',rowIndex,inputIndex)" optionLabel="value"
+                                            resetFilterOnHide="true">
+                                        </p-dropdown>
                                     </div>
                                     {{input.suffix}}
                                 </ng-container>
@@ -89,12 +108,13 @@
                             <td>
                                 <p-dropdown [id]="'rule_type' + rowIndex " [options]="ruleTypes"
                                     styleClass="form-control" [formControl]="getControl('ruleType',rowIndex)"
-                                    (onChange)="onRuleTypeSelected($event)" optionLabel="value" 
-                                    resetFilterOnHide="true"  ></p-dropdown>
+                                    (onChange)="onRuleTypeSelected($event)" optionLabel="value"
+                                    resetFilterOnHide="true"></p-dropdown>
                             </td>
-                            
+
                             <td class="text-center">
-                                <p-inputSwitch [id]="'enable' + rowIndex" [formControl]="getControl('enable',rowIndex)" (onChange)="checkForFormValueChanges()">
+                                <p-inputSwitch [id]="'enable' + rowIndex" [formControl]="getControl('enable',rowIndex)"
+                                    (onChange)="checkForFormValueChanges()">
                                 </p-inputSwitch>
                             </td>
                         </tr>
@@ -106,7 +126,3 @@
     </div>
 
 </form>
-
-<ng-template #empty>
-    {{'NO_RECORDS_FOUND' | translate}}
-</ng-template>

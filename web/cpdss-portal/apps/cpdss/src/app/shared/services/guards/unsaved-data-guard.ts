@@ -6,10 +6,18 @@ import { ConfirmationService } from 'primeng/api';
 import { Observer } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
+/**
+ *  Interface for component candeactivate function
+ *  
+ */
 export interface ComponentCanDeactivate {
   canDeactivate: () => boolean | Observable<boolean>;
 }
 
+/**
+ *  this guard will check for unsaved changes and prompt for confirmation
+ * 
+ */
 @Injectable({
   providedIn: 'root'
 })

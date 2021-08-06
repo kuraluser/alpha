@@ -3,7 +3,7 @@
         {{ 'LOADING_DISCHARGING_INSTRUCTION_HEADING' | translate}}
     </div>
     <div class="col text-right">
-        <button (click)="addParent()" class="btn btn-main mr-15">{{'ADD_NEW_BUTTON_LABEL' | translate}}</button>
+        <button (click)="addParent()" class="btn btn-main mr-15">{{'ADD_NEW_INSTRUCTION_SUBSECTION_BUTTON_LABEL' | translate}}</button>
         <button (click)="addNewInstruction()" class="btn btn-main">{{'ADD_NEW_INSTRUCTION_BUTTON_LABEL' |
             translate}}</button>
     </div>
@@ -28,7 +28,7 @@
                                 <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
                                 <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
                                 <span *ngIf="!rowNode.node.data.editable" class="inline-block"
-                                    [ngClass]="{'text-danger': rowNode?.level === 0}">{{rowNode?.node?.label}}</span>
+                                    [ngClass]="{'text-danger': rowNode?.level === 0 && !rowNode.node?.data?.isSingleHeader}">{{rowNode?.node?.label}}</span>
                                 <span *ngIf="!rowNode.node.data.editable && rowNode.node.data.isEditable"
                                     (click)="editData(rowNode)" class="pencil-icon v-t-bottom ml-5"></span>
                                 <span *ngIf="!rowNode.node.data.editable && rowNode.node.data.isEditable"
@@ -51,6 +51,8 @@
                             <div class="col">
                                 <input #editField *ngIf="rowNode.node.data.editable" [maxlength]="textFieldLength"
                                     formControlName="name" type="text" class="form-control">
+                                    <cpdss-portal-validation-error [errors]="fieldError('name')" [errorMessages]="errorMessages">
+                                    </cpdss-portal-validation-error>
                             </div>
                             <div>
                                 <button *ngIf="rowNode.node.data.editable" (click)="saveData(rowNode)"

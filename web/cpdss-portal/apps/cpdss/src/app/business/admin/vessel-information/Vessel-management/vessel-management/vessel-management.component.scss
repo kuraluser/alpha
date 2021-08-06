@@ -1,0 +1,20 @@
+.vessel-master-info-wrapper {
+    max-width: 500px;
+    margin-top: 5px;
+}
+.vessel-master-info {
+    height: 38px;
+    border-radius: 5px;
+    display: grid;
+    grid-template-columns: 40px auto 65px;
+    grid-column-gap: 5px;
+    line-height: 1.3;
+    h5{
+       font-size: 14px; 
+    }
+}
+
+.vessel-master .row.form-group {
+    border-bottom: 1px solid #bebebe;
+    margin: -5px 0;
+}

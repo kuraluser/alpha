@@ -8,6 +8,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.AlgoReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
@@ -21,8 +23,10 @@ import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischa
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
+import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.AlgoPatternResponse;
 import com.cpdss.gateway.domain.BackLoading;
 import com.cpdss.gateway.domain.BillOfLadding;
 import com.cpdss.gateway.domain.Cargo;
@@ -391,7 +395,6 @@ public class DischargeStudyService {
       DischargeStudyCargoResponse response,
       LoadableStudy.PortRotationReply portRotationReply,
       LoadableStudy.CargoNominationReply grpcReply) {
-
     Map<Long, List<LoadableStudy.CargoNominationDetail>> portIdsToCargoNominationMap =
         grpcReply.getCargoNominationsList().stream()
             .flatMap(
@@ -467,6 +470,11 @@ public class DischargeStudyService {
               cargoNomination.setTemperature(
                   new BigDecimal(cargoNominationDetail.getTemperature()));
               cargoNomination.setMode(cargoNominationDetail.getMode());
+              cargoNomination.setMaxQuantity(
+                  cargoNominationDetail.getMaxQuantity() != null
+                          && !cargoNominationDetail.getMaxQuantity().isBlank()
+                      ? new BigDecimal(cargoNominationDetail.getMaxQuantity())
+                      : new BigDecimal(0));
               cargoNominations.add(cargoNomination);
             });
     portRotation.setCargoNominationList(cargoNominations);
@@ -611,5 +619,34 @@ public class DischargeStudyService {
         });
 
     return backLoadingList;
+  }
+
+  public AlgoPatternResponse generateDischargePatterns(
+      Long vesselId, Long voyageId, Long dischargeStudyId, String correlationId)
+      throws GenericServiceException {
+    log.info(
+        "Inside generateDischargePatterns gateway service with correlationId : " + correlationId);
+    AlgoRequest request = AlgoRequest.newBuilder().setLoadableStudyId(dischargeStudyId).build();
+    AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
+    AlgoReply reply = this.generateDischargePatterns(request);
+
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("GRPC Failed");
+      throw new GenericServiceException(
+          "failed to call algo",
+          reply.getResponseStatus().getCode(),
+          reply.getResponseStatus().getCode().equals(CommonErrorCodes.E_CPDSS_ALGO_ISSUE)
+              ? HttpStatusCode.SERVICE_UNAVAILABLE
+              : HttpStatusCode.valueOf(
+                  Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
+    }
+    algoPatternResponse.setProcessId(reply.getProcesssId());
+    algoPatternResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return algoPatternResponse;
+  }
+
+  public AlgoReply generateDischargePatterns(AlgoRequest request) {
+    return this.dischargeStudyOperationServiceBlockingStub.generateDischargePatterns(request);
   }
 }

@@ -24,10 +24,10 @@
 
         <div class="row">
             <div class="col text-right">
-                <button class="btn btn-main mr-10" id="edit-port-rotation-popup-cancel" (click)="cancel()">{{
+                <button class="btn btn-main mr-10" id="edit-port-rotation-popup-cancel" (click)="cancel()" autofocus focusTrap>{{
                     'CANCEL_BUTTON_EDIT_PORT_ROTATION_POPUP' | translate }}</button>
                 <button class="btn btn-main" type="submit" id="edit-port-rotation-popup-submit"
-                    (click)="saveEditPortRotation()" *cpdssPortalPermission="editPortRotationPermissionContext">{{
+                    (click)="saveEditPortRotation()" *cpdssPortalPermission="editPortRotationPermissionContext" focusTrap>{{
                     'SAVE_BUTTON_EDIT_PORT_ROTATION_POPUP' | translate }}</button>
             </div>
         </div>

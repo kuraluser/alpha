@@ -1315,6 +1315,32 @@ public final class Common {
      * @return The cargoId.
      */
     long getCargoId();
+
+    /**
+     * <code>string blRefNo = 14;</code>
+     *
+     * @return The blRefNo.
+     */
+    java.lang.String getBlRefNo();
+    /**
+     * <code>string blRefNo = 14;</code>
+     *
+     * @return The bytes for blRefNo.
+     */
+    com.google.protobuf.ByteString getBlRefNoBytes();
+
+    /**
+     * <code>string quantityLT = 15;</code>
+     *
+     * @return The quantityLT.
+     */
+    java.lang.String getQuantityLT();
+    /**
+     * <code>string quantityLT = 15;</code>
+     *
+     * @return The bytes for quantityLT.
+     */
+    com.google.protobuf.ByteString getQuantityLTBytes();
   }
   /** Protobuf type {@code BillOfLadding} */
   public static final class BillOfLadding extends com.google.protobuf.GeneratedMessageV3
@@ -1337,6 +1363,8 @@ public final class Common {
       cargoName_ = "";
       cargoAbbrevation_ = "";
       loadingPort_ = emptyLongList();
+      blRefNo_ = "";
+      quantityLT_ = "";
     }
 
     @java.lang.Override
@@ -1466,6 +1494,20 @@ public final class Common {
             case 104:
               {
                 cargoId_ = input.readInt64();
+                break;
+              }
+            case 114:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                blRefNo_ = s;
+                break;
+              }
+            case 122:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                quantityLT_ = s;
                 break;
               }
             default:
@@ -1857,6 +1899,76 @@ public final class Common {
       return cargoId_;
     }
 
+    public static final int BLREFNO_FIELD_NUMBER = 14;
+    private volatile java.lang.Object blRefNo_;
+    /**
+     * <code>string blRefNo = 14;</code>
+     *
+     * @return The blRefNo.
+     */
+    public java.lang.String getBlRefNo() {
+      java.lang.Object ref = blRefNo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        blRefNo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string blRefNo = 14;</code>
+     *
+     * @return The bytes for blRefNo.
+     */
+    public com.google.protobuf.ByteString getBlRefNoBytes() {
+      java.lang.Object ref = blRefNo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        blRefNo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int QUANTITYLT_FIELD_NUMBER = 15;
+    private volatile java.lang.Object quantityLT_;
+    /**
+     * <code>string quantityLT = 15;</code>
+     *
+     * @return The quantityLT.
+     */
+    public java.lang.String getQuantityLT() {
+      java.lang.Object ref = quantityLT_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        quantityLT_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string quantityLT = 15;</code>
+     *
+     * @return The bytes for quantityLT.
+     */
+    public com.google.protobuf.ByteString getQuantityLTBytes() {
+      java.lang.Object ref = quantityLT_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        quantityLT_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -1914,6 +2026,12 @@ public final class Common {
       }
       if (cargoId_ != 0L) {
         output.writeInt64(13, cargoId_);
+      }
+      if (!getBlRefNoBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 14, blRefNo_);
+      }
+      if (!getQuantityLTBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 15, quantityLT_);
       }
       unknownFields.writeTo(output);
     }
@@ -1973,6 +2091,12 @@ public final class Common {
       if (cargoId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(13, cargoId_);
       }
+      if (!getBlRefNoBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, blRefNo_);
+      }
+      if (!getQuantityLTBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, quantityLT_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2002,6 +2126,8 @@ public final class Common {
       if (!getCargoAbbrevation().equals(other.getCargoAbbrevation())) return false;
       if (!getLoadingPortList().equals(other.getLoadingPortList())) return false;
       if (getCargoId() != other.getCargoId()) return false;
+      if (!getBlRefNo().equals(other.getBlRefNo())) return false;
+      if (!getQuantityLT().equals(other.getQuantityLT())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -2041,6 +2167,10 @@ public final class Common {
       }
       hash = (37 * hash) + CARGOID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoId());
+      hash = (37 * hash) + BLREFNO_FIELD_NUMBER;
+      hash = (53 * hash) + getBlRefNo().hashCode();
+      hash = (37 * hash) + QUANTITYLT_FIELD_NUMBER;
+      hash = (53 * hash) + getQuantityLT().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2204,6 +2334,10 @@ public final class Common {
         bitField0_ = (bitField0_ & ~0x00000001);
         cargoId_ = 0L;
 
+        blRefNo_ = "";
+
+        quantityLT_ = "";
+
         return this;
       }
 
@@ -2248,6 +2382,8 @@ public final class Common {
         }
         result.loadingPort_ = loadingPort_;
         result.cargoId_ = cargoId_;
+        result.blRefNo_ = blRefNo_;
+        result.quantityLT_ = quantityLT_;
         onBuilt();
         return result;
       }
@@ -2353,6 +2489,14 @@ public final class Common {
         }
         if (other.getCargoId() != 0L) {
           setCargoId(other.getCargoId());
+        }
+        if (!other.getBlRefNo().isEmpty()) {
+          blRefNo_ = other.blRefNo_;
+          onChanged();
+        }
+        if (!other.getQuantityLT().isEmpty()) {
+          quantityLT_ = other.quantityLT_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -3206,6 +3350,158 @@ public final class Common {
       public Builder clearCargoId() {
 
         cargoId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object blRefNo_ = "";
+      /**
+       * <code>string blRefNo = 14;</code>
+       *
+       * @return The blRefNo.
+       */
+      public java.lang.String getBlRefNo() {
+        java.lang.Object ref = blRefNo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          blRefNo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string blRefNo = 14;</code>
+       *
+       * @return The bytes for blRefNo.
+       */
+      public com.google.protobuf.ByteString getBlRefNoBytes() {
+        java.lang.Object ref = blRefNo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          blRefNo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string blRefNo = 14;</code>
+       *
+       * @param value The blRefNo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBlRefNo(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        blRefNo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string blRefNo = 14;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearBlRefNo() {
+
+        blRefNo_ = getDefaultInstance().getBlRefNo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string blRefNo = 14;</code>
+       *
+       * @param value The bytes for blRefNo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBlRefNoBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        blRefNo_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object quantityLT_ = "";
+      /**
+       * <code>string quantityLT = 15;</code>
+       *
+       * @return The quantityLT.
+       */
+      public java.lang.String getQuantityLT() {
+        java.lang.Object ref = quantityLT_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          quantityLT_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string quantityLT = 15;</code>
+       *
+       * @return The bytes for quantityLT.
+       */
+      public com.google.protobuf.ByteString getQuantityLTBytes() {
+        java.lang.Object ref = quantityLT_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          quantityLT_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string quantityLT = 15;</code>
+       *
+       * @param value The quantityLT to set.
+       * @return This builder for chaining.
+       */
+      public Builder setQuantityLT(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        quantityLT_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string quantityLT = 15;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearQuantityLT() {
+
+        quantityLT_ = getDefaultInstance().getQuantityLT();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string quantityLT = 15;</code>
+       *
+       * @param value The bytes for quantityLT to set.
+       * @return This builder for chaining.
+       */
+      public Builder setQuantityLTBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        quantityLT_ = value;
         onChanged();
         return this;
       }
@@ -8611,32 +8907,33 @@ public final class Common {
     java.lang.String[] descriptorData = {
       "\n\014common.proto\"W\n\016ResponseStatus\022\016\n\006stat"
           + "us\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022"
-          + "\026\n\016httpStatusCode\030\004 \001(\005\"\215\002\n\rBillOfLaddin"
+          + "\026\n\016httpStatusCode\030\004 \001(\005\"\262\002\n\rBillOfLaddin"
           + "g\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\031\n\021cargoNo"
           + "minationId\030\003 \001(\003\022\024\n\014quantityBbls\030\004 \001(\t\022\022"
           + "\n\nquantityMt\030\005 \001(\t\022\022\n\nquantityKl\030\006 \001(\t\022\013"
           + "\n\003api\030\007 \001(\t\022\023\n\013temperature\030\010 \001(\t\022\022\n\ncarg"
           + "oColor\030\t \001(\t\022\021\n\tcargoName\030\n \001(\t\022\030\n\020cargo"
           + "Abbrevation\030\013 \001(\t\022\023\n\013loadingPort\030\014 \003(\003\022\017"
-          + "\n\007cargoId\030\r \001(\003\"2\n\tRulePlans\022\016\n\006header\030\001"
-          + " \001(\t\022\025\n\005rules\030\002 \003(\0132\006.Rules\"\362\001\n\005Rules\022\n\n"
-          + "\002id\030\001 \001(\t\022\016\n\006enable\030\002 \001(\010\022\017\n\007disable\030\003 \001"
-          + "(\010\022\031\n\021displayInSettings\030\004 \001(\010\022\020\n\010ruleTyp"
-          + "e\030\005 \001(\t\022\034\n\006inputs\030\006 \003(\0132\014.RulesInputs\022\026\n"
-          + "\016ruleTemplateId\030\007 \001(\t\022\025\n\rvesselRuleXId\030\010"
-          + " \001(\t\022\022\n\nisHardRule\030\t \001(\010\022\030\n\020numericPreci"
-          + "sion\030\n \001(\003\022\024\n\014numericScale\030\013 \001(\003\"\314\001\n\013Rul"
-          + "esInputs\022\016\n\006prefix\030\001 \001(\t\022\024\n\014defaultValue"
-          + "\030\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\013\n\003max\030\004 \001(\t\022\013\n\003min"
-          + "\030\005 \001(\t\022\r\n\005value\030\006 \001(\t\022\016\n\006suffix\030\007 \001(\t\022\n\n"
-          + "\002id\030\010 \001(\t\022/\n\022ruleDropDownMaster\030\t \003(\0132\023."
-          + "RuleDropDownMaster\022\023\n\013isMandatory\030\n \001(\010\""
-          + "/\n\022RuleDropDownMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005val"
-          + "ue\030\002 \001(\t*E\n\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022"
-          + "\n\016LOADABLE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002*"
-          + "H\n\013MachineType\022\t\n\005EMPTY\020\000\022\017\n\013VESSEL_PUMP"
-          + "\020\001\022\014\n\010MANIFOLD\020\002\022\017\n\013BOTTOM_LINE\020\003B\036\n\032com"
-          + ".cpdss.common.generatedP\000b\006proto3"
+          + "\n\007cargoId\030\r \001(\003\022\017\n\007blRefNo\030\016 \001(\t\022\022\n\nquan"
+          + "tityLT\030\017 \001(\t\"2\n\tRulePlans\022\016\n\006header\030\001 \001("
+          + "\t\022\025\n\005rules\030\002 \003(\0132\006.Rules\"\362\001\n\005Rules\022\n\n\002id"
+          + "\030\001 \001(\t\022\016\n\006enable\030\002 \001(\010\022\017\n\007disable\030\003 \001(\010\022"
+          + "\031\n\021displayInSettings\030\004 \001(\010\022\020\n\010ruleType\030\005"
+          + " \001(\t\022\034\n\006inputs\030\006 \003(\0132\014.RulesInputs\022\026\n\016ru"
+          + "leTemplateId\030\007 \001(\t\022\025\n\rvesselRuleXId\030\010 \001("
+          + "\t\022\022\n\nisHardRule\030\t \001(\010\022\030\n\020numericPrecisio"
+          + "n\030\n \001(\003\022\024\n\014numericScale\030\013 \001(\003\"\314\001\n\013RulesI"
+          + "nputs\022\016\n\006prefix\030\001 \001(\t\022\024\n\014defaultValue\030\002 "
+          + "\001(\t\022\014\n\004type\030\003 \001(\t\022\013\n\003max\030\004 \001(\t\022\013\n\003min\030\005 "
+          + "\001(\t\022\r\n\005value\030\006 \001(\t\022\016\n\006suffix\030\007 \001(\t\022\n\n\002id"
+          + "\030\010 \001(\t\022/\n\022ruleDropDownMaster\030\t \003(\0132\023.Rul"
+          + "eDropDownMaster\022\023\n\013isMandatory\030\n \001(\010\"/\n\022"
+          + "RuleDropDownMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030"
+          + "\002 \001(\t*E\n\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022\n\016L"
+          + "OADABLE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002*H\n\013"
+          + "MachineType\022\t\n\005EMPTY\020\000\022\017\n\013VESSEL_PUMP\020\001\022"
+          + "\014\n\010MANIFOLD\020\002\022\017\n\013BOTTOM_LINE\020\003B\036\n\032com.cp"
+          + "dss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -8666,6 +8963,8 @@ public final class Common {
               "CargoAbbrevation",
               "LoadingPort",
               "CargoId",
+              "BlRefNo",
+              "QuantityLT",
             });
     internal_static_RulePlans_descriptor = getDescriptor().getMessageTypes().get(2);
     internal_static_RulePlans_fieldAccessorTable =

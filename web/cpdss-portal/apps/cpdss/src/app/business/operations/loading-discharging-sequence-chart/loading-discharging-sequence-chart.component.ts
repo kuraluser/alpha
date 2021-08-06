@@ -4,9 +4,11 @@ import * as Highcharts from 'highcharts';
 import Theme from 'highcharts/themes/grid-light';
 import GanttChart from 'highcharts/modules/gantt';
 import Annotations from 'highcharts/modules/annotations';
-import { Commodity, Pump } from './loading-discharging-sequence-chart.model';
+import { IPump, IPumpData, IStabilityParam, ITank, ITankData } from './loading-discharging-sequence-chart.model';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { OPERATION } from '../models/operations.model';
+import { OPERATIONS } from '../../core/models/common.model';
+import { LoadingDischargingSequenceApiService } from '../services/loading-discharging-sequence-api.service';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
  * Override the reset function, we don't need to hide the tooltips and
@@ -36,177 +38,20 @@ Annotations(Highcharts);
 export class LoadingDischargingSequenceChartComponent implements OnInit {
 
   // Input fields
-  @Input() static operation: OPERATION = OPERATION.LOADING;
+  @Input() static operation: OPERATIONS = OPERATIONS.LOADING;
+
+  get operation() {
+    return LoadingDischargingSequenceChartComponent.operation;
+  }
 
   // Static fields
-  static stages = [
-    { id: 1, name: 'Stage 1', start: Date.UTC(2014, 10, 17, 0), end: Date.UTC(2014, 10, 17, 12), rate: 25000, duration: '12 HRS' },
-    { id: 2, name: 'Stage 2', start: Date.UTC(2014, 10, 17, 12), end: Date.UTC(2014, 10, 18, 4), rate: 25000, duration: '16 HRS' },
-    { id: 3, name: 'Stage 3', start: Date.UTC(2014, 10, 18, 4), end: Date.UTC(2014, 10, 18, 12), rate: 25000, duration: '8 HRS' },
-    { id: 4, name: 'Stage 4', start: Date.UTC(2014, 10, 18, 12), end: Date.UTC(2014, 10, 18, 20), rate: 25000, duration: '8 HRS' }
-  ];
-  static cargos: Commodity[] = [
-    {
-      id: 1,
-      name: 'Cargo 1',
-      color: '#236aff',
-      abbreviation: 'KU',
-      duration: '12 HRS',
-      stageId: 1,
-      data: [
-        {
-          tankId: 2,
-          start: Date.UTC(2014, 10, 17, 0),
-          end: Date.UTC(2014, 10, 17, 1),
-          ullage: 2.3,
-          quantity: 1856
-        },
-        {
-          tankId: 2,
-          start: Date.UTC(2014, 10, 17, 1),
-          end: Date.UTC(2014, 10, 17, 4),
-          ullage: 2.3,
-          quantity: 1856
-        },
-        {
-          tankId: 2,
-          start: Date.UTC(2014, 10, 17, 4),
-          end: Date.UTC(2014, 10, 17, 6),
-          ullage: 2.3,
-          quantity: 1856
-        },
-        {
-          tankId: 2,
-          start: Date.UTC(2014, 10, 17, 8),
-          end: Date.UTC(2014, 10, 17, 12),
-          ullage: 2.3,
-          quantity: 1856,
-        }]
-    },
-    {
-      id: 2,
-      name: 'Cargo 2',
-      color: '#eaa15c',
-      abbreviation: 'AEL',
-      duration: '16 HRS',
-      stageId: 2,
-      data: [
-        {
-          tankId: 1,
-          start: Date.UTC(2014, 10, 17, 13),
-          end: Date.UTC(2014, 10, 17, 24),
-          ullage: 2.3,
-          quantity: 1856
-        }, {
-          tankId: 3,
-          start: Date.UTC(2014, 10, 17, 15),
-          end: Date.UTC(2014, 10, 17, 20),
-          ullage: 2.3,
-          quantity: 1856
-        }, {
-          tankId: 3,
-          start: Date.UTC(2014, 10, 18, 0),
-          end: Date.UTC(2014, 10, 18, 4),
-          ullage: 2.3,
-          quantity: 1856
-        }]
-    },
-    {
-      id: 3,
-      name: 'Cargo 3',
-      color: '#5d9ea0',
-      abbreviation: 'OM',
-      duration: '8 HRS',
-      stageId: 3,
-      data: [
-        {
-          tankId: 4,
-          start: Date.UTC(2014, 10, 18, 4),
-          end: Date.UTC(2014, 10, 18, 10),
-          ullage: 2.3,
-          quantity: 1856
-        },
-        {
-          tankId: 4,
-          start: Date.UTC(2014, 10, 18, 11),
-          end: Date.UTC(2014, 10, 18, 11),
-          className: 'pi-sort-up',
-          ullage: 2.3,
-          quantity: 1856
-        }
-      ]
-    },
-    {
-      id: 4,
-      name: 'Cargo 4',
-      color: '#ff0095',
-      abbreviation: 'AEH',
-      duration: '8 HRS',
-      stageId: 4,
-      data: [
-        {
-          tankId: 5,
-          start: Date.UTC(2014, 10, 18, 13),
-          end: Date.UTC(2014, 10, 18, 18),
-          ullage: 2.3,
-          quantity: 1856
-        }
-      ]
-    }
-  ];
-  static ballasts: Commodity[] = [
-    {
-      id: 6,
-      name: 'Ballast',
-      color: '#01717d',
-      abbreviation: 'Ballast',
-      stageId: 2,
-      data: [
-        {
-          tankId: 2,
-          start: Date.UTC(2014, 10, 17, 13),
-          end: Date.UTC(2014, 10, 17, 16),
-          quantity: 1856,
-          ullage: 2.1,
-          rate: 2000
-        },
-        {
-          tankId: 2,
-          start: Date.UTC(2014, 10, 17, 18),
-          end: Date.UTC(2014, 10, 17, 22),
-          quantity: 1856,
-          ullage: 2.1,
-          rate: 2000,
-          id: 'stripping',
-        }
-      ]
-    }, {
-      id: 5,
-      name: 'Ballast',
-      stageId: 1,
-      color: '#01717d',
-      data: [
-        {
-          tankId: 1,
-          start: Date.UTC(2014, 10, 17, 0),
-          end: Date.UTC(2014, 10, 17, 6),
-          quantity: 1856,
-          ullage: 2.1,
-          rate: 2000
-        },
-        {
-          tankId: 3,
-          start: Date.UTC(2014, 10, 17, 0),
-          end: Date.UTC(2014, 10, 17, 12),
-          quantity: 1856,
-          ullage: 2.1,
-          rate: 2000,
-        }
-      ]
-    }
-  ];
+  static cargoStages: any[];
+  static cargos: ITankData[];
+  static ballasts: ITankData[];
+  static cargoLoadingRates: number[][];
 
   // Public fileds
+  OPERATIONS = OPERATIONS;
   Highcharts: typeof Highcharts = Highcharts;
   cargoSequenceGanttChart: Highcharts.Options;
   ballastSequenceGanttChart: Highcharts.Options;
@@ -214,93 +59,29 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
   ballastPumpSequenceGanttChart: Highcharts.Options;
   stabilityGanttChart: Highcharts.Options;
   flowRateAreaChart: Highcharts.Options;
-  cargoPumps: Pump[] = [
-    {
-      id: 6,
-      name: 'Cargo Pump',
-      color: '#236aff',
-      stageId: 1,
-      data: [
-        {
-          pumpId: 1,
-          start: Date.UTC(2014, 10, 17, 0),
-          end: Date.UTC(2014, 10, 17, 8),
-          rate: 1856,
-        },
-        {
-          pumpId: 1,
-          start: Date.UTC(2014, 10, 17, 0),
-          end: Date.UTC(2014, 10, 17, 12),
-          rate: 1856,
-        }
-      ]
-    }, {
-      id: 6,
-      name: 'Cargo Pump',
-      color: '#eaa15c',
-      stageId: 2,
-      data: [
-        {
-          pumpId: 2,
-          start: Date.UTC(2014, 10, 17, 0),
-          end: Date.UTC(2014, 10, 17, 16),
-          rate: 1856,
-        }
-      ]
-    }
-  ];
-  ballastPumps: Pump[] = [
-    {
-      id: 6,
-      name: 'Ballast Pump',
-      color: '#01717d',
-      stageId: 1,
-      data: [
-        {
-          pumpId: 1,
-          start: Date.UTC(2014, 10, 17, 2),
-          end: Date.UTC(2014, 10, 17, 16),
-          rate: 1856,
-        },
-        {
-          pumpId: 1,
-          start: Date.UTC(2014, 10, 17, 0),
-          end: Date.UTC(2014, 10, 17, 12),
-          rate: 1856,
-        }
-      ]
-    }, {
-      id: 5,
-      name: 'Ballast Pump',
-      stageId: 1,
-      color: '#01717d',
-      data: [
-        {
-          pumpId: 3,
-          start: Date.UTC(2014, 10, 17, 0),
-          end: Date.UTC(2014, 10, 17, 6),
-          rate: 1856,
-        },
-        {
-          pumpId: 2,
-          start: Date.UTC(2014, 10, 17, 0),
-          end: Date.UTC(2014, 10, 17, 12),
-          rate: 1856,
-        }
-      ]
-    }
-  ];
+  cargoPumps: IPumpData[];
+  ballastPumps: IPumpData[];
   cargoSequenceChartSeries: Array<any>;
   ballastSequenceChartSeries: Array<any>;
   cargoPumpSequenceChartSeries: Array<any>;
   ballastPumpSequenceChartSeries: Array<any>;
   stabilityChartSeries: Array<any>;
   flowRateChartSeries: Array<any>;
-  cargoTankCategories: Array<any> = [];
-  ballastTankCategories: Array<any> = [];
-  cargoPumpCategories: Array<any> = [];
-  ballastPumpCategories: Array<any> = [];
-  flowRateChartTankCategories: Array<any> = [];
+  cargoTankCategories: ITank[] = [];
+  ballastTankCategories: ITank[] = [];
+  cargoPumpCategories: IPump[] = [];
+  ballastPumpCategories: IPump[] = [];
+  flowRateChartTankCategories: ITank[] = [];
+  minXAxisValue: number;
+  maxXAxisValue: number;
+  stageInterval: number;
+  stagePlotLines: Highcharts.XAxisPlotLinesOptions[];
+  stageTickPositions: number[];
+  cargoStageTickPositions: number[];
+  tickPositions: number[];
+  flowRates: Array<any>;
+  stabilityParams: IStabilityParam[];
+
 
   /**
    * Draw a single line in the table
@@ -316,216 +97,84 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       .add();
   }
 
-  constructor(private ngxSpinnerService: NgxSpinnerService) { }
+  constructor(private ngxSpinnerService: NgxSpinnerService,
+    private loadingDischargingSequenceService: LoadingDischargingSequenceApiService,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
 
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.ngxSpinnerService.show();
-    this.cargoTankCategories = [{ id: 1, tankNo: '1C' }, { id: 2, tankNo: '2C' }, { id: 3, tankNo: '3C' }, { id: 4, tankNo: '4C' }, { id: 5, tankNo: '5C' }, { id: 6, tankNo: '1P' }, { id: 7, tankNo: '1S' }];
-    this.ballastTankCategories = [{ id: 1, tankNo: 'FPT', type: 'Ballast' }, { id: 2, tankNo: '1PS', type: 'Ballast' }, { id: 3, tankNo: '2PS', type: 'Ballast' }, { id: 4, tankNo: '3PS', type: 'Ballast' }];
-    this.cargoPumpCategories = [{ id: 1, pumpNo: 'NO. 1COP', type: 'Cargo Pump' }, { id: 2, pumpNo: 'NO. 2COP', type: 'Cargo Pump' }, { id: 3, pumpNo: 'NO. 3COP', type: 'Cargo Pump' }, { id: 4, pumpNo: 'TCP', type: 'Cargo Pump' }];
-    this.ballastPumpCategories = [{ id: 1, pumpNo: 'NO. 1WBP', type: 'Ballast Pump' }, { id: 2, pumpNo: 'NO. 2WBP', type: 'Ballast Pump' }, { id: 3, pumpNo: 'GS PUMP', type: 'Ballast Pump' }];
-    this.flowRateChartTankCategories = [{ id: 1, tankNo: '1C', type: 'Cargo Pump' }, { id: 2, tankNo: '2C', type: 'Cargo Pump' }, { id: 3, tankNo: '3C', type: 'Ballast' }, { id: 4, tankNo: '4C', type: 'Ballast' }];
 
-    const cargoSequenceSeriesData = [];
-    const cargoPumpSequenceSeriesData = [];
-    const ballastSequenceSeriesData = [];
-    const ballastPumpSequenceSeriesData = [];
+    const sequenceDataResponse = await this.loadingDischargingSequenceService.getSequenceData(0, 0, 0).toPromise();
+    const sequenceData = this.loadingDischargingTransformationService.transformSequenceData(sequenceDataResponse);
+    LoadingDischargingSequenceChartComponent.cargos = sequenceData.cargos;
+    LoadingDischargingSequenceChartComponent.ballasts = sequenceData.ballasts;
+    LoadingDischargingSequenceChartComponent.cargoStages = sequenceData.cargoStages;
+    LoadingDischargingSequenceChartComponent.cargoLoadingRates = sequenceData.cargoLoadingRates;
+    this.cargoTankCategories = sequenceData.cargoTankCategories;
+    this.flowRateChartTankCategories = sequenceData.cargoTankCategories;
+    this.ballastTankCategories = sequenceData.ballastTankCategories;
+    this.minXAxisValue = sequenceData.minXAxisValue;
+    this.maxXAxisValue = sequenceData.maxXAxisValue;
+    this.stageInterval = sequenceData.interval;
+    this.stagePlotLines = sequenceData.stagePlotLines;
+    this.cargoStageTickPositions = sequenceData.cargoStageTickPositions;
+    this.stageTickPositions = sequenceData.stageTickPositions;
+    this.tickPositions = sequenceData.tickPositions;
+    this.cargoPumps = sequenceData?.cargoPumps;
+    this.ballastPumps = sequenceData.ballastPumps;
+    this.cargoPumpCategories = sequenceData?.cargoPumpCategories;
+    this.ballastPumpCategories = sequenceData.ballastPumpCategories;
+    this.flowRates = sequenceData?.flowRates ?? [];
+    this.stabilityParams = sequenceData.stabilityParams;
 
-    LoadingDischargingSequenceChartComponent.stages.map(stage => {
-      const cargos = LoadingDischargingSequenceChartComponent.cargos.filter(cargo => cargo.stageId === stage.id);
-      cargos.forEach((cargoData) => {
-        cargoData?.data?.forEach((dataObj: any) => {
-          const tankIndex = this.cargoTankCategories.findIndex(i => i?.id === dataObj.tankId);
-          cargoSequenceSeriesData.push({
-            tankId: dataObj?.tankId,
-            start: dataObj?.start,
-            end: dataObj?.end,
-            className: dataObj?.className,
-            tankNo: this.cargoTankCategories[tankIndex].tankNo,
-            ullage: dataObj?.ullage,
-            quantity: dataObj?.quantity,
-            id: dataObj?.id,
-            color: dataObj?.id === 'stripping' ? '#d1d1d1' : cargoData.color,
-            abbreviation: cargoData.abbreviation,
-            y: tankIndex,
-            pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
-            borderColor: dataObj?.id === 'stripping' ? 'grey' : null,
-          });
-        });
-      });
+    this.setCargoTankSequenceData();
+    this.setBallastTankSequenceData();
+    this.setBallastPumpSequenceData();
+    this.setFlowRateData();
+    this.setStabilityData();
 
-      const cargoPumbs = this.cargoPumps.filter(item => item.stageId === stage.id);
-      cargoPumbs.forEach((item) => {
-        item?.data?.forEach((dataObj: any) => {
-          const pumpIndex = this.cargoPumpCategories.findIndex(i => i?.id === dataObj.pumpId);
-          cargoPumpSequenceSeriesData.push({
-            pumpId: dataObj?.pumpId,
-            start: dataObj?.start,
-            end: dataObj?.end,
-            className: dataObj?.className,
-            pumpNo: this.cargoPumpCategories[pumpIndex].pumpNo,
-            rate: dataObj?.rate,
-            id: dataObj?.id,
-            color: dataObj?.id === 'stripping' ? '#d1d1d1' : item.color,
-            y: pumpIndex,
-            pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
-            borderColor: dataObj?.id === 'stripping' ? 'grey' : null,
-          });
-        });
-      });
-
-      const ballasts = LoadingDischargingSequenceChartComponent.ballasts.filter(item => item.stageId === stage.id);
-      ballasts.forEach((item) => {
-        item?.data?.forEach((dataObj: any) => {
-          const tankIndex = this.ballastTankCategories.findIndex(i => i?.id === dataObj.tankId);
-          ballastSequenceSeriesData.push({
-            tankId: dataObj?.tankId,
-            start: dataObj?.start,
-            end: dataObj?.end,
-            className: dataObj?.className,
-            tankNo: this.ballastTankCategories[tankIndex].tankNo,
-            rate: dataObj?.rate,
-            id: dataObj?.id,
-            color: dataObj?.id === 'stripping' ? '#d1d1d1' : item.color,
-            abbreviation: item.abbreviation,
-            y: tankIndex,
-            pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
-            borderColor: dataObj?.id === 'stripping' ? 'grey' : null,
-          });
-        });
-      });
-
-      const ballastPumbs = this.ballastPumps.filter(item => item.stageId === stage.id);
-      ballastPumbs.forEach((item) => {
-        item?.data?.forEach((dataObj: any) => {
-          const pumpIndex = this.ballastPumpCategories.findIndex(i => i?.id === dataObj.pumpId);
-          ballastPumpSequenceSeriesData.push({
-            pumpId: dataObj?.pumpId,
-            start: dataObj?.start,
-            end: dataObj?.end,
-            className: dataObj?.className,
-            pumpNo: this.ballastPumpCategories[pumpIndex]?.pumpNo,
-            rate: dataObj?.rate,
-            id: dataObj?.id,
-            color: dataObj?.id === 'stripping' ? '#d1d1d1' : item.color,
-            y: pumpIndex,
-            pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
-            borderColor: dataObj?.id === 'stripping' ? 'grey' : null,
-          });
-        });
-      });
-    });
-
-    this.cargoSequenceChartSeries = [{
-      name: `${LoadingDischargingSequenceChartComponent.operation === OPERATION.LOADING ? 'LOADING' : 'DISCHARGING'} SEQUENCE`,
-      custom: LoadingDischargingSequenceChartComponent.stages,
-      showInLegend: false,
-      data: cargoSequenceSeriesData
-    }];
-
-    this.cargoPumpSequenceChartSeries = [{
-      name: `${LoadingDischargingSequenceChartComponent.operation === OPERATION.LOADING ? 'LOADING' : 'DISCHARGING'} RATE`,
-      custom: LoadingDischargingSequenceChartComponent.stages,
-      showInLegend: false,
-      data: cargoPumpSequenceSeriesData
-    }];
-
-    this.ballastSequenceChartSeries = [{
-      name: `${LoadingDischargingSequenceChartComponent.operation === OPERATION.LOADING ? 'LOADING' : 'DISCHARGING'} SEQUENCE`,
-      custom: LoadingDischargingSequenceChartComponent.stages,
-      showInLegend: false,
-      data: ballastSequenceSeriesData
-    }];
-
-    this.ballastPumpSequenceChartSeries = [{
-      name: `${LoadingDischargingSequenceChartComponent.operation === OPERATION.LOADING ? 'LOADING' : 'DISCHARGING'} RATE`,
-      custom: LoadingDischargingSequenceChartComponent.stages,
-      showInLegend: false,
-      data: ballastPumpSequenceSeriesData
-    }];
-
-    this.stabilityChartSeries = [{
-      yAxis: 0,
-      type: 'areaspline',
-      name: "FORE DRAFT",
-      custom: {
-        showFinalValue: true
-      },
-      data: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 6), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 17, 20), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 8), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 16), Date.UTC(2014, 10, 18, 20)].map(v => [v, Math.floor(Math.random() * 11)]),
-    }, {
-      yAxis: 0,
-      type: 'areaspline',
-      name: "AFT DRAFT",
-      custom: {
-        showFinalValue: true
-      },
-      data: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 6), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 17, 20), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 8), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 16), Date.UTC(2014, 10, 18, 20)].map(v => [v, Math.floor(Math.random() * 11)]),
-    },
-    {
-      yAxis: 0,
-      type: 'areaspline',
-      name: "TRIM",
-      custom: {
-        showFinalValue: true
-      },
-      data: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 6), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 17, 20), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 8), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 16), Date.UTC(2014, 10, 18, 20)].map(v => [v, Math.floor(Math.random() * 11)]),
-    },
-    {
-      yAxis: 0,
-      type: 'areaspline',
-      name: "UKC",
-      custom: {
-        showFinalValue: true
-      },
-      data: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 6), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 17, 20), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 8), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 16), Date.UTC(2014, 10, 18, 20)].map(v => [v, Math.floor(Math.random() * 11)]),
-    },
-    {
-      yAxis: 0,
-      type: 'areaspline',
-      name: "GM (M)",
-      custom: {
-        showFinalValue: true
-      },
-      data: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 6), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 17, 20), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 8), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 16), Date.UTC(2014, 10, 18, 20)].map(v => [v, Math.floor(Math.random() * 11)]),
-    },
-    {
-      yAxis: 0,
-      type: 'areaspline',
-      name: "MAX. SHEARING FORCE (FR.NO./%)",
-      data: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 6), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 17, 20), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 8), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 16), Date.UTC(2014, 10, 18, 20)].map(v => [v, Math.floor(Math.random() * 11)]),
-    },
-    {
-      yAxis: 0,
-      type: 'areaspline',
-      name: "MAX. BENDING MOMENT (FR.NO./%)",
-      data: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 6), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 17, 20), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 8), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 16), Date.UTC(2014, 10, 18, 20)].map(v => [v, Math.floor(Math.random() * 11)]),
-    }];
-
-    this.flowRateChartSeries = [{
-      name: 'AGGREGATE',
-      type: 'areaspline',
-      custom: LoadingDischargingSequenceChartComponent.stages,
-      data: []
-    }, ...this.flowRateChartTankCategories.map(item => {
-      return {
-        name: item.tankNo,
-        type: 'spline',
-        custom: LoadingDischargingSequenceChartComponent.stages,
-        data: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 6), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 17, 20), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 8), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 16), Date.UTC(2014, 10, 18, 20)].map(v => [v, Math.floor(Math.random() * 11)])
-      }
-    })];
-    this.setChartData();
+    if (this.operation === OPERATIONS.DISCHARGING) {
+      this.setCargoPumpSequenceData();
+    }
     this.ngxSpinnerService.hide();
 
   }
 
   /**
-   * Set chart data
+   * Set cargo tank chart data
    *
    * @memberof LoadingDischargingSequenceChartComponent
    */
-  setChartData() {
+  setCargoTankSequenceData() {
+    const cargoSequenceSeriesData = [];
+    LoadingDischargingSequenceChartComponent.cargos?.forEach((dataObj: any) => {
+      const tankIndex = this.cargoTankCategories.findIndex(i => i?.id === dataObj.tankId);
+      cargoSequenceSeriesData.push({
+        tankId: dataObj?.tankId,
+        start: dataObj?.start,
+        end: dataObj?.end,
+        className: dataObj?.className,
+        tankName: this.cargoTankCategories[tankIndex].tankName,
+        ullage: dataObj?.ullage,
+        quantity: dataObj?.quantity,
+        id: dataObj?.id,
+        color: dataObj?.id === 'stripping' ? '#f8f8f8' : dataObj.color,
+        abbreviation: dataObj.abbreviation,
+        y: tankIndex,
+        pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
+        borderColor: dataObj?.id === 'stripping' ? '#bebebe' : null,
+        borderWidth: dataObj?.id === 'stripping' ? 1 : 0,
+        borderRadius: dataObj?.id === 'stripping' ? 5 : 0,
+      });
+    });
+    this.cargoSequenceChartSeries = [{
+      name: `${LoadingDischargingSequenceChartComponent.operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} SEQUENCE`,
+      custom: LoadingDischargingSequenceChartComponent.cargoStages,
+      showInLegend: false,
+      data: cargoSequenceSeriesData
+    }];
+
     this.cargoSequenceGanttChart = {
       credits: {
         enabled: false
@@ -553,8 +202,19 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               enabled: true,
               align: 'right',
               verticalAlign: 'bottom',
+              color: '#666666',
               formatter: function () {
-                return !this.point?.options?.className ? this.point?.ullage : undefined;
+                return !this.point?.options?.className && this.point?.options?.id !== 'stripping' ? this.point?.ullage : undefined;
+              }
+            },
+            {
+              enabled: true,
+              color: '#666666',
+              formatter: function () {
+                return this.point?.options?.id === 'stripping' ? 'STRIPPING BY EDUCTOR' : undefined;
+              },
+              animation: {
+                defer: 6000
               }
             },
             {
@@ -587,44 +247,14 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           grid: {
             enabled: false
           },
-          tickInterval: 3600,
+          // tickInterval: 1000 * 60 * 60,
+          tickPositions: this.tickPositions,
           tickLength: 0,
           gridLineWidth: 1,
           gridLineColor: '#bebebe',
-          min: Date.UTC(2014, 10, 17, 0),
-          max: Date.UTC(2014, 10, 18, 21),
-          dateTimeLabelFormats: {
-            hour: '%H'
-          },
-          plotLines: [{
-            value: Date.UTC(2014, 10, 17, 6),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 17, 20),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 18, 8),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 18, 16),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          }
-          ]
+          min: this.minXAxisValue,
+          max: this.maxXAxisValue,
+          plotLines: this.stagePlotLines
         },
         {
           grid: {
@@ -635,7 +265,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           gridZIndex: 3,
           gridLineColor: '#000d20',
           gridLineWidth: 1,
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
           tickLength: 50,
           margin: 10,
@@ -645,14 +275,20 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               if (!this.isLast) {
                 const equalIndex = this.axis.tickPositions.findIndex(value => value === this.value);
                 const nextTick = this.axis.tickPositions[equalIndex + 1];
+                const cargos = [];
                 let cargosLabel = '';
+
                 LoadingDischargingSequenceChartComponent.cargos.forEach((cargo: any) => {
-                  if (cargo.data.some(item => item.start >= this.value && item.end <= nextTick)) {
-                    cargosLabel += '<span><span class="badge-custom mx-1" style="background-color: ' + cargo?.color + '"> ' + cargo?.abbreviation + '</span>' + cargo?.name + '</span>';
+                  if (cargo.start >= this.value && cargo.end <= nextTick && !cargos.some(item => item?.cargoNominationId === cargo?.cargoNominationId)) {
+                    cargos.push({ cargoNominationId: cargo?.cargoNominationId, color: cargo?.color, abbreviation: cargo?.abbreviation, name: cargo?.name });
                   }
                 });
 
-                const stage = LoadingDischargingSequenceChartComponent.stages.find((data: any) => data.start <= this.value && data.end > this.value);
+                cargos.forEach(cargo => {
+                  cargosLabel += '<span><span class="badge-custom mx-1" style="background-color: ' + cargo?.color + '"> ' + cargo?.abbreviation + '</span>' + cargo?.name + '</span>';
+                });
+
+                const stage = LoadingDischargingSequenceChartComponent.cargoStages.find((data: any) => data.start <= this.value && data.end > this.value);
 
                 const categoryLabel =
                   '<div class="row">' +
@@ -677,7 +313,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           gridZIndex: 3,
           gridLineColor: '#000d20',
           gridLineWidth: 1,
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
           tickLength: 80,
           labels: {
@@ -687,28 +323,38 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         {
           opposite: false,
           title: {
-            text: `TOTAL:20,21,154 BBLS`,
+            text: `TOTAL: ${this.cargoTankCategories.reduce((a, b) => a + b.quantity, 0)} BBLS`,
           },
           lineColor: '#bebebe',
           lineWidth: 1,
           grid: {
             enabled: true,
-            borderWidth: 0
+            // borderWidth: 0
           },
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 6), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 17, 20), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 8), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 16), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.stageTickPositions,
+          tickColor: '#000d20',
           labels: {
             useHTML: true,
             formatter: function () {
               const equalIndex = this.axis.tickPositions.findIndex(value => value === this.value);
               const nextTick = this.axis.tickPositions[equalIndex + 1];
               let quantity = 0;
+              const quantityPerTank = [];
               LoadingDischargingSequenceChartComponent.cargos.forEach((cargo: any) => {
-                cargo.data.forEach(item => {
-                  if (item.start <= this.value && item.end <= nextTick) {
-                    quantity += item.quantity;
+                if ((cargo.start >= this.value && cargo.end <= nextTick) || (cargo.start >= this.value && cargo.start < nextTick) || (cargo.end > this.value && cargo.end <= nextTick)) {
+                  const index = quantityPerTank.findIndex(tank => tank.tankId === cargo.tankId);
+                  if (index === -1 || index === undefined) {
+                    quantityPerTank.push({ tankId: cargo.tankId, quantity: cargo.quantity });
+                  } else {
+                    quantityPerTank[index].quantity = cargo.quantity;
                   }
-                });
+                }
               });
+
+              quantityPerTank.forEach(tank => {
+                quantity += Number(tank.quantity);
+              });
+
               const categoryLabel =
                 '<div class="row">' +
                 '<div class="col-md-12" style="text-align: center">' +
@@ -722,9 +368,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           offset: '0'
         },
         {
-          visible: LoadingDischargingSequenceChartComponent.operation === OPERATION.LOADING,
+          visible: LoadingDischargingSequenceChartComponent.operation === OPERATIONS.LOADING,
           title: {
-            text: `${LoadingDischargingSequenceChartComponent.operation === OPERATION.LOADING ? 'LOADING' : 'DISCHARGING'} RATE BBLS/HR`,
+            text: `${LoadingDischargingSequenceChartComponent.operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} RATE BBLS/HR`,
           },
           grid: {
             enabled: true,
@@ -733,21 +379,20 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           opposite: false,
           lineWidth: 0,
           lineColor: 'transparent',
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.stageTickPositions,
           tickColor: '#000d20',
           offset: '30',
           labels: {
             useHTML: true,
             formatter: function () {
               if (!this.isLast) {
-                const stage = LoadingDischargingSequenceChartComponent.stages.find((data: any) => data.start <= this.value && data.end >= this.value);
-                const rate = stage?.rate;
+                const equalIndex = this.axis.tickPositions.findIndex(value => value === this.value);
+                const rate = LoadingDischargingSequenceChartComponent.cargoLoadingRates[equalIndex].join('/');
 
                 const categoryLabel =
                   '<div class="row">' +
                   '<div class="col-md-12" style="text-align: center">' +
-                  '<span>Requested Max</span>' +
-                  '<br/><span>' + rate + ' BBLS/ HR</span>' +
+                  '<span>' + rate + ' BBLS/ HR</span>' +
                   '</div>' +
                   '</div>';
 
@@ -758,15 +403,15 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         },
       ],
       // TODO: needed in future
-      /* annotations: [{
-        labels: [{
-          point: 'stripping',
-          text: 'Stripping by Eductor',
-          shape: 'rect',
-          allowOverlap: true,
-          distance: -15,
-        }]
-      }], */
+      /*  annotations: [{
+         labels: [{
+           point: 'stripping',
+           text: 'Stripping by Eductor222',
+           shape: 'rect',
+           allowOverlap: true,
+           distance: -15,
+         }]
+       }], */
       yAxis: {
         type: 'category',
         grid: {
@@ -780,7 +425,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 y: -73.5,
               },
               categories: this.cargoTankCategories.map(function (item) {
-                return item.tankNo;
+                return item.tankName;
               })
             },
             {
@@ -789,15 +434,22 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 useHTML: true,
                 y: -73.5,
               },
-              categories: ['AEL', 'KU', 'AEL', 'OM', 'AEH'],
+              categories: this.cargoTankCategories.map(function (item) {
+                return item.id.toString();
+              }),
               labels: {
                 useHTML: true,
                 formatter: function () {
                   let cargosLabel = '';
+                  const cargos = [];
+
                   LoadingDischargingSequenceChartComponent.cargos.forEach((cargo: any) => {
-                    if (cargo.abbreviation === this.value) {
-                      cargosLabel += '<span><span class="badge-custom mx-1" style="background-color: ' + cargo?.color + '"> ' + cargo?.abbreviation + '</span></span>';
+                    if (cargo?.tankId === Number(this.value) && !cargos.some(item => item?.cargoNominationId === cargo?.cargoNominationId)) {
+                      cargos.push({ cargoNominationId: cargo?.cargoNominationId, color: cargo?.color, abbreviation: cargo?.abbreviation });
                     }
+                  });
+                  cargos?.forEach(cargo => {
+                    cargosLabel += '<span><span class="badge-custom mx-1" style="background-color: ' + cargo?.color + '"> ' + cargo?.abbreviation + '</span></span>';
                   });
 
                   const categoryLabel = cargosLabel;
@@ -812,16 +464,22 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 useHTML: true,
                 y: -73.5
               },
-              categories: ['2.3', '2.4', '2.6', '2.5', '2.1', '2.5', '2.2']
-            }, {
+              categories: this.cargoTankCategories.map(function (item) {
+                return item.ullage.toString();
+              })
+            },
+            {
               width: 200,
-              categories: ['1.866', '1.857', '1.458', '1.058', '1.229', '1.928', '2.319'],
+              categories: this.cargoTankCategories.map(function (item) {
+                return item.quantity.toString();
+              }),
               title: {
                 text: `<div style="padding: 31px 0px; white-space: normal; text-align: center; border-right: 0; border-bottom: 0;">QTY BBLS</div>`,
                 useHTML: true,
                 y: -73.5
               }
-            }]
+            }
+          ]
         },
         gridLineColor: '#bebebe'
       },
@@ -837,9 +495,10 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             tooltipContent = `COW ANGLE <br/> 150&deg`;
           } else {
             cargoNames = this?.point?.abbreviation;
-            duration = (this?.point?.end - this?.point?.start) / (1000 * 60 * 60);
-            startingTime = Highcharts.dateFormat('%H', this?.point?.start);
-            endingTime = Highcharts.dateFormat('%H', this?.point?.end);
+            const min = this.series.xAxis.min;
+            startingTime = (this?.point?.start - min) / (1000 * 60 * 60);
+            endingTime = (this?.point?.end - min) / (1000 * 60 * 60);
+            duration = (this?.point?.end - min) / (1000 * 60 * 60);
             quantity = this?.point?.quantity;
             ullage = this?.point?.ullage;
             tooltipContent = `<p>${cargoNames}</p><br/>
@@ -855,6 +514,39 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       series: this.cargoSequenceChartSeries
 
     };
+  }
+
+  /**
+   * Set cargo pump chart data
+   *
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  setCargoPumpSequenceData() {
+    const cargoPumpSequenceSeriesData = [];
+    this.cargoPumps.forEach((dataObj: any) => {
+      const pumpIndex = this.cargoPumpCategories.findIndex(i => i?.id === dataObj.pumpId);
+      cargoPumpSequenceSeriesData.push({
+        pumpId: dataObj?.pumpId,
+        start: dataObj?.start,
+        end: dataObj?.end,
+        className: dataObj?.className,
+        pumpName: this.cargoPumpCategories[pumpIndex].pumpName,
+        rate: dataObj?.rate,
+        id: dataObj?.id,
+        color: dataObj?.id === 'stripping' ? '#f8f8f8' : dataObj.color,
+        y: pumpIndex,
+        pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
+        borderColor: dataObj?.id === 'stripping' ? '#bebebe' : null,
+        borderWidth: dataObj?.id === 'stripping' ? 1 : 0,
+        borderRadius: dataObj?.id === 'stripping' ? 5 : 0,
+      });
+    });
+    this.cargoPumpSequenceChartSeries = [{
+      name: `${LoadingDischargingSequenceChartComponent.operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} RATE`,
+      custom: LoadingDischargingSequenceChartComponent.cargoStages,
+      showInLegend: false,
+      data: cargoPumpSequenceSeriesData
+    }];
 
     this.cargoPumpSequenceGanttChart = {
       credits: {
@@ -914,48 +606,21 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           grid: {
             enabled: false
           },
-          tickInterval: 3600,
+          // tickInterval: 1000 * 60 * 60,
+          tickPositions: this.tickPositions,
           tickLength: 0,
           gridLineWidth: 1,
           gridLineColor: '#bebebe',
-          min: Date.UTC(2014, 10, 17, 0),
-          max: Date.UTC(2014, 10, 18, 21),
+          min: this.minXAxisValue,
+          max: this.maxXAxisValue,
           dateTimeLabelFormats: {
             hour: '%H'
           },
-          plotLines: [{
-            value: Date.UTC(2014, 10, 17, 6),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 17, 20),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 18, 8),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 18, 16),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          }
-          ]
+          plotLines: this.stagePlotLines
         },
         {
           title: {
-            text: LoadingDischargingSequenceChartComponent.operation === OPERATION.DISCHARGING ? `DISCHARGING RATE BBLS/HR` : null,
+            text: LoadingDischargingSequenceChartComponent.operation === OPERATIONS.DISCHARGING ? `DISCHARGING RATE BBLS/HR` : null,
           },
           grid: {
             enabled: true,
@@ -964,16 +629,16 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           lineColor: 'transparent',
           gridZIndex: 3,
           gridLineColor: '#000d20',
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
           tickLength: 100,
           margin: 10,
           labels: {
-            enabled: LoadingDischargingSequenceChartComponent.operation === OPERATION.DISCHARGING,
+            enabled: LoadingDischargingSequenceChartComponent.operation === OPERATIONS.DISCHARGING,
             useHTML: true,
             formatter: function () {
               if (!this.isLast) {
-                const stage = LoadingDischargingSequenceChartComponent.stages.find((data: any) => data.start <= this.value && data.end >= this.value);
+                const stage = LoadingDischargingSequenceChartComponent.cargoStages.find((data: any) => data.start <= this.value && data.end >= this.value);
                 const rate = stage?.rate;
 
                 const categoryLabel =
@@ -999,7 +664,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           gridZIndex: 3,
           gridLineColor: '#000d20',
           gridLineWidth: 1,
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
           margin: -45,
           labels: {
@@ -1020,7 +685,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 y: -45,
               },
               categories: this.cargoPumpCategories.map(function (item) {
-                return item.pumpNo;
+                return item.pumpName;
               })
             }]
         },
@@ -1033,17 +698,53 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         borderRadius: 20,
         followPointer: true,
         formatter: function () {
-          const pumpNo = this?.point?.pumpNo,
+          const pumpName = this?.point?.pumpName,
             seriesName = this?.series?.name,
             rate = this?.point?.rate;
 
-          return `<p>${pumpNo}</p><br/>
+          return `<p>${pumpName}</p><br/>
                   <p>${seriesName} <span>${rate}</span></p>`;
 
         },
       },
       series: this.cargoPumpSequenceChartSeries
     };
+  }
+
+  /**
+   * Set ballast tank chart data
+   *
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  setBallastTankSequenceData() {
+    const ballastSequenceSeriesData = [];
+    LoadingDischargingSequenceChartComponent.ballasts.forEach((dataObj: any) => {
+      const tankIndex = this.ballastTankCategories.findIndex(i => i?.id === dataObj.tankId);
+      ballastSequenceSeriesData.push({
+        tankId: dataObj?.tankId,
+        start: dataObj?.start,
+        end: dataObj?.end,
+        className: dataObj?.className,
+        tankName: this.ballastTankCategories[tankIndex].tankName,
+        rate: dataObj?.rate,
+        sounding: dataObj?.sounding,
+        quantity: dataObj?.quantity,
+        id: dataObj?.id,
+        color: dataObj?.id === 'stripping' ? '#f8f8f8' : dataObj.color,
+        abbreviation: 'Ballast',
+        y: tankIndex,
+        pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
+        borderColor: dataObj?.id === 'stripping' ? '#bebebe' : null,
+        borderWidth: dataObj?.id === 'stripping' ? 1 : 0,
+        borderRadius: dataObj?.id === 'stripping' ? 5 : 0,
+      });
+    });
+    this.ballastSequenceChartSeries = [{
+      name: `${LoadingDischargingSequenceChartComponent.operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} SEQUENCE`,
+      custom: LoadingDischargingSequenceChartComponent.cargoStages,
+      showInLegend: false,
+      data: ballastSequenceSeriesData
+    }];
 
     this.ballastSequenceGanttChart = {
       credits: {
@@ -1068,14 +769,19 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               enabled: true,
               align: 'right',
               verticalAlign: 'bottom',
+              color: '#666666',
               formatter: function () {
-                return this.point?.options?.id !== 'stripping' && !this.point?.options?.className ? this.point?.ullage : undefined;
+                return this.point?.options?.id !== 'stripping' && !this.point?.options?.className ? this.point?.sounding : undefined;
               }
             },
             {
               enabled: true,
+              color: '#666666',
               formatter: function () {
-                return this.point?.options?.id === 'stripping' ? 'Stripping by Eductor' : undefined;
+                return this.point?.options?.id === 'stripping' ? 'STRIPPING BY EDUCTOR' : undefined;
+              },
+              animation: {
+                defer: 6000
               }
             },
             {
@@ -1110,44 +816,14 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           grid: {
             enabled: false
           },
-          tickInterval: 3600,
+          // tickInterval: 1000 * 60 * 60,
+          tickPositions: this.tickPositions,
           tickLength: 0,
           gridLineWidth: 1,
           gridLineColor: '#bebebe',
-          min: Date.UTC(2014, 10, 17, 0),
-          max: Date.UTC(2014, 10, 18, 21),
-          dateTimeLabelFormats: {
-            hour: '%H'
-          },
-          plotLines: [{
-            value: Date.UTC(2014, 10, 17, 6),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 17, 20),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 18, 8),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 18, 16),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          }
-          ]
+          min: this.minXAxisValue,
+          max: this.maxXAxisValue,
+          plotLines: this.stagePlotLines
         },
         {
           lineColor: '#bebebe',
@@ -1158,21 +834,29 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           },
           grid: {
             enabled: true,
-            borderWidth: 0
+            // borderWidth: 0
           },
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 6), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 17, 20), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 8), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 16), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.stageTickPositions,
+          tickColor: '#000d20',
           labels: {
             useHTML: true,
             formatter: function () {
               const equalIndex = this.axis.tickPositions.findIndex(value => value === this.value);
               const nextTick = this.axis.tickPositions[equalIndex + 1];
               let quantity = 0;
+              const quantityPerTank = [];
               LoadingDischargingSequenceChartComponent.ballasts.forEach((ballast: any) => {
-                ballast.data.forEach(item => {
-                  if (item.start <= this.value && item.end <= nextTick) {
-                    quantity += item.quantity;
+                if ((ballast.start >= this.value && ballast.end <= nextTick) || (ballast.start >= this.value && ballast.start < nextTick) || (ballast.end > this.value && ballast.end <= nextTick)) {
+                  const index = quantityPerTank.findIndex(tank => tank.tankId === ballast.tankId);
+                  if (index === -1 || index === undefined) {
+                    quantityPerTank.push({ tankId: ballast.tankId, quantity: ballast.quantity });
+                  } else {
+                    quantityPerTank[index].quantity = ballast.quantity;
                   }
-                });
+                }
+              });
+              quantityPerTank.forEach(tank => {
+                quantity += Number(tank.quantity);
               });
               const categoryLabel =
                 '<div class="row">' +
@@ -1195,7 +879,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           gridZIndex: 3,
           gridLineColor: '#000d20',
           gridLineWidth: 1,
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
           tickLength: 45,
           margin: -45,
@@ -1211,7 +895,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           lineColor: 'transparent',
           gridZIndex: 3,
           gridLineColor: '#000d20',
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
           tickLength: 50,
           margin: 10,
@@ -1233,7 +917,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 y: -35,
               },
               categories: this.ballastTankCategories.map(function (item) {
-                return item.tankNo;
+                return item.tankName;
               })
             }]
         },
@@ -1246,17 +930,58 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         borderRadius: 20,
         followPointer: true,
         formatter: function () {
-          const tankNo = this?.point?.tankNo,
-            seriesName = this?.series?.name,
-            rate = this?.point?.rate;
+          const min = this.series.xAxis.min, startingTime = (this?.point?.start - min) / (1000 * 60 * 60),
+            endingTime = (this?.point?.end - min) / (1000 * 60 * 60),
+            duration = (this?.point?.end - min) / (1000 * 60 * 60),
+            quantity = this?.point?.quantity,
+            sounding = this?.point?.sounding,
+            tooltipContent = `<p>HOURS <span>${duration}</span></p><br/>
+                  <p>STARTING TIME <span>${startingTime}</span></p><br/>
+                  <p>ENDING TIME <span>${endingTime}</span></p><br/>
+                  <p>QUANTITY <span>${quantity}</span></p><br/>
+                  <p>SOUNDING <span>${sounding}</span></p>`;
 
-          return `<p>${tankNo}</p><br/>
-                  <p>${seriesName} <span>${rate}</span></p>`;
+          return tooltipContent;
 
         },
       },
       series: this.ballastSequenceChartSeries
     };
+  }
+
+  /**
+   * Set ballast pump chart data
+   *
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  setBallastPumpSequenceData() {
+    const ballastPumpSequenceSeriesData = [];
+
+    this.ballastPumps?.forEach((dataObj: any) => {
+      const pumpIndex = this.ballastPumpCategories.findIndex(i => i?.id === dataObj.pumpId);
+      ballastPumpSequenceSeriesData.push({
+        pumpId: dataObj?.pumpId,
+        start: dataObj?.start,
+        end: dataObj?.end,
+        className: dataObj?.className,
+        pumpName: this.ballastPumpCategories[pumpIndex]?.pumpName,
+        rate: dataObj?.rate,
+        id: dataObj?.id,
+        color: dataObj?.id === 'gravity' || dataObj?.id === 'stripping' ? '#f8f8f8' : dataObj.color,
+        y: pumpIndex,
+        pointWidth: dataObj?.id === 'gravity' || dataObj?.id === 'stripping' ? 40 : 6,
+        borderColor: dataObj?.id === 'gravity' || dataObj?.id === 'stripping' ? '#bebebe' : null,
+        borderWidth: dataObj?.id === 'gravity' || dataObj?.id === 'stripping' ? 1 : 0,
+        borderRadius: dataObj?.id === 'gravity' || dataObj?.id === 'stripping' ? 5 : 0,
+      });
+    });
+
+    this.ballastPumpSequenceChartSeries = [{
+      name: `${LoadingDischargingSequenceChartComponent.operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} RATE`,
+      custom: LoadingDischargingSequenceChartComponent.cargoStages,
+      showInLegend: false,
+      data: ballastPumpSequenceSeriesData
+    }];
 
     this.ballastPumpSequenceGanttChart = {
       credits: {
@@ -1281,8 +1006,19 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               enabled: true,
               align: 'right',
               verticalAlign: 'bottom',
+              color: '#666666',
               formatter: function () {
-                return this.point?.options?.id !== 'stripping' && !this.point?.options?.className ? this.point?.ullage : undefined;
+                return this.point?.options?.id !== 'stripping' && !this.point?.options?.className ? this.point?.sounding : undefined;
+              }
+            },
+            {
+              enabled: true,
+              color: '#666666',
+              formatter: function () {
+                return this.point?.options?.id === 'gravity' ? 'GRAVITY' : undefined;
+              },
+              animation: {
+                defer: 6000
               }
             },
             {
@@ -1316,44 +1052,17 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           grid: {
             enabled: false
           },
-          tickInterval: 3600,
+          // tickInterval: 1000 * 60 * 60,
+          tickPositions: this.tickPositions,
           tickLength: 0,
           gridLineWidth: 1,
           gridLineColor: '#bebebe',
-          min: Date.UTC(2014, 10, 17, 0),
-          max: Date.UTC(2014, 10, 18, 21),
+          min: this.minXAxisValue,
+          max: this.maxXAxisValue,
           dateTimeLabelFormats: {
             hour: '%H'
           },
-          plotLines: [{
-            value: Date.UTC(2014, 10, 17, 6),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 17, 20),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 18, 8),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 18, 16),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          }
-          ]
+          plotLines: this.stagePlotLines
         },
         {
           grid: {
@@ -1363,10 +1072,24 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           lineColor: 'transparent',
           gridZIndex: 3,
           gridLineColor: '#000d20',
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
           tickLength: 50,
           margin: 10,
+          labels: {
+            enabled: false
+          }
+        },
+        {
+          lineColor: '#bebebe',
+          lineWidth: 1,
+          opposite: false,
+          grid: {
+            enabled: true,
+            // borderWidth: 0
+          },
+          tickPositions: this.stageTickPositions,
+          tickColor: '#000d20',
           labels: {
             enabled: false
           }
@@ -1381,13 +1104,13 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           gridZIndex: 3,
           gridLineColor: '#000d20',
           gridLineWidth: 1,
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
           margin: -45,
           labels: {
             enabled: false
           },
-        },
+        }
       ],
       yAxis: {
         type: 'category',
@@ -1402,7 +1125,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 y: -45,
               },
               categories: this.ballastPumpCategories.map(function (item) {
-                return item.pumpNo;
+                return item.pumpName;
               })
             }]
         },
@@ -1415,17 +1138,43 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         borderRadius: 20,
         followPointer: true,
         formatter: function () {
-          const pumpNo = this?.point?.pumpNo,
+          const pumpName = this?.point?.pumpName,
             seriesName = this?.series?.name,
             rate = this?.point?.rate;
 
-          return `<p>${pumpNo}</p><br/>
+          return `<p>${pumpName}</p><br/>
                   <p>${seriesName} <span>${rate}</span></p>`;
 
         },
       },
       series: this.ballastPumpSequenceChartSeries
     };
+  }
+
+  /**
+   * Set flow rate chart data
+   *
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  setFlowRateData() {
+    this.flowRateChartSeries = [
+      {
+        name: 'AGGREGATE',
+        type: 'areaspline',
+        custom: LoadingDischargingSequenceChartComponent.cargoStages,
+        data: [],
+        // step: 'left'
+      },
+      ...this.flowRates?.map(item => {
+        return {
+          name: item.tankName,
+          type: 'line',
+          custom: LoadingDischargingSequenceChartComponent.cargoStages,
+          data: item.data,
+          step: 'left'
+        }
+      })];
+
 
     this.flowRateAreaChart = {
       credits: {
@@ -1464,7 +1213,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             enabled: false
           }
         },
-        spline: {
+        line: {
           marker: {
             enabled: false
           }
@@ -1474,13 +1223,16 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         {
           lineColor: '#bebebe',
           lineWidth: 1,
-          startOnTick: true,
+          // startOnTick: true,
           crosshair: {
             color: 'red',
             snap: false
           },
           opposite: true,
           type: 'datetime',
+          events: {
+            setExtremes: this.syncExtremes
+          },
           labels: {
             align: 'center',
             formatter: function (y) {
@@ -1489,62 +1241,36 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               return number.toString();
             }
           },
-          tickInterval: 3600,
+          // tickInterval: 1000 * 60 * 60,
+          tickPositions: this.tickPositions,
           tickLength: 0,
           // tickColor: '#bebebe',
           gridLineColor: '#bebebe',
-          min: Date.UTC(2014, 10, 17, 0),
-          max: Date.UTC(2014, 10, 18, 21),
+          min: this.minXAxisValue,
+          max: this.maxXAxisValue,
           dateTimeLabelFormats: {
             hour: '%H'
           },
-          plotLines: [{
-            value: Date.UTC(2014, 10, 17, 6),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 17, 20),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 18, 8),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          },
-          {
-            value: Date.UTC(2014, 10, 18, 16),
-            color: '#000d20',
-            width: 1,
-            dashStyle: 'Dash',
-            zIndex: 1
-          }
-          ]
+          plotLines: this.stagePlotLines
         },
         {
           lineWidth: 0,
-          startOnTick: true,
+          // startOnTick: true,
           opposite: true,
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
           tickLength: 20,
           margin: 10,
           gridLineColor: '#000d20',
-          min: Date.UTC(2014, 10, 17, 0),
-          max: Date.UTC(2014, 10, 18, 21),
+          min: this.minXAxisValue,
+          max: this.maxXAxisValue,
           labels: {
             enabled: false
           }
         },
       ],
       yAxis: [{
+        type: 'logarithmic',
         gridLineColor: '#bebebe',
         minorGridLineWidth: 0,
         // offset: 0,
@@ -1564,7 +1290,73 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       },
       series: this.flowRateChartSeries
     };
+  }
 
+  /**
+   * Set stability chart data
+   *
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  setStabilityData() {
+    this.stabilityChartSeries = [
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "FORE DRAFT",
+        custom: {
+          showFinalValue: true
+        },
+        data: this.stabilityParams.find(item => item.name === 'fore_draft')?.data,
+      },
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "AFT DRAFT",
+        custom: {
+          showFinalValue: true
+        },
+        data: this.stabilityParams.find(item => item.name === 'aft_draft')?.data,
+      },
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "TRIM",
+        custom: {
+          showFinalValue: true
+        },
+        data: this.stabilityParams.find(item => item.name === 'trim')?.data,
+      },
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "UKC",
+        custom: {
+          showFinalValue: true
+        },
+        data: this.stabilityParams.find(item => item.name === 'ukc')?.data,
+      },
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "GM (M)",
+        custom: {
+          showFinalValue: true
+        },
+        data: this.stabilityParams.find(item => item.name === 'gm')?.data,
+      },
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "MAX. SHEARING FORCE (FR.NO./%)",
+        data: this.stabilityParams.find(item => item.name === 'sf')?.data,
+      },
+      {
+        yAxis: 0,
+        type: 'areaspline',
+        name: "MAX. BENDING MOMENT (FR.NO./%)",
+        data: this.stabilityParams.find(item => item.name === 'bm')?.data,
+      }
+    ];
     this.stabilityGanttChart = {
       credits: {
         enabled: false
@@ -1589,7 +1381,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       },
       xAxis: [
         {
-          startOnTick: true,
+          // startOnTick: true,
           events: {
             setExtremes: this.syncExtremes
           },
@@ -1598,16 +1390,14 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           labels: {
             enabled: false,
           },
-          tickInterval: 3600,
+          // tickInterval: 1000 * 60 * 60,
+          tickPositions: this.tickPositions,
           tickLength: 0,
           tickColor: '#bebebe',
           gridLineWidth: 0,
           top: 13,
-          min: Date.UTC(2014, 10, 17, 0),
-          max: Date.UTC(2014, 10, 18, 21),
-          dateTimeLabelFormats: {
-            hour: '%H'
-          }
+          min: this.minXAxisValue,
+          max: this.maxXAxisValue,
         },
         {
           title: {
@@ -1618,7 +1408,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             y: 15,
             text: `DRAFT`,
           },
-          startOnTick: true,
+          // startOnTick: true,
           opposite: true,
           type: 'datetime',
           lineWidth: 0,
@@ -1631,29 +1421,26 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               return number.toString();
             }
           },
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 6), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 17, 20), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 8), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 16), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.stageTickPositions,
           tickLength: 20,
           tickColor: '#bebebe',
           gridLineWidth: 0,
           top: 24,
-          min: Date.UTC(2014, 10, 17, 0),
-          max: Date.UTC(2014, 10, 18, 21),
-          dateTimeLabelFormats: {
-            hour: '%H'
-          }
+          min: this.minXAxisValue,
+          max: this.maxXAxisValue,
         },
         {
           lineWidth: 0,
-          startOnTick: true,
+          // startOnTick: true,
           opposite: true,
           top: 39,
-          tickPositions: [Date.UTC(2014, 10, 17, 0), Date.UTC(2014, 10, 17, 12), Date.UTC(2014, 10, 18, 4), Date.UTC(2014, 10, 18, 12), Date.UTC(2014, 10, 18, 20)],
+          tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
           tickPosition: 'inside',
           tickLength: 20,
           gridLineWidth: 0,
-          min: Date.UTC(2014, 10, 17, 0),
-          max: Date.UTC(2014, 10, 18, 21),
+          min: this.minXAxisValue,
+          max: this.maxXAxisValue,
           labels: {
             enabled: false
           }
@@ -1702,7 +1489,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       i;
     for (i = 0; i < Highcharts.charts.length; i++) {
       chart = Highcharts.charts[i];
-      e = chart.pointer.normalize(e); // Find coordinates within the chart
+      e = chart?.pointer?.normalize(e); // Find coordinates within the chart
       points = [];
       chart.xAxis[0].drawCrosshair(e);
       chart.series.forEach((p) => {
@@ -1742,7 +1529,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     const points = series.points,
       len = points.length,
       x = chart.xAxis[0].toValue(event.chartX),
-      range = 1000 * 60 * 60;
+      range = 1000 * 60 * 5; // Show sychronized tooltip in the range
     let pointX,
       i;
 
@@ -1894,7 +1681,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     const chart: Highcharts.Chart = this;
 
     // Show COW legends only in discharging operation
-    if (LoadingDischargingSequenceChartComponent.operation === OPERATION.DISCHARGING) {
+    if (LoadingDischargingSequenceChartComponent.operation === OPERATIONS.DISCHARGING) {
       const cowLegend = `<ul class="list-group list-group-horizontal cow-legend">
                           <li class="list-group-item" style="background: none; border: none;">
                             <i class="pi pi-sort" style="color: #666666;font-size: 1.5em; padding-right: 5px; margin-top: -2px;"></i>
@@ -1936,7 +1723,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
   makeSumSeries = function (event) {
     const chart = this, series = chart.series,
       x = [];
-    let sum, flag;
+    let sum, flag, count;
 
     series[0].update({
       data: []
@@ -1957,18 +1744,19 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       }
     });
     for (let i = 0; i < x.length; i++) {
-      sum = 0;
+      sum = 0; count = 0;
       series.forEach(function (p, k) {
-        if (p.name !== 'sum' && p.visible === true) {
+        if (p.name !== 'AGGREGATE' && p.visible === true) {
           p.data.forEach(function (ob, j) {
             if (ob.x === x[i]) {
+              count++;
               sum += ob.y;
             }
           });
         }
       });
       series[0].addPoint({
-        y: parseFloat(sum.toFixed(2)),
+        y: parseFloat((sum / count).toFixed(2)),
         x: x[i]
       }, false);
     }

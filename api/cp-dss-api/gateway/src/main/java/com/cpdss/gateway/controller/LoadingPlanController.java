@@ -5,19 +5,8 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.AlgoStatusRequest;
-import com.cpdss.gateway.domain.RuleRequest;
-import com.cpdss.gateway.domain.RuleResponse;
-import com.cpdss.gateway.domain.UpdateUllage;
-import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsSaveRequest;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsSaveResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsStatus;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionsUpdateRequest;
+import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
@@ -546,6 +535,15 @@ public class LoadingPlanController {
       log.error("Exception in Get Loading Sequence API");
       e.printStackTrace();
       throw new CommonRestException(
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          headers,
+          HttpStatusCode.BAD_REQUEST,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Get Loading Sequence API");
+      e.printStackTrace();
+      throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
           HttpStatusCode.INTERNAL_SERVER_ERROR,
@@ -564,7 +562,7 @@ public class LoadingPlanController {
    * @return
    * @throws CommonRestException
    */
-  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/save-loading-plan")
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/loading-plan")
   public LoadingPlanAlgoResponse saveLoadingPlan(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
@@ -585,6 +583,96 @@ public class LoadingPlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in Save Loading Plan API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Get Loading Sequence API
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/loading-plan/{portRotationId}")
+  public LoadingPlanResponse getLoadingPlan(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Get Loading Plan API for vessel {}, voyage {}, loading information {}",
+          vesselId,
+          voyageId,
+          infoId);
+      return loadingPlanService.getLoadingPlan(vesselId, voyageId, infoId, portRotationId);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in Get Loading Plan API");
+      e.printStackTrace();
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in Get Loading Plan API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Retrieve all update ullage details
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      "/vessels/{vesselId}/pattern/{patternId}/port/{portRotationId}/update-ullage/{operationType}")
+  public LoadingUpdateUllageResponse getUpdateUllageDetails(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long patternId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @PathVariable String operationType)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Getting all update ullage details of vesselID: {} of pattern: {} with port rotation id: {}",
+          vesselId,
+          patternId,
+          portRotationId);
+      LoadingUpdateUllageResponse response =
+          loadingPlanService.getUpdateUllageDetails(
+              vesselId, patternId, portRotationId, operationType);
+      return response;
+    } catch (GenericServiceException e) {
+      log.error("Getting update ullage details Failed error");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in \"Getting update ullage details");
       e.printStackTrace();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,

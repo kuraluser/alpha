@@ -10,12 +10,16 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.protobuf.util.JsonFormat;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
@@ -64,6 +68,9 @@ public class LoadicatorService {
 
   @Autowired private LoadableStudyRepository loadableStudyRepository;
 
+  @Autowired
+  private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
+
   @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
 
   @Autowired private LoadablePatternService loadablePatternService;
@@ -73,6 +80,8 @@ public class LoadicatorService {
   @Autowired private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
 
   @Autowired private LoadableStudyService loadableStudyService;
+  @Autowired private JsonDataService jsonDataService;
+  @Autowired private CommunicationService communicationService;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -848,7 +857,7 @@ public class LoadicatorService {
   }
 
   /** @param request void */
-  private void saveLoadicatorResults(LoadableStudy.LoadicatorResultsRequest request) {
+  public void saveLoadicatorResults(LoadableStudy.LoadicatorResultsRequest request) {
     request
         .getLoadicatorPatternDetailsResultsList()
         .forEach(
@@ -976,6 +985,36 @@ public class LoadicatorService {
       this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
       loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
           LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
+      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
+          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+      Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
+          this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
+              request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
+
+      if (loadableStudyCommunicationStatus.get().getMessageUUID() != null) {
+        LoadableStudy.AlgoResponseCommunication.Builder algoRespComm =
+            LoadableStudy.AlgoResponseCommunication.newBuilder();
+        algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
+        LoadableStudy.LoadicatorResultsRequest.Builder loadicatorResultsRequest =
+            LoadableStudy.LoadicatorResultsRequest.newBuilder();
+        JsonFormat.parser()
+            .ignoringUnknownFields()
+            .merge(objectMapper.writeValueAsString(algoResponse), loadicatorResultsRequest);
+        algoRespComm.setLoadicatorResultsRequest(loadicatorResultsRequest.build());
+        Optional<JsonData> patternJson =
+            this.jsonDataService.getJsonData(
+                loadableStudyOpt.get().getId(),
+                LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
+        if (patternJson != null) {
+          LoadableStudy.LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest =
+              LoadableStudy.LoadablePatternAlgoRequest.newBuilder();
+          JsonFormat.parser()
+              .ignoringUnknownFields()
+              .merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
+          algoRespComm.setLoadablePatternAlgoRequest(loadablePatternAlgoRequest.build());
+        }
+        communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
+      }
     }
     replyBuilder =
         LoadableStudy.LoadicatorDataReply.newBuilder()
@@ -1067,7 +1106,7 @@ public class LoadicatorService {
                     + request.getLoadicatorPatternDetails(0).getLoadablePatternId()
                     + ".json"),
             loadicator);
-        loadableStudyService.saveJsonToDatabase(
+        jsonDataService.saveJsonToDatabase(
             request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
             LOADABLE_PATTERN_EDIT_LOADICATOR_REQUEST,
             objectMapper.writeValueAsString(loadicator));
@@ -1076,7 +1115,7 @@ public class LoadicatorService {
             new File(
                 this.rootFolder + "/json/loadicator_" + request.getLoadableStudyId() + ".json"),
             loadicator);
-        loadableStudyService.saveJsonToDatabase(
+        jsonDataService.saveJsonToDatabase(
             request.getLoadableStudyId(),
             LOADABLE_STUDY_LOADICATOR_REQUEST,
             objectMapper.writeValueAsString(loadicator));
@@ -1107,7 +1146,7 @@ public class LoadicatorService {
                     + request.getLoadicatorPatternDetails(0).getLoadablePatternId()
                     + ".json"),
             response);
-        loadableStudyService.saveJsonToDatabase(
+        jsonDataService.saveJsonToDatabase(
             request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
             LOADABLE_PATTERN_EDIT_LOADICATOR_RESPONSE,
             objectMapper.writeValueAsString(response));
@@ -1119,7 +1158,7 @@ public class LoadicatorService {
                     + request.getLoadableStudyId()
                     + ".json"),
             response);
-        loadableStudyService.saveJsonToDatabase(
+        jsonDataService.saveJsonToDatabase(
             request.getLoadableStudyId(),
             LOADABLE_STUDY_LOADICATOR_RESPONSE,
             objectMapper.writeValueAsString(response));

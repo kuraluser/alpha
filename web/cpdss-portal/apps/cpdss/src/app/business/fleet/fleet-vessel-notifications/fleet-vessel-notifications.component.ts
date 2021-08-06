@@ -1,3 +1,4 @@
+import { AppConfigurationService } from './../../../shared/services/app-configuration/app-configuration.service';
 import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
 import { TimeZoneTransformationService } from './../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
@@ -12,15 +13,22 @@ const vesselNotificationsMock: IFleetNotificationResponse = {
       vesselName: 'KAZUSA',
       vesselId: 149,
       flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-10',
-      updatedDate: '19-04-2021 09:15'
+      status: 'Vessel confirmed loadable plan for LS-16',
+      updatedDate: '19-05-2021 09:15'
     },
     {
-      vesselName: 'HAKUSAN',
-      vesselId: 150,
+      vesselName: 'KAZUSA',
+      vesselId: 149,
       flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-2',
-      updatedDate: '18-04-2021 10:15'
+      status: 'Vessel confirmed loadable plan for LS-15',
+      updatedDate: '18-05-2021 09:15'
+    },
+    {
+      vesselName: 'KAZUSA',
+      vesselId: 149,
+      flag: '../../../../assets/images/flags/japan.png',
+      status: 'Vessel confirmed loadable plan for LS-10',
+      updatedDate: '19-04-2021 09:15'
     },
     {
       vesselName: 'KAZUSA',
@@ -30,53 +38,11 @@ const vesselNotificationsMock: IFleetNotificationResponse = {
       updatedDate: '18-03-2021 09:15'
     },
     {
-      vesselName: 'HAKUSAN',
-      vesselId: 150,
-      flag: '../../../../assets/images/flags/japan.png',
-      status: 'The loading plan has been updated for Kiire',
-      updatedDate: '15-03-2021 09:15'
-    },
-    {
       vesselName: 'KAZUSA',
       vesselId: 149,
       flag: '../../../../assets/images/flags/japan.png',
       status: 'Vessel confirmed loadable plan for LS-4',
       updatedDate: '15-03-2021 09:15'
-    },
-    {
-      vesselName: 'SHIZUKISAN',
-      vesselId: 153,
-      flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-1343',
-      updatedDate: '14-03-2021 09:15'
-    },
-    {
-      vesselName: 'SHIZUKISAN',
-      vesselId: 153,
-      flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-144354',
-      updatedDate: '13-03-2021 09:15'
-    },
-    {
-      vesselName: 'SHIZUKISAN',
-      vesselId: 153,
-      flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-134',
-      updatedDate: '13-03-2021 09:15'
-    },
-    {
-      vesselName: 'KAZUSA',
-      vesselId: 149,
-      flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-2',
-      updatedDate: '12-03-2021 09:15'
-    },
-    {
-      vesselName: 'KAZUSA',
-      vesselId: 149,
-      flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-1',
-      updatedDate: '12-03-2021 08:15'
     }
   ],
   all: [
@@ -84,15 +50,22 @@ const vesselNotificationsMock: IFleetNotificationResponse = {
       vesselName: 'KAZUSA',
       vesselId: 149,
       flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-10',
-      updatedDate: '19-04-2021 09:15'
+      status: 'Vessel confirmed loadable plan for LS-16',
+      updatedDate: '19-05-2021 09:15'
     },
     {
-      vesselName: 'HAKUSAN',
-      vesselId: 150,
+      vesselName: 'KAZUSA',
+      vesselId: 149,
       flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-2',
-      updatedDate: '18-04-2021 10:15'
+      status: 'Vessel confirmed loadable plan for LS-15',
+      updatedDate: '18-05-2021 09:15'
+    },
+    {
+      vesselName: 'KAZUSA',
+      vesselId: 149,
+      flag: '../../../../assets/images/flags/japan.png',
+      status: 'Vessel confirmed loadable plan for LS-10',
+      updatedDate: '19-04-2021 09:15'
     },
     {
       vesselName: 'KAZUSA',
@@ -102,39 +75,11 @@ const vesselNotificationsMock: IFleetNotificationResponse = {
       updatedDate: '18-03-2021 09:15'
     },
     {
-      vesselName: 'HAKUSAN',
-      vesselId: 150,
-      flag: '../../../../assets/images/flags/japan.png',
-      status: 'The loading plan has been updated for Kiire',
-      updatedDate: '15-03-2021 09:15'
-    },
-    {
       vesselName: 'KAZUSA',
       vesselId: 149,
       flag: '../../../../assets/images/flags/japan.png',
       status: 'Vessel confirmed loadable plan for LS-4',
       updatedDate: '15-03-2021 09:15'
-    },
-    {
-      vesselName: 'SHIZUKISAN',
-      vesselId: 153,
-      flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-1343',
-      updatedDate: '14-03-2021 09:15'
-    },
-    {
-      vesselName: 'SHIZUKISAN',
-      vesselId: 153,
-      flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-144354',
-      updatedDate: '13-03-2021 09:15'
-    },
-    {
-      vesselName: 'SHIZUKISAN',
-      vesselId: 153,
-      flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-134',
-      updatedDate: '13-03-2021 09:15'
     },
     {
       vesselName: 'KAZUSA',
@@ -149,20 +94,6 @@ const vesselNotificationsMock: IFleetNotificationResponse = {
       flag: '../../../../assets/images/flags/japan.png',
       status: 'Vessel confirmed loadable plan for LS-1',
       updatedDate: '12-03-2021 08:15'
-    },
-    {
-      vesselName: 'MITSUI',
-      vesselId: 152,
-      flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-145',
-      updatedDate: '28-02-2021 09:15'
-    },
-    {
-      vesselName: 'MITSUI',
-      vesselId: 152,
-      flag: '../../../../assets/images/flags/japan.png',
-      status: 'Vessel confirmed loadable plan for LS-144',
-      updatedDate: '26-02-2021 10:15'
     }
   ]
 };
@@ -190,6 +121,7 @@ export class FleetVesselNotificationsComponent implements OnInit {
   searchKey: string;
   filteredDates: Date[];
   today = new Date();
+  dateFormat: string;
 
   constructor(
     private timeZoneTransformationService: TimeZoneTransformationService
@@ -197,6 +129,7 @@ export class FleetVesselNotificationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.initNotifications();
+    this.dateFormat = AppConfigurationService?.settings?.dateFormat;
   }
 
   /**

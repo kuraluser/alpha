@@ -15,3 +15,8 @@
     right: 15px;
     margin: auto;
 }
+
+.sidebar-table-scroll{
+    max-height: calc(100vh - 263px);
+    min-height: 80px;
+}

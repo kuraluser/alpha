@@ -14,7 +14,7 @@
                 </label>
 
                 <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
-                    (click)="addLoadingSequence()">{{'LOADING_INFORMATION_ADD_BUTTON_LABEL'
+                    (click)="addLoadingDischargingSequence()">{{'LOADING_INFORMATION_ADD_BUTTON_LABEL'
                     | translate }}</a>
 
             </div>
@@ -24,8 +24,8 @@
 </div>
 <div class="row">
     <div class="col ml-30 pt-20">
-        <cpdss-portal-datatable *ngIf="columns && loadingSequenceForm" [tableId]="'loading-sequence'" [form]="loadingSequenceForm"
-            [columns]="columns" [value]="loadingDelays" [editMode]="editMode" [listData]="listData"
+        <cpdss-portal-datatable *ngIf="columns && loadingDischargingSequenceForm && loadingDischargingDelays" [tableId]="'loading-discharging-sequence'" [form]="loadingDischargingSequenceForm"
+            [columns]="columns" [value]="loadingDischargingDelays" [editMode]="editMode" [listData]="listData"
             (editComplete)="onEditComplete($event)" (buttonClick)="onDelete($event)" [scrollable]="false"></cpdss-portal-datatable>
     </div>
 </div>

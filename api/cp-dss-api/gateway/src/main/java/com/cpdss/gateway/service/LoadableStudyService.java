@@ -11,6 +11,8 @@ import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.EnvoyReader;
+import com.cpdss.common.generated.EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub;
 import com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest;
 import com.cpdss.common.generated.EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
@@ -102,16 +104,22 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
+import com.cpdss.gateway.domain.simulator.DepartureConditionJson;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import com.cpdss.gateway.utility.RuleUtility;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ProtocolStringList;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -157,6 +165,9 @@ public class LoadableStudyService {
 
   @GrpcClient("envoywritersrvice")
   private EnvoyWriterServiceBlockingStub envoyWriterGrpcService;
+
+  @GrpcClient("envoyreadersrvice")
+  private EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
 
   @Autowired UserService userService;
 
@@ -5771,8 +5782,62 @@ public class LoadableStudyService {
   /** @return Object */
   public Object test() {
     EnvoyWriterRequest.Builder error = EnvoyWriterRequest.newBuilder();
-    error.setImoNumber("123");
-    this.envoyWriterGrpcService.getCommunicationServer(error.build());
+    error.setClientId("kazusa");
+    error.setMessageType("ls");
+    error.setJsonPayload("test data");
+    error.setImoNumber("9513402");
+    error.setMessageId("3638b5aa-1cd0-4e47-b1b7-5a7039f830f9");
+    // this.envoyWriterGrpcService.getCommunicationServer(error.build());
+    this.envoyWriterGrpcService.statusCheck(error.build());
+    return null;
+  }
+
+  /** @return Object */
+  public Object test1() {
+    EnvoyReader.EnvoyReaderResultRequest.Builder error =
+        EnvoyReader.EnvoyReaderResultRequest.newBuilder();
+    error.setClientId("KAZUSA");
+    error.setMessageType("LOADABLESTUDY");
+    error.setShipId("9513402");
+    EnvoyReader.EnvoyReaderResultReply jsonResult =
+        this.envoyReaderGrpcService.getResultFromCommServer(error.build());
+    return null;
+    /*com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.Builder req =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.newBuilder();
+    req.setJsonResult(jsonResult.getPatternResultJson());
+    return loadableStudyServiceBlockingStub.saveLoadableStudyShore(req.build());*/
+  }
+
+  public Object test2() {
+    Long loadableStudiesId = 7258L;
+    try {
+      LoadablePlanRequest loadablePlanrequest =
+          new Gson()
+              .fromJson(
+                  new String(
+                      Files.readAllBytes(
+                          Paths.get(
+                              this.rootFolder
+                                  + "/json/loadableStudyResult_"
+                                  + loadableStudiesId
+                                  + ".json"))),
+                  LoadablePlanRequest.class);
+      LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
+      request.setLoadableStudyId(loadableStudiesId);
+      request.setHasLodicator(loadablePlanrequest.getHasLoadicator());
+      buildLoadablePlanDetails(loadablePlanrequest, request);
+
+      if (loadablePlanrequest.getErrors() != null && !loadablePlanrequest.getErrors().isEmpty()) {
+        this.buildAlgoError(loadablePlanrequest.getErrors(), request);
+      }
+
+      AlgoReply algoReply = this.saveLoadablePatterns(request);
+
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     return null;
   }
 
@@ -5819,7 +5884,7 @@ public class LoadableStudyService {
     return ruleResponse;
   }
 
-  public LoadableStudyShoreResponse getLoadableStudyShore(String first)
+  public LoadableStudyShoreResponse getLoadableStudyShore(String correlationId)
       throws GenericServiceException {
     com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.Builder
         loadableRuleRequestBuilder =
@@ -5849,17 +5914,21 @@ public class LoadableStudyService {
                   .forEach(
                       voPorts -> {
                         VoyagePorts ports = new VoyagePorts();
-                        ports.setAtd(voPorts.getAtd());
-                        ports.setEta(voPorts.getEta());
-                        ports.setEtd(voPorts.getEtd());
-                        ports.setPortOrder(voPorts.getPortOrder());
-                        ports.setPortName(voPorts.getPortName());
-                        ports.setAnchorage(voPorts.getAnchorage());
-                        ports.setIconUrl(voPorts.getIconUrl());
-                        ports.setPortType(voPorts.getPortType());
-                        ports.setAta(voPorts.getAta());
-                        ports.setLat(voPorts.getLat());
-                        ports.setLon(voPorts.getLon());
+                        ports.setAtd(voPorts.getAtd() == null ? "" : voPorts.getAtd());
+                        ports.setEta(voPorts.getEta() == null ? "" : voPorts.getEta());
+                        ports.setEtd(voPorts.getEtd() == null ? "" : voPorts.getEtd());
+                        ports.setPortOrder(
+                            voPorts.getPortOrder() == null ? "" : voPorts.getPortOrder());
+                        ports.setPortName(
+                            voPorts.getPortName() == null ? "" : voPorts.getPortName());
+                        ports.setAnchorage(
+                            voPorts.getAnchorage() == null ? "" : voPorts.getAnchorage());
+                        ports.setIconUrl(voPorts.getIconUrl() == null ? "" : voPorts.getIconUrl());
+                        ports.setPortType(
+                            voPorts.getPortType() == null ? "" : voPorts.getPortType());
+                        ports.setAta(voPorts.getAta() == null ? "" : voPorts.getAta());
+                        ports.setLat(voPorts.getLat() == null ? "" : voPorts.getLat());
+                        ports.setLon(voPorts.getLon() == null ? "" : voPorts.getLon());
                         portList.add(ports);
                       });
 
@@ -5869,7 +5938,152 @@ public class LoadableStudyService {
             });
 
     LoadableStudyShoreResponse response = new LoadableStudyShoreResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     response.setShoreList(shoreList);
     return response;
+  }
+
+  public UllageBillReply saveRulesForLoadableStudy(String first, UllageBillRequest inputData)
+      throws GenericServiceException {
+
+    String errorValidationLandingMsg = "";
+    String errorValidationUllageMsg = "";
+
+    com.cpdss.common.generated.LoadableStudy.UllageBillRequest.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.UllageBillRequest.newBuilder();
+
+    com.cpdss.common.generated.LoadableStudy.BillOfLanding.Builder billOfLandingBuilder =
+        com.cpdss.common.generated.LoadableStudy.BillOfLanding.newBuilder();
+
+    com.cpdss.common.generated.LoadableStudy.UpdateUllage.Builder updateUllageBuilder =
+        com.cpdss.common.generated.LoadableStudy.UpdateUllage.newBuilder();
+
+    try {
+
+      if (inputData.getBillOfLandingList().size() > 0) {
+        inputData
+            .getBillOfLandingList()
+            .forEach(
+                billLanding -> {
+                  billOfLandingBuilder
+                      .setBblAt60F(
+                          billLanding.getBblAt60f() == null ? "" : billLanding.getBblAt60f())
+                      .setId(billLanding.getId() == null ? 0 : billLanding.getId())
+                      .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
+                      .setCargoId(billLanding.getCargoId() == null ? 0 : billLanding.getCargoId())
+                      .setBlRefNumber(
+                          billLanding.getBlRefNumber() == null ? "" : billLanding.getBlRefNumber())
+                      .setQuantityLt(
+                          billLanding.getQuantityLt() == null
+                              ? 0
+                              : billLanding.getQuantityLt().longValue())
+                      .setKlAt15C(
+                          billLanding.getKlAt15c() == null
+                              ? 0
+                              : billLanding.getKlAt15c().longValue())
+                      .setApi(billLanding.getApi() == null ? 0 : billLanding.getApi().longValue())
+                      .setTemperature(
+                          billLanding.getTemperature() == null
+                              ? 0
+                              : billLanding.getApi().longValue())
+                      .setIsActive(
+                          billLanding.getIsActive() == null
+                              ? 0
+                              : billLanding.getIsActive().longValue())
+                      .setVersion(
+                          billLanding.getVersion() == null
+                              ? 0
+                              : billLanding.getVersion().longValue())
+                      .build();
+                });
+      } else {
+        errorValidationLandingMsg = "Required data for Update is missing";
+      }
+      if (inputData.getUllageUpdList().size() > 0) {
+        inputData
+            .getUllageUpdList()
+            .forEach(
+                ullageList -> {
+                  updateUllageBuilder
+                      .setId(ullageList.getId() == null ? 0 : ullageList.getId())
+                      .setTankId(ullageList.getTankId() == null ? 0 : ullageList.getTankId())
+                      .setCorrectedUllage(
+                          ullageList.getCorrectedUllage() == null
+                              ? 0
+                              : ullageList.getCorrectedUllage().longValue())
+                      .setCorrectionFactor(
+                          ullageList.getCorrectionFactor() == null
+                              ? 0
+                              : ullageList.getCorrectionFactor().longValue())
+                      .setQuantityMt(
+                          ullageList.getQuantityMt() == null
+                              ? 0
+                              : ullageList.getQuantityMt().longValue())
+                      .setIsBallast(
+                          ullageList.getIsBallast() == null ? false : ullageList.getIsBallast())
+                      .setFillingRatio(
+                          ullageList.getFillingRatio() == null ? "" : ullageList.getFillingRatio())
+                      .setApi(ullageList.getApi() == null ? "" : ullageList.getApi())
+                      .setTemperature(
+                          ullageList.getTemperature() == null ? "" : ullageList.getTemperature())
+                      .setObservedM3(
+                          ullageList.getObservedM3() == null ? "" : ullageList.getObservedM3())
+                      .setObservedM3(ullageList.getSg() == null ? "" : ullageList.getSg())
+                      .build();
+                });
+
+        // builder.setBillOfLanding(0, billOfLandingBuilder.build());
+
+        builder.addBillOfLanding(billOfLandingBuilder.build());
+        builder.addUpdateUllage(updateUllageBuilder.build());
+
+      } else {
+        errorValidationUllageMsg = "Required data for Update is missing";
+      }
+    } catch (Exception e) {
+      log.error("GenericServiceException when update LoadableStudy", e);
+    }
+
+    ResponseStatus.Builder ruleResponse = ResponseStatus.newBuilder();
+    if (errorValidationLandingMsg == "Required data for Update is missing"
+        && errorValidationUllageMsg == "Required data for Update is missing") {
+      ruleResponse.setCode("200").setStatus("Invalid Input Error");
+    } else {
+      loadableStudyServiceBlockingStub.getLoadableStudyShoreTwo(builder.build());
+      // ruleResponse.setCode(status.getCode()).setStatus(status.getStatus());
+    }
+
+    UllageBillReply replays = new UllageBillReply();
+    replays.setResponseStatus(ruleResponse.build());
+    return replays;
+  }
+
+  public SimulatorJsonResponse getSimulatorJsonDataForLoadableStudy(
+      Long vesselId, Long loadableStudyId, Long caseNumber, String correlationId)
+      throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest.Builder requestBuilder =
+        com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest.newBuilder();
+    requestBuilder.setVesselId(vesselId);
+    requestBuilder.setLoadableStudyId(loadableStudyId);
+    requestBuilder.setCaseNumber(caseNumber);
+    com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply reply =
+        loadableStudyServiceBlockingStub.getLoadableStudySimulatorJsonData(requestBuilder.build());
+    DepartureConditionJson departureConditionJson = null;
+    SimulatorJsonResponse jsonResponse = new SimulatorJsonResponse();
+    try {
+      departureConditionJson =
+          new ObjectMapper().readValue(reply.getDepartureCondition(), DepartureConditionJson.class);
+      jsonResponse.setDepartureCondition(departureConditionJson);
+      jsonResponse.setResponseStatus(
+          new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      jsonResponse.setResponseStatus(
+          new CommonSuccessResponse(
+              String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()), correlationId));
+    }
+
+    return jsonResponse;
   }
 }

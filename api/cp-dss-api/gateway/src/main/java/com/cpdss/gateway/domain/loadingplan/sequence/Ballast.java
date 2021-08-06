@@ -13,4 +13,5 @@ public class Ballast {
   private BigDecimal sounding;
   private Long start;
   private Long end;
+  private String color;
 }

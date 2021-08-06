@@ -14,7 +14,7 @@ public class Sequence {
   private String timeEnd;
   private Boolean toLoadicator;
 
-  @JsonProperty("cargoLoadingRatePerTankM3/Hr")
+  @JsonProperty("cargoLoadingRatePerTankM3_Hr")
   private Map<String, String> tankWiseCargoLoadingRates;
 
   @JsonProperty("deballastingRateM3_Hr")

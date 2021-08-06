@@ -54,9 +54,10 @@ public class ExecuteJob extends QuartzJobBean {
       detail = context.getJobDetail();
       log.info(JOB_STARTED + detail.getKey());
       channel =
-          ManagedChannelBuilder.forTarget("static://" + detail.getJobDataMap().getString(TASK_URL))
+          ManagedChannelBuilder.forTarget(detail.getJobDataMap().getString(TASK_URL))
               .usePlaintext()
               .build();
+      log.info(JOB_STARTED + " invoking Target " + channel);
       Optional<SchedulerJobInfo> schedulerJobInfoOptional =
           schedulerRepository.findByTaskName(detail.getKey().getName());
       if (!schedulerJobInfoOptional.isPresent()) {

@@ -100,7 +100,8 @@ public class LoadingInformationBuilderService {
       Callable<LoadingPlanModels.LoadingInfoSaveResponse> t5 =
           () -> {
             LoadingDelay.Builder loadingDelayBuilder = LoadingDelay.newBuilder();
-            loadingDelayBuilder.addAllDelays(buildLoadingDelays(request.getLoadingDelays()));
+            loadingDelayBuilder.addAllDelays(
+                buildLoadingDelays(request.getLoadingDelays(), request.getLoadingInfoId()));
             builder.setLoadingDelays(loadingDelayBuilder.build());
             return loadingInfoServiceBlockingStub.saveLoadingInfoDelays(builder.build());
           };
@@ -111,7 +112,9 @@ public class LoadingInformationBuilderService {
     if (request.getLoadingMachineries() != null) {
       Callable<LoadingPlanModels.LoadingInfoSaveResponse> t6 =
           () -> {
-            builder.addAllLoadingMachines(buildLoadingMachineries(request.getLoadingMachineries()));
+            builder.addAllLoadingMachines(
+                buildLoadingMachineries(
+                    request.getLoadingMachineries(), request.getLoadingInfoId()));
             return loadingInfoServiceBlockingStub.saveLoadingInfoMachinery(builder.build());
           };
       callableTasks.add(t6);
@@ -231,7 +234,8 @@ public class LoadingInformationBuilderService {
   }
 
   public List<LoadingDelays> buildLoadingDelays(
-      List<com.cpdss.gateway.domain.loadingplan.LoadingDelays> loadingDelayList) {
+      List<com.cpdss.gateway.domain.loadingplan.LoadingDelays> loadingDelayList,
+      Long loadingInfoId) {
     List<LoadingDelays> delayList = new ArrayList<LoadingDelays>();
     loadingDelayList.forEach(
         delay -> {
@@ -240,10 +244,11 @@ public class LoadingInformationBuilderService {
           Optional.ofNullable(delay.getDuration())
               .ifPresent(duration -> builder.setDuration(String.valueOf(duration)));
           Optional.ofNullable(delay.getId()).ifPresent(builder::setId);
-          Optional.ofNullable(delay.getLoadingInfoId()).ifPresent(builder::setLoadingInfoId);
+          Optional.ofNullable(loadingInfoId).ifPresent(builder::setLoadingInfoId);
           Optional.ofNullable(delay.getQuantity())
               .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
-          Optional.ofNullable(delay.getReasonForDelayId()).ifPresent(builder::setReasonForDelayId);
+          Optional.ofNullable(delay.getReasonForDelayIds())
+              .ifPresent(v -> v.forEach(s -> builder.addReasonForDelayIds(s)));
           Optional.ofNullable(delay.getCargoNominationId())
               .ifPresent(builder::setCargoNominationId);
           delayList.add(builder.build());
@@ -252,7 +257,8 @@ public class LoadingInformationBuilderService {
   }
 
   public List<LoadingMachinesInUse> buildLoadingMachineries(
-      List<com.cpdss.gateway.domain.loadingplan.LoadingMachinesInUse> loadingMachineryList) {
+      List<com.cpdss.gateway.domain.loadingplan.LoadingMachinesInUse> loadingMachineryList,
+      Long loadingInfoId) {
     List<LoadingMachinesInUse> machineries = new ArrayList<LoadingMachinesInUse>();
     loadingMachineryList.forEach(
         machine -> {
@@ -260,7 +266,7 @@ public class LoadingInformationBuilderService {
           Optional.ofNullable(machine.getCapacity())
               .ifPresent(capacity -> builder.setCapacity(String.valueOf(capacity)));
           Optional.ofNullable(machine.getId()).ifPresent(builder::setId);
-          Optional.ofNullable(machine.getLoadingInfoId()).ifPresent(builder::setLoadingInfoId);
+          Optional.ofNullable(loadingInfoId).ifPresent(builder::setLoadingInfoId);
           Optional.ofNullable(machine.getMachineId()).ifPresent(builder::setMachineId);
           Optional.ofNullable(machine.getMachineTypeId())
               .ifPresent(v -> builder.setMachineTypeValue(v));

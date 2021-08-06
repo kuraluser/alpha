@@ -11,8 +11,10 @@ import lombok.Data;
 @JsonInclude(Include.NON_EMPTY)
 public class LoadingPlanAlgoRequest {
 
-  // events
+  private String processId;
   private List<Event> events;
-  // plan
   private Map<String, LoadingPlan> plans;
+
+  // stability parameters per stage
+  private List<LoadingSequenceStabilityParam> stages;
 }

@@ -5,6 +5,17 @@ import { DischargingComponent } from './discharging.component';
 import { DischargingRoutingModule } from './discharging-routing.module';
 import { InstructionSidePanelModule } from '../instruction-side-panel/instruction-side-panel.module';
 import { InstructionCheckListModule } from '../instruction-check-list/instruction-check-list.module';
+import { TranslateModule } from '@ngx-translate/core';
+import { DischargingInformationComponent } from './discharging-information/discharging-information.component';
+import { LoadingDischargingInformationApiService } from '../services/loading-discharging-information-api.service'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LoadingDischargingDetailsModule } from '../loading-discharging-details/loading-discharging-details.module';
+import { DischargingRatesModule } from '../discharging-rates/discharging-rates.module';
+import { LoadingDischargingBerthModule } from '../loading-discharging-berth/loading-discharging-berth.module';
+import { LoadingDischargingCargoDetailsModule } from '../loading-discharging-cargo-details/loading-discharging-cargo-details.module';
+import { CargoToBeLoadedDischargedModule } from '../cargo-to-be-loaded-discharged/cargo-to-be-loaded-discharged.module';
+import { DropdownModule } from 'primeng/dropdown';
+import { LoadingDischargingManageSequenceModule } from '../loading-discharging-manage-sequence/loading-discharging-manage-sequence.module';
 
 /**
  * Module for discharging operations
@@ -13,12 +24,23 @@ import { InstructionCheckListModule } from '../instruction-check-list/instructio
  * @class DischargingModule
  */
 @NgModule({
-  declarations: [DischargingComponent],
+  declarations: [DischargingComponent, DischargingInformationComponent],
   imports: [
     CommonModule,
     DischargingRoutingModule,
     InstructionSidePanelModule,
-    InstructionCheckListModule
-  ]
+    InstructionCheckListModule,
+    TranslateModule,
+    FormsModule,
+    ReactiveFormsModule,
+    DropdownModule,
+    LoadingDischargingDetailsModule,
+    DischargingRatesModule,
+    LoadingDischargingBerthModule,
+    LoadingDischargingCargoDetailsModule,
+    CargoToBeLoadedDischargedModule,
+    LoadingDischargingManageSequenceModule
+  ],
+  providers: [LoadingDischargingInformationApiService]
 })
 export class DischargingModule { }

@@ -70,6 +70,57 @@ public final class EnvoyReaderServiceGrpc {
     return getGetResultFromCommServerMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest,
+          com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply>
+      getGetStatusFromCommServerMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getStatusFromCommServer",
+      requestType = com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest.class,
+      responseType = com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest,
+          com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply>
+      getGetStatusFromCommServerMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest,
+            com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply>
+        getGetStatusFromCommServerMethod;
+    if ((getGetStatusFromCommServerMethod = EnvoyReaderServiceGrpc.getGetStatusFromCommServerMethod)
+        == null) {
+      synchronized (EnvoyReaderServiceGrpc.class) {
+        if ((getGetStatusFromCommServerMethod =
+                EnvoyReaderServiceGrpc.getGetStatusFromCommServerMethod)
+            == null) {
+          EnvoyReaderServiceGrpc.getGetStatusFromCommServerMethod =
+              getGetStatusFromCommServerMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest,
+                          com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "getStatusFromCommServer"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new EnvoyReaderServiceMethodDescriptorSupplier("getStatusFromCommServer"))
+                      .build();
+        }
+      }
+    }
+    return getGetStatusFromCommServerMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static EnvoyReaderServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<EnvoyReaderServiceStub> factory =
@@ -122,6 +173,14 @@ public final class EnvoyReaderServiceGrpc {
       asyncUnimplementedUnaryCall(getGetResultFromCommServerMethod(), responseObserver);
     }
 
+    /** */
+    public void getStatusFromCommServer(
+        com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetStatusFromCommServerMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -132,6 +191,13 @@ public final class EnvoyReaderServiceGrpc {
                       com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest,
                       com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply>(
                       this, METHODID_GET_RESULT_FROM_COMM_SERVER)))
+          .addMethod(
+              getGetStatusFromCommServerMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest,
+                      com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply>(
+                      this, METHODID_GET_STATUS_FROM_COMM_SERVER)))
           .build();
     }
   }
@@ -159,6 +225,17 @@ public final class EnvoyReaderServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getStatusFromCommServer(
+        com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetStatusFromCommServerMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -180,6 +257,13 @@ public final class EnvoyReaderServiceGrpc {
         com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetResultFromCommServerMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply getStatusFromCommServer(
+        com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetStatusFromCommServerMethod(), getCallOptions(), request);
     }
   }
 
@@ -204,9 +288,19 @@ public final class EnvoyReaderServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetResultFromCommServerMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply>
+        getStatusFromCommServer(
+            com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetStatusFromCommServerMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_RESULT_FROM_COMM_SERVER = 0;
+  private static final int METHODID_GET_STATUS_FROM_COMM_SERVER = 1;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -227,6 +321,13 @@ public final class EnvoyReaderServiceGrpc {
       switch (methodId) {
         case METHODID_GET_RESULT_FROM_COMM_SERVER:
           serviceImpl.getResultFromCommServer(
+              (com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_STATUS_FROM_COMM_SERVER:
+          serviceImpl.getStatusFromCommServer(
               (com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.EnvoyReader.EnvoyReaderResultReply>)
@@ -297,6 +398,7 @@ public final class EnvoyReaderServiceGrpc {
                   io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
                       .setSchemaDescriptor(new EnvoyReaderServiceFileDescriptorSupplier())
                       .addMethod(getGetResultFromCommServerMethod())
+                      .addMethod(getGetStatusFromCommServerMethod())
                       .build();
         }
       }

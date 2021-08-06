@@ -11,8 +11,8 @@
             <div class="col">
                 <h5 class="text-uppercase heading-border">{{'LOADING_INFORMATION_LOADING_DETAILS_HEADER' | translate }}
                 </h5>
-                <cpdss-portal-loading-discharging-details [loadingDetails]="loadingInformationData?.loadingDetails"
-                    (updateLoadingDetails)="onUpdateLoadingDetails($event)">
+                <cpdss-portal-loading-discharging-details [loadingDischargingDetails]="loadingInformationData?.loadingDetails"
+                    (updateLoadingDischargingDetails)="onUpdateLoadingDetails($event)">
                 </cpdss-portal-loading-discharging-details>
             </div>
         </div>
@@ -25,8 +25,7 @@
         <div class="row">
             <div class="col">
                 <cpdss-portal-loading-discharging-berth [loadingInfoId]="loadingInfoId"
-                    [availableBerths]="loadingInformationData?.berthDetails.availableBerths"
-                    [selectedBerths]="loadingInformationData?.berthDetails.selectedBerths"
+                    [berthDetails]="loadingInformationData?.berthDetails"
                     (berthChange)="onBerthChange($event)">
                 </cpdss-portal-loading-discharging-berth>
             </div>
@@ -35,12 +34,21 @@
     <div class="col">
         <div class="row">
             <div class="col">
-                <h5 class="text-uppercase heading-border">Cargo Details</h5>
+                <h5 class="text-uppercase heading-border">{{ 'LOADING_INFORMATION_CARGO_DETAILS_HEADER' | translate }}</h5>
                 <cpdss-portal-loading-discharging-cargo-details [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
                     [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
-                    [cargoVesselTankDetails]="cargoVesselTankDetails">
+                    [cargoVesselTankDetails]="cargoVesselTankDetails" [operation]="OPERATIONS.LOADING">
                 </cpdss-portal-loading-discharging-cargo-details>
             </div>
+        </div>
+        <div class="row">
+          <div class="col pt-30">
+            <h5 class="text-uppercase heading-border">{{ 'CARGO_TO_BE_LOADED' | translate }}</h5>
+            <cpdss-portal-cargo-to-be-loaded-discharged [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
+              [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
+              [cargoVesselTankDetails]="cargoVesselTankDetails" [operation]="OPERATIONS.LOADING">
+            </cpdss-portal-cargo-to-be-loaded-discharged>
+          </div>
         </div>
         <div class="row">
             <div class="col-md-12 pt-30">
@@ -113,10 +121,11 @@
             </div>
         </div>
 
-        <cpdss-portal-loading-discharging-manage-sequence [cargos]="cargos"
+        <cpdss-portal-loading-discharging-manage-sequence 
+        [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
             [loadableQuantityCargo]="loadingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails"
-            [loadingSequences]="loadingInformationData?.loadingSequences" [loadingInfoId]="loadingInfoId"
-            (updateLoadingDelays)="onUpdateLoadingDelays($event)">
+            [loadingDischargingSequences]="loadingInformationData?.loadingSequences" [loadingInfoId]="loadingInfoId"
+            (updateLoadingDischargingDelays)="onUpdateLoadingDelays($event)">
         </cpdss-portal-loading-discharging-manage-sequence>
         <!-- TODO : Comment the code as per user story DSS-3373
         <div class="row pt-30">
@@ -128,7 +137,7 @@
         <div class="row">
             <div class="col pt-5 ml-30">
 
-                <cpdss-portal-topping-off-tank-table [cargos]="cargos" 
+                <cpdss-portal-topping-off-tank-table [cargos]="cargos"
                     [toppingOffSequence]="loadingInformationData?.toppingOffSequence"
                     [cargoTanks]="loadingInformationData?.cargoVesselTankDetails?.cargoTanks">
                 </cpdss-portal-topping-off-tank-table>
@@ -136,7 +145,7 @@
             </div>
         </div> -->
         <div class="row">
-            <div class="col pt-5 ml-30">
+            <div class="col pt-5">
                 <cpdss-portal-loading-discharging-cargo-machinery [loadingInfoId]="loadingInfoId"
                     [machineryInUses]="loadingInformationData?.machineryInUses"
                     (updatemachineryInUses)="onUpdatemachineryInUses($event)">

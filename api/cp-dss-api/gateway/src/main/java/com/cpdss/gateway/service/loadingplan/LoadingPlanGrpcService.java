@@ -4,6 +4,8 @@ package com.cpdss.gateway.service.loadingplan;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
+import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
@@ -57,4 +59,13 @@ public interface LoadingPlanGrpcService {
   LoadingSequenceReply getLoadingSequence(Builder builder) throws GenericServiceException;
 
   LoadingPlanSaveResponse saveLoadingPlan(LoadingPlanSaveRequest request);
+
+  LoadingPlanModels.LoadingPlanReply getLoadingPlan(
+      Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
+      throws GenericServiceException;
+
+  StatusReply saveJson(JsonRequest jsonRequest);
+
+  LoadingPlanModels.UpdateUllageDetailsResponse getUpdateUllageDetails(
+      LoadingPlanModels.UpdateUllageDetailsRequest.Builder builder) throws GenericServiceException;
 }

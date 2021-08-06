@@ -1,11 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorHandler, Injectable } from '@angular/core';
+import { ErrorHandler, Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AppConfigurationService } from '../app-configuration/app-configuration.service';
 import { SecurityService } from '../security/security.service';
+import { KeycloakService } from 'keycloak-angular';
+import { environment } from '../../../../../src/environments/environment';
 
 /**
  * Service for globally hadling errors
@@ -23,7 +25,8 @@ export class GlobalErrorHandler implements ErrorHandler {
     private messageService: MessageService,
     private router: Router,
     private translateService: TranslateService,
-    private confirmationService: ConfirmationService) { }
+    private confirmationService: ConfirmationService,
+    @Optional() private keycloakService: KeycloakService,) { }
 
   /**
    * Method for handling error
@@ -95,8 +98,13 @@ export class GlobalErrorHandler implements ErrorHandler {
       acceptButtonStyleClass: 'btn btn-main mr-5',
       rejectVisible: false,
       accept: () => {
+        const redirectUrl = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
         SecurityService.userLogoutAction();
-        window.location.href = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
+        if (environment.name === 'shore') {
+          this.keycloakService.logout(redirectUrl);
+        } else {
+          window.location.href = redirectUrl;
+        }
       }
     });
   }

@@ -24,7 +24,7 @@
                     <th *ngFor="let col of columns" [pSortableColumn]="col?.sortField ? col?.sortField : col.field"
                         [pSortableColumnDisabled]="!col.sortable" [colSpan]="col?.columns?.length"
                         [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)"
-                        [class]="col?.fieldColumnClass">
+                        [class]="col?.fieldColumnClass" [ngClass]="{'text-right': col.fieldType === 'NUMBER'}">
                         <span>{{col.header| translate}}</span>
                         <span *ngIf="col?.fieldHeaderTooltipIcon && col?.fieldHeaderTooltipText" class="inline-block ml-5 v-middle pointer pi" [ngClass]="col?.fieldHeaderTooltipIcon" pTooltip="{{col?.fieldHeaderTooltipText | translate}}" tooltipPosition="top"></span>
                         <p-sortIcon [field]="col?.sortField ? col?.sortField : col.field" *ngIf="col.sortable">
@@ -49,7 +49,7 @@
                         <th *ngIf="progress"></th>
                         <th *ngIf="tableRowReOrder"></th>
                         <th *ngFor="let col of columns" [colSpan]="col?.columns?.length"
-                            [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)">
+                            [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)" [ngClass]="{'text-right': col.fieldType === 'NUMBER'}">
                             <ng-container *ngTemplateOutlet="filterTemplate;context:{column:col}">
                             </ng-container>
                         </th>
@@ -133,7 +133,7 @@
                         let-rowIndex="rowIndex" let-columns="columns">
                         <td [class]="col.fieldClass" [ngSwitch]="col.fieldType" [pEditableColumn]="rowData"
                             [pEditableColumnField]="col.field" [pEditableColumnRowIndex]="rowIndex"
-                            (click)="onClick($event, rowData, rowIndex, col)">
+                            (click)="onClick($event, rowData, rowIndex, col)" [ngClass]="{'text-right': col.fieldType === 'NUMBER','no-ediable-field': col.fieldType === 'NUMBER' && (!editMode || !rowData[col.field]?.isEditMode)}">
                             <div [attr.tabindex]="col.field !== 'actions' && col.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+rowIndex : null"
                                 (keyup)="onKeyChange($event, rowData, col, colIndex, rowIndex)"
                                 (keydown.enter)="onKeyChange($event, rowData, col, colIndex, rowIndex)"
@@ -169,14 +169,16 @@
                                     <div class="action-buttons"
                                         *ngIf="rowData.isActionsEnabled === undefined || rowData.isActionsEnabled">
                                         <p-splitButton appendTo="body" id="{{tableId + 'split_button_' + rowIndex}}"
-                                            *ngIf="col.actions.length > 1" icon="null"
+                                            *ngIf="col.actions.length > 1;else iconRef" icon="null"
                                             menuStyleClass="grid-dropdown-menu" styleClass="grid-dropdown-icon"
                                             [model]="getMoreOptions(rowData)"
                                             (onDropdownClick)="onDropdownClick($event, rowData, rowIndex, col)">
                                         </p-splitButton>
-                                        <a type="button" id="{{tableId + 'option_button' + rowIndex}}"
-                                            class="{{moreOptions[0].icon}}" *ngIf="col.actions.length === 1"
-                                            (click)="onOptionClick($event, rowData, rowIndex, col, moreOptions[0])"></a>
+                                        <ng-template #iconRef>
+                                            <a type="button" id="{{tableId + 'option_button' + rowIndex}}"
+                                                class="{{moreOptions[0].icon}}" *ngIf="isIconVisible(rowData, col)"
+                                                (click)="onOptionClick($event, rowData, rowIndex, col, moreOptions[0])"></a>
+                                        </ng-template>
                                     </div>
                                 </ng-container>
 
@@ -255,7 +257,7 @@
                                                 <span>{{
                                                 rowData[col.field]?.value}}</span>
                                             </ng-template>
-         
+
                                     </ng-container>
                                 </ng-container>
 
@@ -263,7 +265,8 @@
                                 <ng-container *ngSwitchCase="fieldType.COLOR" class="col no-left-padding"
                                     style="max-width: 20px;">
                                     <div class="color-rounded mt-5"
-                                        [ngStyle]="rowData[col.field] && {'background' : rowData[col.field]}">
+                                        [ngStyle]="(rowData[col.field]) &&
+                                        {'background' : rowData[col.field]?.value ? rowData[col.field]?.value : rowData[col.field]}">
                                     </div>
                                 </ng-container>
 
@@ -375,6 +378,22 @@
                                 <ng-container *ngSwitchCase="fieldType.BADGE" >
                                     <span class="badge-custom"  [ngStyle]="{'background': rowData[col.badgeColorField]}">{{rowData[col.field]}}</span>
                                 </ng-container>
+                                <ng-container *ngSwitchCase="fieldType.CHECKBOX">
+                                  <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
+                                    <label class="checkbox-custom pr-20">
+                                      <input type="checkbox" [formControlName]="col.field" (change)="onChange($event, rowData, rowIndex, col)" id="{{col.field+'_'+rowIndex}}" [readonly]="!rowData[col.field]?.isEditable">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                    <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)" [errorMessages]="col.errorMessages">
+                                    </cpdss-portal-validation-error>
+                                  </ng-container>
+                                  <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
+                                    <label class="checkbox-custom pr-20">
+                                      <input type="checkbox" [formControlName]="col.field" (change)="onChange($event, rowData, rowIndex, col)" id="{{col.field+'_'+rowIndex}}" readonly="true">
+                                      <span class="checkmark"></span>
+                                    </label>
+                                  </ng-container>
+                                </ng-container>
                                 <span *ngSwitchDefault>
                                     {{col?.numberFormat ? (rowData[col.field] | number: col?.numberFormat) : rowData[col.field]}}</span>
                             </div>
@@ -387,7 +406,7 @@
                     <td *ngIf="progress">
 
                     </td>
-                    <td *ngFor="let col of columns; let i = index">
+                    <td *ngFor="let col of columns; let i = index" class="text-right">
                         <ng-container *ngIf="i !== 0;else totalRef">
                             {{ col?.numberType === 'quantity' ? (getTotal(col, i) | quantityDecimalFormat: col?.unit) :
                             (getTotal(col, i) | number: col?.numberFormat)}}

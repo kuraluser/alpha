@@ -3,15 +3,14 @@ package com.cpdss.vesselinfo.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import javax.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /** The persistent class for the vessel_manifold database table. */
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Entity
+@Getter
+@Setter
 @Table(name = "vessel_manifold")
 public class VesselManifold extends EntityDoc {
   private static final long serialVersionUID = 1L;

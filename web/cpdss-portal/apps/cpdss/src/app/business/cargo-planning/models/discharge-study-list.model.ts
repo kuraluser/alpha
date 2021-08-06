@@ -215,6 +215,7 @@ export interface IBackLoadingDetails {
     temp: ValueObject<string>;
     isDelete: boolean;
     isAdd: boolean;
+    isNew: boolean;
     abbreviation: ValueObject<string>;
     storedKey: ValueObject<string>;
 }
@@ -360,6 +361,7 @@ export interface IDischargeStudyBackLoadingDetails {
  */
 export interface IDischargeStudyCargoNominationList {
     id: number | string;
+    maxQuantity: number;
     priority: number;
     color: string;
     cargoId: number;

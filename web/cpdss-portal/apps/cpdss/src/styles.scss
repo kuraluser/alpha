@@ -977,7 +977,7 @@ input[type=number] {
   height: calc(100vh - 220px);
   padding-right: 15px;
   margin-right: 2px;
-  padding-bottom: 30px;
+  padding-bottom: 10px;
 }
 
 .p-datatable-wrapper, .p-datatable-scrollable-wrapper{
@@ -1018,8 +1018,9 @@ input[type=number] {
         max-width: 80px;
         height: 25px;
         line-height: 25px;
+        padding-right: 25px!important;
         .icon-api-temp{
-          right: -20px!important;
+          right: 0px!important;
           position: absolute;
           top: 5px;
         }
@@ -1275,7 +1276,7 @@ td.sl div{
 }
 
 .p-multiselect-label{
-  line-height: 25px;
+  line-height: 17px;
     height: 25px;
     padding: 0 5px!important;
 }
@@ -2456,6 +2457,7 @@ textarea{
   }
 }
 .carousel-card{
+  height: 138px;
   .p-calendar .p-inputtext{
     padding: 0 8px;
     margin-bottom: 2px;
@@ -2786,3 +2788,95 @@ textarea{
       padding:2px 0;
   }
 }
+
+.rowspan-no-border{
+  td{
+    border-bottom: 0!important;
+    vertical-align: baseline;
+    padding: 3px 2px !important;
+    &.row-border{
+     padding: 0!important;
+    }
+    &[rowspan]{
+      vertical-align: baseline;
+    }
+  }
+}
+
+.no-min-width{
+  min-width: 0px !important;
+}
+
+.text-right{
+  input{
+    text-align: right;
+  }
+}
+
+.no-ediable-field div{
+  padding-right: 0!important;
+}
+
+.ol-control{
+  width: 20px;
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  opacity: 0.8;
+  button{
+      margin: 6px 0;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 2px;
+      width: 28px;
+      height: 28px;
+  }
+}
+
+.ol-rotate, .ol-attribution{
+  display: none;
+}
+
+.vessel-card-container {
+  &.collapsed{
+    .vessel-card-fleet-container{
+      height: 92px;
+      overflow: hidden;
+    }
+  }
+}
+
+.calendar-f-w {
+  span.p-calendar {
+    width: 100%;
+  }
+}
+
+.calendar-f-w {
+  span.p-calendar {
+    width: 100%;
+  } 
+  &.fleet-calendar {
+    input.p-inputtext {
+      font-size: 11px;
+    }
+  }
+}
+
+.discharge-study-pop-up{
+  width: 540px;
+}
+
+.search-wrapper{
+  position: relative;
+  input{
+    width: 100%;
+    padding-left: 17px;
+  }
+  .pi-search{
+    position: absolute;
+    left: 0px;
+    top: 5px;
+  }
+}
+

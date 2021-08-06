@@ -1,6 +1,6 @@
 <p-dialog header=" {{'PORT_MASTER_SELECT_PORT_LOCATION'| translate}}" [(visible)]="visible"
   styleClass="new-voayge-pop-up" [draggable]="visible" [closable]="true" (onHide)="onClose()">
-  <button type="button" id="btnOk" (click)="setPortLocation()">{{'PORT_MASTER_OK' | translate}}</button>
-  <button type="button" id="btnCancel" (click)="onCancelClick()">{{'PORT_MASTER_CANCEL' | translate}}</button>
+  <button type="button" id="btnOk" (click)="setPortLocation()" autofocus focusTrap>{{'PORT_MASTER_OK' | translate}}</button>
+  <button type="button" id="btnCancel" (click)="onCancelClick()" focusTrap>{{'PORT_MASTER_CANCEL' | translate}}</button>
   <div id="countryMap" class="map"></div>
 </p-dialog>

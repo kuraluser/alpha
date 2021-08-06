@@ -3,13 +3,16 @@ package com.cpdss.loadingplan.service.impl;
 
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelays;
+import com.cpdss.loadingplan.entity.LoadingDelayReason;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.ReasonForDelay;
+import com.cpdss.loadingplan.repository.LoadingDelayReasonRepository;
 import com.cpdss.loadingplan.repository.LoadingDelayRepository;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.ReasonForDelayRepository;
 import com.cpdss.loadingplan.service.LoadingDelayService;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +30,7 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
   @Autowired LoadingDelayRepository loadingDelayRepository;
   @Autowired LoadingInformationRepository loadingInformationRepository;
   @Autowired ReasonForDelayRepository reasonForDelayRepository;
+  @Autowired LoadingDelayReasonRepository loadingDelayReasonRepository;
 
   @Override
   public void saveLoadingDelayList(
@@ -43,7 +47,8 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
           .filter(existingDelay -> !requestedDelays.contains(existingDelay.getId()))
           .forEach(
               existingDelay -> {
-                loadingDelayRepository.deleteById(existingDelay.getId());
+                this.deleteDelayAndReasons(existingDelay);
+                // loadingDelayRepository.deleteById(existingDelay.getId());
               });
     }
     for (LoadingDelays delay : loadingDelays.getDelaysList()) {
@@ -63,10 +68,14 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
         }
       }
 
-      if (delay.getReasonForDelayId() != 0) {
+      if (!delay.getReasonForDelayIdsList().isEmpty()) {
         buildLoadingDelay(delay, loadingDelay);
         loadingDelayRepository.save(loadingDelay);
       }
+      log.info(
+          "Loading Delay Saved Id {}, Reasons {}",
+          loadingDelay.getId(),
+          loadingDelay.getLoadingDelayReasons().size());
     }
   }
 
@@ -83,16 +92,27 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
           "Cannot find the loading information for the delay with id " + delay.getLoadingInfoId());
     }
 
-    Optional<ReasonForDelay> reasonOpt =
-        reasonForDelayRepository.findByIdAndIsActiveTrue(delay.getReasonForDelayId());
-
-    if (reasonOpt.isPresent()) {
-      loadingDelay.setReasonForDelay(reasonOpt.get());
-    } else {
-      throw new Exception(
-          "Cannot find the reason with id " + delay.getReasonForDelayId() + "for the delay");
+    if (delay.getId() > 0) {
+      // Remove All And Add Again
+      List<LoadingDelayReason> reasonList =
+          loadingDelayReasonRepository.findAllByLoadingDelayAndIsActiveTrue(loadingDelay);
+      if (!reasonList.isEmpty()) {
+        this.deleteDelayReasons(reasonList);
+      }
     }
 
+    // Incoming Delays
+    List<LoadingDelayReason> delayReasons = new ArrayList<>();
+    for (Long id : delay.getReasonForDelayIdsList()) {
+      // Master Reason data
+      Optional<ReasonForDelay> var1 = reasonForDelayRepository.findByIdAndIsActiveTrue(id);
+      if (!var1.isEmpty()) {
+        delayReasons.add(new LoadingDelayReason(loadingDelay, var1.get(), true));
+      } else {
+        throw new Exception("Delay Reason master data not found for id - " + id);
+      }
+    }
+    loadingDelay.setLoadingDelayReasons(delayReasons);
     loadingDelay.setCargoNominationId(delay.getCargoNominationId());
     loadingDelay.setDuration(
         StringUtils.isEmpty(delay.getDuration()) ? null : new BigDecimal(delay.getDuration()));
@@ -100,5 +120,17 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
     loadingDelay.setQuantity(
         StringUtils.isEmpty(delay.getQuantity()) ? null : new BigDecimal(delay.getQuantity()));
     loadingDelay.setIsActive(true);
+  }
+
+  private void deleteDelayReasons(List<LoadingDelayReason> reasonList) {
+    reasonList.forEach(v -> v.setIsActive(false));
+    loadingDelayReasonRepository.saveAll(reasonList);
+  }
+
+  private void deleteDelayAndReasons(com.cpdss.loadingplan.entity.LoadingDelay delay) {
+    delay.setIsActive(false);
+    delay.getLoadingDelayReasons().forEach(v -> v.setIsActive(false));
+    loadingDelayRepository.save(delay);
+    log.info("Deleted old delay Id {}", delay.getId());
   }
 }
