@@ -668,6 +668,7 @@
         sync.refreshedToken = refreshedToken;
         sync.pattern = data;
         if (syncView?.responseStatus?.status === '200') {
+          sync.syncType = 'discharge-study';
           sync.status = syncView?.responseStatus?.status;
           currentStatus = syncView?.dischargeStudyId;
           if (syncView?.dischargeStudyId === 4 || syncView?.dischargeStudyId === 5) {
@@ -707,6 +708,7 @@
       }, 3500);
       setTimeout(() => {
         if (currentStatus === 4) {
+          sync.syncType = 'discharge-study';
           sync.type = 'discharge-pattern-no-response';
           // sending default status
           sync.statusId = 1;

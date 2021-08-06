@@ -418,6 +418,7 @@ export enum LOADABLE_STUDY_STATUS {
     PLAN_ALGO_PROCESSING = 4,
     PLAN_ALGO_PROCESSING_COMPETED = 5,
     PLAN_NO_SOLUTION = 6,
+    PLAN_LOADICATOR_CHECKING = 7,
     PLAN_ERROR = 11
 }
 
@@ -428,6 +429,23 @@ export enum LOADABLE_STUDY_STATUS {
  * @enum {string}
  */
  export enum LOADABLE_STUDY_STATUS_TEXT {
+    PLAN_PENDING = "Pending",
+    PLAN_CONFIRMED = "Confirmed",
+    PLAN_GENERATED = "Plan Generated",
+    PLAN_ALGO_PROCESSING = "ALGO Processing Started",
+    PLAN_ALGO_PROCESSING_COMPETED = "ALGO Processing Completed",
+    PLAN_NO_SOLUTION = "No Plan Available",
+    PLAN_LOADICATOR_CHECKING = "Loadicator Processing Started",
+    PLAN_ERROR = "Error Occurred"
+}
+
+/**
+ * ENUM for Discharge Study Status
+ *
+ * @export
+ * @enum {string}
+ */
+ export enum DISCHARGE_STUDY_STATUS_TEXT {
     PLAN_PENDING = "Pending",
     PLAN_CONFIRMED = "Confirmed",
     PLAN_GENERATED = "Plan Generated",

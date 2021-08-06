@@ -57,7 +57,7 @@
             <a class="tab-btn"
                 [ngClass]="{'active': selectedTab === DISCHARGE_STUDY_DETAILS_TABS.DISCHARGE_STUDY , 'disabled': !dischargeStudyTabPermission?.view}"
                 (click)="onTabClick(DISCHARGE_STUDY_DETAILS_TABS.DISCHARGE_STUDY)">{{'DISCHARGE_STUDY' | translate}}
-                <div class="pt-5" *ngIf="dischargeStudyComplete else incomplete">
+                <div class="pt-5" *ngIf="(dischargeStudyComplete && !this.dischargeStudyRef?.dischargeStudyForm?.dirty) else incomplete">
                     <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
                 </div>
                 <ng-template #incomplete>
@@ -70,8 +70,8 @@
 
         <div class="pr-15 text-right">
             <button id="generate_plan" class="btn btn-main mr-10"
-            [disabled]="!dischargeStudies?.length || !dischargeStudyGeneratePermission?.view"
-            (click)="generateLoadablePattern()">{{'DISCHARGE_STUDY_GENERATE_PLAN' |
+            [disabled]="!dischargeStudies?.length || !dischargeStudyGeneratePermission?.view || isGenerateClicked || !portsComplete || !ohqComplete || isPlanGenerated || isPlanOpenOrNo || [VOYAGE_STATUS.CLOSE , VOYAGE_STATUS.OPEN].includes(selectedVoyage?.statusId) || !this.dischargeStudyRef?.dischargeStudyForm?.dirty"
+            (click)="generatePlan()">{{'DISCHARGE_STUDY_GENERATE_PLAN' |
                 translate}}</button>
 
             <button id="view_plan" class="btn btn-main"
@@ -133,6 +133,9 @@
     </div>
 </div>
 
-
-
-
+<cpdss-portal-error-log-popup
+    [(visible)]="errorPopup"
+    (visibleChange)="viewError($event)"
+    [header]="'GENERATED_PLAN_ERROR_MESSAGE_HEADING'"
+    [errorMessage]="errorMessage"
+    ></cpdss-portal-error-log-popup>

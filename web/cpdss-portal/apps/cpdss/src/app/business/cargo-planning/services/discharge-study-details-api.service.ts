@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { IPort, IDischargeStudyPortList , IDischargePortsDetailsResponse , IPortsResponse , IInstructionResponse , ITankResponse, ICargoResponseModel  } from '../../core/models/common.model';
+import { IPort, IDischargeStudyPortList , IDischargePortsDetailsResponse , IPortsResponse , IInstructionResponse , ITankResponse, ICargoResponseModel , IAlgoResponse } from '../../core/models/common.model';
 
 import { DischargePortsDB , IOHQPortRotationResponse, IDischargeStudyPortOHQResponse, IDischargeStudyPortOHQTankDetail , DischargeOHQDB  } from '../models/cargo-planning.model';
 import { IResponse } from '../../../shared/models/common.model';
@@ -239,4 +239,15 @@ export class DischargeStudyDetailsApiService {
       generateDischargePattern(vesselId: number, voyageId: number, dischargeStudyId: number): Observable<IGeneratePatternResponse> {
         return this.commonApiService.post<any, IGeneratePatternResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-studies/${dischargeStudyId}/generate-discharge-patterns`,{});
       }
+
+    /**
+     * 
+     * @param {number} vesselId 
+     * @param {number} voyageId 
+     * @param {number} dischargeStudyId 
+     * Get api for algo error response
+     */
+    getAlgoErrorDetails(vesselId: number, voyageId: number, dischargeStudyId: number): Observable<IAlgoResponse> {
+      return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${dischargeStudyId}/algo-errors`);
+    }
 }
