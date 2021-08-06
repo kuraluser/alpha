@@ -41,6 +41,9 @@ public class BillOfLadding extends EntityDoc {
   @Column(name = "quantity_mt")
   private BigDecimal quantityMt;
 
+  @Column(name = "quantity_lt")
+  private BigDecimal quantityLT;
+
   @Column(name = "kl_at_15c")
   private BigDecimal quantityKl;
 
