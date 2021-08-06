@@ -14,6 +14,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { TooltipModule } from 'primeng/tooltip';
 import { QuantityDecimalFormatPipeModule } from '../../pipes/quantity-decimal-format/quantity-decimal-format.module';
 import {InputMaskModule} from 'primeng/inputmask';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 /**
  * Module for DataTable
@@ -37,7 +38,8 @@ import {InputMaskModule} from 'primeng/inputmask';
     NumberDirectiveModule,
     TooltipModule,
     QuantityDecimalFormatPipeModule,
-    InputMaskModule
+    InputMaskModule,
+    MultiSelectModule
   ],
   exports: [DatatableComponent],
   providers: [DecimalPipe]

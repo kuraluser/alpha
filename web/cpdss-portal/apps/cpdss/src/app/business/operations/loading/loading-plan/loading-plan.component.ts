@@ -109,7 +109,7 @@ export class LoadingPlanComponent implements OnInit {
         {
           "id": 94,
           "loadingInfoId": 119,
-          "reasonForDelayId": 1,
+          "reasonForDelayIds": [1],
           "duration": 45.0000,
           "cargoId": 0,
           "quantity": null

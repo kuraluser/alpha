@@ -173,7 +173,7 @@ export class LoadingDischargingTransformationService {
         field: 'reasonForDelay',
         header: 'REASON FOR DELAY',
         listName: 'reasonForDelays',
-        fieldType: DATATABLE_FIELD_TYPE.SELECT,
+        fieldType: DATATABLE_FIELD_TYPE.MULTISELECT,
         fieldOptionLabel: 'reason',
         fieldPlaceholder: 'LOADING_MANAGE_SEQUENCE_SELECT_REASON',
         errorMessages: {
@@ -214,7 +214,7 @@ export class LoadingDischargingTransformationService {
   */
   getLoadingDischargingDelayAsValueObject(loadingDischargingDelay: ILoadingDischargingDelays, isNewValue = true, isEditable = true, listData: ILoadingSequenceDropdownData, prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT): ILoadingSequenceValueObject {
     const _loadingDischargingDelay = <ILoadingSequenceValueObject>{};
-    const reasonDelayObj: IReasonForDelays = listData?.reasonForDelays?.find(reason => reason.id === loadingDischargingDelay.reasonForDelayId);
+    const reasonDelayObj: IReasonForDelays[] = listData?.reasonForDelays?.filter(reason => loadingDischargingDelay?.reasonForDelayIds?.includes(reason.id));
     const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === loadingDischargingDelay.cargoId);
     _loadingDischargingDelay.id = loadingDischargingDelay.id;
     let hourDuration = (loadingDischargingDelay.duration / 60).toString();
@@ -226,7 +226,7 @@ export class LoadingDischargingTransformationService {
     _loadingDischargingDelay.quantity = this.quantityPipe.transform(loadingDischargingDelay.quantity, prevUnit, currUnit, cargoObj?.estimatedAPI);
     _loadingDischargingDelay.colorCode = cargoObj?.colorCode;
     _loadingDischargingDelay.cargo = new ValueObject<ILoadableQuantityCargo>(cargoObj, true, isEditable ? isNewValue : false, false, isEditable);
-    _loadingDischargingDelay.reasonForDelay = new ValueObject<IReasonForDelays>(reasonDelayObj, true, isNewValue, false, true);
+    _loadingDischargingDelay.reasonForDelay = new ValueObject<IReasonForDelays[]>(reasonDelayObj, true, isNewValue, false, true);
     _loadingDischargingDelay.isAdd = isNewValue;
     return _loadingDischargingDelay;
   }
@@ -250,7 +250,7 @@ export class LoadingDischargingTransformationService {
         _loadingDischargingDelays.dischargingInfoId = infoId;
       }
       _loadingDischargingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
-      _loadingDischargingDelays.reasonForDelayId = loadingValueObject?.reasonForDelay?.value?.id;
+      _loadingDischargingDelays.reasonForDelayIds = loadingValueObject?.reasonForDelay?.value?.map(a => a.id) ?? [];
       _loadingDischargingDelays.quantity = loadingValueObject?.quantity;
       const minuteDuration = loadingValueObject?.duration?.value.split(':');
       _loadingDischargingDelays.duration = (Number(minuteDuration[0]) * 60) + Number(minuteDuration[1]);

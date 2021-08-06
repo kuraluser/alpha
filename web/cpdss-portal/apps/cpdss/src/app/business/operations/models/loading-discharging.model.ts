@@ -362,7 +362,7 @@ export interface ILoadingDischargingDelays {
   id: number;
   loadingInfoId?: number;
   dischargingInfoId?: number;
-  reasonForDelayId: number;
+  reasonForDelayIds: number[];
   duration: number;
   cargoId: number;
   quantity: number;
@@ -474,7 +474,7 @@ export interface IDischargingInformationSaveResponse {
  */
  export interface ILoadingSequenceValueObject {
     id: number;
-    reasonForDelay: ValueObject<IReasonForDelays>;
+    reasonForDelay: ValueObject<IReasonForDelays[]>;
     duration: ValueObject<string>;
     cargo: ValueObject<ILoadableQuantityCargo>;
     quantity: number;

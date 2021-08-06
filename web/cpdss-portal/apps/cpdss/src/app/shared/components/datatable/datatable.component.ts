@@ -473,6 +473,7 @@ export class DatatableComponent implements OnInit {
     }
   }
 
+
   /**
    * Handler for row delete event
    *
@@ -1022,6 +1023,17 @@ export class DatatableComponent implements OnInit {
     } else {
       return moment(dateTime).format(AppConfigurationService.settings?.dateFormat);
     }
+  }
+
+   /**
+   * get the label from multi slected array
+   *
+   * @param {any} multiSelectedArray
+   * @param {string} fieldOptionLabel
+   * @memberof DatatableComponent
+   */
+  getMultiselectedDataAsLabel(multiSelectedArray:any, fieldOptionLabel: string){
+    return multiSelectedArray?.map(e => e[fieldOptionLabel]).join(",") ?? '';
   }
 
 }
