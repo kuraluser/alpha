@@ -25,4 +25,6 @@ public class VoyageResponse {
   private Long patternId;
   private Long patternCaseNo;
   private Long patternStatus;
+
+  private LoadableStudy loadableStudy;
 }
