@@ -338,14 +338,6 @@ public class LoadicatorService {
             Optional.ofNullable(tankDetail.get().getShortName())
                 .ifPresent(stowageDetailsBuilder::setShortName);
           }
-          Optional<CargoInfo.CargoDetail> cargoDetail =
-              cargoReply.getCargosList().stream()
-                  .filter(c -> Long.valueOf(c.getId()).equals(cargoNomDetail.getCargoId()))
-                  .findAny();
-          if (cargoDetail.isPresent()) {
-            Optional.ofNullable(cargoDetail.get().getCrudeType())
-                .ifPresent(stowageDetailsBuilder::setCargoName);
-          }
           stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
         });
   }
