@@ -384,8 +384,8 @@ export class LoadingDischargingInformationApiService {
           }
         ],
         "dischargingDelays": [
-          { "id": 106, "dischargingInfoId": 141, "reasonForDelayId": 1, "duration": 111, "cargoId": 33, "cargoNominationId": 0, "quantity": 27500 },
-          { "id": 107, "dischargingInfoId": 141, "reasonForDelayId": 1, "duration": 1320, "cargoId": 0, "cargoNominationId": 0, "quantity": null }]
+          { "id": 106, "dischargingInfoId": 141, "reasonForDelayIds": [1], "duration": 111, "cargoId": 33, "cargoNominationId": 0, "quantity": 27500 },
+          { "id": 107, "dischargingInfoId": 141, "reasonForDelayIds": [1], "duration": 1320, "cargoId": 0, "cargoNominationId": 0, "quantity": null }]
       },
       "toppingOffSequence": [
         {

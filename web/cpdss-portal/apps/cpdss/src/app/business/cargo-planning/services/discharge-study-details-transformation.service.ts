@@ -933,7 +933,8 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       numberType: 'quantity',
       fieldPlaceholder: 'DISCHARGE_STUDY_BACK_LOADING_KL',
       errorMessages: {
-        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
+        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
+        'min': 'DISCHARGE_STUDY_QUANTITY_MIN_VALUE'
       }
     },
     {
@@ -1014,7 +1015,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       } else {
         _portDetail.percentage = null;
         _portDetail.tank = listData?.tank.filter((tankDetail) => {
-          portDetail.tanks.map((items) => {
+          return portDetail.tanks.some((items) => {
             return items === tankDetail.id
           })
         })
@@ -1043,7 +1044,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
         return isColorUnique.storedKey
       } else {
         const storedKey = uuid4();
-        portUniqueColorAbbrList.push({color: data.color , abbreviation: data.abbreviation , storedKey: storedKey})
+        portUniqueColorAbbrList.push({id: data.id , color: data.color , abbreviation: data.abbreviation , storedKey: storedKey})
         return storedKey;
       }
     }
@@ -1064,8 +1065,8 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       const isKlEditable = mode?.id === 2 ? true : false;
       
       const unitConversion = {
-        kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature , -1),
-        bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature, -1)
+        kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature),
+        bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature)
       }
       _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color , true , false);
       _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? (unitConversion.bbls ? unitConversion.bbls+'' : '0') : '-', true , false);
@@ -1090,9 +1091,14 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
    * @param {IMode} mode
    * @memberof DischargeStudyDetailsTransformationService
    */
-    setNewCargoInPortAsValuObject(backLoadingDetails: any , mode: IMode) : IPortCargo {
+    setNewCargoInPortAsValuObject(backLoadingDetails: any , mode: IMode , portDetails: IPortDetailValueObject[] , index: number) : IPortCargo {
+      const cargoDetail = portDetails[index]?.cargoDetail?.find((item) => {
+        if(item.storedKey['_value'] === backLoadingDetails.storedKey.value) { 
+          return item;
+        }
+      })
       return {
-        id: new ValueObject<string>(backLoadingDetails.id.value),
+        id: new ValueObject<string>(cargoDetail?.id['_value'] ? cargoDetail?.id['_value'] : ''),
         storedKey: new ValueObject<string>(backLoadingDetails.storedKey.value),
         maxKl: new ValueObject<number>(backLoadingDetails?.maxKl?.value ? backLoadingDetails.maxKl.value : 0, true , false),
         abbreviation: new ValueObject<string>(backLoadingDetails.abbreviation.value, true , false),
@@ -1118,8 +1124,8 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
     getBackLoadingDetailAsValueObject(backLoadingDetail: IDischargeStudyBackLoadingDetails, listData:IDischargeStudyDropdownData ,storedKey: string ,isNewValue = true): IBackLoadingDetails {
       const _backLoadingDetailDetail = <IBackLoadingDetails>{};
       const unitConversion = {
-        kl: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature , -1),
-        bbls: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, backLoadingDetail.api, backLoadingDetail.temperature , -1),
+        kl: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature),
+        bbls: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, backLoadingDetail.api, backLoadingDetail.temperature),
       }
       const cargoObj: ICargo = backLoadingDetail.cargoId ? listData.cargoList.find(cargo => cargo.id === backLoadingDetail.cargoId) : null;
       _backLoadingDetailDetail.color = new ValueObject<string>(backLoadingDetail.color , true , isNewValue);

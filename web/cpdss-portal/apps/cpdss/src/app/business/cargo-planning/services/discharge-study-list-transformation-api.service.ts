@@ -138,7 +138,7 @@ convertToDate(value): Date {
     return {    
       newDischargeStudyName: {
         'required': 'DISCHARGE_STUDY_POPUP_REQUIRED_ERROR',       
-        
+        'patternMatch': 'DISCHARGE_NAME_INVALID_PATTERN'
       },
       enquiryDetails: {
         'maxlength': 'DISCHARGE_STUDY_MAX_LENGTH'

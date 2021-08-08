@@ -89,6 +89,9 @@ public class LoadicatorService {
   @Value("${algo.loadicator.api.url}")
   private String loadicatorUrl;
 
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
+
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
@@ -990,30 +993,31 @@ public class LoadicatorService {
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
               request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
-
-      if (loadableStudyCommunicationStatus.get().getMessageUUID() != null) {
-        LoadableStudy.AlgoResponseCommunication.Builder algoRespComm =
-            LoadableStudy.AlgoResponseCommunication.newBuilder();
-        algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
-        LoadableStudy.LoadicatorResultsRequest.Builder loadicatorResultsRequest =
-            LoadableStudy.LoadicatorResultsRequest.newBuilder();
-        JsonFormat.parser()
-            .ignoringUnknownFields()
-            .merge(objectMapper.writeValueAsString(algoResponse), loadicatorResultsRequest);
-        algoRespComm.setLoadicatorResultsRequest(loadicatorResultsRequest.build());
-        Optional<JsonData> patternJson =
-            this.jsonDataService.getJsonData(
-                loadableStudyOpt.get().getId(),
-                LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
-        if (patternJson != null) {
-          LoadableStudy.LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest =
-              LoadableStudy.LoadablePatternAlgoRequest.newBuilder();
+      if (enableCommunication) {
+        if (loadableStudyCommunicationStatus.get().getMessageUUID() != null) {
+          LoadableStudy.AlgoResponseCommunication.Builder algoRespComm =
+                  LoadableStudy.AlgoResponseCommunication.newBuilder();
+          algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
+          LoadableStudy.LoadicatorResultsRequest.Builder loadicatorResultsRequest =
+                  LoadableStudy.LoadicatorResultsRequest.newBuilder();
           JsonFormat.parser()
-              .ignoringUnknownFields()
-              .merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
-          algoRespComm.setLoadablePatternAlgoRequest(loadablePatternAlgoRequest.build());
+                  .ignoringUnknownFields()
+                  .merge(objectMapper.writeValueAsString(algoResponse), loadicatorResultsRequest);
+          algoRespComm.setLoadicatorResultsRequest(loadicatorResultsRequest.build());
+          Optional<JsonData> patternJson =
+                  this.jsonDataService.getJsonData(
+                          loadableStudyOpt.get().getId(),
+                          LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
+          if (patternJson != null) {
+            LoadableStudy.LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest =
+                    LoadableStudy.LoadablePatternAlgoRequest.newBuilder();
+            JsonFormat.parser()
+                    .ignoringUnknownFields()
+                    .merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
+            algoRespComm.setLoadablePatternAlgoRequest(loadablePatternAlgoRequest.build());
+          }
+          communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
         }
-        communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
       }
     }
     replyBuilder =
