@@ -5,6 +5,8 @@ import com.cpdss.common.generated.Common.BillOfLadding;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
@@ -24,6 +26,7 @@ import com.cpdss.loadingplan.service.LoadingPlanService;
 import com.cpdss.loadingplan.service.LoadingSequenceService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingPlanRuleServiceImpl;
+import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import io.grpc.stub.StreamObserver;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +45,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   @Autowired LoadingPlanService loadingPlanService;
   @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
   @Autowired LoadingSequenceService loadingSequenceService;
+  @Autowired LoadicatorService loadicatorService;
 
   @Autowired LoadingPlanRuleServiceImpl loadingPlanRuleService;
 
@@ -272,6 +276,29 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
               reply.addCargoMaxQuantity(maxQuantity);
             });
       }
+      reply.setResponseStatus(
+          ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Exception when getting bill of ladding details agianst cargonomination Id", e);
+      reply.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(LoadingPlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(reply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadicatorData(
+      LoadingInfoLoadicatorDataRequest request,
+      StreamObserver<LoadingInfoLoadicatorDataReply> responseObserver) {
+    LoadingInfoLoadicatorDataReply.Builder reply = LoadingInfoLoadicatorDataReply.newBuilder();
+    try {
+      loadicatorService.getLoadicatorData(request, reply);
       reply.setResponseStatus(
           ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
     } catch (Exception e) {

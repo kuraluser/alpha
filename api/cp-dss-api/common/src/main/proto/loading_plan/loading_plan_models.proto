@@ -407,6 +407,7 @@ message LoadingPlanSaveRequest {
   repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 7;
   repeated LoadingPlanStabilityParameters loadingSequenceStabilityParameters = 8;
   repeated AlgoErrors algoErrors = 9;
+  bool hasLoadicator = 10;
 }
 
 message LoadingSequence {
@@ -680,4 +681,23 @@ message MaxQuantityDetails{
   	int64 cargoNominationId = 1;
     string maxQuantity = 2;
   
+}
+
+message LoadingInfoLoadicatorDataRequest {
+  string processId = 1;
+  int64 loadingInformationId = 2;
+  repeated LoadingInfoLoadicatorDetail loadingInfoLoadicatorDetails = 3;
+}
+
+message LoadingInfoLoadicatorDetail {
+  int32 time = 1;
+  LDtrim lDtrim = 2;
+  LDStrength lDStrength = 3;
+  LDIntactStability lDIntactStability = 4;
+}
+
+message LoadingInfoLoadicatorDataReply {
+  string processId = 1;
+  int64 loadableStudyId = 2;
+  ResponseStatus responseStatus = 3;
 }

@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service;
 
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
@@ -10,6 +11,8 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply.Builder;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.entity.BallastOperation;
 import com.cpdss.loadingplan.entity.CargoLoadingRate;
@@ -75,7 +78,10 @@ public class LoadingSequenceService {
         loadingInformationRepository.findById(request.getLoadingInfoId());
     if (loadingInfoOpt.isEmpty()) {
       log.info("Cannot find loading information with id {}", request.getLoadingInfoId());
-      throw new Exception("Cannot find loading information with id " + request.getLoadingInfoId());
+      throw new GenericServiceException(
+          "Could not find loading information " + request.getLoadingInfoId(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
     }
 
     String startDate = this.getStartDate(loadingInfoOpt.get().getPortRotationXId());

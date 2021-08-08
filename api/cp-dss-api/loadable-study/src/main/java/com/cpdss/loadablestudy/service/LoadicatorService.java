@@ -170,18 +170,18 @@ public class LoadicatorService {
     Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
         Loadicator.LoadicatorRequest.newBuilder();
     try {
+      loadicatorRequestBuilder.setTypeId(
+          LoadableStudiesConstants.LOADABLE_STUDY_LOADICATOR_TYPE_ID);
       List<LoadablePattern> loadablePatterns = null;
       if (patternId == 0) {
         loadablePatterns = loadablePatternsList;
         loadicatorRequestBuilder.setIsPattern(false);
-        loadicatorRequestBuilder.setLoadableStudyId(loadableStudyEntity.getId());
       } else {
         Optional<LoadablePattern> lpOpt =
             this.loadablePatternRepository.findByIdAndIsActive(patternId, true);
         loadablePatterns =
             lpOpt.isPresent() ? new ArrayList<LoadablePattern>(Arrays.asList(lpOpt.get())) : null;
         loadicatorRequestBuilder.setIsPattern(true);
-        loadicatorRequestBuilder.setLoadablePatternId(lpOpt.get().getId());
       }
       if (null == loadablePatterns) {
         throw new GenericServiceException(

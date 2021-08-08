@@ -23,4 +23,9 @@ public interface LoadingPlanBallastDetailsRepository
       "UPDATE LoadingPlanBallastDetails SET isActive = false WHERE loadingPlanPortWiseDetails = ?1")
   public void deleteByLoadingPlanPortWiseDetails(
       LoadingPlanPortWiseDetails loadingPlanPortWiseDetails);
+
+  @Query(
+      "SELECT LPBD FROM LoadingPlanBallastDetails LPBD WHERE LPBD.loadingPlanPortWiseDetails.id IN ?1 AND LPBD.isActive = ?2")
+  public List<LoadingPlanBallastDetails> findByLoadingPlanPortWiseDetailIdsAndIsActive(
+      List<Long> portWiseDetailIds, Boolean isActive);
 }
