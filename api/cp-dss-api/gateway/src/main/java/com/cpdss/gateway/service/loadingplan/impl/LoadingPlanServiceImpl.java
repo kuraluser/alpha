@@ -477,26 +477,6 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     LoadingUpdateUllageResponse outResponse = new LoadingUpdateUllageResponse();
 
-    //    // Call No. 1 To synoptic table api (voyage-status)
-    //    CargoVesselTankDetails vesselTankDetails =
-    //        this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
-    //            vesselId,
-    //            activeVoyage.getId(),
-    //            activeVoyage.getActiveLs().getId(),
-    //            portRotation.get().getPortId(),
-    //            portRotation.get().getPortOrder(),
-    //            portRotation.get().getId(),
-    //            operationType);
-    //    // Call No. 2 To synoptic data for loading (same as port rotation in above code)
-    //    vesselTankDetails.setLoadableQuantityCargoDetails(
-    //        this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
-    //            vesselId,
-    //            activeVoyage.getPatternId(),
-    //            operationType,
-    //            portRotation.get().getId(),
-    //            portRotation.get().getPortId()));
-    //    outResponse.setVesselTankDetails(vesselTankDetails);
-
     // group cargo nomination ids
     List<Long> cargoNominationIds =
         cargoNominationReply.getCargoNominationsList().stream()
