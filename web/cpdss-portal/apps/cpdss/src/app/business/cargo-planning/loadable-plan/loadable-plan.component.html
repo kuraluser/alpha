@@ -39,7 +39,7 @@
                     {{'LOADABLE_PLAN_SIMULATOR_BUTTON_LABEL' |translate}}
                     <span class="pi pi-angle-down ml-5"></span>
                 </button>
-                <p-menu #menu styleClass="menu-drop-down" [popup]="true" [model]="simulatorMenu"></p-menu>
+                <p-menu #menu styleClass="simulator-menu-drop-down" [popup]="true" [model]="simulatorMenu"></p-menu>
 
                 <button class="btn btn-main mr-10" id="confirm_plan"
                     [disabled]="!confirmPlanPermission || confirmButtonStatus || validationPending"
