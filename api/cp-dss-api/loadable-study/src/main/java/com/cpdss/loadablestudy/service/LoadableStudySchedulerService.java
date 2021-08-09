@@ -62,7 +62,7 @@ public class LoadableStudySchedulerService {
                       properties.setTaskStartTime(dateTime.toLocalTime());
                       properties.setTaskEndDate(endDateTime.toLocalDate());
                       properties.setTaskEndTime(endDateTime.toLocalTime());
-                      properties.setTaskURI("loadable-study-service:"+port);
+                      properties.setTaskURI("loadable-study-service:" + port);
                       Map<String, String> requestParam = new HashMap<>();
                       requestParam.put("env", environment);
                       requestParam.put("ClientId", vesssel.getVesselName());
@@ -93,7 +93,7 @@ public class LoadableStudySchedulerService {
                       properties.setTaskStartTime(dateTime.toLocalTime());
                       properties.setTaskEndDate(endDateTime.toLocalDate());
                       properties.setTaskEndTime(endDateTime.toLocalTime());
-                      properties.setTaskURI("loadable-study-service:"+port);
+                      properties.setTaskURI("loadable-study-service:" + port);
                       Map<String, String> requestParam = new HashMap<>();
 
                       requestParam.put("ClientId", vesssel.getVesselName());

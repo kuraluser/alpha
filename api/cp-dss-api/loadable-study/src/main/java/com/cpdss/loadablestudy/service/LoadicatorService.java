@@ -994,28 +994,32 @@ public class LoadicatorService {
           this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
               request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
       if (enableCommunication) {
+        log.info("inside Communication ==Loadicator ==" + loadableStudyCommunicationStatus);
         if (loadableStudyCommunicationStatus.get().getMessageUUID() != null) {
           LoadableStudy.AlgoResponseCommunication.Builder algoRespComm =
-                  LoadableStudy.AlgoResponseCommunication.newBuilder();
+              LoadableStudy.AlgoResponseCommunication.newBuilder();
           algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
           LoadableStudy.LoadicatorResultsRequest.Builder loadicatorResultsRequest =
-                  LoadableStudy.LoadicatorResultsRequest.newBuilder();
+              LoadableStudy.LoadicatorResultsRequest.newBuilder();
           JsonFormat.parser()
-                  .ignoringUnknownFields()
-                  .merge(objectMapper.writeValueAsString(algoResponse), loadicatorResultsRequest);
+              .ignoringUnknownFields()
+              .merge(objectMapper.writeValueAsString(algoResponse), loadicatorResultsRequest);
           algoRespComm.setLoadicatorResultsRequest(loadicatorResultsRequest.build());
           Optional<JsonData> patternJson =
-                  this.jsonDataService.getJsonData(
-                          loadableStudyOpt.get().getId(),
-                          LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
+              this.jsonDataService.getJsonData(
+                  loadableStudyOpt.get().getId(),
+                  LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
           if (patternJson != null) {
             LoadableStudy.LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest =
-                    LoadableStudy.LoadablePatternAlgoRequest.newBuilder();
+                LoadableStudy.LoadablePatternAlgoRequest.newBuilder();
             JsonFormat.parser()
-                    .ignoringUnknownFields()
-                    .merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
+                .ignoringUnknownFields()
+                .merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
             algoRespComm.setLoadablePatternAlgoRequest(loadablePatternAlgoRequest.build());
           }
+          log.info(
+              "inside passResultPayloadToEnvoyWriter ==Loadicator =="
+                  + loadableStudyOpt.get().getId());
           communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
         }
       }
