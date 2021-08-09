@@ -58,6 +58,7 @@ import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
+import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -106,6 +107,7 @@ public class LoadingPlanAlgoService {
 
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
+  @Autowired LoadicatorService loadicatorService;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceBlockingStub loadableStudyService;
@@ -268,37 +270,13 @@ public class LoadingPlanAlgoService {
               sequence -> {
                 saveLoadingSequence(sequence, loadingInfoOpt.get());
               });
+      deleteLoadingSequences(loadingInfoOpt.get().getId(), oldLoadingSequences);
 
-      log.info(
-          "Deleting Old Loading Sequences of LoadingInformation {}", request.getLoadingInfoId());
-      deleteLoadingSequences(oldLoadingSequences);
-
-      List<LoadingSequenceStabilityParameters> oldLoadingSequenceStabilityParameters =
-          loadingSequenceStabilityParamsRepository.findByLoadingInformationAndIsActive(
-              loadingInfoOpt.get(), true);
-
+      deleteLoadingSequenceStabilityParams(loadingInfoOpt.get().getId());
       saveLoadingSequenceStabilityParams(request, loadingInfoOpt.get());
 
-      deleteLoadingSequenceStabilityParams(
-          loadingInfoOpt.get(), oldLoadingSequenceStabilityParameters);
-
-      List<PortLoadingPlanStabilityParameters> oldStabilityParams =
-          portStabilityParamsRepository.findByLoadingInformationAndIsActive(
-              loadingInfoOpt.get(), true);
-      List<PortLoadingPlanStowageDetails> oldStowageDetails =
-          portStowageDetailsRepository.findByLoadingInformationAndIsActive(
-              loadingInfoOpt.get(), true);
-      List<PortLoadingPlanBallastDetails> oldBallastDetails =
-          portBallastDetailsRepository.findByLoadingInformationAndIsActive(
-              loadingInfoOpt.get(), true);
-      List<PortLoadingPlanRobDetails> oldRobDetails =
-          portRobDetailsRepository.findByLoadingInformationAndIsActive(loadingInfoOpt.get(), true);
-
-      // Saving Loading Plan
+      deleteLoadingPlan(loadingInfoOpt.get().getId());
       saveLoadingPlan(request, loadingInfoOpt.get());
-
-      log.info("Deleting Old Loading Plan of LoadingInformation {}", request.getLoadingInfoId());
-      deleteLoadingPlan(oldStowageDetails, oldBallastDetails, oldRobDetails, oldStabilityParams);
 
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingInfoStatusRepository.findByIdAndIsActive(
@@ -315,6 +293,11 @@ public class LoadingPlanAlgoService {
           loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
       updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+
+      loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
+      //      if (request.getHasLoadicator()) {
+      //        loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
+      //      }
     }
   }
 
@@ -373,17 +356,11 @@ public class LoadingPlanAlgoService {
         loadingInformationStatus.getId(), processId);
   }
 
-  private void deleteLoadingSequenceStabilityParams(
-      LoadingInformation loadingInformation,
-      List<LoadingSequenceStabilityParameters> oldLoadingSequenceStabilityParameters) {
+  private void deleteLoadingSequenceStabilityParams(Long loadingInfoId) {
     log.info(
         "Deleting Old Loading Sequence Stability Parameters of Loading Information {}",
-        loadingInformation.getId());
-    oldLoadingSequenceStabilityParameters.forEach(
-        param -> {
-          loadingSequenceStabilityParamsRepository.deleteById(param.getId());
-        });
-    ;
+        loadingInfoId);
+    loadingSequenceStabilityParamsRepository.deleteByLoadingInformationId(loadingInfoId);
   }
 
   private void saveLoadingSequenceStabilityParams(
@@ -407,42 +384,19 @@ public class LoadingPlanAlgoService {
     loadingSequenceStabilityParamsRepository.saveAll(loadingSequenceStabilityParams);
   }
 
-  private void deleteLoadingPlan(
-      List<PortLoadingPlanStowageDetails> oldStowageDetails,
-      List<PortLoadingPlanBallastDetails> oldBallastDetails,
-      List<PortLoadingPlanRobDetails> oldRobDetails,
-      List<PortLoadingPlanStabilityParameters> oldStabilityParams) {
-
-    oldBallastDetails.forEach(
-        ballast -> {
-          log.info("Deleting Port Loading Plan Ballast {}", ballast.getId());
-          portBallastDetailsRepository.deleteById(ballast.getId());
-        });
-
-    oldRobDetails.forEach(
-        rob -> {
-          log.info("Deleting Port Loading Plan ROB {}", rob.getId());
-          portRobDetailsRepository.deleteById(rob.getId());
-        });
-
-    oldStabilityParams.forEach(
-        params -> {
-          log.info("Deleting Port Loading Plan Stability Params {}", params.getId());
-          portStabilityParamsRepository.deleteById(params.getId());
-        });
-
-    oldStowageDetails.forEach(
-        stowage -> {
-          log.info("Deleting Port Loading Plan Stowage {}", stowage.getId());
-          portStowageDetailsRepository.deleteById(stowage.getId());
-        });
+  private void deleteLoadingPlan(Long loadingInfoId) {
+    log.info("Deleting Old Loading Plan of LoadingInformation {}", loadingInfoId);
+    portBallastDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
+    portRobDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
+    portStabilityParamsRepository.deleteByLoadingInformationId(loadingInfoId);
+    portStowageDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
   }
 
   private void deleteLoadingSequences(
-      List<com.cpdss.loadingplan.entity.LoadingSequence> oldLoadingSequences) {
+      Long loadingInfoId, List<com.cpdss.loadingplan.entity.LoadingSequence> oldLoadingSequences) {
+    log.info("Deleting Old Loading Sequences of LoadingInformation {}", loadingInfoId);
     oldLoadingSequences.forEach(
         loadingSequence -> {
-          log.info("Deleting Loading Sequence {}", loadingSequence.getId());
           loadingSequenceRepository.deleteById(loadingSequence.getId());
           ballastOperationRepository.deleteByLoadingSequence(loadingSequence);
           cargoLoadingRateRepository.deleteByLoadingSequence(loadingSequence);

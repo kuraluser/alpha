@@ -382,6 +382,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+    algoResponse.setProcessId(loadingPlanAlgoRequest.getProcessId());
     algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
     return algoResponse;
   }

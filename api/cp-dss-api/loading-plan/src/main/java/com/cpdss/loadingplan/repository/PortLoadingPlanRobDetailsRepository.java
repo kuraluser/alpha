@@ -26,4 +26,9 @@ public interface PortLoadingPlanRobDetailsRepository
   @Transactional
   @Query("UPDATE PortLoadingPlanRobDetails SET isActive = false WHERE id = ?1")
   public void deleteById(Long id);
+
+  @Modifying
+  @Transactional
+  @Query("UPDATE PortLoadingPlanRobDetails SET isActive = false WHERE loadingInformation.id = ?1")
+  public void deleteByLoadingInformationId(Long loadingInfoId);
 }

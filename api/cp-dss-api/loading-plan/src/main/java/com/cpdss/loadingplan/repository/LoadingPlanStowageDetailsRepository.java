@@ -23,4 +23,9 @@ public interface LoadingPlanStowageDetailsRepository
       "UPDATE LoadingPlanStowageDetails SET isActive = false WHERE loadingPlanPortWiseDetails = ?1")
   public void deleteByLoadingPlanPortWiseDetails(
       LoadingPlanPortWiseDetails loadingPlanPortWiseDetails);
+
+  @Query(
+      "SELECT LPSD FROM LoadingPlanStowageDetails LPSD WHERE LPSD.loadingPlanPortWiseDetails.id IN ?1 AND LPSD.isActive = ?2")
+  public List<LoadingPlanStowageDetails> findByPortWiseDetailIdsAndIsActive(
+      List<Long> portWiseDetailIds, Boolean isActive);
 }

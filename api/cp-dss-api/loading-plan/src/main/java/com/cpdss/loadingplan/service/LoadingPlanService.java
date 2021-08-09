@@ -197,7 +197,7 @@ public class LoadingPlanService {
               blBuilder.setQuantityKl(
                   bill.getQuantityMt() != null ? bill.getQuantityKl().toString() : "");
               blBuilder.setQuantityLT(
-                      bill.getQuantityLT() != null ? bill.getQuantityLT().toString() : "");
+                  bill.getQuantityLT() != null ? bill.getQuantityLT().toString() : "");
               blBuilder.setCargoNominationId(bill.getCargoNominationId());
               builder.addBillOfLadding(blBuilder);
             });
