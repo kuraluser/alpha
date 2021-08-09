@@ -1139,6 +1139,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 portDetail.setIsActive(true);
                 portDetail.setVersion(1L);
                 cargoBackloading.setVersion(1L);
+                cargoBackloading.setIsBackloading(true);
                 cargoBackloading.setCargoNominationPortDetails(
                     cargoNominationService.createCargoNominationPortDetails(
                         cargoBackloading,
@@ -1193,6 +1194,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               if (!firstPortCargoIds.contains(cargo.getId())) {
                 cargo.setQuantity(new BigDecimal(0));
                 cargo.setMode(1L);
+              }
+              if (cargo.getIsBackloading() != null && cargo.getIsBackloading()) {
+                cargo.setIsActive(false);
               }
             });
     cargoNominationService.saveAll(cargos);
