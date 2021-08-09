@@ -22,6 +22,7 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
+import com.cpdss.common.generated.LoadableStudy.COWDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoDetails;
 import com.cpdss.common.generated.LoadableStudy.CargoHistoryDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoHistoryReply;
@@ -3406,7 +3407,6 @@ public class LoadableStudyService {
     } else {
       fileName = "/json/dischargeStudyResult_";
       jsonTypeID = DISCHARGE_STUDY_RESULT_JSON_ID;
-      loadablePlanRequest.setLoadablePlanDetails(loadablePlanRequest.getDischargePlanDetails());
     }
     try {
       objectMapper.writeValue(
@@ -3420,20 +3420,24 @@ public class LoadableStudyService {
     } catch (IOException e) {
       log.error("Error in json writing ", e);
     }
-
-    return this.saveLoadablePatterns(loadablePlanRequest, loadableStudiesId, correlationId);
+ 
+    return this.saveLoadablePatterns(loadablePlanRequest, loadableStudiesId, correlationId,requestType);
   }
 
   /**
    * @param loadablePlanDetailsResponses
    * @param loadableStudiesId
+ * @param requestType 
    * @param first
    * @return AlgoPatternResponse
    */
   public AlgoPatternResponse saveLoadablePatterns(
-      LoadablePlanRequest loadablePlanRequest, Long loadableStudiesId, String correlationId)
+      LoadablePlanRequest loadablePlanRequest, Long loadableStudiesId, String correlationId, String requestType)
       throws GenericServiceException {
     log.info("Inside saveLoadablePatterns gateway service with correlationId : " + correlationId);
+    if (requestType.equals(DISCHARGE_STUDY_RESULT_JSON_ID)) {
+   	 loadablePlanRequest.setLoadablePlanDetails(loadablePlanRequest.getDischargePlanDetails());
+     }
     //		ObjectMapper objectMapper = new ObjectMapper();
     //		try {
     //			objectMapper.writeValue(
@@ -3451,11 +3455,14 @@ public class LoadableStudyService {
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
     request.setHasLodicator(loadablePlanRequest.getHasLoadicator());
-    // TODO add extra fields in DS
-    request.setFeedbackLoop(loadablePlanRequest.getFeedbackLoop());
-    request.setFeedbackLoopCount(loadablePlanRequest.getFeedbackLoopCount());
-    request.setUser(loadablePlanRequest.getUser());
-    request.setRole(loadablePlanRequest.getRole());
+    if (requestType.equals(DISCHARGE_STUDY_RESULT_JSON_ID)) {
+      	 loadablePlanRequest.setLoadablePlanDetails(loadablePlanRequest.getDischargePlanDetails());
+      	 request.setRequestType(DICHARGE_STUDY);
+        }
+    else {
+    	request.setRequestType(LOADABLE_STUDY);
+    }
+    
 
     buildLoadablePlanDetails(loadablePlanRequest, request);
 
@@ -3535,16 +3542,6 @@ public class LoadableStudyService {
                                     detailsBuilderDeparture.setStabilityParameter(
                                         buildStabilityParamter(stabilityParameter)));
 
-                        // DS field
-                        Optional.ofNullable(
-                                lppwd.getDepartureCondition().getDischargePlanRoBDetails())
-                            .ifPresent(
-                                robDetails ->
-                                    robDetails.forEach(
-                                        rd -> {
-                                          buildRoBDetails(rd, detailsBuilderDeparture);
-                                        }));
-
                         portWiseBuilder.setDepartureCondition(detailsBuilderDeparture);
 
                         LoadablePlanDetailsReply.Builder detailsBuilderArrival =
@@ -3584,20 +3581,15 @@ public class LoadableStudyService {
                                     detailsBuilderArrival.setStabilityParameter(
                                         buildStabilityParamter(stabilityParameter)));
 
-                        // DS field
-                        Optional.ofNullable(
-                                lppwd.getDepartureCondition().getDischargePlanRoBDetails())
-                            .ifPresent(
-                                robDetails ->
-                                    robDetails.forEach(
-                                        rd -> {
-                                          buildRoBDetails(rd, detailsBuilderArrival);
-                                        }));
                         portWiseBuilder.setArrivalCondition(detailsBuilderArrival);
 
                         portWiseBuilder.setPortId(lppwd.getPortId());
                         portWiseBuilder.setPortRotationId(
                             null != lppwd.getPortRotationId() ? lppwd.getPortRotationId() : 0);
+                        portWiseBuilder.setSeaWaterTemperature(
+                                lppwd.getSeaWaterTemperature() );
+                        portWiseBuilder.setAmbientTemperature(
+                               lppwd.getAmbientTemperature());
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
               Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);
@@ -3622,22 +3614,6 @@ public class LoadableStudyService {
     }
   }
 
-  /**
-   * @param robDetails
-   * @return StabilityParameter
-   */
-  private StabilityParameter buildRoBDetails(
-      DischargePlanRoBDetails robDetails,
-      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder detailsBuilder) {
-    log.info("builidng ROB details");
-    ROBdetails.Builder builder = ROBdetails.newBuilder();
-    Optional.ofNullable(robDetails.getTankShortName()).ifPresent(builder::setTankShortName);
-    Optional.ofNullable(robDetails.getQuantity()).ifPresent(builder::setQuantity);
-    Optional.ofNullable(robDetails.getSg()).ifPresent(builder::setSg);
-    Optional.ofNullable(robDetails.getTankId()).ifPresent(builder::setTankId);
-
-    detailsBuilder.addLoadablePlanRoBDetails(builder.build()); // TODO
-  }
 
   /**
    * @param stabilityParameters
@@ -3767,11 +3743,11 @@ public class LoadableStudyService {
             i ->
                 i.forEach(
                     cowDetail -> {
-                      Tank.Builder tankBuilder = Tank.newBuilder(); // TODO
+                      COWDetail.Builder cowDetailBuilder = COWDetail.newBuilder(); // TODO
                       Optional.ofNullable(cowDetail.getShortName())
-                          .ifPresent(tankBuilder::setShortName);
-                      Optional.ofNullable(cowDetail.getTankId()).ifPresent(tankBuilder::setTankId);
-                      qunatityBuilder.addCowDetails(tankBuilder.build());
+                          .ifPresent(cowDetailBuilder::setShortName);
+                      Optional.ofNullable(cowDetail.getTankId()).ifPresent(cowDetailBuilder::setTankId);
+                      qunatityBuilder.addCowDetails(cowDetailBuilder.build());
                     }));
 
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
