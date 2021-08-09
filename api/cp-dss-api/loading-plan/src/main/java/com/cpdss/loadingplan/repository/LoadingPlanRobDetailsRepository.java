@@ -22,4 +22,9 @@ public interface LoadingPlanRobDetailsRepository
   @Query("UPDATE LoadingPlanRobDetails SET isActive = false WHERE loadingPlanPortWiseDetails = ?1")
   public void deleteByLoadingPlanPortWiseDetails(
       LoadingPlanPortWiseDetails loadingPlanPortWiseDetails);
+
+  @Query(
+      "SELECT LPRD FROM LoadingPlanRobDetails LPRD WHERE LPRD.loadingPlanPortWiseDetails.id IN ?1 AND LPRD.isActive = ?2")
+  public List<LoadingPlanRobDetails> findByPortWiseDetailIdsAndIsActive(
+      List<Long> portWiseDetailIds, Boolean isActive);
 }

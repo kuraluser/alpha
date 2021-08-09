@@ -24,4 +24,10 @@ public interface LoadingSequenceStabiltyParametersRepository
 
   public List<LoadingSequenceStabilityParameters> findByLoadingInformationAndIsActiveOrderByTime(
       LoadingInformation loadingInformation, Boolean isActive);
+
+  @Modifying
+  @Transactional
+  @Query(
+      "UPDATE LoadingSequenceStabilityParameters SET isActive = false WHERE loadingInformation.id = ?1")
+  public void deleteByLoadingInformationId(Long loadingInfoId);
 }
