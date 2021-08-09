@@ -15,4 +15,6 @@ public class Cargo {
   private String companyId;
   private BigDecimal plannedWeight;
   private BigDecimal actualWeight;
+  private Long dischargeTime;
+
 }

@@ -9,6 +9,8 @@ import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
+import com.cpdss.gateway.domain.DischargePlanDetailsResponse;
+import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
@@ -488,6 +490,45 @@ public class DischargePlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error fetching getDischargeStudyByVoyage", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+  
+  
+  /**
+   * @param vesselId
+   * @param voyageId
+   * @param loadableStudyId
+   * @param loadablePatternId
+   * @param headers
+   * @return
+   * @throws CommonRestException 
+   */
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/discharge-pattern-details/{dischargePatternId}")
+  public DischargePlanDetailsResponse getDischargePatternDetails(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadablePatternId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.dischargeStudyService.getDischargePatternDetails(
+          loadablePatternId, loadableStudyId, vesselId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when getLoadablePatternDetails", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when getLoadablePatternDetails", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

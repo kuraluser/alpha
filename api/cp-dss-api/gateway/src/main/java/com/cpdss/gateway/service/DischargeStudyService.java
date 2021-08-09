@@ -31,6 +31,8 @@ import com.cpdss.gateway.domain.BackLoading;
 import com.cpdss.gateway.domain.BillOfLadding;
 import com.cpdss.gateway.domain.Cargo;
 import com.cpdss.gateway.domain.CargoNomination;
+import com.cpdss.gateway.domain.DischargePlanDetailsResponse;
+import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
@@ -52,6 +54,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -649,4 +653,9 @@ public class DischargeStudyService {
   public AlgoReply generateDischargePatterns(AlgoRequest request) {
     return this.dischargeStudyOperationServiceBlockingStub.generateDischargePatterns(request);
   }
+
+public DischargePlanDetailsResponse getDischargePatternDetails(Long loadablePatternId,Long loadableStudyId, Long vesselId,
+		String first) throws GenericServiceException{
+	return null;
+}
 }
