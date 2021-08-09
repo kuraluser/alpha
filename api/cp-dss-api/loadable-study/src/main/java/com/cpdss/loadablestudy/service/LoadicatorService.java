@@ -921,10 +921,10 @@ public class LoadicatorService {
         restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
     this.saveLoadicatorAlgoResponse(request, algoResponse, objectMapper);
     Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
-            this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+        this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
     Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
-            this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
-                    request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
+        this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
+            request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
     if (algoResponse.getFeedbackLoop() != null) {
       if (!request.getIsPattern()) {
         if (algoResponse.getFeedbackLoop()) {
@@ -965,7 +965,8 @@ public class LoadicatorService {
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
           log.info("enableCommunication " + enableCommunication);
           if (enableCommunication) {
-            passResultToCommunication(objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
+            passResultToCommunication(
+                objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
           }
         }
       } else {
@@ -1000,7 +1001,8 @@ public class LoadicatorService {
           LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
 
       if (enableCommunication) {
-        passResultToCommunication(objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
+        passResultToCommunication(
+            objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
       }
     }
     replyBuilder =
@@ -1010,7 +1012,12 @@ public class LoadicatorService {
     return replyBuilder;
   }
 
-  private void passResultToCommunication(ObjectMapper objectMapper, LoadicatorAlgoResponse algoResponse, Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt, Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus) throws InvalidProtocolBufferException, JsonProcessingException, GenericServiceException {
+  private void passResultToCommunication(
+      ObjectMapper objectMapper,
+      LoadicatorAlgoResponse algoResponse,
+      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt,
+      Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus)
+      throws InvalidProtocolBufferException, JsonProcessingException, GenericServiceException {
     log.info("inside Communication ==Loadicator ==" + loadableStudyCommunicationStatus);
     if (loadableStudyCommunicationStatus.get().getMessageUUID() != null) {
       LoadableStudy.AlgoResponseCommunication.Builder algoRespComm =
@@ -1035,8 +1042,7 @@ public class LoadicatorService {
         algoRespComm.setLoadablePatternAlgoRequest(loadablePatternAlgoRequest.build());
       }
       log.info(
-          "inside passResultPayloadToEnvoyWriter ==Loadicator =="
-              + loadableStudyOpt.get().getId());
+          "inside passResultPayloadToEnvoyWriter ==Loadicator ==" + loadableStudyOpt.get().getId());
       communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
     }
   }
