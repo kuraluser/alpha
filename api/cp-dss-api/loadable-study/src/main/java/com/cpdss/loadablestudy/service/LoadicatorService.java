@@ -959,9 +959,11 @@ public class LoadicatorService {
               false,
               algoResponse.getFeedbackLoopCount(),
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
+          log.info("saveloadicatorDataForSynopticalTable== " + enableCommunication);
           this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
           loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
+          log.info("enableCommunication " + enableCommunication);
           if (enableCommunication) {
             passResultToCommunication(objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
           }
