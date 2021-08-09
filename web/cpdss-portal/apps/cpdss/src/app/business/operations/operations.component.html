@@ -3,7 +3,7 @@
         <div class="col vessel-info-wrapper">
             <cpdss-portal-vessel-info [vesselDetails]="vessel"></cpdss-portal-vessel-info>
         </div>
-        <div *ngIf="vessel && voyages">
+        <div *ngIf="vessel && voyages" class="voyage-label">
             <label for="">Voyage</label>
                 {{selectedVoyage?.voyageNo}}
         </div>
