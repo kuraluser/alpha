@@ -11,7 +11,7 @@
     <div formArrayName="berth" class="row no-gutters" >
         <div [formGroupName]="i" class="col-6 mb-5" *ngFor="let berthData of berthFormArray.controls; let i = index;">
             <ng-container *ngIf="berthData.controls && berthData.controls.edit.value">
-                <p-dropdown  id="{{'berth_select_'+ i}}" styleClass="form-control" [filter]="true"
+                <p-dropdown  id="{{'berth_select_'+ i}}" styleClass="form-control dropdown-panel-auto" [filter]="true"
                     [options]="availableBerths" optionLabel="berthName"  [formControl]="berthData.controls['name']"
                     (onChange)="onBerthChange($event, i)"
                     placeholder="{{'LOADING_DISCHARGING_BERTH_SELECT_LABEL' | translate}}" [readonly]="false"
@@ -24,7 +24,7 @@
             </ng-container>
             <ng-container *ngIf="!berthData.controls.edit.value">
                 <div class="bg-highlight mr-15" (click)="selectBerth(berthData, i)">
-                    <span>{{(i+1) + '. '}}</span><label class="mb-0">{{berthData?.controls?.name?.value?.berthName}}</label>
+                    <span class="v-top">{{(i+1) + '. '}}</span><label class="mb-0 content-berth">{{berthData?.controls?.name?.value?.berthName}}</label>
                     <div class="pull-right">
                         <span *ngIf="editMode"><a type="button" id="edit-berth-btn" class="pencil-icon mr-5"
                                 (click)="editBerth(berthData, i)"></a></span>
