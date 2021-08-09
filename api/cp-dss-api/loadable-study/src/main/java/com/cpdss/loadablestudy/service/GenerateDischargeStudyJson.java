@@ -227,11 +227,11 @@ public class GenerateDischargeStudyJson {
     log.info("Fetching LoadablePlan PortWise Details for discharge id {}", dischargeStudyId);
     ActiveVoyage.Builder builder = ActiveVoyage.newBuilder();
 
-    Optional<LoadableStudy> loadableStudyOpt =
+    Optional<LoadableStudy> dischargeStudyOpt =
         this.loadableStudyRepository.findByIdAndIsActive(dischargeStudyId, true);
 
-    if (loadableStudyOpt.isPresent()
-        && loadableStudyOpt.get().getConfirmedLoadableStudyId() != null) {
+    if (dischargeStudyOpt.isPresent()
+        && dischargeStudyOpt.get().getConfirmedLoadableStudyId() != null) {
       try {
         this.voyageService.fetchActiveVoyageByVesselId(builder, vesselId, ACTIVE_VOYAGE_STATUS);
       } catch (Exception e) {
@@ -253,9 +253,14 @@ public class GenerateDischargeStudyJson {
             HttpStatusCode.BAD_REQUEST);
       } else {
         log.info("Found active voyage {} ", voyageNo);
+
+        Optional<LoadableStudy> respectiveLoadableStudyOpt =
+            this.loadableStudyRepository.findByIdAndIsActive(
+                dischargeStudyOpt.get().getConfirmedLoadableStudyId(), true);
+
         Optional<com.cpdss.loadablestudy.entity.LoadableStudyPortRotation>
             optionalLoadableStudyWithMAXPortOrder =
-                loadableStudyOpt.get().getPortRotations().stream()
+                respectiveLoadableStudyOpt.get().getPortRotations().stream()
                     .filter(item -> item.getOperation().getId() == 1L)
                     .max(
                         Comparator.comparing(
