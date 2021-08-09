@@ -1702,6 +1702,7 @@ public class LoadablePatternService {
   public void saveLoadablePatternDetails(
       String patternResultJson, AlgoResponseCommunication.Builder load) {
     try {
+      log.info("inside saveLoadablePatternDetails ===== ");
       JsonFormat.parser().ignoringUnknownFields().merge(patternResultJson, load);
       AlgoResponseCommunication responseCommunication = load.build();
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest patternResult =
@@ -1733,9 +1734,11 @@ public class LoadablePatternService {
             LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, loadableStudyOpt.get().getId());
       } else {
         savePatternDetails(patternResult, loadableStudyOpt);
+        log.info("end savePatternDetails ===== ");
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get().getId());
         if (responseCommunication.getLoadicatorResultsRequest() != null) {
+          log.info("inside  saveLoadicatorResults ===== ");
           loadicatorService.saveLoadicatorResults(
               responseCommunication.getLoadicatorResultsRequest());
         }
