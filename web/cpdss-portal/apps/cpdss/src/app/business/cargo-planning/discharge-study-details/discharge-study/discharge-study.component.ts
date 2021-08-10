@@ -55,6 +55,7 @@ export class DischargeStudyComponent implements OnInit {
     this._dischargeStudy = value;
     this.editMode = (this.permission?.edit === undefined || this.permission?.edit)  && [VOYAGE_STATUS.ACTIVE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
     this.editMode ? this.dischargeStudyForm?.enable() : this.dischargeStudyForm?.disable();
+    this.backLoadingColumns = this.dischargeStudyDetailsTransformationService.getDischargeStudyBackLoadingDatatableColumns(this.permission);
   }
 
   editMode: DATATABLE_EDITMODE;
@@ -96,8 +97,7 @@ export class DischargeStudyComponent implements OnInit {
     })
     this.errorMessages = this.dischargeStudyDetailsTransformationService.setValidationMessageForDischargeStudy();
     this.columns = this.dischargeStudyDetailsTransformationService.getDischargeStudyCargoDatatableColumns();
-    this.backLoadingColumns = this.dischargeStudyDetailsTransformationService.getDischargeStudyBackLoadingDatatableColumns();
-    this.setDummyDetails();
+    
     this.getDischargeStudyDetails();
   }
 
@@ -109,6 +109,7 @@ export class DischargeStudyComponent implements OnInit {
    */
   private async getDischargeStudyDetails() {
     this.ngxSpinnerService.show();
+    await this.setDropDownDetails();
     const instruction = await this.dischargeStudyDetailsApiService.getInstructionDetails().toPromise();
     const tankList = await this.dischargeStudyDetailsApiService.getTankDetails(this.vesselId).toPromise();
     const portCargoDetails = await this.dischargeStudyDetailsApiService.getPortCargoDetails(this.dischargeStudyId).toPromise();
@@ -164,19 +165,20 @@ export class DischargeStudyComponent implements OnInit {
   }
 
   /**
-   * Method set dummy details need to remove when actual api comes
-   *
+   * Method set drop down details 
+   * 
    * @private
    * @memberof DischargeStudyComponent
    */
-  setDummyDetails() {
+   private async setDropDownDetails() {
+    const translationKeys  = await this.translateService.get(['MANUAL','AUTO']).toPromise();
     this.mode = [
-      { name: 'auto', id: 1 },
-      { name: 'manual', id: 2 }
+      { name: translationKeys['AUTO'] , id: 1 },
+      { name: translationKeys['MANUAL'] , id: 2 }
     ]
     this.cowList = [
-      { name: 'auto', id: 1 },
-      { name: 'manual', id: 2 }
+      { name: translationKeys['AUTO'] , id: 1 },
+      { name: translationKeys['MANUAL'] , id: 2 }
     ];
     this.percentageList = [
       { value: 25, name: '25%' },

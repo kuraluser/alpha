@@ -858,7 +858,7 @@ getDischargeStudyCargoDatatableColumns(): IDataTableColumn[] {
 * @returns {IDataTableColumn[]}
 * @memberof DischargeStudyDetailsTransformationService
 */
-getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
+getDischargeStudyBackLoadingDatatableColumns(permission: IPermission): IDataTableColumn[] {
   let columns:IDataTableColumn[] = [
     {
       field: 'slNo',
@@ -956,17 +956,20 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       }
     }
   ]
-  const actions: DATATABLE_ACTION[] = [];
-  actions.push(DATATABLE_ACTION.DELETE);
-  actions.push(DATATABLE_ACTION.SAVE);
-  const action: IDataTableColumn = {
-    field: 'actions',
-    header: '',
-    fieldHeaderClass: 'column-actions',
-    fieldType: DATATABLE_FIELD_TYPE.ACTION,
-    actions: actions
-  };
-  columns = [...columns, action];
+  if((permission?.edit === undefined || permission?.edit)) {
+    const actions: DATATABLE_ACTION[] = [];
+    actions.push(DATATABLE_ACTION.SAVE);
+    actions.push(DATATABLE_ACTION.DELETE);
+    const action: IDataTableColumn = {
+      field: 'actions',
+      header: '',
+      fieldHeaderClass: 'column-actions',
+      fieldType: DATATABLE_FIELD_TYPE.ACTION,
+      actions: actions
+    };
+    columns = [...columns, action];
+  }
+  
   return columns;
 }
 
@@ -1140,7 +1143,7 @@ getDischargeStudyBackLoadingDatatableColumns(): IDataTableColumn[] {
       _backLoadingDetailDetail.isNew = isNewValue;
       _backLoadingDetailDetail.storedKey = new ValueObject<string>(storedKey),
       _backLoadingDetailDetail.id = new ValueObject<number>(Number(backLoadingDetail.id)),
-      _backLoadingDetailDetail.abbreviation = new ValueObject<string>(backLoadingDetail.abbreviation);
+      _backLoadingDetailDetail.abbreviation = new ValueObject<string>(backLoadingDetail.abbreviation, true , isNewValue);
       return _backLoadingDetailDetail;
     }
 
