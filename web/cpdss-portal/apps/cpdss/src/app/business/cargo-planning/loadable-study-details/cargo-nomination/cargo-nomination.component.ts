@@ -379,10 +379,11 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
         this.ngxSpinnerService.show();
         event.data.processing = true;
         this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(true);
-        this.updateCommingleButton(true);
+        this.updateCommingleButton(true, false);
         const row = this.cargoNominations[event.index];
         this.updateRowByUnit(row, this.loadableStudyDetailsApiService.currentUnit, this.loadableStudyDetailsApiService.baseUnit);
         const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, true);
+        this.updateCommingleButton(true); // to validate LQ total.
         this.updateRowByUnit(row, this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
         if (res) {
           for (const key in this.cargoNominations[valueIndex]) {
