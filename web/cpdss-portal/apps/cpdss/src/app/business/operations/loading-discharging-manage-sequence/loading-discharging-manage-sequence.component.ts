@@ -205,11 +205,6 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     if (form.valid) {
       const loadingDischargingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation)
       this.updateLoadingDischargingDelays.emit(loadingDischargingDelaysList);
-      for (const key in this.loadingDischargingDelays[index]) {
-        if (this.loadingDischargingDelays[index]?.hasOwnProperty(key) && this.loadingDischargingDelays[index][key]?.hasOwnProperty('_isEditMode')) {
-          this.loadingDischargingDelays[index][key].isEditMode = false;
-        }
-      }
     }
   }
 

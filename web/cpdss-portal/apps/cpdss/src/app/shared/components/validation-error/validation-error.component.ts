@@ -16,7 +16,6 @@ import { IValidationErrorMessages, IValidationErrors } from './validation-error.
   styleUrls: ['./validation-error.component.scss']
 })
 export class ValidationErrorComponent implements OnInit {
-
   @Input()
   get errors(): IValidationErrors {
     return this._errors;
@@ -28,8 +27,20 @@ export class ValidationErrorComponent implements OnInit {
     }
   }
 
-  @Input() errorMessages: IValidationErrorMessages;
 
+  @Input()
+  get errorMessages(): IValidationErrorMessages {
+    return this._errorMessages;
+  }
+
+  set errorMessages(errors: IValidationErrorMessages) {
+    this._errorMessages = errors;
+    if (errors) {
+      this.setErrors();
+    }
+  }
+
+  _errorMessages :IValidationErrorMessages;
   _errors: IValidationErrors;
 
   errorData: string;
