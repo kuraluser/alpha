@@ -238,7 +238,7 @@ public class LoadingSequenceService {
     SortedSet<Long> cargoNominationIds = new TreeSet<Long>();
         cargoNominationIds.addAll(reply.getLoadingSequencesList().stream()
             .map(sequence -> sequence.getCargoNominationId())
-            .collect(Collectors.toSet()));
+            .collect(Collectors.toList()));
     for (Long cargoNominationId : cargoNominationIds) {
       AtomicInteger stageNumber = new AtomicInteger();
       for (LoadingSequence sequence :
