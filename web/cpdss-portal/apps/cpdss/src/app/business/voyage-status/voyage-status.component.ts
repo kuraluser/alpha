@@ -201,8 +201,8 @@ export class VoyageStatusComponent implements OnInit {
     this.voyageStatusResponse = await this.voyageApiService.getVoyageDetails(vesselId, voyageId, loadableStudyId, this.selectedPortDetails).toPromise();
     if (this.voyageStatusResponse?.responseStatus?.status === '200') {
       this.bunkerConditions = this.voyageStatusResponse?.bunkerConditions;
-      this.cargoConditions = this.voyageStatusResponse?.cargoConditions;
-      this.cargoQuantities = this.voyageStatusResponse?.cargoQuantities;
+      this.cargoConditions = this.voyageStatusResponse?.cargoConditions?.length > 0 ? this.voyageStatusResponse?.cargoConditions : [];
+      this.cargoQuantities = this.voyageStatusResponse?.cargoQuantities?.length > 0 ? this.voyageStatusResponse?.cargoQuantities : [];
     }
     this.ngxSpinnerService.hide();
   }
