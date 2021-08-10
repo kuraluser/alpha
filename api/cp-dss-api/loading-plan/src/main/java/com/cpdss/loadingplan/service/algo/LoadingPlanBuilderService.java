@@ -282,7 +282,7 @@ public class LoadingPlanBuilderService {
         StringUtils.isEmpty(params.getTrim()) ? null : new BigDecimal(params.getTrim()));
     stabilityParams.setList(
         StringUtils.isEmpty(params.getList()) ? null : new BigDecimal(params.getList()));
-    stabilityParams.setValueType(LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE);
+    stabilityParams.setValueType(LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
   }
 
   public void buildPortStowage(
@@ -310,7 +310,7 @@ public class LoadingPlanBuilderService {
         StringUtils.isEmpty(stowage.getTemperature())
             ? null
             : new BigDecimal(stowage.getTemperature()));
-    stowageDetails.setValueType(LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
+    stowageDetails.setValueType(LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
   }
 
   public void buildBallastOperation(
