@@ -212,6 +212,16 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         "Get Loading Info, Port rotation id is available in Active Voyage, Port Id is {}",
         portRotation.get().getPortId());
 
+    // Set LS name and id
+    if (activeVoyage.getLoadableStudy() != null) {
+      var1.setLoadableStudyId(activeVoyage.getLoadableStudy().getId());
+      var1.setLoadableStudyName(activeVoyage.getLoadableStudy().getName());
+      log.info(
+          "Setting Loadable Study Name {} and Id {}",
+          var1.getLoadableStudyName(),
+          var1.getLoadableStudyId());
+    }
+
     // call to synoptic/port master table for sunrise/sunset data
     LoadingDetails loadingDetails =
         this.loadingInformationService.getLoadingDetailsByPortRotationId(
@@ -234,7 +244,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         this.loadingInformationService.buildLoadingPlanBerthDetails(
             loadingInfo.getLoadingBerthsList());
 
-    // Call to vessel and set value from loading plan
+    // Machine In use master and selected data setting
     CargoMachineryInUse machineryInUse =
         this.loadingInformationService.getCargoMachinesInUserFromVessel(
             loadingInfo.getLoadingMachinesList(), vesselId);
@@ -267,6 +277,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             portRotation.get().getId(),
             portRotation.get().getPortId()));
 
+    // Manage Sequence
     LoadingSequences loadingSequences =
         this.loadingInformationService.getLoadingSequence(loadingInfo.getLoadingDelays());
 
@@ -336,7 +347,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Override
   public LoadingPlanAlgoResponse saveLoadingPlan(
-      Long vesselId, Long voyageId, Long infoId, Object loadingPlanAlgoRequest)
+      Long vesselId, Long voyageId, Long infoId, LoadingPlanAlgoRequest loadingPlanAlgoRequest)
       throws GenericServiceException {
     LoadingPlanAlgoResponse algoResponse = new LoadingPlanAlgoResponse();
     LoadingPlanSaveRequest.Builder builder = LoadingPlanSaveRequest.newBuilder();
@@ -362,7 +373,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       log.error("Exception encountered when processing Loading Information Response JSON");
     }
     loadingSequenceService.buildLoadingPlanSaveRequest(
-        (LoadingPlanAlgoRequest) loadingPlanAlgoRequest, vesselId, infoId, builder);
+        loadingPlanAlgoRequest, vesselId, infoId, builder);
     LoadingPlanSaveResponse response = loadingPlanGrpcService.saveLoadingPlan(builder.build());
     if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error("Exception occured when saving loading plan");
@@ -371,6 +382,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+    algoResponse.setProcessId(loadingPlanAlgoRequest.getProcessId());
     algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
     return algoResponse;
   }
@@ -464,26 +476,6 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
 
     LoadingUpdateUllageResponse outResponse = new LoadingUpdateUllageResponse();
-
-    //    // Call No. 1 To synoptic table api (voyage-status)
-    //    CargoVesselTankDetails vesselTankDetails =
-    //        this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
-    //            vesselId,
-    //            activeVoyage.getId(),
-    //            activeVoyage.getActiveLs().getId(),
-    //            portRotation.get().getPortId(),
-    //            portRotation.get().getPortOrder(),
-    //            portRotation.get().getId(),
-    //            operationType);
-    //    // Call No. 2 To synoptic data for loading (same as port rotation in above code)
-    //    vesselTankDetails.setLoadableQuantityCargoDetails(
-    //        this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
-    //            vesselId,
-    //            activeVoyage.getPatternId(),
-    //            operationType,
-    //            portRotation.get().getId(),
-    //            portRotation.get().getPortId()));
-    //    outResponse.setVesselTankDetails(vesselTankDetails);
 
     // group cargo nomination ids
     List<Long> cargoNominationIds =
@@ -627,6 +619,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       cargoBillOfLadding.setCargoColor(cargoNomination.getColor());
       cargoBillOfLadding.setCargoName(cargoNomination.getCargoName());
       cargoBillOfLadding.setCargoAbbrevation(cargoNomination.getAbbreviation());
+      cargoBillOfLadding.setCargoNominationId(cargoNominationId);
       cargoBillOfLadding.setBillOfLaddings(billOfLaddings);
       billOfLaddingList.add(cargoBillOfLadding);
 
@@ -635,22 +628,23 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       cargoQuantityDetail.setCargoColor(cargoNomination.getColor());
       cargoQuantityDetail.setCargoName(cargoNomination.getCargoName());
       cargoQuantityDetail.setCargoAbbrevation(cargoNomination.getAbbreviation());
+      cargoQuantityDetail.setCargoNominationId(cargoNominationId);
       cargoQuantityDetail.setNominationApi(cargoNomination.getApi());
       cargoQuantityDetail.setNominationTemp(cargoNomination.getTemperature());
       Double nominationQuantity =
-          cargoNomination.getQuantity() != null
+          !cargoNomination.getQuantity().isEmpty()
               ? Double.parseDouble(cargoNomination.getQuantity())
-              : null;
+              : 0;
       cargoQuantityDetail.setNominationTotal(nominationQuantity);
       Double minTolerance =
-          cargoNomination.getMinTolerance() != null
+          !cargoNomination.getMinTolerance().isEmpty()
               ? Double.parseDouble(cargoNomination.getMinTolerance())
-              : null;
+              : 0;
       cargoQuantityDetail.setMinTolerance(minTolerance);
       Double maxTolerance =
-          cargoNomination.getMaxTolerance() != null
+          !cargoNomination.getMaxTolerance().isEmpty()
               ? Double.parseDouble(cargoNomination.getMaxTolerance())
-              : null;
+              : 0;
       cargoQuantityDetail.setMaxTolerance(maxTolerance);
       Double minQuantity = nominationQuantity * (100 + minTolerance) / 100;
       cargoQuantityDetail.setMinQuantity(minQuantity);
@@ -674,12 +668,27 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
               .reduce(0, (subtotal, element) -> subtotal + element);
       cargoQuantityDetail.setPlannedQuantityTotal(plannedQuantityTotal);
-      Double blQuantityTotal =
+      Double blQuantityMtTotal =
           billOfLaddings.stream()
               .mapToDouble(billOfLadding -> billOfLadding.getQuantityMt().doubleValue())
               .reduce(0, (subtotal, element) -> subtotal + element);
-      cargoQuantityDetail.setBlQuantityTotal(blQuantityTotal);
-      Double difference = actualQuantityTotal.doubleValue() - blQuantityTotal.doubleValue();
+      cargoQuantityDetail.setBlQuantityMTTotal(blQuantityMtTotal);
+      Double blQuantityLTTotal =
+          billOfLaddings.stream()
+              .mapToDouble(billOfLadding -> billOfLadding.getQuantityLT().doubleValue())
+              .reduce(0, (subtotal, element) -> subtotal + element);
+      cargoQuantityDetail.setBlQuantityLTTotal(blQuantityLTTotal);
+      Double blQuantityKLTotal =
+          billOfLaddings.stream()
+              .mapToDouble(billOfLadding -> billOfLadding.getQuantityKl().doubleValue())
+              .reduce(0, (subtotal, element) -> subtotal + element);
+      cargoQuantityDetail.setBlQuantityKLTotal(blQuantityKLTotal);
+      Double blQuantityBblsTotal =
+          billOfLaddings.stream()
+              .mapToDouble(billOfLadding -> billOfLadding.getQuantityBbls().doubleValue())
+              .reduce(0, (subtotal, element) -> subtotal + element);
+      cargoQuantityDetail.setBlQuantityBblsTotal(blQuantityBblsTotal);
+      Double difference = actualQuantityTotal.doubleValue() - blQuantityMtTotal.doubleValue();
       cargoQuantityDetail.setDifference(difference);
       Double blAvgApi =
           billOfLaddings.stream()
@@ -736,6 +745,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         .ifPresent(quantity -> billOfLadding.setQuantityBbls(new BigDecimal(quantity)));
     Optional.ofNullable(cargoBill.getQuantityKl())
         .ifPresent(quantity -> billOfLadding.setQuantityKl(new BigDecimal(quantity)));
+    Optional.ofNullable(cargoBill.getQuantityLT())
+        .ifPresent(quantity -> billOfLadding.setQuantityLT(new BigDecimal(quantity)));
     Optional.ofNullable(cargoBill.getBlRefNo()).ifPresent(ref -> billOfLadding.setBlRefNo(ref));
     return billOfLadding;
   }

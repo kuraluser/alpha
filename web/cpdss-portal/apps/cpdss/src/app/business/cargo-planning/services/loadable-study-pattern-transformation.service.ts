@@ -192,7 +192,7 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
         numberFormat: '1.2-2'
       },
       {
-        field: 'loadingPort',
+        field: 'loadingPortsLabels',
         header: 'CARGO_TO_BE_LOADED_LOADING_PORT'
       },
       {

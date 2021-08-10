@@ -1,10 +1,13 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan.sequence;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
+@JsonInclude(Include.NON_NULL)
 public class Cargo {
 
   private Long tankId;
@@ -17,4 +20,5 @@ public class Cargo {
   private String color;
   private String abbreviation;
   private Long cargoNominationId;
+  private Long cargoId;
 }

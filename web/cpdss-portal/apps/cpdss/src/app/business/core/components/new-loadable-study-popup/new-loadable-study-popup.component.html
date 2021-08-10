@@ -31,6 +31,12 @@
                                 {{'NEW_LOADABLE_STUDY_POPUP__NAME_REQUIRED' | translate}}!
                             </span>
                             <span
+                                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && (form.newLoadableStudyName.errors?.patternMatch)"
+                                class="text-danger">
+                                {{'DISCHARGE_NAME_INVALID_PATTERN' | translate}}!
+                            </span>
+
+                            <span
                                 *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && form.newLoadableStudyName.errors?.maxlength && !form.newLoadableStudyName.errors?.whitespace"
                                 class="text-danger">
                                 {{'NEW_LOADABLE_STUDY_POPUP_MAX_LENGTH' | translate}}!

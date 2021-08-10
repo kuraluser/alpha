@@ -120,6 +120,7 @@ public class LoadingInformationGrpcService
       LoadingInformation request, StreamObserver<LoadingInfoSaveResponse> responseObserver) {
     LoadingInfoSaveResponse.Builder builder = LoadingInfoSaveResponse.newBuilder();
     try {
+      log.info("Request payload {}", Utils.toJson(request));
       com.cpdss.loadingplan.entity.LoadingInformation response =
           this.loadingInformationService.saveLoadingInformation(request);
       buildLoadingInfoSaveResponse(builder, response);
@@ -161,6 +162,7 @@ public class LoadingInformationGrpcService
       LoadingInformation request, StreamObserver<LoadingInfoSaveResponse> responseObserver) {
     LoadingInfoSaveResponse.Builder builder = LoadingInfoSaveResponse.newBuilder();
     try {
+      log.info("Request payload {}", Utils.toJson(request));
       Optional<com.cpdss.loadingplan.entity.LoadingInformation> loadingInformation =
           loadingInformationService.getLoadingInformation(request.getLoadingInfoId());
       log.info("Save Loading Info, Rates Id {}", request.getLoadingInfoId());
@@ -199,6 +201,7 @@ public class LoadingInformationGrpcService
       LoadingInformation request, StreamObserver<LoadingInfoSaveResponse> responseObserver) {
     LoadingInfoSaveResponse.Builder builder = LoadingInfoSaveResponse.newBuilder();
     try {
+      log.info("Request payload {}", Utils.toJson(request));
       Optional<com.cpdss.loadingplan.entity.LoadingInformation> loadingInformation =
           loadingInformationService.getLoadingInformation(request.getLoadingInfoId());
       log.info("Save Loading Info, Stages Id {}", request.getLoadingInfoId());
@@ -237,6 +240,7 @@ public class LoadingInformationGrpcService
       LoadingInformation request, StreamObserver<LoadingInfoSaveResponse> responseObserver) {
     LoadingInfoSaveResponse.Builder builder = LoadingInfoSaveResponse.newBuilder();
     try {
+      log.info("Request payload {}", Utils.toJson(request));
       Optional<com.cpdss.loadingplan.entity.LoadingInformation> loadingInformation =
           loadingInformationService.getLoadingInformation(request.getLoadingInfoId());
       log.info("Save Loading Info, Berths Id {}", request.getLoadingInfoId());
@@ -314,6 +318,7 @@ public class LoadingInformationGrpcService
       LoadingInformation request, StreamObserver<LoadingInfoSaveResponse> responseObserver) {
     LoadingInfoSaveResponse.Builder builder = LoadingInfoSaveResponse.newBuilder();
     try {
+      log.info("Request payload {}", Utils.toJson(request));
       Optional<com.cpdss.loadingplan.entity.LoadingInformation> loadingInformation =
           loadingInformationService.getLoadingInformation(request.getLoadingInfoId());
       log.info("Save Loading Info, Delays Id {}", request.getLoadingInfoId());

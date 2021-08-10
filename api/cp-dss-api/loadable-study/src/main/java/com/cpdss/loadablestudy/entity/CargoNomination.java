@@ -69,4 +69,7 @@ public class CargoNomination extends EntityDoc {
       orphanRemoval = true,
       fetch = FetchType.LAZY)
   private Set<CargoNominationPortDetails> cargoNominationPortDetails;
+
+  @Column(name = "is_backloading")
+  private Boolean isBackloading = false;
 }

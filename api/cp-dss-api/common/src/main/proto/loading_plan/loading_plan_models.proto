@@ -136,7 +136,7 @@ message DelayReasons{
 message LoadingDelays{
   int64 id = 1;
   int64 loadingInfoId = 2;
-  int64 reasonForDelayId = 3;
+  repeated int64 reasonForDelayIds = 3;
   string duration = 4;
   int64 cargoId = 5;
   string quantity = 6; // was added in gateway
@@ -406,6 +406,8 @@ message LoadingPlanSaveRequest {
   repeated LoadingPlanTankDetails portLoadingPlanRobDetails = 6;
   repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 7;
   repeated LoadingPlanStabilityParameters loadingSequenceStabilityParameters = 8;
+  repeated AlgoErrors algoErrors = 9;
+  bool hasLoadicator = 10;
 }
 
 message LoadingSequence {
@@ -445,6 +447,8 @@ message LoadingPlanStabilityParameters {
   string foreDraft = 7;
   string aftDraft = 8;
   int32 time = 9;
+  string meanDraft = 10;
+  string list = 11;
 }
 
 message LoadingPlanTankDetails {
@@ -677,4 +681,23 @@ message MaxQuantityDetails{
   	int64 cargoNominationId = 1;
     string maxQuantity = 2;
   
+}
+
+message LoadingInfoLoadicatorDataRequest {
+  string processId = 1;
+  int64 loadingInformationId = 2;
+  repeated LoadingInfoLoadicatorDetail loadingInfoLoadicatorDetails = 3;
+}
+
+message LoadingInfoLoadicatorDetail {
+  int32 time = 1;
+  LDtrim lDtrim = 2;
+  LDStrength lDStrength = 3;
+  LDIntactStability lDIntactStability = 4;
+}
+
+message LoadingInfoLoadicatorDataReply {
+  string processId = 1;
+  int64 loadableStudyId = 2;
+  ResponseStatus responseStatus = 3;
 }

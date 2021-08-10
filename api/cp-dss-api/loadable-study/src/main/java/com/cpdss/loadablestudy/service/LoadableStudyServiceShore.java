@@ -86,6 +86,11 @@ public class LoadableStudyServiceShore {
         loadableStudyEntity = saveLoadableStudyShore(loadableStudy, voyage);
         saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity);
         saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy, modelMapper);
+        if (loadableStudyEntity != null) {
+          loadableStudyRepository.updateLoadableStudyStatus(
+              LoadableStudiesConstants.LOADABLE_STUDY_INITIAL_STATUS_ID,
+              loadableStudyEntity.getId());
+        }
       } catch (IOException e) {
         e.printStackTrace();
       }

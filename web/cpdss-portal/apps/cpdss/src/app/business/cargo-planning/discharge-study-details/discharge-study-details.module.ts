@@ -7,6 +7,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { VesselInfoModule } from '../../core/components/vessel-info/vessel-info.module';
+import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error-log-popup.module';
 import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
 import { DischargeStudyDetailsRoutingModule } from './discharge-study-details-routing.module';
 import { CargoNominationComponent } from './cargo-nomination/cargo-nomination.component';
@@ -43,6 +44,7 @@ import { DischargeStudyDetailsTransformationService } from '../services/discharg
     BunkeringLayoutModule,
     QuantityPipeModule,
     ValidationErrorModule,
+    ErrorLogPopupModule,
     DischargeStudyDetailsRoutingModule
   ],
   providers: [

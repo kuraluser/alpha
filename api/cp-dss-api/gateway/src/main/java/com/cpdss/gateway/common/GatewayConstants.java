@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.common;
 
+import java.util.*;
+
 public class GatewayConstants {
 
   public static final String SUCCESS = "SUCCESS";
@@ -10,9 +12,6 @@ public class GatewayConstants {
 
   public static final Long LOADING_INFORMATION_RESPONSE_JSON_ID = 10L;
 
-  /**
-   * Actual value in table pump_type, here needed for skip from loading info machine in use master
-   * data
-   */
-  public static final Long VESSEL_PUMP_CARGO_TYPE_ID = 1L;
+  public static final List<String> LOADING_VESSEL_PUMPS =
+      Arrays.asList("BALLAST PUMP", "GS PUMP", "IG PUMP");
 }

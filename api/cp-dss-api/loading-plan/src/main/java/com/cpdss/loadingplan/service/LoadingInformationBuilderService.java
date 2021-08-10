@@ -185,7 +185,9 @@ public class LoadingInformationBuilderService {
       builder1.setId(var.getId());
       Optional.ofNullable(var.getLoadingInformation().getId())
           .ifPresent(builder1::setLoadingInfoId);
-      Optional.ofNullable(var.getReasonForDelay().getId()).ifPresent(builder1::setReasonForDelayId);
+      Optional.ofNullable(var.getLoadingDelayReasons())
+          .ifPresent(
+              v -> v.forEach(s -> builder1.addReasonForDelayIds(s.getReasonForDelay().getId())));
       Optional.ofNullable(var.getDuration())
           .ifPresent(value -> builder1.setDuration(value.toString()));
       Optional.ofNullable(var.getCargoXId()).ifPresent(builder1::setCargoId);

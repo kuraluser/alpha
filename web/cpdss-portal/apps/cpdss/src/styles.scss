@@ -1015,14 +1015,17 @@ input[type=number] {
     &.api, &.temperature{
       > div{
         min-width: 80px!important;
-        max-width: 80px;
+        max-width: 100px;
         height: 25px;
         line-height: 25px;
-        padding-right: 25px!important;
+        padding-right: 36px!important;
         .icon-api-temp{
           right: 0px!important;
           position: absolute;
           top: 5px;
+        }
+        .error-icon{
+          right: 21px;
         }
         input{
           padding-left: 5px;
@@ -2635,45 +2638,6 @@ textarea{
   width: 80px;
 }
 
-.table-rules{
-  input.form-control{
-    width: 83px;
-    margin-bottom: 3px;
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-}
-
-.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
-  transform: translateX(1rem);
-}
-
-
-.loading-discharging-tank-layout{
-  .tank-btn-rounded{
-    margin-left: 2px;
-  }
-  .tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
-    top: 3px !important;
-    left: 14px !important;
-    margin-top: 0 !important;
-    width: auto !important;
-  }
-  .tank-item-valign{
-    position: absolute;
-    left: 2px;
-    top: 13px;
-  }
-  .tank-filling-percentage{
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    text-align: right;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
 
 .table-column-flexible-wrapper{
   .column-class{
@@ -2733,14 +2697,22 @@ textarea{
     position: absolute;
     left: 2px;
     top: 13px;
+    right: 2px;
   }
   .tank-filling-percentage{
     position: absolute;
     bottom: 5px;
     right: 5px;
-    text-align: right;
+    left: 2px;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .tank-commodity-weight{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    display: block;
   }
 }
 
@@ -2840,7 +2812,7 @@ textarea{
 .vessel-card-container {
   &.collapsed{
     .vessel-card-fleet-container{
-      height: 92px;
+      height: 100px;
       overflow: hidden;
     }
   }
@@ -2880,3 +2852,24 @@ textarea{
   }
 }
 
+.color-rounded{
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  display: inline-block;
+  padding-right: 0!important;
+  vertical-align: text-bottom;
+  margin-right: 2px;
+}
+
+.v-top{
+  vertical-align: top;
+}
+
+.dropdown-panel-auto .p-dropdown-panel{
+  max-width: none!important;
+}
+
+.simulator-menu-drop-down{
+  width: 102px;
+}

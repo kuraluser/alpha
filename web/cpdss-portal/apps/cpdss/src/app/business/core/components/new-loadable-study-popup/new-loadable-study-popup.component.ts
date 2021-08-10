@@ -14,6 +14,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { whiteSpaceValidator } from '../../directives/space-validator.directive';
 import { saveAs } from 'file-saver';
 import { LoadableStudyDetailsTransformationService } from '../../../cargo-planning/services/loadable-study-details-transformation.service';
+import { isAlphaCharacterAvaiable } from '../../directives/alpha-validator.directive';
 
 /**
  *  popup for creating / editing loadable-study
@@ -126,7 +127,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   async createNewLoadableStudyFormGroup() {
     this.newLoadableStudyFormGroup = this.formBuilder.group({
       duplicateExisting: '',
-      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), whiteSpaceValidator]),
+      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), whiteSpaceValidator , isAlphaCharacterAvaiable]),
       enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
       attachMail: null,
       charterer: this.vesselInfoList?.charterer,

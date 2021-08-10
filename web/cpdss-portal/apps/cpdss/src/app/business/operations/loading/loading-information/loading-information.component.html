@@ -25,8 +25,7 @@
         <div class="row">
             <div class="col">
                 <cpdss-portal-loading-discharging-berth [loadingInfoId]="loadingInfoId"
-                    [availableBerths]="loadingInformationData?.berthDetails.availableBerths"
-                    [selectedBerths]="loadingInformationData?.berthDetails.selectedBerths"
+                    [berthDetails]="loadingInformationData?.berthDetails"
                     (berthChange)="onBerthChange($event)">
                 </cpdss-portal-loading-discharging-berth>
             </div>
@@ -122,7 +121,8 @@
             </div>
         </div>
 
-        <cpdss-portal-loading-discharging-manage-sequence [cargos]="cargos"
+        <cpdss-portal-loading-discharging-manage-sequence 
+        [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
             [loadableQuantityCargo]="loadingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails"
             [loadingDischargingSequences]="loadingInformationData?.loadingSequences" [loadingInfoId]="loadingInfoId"
             (updateLoadingDischargingDelays)="onUpdateLoadingDelays($event)">

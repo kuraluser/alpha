@@ -25,4 +25,5 @@ public class LoadingSequenceResponse {
   private List<PumpCategory> ballastPumpCategories;
   private List<Long> stageTickPositions;
   private List<StabilityParam> stabilityParams;
+  private List<CargoStage> cargoStages;
 }

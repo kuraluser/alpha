@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -381,13 +382,26 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             pumpTypes.add(type);
           }
         }
+        List<Long> acceptingPumpIds =
+            pumpTypes.stream()
+                .map(
+                    v -> {
+                      if (GatewayConstants.LOADING_VESSEL_PUMPS.contains(
+                          v.getName().toUpperCase())) {
+                        return v.getId();
+                      }
+                      return null;
+                    })
+                .collect(Collectors.toList());
         List<VesselPump> vesselPumps = new ArrayList<>();
         if (grpcReply.getVesselPumpCount() > 0) {
           for (VesselInfo.VesselPump vp : grpcReply.getVesselPumpList()) {
-            // Cargo pumps not needed in loading
-            if (vp.getPumpTypeId() != GatewayConstants.VESSEL_PUMP_CARGO_TYPE_ID) {
+            // created an array of ids from constants.
+            if (acceptingPumpIds.contains(vp.getPumpTypeId())) {
               VesselPump pump = new VesselPump();
               BeanUtils.copyProperties(vp, pump);
+              Optional.ofNullable(vp.getPumpCapacity())
+                  .ifPresent(v -> pump.setPumpCapacity(new BigDecimal(v)));
               pump.setMachineType(Common.MachineType.VESSEL_PUMP_VALUE);
               vesselPumps.add(pump);
             }
@@ -568,6 +582,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                 if (!v.isEmpty()) val1.setQuantity(new BigDecimal(v));
               });
       BeanUtils.copyProperties(var2, val1);
+      val1.setReasonForDelayIds(var2.getReasonForDelayIdsList());
       loadingDelays.add(val1);
     }
     loadingSequences.setReasonForDelays(reasonForDelays);

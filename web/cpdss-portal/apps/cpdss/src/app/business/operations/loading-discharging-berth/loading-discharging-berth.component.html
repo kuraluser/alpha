@@ -3,33 +3,33 @@
         <h5 class="">{{'LOADING_DISCHARGING_BERTH_HEADER' | translate}}</h5>
     </div>
     <div class="col-md-6 text-right" *ngIf="editMode">
-        <a id="add_berth_btn" [ngStyle]="{'pointer-events': (disableAddBtn) ? 'none' : null}" class="plus-icon plus-icon-rounded" (click)="addBerth(null)"> </a>
+        <a id="add_berth_btn" [ngStyle]="{'pointer-events': (disableAddBtn) ? 'none' : null}" class="plus-icon plus-icon-rounded" (click)="addBerth(null, -2)"> </a>
     </div>
 </div>
 
 <form [formGroup]="berthForm">
-    <div formArrayName="berth" class="row no-gutters">
-        <div [formGroupName]="i" class="col-6 mb-5" *ngFor="let berth of berths.controls; let i = index;">
-            <ng-container *ngIf="berth.controls.edit.value">
-                <p-dropdown id="{{'berth_select_'+ i}}" styleClass="form-control" [filter]="true"
-                    [options]="availableBerths" optionLabel="berthName" formControlName="name"
+    <div formArrayName="berth" class="row no-gutters" >
+        <div [formGroupName]="i" class="col-6 mb-5" *ngFor="let berthData of berthFormArray.controls; let i = index;">
+            <ng-container *ngIf="berthData.controls && berthData.controls.edit.value">
+                <p-dropdown  id="{{'berth_select_'+ i}}" styleClass="form-control dropdown-panel-auto" [filter]="true"
+                    [options]="availableBerths" optionLabel="berthName"  [formControl]="berthData.controls['name']"
                     (onChange)="onBerthChange($event, i)"
                     placeholder="{{'LOADING_DISCHARGING_BERTH_SELECT_LABEL' | translate}}" [readonly]="false"
                     resetFilterOnHide="true">
                 </p-dropdown>
             </ng-container>
             <ng-container>
-                <cpdss-portal-validation-error [errors]="berth.controls.name.errors"
+                <cpdss-portal-validation-error [errors]="berthData.controls.name.errors"
                     [errorMessages]="errorMesages.berth"></cpdss-portal-validation-error>
             </ng-container>
-            <ng-container *ngIf="!berth.controls.edit.value">
-                <div class="bg-highlight mr-15" (click)="selectBerth(berth, i)">
-                    <span>{{(i+1) + '. '}}</span><label class="mb-0">{{berth.controls.name.value.berthName}}</label>
+            <ng-container *ngIf="!berthData.controls.edit.value">
+                <div class="bg-highlight mr-15" (click)="selectBerth(berthData, i)">
+                    <span class="v-top">{{(i+1) + '. '}}</span><label class="mb-0 content-berth">{{berthData?.controls?.name?.value?.berthName}}</label>
                     <div class="pull-right">
                         <span *ngIf="editMode"><a type="button" id="edit-berth-btn" class="pencil-icon mr-5"
-                                (click)="editBerth(berth, i)"></a></span>
+                                (click)="editBerth(berthData, i)"></a></span>
                         <span *ngIf="editMode"><a type="button" id="delete-berth-btn" class="delete-icon"
-                                (click)="deleteBerth(berth, i)"></a></span>
+                                (click)="deleteBerth(berthData, i)"></a></span>
                     </div>
                 </div>
             </ng-container>

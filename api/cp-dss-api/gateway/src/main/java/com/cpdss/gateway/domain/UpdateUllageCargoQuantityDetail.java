@@ -9,6 +9,7 @@ public class UpdateUllageCargoQuantityDetail {
   private String cargoColor;
   private String cargoName;
   private String cargoAbbrevation;
+  private Long cargoNominationId;
   private Double nominationTotal;
   private Double maxTolerance;
   private Double minTolerance;
@@ -16,7 +17,10 @@ public class UpdateUllageCargoQuantityDetail {
   private Double minQuantity;
   private Double plannedQuantityTotal;
   private Double actualQuantityTotal;
-  private Double blQuantityTotal;
+  private Double blQuantityMTTotal;
+  private Double blQuantityBblsTotal;
+  private Double blQuantityKLTotal;
+  private Double blQuantityLTTotal;
   private Double difference;
   private String nominationApi;
   private String nominationTemp;

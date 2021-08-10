@@ -67,4 +67,5 @@ service LoadingPlanService {
   
   rpc GetCargoNominationMaxQuantity (MaxQuantityRequest) returns (MaxQuantityResponse) {}
 
+  rpc GetLoadicatorData(LoadingInfoLoadicatorDataRequest) returns (LoadingInfoLoadicatorDataReply) {}
 }

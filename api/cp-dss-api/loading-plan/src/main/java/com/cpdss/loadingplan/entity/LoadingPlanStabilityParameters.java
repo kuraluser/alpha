@@ -36,6 +36,18 @@ public class LoadingPlanStabilityParameters extends EntityDoc {
   @Column(name = "draft")
   private BigDecimal draft;
 
+  @Column(name = "fore_draft")
+  private BigDecimal foreDraft;
+
+  @Column(name = "aft_draft")
+  private BigDecimal aftDraft;
+
+  @Column(name = "mean_draft")
+  private BigDecimal meanDraft;
+
+  @Column(name = "list")
+  private BigDecimal list;
+
   @Column(name = "bm")
   private BigDecimal bm;
 

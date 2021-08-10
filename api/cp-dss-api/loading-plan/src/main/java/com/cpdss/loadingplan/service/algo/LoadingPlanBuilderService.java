@@ -179,6 +179,26 @@ public class LoadingPlanBuilderService {
         StringUtils.isEmpty(loadingPlanStabilityParameters.getDraft())
             ? null
             : new BigDecimal(loadingPlanStabilityParameters.getDraft()));
+    parameters.setForeDraft(
+        StringUtils.isEmpty(loadingPlanStabilityParameters.getForeDraft())
+            ? null
+            : new BigDecimal(loadingPlanStabilityParameters.getForeDraft()));
+    parameters.setAftDraft(
+        StringUtils.isEmpty(loadingPlanStabilityParameters.getAftDraft())
+            ? null
+            : new BigDecimal(loadingPlanStabilityParameters.getAftDraft()));
+    parameters.setMeanDraft(
+        StringUtils.isEmpty(loadingPlanStabilityParameters.getMeanDraft())
+            ? null
+            : new BigDecimal(loadingPlanStabilityParameters.getMeanDraft()));
+    parameters.setTrim(
+        StringUtils.isEmpty(loadingPlanStabilityParameters.getTrim())
+            ? null
+            : new BigDecimal(loadingPlanStabilityParameters.getTrim()));
+    parameters.setList(
+        StringUtils.isEmpty(loadingPlanStabilityParameters.getList())
+            ? null
+            : new BigDecimal(loadingPlanStabilityParameters.getList()));
     parameters.setLoadingPlanPortWiseDetails(loadingPlanPortWiseDetails);
     parameters.setIsActive(true);
   }
@@ -252,6 +272,16 @@ public class LoadingPlanBuilderService {
     stabilityParams.setPortXId(loadingInformation.getPortXId());
     stabilityParams.setShearingForce(
         StringUtils.isEmpty(params.getSf()) ? null : new BigDecimal(params.getSf()));
+    stabilityParams.setForeDraft(
+        StringUtils.isEmpty(params.getForeDraft()) ? null : new BigDecimal(params.getForeDraft()));
+    stabilityParams.setMeanDraft(
+        StringUtils.isEmpty(params.getMeanDraft()) ? null : new BigDecimal(params.getMeanDraft()));
+    stabilityParams.setAftDraft(
+        StringUtils.isEmpty(params.getAftDraft()) ? null : new BigDecimal(params.getAftDraft()));
+    stabilityParams.setTrim(
+        StringUtils.isEmpty(params.getTrim()) ? null : new BigDecimal(params.getTrim()));
+    stabilityParams.setList(
+        StringUtils.isEmpty(params.getList()) ? null : new BigDecimal(params.getList()));
     stabilityParams.setValueType(LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE);
   }
 
@@ -321,6 +351,12 @@ public class LoadingPlanBuilderService {
     stabilityParameters.setPortXId(loadingInformation.getPortXId());
     stabilityParameters.setShearingForce(
         StringUtils.isEmpty(param.getSf()) ? null : new BigDecimal(param.getSf()));
+    stabilityParameters.setMeanDraft(
+        StringUtils.isEmpty(param.getMeanDraft()) ? null : new BigDecimal(param.getMeanDraft()));
+    stabilityParameters.setTrim(
+        StringUtils.isEmpty(param.getTrim()) ? null : new BigDecimal(param.getTrim()));
+    stabilityParameters.setList(
+        StringUtils.isEmpty(param.getList()) ? null : new BigDecimal(param.getList()));
     stabilityParameters.setTime(param.getTime());
   }
 }

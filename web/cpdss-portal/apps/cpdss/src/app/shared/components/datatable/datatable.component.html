@@ -261,6 +261,29 @@
                                     </ng-container>
                                 </ng-container>
 
+                                <ng-container *ngSwitchCase="fieldType.MULTISELECT">
+                                    <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
+                                        <p-multiSelect #multiselect [options]="listData[col.listName]"
+                                            styleClass="form-control" appendTo="body"
+                                            [panelStyleClass]="col.fieldComponentClass ? col.fieldComponentClass : 'index-1'"
+                                            [formControlName]="col.field" [filter]="col.listFilter"
+                                            optionLabel="{{col.fieldOptionLabel}}"
+                                            [defaultLabel]="col.fieldPlaceholder| translate"
+                                            (onChange)="onChange($event, rowData, rowIndex, col)"
+                                            resetFilterOnHide="true" 
+                                            id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
+                                            itemSize="30" >
+                                        </p-multiSelect>
+                                        <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
+                                            [errorMessages]="col.errorMessages">
+                                        </cpdss-portal-validation-error>
+                                    </ng-container>
+                                    <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
+                                        <span>{{
+                                            getMultiselectedDataAsLabel(rowData[col.field]?.value, col.fieldOptionLabel)}}</span>
+                                    </ng-container>
+                                </ng-container>
+
 
                                 <ng-container *ngSwitchCase="fieldType.COLOR" class="col no-left-padding"
                                     style="max-width: 20px;">

@@ -20,18 +20,26 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
 
 export class LoadingDischargingCargoDetailsComponent implements OnInit {
   @Input() cargos: ICargo[];
-  @Input() cargoVesselTankDetails: ICargoVesselTankDetails;
   @Input() prevQuantitySelectedUnit: QUANTITY_UNIT;
+  @Input() operation: OPERATIONS;
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
   }
-  @Input() operation: OPERATIONS;
 
   set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
     this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
     this._currentQuantitySelectedUnit = value;
     this.cargoTankOptions.weightUnit = value;
   }
+  @Input() get cargoVesselTankDetails(): ICargoVesselTankDetails {
+    return this._cargoVesselTankDetails;
+  }
+
+  set cargoVesselTankDetails(cargoVesselTankDetails: ICargoVesselTankDetails) {
+    this._cargoVesselTankDetails = cargoVesselTankDetails;
+    this.init();
+  }
+  
 
   cargoTanks: IShipCargoTank[][];
   cargoConditions: any = [];
@@ -39,12 +47,21 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
   cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, showFillingPercentage: true, weightField: 'actualWeight', showWeight: true, weightUnit: 'MT', commodityNameField: 'cargoAbbreviation', ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api' }
 
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
+  private _cargoVesselTankDetails: ICargoVesselTankDetails;
 
   constructor(
     private loadingDischargingTransformationService: LoadingDischargingTransformationService
   ) { }
 
   async ngOnInit(): Promise<void> {
+  }
+
+  /**
+  * Method to initialise
+  *
+  * @memberof LoadingDischargingCargoDetailsComponent
+  */
+  init(){
     this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
     this.cargoConditions = this.cargoVesselTankDetails?.cargoConditions;
     this.cargoQuantities = this.cargoVesselTankDetails?.cargoQuantities;

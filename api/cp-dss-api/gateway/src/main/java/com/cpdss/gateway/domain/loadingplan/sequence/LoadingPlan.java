@@ -9,18 +9,18 @@ import lombok.Data;
 public class LoadingPlan {
 
   private String time;
-
   private List<LoadingPlanStowageDetails> loadablePlanStowageDetails;
-
   private List<LoadingPlanBallastDetails> loadablePlanBallastDetails;
-
   private List<LoadingPlanRobDetails> loadablePlanRoBDetails;
+  private String foreDraft;
+  private String meanDraft;
+  private String afterDraft;
+  private String trim;
 
-  private String draft;
+  @JsonProperty("heel")
+  private String list;
 
-  @JsonProperty("BM")
-  private String bm;
+  private String bendinMoment;
 
-  @JsonProperty("SF")
-  private String sf;
+  private String shearForce;
 }

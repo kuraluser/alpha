@@ -36,6 +36,21 @@ public class PortLoadingPlanStabilityParameters extends EntityDoc {
   @Column(name = "draft")
   private BigDecimal draft;
 
+  @Column(name = "fore_draft")
+  private BigDecimal foreDraft;
+
+  @Column(name = "aft_draft")
+  private BigDecimal aftDraft;
+
+  @Column(name = "mean_draft")
+  private BigDecimal meanDraft;
+
+  @Column(name = "trim")
+  private BigDecimal trim;
+
+  @Column(name = "list")
+  private BigDecimal list;
+
   @Column(name = "shearing_force")
   private BigDecimal shearingForce;
 

@@ -409,6 +409,7 @@ public class CargoNominationService {
                   this.cargoNominationRepository.getCountCargoNominationWithPortIds(
                       cargoNomination.getLoadableStudyXId(), cargoNomination, existingPortId);
               if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))) {
+                log.info("deleting port {}", existingPortId);
                 loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
                     loadableStudy, existingPortId);
                 synopticalTableRepository.deleteSynopticalPorts(
@@ -459,13 +460,12 @@ public class CargoNominationService {
       loadableStudyPortRotationService.setPortOrdering(loadableStudy);
     }
 
-    AtomicLong newPortOrder = new AtomicLong(0);
-    loadableStudyPortRotations.forEach(
-        portRotation -> {
-          portRotation.setPortOrder(newPortOrder.incrementAndGet());
-        });
-
-    this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
+    //    AtomicLong newPortOrder = new AtomicLong(0);
+    //    loadableStudyPortRotations.forEach(
+    //        portRotation -> {
+    //          portRotation.setPortOrder(newPortOrder.incrementAndGet());
+    //        });
+    // this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
   }
 
   /**

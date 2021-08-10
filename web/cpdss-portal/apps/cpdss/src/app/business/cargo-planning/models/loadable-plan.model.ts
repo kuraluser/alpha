@@ -456,6 +456,17 @@ export enum VALIDATION_AND_SAVE_STATUS {
      cargoNominationId? : number;
  }
 
+ /**
+  * interface for get simulator json response
+  *
+  * @export
+  * @interface ILoadablePlanSimulatorResponse
+  */
+ export interface ILoadablePlanSimulatorResponse {
+    departureCondition: any;
+    responseStatus: IResponseStatus;
+ }
+
 
 
 

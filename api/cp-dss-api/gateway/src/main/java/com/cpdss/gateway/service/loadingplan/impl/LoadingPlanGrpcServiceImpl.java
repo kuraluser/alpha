@@ -40,6 +40,7 @@ import com.cpdss.gateway.utility.RuleUtility;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
@@ -110,6 +111,15 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
           new com.cpdss.gateway.domain.LoadableStudy();
       BeanUtils.copyProperties(activeVoyage.getConfirmedLoadableStudy(), loadableStudy);
       voyageResponse.setActiveLs(loadableStudy);
+    }
+    if (activeVoyage.getConfirmedLoadableStudy() != null) {
+      com.cpdss.gateway.domain.LoadableStudy loadableStudy =
+          new com.cpdss.gateway.domain.LoadableStudy();
+      Optional.ofNullable(activeVoyage.getConfirmedLoadableStudy().getId())
+          .ifPresent(loadableStudy::setId);
+      Optional.ofNullable(activeVoyage.getConfirmedLoadableStudy().getName())
+          .ifPresent(loadableStudy::setName);
+      voyageResponse.setLoadableStudy(loadableStudy);
     }
 
     return voyageResponse;

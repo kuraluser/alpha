@@ -52,7 +52,7 @@ public final class LoadingPlanServiceOuterClass {
           + "eStatus\"\000\022I\n\031DeleteLoadingInstructions\022\031"
           + ".LoadingInstructionStatus\032\017.ResponseStat"
           + "us\"\000\022@\n\020EditInstructions\022\031.LoadingInstru"
-          + "ctionStatus\032\017.ResponseStatus\"\0002\207\005\n\022Loadi"
+          + "ctionStatus\032\017.ResponseStatus\"\0002\342\005\n\022Loadi"
           + "ngPlanService\022N\n\032LoadingPlanSynchronizat"
           + "ion\022\027.LoadingPlanSyncDetails\032\025.LoadingPl"
           + "anSyncReply\"\000\022F\n\017SaveLoadingPlan\022\027.Loadi"
@@ -69,8 +69,10 @@ public final class LoadingPlanServiceOuterClass {
           + "uest\032\".LoadingInformationSynopticalReply"
           + "\"\000\022L\n\035GetCargoNominationMaxQuantity\022\023.Ma"
           + "xQuantityRequest\032\024.MaxQuantityResponse\"\000"
-          + "B+\n\'com.cpdss.common.generated.loading_p"
-          + "lanP\000b\006proto3"
+          + "\022Y\n\021GetLoadicatorData\022!.LoadingInfoLoadi"
+          + "catorDataRequest\032\037.LoadingInfoLoadicator"
+          + "DataReply\"\000B+\n\'com.cpdss.common.generate"
+          + "d.loading_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

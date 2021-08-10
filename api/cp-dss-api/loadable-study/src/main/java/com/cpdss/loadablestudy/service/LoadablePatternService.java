@@ -282,7 +282,7 @@ public class LoadablePatternService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    if (enableCommunication) {
+    if (enableCommunication && !request.getHasLodicator()) {
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
               request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
@@ -1793,6 +1793,7 @@ private void saveLoadableQuantityCargoPortwiseDetails(LoadableQuantityCargoDetai
   public void saveLoadablePatternDetails(
       String patternResultJson, AlgoResponseCommunication.Builder load) {
     try {
+      log.info("inside saveLoadablePatternDetails ===== ");
       JsonFormat.parser().ignoringUnknownFields().merge(patternResultJson, load);
       AlgoResponseCommunication responseCommunication = load.build();
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest patternResult =
@@ -1827,6 +1828,7 @@ private void saveLoadableQuantityCargoPortwiseDetails(LoadableQuantityCargoDetai
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get().getId());
         if (responseCommunication.getLoadicatorResultsRequest() != null) {
+          log.info("inside  saveLoadicatorResults ===== ");
           loadicatorService.saveLoadicatorResults(
               responseCommunication.getLoadicatorResultsRequest());
         }

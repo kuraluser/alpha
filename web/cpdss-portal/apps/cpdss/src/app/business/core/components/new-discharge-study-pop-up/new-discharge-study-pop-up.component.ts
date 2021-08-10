@@ -5,7 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { DischargeStudyListApiService } from '../../../cargo-planning/services/discharge-study-list-api.service';
 import { DischargeStudyListTransformationApiService } from '../../../cargo-planning/services/discharge-study-list-transformation-api.service';
-
+import { isAlphaCharacterAvaiable } from '../../directives/alpha-validator.directive';
 
 /**
  * Component class for NewDischargeStudyPopUpComponent
@@ -108,7 +108,7 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
   initialiseForm()
   {
     this.dischargeStudyForm = this.formBuilder.group({
-      'newDischargeStudyName':['', [Validators.required]],
+      'newDischargeStudyName':['', [Validators.required , isAlphaCharacterAvaiable]],
       'enquiryDetails': ['', [Validators.maxLength(1000)]],
     });
   }

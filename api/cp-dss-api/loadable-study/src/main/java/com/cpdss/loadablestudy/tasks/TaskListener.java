@@ -38,7 +38,7 @@ public class TaskListener implements ExecuteTaskListener {
         }
 
       } else if (taskName.contains("STATUS_CHECK_")) {
-        communicationService.checkLoadableStudyStatus(taskReqParams);
+        // communicationService.checkLoadableStudyStatus(taskReqParams);
       }
     }
   }

@@ -10,5 +10,6 @@ public class CargoBillOfLadding {
   private String cargoColor;
   private String cargoName;
   private String cargoAbbrevation;
+  private Long cargoNominationId;
   private List<BillOfLadding> billOfLaddings;
 }

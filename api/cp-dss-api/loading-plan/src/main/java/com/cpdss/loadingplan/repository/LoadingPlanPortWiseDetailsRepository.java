@@ -26,4 +26,11 @@ public interface LoadingPlanPortWiseDetailsRepository
   @Transactional
   @Query("UPDATE LoadingPlanPortWiseDetails SET isActive = false WHERE loadingSequence = ?1")
   public void deleteByLoadingSequence(LoadingSequence loadingSequence);
+
+  @Query(
+      "SELECT LPPWD FROM LoadingPlanPortWiseDetails LPPWD WHERE LPPWD.loadingSequence.id IN "
+          + "(SELECT LS.id FROM LoadingSequence LS WHERE LS.loadingInformation.id = ?1 AND LS.toLoadicator = ?2 AND LS.isActive = true) "
+          + " AND LPPWD.isActive = ?3")
+  public List<LoadingPlanPortWiseDetails> findByLoadingInformationIdAndToLoadicatorAndIsActive(
+      Long loadingInfoId, Boolean toLoadicator, Boolean isActive);
 }

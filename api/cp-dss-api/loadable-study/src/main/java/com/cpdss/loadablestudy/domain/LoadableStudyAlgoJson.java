@@ -10,4 +10,7 @@ public class LoadableStudyAlgoJson {
   private String processId;
   private List<LoadablePlanDetailsAlgoJson> loadablePlanDetails;
   private String errors;
+  private boolean hasLodicator;
+  private Object validated;
+  private Object loadablePatternId;
 }

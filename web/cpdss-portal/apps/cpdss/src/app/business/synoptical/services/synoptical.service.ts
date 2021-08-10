@@ -50,7 +50,6 @@ export class SynopticalService {
 
   // Init function to intialize data
   async init() {
-    localStorage.removeItem("loadableStudyId")
     localStorage.removeItem("loadablePatternId")
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     if (!this.vesselInfo) {
@@ -110,26 +109,28 @@ export class SynopticalService {
   * Get loadable pattern list for selected loadable study
   */
   async getLoadablePatterns() {
-    const result = await this.loadableStudyListApiService.getLoadablePatterns(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
-    if (this.selectedLoadableStudy.status === "Confirmed") {
-      this.selectedLoadablePattern = result.loadablePatterns.find(pattern => pattern.loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_CONFIRMED)
-      this.loadablePatternsList = [this.selectedLoadablePattern]
-
-    } else {
-      this.loadablePatternsList = result.loadablePatterns;
-      if (this.selectedLoadablePattern) {
-        this.loadablePatternId = this.selectedLoadablePattern.loadablePatternId;
-      } else if (this.loadablePatternId) {
-        this.selectedLoadablePattern = this.loadablePatternsList.find(pattern => pattern.loadablePatternId === this.loadablePatternId)
+    if(this.selectedLoadableStudy){
+      const result = await this.loadableStudyListApiService.getLoadablePatterns(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
+      if (this.selectedLoadableStudy.status === "Confirmed") {
+        this.selectedLoadablePattern = result.loadablePatterns.find(pattern => pattern.loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_CONFIRMED)
+        this.loadablePatternsList = [this.selectedLoadablePattern]
+  
       } else {
-        this.selectedLoadablePattern = this.loadablePatternsList[0]
+        this.loadablePatternsList = result.loadablePatterns;
+        if (this.selectedLoadablePattern) {
+          this.loadablePatternId = this.selectedLoadablePattern.loadablePatternId;
+        } else if (this.loadablePatternId) {
+          this.selectedLoadablePattern = this.loadablePatternsList.find(pattern => pattern.loadablePatternId === this.loadablePatternId)
+        } else {
+          this.selectedLoadablePattern = this.loadablePatternsList[0]
+        }
       }
-    }
-
-    if (this.selectedLoadablePattern) {
-      this.router.navigateByUrl('/business/synoptical/' + this.vesselInfo.id + '/' + this.selectedVoyage.id + '/' + this.selectedLoadableStudy.id + '/' + this.selectedLoadablePattern.loadablePatternId);
-    }else if(this.selectedLoadableStudy?.id){
-      this.router.navigateByUrl('/business/synoptical/' + this.vesselInfo.id + '/' + this.selectedVoyage.id + '/' + this.selectedLoadableStudy.id);
+  
+      if (this.selectedLoadablePattern) {
+        this.router.navigateByUrl('/business/synoptical/' + this.vesselInfo.id + '/' + this.selectedVoyage.id + '/' + this.selectedLoadableStudy.id + '/' + this.selectedLoadablePattern.loadablePatternId);
+      }else if(this.selectedLoadableStudy?.id){
+        this.router.navigateByUrl('/business/synoptical/' + this.vesselInfo.id + '/' + this.selectedVoyage.id + '/' + this.selectedLoadableStudy.id);
+      }
     }
   }
 

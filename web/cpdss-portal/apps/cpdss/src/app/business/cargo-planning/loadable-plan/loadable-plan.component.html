@@ -34,9 +34,13 @@
                 <ng-template #refPending><span
                         class="badge-custom badge-muted v-middle mr-10">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_PENDING' |
                         translate}}</span></ng-template>
-                <button class="btn btn-main" id="simulator-load" (click)="simulatorLoad()">
+
+                <button type="button" class="btn btn-main mr-10" (click)="menu.toggle($event)">
                     {{'LOADABLE_PLAN_SIMULATOR_BUTTON_LABEL' |translate}}
+                    <span class="pi pi-angle-down ml-5"></span>
                 </button>
+                <p-menu #menu styleClass="simulator-menu-drop-down" [popup]="true" [model]="simulatorMenu"></p-menu>
+
                 <button class="btn btn-main mr-10" id="confirm_plan"
                     [disabled]="!confirmPlanPermission || confirmButtonStatus || validationPending"
                     [ngClass]="{'confirmed': loadableStudyStatus}"
@@ -93,4 +97,3 @@
 <cpdss-portal-port-rotation-popup *ngIf="showPortRotationPopup" [visible]="showPortRotationPopup" [vesselId]="vesselId"
     [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" (displayPopup)="closePortRotationPopup($event)">
 </cpdss-portal-port-rotation-popup>
-<cpdss-portal-user-role-selection-popup *ngIf="showUserRolePopup" [visible]="showUserRolePopup" (displayPopUp)="closeUserRoleSelection($event)"></cpdss-portal-user-role-selection-popup>

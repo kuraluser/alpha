@@ -20,6 +20,8 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoRequest;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoResponse;
+import com.cpdss.loadingplan.entity.AlgoErrorHeading;
+import com.cpdss.loadingplan.entity.AlgoErrors;
 import com.cpdss.loadingplan.entity.BallastOperation;
 import com.cpdss.loadingplan.entity.BallastValve;
 import com.cpdss.loadingplan.entity.CargoLoadingRate;
@@ -35,6 +37,8 @@ import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
+import com.cpdss.loadingplan.repository.AlgoErrorHeadingRepository;
+import com.cpdss.loadingplan.repository.AlgoErrorsRepository;
 import com.cpdss.loadingplan.repository.BallastOperationRepository;
 import com.cpdss.loadingplan.repository.BallastValveRepository;
 import com.cpdss.loadingplan.repository.CargoLoadingRateRepository;
@@ -54,6 +58,7 @@ import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
+import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -97,9 +102,12 @@ public class LoadingPlanAlgoService {
   @Autowired PortLoadingPlanStowageDetailsRepository portStowageDetailsRepository;
   @Autowired BallastOperationRepository ballastOperationRepository;
   @Autowired LoadingSequenceStabiltyParametersRepository loadingSequenceStabilityParamsRepository;
+  @Autowired AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @Autowired AlgoErrorsRepository algoErrorsRepository;
 
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
+  @Autowired LoadicatorService loadicatorService;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceBlockingStub loadableStudyService;
@@ -231,59 +239,111 @@ public class LoadingPlanAlgoService {
           HttpStatusCode.BAD_REQUEST);
     }
 
-    List<com.cpdss.loadingplan.entity.LoadingSequence> oldLoadingSequences =
-        loadingSequenceRepository.findByLoadingInformationAndIsActive(loadingInfoOpt.get(), true);
-    // Saving Loading Sequence
-    request.getLoadingSequencesList().stream()
+    if (request.getLoadingSequencesList().isEmpty()) {
+      log.info("No Plans Available for Loading Information {}", loadingInfoOpt.get().getId());
+      Optional<LoadingInformationStatus> noPlanAvailableStatusOpt =
+          loadingInfoStatusRepository.findByIdAndIsActive(
+              LoadingPlanConstants.LOADING_INFORMATION_NO_PLAN_AVAILABLE_ID, true);
+      if (noPlanAvailableStatusOpt.isEmpty()) {
+        throw new GenericServiceException(
+            "Could not find loading information status with id "
+                + LoadingPlanConstants.LOADING_INFORMATION_NO_PLAN_AVAILABLE_ID,
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      loadingInformationRepository.updateLoadingInformationStatus(
+          noPlanAvailableStatusOpt.get(), loadingInfoOpt.get().getId());
+      updateLoadingInfoAlgoStatus(
+          loadingInfoOpt.get(), request.getProcessId(), noPlanAvailableStatusOpt.get());
+    }
+
+    if (!request.getAlgoErrorsList().isEmpty()) {
+      saveAlgoErrors(loadingInfoOpt.get(), request);
+    }
+
+    if (!request.getLoadingSequencesList().isEmpty()) {
+      List<com.cpdss.loadingplan.entity.LoadingSequence> oldLoadingSequences =
+          loadingSequenceRepository.findByLoadingInformationAndIsActive(loadingInfoOpt.get(), true);
+      // Saving Loading Sequence
+      request.getLoadingSequencesList().stream()
+          .forEach(
+              sequence -> {
+                saveLoadingSequence(sequence, loadingInfoOpt.get());
+              });
+      deleteLoadingSequences(loadingInfoOpt.get().getId(), oldLoadingSequences);
+
+      deleteLoadingSequenceStabilityParams(loadingInfoOpt.get().getId());
+      saveLoadingSequenceStabilityParams(request, loadingInfoOpt.get());
+
+      deleteLoadingPlan(loadingInfoOpt.get().getId());
+      saveLoadingPlan(request, loadingInfoOpt.get());
+
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          loadingInfoStatusRepository.findByIdAndIsActive(
+              LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
+      if (loadingInfoStatusOpt.isEmpty()) {
+        throw new GenericServiceException(
+            "Could not find loading information status with id "
+                + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
+      loadingInformationRepository.updateLoadingInformationStatus(
+          loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
+      updateLoadingInfoAlgoStatus(
+          loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+
+      loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
+      //      if (request.getHasLoadicator()) {
+      //        loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
+      //      }
+    }
+  }
+
+  private void saveAlgoErrors(LoadingInformation loadingInformation, LoadingPlanSaveRequest request)
+      throws GenericServiceException {
+    log.info(
+        "ALGO returned errors while generating loading plan for loading information {}",
+        loadingInformation.getId());
+
+    algoErrorHeadingRepository.deleteByLoadingInformation(loadingInformation);
+    algoErrorsRepository.deleteByLoadingInformation(loadingInformation);
+
+    request
+        .getAlgoErrorsList()
         .forEach(
-            sequence -> {
-              saveLoadingSequence(sequence, loadingInfoOpt.get());
+            algoError -> {
+              AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+              algoErrorHeading.setErrorHeading(algoError.getErrorHeading());
+              algoErrorHeading.setLoadingInformation(loadingInformation);
+              algoErrorHeading.setIsActive(true);
+              algoErrorHeadingRepository.save(algoErrorHeading);
+              algoError
+                  .getErrorMessagesList()
+                  .forEach(
+                      error -> {
+                        AlgoErrors algoErrors = new AlgoErrors();
+                        algoErrors.setAlgoErrorHeading(algoErrorHeading);
+                        algoErrors.setErrorMessage(error);
+                        algoErrors.setIsActive(true);
+                        algoErrorsRepository.save(algoErrors);
+                      });
             });
-
-    log.info("Deleting Old Loading Sequences of LoadingInformation {}", request.getLoadingInfoId());
-    deleteLoadingSequences(oldLoadingSequences);
-
-    List<LoadingSequenceStabilityParameters> oldLoadingSequenceStabilityParameters =
-        loadingSequenceStabilityParamsRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get(), true);
-
-    saveLoadingSequenceStabilityParams(request, loadingInfoOpt.get());
-
-    deleteLoadingSequenceStabilityParams(
-        loadingInfoOpt.get(), oldLoadingSequenceStabilityParameters);
-
-    List<PortLoadingPlanStabilityParameters> oldStabilityParams =
-        portStabilityParamsRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get(), true);
-    List<PortLoadingPlanStowageDetails> oldStowageDetails =
-        portStowageDetailsRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get(), true);
-    List<PortLoadingPlanBallastDetails> oldBallastDetails =
-        portBallastDetailsRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get(), true);
-    List<PortLoadingPlanRobDetails> oldRobDetails =
-        portRobDetailsRepository.findByLoadingInformationAndIsActive(loadingInfoOpt.get(), true);
-
-    // Saving Loading Plan
-    saveLoadingPlan(request, loadingInfoOpt.get());
-
-    log.info("Deleting Old Loading Plan of LoadingInformation {}", request.getLoadingInfoId());
-    deleteLoadingPlan(oldStowageDetails, oldBallastDetails, oldRobDetails, oldStabilityParams);
-
-    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+    Optional<LoadingInformationStatus> errorOccurredStatusOpt =
         loadingInfoStatusRepository.findByIdAndIsActive(
-            LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
-    if (loadingInfoStatusOpt.isEmpty()) {
+            LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID, true);
+    if (errorOccurredStatusOpt.isEmpty()) {
       throw new GenericServiceException(
           "Could not find loading information status with id "
-              + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
+              + LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID,
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
-    loadingInformationRepository.save(loadingInfoOpt.get());
+    loadingInformationRepository.updateLoadingInformationStatus(
+        errorOccurredStatusOpt.get(), loadingInformation.getId());
     updateLoadingInfoAlgoStatus(
-        loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+        loadingInformation, request.getProcessId(), errorOccurredStatusOpt.get());
   }
 
   private void updateLoadingInfoAlgoStatus(
@@ -291,30 +351,16 @@ public class LoadingPlanAlgoService {
       String processId,
       LoadingInformationStatus loadingInformationStatus)
       throws GenericServiceException {
-    Optional<LoadingInformationAlgoStatus> algoStatus =
-        this.loadingInfoAlgoStatusRepository.findByProcessIdAndIsActiveTrue(processId);
-    if (algoStatus.isEmpty()) {
-      throw new GenericServiceException(
-          "Could not find loading information algo status with process id " + processId,
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
 
-    algoStatus.get().setLoadingInformationStatus(loadingInformationStatus);
-    this.loadingInfoAlgoStatusRepository.save(algoStatus.get());
+    this.loadingInfoAlgoStatusRepository.updateLoadingInformationAlgoStatus(
+        loadingInformationStatus.getId(), processId);
   }
 
-  private void deleteLoadingSequenceStabilityParams(
-      LoadingInformation loadingInformation,
-      List<LoadingSequenceStabilityParameters> oldLoadingSequenceStabilityParameters) {
+  private void deleteLoadingSequenceStabilityParams(Long loadingInfoId) {
     log.info(
         "Deleting Old Loading Sequence Stability Parameters of Loading Information {}",
-        loadingInformation.getId());
-    oldLoadingSequenceStabilityParameters.forEach(
-        param -> {
-          loadingSequenceStabilityParamsRepository.deleteById(param.getId());
-        });
-    ;
+        loadingInfoId);
+    loadingSequenceStabilityParamsRepository.deleteByLoadingInformationId(loadingInfoId);
   }
 
   private void saveLoadingSequenceStabilityParams(
@@ -338,42 +384,19 @@ public class LoadingPlanAlgoService {
     loadingSequenceStabilityParamsRepository.saveAll(loadingSequenceStabilityParams);
   }
 
-  private void deleteLoadingPlan(
-      List<PortLoadingPlanStowageDetails> oldStowageDetails,
-      List<PortLoadingPlanBallastDetails> oldBallastDetails,
-      List<PortLoadingPlanRobDetails> oldRobDetails,
-      List<PortLoadingPlanStabilityParameters> oldStabilityParams) {
-
-    oldBallastDetails.forEach(
-        ballast -> {
-          log.info("Deleting Port Loading Plan Ballast {}", ballast.getId());
-          portBallastDetailsRepository.deleteById(ballast.getId());
-        });
-
-    oldRobDetails.forEach(
-        rob -> {
-          log.info("Deleting Port Loading Plan ROB {}", rob.getId());
-          portRobDetailsRepository.deleteById(rob.getId());
-        });
-
-    oldStabilityParams.forEach(
-        params -> {
-          log.info("Deleting Port Loading Plan Stability Params {}", params.getId());
-          portStabilityParamsRepository.deleteById(params.getId());
-        });
-
-    oldStowageDetails.forEach(
-        stowage -> {
-          log.info("Deleting Port Loading Plan Stowage {}", stowage.getId());
-          portStowageDetailsRepository.deleteById(stowage.getId());
-        });
+  private void deleteLoadingPlan(Long loadingInfoId) {
+    log.info("Deleting Old Loading Plan of LoadingInformation {}", loadingInfoId);
+    portBallastDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
+    portRobDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
+    portStabilityParamsRepository.deleteByLoadingInformationId(loadingInfoId);
+    portStowageDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
   }
 
   private void deleteLoadingSequences(
-      List<com.cpdss.loadingplan.entity.LoadingSequence> oldLoadingSequences) {
+      Long loadingInfoId, List<com.cpdss.loadingplan.entity.LoadingSequence> oldLoadingSequences) {
+    log.info("Deleting Old Loading Sequences of LoadingInformation {}", loadingInfoId);
     oldLoadingSequences.forEach(
         loadingSequence -> {
-          log.info("Deleting Loading Sequence {}", loadingSequence.getId());
           loadingSequenceRepository.deleteById(loadingSequence.getId());
           ballastOperationRepository.deleteByLoadingSequence(loadingSequence);
           cargoLoadingRateRepository.deleteByLoadingSequence(loadingSequence);

@@ -106,6 +106,7 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
+import com.cpdss.gateway.domain.simulator.DepartureConditionJson;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
@@ -6154,16 +6155,16 @@ public class LoadableStudyService {
     requestBuilder.setCaseNumber(caseNumber);
     com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply reply =
         loadableStudyServiceBlockingStub.getLoadableStudySimulatorJsonData(requestBuilder.build());
-    ArrivalDepartureConditionJson departureConditionJson = null;
+    DepartureConditionJson departureConditionJson = null;
     SimulatorJsonResponse jsonResponse = new SimulatorJsonResponse();
     try {
       departureConditionJson =
-          new ObjectMapper()
-              .readValue(reply.getDepartureCondition(), ArrivalDepartureConditionJson.class);
+          new ObjectMapper().readValue(reply.getDepartureCondition(), DepartureConditionJson.class);
       jsonResponse.setDepartureCondition(departureConditionJson);
       jsonResponse.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     } catch (JsonProcessingException e) {
+      e.printStackTrace();
       jsonResponse.setResponseStatus(
           new CommonSuccessResponse(
               String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()), correlationId));

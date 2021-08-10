@@ -20,6 +20,8 @@ public final class LoadingPlanConstants {
   // Loading Information Status IDs
   public static final Long LOADING_INFORMATION_PROCESSING_STARTED_ID = 3L;
   public static final Long LOADING_INFORMATION_PLAN_GENERATED_ID = 5L;
+  public static final Long LOADING_INFORMATION_NO_PLAN_AVAILABLE_ID = 6L;
+  public static final Long LOADING_INFORMATION_ERROR_OCCURRED_ID = 7L;
 
   // Loading Plan Conditions
   public static final Integer LOADING_PLAN_ARRIVAL_CONDITION_VALUE = 1;
@@ -33,4 +35,6 @@ public final class LoadingPlanConstants {
   public static final String LOADING_INFORMATION_REQUEST_JSON_MODULE_NAME = "LOADING";
 
   public static final Long LOADING_RULE_MASTER_ID = 2l;
+
+  public static final Long LOADING_INFORMATION_LOADICATOR_TYPE_ID = 2L;
 }

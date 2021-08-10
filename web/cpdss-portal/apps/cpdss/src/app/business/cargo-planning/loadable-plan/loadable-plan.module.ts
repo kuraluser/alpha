@@ -28,7 +28,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'; 
 import { PortRotationPopupModule } from '../../core/components/port-rotation-popup/port-rotation-popup.module';
-import { UserRoleSelectionPopupComponent } from './user-role-selection-popup/user-role-selection-popup.component';
+import { MenuModule } from 'primeng/menu';
 /**
  * Module for loadable plan
  *
@@ -36,7 +36,7 @@ import { UserRoleSelectionPopupComponent } from './user-role-selection-popup/use
  * @class LoadablePlanModule
  */
 @NgModule({
-  declarations: [LoadablePlanComponent, LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent, BallastStowageComponent, SaveStowagePopupComponent, UserRoleSelectionPopupComponent],
+  declarations: [LoadablePlanComponent, LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent, BallastStowageComponent, SaveStowagePopupComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -51,13 +51,14 @@ import { UserRoleSelectionPopupComponent } from './user-role-selection-popup/use
     ErrorLogPopupModule,
     ValidationErrorModule,
     TooltipModule,
+    MenuModule,
     QuantityDecimalFormatPipeModule,
     PortRotationPopupModule,
     FormsModule
   ],
   providers: [QuantityDecimalFormatPipe , LoadableQuantityApiService , DecimalPipe , LoadablePlanTransformationService , LoadablePlanApiService , DatePipe, LoadableStudyListApiService ],
   exports: [
-    LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent, UserRoleSelectionPopupComponent
+    LoadableQuantityComponent, StowageComponent, PortEtaEtdConditionComponent, CommentsComponent, CommingledCargoDetailsComponent
   ]
 })
 export class LoadablePlanModule { }

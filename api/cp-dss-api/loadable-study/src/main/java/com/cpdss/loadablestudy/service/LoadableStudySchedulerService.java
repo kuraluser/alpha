@@ -35,8 +35,8 @@ public class LoadableStudySchedulerService {
   @Value("${cpdss.build.env}")
   private String environment;
 
-  @Value("${scheduler.task.url}")
-  private String taskUrl;
+  @Value("${ro.grpc.server.port}")
+  private String port;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -62,7 +62,7 @@ public class LoadableStudySchedulerService {
                       properties.setTaskStartTime(dateTime.toLocalTime());
                       properties.setTaskEndDate(endDateTime.toLocalDate());
                       properties.setTaskEndTime(endDateTime.toLocalTime());
-                      properties.setTaskURI(taskUrl);
+                      properties.setTaskURI("loadable-study-service:" + port);
                       Map<String, String> requestParam = new HashMap<>();
                       requestParam.put("env", environment);
                       requestParam.put("ClientId", vesssel.getVesselName());
@@ -93,7 +93,7 @@ public class LoadableStudySchedulerService {
                       properties.setTaskStartTime(dateTime.toLocalTime());
                       properties.setTaskEndDate(endDateTime.toLocalDate());
                       properties.setTaskEndTime(endDateTime.toLocalTime());
-                      properties.setTaskURI(taskUrl);
+                      properties.setTaskURI("loadable-study-service:" + port);
                       Map<String, String> requestParam = new HashMap<>();
 
                       requestParam.put("ClientId", vesssel.getVesselName());

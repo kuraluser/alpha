@@ -110,7 +110,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           this.route.params
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(async route => {
-              this.synopticalService.loadableStudyId = Number(route.loadableStudyId);
+              if (Number(route.loadableStudyId) !== 0) {
+                this.synopticalService.loadableStudyId = Number(route.loadableStudyId);
+              }
               if (route.loadablePatternId) {
                 this.synopticalService.loadablePatternId = Number(route.loadablePatternId);
               }
