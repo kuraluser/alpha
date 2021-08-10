@@ -32,7 +32,10 @@
             </cpdss-portal-port-rotation-ribbon>
         </div>
     </div>
-    <router-outlet *ngIf="vessel && selectedVoyage"></router-outlet>
+    <router-outlet *ngIf="vessel && selectedVoyage && [OPERATIONS.LOADING , OPERATIONS.DISCHARGING].includes(operationId)"></router-outlet>
+    <ng-container *ngIf="![OPERATIONS.LOADING , OPERATIONS.DISCHARGING].includes(operationId)">
+        <div>{{'LOADING_PLAN_ONLY_LOADING_DISCHARGING' | translate}}</div>
+    </ng-container>
 </div>
 <cpdss-portal-add-port-popup *ngIf="showAddPortPopup" [display]="showAddPortPopup"
     (displayPopUp)="closeAddPortPoup($event)"></cpdss-portal-add-port-popup>

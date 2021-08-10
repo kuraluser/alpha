@@ -50,7 +50,7 @@ export class CargoNominationComponent implements OnInit {
   columns: IDataTableColumn[];
   loadableQuantityCommingleCargoDetails: ILoadableQuantityCommingleCargo[];
 
-  billOfLaddingsValueObject: IBillingFigValueObject[] = [];
+  billOfLaddingsValueObject: IBillingFigValueObject[];
   cargoColumns: any;
   listData: any;
 

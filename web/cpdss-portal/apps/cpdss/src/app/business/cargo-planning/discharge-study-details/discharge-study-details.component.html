@@ -70,7 +70,7 @@
 
         <div class="pr-15 text-right">
             <button id="generate_plan" class="btn btn-main mr-10"
-            [disabled]="!dischargeStudies?.length || !dischargeStudyGeneratePermission?.view || isGenerateClicked || !portsComplete || !ohqComplete || isPlanGenerated || isPlanOpenOrNo || [VOYAGE_STATUS.CLOSE , VOYAGE_STATUS.OPEN].includes(selectedVoyage?.statusId) || !this.dischargeStudyRef?.dischargeStudyForm?.dirty"
+            [disabled]="!dischargeStudies?.length || !dischargeStudyGeneratePermission?.view || isGenerateClicked || !portsComplete || !ohqComplete || isPlanGenerated || isPlanOpenOrNo || [VOYAGE_STATUS.CLOSE , VOYAGE_STATUS.OPEN].includes(selectedVoyage?.statusId) || this.dischargeStudyRef?.dischargeStudyForm?.dirty"
             (click)="generatePlan()">{{'DISCHARGE_STUDY_GENERATE_PLAN' |
                 translate}}</button>
 
