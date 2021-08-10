@@ -66,9 +66,11 @@
                 </cpdss-portal-ship-landing-tanks>
             </div>
             <div class="col sidebar-right-landing tank-parameters-right">
+                <div class="content-scroll">
                 <cpdss-portal-cargo-details *ngIf="cargoConditions && cargoQuantities"
                     [cargoConditions]="cargoConditions" [cargoQuantities]="cargoQuantities"
                     [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"></cpdss-portal-cargo-details>
+                </div>
             </div>
         </div>
 

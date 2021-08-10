@@ -1449,8 +1449,12 @@ public class SynopticService {
               .sum();
       double arrDisplacement =
           cargoArrTotal
-              + arrSynopticRecord.get().getConstantPlanned().doubleValue()
-              + arrSynopticRecord.get().getOthersPlanned().doubleValue()
+              + (null != arrSynopticRecord.get().getConstantPlanned()
+                  ? arrSynopticRecord.get().getConstantPlanned().doubleValue()
+                  : 0)
+              + (null != arrSynopticRecord.get().getOthersPlanned()
+                  ? arrSynopticRecord.get().getOthersPlanned().doubleValue()
+                  : 0)
               + foArrTotal
               + doArrTotal
               + fwArrTotal
@@ -1458,8 +1462,12 @@ public class SynopticService {
               + vesselLwt;
       double depDisplacement =
           cargoDepTotal
-              + depSynopticRecord.get().getConstantPlanned().doubleValue()
-              + depSynopticRecord.get().getOthersPlanned().doubleValue()
+              + (null != depSynopticRecord.get().getConstantPlanned()
+                  ? depSynopticRecord.get().getConstantPlanned().doubleValue()
+                  : 0)
+              + (null != depSynopticRecord.get().getOthersPlanned()
+                  ? depSynopticRecord.get().getOthersPlanned().doubleValue()
+                  : 0)
               + foDepTotal
               + doDepTotal
               + fwDepTotal

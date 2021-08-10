@@ -154,5 +154,4 @@ public interface LoadableStudyPortRotationRepository
 
   public LoadableStudyPortRotation findByLoadableStudyAndPortXIdAndIsActive(
       LoadableStudy loadableStudy, Long portId, boolean isActive);
-
 }
