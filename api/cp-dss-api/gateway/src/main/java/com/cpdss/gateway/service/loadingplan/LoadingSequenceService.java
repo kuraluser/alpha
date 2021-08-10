@@ -236,7 +236,8 @@ public class LoadingSequenceService {
     Integer temp = 0;
     List<CargoStage> cargoStages = new ArrayList<>();
     SortedSet<Long> cargoNominationIds = new TreeSet<Long>();
-        cargoNominationIds.addAll(reply.getLoadingSequencesList().stream()
+    cargoNominationIds.addAll(
+        reply.getLoadingSequencesList().stream()
             .map(sequence -> sequence.getCargoNominationId())
             .collect(Collectors.toList()));
     for (Long cargoNominationId : cargoNominationIds) {
@@ -249,7 +250,14 @@ public class LoadingSequenceService {
             sequence.getLoadingPlanPortWiseDetailsList()) {
           temp = portWiseDetails.getTime();
           addCargoStage(
-              portWiseDetails, cargoNomDetails, cargoNominationId, stageNumber, portEta, start, temp, cargoStages);
+              portWiseDetails,
+              cargoNomDetails,
+              cargoNominationId,
+              stageNumber,
+              portEta,
+              start,
+              temp,
+              cargoStages);
           start = temp;
         }
       }
@@ -260,7 +268,8 @@ public class LoadingSequenceService {
   private void addCargoStage(
       LoadingPlanPortWiseDetails portWiseDetails,
       Map<Long, CargoNominationDetail> cargoNomDetails,
-      Long cargoNomId, AtomicInteger stageNumber,
+      Long cargoNomId,
+      AtomicInteger stageNumber,
       Long portEta,
       Integer start,
       Integer end,
