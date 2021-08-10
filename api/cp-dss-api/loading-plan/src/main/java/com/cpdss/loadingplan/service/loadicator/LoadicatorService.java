@@ -580,6 +580,7 @@ public class LoadicatorService {
         .forEach(
             loadicatorDetails -> {
               LoadicatorStage loadicatorStage = new LoadicatorStage();
+              loadicatorStage.setTime(loadicatorDetails.getTime());
               buildLdTrim(loadicatorDetails.getLDtrim(), loadicatorStage);
               buildLdIntactStability(loadicatorDetails.getLDIntactStability(), loadicatorStage);
               buildLdStrength(loadicatorDetails.getLDStrength(), loadicatorStage);

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.Date;
 import java.util.List;
+import java.util.SortedSet;
 import lombok.Data;
 
 @Data
@@ -23,7 +24,7 @@ public class LoadingSequenceResponse {
   private List<TankCategory> cargoTankCategories;
   private List<TankCategory> ballastTankCategories;
   private List<PumpCategory> ballastPumpCategories;
-  private List<Long> stageTickPositions;
+  private SortedSet<Long> stageTickPositions;
   private List<StabilityParam> stabilityParams;
   private List<CargoStage> cargoStages;
 }
