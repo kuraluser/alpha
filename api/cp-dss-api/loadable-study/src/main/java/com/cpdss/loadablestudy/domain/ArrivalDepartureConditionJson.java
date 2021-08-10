@@ -6,6 +6,7 @@ import lombok.Data;
 /** @Author gokul.p */
 @Data
 public class ArrivalDepartureConditionJson {
+  private Boolean confirmPlanEligibility;
   private Object loadablePlanBallastDetails;
   private Object loadablePlanStowageDetails;
   private Object loadableQuantityCargoDetails;

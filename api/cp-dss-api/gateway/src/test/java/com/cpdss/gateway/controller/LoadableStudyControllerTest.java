@@ -1052,7 +1052,7 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testSaveLoadablePatternDetails(String url) throws Exception {
     when(this.loadableStudyService.saveLoadablePatterns(
-            any(LoadablePlanRequest.class), anyLong(), anyString()))
+            any(LoadablePlanRequest.class), anyLong(), anyString(),anyString()))
         .thenReturn(new AlgoPatternResponse());
     this.mockMvc
         .perform(
@@ -1081,7 +1081,7 @@ class LoadableStudyControllerTest {
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     when(this.loadableStudyService.saveLoadablePatterns(
-            any(LoadablePlanRequest.class), anyLong(), anyString()))
+            any(LoadablePlanRequest.class), anyLong(), anyString(), anyString()))
         .thenThrow(ex);
     this.mockMvc
         .perform(
