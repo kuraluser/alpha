@@ -235,11 +235,11 @@ public class LoadingSequenceService {
     Integer start = 0;
     Integer temp = 0;
     List<CargoStage> cargoStages = new ArrayList<>();
-    Set<Long> cargoNominationIds =
-        reply.getLoadingSequencesList().stream()
+    SortedSet<Long> cargoNominationIds = new TreeSet<Long>();
+        cargoNominationIds.addAll(reply.getLoadingSequencesList().stream()
             .map(sequence -> sequence.getCargoNominationId())
-            .collect(Collectors.toSet());
-    for (Long cargoNominationId : cargoNominationIds.stream().sorted().toList()) {
+            .collect(Collectors.toList()));
+    for (Long cargoNominationId : cargoNominationIds) {
       AtomicInteger stageNumber = new AtomicInteger();
       for (LoadingSequence sequence :
           reply.getLoadingSequencesList().stream()
