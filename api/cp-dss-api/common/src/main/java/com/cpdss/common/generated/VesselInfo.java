@@ -16367,6 +16367,68 @@ public final class VesselInfo {
     /** <code>repeated .SelectableParameter selectableParameter = 10;</code> */
     com.cpdss.common.generated.VesselInfo.SelectableParameterOrBuilder
         getSelectableParameterOrBuilder(int index);
+
+    /** <code>repeated .PumpType pumpType = 11;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.PumpType> getPumpTypeList();
+    /** <code>repeated .PumpType pumpType = 11;</code> */
+    com.cpdss.common.generated.VesselInfo.PumpType getPumpType(int index);
+    /** <code>repeated .PumpType pumpType = 11;</code> */
+    int getPumpTypeCount();
+    /** <code>repeated .PumpType pumpType = 11;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder>
+        getPumpTypeOrBuilderList();
+    /** <code>repeated .PumpType pumpType = 11;</code> */
+    com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder getPumpTypeOrBuilder(int index);
+
+    /** <code>repeated .VesselPump vesselPump = 12;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.VesselPump> getVesselPumpList();
+    /** <code>repeated .VesselPump vesselPump = 12;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselPump getVesselPump(int index);
+    /** <code>repeated .VesselPump vesselPump = 12;</code> */
+    int getVesselPumpCount();
+    /** <code>repeated .VesselPump vesselPump = 12;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder>
+        getVesselPumpOrBuilderList();
+    /** <code>repeated .VesselPump vesselPump = 12;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder getVesselPumpOrBuilder(int index);
+
+    /** <code>repeated .TankType tankType = 13;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.TankType> getTankTypeList();
+    /** <code>repeated .TankType tankType = 13;</code> */
+    com.cpdss.common.generated.VesselInfo.TankType getTankType(int index);
+    /** <code>repeated .TankType tankType = 13;</code> */
+    int getTankTypeCount();
+    /** <code>repeated .TankType tankType = 13;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder>
+        getTankTypeOrBuilderList();
+    /** <code>repeated .TankType tankType = 13;</code> */
+    com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder getTankTypeOrBuilder(int index);
+
+    /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent> getVesselManifoldList();
+    /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselComponent getVesselManifold(int index);
+    /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+    int getVesselManifoldCount();
+    /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+        getVesselManifoldOrBuilderList();
+    /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder getVesselManifoldOrBuilder(
+        int index);
+
+    /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent> getVesselBottomLineList();
+    /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselComponent getVesselBottomLine(int index);
+    /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+    int getVesselBottomLineCount();
+    /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+        getVesselBottomLineOrBuilderList();
+    /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+    com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder getVesselBottomLineOrBuilder(
+        int index);
   }
   /** Protobuf type {@code VesselAlgoReply} */
   public static final class VesselAlgoReply extends com.google.protobuf.GeneratedMessageV3
@@ -16387,6 +16449,11 @@ public final class VesselInfo {
       ullageDetails_ = java.util.Collections.emptyList();
       ullageTrimCorrection_ = java.util.Collections.emptyList();
       selectableParameter_ = java.util.Collections.emptyList();
+      pumpType_ = java.util.Collections.emptyList();
+      vesselPump_ = java.util.Collections.emptyList();
+      tankType_ = java.util.Collections.emptyList();
+      vesselManifold_ = java.util.Collections.emptyList();
+      vesselBottomLine_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -16567,6 +16634,73 @@ public final class VesselInfo {
                         extensionRegistry));
                 break;
               }
+            case 90:
+              {
+                if (!((mutable_bitField0_ & 0x00000080) != 0)) {
+                  pumpType_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.PumpType>();
+                  mutable_bitField0_ |= 0x00000080;
+                }
+                pumpType_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.PumpType.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 98:
+              {
+                if (!((mutable_bitField0_ & 0x00000100) != 0)) {
+                  vesselPump_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.VesselPump>();
+                  mutable_bitField0_ |= 0x00000100;
+                }
+                vesselPump_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.VesselPump.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 106:
+              {
+                if (!((mutable_bitField0_ & 0x00000200) != 0)) {
+                  tankType_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.TankType>();
+                  mutable_bitField0_ |= 0x00000200;
+                }
+                tankType_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.TankType.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 114:
+              {
+                if (!((mutable_bitField0_ & 0x00000400) != 0)) {
+                  vesselManifold_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.VesselInfo.VesselComponent>();
+                  mutable_bitField0_ |= 0x00000400;
+                }
+                vesselManifold_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.VesselComponent.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 122:
+              {
+                if (!((mutable_bitField0_ & 0x00000800) != 0)) {
+                  vesselBottomLine_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.VesselInfo.VesselComponent>();
+                  mutable_bitField0_ |= 0x00000800;
+                }
+                vesselBottomLine_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.VesselComponent.parser(),
+                        extensionRegistry));
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -16601,6 +16735,21 @@ public final class VesselInfo {
         }
         if (((mutable_bitField0_ & 0x00000040) != 0)) {
           selectableParameter_ = java.util.Collections.unmodifiableList(selectableParameter_);
+        }
+        if (((mutable_bitField0_ & 0x00000080) != 0)) {
+          pumpType_ = java.util.Collections.unmodifiableList(pumpType_);
+        }
+        if (((mutable_bitField0_ & 0x00000100) != 0)) {
+          vesselPump_ = java.util.Collections.unmodifiableList(vesselPump_);
+        }
+        if (((mutable_bitField0_ & 0x00000200) != 0)) {
+          tankType_ = java.util.Collections.unmodifiableList(tankType_);
+        }
+        if (((mutable_bitField0_ & 0x00000400) != 0)) {
+          vesselManifold_ = java.util.Collections.unmodifiableList(vesselManifold_);
+        }
+        if (((mutable_bitField0_ & 0x00000800) != 0)) {
+          vesselBottomLine_ = java.util.Collections.unmodifiableList(vesselBottomLine_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -16888,6 +17037,131 @@ public final class VesselInfo {
       return selectableParameter_.get(index);
     }
 
+    public static final int PUMPTYPE_FIELD_NUMBER = 11;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.PumpType> pumpType_;
+    /** <code>repeated .PumpType pumpType = 11;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.PumpType> getPumpTypeList() {
+      return pumpType_;
+    }
+    /** <code>repeated .PumpType pumpType = 11;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder>
+        getPumpTypeOrBuilderList() {
+      return pumpType_;
+    }
+    /** <code>repeated .PumpType pumpType = 11;</code> */
+    public int getPumpTypeCount() {
+      return pumpType_.size();
+    }
+    /** <code>repeated .PumpType pumpType = 11;</code> */
+    public com.cpdss.common.generated.VesselInfo.PumpType getPumpType(int index) {
+      return pumpType_.get(index);
+    }
+    /** <code>repeated .PumpType pumpType = 11;</code> */
+    public com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder getPumpTypeOrBuilder(int index) {
+      return pumpType_.get(index);
+    }
+
+    public static final int VESSELPUMP_FIELD_NUMBER = 12;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.VesselPump> vesselPump_;
+    /** <code>repeated .VesselPump vesselPump = 12;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.VesselPump> getVesselPumpList() {
+      return vesselPump_;
+    }
+    /** <code>repeated .VesselPump vesselPump = 12;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder>
+        getVesselPumpOrBuilderList() {
+      return vesselPump_;
+    }
+    /** <code>repeated .VesselPump vesselPump = 12;</code> */
+    public int getVesselPumpCount() {
+      return vesselPump_.size();
+    }
+    /** <code>repeated .VesselPump vesselPump = 12;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselPump getVesselPump(int index) {
+      return vesselPump_.get(index);
+    }
+    /** <code>repeated .VesselPump vesselPump = 12;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder getVesselPumpOrBuilder(
+        int index) {
+      return vesselPump_.get(index);
+    }
+
+    public static final int TANKTYPE_FIELD_NUMBER = 13;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.TankType> tankType_;
+    /** <code>repeated .TankType tankType = 13;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.TankType> getTankTypeList() {
+      return tankType_;
+    }
+    /** <code>repeated .TankType tankType = 13;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder>
+        getTankTypeOrBuilderList() {
+      return tankType_;
+    }
+    /** <code>repeated .TankType tankType = 13;</code> */
+    public int getTankTypeCount() {
+      return tankType_.size();
+    }
+    /** <code>repeated .TankType tankType = 13;</code> */
+    public com.cpdss.common.generated.VesselInfo.TankType getTankType(int index) {
+      return tankType_.get(index);
+    }
+    /** <code>repeated .TankType tankType = 13;</code> */
+    public com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder getTankTypeOrBuilder(int index) {
+      return tankType_.get(index);
+    }
+
+    public static final int VESSELMANIFOLD_FIELD_NUMBER = 14;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent> vesselManifold_;
+    /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent>
+        getVesselManifoldList() {
+      return vesselManifold_;
+    }
+    /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+        getVesselManifoldOrBuilderList() {
+      return vesselManifold_;
+    }
+    /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+    public int getVesselManifoldCount() {
+      return vesselManifold_.size();
+    }
+    /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselComponent getVesselManifold(int index) {
+      return vesselManifold_.get(index);
+    }
+    /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder
+        getVesselManifoldOrBuilder(int index) {
+      return vesselManifold_.get(index);
+    }
+
+    public static final int VESSELBOTTOMLINE_FIELD_NUMBER = 15;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent> vesselBottomLine_;
+    /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent>
+        getVesselBottomLineList() {
+      return vesselBottomLine_;
+    }
+    /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+        getVesselBottomLineOrBuilderList() {
+      return vesselBottomLine_;
+    }
+    /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+    public int getVesselBottomLineCount() {
+      return vesselBottomLine_.size();
+    }
+    /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselComponent getVesselBottomLine(int index) {
+      return vesselBottomLine_.get(index);
+    }
+    /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+    public com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder
+        getVesselBottomLineOrBuilder(int index) {
+      return vesselBottomLine_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -16931,6 +17205,21 @@ public final class VesselInfo {
       }
       for (int i = 0; i < selectableParameter_.size(); i++) {
         output.writeMessage(10, selectableParameter_.get(i));
+      }
+      for (int i = 0; i < pumpType_.size(); i++) {
+        output.writeMessage(11, pumpType_.get(i));
+      }
+      for (int i = 0; i < vesselPump_.size(); i++) {
+        output.writeMessage(12, vesselPump_.get(i));
+      }
+      for (int i = 0; i < tankType_.size(); i++) {
+        output.writeMessage(13, tankType_.get(i));
+      }
+      for (int i = 0; i < vesselManifold_.size(); i++) {
+        output.writeMessage(14, vesselManifold_.get(i));
+      }
+      for (int i = 0; i < vesselBottomLine_.size(); i++) {
+        output.writeMessage(15, vesselBottomLine_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -16979,6 +17268,23 @@ public final class VesselInfo {
             com.google.protobuf.CodedOutputStream.computeMessageSize(
                 10, selectableParameter_.get(i));
       }
+      for (int i = 0; i < pumpType_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(11, pumpType_.get(i));
+      }
+      for (int i = 0; i < vesselPump_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(12, vesselPump_.get(i));
+      }
+      for (int i = 0; i < tankType_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(13, tankType_.get(i));
+      }
+      for (int i = 0; i < vesselManifold_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(14, vesselManifold_.get(i));
+      }
+      for (int i = 0; i < vesselBottomLine_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(15, vesselBottomLine_.get(i));
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -17014,6 +17320,11 @@ public final class VesselInfo {
       if (!getUllageDetailsList().equals(other.getUllageDetailsList())) return false;
       if (!getUllageTrimCorrectionList().equals(other.getUllageTrimCorrectionList())) return false;
       if (!getSelectableParameterList().equals(other.getSelectableParameterList())) return false;
+      if (!getPumpTypeList().equals(other.getPumpTypeList())) return false;
+      if (!getVesselPumpList().equals(other.getVesselPumpList())) return false;
+      if (!getTankTypeList().equals(other.getTankTypeList())) return false;
+      if (!getVesselManifoldList().equals(other.getVesselManifoldList())) return false;
+      if (!getVesselBottomLineList().equals(other.getVesselBottomLineList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -17064,6 +17375,26 @@ public final class VesselInfo {
       if (getSelectableParameterCount() > 0) {
         hash = (37 * hash) + SELECTABLEPARAMETER_FIELD_NUMBER;
         hash = (53 * hash) + getSelectableParameterList().hashCode();
+      }
+      if (getPumpTypeCount() > 0) {
+        hash = (37 * hash) + PUMPTYPE_FIELD_NUMBER;
+        hash = (53 * hash) + getPumpTypeList().hashCode();
+      }
+      if (getVesselPumpCount() > 0) {
+        hash = (37 * hash) + VESSELPUMP_FIELD_NUMBER;
+        hash = (53 * hash) + getVesselPumpList().hashCode();
+      }
+      if (getTankTypeCount() > 0) {
+        hash = (37 * hash) + TANKTYPE_FIELD_NUMBER;
+        hash = (53 * hash) + getTankTypeList().hashCode();
+      }
+      if (getVesselManifoldCount() > 0) {
+        hash = (37 * hash) + VESSELMANIFOLD_FIELD_NUMBER;
+        hash = (53 * hash) + getVesselManifoldList().hashCode();
+      }
+      if (getVesselBottomLineCount() > 0) {
+        hash = (37 * hash) + VESSELBOTTOMLINE_FIELD_NUMBER;
+        hash = (53 * hash) + getVesselBottomLineList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -17206,6 +17537,11 @@ public final class VesselInfo {
           getUllageDetailsFieldBuilder();
           getUllageTrimCorrectionFieldBuilder();
           getSelectableParameterFieldBuilder();
+          getPumpTypeFieldBuilder();
+          getVesselPumpFieldBuilder();
+          getTankTypeFieldBuilder();
+          getVesselManifoldFieldBuilder();
+          getVesselBottomLineFieldBuilder();
         }
       }
 
@@ -17271,6 +17607,36 @@ public final class VesselInfo {
           bitField0_ = (bitField0_ & ~0x00000040);
         } else {
           selectableParameterBuilder_.clear();
+        }
+        if (pumpTypeBuilder_ == null) {
+          pumpType_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000080);
+        } else {
+          pumpTypeBuilder_.clear();
+        }
+        if (vesselPumpBuilder_ == null) {
+          vesselPump_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000100);
+        } else {
+          vesselPumpBuilder_.clear();
+        }
+        if (tankTypeBuilder_ == null) {
+          tankType_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000200);
+        } else {
+          tankTypeBuilder_.clear();
+        }
+        if (vesselManifoldBuilder_ == null) {
+          vesselManifold_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000400);
+        } else {
+          vesselManifoldBuilder_.clear();
+        }
+        if (vesselBottomLineBuilder_ == null) {
+          vesselBottomLine_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000800);
+        } else {
+          vesselBottomLineBuilder_.clear();
         }
         return this;
       }
@@ -17376,6 +17742,51 @@ public final class VesselInfo {
           result.selectableParameter_ = selectableParameter_;
         } else {
           result.selectableParameter_ = selectableParameterBuilder_.build();
+        }
+        if (pumpTypeBuilder_ == null) {
+          if (((bitField0_ & 0x00000080) != 0)) {
+            pumpType_ = java.util.Collections.unmodifiableList(pumpType_);
+            bitField0_ = (bitField0_ & ~0x00000080);
+          }
+          result.pumpType_ = pumpType_;
+        } else {
+          result.pumpType_ = pumpTypeBuilder_.build();
+        }
+        if (vesselPumpBuilder_ == null) {
+          if (((bitField0_ & 0x00000100) != 0)) {
+            vesselPump_ = java.util.Collections.unmodifiableList(vesselPump_);
+            bitField0_ = (bitField0_ & ~0x00000100);
+          }
+          result.vesselPump_ = vesselPump_;
+        } else {
+          result.vesselPump_ = vesselPumpBuilder_.build();
+        }
+        if (tankTypeBuilder_ == null) {
+          if (((bitField0_ & 0x00000200) != 0)) {
+            tankType_ = java.util.Collections.unmodifiableList(tankType_);
+            bitField0_ = (bitField0_ & ~0x00000200);
+          }
+          result.tankType_ = tankType_;
+        } else {
+          result.tankType_ = tankTypeBuilder_.build();
+        }
+        if (vesselManifoldBuilder_ == null) {
+          if (((bitField0_ & 0x00000400) != 0)) {
+            vesselManifold_ = java.util.Collections.unmodifiableList(vesselManifold_);
+            bitField0_ = (bitField0_ & ~0x00000400);
+          }
+          result.vesselManifold_ = vesselManifold_;
+        } else {
+          result.vesselManifold_ = vesselManifoldBuilder_.build();
+        }
+        if (vesselBottomLineBuilder_ == null) {
+          if (((bitField0_ & 0x00000800) != 0)) {
+            vesselBottomLine_ = java.util.Collections.unmodifiableList(vesselBottomLine_);
+            bitField0_ = (bitField0_ & ~0x00000800);
+          }
+          result.vesselBottomLine_ = vesselBottomLine_;
+        } else {
+          result.vesselBottomLine_ = vesselBottomLineBuilder_.build();
         }
         onBuilt();
         return result;
@@ -17624,6 +18035,141 @@ public final class VesselInfo {
                       : null;
             } else {
               selectableParameterBuilder_.addAllMessages(other.selectableParameter_);
+            }
+          }
+        }
+        if (pumpTypeBuilder_ == null) {
+          if (!other.pumpType_.isEmpty()) {
+            if (pumpType_.isEmpty()) {
+              pumpType_ = other.pumpType_;
+              bitField0_ = (bitField0_ & ~0x00000080);
+            } else {
+              ensurePumpTypeIsMutable();
+              pumpType_.addAll(other.pumpType_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.pumpType_.isEmpty()) {
+            if (pumpTypeBuilder_.isEmpty()) {
+              pumpTypeBuilder_.dispose();
+              pumpTypeBuilder_ = null;
+              pumpType_ = other.pumpType_;
+              bitField0_ = (bitField0_ & ~0x00000080);
+              pumpTypeBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getPumpTypeFieldBuilder()
+                      : null;
+            } else {
+              pumpTypeBuilder_.addAllMessages(other.pumpType_);
+            }
+          }
+        }
+        if (vesselPumpBuilder_ == null) {
+          if (!other.vesselPump_.isEmpty()) {
+            if (vesselPump_.isEmpty()) {
+              vesselPump_ = other.vesselPump_;
+              bitField0_ = (bitField0_ & ~0x00000100);
+            } else {
+              ensureVesselPumpIsMutable();
+              vesselPump_.addAll(other.vesselPump_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.vesselPump_.isEmpty()) {
+            if (vesselPumpBuilder_.isEmpty()) {
+              vesselPumpBuilder_.dispose();
+              vesselPumpBuilder_ = null;
+              vesselPump_ = other.vesselPump_;
+              bitField0_ = (bitField0_ & ~0x00000100);
+              vesselPumpBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getVesselPumpFieldBuilder()
+                      : null;
+            } else {
+              vesselPumpBuilder_.addAllMessages(other.vesselPump_);
+            }
+          }
+        }
+        if (tankTypeBuilder_ == null) {
+          if (!other.tankType_.isEmpty()) {
+            if (tankType_.isEmpty()) {
+              tankType_ = other.tankType_;
+              bitField0_ = (bitField0_ & ~0x00000200);
+            } else {
+              ensureTankTypeIsMutable();
+              tankType_.addAll(other.tankType_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.tankType_.isEmpty()) {
+            if (tankTypeBuilder_.isEmpty()) {
+              tankTypeBuilder_.dispose();
+              tankTypeBuilder_ = null;
+              tankType_ = other.tankType_;
+              bitField0_ = (bitField0_ & ~0x00000200);
+              tankTypeBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getTankTypeFieldBuilder()
+                      : null;
+            } else {
+              tankTypeBuilder_.addAllMessages(other.tankType_);
+            }
+          }
+        }
+        if (vesselManifoldBuilder_ == null) {
+          if (!other.vesselManifold_.isEmpty()) {
+            if (vesselManifold_.isEmpty()) {
+              vesselManifold_ = other.vesselManifold_;
+              bitField0_ = (bitField0_ & ~0x00000400);
+            } else {
+              ensureVesselManifoldIsMutable();
+              vesselManifold_.addAll(other.vesselManifold_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.vesselManifold_.isEmpty()) {
+            if (vesselManifoldBuilder_.isEmpty()) {
+              vesselManifoldBuilder_.dispose();
+              vesselManifoldBuilder_ = null;
+              vesselManifold_ = other.vesselManifold_;
+              bitField0_ = (bitField0_ & ~0x00000400);
+              vesselManifoldBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getVesselManifoldFieldBuilder()
+                      : null;
+            } else {
+              vesselManifoldBuilder_.addAllMessages(other.vesselManifold_);
+            }
+          }
+        }
+        if (vesselBottomLineBuilder_ == null) {
+          if (!other.vesselBottomLine_.isEmpty()) {
+            if (vesselBottomLine_.isEmpty()) {
+              vesselBottomLine_ = other.vesselBottomLine_;
+              bitField0_ = (bitField0_ & ~0x00000800);
+            } else {
+              ensureVesselBottomLineIsMutable();
+              vesselBottomLine_.addAll(other.vesselBottomLine_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.vesselBottomLine_.isEmpty()) {
+            if (vesselBottomLineBuilder_.isEmpty()) {
+              vesselBottomLineBuilder_.dispose();
+              vesselBottomLineBuilder_ = null;
+              vesselBottomLine_ = other.vesselBottomLine_;
+              bitField0_ = (bitField0_ & ~0x00000800);
+              vesselBottomLineBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getVesselBottomLineFieldBuilder()
+                      : null;
+            } else {
+              vesselBottomLineBuilder_.addAllMessages(other.vesselBottomLine_);
             }
           }
         }
@@ -19581,6 +20127,1084 @@ public final class VesselInfo {
           selectableParameter_ = null;
         }
         return selectableParameterBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.PumpType> pumpType_ =
+          java.util.Collections.emptyList();
+
+      private void ensurePumpTypeIsMutable() {
+        if (!((bitField0_ & 0x00000080) != 0)) {
+          pumpType_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.PumpType>(pumpType_);
+          bitField0_ |= 0x00000080;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.PumpType,
+              com.cpdss.common.generated.VesselInfo.PumpType.Builder,
+              com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder>
+          pumpTypeBuilder_;
+
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.PumpType> getPumpTypeList() {
+        if (pumpTypeBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(pumpType_);
+        } else {
+          return pumpTypeBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public int getPumpTypeCount() {
+        if (pumpTypeBuilder_ == null) {
+          return pumpType_.size();
+        } else {
+          return pumpTypeBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public com.cpdss.common.generated.VesselInfo.PumpType getPumpType(int index) {
+        if (pumpTypeBuilder_ == null) {
+          return pumpType_.get(index);
+        } else {
+          return pumpTypeBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public Builder setPumpType(int index, com.cpdss.common.generated.VesselInfo.PumpType value) {
+        if (pumpTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePumpTypeIsMutable();
+          pumpType_.set(index, value);
+          onChanged();
+        } else {
+          pumpTypeBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public Builder setPumpType(
+          int index, com.cpdss.common.generated.VesselInfo.PumpType.Builder builderForValue) {
+        if (pumpTypeBuilder_ == null) {
+          ensurePumpTypeIsMutable();
+          pumpType_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          pumpTypeBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public Builder addPumpType(com.cpdss.common.generated.VesselInfo.PumpType value) {
+        if (pumpTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePumpTypeIsMutable();
+          pumpType_.add(value);
+          onChanged();
+        } else {
+          pumpTypeBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public Builder addPumpType(int index, com.cpdss.common.generated.VesselInfo.PumpType value) {
+        if (pumpTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePumpTypeIsMutable();
+          pumpType_.add(index, value);
+          onChanged();
+        } else {
+          pumpTypeBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public Builder addPumpType(
+          com.cpdss.common.generated.VesselInfo.PumpType.Builder builderForValue) {
+        if (pumpTypeBuilder_ == null) {
+          ensurePumpTypeIsMutable();
+          pumpType_.add(builderForValue.build());
+          onChanged();
+        } else {
+          pumpTypeBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public Builder addPumpType(
+          int index, com.cpdss.common.generated.VesselInfo.PumpType.Builder builderForValue) {
+        if (pumpTypeBuilder_ == null) {
+          ensurePumpTypeIsMutable();
+          pumpType_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          pumpTypeBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public Builder addAllPumpType(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.PumpType> values) {
+        if (pumpTypeBuilder_ == null) {
+          ensurePumpTypeIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, pumpType_);
+          onChanged();
+        } else {
+          pumpTypeBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public Builder clearPumpType() {
+        if (pumpTypeBuilder_ == null) {
+          pumpType_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000080);
+          onChanged();
+        } else {
+          pumpTypeBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public Builder removePumpType(int index) {
+        if (pumpTypeBuilder_ == null) {
+          ensurePumpTypeIsMutable();
+          pumpType_.remove(index);
+          onChanged();
+        } else {
+          pumpTypeBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public com.cpdss.common.generated.VesselInfo.PumpType.Builder getPumpTypeBuilder(int index) {
+        return getPumpTypeFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder getPumpTypeOrBuilder(
+          int index) {
+        if (pumpTypeBuilder_ == null) {
+          return pumpType_.get(index);
+        } else {
+          return pumpTypeBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder>
+          getPumpTypeOrBuilderList() {
+        if (pumpTypeBuilder_ != null) {
+          return pumpTypeBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(pumpType_);
+        }
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public com.cpdss.common.generated.VesselInfo.PumpType.Builder addPumpTypeBuilder() {
+        return getPumpTypeFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.PumpType.getDefaultInstance());
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public com.cpdss.common.generated.VesselInfo.PumpType.Builder addPumpTypeBuilder(int index) {
+        return getPumpTypeFieldBuilder()
+            .addBuilder(index, com.cpdss.common.generated.VesselInfo.PumpType.getDefaultInstance());
+      }
+      /** <code>repeated .PumpType pumpType = 11;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.PumpType.Builder>
+          getPumpTypeBuilderList() {
+        return getPumpTypeFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.PumpType,
+              com.cpdss.common.generated.VesselInfo.PumpType.Builder,
+              com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder>
+          getPumpTypeFieldBuilder() {
+        if (pumpTypeBuilder_ == null) {
+          pumpTypeBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.PumpType,
+                  com.cpdss.common.generated.VesselInfo.PumpType.Builder,
+                  com.cpdss.common.generated.VesselInfo.PumpTypeOrBuilder>(
+                  pumpType_, ((bitField0_ & 0x00000080) != 0), getParentForChildren(), isClean());
+          pumpType_ = null;
+        }
+        return pumpTypeBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.VesselPump> vesselPump_ =
+          java.util.Collections.emptyList();
+
+      private void ensureVesselPumpIsMutable() {
+        if (!((bitField0_ & 0x00000100) != 0)) {
+          vesselPump_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.VesselPump>(
+                  vesselPump_);
+          bitField0_ |= 0x00000100;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselPump,
+              com.cpdss.common.generated.VesselInfo.VesselPump.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder>
+          vesselPumpBuilder_;
+
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselPump> getVesselPumpList() {
+        if (vesselPumpBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(vesselPump_);
+        } else {
+          return vesselPumpBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public int getVesselPumpCount() {
+        if (vesselPumpBuilder_ == null) {
+          return vesselPump_.size();
+        } else {
+          return vesselPumpBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselPump getVesselPump(int index) {
+        if (vesselPumpBuilder_ == null) {
+          return vesselPump_.get(index);
+        } else {
+          return vesselPumpBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public Builder setVesselPump(
+          int index, com.cpdss.common.generated.VesselInfo.VesselPump value) {
+        if (vesselPumpBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselPumpIsMutable();
+          vesselPump_.set(index, value);
+          onChanged();
+        } else {
+          vesselPumpBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public Builder setVesselPump(
+          int index, com.cpdss.common.generated.VesselInfo.VesselPump.Builder builderForValue) {
+        if (vesselPumpBuilder_ == null) {
+          ensureVesselPumpIsMutable();
+          vesselPump_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          vesselPumpBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public Builder addVesselPump(com.cpdss.common.generated.VesselInfo.VesselPump value) {
+        if (vesselPumpBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselPumpIsMutable();
+          vesselPump_.add(value);
+          onChanged();
+        } else {
+          vesselPumpBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public Builder addVesselPump(
+          int index, com.cpdss.common.generated.VesselInfo.VesselPump value) {
+        if (vesselPumpBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselPumpIsMutable();
+          vesselPump_.add(index, value);
+          onChanged();
+        } else {
+          vesselPumpBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public Builder addVesselPump(
+          com.cpdss.common.generated.VesselInfo.VesselPump.Builder builderForValue) {
+        if (vesselPumpBuilder_ == null) {
+          ensureVesselPumpIsMutable();
+          vesselPump_.add(builderForValue.build());
+          onChanged();
+        } else {
+          vesselPumpBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public Builder addVesselPump(
+          int index, com.cpdss.common.generated.VesselInfo.VesselPump.Builder builderForValue) {
+        if (vesselPumpBuilder_ == null) {
+          ensureVesselPumpIsMutable();
+          vesselPump_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          vesselPumpBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public Builder addAllVesselPump(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.VesselPump> values) {
+        if (vesselPumpBuilder_ == null) {
+          ensureVesselPumpIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, vesselPump_);
+          onChanged();
+        } else {
+          vesselPumpBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public Builder clearVesselPump() {
+        if (vesselPumpBuilder_ == null) {
+          vesselPump_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000100);
+          onChanged();
+        } else {
+          vesselPumpBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public Builder removeVesselPump(int index) {
+        if (vesselPumpBuilder_ == null) {
+          ensureVesselPumpIsMutable();
+          vesselPump_.remove(index);
+          onChanged();
+        } else {
+          vesselPumpBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselPump.Builder getVesselPumpBuilder(
+          int index) {
+        return getVesselPumpFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder getVesselPumpOrBuilder(
+          int index) {
+        if (vesselPumpBuilder_ == null) {
+          return vesselPump_.get(index);
+        } else {
+          return vesselPumpBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder>
+          getVesselPumpOrBuilderList() {
+        if (vesselPumpBuilder_ != null) {
+          return vesselPumpBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(vesselPump_);
+        }
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselPump.Builder addVesselPumpBuilder() {
+        return getVesselPumpFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.VesselPump.getDefaultInstance());
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselPump.Builder addVesselPumpBuilder(
+          int index) {
+        return getVesselPumpFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.VesselInfo.VesselPump.getDefaultInstance());
+      }
+      /** <code>repeated .VesselPump vesselPump = 12;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselPump.Builder>
+          getVesselPumpBuilderList() {
+        return getVesselPumpFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselPump,
+              com.cpdss.common.generated.VesselInfo.VesselPump.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder>
+          getVesselPumpFieldBuilder() {
+        if (vesselPumpBuilder_ == null) {
+          vesselPumpBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.VesselPump,
+                  com.cpdss.common.generated.VesselInfo.VesselPump.Builder,
+                  com.cpdss.common.generated.VesselInfo.VesselPumpOrBuilder>(
+                  vesselPump_, ((bitField0_ & 0x00000100) != 0), getParentForChildren(), isClean());
+          vesselPump_ = null;
+        }
+        return vesselPumpBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.TankType> tankType_ =
+          java.util.Collections.emptyList();
+
+      private void ensureTankTypeIsMutable() {
+        if (!((bitField0_ & 0x00000200) != 0)) {
+          tankType_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.TankType>(tankType_);
+          bitField0_ |= 0x00000200;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.TankType,
+              com.cpdss.common.generated.VesselInfo.TankType.Builder,
+              com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder>
+          tankTypeBuilder_;
+
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.TankType> getTankTypeList() {
+        if (tankTypeBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(tankType_);
+        } else {
+          return tankTypeBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public int getTankTypeCount() {
+        if (tankTypeBuilder_ == null) {
+          return tankType_.size();
+        } else {
+          return tankTypeBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public com.cpdss.common.generated.VesselInfo.TankType getTankType(int index) {
+        if (tankTypeBuilder_ == null) {
+          return tankType_.get(index);
+        } else {
+          return tankTypeBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public Builder setTankType(int index, com.cpdss.common.generated.VesselInfo.TankType value) {
+        if (tankTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTankTypeIsMutable();
+          tankType_.set(index, value);
+          onChanged();
+        } else {
+          tankTypeBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public Builder setTankType(
+          int index, com.cpdss.common.generated.VesselInfo.TankType.Builder builderForValue) {
+        if (tankTypeBuilder_ == null) {
+          ensureTankTypeIsMutable();
+          tankType_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          tankTypeBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public Builder addTankType(com.cpdss.common.generated.VesselInfo.TankType value) {
+        if (tankTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTankTypeIsMutable();
+          tankType_.add(value);
+          onChanged();
+        } else {
+          tankTypeBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public Builder addTankType(int index, com.cpdss.common.generated.VesselInfo.TankType value) {
+        if (tankTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureTankTypeIsMutable();
+          tankType_.add(index, value);
+          onChanged();
+        } else {
+          tankTypeBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public Builder addTankType(
+          com.cpdss.common.generated.VesselInfo.TankType.Builder builderForValue) {
+        if (tankTypeBuilder_ == null) {
+          ensureTankTypeIsMutable();
+          tankType_.add(builderForValue.build());
+          onChanged();
+        } else {
+          tankTypeBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public Builder addTankType(
+          int index, com.cpdss.common.generated.VesselInfo.TankType.Builder builderForValue) {
+        if (tankTypeBuilder_ == null) {
+          ensureTankTypeIsMutable();
+          tankType_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          tankTypeBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public Builder addAllTankType(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.TankType> values) {
+        if (tankTypeBuilder_ == null) {
+          ensureTankTypeIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, tankType_);
+          onChanged();
+        } else {
+          tankTypeBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public Builder clearTankType() {
+        if (tankTypeBuilder_ == null) {
+          tankType_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000200);
+          onChanged();
+        } else {
+          tankTypeBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public Builder removeTankType(int index) {
+        if (tankTypeBuilder_ == null) {
+          ensureTankTypeIsMutable();
+          tankType_.remove(index);
+          onChanged();
+        } else {
+          tankTypeBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public com.cpdss.common.generated.VesselInfo.TankType.Builder getTankTypeBuilder(int index) {
+        return getTankTypeFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder getTankTypeOrBuilder(
+          int index) {
+        if (tankTypeBuilder_ == null) {
+          return tankType_.get(index);
+        } else {
+          return tankTypeBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder>
+          getTankTypeOrBuilderList() {
+        if (tankTypeBuilder_ != null) {
+          return tankTypeBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(tankType_);
+        }
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public com.cpdss.common.generated.VesselInfo.TankType.Builder addTankTypeBuilder() {
+        return getTankTypeFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.TankType.getDefaultInstance());
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public com.cpdss.common.generated.VesselInfo.TankType.Builder addTankTypeBuilder(int index) {
+        return getTankTypeFieldBuilder()
+            .addBuilder(index, com.cpdss.common.generated.VesselInfo.TankType.getDefaultInstance());
+      }
+      /** <code>repeated .TankType tankType = 13;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.TankType.Builder>
+          getTankTypeBuilderList() {
+        return getTankTypeFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.TankType,
+              com.cpdss.common.generated.VesselInfo.TankType.Builder,
+              com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder>
+          getTankTypeFieldBuilder() {
+        if (tankTypeBuilder_ == null) {
+          tankTypeBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.TankType,
+                  com.cpdss.common.generated.VesselInfo.TankType.Builder,
+                  com.cpdss.common.generated.VesselInfo.TankTypeOrBuilder>(
+                  tankType_, ((bitField0_ & 0x00000200) != 0), getParentForChildren(), isClean());
+          tankType_ = null;
+        }
+        return tankTypeBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent>
+          vesselManifold_ = java.util.Collections.emptyList();
+
+      private void ensureVesselManifoldIsMutable() {
+        if (!((bitField0_ & 0x00000400) != 0)) {
+          vesselManifold_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.VesselComponent>(
+                  vesselManifold_);
+          bitField0_ |= 0x00000400;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselComponent,
+              com.cpdss.common.generated.VesselInfo.VesselComponent.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+          vesselManifoldBuilder_;
+
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent>
+          getVesselManifoldList() {
+        if (vesselManifoldBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(vesselManifold_);
+        } else {
+          return vesselManifoldBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public int getVesselManifoldCount() {
+        if (vesselManifoldBuilder_ == null) {
+          return vesselManifold_.size();
+        } else {
+          return vesselManifoldBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent getVesselManifold(int index) {
+        if (vesselManifoldBuilder_ == null) {
+          return vesselManifold_.get(index);
+        } else {
+          return vesselManifoldBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public Builder setVesselManifold(
+          int index, com.cpdss.common.generated.VesselInfo.VesselComponent value) {
+        if (vesselManifoldBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.set(index, value);
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public Builder setVesselManifold(
+          int index,
+          com.cpdss.common.generated.VesselInfo.VesselComponent.Builder builderForValue) {
+        if (vesselManifoldBuilder_ == null) {
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public Builder addVesselManifold(
+          com.cpdss.common.generated.VesselInfo.VesselComponent value) {
+        if (vesselManifoldBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.add(value);
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public Builder addVesselManifold(
+          int index, com.cpdss.common.generated.VesselInfo.VesselComponent value) {
+        if (vesselManifoldBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.add(index, value);
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public Builder addVesselManifold(
+          com.cpdss.common.generated.VesselInfo.VesselComponent.Builder builderForValue) {
+        if (vesselManifoldBuilder_ == null) {
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.add(builderForValue.build());
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public Builder addVesselManifold(
+          int index,
+          com.cpdss.common.generated.VesselInfo.VesselComponent.Builder builderForValue) {
+        if (vesselManifoldBuilder_ == null) {
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public Builder addAllVesselManifold(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.VesselComponent>
+              values) {
+        if (vesselManifoldBuilder_ == null) {
+          ensureVesselManifoldIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, vesselManifold_);
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public Builder clearVesselManifold() {
+        if (vesselManifoldBuilder_ == null) {
+          vesselManifold_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000400);
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public Builder removeVesselManifold(int index) {
+        if (vesselManifoldBuilder_ == null) {
+          ensureVesselManifoldIsMutable();
+          vesselManifold_.remove(index);
+          onChanged();
+        } else {
+          vesselManifoldBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent.Builder getVesselManifoldBuilder(
+          int index) {
+        return getVesselManifoldFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder
+          getVesselManifoldOrBuilder(int index) {
+        if (vesselManifoldBuilder_ == null) {
+          return vesselManifold_.get(index);
+        } else {
+          return vesselManifoldBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+          getVesselManifoldOrBuilderList() {
+        if (vesselManifoldBuilder_ != null) {
+          return vesselManifoldBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(vesselManifold_);
+        }
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent.Builder
+          addVesselManifoldBuilder() {
+        return getVesselManifoldFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.VesselComponent.getDefaultInstance());
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent.Builder addVesselManifoldBuilder(
+          int index) {
+        return getVesselManifoldFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.VesselInfo.VesselComponent.getDefaultInstance());
+      }
+      /** <code>repeated .VesselComponent vesselManifold = 14;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent.Builder>
+          getVesselManifoldBuilderList() {
+        return getVesselManifoldFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselComponent,
+              com.cpdss.common.generated.VesselInfo.VesselComponent.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+          getVesselManifoldFieldBuilder() {
+        if (vesselManifoldBuilder_ == null) {
+          vesselManifoldBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.VesselComponent,
+                  com.cpdss.common.generated.VesselInfo.VesselComponent.Builder,
+                  com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>(
+                  vesselManifold_,
+                  ((bitField0_ & 0x00000400) != 0),
+                  getParentForChildren(),
+                  isClean());
+          vesselManifold_ = null;
+        }
+        return vesselManifoldBuilder_;
+      }
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent>
+          vesselBottomLine_ = java.util.Collections.emptyList();
+
+      private void ensureVesselBottomLineIsMutable() {
+        if (!((bitField0_ & 0x00000800) != 0)) {
+          vesselBottomLine_ =
+              new java.util.ArrayList<com.cpdss.common.generated.VesselInfo.VesselComponent>(
+                  vesselBottomLine_);
+          bitField0_ |= 0x00000800;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselComponent,
+              com.cpdss.common.generated.VesselInfo.VesselComponent.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+          vesselBottomLineBuilder_;
+
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent>
+          getVesselBottomLineList() {
+        if (vesselBottomLineBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(vesselBottomLine_);
+        } else {
+          return vesselBottomLineBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public int getVesselBottomLineCount() {
+        if (vesselBottomLineBuilder_ == null) {
+          return vesselBottomLine_.size();
+        } else {
+          return vesselBottomLineBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent getVesselBottomLine(int index) {
+        if (vesselBottomLineBuilder_ == null) {
+          return vesselBottomLine_.get(index);
+        } else {
+          return vesselBottomLineBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public Builder setVesselBottomLine(
+          int index, com.cpdss.common.generated.VesselInfo.VesselComponent value) {
+        if (vesselBottomLineBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.set(index, value);
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public Builder setVesselBottomLine(
+          int index,
+          com.cpdss.common.generated.VesselInfo.VesselComponent.Builder builderForValue) {
+        if (vesselBottomLineBuilder_ == null) {
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public Builder addVesselBottomLine(
+          com.cpdss.common.generated.VesselInfo.VesselComponent value) {
+        if (vesselBottomLineBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.add(value);
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public Builder addVesselBottomLine(
+          int index, com.cpdss.common.generated.VesselInfo.VesselComponent value) {
+        if (vesselBottomLineBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.add(index, value);
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public Builder addVesselBottomLine(
+          com.cpdss.common.generated.VesselInfo.VesselComponent.Builder builderForValue) {
+        if (vesselBottomLineBuilder_ == null) {
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.add(builderForValue.build());
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public Builder addVesselBottomLine(
+          int index,
+          com.cpdss.common.generated.VesselInfo.VesselComponent.Builder builderForValue) {
+        if (vesselBottomLineBuilder_ == null) {
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public Builder addAllVesselBottomLine(
+          java.lang.Iterable<? extends com.cpdss.common.generated.VesselInfo.VesselComponent>
+              values) {
+        if (vesselBottomLineBuilder_ == null) {
+          ensureVesselBottomLineIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, vesselBottomLine_);
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public Builder clearVesselBottomLine() {
+        if (vesselBottomLineBuilder_ == null) {
+          vesselBottomLine_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000800);
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public Builder removeVesselBottomLine(int index) {
+        if (vesselBottomLineBuilder_ == null) {
+          ensureVesselBottomLineIsMutable();
+          vesselBottomLine_.remove(index);
+          onChanged();
+        } else {
+          vesselBottomLineBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent.Builder
+          getVesselBottomLineBuilder(int index) {
+        return getVesselBottomLineFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder
+          getVesselBottomLineOrBuilder(int index) {
+        if (vesselBottomLineBuilder_ == null) {
+          return vesselBottomLine_.get(index);
+        } else {
+          return vesselBottomLineBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+          getVesselBottomLineOrBuilderList() {
+        if (vesselBottomLineBuilder_ != null) {
+          return vesselBottomLineBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(vesselBottomLine_);
+        }
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent.Builder
+          addVesselBottomLineBuilder() {
+        return getVesselBottomLineFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.VesselInfo.VesselComponent.getDefaultInstance());
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public com.cpdss.common.generated.VesselInfo.VesselComponent.Builder
+          addVesselBottomLineBuilder(int index) {
+        return getVesselBottomLineFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.VesselInfo.VesselComponent.getDefaultInstance());
+      }
+      /** <code>repeated .VesselComponent vesselBottomLine = 15;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.VesselComponent.Builder>
+          getVesselBottomLineBuilderList() {
+        return getVesselBottomLineFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.VesselComponent,
+              com.cpdss.common.generated.VesselInfo.VesselComponent.Builder,
+              com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>
+          getVesselBottomLineFieldBuilder() {
+        if (vesselBottomLineBuilder_ == null) {
+          vesselBottomLineBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.VesselComponent,
+                  com.cpdss.common.generated.VesselInfo.VesselComponent.Builder,
+                  com.cpdss.common.generated.VesselInfo.VesselComponentOrBuilder>(
+                  vesselBottomLine_,
+                  ((bitField0_ & 0x00000800) != 0),
+                  getParentForChildren(),
+                  isClean());
+          vesselBottomLine_ = null;
+        }
+        return vesselBottomLineBuilder_;
       }
 
       @java.lang.Override
@@ -75888,7 +77512,7 @@ public final class VesselInfo {
           + "sponseStatus\022\036\n\007vessels\030\004 \003(\0132\r.VesselDe"
           + "tail\022E\n\035vesselLoadableQuantityDetails\030\005 "
           + "\001(\0132\036.VesselLoadableQuantityDetails\"%\n\021V"
-          + "esselAlgoRequest\022\020\n\010vesselId\030\001 \001(\003\"\275\003\n\017V"
+          + "esselAlgoRequest\022\020\n\010vesselId\030\001 \001(\003\"\356\004\n\017V"
           + "esselAlgoReply\022#\n\014vesselDetail\030\001 \001(\0132\r.V"
           + "esselDetail\0223\n\024vesselDraftCondition\030\002 \003("
           + "\0132\025.VesselDraftCondition\022+\n\020vesselTankDe"
@@ -75900,194 +77524,198 @@ public final class VesselInfo {
           + "(\0132\016.UllageDetails\0223\n\024ullageTrimCorrecti"
           + "on\030\t \003(\0132\025.UllageTrimCorrection\0221\n\023selec"
           + "tableParameter\030\n \003(\0132\024.SelectableParamet"
-          + "er\"\211\001\n\022BendingMomentType2\022\n\n\002id\030\001 \001(\003\022\023\n"
-          + "\013frameNumber\030\002 \001(\t\022\024\n\014displacement\030\003 \001(\t"
-          + "\022\014\n\004buay\030\004 \001(\t\022\r\n\005difft\030\005 \001(\t\022\r\n\005corrt\030\006"
-          + " \001(\t\022\020\n\010isActive\030\007 \001(\t\"\270\001\n\022BendingMoment"
-          + "Type4\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\017"
-          + "\n\007trim_m1\030\003 \001(\t\022\016\n\006trim_0\030\004 \001(\t\022\016\n\006trim_"
-          + "1\030\005 \001(\t\022\016\n\006trim_2\030\006 \001(\t\022\016\n\006trim_3\030\007 \001(\t\022"
-          + "\016\n\006trim_4\030\010 \001(\t\022\016\n\006trim_5\030\t \001(\t\022\020\n\010isAct"
-          + "ive\030\n \001(\t\"\214\001\n\022ShearingForceType1\022\n\n\002id\030\001"
-          + " \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\021\n\tbaseDraft\030\003"
-          + " \001(\t\022\021\n\tbaseValue\030\004 \001(\t\022\027\n\017draftCorrecti"
-          + "on\030\005 \001(\t\022\026\n\016trimCorrection\030\006 \001(\t\"\211\001\n\022She"
-          + "aringForceType2\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumb"
-          + "er\030\002 \001(\t\022\024\n\014displacement\030\003 \001(\t\022\014\n\004buay\030\004"
-          + " \001(\t\022\r\n\005difft\030\005 \001(\t\022\r\n\005corrt\030\006 \001(\t\022\020\n\010is"
-          + "Active\030\007 \001(\t\"\270\001\n\022ShearingForceType4\022\n\n\002i"
-          + "d\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\017\n\007trim_m1\030"
-          + "\003 \001(\t\022\016\n\006trim_0\030\004 \001(\t\022\016\n\006trim_1\030\005 \001(\t\022\016\n"
-          + "\006trim_2\030\006 \001(\t\022\016\n\006trim_3\030\007 \001(\t\022\016\n\006trim_4\030"
-          + "\010 \001(\t\022\016\n\006trim_5\030\t \001(\t\022\020\n\010isActive\030\n \001(\t\""
-          + "\273\001\n\037BendingMomentShearingForceType3\022\n\n\002i"
-          + "d\030\001 \001(\003\022\025\n\rloadCondition\030\002 \001(\t\022\023\n\013frameN"
-          + "umber\030\003 \001(\t\022\017\n\007draftAp\030\004 \001(\t\022\017\n\007draftFp\030"
-          + "\005 \001(\t\022\025\n\rbendingMoment\030\006 \001(\t\022\025\n\rshearing"
-          + "Force\030\007 \001(\t\022\020\n\010isActive\030\010 \001(\t\"L\n\023Selecta"
-          + "bleParameter\022\024\n\014paramterName\030\001 \001(\t\022\037\n\006va"
-          + "lues\030\002 \003(\0132\017.ParameterValue\"-\n\016Parameter"
-          + "Value\022\014\n\004type\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"r\n\rUl"
-          + "lageDetails\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022"
-          + "\023\n\013ullageDepth\030\003 \001(\t\022\034\n\024evenKeelCapacity"
-          + "Cubm\030\004 \001(\t\022\022\n\nsoundDepth\030\005 \001(\t\"\236\001\n\024Vesse"
-          + "lDraftCondition\022\n\n\002id\030\001 \001(\003\022\030\n\020draftCond"
-          + "itionId\030\002 \001(\003\022\r\n\005depth\030\003 \001(\t\022\021\n\tfreeboar"
-          + "d\030\004 \001(\t\022\024\n\014draftExtreme\030\005 \001(\t\022\024\n\014displac"
-          + "ement\030\006 \001(\t\022\022\n\ndeadWeight\030\007 \001(\t\"\253\001\n\017Hydr"
-          + "ostaticData\022\n\n\002id\030\001 \001(\003\022\014\n\004trim\030\002 \001(\t\022\r\n"
-          + "\005draft\030\003 \001(\t\022\024\n\014displacement\030\004 \001(\t\022\013\n\003lc"
-          + "b\030\005 \001(\t\022\013\n\003lcf\030\006 \001(\t\022\013\n\003vcb\030\007 \001(\t\022\013\n\003tkm"
-          + "\030\010 \001(\t\022\013\n\003lkm\030\t \001(\t\022\013\n\003mtc\030\n \001(\t\022\013\n\003tpc\030"
-          + "\013 \001(\t\"u\n\rVesselTankTCG\022\n\n\002id\030\001 \001(\003\022\016\n\006ta"
-          + "nkId\030\002 \001(\003\022\020\n\010capacity\030\003 \001(\t\022\013\n\003tcg\030\004 \001("
-          + "\t\022\013\n\003lcg\030\005 \001(\t\022\013\n\003vcg\030\006 \001(\t\022\017\n\007inertia\030\007"
-          + " \001(\t\"\355\004\n\007BMAndSF\022/\n\022bendingMomentType1\030\001"
-          + " \003(\0132\023.BendingMomentType1\022/\n\022shearingFor"
-          + "ceType1\030\002 \003(\0132\023.ShearingForceType1\022+\n\020ca"
-          + "lculationSheet\030\003 \003(\0132\021.CalculationSheet\022"
-          + "=\n\031calculationSheetTankGroup\030\004 \003(\0132\032.Cal"
-          + "culationSheetTankGroup\0227\n\026minMaxValuesFo"
-          + "rBMAndSf\030\005 \003(\0132\027.MinMaxValuesForBMAndSf\022"
-          + "%\n\rstationValues\030\006 \003(\0132\016.StationValues\022)"
-          + "\n\017InnerBulkHeadSF\030\007 \003(\0132\020.InnerBulkHeadS"
-          + "F\022/\n\022bendingMomentType2\030\010 \003(\0132\023.BendingM"
-          + "omentType2\022/\n\022bendingMomentType4\030\t \003(\0132\023"
-          + ".BendingMomentType4\022/\n\022shearingForceType"
-          + "2\030\n \003(\0132\023.ShearingForceType2\022/\n\022shearing"
-          + "ForceType4\030\013 \003(\0132\023.ShearingForceType4\022E\n"
-          + "\033bendingMomentShearingForce3\030\014 \003(\0132 .Ben"
-          + "dingMomentShearingForceType3\"\214\001\n\022Bending"
-          + "MomentType1\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002"
-          + " \001(\t\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001"
-          + "(\t\022\027\n\017draftCorrection\030\005 \001(\t\022\026\n\016trimCorre"
-          + "ction\030\006 \001(\t\"c\n\020CalculationSheet\022\n\n\002id\030\001 "
-          + "\001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\016\n\006tankId\030\003 \001(\003\022\023"
-          + "\n\013weightRatio\030\004 \001(\t\022\013\n\003lcg\030\005 \001(\t\"\\\n\031Calc"
-          + "ulationSheetTankGroup\022\n\n\002id\030\001 \001(\003\022\021\n\ttan"
-          + "kGroup\030\002 \001(\005\022\013\n\003lcg\030\003 \001(\t\022\023\n\013frameNumber"
-          + "\030\004 \001(\t\"u\n\026MinMaxValuesForBMAndSf\022\n\n\002id\030\001"
-          + " \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\r\n\005minBm\030\003 \001(\t"
-          + "\022\r\n\005maxBm\030\004 \001(\t\022\r\n\005minSf\030\005 \001(\t\022\r\n\005maxSf\030"
-          + "\006 \001(\t\"\205\001\n\rStationValues\022\023\n\013stationFrom\030\001"
-          + " \001(\t\022\021\n\tstationTo\030\002 \001(\t\022\027\n\017frameNumberFr"
-          + "om\030\003 \001(\t\022\025\n\rframeNumberTo\030\004 \001(\t\022\020\n\010dista"
-          + "nce\030\005 \001(\t\022\n\n\002id\030\006 \001(\003\"\221\004\n\017InnerBulkHeadS"
-          + "F\022\023\n\013frameNumber\030\001 \001(\t\022\021\n\tforeAlpha\030\002 \001("
-          + "\t\022\035\n\025foreCenterCargoTankId\030\003 \001(\003\022\016\n\006fore"
-          + "C1\030\004 \001(\t\022\027\n\017foreWingTankIds\030\005 \001(\t\022\016\n\006for"
-          + "eC2\030\006 \001(\t\022\030\n\020foreBallastTanks\030\007 \001(\t\022\016\n\006f"
-          + "oreC3\030\010 \001(\t\022\030\n\020foreBWCorrection\030\t \001(\t\022\016\n"
-          + "\006foreC4\030\n \001(\t\022\030\n\020foreMaxAllowence\030\013 \001(\t\022"
-          + "\030\n\020foreMinAllowence\030\014 \001(\t\022\n\n\002id\030\r \001(\003\022\020\n"
-          + "\010aftAlpha\030\016 \001(\t\022\034\n\024aftCenterCargoTankId\030"
-          + "\017 \001(\003\022\r\n\005aftC1\030\020 \001(\t\022\026\n\016aftWingTankIds\030\021"
-          + " \001(\t\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017aftBallastTanks\030\023"
-          + " \001(\t\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017aftBWCorrection\030\025"
-          + " \001(\t\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021aftMaxFlAllowence"
-          + "\030\027 \001(\t\022\031\n\021aftMinFlAllowence\030\030 \001(\t\"\200\002\n\024Ul"
-          + "lageTrimCorrection\022\n\n\002id\030\001 \001(\003\022\016\n\006tankId"
-          + "\030\002 \001(\003\022\023\n\013ullageDepth\030\003 \001(\t\022\016\n\006trimM1\030\004 "
-          + "\001(\t\022\016\n\006trimM2\030\005 \001(\t\022\016\n\006trimM3\030\006 \001(\t\022\016\n\006t"
-          + "rimM4\030\007 \001(\t\022\016\n\006trimM5\030\010 \001(\t\022\r\n\005trim0\030\t \001"
-          + "(\t\022\r\n\005trim1\030\n \001(\t\022\r\n\005trim2\030\013 \001(\t\022\r\n\005trim"
-          + "3\030\014 \001(\t\022\r\n\005trim4\030\r \001(\t\022\r\n\005trim5\030\016 \001(\t\022\r\n"
-          + "\005trim6\030\017 \001(\t\"$\n\021VesselTankRequest\022\017\n\007tan"
-          + "kIds\030\001 \003(\003\"`\n\017VesselTankOrder\022\020\n\010tankNam"
-          + "e\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\021\n\tshortName\030\003 \001"
-          + "(\t\022\030\n\020tankDisplayOrder\030\004 \001(\005\"h\n\022VesselTa"
-          + "nkResponse\022)\n\017vesselTankOrder\030\001 \003(\0132\020.Ve"
-          + "sselTankOrder\022\'\n\016responseStatus\030\002 \001(\0132\017."
-          + "ResponseStatus\"#\n\017VesselIdRequest\022\020\n\010ves"
-          + "selId\030\001 \001(\003\"`\n\020VesselIdResponse\022#\n\014vesse"
-          + "lDetail\030\001 \001(\0132\r.VesselDetail\022\'\n\016response"
-          + "Status\030\002 \001(\0132\017.ResponseStatus\"8\n\020VesselD"
-          + "WTRequest\022\020\n\010vesselId\030\001 \001(\003\022\022\n\ndraftValu"
-          + "e\030\002 \001(\t\"t\n\021VesselDWTResponse\022\020\n\010vesselId"
-          + "\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001(\003\022\021\n\tdwtResult\030\003"
-          + " \001(\t\022\'\n\016responseStatus\030\004 \001(\0132\017.ResponseS"
-          + "tatus\"\225\002\n\023VesselPumpsResponse\022\'\n\016respons"
-          + "eStatus\030\001 \001(\0132\017.ResponseStatus\022\033\n\010pumpTy"
-          + "pe\030\002 \003(\0132\t.PumpType\022\037\n\nvesselPump\030\003 \003(\0132"
-          + "\013.VesselPump\022\033\n\010tankType\030\005 \003(\0132\t.TankTyp"
-          + "e\022$\n\rvesselDetails\030\004 \001(\0132\r.VesselDetail\022"
-          + "(\n\016vesselManifold\030\006 \003(\0132\020.VesselComponen"
-          + "t\022*\n\020vesselBottomLine\030\007 \003(\0132\020.VesselComp"
-          + "onent\"t\n\017VesselComponent\022\n\n\002id\030\001 \001(\003\022\020\n\010"
-          + "vesselId\030\002 \001(\003\022\025\n\rcomponentName\030\003 \001(\t\022\025\n"
-          + "\rcomponentCode\030\004 \001(\t\022\025\n\rcomponentType\030\005 "
-          + "\001(\003\"(\n\010TankType\022\n\n\002id\030\001 \001(\003\022\020\n\010typeName\030"
-          + "\002 \001(\t\"$\n\010PumpType\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 "
-          + "\001(\t\"x\n\nVesselPump\022\n\n\002id\030\001 \001(\003\022\020\n\010vesselI"
-          + "d\030\002 \001(\003\022\022\n\npumpTypeId\030\003 \001(\003\022\020\n\010pumpName\030"
-          + "\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t\022\024\n\014pumpCapacity\030"
-          + "\006 \001(\t\"\214\001\n\021VesselRuleRequest\022\020\n\010vesselId\030"
-          + "\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePlan\030\003 \003"
-          + "(\0132\n.RulePlans\022\027\n\017isNoDefaultRule\030\004 \001(\010\022"
-          + "\033\n\023isFetchEnabledRules\030\005 \001(\010\"\347\001\n\017VesselR"
-          + "uleReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
-          + "nseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.RulePlans\022"
-          + ")\n\017cargoTankMaster\030\003 \003(\0132\020.CargoTankMast"
-          + "er\0229\n\027ruleDropDownValueMaster\030\004 \003(\0132\030.Ru"
-          + "leDropDownValueMaster\022\'\n\016ruleTypeMaster\030"
-          + "\005 \003(\0132\017.RuleTypeMaster\"\260\001\n\030VesselValveSe"
-          + "quenceReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Re"
-          + "sponseStatus\0220\n\022vvSequenceEntities\030\002 \003(\013"
-          + "2\024.VesselValveSequence\0229\n\023vvEducationEnt"
-          + "ities\030\003 \003(\0132\034.VesselValveEducationProces"
-          + "s\"\255\004\n\023VesselValveSequence\022\n\n\002id\030\001 \001(\003\022\025\n"
-          + "\risCommonValve\030\002 \001(\010\022\022\n\npipelineId\030\003 \001(\005"
-          + "\022\025\n\rpipelineColor\030\004 \001(\t\022\024\n\014pipelineName\030"
-          + "\005 \001(\t\022\024\n\014pipelineType\030\006 \001(\t\022\026\n\016sequenceN"
-          + "umber\030\007 \001(\t\022\033\n\023sequenceOperationId\030\010 \001(\005"
-          + "\022\035\n\025sequenceOperationName\030\t \001(\t\022\026\n\016seque"
-          + "nceTypeId\030\n \001(\005\022\030\n\020sequenceTypeName\030\013 \001("
-          + "\t\022\037\n\027sequenceVesselMappingId\030\014 \001(\005\022\025\n\rta"
-          + "nkShortName\030\r \001(\t\022\025\n\rvalveCategory\030\016 \001(\t"
-          + "\022\027\n\017valveCategoryId\030\017 \001(\005\022\023\n\013valveNumber"
-          + "\030\020 \001(\t\022\021\n\tvalveSide\030\021 \001(\005\022\023\n\013valveTypeId"
-          + "\030\022 \001(\005\022\025\n\rvalveTypeName\030\023 \001(\t\022\022\n\nvesselN"
-          + "ame\030\024 \001(\t\022\025\n\rvesselTankXid\030\025 \001(\005\022\034\n\024vess"
-          + "elValveMappingId\030\026 \001(\005\022\021\n\tvesselXid\030\027 \001("
-          + "\003\"\261\001\n\033VesselValveEducationProcess\022\n\n\002id\030"
-          + "\001 \001(\003\022\023\n\013eductorName\030\002 \001(\t\022\026\n\016sequenceNu"
-          + "mber\030\003 \001(\005\022\020\n\010stepName\030\004 \001(\t\022\023\n\013valveNum"
-          + "ber\030\005 \001(\t\022\021\n\teductorId\030\006 \001(\005\022\037\n\027eduction"
-          + "ProcessMasterId\030\007 \001(\005\"+\n\027LoadingInfoRule"
-          + "sRequest\022\020\n\010vesselId\030\001 \001(\003\"W\n\025LoadingInf"
-          + "oRulesReply\022\025\n\005rules\030\001 \003(\0132\006.Rules\022\'\n\016re"
-          + "sponseStatus\030\002 \001(\0132\017.ResponseStatus\"0\n\017C"
-          + "argoTankMaster\022\n\n\002id\030\001 \001(\003\022\021\n\tshortName\030"
-          + "\002 \001(\t\"L\n\027RuleDropDownValueMaster\022\n\n\002id\030\001"
-          + " \001(\003\022\r\n\005value\030\002 \001(\t\022\026\n\016ruleTemplateId\030\003 "
-          + "\001(\003\".\n\016RuleTypeMaster\022\n\n\002id\030\001 \001(\003\022\020\n\010rul"
-          + "eType\030\002 \001(\t2\344\007\n\021VesselInfoService\0228\n\026Get"
-          + "AllVesselsByCompany\022\016.VesselRequest\032\014.Ve"
-          + "sselReply\"\000\0226\n\024GetVesselDetailsById\022\016.Ve"
-          + "sselRequest\032\014.VesselReply\"\000\0220\n\016GetVessel"
-          + "Tanks\022\016.VesselRequest\032\014.VesselReply\"\000\0225\n"
-          + "\023GetVesselCargoTanks\022\016.VesselRequest\032\014.V"
-          + "esselReply\"\000\022A\n\027GetVesselDetailsForAlgo\022"
-          + "\022.VesselAlgoRequest\032\020.VesselAlgoReply\"\000\022"
-          + "C\n!GetVesselDetailForSynopticalTable\022\016.V"
-          + "esselRequest\032\014.VesselReply\"\000\022;\n\031GetVesse"
-          + "lDetailByVesselId\022\016.VesselRequest\032\014.Vess"
-          + "elReply\"\000\022A\n\025GetVesselInfoByPaging\022\030.Ves"
-          + "selRequestWithPaging\032\014.VesselReply\"\000\022C\n\026"
-          + "GetVesselInfoBytankIds\022\022.VesselTankReque"
-          + "st\032\023.VesselTankResponse\"\000\022C\n\032GetDWTFromV"
-          + "esselByVesselId\022\021.VesselDWTRequest\032\022.Ves"
-          + "selDWTResponse\022@\n\027GetVesselInfoByVesselI"
-          + "d\022\020.VesselIdRequest\032\021.VesselIdResponse\"\000"
-          + "\022D\n\030GetVesselPumpsByVesselId\022\020.VesselIdR"
-          + "equest\032\024.VesselPumpsResponse\"\000\022H\n\036GetRul"
-          + "esByVesselIdAndSectionId\022\022.VesselRuleReq"
-          + "uest\032\020.VesselRuleReply\"\000\022E\n\026GetVesselVal"
-          + "veSequence\022\016.VesselRequest\032\031.VesselValve"
-          + "SequenceReply\"\000\022I\n\023GetLoadingInfoRules\022\030"
-          + ".LoadingInfoRulesRequest\032\026.LoadingInfoRu"
-          + "lesReply\"\000B\036\n\032com.cpdss.common.generated"
-          + "P\000b\006proto3"
+          + "er\022\033\n\010pumpType\030\013 \003(\0132\t.PumpType\022\037\n\nvesse"
+          + "lPump\030\014 \003(\0132\013.VesselPump\022\033\n\010tankType\030\r \003"
+          + "(\0132\t.TankType\022(\n\016vesselManifold\030\016 \003(\0132\020."
+          + "VesselComponent\022*\n\020vesselBottomLine\030\017 \003("
+          + "\0132\020.VesselComponent\"\211\001\n\022BendingMomentTyp"
+          + "e2\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\024\n\014d"
+          + "isplacement\030\003 \001(\t\022\014\n\004buay\030\004 \001(\t\022\r\n\005difft"
+          + "\030\005 \001(\t\022\r\n\005corrt\030\006 \001(\t\022\020\n\010isActive\030\007 \001(\t\""
+          + "\270\001\n\022BendingMomentType4\022\n\n\002id\030\001 \001(\003\022\023\n\013fr"
+          + "ameNumber\030\002 \001(\t\022\017\n\007trim_m1\030\003 \001(\t\022\016\n\006trim"
+          + "_0\030\004 \001(\t\022\016\n\006trim_1\030\005 \001(\t\022\016\n\006trim_2\030\006 \001(\t"
+          + "\022\016\n\006trim_3\030\007 \001(\t\022\016\n\006trim_4\030\010 \001(\t\022\016\n\006trim"
+          + "_5\030\t \001(\t\022\020\n\010isActive\030\n \001(\t\"\214\001\n\022ShearingF"
+          + "orceType1\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001"
+          + "(\t\022\021\n\tbaseDraft\030\003 \001(\t\022\021\n\tbaseValue\030\004 \001(\t"
+          + "\022\027\n\017draftCorrection\030\005 \001(\t\022\026\n\016trimCorrect"
+          + "ion\030\006 \001(\t\"\211\001\n\022ShearingForceType2\022\n\n\002id\030\001"
+          + " \001(\003\022\023\n\013frameNumber\030\002 \001(\t\022\024\n\014displacemen"
+          + "t\030\003 \001(\t\022\014\n\004buay\030\004 \001(\t\022\r\n\005difft\030\005 \001(\t\022\r\n\005"
+          + "corrt\030\006 \001(\t\022\020\n\010isActive\030\007 \001(\t\"\270\001\n\022Sheari"
+          + "ngForceType4\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030"
+          + "\002 \001(\t\022\017\n\007trim_m1\030\003 \001(\t\022\016\n\006trim_0\030\004 \001(\t\022\016"
+          + "\n\006trim_1\030\005 \001(\t\022\016\n\006trim_2\030\006 \001(\t\022\016\n\006trim_3"
+          + "\030\007 \001(\t\022\016\n\006trim_4\030\010 \001(\t\022\016\n\006trim_5\030\t \001(\t\022\020"
+          + "\n\010isActive\030\n \001(\t\"\273\001\n\037BendingMomentSheari"
+          + "ngForceType3\022\n\n\002id\030\001 \001(\003\022\025\n\rloadConditio"
+          + "n\030\002 \001(\t\022\023\n\013frameNumber\030\003 \001(\t\022\017\n\007draftAp\030"
+          + "\004 \001(\t\022\017\n\007draftFp\030\005 \001(\t\022\025\n\rbendingMoment\030"
+          + "\006 \001(\t\022\025\n\rshearingForce\030\007 \001(\t\022\020\n\010isActive"
+          + "\030\010 \001(\t\"L\n\023SelectableParameter\022\024\n\014paramte"
+          + "rName\030\001 \001(\t\022\037\n\006values\030\002 \003(\0132\017.ParameterV"
+          + "alue\"-\n\016ParameterValue\022\014\n\004type\030\001 \001(\003\022\r\n\005"
+          + "value\030\002 \001(\t\"r\n\rUllageDetails\022\n\n\002id\030\001 \001(\003"
+          + "\022\016\n\006tankId\030\002 \001(\003\022\023\n\013ullageDepth\030\003 \001(\t\022\034\n"
+          + "\024evenKeelCapacityCubm\030\004 \001(\t\022\022\n\nsoundDept"
+          + "h\030\005 \001(\t\"\236\001\n\024VesselDraftCondition\022\n\n\002id\030\001"
+          + " \001(\003\022\030\n\020draftConditionId\030\002 \001(\003\022\r\n\005depth\030"
+          + "\003 \001(\t\022\021\n\tfreeboard\030\004 \001(\t\022\024\n\014draftExtreme"
+          + "\030\005 \001(\t\022\024\n\014displacement\030\006 \001(\t\022\022\n\ndeadWeig"
+          + "ht\030\007 \001(\t\"\253\001\n\017HydrostaticData\022\n\n\002id\030\001 \001(\003"
+          + "\022\014\n\004trim\030\002 \001(\t\022\r\n\005draft\030\003 \001(\t\022\024\n\014displac"
+          + "ement\030\004 \001(\t\022\013\n\003lcb\030\005 \001(\t\022\013\n\003lcf\030\006 \001(\t\022\013\n"
+          + "\003vcb\030\007 \001(\t\022\013\n\003tkm\030\010 \001(\t\022\013\n\003lkm\030\t \001(\t\022\013\n\003"
+          + "mtc\030\n \001(\t\022\013\n\003tpc\030\013 \001(\t\"u\n\rVesselTankTCG\022"
+          + "\n\n\002id\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\020\n\010capacity\030"
+          + "\003 \001(\t\022\013\n\003tcg\030\004 \001(\t\022\013\n\003lcg\030\005 \001(\t\022\013\n\003vcg\030\006"
+          + " \001(\t\022\017\n\007inertia\030\007 \001(\t\"\355\004\n\007BMAndSF\022/\n\022ben"
+          + "dingMomentType1\030\001 \003(\0132\023.BendingMomentTyp"
+          + "e1\022/\n\022shearingForceType1\030\002 \003(\0132\023.Shearin"
+          + "gForceType1\022+\n\020calculationSheet\030\003 \003(\0132\021."
+          + "CalculationSheet\022=\n\031calculationSheetTank"
+          + "Group\030\004 \003(\0132\032.CalculationSheetTankGroup\022"
+          + "7\n\026minMaxValuesForBMAndSf\030\005 \003(\0132\027.MinMax"
+          + "ValuesForBMAndSf\022%\n\rstationValues\030\006 \003(\0132"
+          + "\016.StationValues\022)\n\017InnerBulkHeadSF\030\007 \003(\013"
+          + "2\020.InnerBulkHeadSF\022/\n\022bendingMomentType2"
+          + "\030\010 \003(\0132\023.BendingMomentType2\022/\n\022bendingMo"
+          + "mentType4\030\t \003(\0132\023.BendingMomentType4\022/\n\022"
+          + "shearingForceType2\030\n \003(\0132\023.ShearingForce"
+          + "Type2\022/\n\022shearingForceType4\030\013 \003(\0132\023.Shea"
+          + "ringForceType4\022E\n\033bendingMomentShearingF"
+          + "orce3\030\014 \003(\0132 .BendingMomentShearingForce"
+          + "Type3\"\214\001\n\022BendingMomentType1\022\n\n\002id\030\001 \001(\003"
+          + "\022\023\n\013frameNumber\030\002 \001(\t\022\021\n\tbaseDraft\030\003 \001(\t"
+          + "\022\021\n\tbaseValue\030\004 \001(\t\022\027\n\017draftCorrection\030\005"
+          + " \001(\t\022\026\n\016trimCorrection\030\006 \001(\t\"c\n\020Calculat"
+          + "ionSheet\022\n\n\002id\030\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022"
+          + "\016\n\006tankId\030\003 \001(\003\022\023\n\013weightRatio\030\004 \001(\t\022\013\n\003"
+          + "lcg\030\005 \001(\t\"\\\n\031CalculationSheetTankGroup\022\n"
+          + "\n\002id\030\001 \001(\003\022\021\n\ttankGroup\030\002 \001(\005\022\013\n\003lcg\030\003 \001"
+          + "(\t\022\023\n\013frameNumber\030\004 \001(\t\"u\n\026MinMaxValuesF"
+          + "orBMAndSf\022\n\n\002id\030\001 \001(\003\022\023\n\013frameNumber\030\002 \001"
+          + "(\t\022\r\n\005minBm\030\003 \001(\t\022\r\n\005maxBm\030\004 \001(\t\022\r\n\005minS"
+          + "f\030\005 \001(\t\022\r\n\005maxSf\030\006 \001(\t\"\205\001\n\rStationValues"
+          + "\022\023\n\013stationFrom\030\001 \001(\t\022\021\n\tstationTo\030\002 \001(\t"
+          + "\022\027\n\017frameNumberFrom\030\003 \001(\t\022\025\n\rframeNumber"
+          + "To\030\004 \001(\t\022\020\n\010distance\030\005 \001(\t\022\n\n\002id\030\006 \001(\003\"\221"
+          + "\004\n\017InnerBulkHeadSF\022\023\n\013frameNumber\030\001 \001(\t\022"
+          + "\021\n\tforeAlpha\030\002 \001(\t\022\035\n\025foreCenterCargoTan"
+          + "kId\030\003 \001(\003\022\016\n\006foreC1\030\004 \001(\t\022\027\n\017foreWingTan"
+          + "kIds\030\005 \001(\t\022\016\n\006foreC2\030\006 \001(\t\022\030\n\020foreBallas"
+          + "tTanks\030\007 \001(\t\022\016\n\006foreC3\030\010 \001(\t\022\030\n\020foreBWCo"
+          + "rrection\030\t \001(\t\022\016\n\006foreC4\030\n \001(\t\022\030\n\020foreMa"
+          + "xAllowence\030\013 \001(\t\022\030\n\020foreMinAllowence\030\014 \001"
+          + "(\t\022\n\n\002id\030\r \001(\003\022\020\n\010aftAlpha\030\016 \001(\t\022\034\n\024aftC"
+          + "enterCargoTankId\030\017 \001(\003\022\r\n\005aftC1\030\020 \001(\t\022\026\n"
+          + "\016aftWingTankIds\030\021 \001(\t\022\r\n\005aftC2\030\022 \001(\t\022\027\n\017"
+          + "aftBallastTanks\030\023 \001(\t\022\r\n\005aftC3\030\024 \001(\t\022\027\n\017"
+          + "aftBWCorrection\030\025 \001(\t\022\r\n\005aftC4\030\026 \001(\t\022\031\n\021"
+          + "aftMaxFlAllowence\030\027 \001(\t\022\031\n\021aftMinFlAllow"
+          + "ence\030\030 \001(\t\"\200\002\n\024UllageTrimCorrection\022\n\n\002i"
+          + "d\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013ullageDepth\030\003"
+          + " \001(\t\022\016\n\006trimM1\030\004 \001(\t\022\016\n\006trimM2\030\005 \001(\t\022\016\n\006"
+          + "trimM3\030\006 \001(\t\022\016\n\006trimM4\030\007 \001(\t\022\016\n\006trimM5\030\010"
+          + " \001(\t\022\r\n\005trim0\030\t \001(\t\022\r\n\005trim1\030\n \001(\t\022\r\n\005tr"
+          + "im2\030\013 \001(\t\022\r\n\005trim3\030\014 \001(\t\022\r\n\005trim4\030\r \001(\t\022"
+          + "\r\n\005trim5\030\016 \001(\t\022\r\n\005trim6\030\017 \001(\t\"$\n\021VesselT"
+          + "ankRequest\022\017\n\007tankIds\030\001 \003(\003\"`\n\017VesselTan"
+          + "kOrder\022\020\n\010tankName\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003"
+          + "\022\021\n\tshortName\030\003 \001(\t\022\030\n\020tankDisplayOrder\030"
+          + "\004 \001(\005\"h\n\022VesselTankResponse\022)\n\017vesselTan"
+          + "kOrder\030\001 \003(\0132\020.VesselTankOrder\022\'\n\016respon"
+          + "seStatus\030\002 \001(\0132\017.ResponseStatus\"#\n\017Vesse"
+          + "lIdRequest\022\020\n\010vesselId\030\001 \001(\003\"`\n\020VesselId"
+          + "Response\022#\n\014vesselDetail\030\001 \001(\0132\r.VesselD"
+          + "etail\022\'\n\016responseStatus\030\002 \001(\0132\017.Response"
+          + "Status\"8\n\020VesselDWTRequest\022\020\n\010vesselId\030\001"
+          + " \001(\003\022\022\n\ndraftValue\030\002 \001(\t\"t\n\021VesselDWTRes"
+          + "ponse\022\020\n\010vesselId\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001"
+          + "(\003\022\021\n\tdwtResult\030\003 \001(\t\022\'\n\016responseStatus\030"
+          + "\004 \001(\0132\017.ResponseStatus\"\225\002\n\023VesselPumpsRe"
+          + "sponse\022\'\n\016responseStatus\030\001 \001(\0132\017.Respons"
+          + "eStatus\022\033\n\010pumpType\030\002 \003(\0132\t.PumpType\022\037\n\n"
+          + "vesselPump\030\003 \003(\0132\013.VesselPump\022\033\n\010tankTyp"
+          + "e\030\005 \003(\0132\t.TankType\022$\n\rvesselDetails\030\004 \001("
+          + "\0132\r.VesselDetail\022(\n\016vesselManifold\030\006 \003(\013"
+          + "2\020.VesselComponent\022*\n\020vesselBottomLine\030\007"
+          + " \003(\0132\020.VesselComponent\"t\n\017VesselComponen"
+          + "t\022\n\n\002id\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\025\n\rcompo"
+          + "nentName\030\003 \001(\t\022\025\n\rcomponentCode\030\004 \001(\t\022\025\n"
+          + "\rcomponentType\030\005 \001(\003\"(\n\010TankType\022\n\n\002id\030\001"
+          + " \001(\003\022\020\n\010typeName\030\002 \001(\t\"$\n\010PumpType\022\n\n\002id"
+          + "\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\"x\n\nVesselPump\022\n\n\002id"
+          + "\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\022\n\npumpTypeId\030\003"
+          + " \001(\003\022\020\n\010pumpName\030\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t"
+          + "\022\024\n\014pumpCapacity\030\006 \001(\t\"\214\001\n\021VesselRuleReq"
+          + "uest\022\020\n\010vesselId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001("
+          + "\003\022\034\n\010rulePlan\030\003 \003(\0132\n.RulePlans\022\027\n\017isNoD"
+          + "efaultRule\030\004 \001(\010\022\033\n\023isFetchEnabledRules\030"
+          + "\005 \001(\010\"\347\001\n\017VesselRuleReply\022\'\n\016responseSta"
+          + "tus\030\001 \001(\0132\017.ResponseStatus\022\034\n\010rulePlan\030\002"
+          + " \003(\0132\n.RulePlans\022)\n\017cargoTankMaster\030\003 \003("
+          + "\0132\020.CargoTankMaster\0229\n\027ruleDropDownValue"
+          + "Master\030\004 \003(\0132\030.RuleDropDownValueMaster\022\'"
+          + "\n\016ruleTypeMaster\030\005 \003(\0132\017.RuleTypeMaster\""
+          + "\260\001\n\030VesselValveSequenceReply\022\'\n\016response"
+          + "Status\030\001 \001(\0132\017.ResponseStatus\0220\n\022vvSeque"
+          + "nceEntities\030\002 \003(\0132\024.VesselValveSequence\022"
+          + "9\n\023vvEducationEntities\030\003 \003(\0132\034.VesselVal"
+          + "veEducationProcess\"\255\004\n\023VesselValveSequen"
+          + "ce\022\n\n\002id\030\001 \001(\003\022\025\n\risCommonValve\030\002 \001(\010\022\022\n"
+          + "\npipelineId\030\003 \001(\005\022\025\n\rpipelineColor\030\004 \001(\t"
+          + "\022\024\n\014pipelineName\030\005 \001(\t\022\024\n\014pipelineType\030\006"
+          + " \001(\t\022\026\n\016sequenceNumber\030\007 \001(\t\022\033\n\023sequence"
+          + "OperationId\030\010 \001(\005\022\035\n\025sequenceOperationNa"
+          + "me\030\t \001(\t\022\026\n\016sequenceTypeId\030\n \001(\005\022\030\n\020sequ"
+          + "enceTypeName\030\013 \001(\t\022\037\n\027sequenceVesselMapp"
+          + "ingId\030\014 \001(\005\022\025\n\rtankShortName\030\r \001(\t\022\025\n\rva"
+          + "lveCategory\030\016 \001(\t\022\027\n\017valveCategoryId\030\017 \001"
+          + "(\005\022\023\n\013valveNumber\030\020 \001(\t\022\021\n\tvalveSide\030\021 \001"
+          + "(\005\022\023\n\013valveTypeId\030\022 \001(\005\022\025\n\rvalveTypeName"
+          + "\030\023 \001(\t\022\022\n\nvesselName\030\024 \001(\t\022\025\n\rvesselTank"
+          + "Xid\030\025 \001(\005\022\034\n\024vesselValveMappingId\030\026 \001(\005\022"
+          + "\021\n\tvesselXid\030\027 \001(\003\"\261\001\n\033VesselValveEducat"
+          + "ionProcess\022\n\n\002id\030\001 \001(\003\022\023\n\013eductorName\030\002 "
+          + "\001(\t\022\026\n\016sequenceNumber\030\003 \001(\005\022\020\n\010stepName\030"
+          + "\004 \001(\t\022\023\n\013valveNumber\030\005 \001(\t\022\021\n\teductorId\030"
+          + "\006 \001(\005\022\037\n\027eductionProcessMasterId\030\007 \001(\005\"+"
+          + "\n\027LoadingInfoRulesRequest\022\020\n\010vesselId\030\001 "
+          + "\001(\003\"W\n\025LoadingInfoRulesReply\022\025\n\005rules\030\001 "
+          + "\003(\0132\006.Rules\022\'\n\016responseStatus\030\002 \001(\0132\017.Re"
+          + "sponseStatus\"0\n\017CargoTankMaster\022\n\n\002id\030\001 "
+          + "\001(\003\022\021\n\tshortName\030\002 \001(\t\"L\n\027RuleDropDownVa"
+          + "lueMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\022\026\n\016"
+          + "ruleTemplateId\030\003 \001(\003\".\n\016RuleTypeMaster\022\n"
+          + "\n\002id\030\001 \001(\003\022\020\n\010ruleType\030\002 \001(\t2\344\007\n\021VesselI"
+          + "nfoService\0228\n\026GetAllVesselsByCompany\022\016.V"
+          + "esselRequest\032\014.VesselReply\"\000\0226\n\024GetVesse"
+          + "lDetailsById\022\016.VesselRequest\032\014.VesselRep"
+          + "ly\"\000\0220\n\016GetVesselTanks\022\016.VesselRequest\032\014"
+          + ".VesselReply\"\000\0225\n\023GetVesselCargoTanks\022\016."
+          + "VesselRequest\032\014.VesselReply\"\000\022A\n\027GetVess"
+          + "elDetailsForAlgo\022\022.VesselAlgoRequest\032\020.V"
+          + "esselAlgoReply\"\000\022C\n!GetVesselDetailForSy"
+          + "nopticalTable\022\016.VesselRequest\032\014.VesselRe"
+          + "ply\"\000\022;\n\031GetVesselDetailByVesselId\022\016.Ves"
+          + "selRequest\032\014.VesselReply\"\000\022A\n\025GetVesselI"
+          + "nfoByPaging\022\030.VesselRequestWithPaging\032\014."
+          + "VesselReply\"\000\022C\n\026GetVesselInfoBytankIds\022"
+          + "\022.VesselTankRequest\032\023.VesselTankResponse"
+          + "\"\000\022C\n\032GetDWTFromVesselByVesselId\022\021.Vesse"
+          + "lDWTRequest\032\022.VesselDWTResponse\022@\n\027GetVe"
+          + "sselInfoByVesselId\022\020.VesselIdRequest\032\021.V"
+          + "esselIdResponse\"\000\022D\n\030GetVesselPumpsByVes"
+          + "selId\022\020.VesselIdRequest\032\024.VesselPumpsRes"
+          + "ponse\"\000\022H\n\036GetRulesByVesselIdAndSectionI"
+          + "d\022\022.VesselRuleRequest\032\020.VesselRuleReply\""
+          + "\000\022E\n\026GetVesselValveSequence\022\016.VesselRequ"
+          + "est\032\031.VesselValveSequenceReply\"\000\022I\n\023GetL"
+          + "oadingInfoRules\022\030.LoadingInfoRulesReques"
+          + "t\032\026.LoadingInfoRulesReply\"\000B\036\n\032com.cpdss"
+          + ".common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -76245,6 +77873,11 @@ public final class VesselInfo {
               "UllageDetails",
               "UllageTrimCorrection",
               "SelectableParameter",
+              "PumpType",
+              "VesselPump",
+              "TankType",
+              "VesselManifold",
+              "VesselBottomLine",
             });
     internal_static_BendingMomentType2_descriptor = getDescriptor().getMessageTypes().get(9);
     internal_static_BendingMomentType2_fieldAccessorTable =

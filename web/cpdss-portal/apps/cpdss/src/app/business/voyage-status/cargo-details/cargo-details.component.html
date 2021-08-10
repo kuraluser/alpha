@@ -15,7 +15,6 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns">
-
         <tr>
             <td *ngFor="let col of columns">
                 <ng-container *ngIf="col.field !== 'difference'">
@@ -53,6 +52,13 @@
                 </span>
                 <span *ngIf="totalDifference===0"> {{totalDifference| quantityDecimalFormat: currentQuantitySelectedUnit}}
                 </span>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" let-columns>
+        <tr>
+            <td [attr.colspan]="columns.length">
+                {{'NO_RECORDS_FOUND'| translate}}
             </td>
         </tr>
     </ng-template>

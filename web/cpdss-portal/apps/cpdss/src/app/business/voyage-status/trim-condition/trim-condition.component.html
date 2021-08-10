@@ -13,9 +13,9 @@
             </div>
           </div>
         </div>
-        <div class="col text-center sag">
-          {{ hasLoadicator && (deflection < 0 ? 'VOYAGE_STATUS_HOG' : 'VOYAGE_STATUS_SAG' ) | translate}} <h5
-            class="text-secondary" *ngIf="hasLoadicator">{{deflection
+        <div class="col text-center sag" *ngIf="hasLoadicator">
+          {{(deflection < 0 ? 'VOYAGE_STATUS_HOG' : 'VOYAGE_STATUS_SAG' ) | translate}} <h5
+            class="text-secondary">{{deflection
             | number: '1.2-2'}}{{'VOYAGE_STATUS_HOGSAG_UNIT' | translate}}</h5>
         </div>
         <div class="col"></div>

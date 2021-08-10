@@ -656,6 +656,14 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                       selectableParameterBuilder(flowRate, selectableBuilder));
                 });
 
+        com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.Builder pumpDetailsBuilder = com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.newBuilder();
+        this.vesselPumpService.getVesselPumpsAndTypes(pumpDetailsBuilder, vessel.getId());
+        replyBuilder.addAllPumpType(pumpDetailsBuilder.getPumpTypeList());
+        replyBuilder.addAllVesselPump(pumpDetailsBuilder.getVesselPumpList());
+        replyBuilder.addAllTankType(pumpDetailsBuilder.getTankTypeList());
+        replyBuilder.addAllVesselManifold(pumpDetailsBuilder.getVesselManifoldList());
+        replyBuilder.addAllVesselBottomLine(pumpDetailsBuilder.getVesselBottomLineList());
+
         replyBuilder.setBMAndSF(bMAndSFBuilder);
         replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       }

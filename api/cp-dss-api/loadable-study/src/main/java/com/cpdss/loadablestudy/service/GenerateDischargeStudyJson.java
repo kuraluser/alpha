@@ -289,7 +289,7 @@ public class GenerateDischargeStudyJson {
               optionalLoadableStudyWithMAXPortOrder.get().getId());
           LoadingPlanReply loadingPlanReply =
               loadingPlanGrpcService.getLoadingPlan(LoadingInformationRequest.build());
-          if (SUCCESS != loadingPlanReply.getResponseStatus().getStatus()) {
+          if (SUCCESS.equals(loadingPlanReply.getResponseStatus().getStatus())) {
             log.error(
                 "No Loading plan found for port rotaion id {} ",
                 optionalLoadableStudyWithMAXPortOrder.get().getId());

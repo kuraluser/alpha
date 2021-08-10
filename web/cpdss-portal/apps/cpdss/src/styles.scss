@@ -1015,14 +1015,17 @@ input[type=number] {
     &.api, &.temperature{
       > div{
         min-width: 80px!important;
-        max-width: 80px;
+        max-width: 100px;
         height: 25px;
         line-height: 25px;
-        padding-right: 25px!important;
+        padding-right: 36px!important;
         .icon-api-temp{
           right: 0px!important;
           position: absolute;
           top: 5px;
+        }
+        .error-icon{
+          right: 21px;
         }
         input{
           padding-left: 5px;
@@ -2865,4 +2868,8 @@ textarea{
 
 .dropdown-panel-auto .p-dropdown-panel{
   max-width: none!important;
+}
+
+.simulator-menu-drop-down{
+  width: 102px;
 }

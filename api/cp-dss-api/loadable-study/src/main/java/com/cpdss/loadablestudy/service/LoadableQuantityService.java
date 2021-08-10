@@ -621,7 +621,10 @@ public class LoadableQuantityService {
               loadablePlanQuantity.setCargoXId(lqcd.getCargoId());
               loadablePlanQuantity.setIsActive(true);
               loadablePlanQuantity.setLoadableMt(lqcd.getLoadableMT());
-              loadablePlanQuantity.setOrderQuantity(new BigDecimal(lqcd.getOrderedMT()));
+              loadablePlanQuantity.setOrderQuantity(
+                  (lqcd.getOrderedMT() != null && !lqcd.getOrderedMT().isEmpty())
+                      ? new BigDecimal(lqcd.getOrderedMT())
+                      : new BigDecimal(0));
               loadablePlanQuantity.setLoadablePattern(loadablePattern);
               loadablePlanQuantity.setCargoAbbreviation(lqcd.getCargoAbbreviation());
               loadablePlanQuantity.setCargoColor(lqcd.getColorCode());
@@ -632,7 +635,10 @@ public class LoadableQuantityService {
               loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
               loadablePlanQuantity.setCargoNominationId(lqcd.getCargoNominationId());
               loadablePlanQuantity.setCargoNominationTemperature(
-                  new BigDecimal(lqcd.getCargoNominationTemperature()));
+                  (lqcd.getCargoNominationTemperature() != null
+                          && !lqcd.getCargoNominationTemperature().isEmpty())
+                      ? new BigDecimal(lqcd.getCargoNominationTemperature())
+                      : new BigDecimal(0));
               loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
               lqcd.getToppingOffSequencesList()
