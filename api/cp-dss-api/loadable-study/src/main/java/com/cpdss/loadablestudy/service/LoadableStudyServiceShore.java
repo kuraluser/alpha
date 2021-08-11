@@ -679,11 +679,10 @@ public class LoadableStudyServiceShore {
     this.setCaseNo(entity);
     /*entity.setDischargeCargoId(loadableStudy.getD);*/
     entity.setLoadOnTop(loadableStudy.getLoadOnTop() != null ? loadableStudy.getLoadOnTop() : null);
-    /*entity.setIsCargoNominationComplete(loadableStudy.getIsCargoNominationComplete());
-    entity.setIsDischargePortsComplete(loadableStudy.getIsDischargePortsComplete());
-    entity.setIsObqComplete(loadableStudy.getIsObqComplete());
-    entity.setIsOhqComplete(loadableStudy.getIsOhqComplete());
-    entity.setIsPortsComplete(loadableStudy.getIsPortsComplete());*/
+    entity.setIsCargoNominationComplete(true);
+    entity.setIsDischargePortsComplete(true);
+    entity.setIsObqComplete(true);
+    entity.setIsPortsComplete(true);
     Set<LoadableStudyAttachments> attachmentCollection = new HashSet<>();
     if (null != loadableStudy.getLoadableStudyAttachment()) {
       String folderLocation = constructFolderPath(entity);
