@@ -16,4 +16,5 @@ public class LoadingPlanStabilityParam {
   private String bm;
   private String sf;
   private Integer conditionType;
+  private Integer valueType;
 }

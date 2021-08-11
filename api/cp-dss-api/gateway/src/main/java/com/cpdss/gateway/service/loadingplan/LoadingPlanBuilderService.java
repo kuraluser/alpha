@@ -27,6 +27,8 @@ public class LoadingPlanBuilderService {
       var2.setTankId(var1.getTankId());
       // tank name not added
       var2.setQuantityMT(var1.getQuantity());
+      var2.setConditionType(var1.getConditionType());
+      var2.setValueType(var1.getValueType());
       response.add(var2);
     }
     return response;
@@ -42,6 +44,8 @@ public class LoadingPlanBuilderService {
       var2.setQuantityMT(var1.getQuantity());
       var2.setQuantityM3(var1.getQuantityM3());
       var2.setSounding(var1.getSounding());
+      var2.setConditionType(var1.getConditionType());
+      var2.setValueType(var1.getValueType());
       response.add(var2);
     }
     return response;
@@ -56,6 +60,8 @@ public class LoadingPlanBuilderService {
       // tank name not added
       var2.setQuantityMT(var1.getQuantity());
       var2.setQuantityM3(var1.getQuantityM3());
+      var2.setConditionType(var1.getConditionType());
+      var2.setValueType(var1.getValueType());
       response.add(var2);
     }
     return response;
@@ -73,6 +79,7 @@ public class LoadingPlanBuilderService {
       var2.setAftDraft(var1.getAftDraft());
       var2.setTrim(var1.getTrim());
       var2.setConditionType(var1.getConditionType());
+      var2.setValueType(var1.getValueType());
       response.add(var2);
     }
     return response;
