@@ -10,4 +10,6 @@ public class LoadingPlanRobDetails {
   private String tankName;
   private String quantityMT;
   private String quantityM3;
+  private Integer conditionType;
+  private Integer valueType;
 }

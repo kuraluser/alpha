@@ -14,4 +14,6 @@ public class LoadingPlanStowageDetails {
   private String api;
   private String temperature;
   private String ullage;
+  private Integer conditionType;
+  private Integer valueType;
 }

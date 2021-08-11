@@ -2,6 +2,7 @@
 package com.cpdss.gateway.domain.loadingplan;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanRobDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
@@ -22,6 +23,12 @@ public class LoadingPlanResponse {
   private List<LoadingPlanRobDetails> planRobDetails;
   private List<LoadingPlanStabilityParam> planStabilityParams;
   private LoadingInformation loadingInformation;
+  private List<List<VesselTank>> bunkerRearTanks;
+  private List<List<VesselTank>> bunkerTanks;
+  private List<List<VesselTank>> ballastFrontTanks;
+  private List<List<VesselTank>> ballastCenterTanks;
+  private List<List<VesselTank>> ballastRearTanks;
+  private List<List<VesselTank>> cargoTanks;
 
   public LoadingPlanResponse(CommonSuccessResponse responseStatus) {
     this.responseStatus = responseStatus;

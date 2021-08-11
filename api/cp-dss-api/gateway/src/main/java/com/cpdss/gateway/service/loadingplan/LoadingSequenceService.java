@@ -57,13 +57,12 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -109,7 +108,7 @@ public class LoadingSequenceService {
     BallastPump gravity = new BallastPump();
     List<CargoLoadingRate> cargoLoadingRates = new ArrayList<>();
     List<LoadingRate> loadingRates = new ArrayList<LoadingRate>();
-    SortedSet<Long> stageTickPositions = new TreeSet<Long>();
+    Set<Long> stageTickPositions = new LinkedHashSet<Long>();
     List<StabilityParam> stabilityParams = new ArrayList<StabilityParam>();
 
     StabilityParam foreDraft = new StabilityParam();
@@ -235,7 +234,7 @@ public class LoadingSequenceService {
     Integer start = 0;
     Integer temp = 0;
     List<CargoStage> cargoStages = new ArrayList<>();
-    SortedSet<Long> cargoNominationIds = new TreeSet<Long>();
+    Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
     cargoNominationIds.addAll(
         reply.getLoadingSequencesList().stream()
             .map(sequence -> sequence.getCargoNominationId())
@@ -307,7 +306,7 @@ public class LoadingSequenceService {
   }
 
   private void updateCargoLoadingRateIntervals(
-      List<CargoLoadingRate> cargoLoadingRates, SortedSet<Long> stageTickPositions) {
+      List<CargoLoadingRate> cargoLoadingRates, Set<Long> stageTickPositions) {
     cargoLoadingRates.forEach(
         cargoLoadingRate -> {
           Optional<Long> startOpt =
@@ -418,7 +417,7 @@ public class LoadingSequenceService {
   private void buildCargoLoadingRates(
       LoadingSequence loadingSequence,
       Long portEta,
-      SortedSet<Long> stageTickPositions,
+      Set<Long> stageTickPositions,
       List<CargoLoadingRate> cargoLoadingRates) {
     log.info("Adding cargo loading rate");
     CargoLoadingRate cargoLoadingRate = new CargoLoadingRate();
