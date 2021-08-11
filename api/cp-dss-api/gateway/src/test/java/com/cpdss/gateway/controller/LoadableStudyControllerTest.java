@@ -1052,7 +1052,7 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testSaveLoadablePatternDetails(String url) throws Exception {
     when(this.loadableStudyService.saveLoadablePatterns(
-            any(LoadablePlanRequest.class), anyLong(), anyString(),anyString()))
+            any(LoadablePlanRequest.class), anyLong(), anyString(), anyString()))
         .thenReturn(new AlgoPatternResponse());
     this.mockMvc
         .perform(

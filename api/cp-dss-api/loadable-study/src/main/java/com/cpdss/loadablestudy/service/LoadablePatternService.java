@@ -83,8 +83,10 @@ public class LoadablePatternService {
   @Autowired private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
 
   @Autowired private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
-  
-  @Autowired private DischargePatternQuantityCargoPortwiseRepository dischargePatternQuantityCargoPortwiseRepository;
+
+  @Autowired
+  private DischargePatternQuantityCargoPortwiseRepository
+      dischargePatternQuantityCargoPortwiseRepository;
 
   @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
 
@@ -128,7 +130,7 @@ public class LoadablePatternService {
   @Autowired JsonDataService jsonDataService;
   @Autowired CommunicationService communicationService;
   @Autowired private OnHandQuantityService onHandQuantityService;
-  
+
   @Autowired private CowTypeMasterRepository cowTypeMasterRepository;
 
   @Value("${loadablestudy.attachement.rootFolder}")
@@ -276,7 +278,8 @@ public class LoadablePatternService {
       com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder builder)
       throws GenericServiceException {
     log.info("saveLoadablePatternDetails - loadable study micro service");
-	final String requestType = null == request.getRequestType() ? LOADABLE_STUDY : request.getRequestType() ;
+    final String requestType =
+        null == request.getRequestType() ? LOADABLE_STUDY : request.getRequestType();
     Optional<LoadableStudy> loadableStudyOpt =
         this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
     if (!loadableStudyOpt.isPresent()) {
@@ -306,7 +309,8 @@ public class LoadablePatternService {
     } else {
       // uncomment with communication service implementation
       // savePatternDtails(request, loadableStudyOpt);
-      List<LoadablePattern> loadablePatterns = savePatternDetails(request, loadableStudyOpt,requestType);
+      List<LoadablePattern> loadablePatterns =
+          savePatternDetails(request, loadableStudyOpt, requestType);
       if (request.getHasLodicator()) {
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
             LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_ID, request.getProcesssId(), true);
@@ -336,11 +340,12 @@ public class LoadablePatternService {
         .build();
     return builder;
   }
-  
+
   private List<LoadablePattern> savePatternDetails(
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
-      Optional<LoadableStudy> loadableStudyOpt, String requestType) {
-	
+      Optional<LoadableStudy> loadableStudyOpt,
+      String requestType) {
+
     Long lastLoadingPort =
         loadableStudyPortRotationService.getLastPort(
             loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
@@ -353,28 +358,35 @@ public class LoadablePatternService {
                   saveloadablePattern(lpd, loadableStudyOpt.get(), request.getHasLodicator());
               loadablePatterns.add(loadablePattern);
               saveConstrains(lpd, loadablePattern);
-              if(requestType.equals(LOADABLE_STUDY)) {
-            	  Optional<com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails>
-                  lppwdOptional =
-                      lpd.getLoadablePlanPortWiseDetailsList().stream()
-                          .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
-                          .findAny();
-            	  if (lppwdOptional.isPresent()) {
-                      loadableQuantityService.saveLoadableQuantity(lppwdOptional.get(), loadablePattern);
-                      saveLoadablePlanCommingleCargo(
-                          lppwdOptional
-                              .get()
-                              .getDepartureCondition()
-                              .getLoadableQuantityCommingleCargoDetailsList(),
-                          loadablePattern);
-                      saveLoadablePlanStowageDetails(
-                          lppwdOptional.get().getDepartureCondition().getLoadablePlanStowageDetailsList(),
-                          loadablePattern);
-                      saveLoadablePlanBallastDetails(
-                          lppwdOptional.get().getDepartureCondition().getLoadablePlanBallastDetailsList(),
-                          loadablePattern);
-                    }
-          	  }
+              if (requestType.equals(LOADABLE_STUDY)) {
+                Optional<com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails>
+                    lppwdOptional =
+                        lpd.getLoadablePlanPortWiseDetailsList().stream()
+                            .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
+                            .findAny();
+                if (lppwdOptional.isPresent()) {
+                  loadableQuantityService.saveLoadableQuantity(
+                      lppwdOptional.get(), loadablePattern);
+                  saveLoadablePlanCommingleCargo(
+                      lppwdOptional
+                          .get()
+                          .getDepartureCondition()
+                          .getLoadableQuantityCommingleCargoDetailsList(),
+                      loadablePattern);
+                  saveLoadablePlanStowageDetails(
+                      lppwdOptional
+                          .get()
+                          .getDepartureCondition()
+                          .getLoadablePlanStowageDetailsList(),
+                      loadablePattern);
+                  saveLoadablePlanBallastDetails(
+                      lppwdOptional
+                          .get()
+                          .getDepartureCondition()
+                          .getLoadablePlanBallastDetailsList(),
+                      loadablePattern);
+                }
+              }
 
               AtomicInteger displayOrder = new AtomicInteger(0);
               saveLoadableQuantityCommingleCargoPortwiseDetails(
@@ -385,26 +397,26 @@ public class LoadablePatternService {
               saveStabilityParameterForNonLodicator(
                   request.getHasLodicator(), loadablePattern, lpd);
               // TODO ROB details - Data is coming from OHQ - As of now decided to not save here.
-              if(requestType.equals(DICHARGE_STUDY)) {
-                saveLoadableQuantityCargoDetails(lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
+              if (requestType.equals(DICHARGE_STUDY)) {
+                saveLoadableQuantityCargoDetails(
+                    lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
               }
-             
             });
     return loadablePatterns;
   }
 
-  private void saveLoadableQuantityCargoDetails(List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetailsList,
-		LoadablePattern loadablePattern) {
-	  if(ofNullable(loadablePlanPortWiseDetailsList).isPresent()){
-	  loadablePlanPortWiseDetailsList
-      .forEach(
+  private void saveLoadableQuantityCargoDetails(
+      List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetailsList,
+      LoadablePattern loadablePattern) {
+    if (ofNullable(loadablePlanPortWiseDetailsList).isPresent()) {
+      loadablePlanPortWiseDetailsList.forEach(
           lppwd -> {
             lppwd
                 .getArrivalCondition()
                 .getLoadableQuantityCargoDetailsList()
                 .forEach(
                     lpcd -> {
-                    	saveLoadableQuantityCargoPortwiseDetails(
+                      saveLoadableQuantityCargoPortwiseDetails(
                           lpcd,
                           lppwd.getPortId(),
                           lppwd.getPortRotationId(),
@@ -416,7 +428,7 @@ public class LoadablePatternService {
                 .getLoadableQuantityCargoDetailsList()
                 .forEach(
                     lpcd -> {
-                    	saveLoadableQuantityCargoPortwiseDetails(
+                      saveLoadableQuantityCargoPortwiseDetails(
                           lpcd,
                           lppwd.getPortId(),
                           lppwd.getPortRotationId(),
@@ -424,53 +436,65 @@ public class LoadablePatternService {
                           loadablePattern);
                     });
           });
-	  }
-}
+    }
+  }
 
-private void saveLoadableQuantityCargoPortwiseDetails(LoadableQuantityCargoDetails lpcd, long portId,
-		long portRotationId, String operationType, LoadablePattern loadablePattern) {
-	
-	 DischargePatternQuantityCargoPortwiseDetails loadableQuantityCargoDetails =
-		        new DischargePatternQuantityCargoPortwiseDetails();
-		    loadableQuantityCargoDetails.setIsActive(true);
-		    loadableQuantityCargoDetails.setCargoId(lpcd.getCargoId());
-		    loadableQuantityCargoDetails.setCargoNominationId(lpcd.getCargoNominationId());
-		    loadableQuantityCargoDetails.setPortId(portId);
-		    loadableQuantityCargoDetails.setPortRotationId(portRotationId);
-		    loadableQuantityCargoDetails.setLoadablePatternId(loadablePattern.getId());
-		    loadableQuantityCargoDetails.setCargoAbbreviation(lpcd.getCargoAbbreviation());
-		    loadableQuantityCargoDetails.setEstimatedAPI(lpcd.getEstimatedAPI());
-		    loadableQuantityCargoDetails.setEstimatedTemp(lpcd.getEstimatedTemp());
-		    loadableQuantityCargoDetails.setPriority(lpcd.getPriority());
-		    loadableQuantityCargoDetails.setColorCode(lpcd.getColorCode());
-		    loadableQuantityCargoDetails.setDischargeMT(lpcd.getDischargeMT());
-		    loadableQuantityCargoDetails.setOrderedQuantity(lpcd.getOrderQuantity());
-		    loadableQuantityCargoDetails.setSlopQuantity(lpcd.getSlopQuantity());
-		    loadableQuantityCargoDetails.setDifferencePercentage(lpcd.getDifferencePercentage());
-		    loadableQuantityCargoDetails.setLoadingOrder(lpcd.getLoadingOrder());
-		    loadableQuantityCargoDetails.setTimeRequiredForDischarging(lpcd.getTimeRequiredForDischarging());
-		    loadableQuantityCargoDetails.setDischargingRate(lpcd.getDischargingRate());
-		    loadableQuantityCargoDetails.setCargoNominationTemperature(lpcd.getCargoNominationTemperature());
-		    loadableQuantityCargoDetails.setOperationType(operationType);
-		    
-		    List<DischargePlanCowDetailFromAlgo> cowDetailFromAlgoList= new ArrayList<>();
-		    Optional.ofNullable(lpcd.getCowDetailsList()).ifPresent(i -> i.forEach(item -> {
-		    	DischargePlanCowDetailFromAlgo cowDetail = new DischargePlanCowDetailFromAlgo();
-		    	Optional<CowTypeMaster> cowTypeOpt = cowTypeMasterRepository.findByCowTypeAndIsActiveTrue(item.getWashType());
-		    	if(cowTypeOpt.isPresent()) {
-		    	  cowDetail.setCowType(cowTypeOpt.get().getId());
-		    	}
-		    	Optional.ofNullable(item.getTankId()).ifPresent(cowDetail::setTankIds);
-//		    	Optional.ofNullable(item.getShortName()).ifPresent(cowDetail::setShortName); TODO
-		    	cowDetailFromAlgoList.add(cowDetail);
-		    	}));
-		    loadableQuantityCargoDetails.setCowDetails(cowDetailFromAlgoList);
-		    
-		    dischargePatternQuantityCargoPortwiseRepository.save(loadableQuantityCargoDetails);
-	
-}
+  private void saveLoadableQuantityCargoPortwiseDetails(
+      LoadableQuantityCargoDetails lpcd,
+      long portId,
+      long portRotationId,
+      String operationType,
+      LoadablePattern loadablePattern) {
 
-/**
+    DischargePatternQuantityCargoPortwiseDetails loadableQuantityCargoDetails =
+        new DischargePatternQuantityCargoPortwiseDetails();
+    loadableQuantityCargoDetails.setIsActive(true);
+    loadableQuantityCargoDetails.setCargoId(lpcd.getCargoId());
+    loadableQuantityCargoDetails.setCargoNominationId(lpcd.getCargoNominationId());
+    loadableQuantityCargoDetails.setPortId(portId);
+    loadableQuantityCargoDetails.setPortRotationId(portRotationId);
+    loadableQuantityCargoDetails.setLoadablePatternId(loadablePattern.getId());
+    loadableQuantityCargoDetails.setCargoAbbreviation(lpcd.getCargoAbbreviation());
+    loadableQuantityCargoDetails.setEstimatedAPI(lpcd.getEstimatedAPI());
+    loadableQuantityCargoDetails.setEstimatedTemp(lpcd.getEstimatedTemp());
+    loadableQuantityCargoDetails.setPriority(lpcd.getPriority());
+    loadableQuantityCargoDetails.setColorCode(lpcd.getColorCode());
+    loadableQuantityCargoDetails.setDischargeMT(lpcd.getDischargeMT());
+    loadableQuantityCargoDetails.setOrderedQuantity(lpcd.getOrderQuantity());
+    loadableQuantityCargoDetails.setSlopQuantity(lpcd.getSlopQuantity());
+    loadableQuantityCargoDetails.setDifferencePercentage(lpcd.getDifferencePercentage());
+    loadableQuantityCargoDetails.setLoadingOrder(lpcd.getLoadingOrder());
+    loadableQuantityCargoDetails.setTimeRequiredForDischarging(
+        lpcd.getTimeRequiredForDischarging());
+    loadableQuantityCargoDetails.setDischargingRate(lpcd.getDischargingRate());
+    loadableQuantityCargoDetails.setCargoNominationTemperature(
+        lpcd.getCargoNominationTemperature());
+    loadableQuantityCargoDetails.setOperationType(operationType);
+
+    List<DischargePlanCowDetailFromAlgo> cowDetailFromAlgoList = new ArrayList<>();
+    Optional.ofNullable(lpcd.getCowDetailsList())
+        .ifPresent(
+            i ->
+                i.forEach(
+                    item -> {
+                      DischargePlanCowDetailFromAlgo cowDetail =
+                          new DischargePlanCowDetailFromAlgo();
+                      Optional<CowTypeMaster> cowTypeOpt =
+                          cowTypeMasterRepository.findByCowTypeAndIsActiveTrue(item.getWashType());
+                      if (cowTypeOpt.isPresent()) {
+                        cowDetail.setCowType(cowTypeOpt.get().getId());
+                      }
+                      Optional.ofNullable(item.getTankId()).ifPresent(cowDetail::setTankIds);
+                      //
+                      //	Optional.ofNullable(item.getShortName()).ifPresent(cowDetail::setShortName); TODO
+                      cowDetailFromAlgoList.add(cowDetail);
+                    }));
+    loadableQuantityCargoDetails.setCowDetails(cowDetailFromAlgoList);
+
+    dischargePatternQuantityCargoPortwiseRepository.save(loadableQuantityCargoDetails);
+  }
+
+  /**
    * @param lpd void
    * @param loadableStudy
    * @param hasLoadicator
@@ -867,7 +891,7 @@ private void saveLoadableQuantityCargoPortwiseDetails(LoadableQuantityCargoDetai
     loadablePatternCargoDetails.setCargoNominationTemperature(
         new BigDecimal(lpsd.getCargoNominationTemperature()));
     loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
-//    DS field
+    //    DS field
     loadablePatternCargoDetails.setOnBoard(lpsd.getOnboard());
     loadablePatternCargoDetails.setMaxTankVolume(lpsd.getMaxTankVolume());
     loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
@@ -928,8 +952,8 @@ private void saveLoadableQuantityCargoPortwiseDetails(LoadableQuantityCargoDetai
     loadablePlanStowageBallastDetails.setCorrectionFactor(lpbd.getCorrectionFactor());
     loadablePlanStowageBallastDetails.setRdgUllage(lpbd.getRdgLevel());
     loadablePlanStowageBallastDetails.setFillingPercentage(lpbd.getPercentage());
-    
-    //DS fields
+
+    // DS fields
     loadablePlanStowageBallastDetails.setVolume(lpbd.getVolume());
     loadablePlanStowageBallastDetails.setMaxTankVolume(lpbd.getMaxTankVolume());
     loadablePlanStowageBallastDetailsRepository.save(loadablePlanStowageBallastDetails);
@@ -1057,10 +1081,12 @@ private void saveLoadableQuantityCargoPortwiseDetails(LoadableQuantityCargoDetai
     stabilityParameter.setShearingForce(lpd.getStabilityParameters().getShearForce());
     stabilityParameter.setTrimValue(lpd.getStabilityParameters().getTrim());
     stabilityParameter.setIsActive(true);
-    //DS field 
+    // DS field
     StabilityParameter s = lpd.getStabilityParameters();
-    stabilityParameter.setAirDraft(lpd.getStabilityParameters().getAirDraft().isBlank()
-        		?null: new BigDecimal(lpd.getStabilityParameters().getAirDraft()));
+    stabilityParameter.setAirDraft(
+        lpd.getStabilityParameters().getAirDraft().isBlank()
+            ? null
+            : new BigDecimal(lpd.getStabilityParameters().getAirDraft()));
     stabilityParameterRepository.save(stabilityParameter);
   }
 
@@ -1840,7 +1866,7 @@ private void saveLoadableQuantityCargoPortwiseDetails(LoadableQuantityCargoDetai
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, loadableStudyOpt.get().getId());
       } else {
-        savePatternDetails(patternResult, loadableStudyOpt,LOADABLE_STUDY);
+        savePatternDetails(patternResult, loadableStudyOpt, LOADABLE_STUDY);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get().getId());
         if (responseCommunication.getLoadicatorResultsRequest() != null) {

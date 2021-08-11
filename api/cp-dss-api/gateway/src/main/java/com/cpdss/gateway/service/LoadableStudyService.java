@@ -3421,19 +3421,23 @@ public class LoadableStudyService {
     } catch (IOException e) {
       log.error("Error in json writing ", e);
     }
- 
-    return this.saveLoadablePatterns(loadablePlanRequest, loadableStudiesId, correlationId,requestType);
+
+    return this.saveLoadablePatterns(
+        loadablePlanRequest, loadableStudiesId, correlationId, requestType);
   }
 
   /**
    * @param loadablePlanDetailsResponses
    * @param loadableStudiesId
- * @param requestType 
+   * @param requestType
    * @param first
    * @return AlgoPatternResponse
    */
   public AlgoPatternResponse saveLoadablePatterns(
-      LoadablePlanRequest loadablePlanRequest, Long loadableStudiesId, String correlationId, String requestType)
+      LoadablePlanRequest loadablePlanRequest,
+      Long loadableStudiesId,
+      String correlationId,
+      String requestType)
       throws GenericServiceException {
     log.info("Inside saveLoadablePatterns gateway service with correlationId : " + correlationId);
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
@@ -3441,13 +3445,11 @@ public class LoadableStudyService {
     request.setLoadableStudyId(loadableStudiesId);
     request.setHasLodicator(loadablePlanRequest.getHasLoadicator());
     if (requestType.equals(DISCHARGE_STUDY_SAVE_REQUEST)) {
-      	 loadablePlanRequest.setLoadablePlanDetails(loadablePlanRequest.getDischargePlanDetails());
-      	 request.setRequestType(DICHARGE_STUDY);
-        }
-    else {
-    	request.setRequestType(LOADABLE_STUDY);
+      loadablePlanRequest.setLoadablePlanDetails(loadablePlanRequest.getDischargePlanDetails());
+      request.setRequestType(DICHARGE_STUDY);
+    } else {
+      request.setRequestType(LOADABLE_STUDY);
     }
-    
 
     buildLoadablePlanDetails(loadablePlanRequest, request);
 
@@ -3571,8 +3573,10 @@ public class LoadableStudyService {
                         portWiseBuilder.setPortId(lppwd.getPortId());
                         portWiseBuilder.setPortRotationId(
                             null != lppwd.getPortRotationId() ? lppwd.getPortRotationId() : 0);
-                        Optional.ofNullable(lppwd.getSeaWaterTemperature()).ifPresent(portWiseBuilder::setSeaWaterTemperature);
-                        Optional.ofNullable(lppwd.getAmbientTemperature()).ifPresent(portWiseBuilder::setAmbientTemperature);
+                        Optional.ofNullable(lppwd.getSeaWaterTemperature())
+                            .ifPresent(portWiseBuilder::setSeaWaterTemperature);
+                        Optional.ofNullable(lppwd.getAmbientTemperature())
+                            .ifPresent(portWiseBuilder::setAmbientTemperature);
 
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
@@ -3597,7 +3601,6 @@ public class LoadableStudyService {
               });
     }
   }
-
 
   /**
    * @param stabilityParameters
@@ -3666,7 +3669,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lpsd.getCargoNominationTemperature())
         .ifPresent(builder::setCargoNominationTemperature);
 
-    //DS field
+    // DS field
     Optional.ofNullable(lpsd.getOnboard()).ifPresent(builder::setOnboard);
     Optional.ofNullable(lpsd.getMaxTankVolume()).ifPresent(builder::setMaxTankVolume);
     detailsBuilder.addLoadablePlanStowageDetails(builder.build());
@@ -3701,20 +3704,20 @@ public class LoadableStudyService {
         .ifPresent(qunatityBuilder::setCargoNominationId);
     Optional.ofNullable(lpqcd.getTimeRequiredForLoading())
         .ifPresent(qunatityBuilder::setTimeRequiredForLoading);
-    Optional.ofNullable(lpqcd
-        .getToppingSequence()).ifPresent( i ->
-    	  i.forEach(
-    	            sequence -> {
-    	              CargoToppingOffSequenceDetails.Builder toppingBuilder =
-    	                  CargoToppingOffSequenceDetails.newBuilder();
-    	              Optional.ofNullable(lpqcd.getCargoId()).ifPresent(toppingBuilder::setCargoId);
-    	              Optional.ofNullable(sequence.getSequenceOrder())
-    	                  .ifPresent(toppingBuilder::setOrderNumber);
-    	              Optional.ofNullable(sequence.getTankId()).ifPresent(toppingBuilder::setTankId);
-    	              qunatityBuilder.addToppingOffSequences(toppingBuilder.build());
-    	            }));
-    
-  
+    Optional.ofNullable(lpqcd.getToppingSequence())
+        .ifPresent(
+            i ->
+                i.forEach(
+                    sequence -> {
+                      CargoToppingOffSequenceDetails.Builder toppingBuilder =
+                          CargoToppingOffSequenceDetails.newBuilder();
+                      Optional.ofNullable(lpqcd.getCargoId()).ifPresent(toppingBuilder::setCargoId);
+                      Optional.ofNullable(sequence.getSequenceOrder())
+                          .ifPresent(toppingBuilder::setOrderNumber);
+                      Optional.ofNullable(sequence.getTankId())
+                          .ifPresent(toppingBuilder::setTankId);
+                      qunatityBuilder.addToppingOffSequences(toppingBuilder.build());
+                    }));
 
     Optional.ofNullable(lpqcd.getCargoNominationTemperature())
         .ifPresent(qunatityBuilder::setCargoNominationTemperature);
@@ -3732,8 +3735,10 @@ public class LoadableStudyService {
                       COWDetail.Builder cowDetailBuilder = COWDetail.newBuilder();
                       Optional.ofNullable(cowDetail.getShortName())
                           .ifPresent(cowDetailBuilder::setShortName);
-                      Optional.ofNullable(cowDetail.getTankId()).ifPresent(cowDetailBuilder::setTankId);
-                      Optional.ofNullable(cowDetail.getWashType()).ifPresent(cowDetailBuilder::setWashType);
+                      Optional.ofNullable(cowDetail.getTankId())
+                          .ifPresent(cowDetailBuilder::setTankId);
+                      Optional.ofNullable(cowDetail.getWashType())
+                          .ifPresent(cowDetailBuilder::setWashType);
                       qunatityBuilder.addCowDetails(cowDetailBuilder.build());
                     }));
 

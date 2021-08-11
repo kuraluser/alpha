@@ -3,14 +3,10 @@ package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.util.List;
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -33,7 +29,7 @@ public class DischargePatternQuantityCargoPortwiseDetails extends EntityDoc {
 
   @Column(name = "cargo_xid")
   private Long cargoId;
-  
+
   @Column(name = "cargo_nomination_xid")
   private Long cargoNominationId;
 
@@ -42,22 +38,22 @@ public class DischargePatternQuantityCargoPortwiseDetails extends EntityDoc {
 
   @Column(name = "operation_type ")
   private String operationType;
-  
+
   @Column(name = "port_xid")
   private Long portId;
-  
+
   @Column(name = "port_rotation_xid")
   private Long portRotationId;
-  
+
   @Column(name = "cargo_abbreviation ")
   private String cargoAbbreviation;
 
   @Column(name = "estimated_api")
   private String estimatedAPI;
-  
+
   @Column(name = "estimated_temp")
   private String estimatedTemp;
-  
+
   @Column(name = "priority")
   private Integer priority;
 
@@ -66,37 +62,35 @@ public class DischargePatternQuantityCargoPortwiseDetails extends EntityDoc {
 
   @Column(name = "discharge_mt")
   private String dischargeMT;
-  
+
   @Column(name = "ordered_quantity")
   private String orderedQuantity;
-  
+
   @Column(name = "slop_quantity")
   private String slopQuantity;
 
   @Column(name = "difference_percentage")
   private String differencePercentage;
-  
+
   @Column(name = "loading_order")
   private Integer loadingOrder;
-  
+
   @Column(name = "time_required_for_discharging")
   private String timeRequiredForDischarging;
 
   @Column(name = "discharging_rate")
   private String dischargingRate;
-  
+
   @Column(name = "cargo_nomination_temperature")
   private String cargoNominationTemperature;
 
   @Column(name = "is_active")
   private Boolean isActive;
-  
-  @OneToMany(
-	      mappedBy = "dischargePatternQuantityCargoPortwiseDetails",
-	      cascade = CascadeType.ALL,
-	      orphanRemoval = true,
-	      fetch = FetchType.LAZY)
-  private List<DischargePlanCowDetailFromAlgo> cowDetails;
-  
 
+  @OneToMany(
+      mappedBy = "dischargePatternQuantityCargoPortwiseDetails",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.LAZY)
+  private List<DischargePlanCowDetailFromAlgo> cowDetails;
 }

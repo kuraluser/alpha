@@ -2,7 +2,6 @@
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,7 +27,7 @@ public class DischargePlanCowDetailFromAlgo extends EntityDoc {
 
   @Column(name = "port_xid")
   private Long portId;
-  
+
   @Column(name = "voyage_xid")
   private Long voyageId;
 
@@ -40,9 +39,8 @@ public class DischargePlanCowDetailFromAlgo extends EntityDoc {
 
   @Column(name = "tank_xid")
   private String tankIds;
-  
+
   @ManyToOne(cascade = CascadeType.MERGE)
   @JoinColumn(name = "quantity_cargo_details_xid")
   private DischargePatternQuantityCargoPortwiseDetails dischargePatternQuantityCargoPortwiseDetails;
-
 }

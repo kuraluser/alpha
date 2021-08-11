@@ -66,8 +66,8 @@ public class LoadablePlanStowageBallastDetails extends EntityDoc {
 
   @Column(name = "filling_percentage")
   private String fillingPercentage;
-  
-  //DS fields
+
+  // DS fields
   @Column(name = "volume")
   private String volume;
 

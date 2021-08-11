@@ -72,12 +72,11 @@ public class LoadablePatternCargoDetails extends EntityDoc {
 
   @Column(name = "cargo_nomination_temperature")
   private BigDecimal cargoNominationTemperature;
-  
-  //DS fields
+
+  // DS fields
   @Column(name = "on_board")
   private String onBoard;
-  
+
   @Column(name = "max_tank_volume")
   private String maxTankVolume;
-  
 }
