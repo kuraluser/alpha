@@ -462,6 +462,7 @@ message LoadingPlanTankDetails {
   string sounding = 8;
   int32 conditionType = 9;
   int32 valueType = 10;
+  int64 id = 11;
 }
 
 message DeBallastingRate {

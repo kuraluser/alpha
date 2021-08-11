@@ -57,6 +57,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -107,9 +108,8 @@ public class LoadingSequenceService {
     BallastPump gravity = new BallastPump();
     List<CargoLoadingRate> cargoLoadingRates = new ArrayList<>();
     List<LoadingRate> loadingRates = new ArrayList<LoadingRate>();
-    List<Long> stageTickPositions = new ArrayList<Long>();
+    Set<Long> stageTickPositions = new LinkedHashSet<Long>();
     List<StabilityParam> stabilityParams = new ArrayList<StabilityParam>();
-    List<CargoStage> cargoStages = new ArrayList<CargoStage>();
 
     StabilityParam foreDraft = new StabilityParam();
     foreDraft.setName("fore_draft");
@@ -149,10 +149,16 @@ public class LoadingSequenceService {
 
     log.info("Populating Loading Sequences");
     for (LoadingSequence loadingSequence : reply.getLoadingSequencesList()) {
-      AtomicInteger stageNumber = new AtomicInteger(0);
+      log.info(loadingSequence.getStageName());
       for (LoadingPlanPortWiseDetails portWiseDetails :
           loadingSequence.getLoadingPlanPortWiseDetailsList()) {
-        for (LoadingPlanTankDetails stowage : portWiseDetails.getLoadingPlanStowageDetailsList()) {
+        List<LoadingPlanTankDetails> filteredStowage =
+            portWiseDetails.getLoadingPlanStowageDetailsList().stream()
+                .filter(
+                    stowage ->
+                        stowage.getCargoNominationId() == loadingSequence.getCargoNominationId())
+                .collect(Collectors.toList());
+        for (LoadingPlanTankDetails stowage : filteredStowage) {
           // Adding cargos
           temp =
               this.buildCargoSequence(
@@ -164,8 +170,6 @@ public class LoadingSequenceService {
               ballast, vesselTanks, portEta, start, portWiseDetails, ballastDetails, ballasts);
         }
 
-        addCargoStage(
-            portWiseDetails, cargoNomDetails, stageNumber, portEta, start, temp, cargoStages);
         start = temp;
         stageTickPositions.add(portEta + (temp * 60 * 1000));
       }
@@ -206,6 +210,7 @@ public class LoadingSequenceService {
     this.buildCargoTankCategories(reply, vesselTanks, response);
     this.buildBallastTankCategories(reply, vesselTanks, response);
     this.buildBallastPumpCategories(vesselId, response);
+    this.buildCargoStages(reply, cargoNomDetails, portEta, response);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);
@@ -214,12 +219,55 @@ public class LoadingSequenceService {
     response.setCargoLoadingRates(cargoLoadingRates);
     response.setStageTickPositions(stageTickPositions);
     response.setStabilityParams(stabilityParams);
+  }
+
+  /**
+   * @param reply
+   * @param cargoNomDetails
+   * @param response
+   */
+  private void buildCargoStages(
+      LoadingSequenceReply reply,
+      Map<Long, CargoNominationDetail> cargoNomDetails,
+      Long portEta,
+      LoadingSequenceResponse response) {
+    Integer start = 0;
+    Integer temp = 0;
+    List<CargoStage> cargoStages = new ArrayList<>();
+    Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
+    cargoNominationIds.addAll(
+        reply.getLoadingSequencesList().stream()
+            .map(sequence -> sequence.getCargoNominationId())
+            .collect(Collectors.toList()));
+    for (Long cargoNominationId : cargoNominationIds) {
+      AtomicInteger stageNumber = new AtomicInteger();
+      for (LoadingSequence sequence :
+          reply.getLoadingSequencesList().stream()
+              .filter(sequence -> sequence.getCargoNominationId() == cargoNominationId)
+              .collect(Collectors.toList())) {
+        for (LoadingPlanPortWiseDetails portWiseDetails :
+            sequence.getLoadingPlanPortWiseDetailsList()) {
+          temp = portWiseDetails.getTime();
+          addCargoStage(
+              portWiseDetails,
+              cargoNomDetails,
+              cargoNominationId,
+              stageNumber,
+              portEta,
+              start,
+              temp,
+              cargoStages);
+          start = temp;
+        }
+      }
+    }
     response.setCargoStages(cargoStages);
   }
 
   private void addCargoStage(
       LoadingPlanPortWiseDetails portWiseDetails,
       Map<Long, CargoNominationDetail> cargoNomDetails,
+      Long cargoNomId,
       AtomicInteger stageNumber,
       Long portEta,
       Integer start,
@@ -228,34 +276,27 @@ public class LoadingSequenceService {
     CargoStage cargoStage = new CargoStage();
     if (portWiseDetails.getLoadingPlanStowageDetailsCount() > 0) {
       List<Cargo> cargos = new ArrayList<Cargo>();
-      Set<Long> cargoNomIds =
+      Cargo cargo = new Cargo();
+      CargoNominationDetail cargoNomination = cargoNomDetails.get(cargoNomId);
+      cargo.setName(cargoNomination.getCargoName());
+      cargo.setCargoId(cargoNomination.getCargoId());
+      cargo.setAbbreviation(cargoNomination.getAbbreviation());
+      cargo.setCargoNominationId(cargoNomination.getId());
+      cargo.setColor(cargoNomination.getColor());
+      BigDecimal total =
           portWiseDetails.getLoadingPlanStowageDetailsList().stream()
-              .map(stowage -> stowage.getCargoNominationId())
-              .collect(Collectors.toSet());
-      cargoNomIds.forEach(
-          cargoNominationId -> {
-            Cargo cargo = new Cargo();
-            CargoNominationDetail cargoNomination = cargoNomDetails.get(cargoNominationId);
-            cargo.setName(cargoNomination.getCargoName());
-            cargo.setCargoId(cargoNomination.getCargoId());
-            cargo.setAbbreviation(cargoNomination.getAbbreviation());
-            cargo.setCargoNominationId(cargoNomination.getId());
-            cargo.setColor(cargoNomination.getColor());
-            BigDecimal total =
-                portWiseDetails.getLoadingPlanStowageDetailsList().stream()
-                    .filter(
-                        stowage ->
-                            (stowage.getCargoNominationId() == cargoNominationId)
-                                && !StringUtils.isEmpty(stowage.getQuantity()))
-                    .map(stowage -> new BigDecimal(stowage.getQuantity()))
-                    .reduce(
-                        new BigDecimal(0),
-                        (val1, val2) -> {
-                          return val1.add(val2);
-                        });
-            cargo.setQuantity(total);
-            cargos.add(cargo);
-          });
+              .filter(
+                  stowage ->
+                      (stowage.getCargoNominationId() == cargoNomId)
+                          && !StringUtils.isEmpty(stowage.getQuantity()))
+              .map(stowage -> new BigDecimal(stowage.getQuantity()))
+              .reduce(
+                  new BigDecimal(0),
+                  (val1, val2) -> {
+                    return val1.add(val2);
+                  });
+      cargo.setQuantity(total);
+      cargos.add(cargo);
       cargoStage.setName("Stage " + stageNumber.incrementAndGet());
       cargoStage.setStart(portEta + (start * 60 * 1000));
       cargoStage.setEnd(portEta + (end * 60 * 1000));
@@ -265,7 +306,7 @@ public class LoadingSequenceService {
   }
 
   private void updateCargoLoadingRateIntervals(
-      List<CargoLoadingRate> cargoLoadingRates, List<Long> stageTickPositions) {
+      List<CargoLoadingRate> cargoLoadingRates, Set<Long> stageTickPositions) {
     cargoLoadingRates.forEach(
         cargoLoadingRate -> {
           Optional<Long> startOpt =
@@ -376,7 +417,7 @@ public class LoadingSequenceService {
   private void buildCargoLoadingRates(
       LoadingSequence loadingSequence,
       Long portEta,
-      List<Long> stageTickPositions,
+      Set<Long> stageTickPositions,
       List<CargoLoadingRate> cargoLoadingRates) {
     log.info("Adding cargo loading rate");
     CargoLoadingRate cargoLoadingRate = new CargoLoadingRate();
