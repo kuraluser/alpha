@@ -400,6 +400,7 @@ export interface ILoadingInformation {
   toppingOffSequence: IToppingOffSequence[];
   vesselId?: number;
   voyageId?: number;
+  isLoadingInfoComplete:boolean;
 }
 
 /**

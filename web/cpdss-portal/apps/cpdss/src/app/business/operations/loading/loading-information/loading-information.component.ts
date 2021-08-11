@@ -269,6 +269,7 @@ export class LoadingInformationComponent implements OnInit {
       }
       else{
         this.ngxSpinnerService.show();
+        this.loadingInformationPostData.isLoadingInfoComplete = true
         const result: ILoadingInformationSaveResponse = await this.loadingDischargingInformationApiService.saveLoadingInformation(this.vesselId, this.voyageId, this.loadingInformationPostData).toPromise();
         if (result?.responseStatus?.status === '200') {
           this.loadingInformationData = result?.loadingInformation;
