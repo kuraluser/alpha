@@ -682,4 +682,91 @@ public class LoadingPlanController {
           e);
     }
   }
+
+  /**
+   * Get Loading Information ALGO Status API
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/algo-status")
+  public LoadingInfoAlgoStatus getLoadingInfoStatus(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @RequestBody LoadingInfoAlgoStatusRequest request)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Get Loading Information Status of" + " vessel {}, voyage {}, loading information {}",
+          vesselId,
+          voyageId,
+          infoId);
+      return loadingInformationService.getLoadingInfoAlgoStatus(
+          vesselId, voyageId, infoId, request.getProcessId());
+    } catch (GenericServiceException e) {
+      log.error("Exception in Get Loading Sequence API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          headers,
+          HttpStatusCode.BAD_REQUEST,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Get Loading Sequence API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * @param loadablePatternId
+   * @param headers
+   * @return
+   * @throws CommonRestException AlgoErrorResponse
+   */
+  @GetMapping(value = "/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/algo-errors")
+  public AlgoErrorResponse getAlgoErrors(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Get Loading Information ALGO Errors Status for "
+              + "vessel {}, voyage {}, loading information {}",
+          vesselId,
+          voyageId,
+          infoId);
+      return loadingInformationService.getLoadingInfoAlgoErrors(vesselId, voyageId, infoId);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when getAlgoErrors", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          headers,
+          HttpStatusCode.BAD_REQUEST,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Error when getAlgoErrors", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
 }
