@@ -257,6 +257,7 @@ public class LoadingInformationBuilderService {
     for (PortLoadingPlanBallastDetails var1 : list) {
       response.add(
           this.buildLoadingPlanTankBuilder(
+              var1.getId(),
               null,
               null,
               null,
@@ -278,6 +279,7 @@ public class LoadingInformationBuilderService {
     for (PortLoadingPlanStowageDetails var1 : list) {
       response.add(
           this.buildLoadingPlanTankBuilder(
+              var1.getId(),
               var1.getApi(),
               var1.getTemperature(),
               var1.getCargoNominationXId(),
@@ -299,6 +301,7 @@ public class LoadingInformationBuilderService {
     for (PortLoadingPlanRobDetails var1 : list) {
       response.add(
           this.buildLoadingPlanTankBuilder(
+              var1.getId(),
               null,
               null,
               null,
@@ -366,6 +369,7 @@ public class LoadingInformationBuilderService {
   }
 
   private LoadingPlanTankDetails buildLoadingPlanTankBuilder(
+      Long id,
       BigDecimal api,
       BigDecimal temp,
       Long nominationId,
@@ -381,6 +385,7 @@ public class LoadingInformationBuilderService {
     try {
       LoadingPlanTankDetails builder =
           LoadingPlanTankDetails.newBuilder()
+              .setId(id != null ? id : 0)
               .setApi(api != null ? api.toString() : "")
               .setTemperature(temp != null ? temp.toString() : "")
               .setCargoNominationId(nominationId != null ? nominationId : 0)
