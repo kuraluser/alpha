@@ -11,9 +11,12 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
+import com.cpdss.common.generated.LoadableStudy.DischargePlanDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
+import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
@@ -656,6 +659,9 @@ public class DischargeStudyService {
 
 public DischargePlanDetailsResponse getDischargePatternDetails(Long loadablePatternId,Long loadableStudyId, Long vesselId,
 		String first) throws GenericServiceException{
+	LoadablePlanDetailsRequest.Builder request = LoadablePlanDetailsRequest.newBuilder();
+	request.setLoadablePatternId(loadablePatternId);
+	PortRotationReply dischargePlanDetails = dischargeStudyOperationServiceBlockingStub.getDischargePlanDetails(request.build());
 	return null;
 }
 }

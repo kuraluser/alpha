@@ -209,7 +209,7 @@ service DischargeStudyOperationService {
   rpc getDischargeStudyPortWiseCargos(DischargeStudyRequest) returns (DishargeStudyCargoReply) {}
   rpc SaveDischargeStudyBackLoading (DishargeStudyBackLoadingSaveRequest) returns (DischargeStudyReply){}
   rpc GenerateDischargePatterns (AlgoRequest) returns (AlgoReply) {}
-  rpc GetDischargePlanDetails(LoadablePlanDetailsRequest) returns (DischargePlanDetailsReply) {}
+  rpc GetDischargePlanDetails(LoadablePlanDetailsRequest) returns (PortRotationReply) {}
 	
 }
 
@@ -219,8 +219,8 @@ service PortInstructionService {
 
 message DischargePlanDetailsReply {
 	ResponseStatus responseStatus = 1;
-	repeated LoadableQuantityCommingleCargoDetails loadableQuantityCommingleCargoDetails= 2;
-	repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 3;
+	repeated CargoNominationDetail cargoNominations= 2;
+	repeated BackLoading backLoading = 3;
 }
 message CargoNominationDetailReply{
 	CargoNominationDetail cargoNominationdetail = 1;
