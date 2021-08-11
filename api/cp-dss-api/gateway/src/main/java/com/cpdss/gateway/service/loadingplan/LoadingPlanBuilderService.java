@@ -68,7 +68,9 @@ public class LoadingPlanBuilderService {
       LoadingPlanStabilityParam var2 = new LoadingPlanStabilityParam();
       var2.setBm(var1.getBm());
       var2.setSf(var1.getSf());
-      var2.setDraft(var1.getDraft());
+      var2.setForeDraft(var1.getForeDraft());
+      var2.setMeanDraft(var1.getMeanDraft());
+      var2.setAftDraft(var1.getAftDraft());
       var2.setTrim(var1.getTrim());
       var2.setConditionType(var1.getConditionType());
       response.add(var2);

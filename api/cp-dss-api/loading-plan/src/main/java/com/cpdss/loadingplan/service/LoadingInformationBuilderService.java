@@ -321,8 +321,10 @@ public class LoadingInformationBuilderService {
     for (PortLoadingPlanStabilityParameters var1 : list) {
       response.add(
           this.buildLoadingPlanStabilityBuilder(
-              var1.getDraft(),
-              null,
+              var1.getForeDraft(),
+              var1.getMeanDraft(),
+              var1.getAftDraft(),
+              var1.getTrim(),
               var1.getBendingMoment(),
               var1.getShearingForce(),
               var1.getConditionType(),
@@ -332,7 +334,9 @@ public class LoadingInformationBuilderService {
   }
 
   private LoadingPlanModels.LoadingPlanStabilityParameters buildLoadingPlanStabilityBuilder(
-      BigDecimal draft,
+      BigDecimal foreDraft,
+      BigDecimal meanDraft,
+      BigDecimal aftDraft,
       BigDecimal trim,
       BigDecimal bm,
       BigDecimal sf,
@@ -342,7 +346,9 @@ public class LoadingInformationBuilderService {
     try {
       LoadingPlanModels.LoadingPlanStabilityParameters builder =
           LoadingPlanModels.LoadingPlanStabilityParameters.newBuilder()
-              .setDraft(draft != null ? draft.toString() : "")
+              .setForeDraft(foreDraft != null ? foreDraft.toString() : "")
+              .setMeanDraft(meanDraft != null ? meanDraft.toString() : "")
+              .setAftDraft(aftDraft != null ? aftDraft.toString() : "")
               .setTrim(trim != null ? trim.toString() : "")
               .setBm(bm != null ? bm.toString() : "")
               .setSf(sf != null ? sf.toString() : "")
