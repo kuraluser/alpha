@@ -157,7 +157,7 @@ public class DischargeStudyController {
   /**
    * @param vesselId
    * @param voyageId
-   * @param loadableStudiesId
+   * @param dischargeStudiesId
    * @param headers
    * @return
    * @throws CommonRestException LoadablePatternResponse Save Algo reply to data base API - This API
@@ -169,7 +169,7 @@ public class DischargeStudyController {
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          Long dischargetudiesId,
+          Long dischargeStudiesId,
       @RequestBody LoadablePlanRequest dischargePlanRequest,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
@@ -179,7 +179,7 @@ public class DischargeStudyController {
           "saveDischargePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
       return loadableStudyService.saveAlgoPatterns(
           dischargePlanRequest,
-          dischargetudiesId,
+          dischargeStudiesId,
           DISCHARGE_STUDY_SAVE_REQUEST,
           headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {

@@ -69,8 +69,8 @@ public class LoadablePlanStowageBallastDetails extends EntityDoc {
 
   // DS fields
   @Column(name = "volume")
-  private String volume;
+  private BigDecimal volume;
 
   @Column(name = "max_tank_volume")
-  private String maxTankVolume;
+  private BigDecimal maxTankVolume;
 }

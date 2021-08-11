@@ -3445,13 +3445,13 @@ public class LoadableStudyService {
     request.setLoadableStudyId(loadableStudiesId);
     request.setHasLodicator(loadablePlanRequest.getHasLoadicator());
     if (requestType.equals(DISCHARGE_STUDY_SAVE_REQUEST)) {
-      loadablePlanRequest.setLoadablePlanDetails(loadablePlanRequest.getDischargePlanDetails());
       request.setRequestType(DICHARGE_STUDY);
+      buildDischargePlanDetails(loadablePlanRequest, request);
     } else {
       request.setRequestType(LOADABLE_STUDY);
+      buildLoadablePlanDetails(loadablePlanRequest, request);
     }
-
-    buildLoadablePlanDetails(loadablePlanRequest, request);
+   
 
     if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
       this.buildAlgoError(loadablePlanRequest.getErrors(), request);
@@ -3586,6 +3586,119 @@ public class LoadableStudyService {
             });
   }
 
+  /**
+   * @param loadablePlanRequest
+   * @param request void
+   */
+  private void buildDischargePlanDetails(
+      LoadablePlanRequest loadablePlanRequest,
+      com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
+    LoadablePlanDetails.Builder planBuilder = LoadablePlanDetails.newBuilder();
+    Optional.ofNullable(loadablePlanRequest.getProcessId()).ifPresent(request::setProcesssId);
+    loadablePlanRequest
+        .getDischargePlanDetails()
+        .forEach(
+            lpd -> {
+              planBuilder.clearLoadablePlanPortWiseDetails();
+              planBuilder.clearConstraints();
+              LoadablePlanPortWiseDetails.Builder portWiseBuilder =
+                  LoadablePlanPortWiseDetails.newBuilder();
+              lpd.getDischargePlanPortWiseDetails()
+                  .forEach(
+                      lppwd -> {
+                        LoadablePlanDetailsReply.Builder detailsBuilderDeparture =
+                            LoadablePlanDetailsReply.newBuilder();
+                        lppwd
+                            .getDepartureCondition()
+                            .getDischargeQuantityCommingleCargoDetails()
+                            .forEach(
+                                lqccd -> {
+                                  buildCommingleDetails(lqccd, detailsBuilderDeparture);
+                                });
+                        lppwd
+                            .getDepartureCondition()
+                            .getDischargeQuantityCargoDetails()
+                            .forEach(
+                                lpqcd -> {
+                                  buildLoadableCargoDetails(lpqcd, detailsBuilderDeparture);
+                                });
+                        lppwd
+                            .getDepartureCondition()
+                            .getDischargePlanStowageDetails()
+                            .forEach(
+                                lpsd -> {
+                                  buildLoadablePlanStowageDetails(lpsd, detailsBuilderDeparture);
+                                });
+                        lppwd
+                            .getDepartureCondition()
+                            .getDischargePlanBallastDetails()
+                            .forEach(
+                                lpbd -> {
+                                  buildLoadablePlanBallastDetails(lpbd, detailsBuilderDeparture);
+                                });
+
+                        Optional.ofNullable(lppwd.getDepartureCondition().getStabilityParameters())
+                            .ifPresent(
+                                stabilityParameter ->
+                                    detailsBuilderDeparture.setStabilityParameter(
+                                        buildStabilityParamter(stabilityParameter)));
+
+                        portWiseBuilder.setDepartureCondition(detailsBuilderDeparture);
+
+                        LoadablePlanDetailsReply.Builder detailsBuilderArrival =
+                            LoadablePlanDetailsReply.newBuilder();
+                        lppwd
+                            .getArrivalCondition()
+                            .getDischargeQuantityCommingleCargoDetails()
+                            .forEach(
+                                lqccd -> {
+                                  buildCommingleDetails(lqccd, detailsBuilderArrival);
+                                });
+                        lppwd
+                            .getArrivalCondition()
+                            .getDischargeQuantityCargoDetails()
+                            .forEach(
+                                lpqcd -> {
+                                  buildLoadableCargoDetails(lpqcd, detailsBuilderArrival);
+                                });
+                        lppwd
+                            .getArrivalCondition()
+                            .getDischargePlanStowageDetails()
+                            .forEach(
+                                lpsd -> {
+                                  buildLoadablePlanStowageDetails(lpsd, detailsBuilderArrival);
+                                });
+                        lppwd
+                            .getArrivalCondition()
+                            .getDischargePlanBallastDetails()
+                            .forEach(
+                                lpbd -> {
+                                  buildLoadablePlanBallastDetails(lpbd, detailsBuilderArrival);
+                                });
+
+                        Optional.ofNullable(lppwd.getArrivalCondition().getStabilityParameters())
+                            .ifPresent(
+                                stabilityParameter ->
+                                    detailsBuilderArrival.setStabilityParameter(
+                                        buildStabilityParamter(stabilityParameter)));
+
+                        portWiseBuilder.setArrivalCondition(detailsBuilderArrival);
+
+                        portWiseBuilder.setPortId(lppwd.getPortId());
+                        portWiseBuilder.setPortRotationId(
+                            null != lppwd.getPortRotationId() ? lppwd.getPortRotationId() : 0);
+                        Optional.ofNullable(lppwd.getSeaWaterTemperature())
+                            .ifPresent(portWiseBuilder::setSeaWaterTemperature);
+                        Optional.ofNullable(lppwd.getAmbientTemperature())
+                            .ifPresent(portWiseBuilder::setAmbientTemperature);
+
+                        planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
+                      });
+              Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);
+              buildLoadablePlanConstrains(lpd, planBuilder);
+              request.addLoadablePlanDetails(planBuilder);
+            });
+  }
   /**
    * @param lpd
    * @param planBuilder void

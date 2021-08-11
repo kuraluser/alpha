@@ -462,13 +462,17 @@ public class LoadablePatternService {
     loadableQuantityCargoDetails.setDischargeMT(lpcd.getDischargeMT());
     loadableQuantityCargoDetails.setOrderedQuantity(lpcd.getOrderQuantity());
     loadableQuantityCargoDetails.setSlopQuantity(lpcd.getSlopQuantity());
-    loadableQuantityCargoDetails.setDifferencePercentage(lpcd.getDifferencePercentage());
+    loadableQuantityCargoDetails.setDifferencePercentage(lpcd.getDifferencePercentage().isBlank() 
+    		? null : new BigDecimal(lpcd.getDifferencePercentage()));
     loadableQuantityCargoDetails.setLoadingOrder(lpcd.getLoadingOrder());
     loadableQuantityCargoDetails.setTimeRequiredForDischarging(
-        lpcd.getTimeRequiredForDischarging());
-    loadableQuantityCargoDetails.setDischargingRate(lpcd.getDischargingRate());
+        lpcd.getTimeRequiredForDischarging().isBlank() 
+		? null : new BigDecimal(lpcd.getTimeRequiredForDischarging()));
+    loadableQuantityCargoDetails.setDischargingRate(lpcd.getDischargingRate().isBlank() 
+    		? null : new BigDecimal(lpcd.getDischargingRate()));
     loadableQuantityCargoDetails.setCargoNominationTemperature(
-        lpcd.getCargoNominationTemperature());
+        lpcd.getCargoNominationTemperature().isBlank() 
+        ? null : new BigDecimal(lpcd.getCargoNominationTemperature()));
     loadableQuantityCargoDetails.setOperationType(operationType);
 
     List<DischargePlanCowDetailFromAlgo> cowDetailFromAlgoList = new ArrayList<>();
@@ -485,8 +489,7 @@ public class LoadablePatternService {
                         cowDetail.setCowType(cowTypeOpt.get().getId());
                       }
                       Optional.ofNullable(item.getTankId()).ifPresent(cowDetail::setTankIds);
-                      //
-                      //	Optional.ofNullable(item.getShortName()).ifPresent(cowDetail::setShortName); TODO
+                      Optional.ofNullable(item.getShortName()).ifPresent(cowDetail::setShortName);
                       cowDetailFromAlgoList.add(cowDetail);
                     }));
     loadableQuantityCargoDetails.setCowDetails(cowDetailFromAlgoList);
@@ -892,8 +895,8 @@ public class LoadablePatternService {
         new BigDecimal(lpsd.getCargoNominationTemperature()));
     loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
     //    DS field
-    loadablePatternCargoDetails.setOnBoard(lpsd.getOnboard());
-    loadablePatternCargoDetails.setMaxTankVolume(lpsd.getMaxTankVolume());
+    loadablePatternCargoDetails.setOnBoard(lpsd.getOnboard().isBlank() ? null : new BigDecimal(lpsd.getOnboard()));
+    loadablePatternCargoDetails.setMaxTankVolume(lpsd.getMaxTankVolume().isBlank() ? null : new BigDecimal(lpsd.getMaxTankVolume()));
     loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
   }
 
@@ -954,8 +957,8 @@ public class LoadablePatternService {
     loadablePlanStowageBallastDetails.setFillingPercentage(lpbd.getPercentage());
 
     // DS fields
-    loadablePlanStowageBallastDetails.setVolume(lpbd.getVolume());
-    loadablePlanStowageBallastDetails.setMaxTankVolume(lpbd.getMaxTankVolume());
+    loadablePlanStowageBallastDetails.setVolume(lpbd.getVolume().isBlank() ? null : new BigDecimal(lpbd.getVolume()));
+    loadablePlanStowageBallastDetails.setMaxTankVolume(lpbd.getMaxTankVolume().isBlank() ? null : new BigDecimal(lpbd.getMaxTankVolume()) );
     loadablePlanStowageBallastDetailsRepository.save(loadablePlanStowageBallastDetails);
   }
 

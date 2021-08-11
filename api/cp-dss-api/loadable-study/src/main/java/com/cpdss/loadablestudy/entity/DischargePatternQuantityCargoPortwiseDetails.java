@@ -2,6 +2,8 @@
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+
+import java.math.BigDecimal;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -70,19 +72,19 @@ public class DischargePatternQuantityCargoPortwiseDetails extends EntityDoc {
   private String slopQuantity;
 
   @Column(name = "difference_percentage")
-  private String differencePercentage;
+  private BigDecimal differencePercentage;
 
   @Column(name = "loading_order")
   private Integer loadingOrder;
 
   @Column(name = "time_required_for_discharging")
-  private String timeRequiredForDischarging;
+  private BigDecimal timeRequiredForDischarging;
 
   @Column(name = "discharging_rate")
-  private String dischargingRate;
+  private BigDecimal dischargingRate;
 
   @Column(name = "cargo_nomination_temperature")
-  private String cargoNominationTemperature;
+  private BigDecimal cargoNominationTemperature;
 
   @Column(name = "is_active")
   private Boolean isActive;
