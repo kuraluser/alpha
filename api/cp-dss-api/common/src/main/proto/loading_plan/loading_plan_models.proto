@@ -376,6 +376,12 @@ message LoadingInfoAlgoRequest {
   int64 loadingInfoId = 1;
 }
 
+message LoadingInfoAlgoReply {
+  int64 loadingInfoId = 1;
+  string processId = 2;
+  ResponseStatus responseStatus = 3;
+}
+
 message LoadingInfoSaveResponse {
   int64 loadingInfoId = 1;
   int64 vesselId = 2;
@@ -702,3 +708,16 @@ message LoadingInfoLoadicatorDataReply {
   int64 loadableStudyId = 2;
   ResponseStatus responseStatus = 3;
 }
+
+message LoadingInfoStatusRequest {
+  int64 loadingInfoId = 1;
+  string processId = 2;
+}
+
+message LoadingInfoStatusReply {
+  int64 loadingInfoId = 1;
+  int64 loadingInfoStatusId = 2;
+  string loadingInfoStatusLastModifiedTime = 3;
+  ResponseStatus responseStatus = 4;
+}
+

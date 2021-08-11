@@ -5,8 +5,9 @@ import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfoServiceGrpc;
-import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
@@ -17,8 +18,11 @@ import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
@@ -288,7 +292,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   }
 
   @Override
-  public ResponseStatus generateLoadingPlan(Long loadingInfoId) {
+  public LoadingInfoAlgoReply generateLoadingPlan(Long loadingInfoId) {
     LoadingInfoAlgoRequest.Builder builder = LoadingInfoAlgoRequest.newBuilder();
     builder.setLoadingInfoId(loadingInfoId);
     return this.loadingInfoServiceBlockingStub.generateLoadingPlan(builder.build());
@@ -409,5 +413,15 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   @Override
   public StatusReply saveJson(JsonRequest jsonRequest) {
     return this.loadableStudyServiceBlockingStub.saveJson(jsonRequest);
+  }
+
+  @Override
+  public LoadingInfoStatusReply getLoadingInfoAlgoStatus(LoadingInfoStatusRequest request) {
+    return this.loadingInfoServiceBlockingStub.getLoadingInfoAlgoStatus(request);
+  }
+
+  @Override
+  public AlgoErrorReply getLoadingInfoAlgoErrors(AlgoErrorRequest request) {
+    return this.loadingInfoServiceBlockingStub.getLoadingInfoAlgoErrors(request);
   }
 }

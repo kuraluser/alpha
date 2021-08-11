@@ -2,13 +2,17 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
@@ -51,7 +55,7 @@ public interface LoadingPlanGrpcService {
   Boolean updateUllageAtLoadingPlan(LoadingPlanModels.UpdateUllageLoadingRequest request)
       throws GenericServiceException;
 
-  ResponseStatus generateLoadingPlan(Long loadingInfoId);
+  LoadingInfoAlgoReply generateLoadingPlan(Long loadingInfoId);
 
   RuleResponse saveOrGetLoadingPlanRules(LoadingPlanModels.LoadingPlanRuleRequest.Builder builder)
       throws GenericServiceException;
@@ -68,4 +72,20 @@ public interface LoadingPlanGrpcService {
 
   LoadingPlanModels.UpdateUllageDetailsResponse getUpdateUllageDetails(
       LoadingPlanModels.UpdateUllageDetailsRequest.Builder builder) throws GenericServiceException;
+
+  /**
+   * Fetches ALGO status of Loading Information
+   *
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   */
+  LoadingInfoStatusReply getLoadingInfoAlgoStatus(LoadingInfoStatusRequest request);
+
+  /**
+   * @param build
+   * @return
+   */
+  AlgoErrorReply getLoadingInfoAlgoErrors(AlgoErrorRequest request);
 }
