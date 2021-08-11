@@ -5,7 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { IVoyagePortDetails, Voyage, VOYAGE_STATUS } from '../core/models/common.model';
+import { IVoyagePortDetails, Voyage, VOYAGE_STATUS , OPERATIONS } from '../core/models/common.model';
 import { IVessel } from '../core/models/vessel-details.model';
 import { PortRotationService } from '../core/services/port-rotation.service';
 import { VesselsApiService } from '../core/services/vessels-api.service';
@@ -34,6 +34,8 @@ export class OperationsComponent implements OnInit, OnDestroy {
   }
 
   voyageDistance: number;
+  operationId: number;
+  readonly OPERATIONS = OPERATIONS;
 
   private _selectedVoyage: Voyage;
   private _ngUnsubscribe: Subject<any> = new Subject();
@@ -137,13 +139,11 @@ export class OperationsComponent implements OnInit, OnDestroy {
    */
   async onPortSelection(port: IVoyagePortDetails) {
     await localStorage.setItem('selectedPortName', port?.name);
+    this.operationId = port?.operationId;
     if (port?.operationId === 1) {
       this.router.navigate(['loading', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute });
     } else if (port?.operationId === 2) {
       this.router.navigate(['discharging', this.vessel?.id, this.selectedVoyage?.id], { relativeTo: this.activatedRoute });
-    } else {
-      const translationKeys = this.translateService.instant(['OPERATION_PLAN_NOT_AVAILABLE_INFO_SUMMARY', 'OPERATION_PLAN_NOT_AVAILABLE_INFO_DETAILS']);
-      this.messageService.add({ severity: 'info', summary: translationKeys['OPERATION_PLAN_NOT_AVAILABLE_INFO_SUMMARY'], detail: translationKeys['OPERATION_PLAN_NOT_AVAILABLE_INFO_DETAILS'] });
     }
   }
 

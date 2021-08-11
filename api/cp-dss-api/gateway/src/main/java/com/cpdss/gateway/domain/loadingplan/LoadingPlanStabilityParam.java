@@ -9,9 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoadingPlanStabilityParam {
-  private String draft;
+  private String foreDraft;
+  private String meanDraft;
+  private String aftDraft;
   private String trim;
   private String bm;
   private String sf;
   private Integer conditionType;
+  private Integer valueType;
 }

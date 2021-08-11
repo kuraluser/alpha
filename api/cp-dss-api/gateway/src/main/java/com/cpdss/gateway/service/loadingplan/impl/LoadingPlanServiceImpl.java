@@ -418,6 +418,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     List<ToppingOffSequence> toppingSequence =
         this.loadingInformationService.getToppingOffSequence(
             planReply.getLoadingInformation().getToppingOffSequenceList());
+    buildTankLayout(vesselId, loadingPlanResponse);
     loadingInformation.setLoadingRates(loadingRates);
     loadingInformation.setToppingOffSequence(toppingSequence);
 
@@ -437,6 +438,78 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             planReply.getPortLoadingPlanStabilityParametersList()));
 
     return loadingPlanResponse;
+  }
+
+  /**
+   * Builds vessel tank layout parameters
+   *
+   * @param vesselId
+   * @param loadingPlanResponse
+   */
+  private void buildTankLayout(Long vesselId, LoadingPlanResponse loadingPlanResponse) {
+    // Getting ballast tanks
+    VesselInfo.VesselRequest.Builder vesselGrpcRequest = VesselInfo.VesselRequest.newBuilder();
+    vesselGrpcRequest.setVesselId(vesselId);
+    vesselGrpcRequest.addAllTankCategories(ALL_TANK_CATEGORIES);
+    VesselInfo.VesselReply vesselReply =
+        this.getVesselDetailForSynopticalTable(vesselGrpcRequest.build());
+    // sorting the tanks based on tank display order from vessel tank table
+    List<VesselInfo.VesselTankDetail> sortedTankList =
+        new ArrayList<>(vesselReply.getVesselTanksList());
+    Collections.sort(
+        sortedTankList, Comparator.comparing(VesselInfo.VesselTankDetail::getTankDisplayOrder));
+    // build ballast tank details
+    List<VesselInfo.VesselTankDetail> ballastTankList =
+        sortedTankList.stream()
+            .filter(tankList -> BALLAST_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
+            .collect(Collectors.toList());
+    List<VesselInfo.VesselTankDetail> frontBallastTanks = new ArrayList<>();
+    List<VesselInfo.VesselTankDetail> centerBallastTanks = new ArrayList<>();
+    List<VesselInfo.VesselTankDetail> rearBallastTanks = new ArrayList<>();
+    frontBallastTanks.addAll(
+        ballastTankList.stream()
+            .filter(tank -> BALLAST_FRONT_TANK.equals(tank.getTankPositionCategory()))
+            .collect(Collectors.toList()));
+    centerBallastTanks.addAll(
+        ballastTankList.stream()
+            .filter(tank -> BALLAST_CENTER_TANK.equals(tank.getTankPositionCategory()))
+            .collect(Collectors.toList()));
+    rearBallastTanks.addAll(
+        ballastTankList.stream()
+            .filter(tank -> BALLAST_REAR_TANK.equals(tank.getTankPositionCategory()))
+            .collect(Collectors.toList()));
+    loadingPlanResponse.setBallastFrontTanks(
+        this.createGroupWiseTankList(this.groupTanks(frontBallastTanks)));
+    loadingPlanResponse.setBallastCenterTanks(
+        this.createGroupWiseTankList(this.groupTanks(centerBallastTanks)));
+    loadingPlanResponse.setBallastRearTanks(
+        this.createGroupWiseTankList(this.groupTanks(rearBallastTanks)));
+
+    // getting bunker tanks
+    List<VesselInfo.VesselTankDetail> bunkerTankList =
+        sortedTankList.stream()
+            .filter(tankList -> OHQ_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
+            .collect(Collectors.toList());
+    List<VesselInfo.VesselTankDetail> bunkerTanks = new ArrayList<>();
+    List<VesselInfo.VesselTankDetail> bunkerRearTanks = new ArrayList<>();
+    bunkerTanks.addAll(
+        bunkerTankList.stream()
+            .filter(tank -> OHQ_CENTER_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
+            .collect(Collectors.toList()));
+    bunkerRearTanks.addAll(
+        bunkerTankList.stream()
+            .filter(tank -> OHQ_REAR_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
+            .collect(Collectors.toList()));
+    loadingPlanResponse.setBunkerTanks(this.createGroupWiseTankList(this.groupTanks(bunkerTanks)));
+    loadingPlanResponse.setBunkerRearTanks(
+        this.createGroupWiseTankList(this.groupTanks(bunkerRearTanks)));
+
+    // getting cargo tanks
+    List<VesselInfo.VesselTankDetail> cargoTanks =
+        sortedTankList.stream()
+            .filter(tankList -> CARGO_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
+            .collect(Collectors.toList());
+    loadingPlanResponse.setCargoTanks(this.createGroupWiseTankList(this.groupTanks(cargoTanks)));
   }
 
   @Override

@@ -483,10 +483,10 @@ public class UserService {
    */
   private List<User> findUsers(UserType userType) throws GenericServiceException {
     List<User> userList = new ArrayList<>();
-    List<Users> users = new ArrayList<>();
-    UserStatus userStatus = userStatusRepository.getOne(UserStatusValue.APPROVED.getId());
+    List<Users> users;
     switch (userType) {
       case SHIP:
+        UserStatus userStatus = userStatusRepository.getOne(UserStatusValue.APPROVED.getId());
         users = this.usersRepository.findByIsActiveAndStatusOrderById(true, userStatus);
         if (users != null && !users.isEmpty()) {
           users.forEach(
@@ -513,9 +513,7 @@ public class UserService {
         List<String> keyCloakIds =
             Arrays.stream(keycloakUsersList).map(KeycloakUser::getId).collect(Collectors.toList());
 
-        users =
-            this.usersRepository.findByKeycloakIdInAndStatusAndIsActiveOrderById(
-                keyCloakIds, userStatus, true);
+        users = this.usersRepository.findByKeycloakIdInOrderById(keyCloakIds);
         users.forEach(
             userEntity -> {
               KeycloakUser keycloakUser = null;

@@ -48,6 +48,7 @@
     "DischargeStudyGeneratePlan": "CARGOPLANNING_DISCHARGE_STUDY_GENERATE_PLAN",
     "CargoMasterComponent":"USER_ROLE_LISTING",
     "VesselInformationComponent":"VESSEL_INFORMATION",
-    "DischargeStudyPortETAETD": "DISCHARGE_STUDY_PORTS_ETA/ETD"
-
+    "DischargeStudyPortETAETD": "DISCHARGE_STUDY_PORTS_ETA/ETD",
+    "LoadingInfoSunSet": "LOADING_INFO_SUNSET",
+    "LoadingInfoSunRise": "LOADING_INFO_SUNRISE"
 }

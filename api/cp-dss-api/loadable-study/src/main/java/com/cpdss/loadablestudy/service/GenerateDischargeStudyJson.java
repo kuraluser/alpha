@@ -289,7 +289,7 @@ public class GenerateDischargeStudyJson {
               optionalLoadableStudyWithMAXPortOrder.get().getId());
           LoadingPlanReply loadingPlanReply =
               loadingPlanGrpcService.getLoadingPlan(LoadingInformationRequest.build());
-          if (SUCCESS.equals(loadingPlanReply.getResponseStatus().getStatus())) {
+          if (!SUCCESS.equals(loadingPlanReply.getResponseStatus().getStatus())) {
             log.error(
                 "No Loading plan found for port rotaion id {} ",
                 optionalLoadableStudyWithMAXPortOrder.get().getId());
@@ -666,7 +666,7 @@ public class GenerateDischargeStudyJson {
                 portRotation.setEta(port.getEta());
                 portRotation.setEtd(port.getEtd());
                 portRotation.setPortOrder(port.getPortOrder());
-                portRotation.setCowDetails(getCowDetails(dischargeStudyId, port.getPortId()));
+                portRotation.setCowDetails(getCowDetails(dischargeStudyId, port.getId()));
                 portRotation.setInstructions(getPortInstructions(port, instructionsDetails));
 
                 portRotationList.add(portRotation);
@@ -687,20 +687,22 @@ public class GenerateDischargeStudyJson {
       cowDetail.setType(reply.getCowType());
       cowDetail.setPercentage(reply.getPercentage());
 
-      List<Long> tankIdList =
-          Stream.of(reply.getTankIds().split(","))
-              .map(Long::parseLong)
-              .collect(Collectors.toList());
-      VesselTankRequest.Builder tankRequest = VesselTankRequest.newBuilder();
-      tankRequest.addAllTankIds(tankIdList);
-      VesselTankResponse replyBuilder =
-          this.vesselInfoGrpcService.getVesselInfoBytankIds(tankRequest.build());
-      if (replyBuilder.getVesselTankOrderList() != null) {
-        log.info("No Tank Sort name found for Discharge ID  :{}", dischargeStudyId);
-        cowDetail.setTanks(
-            replyBuilder.getVesselTankOrderList().stream()
-                .map(item -> item.getShortName())
-                .collect(Collectors.joining(",")));
+      if (!reply.getTankIds().isBlank()) {
+        List<Long> tankIdList =
+            Stream.of(reply.getTankIds().split(","))
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+        VesselTankRequest.Builder tankRequest = VesselTankRequest.newBuilder();
+        tankRequest.addAllTankIds(tankIdList);
+        VesselTankResponse replyBuilder =
+            this.vesselInfoGrpcService.getVesselInfoBytankIds(tankRequest.build());
+        if (replyBuilder.getVesselTankOrderList() != null) {
+          log.info("Tank Sort name found for Discharge ID  :{}", dischargeStudyId);
+          cowDetail.setTanks(
+              replyBuilder.getVesselTankOrderList().stream()
+                  .map(item -> item.getShortName())
+                  .collect(Collectors.joining(",")));
+        }
       }
       return cowDetail;
     }

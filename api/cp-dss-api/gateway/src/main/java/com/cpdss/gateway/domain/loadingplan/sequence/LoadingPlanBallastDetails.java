@@ -11,4 +11,6 @@ public class LoadingPlanBallastDetails {
   private String quantityMT;
   private String quantityM3;
   private String sounding;
+  private Integer conditionType;
+  private Integer valueType;
 }

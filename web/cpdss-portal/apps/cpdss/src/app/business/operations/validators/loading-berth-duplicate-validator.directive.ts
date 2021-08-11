@@ -10,16 +10,22 @@ export function LoadingBerthDuplicateValidator(index): ValidatorFn {
             return null;
         }
         const selectedBerths = control.root.value.berth;
-        if (control?.value && selectedBerths) {
-            if(index !== -2){
-                selectedBerths.splice(index,1);
+        let selectedBerthIds = [];
+        let hasDuplicate = false;
+        if (selectedBerths) {
+            selectedBerthIds = selectedBerths.map((element, ind) => {
+                if (element?.name?.berthId === control.value.berthId && ind !== index) {
+                    hasDuplicate = true;
+                }
+            });
+
+            if (hasDuplicate) {
+                return { duplicateBerth: true }
             }
-            const found = selectedBerths.some(berth => berth?.name?.berthId === control?.value?.berthId );
-            if(found){
-                return {duplicateBerth: true}
-            }else{
+            else {
                 return null;
             }
+
         } else {
             return null;
         }

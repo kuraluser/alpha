@@ -73,6 +73,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   editMode: DATATABLE_EDITMODE = DATATABLE_EDITMODE.CELL;
   loadingDischargingDelayList: ILoadingDischargingDelays[];
   addInitialDelay = false;
+  loadableQuantityCargoCount: number;
   constructor(
     private confirmationService: ConfirmationService,
     private translateService: TranslateService,
@@ -183,9 +184,11 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     loadingDischargingDelay = loadingDischargingDelay ?? <ILoadingDischargingDelays>{ id: 0, loadingInfoId: null, dischargingInfoId: null, reasonForDelayIds: null, duration: null, cargoId: null, quantity: null };
     const _loadingDischargingDelays = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValueObject(loadingDischargingDelay, true, true, this.listData, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     const dataTableControl = <FormArray>this.loadingDischargingSequenceForm.get('dataTable');
-    dataTableControl.push(this.initLoadingDischargingSequenceFormGroup(_loadingDischargingDelays, this.loadingDischargingDelays.length, false));
-    this.loadingDischargingDelays = [...this.loadingDischargingDelays, _loadingDischargingDelays];
-
+    this.loadableQuantityCargoCount = this.addInitialDelay ? ++this.listData.loadableQuantityCargo.length : this.listData.loadableQuantityCargo.length
+    if (dataTableControl.controls.length !== this.loadableQuantityCargoCount) {
+      dataTableControl.push(this.initLoadingDischargingSequenceFormGroup(_loadingDischargingDelays, this.loadingDischargingDelays.length, false));
+      this.loadingDischargingDelays = [...this.loadingDischargingDelays, _loadingDischargingDelays];
+    } 
   }
 
   /**
@@ -205,11 +208,6 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     if (form.valid) {
       const loadingDischargingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation)
       this.updateLoadingDischargingDelays.emit(loadingDischargingDelaysList);
-      for (const key in this.loadingDischargingDelays[index]) {
-        if (this.loadingDischargingDelays[index]?.hasOwnProperty(key) && this.loadingDischargingDelays[index][key]?.hasOwnProperty('_isEditMode')) {
-          this.loadingDischargingDelays[index][key].isEditMode = false;
-        }
-      }
     }
   }
 
