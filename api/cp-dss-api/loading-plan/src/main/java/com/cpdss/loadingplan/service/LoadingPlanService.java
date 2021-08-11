@@ -16,8 +16,12 @@ import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+
+import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class LoadingPlanService {
 
+  private static final String SUCCESS = "SUCCESS";
+  private static final String FAILED = "FAILED";
   @Autowired LoadingInformationService loadingInformationService;
   @Autowired CargoToppingOffSequenceService cargoToppingOffSequenceService;
   @Autowired LoadablePlanBallastDetailsService loadablePlanBallastDetailsService;
@@ -46,6 +52,14 @@ public class LoadingPlanService {
   @Autowired PortLoadingPlanStowageDetailsRepository portLoadingPlanStowageDetailsRepository;
   @Autowired PortLoadingPlanBallastDetailsRepository portLoadingPlanBallastDetailsRepository;
   @Autowired PortLoadingPlanRobDetailsRepository portLoadingPlanRobDetailsRepository;
+
+
+
+  @Autowired
+  BillOfLandingRepository billOfLandingRepository;
+
+  @Autowired
+  LoadingPlanStowageDetailsTempRepository loadingPlanStowageDetailsRepository;
 
   /**
    * @param request
@@ -352,4 +366,53 @@ public class LoadingPlanService {
       builder.addPortLoadingPlanRobDetails(newBuilder);
     }
   }
+
+
+  public LoadingPlanModels.UllageBillReply getLoadableStudyShoreTwo(LoadingPlanModels.UllageBillRequest request,
+                                                                    StreamObserver<LoadingPlanModels.UllageBillReply> responseObserver) {
+
+    LoadingPlanModels.UllageBillReply.Builder builder =
+            LoadingPlanModels.UllageBillReply.newBuilder();
+
+    try {
+
+      request.getBillOfLandingList().forEach(billOfLanding -> {
+        billOfLandingRepository.updateBillOfLandingRepository(
+                billOfLanding.getBlRefNumber(),
+                BigDecimal.valueOf(billOfLanding.getBblAt60F()),
+                BigDecimal.valueOf(billOfLanding.getQuantityLt()),
+                BigDecimal.valueOf(billOfLanding.getQuantityMt()),
+                BigDecimal.valueOf(billOfLanding.getKlAt15C()),
+                BigDecimal.valueOf(billOfLanding.getApi()),
+                BigDecimal.valueOf(billOfLanding.getTemperature()),
+                Integer.valueOf(billOfLanding.getCargoId()+""),
+                Integer.valueOf(billOfLanding.getPortId()+""));
+      });
+
+      request.getUpdateUllageList().forEach(ullageInsert ->{
+                loadingPlanStowageDetailsRepository.save(new LoadingPlanStowageTempDetails(null,
+                        Long.valueOf(ullageInsert.getTankId()),
+                        Long.valueOf(0),
+                        BigDecimal.valueOf(ullageInsert.getQuantityMt()),
+                        BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
+                        BigDecimal.valueOf(ullageInsert.getQuantityMt()),
+                        BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi())),
+                        BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature())),
+                        false));
+              }
+      );
+
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+
+    //log.info("getLoadableStudyShoreTwo ", request);
+    return builder.build();
+  }
+
 }

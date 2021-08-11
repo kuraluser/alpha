@@ -4,7 +4,7 @@ package com.cpdss.gateway.service.loadingplan.impl;
 import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.CargoInfoServiceGrpc;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
@@ -12,10 +12,6 @@ import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
-import com.cpdss.common.generated.LoadableStudyServiceGrpc;
-import com.cpdss.common.generated.PortInfo;
-import com.cpdss.common.generated.PortInfoServiceGrpc;
-import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply;
@@ -51,6 +47,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import com.cpdss.gateway.domain.*;
 
 /** Calls to Grpc Service Parser here and give back to caller. */
 @Slf4j
@@ -59,7 +56,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
-      loadableStudyServiceBlockingStub;
+          loadableStudyServiceBlockingStub;
 
   @GrpcClient("cargoInfoService")
   private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoServiceBlockingStub;
@@ -72,7 +69,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
 
   @GrpcClient("loadingInformationService")
   private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
-      loadingInfoServiceBlockingStub;
+          loadingInfoServiceBlockingStub;
 
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
@@ -82,21 +79,21 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   @Override
   public VoyageResponse getActiveVoyageDetails(Long vesselId) throws GenericServiceException {
     LoadableStudy.ActiveVoyage activeVoyage =
-        loadableStudyServiceBlockingStub.getActiveVoyagesByVessel(
-            this.buildVoyageRequest(vesselId));
+            loadableStudyServiceBlockingStub.getActiveVoyagesByVessel(
+                    this.buildVoyageRequest(vesselId));
     if (!activeVoyage.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
       log.error("Failed to collect Active Voyage Data, Vessel Id {}", vesselId);
       throw new GenericServiceException(
-          "Failed to get Active Voyage",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
+              "Failed to get Active Voyage",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
     }
     if (activeVoyage.getId() <= 0) {
       log.error("Failed to collect Active Voyage Data, Vessel Id {}", vesselId);
       throw new GenericServiceException(
-          "No Active Voyage Exist",
-          CommonErrorCodes.E_CPDSS_NO_ACTIVE_VOYAGE_FOUND,
-          HttpStatusCode.BAD_REQUEST);
+              "No Active Voyage Exist",
+              CommonErrorCodes.E_CPDSS_NO_ACTIVE_VOYAGE_FOUND,
+              HttpStatusCode.BAD_REQUEST);
     }
     VoyageResponse voyageResponse = new VoyageResponse();
     BeanUtils.copyProperties(activeVoyage, voyageResponse);
@@ -110,19 +107,19 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     }
     voyageResponse.setPortRotations(rotationDomain);
     if (activeVoyage.getConfirmedLoadableStudy() != null
-        && activeVoyage.getConfirmedLoadableStudy().getId() > 0) {
+            && activeVoyage.getConfirmedLoadableStudy().getId() > 0) {
       com.cpdss.gateway.domain.LoadableStudy loadableStudy =
-          new com.cpdss.gateway.domain.LoadableStudy();
+              new com.cpdss.gateway.domain.LoadableStudy();
       BeanUtils.copyProperties(activeVoyage.getConfirmedLoadableStudy(), loadableStudy);
       voyageResponse.setActiveLs(loadableStudy);
     }
     if (activeVoyage.getConfirmedLoadableStudy() != null) {
       com.cpdss.gateway.domain.LoadableStudy loadableStudy =
-          new com.cpdss.gateway.domain.LoadableStudy();
+              new com.cpdss.gateway.domain.LoadableStudy();
       Optional.ofNullable(activeVoyage.getConfirmedLoadableStudy().getId())
-          .ifPresent(loadableStudy::setId);
+              .ifPresent(loadableStudy::setId);
       Optional.ofNullable(activeVoyage.getConfirmedLoadableStudy().getName())
-          .ifPresent(loadableStudy::setName);
+              .ifPresent(loadableStudy::setName);
       voyageResponse.setLoadableStudy(loadableStudy);
     }
 
@@ -136,47 +133,47 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
 
   @Override
   public LoadableStudy.LoadingSynopticResponse fetchSynopticRecordForPortRotationArrivalCondition(
-      Long portRId) throws GenericServiceException {
+          Long portRId) throws GenericServiceException {
     LoadableStudy.LoadingPlanCommonResponse response =
-        this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
-            LoadableStudy.LoadingPlanIdRequest.newBuilder()
-                .setIdType("PORT_ROTATION")
-                .setId(portRId)
-                .build());
+            this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
+                    LoadableStudy.LoadingPlanIdRequest.newBuilder()
+                            .setIdType("PORT_ROTATION")
+                            .setId(portRId)
+                            .build());
 
     if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error("Failed to get Synoptic data from LS ", response.getResponseStatus().getMessage());
       throw new GenericServiceException(
-          "Failed to get Synoptic Data for Port",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
+              "Failed to get Synoptic Data for Port",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
     }
     if (response.getSynopticDataList().isEmpty()) {
       log.info("No data found for Port Rotation {} in Synoptic table", portRId);
       return null;
     } else {
       return response.getSynopticDataList().stream()
-          .filter(v -> v.getOperationType().equalsIgnoreCase("ARR"))
-          .findFirst()
-          .get();
+              .filter(v -> v.getOperationType().equalsIgnoreCase("ARR"))
+              .findFirst()
+              .get();
     }
   }
 
   @Override
   public PortInfo.PortDetail fetchPortDetailByPortId(Long portId) throws GenericServiceException {
     PortInfo.PortReply response =
-        this.portInfoServiceBlockingStub.getPortInfoByPortIds(
-            PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
-                .addAllId(Arrays.asList(portId))
-                .build());
+            this.portInfoServiceBlockingStub.getPortInfoByPortIds(
+                    PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
+                            .addAllId(Arrays.asList(portId))
+                            .build());
 
     if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error(
-          "Failed to get Port Details from Port Info ", response.getResponseStatus().getMessage());
+              "Failed to get Port Details from Port Info ", response.getResponseStatus().getMessage());
       throw new GenericServiceException(
-          "Failed to get Port Details from Port Info",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
+              "Failed to get Port Details from Port Info",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
     }
 
     if (response.getPortsList().isEmpty()) {
@@ -189,35 +186,35 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
 
   @Override
   public LoadingPlanModels.LoadingInformation fetchLoadingInformation(
-      Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
-      throws GenericServiceException {
+          Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
+          throws GenericServiceException {
     LoadingPlanModels.LoadingInformationRequest.Builder builder =
-        LoadingPlanModels.LoadingInformationRequest.newBuilder();
+            LoadingPlanModels.LoadingInformationRequest.newBuilder();
     builder.setVesselId(vesselId);
     builder.setVoyageId(voyageId);
     builder.setLoadingPlanId(loadingInfoId);
     if (patternId != null) builder.setLoadingPatternId(patternId);
     if (portRotationId != null) builder.setPortRotationId(portRotationId);
     LoadingPlanModels.LoadingInformation replay =
-        loadingInfoServiceBlockingStub.getLoadingInformation(builder.build());
+            loadingInfoServiceBlockingStub.getLoadingInformation(builder.build());
     if (!replay.getResponseStatus().getStatus().equals(SUCCESS)) {
       throw new GenericServiceException(
-          "Failed to get Loading Information",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
+              "Failed to get Loading Information",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
     }
     return replay;
   }
 
   @Override
   public CargoVesselTankDetails fetchPortWiseCargoDetails(
-      Long vesselId,
-      Long voyageId,
-      Long loadableStudyId,
-      Long portId,
-      Long portOrder,
-      Long portRotationId,
-      String operationType) {
+          Long vesselId,
+          Long voyageId,
+          Long loadableStudyId,
+          Long portId,
+          Long portOrder,
+          Long portRotationId,
+          String operationType) {
     CargoVesselTankDetails cvt = new CargoVesselTankDetails();
     VoyageStatusRequest request = new VoyageStatusRequest();
     request.setPortOrder(portOrder);
@@ -225,8 +222,8 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     request.setPortRotationId(portRotationId);
     try {
       VoyageStatusResponse rpcResponse =
-          this.loadableStudyService.getVoyageStatus(
-              request, vesselId, voyageId, loadableStudyId, portId, null);
+              this.loadableStudyService.getVoyageStatus(
+                      request, vesselId, voyageId, loadableStudyId, portId, null);
       cvt.setCargoTanks(rpcResponse.getCargoTanks());
       cvt.setCargoQuantities(rpcResponse.getCargoQuantities());
       cvt.setCargoConditions(rpcResponse.getCargoConditions());
@@ -238,15 +235,15 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
 
   @Override
   public List<LoadableStudy.LoadableQuantityCargoDetails> fetchLoadablePlanCargoDetails(
-      Long patternId, String operationType, Long portRotationId, Long portId) {
+          Long patternId, String operationType, Long portRotationId, Long portId) {
     LoadableStudy.LoadingPlanCommonResponse response =
-        this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
-            LoadableStudy.LoadingPlanIdRequest.newBuilder()
-                .setPatternId(patternId)
-                .setOperationType(operationType)
-                .setPortRotationId(portRotationId)
-                .setPortId(portId)
-                .build());
+            this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
+                    LoadableStudy.LoadingPlanIdRequest.newBuilder()
+                            .setPatternId(patternId)
+                            .setOperationType(operationType)
+                            .setPortRotationId(portRotationId)
+                            .setPortId(portId)
+                            .build());
 
     if (response.getResponseStatus().getStatus().equals(SUCCESS)) {
       return response.getLoadableQuantityCargoDetailsList();
@@ -267,23 +264,23 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
 
   @Override
   public Boolean updateUllageAtLoadingPlan(LoadingPlanModels.UpdateUllageLoadingRequest request)
-      throws GenericServiceException {
+          throws GenericServiceException {
     LoadingPlanModels.UpdateUllageLoadingReplay replay =
-        this.loadingInfoServiceBlockingStub.updateUllage(request);
+            this.loadingInfoServiceBlockingStub.updateUllage(request);
     if (!replay.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error(
-          "Update Ullage, Failed to update at Loading Information: {}",
-          replay.getResponseStatus().getMessage());
+              "Update Ullage, Failed to update at Loading Information: {}",
+              replay.getResponseStatus().getMessage());
       throw new GenericServiceException(
-          "Failed to update ullage in Loading Information DB",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
+              "Failed to update ullage in Loading Information DB",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
     }
     log.info(
-        "Update ullage at Loading Plan Service Success!, Port Rotation Id {}, Voyage Id {}, Tank Id {}",
-        request.getPortRotationId(),
-        request.getVoyageId(),
-        request.getTankId());
+            "Update ullage at Loading Plan Service Success!, Port Rotation Id {}, Voyage Id {}, Tank Id {}",
+            request.getPortRotationId(),
+            request.getVoyageId(),
+            request.getTankId());
     return true;
   }
 
@@ -323,31 +320,31 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
 
   @Override
   public RuleResponse saveOrGetLoadingPlanRules(
-      LoadingPlanModels.LoadingPlanRuleRequest.Builder builder) throws GenericServiceException {
+          LoadingPlanModels.LoadingPlanRuleRequest.Builder builder) throws GenericServiceException {
     RuleResponse ruleResponse = new RuleResponse();
     LoadingPlanModels.LoadingPlanRuleReply loadingRuleReply =
-        this.loadingPlanServiceBlockingStub.getOrSaveRulesForLoadingPlan(builder.build());
+            this.loadingPlanServiceBlockingStub.getOrSaveRulesForLoadingPlan(builder.build());
     if (!loadingRuleReply.getResponseStatus().getStatus().equals(SUCCESS)) {
       throw new GenericServiceException(
-          "Failed to save loading plan rules",
-          loadingRuleReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(loadingRuleReply.getResponseStatus().getCode())));
+              "Failed to save loading plan rules",
+              loadingRuleReply.getResponseStatus().getCode(),
+              HttpStatusCode.valueOf(Integer.valueOf(loadingRuleReply.getResponseStatus().getCode())));
     }
     ruleResponse.setPlan(RuleUtility.buildLoadingPlanRule(loadingRuleReply));
     ruleResponse.setResponseStatus(
-        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
+            new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return ruleResponse;
   }
 
   @Override
   public LoadingSequenceReply getLoadingSequence(Builder builder) throws GenericServiceException {
     LoadingSequenceReply reply =
-        this.loadingPlanServiceBlockingStub.getLoadingSequences(builder.build());
+            this.loadingPlanServiceBlockingStub.getLoadingSequences(builder.build());
     if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
       throw new GenericServiceException(
-          "Failed to get loading sequences for loading information " + builder.getLoadingInfoId(),
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
+              "Failed to get loading sequences for loading information " + builder.getLoadingInfoId(),
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
     }
 
     return reply;
@@ -360,11 +357,11 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
 
   @Override
   public LoadingPlanModels.LoadingPlanReply getLoadingPlan(
-      Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
-      throws GenericServiceException {
+          Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
+          throws GenericServiceException {
 
     LoadingPlanModels.LoadingInformationRequest.Builder builder =
-        LoadingPlanModels.LoadingInformationRequest.newBuilder();
+            LoadingPlanModels.LoadingInformationRequest.newBuilder();
     builder.setLoadingPlanId(loadingInfoId);
     builder.setLoadingPatternId(patternId);
     builder.setPortRotationId(portRotationId);
@@ -372,26 +369,26 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     builder.setVesselId(vesselId);
 
     LoadingPlanModels.LoadingPlanReply reply =
-        this.loadingPlanServiceBlockingStub.getLoadingPlan(builder.build());
+            this.loadingPlanServiceBlockingStub.getLoadingPlan(builder.build());
 
     if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error("Failed to fetch Loading plan, Message {}", reply.getResponseStatus().getMessage());
       throw new GenericServiceException(
-          "Failed to get loading plan from loading info",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
+              "Failed to get loading plan from loading info",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
     }
     return reply;
   }
 
   @Override
   public LoadingPlanModels.UpdateUllageDetailsResponse getUpdateUllageDetails(
-      LoadingPlanModels.UpdateUllageDetailsRequest.Builder requestBuilder)
-      throws GenericServiceException {
+          LoadingPlanModels.UpdateUllageDetailsRequest.Builder requestBuilder)
+          throws GenericServiceException {
     log.info("Calling getLoadingInstructions in loading-plan microservice via GRPC");
 
     LoadingPlanModels.UpdateUllageDetailsResponse grpcResponse =
-        loadingPlanServiceBlockingStub.getUpdateUllageDetails(requestBuilder.build());
+            loadingPlanServiceBlockingStub.getUpdateUllageDetails(requestBuilder.build());
 
     //      if (grpcResponse.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
     //        log.info("GRPC call successfull");
@@ -424,4 +421,13 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   public AlgoErrorReply getLoadingInfoAlgoErrors(AlgoErrorRequest request) {
     return this.loadingInfoServiceBlockingStub.getLoadingInfoAlgoErrors(request);
   }
+
+  @Override
+  public UllageBillReply getLoadableStudyShoreTwo(String first, LoadingPlanModels.UllageBillRequest.Builder inputData) throws GenericServiceException {
+    Common.ResponseStatus reply = loadingPlanServiceBlockingStub.getLoadableStudyShoreTwo(inputData.build()).getResponseStatus();
+    UllageBillReply replyData = new UllageBillReply();
+    replyData.setResponseStatus(new CommonSuccessResponse(reply.getStatus(),reply.getCode()));
+    return replyData;
+  }
+
 }

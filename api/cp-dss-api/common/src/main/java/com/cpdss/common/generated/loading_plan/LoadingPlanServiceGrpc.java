@@ -520,6 +520,61 @@ public final class LoadingPlanServiceGrpc {
     return getGetLoadicatorDataMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>
+      getGetLoadableStudyShoreTwoMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadableStudyShoreTwo",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>
+      getGetLoadableStudyShoreTwoMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>
+        getGetLoadableStudyShoreTwoMethod;
+    if ((getGetLoadableStudyShoreTwoMethod =
+            LoadingPlanServiceGrpc.getGetLoadableStudyShoreTwoMethod)
+        == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getGetLoadableStudyShoreTwoMethod =
+                LoadingPlanServiceGrpc.getGetLoadableStudyShoreTwoMethod)
+            == null) {
+          LoadingPlanServiceGrpc.getGetLoadableStudyShoreTwoMethod =
+              getGetLoadableStudyShoreTwoMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetLoadableStudyShoreTwo"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .UllageBillRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .UllageBillReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier(
+                              "GetLoadableStudyShoreTwo"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadableStudyShoreTwoMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingPlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingPlanServiceStub> factory =
@@ -650,6 +705,15 @@ public final class LoadingPlanServiceGrpc {
       asyncUnimplementedUnaryCall(getGetLoadicatorDataMethod(), responseObserver);
     }
 
+    /** */
+    public void getLoadableStudyShoreTwo(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetLoadableStudyShoreTwoMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -726,6 +790,13 @@ public final class LoadingPlanServiceGrpc {
                           .LoadingInfoLoadicatorDataRequest,
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingInfoLoadicatorDataReply>(this, METHODID_GET_LOADICATOR_DATA)))
+          .addMethod(
+              getGetLoadableStudyShoreTwoMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>(
+                      this, METHODID_GET_LOADABLE_STUDY_SHORE_TWO)))
           .build();
     }
   }
@@ -855,6 +926,18 @@ public final class LoadingPlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getLoadableStudyShoreTwo(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetLoadableStudyShoreTwoMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -949,6 +1032,14 @@ public final class LoadingPlanServiceGrpc {
                 request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadicatorDataMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply
+        getLoadableStudyShoreTwo(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getGetLoadableStudyShoreTwoMethod(), getCallOptions(), request);
     }
   }
 
@@ -1057,6 +1148,15 @@ public final class LoadingPlanServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGetLoadicatorDataMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>
+        getLoadableStudyShoreTwo(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getGetLoadableStudyShoreTwoMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_LOADING_PLAN_SYNCHRONIZATION = 0;
@@ -1068,6 +1168,7 @@ public final class LoadingPlanServiceGrpc {
   private static final int METHODID_GET_BILL_OF_LADDING_DETAILS = 6;
   private static final int METHODID_GET_CARGO_NOMINATION_MAX_QUANTITY = 7;
   private static final int METHODID_GET_LOADICATOR_DATA = 8;
+  private static final int METHODID_GET_LOADABLE_STUDY_SHORE_TWO = 9;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1167,6 +1268,13 @@ public final class LoadingPlanServiceGrpc {
                           .LoadingInfoLoadicatorDataReply>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADABLE_STUDY_SHORE_TWO:
+          serviceImpl.getLoadableStudyShoreTwo(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1240,6 +1348,7 @@ public final class LoadingPlanServiceGrpc {
                       .addMethod(getGetBillOfLaddingDetailsMethod())
                       .addMethod(getGetCargoNominationMaxQuantityMethod())
                       .addMethod(getGetLoadicatorDataMethod())
+                      .addMethod(getGetLoadableStudyShoreTwoMethod())
                       .build();
         }
       }

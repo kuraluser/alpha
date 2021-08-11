@@ -2,9 +2,7 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.gateway.domain.LoadingUpdateUllageResponse;
-import com.cpdss.gateway.domain.RuleRequest;
-import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
@@ -43,4 +41,6 @@ public interface LoadingPlanService {
   public LoadingUpdateUllageResponse getUpdateUllageDetails(
       Long vesselId, Long patternId, Long portId, String operationType)
       throws GenericServiceException;
+
+  UllageBillReply getLoadableStudyShoreTwo(String first, UllageBillRequest inputData) throws GenericServiceException;
 }

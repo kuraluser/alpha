@@ -56,7 +56,7 @@ public final class LoadingPlanServiceOuterClass {
           + "s\"\000\022I\n\031DeleteLoadingInstructions\022\031.Loadi"
           + "ngInstructionStatus\032\017.ResponseStatus\"\000\022@"
           + "\n\020EditInstructions\022\031.LoadingInstructionS"
-          + "tatus\032\017.ResponseStatus\"\0002\342\005\n\022LoadingPlan"
+          + "tatus\032\017.ResponseStatus\"\0002\246\006\n\022LoadingPlan"
           + "Service\022N\n\032LoadingPlanSynchronization\022\027."
           + "LoadingPlanSyncDetails\032\025.LoadingPlanSync"
           + "Reply\"\000\022F\n\017SaveLoadingPlan\022\027.LoadingPlan"
@@ -75,8 +75,10 @@ public final class LoadingPlanServiceOuterClass {
           + "ityRequest\032\024.MaxQuantityResponse\"\000\022Y\n\021Ge"
           + "tLoadicatorData\022!.LoadingInfoLoadicatorD"
           + "ataRequest\032\037.LoadingInfoLoadicatorDataRe"
-          + "ply\"\000B+\n\'com.cpdss.common.generated.load"
-          + "ing_planP\000b\006proto3"
+          + "ply\"\000\022B\n\030GetLoadableStudyShoreTwo\022\022.Ulla"
+          + "geBillRequest\032\020.UllageBillReply\"\000B+\n\'com"
+          + ".cpdss.common.generated.loading_planP\000b\006"
+          + "proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

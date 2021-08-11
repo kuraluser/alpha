@@ -15,6 +15,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSave
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -65,6 +66,14 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
+
+  @Autowired
+  LoadingPlanService loadingPlanService;
+
 
   private static final String SUCCESS = "SUCCESS";
   public static final String BALLAST_FRONT_TANK = "FRONT";
@@ -1060,4 +1069,101 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     builder.setFullCapacityCubm(detail.getFullCapacityCubm());
     return builder.build();
   }
+
+
+
+
+  @Override
+  public UllageBillReply getLoadableStudyShoreTwo(String correlationID, UllageBillRequest inputData)
+          throws GenericServiceException {
+
+    String errorValidationLandingMsg = "";
+    String errorValidationUllageMsg = "";
+
+    LoadingPlanModels.UllageBillRequest.Builder builder =
+            LoadingPlanModels.UllageBillRequest.newBuilder();
+
+    LoadingPlanModels.BillOfLanding.Builder billOfLandingBuilder =
+            LoadingPlanModels.BillOfLanding.newBuilder();
+
+    LoadingPlanModels.UpdateUllage.Builder updateUllageBuilder =
+            LoadingPlanModels.UpdateUllage.newBuilder();
+    UllageBillReply replays = new UllageBillReply();
+
+    try {
+
+      if (inputData.getBillOfLandingList().size() > 0) {
+        inputData
+                .getBillOfLandingList()
+                .forEach(
+                        billLanding -> {
+                          billOfLandingBuilder
+                                  .setBblAt60F(billLanding.getBblAt60f() == null ? null :  billLanding.getBblAt60f().longValue())
+                                  .setId(billLanding.getId() == 0 ? 0 : billLanding.getId())
+                                  .setPortId(billLanding.getPortId() == 0 ? 0 : billLanding.getPortId())
+                                  .setCargoId(billLanding.getCargoId() == 0 ? 0 : billLanding.getCargoId())
+                                  .setBlRefNumber(
+                                          billLanding.getBlRefNumber() == null ? "" : billLanding.getBlRefNumber())
+                                  .setQuantityLt(billLanding.getQuantityLt().longValue())
+                                  .setKlAt15C(billLanding.getKlAt15c().longValue())
+                                  .setApi(billLanding.getApi().longValue())
+                                  .setTemperature(billLanding.getTemperature().longValue())
+                                  .setIsActive(billLanding.getIsActive().longValue())
+                                  .setVersion(
+                                          billLanding.getVersion() == 0
+                                                  ? 0
+                                                  : billLanding.getVersion())
+                                  .build();
+                        });
+      } else {
+        errorValidationLandingMsg = "Required data for Update is missing";
+      }
+      if (inputData.getUllageUpdList().size() > 0) {
+        inputData
+                .getUllageUpdList()
+                .forEach(
+                        ullageList -> {
+                          updateUllageBuilder
+                                  .setId(ullageList.getId() == 0 ? 0 : ullageList.getId())
+                                  .setTankId(ullageList.getTankId() == 0 ? 0 : ullageList.getTankId())
+                                  .setCorrectedUllage(ullageList.getCorrectedUllage().longValue())
+                                  .setCorrectionFactor(ullageList.getCorrectionFactor().longValue())
+                                  .setQuantityMt(ullageList.getQuantityMt().longValue())
+                                  .setIsBallast(ullageList.getIsBallast() == false ? false : ullageList.getIsBallast())
+                                  .setFillingRatio( ullageList.getFillingRatio() == null ? "" : ullageList.getFillingRatio())
+                                  .setApi(ullageList.getApi() == null ? "" : ullageList.getApi())
+                                  .setTemperature(ullageList.getTemperature() == null ? "" : ullageList.getTemperature())
+                                  .setObservedM3(ullageList.getObservedM3() == null ? "" : ullageList.getObservedM3())
+                                  .setObservedM3(ullageList.getSg() == null ? "" : ullageList.getSg())
+                                  .build();
+                        });
+
+        builder.addBillOfLanding(billOfLandingBuilder.build());
+        builder.addUpdateUllage(updateUllageBuilder.build());
+
+      } else {
+        errorValidationUllageMsg = "Required data for Update is missing";
+      }
+    } catch (Exception e) {
+      log.error("GenericServiceException when update LoadableStudy", e);
+    }
+
+    Common.ResponseStatus.Builder ruleResponse = Common.ResponseStatus.newBuilder();
+    if (errorValidationLandingMsg == "Required data for Update is missing"
+            && errorValidationUllageMsg == "Required data for Update is missing") {
+      ruleResponse.setCode("200").setStatus("Invalid Input Error");
+    } else {
+      replays = loadingPlanGrpcService.getLoadableStudyShoreTwo(correlationID, builder);
+      if (!SUCCESS.equals(replays.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+                "failed to get or save UllageBill ",
+                replays.getResponseStatus().getStatus(),
+                HttpStatusCode.valueOf(500));
+      }
+      replays.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), "Ullage Updated Successfully"));
+    }
+
+    return replays;
+  }
+
 }
