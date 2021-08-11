@@ -3,9 +3,15 @@ package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -85,7 +91,12 @@ public class DischargePatternQuantityCargoPortwiseDetails extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
   
-  @Column(name = "cowDetails")
-  private List<DischargeStudyCowDetail> cowDetails;
+  @OneToMany(
+	      mappedBy = "dischargePatternQuantityCargoPortwiseDetails",
+	      cascade = CascadeType.ALL,
+	      orphanRemoval = true,
+	      fetch = FetchType.LAZY)
+  private List<DischargePlanCowDetailFromAlgo> cowDetails;
+  
 
 }

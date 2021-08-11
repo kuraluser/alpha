@@ -10,6 +10,7 @@ import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
+import com.cpdss.common.generated.LoadableStudy.StabilityParameter;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -127,6 +128,8 @@ public class LoadablePatternService {
   @Autowired JsonDataService jsonDataService;
   @Autowired CommunicationService communicationService;
   @Autowired private OnHandQuantityService onHandQuantityService;
+  
+  @Autowired private CowTypeMasterRepository cowTypeMasterRepository;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -450,7 +453,18 @@ private void saveLoadableQuantityCargoPortwiseDetails(LoadableQuantityCargoDetai
 		    loadableQuantityCargoDetails.setCargoNominationTemperature(lpcd.getCargoNominationTemperature());
 		    loadableQuantityCargoDetails.setOperationType(operationType);
 		    
-//		    loadableQuantityCargoDetails.setCowDetails(lpcd.getCowDetailsList()); TODO
+		    List<DischargePlanCowDetailFromAlgo> cowDetailFromAlgoList= new ArrayList<>();
+		    Optional.ofNullable(lpcd.getCowDetailsList()).ifPresent(i -> i.forEach(item -> {
+		    	DischargePlanCowDetailFromAlgo cowDetail = new DischargePlanCowDetailFromAlgo();
+		    	Optional<CowTypeMaster> cowTypeOpt = cowTypeMasterRepository.findByCowTypeAndIsActiveTrue(item.getWashType());
+		    	if(cowTypeOpt.isPresent()) {
+		    	  cowDetail.setCowType(cowTypeOpt.get().getId());
+		    	}
+		    	Optional.ofNullable(item.getTankId()).ifPresent(cowDetail::setTankIds);
+//		    	Optional.ofNullable(item.getShortName()).ifPresent(cowDetail::setShortName); TODO
+		    	cowDetailFromAlgoList.add(cowDetail);
+		    	}));
+		    loadableQuantityCargoDetails.setCowDetails(cowDetailFromAlgoList);
 		    
 		    dischargePatternQuantityCargoPortwiseRepository.save(loadableQuantityCargoDetails);
 	
@@ -854,7 +868,7 @@ private void saveLoadableQuantityCargoPortwiseDetails(LoadableQuantityCargoDetai
         new BigDecimal(lpsd.getCargoNominationTemperature()));
     loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
 //    DS field
-    loadablePatternCargoDetails.setOnboard(lpsd.getOnboard());
+    loadablePatternCargoDetails.setOnBoard(lpsd.getOnboard());
     loadablePatternCargoDetails.setMaxTankVolume(lpsd.getMaxTankVolume());
     loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
   }
@@ -1044,7 +1058,9 @@ private void saveLoadableQuantityCargoPortwiseDetails(LoadableQuantityCargoDetai
     stabilityParameter.setTrimValue(lpd.getStabilityParameters().getTrim());
     stabilityParameter.setIsActive(true);
     //DS field 
-    stabilityParameter.setAirDraft(lpd.getStabilityParameters().getAirDraft());
+    StabilityParameter s = lpd.getStabilityParameters();
+    stabilityParameter.setAirDraft(lpd.getStabilityParameters().getAirDraft().isBlank()
+        		?null: new BigDecimal(lpd.getStabilityParameters().getAirDraft()));
     stabilityParameterRepository.save(stabilityParameter);
   }
 

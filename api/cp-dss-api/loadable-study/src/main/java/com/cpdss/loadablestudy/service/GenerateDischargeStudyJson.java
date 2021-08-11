@@ -139,8 +139,6 @@ public class GenerateDischargeStudyJson {
           objectMapper.writeValueAsString(AlgoJsonPayload));
 
       // Calling Algo Service
-      //      AlgoResponse algoResponse = new AlgoResponse();
-      //      algoResponse.setProcessId("123");
       //       Uncomment when Algo actual API is ready
       AlgoResponse algoResponse =
           restTemplate.postForObject(dischargeStudyUrl, AlgoJsonPayload, AlgoResponse.class);
@@ -339,88 +337,6 @@ public class GenerateDischargeStudyJson {
     return arrivalCondition;
   }
 
-  // private ArrivalConditionJson getLoadablePlanPortWiseDetails(Long
-  // dischargeStudyId) throws
-  // GenericServiceException {
-  // log.info("Fetching LoadablePlan PortWise Details for discharge id {}",
-  // dischargeStudyId);
-  // LoadablePatternRequest.Builder request = LoadablePatternRequest.newBuilder();
-  // ArrivalConditionJson arrivalCondition = new ArrivalConditionJson();
-  // request.setLoadableStudyId(dischargeStudyId);
-  //
-  // LoadablePatternReply loadablePatternReply = loadablePatternService
-  // .getLoadablePatternDetails(request.build(),
-  // LoadablePatternReply.newBuilder()).build();
-  //
-  // if (loadablePatternReply.getResponseStatus().getStatus() != SUCCESS) {
-  //
-  // } else {
-  // ofNullable(loadablePatternReply.getConfirmPlanEligibility())
-  // .ifPresent(arrivalCondition::setConfirmPlanEligibility);
-  //
-  // // Fetch arrival condition details form list of loading pattern details.
-  // LoadablePattern loadablePattern =
-  // loadablePatternReply.getLoadablePatternList().get(0);
-  //
-  //
-  // ofNullable(loadablePattern.getLoadablePatternId()).ifPresent(arrivalCondition::setLoadablePatternId);
-  // ofNullable(loadablePattern.getLoadableStudyStatusId())
-  // .ifPresent(arrivalCondition::setLoadableStudyStatusId);
-  // ofNullable(loadablePattern.getCaseNumber()).ifPresent(arrivalCondition::setCaseNumber);
-  //
-  // ofNullable(loadablePattern.getLoadableQuantityCargoDetailsList())
-  // .ifPresent(loadableQuantityCargoDetails ->
-  // arrivalCondition.setLoadableQuantityCargoDetails(
-  // getLoadableQuantityCargoDetails(loadableQuantityCargoDetails)));
-  //
-  // ofNullable(loadablePattern.getLoadableQuantityCommingleCargoDetailsList())
-  // .ifPresent(loadableQuantityCommingleCargoDetails -> arrivalCondition
-  // .setLoadableQuantityCommingleCargoDetails(new ArrayList<>())); // For future
-  //
-  // ofNullable(loadablePattern.getLoadablePlanStowageDetailsList())
-  // .ifPresent(loadablePlanStowageDetails -> arrivalCondition
-  //
-  // .setLoadablePlanStowageDetails(getLoadablePlanStowageDetails(loadablePlanStowageDetails)));
-  //
-  // ofNullable(loadablePattern.getLoadablePlanBallastDetailsList())
-  // .ifPresent(loadablePlanBallastDetails -> arrivalCondition
-  //
-  // .setLoadablePlanBallastDetails(getLoadablePlanBallastDetails(loadablePlanBallastDetails)));
-  //
-  // ofNullable(loadablePattern.getStabilityParameters())
-  // .ifPresent(item ->
-  // arrivalCondition.setStabilityParameters(getStabilityParameters(item)));
-  // }
-  //
-  // return null;
-  // }
-
-  // private List<LoadablePlanBallastDetails> getLoadablePlanBallastDetails(
-  // List<LoadingPlanTankDetails> loadablePlanBallastFromloadingPlanReply) {
-  //
-  // List<LoadablePlanBallastDetails> ballastDetailsList = new ArrayList<>();
-  // loadablePlanBallastFromloadingPlanReply =
-  // loadablePlanBallastFromloadingPlanReply.stream()
-  // .filter(item -> item.getConditionType() == 1L && item.getValueType() ==
-  // 1L).collect(Collectors.toList());
-  //
-  // loadablePlanBallastFromloadingPlanReply.forEach(item -> {
-  // LoadablePlanBallastDetails ballastDetails = new LoadablePlanBallastDetails();
-  // ofNullable(item.getId()).ifPresent(ballastDetails::setId);
-  // ofNullable(item.getTankId()).ifPresent(ballastDetails::setTankId);
-  // ofNullable(item.getCorrectionFactor()).ifPresent(ballastDetails::setCorrectionFactor);
-  // ofNullable(item.getCorrectedLevel()).ifPresent(ballastDetails::setCorrectedUllage);
-  // ofNullable(item.getSg()).ifPresent(ballastDetails::setSg);
-  // ofNullable(item.getTankName()).ifPresent(ballastDetails::setTankName);
-  // ofNullable(item.getMetricTon()).ifPresent(ballastDetails::setQuantityMT);
-  // // ofNullable(item.get).ifPresent(ballastDetails::setFillingRatio);
-  // ofNullable(item.getTankShortName()).ifPresent(ballastDetails::setTankShortName);
-  //
-  // ballastDetailsList.add(ballastDetails);
-  // });
-  // return ballastDetailsList;
-  // }
-
   private List<LoadablePlanStowageDetailsJson> getLoadablePlanStowageDetails(
       List<LoadingPlanTankDetails> loadablePlanStowageFromloadingPlanReply) {
 
@@ -433,6 +349,7 @@ public class GenerateDischargeStudyJson {
     loadablePlanStowageFromloadingPlanReply.forEach(
         item -> {
           LoadablePlanStowageDetailsJson stowageDetails = new LoadablePlanStowageDetailsJson();
+          ofNullable(item.getId()).ifPresent(stowageDetails::setId);
           ofNullable(item.getApi()).ifPresent(stowageDetails::setApi);
           ofNullable(item.getCargoNominationId()).ifPresent(stowageDetails::setCargoNominationId);
           ofNullable(item.getQuantity()).ifPresent(stowageDetails::setQuantity);
@@ -445,38 +362,6 @@ public class GenerateDischargeStudyJson {
         });
     return stowageDetailsList;
   }
-
-  // private List<LoadableQuantityCargoDetails> getLoadableQuantityCargoDetails(
-  // List<com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails>
-  // loadableQuantityCargoDetails) {
-  // List<LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList = new
-  // ArrayList<>();
-  // loadableQuantityCargoDetails.forEach(item -> {
-  // LoadableQuantityCargoDetails quantityCargoDetail = new
-  // LoadableQuantityCargoDetails();
-  // ofNullable(item.getId()).ifPresent(quantityCargoDetail::setId);
-  // ofNullable(item.getEstimatedAPI()).ifPresent(quantityCargoDetail::setEstimatedAPI);
-  // ofNullable(item.getEstimatedTemp()).ifPresent(quantityCargoDetail::setEstimatedTemp);
-  // ofNullable(item.getMinTolerence()).ifPresent(quantityCargoDetail::setMinTolerence);
-  // ofNullable(item.getMaxTolerence()).ifPresent(quantityCargoDetail::setMaxTolerence);
-  // ofNullable(item.getLoadableMT()).ifPresent(quantityCargoDetail::setLoadableMT);
-  //
-  // ofNullable(item.getDifferencePercentage()).ifPresent(quantityCargoDetail::setDifferencePercentage);
-  // ofNullable(item.getCargoId()).ifPresent(quantityCargoDetail::setCargoId);
-  // ofNullable(item.getOrderQuantity()).ifPresent(quantityCargoDetail::setOrderedQuantity);
-  // ofNullable(item.getCargoAbbreviation()).ifPresent(quantityCargoDetail::setCargoAbbreviation);
-  // ofNullable(item.getColorCode()).ifPresent(quantityCargoDetail::setColorCode);
-  // ofNullable(item.getPriority()).ifPresent(quantityCargoDetail::setPriority);
-  // ofNullable(item.getLoadingOrder()).ifPresent(quantityCargoDetail::setLoadingOrder);
-  // ofNullable(item.getCargoNominationId()).ifPresent(quantityCargoDetail::setCargoNominationId);
-  // ofNullable(item.getSlopQuantity()).ifPresent(quantityCargoDetail::setSlopQuantity);
-  //
-  // ofNullable(item.getTimeRequiredForLoading()).ifPresent(quantityCargoDetail::setTimeRequiredForLoading);
-  //
-  // loadableQuantityCargoDetailsList.add(quantityCargoDetail);
-  // });
-  // return loadableQuantityCargoDetailsList;
-  // }
 
   private StabilityParameter getStabilityParameters(
       List<LoadingPlanStabilityParameters> loadingPlanStabilityParametersList) {

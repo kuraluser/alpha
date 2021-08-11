@@ -73,5 +73,5 @@ public class LoadableQuantityCargoDetails {
   private String dischargeMT;
   private String timeRequiredForDischarging;
   private String dischargingRate;
-  private List<Tank> cowDetails;
+  private List<ContainerWashing> cowDetails;
 }

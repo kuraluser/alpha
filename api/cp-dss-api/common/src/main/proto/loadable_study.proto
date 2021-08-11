@@ -422,8 +422,8 @@ message LoadablePlanPortWiseDetails {
 	int64 portRotationId = 3;
 	LoadablePlanDetailsReply arrivalCondition = 4;
 	LoadablePlanDetailsReply departureCondition = 5;
-	string seaWaterTemperature =6;
-	string ambientTemperature =7;
+	string seaWaterTemperature = 6;
+	string ambientTemperature = 7;
 }
 
 message LoadablePlanDetailsRequest {
@@ -604,8 +604,9 @@ message LoadableQuantityCargoDetails {
 }
 
 message COWDetail {
-  int64 tankId = 1;
+  string tankId = 1;
   string shortName = 2;
+  string washType = 3;
 }
 
 message CargoToppingOffSequenceDetails {

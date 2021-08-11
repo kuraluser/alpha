@@ -2,6 +2,9 @@
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -56,5 +59,5 @@ public class StabilityParameters extends EntityDoc {
   
   //DS field
   @Column(name = "air_draft")
-  private String airDraft;
+  private BigDecimal airDraft;
 }

@@ -3436,27 +3436,11 @@ public class LoadableStudyService {
       LoadablePlanRequest loadablePlanRequest, Long loadableStudiesId, String correlationId, String requestType)
       throws GenericServiceException {
     log.info("Inside saveLoadablePatterns gateway service with correlationId : " + correlationId);
-    if (requestType.equals(DISCHARGE_STUDY_RESULT_JSON_ID)) {
-   	 loadablePlanRequest.setLoadablePlanDetails(loadablePlanRequest.getDischargePlanDetails());
-     }
-    //		ObjectMapper objectMapper = new ObjectMapper();
-    //		try {
-    //			objectMapper.writeValue(
-    //					new File(this.rootFolder + "/json/loadableStudyResult_" + loadableStudiesId + ".json"),
-    //					loadablePlanRequest);
-    //			StatusReply reply = this.saveJson(loadableStudiesId, LOADABLE_STUDY_RESULT_JSON_ID,
-    //					objectMapper.writeValueAsString(loadablePlanRequest));
-    //			if (!SUCCESS.equals(reply.getStatus())) {
-    //				log.error("Error occured  in gateway while writing JSON to database.");
-    //			}
-    //		} catch (IOException e) {
-    //			log.error("Error in json writing ", e);
-    //		}
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
     request.setHasLodicator(loadablePlanRequest.getHasLoadicator());
-    if (requestType.equals(DISCHARGE_STUDY_RESULT_JSON_ID)) {
+    if (requestType.equals(DISCHARGE_STUDY_SAVE_REQUEST)) {
       	 loadablePlanRequest.setLoadablePlanDetails(loadablePlanRequest.getDischargePlanDetails());
       	 request.setRequestType(DICHARGE_STUDY);
         }
@@ -3587,10 +3571,9 @@ public class LoadableStudyService {
                         portWiseBuilder.setPortId(lppwd.getPortId());
                         portWiseBuilder.setPortRotationId(
                             null != lppwd.getPortRotationId() ? lppwd.getPortRotationId() : 0);
-                        portWiseBuilder.setSeaWaterTemperature(
-                                lppwd.getSeaWaterTemperature() );
-                        portWiseBuilder.setAmbientTemperature(
-                               lppwd.getAmbientTemperature());
+                        Optional.ofNullable(lppwd.getSeaWaterTemperature()).ifPresent(portWiseBuilder::setSeaWaterTemperature);
+                        Optional.ofNullable(lppwd.getAmbientTemperature()).ifPresent(portWiseBuilder::setAmbientTemperature);
+
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
               Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);
@@ -3718,18 +3701,20 @@ public class LoadableStudyService {
         .ifPresent(qunatityBuilder::setCargoNominationId);
     Optional.ofNullable(lpqcd.getTimeRequiredForLoading())
         .ifPresent(qunatityBuilder::setTimeRequiredForLoading);
-    lpqcd
-        .getToppingSequence()
-        .forEach(
-            sequence -> {
-              CargoToppingOffSequenceDetails.Builder toppingBuilder =
-                  CargoToppingOffSequenceDetails.newBuilder();
-              Optional.ofNullable(lpqcd.getCargoId()).ifPresent(toppingBuilder::setCargoId);
-              Optional.ofNullable(sequence.getSequenceOrder())
-                  .ifPresent(toppingBuilder::setOrderNumber);
-              Optional.ofNullable(sequence.getTankId()).ifPresent(toppingBuilder::setTankId);
-              qunatityBuilder.addToppingOffSequences(toppingBuilder.build());
-            });
+    Optional.ofNullable(lpqcd
+        .getToppingSequence()).ifPresent( i ->
+    	  i.forEach(
+    	            sequence -> {
+    	              CargoToppingOffSequenceDetails.Builder toppingBuilder =
+    	                  CargoToppingOffSequenceDetails.newBuilder();
+    	              Optional.ofNullable(lpqcd.getCargoId()).ifPresent(toppingBuilder::setCargoId);
+    	              Optional.ofNullable(sequence.getSequenceOrder())
+    	                  .ifPresent(toppingBuilder::setOrderNumber);
+    	              Optional.ofNullable(sequence.getTankId()).ifPresent(toppingBuilder::setTankId);
+    	              qunatityBuilder.addToppingOffSequences(toppingBuilder.build());
+    	            }));
+    
+  
 
     Optional.ofNullable(lpqcd.getCargoNominationTemperature())
         .ifPresent(qunatityBuilder::setCargoNominationTemperature);
@@ -3744,10 +3729,11 @@ public class LoadableStudyService {
             i ->
                 i.forEach(
                     cowDetail -> {
-                      COWDetail.Builder cowDetailBuilder = COWDetail.newBuilder(); // TODO
+                      COWDetail.Builder cowDetailBuilder = COWDetail.newBuilder();
                       Optional.ofNullable(cowDetail.getShortName())
                           .ifPresent(cowDetailBuilder::setShortName);
                       Optional.ofNullable(cowDetail.getTankId()).ifPresent(cowDetailBuilder::setTankId);
+                      Optional.ofNullable(cowDetail.getWashType()).ifPresent(cowDetailBuilder::setWashType);
                       qunatityBuilder.addCowDetails(cowDetailBuilder.build());
                     }));
 
