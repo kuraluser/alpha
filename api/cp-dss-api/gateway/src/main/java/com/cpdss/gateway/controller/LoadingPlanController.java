@@ -21,6 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
+import com.cpdss.gateway.service.loadingplan.LoadingInformationBuilderService;
+import com.cpdss.gateway.domain.*;
 
 @Log4j2
 @Validated
@@ -34,6 +38,13 @@ public class LoadingPlanController {
   @Autowired private LoadingInstructionService loadingInstructionService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
+
+  @Autowired LoadingPlanGrpcService loadingPlanGRPCService;
+  @Autowired
+  private LoadingInformationBuilderService loadingInformationBuilderService;
+
+  @Autowired
+  LoadingPlanGrpcService loadingPlanGrpcService;
 
   /**
    * Get API to collect the port rotation details of active Voyage
@@ -681,5 +692,126 @@ public class LoadingPlanController {
           e.getMessage(),
           e);
     }
+  }
+
+  /**
+   * Get Loading Information ALGO Status API
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/algo-status")
+  public LoadingInfoAlgoStatus getLoadingInfoStatus(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @RequestBody LoadingInfoAlgoStatusRequest request)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Get Loading Information Status of" + " vessel {}, voyage {}, loading information {}",
+          vesselId,
+          voyageId,
+          infoId);
+      return loadingInformationService.getLoadingInfoAlgoStatus(
+          vesselId, voyageId, infoId, request.getProcessId());
+    } catch (GenericServiceException e) {
+      log.error("Exception in Get Loading Sequence API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          headers,
+          HttpStatusCode.BAD_REQUEST,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Get Loading Sequence API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * @param loadablePatternId
+   * @param headers
+   * @return
+   * @throws CommonRestException AlgoErrorResponse
+   */
+  @GetMapping(value = "/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/algo-errors")
+  public AlgoErrorResponse getAlgoErrors(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Get Loading Information ALGO Errors Status for "
+              + "vessel {}, voyage {}, loading information {}",
+          vesselId,
+          voyageId,
+          infoId);
+      return loadingInformationService.getLoadingInfoAlgoErrors(vesselId, voyageId, infoId);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when getAlgoErrors", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          headers,
+          HttpStatusCode.BAD_REQUEST,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Error when getAlgoErrors", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * To retrieve rule against loadable study
+   *
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+          value = "/loading/ullage-bill-update",
+          consumes = MediaType.APPLICATION_JSON_VALUE,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public UllageBillReply saveRulesForLoadableStudy(
+          @RequestHeader HttpHeaders headers, @RequestBody UllageBillRequest inputData)
+          throws CommonRestException {
+    UllageBillReply reply = new UllageBillReply();
+
+    try {
+      reply = loadingPlanService.getLoadableStudyShoreTwo(
+              headers.getFirst(CORRELATION_ID_HEADER), inputData);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when update bill rules", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when update bill rules", e);
+      throw new CommonRestException(
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              headers,
+              HttpStatusCode.INTERNAL_SERVER_ERROR,
+              e.getMessage(),
+              e);
+    }
+    return reply;
   }
 }

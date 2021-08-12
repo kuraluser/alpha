@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { ICargo, ILoadableQuantityCargo, OPERATIONS } from '../../core/models/common.model';
-import { ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequences, ILoadingSequenceValueObject } from '../models/loading-discharging.model';
+import { ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequences, ILoadingDischargingSequenceValueObject } from '../models/loading-discharging.model';
 import { durationValidator } from '../validators/duration-validator.directive';
 import { ConfirmationService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
@@ -68,8 +68,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   loadingDischargingSequenceForm: FormGroup;
   columns: IDataTableColumn[];
   listData = <ILoadingSequenceDropdownData>{};
-  cargoTobeLoaded: ILoadableQuantityCargo[];
-  loadingDischargingDelays: ILoadingSequenceValueObject[] = [];
+  loadingDischargingDelays: ILoadingDischargingSequenceValueObject[] = [];
   editMode: DATATABLE_EDITMODE = DATATABLE_EDITMODE.CELL;
   loadingDischargingDelayList: ILoadingDischargingDelays[];
   addInitialDelay = false;
@@ -158,11 +157,11 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   * Method for initializing loading sequence row
   *
   * @private
-  * @param {ILoadingSequenceValueObject} loadingDischargingDelay
+  * @param {ILoadingDischargingSequenceValueObject} loadingDischargingDelay
   * @returns
   * @memberof LoadingDischargingManageSequenceComponent
   */
-  initLoadingDischargingSequenceFormGroup(loadingDischargingDelay: ILoadingSequenceValueObject, index: number, initialDelay: boolean) {
+  initLoadingDischargingSequenceFormGroup(loadingDischargingDelay: ILoadingDischargingSequenceValueObject, index: number, initialDelay: boolean) {
     return this.fb.group({
       id: loadingDischargingDelay.id,
       reasonForDelay: this.fb.control(loadingDischargingDelay.reasonForDelay.value, [Validators.required]),

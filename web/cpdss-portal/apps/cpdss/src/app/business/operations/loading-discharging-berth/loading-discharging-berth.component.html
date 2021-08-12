@@ -10,6 +10,7 @@
 <form [formGroup]="berthForm">
     <div formArrayName="berth" class="row no-gutters" >
         <div [formGroupName]="i" class="col-6 mb-5" *ngFor="let berthData of berthFormArray.controls; let i = index;">
+            <div class="error-icon-wrapper dropdown-berth pr-15 mr-5">
             <ng-container *ngIf="berthData.controls && berthData.controls.edit.value">
                 <p-dropdown  id="{{'berth_select_'+ i}}" styleClass="form-control dropdown-panel-auto" [filter]="true"
                     [options]="availableBerths" optionLabel="berthName"  [formControl]="berthData.controls['name']"
@@ -22,8 +23,9 @@
                 <cpdss-portal-validation-error [errors]="berthData.controls.name.errors"
                     [errorMessages]="errorMesages.berth"></cpdss-portal-validation-error>
             </ng-container>
+            
             <ng-container *ngIf="!berthData.controls.edit.value">
-                <div class="bg-highlight mr-15" (click)="selectBerth(berthData, i)">
+                <div class="bg-highlight" (click)="selectBerth(berthData, i)">
                     <span class="v-top">{{(i+1) + '. '}}</span><label class="mb-0 content-berth">{{berthData?.controls?.name?.value?.berthName}}</label>
                     <div class="pull-right">
                         <span *ngIf="editMode"><a type="button" id="edit-berth-btn" class="pencil-icon mr-5"
@@ -33,6 +35,7 @@
                     </div>
                 </div>
             </ng-container>
+        </div>
         </div>
     </div>
 </form>

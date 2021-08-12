@@ -2,11 +2,14 @@
 package com.cpdss.loadingplan.service.algo;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply.Builder;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStabilityParameters;
@@ -116,9 +119,11 @@ public class LoadingPlanAlgoService {
    * CALL TO ALGO - for LOADING PLAN Generates Loading plan from Algo
    *
    * @param request Loading Information Id Only
+   * @param builder
    * @throws GenericServiceException
    */
-  public void generateLoadingPlan(LoadingInfoAlgoRequest request) throws GenericServiceException {
+  public void generateLoadingPlan(LoadingInfoAlgoRequest request, Builder builder)
+      throws GenericServiceException {
     log.info("Generating Loading Plan");
     Optional<LoadingInformation> loadingInfoOpt =
         loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingInfoId());
@@ -157,6 +162,9 @@ public class LoadingPlanAlgoService {
     loadingInformationRepository.save(loadingInfoOpt.get());
     createLoadingInformationAlgoStatus(
         loadingInfoOpt.get(), response.getProcessId(), loadingInfoStatusOpt.get());
+    builder.setLoadingInfoId(loadingInfoOpt.get().getId());
+    builder.setProcessId(response.getProcessId());
+    ;
   }
 
   /** @param request void */
@@ -708,5 +716,62 @@ public class LoadingPlanAlgoService {
           ballastValves.add(ballastValve);
         });
     this.ballastValveRepository.saveAll(ballastValves);
+  }
+
+  /**
+   * @param request
+   * @param builder
+   * @throws GenericServiceException
+   */
+  public void getLoadingInfoAlgoStatus(
+      LoadingInfoStatusRequest request,
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusReply.Builder
+          builder)
+      throws GenericServiceException {
+    log.info("Fetching ALGO status of Loading Information {}", request.getLoadingInfoId());
+    Optional<LoadingInformationAlgoStatus> algoStatusOpt =
+        loadingInfoAlgoStatusRepository.findByProcessIdAndLoadingInformationIdAndIsActiveTrue(
+            request.getProcessId(), request.getLoadingInfoId());
+    if (algoStatusOpt.isEmpty()) {
+      throw new GenericServiceException(
+          "Could not find loading info status for loading information "
+              + request.getLoadingInfoId(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    builder.setLoadingInfoId(request.getLoadingInfoId());
+    builder.setLoadingInfoStatusId(algoStatusOpt.get().getLoadingInformationStatus().getId());
+    builder.setLoadingInfoStatusLastModifiedTime(
+        algoStatusOpt.get().getLastModifiedDateTime().toString());
+  }
+
+  /**
+   * Fetches Loading Information ALGO errors
+   *
+   * @param request
+   * @param builder
+   */
+  public void getLoadingInfoAlgoErrors(
+      AlgoErrorRequest request,
+      com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder builder)
+      throws GenericServiceException {
+    log.info("Fetching ALGO errors of Loading Information {}", request.getLoadingInformationId());
+    List<AlgoErrorHeading> errorHeaders =
+        algoErrorHeadingRepository.findByLoadingInformationIdAndIsActiveTrue(
+            request.getLoadingInformationId());
+    errorHeaders.forEach(
+        header -> {
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder errorBuilder =
+              com.cpdss.common.generated.LoadableStudy.AlgoErrors.newBuilder();
+          errorBuilder.setErrorHeading(header.getErrorHeading());
+          header
+              .getAlgoErrors()
+              .forEach(
+                  error -> {
+                    errorBuilder.addErrorMessages(error.getErrorMessage());
+                  });
+          builder.addAlgoErrors(errorBuilder.build());
+        });
   }
 }

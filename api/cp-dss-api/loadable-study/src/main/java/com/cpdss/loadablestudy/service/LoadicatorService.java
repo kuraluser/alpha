@@ -959,11 +959,9 @@ public class LoadicatorService {
               false,
               algoResponse.getFeedbackLoopCount(),
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
-          log.info("saveloadicatorDataForSynopticalTable== " + enableCommunication);
           this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
           loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
-          log.info("enableCommunication " + enableCommunication);
           if (enableCommunication) {
             passResultToCommunication(
                 objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
@@ -1018,7 +1016,6 @@ public class LoadicatorService {
       Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt,
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus)
       throws InvalidProtocolBufferException, JsonProcessingException, GenericServiceException {
-    log.info("inside Communication ==Loadicator ==" + loadableStudyCommunicationStatus);
     if (loadableStudyCommunicationStatus.get().getMessageUUID() != null) {
       LoadableStudy.AlgoResponseCommunication.Builder algoRespComm =
           LoadableStudy.AlgoResponseCommunication.newBuilder();
@@ -1041,8 +1038,6 @@ public class LoadicatorService {
             .merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
         algoRespComm.setLoadablePatternAlgoRequest(loadablePatternAlgoRequest.build());
       }
-      log.info(
-          "inside passResultPayloadToEnvoyWriter ==Loadicator ==" + loadableStudyOpt.get().getId());
       communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
     }
   }

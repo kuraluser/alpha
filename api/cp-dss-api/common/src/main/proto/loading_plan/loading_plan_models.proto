@@ -376,6 +376,12 @@ message LoadingInfoAlgoRequest {
   int64 loadingInfoId = 1;
 }
 
+message LoadingInfoAlgoReply {
+  int64 loadingInfoId = 1;
+  string processId = 2;
+  ResponseStatus responseStatus = 3;
+}
+
 message LoadingInfoSaveResponse {
   int64 loadingInfoId = 1;
   int64 vesselId = 2;
@@ -701,4 +707,59 @@ message LoadingInfoLoadicatorDataReply {
   string processId = 1;
   int64 loadableStudyId = 2;
   ResponseStatus responseStatus = 3;
+}
+
+message LoadingInfoStatusRequest {
+  int64 loadingInfoId = 1;
+  string processId = 2;
+}
+
+message LoadingInfoStatusReply {
+  int64 loadingInfoId = 1;
+  int64 loadingInfoStatusId = 2;
+  string loadingInfoStatusLastModifiedTime = 3;
+  ResponseStatus responseStatus = 4;
+}
+
+
+message BillOfLanding{
+  int64 id = 1;
+  int64 dischargeStudyId = 2;
+  int64 portId = 3;
+  int64 cargoId = 4;
+  string blRefNumber = 5;
+  int64 bblAt60f = 6;
+  int64 quantityLt = 7;
+  int64 quantityMt = 8;
+  int64 klAt15c = 9;
+  int64 api = 10;
+  int64 temperature = 11;
+  int64 isActive = 12;
+  int64 version = 13;
+}
+
+message UpdateUllage{
+  int64 id = 1;
+  int64 tankId = 2 ;
+  int64 correctedUllage = 3;
+  int64 correctionFactor = 4;
+  int64 quantityMt = 5;
+  bool isBallast = 6;
+  string fillingRatio = 7;
+  string api =8;
+  string temperature =9;
+  string observedM3 =10;
+  string sg =11;
+  bool isCommingle =12;
+}
+
+message UllageBillRequest{
+  repeated BillOfLanding billOfLanding = 1;
+  repeated UpdateUllage updateUllage = 2;
+}
+
+
+message UllageBillReply{
+  ResponseStatus responseStatus = 1;
+  repeated RulePlans rulePlan = 2;
 }

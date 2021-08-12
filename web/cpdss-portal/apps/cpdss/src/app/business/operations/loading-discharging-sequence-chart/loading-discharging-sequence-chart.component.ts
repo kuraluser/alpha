@@ -4,7 +4,7 @@ import * as Highcharts from 'highcharts';
 import Theme from 'highcharts/themes/grid-light';
 import GanttChart from 'highcharts/modules/gantt';
 import Annotations from 'highcharts/modules/annotations';
-import { IPump, IPumpData, IStabilityParam, ITank, ITankData } from './loading-discharging-sequence-chart.model';
+import { ICargoStage, IPump, IPumpData, IStabilityParam, ITank, ITankData } from './loading-discharging-sequence-chart.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { OPERATIONS } from '../../core/models/common.model';
 import { LoadingDischargingSequenceApiService } from '../services/loading-discharging-sequence-api.service';
@@ -38,17 +38,24 @@ Annotations(Highcharts);
 export class LoadingDischargingSequenceChartComponent implements OnInit {
 
   // Input fields
-  @Input() static operation: OPERATIONS = OPERATIONS.LOADING;
-
-  get operation() {
-    return LoadingDischargingSequenceChartComponent.operation;
+  @Input() vesselId: number;
+  @Input() voyageId: number;
+  @Input() infoId: number;
+  @Input()
+  get operation(): OPERATIONS {
+    return LoadingDischargingSequenceChartComponent._operation;
+  }
+  set operation(value: OPERATIONS) {
+    LoadingDischargingSequenceChartComponent._operation = value;
   }
 
+
   // Static fields
-  static cargoStages: any[];
+  static cargoStages: ICargoStage[];
   static cargos: ITankData[];
   static ballasts: ITankData[];
   static cargoLoadingRates: number[][];
+  static _operation: OPERATIONS;
 
   // Public fileds
   OPERATIONS = OPERATIONS;
@@ -105,7 +112,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.ngxSpinnerService.show();
 
-    const sequenceDataResponse = await this.loadingDischargingSequenceService.getSequenceData(0, 0, 0).toPromise();
+    const sequenceDataResponse = await this.loadingDischargingSequenceService.getSequenceData(this.vesselId, this.voyageId, this.infoId, this.operation).toPromise();
     const sequenceData = this.loadingDischargingTransformationService.transformSequenceData(sequenceDataResponse);
     LoadingDischargingSequenceChartComponent.cargos = sequenceData.cargos;
     LoadingDischargingSequenceChartComponent.ballasts = sequenceData.ballasts;
@@ -169,7 +176,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       });
     });
     this.cargoSequenceChartSeries = [{
-      name: `${LoadingDischargingSequenceChartComponent.operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} SEQUENCE`,
+      name: `${LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} SEQUENCE`,
       custom: LoadingDischargingSequenceChartComponent.cargoStages,
       showInLegend: false,
       data: cargoSequenceSeriesData
@@ -180,7 +187,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 240, // Keep all charts left aligned
+        marginLeft: 270, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
           render: this.sequnceChartRender
@@ -273,28 +280,20 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             useHTML: true,
             formatter: function () {
               if (!this.isLast) {
-                const equalIndex = this.axis.tickPositions.findIndex(value => value === this.value);
-                const nextTick = this.axis.tickPositions[equalIndex + 1];
-                const cargos = [];
                 let cargosLabel = '';
-
-                LoadingDischargingSequenceChartComponent.cargos.forEach((cargo: any) => {
-                  if (cargo.start >= this.value && cargo.end <= nextTick && !cargos.some(item => item?.cargoNominationId === cargo?.cargoNominationId)) {
-                    cargos.push({ cargoNominationId: cargo?.cargoNominationId, color: cargo?.color, abbreviation: cargo?.abbreviation, name: cargo?.name });
-                  }
-                });
-
-                cargos.forEach(cargo => {
-                  cargosLabel += '<span><span class="badge-custom mx-1" style="background-color: ' + cargo?.color + '"> ' + cargo?.abbreviation + '</span>' + cargo?.name + '</span>';
-                });
 
                 const stage = LoadingDischargingSequenceChartComponent.cargoStages.find((data: any) => data.start <= this.value && data.end > this.value);
 
+                stage?.cargos?.forEach(cargo => {
+                  cargosLabel += '<p><span class="badge-custom mx-1" style="background-color: ' + cargo?.color + '"> ' + cargo?.abbreviation + '</span> - ' + cargo?.quantity + ' MT</p>';
+                });
+
+                const duration = (stage?.end - stage?.start) / (60 * 60 * 1000);
                 const categoryLabel =
                   '<div class="row">' +
                   '<div class="col-md-12" style="text-align: center">' +
                   cargosLabel +
-                  '<br/><span>' + stage.duration + '</span>' +
+                  '<br/><span>' + duration.toFixed(2) + ' HRS</span>' +
                   '</div>' +
                   '</div>';
 
@@ -323,7 +322,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         {
           opposite: false,
           title: {
-            text: `TOTAL: ${this.cargoTankCategories.reduce((a, b) => a + b.quantity, 0)} BBLS`,
+            text: `TOTAL: ${this.cargoTankCategories.reduce((a, b) => a + b.quantity, 0).toFixed(2)} MT`,
           },
           lineColor: '#bebebe',
           lineWidth: 1,
@@ -336,29 +335,17 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           labels: {
             useHTML: true,
             formatter: function () {
-              const equalIndex = this.axis.tickPositions.findIndex(value => value === this.value);
-              const nextTick = this.axis.tickPositions[equalIndex + 1];
               let quantity = 0;
-              const quantityPerTank = [];
-              LoadingDischargingSequenceChartComponent.cargos.forEach((cargo: any) => {
-                if ((cargo.start >= this.value && cargo.end <= nextTick) || (cargo.start >= this.value && cargo.start < nextTick) || (cargo.end > this.value && cargo.end <= nextTick)) {
-                  const index = quantityPerTank.findIndex(tank => tank.tankId === cargo.tankId);
-                  if (index === -1 || index === undefined) {
-                    quantityPerTank.push({ tankId: cargo.tankId, quantity: cargo.quantity });
-                  } else {
-                    quantityPerTank[index].quantity = cargo.quantity;
-                  }
-                }
-              });
 
-              quantityPerTank.forEach(tank => {
-                quantity += Number(tank.quantity);
+              const stage = LoadingDischargingSequenceChartComponent.cargoStages.find((data: any) => data.start <= this.value && data.end > this.value);
+              stage?.cargos?.forEach(cargo => {
+                quantity += Number(cargo.quantity);
               });
 
               const categoryLabel =
                 '<div class="row">' +
                 '<div class="col-md-12" style="text-align: center">' +
-                '<span>' + quantity + ' BBLS</span>' +
+                '<span>' + quantity.toFixed(2) + ' MT</span>' +
                 '</div>' +
                 '</div>';
 
@@ -368,9 +355,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           offset: '0'
         },
         {
-          visible: LoadingDischargingSequenceChartComponent.operation === OPERATIONS.LOADING,
+          visible: LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING,
           title: {
-            text: `${LoadingDischargingSequenceChartComponent.operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} RATE BBLS/HR`,
+            text: `${LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} RATE BBLS/HR`,
           },
           grid: {
             enabled: true,
@@ -392,7 +379,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 const categoryLabel =
                   '<div class="row">' +
                   '<div class="col-md-12" style="text-align: center">' +
-                  '<span>' + rate + ' BBLS/ HR</span>' +
+                  '<span>' + rate + ' BBLS/HR</span>' +
                   '</div>' +
                   '</div>';
 
@@ -474,7 +461,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 return item.quantity.toString();
               }),
               title: {
-                text: `<div style="padding: 31px 0px; white-space: normal; text-align: center; border-right: 0; border-bottom: 0;">QTY BBLS</div>`,
+                text: `<div style="padding: 31px 0px; white-space: normal; text-align: center; border-right: 0; border-bottom: 0;">QTY MT</div>`,
                 useHTML: true,
                 y: -73.5
               }
@@ -542,7 +529,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       });
     });
     this.cargoPumpSequenceChartSeries = [{
-      name: `${LoadingDischargingSequenceChartComponent.operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} RATE`,
+      name: `${LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} RATE`,
       custom: LoadingDischargingSequenceChartComponent.cargoStages,
       showInLegend: false,
       data: cargoPumpSequenceSeriesData
@@ -553,7 +540,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 240, // Keep all charts left aligned
+        marginLeft: 270, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
         }
@@ -620,7 +607,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         },
         {
           title: {
-            text: LoadingDischargingSequenceChartComponent.operation === OPERATIONS.DISCHARGING ? `DISCHARGING RATE BBLS/HR` : null,
+            text: LoadingDischargingSequenceChartComponent._operation === OPERATIONS.DISCHARGING ? `DISCHARGING RATE BBLS/HR` : null,
           },
           grid: {
             enabled: true,
@@ -634,18 +621,18 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           tickLength: 100,
           margin: 10,
           labels: {
-            enabled: LoadingDischargingSequenceChartComponent.operation === OPERATIONS.DISCHARGING,
+            enabled: LoadingDischargingSequenceChartComponent._operation === OPERATIONS.DISCHARGING,
             useHTML: true,
             formatter: function () {
               if (!this.isLast) {
                 const stage = LoadingDischargingSequenceChartComponent.cargoStages.find((data: any) => data.start <= this.value && data.end >= this.value);
-                const rate = stage?.rate;
+                const rate = 0;
 
                 const categoryLabel =
                   '<div class="row">' +
                   '<div class="col-md-12" style="text-align: center">' +
                   '<span>Requested Max</span>' +
-                  '<br/><span>' + rate + ' BBLS/ HR</span>' +
+                  '<br/><span>' + rate + ' BBLS/HR</span>' +
                   '</div>' +
                   '</div>';
 
@@ -740,7 +727,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       });
     });
     this.ballastSequenceChartSeries = [{
-      name: `${LoadingDischargingSequenceChartComponent.operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} SEQUENCE`,
+      name: `${LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} SEQUENCE`,
       custom: LoadingDischargingSequenceChartComponent.cargoStages,
       showInLegend: false,
       data: ballastSequenceSeriesData
@@ -751,7 +738,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 240, // Keep all charts left aligned
+        marginLeft: 270, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
         }
@@ -861,7 +848,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               const categoryLabel =
                 '<div class="row">' +
                 '<div class="col-md-12" style="text-align: center;">' +
-                '<span>' + quantity + ' BBLS</span>' +
+                '<span>' + quantity + ' MT</span>' +
                 '</div>' +
                 '</div>';
 
@@ -977,7 +964,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     });
 
     this.ballastPumpSequenceChartSeries = [{
-      name: `${LoadingDischargingSequenceChartComponent.operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} RATE`,
+      name: `${LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING ? 'LOADING' : 'DISCHARGING'} RATE`,
       custom: LoadingDischargingSequenceChartComponent.cargoStages,
       showInLegend: false,
       data: ballastPumpSequenceSeriesData
@@ -988,7 +975,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 240, // Keep all charts left aligned
+        marginLeft: 270, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
         }
@@ -1181,7 +1168,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 240, // Keep all charts left aligned
+        marginLeft: 270, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
           load: this.makeSumSeries
@@ -1293,76 +1280,74 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
   }
 
   /**
-   * Set stability chart data
+   * Set stabilityparameters chart data
    *
    * @memberof LoadingDischargingSequenceChartComponent
    */
   setStabilityData() {
-    this.stabilityChartSeries = [
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: "FORE DRAFT",
-        custom: {
-          showFinalValue: true
-        },
-        data: this.stabilityParams.find(item => item.name === 'fore_draft')?.data,
+    this.stabilityChartSeries = [{
+      yAxis: 0,
+      type: 'areaspline',
+      name: "FORE DRAFT",
+      custom: {
+        showFinalValue: true
       },
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: "AFT DRAFT",
-        custom: {
-          showFinalValue: true
-        },
-        data: this.stabilityParams.find(item => item.name === 'aft_draft')?.data,
+      data: this.stabilityParams.find(item => item.name === 'fore_draft')?.data,
+    }, {
+      yAxis: 0,
+      type: 'areaspline',
+      name: "AFT DRAFT",
+      custom: {
+        showFinalValue: true
       },
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: "TRIM",
-        custom: {
-          showFinalValue: true
-        },
-        data: this.stabilityParams.find(item => item.name === 'trim')?.data,
+      data: this.stabilityParams.find(item => item.name === 'aft_draft')?.data,
+    },
+    {
+      yAxis: 0,
+      type: 'areaspline',
+      name: "TRIM",
+      custom: {
+        showFinalValue: true
       },
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: "UKC",
-        custom: {
-          showFinalValue: true
-        },
-        data: this.stabilityParams.find(item => item.name === 'ukc')?.data,
+      data: this.stabilityParams.find(item => item.name === 'trim')?.data,
+    },
+    {
+      yAxis: 0,
+      type: 'areaspline',
+      name: "UKC",
+      custom: {
+        showFinalValue: true
       },
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: "GM (M)",
-        custom: {
-          showFinalValue: true
-        },
-        data: this.stabilityParams.find(item => item.name === 'gm')?.data,
+      data: this.stabilityParams.find(item => item.name === 'ukc')?.data,
+    },
+    {
+      yAxis: 0,
+      type: 'areaspline',
+      name: "GM (M)",
+      custom: {
+        showFinalValue: true
       },
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: "MAX. SHEARING FORCE (FR.NO./%)",
-        data: this.stabilityParams.find(item => item.name === 'sf')?.data,
-      },
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: "MAX. BENDING MOMENT (FR.NO./%)",
-        data: this.stabilityParams.find(item => item.name === 'bm')?.data,
-      }
-    ];
+      data: this.stabilityParams.find(item => item.name === 'gm')?.data,
+    },
+    {
+      yAxis: 0,
+      type: 'areaspline',
+      name: "MAX. SHEARING FORCE (FR.NO./%)",
+      data: this.stabilityParams.find(item => item.name === 'sf')?.data,
+    },
+    {
+      yAxis: 0,
+      type: 'areaspline',
+      name: "MAX. BENDING MOMENT (FR.NO./%)",
+      data: this.stabilityParams.find(item => item.name === 'bm')?.data,
+    }];
+
     this.stabilityGanttChart = {
       credits: {
         enabled: false
       },
       chart: {
-        marginLeft: 240, // Keep all charts left aligned
+        marginLeft: 270, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
           render: this.drawTable
@@ -1418,7 +1403,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toString();
+              return number.toFixed(2);
             }
           },
           tickPositions: this.stageTickPositions,
@@ -1681,7 +1666,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     const chart: Highcharts.Chart = this;
 
     // Show COW legends only in discharging operation
-    if (LoadingDischargingSequenceChartComponent.operation === OPERATIONS.DISCHARGING) {
+    if (LoadingDischargingSequenceChartComponent._operation === OPERATIONS.DISCHARGING) {
       const cowLegend = `<ul class="list-group list-group-horizontal cow-legend">
                           <li class="list-group-item" style="background: none; border: none;">
                             <i class="pi pi-sort" style="color: #666666;font-size: 1.5em; padding-right: 5px; margin-top: -2px;"></i>

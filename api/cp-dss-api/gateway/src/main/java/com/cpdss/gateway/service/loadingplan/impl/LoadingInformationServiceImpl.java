@@ -3,12 +3,16 @@ package com.cpdss.gateway.service.loadingplan.impl;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
-import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -316,8 +320,6 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
               .ifPresent(dto::setRegulationAndRestriction);
           dto.setMaxLoa(
               bd.getMaxLoa().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxLoa()));
-          dto.setMaxShipDepth(
-              bd.getMaxDraft().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxDraft()));
           dto.setLineDisplacement(bd.getLineDisplacement());
           dto.setHoseConnections(bd.getHoseConnection());
           berthDetails.add(dto);
@@ -803,9 +805,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     try {
       log.info("Calling generateLoadingPlan in loading-plan microservice via GRPC");
       LoadingInfoAlgoResponse algoResponse = new LoadingInfoAlgoResponse();
-      ResponseStatus response = this.loadingPlanGrpcService.generateLoadingPlan(infoId);
-      if (response.getStatus().equalsIgnoreCase(SUCCESS)) {
+      LoadingInfoAlgoReply response = this.loadingPlanGrpcService.generateLoadingPlan(infoId);
+      if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
         CommonSuccessResponse successResponse = new CommonSuccessResponse("SUCCESS", "");
+        algoResponse.setProcessId(response.getProcessId());
         algoResponse.setResponseStatus(successResponse);
         return algoResponse;
       } else {
@@ -822,5 +825,67 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  @Override
+  public LoadingInfoAlgoStatus getLoadingInfoAlgoStatus(
+      Long vesselId, Long voyageId, Long infoId, String processId) throws GenericServiceException {
+    log.info("Fetching ALGO status of Loading Information {} from Loading-Info MS", infoId);
+    LoadingInfoStatusRequest.Builder requestBuilder = LoadingInfoStatusRequest.newBuilder();
+    requestBuilder.setLoadingInfoId(infoId);
+    requestBuilder.setProcessId(processId);
+    LoadingInfoStatusReply reply =
+        this.loadingPlanGrpcService.getLoadingInfoAlgoStatus(requestBuilder.build());
+    LoadingInfoAlgoStatus algoStatus = new LoadingInfoAlgoStatus();
+    if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      throw new GenericServiceException(
+          "Failed to fetch Loading Information ALGO status",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    algoStatus.setLoadingInfoStatusId(reply.getLoadingInfoStatusId());
+    algoStatus.setLoadingInfoStatusLastModifiedTime(reply.getLoadingInfoStatusLastModifiedTime());
+    algoStatus.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
+    return algoStatus;
+  }
+
+  @Override
+  public AlgoErrorResponse getLoadingInfoAlgoErrors(Long vesselId, Long voyageId, Long infoId)
+      throws GenericServiceException {
+    log.info("Fetching ALGO errors of Loading Information {} from Loading-Info MS", infoId);
+    AlgoErrorRequest.Builder requestBuilder = AlgoErrorRequest.newBuilder();
+    requestBuilder.setLoadingInformationId(infoId);
+    AlgoErrorResponse algoResponse = new AlgoErrorResponse();
+    AlgoErrorReply reply =
+        this.loadingPlanGrpcService.getLoadingInfoAlgoErrors(requestBuilder.build());
+    if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      throw new GenericServiceException(
+          "Failed to fetch Loading Information ALGO status",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    this.buildAlgoErrors(reply, algoResponse);
+    return algoResponse;
+  }
+
+  /**
+   * Builds ALGO error response
+   *
+   * @param reply
+   * @param algoResponse
+   */
+  private void buildAlgoErrors(AlgoErrorReply reply, AlgoErrorResponse algoResponse) {
+    List<AlgoError> algoErrors = new ArrayList<AlgoError>();
+    reply
+        .getAlgoErrorsList()
+        .forEach(
+            error -> {
+              AlgoError algoError = new AlgoError();
+              algoError.setErrorHeading(error.getErrorHeading());
+              algoError.setErrorDetails(error.getErrorMessagesList());
+              algoErrors.add(algoError);
+            });
+    algoResponse.setAlgoErrors(algoErrors);
+    algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
   }
 }
