@@ -404,6 +404,54 @@ public final class DischargeStudyOperationServiceGrpc {
     return getGenerateDischargePatternsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+          com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+      getConfirmPlanMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ConfirmPlan",
+      requestType = com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+          com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+      getConfirmPlanMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+            com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+        getConfirmPlanMethod;
+    if ((getConfirmPlanMethod = DischargeStudyOperationServiceGrpc.getConfirmPlanMethod) == null) {
+      synchronized (DischargeStudyOperationServiceGrpc.class) {
+        if ((getConfirmPlanMethod = DischargeStudyOperationServiceGrpc.getConfirmPlanMethod)
+            == null) {
+          DischargeStudyOperationServiceGrpc.getConfirmPlanMethod =
+              getConfirmPlanMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+                          com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ConfirmPlan"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeStudyOperationServiceMethodDescriptorSupplier("ConfirmPlan"))
+                      .build();
+        }
+      }
+    }
+    return getConfirmPlanMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeStudyOperationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeStudyOperationServiceStub> factory =
@@ -513,6 +561,14 @@ public final class DischargeStudyOperationServiceGrpc {
       asyncUnimplementedUnaryCall(getGenerateDischargePatternsMethod(), responseObserver);
     }
 
+    /** */
+    public void confirmPlan(
+        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getConfirmPlanMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -599,6 +655,13 @@ public final class DischargeStudyOperationServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.AlgoRequest,
                       com.cpdss.common.generated.LoadableStudy.AlgoReply>(
                       this, METHODID_GENERATE_DISCHARGE_PATTERNS)))
+          .addMethod(
+              getConfirmPlanMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
+                      com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>(
+                      this, METHODID_CONFIRM_PLAN)))
           .build();
     }
   }
@@ -697,6 +760,17 @@ public final class DischargeStudyOperationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void confirmPlan(
+        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getConfirmPlanMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -762,6 +836,12 @@ public final class DischargeStudyOperationServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.AlgoRequest request) {
       return blockingUnaryCall(
           getChannel(), getGenerateDischargePatternsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply confirmPlan(
+        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
+      return blockingUnaryCall(getChannel(), getConfirmPlanMethod(), getCallOptions(), request);
     }
   }
 
@@ -837,6 +917,14 @@ public final class DischargeStudyOperationServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getGenerateDischargePatternsMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
+        confirmPlan(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getConfirmPlanMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DELETE_DISCHARGE_STUDY = 0;
@@ -845,6 +933,7 @@ public final class DischargeStudyOperationServiceGrpc {
   private static final int METHODID_GET_DISCHARGE_STUDY_PORT_WISE_CARGOS = 3;
   private static final int METHODID_SAVE_DISCHARGE_STUDY_BACK_LOADING = 4;
   private static final int METHODID_GENERATE_DISCHARGE_PATTERNS = 5;
+  private static final int METHODID_CONFIRM_PLAN = 6;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -934,6 +1023,13 @@ public final class DischargeStudyOperationServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply>)
                   responseObserver);
           break;
+        case METHODID_CONFIRM_PLAN:
+          serviceImpl.confirmPlan(
+              (com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1005,6 +1101,7 @@ public final class DischargeStudyOperationServiceGrpc {
                       .addMethod(getGetDischargeStudyPortWiseCargosMethod())
                       .addMethod(getSaveDischargeStudyBackLoadingMethod())
                       .addMethod(getGenerateDischargePatternsMethod())
+                      .addMethod(getConfirmPlanMethod())
                       .build();
         }
       }

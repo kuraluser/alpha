@@ -11,6 +11,8 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
@@ -31,6 +33,7 @@ import com.cpdss.gateway.domain.BackLoading;
 import com.cpdss.gateway.domain.BillOfLadding;
 import com.cpdss.gateway.domain.Cargo;
 import com.cpdss.gateway.domain.CargoNomination;
+import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
@@ -648,5 +651,26 @@ public class DischargeStudyService {
 
   public AlgoReply generateDischargePatterns(AlgoRequest request) {
     return this.dischargeStudyOperationServiceBlockingStub.generateDischargePatterns(request);
+  }
+
+  public CommonResponse confirmPlan(
+      Long dischargeStudyId, Long dischargePatternId, String correlationId)
+      throws GenericServiceException {
+
+    log.info("Inside confirmPlan gateway service with correlationId : " + correlationId);
+    CommonResponse response = new CommonResponse();
+    ConfirmPlanRequest.Builder request = ConfirmPlanRequest.newBuilder();
+    request.setLoadablePatternId(dischargePatternId);
+    ConfirmPlanReply grpcReply =
+        this.dischargeStudyOperationServiceBlockingStub.confirmPlan(request.build());
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to confirm plan",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
   }
 }
