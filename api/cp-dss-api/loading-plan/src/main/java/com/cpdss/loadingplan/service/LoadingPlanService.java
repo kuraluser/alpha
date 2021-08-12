@@ -12,10 +12,6 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
-import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.util.List;
@@ -54,6 +50,11 @@ public class LoadingPlanService {
   @Autowired BillOfLandingRepository billOfLandingRepository;
 
   @Autowired LoadingPlanStowageDetailsTempRepository loadingPlanStowageDetailsRepository;
+
+  @Autowired StageOffsetRepository stageOffsetRepository;
+  @Autowired StageDurationRepository stageDurationRepository;
+  @Autowired ReasonForDelayRepository reasonForDelayRepository;
+  @Autowired LoadingDelayRepository loadingDelayRepository;
 
   /**
    * @param request
@@ -149,6 +150,26 @@ public class LoadingPlanService {
       List<LoadingPlanModels.LoadingToppingOff> toppingOff =
           this.informationBuilderService.buildToppingOffMessage(list2);
       loadingInformation.addAllToppingOffSequence(toppingOff);
+
+      // Loading Sequences
+      // Stage Min Amount Master
+      List<StageOffset> list3 = this.stageOffsetRepository.findAll();
+      // Stage Duration Master
+      List<StageDuration> list4 = this.stageDurationRepository.findAll();
+
+      // Staging User data and Master data
+      LoadingPlanModels.LoadingStages loadingStages =
+          this.informationBuilderService.buildLoadingStageMessage(var1.orElse(null), list3, list4);
+      loadingInformation.setLoadingStage(loadingStages);
+
+      // Loading Delay
+      List<ReasonForDelay> list5 = this.reasonForDelayRepository.findAll();
+      List<LoadingDelay> list6 =
+          this.loadingDelayRepository.findAllByLoadingInformationAndIsActiveTrue(var1.orElse(null));
+      LoadingPlanModels.LoadingDelay loadingDelay =
+          this.informationBuilderService.buildLoadingDelayMessage(list5, list6);
+      loadingInformation.setLoadingDelays(loadingDelay);
+
       masterBuilder.setLoadingInformation(loadingInformation.build());
 
       // <---Loading Information End-->
