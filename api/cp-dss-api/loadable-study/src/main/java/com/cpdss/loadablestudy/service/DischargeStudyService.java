@@ -18,6 +18,8 @@ import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc.DischargeSt
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
@@ -1213,5 +1215,26 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               backLoading.setActive(false);
             });
     backLoadingService.saveAll(backLoadings);
+  }
+
+  @Override
+  public void confirmPlan(
+      ConfirmPlanRequest request, StreamObserver<ConfirmPlanReply> responseObserver) {
+    log.info("inside confirmPlan loadable study service");
+    ConfirmPlanReply.Builder replyBuilder = ConfirmPlanReply.newBuilder();
+    try {
+      loadablePatternService.confirmPlan(request, replyBuilder);
+    } catch (Exception e) {
+      log.error("Exception when confirmPlan ", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when confirmPlan Loadable Study Status"));
+
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }
