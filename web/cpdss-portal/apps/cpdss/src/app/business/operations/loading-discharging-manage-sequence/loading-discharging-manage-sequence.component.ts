@@ -40,7 +40,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       this.initiLoadingDischargingSequenceArray();
     }
   }
-  
+
   @Input() get loadingDischargingSequences(): ILoadingDischargingSequences {
     return this._loadingDischargingSequences;
   }
@@ -107,10 +107,10 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       }
       return loadingSequenceData;
     });
-    const loadingDischargingDelayArray = _loadingDischargingDelays?.map((loadingDischargingDelay, index) =>{
+    const loadingDischargingDelayArray = _loadingDischargingDelays?.map((loadingDischargingDelay, index) => {
       if (loadingDischargingDelay?.cargo?.value?.cargoId && loadingDischargingDelay?.quantity) {
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, false)
-      }else{
+      } else {
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, true)
       }
     }
@@ -169,7 +169,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   initLoadingDischargingSequenceFormGroup(loadingDischargingDelay: ILoadingDischargingSequenceValueObject, index: number, initialDelay: boolean) {
     return this.fb.group({
       id: loadingDischargingDelay.id,
-      reasonForDelay: this.fb.control(loadingDischargingDelay.reasonForDelay.value, [Validators.required]),
+      reasonForDelay: this.fb.control(loadingDischargingDelay.reasonForDelay.value, initialDelay ? [Validators.required] : []),
       duration: this.fb.control(loadingDischargingDelay.duration.value, [Validators.required, durationValidator(24, 59)]),
       cargo: this.fb.control(loadingDischargingDelay.cargo.value, initialDelay ? [] : [Validators.required, LoadingCargoDuplicateValidator(index)]),
       quantity: this.fb.control(loadingDischargingDelay.quantity, initialDelay ? [] : [Validators.required]),
@@ -208,12 +208,61 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       this.loadingDischargingDelays[index]['colorCode'] = event.data.cargo.value.colorCode;
       this.updateField(index, 'quantity', event.data.cargo.value.loadableMT);
       this.updateField(index, 'colorCode', event.data.cargo.value.colorCode);
+      this.updateFormValidity();
     }
     if (form.valid) {
       const loadingDischargingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation)
       this.updateLoadingDischargingDelays.emit(loadingDischargingDelaysList);
     }
   }
+
+  /**
+ * Update validity of invalid rows if valid
+ *
+ * @memberof LoadingDischargingManageSequenceComponent
+ */
+  updateFormValidity() {
+    const formArray = (<FormArray>this.loadingDischargingSequenceForm.get('dataTable')).controls;
+    formArray.forEach(async (row: FormGroup, index) => {
+      if (row.invalid && row.touched) {
+        const invalidFormControls = this.findInvalidControlsRecursive(row);
+        invalidFormControls.forEach((key) => {
+          const formControl = this.field(index, key);
+          formControl.updateValueAndValidity();
+          if(formControl.invalid) {
+            this.loadingDischargingDelays[index][key]['isEditMode'] = true;
+          }
+        });
+      }
+    })
+  }
+
+
+  /**
+ * Method get all invalid fields in a row
+ *
+ * @private
+ * @param {FormGroup} formToInvestigate
+ * @returns {string[]}
+ * @memberof LoadingDischargingManageSequenceComponent
+ */
+  private findInvalidControlsRecursive(formToInvestigate: FormGroup): string[] {
+    const invalidControls: string[] = [];
+    const recursiveFunc = (form: FormGroup | FormArray) => {
+      Object.keys(form.controls).forEach(field => {
+        const control = form.get(field);
+        if (control.invalid) invalidControls.push(field);
+        if (control instanceof FormGroup) {
+          recursiveFunc(control);
+        } else if (control instanceof FormArray) {
+          recursiveFunc(control);
+        }
+      });
+    }
+    recursiveFunc(formToInvestigate);
+    return invalidControls;
+  }
+
 
   /**
   * Method for fetching form group
@@ -245,6 +294,8 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       this.loadingDischargingDelays.splice(0, 1);
       dataTableControl.removeAt(0);
     }
+    const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation);
+    this.updateLoadingDischargingDelays.emit(loadingDelaysList);
   }
 
   /**

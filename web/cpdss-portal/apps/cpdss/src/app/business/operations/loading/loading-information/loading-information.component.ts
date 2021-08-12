@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output , ViewChild } from '@angular/core';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { ICargoVesselTankDetails, ILoadingDischargingStages, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
@@ -24,12 +24,16 @@ import { LoadingDischargingTransformationService } from '../../services/loading-
  * @implements {OnInit}
  */
 export class LoadingInformationComponent implements OnInit {
+  @ViewChild('manageSequence') manageSequence;
+  @ViewChild('dischargeBerth') dischargeBerth;
+  @ViewChild('machineryRef') machineryRef;
+  
   @Input() voyageId: number;
   @Input() vesselId: number;
   @Input() get cargos(): ICargo[] {
     return this._cargos;
   }
-
+  
   set cargos(cargos: ICargo[]) {
     this._cargos = cargos;
   }
@@ -257,7 +261,16 @@ export class LoadingInformationComponent implements OnInit {
 * @memberof LoadingInformationComponent
 */
   async saveLoadingInformationData() {
-    const translationKeys = await this.translateService.get(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY', 'LOADING_INFORMATION_NO_BERTHS']).toPromise();
+    const translationKeys = await this.translateService.get(['LOADING_INFORMATION_INVALID_DATA','LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY', 'LOADING_INFORMATION_NO_BERTHS']).toPromise();
+   const isMachineryValid = await this.machineryRef.isMachineryValid();
+    if(this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid) {
+      this.manageSequence.loadingDischargingSequenceForm.markAsDirty();
+      this.manageSequence.loadingDischargingSequenceForm.markAllAsTouched();
+      this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_INVALID_DATA'] });
+      return;
+    } else if(!isMachineryValid) {
+      return;
+    }
     if(this.hasUnSavedData){
       const isLoadingMachinery = this.loadingInformationPostData?.loadingMachineries?.some(machinery => machinery.isUsing) ?? true;
       if(!isLoadingMachinery){

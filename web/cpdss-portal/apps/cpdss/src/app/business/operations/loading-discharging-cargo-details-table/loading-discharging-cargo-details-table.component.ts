@@ -103,7 +103,7 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
       cargoList.actualWeight = actualWeight ? Number(actualWeight) : 0;
 
       this.totalPlanned = cargoList.plannedWeight + this.totalPlanned;
-      let difference = Number(cargoList.actualWeight - cargoList.plannedWeight) / cargoList.plannedWeight;
+      const difference = (Number(cargoList.actualWeight - cargoList.plannedWeight) / cargoList.plannedWeight) * 100;
       this.totalActual = cargoList.actualWeight + this.totalActual;
       cargoList.difference = difference ? Number(difference) : 0;
       cargoList.isPositive = difference > 0 ? true : false;
@@ -111,7 +111,7 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
 
     this.totalPlanned = this.totalPlanned ? Number(this.totalPlanned) : 0;
     this.totalActual = this.totalActual ? Number(this.totalActual) : 0;
-    this.totalDifference = (this.totalActual - this.totalPlanned) / this.totalPlanned;
+    this.totalDifference = ((this.totalActual - this.totalPlanned) / this.totalPlanned) * 100;
     this.totalDifference > 0 ? this.isTotalPositive = true : this.isTotalPositive = false;
   }
 

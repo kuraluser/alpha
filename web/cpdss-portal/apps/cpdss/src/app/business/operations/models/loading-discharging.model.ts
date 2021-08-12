@@ -143,6 +143,7 @@ export interface IMachineTypes {
   EMPTY: number;
 }
 
+
 /**
  * Interface for pump types
  *
@@ -636,4 +637,31 @@ export interface ILoadedCargo extends ILoadableQuantityCargo {
   protested?: ValueObject<IProtested>;
   isCommingled?: ValueObject<boolean>;
   isAdd?: boolean;
+}
+
+/**
+ * Machine Types
+ * @export
+ * @enum {number}
+ */
+ export enum MACHINE_TYPES {
+  EMPTY = 0,
+  VESSEL_PUMP = 1,
+  BOTTOM_LINE =  3,
+  MANIFOLD =  2
+}
+
+/**
+ * Pump Types
+ * @export
+ * @enum {number}
+ */
+ export enum Pump_TYPES {
+  Cargo_Pump = 1,
+  Ballast_Pump = 2,
+  GS_Pump =  3,
+  IG_Pump =  4,
+  Stripping_Pump = 5,
+  Strip_Eductor =  6 ,
+  COW_Pump = 7
 }

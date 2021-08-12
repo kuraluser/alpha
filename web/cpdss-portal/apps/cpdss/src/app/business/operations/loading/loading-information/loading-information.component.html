@@ -24,7 +24,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <cpdss-portal-loading-discharging-berth [loadingInfoId]="loadingInfoId"
+                <cpdss-portal-loading-discharging-berth [loadingInfoId]="loadingInfoId" #dischargeBerth
                     [berthDetails]="loadingInformationData?.berthDetails"
                     (berthChange)="onBerthChange($event)">
                 </cpdss-portal-loading-discharging-berth>
@@ -121,7 +121,7 @@
             </div>
         </div>
 
-        <cpdss-portal-loading-discharging-manage-sequence 
+        <cpdss-portal-loading-discharging-manage-sequence  #manageSequence
         [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
             [loadableQuantityCargo]="loadingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails"
             [loadingDischargingSequences]="loadingInformationData?.loadingSequences" [loadingInfoId]="loadingInfoId"
@@ -146,7 +146,7 @@
         </div> -->
         <div class="row">
             <div class="col pt-5">
-                <cpdss-portal-loading-discharging-cargo-machinery [loadingInfoId]="loadingInfoId"
+                <cpdss-portal-loading-discharging-cargo-machinery [loadingInfoId]="loadingInfoId" #machineryRef
                     [machineryInUses]="loadingInformationData?.machineryInUses"
                     (updatemachineryInUses)="onUpdatemachineryInUses($event)">
                 </cpdss-portal-loading-discharging-cargo-machinery>

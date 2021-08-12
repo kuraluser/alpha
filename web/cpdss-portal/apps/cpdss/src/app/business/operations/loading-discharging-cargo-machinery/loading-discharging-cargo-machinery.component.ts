@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
+import { ILoadingMachinesInUse, IMachineryInUses, IMachineTankTypes , MACHINE_TYPES , Pump_TYPES , IDischargingMachinesInUse} from '../models/loading-discharging.model';
 import { OPERATIONS } from '../../core/models/common.model';
-import { IDischargingMachinesInUse, ILoadingMachinesInUse, IMachineryInUses, IMachineTankTypes } from '../models/loading-discharging.model';
 
 @Component({
   selector: 'cpdss-portal-loading-discharging-cargo-machinery',
@@ -42,9 +44,15 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   pumpValues: any = [];
   machinery: any = [];
   selectedType: IMachineTankTypes;
+  readonly MACHINE_TYPES = MACHINE_TYPES;
   OPERATIONS = OPERATIONS;
+  constructor(
+    private messageService: MessageService,
+    private translateService: TranslateService
+  ) { }
+  
 
-  constructor() { }
+
 
   ngOnInit(): void {
 
@@ -165,6 +173,43 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
       this.updatemachineryInUses.emit(this.machineryInUses.loadingDischargingMachinesInUses);
     }
 
+  }
+
+  /**
+  * Method for machinary is valid
+  *
+  * @memberof LoadingDischargingCargoMachineryComponent
+  */
+  async isMachineryValid() {
+    let bottomLine;
+    let manifold;
+    let vesselPump;
+    this.machineryInUses?.loadingDischargingMachinesInUses.map((machineUse) => {
+      if(machineUse.isUsing) {
+        switch(machineUse.machineTypeId) {
+          case MACHINE_TYPES.BOTTOM_LINE : {
+            bottomLine = true;
+            break;
+          }
+          case MACHINE_TYPES.MANIFOLD : {
+            manifold = true;
+            break;
+          }
+          case MACHINE_TYPES.VESSEL_PUMP : {
+            vesselPump = true;
+            break;
+          }
+        }
+      }
+    });
+    if(vesselPump && manifold && bottomLine) {
+      return true;
+    } else {
+      const translationKeys = await this.translateService.get(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_CARGO_MACHINERY_MANIFOLD','LOADING_INFORMATION_CARGO_MACHINERY_BOTTOM_LINE', 'LOADING_INFORMATION_CARGO_MACHINERY_PUMP' , 'LOADING_INFORMATION_CARGO_MACHINERY_BALLAST_PUMP']).toPromise();
+      this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], 
+      detail: !manifold ? translationKeys['LOADING_INFORMATION_CARGO_MACHINERY_MANIFOLD'] : !bottomLine ?  translationKeys['LOADING_INFORMATION_CARGO_MACHINERY_BOTTOM_LINE'] : translationKeys['LOADING_INFORMATION_CARGO_MACHINERY_BALLAST_PUMP']});
+      return false;
+    }
   }
 
   /**

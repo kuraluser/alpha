@@ -9,8 +9,10 @@ export function LoadingCargoDuplicateValidator(index): ValidatorFn {
         if (!control.root || !control.parent) {
             return null;
         }
-        const dataTableArray = control.root.value.dataTable;
+        
+        let dataTableArray = control.root.value.dataTable;
         if (control?.value && dataTableArray) {
+            dataTableArray = JSON.parse(JSON.stringify(dataTableArray));
             dataTableArray.splice(index,1);
             const found = dataTableArray.some(data => data?.cargo?.cargoNominationId === control?.value?.cargoNominationId );
             if(found){
