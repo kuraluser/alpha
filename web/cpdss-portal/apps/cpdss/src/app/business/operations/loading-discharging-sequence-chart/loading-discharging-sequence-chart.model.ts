@@ -83,7 +83,7 @@ export interface Pump {
  * @interface ITankData
  */
 export interface ITankData {
-  tankId: number;
+  tankId?: number;
   start: number;
   end: number;
   ullage?: number;
@@ -164,7 +164,7 @@ export interface ISequenceData {
   maxXAxisValue: number;
   interval: number;
   stagePlotLines?: Highcharts.XAxisPlotLinesOptions[];
-  cargoStages?: any[];
+  cargoStages?: ICargoStage[];
   cargoStageTickPositions?: number[];
   stageTickPositions?: number[];
   tickPositions?: number[];
@@ -174,6 +174,18 @@ export interface ISequenceData {
   cargoLoadingRates: Array<any>;
   stabilityParams: IStabilityParam[];
   gravity?: IPumpData;
+}
+
+/**
+ * Interface for cargo data
+ *
+ * @export
+ * @interface ICargoStage
+ */
+export interface ICargoStage {
+  start: number;
+  end: number;
+  cargos: ITankData[];
 }
 
 /**

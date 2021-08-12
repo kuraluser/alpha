@@ -1,5 +1,5 @@
-import { ICargoConditions, IResponse, ValueObject } from "../../../shared/models/common.model";
-import { ICargoQuantities, ILoadableQuantityCargo, IShipCargoTank } from "../../core/models/common.model";
+import { ICargoConditions, IMode, IPercentage, IResponse, ValueObject } from "../../../shared/models/common.model";
+import { ICargo, ICargoQuantities, ILoadableQuantityCargo, IProtested, IShipCargoTank, ITank } from "../../core/models/common.model";
 
 /**
  * Interface for Loadable information api response
@@ -13,8 +13,8 @@ export interface ILoadingInformationResponse {
   loadingRates: ILoadingRates;
   berthDetails: IBerthDetails;
   machineryInUses: IMachineryInUses;
-  loadingStages: ILoadingDischargingStages;
-  loadingSequences: ILoadingDischargingSequences;
+  loadingStages: ILoadingDischargingStagesResponse;
+  loadingSequences: ILoadingDischargingSequencesResponse;
   toppingOffSequence: IToppingOffSequence[];
   cargoVesselTankDetails: ICargoVesselTankDetails;
   loadingInfoId: number;
@@ -34,13 +34,15 @@ export interface IDischargingInformationResponse {
   dischargingRates: IDischargingRates;
   berthDetails: IBerthDetails;
   machineryInUses: IMachineryInUses;
-  dischargingStages: ILoadingDischargingStages;
-  dischargingSequences: ILoadingDischargingSequences;
-  toppingOffSequence: IToppingOffSequence[];
-  cargoVesselTankDetails: ICargoVesselTankDetails;
+  dischargingStages: ILoadingDischargingStagesResponse;
+  dischargingSequences: ILoadingDischargingSequencesResponse;
+  cargoVesselTankDetails: ICargoVesselTankDetailsResponse;
   dischargingInfoId: number;
   synopticTableId: number;
   isDischargingInfoComplete: boolean;
+  cowDetails: ICOWDetailsResponse;
+  postDischargeStageTime: IPostDischargeStageTime;
+  loadedCargos: ICargo[];
 }
 
 
@@ -96,8 +98,7 @@ export interface IMachineryInUses {
   vesselManifold: IVesselManifoldBottomLine[];
   pumpTypes: IPumpTypes[];
   vesselPumps: IVesselPumps[];
-  loadingMachinesInUses?: ILoadingMachinesInUses[];
-  dischargingMachinesInUses?: IDischargingMachinesInUses[];
+  loadingDischargingMachinesInUses?: Array<ILoadingMachinesInUse | IDischargingMachinesInUse>;
 }
 
 /**
@@ -175,9 +176,9 @@ export interface IVesselPumps {
  * Interface for loading machine
  *
  * @export
- * @interface ILoadingMachinesInUses
+ * @interface ILoadingMachinesInUse
  */
-export interface ILoadingMachinesInUses {
+export interface ILoadingMachinesInUse {
   id: number;
   loadingInfoId: number;
   machineId: number;
@@ -190,9 +191,9 @@ export interface ILoadingMachinesInUses {
  * Interface for discharging machines used
  *
  * @export
- * @interface IDischargingMachinesInUses
+ * @interface IDischargingMachinesInUse
  */
-export interface IDischargingMachinesInUses {
+export interface IDischargingMachinesInUse {
   id: number;
   dischargingInfoId: number;
   machineId: number;
@@ -268,9 +269,9 @@ export interface IBerth {
  * Interface for loading discharging stages
  *
  * @export
- * @interface ILoadingDischargingStages
+ * @interface ILoadingDischargingStagesResponse
  */
-export interface ILoadingDischargingStages {
+export interface ILoadingDischargingStagesResponse {
   id: number;
   trackStartEndStage: boolean;
   trackGradeSwitch: boolean;
@@ -330,15 +331,26 @@ export interface IToppingOffSequence {
 }
 
 /**
-* Interface for loading sequence
+* Interface for loading sequence response
 *
 * @export
-* @interface ILoadingDischargingSequences
+* @interface ILoadingDischargingSequencesResponse
 */
+export interface ILoadingDischargingSequencesResponse {
+  reasonForDelays: IReasonForDelays[];
+  loadingDelays?: ILoadingDischargingDelays[];
+  dischargingDelays?: ILoadingDischargingDelays[];
+}
+
+/**
+ *
+ *
+ * @export
+ * @interface ILoadingDischargingSequences
+ */
 export interface ILoadingDischargingSequences {
   reasonForDelays: IReasonForDelays[];
   loadingDischargingDelays?: ILoadingDischargingDelays[];
-  dischargingDelays?: ILoadingDischargingDelays[];//TODO: need to be removed
 }
 
 /**
@@ -379,7 +391,20 @@ export interface ICargoVesselTankDetails {
   cargoConditions: ICargoConditions[];
   cargoTanks: IShipCargoTank[][];
   cargoQuantities: ICargoQuantities[];
-  loadableQuantityCargoDetails: ILoadableQuantityCargo[];
+  loadableQuantityCargoDetails: ILoadedCargo[];
+}
+
+/**
+* Interface for cargo vessel tank details response
+*
+* @export
+* @interface ICargoVesselTankDetailsResponse
+*/
+export interface ICargoVesselTankDetailsResponse {
+  cargoConditions: ICargoConditions[];
+  cargoTanks: IShipCargoTank[][];
+  cargoQuantities: ICargoQuantities[];
+  loadableQuantityCargoDetails: ILoadedCargoResponse[];
 }
 
 /**
@@ -394,8 +419,8 @@ export interface ILoadingInformation {
   loadingDetails: ILoadingDischargingDetails;
   loadingRates: ILoadingRates;
   loadingBerths: IBerth[];
-  loadingMachineries: ILoadingMachinesInUses[];
-  loadingStages: ILoadingDischargingStagesDetails;
+  loadingMachineries: ILoadingMachinesInUse[];
+  loadingStages: ILoadingDischargingStages;
   loadingDelays: ILoadingDischargingDelays[];
   toppingOffSequence: IToppingOffSequence[];
   vesselId?: number;
@@ -415,25 +440,35 @@ export interface IDischargingInformation {
   dischargingDetails: ILoadingDischargingDetails;
   dischargingRates: IDischargingRates;
   dischargingBerths: IBerth[];
-  dischargingMachineries: IDischargingMachinesInUses[];
-  dischargingStages: ILoadingDischargingStagesDetails;
+  berthDetails: IBerthDetails;
+  dischargingMachineries: IDischargingMachinesInUse[];
+  dischargingStages: ILoadingDischargingStages;
   dischargingDelays: ILoadingDischargingDelays[];
-  toppingOffSequence: IToppingOffSequence[];
+  dischargingSequences: ILoadingDischargingSequences;
   vesselId?: number;
   voyageId?: number;
+  cowDetails: ICOWDetails;
+  postDischargeStageTime: IPostDischargeStageTime;
+  loadedCargos: ICargo[];
+  cargoVesselTankDetails: ICargoVesselTankDetails;
+  isDischargingInfoComplete: boolean;
+  cargoTanks: ITank[];
+  machineryInUses: IMachineryInUses;
 }
 
 /**
  * Interface for loading stages for save
  *
  * @export
- * @interface ILoadingDischargingStagesDetails
+ * @interface ILoadingDischargingStages
  */
-export interface ILoadingDischargingStagesDetails {
+export interface ILoadingDischargingStages {
   trackStartEndStage: boolean;
   trackGradeSwitch: boolean;
   stageOffset: IStageOffset;
   stageDuration: IStageDuration;
+  stageOffsetList?: IStageOffset[];
+  stageDurationList?: IStageDuration[];
 }
 
 
@@ -473,15 +508,15 @@ export interface IDischargingInformationSaveResponse {
  * @export
  * @interface ILoadingSequenceValueObject
  */
- export interface ILoadingSequenceValueObject {
-    id: number;
-    reasonForDelay: ValueObject<IReasonForDelays[]>;
-    duration: ValueObject<string>;
-    cargo: ValueObject<ILoadableQuantityCargo>;
-    quantity: number;
-    isAdd: boolean;
-    colorCode: string;
- }
+export interface ILoadingDischargingSequenceValueObject {
+  id: number;
+  reasonForDelay: ValueObject<IReasonForDelays[]>;
+  duration: ValueObject<string>;
+  cargo: ValueObject<ILoadableQuantityCargo>;
+  quantity: number;
+  isAdd: boolean;
+  colorCode: string;
+}
 
 /**
 * Interface for cargo vessel tank details
@@ -490,6 +525,115 @@ export interface IDischargingInformationSaveResponse {
 * @interface ILoadingSequenceDropdownData
 */
 export interface ILoadingSequenceDropdownData {
-    loadableQuantityCargo: ILoadableQuantityCargo[];
-    reasonForDelays: IReasonForDelays[];
+  loadableQuantityCargo: ILoadableQuantityCargo[];
+  reasonForDelays: IReasonForDelays[];
+}
+
+/**
+ * Interface form port discharge time data
+ *
+ * @export
+ * @interface IPostDischargeStageTime
+ */
+export interface IPostDischargeStageTime {
+  dryCheckTime: string;
+  slopDischargingTime: string;
+  finalStrippingTime: string;
+  freshOilWashingTime: string;
+}
+
+/**
+ * Interface for COW details
+ *
+ * @export
+ * @interface ICOWDetails
+ */
+export interface ICOWDetails {
+  cowOption: IMode;
+  cowPercentage: IPercentage;
+  topCOWTanks: ITank[];
+  bottomCOWTanks: ITank[];
+  allCOWTanks: ITank[];
+  tanksWashingWithDifferentCargo: ITanksWashingWithDifferentCargo[];
+  cowStart: string;
+  cowEnd: string;
+  cowDuration: string;
+  cowTrimMin: number;
+  cowTrimMax: number;
+  needFreshCrudeStorage: boolean;
+  needFlushingOil: boolean;
+}
+
+/**
+ * Interface for cow details response data
+ *
+ * @export
+ * @interface ICOWDetailsResponse
+ */
+export interface ICOWDetailsResponse {
+  cowOption: number;
+  cowPercentage: number;
+  topCOWTanks: ITank[];
+  bottomCOWTanks: ITank[];
+  allCOWTanks: ITank[];
+  tanksWashingWithDifferentCargo: ITanksWashingWithDifferentCargo[];
+  cowStart: string;
+  cowEnd: string;
+  cowDuration: string;
+  cowTrimMin: number;
+  cowTrimMax: number;
+  needFreshCrudeStorage: boolean;
+  needFlushingOil: boolean;
+}
+
+/**
+ * Interface for selected tanks for washing with different cargo
+ *
+ * @export
+ * @interface ITanksWashingWithDifferentCargo
+ */
+export interface ITanksWashingWithDifferentCargo {
+  cargo: ICargo;
+  washingCargo: ICargo;
+  tanks: ITank[];
+  selectedTanks: ITank[];
+}
+
+/**
+ * Interface for list datas in discharging module
+ *
+ * @export
+ * @interface IDischargeOperationListData
+ */
+export interface IDischargeOperationListData {
+  protestedOptions: IProtested[],
+  cowOptions: IMode[],
+  cowPercentages: IPercentage[];
+}
+
+/**
+ * Interface loaded cargo response in vessel
+ *
+ * @export
+ * @interface ILoadedCargoResponse
+ * @extends {ILoadableQuantityCargo}
+ */
+export interface ILoadedCargoResponse extends ILoadableQuantityCargo {
+  shipFigure?: string;
+  protested?: boolean;
+  isCommingled?: boolean;
+}
+
+/**
+ * Interface loaded cargo in vessel
+ *
+ * @export
+ * @interface ILoadedCargo
+ * @extends {ILoadableQuantityCargo}
+ */
+export interface ILoadedCargo extends ILoadableQuantityCargo {
+  shipFigure?: string;
+  protested?: ValueObject<IProtested>;
+  isCommingled?: ValueObject<boolean>;
+  isAdd?: boolean;
 }

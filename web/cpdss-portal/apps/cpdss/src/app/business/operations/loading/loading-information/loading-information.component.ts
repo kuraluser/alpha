@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
-import { ICargoVesselTankDetails, ILoadingDischargingStagesDetails, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset } from '../../models/loading-discharging.model';
+import { ICargoVesselTankDetails, ILoadingDischargingStages, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
@@ -97,8 +97,7 @@ export class LoadingInformationComponent implements OnInit {
     try {
       this.hasUnSavedData = false;
       this.loadingInformationPostData = <ILoadingInformation>{};
-      this.loadingInformationData = await this.loadingDischargingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();   
-      this.loadingInformationData.loadingSequences.loadingDischargingDelays = this.loadingInformationData.loadingSequences['loadingDelays'];
+      this.loadingInformationData = await this.loadingDischargingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
       this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
     }
@@ -122,7 +121,7 @@ export class LoadingInformationComponent implements OnInit {
     this.loadingDischargingTransformationService.setLoadingInformationValidity(this.loadingInformationData?.isLoadingInfoComplete)
     this.loadingInfoId = this.loadingInformationData?.loadingInfoId;
     this.loadingInformationId.emit(this.loadingInfoId);
-    this.loadingInformationData.loadingSequences.loadingDischargingDelays = this.loadingInformationData.loadingSequences['loadingDelays'];
+    this.loadingInformationData.loadingSequences["loadingDischargingDelays"] = this.loadingInformationData.loadingSequences.loadingDelays;
     this.trackStartEndStage = this.loadingInformationData?.loadingStages?.trackStartEndStage;
     this.trackGradeSwitch = this.loadingInformationData?.loadingStages?.trackGradeSwitch;
     this.cargoVesselTankDetails = this.loadingInformationData?.cargoVesselTankDetails;
@@ -193,7 +192,7 @@ export class LoadingInformationComponent implements OnInit {
 * @memberof LoadingInformationComponent
 */
   onUpdateLoadingStages() {
-    this.loadingInformationPostData.loadingStages = <ILoadingDischargingStagesDetails>{};
+    this.loadingInformationPostData.loadingStages = <ILoadingDischargingStages>{};
     this.loadingInformationPostData.loadingStages.stageOffset = this.stageOffset;
     this.loadingInformationPostData.loadingStages.stageDuration = this.stageDuration;
     this.loadingInformationPostData.loadingStages.trackStartEndStage = this.trackStartEndStage;
@@ -279,7 +278,7 @@ export class LoadingInformationComponent implements OnInit {
         }
         this.ngxSpinnerService.hide();
       }
-      
+
     }else{
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_SAVE_NO_DATA_ERROR'] });
     }

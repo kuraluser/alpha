@@ -2,7 +2,7 @@ import { Component, ComponentRef, HostListener, OnDestroy, OnInit, ViewChild } f
 import { ActivatedRoute } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ICargo, ICargoResponseModel } from '../../core/models/common.model';
+import { ICargo, ICargoResponseModel, OPERATIONS } from '../../core/models/common.model';
 import { OPERATION_TAB } from '../models/operations.model';
 import { LoadingInformationComponent } from './loading-information/loading-information.component';
 import { UnsavedChangesGuard, ComponentCanDeactivate } from './../../../shared/services/guards/unsaved-data-guard';
@@ -37,6 +37,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   loadingInformationComplete: boolean;
   cargos: ICargo[]
   loadingInstructionComplete: boolean;
+  loadingSequenceComplete: boolean;
+  OPERATIONS = OPERATIONS;
 
   private ngUnsubscribe: Subject<any> = new Subject();
 

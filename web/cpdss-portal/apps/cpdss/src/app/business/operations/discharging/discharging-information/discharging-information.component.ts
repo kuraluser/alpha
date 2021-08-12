@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { QUANTITY_UNIT, ValueObject } from '../../../../shared/models/common.model';
+import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
-import { ICargo, ILoadableQuantityCargo, IProtested, OPERATIONS } from '../../../core/models/common.model';
-import { IStageOffset, IStageDuration, ICargoVesselTankDetails, IDischargingInformationResponse, IDischargingInformation, IDischargingInformationSaveResponse } from '../../models/loading-discharging.model';
+import { ICargo, OPERATIONS } from '../../../core/models/common.model';
+import { IStageOffset, IStageDuration, ICargoVesselTankDetails, IDischargingInformation, IDischargeOperationListData } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 import { RulesService } from '../../services/rules/rules.service';
@@ -45,14 +45,9 @@ export class DischargingInformationComponent implements OnInit {
 
   @Output() dischargingInformationId: EventEmitter<any> = new EventEmitter();
 
-  dischargingInformationData?: IDischargingInformationResponse;
-  stageOffsetList: IStageOffset[];
-  stageDurationList: IStageDuration[];
-  cargoVesselTankDetails: ICargoVesselTankDetails;
+  dischargingInformationData?: IDischargingInformation;
   dischargingInformationPostData = <IDischargingInformation>{};
   dischargingInfoId: number;
-  trackStartEndStage: boolean;
-  trackGradeSwitch: boolean;
   stageDuration: IStageDuration;
   stageOffset: IStageOffset;
   prevQuantitySelectedUnit: QUANTITY_UNIT;
@@ -60,7 +55,16 @@ export class DischargingInformationComponent implements OnInit {
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   readonly OPERATIONS = OPERATIONS;
   dischargingInformationForm: FormGroup;
-  listData = { protestedOptions: [{ name: 'Yes', id: 1 }, { name: 'No', id: 2 }] };
+  listData: IDischargeOperationListData = {
+    protestedOptions: [{ name: 'Yes', id: 1 }, { name: 'No', id: 2 }],
+    cowOptions: [{ name: 'Auto', id: 1 }, { name: 'Manual', id: 2 }],
+    cowPercentages: [
+      { value: 25, name: '25%' },
+      { value: 50, name: '50%' },
+      { value: 75, name: '75%' },
+      { value: 100, name: '100%' },
+    ]
+  };
 
   private _portRotationId: number;
   private _cargos: ICargo[];
@@ -100,28 +104,8 @@ export class DischargingInformationComponent implements OnInit {
     this.ngxSpinnerService.show();
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_NO_ACTIVE_VOYAGE', 'LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE']).toPromise();
     try {
-      this.dischargingInformationData = await this.loadingDischargingInformationApiService.getDischargingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
-      const loadableQuantityCargoDetails: ILoadableQuantityCargo[] = this.dischargingInformationData?.cargoVesselTankDetails?.loadableQuantityCargoDetails.map(cargo => {
-        const _cargo = <ILoadableQuantityCargo>{};
-        _cargo.isAdd = true;
-        for (const key in cargo) {
-          if (Object.prototype.hasOwnProperty.call(cargo, key)) {
-            if (key === 'protested') {
-              const _protested = cargo.protested ? this.listData?.protestedOptions[0] : this.listData?.protestedOptions[1];
-              _cargo.protested = new ValueObject<IProtested>(_protested, true, true, false);
-            } else if (key === 'isCommingled') {
-              const _isCommingled = cargo.isCommingled ?? false;
-              _cargo.isCommingled = new ValueObject<boolean>(_isCommingled, true, true, false);
-            } else {
-              _cargo[key] = cargo[key];
-            }
-          }
-        }
-        return _cargo;
-      });
-      this.dischargingInformationData.cargoVesselTankDetails.loadableQuantityCargoDetails = loadableQuantityCargoDetails;
-      this.dischargingInformationData.dischargingSequences.loadingDischargingDelays = this.dischargingInformationData.dischargingSequences['dischargingDelays']
-
+      const dischargingInformationResponse = await this.loadingDischargingInformationApiService.getDischargingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
+      this.dischargingInformationData = this.loadingDischargingTransformationService.transformDischargingInformation(dischargingInformationResponse, this.listData);
       this.initFormArray(this.dischargingInformationData);
       // this.rulesService.dischargingInfoId.next(this.dischargingInformationData.dischargingInfoId);
       await this.updateGetData();
@@ -137,19 +121,47 @@ export class DischargingInformationComponent implements OnInit {
   /**
    * Method for initialising form
    *
-   * @param {IDischargingInformationResponse} dischargingInformationData
+   * @param {IDischargingInformation} dischargingInformationData
    * @memberof DischargingInformationComponent
    */
-  initFormArray(dischargingInformationData: IDischargingInformationResponse) {
+  initFormArray(dischargingInformationData: IDischargingInformation) {
     const cargoToBeDischarged = dischargingInformationData?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(cargo => {
       return this.fb.group({
         protested: this.fb.control(cargo.protested.value),
         isCommingled: this.fb.control(cargo?.isCommingled.value)
       })
     });
+    const tanksWashingWithDifferentCargo = dischargingInformationData?.cowDetails?.tanksWashingWithDifferentCargo?.map(item => {
+      return this.fb.group({
+        cargo: this.fb.control(item?.cargo),
+        washingCargo: this.fb.control(item?.washingCargo),
+        tanks: this.fb.control(item?.tanks)
+      })
+    });
     this.dischargingInformationForm = this.fb.group({
       cargoTobeLoadedDischarged: this.fb.group({
         dataTable: this.fb.array([...cargoToBeDischarged])
+      }),
+      cowDetails: this.fb.group({
+        cowOption: this.fb.control(dischargingInformationData?.cowDetails?.cowOption),
+        cowPercentage: this.fb.control(dischargingInformationData?.cowDetails?.cowPercentage),
+        topCOWTanks: this.fb.control(dischargingInformationData?.cowDetails?.topCOWTanks),
+        bottomCOWTanks: this.fb.control(dischargingInformationData?.cowDetails?.bottomCOWTanks),
+        allCOWTanks: this.fb.control(dischargingInformationData?.cowDetails?.allCOWTanks),
+        tanksWashingWithDifferentCargo: this.fb.array([...tanksWashingWithDifferentCargo]),
+        cowStart: this.fb.control(dischargingInformationData?.cowDetails?.cowStart),
+        cowEnd: this.fb.control(dischargingInformationData?.cowDetails?.cowEnd),
+        cowDuration: this.fb.control(dischargingInformationData?.cowDetails?.cowDuration),
+        cowTrimMin: this.fb.control(dischargingInformationData?.cowDetails?.cowTrimMin),
+        cowTrimMax: this.fb.control(dischargingInformationData?.cowDetails?.cowTrimMax),
+        needFreshCrudeStorage: this.fb.control(dischargingInformationData?.cowDetails?.needFreshCrudeStorage),
+        needFlushingOil: this.fb.control(dischargingInformationData?.cowDetails?.needFlushingOil),
+      }),
+      postDischargeStageTime: this.fb.group({
+        dryCheckTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime),
+        slopDischargingTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime),
+        finalStrippingTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime),
+        freshOilWashingTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime),
       })
     })
   }
@@ -162,18 +174,12 @@ export class DischargingInformationComponent implements OnInit {
   async updateGetData() {
     if (this.dischargingInformationData) {
       this.dischargingInformationPostData.dischargingInfoId = this.dischargingInformationData?.dischargingInfoId;
-      this.dischargingInformationPostData.synopticalTableId = this.dischargingInformationData?.synopticTableId;
+      this.dischargingInformationPostData.synopticalTableId = this.dischargingInformationData?.synopticalTableId;
     }
     this.loadingDischargingTransformationService.setDischargingInformationValidity(this.dischargingInformationData?.isDischargingInfoComplete)
     this.dischargingInfoId = this.dischargingInformationData?.dischargingInfoId;
     this.dischargingInformationId.emit(this.dischargingInfoId);
-    this.trackStartEndStage = this.dischargingInformationData?.dischargingStages?.trackStartEndStage;
-    this.trackGradeSwitch = this.dischargingInformationData?.dischargingStages?.trackGradeSwitch;
-    this.cargoVesselTankDetails = this.dischargingInformationData?.cargoVesselTankDetails;
-    this.stageOffsetList = this.dischargingInformationData?.dischargingStages.stageOffsetList;
-    this.stageDurationList = this.dischargingInformationData?.dischargingStages.stageDurationList;
-    this.stageDuration = this.stageDurationList?.find(duration => duration.id === this.dischargingInformationData?.dischargingStages?.stageDuration);
-    this.stageOffset = this.stageOffsetList?.find(offset => offset.id === this.dischargingInformationData?.dischargingStages?.stageOffset);
+
   }
 
   /**
@@ -224,8 +230,8 @@ export class DischargingInformationComponent implements OnInit {
   onUpdateDischargingStages() {
     this.dischargingInformationPostData.dischargingStages.stageOffset = this.stageOffset;
     this.dischargingInformationPostData.dischargingStages.stageDuration = this.stageDuration;
-    this.dischargingInformationPostData.dischargingStages.trackStartEndStage = this.trackStartEndStage;
-    this.dischargingInformationPostData.dischargingStages.trackGradeSwitch = this.trackGradeSwitch;
+    this.dischargingInformationPostData.dischargingStages.trackStartEndStage = this.dischargingInformationData?.dischargingStages?.trackStartEndStage;
+    this.dischargingInformationPostData.dischargingStages.trackGradeSwitch = this.dischargingInformationData?.dischargingStages?.trackGradeSwitch;
     this.hasUnSavedData = true;
   }
 
@@ -255,8 +261,8 @@ export class DischargingInformationComponent implements OnInit {
   * @memberof DischargingInformationComponent
   */
   onTrackStageChange() {
-    this.dischargingInformationPostData.dischargingStages.trackStartEndStage = this.trackStartEndStage;
-    this.dischargingInformationPostData.dischargingStages.trackGradeSwitch = this.trackGradeSwitch;
+    this.dischargingInformationPostData.dischargingStages.trackStartEndStage = this.dischargingInformationData?.dischargingStages?.trackStartEndStage;
+    this.dischargingInformationPostData.dischargingStages.trackGradeSwitch = this.dischargingInformationData?.dischargingStages?.trackGradeSwitch;
     this.onUpdateDischargingStages();
   }
 
@@ -267,16 +273,6 @@ export class DischargingInformationComponent implements OnInit {
   */
   onDischargingRateChange(event) {
     this.dischargingInformationPostData.dischargingRates = event;
-    this.hasUnSavedData = true;
-  }
-
-  /**
-  * Method for event topping off sequence update
-  *
-  * @memberof DischargingInformationComponent
-  */
-  onUpdateToppingOff(event) {
-    this.dischargingInformationPostData.toppingOffSequence = event;
     this.hasUnSavedData = true;
   }
 
