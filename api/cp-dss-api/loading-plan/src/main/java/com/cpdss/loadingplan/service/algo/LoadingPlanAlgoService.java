@@ -302,10 +302,9 @@ public class LoadingPlanAlgoService {
       updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
 
-      loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
-      //      if (request.getHasLoadicator()) {
-      //        loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
-      //      }
+      if (request.getHasLoadicator()) {
+        loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
+      }
     }
   }
 
