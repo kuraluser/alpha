@@ -61,4 +61,6 @@ public interface LoadingInformationService {
 
   LoadingInformation saveLoadingInfoStages(
       LoadingPlanModels.LoadingStages loadingStage, LoadingInformation loadingInformation);
+
+  void updateIsLoadingInfoCompeteStatus(Long loadingInfoId, boolean status);
 }

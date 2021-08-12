@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.controller;
 
+import static com.cpdss.gateway.utility.GatewayConstants.*;
+
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -12,6 +14,7 @@ import com.cpdss.gateway.domain.LoadablePlanRequest;
 import com.cpdss.gateway.domain.LoadableStudyStatusResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.LoadableStudyService;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /** @Author jerin.g */
 @Log4j2
@@ -147,5 +152,63 @@ public class DischargeStudyController {
           e.getMessage(),
           e);
     }
+  }
+
+  /**
+   * @param vesselId
+   * @param voyageId
+   * @param dischargeStudiesId
+   * @param headers
+   * @return
+   * @throws CommonRestException LoadablePatternResponse Save Algo reply to data base API - This API
+   *     is consumed by Algo
+   */
+  @PostMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudiesId}/discharge-patterns")
+  public AlgoPatternResponse saveDischargePatterns(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long dischargeStudiesId,
+      @RequestBody LoadablePlanRequest dischargePlanRequest,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("saveDischargePatterns : {}", getClientIp());
+      log.info(
+          "saveDischargePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.saveAlgoPatterns(
+          dischargePlanRequest,
+          dischargeStudiesId,
+          DISCHARGE_STUDY_SAVE_REQUEST,
+          headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in saveLoadablePatterns ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in saveLoadablePatterns ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Returns the caller ip for debugging
+   *
+   * @return
+   */
+  private static String getClientIp() {
+    HttpServletRequest curRequest =
+        ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+    String remoteAddr = "";
+    remoteAddr = curRequest.getHeader("X-FORWARDED-FOR");
+    if (remoteAddr == null || "".equals(remoteAddr)) {
+      remoteAddr = curRequest.getRemoteAddr();
+    }
+    return remoteAddr;
   }
 }

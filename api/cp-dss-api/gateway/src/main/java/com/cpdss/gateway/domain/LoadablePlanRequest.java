@@ -1,11 +1,13 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import lombok.Data;
 
 /** @Author jerin.g */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoadablePlanRequest {
   private String processId;
   private boolean hasLodicator;
@@ -14,4 +16,11 @@ public class LoadablePlanRequest {
   private Long loadablePatternId;
   private Boolean validated;
   private Boolean hasLoadicator;
+
+  // DS fields
+  private List<LoadablePlanDetails> dischargePlanDetails;
+  private Boolean feedbackLoop;
+  private Long feedbackLoopCount;
+  private String user;
+  private String role;
 }

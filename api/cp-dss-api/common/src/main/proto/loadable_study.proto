@@ -197,8 +197,6 @@ service LoadableStudyService {
 
 	rpc GetLoadableStudyPortRotationByPortRotationId(PortRotationRequest) returns (PortRotationDetailReply) {}
 
-	rpc GetLoadableStudyShoreTwo(UllageBillRequest) returns (UllageBillReply){}
-
 	rpc GetLoadableStudySimulatorJsonData(SimulatorJsonRequest) returns (SimulatorJsonReply){}
 }
 
@@ -386,12 +384,13 @@ message LoadablePatternAlgoRequest {
 	bool validated = 5;
 	repeated AlgoErrors algoErrors = 6;
 	int64 loadablePatternId = 7;
-	
+	string requestType = 8; // LS or DS for re usability
 }
 
 message AlgoErrorRequest {
 	int64 loadableStudyId = 1;
 	int64 loadablePatternId = 2;
+	int64 loadingInformationId = 3;
 }
 
 message AlgoErrorReply {
@@ -414,6 +413,7 @@ message StabilityParameter {
 	string heel = 5;
 	string bendinMoment = 6;
 	string shearForce = 7;
+	string airDraft = 8; //DS field
 }
 
 message LoadablePlanPortWiseDetails {
@@ -422,6 +422,8 @@ message LoadablePlanPortWiseDetails {
 	int64 portRotationId = 3;
 	LoadablePlanDetailsReply arrivalCondition = 4;
 	LoadablePlanDetailsReply departureCondition = 5;
+	string seaWaterTemperature = 6;
+	string ambientTemperature = 7;
 }
 
 message LoadablePlanDetailsRequest {
@@ -487,6 +489,8 @@ message LoadablePlanBallastDetails {
 	string correctedLevelOrginal = 20; //same as corrected ullage
 	string metricTonOrginal = 21; //quantity
 	string percentageOrginal = 22;
+	string volume = 23; //DS field
+	string maxTankVolume = 24; //DS field
 }
 
 message LoadablePlanStowageDetails {
@@ -518,6 +522,8 @@ message LoadablePlanStowageDetails {
   string rdgUllageOrginal = 25;
   string weightOrginal = 26; // MT
   string cargoNominationTemperature = 27;
+  string onboard = 28; //DS field
+  string maxTankVolume = 29; //DS field
  }
 
 
@@ -589,6 +595,18 @@ message LoadableQuantityCargoDetails {
 	 string cargoNominationTemperature = 27;
 	 string cargoNominationQuantity = 28;
 	 string orderQuantity = 29;
+	 string dischargeMT = 30;
+	 string dischargingRate = 31;
+	 string timeRequiredForDischarging = 32;
+	 repeated COWDetail cowDetails = 33;
+	 
+	 
+}
+
+message COWDetail {
+  string tankId = 1;
+  string shortName = 2;
+  string washType = 3;
 }
 
 message CargoToppingOffSequenceDetails {
@@ -1490,47 +1508,6 @@ message PortRotationDetailReply {
   ResponseStatus responseStatus = 2;
 }
 
-message BillOfLanding{
-	int64 id = 1;
-	int64 dischargeStudyId = 2;
-	int64 portId = 3;
-	int64 cargoId = 4;
-	string blRefNumber = 5;
-	string bblAt60f = 6;
-	int64 quantityLt = 7;
-	int64 quantityMt = 8;
-	int64 klAt15c = 9;
-	int64 api = 10;
-	int64 temperature = 11;
-	int64 isActive = 12;
-	int64 version = 13;
-}
-
-message UpdateUllage{
-	int64 id = 1;
-	int64 tankId = 2 ;
-	int64 correctedUllage = 3;
-	int64 correctionFactor = 4;
-	int64 quantityMt = 5;
-	bool isBallast = 6;
-	string fillingRatio = 7;
-	string api =8;
-	string temperature =9;
-	string observedM3 =10;
-	string sg =11;
-	bool isCommingle =12;
-}
-
-message UllageBillRequest{
-	repeated BillOfLanding billOfLanding = 1;
-	repeated UpdateUllage updateUllage = 2;
-}
-
-
-message UllageBillReply{
-	ResponseStatus responseStatus = 1;
-	repeated RulePlans rulePlan = 2;
-}
 message AlgoResponseCommunication{
 		LoadablePatternAlgoRequest loadablePatternAlgoRequest = 1;
 		LoadicatorResultsRequest loadicatorResultsRequest = 2;

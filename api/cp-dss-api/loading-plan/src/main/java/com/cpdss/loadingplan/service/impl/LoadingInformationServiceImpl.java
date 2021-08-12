@@ -238,6 +238,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       LoadingInformation loadingInformation = loadingInformationOpt.get();
       informationBuilderService.buildLoadingInfoFromRpcMessage(request, loadingInformation);
       loadingInformationRepository.save(loadingInformation);
+      this.updateIsLoadingInfoCompeteStatus(
+          loadingInformationOpt.get().getId(), request.getIsLoadingInfoComplete());
       return loadingInformationOpt.get();
     } else {
       throw new Exception(
@@ -347,6 +349,17 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       loadingInformationRepository.save(loadingInformation);
     }
     return null;
+  }
+
+  /**
+   * For every save request, this status will pass from front end
+   *
+   * @param loadingInfoId
+   * @param status
+   */
+  @Override
+  public void updateIsLoadingInfoCompeteStatus(Long loadingInfoId, boolean status) {
+    this.loadingInformationRepository.updateLoadingInformationCompleteStatus(loadingInfoId, status);
   }
 
   private void buildLoadingInfoResponse(

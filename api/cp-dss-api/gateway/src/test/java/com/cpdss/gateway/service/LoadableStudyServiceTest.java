@@ -1594,7 +1594,7 @@ class LoadableStudyServiceTest {
   void testSaveLoadablePatternDetailsGrpcFailure() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.saveLoadablePatterns(
-                any(LoadablePlanRequest.class), anyLong(), anyString()))
+                any(LoadablePlanRequest.class), anyLong(), anyString(), anyString()))
         .thenCallRealMethod();
     Mockito.when(this.loadableStudyService.saveJson(anyLong(), anyLong(), anyString()))
         .thenReturn(StatusReply.newBuilder().setStatus(SUCCESS).setCode(SUCCESS).build());
@@ -1618,7 +1618,7 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.saveLoadablePatterns(
-                    createAlgoPatternResponse(), 1L, CORRELATION_ID_HEADER_VALUE));
+                    createAlgoPatternResponse(), 1L, CORRELATION_ID_HEADER_VALUE, anyString()));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
@@ -1631,7 +1631,7 @@ class LoadableStudyServiceTest {
         .thenReturn(StatusReply.newBuilder().setStatus(SUCCESS).setCode(SUCCESS).build());
     Mockito.when(
             this.loadableStudyService.saveLoadablePatterns(
-                any(LoadablePlanRequest.class), anyLong(), anyString()))
+                any(LoadablePlanRequest.class), anyLong(), anyString(), anyString()))
         .thenCallRealMethod();
     Mockito.when(
             this.loadableStudyService.saveLoadablePatterns(
@@ -1645,7 +1645,7 @@ class LoadableStudyServiceTest {
 
     AlgoPatternResponse response =
         this.loadableStudyService.saveLoadablePatterns(
-            createAlgoPatternResponse(), 1L, CORRELATION_ID_HEADER_VALUE);
+            createAlgoPatternResponse(), 1L, CORRELATION_ID_HEADER_VALUE, anyString());
     assertAll(
         () ->
             assertEquals(

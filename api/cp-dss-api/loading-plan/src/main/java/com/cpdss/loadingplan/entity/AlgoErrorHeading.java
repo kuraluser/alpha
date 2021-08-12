@@ -2,10 +2,13 @@
 package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,4 +34,7 @@ public class AlgoErrorHeading extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @OneToMany(mappedBy = "algoErrorHeading", fetch = FetchType.LAZY)
+  private List<AlgoErrors> algoErrors;
 }

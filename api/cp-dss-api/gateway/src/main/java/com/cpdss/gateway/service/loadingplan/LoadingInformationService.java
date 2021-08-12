@@ -3,6 +3,7 @@ package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.gateway.domain.AlgoErrorResponse;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
 import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.loadingplan.*;
@@ -62,4 +63,19 @@ public interface LoadingInformationService {
       throws GenericServiceException;
 
   LoadingInfoAlgoResponse generateLoadingPlan(Long infoId) throws GenericServiceException;
+
+  LoadingInfoAlgoStatus getLoadingInfoAlgoStatus(
+      Long vesselId, Long voyageId, Long infoId, String processId) throws GenericServiceException;
+
+  /**
+   * Fetches ALGO Errors of Loading Information
+   *
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   * @throws GenericServiceException
+   */
+  AlgoErrorResponse getLoadingInfoAlgoErrors(Long vesselId, Long voyageId, Long infoId)
+      throws GenericServiceException;
 }

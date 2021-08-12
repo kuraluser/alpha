@@ -4,9 +4,9 @@ import { DATATABLE_BUTTON, DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../
 import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { ICargoQuantities, ILoadableQuantityCargo, IShipCargoTank, OPERATIONS } from '../../core/models/common.model';
-import { IPumpData, IPump, ILoadingRate, ISequenceData } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
-import { ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingSequenceValueObject, IReasonForDelays } from '../models/loading-discharging.model';
+import { ICargoQuantities, ILoadableQuantityCargo, IProtested, IShipCargoTank, OPERATIONS } from '../../core/models/common.model';
+import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
+import { ICOWDetails, IDischargeOperationListData, IDischargingInformation, IDischargingInformationResponse, ILoadedCargo, ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequenceValueObject, IReasonForDelays } from '../models/loading-discharging.model';
 
 /**
  * Transformation Service for Loading  and Discharging
@@ -209,11 +209,11 @@ export class LoadingDischargingTransformationService {
   * @param {ILoadingDischargingDelays} loadingDischargingDelay
   * @param {boolean} [isNewValue=true]
   * @param {ILoadingSequenceDropdownData} listData
-  * @returns {ILoadingSequenceValueObject}
+  * @returns {ILoadingDischargingSequenceValueObject}
   * @memberof LoadingDischargingTransformationService
   */
-  getLoadingDischargingDelayAsValueObject(loadingDischargingDelay: ILoadingDischargingDelays, isNewValue = true, isEditable = true, listData: ILoadingSequenceDropdownData, prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT): ILoadingSequenceValueObject {
-    const _loadingDischargingDelay = <ILoadingSequenceValueObject>{};
+  getLoadingDischargingDelayAsValueObject(loadingDischargingDelay: ILoadingDischargingDelays, isNewValue = true, isEditable = true, listData: ILoadingSequenceDropdownData, prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT): ILoadingDischargingSequenceValueObject {
+    const _loadingDischargingDelay = <ILoadingDischargingSequenceValueObject>{};
     const reasonDelayObj: IReasonForDelays[] = listData?.reasonForDelays?.filter(reason => loadingDischargingDelay?.reasonForDelayIds?.includes(reason.id));
     const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === loadingDischargingDelay.cargoId);
     _loadingDischargingDelay.id = loadingDischargingDelay.id;
@@ -235,11 +235,11 @@ export class LoadingDischargingTransformationService {
   /**
    * Method for converting from loading delay value object model
    *
-   * @param {ILoadingSequenceValueObject} loadingDischargingDelayValueObject
+   * @param {ILoadingDischargingSequenceValueObject} loadingDischargingDelayValueObject
    * @returns {ILoadingDischargingDelays}
    * @memberof LoadingDischargingTransformationService
    */
-  getLoadingDischargingDelayAsValue(loadingDischargingDelayValueObject: ILoadingSequenceValueObject[], infoId: number, operation: OPERATIONS): ILoadingDischargingDelays[] {
+  getLoadingDischargingDelayAsValue(loadingDischargingDelayValueObject: ILoadingDischargingSequenceValueObject[], infoId: number, operation: OPERATIONS): ILoadingDischargingDelays[] {
     const loadingDischargingDelays: ILoadingDischargingDelays[] = [];
     loadingDischargingDelayValueObject.forEach((loadingValueObject) => {
       const _loadingDischargingDelays = <ILoadingDischargingDelays>{};
@@ -579,15 +579,24 @@ export class LoadingDischargingTransformationService {
   }
 
   /**
+   * Set cargo stage tickposition
+   *
+   * @param {ICargoStage[]} cargoStages
+   * @return {*}
+   * @memberof LoadingDischargingTransformationService
+   */
+  setCargoTickPositions(cargoStages: ICargoStage[]) {
+    return [cargoStages[0].start, ...cargoStages.map((item) => item.end)];
+  }
+
+  /**
    * Transform sequence data
    *
    * @return {*}
    * @memberof LoadingDischargingTransformationService
    */
   transformSequenceData(sequenceData: ISequenceData) {
-
-    sequenceData.cargoStages = [];
-    sequenceData.cargoStageTickPositions = [];
+    sequenceData.cargoStageTickPositions = this.setCargoTickPositions(sequenceData.cargoStages);
     sequenceData.ballastPumps = this.setBallastPumpGravity(sequenceData.ballastPumps, sequenceData.gravity, sequenceData.ballastPumpCategories);
     sequenceData.stabilityParams = sequenceData.stabilityParams?.map(param => {
       param.data = param?.data?.map((value) => [value[0], Number(value[1])]);
@@ -598,5 +607,95 @@ export class LoadingDischargingTransformationService {
     sequenceData.cargoLoadingRates = this.setCargoLoadingRate(sequenceData.stageTickPositions, sequenceData.cargoLoadingRates);
 
     return sequenceData;
+  }
+
+  /**
+   * Method for transforming discharge information data
+   *
+   * @param {IDischargingInformationResponse} dischargingInformationResponse
+   * @param {IDischargeOperationListData} listData
+   * @return {*}  {IDischargingInformation}
+   * @memberof LoadingDischargingTransformationService
+   */
+  transformDischargingInformation(dischargingInformationResponse: IDischargingInformationResponse, listData: IDischargeOperationListData): IDischargingInformation {
+    const dischargingInformation = <IDischargingInformation>{};
+    dischargingInformation.dischargingInfoId = dischargingInformationResponse?.dischargingInfoId;
+    dischargingInformation.synopticalTableId = dischargingInformationResponse?.synopticTableId;
+    dischargingInformation.dischargingDetails = dischargingInformationResponse?.dischargingDetails;
+    dischargingInformation.dischargingRates = dischargingInformationResponse?.dischargingRates;
+    dischargingInformation.berthDetails = dischargingInformationResponse?.berthDetails;
+    dischargingInformation.dischargingSequences = dischargingInformationResponse?.dischargingSequences;
+    dischargingInformation.isDischargingInfoComplete = dischargingInformationResponse?.isDischargingInfoComplete;
+    dischargingInformation.postDischargeStageTime = dischargingInformationResponse?.postDischargeStageTime;
+    dischargingInformation.loadedCargos = dischargingInformationResponse?.loadedCargos;
+    dischargingInformation.machineryInUses = dischargingInformationResponse?.machineryInUses;
+    dischargingInformation.dischargingSequences.loadingDischargingDelays = dischargingInformationResponse.dischargingSequences.dischargingDelays;
+
+    //Update tank list
+    const cargoTanks = [];
+    dischargingInformationResponse?.cargoVesselTankDetails?.cargoTanks.forEach(tanks => {
+      tanks.forEach(tank => {
+        cargoTanks.push(tank);
+      });
+    });
+    dischargingInformation.cargoTanks = cargoTanks;
+
+    //Update cow details
+    const cowDetails = <ICOWDetails>{};
+    cowDetails.cowOption = listData.cowOptions.find(option => option.id === dischargingInformationResponse?.cowDetails?.cowOption);
+    cowDetails.cowPercentage = listData.cowPercentages.find(percentage => percentage.value === dischargingInformationResponse?.cowDetails?.cowPercentage);
+    cowDetails.allCOWTanks = dischargingInformationResponse?.cowDetails?.allCOWTanks?.map(tank => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tank.id));
+    cowDetails.topCOWTanks = dischargingInformationResponse?.cowDetails?.topCOWTanks?.map(tank => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tank.id));
+    cowDetails.bottomCOWTanks = dischargingInformationResponse?.cowDetails?.bottomCOWTanks?.map(tank => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tank.id));
+    cowDetails.cowEnd = dischargingInformationResponse?.cowDetails?.cowEnd;
+    cowDetails.cowStart = dischargingInformationResponse?.cowDetails?.cowStart;
+    cowDetails.cowDuration = dischargingInformationResponse?.cowDetails?.cowDuration;
+    cowDetails.cowTrimMax = dischargingInformationResponse?.cowDetails?.cowTrimMax;
+    cowDetails.cowTrimMin = dischargingInformationResponse?.cowDetails?.cowTrimMin;
+    cowDetails.needFlushingOil = dischargingInformationResponse?.cowDetails?.needFlushingOil;
+    cowDetails.needFreshCrudeStorage = dischargingInformationResponse?.cowDetails?.needFreshCrudeStorage;
+    cowDetails.tanksWashingWithDifferentCargo = dischargingInformationResponse?.cowDetails?.tanksWashingWithDifferentCargo.map(cargoDetails => {
+      cargoDetails.washingCargo = dischargingInformation.loadedCargos.find(cargo => cargo.id === cargoDetails?.washingCargo.id);
+      return cargoDetails;
+    });
+    dischargingInformation.cowDetails = cowDetails;
+
+    //Update cargon details
+    const loadableQuantityCargoDetails: ILoadedCargo[] = dischargingInformationResponse?.cargoVesselTankDetails?.loadableQuantityCargoDetails.map(cargo => {
+      const _cargo = <ILoadedCargo>{};
+      _cargo.isAdd = true;
+      for (const key in cargo) {
+        if (Object.prototype.hasOwnProperty.call(cargo, key)) {
+          if (key === 'protested') {
+            const _protested = cargo.protested ? listData?.protestedOptions[0] : listData?.protestedOptions[1];
+            _cargo.protested = new ValueObject<IProtested>(_protested, true, true, false);
+          } else if (key === 'isCommingled') {
+            const _isCommingled = cargo.isCommingled ?? false;
+            _cargo.isCommingled = new ValueObject<boolean>(_isCommingled, true, true, false);
+          } else {
+            _cargo[key] = cargo[key];
+          }
+        }
+      }
+      return _cargo;
+    });
+    dischargingInformation.cargoVesselTankDetails = {
+      cargoConditions: dischargingInformationResponse?.cargoVesselTankDetails?.cargoConditions,
+      cargoQuantities: dischargingInformationResponse?.cargoVesselTankDetails?.cargoQuantities,
+      cargoTanks: dischargingInformationResponse?.cargoVesselTankDetails?.cargoTanks,
+      loadableQuantityCargoDetails
+    }
+
+    //Update stage details
+    const stageDuration = dischargingInformationResponse?.dischargingStages.stageDurationList?.find(duration => duration.id === dischargingInformationResponse?.dischargingStages?.stageDuration);
+    const stageOffset = dischargingInformationResponse?.dischargingStages.stageOffsetList?.find(offset => offset.id === dischargingInformationResponse?.dischargingStages?.stageOffset);
+    dischargingInformation.dischargingStages = {
+      trackStartEndStage: dischargingInformationResponse?.dischargingStages?.trackGradeSwitch,
+      trackGradeSwitch: dischargingInformationResponse?.dischargingStages?.trackGradeSwitch,
+      stageDuration,
+      stageOffset
+    };
+
+    return dischargingInformation;
   }
 }
