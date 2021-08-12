@@ -37,11 +37,6 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import java.math.BigDecimal;
-
-import static com.cpdss.loadingplan.common.LoadingPlanConstants.FAILED;
-import static com.cpdss.loadingplan.common.LoadingPlanConstants.SUCCESS;
-
 /** @author pranav.k */
 @Slf4j
 @GrpcService
@@ -57,8 +52,6 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   @Autowired PortLoadingPlanStowageDetailsRepository portLoadingPlanStowageDetailsRepository;
 
   @Autowired BillOfLaddingRepository billOfLaddingRepository;
-
-
 
   @Override
   public void loadingPlanSynchronization(
@@ -322,25 +315,25 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
     }
   }
 
-
   @Override
-  public void getLoadableStudyShoreTwo(LoadingPlanModels.UllageBillRequest request, StreamObserver<LoadingPlanModels.UllageBillReply> responseObserver) {
+  public void getLoadableStudyShoreTwo(
+      LoadingPlanModels.UllageBillRequest request,
+      StreamObserver<LoadingPlanModels.UllageBillReply> responseObserver) {
     LoadingPlanModels.UllageBillReply.Builder builder =
-            LoadingPlanModels.UllageBillReply.newBuilder();
+        LoadingPlanModels.UllageBillReply.newBuilder();
     try {
       loadingPlanService.getLoadableStudyShoreTwo(request, responseObserver);
     } catch (Exception e) {
       e.printStackTrace();
       builder.setResponseStatus(
-              ResponseStatus.newBuilder()
-                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-                      .setMessage(e.getMessage())
-                      .setStatus(LoadingPlanConstants.FAILED)
-                      .build());
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(LoadingPlanConstants.FAILED)
+              .build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
   }
-
 }

@@ -455,29 +455,33 @@ public class LoadablePatternService {
     loadableQuantityCargoDetails.setPortRotationId(portRotationId);
     loadableQuantityCargoDetails.setLoadablePatternId(loadablePattern.getId());
     loadableQuantityCargoDetails.setCargoAbbreviation(lpcd.getCargoAbbreviation());
-    loadableQuantityCargoDetails.setEstimatedAPI(lpcd.getEstimatedAPI().isBlank() 
-    		? null : new BigDecimal(lpcd.getEstimatedAPI()));
-    loadableQuantityCargoDetails.setEstimatedTemp(lpcd.getEstimatedTemp().isBlank() 
-    		? null : new BigDecimal(lpcd.getEstimatedTemp()));
+    loadableQuantityCargoDetails.setEstimatedAPI(
+        lpcd.getEstimatedAPI().isBlank() ? null : new BigDecimal(lpcd.getEstimatedAPI()));
+    loadableQuantityCargoDetails.setEstimatedTemp(
+        lpcd.getEstimatedTemp().isBlank() ? null : new BigDecimal(lpcd.getEstimatedTemp()));
     loadableQuantityCargoDetails.setPriority(lpcd.getPriority());
     loadableQuantityCargoDetails.setColorCode(lpcd.getColorCode());
-    loadableQuantityCargoDetails.setDischargeMT(lpcd.getDischargeMT().isBlank() 
-    		? null : new BigDecimal(lpcd.getDischargeMT()));
-    loadableQuantityCargoDetails.setOrderedQuantity(lpcd.getOrderQuantity().isBlank() 
-    		? null : new BigDecimal(lpcd.getOrderQuantity()));
-    loadableQuantityCargoDetails.setSlopQuantity(lpcd.getSlopQuantity().isBlank() 
-    		? null : new BigDecimal(lpcd.getSlopQuantity()));
-    loadableQuantityCargoDetails.setDifferencePercentage(lpcd.getDifferencePercentage().isBlank() 
-    		? null : new BigDecimal(lpcd.getDifferencePercentage()));
+    loadableQuantityCargoDetails.setDischargeMT(
+        lpcd.getDischargeMT().isBlank() ? null : new BigDecimal(lpcd.getDischargeMT()));
+    loadableQuantityCargoDetails.setOrderedQuantity(
+        lpcd.getOrderQuantity().isBlank() ? null : new BigDecimal(lpcd.getOrderQuantity()));
+    loadableQuantityCargoDetails.setSlopQuantity(
+        lpcd.getSlopQuantity().isBlank() ? null : new BigDecimal(lpcd.getSlopQuantity()));
+    loadableQuantityCargoDetails.setDifferencePercentage(
+        lpcd.getDifferencePercentage().isBlank()
+            ? null
+            : new BigDecimal(lpcd.getDifferencePercentage()));
     loadableQuantityCargoDetails.setLoadingOrder(lpcd.getLoadingOrder());
     loadableQuantityCargoDetails.setTimeRequiredForDischarging(
-        lpcd.getTimeRequiredForDischarging().isBlank() 
-		? null : new BigDecimal(lpcd.getTimeRequiredForDischarging()));
-    loadableQuantityCargoDetails.setDischargingRate(lpcd.getDischargingRate().isBlank() 
-    		? null : new BigDecimal(lpcd.getDischargingRate()));
+        lpcd.getTimeRequiredForDischarging().isBlank()
+            ? null
+            : new BigDecimal(lpcd.getTimeRequiredForDischarging()));
+    loadableQuantityCargoDetails.setDischargingRate(
+        lpcd.getDischargingRate().isBlank() ? null : new BigDecimal(lpcd.getDischargingRate()));
     loadableQuantityCargoDetails.setCargoNominationTemperature(
-        lpcd.getCargoNominationTemperature().isBlank() 
-        ? null : new BigDecimal(lpcd.getCargoNominationTemperature()));
+        lpcd.getCargoNominationTemperature().isBlank()
+            ? null
+            : new BigDecimal(lpcd.getCargoNominationTemperature()));
     loadableQuantityCargoDetails.setOperationType(operationType);
 
     List<DischargePlanCowDetailFromAlgo> cowDetailFromAlgoList = new ArrayList<>();
@@ -900,8 +904,10 @@ public class LoadablePatternService {
         new BigDecimal(lpsd.getCargoNominationTemperature()));
     loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
     //    DS field
-    loadablePatternCargoDetails.setOnBoard(lpsd.getOnboard().isBlank() ? null : new BigDecimal(lpsd.getOnboard()));
-    loadablePatternCargoDetails.setMaxTankVolume(lpsd.getMaxTankVolume().isBlank() ? null : new BigDecimal(lpsd.getMaxTankVolume()));
+    loadablePatternCargoDetails.setOnBoard(
+        lpsd.getOnboard().isBlank() ? null : new BigDecimal(lpsd.getOnboard()));
+    loadablePatternCargoDetails.setMaxTankVolume(
+        lpsd.getMaxTankVolume().isBlank() ? null : new BigDecimal(lpsd.getMaxTankVolume()));
     loadablePatternCargoDetailsRepository.save(loadablePatternCargoDetails);
   }
 
@@ -962,8 +968,10 @@ public class LoadablePatternService {
     loadablePlanStowageBallastDetails.setFillingPercentage(lpbd.getPercentage());
 
     // DS fields
-    loadablePlanStowageBallastDetails.setVolume(lpbd.getVolume().isBlank() ? null : new BigDecimal(lpbd.getVolume()));
-    loadablePlanStowageBallastDetails.setMaxTankVolume(lpbd.getMaxTankVolume().isBlank() ? null : new BigDecimal(lpbd.getMaxTankVolume()) );
+    loadablePlanStowageBallastDetails.setVolume(
+        lpbd.getVolume().isBlank() ? null : new BigDecimal(lpbd.getVolume()));
+    loadablePlanStowageBallastDetails.setMaxTankVolume(
+        lpbd.getMaxTankVolume().isBlank() ? null : new BigDecimal(lpbd.getMaxTankVolume()));
     loadablePlanStowageBallastDetailsRepository.save(loadablePlanStowageBallastDetails);
   }
 
@@ -1239,9 +1247,12 @@ public class LoadablePatternService {
           loadableStudyRepository.updateLoadableStudyStatus(
               LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
           replyBuilder
-                  .setProcesssId("")
-                  .setResponseStatus(
-                          Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+              .setProcesssId("")
+              .setResponseStatus(
+                  Common.ResponseStatus.newBuilder()
+                      .setMessage(SUCCESS)
+                      .setStatus(SUCCESS)
+                      .build());
         } else {
           getAlgoCall(replyBuilder, loadableStudyOpt, loadableStudy);
         }

@@ -2,7 +2,6 @@
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
-
 import java.math.BigDecimal;
 import java.util.List;
 import javax.persistence.CascadeType;

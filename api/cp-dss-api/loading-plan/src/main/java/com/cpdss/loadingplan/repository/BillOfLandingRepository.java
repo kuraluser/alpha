@@ -1,13 +1,10 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.repository;
 
-import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.springdata.CommonCrudRepository;
-
+import com.cpdss.loadingplan.entity.BillOfLanding;
 import java.math.BigDecimal;
 import java.util.List;
-
-import com.cpdss.loadingplan.entity.BillOfLanding;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

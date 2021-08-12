@@ -3451,7 +3451,6 @@ public class LoadableStudyService {
       request.setRequestType(LOADABLE_STUDY);
       buildLoadablePlanDetails(loadablePlanRequest, request);
     }
-   
 
     if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
       this.buildAlgoError(loadablePlanRequest.getErrors(), request);

@@ -39,7 +39,7 @@ public class DischargePlanCowDetailFromAlgo extends EntityDoc {
 
   @Column(name = "tank_xid")
   private String tankIds;
-  
+
   @Column(name = "short_name")
   private String shortName;
 

@@ -42,5 +42,6 @@ public interface LoadingPlanService {
       Long vesselId, Long patternId, Long portId, String operationType)
       throws GenericServiceException;
 
-  UllageBillReply getLoadableStudyShoreTwo(String first, UllageBillRequest inputData) throws GenericServiceException;
+  UllageBillReply getLoadableStudyShoreTwo(String first, UllageBillRequest inputData)
+      throws GenericServiceException;
 }

@@ -19,10 +19,10 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSave
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest.Builder;
 import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.UllageBillReply;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import java.util.List;
-import com.cpdss.gateway.domain.UllageBillReply;
 
 public interface LoadingPlanGrpcService {
 
@@ -69,7 +69,9 @@ public interface LoadingPlanGrpcService {
       Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
       throws GenericServiceException;
 
-  UllageBillReply getLoadableStudyShoreTwo(String first, LoadingPlanModels.UllageBillRequest.Builder inputData) throws GenericServiceException;
+  UllageBillReply getLoadableStudyShoreTwo(
+      String first, LoadingPlanModels.UllageBillRequest.Builder inputData)
+      throws GenericServiceException;
 
   StatusReply saveJson(JsonRequest jsonRequest);
 
