@@ -320,8 +320,6 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
               .ifPresent(dto::setRegulationAndRestriction);
           dto.setMaxLoa(
               bd.getMaxLoa().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxLoa()));
-          dto.setMaxShipDepth(
-              bd.getMaxDraft().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxDraft()));
           dto.setLineDisplacement(bd.getLineDisplacement());
           dto.setHoseConnections(bd.getHoseConnection());
           berthDetails.add(dto);

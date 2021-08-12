@@ -174,6 +174,8 @@ public class LoadingInformationGrpcService
       if (loadingInformation.isPresent()) {
         loadingInformationService.saveLoadingInfoRates(
             request.getLoadingRate(), loadingInformation.get(), builder);
+        this.loadingInformationService.updateIsLoadingInfoCompeteStatus(
+            loadingInformation.get().getId(), request.getIsLoadingInfoComplete());
       }
       buildLoadingInfoSaveResponse(builder, loadingInformation.get());
       builder
@@ -213,6 +215,8 @@ public class LoadingInformationGrpcService
       if (loadingInformation.isPresent()) {
         loadingInformationService.saveLoadingInfoStages(
             request.getLoadingStage(), loadingInformation.get());
+        this.loadingInformationService.updateIsLoadingInfoCompeteStatus(
+            loadingInformation.get().getId(), request.getIsLoadingInfoComplete());
       }
       buildLoadingInfoSaveResponse(builder, loadingInformation.get());
       builder
@@ -252,6 +256,8 @@ public class LoadingInformationGrpcService
       if (loadingInformation.isPresent()) {
         loadingBerthService.saveLoadingBerthList(
             request.getLoadingBerthsList(), loadingInformation.get());
+        this.loadingInformationService.updateIsLoadingInfoCompeteStatus(
+            loadingInformation.get().getId(), request.getIsLoadingInfoComplete());
       }
       buildLoadingInfoSaveResponse(builder, loadingInformation.get());
       builder
@@ -291,6 +297,8 @@ public class LoadingInformationGrpcService
       if (loadingInformation.isPresent()) {
         loadingMachineryInUseService.saveLoadingMachineryList(
             request.getLoadingMachinesList(), loadingInformation.get());
+        this.loadingInformationService.updateIsLoadingInfoCompeteStatus(
+            loadingInformation.get().getId(), request.getIsLoadingInfoComplete());
       }
       buildLoadingInfoSaveResponse(builder, loadingInformation.get());
       builder
@@ -330,6 +338,8 @@ public class LoadingInformationGrpcService
       if (loadingInformation.isPresent()) {
         loadingDelayService.saveLoadingDelayList(
             request.getLoadingDelays(), loadingInformation.get());
+        this.loadingInformationService.updateIsLoadingInfoCompeteStatus(
+            loadingInformation.get().getId(), request.getIsLoadingInfoComplete());
       }
       buildLoadingInfoSaveResponse(builder, loadingInformation.get());
       builder
