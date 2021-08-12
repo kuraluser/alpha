@@ -9,9 +9,8 @@ import lombok.Data;
 public class LoadableStudyAlgoJson {
   private String processId;
   private List<LoadablePlanDetailsAlgoJson> loadablePlanDetails;
-  private Object errors;
+  private String errors;
   private boolean hasLodicator;
   private Object validated;
   private Object loadablePatternId;
-  private Object hasLoadicator;
 }

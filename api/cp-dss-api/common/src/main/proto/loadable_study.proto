@@ -383,7 +383,7 @@ message LoadablePatternAlgoRequest {
 	bool validated = 5;
 	repeated AlgoErrors algoErrors = 6;
 	int64 loadablePatternId = 7;
-	
+	string requestType = 8; // LS or DS for re usability
 }
 
 message AlgoErrorRequest {
@@ -412,6 +412,7 @@ message StabilityParameter {
 	string heel = 5;
 	string bendinMoment = 6;
 	string shearForce = 7;
+	string airDraft = 8; //DS field
 }
 
 message LoadablePlanPortWiseDetails {
@@ -420,6 +421,8 @@ message LoadablePlanPortWiseDetails {
 	int64 portRotationId = 3;
 	LoadablePlanDetailsReply arrivalCondition = 4;
 	LoadablePlanDetailsReply departureCondition = 5;
+	string seaWaterTemperature = 6;
+	string ambientTemperature = 7;
 }
 
 message LoadablePlanDetailsRequest {
@@ -485,6 +488,8 @@ message LoadablePlanBallastDetails {
 	string correctedLevelOrginal = 20; //same as corrected ullage
 	string metricTonOrginal = 21; //quantity
 	string percentageOrginal = 22;
+	string volume = 23; //DS field
+	string maxTankVolume = 24; //DS field
 }
 
 message LoadablePlanStowageDetails {
@@ -516,6 +521,8 @@ message LoadablePlanStowageDetails {
   string rdgUllageOrginal = 25;
   string weightOrginal = 26; // MT
   string cargoNominationTemperature = 27;
+  string onboard = 28; //DS field
+  string maxTankVolume = 29; //DS field
  }
 
 
@@ -587,6 +594,18 @@ message LoadableQuantityCargoDetails {
 	 string cargoNominationTemperature = 27;
 	 string cargoNominationQuantity = 28;
 	 string orderQuantity = 29;
+	 string dischargeMT = 30;
+	 string dischargingRate = 31;
+	 string timeRequiredForDischarging = 32;
+	 repeated COWDetail cowDetails = 33;
+	 
+	 
+}
+
+message COWDetail {
+  string tankId = 1;
+  string shortName = 2;
+  string washType = 3;
 }
 
 message CargoToppingOffSequenceDetails {
