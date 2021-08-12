@@ -8,4 +8,5 @@ import lombok.Data;
 public class LoadingInfoAlgoResponse {
 
   private CommonSuccessResponse responseStatus;
+  private String processId;
 }

@@ -18,7 +18,7 @@ public class BillOfLanding {
 
   private String blRefNumber;
 
-  private String bblAt60f;
+  private BigDecimal bblAt60f;
 
   private BigDecimal quantityLt;
 

@@ -4,21 +4,21 @@ package com.cpdss.gateway.service.loadingplan.impl;
 import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.CargoInfoServiceGrpc;
-import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
-import com.cpdss.common.generated.LoadableStudyServiceGrpc;
-import com.cpdss.common.generated.PortInfo;
-import com.cpdss.common.generated.PortInfoServiceGrpc;
-import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
@@ -28,6 +28,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.VoyageStatusRequest;
@@ -288,7 +289,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   }
 
   @Override
-  public ResponseStatus generateLoadingPlan(Long loadingInfoId) {
+  public LoadingInfoAlgoReply generateLoadingPlan(Long loadingInfoId) {
     LoadingInfoAlgoRequest.Builder builder = LoadingInfoAlgoRequest.newBuilder();
     builder.setLoadingInfoId(loadingInfoId);
     return this.loadingInfoServiceBlockingStub.generateLoadingPlan(builder.build());
@@ -409,5 +410,28 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   @Override
   public StatusReply saveJson(JsonRequest jsonRequest) {
     return this.loadableStudyServiceBlockingStub.saveJson(jsonRequest);
+  }
+
+  @Override
+  public LoadingInfoStatusReply getLoadingInfoAlgoStatus(LoadingInfoStatusRequest request) {
+    return this.loadingInfoServiceBlockingStub.getLoadingInfoAlgoStatus(request);
+  }
+
+  @Override
+  public AlgoErrorReply getLoadingInfoAlgoErrors(AlgoErrorRequest request) {
+    return this.loadingInfoServiceBlockingStub.getLoadingInfoAlgoErrors(request);
+  }
+
+  @Override
+  public UllageBillReply getLoadableStudyShoreTwo(
+      String first, LoadingPlanModels.UllageBillRequest.Builder inputData)
+      throws GenericServiceException {
+    Common.ResponseStatus reply =
+        loadingPlanServiceBlockingStub
+            .getLoadableStudyShoreTwo(inputData.build())
+            .getResponseStatus();
+    UllageBillReply replyData = new UllageBillReply();
+    replyData.setResponseStatus(new CommonSuccessResponse(reply.getStatus(), reply.getCode()));
+    return replyData;
   }
 }

@@ -9,6 +9,7 @@ import lombok.Data;
 
 /** @Author jerin.g */
 @Data
+@JsonInclude(Include.NON_NULL)
 public class LoadableQuantityCargoDetails {
   @JsonInclude(Include.NON_NULL)
   private Long id;
@@ -67,4 +68,10 @@ public class LoadableQuantityCargoDetails {
   private String cargoNominationQuantity;
   private String orderQuantity;
   private String maxLoadingRate = BigDecimal.ZERO.toString();
+
+  // additional fields in DS
+  private String dischargeMT;
+  private String timeRequiredForDischarging;
+  private String dischargingRate;
+  private List<ContainerWashing> cowDetails;
 }

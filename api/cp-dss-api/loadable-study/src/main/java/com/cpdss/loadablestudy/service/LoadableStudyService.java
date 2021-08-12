@@ -2793,35 +2793,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
-  public void getLoadableStudyShoreTwo(
-      com.cpdss.common.generated.LoadableStudy.UllageBillRequest request,
-      StreamObserver<com.cpdss.common.generated.LoadableStudy.UllageBillReply> responseObserver) {
-
-    com.cpdss.common.generated.LoadableStudy.UllageBillReply.Builder builder =
-        com.cpdss.common.generated.LoadableStudy.UllageBillReply.newBuilder();
-
-    try {
-      billOfLandingRepository.updateBillOfLandingRepository(
-          Long.valueOf(16377),
-          null,
-          Long.valueOf(3),
-          Long.valueOf(33),
-          Long.valueOf(44),
-          Long.valueOf(6),
-          Long.valueOf(7),
-          Long.valueOf(7),
-          Long.valueOf(359));
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
-    } finally {
-      responseObserver.onNext(builder.build());
-      responseObserver.onCompleted();
-    }
-  }
-
-  @Override
   public void getLoadableStudySimulatorJsonData(
       com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest request,
       StreamObserver<com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply>

@@ -37,7 +37,11 @@ service LoadingInformationService {
   
   rpc SaveAlgoLoadingPlanStatus(AlgoStatusRequest) returns (AlgoStatusReply) {}
   
-  rpc GenerateLoadingPlan(LoadingInfoAlgoRequest) returns (ResponseStatus) {}
+  rpc GenerateLoadingPlan(LoadingInfoAlgoRequest) returns (LoadingInfoAlgoReply) {}
+  
+  rpc GetLoadingInfoAlgoStatus(LoadingInfoStatusRequest) returns (LoadingInfoStatusReply) {}
+  
+  rpc GetLoadingInfoAlgoErrors(AlgoErrorRequest) returns (AlgoErrorReply) {}
 }
 
 service LoadingInstructionService {
@@ -68,4 +72,6 @@ service LoadingPlanService {
   rpc GetCargoNominationMaxQuantity (MaxQuantityRequest) returns (MaxQuantityResponse) {}
 
   rpc GetLoadicatorData(LoadingInfoLoadicatorDataRequest) returns (LoadingInfoLoadicatorDataReply) {}
+
+  rpc GetLoadableStudyShoreTwo(UllageBillRequest) returns (UllageBillReply){}
 }

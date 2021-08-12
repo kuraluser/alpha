@@ -16,5 +16,4 @@ public class Cargo {
   private BigDecimal plannedWeight;
   private BigDecimal actualWeight;
   private Long dischargeTime;
-
 }

@@ -5,8 +5,8 @@ import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../shared/components
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { ICargo, OPERATIONS, ILoadableQuantityCargo, IProtested } from '../../core/models/common.model';
-import { ICargoVesselTankDetails } from '../models/loading-discharging.model';
+import { ICargo, OPERATIONS } from '../../core/models/common.model';
+import { ICargoVesselTankDetails, ILoadedCargo } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
@@ -63,7 +63,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
   }
 
   cargoTobeLoadedDischargedColumns: IDataTableColumn[];
-  cargoTobeLoadedDischarged: ILoadableQuantityCargo[] = [];
+  cargoTobeLoadedDischarged: ILoadedCargo[] = [];
   editMode: DATATABLE_EDITMODE;
 
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;

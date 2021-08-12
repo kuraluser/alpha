@@ -5,12 +5,11 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.DischargePlanDetailsResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
-import com.cpdss.gateway.domain.DischargePlanDetailsResponse;
-import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
@@ -498,8 +497,7 @@ public class DischargePlanController {
           e);
     }
   }
-  
-  
+
   /**
    * @param vesselId
    * @param voyageId
@@ -507,7 +505,7 @@ public class DischargePlanController {
    * @param loadablePatternId
    * @param headers
    * @return
-   * @throws CommonRestException 
+   * @throws CommonRestException
    */
   @GetMapping(
       value =

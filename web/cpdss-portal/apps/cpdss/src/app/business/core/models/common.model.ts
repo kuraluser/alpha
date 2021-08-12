@@ -664,11 +664,7 @@ export interface ICargoQuantities {
    colorCode?: string;
    maxDischargingRate?: string;
    blFigure?: string;
-   shipFigure?: string;
    timeRequiredForDischarging?: string;
-   protested?: ValueObject<IProtested>| any;
-   isCommingled?: ValueObject<boolean> | any;
-   isAdd?: boolean;
 }
 
 /**
@@ -708,7 +704,8 @@ export interface ICargo {
   abbreviation?: string;
   api?: number;
   ports?: IPort[];
-  temp: string;
+  temp?: string;
+  colorCode?: string;
 }
 
 /**

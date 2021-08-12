@@ -16,6 +16,9 @@ import { LoadingDischargingCargoDetailsModule } from '../loading-discharging-car
 import { CargoToBeLoadedDischargedModule } from '../cargo-to-be-loaded-discharged/cargo-to-be-loaded-discharged.module';
 import { DropdownModule } from 'primeng/dropdown';
 import { LoadingDischargingManageSequenceModule } from '../loading-discharging-manage-sequence/loading-discharging-manage-sequence.module';
+import { LoadingDischargingCargoMachineryModule } from '../loading-discharging-cargo-machinery/loading-discharging-cargo-machinery.module';
+import { CowPlanModule } from '../cow-plan/cow-plan.module';
+import { PostDischargeStageModule } from '../post-discharge-stage/post-discharge-stage.module';
 
 /**
  * Module for discharging operations
@@ -39,7 +42,10 @@ import { LoadingDischargingManageSequenceModule } from '../loading-discharging-m
     LoadingDischargingBerthModule,
     LoadingDischargingCargoDetailsModule,
     CargoToBeLoadedDischargedModule,
-    LoadingDischargingManageSequenceModule
+    LoadingDischargingManageSequenceModule,
+    LoadingDischargingCargoMachineryModule,
+    CowPlanModule,
+    PostDischargeStageModule
   ],
   providers: [LoadingDischargingInformationApiService]
 })

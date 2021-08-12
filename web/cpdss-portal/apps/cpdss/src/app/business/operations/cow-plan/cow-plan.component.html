@@ -1,0 +1,204 @@
+<h5 class="text-uppercase heading-border">{{'DISCHARGING_COW_PLAN' | translate }}
+</h5>
+<div class="container-fluid" [formGroup]="cowDetailsForm">
+  <div class="row">
+    <div class="col">
+      <div class="form-group row">
+        <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_SELECT_COW_OPTION' |
+          translate}}</label>
+        <div class="col-7">
+          <p-dropdown [options]="listData?.cowOptions" formControlName="cowOption" optionLabel="name"
+            styleClass="form-control">
+          </p-dropdown>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_NO_OF_TANKS' | translate}}</label>
+        <div class="col-7">
+          <p-dropdown [options]="listData?.cowPercentages" formControlName="cowPercentage" optionLabel="name"
+            styleClass="form-control">
+          </p-dropdown>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="row">
+        <div class="col">
+          <h5 class="text-uppercase">{{'DISCHARGING_SELECT_COW_OPTIONS' | translate }}
+          </h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col">
+              <div class="form-group row">
+                <label class="col-5 col-form-label">{{ 'DISCHARGING_COW_TYPE' |
+                  translate}}</label>
+                <label class="col-7 col-form-label">{{ 'DISCHARGING_COW_TANKS' |
+                  translate}}</label>
+              </div>
+              <div class="form-group row">
+                <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_TOP_COW' |
+                  translate}}</label>
+                <div class="col-7">
+                  <p-multiSelect [options]="cargoTanks" optionLabel="shortName" styleClass="form-control"
+                    formControlName="topCOWTanks">
+                  </p-multiSelect>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_BOTTOM_COW' |
+                  translate}}</label>
+                <div class="col-7">
+                  <p-multiSelect [options]="cargoTanks" optionLabel="shortName" styleClass="form-control"
+                    formControlName="bottomCOWTanks">
+                  </p-multiSelect>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_ALL_COW' |
+                  translate}}</label>
+                <div class="col-7">
+                  <p-multiSelect [options]="cargoTanks" optionLabel="shortName" styleClass="form-control"
+                    formControlName="allCOWTanks">
+                  </p-multiSelect>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <h5 class="text-uppercase">{{'DISCHARGING_SELECT_TANKS_FOR_WASHING_WITH_DIFFERENT_CARGO' | translate }}
+              </h5>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col" formArrayName="tanksWashingWithDifferentCargo">
+              <div class="form-group row">
+                <label class="col-2 col-form-label">{{ 'DISCHARGING_CARGO' |
+                  translate}}</label>
+                <label class="col-6 col-form-label">{{ 'DISCHARGING_TANKS' |
+                  translate}}</label>
+                <label class="col-4 col-form-label">{{ 'DISCHARGING_WASHING_CARGO' |
+                  translate}}</label>
+              </div>
+              <div class="form-group row"
+                *ngFor="let cargoDetails of cowDetails?.tanksWashingWithDifferentCargo; let index = index;"
+                formGroupName="{{index}}">
+                <div class="col-2">
+                  <span class="badge-custom"
+                    [ngStyle]="{'background': cargoDetails?.cargo?.colorCode }">{{cargoDetails?.cargo?.abbreviation}}</span>
+                </div>
+                <div class="col-6">
+                  <p-multiSelect [options]="cargoDetails?.selectedTanks" optionLabel="shortName"
+                    styleClass="form-control" formControlName="tanks">
+                  </p-multiSelect>
+                </div>
+                <div class="col-4">
+                  <p-dropdown [options]="loadedCargos" optionLabel="abbreviation" formControlName="warshingCargo"
+                    styleClass="form-control">
+                  </p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="row">
+            <div class="col">
+              <div class="form-group row">
+                <label for="cow_option" class="col-4 col-form-label">{{ 'DISCHARGING_COW_START_TIME' |
+                  translate}}</label>
+                <div class="col-2">
+                  <p-inputMask type="text" styleClass="form-control" formControlName="cowStart" mask="99:99">
+                  </p-inputMask>
+                </div>
+                <small class="col-6 form-text text-muted">
+                  {{ 'DISCHARGING_COW_START_TIME_HELP' | translate}}
+                </small>
+              </div>
+              <div class="form-group row">
+                <label for="cow_option" class="col-4 col-form-label">{{ 'DISCHARGING_COW_END_TIME' |
+                  translate}}</label>
+                <div class="col-2">
+                  <p-inputMask type="text" styleClass="form-control" formControlName="cowEnd" mask="99:99">
+                  </p-inputMask>
+                </div>
+                <small class="col-6 form-text text-muted">
+                  {{ 'DISCHARGING_COW_END_TIME_HELP' | translate}}
+                </small>
+              </div>
+              <div class="form-group row">
+                <label for="cow_option" class="col-4 col-form-label">{{ 'DISCHARGING_EST_COW_DURATION' |
+                  translate}}</label>
+                <div class="col-2">
+                  <p-inputMask type="text" styleClass="form-control" formControlName="cowDuration" mask="99:99"
+                    readonly>
+                  </p-inputMask>
+                </div>
+                <small class="col-6 form-text text-muted">
+                  {{ 'DISCHARGING_EST_COW_DURATION_HELP' | translate}}
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <h5 class="text-uppercase">{{'DISCHARGING_PREFERRED_TRIM_FOR_COW' | translate }}
+              </h5>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="form-row">
+                <div class="col-auto">
+                  <label for="cow_option">{{ 'DISCHARGING_TRIM_MIN' |
+                    translate}}</label>
+                  <input type="number" formControlName="cowTrimMin" class="form-control" />
+                </div>
+                <div class="col-auto">
+                  <label for="cow_option">{{ 'DISCHARGING_TRIM_MAX' |
+                    translate}}</label>
+                  <input type="number" formControlName="cowTrimMax" class="form-control" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="row">
+        <div class="col">
+          <h5 class="text-uppercase">{{'DISCHARGING_ADDITIONAL_REQUIREMENTS' | translate }}
+          </h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-row align-items-center">
+            <div class="col-auto">
+              <label class="checkbox-custom pr-20">{{'DISCHARGING_ADDITIONAL_REQUIREMENT_CRUDE_STORAGE'
+                | translate}}
+                <input type="checkbox" formControlName="needFreshCrudeStorage">
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="col-auto">
+              <label class="checkbox-custom pr-20">{{'DISCHARGING_ADDITIONAL_REQUIREMENT_FLUSHING_OIL'
+                | translate}}
+                <input type="checkbox" formControlName="needFlushingOil">
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

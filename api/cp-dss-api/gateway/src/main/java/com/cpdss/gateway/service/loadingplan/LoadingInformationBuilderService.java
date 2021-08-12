@@ -51,6 +51,7 @@ public class LoadingInformationBuilderService {
     List<Callable<LoadingPlanModels.LoadingInfoSaveResponse>> callableTasks = new ArrayList<>();
     builder.setLoadingInfoId(request.getLoadingInfoId());
     builder.setSynopticTableId(request.getSynopticalTableId());
+    builder.setIsLoadingInfoComplete(request.getIsLoadingInfoComplete());
 
     // Loading Info Case 1 - Details
     if (request.getLoadingDetails() != null) {

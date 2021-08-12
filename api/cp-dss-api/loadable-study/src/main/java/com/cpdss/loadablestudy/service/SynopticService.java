@@ -1823,7 +1823,7 @@ public class SynopticService {
     } else {
       prEntity.setEtd(etaEtdEstimated);
     }
-    if (!isEmpty(record.getSpecificGravity())) {
+    if (record.getSpecificGravity() != null && !isEmpty(record.getSpecificGravity())) {
       prEntity.setSeaWaterDensity(new BigDecimal(record.getSpecificGravity()));
     }
     this.loadableStudyPortRotationRepository.save(prEntity);

@@ -38,4 +38,9 @@ public interface LoadingInformationRepository
   @Query("UPDATE LoadingInformation SET loadingInformationStatus = ?1 WHERE id = ?2")
   public void updateLoadingInformationStatus(
       LoadingInformationStatus loadingInformationStatus, Long id);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadingInformation li SET li.isLoadingInfoComplete = ?2 WHERE id = ?1")
+  void updateLoadingInformationCompleteStatus(Long id, boolean status);
 }

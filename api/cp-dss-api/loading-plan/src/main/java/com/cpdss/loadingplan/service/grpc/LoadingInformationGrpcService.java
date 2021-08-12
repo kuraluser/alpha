@@ -6,13 +6,18 @@ import static com.cpdss.loadingplan.common.LoadingPlanConstants.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse.Builder;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
@@ -169,6 +174,8 @@ public class LoadingInformationGrpcService
       if (loadingInformation.isPresent()) {
         loadingInformationService.saveLoadingInfoRates(
             request.getLoadingRate(), loadingInformation.get(), builder);
+        this.loadingInformationService.updateIsLoadingInfoCompeteStatus(
+            loadingInformation.get().getId(), request.getIsLoadingInfoComplete());
       }
       buildLoadingInfoSaveResponse(builder, loadingInformation.get());
       builder
@@ -208,6 +215,8 @@ public class LoadingInformationGrpcService
       if (loadingInformation.isPresent()) {
         loadingInformationService.saveLoadingInfoStages(
             request.getLoadingStage(), loadingInformation.get());
+        this.loadingInformationService.updateIsLoadingInfoCompeteStatus(
+            loadingInformation.get().getId(), request.getIsLoadingInfoComplete());
       }
       buildLoadingInfoSaveResponse(builder, loadingInformation.get());
       builder
@@ -247,6 +256,8 @@ public class LoadingInformationGrpcService
       if (loadingInformation.isPresent()) {
         loadingBerthService.saveLoadingBerthList(
             request.getLoadingBerthsList(), loadingInformation.get());
+        this.loadingInformationService.updateIsLoadingInfoCompeteStatus(
+            loadingInformation.get().getId(), request.getIsLoadingInfoComplete());
       }
       buildLoadingInfoSaveResponse(builder, loadingInformation.get());
       builder
@@ -286,6 +297,8 @@ public class LoadingInformationGrpcService
       if (loadingInformation.isPresent()) {
         loadingMachineryInUseService.saveLoadingMachineryList(
             request.getLoadingMachinesList(), loadingInformation.get());
+        this.loadingInformationService.updateIsLoadingInfoCompeteStatus(
+            loadingInformation.get().getId(), request.getIsLoadingInfoComplete());
       }
       buildLoadingInfoSaveResponse(builder, loadingInformation.get());
       builder
@@ -325,6 +338,8 @@ public class LoadingInformationGrpcService
       if (loadingInformation.isPresent()) {
         loadingDelayService.saveLoadingDelayList(
             request.getLoadingDelays(), loadingInformation.get());
+        this.loadingInformationService.updateIsLoadingInfoCompeteStatus(
+            loadingInformation.get().getId(), request.getIsLoadingInfoComplete());
       }
       buildLoadingInfoSaveResponse(builder, loadingInformation.get());
       builder
@@ -401,7 +416,7 @@ public class LoadingInformationGrpcService
                   .build())
           .build();
     } catch (GenericServiceException e) {
-      log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);
+      log.info("GenericServiceException in saveAlgoLoadingPlanStatus at LP MS ", e);
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setStatus(FAILED)
@@ -410,7 +425,7 @@ public class LoadingInformationGrpcService
               .build());
     } catch (Exception e) {
       e.printStackTrace();
-      log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);
+      log.info("Exception in saveAlgoLoadingPlanStatus at LP MS ", e);
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setStatus(FAILED)
@@ -425,25 +440,89 @@ public class LoadingInformationGrpcService
 
   @Override
   public void generateLoadingPlan(
-      LoadingInfoAlgoRequest request, StreamObserver<ResponseStatus> responseObserver) {
+      LoadingInfoAlgoRequest request, StreamObserver<LoadingInfoAlgoReply> responseObserver) {
     log.info("Inside generateLoadingPlan in LP MS");
-    ResponseStatus.Builder builder = ResponseStatus.newBuilder();
+    LoadingInfoAlgoReply.Builder builder = LoadingInfoAlgoReply.newBuilder();
     try {
-      this.loadingPlanAlgoService.generateLoadingPlan(request);
-      builder.setStatus(SUCCESS);
+      this.loadingPlanAlgoService.generateLoadingPlan(request, builder);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);
-      builder
-          .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-          .setMessage(e.getMessage())
-          .setStatus(FAILED);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED));
     } catch (Exception e) {
       e.printStackTrace();
-      log.info("GenericServiceException in generateLoadingPlan at LP MS ", e);
-      builder
-          .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-          .setMessage(e.getMessage())
-          .setStatus(FAILED);
+      log.info("Exception in generateLoadingPlan at LP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadingInfoAlgoStatus(
+      LoadingInfoStatusRequest request, StreamObserver<LoadingInfoStatusReply> responseObserver) {
+    log.info("Inside getLoadingInfoAlgoStatus in LP MS");
+    LoadingInfoStatusReply.Builder builder = LoadingInfoStatusReply.newBuilder();
+    try {
+      this.loadingPlanAlgoService.getLoadingInfoAlgoStatus(request, builder);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build()).build();
+    } catch (GenericServiceException e) {
+      log.info("GenericServiceException in getLoadingInfoAlgoStatus at LP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.info("Exception in getLoadingInfoAlgoStatus at LP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadingInfoAlgoErrors(
+      AlgoErrorRequest request, StreamObserver<AlgoErrorReply> responseObserver) {
+    log.info("Inside getLoadingInfoAlgoErrors in LP MS");
+    AlgoErrorReply.Builder builder = AlgoErrorReply.newBuilder();
+    try {
+      this.loadingPlanAlgoService.getLoadingInfoAlgoErrors(request, builder);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build()).build();
+    } catch (GenericServiceException e) {
+      log.info("GenericServiceException in getLoadingInfoAlgoErrors at LP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.info("Exception in getLoadingInfoAlgoErrors at LP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

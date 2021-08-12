@@ -35,7 +35,7 @@ public class BillOfLanding extends EntityDoc {
   private String blRefNumber;
 
   @Column(name = "bbl_at_60f")
-  private String bblAt60f;
+  private BigDecimal bblAt60f;
 
   @Column(name = "quantity_lt")
   private BigDecimal quantityLt;
