@@ -6,6 +6,7 @@ import com.cpdss.loadingplan.entity.LoadingInstruction;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -20,7 +21,9 @@ public interface LoadingInstructionRepository
               + "and LI.is_active = true and LIF.is_active =true",
       nativeQuery = true)
   public List<LoadingInstruction> getAllLoadingInstructions(
-      long vesselId, long loadingInfoId, long portRotationId);
+      @Param("vesselId") long vesselId,
+      @Param("loadingInfoId") long loadingInfoId,
+      @Param("portRotationId") long portRotationId);
 
   @Query(
       value =
