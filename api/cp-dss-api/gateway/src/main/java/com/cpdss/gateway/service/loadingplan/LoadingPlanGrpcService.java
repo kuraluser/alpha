@@ -22,6 +22,7 @@ import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import java.util.List;
+import com.cpdss.gateway.domain.UllageBillReply;
 
 public interface LoadingPlanGrpcService {
 
@@ -67,6 +68,8 @@ public interface LoadingPlanGrpcService {
   LoadingPlanModels.LoadingPlanReply getLoadingPlan(
       Long vesselId, Long voyageId, Long loadingInfoId, Long patternId, Long portRotationId)
       throws GenericServiceException;
+
+  UllageBillReply getLoadableStudyShoreTwo(String first, LoadingPlanModels.UllageBillRequest.Builder inputData) throws GenericServiceException;
 
   StatusReply saveJson(JsonRequest jsonRequest);
 

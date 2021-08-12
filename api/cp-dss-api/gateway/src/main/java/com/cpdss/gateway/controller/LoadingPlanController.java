@@ -21,6 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
+import com.cpdss.gateway.service.loadingplan.LoadingInformationBuilderService;
+import com.cpdss.gateway.domain.*;
 
 @Log4j2
 @Validated
@@ -34,6 +38,13 @@ public class LoadingPlanController {
   @Autowired private LoadingInstructionService loadingInstructionService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
+
+  @Autowired LoadingPlanGrpcService loadingPlanGRPCService;
+  @Autowired
+  private LoadingInformationBuilderService loadingInformationBuilderService;
+
+  @Autowired
+  LoadingPlanGrpcService loadingPlanGrpcService;
 
   /**
    * Get API to collect the port rotation details of active Voyage
@@ -768,5 +779,39 @@ public class LoadingPlanController {
           e.getMessage(),
           e);
     }
+  }
+
+  /**
+   * To retrieve rule against loadable study
+   *
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+          value = "/loading/ullage-bill-update",
+          consumes = MediaType.APPLICATION_JSON_VALUE,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public UllageBillReply saveRulesForLoadableStudy(
+          @RequestHeader HttpHeaders headers, @RequestBody UllageBillRequest inputData)
+          throws CommonRestException {
+    UllageBillReply reply = new UllageBillReply();
+
+    try {
+      reply = loadingPlanService.getLoadableStudyShoreTwo(
+              headers.getFirst(CORRELATION_ID_HEADER), inputData);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when update bill rules", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when update bill rules", e);
+      throw new CommonRestException(
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              headers,
+              HttpStatusCode.INTERNAL_SERVER_ERROR,
+              e.getMessage(),
+              e);
+    }
+    return reply;
   }
 }
