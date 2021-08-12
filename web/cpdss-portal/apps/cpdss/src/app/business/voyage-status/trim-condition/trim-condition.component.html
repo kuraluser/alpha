@@ -4,12 +4,14 @@
       <div [ngClass]="{'trim-even-keel': !trim, 'trim-head':  trim < 0, 'trim-stern': trim > 0}" class="row">
         <div class="col">
           <div class="row">
-            <div class="col text-secondary pt-25">{{'VOYAGE_STATUS_TRIM_WATERLINE' | translate}}</div>
-            <div class="col text-center pt-10">
-              {{'VOYAGE_STATUS_TRIM' | translate}}
-              <h5 class="text-secondary" *ngIf="trim !== 0">{{trim | number: '1.2-2'}}{{(trim > 0 ?
+            <div class="col-4 text-secondary pt-25">{{'VOYAGE_STATUS_TRIM_WATERLINE' | translate}}</div>
+            <div class="col pt-10">
+              <div class="inline-block text-center">
+              {{'VOYAGE_STATUS_TRIM' | translate}}<br>
+              <h5 class="text-secondary inline-block" *ngIf="trim !== 0">{{trim | number: '1.2-2'}}{{(trim > 0 ?
                 'VOYAGE_STATUS_TRIM_STERN_UNIT' : 'VOYAGE_STATUS_TRIM_HEAD_UNIT')| translate}}</h5>
-              <h5 class="text-secondary" *ngIf="trim === 0">{{'VOYAGE_STATUS_TRIM_ZERO_UNIT'| translate}}</h5>
+              <h5 class="text-secondary inline-block" *ngIf="trim === 0">{{'VOYAGE_STATUS_TRIM_ZERO_UNIT'| translate}}</h5>
+            </div>
             </div>
           </div>
         </div>
