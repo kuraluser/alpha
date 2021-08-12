@@ -547,7 +547,7 @@ public class GenerateDischargeStudyJson {
                 portRotation.setDistanceBetweenPorts(port.getDistanceBetweenPorts());
                 portRotation.setTimeOfStay(port.getTimeOfStay());
                 portRotation.setMaxDraft(port.getMaxDraft());
-                portRotation.setMaxAirDraft(port.getMaxDraft());
+                portRotation.setMaxAirDraft(port.getMaxAirDraft());
                 portRotation.setEta(port.getEta());
                 portRotation.setEtd(port.getEtd());
                 portRotation.setPortOrder(port.getPortOrder());

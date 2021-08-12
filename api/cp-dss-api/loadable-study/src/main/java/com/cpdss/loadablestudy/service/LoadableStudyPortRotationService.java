@@ -620,6 +620,12 @@ public class LoadableStudyPortRotationService {
               builder.setPortId(port.getPortXId());
               builder.setId(port.getId());
               builder.setMaxDraft(String.valueOf(port.getMaxDraft()));
+              builder.setOperationId(port.getOperation().getId());
+              builder.setSeaWaterDensity(String.valueOf(port.getSeaWaterDensity()));
+              builder.setEta(String.valueOf(port.getEta()));
+              builder.setEtd(String.valueOf(port.getEtd()));
+              builder.setPortOrder(port.getPortOrder());
+
               if (port.getIsbackloadingEnabled() != null) {
                 builder.setIsBackLoadingEnabled(port.getIsbackloadingEnabled());
                 if (backloadingDataByportIds.get(port.getId()) != null) {
