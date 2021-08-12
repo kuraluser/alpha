@@ -51,10 +51,10 @@ public class DischargePatternQuantityCargoPortwiseDetails extends EntityDoc {
   private String cargoAbbreviation;
 
   @Column(name = "estimated_api")
-  private String estimatedAPI;
+  private BigDecimal estimatedAPI;
 
   @Column(name = "estimated_temp")
-  private String estimatedTemp;
+  private BigDecimal estimatedTemp;
 
   @Column(name = "priority")
   private Integer priority;
@@ -63,13 +63,13 @@ public class DischargePatternQuantityCargoPortwiseDetails extends EntityDoc {
   private String colorCode;
 
   @Column(name = "discharge_mt")
-  private String dischargeMT;
+  private BigDecimal dischargeMT;
 
   @Column(name = "ordered_quantity")
-  private String orderedQuantity;
+  private BigDecimal orderedQuantity;
 
   @Column(name = "slop_quantity")
-  private String slopQuantity;
+  private BigDecimal slopQuantity;
 
   @Column(name = "difference_percentage")
   private BigDecimal differencePercentage;

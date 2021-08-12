@@ -455,13 +455,18 @@ public class LoadablePatternService {
     loadableQuantityCargoDetails.setPortRotationId(portRotationId);
     loadableQuantityCargoDetails.setLoadablePatternId(loadablePattern.getId());
     loadableQuantityCargoDetails.setCargoAbbreviation(lpcd.getCargoAbbreviation());
-    loadableQuantityCargoDetails.setEstimatedAPI(lpcd.getEstimatedAPI());
-    loadableQuantityCargoDetails.setEstimatedTemp(lpcd.getEstimatedTemp());
+    loadableQuantityCargoDetails.setEstimatedAPI(lpcd.getEstimatedAPI().isBlank() 
+    		? null : new BigDecimal(lpcd.getEstimatedAPI()));
+    loadableQuantityCargoDetails.setEstimatedTemp(lpcd.getEstimatedTemp().isBlank() 
+    		? null : new BigDecimal(lpcd.getEstimatedTemp()));
     loadableQuantityCargoDetails.setPriority(lpcd.getPriority());
     loadableQuantityCargoDetails.setColorCode(lpcd.getColorCode());
-    loadableQuantityCargoDetails.setDischargeMT(lpcd.getDischargeMT());
-    loadableQuantityCargoDetails.setOrderedQuantity(lpcd.getOrderQuantity());
-    loadableQuantityCargoDetails.setSlopQuantity(lpcd.getSlopQuantity());
+    loadableQuantityCargoDetails.setDischargeMT(lpcd.getDischargeMT().isBlank() 
+    		? null : new BigDecimal(lpcd.getDischargeMT()));
+    loadableQuantityCargoDetails.setOrderedQuantity(lpcd.getOrderQuantity().isBlank() 
+    		? null : new BigDecimal(lpcd.getOrderQuantity()));
+    loadableQuantityCargoDetails.setSlopQuantity(lpcd.getSlopQuantity().isBlank() 
+    		? null : new BigDecimal(lpcd.getSlopQuantity()));
     loadableQuantityCargoDetails.setDifferencePercentage(lpcd.getDifferencePercentage().isBlank() 
     		? null : new BigDecimal(lpcd.getDifferencePercentage()));
     loadableQuantityCargoDetails.setLoadingOrder(lpcd.getLoadingOrder());
