@@ -53,6 +53,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -112,10 +113,11 @@ public class LoadicatorService {
     List<LoadingSequence> loadingSequences =
         loadingSequenceRepository.findByLoadingInformationAndIsActiveOrderBySequenceNumber(
             loadingInformation, true);
-    Set<Long> cargoNominationIds =
+    Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
+    cargoNominationIds.addAll(
         loadingSequences.stream()
             .map(sequence -> sequence.getCargoNominationXId())
-            .collect(Collectors.toSet());
+            .collect(Collectors.toList()));
     Map<Long, CargoNominationDetail> cargoNomDetails =
         this.getCargoNominationDetails(cargoNominationIds);
 
@@ -134,77 +136,72 @@ public class LoadicatorService {
             portWiseDetailIds, true);
     List<LoadingPlanRobDetails> loadingPlanRobDetails =
         loadingPlanRobDetailsRepository.findByPortWiseDetailIdsAndIsActive(portWiseDetailIds, true);
-    Set<Integer> loadingTimes =
+    Set<Integer> loadingTimes = new LinkedHashSet<Integer>();
+    loadingTimes.addAll(
         loadingPlanPortWiseDetails.stream()
             .map(portWiseDetails -> portWiseDetails.getTime())
             .sorted()
-            .collect(Collectors.toSet());
+            .collect(Collectors.toList()));
     Map<Integer, List<LoadingPlanStowageDetails>> stowageMap =
         new HashMap<Integer, List<LoadingPlanStowageDetails>>();
     Map<Integer, List<LoadingPlanBallastDetails>> ballastMap =
         new HashMap<Integer, List<LoadingPlanBallastDetails>>();
     Map<Integer, List<LoadingPlanRobDetails>> robMap =
         new HashMap<Integer, List<LoadingPlanRobDetails>>();
-    loadingTimes.stream()
-        .sorted()
-        .forEach(
-            time -> {
-              stowageMap.put(
-                  time,
-                  loadingPlanStowageDetails.stream()
-                      .filter(
-                          stowage -> stowage.getLoadingPlanPortWiseDetails().getTime().equals(time))
-                      .collect(Collectors.toList()));
-              ballastMap.put(
-                  time,
-                  loadingPlanBallastDetails.stream()
-                      .filter(
-                          ballast -> ballast.getLoadingPlanPortWiseDetails().getTime().equals(time))
-                      .collect(Collectors.toList()));
-              robMap.put(
-                  time,
-                  loadingPlanRobDetails.stream()
-                      .filter(rob -> rob.getLoadingPlanPortWiseDetails().getTime().equals(time))
-                      .collect(Collectors.toList()));
-            });
+    loadingTimes.forEach(
+        time -> {
+          stowageMap.put(
+              time,
+              loadingPlanStowageDetails.stream()
+                  .filter(stowage -> stowage.getLoadingPlanPortWiseDetails().getTime().equals(time))
+                  .collect(Collectors.toList()));
+          ballastMap.put(
+              time,
+              loadingPlanBallastDetails.stream()
+                  .filter(ballast -> ballast.getLoadingPlanPortWiseDetails().getTime().equals(time))
+                  .collect(Collectors.toList()));
+          robMap.put(
+              time,
+              loadingPlanRobDetails.stream()
+                  .filter(rob -> rob.getLoadingPlanPortWiseDetails().getTime().equals(time))
+                  .collect(Collectors.toList()));
+        });
 
     CargoInfo.CargoReply cargoReply = getCargoInfoForLoadicator(loadingInformation);
     VesselInfo.VesselReply vesselReply = getVesselDetailsForLoadicator(loadingInformation);
     PortInfo.PortReply portReply = getPortInfoForLoadicator(loadingInformation);
 
     loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
-    loadingTimes.stream()
-        .sorted()
-        .forEach(
-            time -> {
-              StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
-              buildStowagePlan(
-                  loadingInformation,
-                  time,
-                  processId,
-                  cargoReply,
-                  vesselReply,
-                  portReply,
-                  stowagePlanBuilder);
-              buildLoadicatorStowagePlanDetails(
-                  loadingInformation,
-                  stowageMap.get(time),
-                  cargoNomDetails,
-                  vesselReply,
-                  cargoReply,
-                  stowagePlanBuilder);
-              buildLoadicatorCargoDetails(
-                  loadingInformation,
-                  cargoNomDetails,
-                  stowageMap.get(time),
-                  cargoReply,
-                  stowagePlanBuilder);
-              buildLoadicatorBallastDetails(
-                  loadingInformation, ballastMap.get(time), vesselReply, stowagePlanBuilder);
-              buildLoadicatorRobDetails(
-                  loadingInformation, robMap.get(time), vesselReply, stowagePlanBuilder);
-              loadicatorRequestBuilder.addStowagePlanDetails(stowagePlanBuilder.build());
-            });
+    loadingTimes.forEach(
+        time -> {
+          StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
+          buildStowagePlan(
+              loadingInformation,
+              time,
+              processId,
+              cargoReply,
+              vesselReply,
+              portReply,
+              stowagePlanBuilder);
+          buildLoadicatorStowagePlanDetails(
+              loadingInformation,
+              stowageMap.get(time),
+              cargoNomDetails,
+              vesselReply,
+              cargoReply,
+              stowagePlanBuilder);
+          buildLoadicatorCargoDetails(
+              loadingInformation,
+              cargoNomDetails,
+              stowageMap.get(time),
+              cargoReply,
+              stowagePlanBuilder);
+          buildLoadicatorBallastDetails(
+              loadingInformation, ballastMap.get(time), vesselReply, stowagePlanBuilder);
+          buildLoadicatorRobDetails(
+              loadingInformation, robMap.get(time), vesselReply, stowagePlanBuilder);
+          loadicatorRequestBuilder.addStowagePlanDetails(stowagePlanBuilder.build());
+        });
 
     Loadicator.LoadicatorReply reply = this.saveLoadicatorInfo(loadicatorRequestBuilder.build());
     if (!reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
