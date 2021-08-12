@@ -26,11 +26,19 @@ export class DraftConditionComponent implements OnInit {
     this.setConditions();
   }
 
-  @Input() hasLoadicator = false;
+  @Input() get hasLoadicator(): number{
+    return this._hasLoadicator;
+  };
+
+  set hasLoadicator(value: number) {
+    this._hasLoadicator = value;
+    this.setConditions();
+  }
   columns: IDataTableColumn[];
   value = [];
 
   private _draftCondition: IDraftCondition;
+  private _hasLoadicator: number;
 
   constructor(private voyageStatusTransformationService: VoyageStatusTransformationService) { }
 
