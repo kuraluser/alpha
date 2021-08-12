@@ -98,7 +98,9 @@ export interface IMachineryInUses {
   vesselManifold: IVesselManifoldBottomLine[];
   pumpTypes: IPumpTypes[];
   vesselPumps: IVesselPumps[];
-  loadingDischargingMachinesInUses?: Array<ILoadingMachinesInUse | IDischargingMachinesInUse>;
+  //Note:- need to check 
+  loadingMachinesInUses?: Array<ILoadingMachinesInUse | IDischargingMachinesInUse>;
+  loadingDischargingMachinesInUses?: Array<IDischargingMachinesInUse>;
 }
 
 /**

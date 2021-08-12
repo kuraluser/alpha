@@ -64,8 +64,8 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   * @memberof LoadingDischargingCargoMachineryComponent
   */
    initMachinery() {
-    this.machineryInUses.loadingDischargingMachinesInUses = this.machineryInUses?.loadingDischargingMachinesInUses ?? [];
-    const usedManifold = this.machineryInUses?.loadingDischargingMachinesInUses?.find(machine => machine.machineTypeId === this.machineryInUses.machineTypes.MANIFOLD);
+    this.machineryInUses.loadingMachinesInUses = this.machineryInUses?.loadingMachinesInUses ?? [];
+    const usedManifold = this.machineryInUses?.loadingMachinesInUses?.find(machine => machine.machineTypeId === this.machineryInUses.machineTypes.MANIFOLD);
     const usedType = this.machineryInUses?.vesselManifold?.find(manifold => manifold.id === usedManifold?.machineId)
     this.selectedType = usedType ? this.machineryInUses?.tankTypes?.find(type => type.id === usedType.componentType) : this.machineryInUses?.tankTypes[0];
     this.updateMachinery();
@@ -79,8 +79,8 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   updateMachinery() {
     this.machineries = [];
     this.machineryInUses?.vesselPumps?.map((vesselpump) => {
-      vesselpump.isUsing = this.machineryInUses?.loadingDischargingMachinesInUses?.some(machine => machine.machineId === vesselpump.id && machine.machineTypeId === vesselpump.machineType);
-      const machinaryUsed = this.machineryInUses?.loadingDischargingMachinesInUses?.find((machine) => machine.machineId === vesselpump.id && machine.machineTypeId === vesselpump.machineType);
+      vesselpump.isUsing = this.machineryInUses?.loadingMachinesInUses?.some(machine => machine.machineId === vesselpump.id && machine.machineTypeId === vesselpump.machineType);
+      const machinaryUsed = this.machineryInUses?.loadingMachinesInUses?.find((machine) => machine.machineId === vesselpump.id && machine.machineTypeId === vesselpump.machineType);
       if (machinaryUsed) {
         vesselpump.capacity = machinaryUsed.capacity;
       } else {
@@ -99,7 +99,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
     let filteredManiFoldMachineByTankType = [];
     filteredManiFoldMachineByTankType = this.machineryInUses.vesselManifold.filter((manifold) => manifold.componentType === this.selectedType.id);
     filteredManiFoldMachineByTankType?.map((manifold) => {
-      manifold.isUsing = this.machineryInUses?.loadingDischargingMachinesInUses?.some(machine => machine.machineId === manifold.id && machine.machineTypeId === manifold.machineTypeId);
+      manifold.isUsing = this.machineryInUses?.loadingMachinesInUses?.some(machine => machine.machineId === manifold.id && machine.machineTypeId === manifold.machineTypeId);
     });
     const manifoldObject = {
       machine: 'Manifold',
@@ -107,7 +107,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
       field: 'componentCode'
     }
     this.machineryInUses.vesselBottomLine.map((bottoLine) => {
-      bottoLine.isUsing = this.machineryInUses?.loadingDischargingMachinesInUses?.some(machine => machine.machineId === bottoLine.id && machine.machineTypeId === bottoLine.machineTypeId);
+      bottoLine.isUsing = this.machineryInUses?.loadingMachinesInUses?.some(machine => machine.machineId === bottoLine.id && machine.machineTypeId === bottoLine.machineTypeId);
     });
     const bottomLineObject = {
       machine: 'BottomLine',
@@ -136,13 +136,13 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   * @memberof LoadingDischargingCargoMachineryComponent
   */
   onChange(column) {
-    this.machineryInUses.loadingDischargingMachinesInUses = this.machineryInUses.loadingDischargingMachinesInUses.map((machine) => {
+    this.machineryInUses.loadingMachinesInUses = this.machineryInUses.loadingMachinesInUses.map((machine) => {
       if (machine.machineId === column.id) {
         machine.capacity = column.capacity;
       }
       return machine;
     })
-    this.updatemachineryInUses.emit(this.machineryInUses.loadingDischargingMachinesInUses)
+    this.updatemachineryInUses.emit(this.machineryInUses.loadingMachinesInUses)
   }
 
   /**
@@ -161,16 +161,16 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
         machineTypeId: column?.machineType ?? column?.machineTypeId,
         ...info
       }
-      this.machineryInUses.loadingDischargingMachinesInUses.push(machineInUse)
-      this.updatemachineryInUses.emit(this.machineryInUses.loadingDischargingMachinesInUses);
+      this.machineryInUses.loadingMachinesInUses.push(machineInUse)
+      this.updatemachineryInUses.emit(this.machineryInUses.loadingMachinesInUses);
     } else {
       const machineTypeId = column?.machineType ?? column?.machineTypeId;
-      this.machineryInUses?.loadingDischargingMachinesInUses?.map(machineUse => {
+      this.machineryInUses?.loadingMachinesInUses?.map(machineUse => {
         if (machineUse.machineId === column.id && machineUse.machineTypeId === machineTypeId) {
           machineUse.isUsing = false;
         }
       });
-      this.updatemachineryInUses.emit(this.machineryInUses.loadingDischargingMachinesInUses);
+      this.updatemachineryInUses.emit(this.machineryInUses.loadingMachinesInUses);
     }
 
   }
@@ -184,7 +184,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
     let bottomLine;
     let manifold;
     let vesselPump;
-    this.machineryInUses?.loadingDischargingMachinesInUses.map((machineUse) => {
+    this.machineryInUses?.loadingMachinesInUses.map((machineUse) => {
       if(machineUse.isUsing) {
         switch(machineUse.machineTypeId) {
           case MACHINE_TYPES.BOTTOM_LINE : {
