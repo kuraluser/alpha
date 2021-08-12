@@ -10,6 +10,7 @@ import { LoadingCargoDuplicateValidator } from '../validators/loading-cargo-dupl
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 
 /**
  * Component class for loading discharging manage sequence component
@@ -77,6 +78,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private translateService: TranslateService,
     private fb: FormBuilder,
+    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
 
   async ngOnInit(): Promise<void> {
@@ -91,6 +93,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   */
   async initiLoadingDischargingSequenceArray() {
     this.listData = await this.getDropdownData();
+ 
     this.listData.reasonForDelays = this.loadingDischargingSequences.reasonForDelays;
     const initialDelay = this.loadingDischargingSequences.loadingDischargingDelays?.find(loadingDischargingDelay => !loadingDischargingDelay.cargoId && !loadingDischargingDelay.quantity)
     if (initialDelay) {
@@ -127,12 +130,14 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   async getDropdownData(): Promise<ILoadingSequenceDropdownData> {
     const cargoTobeLoaded = this.loadableQuantityCargo?.map(loadable => {
       if (loadable) {
+        loadable.loadableMT = this.quantityDecimalFormatPipe.transform(loadable.loadableMT,this.currentQuantitySelectedUnit).toString().replace(/,/g,'');
         loadable.grade = this.findCargo(loadable);
       }
       return loadable;
     })
     this.listData = <ILoadingSequenceDropdownData>{};
     this.listData.loadableQuantityCargo = cargoTobeLoaded;
+    
     return this.listData;
   }
 

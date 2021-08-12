@@ -166,8 +166,7 @@ export class LoadingDischargingTransformationService {
       },
       {
         field: 'quantity',
-        header: 'QUANTITY',
-        numberFormat: '1.2-2'
+        header: 'QUANTITY'
       },
       {
         field: 'reasonForDelay',
@@ -330,7 +329,7 @@ export class LoadingDischargingTransformationService {
       {
         field: 'orderedQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_NOMINATION',
-        numberFormat: quantityNumberFormat
+       
       },
       {
         field: 'minMaxTolerance',
@@ -339,7 +338,7 @@ export class LoadingDischargingTransformationService {
       {
         field: 'loadableMT',
         header: 'LOADING_CARGO_TO_BE_LOADED_SHIP_LOADABLE',
-        numberFormat: quantityNumberFormat
+      
       },
       {
         field: 'differencePercentage',
