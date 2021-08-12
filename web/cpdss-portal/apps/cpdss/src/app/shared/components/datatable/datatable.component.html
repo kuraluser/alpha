@@ -267,10 +267,11 @@
                                             styleClass="form-control" appendTo="body"
                                             [panelStyleClass]="col.fieldComponentClass ? col.fieldComponentClass : 'index-1'"
                                             [formControlName]="col.field" [filter]="col.listFilter"
+                                            [resetFilterOnHide]="col.listFilter ? true : false"
                                             optionLabel="{{col.fieldOptionLabel}}"
                                             [defaultLabel]="col.fieldPlaceholder| translate"
                                             (onChange)="onChange($event, rowData, rowIndex, col)"
-                                            resetFilterOnHide="true" 
+                                            (onPanelHide)="onMultiselectClose(rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
                                             itemSize="30" >
                                         </p-multiSelect>

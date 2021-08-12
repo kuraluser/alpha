@@ -293,12 +293,24 @@ export class DatatableComponent implements OnInit {
     if (this.editMode && (colEditable === undefined || colEditable) && event?.data[event.field]?.isEditable && !event.data?.isAdd && event.field !== 'actions') {
       for(let i= event.index; i >= 0; i--){
         const control = this.field(i, event.field);
-        if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.DATERANGE && event.data[event.field].value) {
+        if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.MULTISELECT && col?.fieldType !== this.fieldType.DATERANGE && event.data[event.field].value) {
           event.data[event.field].isEditMode = control?.invalid;
           control.updateValueAndValidity();
         }
       }
     }
+  }
+
+  /**
+   * Handler for on multiselect close event
+   *
+   * @param {IDataTableEvent} event
+   * @memberof DatatableComponent
+   */
+  onMultiselectClose(rowData, rowIndex, col){
+    const control = this.field(rowIndex, col.field);
+    rowData[col.field].isEditMode = control?.invalid;
+    control.updateValueAndValidity();
   }
 
   /**
