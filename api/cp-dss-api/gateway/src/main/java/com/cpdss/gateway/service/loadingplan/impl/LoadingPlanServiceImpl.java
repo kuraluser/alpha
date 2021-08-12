@@ -392,6 +392,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       Long vesselId, Long voyageId, Long infoId, Long portRotationId)
       throws GenericServiceException {
 
+    final String OPERATION_TYPE = "DEP";
     LoadingPlanResponse loadingPlanResponse = new LoadingPlanResponse();
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
@@ -421,6 +422,62 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     buildTankLayout(vesselId, loadingPlanResponse);
     loadingInformation.setLoadingRates(loadingRates);
     loadingInformation.setToppingOffSequence(toppingSequence);
+
+    LoadingDetails loadingDetails =
+        this.loadingInformationService.getLoadingDetailsByPortRotationId(
+            planReply.getLoadingInformation().getLoadingDetail(),
+            vesselId,
+            activeVoyage.getId(),
+            portRotationId,
+            portRotation.get().getPortId());
+    loadingInformation.setLoadingDetails(loadingDetails);
+
+    // Berth data from master, call to port Info service
+    List<BerthDetails> masterBerthDetails =
+        this.loadingInformationService.getMasterBerthDetailsByPortId(
+            portRotation.get().getPortId());
+    List<BerthDetails> loadingBerthDetails =
+        this.loadingInformationService.buildLoadingPlanBerthDetails(
+            planReply.getLoadingInformation().getLoadingBerthsList());
+
+    LoadingBerthDetails berthDetails = new LoadingBerthDetails();
+    berthDetails.setAvailableBerths(masterBerthDetails);
+    berthDetails.setSelectedBerths(loadingBerthDetails);
+    loadingInformation.setBerthDetails(berthDetails);
+
+    CargoMachineryInUse machineryInUse =
+        this.loadingInformationService.getCargoMachinesInUserFromVessel(
+            planReply.getLoadingInformation().getLoadingMachinesList(), vesselId);
+    loadingInformation.setMachineryInUses(machineryInUse);
+
+    LoadingStages loadingStages =
+        this.loadingInformationService.getLoadingStagesAndMasters(
+            planReply.getLoadingInformation().getLoadingStage());
+    loadingInformation.setLoadingStages(loadingStages);
+
+    CargoVesselTankDetails vesselTankDetails =
+        this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
+            vesselId,
+            activeVoyage.getId(),
+            activeVoyage.getActiveLs().getId(),
+            portRotation.get().getPortId(),
+            portRotation.get().getPortOrder(),
+            portRotation.get().getId(),
+            OPERATION_TYPE);
+    // Call No. 2 To synoptic data for loading (same as port rotation in above code)
+    vesselTankDetails.setLoadableQuantityCargoDetails(
+        this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
+            vesselId,
+            activeVoyage.getPatternId(),
+            OPERATION_TYPE,
+            portRotation.get().getId(),
+            portRotation.get().getPortId()));
+    loadingInformation.setCargoVesselTankDetails(vesselTankDetails);
+
+    LoadingSequences loadingSequences =
+        this.loadingInformationService.getLoadingSequence(
+            planReply.getLoadingInformation().getLoadingDelays());
+    loadingInformation.setLoadingSequences(loadingSequences);
 
     loadingPlanResponse.setLoadingInformation(loadingInformation);
 
