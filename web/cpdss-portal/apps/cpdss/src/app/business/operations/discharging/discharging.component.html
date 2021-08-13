@@ -68,4 +68,10 @@
     [vesselId]="vesselId" *ngIf="currentTab === OPERATION_TAB.INFORMATION" [voyageId]="voyageId"
     [portRotationId]="portRotationId">
   </cpdss-portal-discharging-information>
+
+  <div class="row" *ngIf="currentTab === OPERATION_TAB.INSTRUCTION">
+    <cpdss-portal-discharging-instruction #dischargingInstruction [vesselId]="vesselId" [voyageId]="voyageId"
+    [portRotationId]="portRotationId" [dischargingInfoId]="dischargingInfoId"></cpdss-portal-discharging-instruction>
+  </div>
+
 </div>
