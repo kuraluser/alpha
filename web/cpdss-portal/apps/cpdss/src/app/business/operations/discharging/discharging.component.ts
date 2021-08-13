@@ -1,7 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ComponentCanDeactivate, UnsavedChangesGuard } from '../../../shared/services/guards/unsaved-data-guard';
 import { ICargo, ICargoResponseModel } from '../../core/models/common.model';
 import { OPERATION_TAB } from '../models/operations.model';
 import { OperationsApiService } from '../services/operations-api.service';
@@ -18,7 +19,9 @@ import { OperationsApiService } from '../services/operations-api.service';
   templateUrl: './discharging.component.html',
   styleUrls: ['./discharging.component.scss']
 })
-export class DischargingComponent implements OnInit, OnDestroy {
+export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
+
+  @ViewChild('dischargingInstruction') dischargingInstruction;
 
   currentTab: OPERATION_TAB = OPERATION_TAB.INFORMATION;
   OPERATION_TAB = OPERATION_TAB;
@@ -35,12 +38,16 @@ export class DischargingComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
+  @HostListener('window:beforeunload')
+  canDeactivate(): Observable<boolean> | boolean {
+    return !(this.dischargingInstruction?.instructionCheckList?.hasUnsavedChanges || this.dischargingInstruction?.instructionCheckList?.instructionForm?.dirty);
+  }
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private operationsApiService: OperationsApiService
-  ) {
-  }
+    private operationsApiService: OperationsApiService,
+    private unsavedChangesGuard: UnsavedChangesGuard
+  ) {}
 
   ngOnInit(): void {
     this.initSubsciptions();
@@ -91,6 +98,8 @@ export class DischargingComponent implements OnInit, OnDestroy {
   * @memberof DischargingComponent
   */
   async switchTab(tab) {
+    const value = await this.unsavedChangesGuard.canDeactivate(this);
+    if (!value) { return };
     this.currentTab = tab;
   }
 
