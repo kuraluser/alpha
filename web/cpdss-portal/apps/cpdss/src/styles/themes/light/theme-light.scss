@@ -1501,3 +1501,13 @@ header{
 .p-menu .p-menuitem-link:not(.p-disabled):hover{
   background: $dropdown-menu-hover-bg;
 }
+.text-info{
+  color: $info!important;
+}
+
+.icon-info-rounded{
+  border: 1px solid $info!important;
+}
+.well-custom{
+  border: 1px solid $border-color!important;
+}

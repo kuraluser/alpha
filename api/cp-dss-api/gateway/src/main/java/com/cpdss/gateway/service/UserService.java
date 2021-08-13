@@ -38,6 +38,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.keycloak.TokenVerifier;
 import org.keycloak.common.VerificationException;
 import org.keycloak.representations.AccessToken;
@@ -53,7 +55,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -572,7 +573,7 @@ public class UserService {
     Optional<Roles> role =
         this.rolesRepository.findByIdAndCompanyXIdAndIsActive(
             permission.getRoleId(), companyId, true);
-    if (!role.isPresent()) {
+    if (role.isEmpty()) {
       throw new GenericServiceException(
           "Role with given id does not exist",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
@@ -585,12 +586,29 @@ public class UserService {
       screenIds.add(screenInfo.getId());
     }
 
-    if (permission.getDeselectedUserId() != null) {
+    // Refresh user roles
+    if (!CollectionUtils.isEmpty(permission.getDeselectedUserId())
+        || !CollectionUtils.isEmpty(permission.getUserId())) {
       List<RoleUserMapping> roleUserList =
-          this.roleUserRepository.findByRolesAndIsActive(role.get().getId(), true);
+          ListUtils.emptyIfNull(this.roleUserRepository.findByRoleId(role.get().getId()));
       roleUserList.stream()
-          .filter(ru -> permission.getDeselectedUserId().contains(ru.getUsers().getId()))
+          .filter(
+              roleUser -> permission.getDeselectedUserId().contains(roleUser.getUsers().getId()))
           .forEach(roleUser -> roleUser.setIsActive(false));
+      roleUserList.stream()
+          .filter(roleUser -> permission.getUserId().contains(roleUser.getUsers().getId()))
+          .forEach(roleUser -> roleUser.setIsActive(true));
+
+      // Deactivate other roles for the user
+      List<RoleUserMapping> userRoleList =
+          ListUtils.emptyIfNull(this.roleUserRepository.findByUserIds(permission.getUserId()));
+      userRoleList.stream()
+          .filter(userRole -> !Objects.equals(role.get().getId(), userRole.getRoles().getId()))
+          .forEach(userRole -> userRole.setIsActive(false));
+      roleUserList.addAll(userRoleList);
+
+      // Update roles
+      this.roleUserRepository.saveAll(roleUserList);
     }
 
     List<Screen> screens =
@@ -620,21 +638,17 @@ public class UserService {
                     notification.setIsActive(false);
                   });
               this.notificationRepository.saveAll(notificationsList);
-            }
 
-            Optional<RoleUserMapping> roleUserOpt =
-                this.roleUserRepository.findByUsersAndIsActive(
-                    user.getId(), true, role.get().getId());
-            RoleUserMapping roleUser = null;
-            if (!roleUserOpt.isPresent()) {
-              roleUser = new RoleUserMapping();
-            } else {
-              roleUser = roleUserOpt.get();
+              // Update roles - first time
+              Optional<RoleUserMapping> roleUserOpt =
+                  this.roleUserRepository.findByUsersAndIsActive(
+                      user.getId(), true, role.get().getId());
+              RoleUserMapping roleUser = roleUserOpt.orElseGet(RoleUserMapping::new);
+              roleUser.setIsActive(true);
+              roleUser.setRoles(role.get());
+              roleUser.setUsers(user);
+              this.roleUserRepository.save(roleUser);
             }
-            roleUser.setIsActive(true);
-            roleUser.setRoles(role.get());
-            roleUser.setUsers(user);
-            this.roleUserRepository.save(roleUser);
           });
     }
 

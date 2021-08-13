@@ -563,6 +563,7 @@ public class LoadableStudyServiceShore {
     if (!cargoNominationOperationDetails.isEmpty()) {
       Set<CargoNominationPortDetails> cargoNominationPortDetailsList =
           cargoNominationOperationDetails.stream()
+              .filter(var -> var.getCargoNominationId().equals(request.getId()))
               .map(
                   cargo -> {
                     CargoNominationPortDetails cargoNominationPortDetails =

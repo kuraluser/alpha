@@ -8,6 +8,7 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { ICargo, OPERATIONS } from '../../core/models/common.model';
 import { ICargoVesselTankDetails, ILoadedCargo } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'
 
 /**
  * Componenet class for cargo to be loaded or discharge section
@@ -74,7 +75,8 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
     private _decimalPipe: DecimalPipe,
     private quantityPipe: QuantityPipe,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -110,15 +112,13 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
         cargo.differencePercentage = cargo.differencePercentage ? (cargo.differencePercentage.includes('%') ? cargo.differencePercentage : cargo.differencePercentage + '%') : '';
         cargo.grade = this.findCargo(cargo);
 
-        const orderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
-        cargo.orderedQuantity = orderedQuantity?.toString();
-
+        const orderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);   
+        cargo.orderedQuantity = this.quantityDecimalFormatPipe.transform(orderedQuantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,'');
         const loadableMT = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
-        cargo.loadableMT = loadableMT?.toString();
-
+        cargo.loadableMT = this.quantityDecimalFormatPipe.transform(loadableMT,this.currentQuantitySelectedUnit).toString().replace(/,/g,'');
+``
         const slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.slopQuantity.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
         cargo.slopQuantity = slopQuantity;
-
         cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
       }
       return cargo;

@@ -84,7 +84,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
       loadingBerthId: 0,
       maxLoa: '',
       maxDraft: '',
-      lineDisplacement: this.fb.control('', [Validators.required, numberValidator(0, 6), Validators.min(500), Validators.max(200000)])
+      lineDisplacement: this.fb.control('', [numberValidator(0, 6), Validators.min(500), Validators.max(200000)])
     });
     this.berthDetailsForm.disable();
     this.initFormArray();
@@ -97,9 +97,9 @@ export class LoadingDischargingBerthComponent implements OnInit {
     return this.berthForm?.get("berth") as FormArray
   }
 
-/**
- * Return the form controlls of the berth details form
- */
+  /**
+   * Return the form controlls of the berth details form
+   */
   get berthDetailsFormControl() {
     return this.berthDetailsForm.controls;
   }
@@ -156,9 +156,14 @@ export class LoadingDischargingBerthComponent implements OnInit {
       })
     } else {
       this.selectedBerths.map((berth) => {
-        if (berth.berthId === this.berthDetailsForm.value.berthId) {
-          berth[field] = 0;
+        if(berth.berthId === this.berthDetailsForm.value.berthId) {
+          if (!(field === 'lineDisplacement' ||  field === 'hoseConnections')) {
+            berth[field] = 0;
+          } else {
+            berth[field] = '';
+          }
         }
+        
         return berth;
       })
     }
@@ -193,7 +198,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
     const formControl = this.field(index, 'name');
     if (formControl.valid) {
       this.selectedBerths.push(event.value);
-      this.setBerthDetails(event.value, index);
+      this.setBerthDetails(event.value, index , true);
       this.selectedBerths = this.selectedBerths.map((berth) => {
         if (!berth.loadingBerthId) {
           berth.loadingBerthId = 0;
@@ -221,6 +226,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @memberof LoadingDischargingBerthComponent
    */
   setBerthDetails(berthInfo: IBerth, index: number, edit: boolean = false) {
+    const lineDisplacement = Number(berthInfo.lineDisplacement);
     this.berthDetailsForm.patchValue({
       berthId: berthInfo.berthId,
       portId: berthInfo.portId,
@@ -239,34 +245,55 @@ export class LoadingDischargingBerthComponent implements OnInit {
       dischargingBerthId: berthInfo?.dischargingBerthId ? berthInfo?.dischargingBerthId : 0,
       maxLoa: berthInfo.maxLoa,
       maxDraft: berthInfo.maxDraft,
-      lineDisplacement: berthInfo.lineDisplacement
+      lineDisplacement: lineDisplacement ? Math.trunc(lineDisplacement) : ''
     });
     setTimeout(() => {
       if (!edit) {
-        if (this.berthDetailsForm.valid) {
-          this.berthFormArray.at(index).patchValue({
+        this.berthFormArray.at(index).patchValue({
+          edit: false
+        })
+        this.berthDetailsForm.disable();
+      } else {
+        this.berthFormArray.at(index).patchValue({
+          edit: true
+        })
+        this.berthDetailsForm.enable();
+      }
+      this.berthFormArray.controls.forEach((berth, i) => {
+        if (i !== index && berth?.value?.name) {
+          this.berthFormArray.at(i).patchValue({
             edit: false
           })
-          this.berthDetailsForm.disable();
-        } else {
-          this.berthFormArray.at(index).patchValue({
-            edit: true
-          })
-          this.berthDetailsForm.enable();
-          this.berthDetailsForm.markAsTouched();
-          this.berthDetailsForm.markAllAsTouched();
-          this.berthDetailsForm.markAsDirty();
-          this.berthDetailsForm.updateValueAndValidity();
         }
-        this.berthFormArray.controls.forEach((berth, i) => {
-          if (i !== index && berth?.value?.name) {
-            this.berthFormArray.at(i).patchValue({
-              edit: false
-            })
-          }
-        });
-      }
-    }, 200);
+      });
+    })
+    //Note: - need to remove after after resolving DSS-3618
+    // setTimeout(() => {
+    //   if (!edit && this.berthDetailsForm.enabled) {
+    //     if (this.berthDetailsForm.valid) {
+    //       this.berthFormArray.at(index).patchValue({
+    //         edit: false
+    //       })
+    //       this.berthDetailsForm.disable();
+    //     } else {
+    //       this.berthFormArray.at(index).patchValue({
+    //         edit: true
+    //       })
+    //       this.berthDetailsForm.enable();
+    //       this.berthDetailsForm.markAsTouched();
+    //       this.berthDetailsForm.markAllAsTouched();
+    //       this.berthDetailsForm.markAsDirty();
+    //       this.berthDetailsForm.updateValueAndValidity();
+    //     }
+    //     this.berthFormArray.controls.forEach((berth, i) => {
+    //       if (i !== index && berth?.value?.name) {
+    //         this.berthFormArray.at(i).patchValue({
+    //           edit: false
+    //         })
+    //       }
+    //     });
+    //   }
+    // }, 200);
   }
 
   /**
@@ -275,10 +302,11 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @memberof LoadingDischargingBerthComponent
    */
   editBerth(berth, index) {
-    this.selectBerth(berth, index, true);
     this.berthFormArray.at(index).patchValue({
       edit: true
-    })
+    });
+    this.berthDetailsForm.enable();
+    this.selectBerth(berth, index, true);
     this.berthFormArray.controls.forEach((element, i) => {
       if (i !== index) {
         this.berthFormArray.at(i).patchValue({

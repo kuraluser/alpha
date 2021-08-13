@@ -7,7 +7,7 @@
     </div>
 </div>
 
-<form [formGroup]="berthForm">
+<form [formGroup]="berthForm" autocomplete="off">
     <div formArrayName="berth" class="row no-gutters" >
         <div [formGroupName]="i" class="col-6 mb-5" *ngFor="let berthData of berthFormArray.controls; let i = index;">
             <div class="error-icon-wrapper dropdown-berth pr-15 mr-5">

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { IShipCargoTank, ITankOptions, ICargoQuantities, ICargo, OPERATIONS } from '../../core/models/common.model';
 import { ICargoVesselTankDetails } from '../models/loading-discharging.model';
@@ -44,13 +45,14 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
   cargoTanks: IShipCargoTank[][];
   cargoConditions: any = [];
   cargoQuantities: ICargoQuantities[];
-  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, showFillingPercentage: true, weightField: 'actualWeight', showWeight: true, weightUnit: 'MT', commodityNameField: 'cargoAbbreviation', ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api' }
+  cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, showFillingPercentage: true, weightField: 'actualWeight', showWeight: true, weightUnit: 'MT',commodityNameField: 'abbreviation', ullageField: 'correctedUllage', ullageUnit: 'CM', densityField: 'api' }
 
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _cargoVesselTankDetails: ICargoVesselTankDetails;
 
   constructor(
-    private loadingDischargingTransformationService: LoadingDischargingTransformationService
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService,
+    private quantityPipe: QuantityPipe
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -65,6 +67,27 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
     this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
     this.cargoConditions = this.cargoVesselTankDetails?.cargoConditions;
     this.cargoQuantities = this.cargoVesselTankDetails?.cargoQuantities;
+
+    this.loadingDischargingTransformationService.unitChange$.subscribe((res) => {
+      this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit
+      this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+      this.convertIntoSelectedUnit();
+    })
     this.cargoTanks = this.loadingDischargingTransformationService.formatCargoTanks(this.cargoVesselTankDetails?.cargoTanks, this.cargoVesselTankDetails?.cargoQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+  }
+
+  /**
+   * Method to convert data into selected unit.
+   *
+   * @memberof LoadingDischargingCargoDetailsComponent
+   */
+  
+  convertIntoSelectedUnit() {
+    this.cargoQuantities.forEach((item) => {
+      const plannedWeight = this.quantityPipe.transform(item.plannedWeight, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, item?.api);
+      item.plannedWeight = plannedWeight ? Number(plannedWeight) : 0;
+      const actualWeight = this.quantityPipe.transform(item.actualWeight, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, item?.api);
+      item.actualWeight = actualWeight ? Number(actualWeight) : 0;
+    })
   }
 }

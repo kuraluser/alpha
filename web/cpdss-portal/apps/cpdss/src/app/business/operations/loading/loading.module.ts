@@ -29,6 +29,7 @@ import { LoadingDischargingInformationApiService } from '../services/loading-dis
 import { LoadingDischargingManageSequenceModule } from '../loading-discharging-manage-sequence/loading-discharging-manage-sequence.module';
 import { LoadingInstructionApiService } from './../services/loading-instruction-api.service';
 import { CargoToBeLoadedDischargedModule } from '../cargo-to-be-loaded-discharged/cargo-to-be-loaded-discharged.module';
+import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
 
 /**
  * Module for loading operation
@@ -67,7 +68,8 @@ import { CargoToBeLoadedDischargedModule } from '../cargo-to-be-loaded-discharge
     ToppingOffTankTableModule,
     CheckboxModule,
     LoadingDischargingManageSequenceModule,
-    CargoToBeLoadedDischargedModule
+    CargoToBeLoadedDischargedModule,
+    QuantityDecimalFormatPipeModule
 
   ],
   providers: [LoadingDischargingInformationApiService, LoadingInstructionApiService],
