@@ -296,10 +296,10 @@ public class LoadingInformationAlgoRequestBuilderService {
                   .ifPresent(loadableQuantity::setLoadableBblsdbs);
               Optional.ofNullable(cargo.getLoadableKL()).ifPresent(loadableQuantity::setLoadableKL);
               Optional.ofNullable(cargo.getLoadableLT()).ifPresent(loadableQuantity::setLoadableLT);
-              Optional.ofNullable(cargo.getLoadableMT()).ifPresent(loadableQuantity::setLoadableMT);
+              Optional.ofNullable(cargo.getLoadableMT()).ifPresent(loadableQuantity::setLoadableMT);*/
               Optional.ofNullable(cargo.getLoadingOrder())
                   .ifPresent(loadableQuantity::setLoadingOrder);
-              Optional.ofNullable(cargo.getMaxTolerence())
+              /*Optional.ofNullable(cargo.getMaxTolerence())
                   .ifPresent(loadableQuantity::setMaxTolerence);
               Optional.ofNullable(cargo.getMinTolerence())
                   .ifPresent(loadableQuantity::setMinTolerence);
