@@ -154,4 +154,10 @@ public interface LoadableStudyPortRotationRepository
 
   public LoadableStudyPortRotation findByLoadableStudyAndPortXIdAndIsActive(
       LoadableStudy loadableStudy, Long portId, boolean isActive);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE LoadableStudyPortRotation SET isPortRotationOhqComplete = ?2 WHERE id = ?1 AND isActive = true")
+  public void updateIsOhqCompleteByIdAndIsActiveTrue(Long id, Boolean isOhqComplete);
 }
