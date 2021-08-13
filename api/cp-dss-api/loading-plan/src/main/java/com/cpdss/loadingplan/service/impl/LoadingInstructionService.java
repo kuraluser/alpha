@@ -316,7 +316,7 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
                         .filter(
                             i ->
                                 i.getLoadingInstructionTemplateXId()
-                                    == item.getParentInstructionXId())
+                                    .equals(item.getParentInstructionXId()))
                         .findFirst()
                         .get()
                         .getId()));
@@ -374,8 +374,7 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
       List<LoadingInstructions> instructionsBuilderList = new ArrayList<>();
 
       for (LoadingInstruction item : instructionList) {
-        log.info("inside  child loop");
-        if (item.getParentInstructionXId() == headerInstruction.getId()) {
+        if (item.getParentInstructionXId().equals(headerInstruction.getId())) {
           LoadingInstructions.Builder instructionBuilder = LoadingInstructions.newBuilder();
           Optional.ofNullable(item.getId()).ifPresent(instructionBuilder::setInstructionId);
           Optional.ofNullable(item.getLoadingInstructionHeaderXId())

@@ -143,7 +143,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
     if (port?.operationId === 1) {
       this.router.navigate(['loading', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute });
     } else if (port?.operationId === 2) {
-      this.router.navigate(['discharging', this.vessel?.id, this.selectedVoyage?.id], { relativeTo: this.activatedRoute });
+      this.router.navigate(['discharging', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute });
     }
   }
 

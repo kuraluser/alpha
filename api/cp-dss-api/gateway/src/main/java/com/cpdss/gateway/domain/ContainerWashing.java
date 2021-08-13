@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @JsonInclude(Include.NON_NULL)
 public class ContainerWashing {
-  private String tankId;
+  private Long tankId;
   private String shortName;
   private String washType;
 }

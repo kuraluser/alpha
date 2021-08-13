@@ -387,7 +387,7 @@ public class GenerateDischargeStudyJson {
       List<Long> portIds =
           portRotationList.stream().map(item -> item.getPortId()).collect(Collectors.toList());
       PortInfo.PortReply portReply = getPortInfo(portIds);
-      if (portReply.getResponseStatus().getStatus() == SUCCESS) {
+      if (portReply.getResponseStatus().getStatus().equals(SUCCESS)) {
         portReply
             .getPortsList()
             .forEach(

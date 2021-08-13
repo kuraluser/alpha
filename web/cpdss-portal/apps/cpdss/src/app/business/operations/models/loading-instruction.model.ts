@@ -17,7 +17,7 @@ export interface IInstructionTabDetails {
  */
 export interface ILoadingInstructionGroup {
     groupId: number;
-    groupName: number;
+    groupName: string;
     selected?: boolean;
 }
 
