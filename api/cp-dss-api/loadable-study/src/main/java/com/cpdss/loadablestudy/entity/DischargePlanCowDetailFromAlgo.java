@@ -38,7 +38,7 @@ public class DischargePlanCowDetailFromAlgo extends EntityDoc {
   private Boolean isActive = true;
 
   @Column(name = "tank_xid")
-  private String tankIds;
+  private Long tankIds;
 
   @Column(name = "short_name")
   private String shortName;
