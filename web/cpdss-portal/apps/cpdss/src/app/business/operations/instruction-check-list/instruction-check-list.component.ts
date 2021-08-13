@@ -40,7 +40,7 @@ export class InstructionCheckListComponent implements OnInit {
   @Input() voyageId: number;
   @Input() portRotationId: number;
   @Input() groupId: number;
-  @Input() loadingInfoId: number;
+  @Input() loadingDischargingInfoId: number;
 
   selectAll: boolean;
   instructionListData: TreeNode[];
@@ -197,7 +197,7 @@ export class InstructionCheckListComponent implements OnInit {
         }
       }
       this.ngxSpinnerService.show();
-      const result = await this.instructionCheckListApiService.saveInstruction(this.vesselId, this.loadingInfoId, this.portRotationId, data).toPromise();
+      const result = await this.instructionCheckListApiService.saveInstruction(this.vesselId, this.loadingDischargingInfoId, this.portRotationId, data).toPromise();
       this.ngxSpinnerService.hide();
       if (result?.responseStatus?.status === 'SUCCESS') {
         this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: event.level === 1 || event?.node?.data?.isSingleHeader ? translationKeys['LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_MESSAGE'] : translationKeys['LOADING_INSTRUCTION_SUCCESS_SUBHEADER_MESSAGE'] });
@@ -215,7 +215,7 @@ export class InstructionCheckListComponent implements OnInit {
       };
 
       this.ngxSpinnerService.show();
-      const result = await this.instructionCheckListApiService.updateInstruction(this.vesselId, this.loadingInfoId, this.portRotationId, data).toPromise();
+      const result = await this.instructionCheckListApiService.updateInstruction(this.vesselId, this.loadingDischargingInfoId, this.portRotationId, data).toPromise();
       this.ngxSpinnerService.hide();
       if (result?.responseStatus?.status === 'SUCCESS') {
         this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: event.level === 1 || event?.node?.data?.isSingleHeader ? translationKeys['LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_UPDATE_MESSAGE'] : translationKeys['LOADING_INSTRUCTION_SUCCESS_SUBHEADER_UPDATE_MESSAGE'] });
@@ -403,7 +403,7 @@ export class InstructionCheckListComponent implements OnInit {
       instructionId: data.level === 1 ? data?.node?.data?.instructionId : data?.node?.data?.subHeaderId
     };
     this.ngxSpinnerService.show();
-    const result = await this.instructionCheckListApiService.deleteInstruction(this.vesselId, this.loadingInfoId, this.portRotationId, payload).toPromise();
+    const result = await this.instructionCheckListApiService.deleteInstruction(this.vesselId, this.loadingDischargingInfoId, this.portRotationId, payload).toPromise();
     this.ngxSpinnerService.hide();
     if (result?.responseStatus?.status === 'SUCCESS') {
       this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: translationKeys['LOADING_INSTRUCTION_DELETE_MESSAGE'] });
@@ -505,7 +505,7 @@ export class InstructionCheckListComponent implements OnInit {
       }
     });
     this.ngxSpinnerService.show();
-    const result = await this.instructionCheckListApiService.updateCheckListStatus(this.vesselId, this.loadingInfoId, this.portRotationId, data).toPromise();
+    const result = await this.instructionCheckListApiService.updateCheckListStatus(this.vesselId, this.loadingDischargingInfoId, this.portRotationId, data).toPromise();
     this.ngxSpinnerService.hide();
     if (result?.responseStatus?.status === 'SUCCESS') {
       this.tabStatus.emit(true);

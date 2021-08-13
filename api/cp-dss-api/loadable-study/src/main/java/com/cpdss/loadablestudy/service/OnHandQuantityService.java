@@ -204,6 +204,9 @@ public class OnHandQuantityService {
     VesselInfo.VesselReply vesselReply = this.getOhqTanks(request);
     if (onHandQuantities.isEmpty()) {
       synopticService.populateOnHandQuantityData(loadableStudyOpt, portRotation);
+    } else if (!onHandQuantities.isEmpty() && !portRotation.getIsPortRotationOhqComplete()) {
+      this.loadableStudyPortRotationRepository.updateIsOhqCompleteByIdAndIsActiveTrue(
+          portRotation.getId(), true);
     }
     onHandQuantities =
         this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
