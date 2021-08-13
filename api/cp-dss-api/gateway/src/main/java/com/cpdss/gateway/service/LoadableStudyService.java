@@ -3891,18 +3891,20 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCargo1NominationId()).ifPresent(builder::setCargo1NominationId);
     Optional.ofNullable(lqccd.getCargo2NominationId()).ifPresent(builder::setCargo2NominationId);
     Optional.ofNullable(lqccd.getTankShortName()).ifPresent(builder::setTankShortName);
-    lqccd
-        .getToppingSequence()
-        .forEach(
-            sequence -> {
-              CargoToppingOffSequenceDetails.Builder toppingBuilder =
-                  CargoToppingOffSequenceDetails.newBuilder();
-              Optional.ofNullable(lqccd.getToppingOffCargoId())
-                  .ifPresent(toppingBuilder::setCargoId);
-              Optional.ofNullable(sequence.getSequenceOrder())
-                  .ifPresent(toppingBuilder::setOrderNumber);
-              Optional.ofNullable(sequence.getTankId()).ifPresent(toppingBuilder::setTankId);
-              builder.addToppingOffSequences(toppingBuilder.build());
+    Optional.ofNullable(lqccd.getToppingSequence())
+        .ifPresent(
+            toppingSequence -> {
+              toppingSequence.forEach(
+                  sequence -> {
+                    CargoToppingOffSequenceDetails.Builder toppingBuilder =
+                        CargoToppingOffSequenceDetails.newBuilder();
+                    Optional.ofNullable(lqccd.getToppingOffCargoId())
+                        .ifPresent(toppingBuilder::setCargoId);
+                    Optional.ofNullable(sequence.getSequenceOrder())
+                        .ifPresent(toppingBuilder::setOrderNumber);
+                    Optional.ofNullable(sequence.getTankId()).ifPresent(toppingBuilder::setTankId);
+                    builder.addToppingOffSequences(toppingBuilder.build());
+                  });
             });
     detailsBuilder.addLoadableQuantityCommingleCargoDetails(builder.build());
   }
