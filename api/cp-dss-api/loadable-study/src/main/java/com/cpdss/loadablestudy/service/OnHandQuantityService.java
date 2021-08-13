@@ -205,6 +205,8 @@ public class OnHandQuantityService {
     if (onHandQuantities.isEmpty()) {
       synopticService.populateOnHandQuantityData(loadableStudyOpt, portRotation);
     } else if (!onHandQuantities.isEmpty() && !portRotation.getIsPortRotationOhqComplete()) {
+      // If ohq quanties already exist for the port rotation but the flag is false we set it to
+      // true.
       this.loadableStudyPortRotationRepository.updateIsOhqCompleteByIdAndIsActiveTrue(
           portRotation.getId(), true);
     }
