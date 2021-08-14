@@ -22,7 +22,10 @@ import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
+import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.CargoInfos;
 import com.cpdss.common.generated.PortInfo.CargoPortMapping;
@@ -99,6 +102,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private PortInstructionService portInstructionService;
   @Autowired private BackLoadingService backLoadingService;
   @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
+  @Autowired private LoadablePlanService loadablePlanService;
 
   @GrpcClient("cargoService")
   private CargoInfoServiceBlockingStub cargoInfoGrpcService;
@@ -1218,6 +1222,25 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   }
 
   @Override
+  public void getDischargePlanDetails(
+      LoadablePlanDetailsRequest request, StreamObserver<PortRotationReply> responseObserver) {
+
+    log.info("inside getLoadablePlanDetails loadable study service");
+    LoadablePlanDetailsReply.Builder replyBuilder = LoadablePlanDetailsReply.newBuilder();
+    try {
+      loadablePlanService.getLoadablePlanDetails(request, replyBuilder);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching loadable study - port data", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } catch (Exception e) {
+      log.error("Exception when getLoadablePlanDetails ", e);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(null);
+      responseObserver.onCompleted();
+    }
+  }
+
   public void confirmPlan(
       ConfirmPlanRequest request, StreamObserver<ConfirmPlanReply> responseObserver) {
     log.info("inside confirmPlan loadable study service");

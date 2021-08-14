@@ -15,7 +15,9 @@ import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
+import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
@@ -34,6 +36,7 @@ import com.cpdss.gateway.domain.BillOfLadding;
 import com.cpdss.gateway.domain.Cargo;
 import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CommonResponse;
+import com.cpdss.gateway.domain.DischargePlanDetailsResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
@@ -651,6 +654,16 @@ public class DischargeStudyService {
 
   public AlgoReply generateDischargePatterns(AlgoRequest request) {
     return this.dischargeStudyOperationServiceBlockingStub.generateDischargePatterns(request);
+  }
+
+  public DischargePlanDetailsResponse getDischargePatternDetails(
+      Long loadablePatternId, Long loadableStudyId, Long vesselId, String first)
+      throws GenericServiceException {
+    LoadablePlanDetailsRequest.Builder request = LoadablePlanDetailsRequest.newBuilder();
+    request.setLoadablePatternId(loadablePatternId);
+    PortRotationReply dischargePlanDetails =
+        dischargeStudyOperationServiceBlockingStub.getDischargePlanDetails(request.build());
+    return null;
   }
 
   public CommonResponse confirmPlan(
