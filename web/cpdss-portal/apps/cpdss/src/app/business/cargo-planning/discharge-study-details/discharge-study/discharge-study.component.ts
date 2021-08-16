@@ -895,10 +895,14 @@ export class DischargeStudyComponent implements OnInit {
    * @memberof DischargeStudyComponent
   */
   async saveDischargeStudy() {
+    const translationKeys = await this.translateService.get(['DISCHARGE_STUDY_SAVE_ERROR','DISCHARGE_STUDY_SAVE_NO_DATA_ERROR','DISCHARGE_STUDY_SAVE_WARNING_SUMMERY','DISCHARGE_STUDY_SAVE_WARNING','DISCHARGE_STUDY_SUCCESS', 'DISCHARGE_STUDY_SUCCESS_SUMMERY' ]).toPromise();
+    if(!this.dischargeStudyForm.dirty) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_SAVE_ERROR'], detail: translationKeys['DISCHARGE_STUDY_SAVE_NO_DATA_ERROR'] });
+      return;
+    }
     this.checkFormFieldValidity();
     this.dischargeStudyForm.markAllAsTouched();
     this.dischargeStudyForm.markAsDirty();
-    const translationKeys =  await this.translateService.get(['DISCHARGE_STUDY_SAVE_WARNING_SUMMERY','DISCHARGE_STUDY_SAVE_WARNING','DISCHARGE_STUDY_SUCCESS', 'DISCHARGE_STUDY_SUCCESS_SUMMERY' , 'DISCHARGE_STUDY_']).toPromise();
     if(this.dischargeStudyForm.valid) {
       let status;
       this.portDetails.forEach((portDetail , portIndex) => {

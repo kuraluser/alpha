@@ -86,6 +86,11 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
       } else {
         vesselpump.capacity = vesselpump.pumpCapacity;
       }
+      this.machineryInUses?.loadingMachinesInUses?.map((machine) => {
+        if(machine.machineId === vesselpump.id && machine.machineTypeId === vesselpump.machineType) {
+          machine.pumpTypeId = vesselpump.pumpTypeId+'';
+        };
+      });
     })
     this.machinery = this.machineryInUses?.vesselPumps?.reduce((acc, obj) => {
       const key = obj['pumpTypeId'];
@@ -159,6 +164,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
         capacity: column.capacity,
         isUsing: column.isUsing,
         machineTypeId: column?.machineType ?? column?.machineTypeId,
+        pumpTypeId: column?.pumpTypeId !== undefined ? column?.pumpTypeId : '',
         ...info
       }
       this.machineryInUses.loadingMachinesInUses.push(machineInUse)
@@ -196,7 +202,9 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
             break;
           }
           case MACHINE_TYPES.VESSEL_PUMP : {
-            vesselPump = true;
+            if(Number(machineUse.pumpTypeId) === Pump_TYPES.Ballast_Pump) {
+              vesselPump = true;
+            }
             break;
           }
         }

@@ -320,7 +320,9 @@ export class DischargeStudyDetailsTransformationService {
         fieldPlaceholder: 'ENTER_WATER_DENSITY',
         errorMessages: {
           'required': 'PORT_WATER_DENSITY_REQUIRED_ERROR',
-          'min': 'PORT_WATER_DENSITY_MIN_ERROR'
+          'min': 'PORT_WATER_DENSITY_MIN_ERROR',
+          'invalidNumber': 'PORT_VALUE_INVALID_ERROR',
+          'waterDensityError': 'PORT_WATER_DENSITY_RANGE_ERROR'
         }
       },
       {
