@@ -813,6 +813,7 @@ message LoadingPortDetail{
 	int64 portId = 1;
 	string quantity = 2;
 	string name=3;
+	int64 mode = 4;
 }
 
 message segregationDetail{
