@@ -50,12 +50,9 @@ import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.VesselTankResponse;
 import com.cpdss.gateway.domain.VesselTankTCG;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
-import com.cpdss.gateway.domain.loadingplan.VesselComponent;
 import com.cpdss.gateway.domain.user.UserStatusValue;
 import com.cpdss.gateway.domain.user.UserType;
-import com.cpdss.gateway.domain.vessel.PumpType;
-import com.cpdss.gateway.domain.vessel.TankType;
-import com.cpdss.gateway.domain.vessel.VesselPump;
+import com.cpdss.gateway.domain.vessel.*;
 import com.cpdss.gateway.entity.RoleUserMapping;
 import com.cpdss.gateway.entity.UserStatus;
 import com.cpdss.gateway.entity.Users;
@@ -471,6 +468,31 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     vesselDetailsResponse.setTankTypes(this.buildTankTypes(vesselAlgoReply));
     vesselDetailsResponse.setVesselManifold(this.buildVesselManifold(vesselAlgoReply));
     vesselDetailsResponse.setVesselBottomLine(this.buildVesselBottomLine(vesselAlgoReply));
+
+    vesselDetailsResponse.getVesselManifold().stream()
+        .forEach(
+            manifold -> {
+              Optional<TankType> type =
+                  vesselDetailsResponse.getTankTypes().stream()
+                      .filter(tankType -> tankType.getId().equals(manifold.getComponentType()))
+                      .findFirst();
+              if (type.isPresent()) {
+                manifold.setComponentTypeName(type.get().getTypeName());
+              }
+            });
+
+    vesselDetailsResponse.getVesselBottomLine().stream()
+        .forEach(
+            bottomLine -> {
+              Optional<TankType> type =
+                  vesselDetailsResponse.getTankTypes().stream()
+                      .filter(tankType -> tankType.getId().equals(bottomLine.getComponentType()))
+                      .findFirst();
+              if (type.isPresent()) {
+                bottomLine.setComponentTypeName(type.get().getTypeName());
+              }
+            });
+
     return vesselDetailsResponse;
   }
 
@@ -1165,13 +1187,13 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     return pumpTypeList;
   }
 
-  private List<VesselPump> buildVesselPumps(VesselAlgoReply reply) {
-    List<VesselPump> pumpList = new ArrayList<>();
+  private List<VesselPumpResponse> buildVesselPumps(VesselAlgoReply reply) {
+    List<VesselPumpResponse> pumpList = new ArrayList<>();
     reply.getVesselPumpList().stream()
         .forEach(
             vesselPump -> {
-              VesselPump pump = new VesselPump();
-              pump.setId(vesselPump.getId());
+              VesselPumpResponse pump = new VesselPumpResponse();
+              pump.setPumpId(vesselPump.getId());
               pump.setVesselId(vesselPump.getVesselId());
               pump.setPumpCapacity(
                   !vesselPump.getPumpCapacity().isEmpty()
@@ -1199,13 +1221,13 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     return tankTypeList;
   }
 
-  private List<VesselComponent> buildVesselManifold(VesselAlgoReply vesselAlgoReply) {
-    List<VesselComponent> maniFoldList = new ArrayList<>();
+  private List<VesselManiFold> buildVesselManifold(VesselAlgoReply vesselAlgoReply) {
+    List<VesselManiFold> maniFoldList = new ArrayList<>();
     vesselAlgoReply.getVesselManifoldList().stream()
         .forEach(
             vesselManifold -> {
-              VesselComponent maniFold = new VesselComponent();
-              maniFold.setId(vesselManifold.getId());
+              VesselManiFold maniFold = new VesselManiFold();
+              maniFold.setManiFoldId(vesselManifold.getId());
               maniFold.setVesselId(vesselManifold.getVesselId());
               maniFold.setComponentCode(vesselManifold.getComponentCode());
               maniFold.setComponentName(vesselManifold.getComponentName());
@@ -1216,13 +1238,13 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     return maniFoldList;
   }
 
-  private List<VesselComponent> buildVesselBottomLine(VesselAlgoReply vesselAlgoReply) {
-    List<VesselComponent> bottomLineList = new ArrayList<>();
+  private List<VesselBottomLine> buildVesselBottomLine(VesselAlgoReply vesselAlgoReply) {
+    List<VesselBottomLine> bottomLineList = new ArrayList<>();
     vesselAlgoReply.getVesselBottomLineList().stream()
         .forEach(
             bottomLineReply -> {
-              VesselComponent bottomLine = new VesselComponent();
-              bottomLine.setId(bottomLineReply.getId());
+              VesselBottomLine bottomLine = new VesselBottomLine();
+              bottomLine.setBottomLineId(bottomLineReply.getId());
               bottomLine.setVesselId(bottomLineReply.getVesselId());
               bottomLine.setComponentCode(bottomLineReply.getComponentCode());
               bottomLine.setComponentName(bottomLineReply.getComponentName());
