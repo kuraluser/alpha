@@ -140,6 +140,8 @@ public class LoadableStudiesConstants {
   public static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED = 16L;
   public static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_STARTED = 18L;
   public static final Long LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID = 6L;
+  public static final Long LOADABLE_STUDY_COMMUNICATED_TO_SHORE = 21L;
+  public static final Long PROCESSING_WITH_SHIP_SIDE_ALGO = 22L;
   public static final String ERRO_CALLING_ALGO = "ERROR_CALLING_ALGO";
   public static final int CASE_1 = 1;
   public static final int CASE_2 = 2;

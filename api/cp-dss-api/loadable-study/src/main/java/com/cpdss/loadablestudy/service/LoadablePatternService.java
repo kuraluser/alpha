@@ -22,7 +22,6 @@ import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
-import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
@@ -307,8 +306,7 @@ public class LoadablePatternService {
       loadableStudyRepository.updateLoadableStudyStatus(
           LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, loadableStudyOpt.get().getId());
     } else {
-      // uncomment with communication service implementation
-      // savePatternDtails(request, loadableStudyOpt);
+
       List<LoadablePattern> loadablePatterns =
           savePatternDetails(request, loadableStudyOpt, requestType);
       if (request.getHasLodicator()) {
@@ -1242,12 +1240,16 @@ public class LoadablePatternService {
           lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
           this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
           updateProcessIdForLoadableStudy(
-              "", loadableStudyOpt.get(), LOADABLE_STUDY_PROCESSING_STARTED_ID);
+              "",
+              loadableStudyOpt.get(),
+              LOADABLE_STUDY_COMMUNICATED_TO_SHORE,
+              ewReply.getMessageId(),
+              true);
 
           loadableStudyRepository.updateLoadableStudyStatus(
               LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
           replyBuilder
-              .setProcesssId("")
+              .setProcesssId(ewReply.getMessageId())
               .setResponseStatus(
                   Common.ResponseStatus.newBuilder()
                       .setMessage(SUCCESS)
@@ -1280,7 +1282,11 @@ public class LoadablePatternService {
     AlgoResponse algoResponse =
         restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
     updateProcessIdForLoadableStudy(
-        algoResponse.getProcessId(), loadableStudyOpt.get(), LOADABLE_STUDY_PROCESSING_STARTED_ID);
+        algoResponse.getProcessId(),
+        loadableStudyOpt.get(),
+        LOADABLE_STUDY_PROCESSING_STARTED_ID,
+        "",
+        false);
 
     loadableStudyRepository.updateLoadableStudyStatus(
         LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
@@ -1313,17 +1319,25 @@ public class LoadablePatternService {
   }
 
   /**
-   * @param loadableStudyStatus
    * @param loadableStudy void
+   * @param loadableStudyStatus
+   * @param messageId
+   * @param generatedFromShore
    */
   public void updateProcessIdForLoadableStudy(
-      String processId, LoadableStudy loadableStudy, Long loadableStudyStatus) {
+      String processId,
+      LoadableStudy loadableStudy,
+      Long loadableStudyStatus,
+      String messageId,
+      boolean generatedFromShore) {
     LoadableStudyAlgoStatus status = new LoadableStudyAlgoStatus();
     status.setLoadableStudy(loadableStudy);
     status.setIsActive(true);
     status.setLoadableStudyStatus(loadableStudyStatusRepository.getOne(loadableStudyStatus));
     status.setProcessId(processId);
     status.setVesselxid(loadableStudy.getVesselXId());
+    status.setMessageId(messageId);
+    status.setGeneratedFromShore(generatedFromShore);
     loadableStudyAlgoStatusRepository.save(status);
   }
 
@@ -1875,10 +1889,6 @@ public class LoadablePatternService {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      updateProcessIdForLoadableStudy(
-          patternResult.getProcesssId(),
-          loadableStudyOpt.get(),
-          LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID);
       loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
           LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, patternResult.getProcesssId(), true);
       if (patternResult.getLoadablePlanDetailsList().isEmpty()) {
