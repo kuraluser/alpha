@@ -35,6 +35,7 @@ import com.cpdss.loadingplan.domain.algo.LoadicatorAlgoRequest;
 import com.cpdss.loadingplan.domain.algo.LoadicatorAlgoResponse;
 import com.cpdss.loadingplan.domain.algo.LoadicatorStage;
 import com.cpdss.loadingplan.entity.LoadingInformation;
+import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import com.cpdss.loadingplan.entity.LoadingPlanBallastDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanRobDetails;
@@ -42,12 +43,14 @@ import com.cpdss.loadingplan.entity.LoadingPlanStowageDetails;
 import com.cpdss.loadingplan.entity.LoadingSequence;
 import com.cpdss.loadingplan.entity.LoadingSequenceStabilityParameters;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
+import com.cpdss.loadingplan.repository.LoadingInformationStatusRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanPortWiseDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceStabiltyParametersRepository;
+import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
@@ -85,6 +88,10 @@ public class LoadicatorService {
 
   @Autowired
   LoadingSequenceStabiltyParametersRepository loadingSequenceStabiltyParametersRepository;
+
+  @Autowired LoadingInformationStatusRepository loadingInformationStatusRepository;
+
+  @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
 
   @Autowired RestTemplate restTemplate;
 
@@ -503,6 +510,19 @@ public class LoadicatorService {
     //
     saveLoadingSequenceStabilityParameters(
         loadingInfoOpt.get(), request.getLoadingInfoLoadicatorDetailsList());
+
+    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+        loadingInformationStatusRepository.findByIdAndIsActive(
+            LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
+    if (loadingInfoStatusOpt.isEmpty()) {
+      throw new GenericServiceException(
+          "Could not find loading information status with id "
+              + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+        loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
   }
 
   /**
