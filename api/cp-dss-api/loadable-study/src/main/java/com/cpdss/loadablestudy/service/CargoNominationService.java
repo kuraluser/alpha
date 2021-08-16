@@ -178,7 +178,7 @@ public class CargoNominationService {
     portDetail.setPortId(portId);
     portDetail.setIsActive(true);
     portDetail.setCargoNomination(dischargeStudyCargo);
-    
+
     if (cargo != null) {
       portDetail.setQuantity(
           cargo.getCargoNominationPortDetails().stream()
@@ -584,7 +584,6 @@ public class CargoNominationService {
             ofNullable(cargoNomination.getColor()).ifPresent(builder::setColor);
             ofNullable(cargoNomination.getCargoXId()).ifPresent(builder::setCargoId);
             ofNullable(cargoNomination.getAbbreviation()).ifPresent(builder::setAbbreviation);
-           //ofNullable(cargoNomination.getMode()).ifPresent(builder::setMode);
             Optional.ofNullable(cargoNomination.getApi())
                 .ifPresent(val -> builder.setApi(String.valueOf(val)));
             Optional.ofNullable(cargoNomination.getTemperature())
@@ -598,17 +597,20 @@ public class CargoNominationService {
                   .getCargoNominationPortDetails()
                   .forEach(
                       loadingPort -> {
-                    	  if(loadingPort.getIsActive()) {
-                        LoadableStudy.LoadingPortDetail.Builder loadingPortDetailBuilder =
-                            LoadableStudy.LoadingPortDetail.newBuilder();
-                        ofNullable(loadingPort.getPortId())
-                            .ifPresent(loadingPortDetailBuilder::setPortId);
-                        ofNullable(loadingPort.getQuantity())
-                            .ifPresent(
-                                quantity ->
-                                    loadingPortDetailBuilder.setQuantity(String.valueOf(quantity)));
-                        builder.addLoadingPortDetails(loadingPortDetailBuilder);
-                    	  }
+                        if (loadingPort.getIsActive()) {
+                          LoadableStudy.LoadingPortDetail.Builder loadingPortDetailBuilder =
+                              LoadableStudy.LoadingPortDetail.newBuilder();
+                          ofNullable(loadingPort.getPortId())
+                              .ifPresent(loadingPortDetailBuilder::setPortId);
+                          ofNullable(loadingPort.getQuantity())
+                              .ifPresent(
+                                  quantity ->
+                                      loadingPortDetailBuilder.setQuantity(
+                                          String.valueOf(quantity)));
+                          ofNullable(loadingPort.getMode())
+                              .ifPresent(mode -> loadingPortDetailBuilder.setMode(mode));
+                          builder.addLoadingPortDetails(loadingPortDetailBuilder);
+                        }
                       });
             }
 

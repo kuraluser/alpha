@@ -697,11 +697,13 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     .collect(Collectors.toList());
             cargosToDisable.forEach(
                 cargoToDisable -> {
-                	Optional<CargoNominationPortDetails> operationDetail =cargoToDisable.getCargoNominationPortDetails().stream()            
-                    .filter(port -> port.getPortId().equals(dbPortRoation.getPortXId())).findFirst();
-                	if(operationDetail.isPresent()){
-                		operationDetail.get().setIsActive(false);
-                	}
+                  Optional<CargoNominationPortDetails> operationDetail =
+                      cargoToDisable.getCargoNominationPortDetails().stream()
+                          .filter(port -> port.getPortId().equals(dbPortRoation.getPortXId()))
+                          .findFirst();
+                  if (operationDetail.isPresent()) {
+                    operationDetail.get().setIsActive(false);
+                  }
                   cargoNominationsToSave.add(cargoToDisable);
                 });
             if (cargoNominations.isEmpty() && !cargosForPort.isEmpty()) {
@@ -748,11 +750,14 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     cargoNomination.setColor(cargoRequest.getColor());
     cargoNomination.setApi(new BigDecimal(cargoRequest.getApi()));
     cargoNomination.setTemperature(new BigDecimal(cargoRequest.getTemperature()));
-    Optional<CargoNominationPortDetails> cargoOperation= cargoNomination.getCargoNominationPortDetails().stream().filter(cp->cp.getPortId().equals(portId)).findFirst();
-    if(cargoOperation.isPresent()) {
-    	cargoOperation.get().setQuantity(new BigDecimal(cargoRequest.getQuantity()));
-    	cargoOperation.get().setMode(cargoRequest.getMode());
-    	cargoOperation.get().setIsActive(true);
+    Optional<CargoNominationPortDetails> cargoOperation =
+        cargoNomination.getCargoNominationPortDetails().stream()
+            .filter(cp -> cp.getPortId().equals(portId))
+            .findFirst();
+    if (cargoOperation.isPresent()) {
+      cargoOperation.get().setQuantity(new BigDecimal(cargoRequest.getQuantity()));
+      cargoOperation.get().setMode(cargoRequest.getMode());
+      cargoOperation.get().setIsActive(true);
     }
     cargoNominationsToSave.add(cargoNomination);
   }
@@ -1110,12 +1115,15 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     previousPortCargos.stream()
         .forEach(
             cargo -> {
-            	Set<CargoNominationPortDetails> newPortDetails =cargoNominationService.createCargoNominationPortDetails(cargo, null, portRotations.get(portRotations.size() - 1).getPortXId());
-             if(cargo.getCargoNominationPortDetails()!=null &&!cargo.getCargoNominationPortDetails().isEmpty()) {
-            	 cargo.getCargoNominationPortDetails().addAll(newPortDetails); 
-             }else {
-            	 cargo.setCargoNominationPortDetails(newPortDetails); 
-             }
+              Set<CargoNominationPortDetails> newPortDetails =
+                  cargoNominationService.createCargoNominationPortDetails(
+                      cargo, null, portRotations.get(portRotations.size() - 1).getPortXId());
+              if (cargo.getCargoNominationPortDetails() != null
+                  && !cargo.getCargoNominationPortDetails().isEmpty()) {
+                cargo.getCargoNominationPortDetails().addAll(newPortDetails);
+              } else {
+                cargo.setCargoNominationPortDetails(newPortDetails);
+              }
             });
 
     Map<Long, List<BackLoading>> backloadingDataByportIds =
@@ -1135,7 +1143,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 cargoBackloading.setLoadableStudyXId(backloading.getDischargeStudyId());
                 cargoBackloading.setQuantity(new BigDecimal(0L));
                 cargoBackloading.setIsActive(true);
-                cargoBackloading.setTemperature(backloading.getTemperature());             
+                cargoBackloading.setTemperature(backloading.getTemperature());
                 cargoBackloading.setVersion(1L);
                 cargoBackloading.setIsBackloading(true);
                 cargoBackloading.setCargoNominationPortDetails(
@@ -1190,10 +1198,13 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         .forEach(
             cargo -> {
               if (!firstPortCargoIds.contains(cargo.getId())) {
-            	  cargo.getCargoNominationPortDetails().forEach(cpd->{
-                  	cpd.setQuantity(new BigDecimal(0));
-                  	cpd.setMode(1L);
-                  });
+                cargo
+                    .getCargoNominationPortDetails()
+                    .forEach(
+                        cpd -> {
+                          cpd.setQuantity(new BigDecimal(0));
+                          cpd.setMode(1L);
+                        });
               }
               if (cargo.getIsBackloading() != null && cargo.getIsBackloading()) {
                 cargo.setIsActive(false);

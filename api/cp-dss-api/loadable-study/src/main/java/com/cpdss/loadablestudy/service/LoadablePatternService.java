@@ -1247,7 +1247,7 @@ public class LoadablePatternService {
               true);
 
           loadableStudyRepository.updateLoadableStudyStatus(
-                  LOADABLE_STUDY_COMMUNICATED_TO_SHORE, loadableStudyOpt.get().getId());
+              LOADABLE_STUDY_COMMUNICATED_TO_SHORE, loadableStudyOpt.get().getId());
           replyBuilder
               .setProcesssId(ewReply.getMessageId())
               .setResponseStatus(

@@ -59,10 +59,10 @@ public class CargoNomination extends EntityDoc {
 
   @Column(name = "quantity")
   private BigDecimal quantity;
-  
+
   @Column(name = "loadable_study_cargo_nomination_xid")
   private Long lsCargoNominationId;
-  
+
   @OneToMany(
       mappedBy = "cargoNomination",
       cascade = CascadeType.ALL,
