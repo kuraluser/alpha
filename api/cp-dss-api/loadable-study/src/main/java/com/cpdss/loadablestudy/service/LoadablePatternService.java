@@ -1247,7 +1247,7 @@ public class LoadablePatternService {
               true);
 
           loadableStudyRepository.updateLoadableStudyStatus(
-              LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
+                  LOADABLE_STUDY_COMMUNICATED_TO_SHORE, loadableStudyOpt.get().getId());
           replyBuilder
               .setProcesssId(ewReply.getMessageId())
               .setResponseStatus(
@@ -1889,12 +1889,12 @@ public class LoadablePatternService {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-          LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, patternResult.getProcesssId(), true);
+      loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatusByMessageId(
+          LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, responseCommunication.getMessageId(), true);
       if (patternResult.getLoadablePlanDetailsList().isEmpty()) {
         log.info("saveLoadablePatternDetails - loadable study micro service - no plans available");
-        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-            LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, patternResult.getProcesssId(), true);
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatusByMessageId(
+            LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, responseCommunication.getMessageId(), true);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, loadableStudyOpt.get().getId());
       } else {
@@ -1914,8 +1914,8 @@ public class LoadablePatternService {
             patternResult, new LoadablePattern(), loadableStudyOpt.get(), false);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, loadableStudyOpt.get().getId());
-        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, patternResult.getProcesssId(), true);
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatusByMessageId(
+            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, responseCommunication.getMessageId(), true);
       }
     } catch (InvalidProtocolBufferException | GenericServiceException e) {
       e.printStackTrace();
