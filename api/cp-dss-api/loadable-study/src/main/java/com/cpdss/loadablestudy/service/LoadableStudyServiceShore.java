@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.OPEN_VOYAGE_STATUS;
 import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -62,6 +63,7 @@ public class LoadableStudyServiceShore {
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @Autowired private CargoNominationRepository cargoNominationRepository;
   @Autowired private VoyageRepository voyageRepository;
+  @Autowired private VoyageStatusRepository voyageStatusRepository;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
@@ -641,8 +643,10 @@ public class LoadableStudyServiceShore {
       voyage.setCaptainXId(voyageDto.getCaptainXId());
       voyage.setChiefOfficerXId(voyageDto.getChiefOfficerXId());
       voyage.setStartTimezoneId(voyageDto.getStartTimezoneId());
-      // voyage.setVoyageStartDate(LocalDateTime.from(voyageDto.getVoyageStartDate()));
-      // voyage.setVoyageEndDate(LocalDateTime.from(voyageDto.getVoyageEndDate()));
+      voyage.setEndTimezoneId(voyageDto.getEndTimezoneId());
+      voyage.setVoyageStatus(this.voyageStatusRepository.getOne(OPEN_VOYAGE_STATUS));
+      voyage.setVoyageStartDate(voyageDto.getVoyageStartDate());
+      voyage.setVoyageEndDate(voyageDto.getVoyageEndDate());
       voyage = voyageRepository.save(voyage);
       return voyage;
     }

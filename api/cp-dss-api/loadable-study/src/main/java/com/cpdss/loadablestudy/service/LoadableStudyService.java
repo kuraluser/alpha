@@ -675,7 +675,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * Construct folder path for loadable study attachments
    *
    * @param loadableStudy - loadable study entity
-   * @param voyage - voyage entity
    * @return - the folder path
    */
   public String constructFolderPath(LoadableStudy loadableStudy) {
@@ -1904,9 +1903,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       if (0 == request.getLoadablePatternId()) {
         log.info("Inside getLoadableStudyStatus");
-        Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOpt =
-            loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndProcessIdAndIsActive(
+        Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOpt = null;
+        Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOptWthMessageId =
+            loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndMessageIdAndIsActive(
                 request.getLoadableStudyId(), request.getProcessId(), true);
+        if (!loadableStudyAlgoStatusOptWthMessageId.isPresent()) {
+          loadableStudyAlgoStatusOpt =
+              loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndProcessIdAndIsActive(
+                  request.getLoadableStudyId(), request.getProcessId(), true);
+        } else {
+          loadableStudyAlgoStatusOpt = loadableStudyAlgoStatusOptWthMessageId;
+        }
+
         if (!loadableStudyAlgoStatusOpt.isPresent()) {
           log.info("Invalid loadable study Id");
           replyBuilder.setResponseStatus(
