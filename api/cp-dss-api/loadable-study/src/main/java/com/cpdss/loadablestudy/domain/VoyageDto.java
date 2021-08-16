@@ -4,7 +4,6 @@ package com.cpdss.loadablestudy.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import lombok.Data;
 
 /** @Author jerin.g */
@@ -27,9 +26,9 @@ public class VoyageDto {
 
   private String charterer;
 
-  private LocalDateTime voyageStartDate;
+  private String voyageStartDate;
 
-  private LocalDateTime voyageEndDate;
+  private String voyageEndDate;
 
   private LocalDate actualStartDate;
 

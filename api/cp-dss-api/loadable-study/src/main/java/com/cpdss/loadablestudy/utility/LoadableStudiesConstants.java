@@ -19,6 +19,8 @@ public class LoadableStudiesConstants {
 
   public static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
 
+  public static final String VOYAGE_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
+
   public static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
   public static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
 
