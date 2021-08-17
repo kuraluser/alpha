@@ -3,7 +3,7 @@ package com.cpdss.loadingplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadingplan.entity.LoadingInformation;
-import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanBallastTempDetails;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,15 +13,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface PortLoadingPlanBallastDetailsRepository
-    extends CommonCrudRepository<PortLoadingPlanBallastDetails, Long> {
+public interface PortLoadingPlanBallastTempDetailsRepository
+    extends CommonCrudRepository<PortLoadingPlanBallastTempDetails, Long> {
 
-  public List<PortLoadingPlanBallastDetails> findByLoadingInformationAndIsActive(
+  public List<PortLoadingPlanBallastTempDetails> findByLoadingInformationAndIsActive(
       LoadingInformation loadingInformation, Boolean isActive);
 
   @Query(
       "FROM PortLoadingPlanBallastDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
-  public List<PortLoadingPlanBallastDetails> findByPatternIdAndPortRotationIdAndIsActive(
+  public List<PortLoadingPlanBallastTempDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
 
   @Modifying

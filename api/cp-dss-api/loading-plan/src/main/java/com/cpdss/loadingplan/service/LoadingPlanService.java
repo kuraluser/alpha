@@ -49,11 +49,11 @@ public class LoadingPlanService {
 
   @Autowired BillOfLandingRepository billOfLandingRepository;
 
-  @Autowired LoadingPlanStowageDetailsTempRepository loadingPlanStowageDetailsTempRepository;
-  @Autowired LoadingPlanBallastDetailsTempRepository loadingPlanBallastDetailsTempRepository;
-  @Autowired LoadingPlanStowageDetailsRepository loadingPlanStowageDetailsRepository;
-  @Autowired LoadingPlanBallastDetailsRepository loadingPlanBallastDetailsRepository;
-  @Autowired LoadingPlanRobDetailsRepository loadingPlanRobDetailsRepository;
+  @Autowired PortLoadingPlanStowageTempDetailsRepository loadingPlanStowageDetailsTempRepository;
+  @Autowired PortLoadingPlanBallastTempDetailsRepository loadingPlanBallastDetailsTempRepository;
+  @Autowired PortLoadingPlanStowageDetailsRepository loadingPlanStowageDetailsRepository;
+  @Autowired PortLoadingPlanBallastDetailsRepository loadingPlanBallastDetailsRepository;
+  @Autowired PortLoadingPlanRobDetailsRepository loadingPlanRobDetailsRepository;
 
   @Autowired StageOffsetRepository stageOffsetRepository;
   @Autowired StageDurationRepository stageDurationRepository;
@@ -425,7 +425,7 @@ public class LoadingPlanService {
           .getRobUpdateList()
           .forEach(
               ullageInsert -> {
-                loadingPlanRobDetailsRepository.updateLoadingPlanRobDetailsRepository(
+                loadingPlanRobDetailsRepository.updatePortLoadingPlanRobDetailsRepository(
                     BigDecimal.valueOf(ullageInsert.getQuantity()),
                     BigDecimal.valueOf(ullageInsert.getQuantity()),
                     Long.valueOf(ullageInsert.getTankId()),
@@ -438,13 +438,13 @@ public class LoadingPlanService {
             .getBallastUpdateList()
             .forEach(
                 ullageInsert -> {
-                  loadingPlanBallastDetailsTempRepository
-                      .updateLoadingPlanBallastTempDetailsRepository(
-                          BigDecimal.valueOf(ullageInsert.getQuantity()),
-                          BigDecimal.valueOf(ullageInsert.getSounding()),
-                          BigDecimal.valueOf(ullageInsert.getQuantity()),
-                          Long.valueOf(ullageInsert.getTankId()),
-                          true);
+                  loadingPlanBallastDetailsTempRepository.updateLoadingPlanBallastDetailsRepository(
+                      BigDecimal.valueOf(ullageInsert.getQuantity()),
+                      BigDecimal.valueOf(ullageInsert.getSounding()),
+                      BigDecimal.valueOf(ullageInsert.getQuantity()),
+                      Long.valueOf(ullageInsert.getTankId()),
+                      true,
+                      Long.valueOf(ullageInsert.getTankId()));
                 });
 
         request
@@ -452,14 +452,15 @@ public class LoadingPlanService {
             .forEach(
                 ullageInsert -> {
                   loadingPlanStowageDetailsTempRepository
-                      .updateLoadingPlanStowageTempDetailsRepository(
+                      .updatePortLoadingPlanStowageDetailsRepository(
                           BigDecimal.valueOf(ullageInsert.getQuantity()),
                           BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
                           BigDecimal.valueOf(ullageInsert.getQuantity()),
                           BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
                           BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
                           Long.valueOf(ullageInsert.getTankId()),
-                          true);
+                          true,
+                          Long.valueOf(ullageInsert.getTankId()));
                 });
       } else {
         validateAndSaveData(request);
@@ -482,7 +483,7 @@ public class LoadingPlanService {
 
     // Validation pending since API from ALGO is not yet created.
 
-    loadingPlanBallastDetailsTempRepository.deleteByLoadingPlanPortWiseDetails(null);
+    loadingPlanBallastDetailsTempRepository.deleteByLoadingInformationId(null);
     request
         .getBallastUpdateList()
         .forEach(
@@ -492,22 +493,24 @@ public class LoadingPlanService {
                   BigDecimal.valueOf(ullageInsert.getSounding()),
                   BigDecimal.valueOf(ullageInsert.getQuantity()),
                   Long.valueOf(ullageInsert.getTankId()),
-                  true);
+                  true,
+                  Long.valueOf(ullageInsert.getTankId()));
             });
 
-    loadingPlanStowageDetailsRepository.deleteByLoadingPlanPortWiseDetails(null);
+    loadingPlanStowageDetailsRepository.deleteByLoadingInformationId(null);
     request
         .getUpdateUllageList()
         .forEach(
             ullageInsert -> {
-              loadingPlanStowageDetailsRepository.updateLoadingPlanStowageDetailsRepository(
+              loadingPlanStowageDetailsRepository.updatePortLoadingPlanStowageDetailsRepository(
                   BigDecimal.valueOf(ullageInsert.getQuantity()),
                   BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
                   BigDecimal.valueOf(ullageInsert.getQuantity()),
                   BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
                   BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
                   Long.valueOf(ullageInsert.getTankId()),
-                  true);
+                  true,
+                  Long.valueOf(ullageInsert.getTankId()));
             });
   }
 }
