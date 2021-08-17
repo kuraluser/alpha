@@ -748,188 +748,204 @@ public class LoadableStudyPortRotationService {
       com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
       com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.Builder builder) {
 
-    VesselInfo.VesselRequest vesselAlgoRequest = VesselInfo.VesselRequest.newBuilder().build();
-    VesselInfo.VesselReply replyBuilder =
-        vesselInfoGrpcService.getAllVesselsByCompany(vesselAlgoRequest);
+    try {
+      VesselInfo.VesselRequest vesselAlgoRequest = VesselInfo.VesselRequest.newBuilder().build();
+      VesselInfo.VesselReply replyBuilder =
+          vesselInfoGrpcService.getAllVesselsByCompany(vesselAlgoRequest);
 
-    replyBuilder
-        .getVesselsList()
-        .forEach(
-            vesselDetail -> {
-              com.cpdss.common.generated.LoadableStudy.LoadableStudyShore.Builder shoreBuilder =
-                  com.cpdss.common.generated.LoadableStudy.LoadableStudyShore.newBuilder();
-              shoreBuilder.setId(vesselDetail.getId());
-              shoreBuilder.setVesselName(vesselDetail.getName());
-              shoreBuilder.setImoNo(Long.parseLong(vesselDetail.getImoNumber()));
-              shoreBuilder.setFlagName(vesselDetail.getFlag());
+      replyBuilder
+          .getVesselsList()
+          .forEach(
+              vesselDetail -> {
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyShore.Builder shoreBuilder =
+                    com.cpdss.common.generated.LoadableStudy.LoadableStudyShore.newBuilder();
+                shoreBuilder.setId(vesselDetail.getId());
+                shoreBuilder.setVesselName(vesselDetail.getName());
+                shoreBuilder.setImoNo(Long.parseLong(vesselDetail.getImoNumber()));
+                shoreBuilder.setFlagName(vesselDetail.getFlag());
 
-              com.cpdss.common.generated.LoadableStudy.VoyageRequest requests =
-                  com.cpdss.common.generated.LoadableStudy.VoyageRequest.newBuilder()
-                      .setVesselId(vesselDetail.getId())
+                com.cpdss.common.generated.LoadableStudy.VoyageRequest requests =
+                    com.cpdss.common.generated.LoadableStudy.VoyageRequest.newBuilder()
+                        .setVesselId(vesselDetail.getId())
+                        .build();
+                com.cpdss.common.generated.LoadableStudy.VoyageListReply.Builder builders =
+                    com.cpdss.common.generated.LoadableStudy.VoyageListReply.newBuilder();
+                List<com.cpdss.common.generated.LoadableStudy.VoyageDetail> de =
+                    voyageService.getVoyagesByVessel(requests, builders).getVoyagesList().stream()
+                        .filter(list -> list.getStatus().trim().equals("Active"))
+                        .collect(Collectors.toList());
+                shoreBuilder.setVoyageId(de.get(0).getId());
+                // Gettting Lodablestudy detaild from Vessel
+                Set<Long> distinctLodableStudyId =
+                    loadableStudyRepository.findByVesselXId(vesselDetail.getId()).stream()
+                        .filter(
+                            det ->
+                                det.getLoadableStudyStatus() != null
+                                    && det.getLoadableStudyStatus().getName() != null
+                                    && det.getVesselXId() != null
+                                    && det.getLoadableStudyStatus()
+                                        .getName()
+                                        .trim()
+                                        .equals("Confirmed")
+                                    && det.getVesselXId() == vesselDetail.getId()
+                                    && det.getVoyage() != null
+                                    && det.getVoyage().getId() == de.get(0).getId())
+                        .map(EntityDoc::getId)
+                        .collect(Collectors.toSet());
+                /* Voyage voy = new Voyage();
+                voy.setId(de.get(0).getId());
+                voy.setVesselXId(vesselDetail.getId());
+                List<LoadableStudy> study = loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
+                        request.getVesselId(), voy, true, CONFIRMED_STATUS_ID);*/
+
+                List<VoyagePorts> dataMap = new ArrayList<>();
+                Set<Long> portId = new HashSet<>();
+
+                // Getting all the port id from Lodable study
+                distinctLodableStudyId.forEach(
+                    detail -> {
+                      List<LoadableStudyPortRotation> loadableStudyPortRotations =
+                          loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+                              detail, true);
+
+                      if (!loadableStudyPortRotations.isEmpty()) {
+                        loadableStudyPortRotations.forEach(
+                            loadableStudyPortRotation -> {
+                              if (!portId.contains(loadableStudyPortRotation.getPortXId())) {
+
+                                // Getting port name and lat and long detials
+                                PortInfo.PortReply reply =
+                                    portInfoGrpcService.getPortInfoByPortIds(
+                                        PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
+                                            .addId(loadableStudyPortRotation.getPortXId())
+                                            .build());
+
+                                dataMap.add(
+                                    new VoyagePorts(
+                                        String.valueOf(loadableStudyPortRotation.getPortXId()),
+                                        String.valueOf(loadableStudyPortRotation.getEta()),
+                                        String.valueOf(loadableStudyPortRotation.getEtd()),
+                                        String.valueOf(loadableStudyPortRotation.getPortOrder()),
+                                        String.valueOf(
+                                            loadableStudyPortRotation.getOperation().getName()),
+                                        null,
+                                        null,
+                                        String.valueOf(
+                                            (loadableStudyPortRotation.getSynopticalTable() != null
+                                                    && loadableStudyPortRotation
+                                                            .getSynopticalTable()
+                                                            .size()
+                                                        > 0)
+                                                ? loadableStudyPortRotation
+                                                            .getSynopticalTable()
+                                                            .get(0)
+                                                            .getEtaActual()
+                                                        == null
+                                                    ? ""
+                                                    : loadableStudyPortRotation
+                                                        .getSynopticalTable()
+                                                        .get(0)
+                                                        .getEtaActual()
+                                                : ""),
+                                        String.valueOf(
+                                            (loadableStudyPortRotation.getSynopticalTable() != null
+                                                    && loadableStudyPortRotation
+                                                            .getSynopticalTable()
+                                                            .size()
+                                                        > 0)
+                                                ? loadableStudyPortRotation
+                                                            .getSynopticalTable()
+                                                            .get(1)
+                                                            .getEtdActual()
+                                                        == null
+                                                    ? ""
+                                                    : loadableStudyPortRotation
+                                                        .getSynopticalTable()
+                                                        .get(1)
+                                                        .getEtdActual()
+                                                : ""),
+                                        reply.getPortsCount() > 0 ? reply.getPorts(0).getLat() : "",
+                                        reply.getPortsCount() > 0 ? reply.getPorts(0).getLon() : "",
+                                        reply.getPortsCount() > 0
+                                            ? reply.getPorts(0).getName()
+                                            : ""));
+                              }
+                              portId.add(loadableStudyPortRotation.getPortXId());
+                            });
+                      }
+                    });
+
+                // Building final Map
+                String vyogeName = "";
+                for (int i = 0; i < dataMap.size(); i++) {
+                  shoreBuilder
+                      .addVoyagePortsBuilder()
+                      .setAnchorage(
+                          dataMap.get(i).getAnchorage() == null
+                              ? ""
+                              : dataMap.get(i).getAnchorage())
+                      .setPortName(
+                          dataMap.get(i).getPortName() == null ? "" : dataMap.get(i).getPortName())
+                      .setEta(
+                          dataMap.get(i).getEtd() == null
+                              ? ""
+                              : dateFormat(dataMap.get(i).getEtd()))
+                      .setEtd(
+                          dataMap.get(i).getEta() == null
+                              ? ""
+                              : dateFormat(dataMap.get(i).getEta()))
+                      .setPortType(
+                          dataMap.get(i).getPortType() == null ? "" : dataMap.get(i).getPortType())
+                      .setAta(
+                          dataMap.get(i).getAta() == null
+                              ? ""
+                              : dateFormat(dataMap.get(i).getAta()))
+                      .setAtd(
+                          dataMap.get(i).getAtd() == null
+                              ? ""
+                              : dateFormat(dataMap.get(i).getAtd()))
+                      .setLat(dataMap.get(i).getLat() == null ? "" : dataMap.get(i).getLat())
+                      .setLon(dataMap.get(i).getLon() == null ? "" : dataMap.get(i).getLon())
+                      .setPortOrder(
+                          dataMap.get(i).getPortOrder() == null
+                              ? ""
+                              : dataMap.get(i).getPortOrder())
                       .build();
-              com.cpdss.common.generated.LoadableStudy.VoyageListReply.Builder builders =
-                  com.cpdss.common.generated.LoadableStudy.VoyageListReply.newBuilder();
-              List<com.cpdss.common.generated.LoadableStudy.VoyageDetail> de =
-                  voyageService.getVoyagesByVessel(requests, builders).getVoyagesList().stream()
-                      .filter(list -> list.getStatus().trim().equals("Active"))
-                      .collect(Collectors.toList());
-
-              // Gettting Lodablestudy detaild from Vessel
-              Set<Long> distinctLodableStudyId =
-                  loadableStudyRepository.findByVesselXId(vesselDetail.getId()).stream()
-                      .filter(
-                          det ->
-                              det.getLoadableStudyStatus() != null
-                                  && det.getLoadableStudyStatus().getName() != null
-                                  && det.getVesselXId() != null
-                                  && det.getLoadableStudyStatus()
-                                      .getName()
-                                      .trim()
-                                      .equals("Confirmed")
-                                  && det.getVesselXId() == vesselDetail.getId()
-                                  && det.getVoyage() != null
-                                  && det.getVoyage().getId() == de.get(0).getId())
-                      .map(EntityDoc::getId)
-                      .collect(Collectors.toSet());
-              /* Voyage voy = new Voyage();
-              voy.setId(de.get(0).getId());
-              voy.setVesselXId(vesselDetail.getId());
-              List<LoadableStudy> study = loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
-                      request.getVesselId(), voy, true, CONFIRMED_STATUS_ID);*/
-
-              List<VoyagePorts> dataMap = new ArrayList<>();
-              Set<Long> portId = new HashSet<>();
-
-              // Getting all the port id from Lodable study
-              distinctLodableStudyId.forEach(
-                  detail -> {
-                    List<LoadableStudyPortRotation> loadableStudyPortRotations =
-                        loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-                            detail, true);
-
-                    if (!loadableStudyPortRotations.isEmpty()) {
-                      loadableStudyPortRotations.forEach(
-                          loadableStudyPortRotation -> {
-                            if (!portId.contains(loadableStudyPortRotation.getPortXId())) {
-
-                              // Getting port name and lat and long detials
-                              PortInfo.PortReply reply =
-                                  portInfoGrpcService.getPortInfoByPortIds(
-                                      PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
-                                          .addId(loadableStudyPortRotation.getPortXId())
-                                          .build());
-
-                              dataMap.add(
-                                  new VoyagePorts(
-                                      String.valueOf(loadableStudyPortRotation.getPortXId()),
-                                      String.valueOf(loadableStudyPortRotation.getEta()),
-                                      String.valueOf(loadableStudyPortRotation.getEtd()),
-                                      String.valueOf(loadableStudyPortRotation.getPortOrder()),
-                                      String.valueOf(
-                                          loadableStudyPortRotation.getOperation().getName()),
-                                      null,
-                                      null,
-                                      String.valueOf(
-                                          (loadableStudyPortRotation.getSynopticalTable() != null
-                                                  && loadableStudyPortRotation
-                                                          .getSynopticalTable()
-                                                          .size()
-                                                      > 0)
-                                              ? loadableStudyPortRotation
-                                                          .getSynopticalTable()
-                                                          .get(0)
-                                                          .getEtaActual()
-                                                      == null
-                                                  ? ""
-                                                  : loadableStudyPortRotation
-                                                      .getSynopticalTable()
-                                                      .get(0)
-                                                      .getEtaActual()
-                                              : ""),
-                                      String.valueOf(
-                                          (loadableStudyPortRotation.getSynopticalTable() != null
-                                                  && loadableStudyPortRotation
-                                                          .getSynopticalTable()
-                                                          .size()
-                                                      > 0)
-                                              ? loadableStudyPortRotation
-                                                          .getSynopticalTable()
-                                                          .get(1)
-                                                          .getEtdActual()
-                                                      == null
-                                                  ? ""
-                                                  : loadableStudyPortRotation
-                                                      .getSynopticalTable()
-                                                      .get(1)
-                                                      .getEtdActual()
-                                              : ""),
-                                      reply.getPortsCount() > 0 ? reply.getPorts(0).getLat() : "",
-                                      reply.getPortsCount() > 0 ? reply.getPorts(0).getLon() : "",
-                                      reply.getPortsCount() > 0
-                                          ? reply.getPorts(0).getName()
-                                          : ""));
-                            }
-                            portId.add(loadableStudyPortRotation.getPortXId());
-                          });
-                    }
-                  });
-
-              // Building final Map
-              String vyogeName = "";
-              for (int i = 0; i < dataMap.size(); i++) {
-                shoreBuilder
-                    .addVoyagePortsBuilder()
-                    .setAnchorage(
-                        dataMap.get(i).getAnchorage() == null ? "" : dataMap.get(i).getAnchorage())
-                    .setPortName(
-                        dataMap.get(i).getPortName() == null ? "" : dataMap.get(i).getPortName())
-                    .setEta(
-                        dataMap.get(i).getEtd() == null ? "" : dateFormat(dataMap.get(i).getEtd()))
-                    .setEtd(
-                        dataMap.get(i).getEta() == null ? "" : dateFormat(dataMap.get(i).getEta()))
-                    .setPortType(
-                        dataMap.get(i).getPortType() == null ? "" : dataMap.get(i).getPortType())
-                    .setAta(
-                        dataMap.get(i).getAta() == null ? "" : dateFormat(dataMap.get(i).getAta()))
-                    .setAtd(
-                        dataMap.get(i).getAtd() == null ? "" : dateFormat(dataMap.get(i).getAtd()))
-                    .setLat(dataMap.get(i).getLat() == null ? "" : dataMap.get(i).getLat())
-                    .setLon(dataMap.get(i).getLon() == null ? "" : dataMap.get(i).getLon())
-                    .setPortOrder(
-                        dataMap.get(i).getPortOrder() == null ? "" : dataMap.get(i).getPortOrder())
-                    .build();
-                if (i == 0) {
-                  shoreBuilder.setAtd(
-                      dataMap.get(i).getAtd() == null ? "" : dateFormat(dataMap.get(i).getAtd()));
-                  vyogeName =
-                      dataMap.get(i).getPortName() == null ? "" : dataMap.get(i).getPortName();
+                  if (i == 0) {
+                    shoreBuilder.setAtd(
+                        dataMap.get(i).getAtd() == null ? "" : dateFormat(dataMap.get(i).getAtd()));
+                    vyogeName =
+                        dataMap.get(i).getPortName() == null ? "" : dataMap.get(i).getPortName();
+                  }
+                  if (i == dataMap.size() - 1) {
+                    shoreBuilder.setEta(
+                        dataMap.get(i).getEta() == null ? "" : dateFormat(dataMap.get(i).getEta()));
+                    vyogeName =
+                        dataMap.get(i).getPortName() == null
+                            ? ""
+                            : vyogeName + " - " + dataMap.get(i).getPortName();
+                  }
                 }
-                if (i == dataMap.size() - 1) {
-                  shoreBuilder.setEta(
-                      dataMap.get(i).getEta() == null ? "" : dateFormat(dataMap.get(i).getEta()));
-                  vyogeName =
-                      dataMap.get(i).getPortName() == null
-                          ? ""
-                          : vyogeName + " - " + dataMap.get(i).getPortName();
-                }
-              }
 
-              shoreBuilder.setVoyageName(vyogeName);
-
-              builder.addShoreList(shoreBuilder);
-            });
-
+                shoreBuilder.setVoyageName(vyogeName);
+                builder.addShoreList(shoreBuilder);
+              });
+    } catch (Exception e) {
+      log.info("Here is my setResponseStatus :" + e.getMessage());
+    }
     builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }
 
   private String dateFormat(String date) {
-    return date.substring(8, 10)
-        + "-"
-        + date.substring(5, 7)
-        + "-"
-        + date.substring(0, 4)
-        + " "
-        + date.substring(11, 16);
+    if (date.length() > 0)
+      return date.substring(8, 10)
+          + "-"
+          + date.substring(5, 7)
+          + "-"
+          + date.substring(0, 4)
+          + " "
+          + date.substring(11, 16);
+    else return "";
   }
 
   public com.cpdss.common.generated.LoadableStudy.LoadableStudyReply getLoadableStudyList(
