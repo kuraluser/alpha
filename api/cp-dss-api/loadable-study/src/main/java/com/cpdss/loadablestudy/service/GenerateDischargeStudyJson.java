@@ -343,7 +343,7 @@ public class GenerateDischargeStudyJson {
     List<LoadablePlanStowageDetailsJson> stowageDetailsList = new ArrayList<>();
     loadablePlanStowageFromloadingPlanReply =
         loadablePlanStowageFromloadingPlanReply.stream()
-            .filter(item -> item.getConditionType() == 1L && item.getValueType() == 1L)
+            .filter(item -> item.getConditionType() == 2L && item.getValueType() == 1L)
             .collect(Collectors.toList());
 
     loadablePlanStowageFromloadingPlanReply.forEach(
@@ -368,7 +368,7 @@ public class GenerateDischargeStudyJson {
 
     Optional<LoadingPlanStabilityParameters> optionalItem =
         loadingPlanStabilityParametersList.stream()
-            .filter(item -> item.getConditionType() == 1L && item.getValueType() == 1L)
+            .filter(item -> item.getConditionType() == 2L && item.getValueType() == 1L)
             .findAny();
     StabilityParameter parameter = new StabilityParameter();
     if (optionalItem.isPresent()) {
@@ -463,17 +463,20 @@ public class GenerateDischargeStudyJson {
                   item.getCargoNominationPortDetails().iterator();
               while (iterator.hasNext()) {
                 CargoNominationPortDetails iteratorItem = iterator.next();
-                CargoNominationOperationDetails cargoNominationOperation =
-                    new CargoNominationOperationDetails();
-                ofNullable(iteratorItem.getId()).ifPresent(cargoNominationOperation::setId);
-                ofNullable(item.getLsCargoNominationId())
-                    .ifPresent(cargoNominationOperation::setCargoNominationId);
-                ofNullable(item.getId())
-                    .ifPresent(cargoNominationOperation::setDscargoNominationId);
-                ofNullable(iteratorItem.getPortId()).ifPresent(cargoNominationOperation::setPortId);
-                ofNullable(iteratorItem.getQuantity())
-                    .ifPresent(i -> cargoNominationOperation.setQuantity(i.toString()));
-                cargoNominationOperationDetailsList.add(cargoNominationOperation);
+                if (iteratorItem.getIsActive()) {
+                  CargoNominationOperationDetails cargoNominationOperation =
+                      new CargoNominationOperationDetails();
+                  ofNullable(iteratorItem.getId()).ifPresent(cargoNominationOperation::setId);
+                  ofNullable(item.getLsCargoNominationId())
+                      .ifPresent(cargoNominationOperation::setCargoNominationId);
+                  ofNullable(item.getId())
+                      .ifPresent(cargoNominationOperation::setDscargoNominationId);
+                  ofNullable(iteratorItem.getPortId())
+                      .ifPresent(cargoNominationOperation::setPortId);
+                  ofNullable(iteratorItem.getQuantity())
+                      .ifPresent(i -> cargoNominationOperation.setQuantity(i.toString()));
+                  cargoNominationOperationDetailsList.add(cargoNominationOperation);
+                }
               }
             }
           });
