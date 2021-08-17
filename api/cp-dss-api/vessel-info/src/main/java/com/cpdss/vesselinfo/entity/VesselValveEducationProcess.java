@@ -26,12 +26,30 @@ public class VesselValveEducationProcess {
   @Column(name = "eductor_name")
   private String eductorName;
 
+  @Column(name = "satge_xid")
+  private Long stageXid;
+
   @Column(name = "sequence_number")
   private Integer sequenceNumber;
+
+  @Column(name = "stage_name")
+  private String stageName;
+
+  @Column(name = "stage_number")
+  private Integer stageNumber;
 
   @Column(name = "step_name")
   private String stepName;
 
+  @Column(name = "valve_id")
+  private Integer valveId;
+
   @Column(name = "valve_number")
   private String valveNumber;
+
+  @Column(name = "vessel_name")
+  private String vesselName;
+
+  @Column(name = "vessel_xid")
+  private Long vesselXid;
 }

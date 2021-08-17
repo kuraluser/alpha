@@ -12,4 +12,6 @@ public class VesselValveEdu {
 
   private Integer sequenceNumber;
   private String valve;
+  private Integer valveId;
+  private String stageName;
 }
