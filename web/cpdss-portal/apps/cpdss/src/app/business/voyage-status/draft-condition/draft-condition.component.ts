@@ -26,7 +26,7 @@ export class DraftConditionComponent implements OnInit {
     this.setConditions();
   }
 
-  @Input() get hasLoadicator(): number{
+  @Input() get hasLoadicator(): number {
     return this._hasLoadicator;
   };
 
@@ -53,9 +53,9 @@ export class DraftConditionComponent implements OnInit {
    */
   setConditions() {
     let deflection;
-    deflection = this.hasLoadicator ?  this.draftCondition?.deflection : 0;    
+    deflection = this.hasLoadicator && this.draftCondition?.deflection > 0 ? (this.draftCondition?.deflection / 100) : 0;
     this.value = [
-      { header: 'VOYAGE_STATUS_DRAFT_CONDITION_CALCULATED', aft: this.draftCondition?.finalDraftAft - deflection, mid: this.draftCondition?.finalDraftMid - deflection, fore: this.draftCondition?.finalDraftFwd - deflection},
+      { header: 'VOYAGE_STATUS_DRAFT_CONDITION_CALCULATED', aft: this.draftCondition?.finalDraftAft - deflection, mid: this.draftCondition?.finalDraftMid - deflection, fore: this.draftCondition?.finalDraftFwd - deflection },
       { header: 'VOYAGE_STATUS_DRAFT_CONDITION_CORRECTED', aft: this.draftCondition?.finalDraftAft, mid: this.draftCondition?.finalDraftMid, fore: this.draftCondition?.finalDraftFwd }
     ]
   }
