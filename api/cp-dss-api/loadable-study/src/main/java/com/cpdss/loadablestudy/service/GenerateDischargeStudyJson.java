@@ -343,7 +343,7 @@ public class GenerateDischargeStudyJson {
     List<LoadablePlanStowageDetailsJson> stowageDetailsList = new ArrayList<>();
     loadablePlanStowageFromloadingPlanReply =
         loadablePlanStowageFromloadingPlanReply.stream()
-            .filter(item -> item.getConditionType() == 1L && item.getValueType() == 1L)
+            .filter(item -> item.getConditionType() == 2L && item.getValueType() == 1L)
             .collect(Collectors.toList());
 
     loadablePlanStowageFromloadingPlanReply.forEach(
@@ -368,7 +368,7 @@ public class GenerateDischargeStudyJson {
 
     Optional<LoadingPlanStabilityParameters> optionalItem =
         loadingPlanStabilityParametersList.stream()
-            .filter(item -> item.getConditionType() == 1L && item.getValueType() == 1L)
+            .filter(item -> item.getConditionType() == 2L && item.getValueType() == 1L)
             .findAny();
     StabilityParameter parameter = new StabilityParameter();
     if (optionalItem.isPresent()) {
