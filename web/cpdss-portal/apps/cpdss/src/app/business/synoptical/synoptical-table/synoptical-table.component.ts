@@ -290,7 +290,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         fields: [{
           key: 'distance',
           type: this.fieldType.NUMBER,
-          validators: ['dddd.dd.+']
+          validators: ['ddddd.dd.+']
         }],
         header: 'Distance (NM)',
         editable: true,

@@ -565,14 +565,14 @@ export class DischargeStudyDetailsTransformationService {
         },
         {
           field: 'fuelTypeName',
-          header: 'DISCHARGE_OHQ_FUEL_TYPE',
+          header: 'DISCHARGE_OHQ_TANK_TYPE',
           editable: false,
           filter: true,
           filterField: 'fuelTypeId',
           filterListName: 'fuelTypes',
           filterMatchMode: DATATABLE_FILTER_MATCHMODE.EQUALS,
           filterType: DATATABLE_FILTER_TYPE.SELECT,
-          filterPlaceholder: 'DISCHARGE_OHQ_SEARCH_FUEL_TYPE',
+          filterPlaceholder: 'DISCHARGE_OHQ_SEARCH_TANK_TYPE',
           fieldHeaderClass: 'column-fuel-type'
         },
         {
