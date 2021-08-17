@@ -8,6 +8,7 @@ import lombok.Data;
 public class CargoNominationOperationDetails {
   private Long id;
   private Long cargoNominationId;
+  private Long dscargoNominationId;
   private Long portId;
   private String quantity;
 }

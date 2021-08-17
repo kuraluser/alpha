@@ -466,7 +466,10 @@ public class GenerateDischargeStudyJson {
                 CargoNominationOperationDetails cargoNominationOperation =
                     new CargoNominationOperationDetails();
                 ofNullable(iteratorItem.getId()).ifPresent(cargoNominationOperation::setId);
-                ofNullable(item.getId()).ifPresent(cargoNominationOperation::setCargoNominationId);
+                ofNullable(item.getLsCargoNominationId())
+                    .ifPresent(cargoNominationOperation::setCargoNominationId);
+                ofNullable(item.getId())
+                    .ifPresent(cargoNominationOperation::setDscargoNominationId);
                 ofNullable(iteratorItem.getPortId()).ifPresent(cargoNominationOperation::setPortId);
                 ofNullable(iteratorItem.getQuantity())
                     .ifPresent(i -> cargoNominationOperation.setQuantity(i.toString()));
