@@ -2,7 +2,7 @@
 package com.cpdss.loadingplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
-import com.cpdss.loadingplan.entity.LoadingPlanBallastDetails;
+import com.cpdss.loadingplan.entity.LoadingPlanBallastTempDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails;
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,30 +13,27 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface LoadingPlanBallastDetailsRepository
-    extends CommonCrudRepository<LoadingPlanBallastDetails, Long> {
-
-  List<LoadingPlanBallastDetails> findByLoadingPlanPortWiseDetailsAndIsActiveTrueOrderById(
-      LoadingPlanPortWiseDetails loadingPlanPortWiseDetails);
+public interface LoadingPlanBallastDetailsTempRepository
+    extends CommonCrudRepository<LoadingPlanBallastTempDetails, Long> {
 
   @Modifying
   @Transactional
   @Query(
       "UPDATE LoadingPlanBallastDetails SET isActive = false WHERE loadingPlanPortWiseDetails = ?1")
   public void deleteByLoadingPlanPortWiseDetails(
-      LoadingPlanPortWiseDetails loadingPlanPortWiseDetails);
+      LoadingPlanPortWiseDetails loadingPlanBallastTempDetails);
 
   @Query(
       "SELECT LPBD FROM LoadingPlanBallastDetails LPBD WHERE LPBD.loadingPlanPortWiseDetails.id IN ?1 AND LPBD.isActive = ?2")
-  public List<LoadingPlanBallastDetails> findByLoadingPlanPortWiseDetailIdsAndIsActive(
+  public List<LoadingPlanBallastTempDetails> findByLoadingPlanBallastTempDetailsIdsAndIsActive(
       List<Long> portWiseDetailIds, Boolean isActive);
 
   @Transactional
   @Modifying
   @Query(
-      "Update LoadingPlanBallastDetails set quantity = ?1, sounding = ?2, quantityM3 = ?3"
+      "Update LoadingPlanBallastTempDetails set quantity = ?1, sounding = ?2, quantityM3 = ?3"
           + " where tankXId = ?4 and isActive = ?5")
-  public void updateLoadingPlanBallastDetailsRepository(
+  public void updateLoadingPlanBallastTempDetailsRepository(
       @Param("quantity") BigDecimal quantity,
       @Param("sounding") BigDecimal sounding,
       @Param("quantity_m3") BigDecimal quantityM3,

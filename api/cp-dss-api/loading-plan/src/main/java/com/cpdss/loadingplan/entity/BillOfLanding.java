@@ -53,7 +53,7 @@ public class BillOfLanding extends EntityDoc {
   private BigDecimal temperature;
 
   @Column(name = "is_active")
-  private BigDecimal isActive;
+  private Boolean isActive;
 
   @Column(name = "version")
   private Long version;

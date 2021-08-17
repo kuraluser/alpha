@@ -9,5 +9,9 @@ import lombok.Data;
 @JsonInclude
 public class UllageBillRequest {
   List<BillOfLanding> billOfLandingList;
-  List<UpdateUllage> ullageUpdList;
+  List<BillOfLanding> billOfLandingListRemove;
+  List<UllageUpdateDetails> ullageUpdList;
+  List<BallastDetail> ballastUpdateList;
+  List<RobDetail> robUpdateList;
+  String isValidate;
 }
