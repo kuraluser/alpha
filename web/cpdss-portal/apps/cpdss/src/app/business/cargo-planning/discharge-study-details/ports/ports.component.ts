@@ -1,5 +1,7 @@
 import { AppConfigurationService } from './../../../../shared/services/app-configuration/app-configuration.service';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { DischargeStudyDetailsApiService } from '../../services/discharge-study-details-api.service';
 import { DischargeStudyDetailsTransformationService } from '../../services/discharge-study-details-transformation.service';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -89,7 +91,7 @@ export class PortsComponent implements OnInit, OnDestroy {
   private _portsLists: IDischargeStudyPortsValueObject[];
   private _dischargeStudy: IDischargeStudy;
   private portsListSaved: IDischargeStudyPortsValueObject[];
-
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(private dischargeStudyDetailsApiService: DischargeStudyDetailsApiService,
     private dischargeStudyDetailsTransformationService: DischargeStudyDetailsTransformationService,
@@ -110,7 +112,14 @@ export class PortsComponent implements OnInit, OnDestroy {
     this.getPortDetails();
   }
 
+  /**
+   * NgOnDestroy lifecycle hook
+   *
+   * @memberof PortsComponent
+ */
   ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
     navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
   }
 
@@ -272,7 +281,7 @@ export class PortsComponent implements OnInit, OnDestroy {
  * @memberof PortsComponent
  */
   private initSubscriptions() {
-    this.dischargeStudyDetailsTransformationService.addPort$.subscribe(() => {
+    this.dischargeStudyDetailsTransformationService.addPort$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
       this.addPort();
     });
 
