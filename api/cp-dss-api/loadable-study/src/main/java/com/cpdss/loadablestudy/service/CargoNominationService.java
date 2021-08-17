@@ -644,7 +644,7 @@ public class CargoNominationService {
             ofNullable(cargoNomination.getMinTolerance())
                 .ifPresent(minTolerance -> builder.setMinTolerance(String.valueOf(minTolerance)));
             ofNullable(cargoNomination.getSegregationXId()).ifPresent(builder::setSegregationId);
-            ofNullable(getMaxQuantityFromBillOfLadding(cargoNomination.getId()))
+            ofNullable(getMaxQuantityFromBillOfLadding(cargoNomination.getLsCargoNominationId()))
                 .ifPresent(builder::setMaxQuantity);
             cargoNominationReplyBuilder.addCargoNominations(builder);
 
