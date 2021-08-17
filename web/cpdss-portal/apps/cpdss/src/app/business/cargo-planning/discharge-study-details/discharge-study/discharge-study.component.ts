@@ -71,7 +71,6 @@ export class DischargeStudyComponent implements OnInit {
   listData: IDischargeStudyDropdownData;
   portCargoList: IPortCargoDetails[];
   errorMessages: any;
-  initPortDetails: IPortDetailValueObject[];
   private _dischargeStudy: IDischargeStudy;
 
   constructor(
@@ -138,7 +137,6 @@ export class DischargeStudyComponent implements OnInit {
         portDetails.push(this.initDischargeStudyFormGroup(portDetailAsValueObject));
         return portDetailAsValueObject;
       })
-      this.initPortDetails = JSON.parse(JSON.stringify(this.portDetails));
     }
     
     this.ngxSpinnerService.hide();
@@ -386,7 +384,7 @@ export class DischargeStudyComponent implements OnInit {
       }
 
       portDetails[index].backLoadingDetails[event.index] = selectedBackLoadingDetails;
-      const newcargo = this.dischargeStudyDetailsTransformationService.setNewCargoInPortAsValuObject(selectedBackLoadingDetails, this.mode[1] , this.initPortDetails , index + 1);
+      const newcargo = this.dischargeStudyDetailsTransformationService.setNewCargoInPortAsValuObject(selectedBackLoadingDetails, this.mode[1]);
       let nextCargoDetails = portDetails[index + 1].cargoDetail;
       const getCargoDetails = this.getFeild(index + 1, 'cargoDetail').get('dataTable') as FormArray;
       getCargoDetails.push(this.initCargoFormGroup(newcargo));
@@ -618,7 +616,7 @@ export class DischargeStudyComponent implements OnInit {
             }
           })
           if (!findCargo) {
-            const newcargo = this.dischargeStudyDetailsTransformationService.setNewCargoInPortAsValuObject(cargo, this.mode[1], this.initPortDetails , i);
+            const newcargo = this.dischargeStudyDetailsTransformationService.setNewCargoInPortAsValuObject(cargo, this.mode[1]);
             this.insertNewDischargeCargo(event, portDetails, newcargo, totalBackLoadingKlValue, i);
             totalBackLoadingKlValue = 0;
           }
@@ -679,7 +677,7 @@ export class DischargeStudyComponent implements OnInit {
     }
     duplicateCargoDetails['mt'].value = unitConverted.mt;
     duplicateCargoDetails['bbls'].value = unitConverted.bbls;
-    const newcargo = this.dischargeStudyDetailsTransformationService.setNewCargoInPortAsValuObject(duplicateCargoDetails, this.mode[1] , this.initPortDetails , index);
+    const newcargo = this.dischargeStudyDetailsTransformationService.setNewCargoInPortAsValuObject(duplicateCargoDetails, this.mode[1]);
     const getCargoDetails = this.getFeild(index, 'cargoDetail').get('dataTable') as FormArray;
     portDetails[index].cargoDetail.push(newcargo);
     getCargoDetails.push(this.initCargoFormGroup(newcargo));
