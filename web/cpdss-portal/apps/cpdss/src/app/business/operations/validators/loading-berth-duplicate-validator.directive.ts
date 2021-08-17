@@ -14,7 +14,7 @@ export function LoadingBerthDuplicateValidator(index): ValidatorFn {
         let hasDuplicate = false;
         if (selectedBerths) {
             selectedBerthIds = selectedBerths.map((element, ind) => {
-                if (element?.name?.berthId === control.value.berthId && ind !== index) {
+                if (element?.name?.berthId === control.value?.berthId && ind !== index) {
                     hasDuplicate = true;
                 }
             });

@@ -419,7 +419,8 @@
                                   </ng-container>
                                 </ng-container>
                                 <span *ngSwitchDefault>
-                                    {{col?.numberFormat ? (rowData[col.field] | number: col?.numberFormat) : rowData[col.field]}}</span>
+                                    {{col?.numberType === 'quantity' ? (rowData[col.field] | quantityDecimalFormat: col.unit) :
+                                      col?.numberFormat ? (rowData[col.field] | number: col?.numberFormat) : rowData[col.field] }}</span>
                             </div>
                         </td>
                     </ng-template>

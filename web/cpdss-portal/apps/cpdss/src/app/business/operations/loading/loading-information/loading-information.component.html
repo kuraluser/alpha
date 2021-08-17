@@ -103,13 +103,13 @@
                                     class="checkbox-custom pr-20">{{'LOADING_INFORMATION_TRACK_START_AND_END_STAGE_LABEL'
                                     | translate}}
                                     <input type="checkbox" [(ngModel)]="trackStartEndStage"
-                                        (change)="onTrackStageChange()">
+                                        (change)="onUpdateLoadingStages()">
                                     <span class="checkmark"></span>
                                 </label>
                                 <label class="checkbox-custom pr-20">{{'LOADING_INFORMATION_TRACK_GRADE_SWITCHING_LABEL'
                                     | translate}}
                                     <input type="checkbox" [(ngModel)]="trackGradeSwitch"
-                                        (change)="onTrackStageChange()">
+                                        (change)="onUpdateLoadingStages()">
                                     <span class="checkmark"></span>
                                 </label>
 

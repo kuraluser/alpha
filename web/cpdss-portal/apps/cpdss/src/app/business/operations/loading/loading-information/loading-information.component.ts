@@ -225,17 +225,6 @@ export class LoadingInformationComponent implements OnInit {
   }
 
   /**
-* Method for event track value change
-*
-* @memberof LoadingInformationComponent
-*/
-  onTrackStageChange() {
-    this.loadingInformationPostData.loadingStages.trackStartEndStage = this.trackStartEndStage;
-    this.loadingInformationPostData.loadingStages.trackGradeSwitch = this.trackGradeSwitch;
-    this.onUpdateLoadingStages();
-  }
-
-  /**
 * Method for event loading rate update
 *
 * @memberof LoadingInformationComponent
