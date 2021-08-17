@@ -28,4 +28,14 @@ public class LoadingDelayReason extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Override
+  public String toString() {
+    return "LoadingDelayReason{"
+        + "reasonForDelay="
+        + reasonForDelay
+        + ", isActive="
+        + isActive
+        + '}';
+  }
 }

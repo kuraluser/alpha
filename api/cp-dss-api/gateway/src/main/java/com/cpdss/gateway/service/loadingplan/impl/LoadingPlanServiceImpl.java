@@ -1139,6 +1139,17 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     LoadingPlanModels.UpdateUllage.Builder updateUllageBuilder =
         LoadingPlanModels.UpdateUllage.newBuilder();
+
+    LoadingPlanModels.RobUpdate.Builder updateRobBuilder = LoadingPlanModels.RobUpdate.newBuilder();
+
+    LoadingPlanModels.BallastUpdate.Builder updateBallastBuilder =
+        LoadingPlanModels.BallastUpdate.newBuilder();
+
+    LoadingPlanModels.BillOfLandingRemove.Builder updateBillRemoveBuilder =
+        LoadingPlanModels.BillOfLandingRemove.newBuilder();
+
+    builder.setIsValidate(inputData.getIsValidate());
+
     UllageBillReply replays = new UllageBillReply();
 
     try {
@@ -1166,6 +1177,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setVersion(billLanding.getVersion() == 0 ? 0 : billLanding.getVersion())
                       .build();
                 });
+
+        builder.addBillOfLanding(billOfLandingBuilder.build());
       } else {
         errorValidationLandingMsg = "Required data for Update is missing";
       }
@@ -1175,26 +1188,166 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             .forEach(
                 ullageList -> {
                   updateUllageBuilder
-                      .setId(ullageList.getId() == 0 ? 0 : ullageList.getId())
-                      .setTankId(ullageList.getTankId() == 0 ? 0 : ullageList.getTankId())
-                      .setCorrectedUllage(ullageList.getCorrectedUllage().longValue())
-                      .setCorrectionFactor(ullageList.getCorrectionFactor().longValue())
-                      .setQuantityMt(ullageList.getQuantityMt().longValue())
-                      .setIsBallast(
-                          ullageList.getIsBallast() == false ? false : ullageList.getIsBallast())
-                      .setFillingRatio(
-                          ullageList.getFillingRatio() == null ? "" : ullageList.getFillingRatio())
-                      .setApi(ullageList.getApi() == null ? "" : ullageList.getApi())
+                      .setId(
+                          ullageList.getLoadingInformationId() == null
+                              ? 0
+                              : ullageList.getLoadingInformationId().longValue())
+                      .setTankId(
+                          ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
                       .setTemperature(
-                          ullageList.getTemperature() == null ? "" : ullageList.getTemperature())
+                          ullageList.getTemperature() == null
+                              ? 0
+                              : ullageList.getTemperature().longValue())
+                      .setCorrectedUllage(
+                          ullageList.getCorrectedUllage() == null
+                              ? 0
+                              : ullageList.getCorrectedUllage().longValue())
+                      .setCorrectionFactor(
+                          ullageList.getCorrectionFactor() == null
+                              ? 0
+                              : ullageList.getCorrectionFactor().longValue())
+                      .setQuantity(
+                          ullageList.getQuantity() == null
+                              ? 0
+                              : ullageList.getQuantity().longValue())
                       .setObservedM3(
-                          ullageList.getObservedM3() == null ? "" : ullageList.getObservedM3())
-                      .setObservedM3(ullageList.getSg() == null ? "" : ullageList.getSg())
+                          ullageList.getObservedM3() == null
+                              ? 0
+                              : ullageList.getObservedM3().longValue())
+                      .setFillingRatio(
+                          ullageList.getFillingRatio() == null
+                              ? 0
+                              : ullageList.getFillingRatio().longValue())
+                      .setApi(ullageList.getApi() == null ? 0 : ullageList.getApi().longValue())
+                      .setUllage(
+                          ullageList.getUllage() == null ? 0 : ullageList.getUllage().longValue())
                       .build();
                 });
 
-        builder.addBillOfLanding(billOfLandingBuilder.build());
         builder.addUpdateUllage(updateUllageBuilder.build());
+
+      } else {
+        errorValidationUllageMsg = "Required data for Update is missing";
+      }
+
+      if (inputData.getBillOfLandingListRemove().size() > 0) {
+        inputData
+            .getBillOfLandingListRemove()
+            .forEach(
+                billLanding -> {
+                  updateBillRemoveBuilder
+                      .setBblAt60F(
+                          billLanding.getBblAt60f() == null
+                              ? null
+                              : billLanding.getBblAt60f().longValue())
+                      .setId(billLanding.getId() == 0 ? 0 : billLanding.getId())
+                      .setPortId(billLanding.getPortId() == 0 ? 0 : billLanding.getPortId())
+                      .setCargoId(billLanding.getCargoId() == 0 ? 0 : billLanding.getCargoId())
+                      .setBlRefNumber(
+                          billLanding.getBlRefNumber() == null ? "" : billLanding.getBlRefNumber())
+                      .setQuantityLt(billLanding.getQuantityLt().longValue())
+                      .setKlAt15C(billLanding.getKlAt15c().longValue())
+                      .setApi(billLanding.getApi().longValue())
+                      .setTemperature(billLanding.getTemperature().longValue())
+                      .setIsActive(billLanding.getIsActive().longValue())
+                      .setVersion(billLanding.getVersion() == 0 ? 0 : billLanding.getVersion())
+                      .build();
+                });
+
+        builder.addBillOfLandingRemove(updateBillRemoveBuilder.build());
+      } else {
+        errorValidationUllageMsg = "Required data for Update is missing";
+      }
+
+      if (inputData.getBallastUpdateList().size() > 0) {
+        inputData
+            .getBallastUpdateList()
+            .forEach(
+                ullageList -> {
+                  updateBallastBuilder
+                      .setLoadingInformationId(
+                          ullageList.getLoadingInformationId() == null
+                              ? 0
+                              : ullageList.getLoadingInformationId().longValue())
+                      .setTankId(
+                          ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
+                      .setTemperature(
+                          ullageList.getTemperature() == null
+                              ? 0
+                              : ullageList.getTemperature().longValue())
+                      .setCorrectedUllage(
+                          ullageList.getCorrectedUllage() == null
+                              ? 0
+                              : ullageList.getCorrectedUllage().longValue())
+                      .setCorrectionFactor(
+                          ullageList.getCorrectionFactor() == null
+                              ? 0
+                              : ullageList.getCorrectionFactor().longValue())
+                      .setQuantity(
+                          ullageList.getQuantity() == null
+                              ? 0
+                              : ullageList.getQuantity().longValue())
+                      .setObservedM3(
+                          ullageList.getObservedM3() == null
+                              ? 0
+                              : ullageList.getObservedM3().longValue())
+                      .setFillingRatio(
+                          ullageList.getFillingRatio() == null
+                              ? 0
+                              : ullageList.getFillingRatio().longValue())
+                      .setSounding(
+                          ullageList.getSounding() == null
+                              ? 0
+                              : ullageList.getSounding().longValue())
+                      .build();
+                });
+
+        builder.addBallastUpdate(updateBallastBuilder.build());
+
+      } else {
+        errorValidationUllageMsg = "Required data for Update is missing";
+      }
+
+      if (inputData.getRobUpdateList().size() > 0) {
+        inputData
+            .getRobUpdateList()
+            .forEach(
+                ullageList -> {
+                  updateRobBuilder
+                      .setLoadingInformationId(
+                          ullageList.getLoadingInformationId() == null
+                              ? 0
+                              : ullageList.getLoadingInformationId().longValue())
+                      .setTankId(
+                          ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
+                      .setTemperature(
+                          ullageList.getTemperature() == null
+                              ? 0
+                              : ullageList.getTemperature().longValue())
+                      .setCorrectedUllage(
+                          ullageList.getCorrectedUllage() == null
+                              ? 0
+                              : ullageList.getCorrectedUllage().longValue())
+                      .setCorrectionFactor(
+                          ullageList.getCorrectionFactor() == null
+                              ? 0
+                              : ullageList.getCorrectionFactor().longValue())
+                      .setQuantity(
+                          ullageList.getQuantity() == null
+                              ? 0
+                              : ullageList.getQuantity().longValue())
+                      .setObservedM3(
+                          ullageList.getObservedM3() == null
+                              ? 0
+                              : ullageList.getObservedM3().longValue())
+                      .setFillingRatio(
+                          ullageList.getFillingRatio() == null
+                              ? 0
+                              : ullageList.getFillingRatio().longValue())
+                      .build();
+                });
+
+        builder.addRobUpdate(updateRobBuilder.build());
 
       } else {
         errorValidationUllageMsg = "Required data for Update is missing";

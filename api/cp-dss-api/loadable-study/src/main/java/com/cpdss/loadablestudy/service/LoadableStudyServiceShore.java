@@ -1,7 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.OPEN_VOYAGE_STATUS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
@@ -645,8 +646,18 @@ public class LoadableStudyServiceShore {
       voyage.setStartTimezoneId(voyageDto.getStartTimezoneId());
       voyage.setEndTimezoneId(voyageDto.getEndTimezoneId());
       voyage.setVoyageStatus(this.voyageStatusRepository.getOne(OPEN_VOYAGE_STATUS));
-      voyage.setVoyageStartDate(voyageDto.getVoyageStartDate());
-      voyage.setVoyageEndDate(voyageDto.getVoyageEndDate());
+      voyage.setVoyageStartDate(
+          !StringUtils.isEmpty(voyageDto.getVoyageStartDate())
+              ? LocalDateTime.from(
+                  DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT)
+                      .parse(voyageDto.getVoyageStartDate()))
+              : null);
+      voyage.setVoyageEndDate(
+          !StringUtils.isEmpty(voyageDto.getVoyageEndDate())
+              ? LocalDateTime.from(
+                  DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT)
+                      .parse(voyageDto.getVoyageEndDate()))
+              : null);
       voyage = voyageRepository.save(voyage);
       return voyage;
     }

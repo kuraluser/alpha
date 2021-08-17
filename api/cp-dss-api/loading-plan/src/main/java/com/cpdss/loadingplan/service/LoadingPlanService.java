@@ -49,7 +49,11 @@ public class LoadingPlanService {
 
   @Autowired BillOfLandingRepository billOfLandingRepository;
 
-  @Autowired LoadingPlanStowageDetailsTempRepository loadingPlanStowageDetailsRepository;
+  @Autowired LoadingPlanStowageDetailsTempRepository loadingPlanStowageDetailsTempRepository;
+  @Autowired LoadingPlanBallastDetailsTempRepository loadingPlanBallastDetailsTempRepository;
+  @Autowired LoadingPlanStowageDetailsRepository loadingPlanStowageDetailsRepository;
+  @Autowired LoadingPlanBallastDetailsRepository loadingPlanBallastDetailsRepository;
+  @Autowired LoadingPlanRobDetailsRepository loadingPlanRobDetailsRepository;
 
   @Autowired StageOffsetRepository stageOffsetRepository;
   @Autowired StageDurationRepository stageDurationRepository;
@@ -408,21 +412,58 @@ public class LoadingPlanService {
               });
 
       request
-          .getUpdateUllageList()
+          .getBillOfLandingRemoveList()
+          .forEach(
+              billOfLanding -> {
+                billOfLandingRepository.deleteBillOfLandingRepository(
+                    Boolean.valueOf(billOfLanding.getIsActive() == 0 ? false : true),
+                    Integer.valueOf(billOfLanding.getCargoId() + ""),
+                    Integer.valueOf(billOfLanding.getPortId() + ""));
+              });
+
+      request
+          .getRobUpdateList()
           .forEach(
               ullageInsert -> {
-                loadingPlanStowageDetailsRepository.save(
-                    new LoadingPlanStowageTempDetails(
-                        null,
-                        Long.valueOf(ullageInsert.getTankId()),
-                        Long.valueOf(0),
-                        BigDecimal.valueOf(ullageInsert.getQuantityMt()),
-                        BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
-                        BigDecimal.valueOf(ullageInsert.getQuantityMt()),
-                        BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi())),
-                        BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature())),
-                        false));
+                loadingPlanRobDetailsRepository.updateLoadingPlanRobDetailsRepository(
+                    BigDecimal.valueOf(ullageInsert.getQuantity()),
+                    BigDecimal.valueOf(ullageInsert.getQuantity()),
+                    Long.valueOf(ullageInsert.getTankId()),
+                    true);
               });
+
+      if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
+
+        request
+            .getBallastUpdateList()
+            .forEach(
+                ullageInsert -> {
+                  loadingPlanBallastDetailsTempRepository
+                      .updateLoadingPlanBallastTempDetailsRepository(
+                          BigDecimal.valueOf(ullageInsert.getQuantity()),
+                          BigDecimal.valueOf(ullageInsert.getSounding()),
+                          BigDecimal.valueOf(ullageInsert.getQuantity()),
+                          Long.valueOf(ullageInsert.getTankId()),
+                          true);
+                });
+
+        request
+            .getUpdateUllageList()
+            .forEach(
+                ullageInsert -> {
+                  loadingPlanStowageDetailsTempRepository
+                      .updateLoadingPlanStowageTempDetailsRepository(
+                          BigDecimal.valueOf(ullageInsert.getQuantity()),
+                          BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
+                          BigDecimal.valueOf(ullageInsert.getQuantity()),
+                          BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
+                          BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
+                          Long.valueOf(ullageInsert.getTankId()),
+                          true);
+                });
+      } else {
+        validateAndSaveData(request);
+      }
 
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
@@ -435,5 +476,38 @@ public class LoadingPlanService {
 
     // log.info("getLoadableStudyShoreTwo ", request);
     return builder.build();
+  }
+
+  private void validateAndSaveData(LoadingPlanModels.UllageBillRequest request) {
+
+    // Validation pending since API from ALGO is not yet created.
+
+    loadingPlanBallastDetailsTempRepository.deleteByLoadingPlanPortWiseDetails(null);
+    request
+        .getBallastUpdateList()
+        .forEach(
+            ullageInsert -> {
+              loadingPlanBallastDetailsRepository.updateLoadingPlanBallastDetailsRepository(
+                  BigDecimal.valueOf(ullageInsert.getQuantity()),
+                  BigDecimal.valueOf(ullageInsert.getSounding()),
+                  BigDecimal.valueOf(ullageInsert.getQuantity()),
+                  Long.valueOf(ullageInsert.getTankId()),
+                  true);
+            });
+
+    loadingPlanStowageDetailsRepository.deleteByLoadingPlanPortWiseDetails(null);
+    request
+        .getUpdateUllageList()
+        .forEach(
+            ullageInsert -> {
+              loadingPlanStowageDetailsRepository.updateLoadingPlanStowageDetailsRepository(
+                  BigDecimal.valueOf(ullageInsert.getQuantity()),
+                  BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
+                  BigDecimal.valueOf(ullageInsert.getQuantity()),
+                  BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
+                  BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
+                  Long.valueOf(ullageInsert.getTankId()),
+                  true);
+            });
   }
 }

@@ -46,6 +46,20 @@ service VesselInfoService {
 	rpc GetLoadingInfoRules(LoadingInfoRulesRequest) returns (LoadingInfoRulesReply) {}
 }
 
+// Mapped to pump_type Table in vessel DB
+enum VesselPumpTypes {
+		EMPTY_PUMP = 0;
+		CARGO_PUMP = 1;
+		BALLAST_PUMP = 2;
+		GS_PUMP = 3;
+		IG_PUMP = 4;
+		STRIPPING_PUMP = 5;
+		STRIP_EDUCTOR = 6;
+		COW_PUMP = 7;
+		BALLAST_EDUCTOR = 8;
+		TANK_CLEANING_PUMP = 9;
+}
+
 message VesselRequestWithPaging{
 	int64 offset = 1;
 	int64 limit = 2;

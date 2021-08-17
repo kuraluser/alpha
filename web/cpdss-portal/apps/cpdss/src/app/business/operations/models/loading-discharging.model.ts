@@ -188,6 +188,7 @@ export interface ILoadingMachinesInUse {
   machineTypeId: number;
   capacity: number;
   isUsing?: boolean;
+  pumpTypeId?: string;
 }
 
 /**
@@ -203,6 +204,7 @@ export interface IDischargingMachinesInUse {
   machineTypeId: number;
   capacity: number;
   isUsing?: boolean;
+  pumpTypeId?: string;
 }
 
 

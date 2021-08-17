@@ -37,4 +37,7 @@ public class CargoNominationPortDetails extends EntityDoc {
 
   @Column(name = "quantity")
   private BigDecimal quantity;
+
+  @Column(name = "mode_xid")
+  private Long mode;
 }

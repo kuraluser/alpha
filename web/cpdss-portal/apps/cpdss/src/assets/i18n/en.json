@@ -1466,7 +1466,7 @@
   "DISCHARGE_STUDY_BACK_LOADING_DELETE_CONFIRM_LABEL": "Yes",
   "DISCHARGE_STUDY_BACK_LOADING_DELETE_REJECT_LABEL": "No",
   "DISCHARGE_STUDY_FIELD_REQUIRED_ERROR": "Required",
-  "SUM_OF_QUANTITY_GREATER_THAN_TOTAL_QUANTITY": "Sum of quntity is greater than total quantity",
+  "SUM_OF_QUANTITY_GREATER_THAN_TOTAL_QUANTITY": "Sum of quantity is greater than total quantity",
   "DISCHARGE_STUDY_COLOR_ALREADY_USED_ERROR": "Color already in use",
   "DISCHARGE_STUDY_ABBREVIATION_ALREADY_USED_ERROR": "Abbreviation already in use",
   "QUANTITY_NOT_EQUAL": "Sum of quantity should be equal to total quantity",
@@ -1782,5 +1782,7 @@
   "LOADING_INFORMATION_INVALID_DATA": "Invalid data",
   "LOADING_INFORMATION_CARGO_MACHINERY_BOTTOM_LINE": "Please select bottomline in cargo machinery",
   "LOADING_INFORMATION_CARGO_MACHINERY_BALLAST_PUMP": "Please select ballastpump in cargo machinery",
-  "LOADING_INFORMATION_CARGO_MACHINERY_MANIFOLD": "Please select manifold in cargo machinery"
+  "LOADING_INFORMATION_CARGO_MACHINERY_MANIFOLD": "Please select manifold in cargo machinery",
+  "DISCHARGE_STUDY_SAVE_ERROR": "Error",
+  "DISCHARGE_STUDY_SAVE_NO_DATA_ERROR": "No changed data for save"
 }
