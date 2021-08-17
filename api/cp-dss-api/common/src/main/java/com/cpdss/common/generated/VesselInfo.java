@@ -9,6 +9,154 @@ public final class VesselInfo {
   public static void registerAllExtensions(com.google.protobuf.ExtensionRegistry registry) {
     registerAllExtensions((com.google.protobuf.ExtensionRegistryLite) registry);
   }
+  /**
+   *
+   *
+   * <pre>
+   * Mapped to pump_type Table in vessel DB
+   * </pre>
+   *
+   * Protobuf enum {@code VesselPumpTypes}
+   */
+  public enum VesselPumpTypes implements com.google.protobuf.ProtocolMessageEnum {
+    /** <code>EMPTY_PUMP = 0;</code> */
+    EMPTY_PUMP(0),
+    /** <code>CARGO_PUMP = 1;</code> */
+    CARGO_PUMP(1),
+    /** <code>BALLAST_PUMP = 2;</code> */
+    BALLAST_PUMP(2),
+    /** <code>GS_PUMP = 3;</code> */
+    GS_PUMP(3),
+    /** <code>IG_PUMP = 4;</code> */
+    IG_PUMP(4),
+    /** <code>STRIPPING_PUMP = 5;</code> */
+    STRIPPING_PUMP(5),
+    /** <code>STRIP_EDUCTOR = 6;</code> */
+    STRIP_EDUCTOR(6),
+    /** <code>COW_PUMP = 7;</code> */
+    COW_PUMP(7),
+    /** <code>BALLAST_EDUCTOR = 8;</code> */
+    BALLAST_EDUCTOR(8),
+    /** <code>TANK_CLEANING_PUMP = 9;</code> */
+    TANK_CLEANING_PUMP(9),
+    UNRECOGNIZED(-1),
+    ;
+
+    /** <code>EMPTY_PUMP = 0;</code> */
+    public static final int EMPTY_PUMP_VALUE = 0;
+    /** <code>CARGO_PUMP = 1;</code> */
+    public static final int CARGO_PUMP_VALUE = 1;
+    /** <code>BALLAST_PUMP = 2;</code> */
+    public static final int BALLAST_PUMP_VALUE = 2;
+    /** <code>GS_PUMP = 3;</code> */
+    public static final int GS_PUMP_VALUE = 3;
+    /** <code>IG_PUMP = 4;</code> */
+    public static final int IG_PUMP_VALUE = 4;
+    /** <code>STRIPPING_PUMP = 5;</code> */
+    public static final int STRIPPING_PUMP_VALUE = 5;
+    /** <code>STRIP_EDUCTOR = 6;</code> */
+    public static final int STRIP_EDUCTOR_VALUE = 6;
+    /** <code>COW_PUMP = 7;</code> */
+    public static final int COW_PUMP_VALUE = 7;
+    /** <code>BALLAST_EDUCTOR = 8;</code> */
+    public static final int BALLAST_EDUCTOR_VALUE = 8;
+    /** <code>TANK_CLEANING_PUMP = 9;</code> */
+    public static final int TANK_CLEANING_PUMP_VALUE = 9;
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static VesselPumpTypes valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static VesselPumpTypes forNumber(int value) {
+      switch (value) {
+        case 0:
+          return EMPTY_PUMP;
+        case 1:
+          return CARGO_PUMP;
+        case 2:
+          return BALLAST_PUMP;
+        case 3:
+          return GS_PUMP;
+        case 4:
+          return IG_PUMP;
+        case 5:
+          return STRIPPING_PUMP;
+        case 6:
+          return STRIP_EDUCTOR;
+        case 7:
+          return COW_PUMP;
+        case 8:
+          return BALLAST_EDUCTOR;
+        case 9:
+          return TANK_CLEANING_PUMP;
+        default:
+          return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<VesselPumpTypes> internalGetValueMap() {
+      return internalValueMap;
+    }
+
+    private static final com.google.protobuf.Internal.EnumLiteMap<VesselPumpTypes>
+        internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<VesselPumpTypes>() {
+              public VesselPumpTypes findValueByNumber(int number) {
+                return VesselPumpTypes.forNumber(number);
+              }
+            };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor getValueDescriptor() {
+      return getDescriptor().getValues().get(ordinal());
+    }
+
+    public final com.google.protobuf.Descriptors.EnumDescriptor getDescriptorForType() {
+      return getDescriptor();
+    }
+
+    public static final com.google.protobuf.Descriptors.EnumDescriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.getDescriptor().getEnumTypes().get(0);
+    }
+
+    private static final VesselPumpTypes[] VALUES = values();
+
+    public static VesselPumpTypes valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException("EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private VesselPumpTypes(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:VesselPumpTypes)
+  }
 
   public interface VesselRequestWithPagingOrBuilder
       extends
@@ -77689,33 +77837,38 @@ public final class VesselInfo {
           + "\001(\003\022\021\n\tshortName\030\002 \001(\t\"L\n\027RuleDropDownVa"
           + "lueMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\022\026\n\016"
           + "ruleTemplateId\030\003 \001(\003\".\n\016RuleTypeMaster\022\n"
-          + "\n\002id\030\001 \001(\003\022\020\n\010ruleType\030\002 \001(\t2\344\007\n\021VesselI"
-          + "nfoService\0228\n\026GetAllVesselsByCompany\022\016.V"
-          + "esselRequest\032\014.VesselReply\"\000\0226\n\024GetVesse"
-          + "lDetailsById\022\016.VesselRequest\032\014.VesselRep"
-          + "ly\"\000\0220\n\016GetVesselTanks\022\016.VesselRequest\032\014"
-          + ".VesselReply\"\000\0225\n\023GetVesselCargoTanks\022\016."
-          + "VesselRequest\032\014.VesselReply\"\000\022A\n\027GetVess"
-          + "elDetailsForAlgo\022\022.VesselAlgoRequest\032\020.V"
-          + "esselAlgoReply\"\000\022C\n!GetVesselDetailForSy"
-          + "nopticalTable\022\016.VesselRequest\032\014.VesselRe"
-          + "ply\"\000\022;\n\031GetVesselDetailByVesselId\022\016.Ves"
-          + "selRequest\032\014.VesselReply\"\000\022A\n\025GetVesselI"
-          + "nfoByPaging\022\030.VesselRequestWithPaging\032\014."
-          + "VesselReply\"\000\022C\n\026GetVesselInfoBytankIds\022"
-          + "\022.VesselTankRequest\032\023.VesselTankResponse"
-          + "\"\000\022C\n\032GetDWTFromVesselByVesselId\022\021.Vesse"
-          + "lDWTRequest\032\022.VesselDWTResponse\022@\n\027GetVe"
-          + "sselInfoByVesselId\022\020.VesselIdRequest\032\021.V"
-          + "esselIdResponse\"\000\022D\n\030GetVesselPumpsByVes"
-          + "selId\022\020.VesselIdRequest\032\024.VesselPumpsRes"
-          + "ponse\"\000\022H\n\036GetRulesByVesselIdAndSectionI"
-          + "d\022\022.VesselRuleRequest\032\020.VesselRuleReply\""
-          + "\000\022E\n\026GetVesselValveSequence\022\016.VesselRequ"
-          + "est\032\031.VesselValveSequenceReply\"\000\022I\n\023GetL"
-          + "oadingInfoRules\022\030.LoadingInfoRulesReques"
-          + "t\032\026.LoadingInfoRulesReply\"\000B\036\n\032com.cpdss"
-          + ".common.generatedP\000b\006proto3"
+          + "\n\002id\030\001 \001(\003\022\020\n\010ruleType\030\002 \001(\t*\277\001\n\017VesselP"
+          + "umpTypes\022\016\n\nEMPTY_PUMP\020\000\022\016\n\nCARGO_PUMP\020\001"
+          + "\022\020\n\014BALLAST_PUMP\020\002\022\013\n\007GS_PUMP\020\003\022\013\n\007IG_PU"
+          + "MP\020\004\022\022\n\016STRIPPING_PUMP\020\005\022\021\n\rSTRIP_EDUCTO"
+          + "R\020\006\022\014\n\010COW_PUMP\020\007\022\023\n\017BALLAST_EDUCTOR\020\010\022\026"
+          + "\n\022TANK_CLEANING_PUMP\020\t2\344\007\n\021VesselInfoSer"
+          + "vice\0228\n\026GetAllVesselsByCompany\022\016.VesselR"
+          + "equest\032\014.VesselReply\"\000\0226\n\024GetVesselDetai"
+          + "lsById\022\016.VesselRequest\032\014.VesselReply\"\000\0220"
+          + "\n\016GetVesselTanks\022\016.VesselRequest\032\014.Vesse"
+          + "lReply\"\000\0225\n\023GetVesselCargoTanks\022\016.Vessel"
+          + "Request\032\014.VesselReply\"\000\022A\n\027GetVesselDeta"
+          + "ilsForAlgo\022\022.VesselAlgoRequest\032\020.VesselA"
+          + "lgoReply\"\000\022C\n!GetVesselDetailForSynoptic"
+          + "alTable\022\016.VesselRequest\032\014.VesselReply\"\000\022"
+          + ";\n\031GetVesselDetailByVesselId\022\016.VesselReq"
+          + "uest\032\014.VesselReply\"\000\022A\n\025GetVesselInfoByP"
+          + "aging\022\030.VesselRequestWithPaging\032\014.Vessel"
+          + "Reply\"\000\022C\n\026GetVesselInfoBytankIds\022\022.Vess"
+          + "elTankRequest\032\023.VesselTankResponse\"\000\022C\n\032"
+          + "GetDWTFromVesselByVesselId\022\021.VesselDWTRe"
+          + "quest\032\022.VesselDWTResponse\022@\n\027GetVesselIn"
+          + "foByVesselId\022\020.VesselIdRequest\032\021.VesselI"
+          + "dResponse\"\000\022D\n\030GetVesselPumpsByVesselId\022"
+          + "\020.VesselIdRequest\032\024.VesselPumpsResponse\""
+          + "\000\022H\n\036GetRulesByVesselIdAndSectionId\022\022.Ve"
+          + "sselRuleRequest\032\020.VesselRuleReply\"\000\022E\n\026G"
+          + "etVesselValveSequence\022\016.VesselRequest\032\031."
+          + "VesselValveSequenceReply\"\000\022I\n\023GetLoading"
+          + "InfoRules\022\030.LoadingInfoRulesRequest\032\026.Lo"
+          + "adingInfoRulesReply\"\000B\036\n\032com.cpdss.commo"
+          + "n.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
