@@ -463,17 +463,20 @@ public class GenerateDischargeStudyJson {
                   item.getCargoNominationPortDetails().iterator();
               while (iterator.hasNext()) {
                 CargoNominationPortDetails iteratorItem = iterator.next();
-                CargoNominationOperationDetails cargoNominationOperation =
-                    new CargoNominationOperationDetails();
-                ofNullable(iteratorItem.getId()).ifPresent(cargoNominationOperation::setId);
-                ofNullable(item.getLsCargoNominationId())
-                    .ifPresent(cargoNominationOperation::setCargoNominationId);
-                ofNullable(item.getId())
-                    .ifPresent(cargoNominationOperation::setDscargoNominationId);
-                ofNullable(iteratorItem.getPortId()).ifPresent(cargoNominationOperation::setPortId);
-                ofNullable(iteratorItem.getQuantity())
-                    .ifPresent(i -> cargoNominationOperation.setQuantity(i.toString()));
-                cargoNominationOperationDetailsList.add(cargoNominationOperation);
+                if (iteratorItem.getIsActive()) {
+                  CargoNominationOperationDetails cargoNominationOperation =
+                      new CargoNominationOperationDetails();
+                  ofNullable(iteratorItem.getId()).ifPresent(cargoNominationOperation::setId);
+                  ofNullable(item.getLsCargoNominationId())
+                      .ifPresent(cargoNominationOperation::setCargoNominationId);
+                  ofNullable(item.getId())
+                      .ifPresent(cargoNominationOperation::setDscargoNominationId);
+                  ofNullable(iteratorItem.getPortId())
+                      .ifPresent(cargoNominationOperation::setPortId);
+                  ofNullable(iteratorItem.getQuantity())
+                      .ifPresent(i -> cargoNominationOperation.setQuantity(i.toString()));
+                  cargoNominationOperationDetailsList.add(cargoNominationOperation);
+                }
               }
             }
           });
