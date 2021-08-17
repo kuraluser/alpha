@@ -303,6 +303,7 @@ public class LoadingPlanAlgoService {
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
 
       if (request.getHasLoadicator()) {
+        log.info("Passing Loading Sequence to Loadicator");
         loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
         Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
             loadingInfoStatusRepository.findByIdAndIsActive(

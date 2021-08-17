@@ -857,10 +857,20 @@ public class LoadingSequenceService {
               sequenceBuilder.setCargoNominationId(event.getCargoNominationId());
               if (sequence.getStageWiseCargoLoadingRates().size() > 0)
                 Optional.ofNullable(sequence.getStageWiseCargoLoadingRates().get("0"))
-                    .ifPresent(sequenceBuilder::setCargoLoadingRate1);
+                    .ifPresent(
+                        rate1 -> {
+                          if (rate1.equalsIgnoreCase("None")) {
+                            sequenceBuilder.setCargoLoadingRate1("0");
+                          } else sequenceBuilder.setCargoLoadingRate1(rate1);
+                        });
               if (sequence.getStageWiseCargoLoadingRates().size() > 1)
                 Optional.ofNullable(sequence.getStageWiseCargoLoadingRates().get("1"))
-                    .ifPresent(sequenceBuilder::setCargoLoadingRate2);
+                    .ifPresent(
+                        rate2 -> {
+                          if (rate2.equalsIgnoreCase("None")) {
+                            sequenceBuilder.setCargoLoadingRate2("0");
+                          } else sequenceBuilder.setCargoLoadingRate2(rate2);
+                        });
               this.buildBallastOperations(sequence.getBallast(), pumps, sequenceBuilder);
               this.buildDeballastingRates(sequence.getDeballastingRates(), sequenceBuilder);
               this.buildLoadingRates(sequence.getTankWiseCargoLoadingRates(), sequenceBuilder);
