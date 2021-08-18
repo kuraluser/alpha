@@ -60,6 +60,7 @@ export class LoadingDischargingTransformationService {
     return {
       berth: {
         'duplicateBerth': 'LOADING_INFORMATION_BERTH_DUPLICATION',
+        'berthRequired': 'LOADING_INFORMATION_BERTH_REQUIRED'
       },
       hoseConnections: {
         'maxlength': 'LOADING_DISCHARGING_BERTH_HOSECONNECTION_CHARACTER_LIMIT',

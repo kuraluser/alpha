@@ -251,13 +251,19 @@ export class LoadingInformationComponent implements OnInit {
 */
   async saveLoadingInformationData() {
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_INVALID_DATA','LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY', 'LOADING_INFORMATION_NO_BERTHS']).toPromise();
-   const isMachineryValid = await this.machineryRef.isMachineryValid();
+   
     if(this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid) {
       this.manageSequence.loadingDischargingSequenceForm.markAsDirty();
       this.manageSequence.loadingDischargingSequenceForm.markAllAsTouched();
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_INVALID_DATA'] });
       return;
-    } else if(!isMachineryValid) {
+    } 
+    const isMachineryValid = await this.machineryRef.isMachineryValid();
+    if(!isMachineryValid) {
+      return;
+    }
+    const iscargoAdded = await this.manageSequence.checkCargoCount();
+    if(!iscargoAdded) {
       return;
     }
     if(this.hasUnSavedData){
