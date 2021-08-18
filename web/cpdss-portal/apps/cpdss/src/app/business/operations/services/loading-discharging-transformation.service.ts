@@ -63,7 +63,7 @@ export class LoadingDischargingTransformationService {
       },
       hoseConnections: {
         'maxlength': 'LOADING_DISCHARGING_BERTH_HOSECONNECTION_CHARACTER_LIMIT',
-        'textError':"LOADING_BETH_HOSE_CONNECTION_ERROR"
+        'textError':"LOADING_BETH_HOSE_CONNECTION_ERROR"      
       },
       regulationAndRestriction: {
         'maxlength': 'LOADING_DISCHARGING_BERTH_REGULATION_RESTRICTION_CHARACTER_LIMIT'

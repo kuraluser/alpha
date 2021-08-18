@@ -315,7 +315,6 @@ export class LoadingDischargingBerthComponent implements OnInit {
       }
     });
     this.berthDetailsForm.enable();
- 
   }
 
   /**
@@ -352,8 +351,10 @@ export class LoadingDischargingBerthComponent implements OnInit {
           this.messageService.add({ severity: 'warn', summary: translationKeys['BERTH_DELETE_ERROR'], detail: translationKeys['BERTH_ERROR_SUMMARY'] });
         }
       }
+      
 
     });
+    
   }
 
   /**
