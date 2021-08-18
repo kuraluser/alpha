@@ -1517,7 +1517,18 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
             .ifPresent(item -> builder.setDeadweightConstant(item.toString()));
         Optional.ofNullable(vesselDetails.getProvisionalConstant())
             .ifPresent(item -> builder.setProvisionalConstant(item.toString()));
+
+        // Set vessel loadable quantity details
+        VesselLoadableQuantityDetails.Builder vesselLoadableQuantityBuilder =
+            VesselLoadableQuantityDetails.newBuilder();
+        Optional.ofNullable(vesselDetails.getLightWeight())
+            .ifPresent(item -> vesselLoadableQuantityBuilder.setVesselLightWeight(item.toString()));
+        Optional.ofNullable(vesselDetails.getDeadweightConstant())
+            .ifPresent(
+                item -> vesselLoadableQuantityBuilder.setDeadWeightConstant(item.doubleValue()));
+
         replyBuilder.addVessels(builder.build());
+        replyBuilder.setVesselLoadableQuantityDetails(vesselLoadableQuantityBuilder);
 
         Vessel vessel = this.vesselRepository.findByIdAndIsActive(request.getVesselId(), true);
         if (null == vessel) {

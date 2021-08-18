@@ -143,11 +143,13 @@ export class VoyageStatusTransformationService {
       },
       {
         field: 'plannedWeight',
-        header: 'QUANTITY BEFORE LOADING'
+        header: 'QUANTITY BEFORE LOADING',
+        numberType: 'quantity'
       },
       {
         field: 'actualWeight',
-        header: 'QUANTITY AFTER LOADING'
+        header: 'QUANTITY AFTER LOADING',
+        numberType: 'quantity'
       },
       {
         field: 'api',

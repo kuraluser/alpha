@@ -31,13 +31,13 @@
             </div>
         </div>
     </div>
-    <div class="col">
+    <div class="col main-content-loading-and-discharging">
         <div class="row">
             <div class="col">
                 <h5 class="text-uppercase heading-border">{{ 'LOADING_INFORMATION_CARGO_DETAILS_HEADER' | translate }}</h5>
                 <cpdss-portal-loading-discharging-cargo-details [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
                     [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
-                    [cargoVesselTankDetails]="cargoVesselTankDetails" [operation]="OPERATIONS.LOADING">
+                    [cargoVesselTankDetails]="cargoVesselTankDetails" [operation]="OPERATIONS.LOADING" [loadableStudyName]="loadingInformationData?.loadableStudyName">
                 </cpdss-portal-loading-discharging-cargo-details>
             </div>
         </div>
@@ -103,13 +103,13 @@
                                     class="checkbox-custom pr-20">{{'LOADING_INFORMATION_TRACK_START_AND_END_STAGE_LABEL'
                                     | translate}}
                                     <input type="checkbox" [(ngModel)]="trackStartEndStage"
-                                        (change)="onTrackStageChange()">
+                                        (change)="onUpdateLoadingStages()">
                                     <span class="checkmark"></span>
                                 </label>
                                 <label class="checkbox-custom pr-20">{{'LOADING_INFORMATION_TRACK_GRADE_SWITCHING_LABEL'
                                     | translate}}
                                     <input type="checkbox" [(ngModel)]="trackGradeSwitch"
-                                        (change)="onTrackStageChange()">
+                                        (change)="onUpdateLoadingStages()">
                                     <span class="checkmark"></span>
                                 </label>
 

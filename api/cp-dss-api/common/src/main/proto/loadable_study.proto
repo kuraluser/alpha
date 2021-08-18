@@ -1486,7 +1486,8 @@ message	LoadableStudyShore{
 	string atd = 5;
 	string eta = 6;
 	string voyageName = 7;
-	repeated VoyagePorts voyagePorts = 8;
+	int64 voyageId = 8;
+	repeated VoyagePorts voyagePorts = 9;
 }
 
 message	VoyagePorts{

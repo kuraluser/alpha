@@ -127,6 +127,8 @@ export class LoadingDischargingDetailsComponent implements OnInit {
       }
 
     }
+    this.loadingDischargingDetailsForm.controls.timeOfSunrise.updateValueAndValidity();
+    this.loadingDischargingDetailsForm.controls.timeOfSunset.updateValueAndValidity();
   }
 
   /**

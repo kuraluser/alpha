@@ -17,19 +17,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class VesselValveService {
 
-  public Map<String, Map<String, Map<String, VesselValveSeq>>> buildVesselValveResponse(
+  public Map<String, Map<String, Map<String, List<VesselValveSeq>>>> buildVesselValveResponse(
       List<VesselInfo.VesselValveSequence> grpcReplyList) {
     List<VesselValveSequence> list = this.buildVesselValveSequenceDomain(grpcReplyList);
     Map<String, List<VesselValveSequence>> map1 =
         list.stream().collect(Collectors.groupingBy(VesselValveSequence::getSequenceTypeName));
-    Map<String, Map<String, Map<String, VesselValveSeq>>> map11 = new HashMap<>();
+    Map<String, Map<String, Map<String, List<VesselValveSeq>>>> map11 = new HashMap<>();
     for (Map.Entry<String, List<VesselValveSequence>> var2 : map1.entrySet()) {
       Map<String, List<VesselValveSequence>> map2 =
           var2.getValue().stream()
               .collect(Collectors.groupingBy(VesselValveSequence::getSequenceOperationName));
-      Map<String, Map<String, VesselValveSeq>> map3 = new HashMap<>();
+
+      Map<String, Map<String, List<VesselValveSeq>>> map3 = new HashMap<>();
       for (Map.Entry<String, List<VesselValveSequence>> seqEntityList : map2.entrySet()) {
-        Map<String, VesselValveSeq> map4 =
+        Map<String, List<VesselValveSeq>> map4 =
             new TreeMap<>(
                 new Comparator<String>() {
                   @Override
@@ -43,9 +44,22 @@ public class VesselValveService {
                     return num.isEmpty() ? 0 : Integer.parseInt(num);
                   }
                 });
+
+        Map<BigDecimal, List<VesselValveSequence>> map22 =
+            seqEntityList.getValue().stream()
+                .collect(Collectors.groupingBy(VesselValveSequence::getSequenceNumber));
+
+        for (Map.Entry<BigDecimal, List<VesselValveSequence>> entry : map22.entrySet()) {
+          map4.put(
+              "sequence_" + entry.getKey(),
+              entry.getValue().stream()
+                  .map(v -> new VesselValveSeq().getInstance(v))
+                  .collect(Collectors.toList()));
+        }
+
         int x = 1;
         for (VesselValveSequence v : seqEntityList.getValue()) {
-          map4.put("sequence_" + x, new VesselValveSeq().getInstance(v));
+          // map4.put("sequence_" + x, new VesselValveSeq().getInstance(v));
           x++;
         }
         map3.put(toCamelCase(seqEntityList.getKey()), map4);
@@ -88,27 +102,32 @@ public class VesselValveService {
     return sequenceList;
   }
 
-  public Map<String, Map<String, List<VesselValveEdu>>> buildVesselValveEductorResponse(
+  public Object buildVesselValveEductorResponse(
       List<VesselInfo.VesselValveEducationProcess> grpcSource) {
     List<VesselValveEducationProcess> sourceList = buildVesselValveEductorDomain(grpcSource);
-    Map<String, List<VesselValveEducationProcess>> map1 =
+
+    Object aa =
         sourceList.stream()
-            .collect(Collectors.groupingBy(VesselValveEducationProcess::getStepName));
-    Map<String, Map<String, List<VesselValveEdu>>> map11 = new HashMap<>();
-    for (Map.Entry<String, List<VesselValveEducationProcess>> mp : map1.entrySet()) {
-      Map<String, List<VesselValveEdu>> map12 =
-          mp.getValue().stream()
-              .collect(
-                  Collectors.groupingBy(
-                      v -> toCamelCase(v.getEductorName()),
-                      Collectors.mapping(
-                          v -> {
-                            return new VesselValveEdu(v.getSequenceNumber(), v.getValveNumber());
-                          },
-                          Collectors.toList())));
-      map11.put(toCamelCase(mp.getKey()), map12);
-    }
-    return map11;
+            .collect(
+                Collectors.groupingBy(
+                    v -> toCamelCase(v.getStepName()),
+                    Collectors.groupingBy(
+                        v -> toCamelCase(v.getStageName()),
+                        Collectors.groupingBy(
+                            v -> toCamelCase("stage_" + v.getStageNumber()),
+                            Collectors.groupingBy(
+                                v -> toCamelCase(v.getEductorName()),
+                                Collectors.groupingBy(
+                                    v -> "sequence_" + v.getSequenceNumber(),
+                                    Collectors.mapping(
+                                        v -> createValveEdu(v), Collectors.toList())))))));
+
+    return aa;
+  }
+
+  private VesselValveEdu createValveEdu(VesselValveEducationProcess v) {
+    return new VesselValveEdu(
+        v.getSequenceNumber(), v.getValveNumber(), v.getValveId(), v.getStageName());
   }
 
   public List<VesselValveEducationProcess> buildVesselValveEductorDomain(

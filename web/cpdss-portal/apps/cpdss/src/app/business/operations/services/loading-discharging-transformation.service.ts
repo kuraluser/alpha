@@ -232,6 +232,19 @@ export class LoadingDischargingTransformationService {
 
 
   /**
+  * Method for unit conversion in manage sequence table
+  *
+  * @param {ILoadingDischargingDelays} loadingDischargingDelay
+  * @returns {string}
+  * @memberof LoadingDischargingTransformationService
+  */
+  manageSequenceUnitConversion(value: number, loadingDischargingDelay: ILoadingDischargingSequenceValueObject, listData: ILoadingSequenceDropdownData, prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT){
+    const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === loadingDischargingDelay?.cargo?.value?.cargoId);
+    return this.quantityPipe.transform(value, prevUnit, currUnit, cargoObj?.estimatedAPI);
+  }
+
+
+  /**
    * Method for converting from loading delay value object model
    *
    * @param {ILoadingDischargingSequenceValueObject} loadingDischargingDelayValueObject

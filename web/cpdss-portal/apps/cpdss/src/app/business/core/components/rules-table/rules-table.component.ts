@@ -45,7 +45,6 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   errorMessages: IValidationErrorMessages = {
     'required': 'RULES_REQUIRED',
   }
- 
   selectedIndex = 0;
   @Input() rulesJson;
   @Input()rulesService;
@@ -55,8 +54,11 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   @Input()isCancelChanges = false;  
   @Input() pageName = "Admin"
 
+  disabledStatus = [];
   rulesFormTemp :any;
   rules: any;
+
+ 
 
   constructor(private translateService: TranslateService,
     private messageService: MessageService,private ngxSpinner: NgxSpinnerService,) { }
@@ -293,7 +295,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
         element.rules = element.rules.filter(el => el.displayInSettings);
       });
     }
-    this.rulesJson[this.selectedTab].forEach(element => {
+    this.rulesJson[this.selectedTab].forEach((element,elementIndex) => {
       let formArrayTemp = new FormArray([])
       element.rules.forEach((rule,rowIndex) => {
         const formGroup = new FormGroup({})
@@ -303,9 +305,11 @@ export class RulesTableComponent implements OnInit, OnDestroy {
         }
 
         formGroup.addControl('enable', new FormControl(rule.enable))
+        this.disabledStatus[elementIndex.toString() + rowIndex.toString()] = rule.enable;
         const formArray = new FormArray([])
         if (rule?.inputs.length > 0) {   
-          rule.inputs.forEach((input,inputIndex) => {                 
+          rule.inputs.forEach((input,inputIndex) => { 
+                            
             let value = null;
             if(input.type ==='String' || input.type==='Number' || input.type === 'number' || input.type==='Boolean')
             {
@@ -375,12 +379,14 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   * @memberof RulesTableComponent
   */
   getControl(key: string, rowIndex: number, inputIndex: number = null): FormControl {
-   
     const temp: FormArray = <FormArray>this.rulesForm.at(this.selectedIndex);
     if (inputIndex !== null) {
       return <FormControl>(<FormArray>(<FormGroup>temp?.at(rowIndex))?.get(key))?.at(inputIndex)
     }
-    return <FormControl>(<FormGroup>temp?.at(rowIndex))?.get(key);
+    else {
+      this.disabledStatus[this.selectedIndex.toString() + rowIndex.toString()] = temp.at(rowIndex).value.enable;
+      return <FormControl>(<FormGroup>temp?.at(rowIndex))?.get(key);
+    }
   }
 
   /**
@@ -424,7 +430,8 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   onRuleTypeSelected() {
     this.checkForFormValueChanges()
   }
-  
+
+
   /**
    *Method to convert array into string, seperated by commas based on property.
    *
