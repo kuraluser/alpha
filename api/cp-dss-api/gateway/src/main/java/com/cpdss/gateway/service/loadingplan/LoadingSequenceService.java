@@ -154,7 +154,7 @@ public class LoadingSequenceService {
 
     log.info("Populating Loading Sequences");
     for (LoadingSequence loadingSequence : reply.getLoadingSequencesList()) {
-      log.info(loadingSequence.getStageName());
+      start = loadingSequence.getStartTime();
       for (LoadingPlanPortWiseDetails portWiseDetails :
           loadingSequence.getLoadingPlanPortWiseDetailsList()) {
         List<LoadingPlanTankDetails> filteredStowage =
