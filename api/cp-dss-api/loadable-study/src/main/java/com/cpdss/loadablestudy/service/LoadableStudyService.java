@@ -1511,7 +1511,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           ofNullable(loadableAttach.getFilePath())
               .ifPresent(filePath -> loadableAttachDto.setFilePath(String.valueOf(filePath)));
           ofNullable(loadableAttach.getUploadedFileName())
-              .ifPresent(fileName -> loadableAttachDto.setFilePath(String.valueOf(fileName)));
+              .ifPresent(fileName -> loadableAttachDto.setFileName(String.valueOf(fileName)));
 
           try {
             File file = ResourceUtils.getFile(this.rootFolder + loadableAttachDto.getFilePath());
@@ -1521,7 +1521,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           } catch (IOException e) {
             log.error("FileNotFoundException in buildLoadableAttachment", e);
           }
-          loadableStudy.getLoadableStudyAttachment().add(loadableAttachDto);
+          List<com.cpdss.loadablestudy.domain.LoadableStudyAttachment> attachmentList = loadableStudy.getLoadableStudyAttachment();
+          if(attachmentList == null){
+            attachmentList = new ArrayList<>();
+          }
+          attachmentList.add(loadableAttachDto);
         });
   }
 
