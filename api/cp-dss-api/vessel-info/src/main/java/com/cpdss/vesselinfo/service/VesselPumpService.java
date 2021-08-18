@@ -141,10 +141,14 @@ public class VesselPumpService {
       try {
         Optional.ofNullable(vvs.getId()).ifPresent(builder::setId);
         Optional.ofNullable(vvs.getIsCommonValve()).ifPresent(builder::setIsCommonValve);
+        Optional.ofNullable(vvs.getIsShut()).ifPresent(builder::setIsShut);
         Optional.ofNullable(vvs.getPipelineId()).ifPresent(builder::setPipelineId);
         Optional.ofNullable(vvs.getPipelineColor()).ifPresent(builder::setPipelineColor);
         Optional.ofNullable(vvs.getPipelineName()).ifPresent(builder::setPipelineName);
         Optional.ofNullable(vvs.getPipelineType()).ifPresent(builder::setPipelineType);
+        Optional.ofNullable(vvs.getPumpCode()).ifPresent(builder::setPumpCode);
+        Optional.ofNullable(vvs.getPumpName()).ifPresent(builder::setPumpName);
+        Optional.ofNullable(vvs.getPumpType()).ifPresent(builder::setPumpType);
         Optional.ofNullable(vvs.getSequenceNumber())
             .ifPresent(v -> builder.setSequenceNumber(v.toString()));
         Optional.ofNullable(vvs.getSequenceOperationId())
@@ -156,16 +160,16 @@ public class VesselPumpService {
         Optional.ofNullable(vvs.getSequenceVesselMappingId())
             .ifPresent(builder::setSequenceVesselMappingId);
         Optional.ofNullable(vvs.getTankShortName()).ifPresent(builder::setTankShortName);
+        Optional.ofNullable(vvs.getStageNumber()).ifPresent(builder::setStageNumber);
         Optional.ofNullable(vvs.getValveCategory()).ifPresent(builder::setValveCategory);
         Optional.ofNullable(vvs.getValveCategoryId()).ifPresent(builder::setValveCategoryId);
+        Optional.ofNullable(vvs.getValveId()).ifPresent(builder::setValveId);
         Optional.ofNullable(vvs.getValveNumber()).ifPresent(builder::setValveNumber);
         Optional.ofNullable(vvs.getValveSide()).ifPresent(builder::setValveSide);
         Optional.ofNullable(vvs.getValveTypeId()).ifPresent(builder::setValveTypeId);
         Optional.ofNullable(vvs.getValveTypeName()).ifPresent(builder::setValveTypeName);
         Optional.ofNullable(vvs.getVesselName()).ifPresent(builder::setVesselName);
         Optional.ofNullable(vvs.getVesselTankXid()).ifPresent(builder::setVesselTankXid);
-        Optional.ofNullable(vvs.getVesselValveMappingId())
-            .ifPresent(builder::setVesselValveMappingId);
         Optional.ofNullable(vvs.getVesselXid()).ifPresent(builder::setVesselXid);
       } catch (Exception e) {
         log.error("Failed to build message for vessel valve sequence");
@@ -191,6 +195,9 @@ public class VesselPumpService {
         Optional.ofNullable(vvEp.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
         Optional.ofNullable(vvEp.getStepName()).ifPresent(builder::setStepName);
         Optional.ofNullable(vvEp.getValveNumber()).ifPresent(builder::setValveNumber);
+        Optional.ofNullable(vvEp.getStageNumber()).ifPresent(builder::setStageNumber);
+        Optional.ofNullable(vvEp.getValveId()).ifPresent(builder::setValveId);
+        Optional.ofNullable(vvEp.getStageName()).ifPresent(builder::setStageName);
         list.add(builder.build());
       } catch (Exception e) {
         log.error("Failed to build message for vessel valve educator");

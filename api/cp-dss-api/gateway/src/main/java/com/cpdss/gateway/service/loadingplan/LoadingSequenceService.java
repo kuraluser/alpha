@@ -7,7 +7,6 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply;
-import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
@@ -67,6 +66,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -79,6 +79,8 @@ public class LoadingSequenceService {
 
   @GrpcClient("loadableStudyService")
   LoadableStudyServiceBlockingStub loadableStudyGrpcService;
+
+  @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
 
   public void buildLoadingSequence(
       Long vesselId, LoadingSequenceReply reply, LoadingSequenceResponse response)
@@ -94,7 +96,10 @@ public class LoadingSequenceService {
     List<SynopticalBallastRecord> ballastDetails = new ArrayList<>();
     SynopticalTableReply synopticalReply =
         this.getSynopticalTableDetails(
-            reply.getVesselId(), reply.getVoyageId(), reply.getLoadablePatternId());
+            reply.getVesselId(),
+            reply.getVoyageId(),
+            reply.getLoadablePatternId(),
+            reply.getPortId());
     synopticalReply
         .getSynopticalRecordsList()
         .forEach(
@@ -149,7 +154,7 @@ public class LoadingSequenceService {
 
     log.info("Populating Loading Sequences");
     for (LoadingSequence loadingSequence : reply.getLoadingSequencesList()) {
-      log.info(loadingSequence.getStageName());
+      start = loadingSequence.getStartTime();
       for (LoadingPlanPortWiseDetails portWiseDetails :
           loadingSequence.getLoadingPlanPortWiseDetailsList()) {
         List<LoadingPlanTankDetails> filteredStowage =
@@ -595,20 +600,20 @@ public class LoadingSequenceService {
   }
 
   private SynopticalTableReply getSynopticalTableDetails(
-      Long vesselId, Long voyageId, long loadablePatternId) throws GenericServiceException {
+      Long vesselId, Long voyageId, long loadablePatternId, long portId)
+      throws GenericServiceException {
     LoadableStudyRequest.Builder builder = LoadableStudyRequest.newBuilder();
     builder.setVesselId(vesselId);
     builder.setVoyageId(voyageId);
     LoadablePatternConfirmedReply confirmedReply =
         loadableStudyGrpcService.getLoadablePatternByVoyageAndStatus(builder.build());
-    LoadablePatternRequest.Builder patternReqBuilder = LoadablePatternRequest.newBuilder();
-    patternReqBuilder.setLoadableStudyId(confirmedReply.getLoadableStudyId());
     SynopticalTableRequest.Builder synopticalBuilder = SynopticalTableRequest.newBuilder();
     synopticalBuilder.setLoadableStudyId(confirmedReply.getLoadableStudyId());
-    synopticalBuilder.setOperationType("ARR");
-    synopticalBuilder.setPortId(504);
+    synopticalBuilder.setPortId(portId);
     synopticalBuilder.setVesselId(vesselId);
     synopticalBuilder.setVoyageId(voyageId);
+    log.info(
+        "fetching synoptical table for vessel {}, voyage {}, port {}", vesselId, voyageId, portId);
     SynopticalTableReply reply =
         loadableStudyGrpcService.getSynopticalDataByPortId(synopticalBuilder.build());
     if (!reply.getResponseStatus().getStatus().equals(GatewayConstants.SUCCESS)) {
@@ -683,6 +688,7 @@ public class LoadingSequenceService {
     cargo.setAbbreviation(cargoNomination.getAbbreviation());
     cargo.setStart(portEta + (start * 60 * 1000));
     cargo.setEnd(portEta + (end * 60 * 1000));
+    cargo.setApi(StringUtils.isEmpty(stowage.getApi()) ? null : new BigDecimal(stowage.getApi()));
     return end;
   }
 
@@ -857,10 +863,20 @@ public class LoadingSequenceService {
               sequenceBuilder.setCargoNominationId(event.getCargoNominationId());
               if (sequence.getStageWiseCargoLoadingRates().size() > 0)
                 Optional.ofNullable(sequence.getStageWiseCargoLoadingRates().get("0"))
-                    .ifPresent(sequenceBuilder::setCargoLoadingRate1);
+                    .ifPresent(
+                        rate1 -> {
+                          if (rate1.equalsIgnoreCase("None")) {
+                            sequenceBuilder.setCargoLoadingRate1("0");
+                          } else sequenceBuilder.setCargoLoadingRate1(rate1);
+                        });
               if (sequence.getStageWiseCargoLoadingRates().size() > 1)
                 Optional.ofNullable(sequence.getStageWiseCargoLoadingRates().get("1"))
-                    .ifPresent(sequenceBuilder::setCargoLoadingRate2);
+                    .ifPresent(
+                        rate2 -> {
+                          if (rate2.equalsIgnoreCase("None")) {
+                            sequenceBuilder.setCargoLoadingRate2("0");
+                          } else sequenceBuilder.setCargoLoadingRate2(rate2);
+                        });
               this.buildBallastOperations(sequence.getBallast(), pumps, sequenceBuilder);
               this.buildDeballastingRates(sequence.getDeballastingRates(), sequenceBuilder);
               this.buildLoadingRates(sequence.getTankWiseCargoLoadingRates(), sequenceBuilder);

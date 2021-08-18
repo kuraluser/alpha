@@ -10,12 +10,12 @@ import lombok.Data;
 public class LoadingPlanPortWiseDetails {
 
   private String time;
-
-  @JsonProperty("loadablePlanStowageDetails")
+  private List loadableQuantityCommingleCargoDetails;
   private List<LoadingPlanStowageDetails> loadablePlanStowageDetails;
-
   private List<LoadingPlanRobDetails> loadablePlanRoBDetails;
   private List<LoadingPlanBallastDetails> loadablePlanBallastDetails;
+  private String ballastVol;
+  private Map<String, String> cargoVol;
 
   @JsonProperty("deballastingRateM3_Hr")
   private Map<String, String> deballastingRates;
@@ -28,6 +28,8 @@ public class LoadingPlanPortWiseDetails {
   @JsonProperty("heel")
   private String list;
 
+  private String airDraft;
   private String bendinMoment;
   private String shearForce;
+  private Map<String, String> ballastingRateM3_Hr;
 }

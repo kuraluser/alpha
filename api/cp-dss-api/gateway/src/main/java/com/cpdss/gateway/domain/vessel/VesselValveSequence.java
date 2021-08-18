@@ -59,4 +59,8 @@ public class VesselValveSequence implements Serializable {
   private Integer vesselValveMappingId;
 
   private Long vesselXid;
+
+  private String stageNumber;
+  private Integer valveId;
+  private Boolean isShut;
 }

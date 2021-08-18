@@ -37,7 +37,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
     this._currentQuantitySelectedUnit = value;
     if (this.loadingDischargingSequences) {
-      this.initiLoadingDischargingSequenceArray();
+      this.unitConversion();
     }
   }
 
@@ -93,7 +93,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   */
   async initiLoadingDischargingSequenceArray() {
     this.listData = await this.getDropdownData();
- 
+
     this.listData.reasonForDelays = this.loadingDischargingSequences.reasonForDelays;
     const initialDelay = this.loadingDischargingSequences.loadingDischargingDelays?.find(loadingDischargingDelay => !loadingDischargingDelay.cargoId && !loadingDischargingDelay.quantity)
     if (initialDelay) {
@@ -122,6 +122,34 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   }
 
   /**
+  * Method for Unit conversion
+  *
+  * @memberof LoadingDischargingManageSequenceComponent
+  */
+  unitConversion() {
+    this.loadingDischargingDelays?.map(item => {
+      if (item?.cargo?.value) {
+        this.loadingDischargingSequences.loadingDischargingDelays.map(el => {
+          if (el.cargoNominationId === item?.cargo?.value?.cargoNominationId) {
+            item.quantity = this.loadingDischargingTransformationService.manageSequenceUnitConversion(Number(el.quantity), item, this.listData, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+          }
+        });
+      }
+    });
+    const loadingDischargingDelayArray = this.loadingDischargingDelays?.map((loadingDischargingDelay, index) => {
+      if (loadingDischargingDelay?.cargo?.value?.cargoId && loadingDischargingDelay?.quantity) {
+        return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, false)
+      } else {
+        return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, true)
+      }
+    }
+    );
+    this.loadingDischargingSequenceForm = this.fb.group({
+      dataTable: this.fb.array([...loadingDischargingDelayArray])
+    });
+  }
+
+  /**
   * Get all lookups for loading sequence screen
   *
   * @returns {Promise<ILoadingSequenceDropdownData>}
@@ -130,14 +158,14 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   async getDropdownData(): Promise<ILoadingSequenceDropdownData> {
     const cargoTobeLoaded = this.loadableQuantityCargo?.map(loadable => {
       if (loadable) {
-        loadable.loadableMT = this.quantityDecimalFormatPipe.transform(loadable.loadableMT,this.currentQuantitySelectedUnit).toString().replace(/,/g,'');
+        loadable.loadableMT = this.quantityDecimalFormatPipe.transform(loadable.loadableMT, this.currentQuantitySelectedUnit).toString().replace(/,/g, '');
         loadable.grade = this.findCargo(loadable);
       }
       return loadable;
     })
     this.listData = <ILoadingSequenceDropdownData>{};
     this.listData.loadableQuantityCargo = cargoTobeLoaded;
-    
+
     return this.listData;
   }
 
@@ -192,7 +220,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     if (dataTableControl.controls.length !== this.loadableQuantityCargoCount) {
       dataTableControl.push(this.initLoadingDischargingSequenceFormGroup(_loadingDischargingDelays, this.loadingDischargingDelays.length, false));
       this.loadingDischargingDelays = [...this.loadingDischargingDelays, _loadingDischargingDelays];
-    } 
+    }
   }
 
   /**
@@ -229,7 +257,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
         invalidFormControls.forEach((key) => {
           const formControl = this.field(index, key);
           formControl.updateValueAndValidity();
-          if(formControl.invalid) {
+          if (formControl.invalid) {
             this.loadingDischargingDelays[index][key]['isEditMode'] = true;
           }
         });
