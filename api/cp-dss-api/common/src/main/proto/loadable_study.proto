@@ -198,6 +198,8 @@ service LoadableStudyService {
 	rpc GetLoadableStudyPortRotationByPortRotationId(PortRotationRequest) returns (PortRotationDetailReply) {}
 
 	rpc GetLoadableStudySimulatorJsonData(SimulatorJsonRequest) returns (SimulatorJsonReply){}
+	
+	rpc GetLoadableStudyByLoadablePatternId(LoadablePlanDetailsRequest) returns (LoadableStudyResponse) {}
 }
 
 service DischargeStudyOperationService {
@@ -815,6 +817,7 @@ message LoadingPortDetail{
 	int64 portId = 1;
 	string quantity = 2;
 	string name=3;
+	int64 mode = 4;
 }
 
 message segregationDetail{
@@ -1485,7 +1488,8 @@ message	LoadableStudyShore{
 	string atd = 5;
 	string eta = 6;
 	string voyageName = 7;
-	repeated VoyagePorts voyagePorts = 8;
+	int64 voyageId = 8;
+	repeated VoyagePorts voyagePorts = 9;
 }
 
 message	VoyagePorts{
@@ -1531,4 +1535,9 @@ message SimulatorJsonRequest{
 message SimulatorJsonReply{
     ResponseStatus responseStatus = 1;
     string departureCondition = 2;
+}
+
+message LoadableStudyResponse {
+	int64 loadableStudyId = 1;
+	ResponseStatus responseStatus = 2;
 }

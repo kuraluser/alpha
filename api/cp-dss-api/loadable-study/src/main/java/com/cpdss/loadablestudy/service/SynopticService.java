@@ -1295,7 +1295,7 @@ public class SynopticService {
             .setDraftExtreme(loadableStudyDetails.getDraftMark().toString())
             .build();
     VesselInfo.VesselReply vesselReply =
-        this.vesselInfoGrpcService.getVesselDetailsById(replyBuilder);
+        this.vesselInfoGrpcService.getVesselDetailByVesselId(replyBuilder);
     double vesselLwt =
         Double.parseDouble(vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight());
 
@@ -1451,7 +1451,7 @@ public class SynopticService {
           cargoArrTotal
               + (null != arrSynopticRecord.get().getConstantPlanned()
                   ? arrSynopticRecord.get().getConstantPlanned().doubleValue()
-                  : 0)
+                  : vesselReply.getVesselLoadableQuantityDetails().getDeadWeightConstant())
               + (null != arrSynopticRecord.get().getOthersPlanned()
                   ? arrSynopticRecord.get().getOthersPlanned().doubleValue()
                   : 0)
@@ -1464,7 +1464,7 @@ public class SynopticService {
           cargoDepTotal
               + (null != depSynopticRecord.get().getConstantPlanned()
                   ? depSynopticRecord.get().getConstantPlanned().doubleValue()
-                  : 0)
+                  : vesselReply.getVesselLoadableQuantityDetails().getDeadWeightConstant())
               + (null != depSynopticRecord.get().getOthersPlanned()
                   ? depSynopticRecord.get().getOthersPlanned().doubleValue()
                   : 0)

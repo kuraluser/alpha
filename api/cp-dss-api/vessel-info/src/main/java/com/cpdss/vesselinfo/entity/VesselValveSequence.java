@@ -2,7 +2,6 @@
 package com.cpdss.vesselinfo.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import javax.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -20,6 +19,9 @@ public class VesselValveSequence implements Serializable {
   @Column(name = "is_common_valve")
   private Boolean isCommonValve;
 
+  @Column(name = "is_shut")
+  private Boolean isShut;
+
   @Column(name = "pipeline_id")
   private Integer pipelineId;
 
@@ -29,8 +31,17 @@ public class VesselValveSequence implements Serializable {
 
   private String pipelineType;
 
+  @Column(name = "pump_code")
+  private String pumpCode;
+
+  @Column(name = "pump_name")
+  private String pumpName;
+
+  @Column(name = "pump_type")
+  private String pumpType;
+
   @Column(name = "sequence_number")
-  private BigDecimal sequenceNumber;
+  private Integer sequenceNumber;
 
   @Column(name = "sequence_operation_id")
   private Integer sequenceOperationId;
@@ -47,6 +58,9 @@ public class VesselValveSequence implements Serializable {
   @Column(name = "sequence_vessel_mapping_id")
   private Integer sequenceVesselMappingId;
 
+  @Column(name = "stage_number")
+  private String stageNumber;
+
   @Column(name = "tank_short_name")
   private String tankShortName;
 
@@ -55,6 +69,9 @@ public class VesselValveSequence implements Serializable {
 
   @Column(name = "valve_category_id")
   private Integer valveCategoryId;
+
+  @Column(name = "valve_id")
+  private Integer valveId;
 
   @Column(name = "valve_number")
   private String valveNumber;
@@ -73,9 +90,6 @@ public class VesselValveSequence implements Serializable {
 
   @Column(name = "vessel_tank_xid")
   private Integer vesselTankXid;
-
-  @Column(name = "vessel_valve_mapping_id")
-  private Integer vesselValveMappingId;
 
   @Column(name = "vessel_xid")
   private Long vesselXid;

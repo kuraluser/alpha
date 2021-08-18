@@ -320,7 +320,9 @@ export class DischargeStudyDetailsTransformationService {
         fieldPlaceholder: 'ENTER_WATER_DENSITY',
         errorMessages: {
           'required': 'PORT_WATER_DENSITY_REQUIRED_ERROR',
-          'min': 'PORT_WATER_DENSITY_MIN_ERROR'
+          'min': 'PORT_WATER_DENSITY_MIN_ERROR',
+          'invalidNumber': 'PORT_VALUE_INVALID_ERROR',
+          'waterDensityError': 'PORT_WATER_DENSITY_RANGE_ERROR'
         }
       },
       {
@@ -336,7 +338,8 @@ export class DischargeStudyDetailsTransformationService {
         numberFormat: '1.2-2',
         errorMessages: {
           'required': 'PORT_MAX_DRAFT_REQUIRED_ERROR',
-          'min': 'PORT_MAX_DRAFT_MIN_ERROR'
+          'min': 'PORT_MAX_DRAFT_MIN_ERROR',
+          'invalidNumber': 'PORT_VALUE_INVALID_ERROR'
         }
       },
       {
@@ -352,7 +355,8 @@ export class DischargeStudyDetailsTransformationService {
         numberFormat: '1.2-2',
         errorMessages: {
           'required': 'PORT_MAX_AIR_DRAFT_REQUIRED_ERROR',
-          'min': 'PORT_MAX_AIR_DRAFT_MIN_ERROR'
+          'min': 'PORT_MAX_AIR_DRAFT_MIN_ERROR',
+          'invalidNumber': 'PORT_VALUE_INVALID_ERROR'
         }
       },
 
@@ -561,14 +565,14 @@ export class DischargeStudyDetailsTransformationService {
         },
         {
           field: 'fuelTypeName',
-          header: 'DISCHARGE_OHQ_FUEL_TYPE',
+          header: 'DISCHARGE_OHQ_TANK_TYPE',
           editable: false,
           filter: true,
           filterField: 'fuelTypeId',
           filterListName: 'fuelTypes',
           filterMatchMode: DATATABLE_FILTER_MATCHMODE.EQUALS,
           filterType: DATATABLE_FILTER_TYPE.SELECT,
-          filterPlaceholder: 'DISCHARGE_OHQ_SEARCH_FUEL_TYPE',
+          filterPlaceholder: 'DISCHARGE_OHQ_SEARCH_TANK_TYPE',
           fieldHeaderClass: 'column-fuel-type'
         },
         {
@@ -596,7 +600,8 @@ export class DischargeStudyDetailsTransformationService {
             'required': 'OHQ_VALUE_REQUIRED',
             'min': 'OHQ_MIN_VALUE',
             'groupTotal': 'OHQ_GROUP_TOTAL',
-            'pattern': 'OHQ_PATTERN_ERROR'
+            'pattern': 'OHQ_PATTERN_ERROR',
+            'invalidNumber': 'OHQ_VALUE_INVALID'
           }
         },
         {
@@ -1094,14 +1099,9 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission): IDataTabl
    * @param {IMode} mode
    * @memberof DischargeStudyDetailsTransformationService
    */
-    setNewCargoInPortAsValuObject(backLoadingDetails: any , mode: IMode , portDetails: IPortDetailValueObject[] , index: number) : IPortCargo {
-      const cargoDetail = portDetails[index]?.cargoDetail?.find((item) => {
-        if(item.storedKey['_value'] === backLoadingDetails.storedKey.value) { 
-          return item;
-        }
-      })
+    setNewCargoInPortAsValuObject(backLoadingDetails: any , mode: IMode) : IPortCargo {
       return {
-        id: new ValueObject<string>(cargoDetail?.id['_value'] ? cargoDetail?.id['_value'] : ''),
+        id: new ValueObject<string>(backLoadingDetails.id.value),
         storedKey: new ValueObject<string>(backLoadingDetails.storedKey.value),
         maxKl: new ValueObject<number>(backLoadingDetails?.maxKl?.value ? backLoadingDetails.maxKl.value : 0, true , false),
         abbreviation: new ValueObject<string>(backLoadingDetails.abbreviation.value, true , false),

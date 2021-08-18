@@ -16,6 +16,9 @@ public class VesselValveSeq {
   private String tankShortName;
   private String pipelineColor;
   private String pipelineName;
+  private String stageNumber;
+  private Integer vesselValveId;
+  private boolean isShut;
 
   public VesselValveSeq getInstance(VesselValveSequence v) {
     VesselValveSeq vq = new VesselValveSeq();
@@ -26,6 +29,9 @@ public class VesselValveSeq {
     vq.tankShortName = v.getTankShortName();
     vq.pipelineColor = v.getPipelineColor();
     vq.pipelineName = v.getPipelineName();
+    vq.stageNumber = v.getStageNumber();
+    vq.vesselValveId = v.getValveId();
+    vq.isShut = v.getIsShut();
     return vq;
   }
 }

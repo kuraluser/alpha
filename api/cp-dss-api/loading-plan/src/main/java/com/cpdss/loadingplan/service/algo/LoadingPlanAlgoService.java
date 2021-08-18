@@ -303,7 +303,20 @@ public class LoadingPlanAlgoService {
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
 
       if (request.getHasLoadicator()) {
+        log.info("Passing Loading Sequence to Loadicator");
         loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
+        Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
+            loadingInfoStatusRepository.findByIdAndIsActive(
+                LoadingPlanConstants.LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID, true);
+        if (loadicatorVerificationStatusOpt.isEmpty()) {
+          throw new GenericServiceException(
+              "Could not find loading information status with id "
+                  + LoadingPlanConstants.LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID,
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        updateLoadingInfoAlgoStatus(
+            loadingInfoOpt.get(), request.getProcessId(), loadicatorVerificationStatusOpt.get());
       }
     }
   }
@@ -353,7 +366,7 @@ public class LoadingPlanAlgoService {
         loadingInformation, request.getProcessId(), errorOccurredStatusOpt.get());
   }
 
-  private void updateLoadingInfoAlgoStatus(
+  public void updateLoadingInfoAlgoStatus(
       LoadingInformation loadingInformation,
       String processId,
       LoadingInformationStatus loadingInformationStatus)

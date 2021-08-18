@@ -75,7 +75,7 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
       log.info(
           "Loading Delay Saved Id {}, Reasons {}",
           loadingDelay.getId(),
-          loadingDelay.getLoadingDelayReasons().size());
+          loadingDelay.getLoadingDelayReasons());
     }
   }
 

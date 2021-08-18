@@ -21,4 +21,5 @@ public class Cargo {
   private String abbreviation;
   private Long cargoNominationId;
   private Long cargoId;
+  private BigDecimal api;
 }

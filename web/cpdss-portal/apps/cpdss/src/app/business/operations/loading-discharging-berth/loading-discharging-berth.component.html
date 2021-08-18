@@ -3,7 +3,7 @@
         <h5 class="">{{'LOADING_DISCHARGING_BERTH_HEADER' | translate}}</h5>
     </div>
     <div class="col-md-6 text-right" *ngIf="editMode">
-        <a id="add_berth_btn" [ngStyle]="{'pointer-events': (disableAddBtn) ? 'none' : null}" class="plus-icon plus-icon-rounded" (click)="addBerth(null, -2)"> </a>
+        <a id="add_berth_btn" [ngStyle]="{'pointer-events': (disableAddBtn || (berthFormArray.controls?.length === availableBerths?.length)) ? 'none' : null}" class="plus-icon plus-icon-rounded" (click)="addBerth(null)"> </a>
     </div>
 </div>
 

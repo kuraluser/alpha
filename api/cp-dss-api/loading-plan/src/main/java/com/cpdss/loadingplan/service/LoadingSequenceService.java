@@ -89,6 +89,7 @@ public class LoadingSequenceService {
     builder.setInterval(loadingInfoOpt.get().getStageOffset().getStageOffsetVal());
     builder.setVesselId(loadingInfoOpt.get().getVesselXId());
     builder.setVoyageId(loadingInfoOpt.get().getVoyageId());
+    builder.setPortId(loadingInfoOpt.get().getPortXId());
     builder.setLoadablePatternId(loadingInfoOpt.get().getLoadablePatternXId());
     List<LoadingSequence> loadingSequences =
         loadingSequenceRepository.findByLoadingInformationAndIsActiveOrderBySequenceNumber(

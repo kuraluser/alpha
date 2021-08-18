@@ -46,6 +46,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply;
@@ -416,7 +417,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   // If there are ohqQuantities for the port rotation and the port rotation
                   // ohqComplete flag is false we set the flag as true since the ohq is already
                   //  there for the port rotation in the DB.
-                  if (!onHandQuantities.isEmpty() && !port.getIsPortRotationOhqComplete()) {
+                  if (!onHandQuantities.isEmpty()
+                      && (port.getIsPortRotationOhqComplete() != null
+                          && !port.getIsPortRotationOhqComplete())) {
                     this.loadableStudyPortRotationRepository.updateIsOhqCompleteByIdAndIsActiveTrue(
                         port.getId(), true);
                     ohqPortsBuilder.setIsPortRotationOhqComplete(true);
@@ -675,7 +678,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
    * Construct folder path for loadable study attachments
    *
    * @param loadableStudy - loadable study entity
-   * @param voyage - voyage entity
    * @return - the folder path
    */
   public String constructFolderPath(LoadableStudy loadableStudy) {
@@ -1904,9 +1906,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       if (0 == request.getLoadablePatternId()) {
         log.info("Inside getLoadableStudyStatus");
-        Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOpt =
-            loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndProcessIdAndIsActive(
+        Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOpt = null;
+        Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOptWthMessageId =
+            loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndMessageIdAndIsActive(
                 request.getLoadableStudyId(), request.getProcessId(), true);
+        if (!loadableStudyAlgoStatusOptWthMessageId.isPresent()) {
+          loadableStudyAlgoStatusOpt =
+              loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndProcessIdAndIsActive(
+                  request.getLoadableStudyId(), request.getProcessId(), true);
+        } else {
+          loadableStudyAlgoStatusOpt = loadableStudyAlgoStatusOptWthMessageId;
+        }
+
         if (!loadableStudyAlgoStatusOpt.isPresent()) {
           log.info("Invalid loadable study Id");
           replyBuilder.setResponseStatus(
@@ -2862,6 +2873,22 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       String departureConditionString = new ObjectMapper().writeValueAsString(departureCondition);
       builder.setDepartureCondition(departureConditionString);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadableStudyByLoadablePatternId(
+      LoadablePlanDetailsRequest request, StreamObserver<LoadableStudyResponse> responseObserver) {
+    LoadableStudyResponse.Builder builder = LoadableStudyResponse.newBuilder();
+    try {
+      this.loadablePatternService.getLoadableStudyDetailsByLoadablePatternId(request, builder);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
       e.printStackTrace();
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());

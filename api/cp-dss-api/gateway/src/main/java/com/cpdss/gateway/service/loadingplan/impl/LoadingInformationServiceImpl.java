@@ -34,7 +34,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -384,22 +383,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             pumpTypes.add(type);
           }
         }
-        List<Long> acceptingPumpIds =
-            pumpTypes.stream()
-                .map(
-                    v -> {
-                      if (GatewayConstants.LOADING_VESSEL_PUMPS.contains(
-                          v.getName().toUpperCase())) {
-                        return v.getId();
-                      }
-                      return null;
-                    })
-                .collect(Collectors.toList());
         List<VesselPump> vesselPumps = new ArrayList<>();
         if (grpcReply.getVesselPumpCount() > 0) {
           for (VesselInfo.VesselPump vp : grpcReply.getVesselPumpList()) {
             // created an array of ids from constants.
-            if (acceptingPumpIds.contains(vp.getPumpTypeId())) {
+            if (GatewayConstants.LOADING_VESSEL_PUMPS_VAL.contains(vp.getPumpTypeId())) {
               VesselPump pump = new VesselPump();
               BeanUtils.copyProperties(vp, pump);
               Optional.ofNullable(vp.getPumpCapacity())

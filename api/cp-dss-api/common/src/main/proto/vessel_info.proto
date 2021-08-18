@@ -46,6 +46,20 @@ service VesselInfoService {
 	rpc GetLoadingInfoRules(LoadingInfoRulesRequest) returns (LoadingInfoRulesReply) {}
 }
 
+// Mapped to pump_type Table in vessel DB
+enum VesselPumpTypes {
+		EMPTY_PUMP = 0;
+		CARGO_PUMP = 1;
+		BALLAST_PUMP = 2;
+		GS_PUMP = 3;
+		IG_PUMP = 4;
+		STRIPPING_PUMP = 5;
+		STRIP_EDUCTOR = 6;
+		COW_PUMP = 7;
+		BALLAST_EDUCTOR = 8;
+		TANK_CLEANING_PUMP = 9;
+}
+
 message VesselRequestWithPaging{
 	int64 offset = 1;
 	int64 limit = 2;
@@ -120,6 +134,7 @@ message VesselLoadableQuantityDetails {
 	string dwt = 5;
 	string draftConditionName = 6;
 	bool hasLoadicator = 7;
+	double deadWeightConstant = 8;
 }
 
 message VesselTankDetail{
@@ -496,10 +511,14 @@ message BendingMomentType1 {
 	message VesselValveSequence{
 		 int64 id = 1;
 		 bool isCommonValve = 2;
+		 bool isShut = 24;
 		 int32 pipelineId = 3;
 		 string pipelineColor = 4;
 		 string pipelineName = 5;
 		 string pipelineType = 6;
+		 string pumpCode = 25;
+		 string pumpName = 26;
+		 string pumpType = 27;
 		 string sequenceNumber = 7; // BigDecimal
 		 int32 sequenceOperationId = 8;
 		 string sequenceOperationName = 9;
@@ -507,15 +526,16 @@ message BendingMomentType1 {
 		 string sequenceTypeName = 11;
 		 int32 sequenceVesselMappingId = 12;
 		 string tankShortName = 13;
+		 string stageNumber = 28;
 		 string valveCategory = 14;
 		 int32 valveCategoryId = 15;
+		 int32 valveId = 29;
 		 string valveNumber = 16;
 		 int32 valveSide = 17;
 		 int32 valveTypeId = 18;
 		 string valveTypeName = 19;
 		 string vesselName = 20;
 		 int32 vesselTankXid = 21;
-		 int32 vesselValveMappingId = 22;
 		 int64 vesselXid = 23;
 	}
 
@@ -527,6 +547,9 @@ message BendingMomentType1 {
 		string valveNumber =5;
 		int32 eductorId = 6;
 		int32 eductionProcessMasterId = 7;
+		int32 stageNumber = 8;
+		int32 valveId = 9;
+		string stageName = 10;
 	}
 	
 	message LoadingInfoRulesRequest {

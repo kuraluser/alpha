@@ -17,4 +17,7 @@ public class VesselValveEducationProcess {
   private Integer sequenceNumber;
   private String stepName;
   private String valveNumber;
+  private Integer valveId;
+  private String stageName;
+  private Integer stageNumber;
 }

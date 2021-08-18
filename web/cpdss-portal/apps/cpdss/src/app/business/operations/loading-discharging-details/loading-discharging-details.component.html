@@ -62,6 +62,7 @@
                     <ng-template  *ngIf="timeOfSunsetPermission?.edit;then editSunSet else nonEditableSunSet">
                     </ng-template>
                     <ng-template #editSunSet>
+                      
                         <p-calendar formControlName="timeOfSunset" [timeOnly]="true" appendTo="body" readonly="true"
                             *ngIf="timeOfSunsetPermission?.edit" inputId="timeOfSunset"
                             placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}" hourFormat="24" #timeOfSunSetCalender>
@@ -78,11 +79,12 @@
                                             translate}}</button>
                                     </div>
                                 </div>
-                            </p-footer>
-                            <cpdss-portal-validation-error [errors]="fieldError('timeOfSunset')"
-                                [errorMessages]="errorMessages.timeOfSunset">
-                            </cpdss-portal-validation-error>
+                            </p-footer>                            
+                      
                         </p-calendar>
+                        <cpdss-portal-validation-error [errors]="fieldError('timeOfSunset')"
+                        [errorMessages]="errorMessages.timeOfSunset">
+                    </cpdss-portal-validation-error>
                     </ng-template>
                     <ng-template #nonEditableSunSet>
                        <label> {{this.loadingDischargingDetailsResponse?.timeOfSunset}}</label>

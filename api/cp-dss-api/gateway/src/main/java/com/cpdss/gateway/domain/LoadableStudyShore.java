@@ -22,5 +22,7 @@ public class LoadableStudyShore {
 
   private String voyageName;
 
+  private Long voyageId;
+
   private List<VoyagePorts> voyagePorts;
 }

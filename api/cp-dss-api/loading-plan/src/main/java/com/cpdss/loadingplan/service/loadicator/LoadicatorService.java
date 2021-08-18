@@ -26,15 +26,16 @@ import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDetail;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.domain.algo.LDTrim;
 import com.cpdss.loadingplan.domain.algo.LoadicatorAlgoRequest;
 import com.cpdss.loadingplan.domain.algo.LoadicatorAlgoResponse;
+import com.cpdss.loadingplan.domain.algo.LoadicatorResult;
 import com.cpdss.loadingplan.domain.algo.LoadicatorStage;
 import com.cpdss.loadingplan.entity.LoadingInformation;
+import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import com.cpdss.loadingplan.entity.LoadingPlanBallastDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanRobDetails;
@@ -42,14 +43,18 @@ import com.cpdss.loadingplan.entity.LoadingPlanStowageDetails;
 import com.cpdss.loadingplan.entity.LoadingSequence;
 import com.cpdss.loadingplan.entity.LoadingSequenceStabilityParameters;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
+import com.cpdss.loadingplan.repository.LoadingInformationStatusRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanPortWiseDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceStabiltyParametersRepository;
+import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,6 +81,9 @@ public class LoadicatorService {
   @Value(value = "${algo.loadicatorUrl}")
   private String loadicatorUrl;
 
+  @Value(value = "${loadingplan.attachment.rootFolder}")
+  private String rootFolder;
+
   @Autowired LoadingInformationRepository loadingInformationRepository;
   @Autowired LoadingSequenceRepository loadingSequenceRepository;
   @Autowired LoadingPlanPortWiseDetailsRepository loadingPlanPortWiseDetailsRepository;
@@ -85,6 +93,10 @@ public class LoadicatorService {
 
   @Autowired
   LoadingSequenceStabiltyParametersRepository loadingSequenceStabiltyParametersRepository;
+
+  @Autowired LoadingInformationStatusRepository loadingInformationStatusRepository;
+
+  @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
 
   @Autowired RestTemplate restTemplate;
 
@@ -497,12 +509,24 @@ public class LoadicatorService {
     buildLoadicatorAlgoRequest(loadingInfoOpt.get(), request, algoRequest);
     saveLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
 
-    //    LoadicatorAlgoResponse algoResponse = restTemplate.postForObject(loadicatorUrl,
-    // algoRequest, LoadicatorAlgoResponse.class);
-    //    saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
-    //
-    saveLoadingSequenceStabilityParameters(
-        loadingInfoOpt.get(), request.getLoadingInfoLoadicatorDetailsList());
+    LoadicatorAlgoResponse algoResponse =
+        restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+    saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
+
+    saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
+
+    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+        loadingInformationStatusRepository.findByIdAndIsActive(
+            LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
+    if (loadingInfoStatusOpt.isEmpty()) {
+      throw new GenericServiceException(
+          "Could not find loading information status with id "
+              + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+        loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
   }
 
   /**
@@ -521,12 +545,24 @@ public class LoadicatorService {
         LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_RESPONSE_JSON_TYPE_ID);
     ObjectMapper mapper = new ObjectMapper();
     try {
+      mapper.writeValue(
+          new File(
+              this.rootFolder
+                  + "/json/loadingInformationLoadicatorResult_"
+                  + loadingInfoId
+                  + ".json"),
+          algoResponse);
       jsonBuilder.setJson(mapper.writeValueAsString(algoResponse));
       saveJson(jsonBuilder);
     } catch (JsonProcessingException e) {
       e.printStackTrace();
       throw new GenericServiceException(
           "Could not save request JSON to DB",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } catch (IOException e) {
+      throw new GenericServiceException(
+          "Could not save request JSON to Filesystem",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
@@ -548,12 +584,24 @@ public class LoadicatorService {
         LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_REQUEST_JSON_TYPE_ID);
     ObjectMapper mapper = new ObjectMapper();
     try {
+      mapper.writeValue(
+          new File(
+              this.rootFolder
+                  + "/json/loadingInformationLoadicatorRequest_"
+                  + loadingInfoId
+                  + ".json"),
+          algoRequest);
       jsonBuilder.setJson(mapper.writeValueAsString(algoRequest));
       saveJson(jsonBuilder);
     } catch (JsonProcessingException e) {
       e.printStackTrace();
       throw new GenericServiceException(
           "Could not save request JSON to DB",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } catch (IOException e) {
+      throw new GenericServiceException(
+          "Could not save request JSON to Filesystem",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
@@ -677,20 +725,23 @@ public class LoadicatorService {
   }
 
   private void saveLoadingSequenceStabilityParameters(
-      LoadingInformation loadingInformation, List<LoadingInfoLoadicatorDetail> loadicatorDetails) {
+      LoadingInformation loadingInformation, LoadicatorAlgoResponse algoResponse) {
     List<LoadingSequenceStabilityParameters> loadingSequenceStabilityParameters =
         new ArrayList<LoadingSequenceStabilityParameters>();
     deleteLoadingSequenceStabilityParameters(loadingInformation);
     log.info(
         "Saving loading sequence stability parameters of loading information {}",
         loadingInformation.getId());
-    loadicatorDetails.forEach(
-        details -> {
-          LoadingSequenceStabilityParameters stabilityParameters =
-              new LoadingSequenceStabilityParameters();
-          buildLoadingSequenceStabilityParameters(loadingInformation, details, stabilityParameters);
-          loadingSequenceStabilityParameters.add(stabilityParameters);
-        });
+    algoResponse
+        .getLoadicatorResults()
+        .forEach(
+            result -> {
+              LoadingSequenceStabilityParameters stabilityParameters =
+                  new LoadingSequenceStabilityParameters();
+              buildLoadingSequenceStabilityParameters(
+                  loadingInformation, result, stabilityParameters);
+              loadingSequenceStabilityParameters.add(stabilityParameters);
+            });
     loadingSequenceStabiltyParametersRepository.saveAll(loadingSequenceStabilityParameters);
   }
 
@@ -703,39 +754,37 @@ public class LoadicatorService {
 
   private void buildLoadingSequenceStabilityParameters(
       LoadingInformation loadingInformation,
-      LoadingInfoLoadicatorDetail details,
+      LoadicatorResult result,
       LoadingSequenceStabilityParameters stabilityParameters) {
     stabilityParameters.setAftDraft(
-        StringUtils.isEmpty(details.getLDtrim().getAftDraftValue())
+        StringUtils.isEmpty(result.getCalculatedDraftAftPlanned())
             ? null
-            : new BigDecimal(details.getLDtrim().getAftDraftValue()));
+            : new BigDecimal(result.getCalculatedDraftAftPlanned()));
     stabilityParameters.setBendingMoment(
-        StringUtils.isEmpty(details.getLDStrength().getBendingMomentPersentValue())
+        StringUtils.isEmpty(result.getBendingMoment())
             ? null
-            : new BigDecimal(details.getLDStrength().getBendingMomentPersentValue()));
+            : new BigDecimal(result.getBendingMoment()));
     stabilityParameters.setForeDraft(
-        StringUtils.isEmpty(details.getLDtrim().getForeDraftValue())
+        StringUtils.isEmpty(result.getCalculatedDraftFwdPlanned())
             ? null
-            : new BigDecimal(details.getLDtrim().getForeDraftValue()));
+            : new BigDecimal(result.getCalculatedDraftFwdPlanned()));
     stabilityParameters.setIsActive(true);
     stabilityParameters.setList(
-        StringUtils.isEmpty(details.getLDtrim().getHeelValue())
-            ? null
-            : new BigDecimal(details.getLDtrim().getHeelValue()));
+        StringUtils.isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
     stabilityParameters.setLoadingInformation(loadingInformation);
     stabilityParameters.setMeanDraft(
-        StringUtils.isEmpty(details.getLDtrim().getMeanDraftValue())
+        StringUtils.isEmpty(result.getCalculatedDraftMidPlanned())
             ? null
-            : new BigDecimal(details.getLDtrim().getMeanDraftValue()));
+            : new BigDecimal(result.getCalculatedDraftMidPlanned()));
     stabilityParameters.setPortXId(loadingInformation.getPortXId());
     stabilityParameters.setShearingForce(
-        StringUtils.isEmpty(details.getLDStrength().getShearingForcePersentValue())
+        StringUtils.isEmpty(result.getShearingForce())
             ? null
-            : new BigDecimal(details.getLDStrength().getShearingForcePersentValue()));
-    stabilityParameters.setTime(details.getTime());
+            : new BigDecimal(result.getShearingForce()));
+    stabilityParameters.setTime(result.getTime());
     stabilityParameters.setTrim(
-        StringUtils.isEmpty(details.getLDtrim().getTrimValue())
+        StringUtils.isEmpty(result.getCalculatedTrimPlanned())
             ? null
-            : new BigDecimal(details.getLDtrim().getTrimValue()));
+            : new BigDecimal(result.getCalculatedTrimPlanned()));
   }
 }

@@ -13,6 +13,7 @@ import lombok.Data;
 public class LoadingPlanAlgoRequest {
 
   private String processId;
+  private Map message;
   private List<Event> events;
   private Map<String, LoadingPlan> plans;
 

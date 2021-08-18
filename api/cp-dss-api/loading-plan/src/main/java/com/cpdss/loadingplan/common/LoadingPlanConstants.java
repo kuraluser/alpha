@@ -24,6 +24,7 @@ public final class LoadingPlanConstants {
   public static final Long LOADING_INFORMATION_PLAN_GENERATED_ID = 5L;
   public static final Long LOADING_INFORMATION_NO_PLAN_AVAILABLE_ID = 6L;
   public static final Long LOADING_INFORMATION_ERROR_OCCURRED_ID = 7L;
+  public static final Long LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID = 8L;
 
   // Loading Plan Conditions
   public static final Integer LOADING_PLAN_ARRIVAL_CONDITION_VALUE = 1;

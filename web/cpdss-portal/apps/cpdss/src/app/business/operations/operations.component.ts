@@ -5,13 +5,22 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { IVoyagePortDetails, Voyage, VOYAGE_STATUS , OPERATIONS } from '../core/models/common.model';
+import { IVoyagePortDetails, Voyage, VOYAGE_STATUS, OPERATIONS } from '../core/models/common.model';
 import { IVessel } from '../core/models/vessel-details.model';
 import { PortRotationService } from '../core/services/port-rotation.service';
 import { VesselsApiService } from '../core/services/vessels-api.service';
 import { VoyageService } from '../core/services/voyage.service';
+import { OPERATION_TAB } from './models/operations.model';
 import { LoadingDischargingTransformationService } from './services/loading-discharging-transformation.service';
 
+/**
+ * Component class for operations component
+ *
+ * @export
+ * @class OperationsComponent
+ * @implements {OnInit}
+ * @implements {OnDestroy}
+ */
 @Component({
   selector: 'cpdss-portal-operations',
   templateUrl: './operations.component.html',
@@ -36,6 +45,8 @@ export class OperationsComponent implements OnInit, OnDestroy {
   voyageDistance: number;
   operationId: number;
   readonly OPERATIONS = OPERATIONS;
+  readonly OPERATION_TAB = OPERATION_TAB;
+  currentTab: OPERATION_TAB = OPERATION_TAB.INFORMATION;
 
   private _selectedVoyage: Voyage;
   private _ngUnsubscribe: Subject<any> = new Subject();
@@ -53,14 +64,26 @@ export class OperationsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getVesselInfo();
-    this.portRotationService.voyageDistance$.pipe(takeUntil(this._ngUnsubscribe)).subscribe((voyageDistance) => {
-      this.voyageDistance = voyageDistance;
-    });
+    this.initSubscriptions();
   }
 
   ngOnDestroy() {
     this._ngUnsubscribe.next();
     this._ngUnsubscribe.complete();
+  }
+
+  /**
+   * Initialise subsciptions
+   *
+   * @memberof OperationsComponent
+   */
+  initSubscriptions() {
+    this.portRotationService.voyageDistance$.pipe(takeUntil(this._ngUnsubscribe)).subscribe((voyageDistance) => {
+      this.voyageDistance = voyageDistance;
+    });
+    this.loadingDischargingTransformationService.tabChange$.pipe(takeUntil(this._ngUnsubscribe)).subscribe((tab) => {
+      this.currentTab = tab;
+    });
   }
 
   /**
@@ -89,9 +112,9 @@ export class OperationsComponent implements OnInit, OnDestroy {
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_NO_ACTIVE_VOYAGE', 'LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE']).toPromise();
     const voyages = await this.voyageService.getVoyagesByVesselId(vesselId).toPromise();
     this.voyages = await this.getSelectedVoyages(voyages);
-    if(this.voyages.length){
+    if (this.voyages.length) {
       this.selectedVoyage = this.voyages[0];
-    }else{
+    } else {
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_NO_ACTIVE_VOYAGE'], detail: translationKeys['LOADING_INFORMATION_NO_ACTIVE_VOYAGE_MESSAGE'] });
     }
 
@@ -163,24 +186,32 @@ export class OperationsComponent implements OnInit, OnDestroy {
     this.showAddPortPopup = displayNew_;
   }
 
-    /**
-  * Handler for unit change event
-  *
-  * @param {*} event
-  * @memberof OperationsComponent
-  */
-     onUnitChange() {
-       this.loadingDischargingTransformationService.setUnitChanged(true);
-     }
+  /**
+* Handler for unit change event
+*
+* @param {*} event
+* @memberof OperationsComponent
+*/
+  onUnitChange() {
+    this.loadingDischargingTransformationService.setUnitChanged(true);
+  }
 
-     /**
-      * Method to close the modal.
-      *
-      * @memberof OperationsComponent
-      */
-      onRulesPopUpClose(event)
-     {
-      this.isRuleModalVisible = event;
-     }
+  /**
+   * Method to close the modal.
+   *
+   * @memberof OperationsComponent
+   */
+  onRulesPopUpClose(event) {
+    this.isRuleModalVisible = event;
+  }
+
+  /**
+   * Handler for rate unit change event
+   *
+   * @memberof OperationsComponent
+   */
+  onRateUnitChange() {
+    this.loadingDischargingTransformationService.setRateUnitChanged(true);
+  }
 
 }

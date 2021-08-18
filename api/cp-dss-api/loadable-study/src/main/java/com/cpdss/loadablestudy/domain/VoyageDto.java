@@ -26,9 +26,9 @@ public class VoyageDto {
 
   private String charterer;
 
-  private LocalDate voyageStartDate;
+  private String voyageStartDate;
 
-  private LocalDate voyageEndDate;
+  private String voyageEndDate;
 
   private LocalDate actualStartDate;
 

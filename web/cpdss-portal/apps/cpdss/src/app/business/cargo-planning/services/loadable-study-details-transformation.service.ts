@@ -1023,14 +1023,14 @@ export class LoadableStudyDetailsTransformationService {
       },
       {
         field: 'fuelTypeName',
-        header: 'OHQ_FUEL_TYPE',
+        header: 'OHQ_TANK_TYPE',
         editable: false,
         filter: true,
         filterField: 'fuelTypeId',
         filterListName: 'fuelTypes',
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.EQUALS,
         filterType: DATATABLE_FILTER_TYPE.SELECT,
-        filterPlaceholder: 'OHQ_SEARCH_FUEL_TYPE',
+        filterPlaceholder: 'OHQ_SEARCH_TANK_TYPE',
         fieldHeaderClass: 'column-fuel-type'
       },
       {

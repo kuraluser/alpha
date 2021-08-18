@@ -16,6 +16,7 @@ import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
@@ -471,11 +472,20 @@ public class DischargeStudyService {
               cargoNomination.setColor(cargoNominationDetail.getColor());
               cargoNomination.setCargoId(cargoNominationDetail.getCargoId());
               cargoNomination.setAbbreviation(cargoNominationDetail.getAbbreviation());
-              cargoNomination.setQuantity(new BigDecimal(cargoNominationDetail.getQuantity()));
+              Optional<LoadingPortDetail> nominationPort =
+                  cargoNominationDetail.getLoadingPortDetailsList().stream()
+                      .filter(port -> portRotation.getPortId().equals(port.getPortId()))
+                      .findFirst();
+              if (nominationPort.isPresent()) {
+                cargoNomination.setQuantity(new BigDecimal(nominationPort.get().getQuantity()));
+                cargoNomination.setMode(nominationPort.get().getMode());
+              } else {
+                cargoNomination.setQuantity(new BigDecimal(cargoNominationDetail.getQuantity()));
+                cargoNomination.setMode(1L);
+              }
               cargoNomination.setApi(new BigDecimal(cargoNominationDetail.getApi()));
               cargoNomination.setTemperature(
                   new BigDecimal(cargoNominationDetail.getTemperature()));
-              cargoNomination.setMode(cargoNominationDetail.getMode());
               cargoNomination.setMaxQuantity(
                   cargoNominationDetail.getMaxQuantity() != null
                           && !cargoNominationDetail.getMaxQuantity().isBlank()

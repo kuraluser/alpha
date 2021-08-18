@@ -4,17 +4,17 @@ import { FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
  * Validator Function for berth duplicates
  * @param control 
  */
-export function LoadingBerthDuplicateValidator(index): ValidatorFn {
-    return (control: FormControl): ValidationErrors | null => {
+
+export const LoadingBerthDuplicateValidator: ValidatorFn = (control: FormControl): ValidationErrors | null => {
         if (!control.root || !control.parent) {
             return null;
         }
         const selectedBerths = control.root.value.berth;
         let selectedBerthIds = [];
         let hasDuplicate = false;
-        if (selectedBerths) {
+        if (selectedBerths && control.value?.berthId) {
             selectedBerthIds = selectedBerths.map((element, ind) => {
-                if (element?.name?.berthId === control.value.berthId && ind !== index) {
+                if (element?.name?.berthId === control.value?.berthId && element !== control.parent.value) {
                     hasDuplicate = true;
                 }
             });
@@ -26,9 +26,11 @@ export function LoadingBerthDuplicateValidator(index): ValidatorFn {
                 return null;
             }
 
+        } else if(!control.value?.berthId) {
+            return { berthRequired: true }
         } else {
             return null;
         }
 
     }
-}
+

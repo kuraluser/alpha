@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -33,6 +34,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
@@ -62,6 +64,7 @@ public class LoadableStudyServiceShore {
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @Autowired private CargoNominationRepository cargoNominationRepository;
   @Autowired private VoyageRepository voyageRepository;
+  @Autowired private VoyageStatusRepository voyageStatusRepository;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
@@ -79,10 +82,11 @@ public class LoadableStudyServiceShore {
         new Gson().fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadableStudy.class);
 
     Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyage());
+    ModelMapper modelMapper = new ModelMapper();
     if (!checkIfLoadableStudyExist(loadableStudy.getName(), voyage)) {
 
       try {
-        ModelMapper modelMapper = new ModelMapper();
+
         loadableStudyEntity = saveLoadableStudyShore(loadableStudy, voyage);
         saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity);
         saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy, modelMapper);
@@ -94,6 +98,12 @@ public class LoadableStudyServiceShore {
       } catch (IOException e) {
         e.printStackTrace();
       }
+    } else {
+      loadableStudyEntity =
+          loadableStudyRepository.findByVoyageAndNameIgnoreCaseAndIsActiveAndPlanningTypeXId(
+              voyage, loadableStudy.getName(), true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
+      saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity);
+      saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy, modelMapper);
     }
     return loadableStudyEntity;
   }
@@ -151,12 +161,27 @@ public class LoadableStudyServiceShore {
               }
             });
     this.commingleCargoRepository.saveAll(commingleEntities);
-
+    List<CargoNomination> existingCargoNominationList =
+        this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+            loadableStudyEntity.getId(), true);
     List<CargoNomination> cargoNominationEntities = new ArrayList<>();
     loadableStudy.getCargoNomination().stream()
         .forEach(
             cargoNom -> {
-              CargoNomination cargoNomination = new CargoNomination();
+              Optional<CargoNomination> existingCargoNomination = null;
+              CargoNomination cargoNomination = null;
+              if (!existingCargoNominationList.isEmpty()) {
+                existingCargoNomination =
+                    existingCargoNominationList.stream()
+                        .filter(
+                            exCargo ->
+                                (exCargo.getAbbreviation().equals(cargoNom.getAbbreviation())
+                                    && exCargo.getColor().equals(cargoNom.getColor())))
+                        .findFirst();
+              }
+              if (existingCargoNomination != null) {
+                cargoNomination = existingCargoNomination.get();
+              } else cargoNomination = new CargoNomination();
               cargoNomination.setLoadableStudyXId(loadableStudyEntity.getId());
               cargoNomination =
                   buildCargoNomination(
@@ -457,6 +482,7 @@ public class LoadableStudyServiceShore {
     loadableStudyPortRotation.setActive(true);
     CargoOperation operation = this.cargoOperationRepository.getOne(portRotation.getOperationId());
     loadableStudyPortRotation.setOperation(operation);
+    loadableStudyPortRotation.setIsPortRotationOhqComplete(true);
     if (!synopticalTableDetails.isEmpty()) {
       List<SynopticalTable> synopticalTableList =
           synopticalTableDetails.stream()
@@ -641,8 +667,20 @@ public class LoadableStudyServiceShore {
       voyage.setCaptainXId(voyageDto.getCaptainXId());
       voyage.setChiefOfficerXId(voyageDto.getChiefOfficerXId());
       voyage.setStartTimezoneId(voyageDto.getStartTimezoneId());
-      // voyage.setVoyageStartDate(LocalDateTime.from(voyageDto.getVoyageStartDate()));
-      // voyage.setVoyageEndDate(LocalDateTime.from(voyageDto.getVoyageEndDate()));
+      voyage.setEndTimezoneId(voyageDto.getEndTimezoneId());
+      voyage.setVoyageStatus(this.voyageStatusRepository.getOne(OPEN_VOYAGE_STATUS));
+      voyage.setVoyageStartDate(
+          !StringUtils.isEmpty(voyageDto.getVoyageStartDate())
+              ? LocalDateTime.from(
+                  DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT)
+                      .parse(voyageDto.getVoyageStartDate()))
+              : null);
+      voyage.setVoyageEndDate(
+          !StringUtils.isEmpty(voyageDto.getVoyageEndDate())
+              ? LocalDateTime.from(
+                  DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT)
+                      .parse(voyageDto.getVoyageEndDate()))
+              : null);
       voyage = voyageRepository.save(voyage);
       return voyage;
     }
