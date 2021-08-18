@@ -8,8 +8,10 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse.Builder;
 import com.cpdss.common.generated.LoadableStudy.StabilityParameter;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
@@ -1920,5 +1922,26 @@ public class LoadablePatternService {
     } catch (InvalidProtocolBufferException | GenericServiceException e) {
       e.printStackTrace();
     }
+  }
+
+  /**
+   * @param request
+   * @param builder
+   * @throws GenericServiceException
+   */
+  public void getLoadableStudyDetailsByLoadablePatternId(
+      LoadablePlanDetailsRequest request, Builder builder) throws GenericServiceException {
+
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+
+    if (loadablePatternOpt.isEmpty()) {
+      throw new GenericServiceException(
+          "Loadable pattern does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    builder.setLoadableStudyId(loadablePatternOpt.get().getLoadableStudy().getId());
   }
 }

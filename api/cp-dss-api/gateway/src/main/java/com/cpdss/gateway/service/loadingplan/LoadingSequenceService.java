@@ -6,8 +6,8 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
-import com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply;
-import com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
@@ -392,11 +392,17 @@ public class LoadingSequenceService {
         vesselTanks.stream().filter(tank -> tank.getTankId() == ballast.getTankId()).findAny();
     Optional<SynopticalBallastRecord> ballastDetailsOpt =
         ballastDetails.stream()
-            .filter(details -> details.getTankId() == ballast.getTankId())
-            .findAny();
+            .filter(
+                details ->
+                    (details.getTankId() == ballast.getTankId())
+                        && !StringUtils.isEmpty(details.getColorCode()))
+            .findFirst();
     buildBallast(ballast, ballastDto, portEta, start, portWiseDetails.getTime());
     tankDetailOpt.ifPresent(tank -> ballastDto.setTankName(tank.getShortName()));
     ballastDetailsOpt.ifPresent(details -> ballastDto.setColor(details.getColorCode()));
+    if (ballastDetailsOpt.isEmpty()) {
+      ballastDto.setColor("#01717D");
+    }
     ballasts.add(ballastDto);
   }
 
@@ -602,18 +608,21 @@ public class LoadingSequenceService {
   private SynopticalTableReply getSynopticalTableDetails(
       Long vesselId, Long voyageId, long loadablePatternId, long portId)
       throws GenericServiceException {
-    LoadableStudyRequest.Builder builder = LoadableStudyRequest.newBuilder();
-    builder.setVesselId(vesselId);
-    builder.setVoyageId(voyageId);
-    LoadablePatternConfirmedReply confirmedReply =
-        loadableStudyGrpcService.getLoadablePatternByVoyageAndStatus(builder.build());
+    LoadablePlanDetailsRequest.Builder builder = LoadablePlanDetailsRequest.newBuilder();
+    builder.setLoadablePatternId(loadablePatternId);
+    LoadableStudyResponse loadableStudyResponse =
+        loadableStudyGrpcService.getLoadableStudyByLoadablePatternId(builder.build());
     SynopticalTableRequest.Builder synopticalBuilder = SynopticalTableRequest.newBuilder();
-    synopticalBuilder.setLoadableStudyId(confirmedReply.getLoadableStudyId());
+    synopticalBuilder.setLoadableStudyId(loadableStudyResponse.getLoadableStudyId());
     synopticalBuilder.setPortId(portId);
     synopticalBuilder.setVesselId(vesselId);
     synopticalBuilder.setVoyageId(voyageId);
     log.info(
-        "fetching synoptical table for vessel {}, voyage {}, port {}", vesselId, voyageId, portId);
+        "fetching synoptical table for vessel {}, voyage {}, loadable study {}, port {}",
+        vesselId,
+        voyageId,
+        loadableStudyResponse.getLoadableStudyId(),
+        portId);
     SynopticalTableReply reply =
         loadableStudyGrpcService.getSynopticalDataByPortId(synopticalBuilder.build());
     if (!reply.getResponseStatus().getStatus().equals(GatewayConstants.SUCCESS)) {
