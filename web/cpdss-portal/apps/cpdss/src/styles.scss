@@ -1411,6 +1411,7 @@ td.sl div{
 }
 .loadable-plan-ballast .tank-outer-pattern, .loadable-plan-stowage.tank-outer-pattern{
       height: 40vh;
+      min-height: 260px;
       padding: 0 10% 0 110px;
       .ship-front-pattern{
         width: 10%;
@@ -2749,7 +2750,7 @@ textarea{
 
 .sidebar-loading-and-discharging{
   max-width: 455px;
-  width: 455px;
+  min-width: 455px;
 }
 
 .item-row-wrapper{
@@ -2894,4 +2895,15 @@ textarea{
   padding: 10px 15px;
   border-radius: 5px;
   display: inline-block;
+}
+
+.p-calendar{
+  width: 100%;
+}
+.font-small {
+  font-size: $font-size-small!important;
+}
+
+.main-content-loading-and-discharging{
+  max-width: calc(100% - 455px);
 }
