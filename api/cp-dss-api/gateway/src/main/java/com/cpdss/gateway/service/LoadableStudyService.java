@@ -6097,7 +6097,7 @@ public class LoadableStudyService {
               shore.setEta(vesselDetail.getEta());
               shore.setAtd(vesselDetail.getAtd());
               shore.setVoyageName(vesselDetail.getVoyageName());
-              shore.setVesselId(vesselDetail.getVoyageId());
+              shore.setVoyageId(vesselDetail.getVoyageId());
 
               List<VoyagePorts> portList = new ArrayList<>();
 
