@@ -87,6 +87,7 @@ export interface ITankData {
   start: number;
   end: number;
   ullage?: number;
+  quantityMT: number;
   quantity: number;
   color: string;
   rate?: number;
@@ -97,6 +98,7 @@ export interface ITankData {
   name?: string;
   cargoNominationId?: number;
   tankName?: string;
+  api: number;
 }
 
 /**
@@ -113,6 +115,7 @@ export interface IPumpData {
   quantityM3?: number;
   color?: string;
   rate?: number;
+  rateM3PerHr?: number;
   id?: string;
   className?: string;
   pumpName?: string;
@@ -128,6 +131,7 @@ export interface ITank {
   id: number;
   tankName: string;
   quantity?: number;
+  quantityMT?: number;
   ullage?: number;
   type?: string;
   time?: number;
@@ -170,8 +174,8 @@ export interface ISequenceData {
   tickPositions?: number[];
   cargoPumps?: IPumpData[];
   ballastPumps: IPumpData[];
-  flowRates: Array<any>;
-  cargoLoadingRates: Array<any>;
+  flowRates: Array<IFlowRate>;
+  cargoLoadingRates: Array<ILoadingRate>;
   stabilityParams: IStabilityParam[];
   gravity?: IPumpData;
 }
@@ -196,7 +200,7 @@ export interface ICargoStage {
  */
 export interface IStabilityParam {
   name: string;
-  data: Number[][];
+  data: number[][];
 }
 
 /**
@@ -208,7 +212,8 @@ export interface IStabilityParam {
 export interface ILoadingRate {
   startTime: number;
   endTime: number;
-  loadingRates: Number[];
+  loadingRates: number[];
+  loadingRatesM3PerHr: number[];
 }
 
 /**
@@ -219,4 +224,16 @@ export interface ILoadingRate {
  */
 export interface ISequenceDataResponse extends ISequenceData {
   responseStatus: IResponseStatus;
+}
+
+/**
+ * Interface for flow rate data
+ *
+ * @export
+ * @interface IFlowRate
+ */
+export interface IFlowRate {
+  tankName: string;
+  data: Array<[number, number]>;
+  dataM3PerHr: Array<[number, number]>;
 }

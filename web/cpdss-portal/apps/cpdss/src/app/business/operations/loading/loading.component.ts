@@ -8,6 +8,7 @@ import { LoadingInformationComponent } from './loading-information/loading-infor
 import { UnsavedChangesGuard, ComponentCanDeactivate } from './../../../shared/services/guards/unsaved-data-guard';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { OperationsApiService } from '../services/operations-api.service';
+import { RATE_UNIT } from '../../../shared/models/common.model';
 
 /**
  * Component class for loading component
@@ -71,6 +72,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         localStorage.setItem("voyageId", this.voyageId.toString());
         this.selectedPortName = localStorage.getItem('selectedPortName');
         this.currentTab = OPERATION_TAB.INFORMATION;
+        localStorage.setItem('rate_unit', RATE_UNIT.BBLS_PER_HR);
       });
   }
 
@@ -117,6 +119,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     const value = await this.unsavedChangesGuard.canDeactivate(this);
     if (!value) { return };
     this.currentTab = tab;
+    this.loadingDischargingTransformationService.setTabChange(tab);
   }
 
   /**

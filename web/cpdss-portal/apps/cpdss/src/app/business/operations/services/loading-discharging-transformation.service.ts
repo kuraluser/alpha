@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { DATATABLE_BUTTON, DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model';
+import { QUANTITY_UNIT, RATE_UNIT, ValueObject } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ICargoQuantities, ILoadableQuantityCargo, IProtested, IShipCargoTank, OPERATIONS } from '../../core/models/common.model';
 import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
 import { ICOWDetails, IDischargeOperationListData, IDischargingInformation, IDischargingInformationResponse, ILoadedCargo, ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequenceValueObject, IReasonForDelays } from '../models/loading-discharging.model';
+import { OPERATION_TAB } from '../models/operations.model';
 
 /**
  * Transformation Service for Loading  and Discharging
@@ -20,11 +21,16 @@ export class LoadingDischargingTransformationService {
   private _dischargingInformationSource: Subject<boolean> = new Subject();
   private _unitChangeSource: Subject<boolean> = new Subject();
   private _loadingInstructionSource: Subject<boolean> = new Subject();
+  private _rateUnitChangeSource: Subject<boolean> = new Subject();
+  private _tabChangeSource: Subject<OPERATION_TAB> = new Subject();
 
   loadingInformationValidity$ = this._loadingInformationSource.asObservable();
   dischargingInformationValidity$ = this._dischargingInformationSource.asObservable();
   unitChange$ = this._unitChangeSource.asObservable();
   loadingInstructionValidity$ = this._loadingInstructionSource.asObservable();
+  rateUnitChange$ = this._rateUnitChangeSource.asObservable();
+  tabChange$ = this._tabChangeSource.asObservable();
+
   constructor(private quantityPipe: QuantityPipe) { }
 
   /** Set loading information complete status */
@@ -47,6 +53,26 @@ export class LoadingDischargingTransformationService {
     this._unitChangeSource.next(unitChanged);
   }
 
+  /**
+   * Set rate unit changed
+   *
+   * @param {boolean} rateUnitChanged
+   * @memberof LoadingDischargingTransformationService
+   */
+  setRateUnitChanged(rateUnitChanged: boolean) {
+    this._rateUnitChangeSource.next(rateUnitChanged);
+  }
+
+  /**
+   * Set tab change event
+   *
+   * @param {OPERATION_TAB} tab
+   * @memberof LoadingDischargingTransformationService
+   */
+  setTabChange(tab: OPERATION_TAB) {
+    this._tabChangeSource.next(tab);
+  }
+
   /** Set loading instruction complete status */
   setLoadingInstructionValidity(value: boolean) {
     this._loadingInstructionSource.next(value);
@@ -64,7 +90,7 @@ export class LoadingDischargingTransformationService {
       },
       hoseConnections: {
         'maxlength': 'LOADING_DISCHARGING_BERTH_HOSECONNECTION_CHARACTER_LIMIT',
-        'textError':"LOADING_BETH_HOSE_CONNECTION_ERROR"      
+        'textError':"LOADING_BETH_HOSE_CONNECTION_ERROR"
       },
       regulationAndRestriction: {
         'maxlength': 'LOADING_DISCHARGING_BERTH_REGULATION_RESTRICTION_CHARACTER_LIMIT'
@@ -221,7 +247,7 @@ export class LoadingDischargingTransformationService {
     hourDuration = hourDuration.includes('.') ? hourDuration.split('.')[0] : hourDuration;
     hourDuration = Number(hourDuration) < 10 ? ('0' + hourDuration) : hourDuration
     const minute = loadingDischargingDelay.duration % 60;
-    const minuteDuration = minute <= 0 ?  '0' + minute : minute;
+    const minuteDuration = minute <= 0 ? '0' + minute : minute;
     _loadingDischargingDelay.duration = new ValueObject<string>(hourDuration + ':' + minuteDuration, true, isNewValue, false, true);
     _loadingDischargingDelay.quantity = this.quantityPipe.transform(loadingDischargingDelay.quantity, prevUnit, currUnit, cargoObj?.estimatedAPI);
     _loadingDischargingDelay.colorCode = cargoObj?.colorCode;
@@ -343,7 +369,7 @@ export class LoadingDischargingTransformationService {
       {
         field: 'orderedQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_NOMINATION',
-       
+
       },
       {
         field: 'minMaxTolerance',
@@ -352,7 +378,7 @@ export class LoadingDischargingTransformationService {
       {
         field: 'loadableMT',
         header: 'LOADING_CARGO_TO_BE_LOADED_SHIP_LOADABLE',
-      
+
       },
       {
         field: 'differencePercentage',
@@ -515,16 +541,17 @@ export class LoadingDischargingTransformationService {
    * @memberof LoadingDischargingTransformationService
    */
   setBallastPumpGravity(ballastPumps: IPumpData[], gravity: IPumpData, ballastPumpCategories: IPump[]) {
-    ballastPumpCategories.forEach(pump => {
+    ballastPumpCategories?.forEach(pump => {
       const data = {
         "pumpId": pump.id,
         "start": gravity.start,
         "end": gravity.end,
-        "quantityM3": gravity.quantityM3,
-        "rate": gravity.rate,
-        "id": "gravity"
+        "quantityM3": gravity.quantityM3 ?? 0,
+        "rate": gravity.rate ?? 0,
+        "rateM3PerHr": gravity.rate ?? 0,
+        "id": "gravity" + pump.pumpName // NB:- id must be unique
       }
-      ballastPumps.push(data);
+      ballastPumps?.push(data);
     });
 
     return ballastPumps;
@@ -539,18 +566,18 @@ export class LoadingDischargingTransformationService {
    * @memberof LoadingDischargingTransformationService
    */
   setCargoLoadingRate(stageTickPositions, cargoLoadingRates: ILoadingRate[]) {
-    const _cargoLoadingRates = []
+    const _cargoLoadingRates = <ILoadingRate[]>[];
     for (let index = 0; index < stageTickPositions.length - 1; index++) {
       const start = stageTickPositions[index];
       const end = stageTickPositions[index + 1];
-      const rate = new Set();
+      const rate = new Set<number>();
       cargoLoadingRates.forEach(element => {
         if ((element.startTime >= start && element.endTime <= end) || (start >= element.startTime && start < element.endTime) || (end > element.startTime && end <= element.endTime)) {
           element.loadingRates.forEach(rate.add, rate);
         }
       });
-
-      _cargoLoadingRates.push(Array.from(rate));
+      const rateArr = Array.from(rate);
+      _cargoLoadingRates.push({ startTime: start, endTime: end, loadingRatesM3PerHr: rateArr, loadingRates: rateArr });
     }
     return _cargoLoadingRates;
   }
@@ -599,7 +626,7 @@ export class LoadingDischargingTransformationService {
    * @memberof LoadingDischargingTransformationService
    */
   setCargoTickPositions(cargoStages: ICargoStage[]) {
-    return [cargoStages[0].start, ...cargoStages.map((item) => item.end)];
+    return cargoStages ? [cargoStages[0]?.start, ...cargoStages?.map((item) => item.end)] : [];
   }
 
   /**
@@ -608,18 +635,110 @@ export class LoadingDischargingTransformationService {
    * @return {*}
    * @memberof LoadingDischargingTransformationService
    */
-  transformSequenceData(sequenceData: ISequenceData) {
-    sequenceData.cargoStageTickPositions = this.setCargoTickPositions(sequenceData.cargoStages);
-    sequenceData.ballastPumps = this.setBallastPumpGravity(sequenceData.ballastPumps, sequenceData.gravity, sequenceData.ballastPumpCategories);
-    sequenceData.stabilityParams = sequenceData.stabilityParams?.map(param => {
+  transformSequenceData(sequenceData: ISequenceData): ISequenceData {
+    sequenceData.cargos = sequenceData?.cargos?.map(cargo => {
+      cargo.quantityMT = cargo.quantity;
+      return cargo;
+    });
+    sequenceData.cargoStages = sequenceData?.cargoStages?.map(stage => {
+      stage.cargos = stage.cargos.map(cargo => {
+        cargo.quantityMT = cargo.quantity;
+        return cargo;
+      });
+      return stage;
+    });
+    sequenceData.cargoTankCategories = sequenceData?.cargoTankCategories?.map(tank => {
+      tank.quantityMT = tank.quantity;
+      return tank;
+    })
+    sequenceData.cargoStageTickPositions = this.setCargoTickPositions(sequenceData?.cargoStages);
+    const ballastPumps = this.setBallastPumpGravity(sequenceData?.ballastPumps, sequenceData?.gravity, sequenceData?.ballastPumpCategories);
+    sequenceData.ballastPumps = ballastPumps?.map(pump => {
+      pump.rateM3PerHr = pump.rate;
+      return pump;
+    });
+    sequenceData.cargoPumps = sequenceData?.cargoPumps?.map(pump => {
+      pump.rateM3PerHr = pump.rate;
+      return pump;
+    });
+    sequenceData.stabilityParams = sequenceData?.stabilityParams?.map(param => {
       param.data = param?.data?.map((value) => [value[0], Number(value[1])]);
       return param;
     });
-    sequenceData.stagePlotLines = this.setPlotLines(sequenceData.stageTickPositions);
-    sequenceData.tickPositions = this.setTickPositions(sequenceData.minXAxisValue, sequenceData.maxXAxisValue);
-    sequenceData.cargoLoadingRates = this.setCargoLoadingRate(sequenceData.stageTickPositions, sequenceData.cargoLoadingRates);
+    const flowRates = sequenceData?.flowRates?.map(tankFlowRate => {
+      tankFlowRate.dataM3PerHr = [...tankFlowRate.data];
 
-    return sequenceData;
+      return tankFlowRate;
+    });
+    sequenceData.flowRates = [...flowRates];
+    sequenceData.stagePlotLines = this.setPlotLines(sequenceData?.stageTickPositions);
+    sequenceData.tickPositions = this.setTickPositions(sequenceData?.minXAxisValue, sequenceData?.maxXAxisValue);
+    sequenceData.cargoLoadingRates = this.setCargoLoadingRate(sequenceData?.stageTickPositions, sequenceData?.cargoLoadingRates);
+
+    return { ...sequenceData };
+  }
+
+  /**
+   * Method for transforming data to seleted unit in sequence charts
+   *
+   * @param {ISequenceData} sequenceData
+   * @param {QUANTITY_UNIT} quantityUnitTo
+   * @param {RATE_UNIT} [rateUnitTo=null]
+   * @return {*}  {ISequenceData}
+   * @memberof LoadingDischargingTransformationService
+   */
+  transformSequenceDataToSelectedUnit(sequenceData: ISequenceData, quantityUnitTo: QUANTITY_UNIT, rateUnitTo: RATE_UNIT = null): ISequenceData {
+    sequenceData.cargos = sequenceData?.cargos?.map(cargo => {
+      cargo.quantity = this.quantityPipe.transform(cargo.quantityMT, QUANTITY_UNIT.MT, quantityUnitTo, cargo?.api);
+      return cargo;
+    });
+    sequenceData.cargoStages = sequenceData?.cargoStages?.map(stage => {
+      stage.cargos = stage?.cargos?.map(cargo => {
+        cargo.quantity = this.quantityPipe.transform(cargo?.quantityMT, QUANTITY_UNIT.MT, quantityUnitTo, cargo?.api);
+        return cargo;
+      });
+      return stage;
+    });
+    sequenceData.cargoTankCategories = sequenceData?.cargoTankCategories?.map(tank => {
+      tank.quantity = sequenceData?.cargos?.reduce((total, cargo) => total = tank.id !== cargo.tankId || total > cargo?.quantity ? total : cargo?.quantity, 0);
+      return tank;
+    });
+    sequenceData.cargoLoadingRates = sequenceData?.cargoLoadingRates?.map(stage => {
+      if (rateUnitTo === RATE_UNIT.BBLS_PER_HR) {
+        stage.loadingRates = stage?.loadingRatesM3PerHr?.map(rate => {
+          return rate * AppConfigurationService.settings.unitConversionConstant;
+        });
+      } else {
+        stage.loadingRates = [...stage?.loadingRatesM3PerHr];
+      }
+
+      return stage;
+    });
+
+    const ballastPumps = sequenceData?.ballastPumps?.map(pump => {
+      pump.rate = rateUnitTo === RATE_UNIT.BBLS_PER_HR ? pump.rateM3PerHr * AppConfigurationService.settings.unitConversionConstant : pump.rateM3PerHr;
+      return pump;
+    });
+    sequenceData.ballastPumps = ballastPumps;
+
+    sequenceData.cargoPumps = sequenceData?.cargoPumps?.map(pump => {
+      pump.rate = rateUnitTo === RATE_UNIT.BBLS_PER_HR ? pump.rateM3PerHr * AppConfigurationService.settings.unitConversionConstant : pump.rateM3PerHr;
+      return pump;
+    });
+    const flowRates = sequenceData?.flowRates?.map(tankFlowRate => {
+      if (rateUnitTo === RATE_UNIT.BBLS_PER_HR) {
+        tankFlowRate.data = tankFlowRate?.dataM3PerHr?.map(data => {
+          return [data[0], data[1] * AppConfigurationService.settings.unitConversionConstant];
+        });
+      } else {
+        tankFlowRate.data = [...tankFlowRate.dataM3PerHr];
+      }
+
+      return tankFlowRate;
+    });
+    sequenceData.flowRates = flowRates;
+
+    return { ...sequenceData };
   }
 
   /**
