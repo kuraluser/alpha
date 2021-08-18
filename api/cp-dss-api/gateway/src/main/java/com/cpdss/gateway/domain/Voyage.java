@@ -34,6 +34,10 @@ public class Voyage {
 
   private Long confirmedLoadableStudyId;
 
+  private Long confirmedDischargeStudyId;
+
+  private Boolean isDischargeStarted;
+
   private List<Port> loadingPorts;
 
   private List<Port> dischargingPorts;

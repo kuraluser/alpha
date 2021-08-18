@@ -1441,7 +1441,7 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadablePatternDetails(String url) throws Exception {
     when(this.loadableStudyService.getLoadablePatternDetails(
-            anyLong(), anyLong(), anyLong(), anyString()))
+            anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
         .thenReturn(new LoadablePlanDetailsResponse());
     this.mockMvc
         .perform(
@@ -1469,7 +1469,7 @@ class LoadableStudyControllerTest {
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     when(this.loadableStudyService.getLoadablePatternDetails(
-            anyLong(), anyLong(), anyLong(), anyString()))
+            anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
         .thenThrow(ex);
     this.mockMvc
         .perform(
@@ -1655,7 +1655,7 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {GET_SYNOPTICAL_TABLE_CLOUD_API_URL, GET_SYNOPTICAL_TABLE_SHIP_API_URL})
   @ParameterizedTest
   void testGetSynopticalTable(String url) throws Exception {
-    when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
+    when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong(), anyLong()))
         .thenReturn(new SynopticalTableResponse());
     this.mockMvc
         .perform(
@@ -1676,7 +1676,7 @@ class LoadableStudyControllerTest {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
+    when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong(), anyLong()))
         .thenThrow(ex);
     this.mockMvc
         .perform(

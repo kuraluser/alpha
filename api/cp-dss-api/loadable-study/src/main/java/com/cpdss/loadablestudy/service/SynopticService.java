@@ -698,8 +698,8 @@ public class SynopticService {
       LoadableStudy.SynopticalRecord.Builder builder,
       List<LoadableStudyPortRotation> portRotations) {
     /*
-     * Optional<LoadableStudyPortRotationService> portRotation = portRotations .stream()
-     * .filter( pr ->
+     * Optional<LoadableStudyPortRotationService> portRotation = portRotations
+     * .stream() .filter( pr ->
      * pr.getId().equals(synopticalEntity.getLoadableStudyPortRotation().getId()))
      * .findFirst();
      */
@@ -1267,14 +1267,14 @@ public class SynopticService {
   public PortOperationTable buildPortOperationsTable(long loadableStudyId, long loadablePatterId)
       throws GenericServiceException {
 
-    //    Get loadable study port rotation details
+    // Get loadable study port rotation details
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         new com.cpdss.loadablestudy.domain.LoadableStudy();
     ModelMapper modelMapper = new ModelMapper();
     loadableStudyPortRotationService.buildLoadableStudyPortRotationDetails(
         loadableStudyId, loadableStudy, modelMapper);
 
-    //    Get loadable study details
+    // Get loadable study details
     com.cpdss.loadablestudy.entity.LoadableStudy loadableStudyDetails =
         loadableStudyRepository
             .findByIdAndIsActive(loadableStudyId, true)
@@ -1299,7 +1299,7 @@ public class SynopticService {
     double vesselLwt =
         Double.parseDouble(vesselReply.getVesselLoadableQuantityDetails().getVesselLightWeight());
 
-    //    Get port rotation details
+    // Get port rotation details
     loadableStudyPortRotationService.buildportRotationDetails(loadableStudyDetails, loadableStudy);
 
     // Get cargo details
@@ -1313,12 +1313,12 @@ public class SynopticService {
     List<LoadablePlanStowageBallastDetails> ballastDetails =
         loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdAndIsActive(
             loadablePatterId, true);
-    //    Set OperationsTable details
+    // Set OperationsTable details
     List<OperationsTable> operationsTableList = new ArrayList<>();
     for (com.cpdss.loadablestudy.domain.LoadableStudyPortRotation portDetails :
         loadableStudy.getLoadableStudyPortRotation()) {
 
-      //      Get port rotations
+      // Get port rotations
       LoadableStudyPortRotation loadableStudyPortRotation =
           loadableStudyDetails.getPortRotations().stream()
               .filter(rotation -> rotation.getPortXId().equals(portDetails.getPortId()))
@@ -1600,19 +1600,37 @@ public class SynopticService {
     return formattedDate;
   }
 
+  public Optional<List<com.cpdss.loadablestudy.entity.LoadableStudy>> checkDischargeStarted(
+      Long vesselId, Long voyageId) {
+    // Checking if Loading completed and Discharge started or not
+    return loadableStudyRepository.getLoadableStudyByVesselVoyagePlanningType(
+        vesselId, voyageId, PLANNING_TYPE_DISCHARGE);
+  }
+
   public void getSynopticalTable(
       LoadableStudy.SynopticalTableRequest request,
       LoadableStudy.SynopticalTableReply.Builder replyBuilder)
       throws GenericServiceException {
-    Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
+
+    Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt = // TODO
         this.loadableStudyRepository.findById(request.getLoadableStudyId());
     if (!loadableStudyOpt.isPresent()) {
       throw new GenericServiceException(
-          "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+          "Loadable/Discharge study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
     }
-    List<SynopticalTable> synopticalTableList =
-        this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveOrderByPortOrder(
-            request.getLoadableStudyId(), true);
+    // Checking if Loading completed and Discharge started or not
+    Optional<List<com.cpdss.loadablestudy.entity.LoadableStudy>> dischargeStudyEntries =
+        checkDischargeStarted(request.getVesselId(), request.getVoyageId());
+    List<SynopticalTable> synopticalTableList = new ArrayList<>();
+    if (dischargeStudyEntries.isPresent()
+        && loadableStudyOpt.get().getConfirmedLoadableStudyId() != null) {
+      synopticalTableList =
+          getsynopticalTableList(
+              loadableStudyOpt.get().getConfirmedLoadableStudyId(), request.getLoadableStudyId());
+    } else {
+      synopticalTableList = getsynopticalTableList(request.getLoadableStudyId(), null);
+    }
+
     if (!synopticalTableList.isEmpty()) {
       VesselInfo.VesselReply vesselReply =
           this.getSynopticalTableVesselData(request, loadableStudyOpt.get());
@@ -1631,6 +1649,32 @@ public class SynopticService {
           replyBuilder);
     }
     replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+  }
+
+  private List<SynopticalTable> getsynopticalTableList(Long lsId, Long dsId) {
+    List<SynopticalTable> synopticalTableList = new ArrayList<>();
+    synopticalTableList =
+        this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveOrderByPortOrder(
+            lsId, true);
+
+    if (dsId != null) {
+      // Removing first discharge port added from LS
+      synopticalTableList =
+          synopticalTableList.stream()
+              .filter(
+                  item ->
+                      !(item.getLoadableStudyPortRotation()
+                          .getOperation()
+                          .getId()
+                          .equals(DISCHARGING_OPERATION_ID)))
+              .collect(Collectors.toList());
+      // Appending all discharge port details added from DS
+      synopticalTableList.addAll(
+          this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveOrderByPortOrder(
+              dsId, true));
+      // TODO sort if needed
+    }
+    return synopticalTableList;
   }
 
   public void getSynopticalPortDataByPortId(
@@ -2120,12 +2164,12 @@ public class SynopticService {
             || (null != entity.getConstantPlanned()
                 && entity.getConstantPlanned().doubleValue()
                     != Double.parseDouble(record.getConstantPlanned()))
-        //            || (null != entity.getDeadWeightPlanned()
-        //            && entity.getDeadWeightPlanned().doubleValue() !=
-        //            Double.parseDouble(record.getTotalDwtPlanned()))
-        //            || (null != entity.getDisplacementPlanned()
-        //            && entity.getDisplacementPlanned().doubleValue() !=
-        //            Double.parseDouble(record.getDisplacementPlanned()))
+        // || (null != entity.getDeadWeightPlanned()
+        // && entity.getDeadWeightPlanned().doubleValue() !=
+        // Double.parseDouble(record.getTotalDwtPlanned()))
+        // || (null != entity.getDisplacementPlanned()
+        // && entity.getDisplacementPlanned().doubleValue() !=
+        // Double.parseDouble(record.getDisplacementPlanned()))
         )) {
       throw new GenericServiceException(
           "Cannot update planned values for plan generated loadable study",

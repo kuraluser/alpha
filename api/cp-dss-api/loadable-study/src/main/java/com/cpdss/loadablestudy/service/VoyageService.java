@@ -1,22 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ACTIVE_VOYAGE_STATUS;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CLOSE_VOYAGE_STATUS;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CREATED_DATE_FORMAT;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_FORMAT;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LS_STATUS_CONFIRMED;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.OPEN_VOYAGE_STATUS;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.START_VOYAGE;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.STATUS_ACTIVE;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.STATUS_CLOSE;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.STATUS_CONFIRMED;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.VOYAGE_EXISTS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -93,6 +78,8 @@ public class VoyageService {
   @Autowired private ApiTempHistoryRepository apiTempHistoryRepository;
 
   @Autowired private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
+
+  @Autowired private SynopticService synopticService;
 
   @Value("${loadablestudy.voyage.day.difference}")
   private String dayDifference;
@@ -289,6 +276,7 @@ public class VoyageService {
 
   public LoadableStudy.VoyageListReply.Builder getVoyagesByVessel(
       LoadableStudy.VoyageRequest request, LoadableStudy.VoyageListReply.Builder builder) {
+
     List<Voyage> entityList =
         this.voyageRepository.findByVesselXIdAndIsActiveOrderByIdDesc(request.getVesselId(), true);
     for (Voyage entity : entityList) {
@@ -311,33 +299,60 @@ public class VoyageService {
           entity.getVoyageStatus() != null ? entity.getVoyageStatus().getName() : "");
       Optional.ofNullable(entity.getVoyageStatus())
           .ifPresent(status -> detailbuilder.setStatusId(status.getId()));
-      // fetch the confirmed loadable study for active voyages
+
+      // fetch the confirmed loadable/discharge study for active voyages
       if (entity.getVoyageStatus() != null
           && (STATUS_ACTIVE.equalsIgnoreCase(entity.getVoyageStatus().getName())
               || STATUS_CLOSE.equalsIgnoreCase(entity.getVoyageStatus().getName()))) {
-        Stream<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyStream =
-            ofNullable(entity.getLoadableStudies())
-                .map(Collection::stream)
-                .orElseGet(Stream::empty);
-        Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudy =
-            loadableStudyStream
-                .filter(
-                    loadableStudyElement ->
-                        (loadableStudyElement.getLoadableStudyStatus() != null
-                            && STATUS_CONFIRMED.equalsIgnoreCase(
-                                loadableStudyElement.getLoadableStudyStatus().getName())))
-                .findFirst();
-
-        if (loadableStudy.isPresent()) {
-          detailbuilder.setConfirmedLoadableStudyId(loadableStudy.get().getId());
-          Long noOfDays = this.getNumberOfDays(loadableStudy.get());
-          Optional.ofNullable(noOfDays).ifPresent(item -> detailbuilder.setNoOfDays(item));
+        Optional<com.cpdss.loadablestudy.entity.LoadableStudy> confirmedStudy = Optional.empty();
+        // Checking if Discharge started or not
+        Optional<List<com.cpdss.loadablestudy.entity.LoadableStudy>> dischargeStudyEntries =
+            synopticService.checkDischargeStarted(entity.getVesselXId(), entity.getId());
+        if (dischargeStudyEntries.isPresent()) {
+          confirmedStudy = getConfirmedStudy(entity, PLANNING_TYPE_DISCHARGE);
+          if (confirmedStudy.isPresent()) {
+            detailbuilder.setIsDischargeStarted(true);
+            detailbuilder.setConfirmedDischargeStudyId(confirmedStudy.get().getId());
+            Long noOfDays = this.getNumberOfDays(confirmedStudy.get());
+            Optional.ofNullable(noOfDays).ifPresent(item -> detailbuilder.setNoOfDays(item));
+          }
+        } else {
+          detailbuilder.setIsDischargeStarted(false);
+          confirmedStudy = getConfirmedStudy(entity, PLANNING_TYPE_LOADING);
+          if (confirmedStudy.isPresent()) {
+            detailbuilder.setConfirmedLoadableStudyId(confirmedStudy.get().getId());
+            Long noOfDays = this.getNumberOfDays(confirmedStudy.get());
+            Optional.ofNullable(noOfDays).ifPresent(item -> detailbuilder.setNoOfDays(item));
+          }
         }
       }
       builder.addVoyages(detailbuilder.build());
     }
     builder.setResponseStatus(LoadableStudy.StatusReply.newBuilder().setStatus(SUCCESS).build());
     return builder;
+  }
+
+  private Optional<com.cpdss.loadablestudy.entity.LoadableStudy> getConfirmedStudy(
+      Voyage entity, Integer planningType) {
+    Optional<com.cpdss.loadablestudy.entity.LoadableStudy> confirmedStudy = Optional.empty();
+    Stream<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyStream =
+        ofNullable(entity.getLoadableStudies()).map(Collection::stream).orElseGet(Stream::empty);
+
+    Stream<com.cpdss.loadablestudy.entity.LoadableStudy> temp =
+        ofNullable(entity.getLoadableStudies()).map(Collection::stream).orElseGet(Stream::empty);
+    confirmedStudy =
+        loadableStudyStream
+            .filter(
+                loadableStudyElement ->
+                    loadableStudyElement.getPlanningTypeXId() != null
+                        && loadableStudyElement.getPlanningTypeXId().equals(planningType))
+            .filter(
+                loadableStudyElement ->
+                    (loadableStudyElement.getLoadableStudyStatus() != null
+                        && STATUS_CONFIRMED.equalsIgnoreCase(
+                            loadableStudyElement.getLoadableStudyStatus().getName())))
+            .findFirst();
+    return confirmedStudy;
   }
 
   private Long getNumberOfDays(com.cpdss.loadablestudy.entity.LoadableStudy entity) {
@@ -498,21 +513,21 @@ public class VoyageService {
                       confirmedLoadablePatternOpt.get(),
                       portRotation,
                       request.getVoyageId());
-                  //                    LoadablePlanDetailsReply.Builder planDetailsReplyBuilder =
-                  //                        LoadablePlanDetailsReply.newBuilder();
-                  //                    try {
-                  //                      buildLoadablePlanDetails(
-                  //                          confirmedLoadablePatternOpt,
+                  // LoadablePlanDetailsReply.Builder planDetailsReplyBuilder =
+                  // LoadablePlanDetailsReply.newBuilder();
+                  // try {
+                  // buildLoadablePlanDetails(
+                  // confirmedLoadablePatternOpt,
                   // planDetailsReplyBuilder);
                   //
                   // builder.setLoadablePlanDetailsReply(planDetailsReplyBuilder);
-                  //                    } catch (GenericServiceException e) {
-                  //                      log.error(
-                  //                          "Could not build loadable plan details for loading
+                  // } catch (GenericServiceException e) {
+                  // log.error(
+                  // "Could not build loadable plan details for loading
                   // pattern "
-                  //                              + confirmedLoadablePatternOpt.get().getId());
-                  //                      e.printStackTrace();
-                  //                    }
+                  // + confirmedLoadablePatternOpt.get().getId());
+                  // e.printStackTrace();
+                  // }
                 }
                 LoadingPlanModels.LoadingPlanSyncReply loadablePlanSyncReply =
                     this.loadingPlanSynchronization(builder.build());

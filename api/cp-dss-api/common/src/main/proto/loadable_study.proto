@@ -699,12 +699,14 @@ message VoyageDetail{
 	string actualEndDate = 12;
 	int64 statusId = 13;
 	int64 noOfDays = 14;
+	bool isDischargeStarted = 15;
+	int64 confirmedDischargeStudyId = 16;
 }
 
 message VoyageListReply{
 	StatusReply responseStatus = 1;
 	repeated VoyageDetail voyages = 2;
-		int64 totalElements=3;	
+	int64 totalElements=3;	
 }
 
 message StatusReply {

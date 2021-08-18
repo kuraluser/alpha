@@ -1320,6 +1320,7 @@ public class LoadableStudyController {
           "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-pattern/{loadablePatternId}/synoptical-table")
   public SynopticalTableResponse getSynopticalTable(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudyId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
@@ -1329,7 +1330,7 @@ public class LoadableStudyController {
     try {
       log.info("getSynopticalTable: {}", getClientIp());
       return this.loadableStudyService.getSynopticalTable(
-          vesselId, loadableStudyId, loadablePatternId);
+          vesselId, loadableStudyId, loadablePatternId, voyageId);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException getSynopticalTable", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
@@ -1412,7 +1413,11 @@ public class LoadableStudyController {
       throws CommonRestException {
     try {
       return this.loadableStudyService.getLoadablePatternDetails(
-          loadablePatternId, loadableStudyId, vesselId, headers.getFirst(CORRELATION_ID_HEADER));
+          loadablePatternId,
+          loadableStudyId,
+          vesselId,
+          voyageId,
+          headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when getLoadablePatternDetails", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
@@ -2207,6 +2212,41 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when fetching simulator json data for loadable study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Get list of discharge studies baed on vessel and voyage
+   *
+   * @param vesselId - the vessel id
+   * @param voyageId - the voyage id
+   * @param headers - http request headers
+   * @return {@link LoadableStudyResponse}
+   * @throws CommonRestException
+   */
+  @GetMapping("/vessels/{vesselId}/voyages/{voyageId}/discharge-studies")
+  public LoadableStudyResponse getDischargeStudyByVoyage(
+      @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @NotNull(message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @RequestParam(required = false, defaultValue = "2") long planningType,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("getDischargeStudyByVoyage: {}", getClientIp());
+      Long companyId = 1L; // TODO get the companyId from userContext in keycloak token
+      return this.loadableStudyService.getLoadableStudies(
+          companyId, vesselId, voyageId, headers.getFirst(CORRELATION_ID_HEADER), planningType);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching discharge study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error fetching discharge study", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
