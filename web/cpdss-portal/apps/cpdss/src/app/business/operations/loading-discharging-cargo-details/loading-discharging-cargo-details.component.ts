@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
@@ -23,6 +24,8 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
   @Input() cargos: ICargo[];
   @Input() prevQuantitySelectedUnit: QUANTITY_UNIT;
   @Input() operation: OPERATIONS;
+  @Input()loadableStudyName:String
+  
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
   }
@@ -52,7 +55,8 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
 
   constructor(
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
-    private quantityPipe: QuantityPipe
+    private quantityPipe: QuantityPipe,
+    private translateService: TranslateService,
   ) { }
 
   async ngOnInit(): Promise<void> {

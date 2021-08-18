@@ -37,7 +37,7 @@
                 <h5 class="text-uppercase heading-border">{{ 'LOADING_INFORMATION_CARGO_DETAILS_HEADER' | translate }}</h5>
                 <cpdss-portal-loading-discharging-cargo-details [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
                     [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
-                    [cargoVesselTankDetails]="cargoVesselTankDetails" [operation]="OPERATIONS.LOADING">
+                    [cargoVesselTankDetails]="cargoVesselTankDetails" [operation]="OPERATIONS.LOADING" [loadableStudyName]="loadingInformationData?.loadableStudyName">
                 </cpdss-portal-loading-discharging-cargo-details>
             </div>
         </div>

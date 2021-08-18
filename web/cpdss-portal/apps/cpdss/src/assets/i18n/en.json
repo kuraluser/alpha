@@ -453,8 +453,8 @@
   "SYNOPTICAL_INVALID": "Invalid",
   "SYNOPTICAL_FROM_MAX": "From Tide should be less than To Tide",
   "SYNOPTICAL_TO_MIN": "To Tide should be greater than From Tide",
-  "SYNOPTICAL_SUNRISE_GREATER": "Sunrise should be lesser than sunset",
-  "SYNOPTICAL_SUNSET_GREATER": "Sunset should be greater than sunrise",
+  "SYNOPTICAL_SUNRISE_GREATER": "Sunrise time should be lesser than Sunset time",
+  "SYNOPTICAL_SUNSET_GREATER": "Sunset time should be greater than Sunrise time",
   "SYNOPTICAL_TIME_FROM_MAX": "From Time should be less than To Time",
   "SYNOPTICAL_TIME_TO_MIN": "To Time should be greater than From Time",
   "SYNOPTICAL_ETA_MIN": "Arrival time should be greater than last port's Departure time",
@@ -1784,5 +1784,7 @@
   "LOADING_INFORMATION_CARGO_MACHINERY_BALLAST_PUMP": "Please select ballastpump in cargo machinery",
   "LOADING_INFORMATION_CARGO_MACHINERY_MANIFOLD": "Please select manifold in cargo machinery",
   "DISCHARGE_STUDY_SAVE_ERROR": "Error",
-  "DISCHARGE_STUDY_SAVE_NO_DATA_ERROR": "No changed data for save"
+  "DISCHARGE_STUDY_SAVE_NO_DATA_ERROR": "No changed data for save",
+  "LOADABLE_STUDY_NAME_PREFIX":"Loadable Study ",
+  "LOADABLE_PATTERN":" - Loadable Pattern"
 }
