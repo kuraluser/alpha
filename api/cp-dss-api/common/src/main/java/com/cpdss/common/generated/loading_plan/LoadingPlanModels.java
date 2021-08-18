@@ -108218,6 +108218,13 @@ public final class LoadingPlanModels {
      * @return The ullage.
      */
     long getUllage();
+
+    /**
+     * <code>bool isUpdate = 12;</code>
+     *
+     * @return The isUpdate.
+     */
+    boolean getIsUpdate();
   }
   /** Protobuf type {@code UpdateUllage} */
   public static final class UpdateUllage extends com.google.protobuf.GeneratedMessageV3
@@ -108314,6 +108321,11 @@ public final class LoadingPlanModels {
             case 88:
               {
                 ullage_ = input.readInt64();
+                break;
+              }
+            case 96:
+              {
+                isUpdate_ = input.readBool();
                 break;
               }
             default:
@@ -108471,6 +108483,17 @@ public final class LoadingPlanModels {
       return ullage_;
     }
 
+    public static final int ISUPDATE_FIELD_NUMBER = 12;
+    private boolean isUpdate_;
+    /**
+     * <code>bool isUpdate = 12;</code>
+     *
+     * @return The isUpdate.
+     */
+    public boolean getIsUpdate() {
+      return isUpdate_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -108518,6 +108541,9 @@ public final class LoadingPlanModels {
       if (ullage_ != 0L) {
         output.writeInt64(11, ullage_);
       }
+      if (isUpdate_ != false) {
+        output.writeBool(12, isUpdate_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -108560,6 +108586,9 @@ public final class LoadingPlanModels {
       if (ullage_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(11, ullage_);
       }
+      if (isUpdate_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(12, isUpdate_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -108588,6 +108617,7 @@ public final class LoadingPlanModels {
       if (getFillingRatio() != other.getFillingRatio()) return false;
       if (getApi() != other.getApi()) return false;
       if (getUllage() != other.getUllage()) return false;
+      if (getIsUpdate() != other.getIsUpdate()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -108621,6 +108651,8 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getApi());
       hash = (37 * hash) + ULLAGE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getUllage());
+      hash = (37 * hash) + ISUPDATE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsUpdate());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -108786,6 +108818,8 @@ public final class LoadingPlanModels {
 
         ullage_ = 0L;
 
+        isUpdate_ = false;
+
         return this;
       }
 
@@ -108827,6 +108861,7 @@ public final class LoadingPlanModels {
         result.fillingRatio_ = fillingRatio_;
         result.api_ = api_;
         result.ullage_ = ullage_;
+        result.isUpdate_ = isUpdate_;
         onBuilt();
         return result;
       }
@@ -108915,6 +108950,9 @@ public final class LoadingPlanModels {
         }
         if (other.getUllage() != 0L) {
           setUllage(other.getUllage());
+        }
+        if (other.getIsUpdate() != false) {
+          setIsUpdate(other.getIsUpdate());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -109310,6 +109348,39 @@ public final class LoadingPlanModels {
         return this;
       }
 
+      private boolean isUpdate_;
+      /**
+       * <code>bool isUpdate = 12;</code>
+       *
+       * @return The isUpdate.
+       */
+      public boolean getIsUpdate() {
+        return isUpdate_;
+      }
+      /**
+       * <code>bool isUpdate = 12;</code>
+       *
+       * @param value The isUpdate to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsUpdate(boolean value) {
+
+        isUpdate_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isUpdate = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsUpdate() {
+
+        isUpdate_ = false;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -109433,6 +109504,13 @@ public final class LoadingPlanModels {
      * @return The sounding.
      */
     long getSounding();
+
+    /**
+     * <code>bool isUpdate = 10;</code>
+     *
+     * @return The isUpdate.
+     */
+    boolean getIsUpdate();
   }
   /** Protobuf type {@code BallastUpdate} */
   public static final class BallastUpdate extends com.google.protobuf.GeneratedMessageV3
@@ -109519,6 +109597,11 @@ public final class LoadingPlanModels {
             case 72:
               {
                 sounding_ = input.readInt64();
+                break;
+              }
+            case 80:
+              {
+                isUpdate_ = input.readBool();
                 break;
               }
             default:
@@ -109655,6 +109738,17 @@ public final class LoadingPlanModels {
       return sounding_;
     }
 
+    public static final int ISUPDATE_FIELD_NUMBER = 10;
+    private boolean isUpdate_;
+    /**
+     * <code>bool isUpdate = 10;</code>
+     *
+     * @return The isUpdate.
+     */
+    public boolean getIsUpdate() {
+      return isUpdate_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -109696,6 +109790,9 @@ public final class LoadingPlanModels {
       if (sounding_ != 0L) {
         output.writeInt64(9, sounding_);
       }
+      if (isUpdate_ != false) {
+        output.writeBool(10, isUpdate_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -109732,6 +109829,9 @@ public final class LoadingPlanModels {
       if (sounding_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(9, sounding_);
       }
+      if (isUpdate_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(10, isUpdate_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -109758,6 +109858,7 @@ public final class LoadingPlanModels {
       if (getObservedM3() != other.getObservedM3()) return false;
       if (getFillingRatio() != other.getFillingRatio()) return false;
       if (getSounding() != other.getSounding()) return false;
+      if (getIsUpdate() != other.getIsUpdate()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -109787,6 +109888,8 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getFillingRatio());
       hash = (37 * hash) + SOUNDING_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getSounding());
+      hash = (37 * hash) + ISUPDATE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsUpdate());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -109948,6 +110051,8 @@ public final class LoadingPlanModels {
 
         sounding_ = 0L;
 
+        isUpdate_ = false;
+
         return this;
       }
 
@@ -109988,6 +110093,7 @@ public final class LoadingPlanModels {
         result.observedM3_ = observedM3_;
         result.fillingRatio_ = fillingRatio_;
         result.sounding_ = sounding_;
+        result.isUpdate_ = isUpdate_;
         onBuilt();
         return result;
       }
@@ -110070,6 +110176,9 @@ public final class LoadingPlanModels {
         }
         if (other.getSounding() != 0L) {
           setSounding(other.getSounding());
+        }
+        if (other.getIsUpdate() != false) {
+          setIsUpdate(other.getIsUpdate());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -110400,6 +110509,39 @@ public final class LoadingPlanModels {
         return this;
       }
 
+      private boolean isUpdate_;
+      /**
+       * <code>bool isUpdate = 10;</code>
+       *
+       * @return The isUpdate.
+       */
+      public boolean getIsUpdate() {
+        return isUpdate_;
+      }
+      /**
+       * <code>bool isUpdate = 10;</code>
+       *
+       * @param value The isUpdate to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsUpdate(boolean value) {
+
+        isUpdate_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isUpdate = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsUpdate() {
+
+        isUpdate_ = false;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -110516,6 +110658,13 @@ public final class LoadingPlanModels {
      * @return The fillingRatio.
      */
     long getFillingRatio();
+
+    /**
+     * <code>bool isUpdate = 11;</code>
+     *
+     * @return The isUpdate.
+     */
+    boolean getIsUpdate();
   }
   /** Protobuf type {@code RobUpdate} */
   public static final class RobUpdate extends com.google.protobuf.GeneratedMessageV3
@@ -110597,6 +110746,11 @@ public final class LoadingPlanModels {
             case 64:
               {
                 fillingRatio_ = input.readInt64();
+                break;
+              }
+            case 88:
+              {
+                isUpdate_ = input.readBool();
                 break;
               }
             default:
@@ -110721,6 +110875,17 @@ public final class LoadingPlanModels {
       return fillingRatio_;
     }
 
+    public static final int ISUPDATE_FIELD_NUMBER = 11;
+    private boolean isUpdate_;
+    /**
+     * <code>bool isUpdate = 11;</code>
+     *
+     * @return The isUpdate.
+     */
+    public boolean getIsUpdate() {
+      return isUpdate_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -110759,6 +110924,9 @@ public final class LoadingPlanModels {
       if (fillingRatio_ != 0L) {
         output.writeInt64(8, fillingRatio_);
       }
+      if (isUpdate_ != false) {
+        output.writeBool(11, isUpdate_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -110792,6 +110960,9 @@ public final class LoadingPlanModels {
       if (fillingRatio_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(8, fillingRatio_);
       }
+      if (isUpdate_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(11, isUpdate_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -110816,6 +110987,7 @@ public final class LoadingPlanModels {
       if (getQuantity() != other.getQuantity()) return false;
       if (getObservedM3() != other.getObservedM3()) return false;
       if (getFillingRatio() != other.getFillingRatio()) return false;
+      if (getIsUpdate() != other.getIsUpdate()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -110843,6 +111015,8 @@ public final class LoadingPlanModels {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getObservedM3());
       hash = (37 * hash) + FILLINGRATIO_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getFillingRatio());
+      hash = (37 * hash) + ISUPDATE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsUpdate());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -111001,6 +111175,8 @@ public final class LoadingPlanModels {
 
         fillingRatio_ = 0L;
 
+        isUpdate_ = false;
+
         return this;
       }
 
@@ -111038,6 +111214,7 @@ public final class LoadingPlanModels {
         result.quantity_ = quantity_;
         result.observedM3_ = observedM3_;
         result.fillingRatio_ = fillingRatio_;
+        result.isUpdate_ = isUpdate_;
         onBuilt();
         return result;
       }
@@ -111116,6 +111293,9 @@ public final class LoadingPlanModels {
         }
         if (other.getFillingRatio() != 0L) {
           setFillingRatio(other.getFillingRatio());
+        }
+        if (other.getIsUpdate() != false) {
+          setIsUpdate(other.getIsUpdate());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -111408,6 +111588,39 @@ public final class LoadingPlanModels {
       public Builder clearFillingRatio() {
 
         fillingRatio_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private boolean isUpdate_;
+      /**
+       * <code>bool isUpdate = 11;</code>
+       *
+       * @return The isUpdate.
+       */
+      public boolean getIsUpdate() {
+        return isUpdate_;
+      }
+      /**
+       * <code>bool isUpdate = 11;</code>
+       *
+       * @param value The isUpdate to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsUpdate(boolean value) {
+
+        isUpdate_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isUpdate = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsUpdate() {
+
+        isUpdate_ = false;
         onChanged();
         return this;
       }
@@ -115538,33 +115751,34 @@ public final class LoadingPlanModels {
           + "\010bblAt60f\030\006 \001(\003\022\022\n\nquantityLt\030\007 \001(\003\022\022\n\nq"
           + "uantityMt\030\010 \001(\003\022\017\n\007klAt15c\030\t \001(\003\022\013\n\003api\030"
           + "\n \001(\003\022\023\n\013temperature\030\013 \001(\003\022\020\n\010isActive\030\014"
-          + " \001(\003\022\017\n\007version\030\r \001(\003\"\351\001\n\014UpdateUllage\022\n"
+          + " \001(\003\022\017\n\007version\030\r \001(\003\"\373\001\n\014UpdateUllage\022\n"
           + "\n\002id\030\001 \001(\003\022\034\n\024loadingInformationId\030\002 \001(\003"
           + "\022\016\n\006tankId\030\003 \001(\003\022\023\n\013temperature\030\004 \001(\003\022\027\n"
           + "\017correctedUllage\030\005 \001(\003\022\030\n\020correctionFact"
           + "or\030\006 \001(\003\022\020\n\010quantity\030\007 \001(\003\022\022\n\nobservedM3"
           + "\030\010 \001(\003\022\024\n\014fillingRatio\030\t \001(\003\022\013\n\003api\030\n \001("
-          + "\003\022\016\n\006ullage\030\013 \001(\003\"\323\001\n\rBallastUpdate\022\034\n\024l"
-          + "oadingInformationId\030\001 \001(\003\022\016\n\006tankId\030\002 \001("
-          + "\003\022\023\n\013temperature\030\003 \001(\003\022\027\n\017correctedUllag"
-          + "e\030\004 \001(\003\022\030\n\020correctionFactor\030\005 \001(\003\022\020\n\010qua"
-          + "ntity\030\006 \001(\003\022\022\n\nobservedM3\030\007 \001(\003\022\024\n\014filli"
-          + "ngRatio\030\010 \001(\003\022\020\n\010sounding\030\t \001(\003\"\275\001\n\tRobU"
-          + "pdate\022\034\n\024loadingInformationId\030\001 \001(\003\022\016\n\006t"
-          + "ankId\030\002 \001(\003\022\023\n\013temperature\030\003 \001(\003\022\027\n\017corr"
-          + "ectedUllage\030\004 \001(\003\022\030\n\020correctionFactor\030\005 "
-          + "\001(\003\022\020\n\010quantity\030\006 \001(\003\022\022\n\nobservedM3\030\007 \001("
-          + "\003\022\024\n\014fillingRatio\030\010 \001(\003\"\354\001\n\021UllageBillRe"
-          + "quest\022%\n\rbillOfLanding\030\001 \003(\0132\016.BillOfLan"
-          + "ding\0221\n\023billOfLandingRemove\030\002 \003(\0132\024.Bill"
-          + "OfLandingRemove\022%\n\rBallastUpdate\030\003 \003(\0132\016"
-          + ".BallastUpdate\022#\n\014updateUllage\030\004 \003(\0132\r.U"
-          + "pdateUllage\022\035\n\trobUpdate\030\005 \003(\0132\n.RobUpda"
-          + "te\022\022\n\nisValidate\030\006 \001(\t\"X\n\017UllageBillRepl"
-          + "y\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStat"
-          + "us\022\034\n\010rulePlan\030\002 \003(\0132\n.RulePlansB+\n\'com."
-          + "cpdss.common.generated.loading_planP\000b\006p"
-          + "roto3"
+          + "\003\022\016\n\006ullage\030\013 \001(\003\022\020\n\010isUpdate\030\014 \001(\010\"\345\001\n\r"
+          + "BallastUpdate\022\034\n\024loadingInformationId\030\001 "
+          + "\001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013temperature\030\003 \001(\003"
+          + "\022\027\n\017correctedUllage\030\004 \001(\003\022\030\n\020correctionF"
+          + "actor\030\005 \001(\003\022\020\n\010quantity\030\006 \001(\003\022\022\n\nobserve"
+          + "dM3\030\007 \001(\003\022\024\n\014fillingRatio\030\010 \001(\003\022\020\n\010sound"
+          + "ing\030\t \001(\003\022\020\n\010isUpdate\030\n \001(\010\"\317\001\n\tRobUpdat"
+          + "e\022\034\n\024loadingInformationId\030\001 \001(\003\022\016\n\006tankI"
+          + "d\030\002 \001(\003\022\023\n\013temperature\030\003 \001(\003\022\027\n\017correcte"
+          + "dUllage\030\004 \001(\003\022\030\n\020correctionFactor\030\005 \001(\003\022"
+          + "\020\n\010quantity\030\006 \001(\003\022\022\n\nobservedM3\030\007 \001(\003\022\024\n"
+          + "\014fillingRatio\030\010 \001(\003\022\020\n\010isUpdate\030\013 \001(\010\"\354\001"
+          + "\n\021UllageBillRequest\022%\n\rbillOfLanding\030\001 \003"
+          + "(\0132\016.BillOfLanding\0221\n\023billOfLandingRemov"
+          + "e\030\002 \003(\0132\024.BillOfLandingRemove\022%\n\rBallast"
+          + "Update\030\003 \003(\0132\016.BallastUpdate\022#\n\014updateUl"
+          + "lage\030\004 \003(\0132\r.UpdateUllage\022\035\n\trobUpdate\030\005"
+          + " \003(\0132\n.RobUpdate\022\022\n\nisValidate\030\006 \001(\t\"X\n\017"
+          + "UllageBillReply\022\'\n\016responseStatus\030\001 \001(\0132"
+          + "\017.ResponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.Rul"
+          + "ePlansB+\n\'com.cpdss.common.generated.loa"
+          + "ding_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -116490,6 +116704,7 @@ public final class LoadingPlanModels {
               "FillingRatio",
               "Api",
               "Ullage",
+              "IsUpdate",
             });
     internal_static_BallastUpdate_descriptor = getDescriptor().getMessageTypes().get(72);
     internal_static_BallastUpdate_fieldAccessorTable =
@@ -116505,6 +116720,7 @@ public final class LoadingPlanModels {
               "ObservedM3",
               "FillingRatio",
               "Sounding",
+              "IsUpdate",
             });
     internal_static_RobUpdate_descriptor = getDescriptor().getMessageTypes().get(73);
     internal_static_RobUpdate_fieldAccessorTable =
@@ -116519,6 +116735,7 @@ public final class LoadingPlanModels {
               "Quantity",
               "ObservedM3",
               "FillingRatio",
+              "IsUpdate",
             });
     internal_static_UllageBillRequest_descriptor = getDescriptor().getMessageTypes().get(74);
     internal_static_UllageBillRequest_fieldAccessorTable =
