@@ -198,6 +198,8 @@ service LoadableStudyService {
 	rpc GetLoadableStudyPortRotationByPortRotationId(PortRotationRequest) returns (PortRotationDetailReply) {}
 
 	rpc GetLoadableStudySimulatorJsonData(SimulatorJsonRequest) returns (SimulatorJsonReply){}
+	
+	rpc GetLoadableStudyByLoadablePatternId(LoadablePlanDetailsRequest) returns (LoadableStudyResponse) {}
 }
 
 service DischargeStudyOperationService {
@@ -1531,4 +1533,9 @@ message SimulatorJsonRequest{
 message SimulatorJsonReply{
     ResponseStatus responseStatus = 1;
     string departureCondition = 2;
+}
+
+message LoadableStudyResponse {
+	int64 loadableStudyId = 1;
+	ResponseStatus responseStatus = 2;
 }
