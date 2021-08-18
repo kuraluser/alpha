@@ -425,11 +425,15 @@ public class LoadingPlanService {
           .getRobUpdateList()
           .forEach(
               ullageInsert -> {
-                loadingPlanRobDetailsRepository.updatePortLoadingPlanRobDetailsRepository(
-                    BigDecimal.valueOf(ullageInsert.getQuantity()),
-                    BigDecimal.valueOf(ullageInsert.getQuantity()),
-                    Long.valueOf(ullageInsert.getTankId()),
-                    true);
+                if (ullageInsert.getIsUpdate()) {
+                  loadingPlanRobDetailsRepository.updatePortLoadingPlanRobDetailsRepository(
+                      BigDecimal.valueOf(ullageInsert.getQuantity()),
+                      BigDecimal.valueOf(ullageInsert.getQuantity()),
+                      Long.valueOf(ullageInsert.getTankId()),
+                      true);
+                } else {
+                  loadingPlanRobDetailsRepository.save(new PortLoadingPlanRobDetails());
+                }
               });
 
       if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
@@ -438,29 +442,40 @@ public class LoadingPlanService {
             .getBallastUpdateList()
             .forEach(
                 ullageInsert -> {
-                  loadingPlanBallastDetailsTempRepository.updateLoadingPlanBallastDetailsRepository(
-                      BigDecimal.valueOf(ullageInsert.getQuantity()),
-                      BigDecimal.valueOf(ullageInsert.getSounding()),
-                      BigDecimal.valueOf(ullageInsert.getQuantity()),
-                      Long.valueOf(ullageInsert.getTankId()),
-                      true,
-                      Long.valueOf(ullageInsert.getTankId()));
+                  if (ullageInsert.getIsUpdate()) {
+                    loadingPlanBallastDetailsTempRepository
+                        .updateLoadingPlanBallastDetailsRepository(
+                            BigDecimal.valueOf(ullageInsert.getQuantity()),
+                            BigDecimal.valueOf(ullageInsert.getSounding()),
+                            BigDecimal.valueOf(ullageInsert.getQuantity()),
+                            Long.valueOf(ullageInsert.getTankId()),
+                            true,
+                            Long.valueOf(ullageInsert.getTankId()));
+                  } else {
+                    loadingPlanBallastDetailsTempRepository.save(
+                        new PortLoadingPlanBallastTempDetails());
+                  }
                 });
 
         request
             .getUpdateUllageList()
             .forEach(
                 ullageInsert -> {
-                  loadingPlanStowageDetailsTempRepository
-                      .updatePortLoadingPlanStowageDetailsRepository(
-                          BigDecimal.valueOf(ullageInsert.getQuantity()),
-                          BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
-                          BigDecimal.valueOf(ullageInsert.getQuantity()),
-                          BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
-                          BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
-                          Long.valueOf(ullageInsert.getTankId()),
-                          true,
-                          Long.valueOf(ullageInsert.getTankId()));
+                  if (ullageInsert.getIsUpdate()) {
+                    loadingPlanStowageDetailsTempRepository
+                        .updatePortLoadingPlanStowageDetailsRepository(
+                            BigDecimal.valueOf(ullageInsert.getQuantity()),
+                            BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
+                            BigDecimal.valueOf(ullageInsert.getQuantity()),
+                            BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
+                            BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
+                            Long.valueOf(ullageInsert.getTankId()),
+                            true,
+                            Long.valueOf(ullageInsert.getTankId()));
+                  } else {
+                    loadingPlanStowageDetailsTempRepository.save(
+                        new PortLoadingPlanStowageTempDetails());
+                  }
                 });
       } else {
         validateAndSaveData(request);
@@ -488,13 +503,17 @@ public class LoadingPlanService {
         .getBallastUpdateList()
         .forEach(
             ullageInsert -> {
-              loadingPlanBallastDetailsRepository.updateLoadingPlanBallastDetailsRepository(
-                  BigDecimal.valueOf(ullageInsert.getQuantity()),
-                  BigDecimal.valueOf(ullageInsert.getSounding()),
-                  BigDecimal.valueOf(ullageInsert.getQuantity()),
-                  Long.valueOf(ullageInsert.getTankId()),
-                  true,
-                  Long.valueOf(ullageInsert.getTankId()));
+              if (ullageInsert.getIsUpdate()) {
+                loadingPlanBallastDetailsRepository.updateLoadingPlanBallastDetailsRepository(
+                    BigDecimal.valueOf(ullageInsert.getQuantity()),
+                    BigDecimal.valueOf(ullageInsert.getSounding()),
+                    BigDecimal.valueOf(ullageInsert.getQuantity()),
+                    Long.valueOf(ullageInsert.getTankId()),
+                    true,
+                    Long.valueOf(ullageInsert.getTankId()));
+              } else {
+                loadingPlanBallastDetailsRepository.save(new PortLoadingPlanBallastDetails());
+              }
             });
 
     loadingPlanStowageDetailsRepository.deleteByLoadingInformationId(null);
@@ -502,15 +521,19 @@ public class LoadingPlanService {
         .getUpdateUllageList()
         .forEach(
             ullageInsert -> {
-              loadingPlanStowageDetailsRepository.updatePortLoadingPlanStowageDetailsRepository(
-                  BigDecimal.valueOf(ullageInsert.getQuantity()),
-                  BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
-                  BigDecimal.valueOf(ullageInsert.getQuantity()),
-                  BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
-                  BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
-                  Long.valueOf(ullageInsert.getTankId()),
-                  true,
-                  Long.valueOf(ullageInsert.getTankId()));
+              if (ullageInsert.getIsUpdate()) {
+                loadingPlanStowageDetailsRepository.updatePortLoadingPlanStowageDetailsRepository(
+                    BigDecimal.valueOf(ullageInsert.getQuantity()),
+                    BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
+                    BigDecimal.valueOf(ullageInsert.getQuantity()),
+                    BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
+                    BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
+                    Long.valueOf(ullageInsert.getTankId()),
+                    true,
+                    Long.valueOf(ullageInsert.getTankId()));
+              } else {
+                loadingPlanStowageDetailsRepository.save(new PortLoadingPlanStowageDetails());
+              }
             });
   }
 }
