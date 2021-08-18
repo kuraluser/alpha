@@ -955,7 +955,11 @@ public class CargoNominationService {
             quantity -> {
               Optional<CargoNomination> cargoNomination =
                   firstPortCargos.stream()
-                      .filter(cargo -> cargo.getId().equals(quantity.getCargoNominationId()))
+                      .filter(
+                          cargo ->
+                              cargo
+                                  .getLsCargoNominationId()
+                                  .equals(quantity.getCargoNominationId()))
                       .findFirst();
               if (cargoNomination.isPresent()) {
                 cargoNomination.get().setQuantity(new BigDecimal(quantity.getMaxQuantity()));

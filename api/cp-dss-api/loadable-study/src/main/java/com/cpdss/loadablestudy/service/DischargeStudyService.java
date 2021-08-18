@@ -1189,27 +1189,34 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             .flatMap(x -> x.getCargoNominationPortDetails().stream())
             .filter(port -> port.getPortId().equals(dischargeStudyPortRotation.getPortXId()))
             .map(CargoNominationPortDetails::getCargoNomination)
+            .filter(cargo -> cargo.getIsBackloading() != false)
             .collect(Collectors.toSet());
     List<Long> firstPortCargoIds =
-        firstPortCargos.parallelStream().map(CargoNomination::getId).collect(Collectors.toList());
+        firstPortCargos.stream()
+            .distinct()
+            .map(CargoNomination::getLsCargoNominationId)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     cargoNominationService.getMaxQuantityForCargoNomination(firstPortCargoIds, firstPortCargos);
-    cargos
-        .parallelStream()
+    cargos.stream()
+        .flatMap(cargo -> cargo.getCargoNominationPortDetails().stream())
+        .forEach(
+            operation -> {
+              if (!operation.getPortId().equals(dischargeStudyPortRotation.getPortXId())) {
+                operation.setQuantity(new BigDecimal(0));
+                operation.setMode(1L);
+              } else {
+                operation.setQuantity(operation.getCargoNomination().getQuantity());
+              }
+            });
+    cargos.stream()
         .forEach(
             cargo -> {
-              if (!firstPortCargoIds.contains(cargo.getId())) {
-                cargo
-                    .getCargoNominationPortDetails()
-                    .forEach(
-                        cpd -> {
-                          cpd.setQuantity(new BigDecimal(0));
-                          cpd.setMode(1L);
-                        });
-              }
               if (cargo.getIsBackloading() != null && cargo.getIsBackloading()) {
                 cargo.setIsActive(false);
               }
             });
+
     cargoNominationService.saveAll(cargos);
     List<BackLoading> backLoadings =
         backLoadingService.getBackLoadings(
@@ -1224,6 +1231,12 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               backLoading.setActive(false);
             });
     backLoadingService.saveAll(backLoadings);
+    dischargeStudyPortRotations.stream()
+        .forEach(
+            port -> {
+              port.setIsbackloadingEnabled(false);
+            });
+    loadableStudyPortRotationRepository.saveAll(dischargeStudyPortRotations);
   }
 
   @Override
