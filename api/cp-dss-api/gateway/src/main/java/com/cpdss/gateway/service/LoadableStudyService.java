@@ -6163,4 +6163,32 @@ public class LoadableStudyService {
 
     return jsonResponse;
   }
+
+  public UpdateUllage getUllageDetailsAlgo(UpdateUllage updateUllageRequest, String correlationId)
+          throws GenericServiceException {
+    log.info("Inside getUllageRequest in gateway micro service");
+
+    UpdateUllageRequest.Builder grpcRequest = UpdateUllageRequest.newBuilder();
+    buildUpdateUllageRequest(updateUllageRequest, null, grpcRequest);
+    UpdateUllageReply grpcReply = this.getUllage(grpcRequest.build());
+
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+              "Failed in confirmPlanStatus from grpc service",
+              grpcReply.getResponseStatus().getCode(),
+              HttpStatusCode.valueOf(
+                      Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
+    }
+
+    return this.buildeUpdateUllageResponse(grpcReply, correlationId);
+  }
+
+  /**
+   * @param grpcRequest
+   * @return RecalculateVolumeReply
+   */
+  public UpdateUllageReply getUllage(
+          com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.getUllage(grpcRequest);
+  }
 }

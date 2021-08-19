@@ -130,9 +130,13 @@ service LoadableStudyService {
 	
 	rpc GetLoadablePlanDetails(LoadablePlanDetailsRequest) returns (LoadablePlanDetailsReply) {
 	}
-	
+
 	rpc updateUllage(UpdateUllageRequest) returns (UpdateUllageReply) {
 	}
+
+	rpc getUllage(UpdateUllageRequest) returns (UpdateUllageReply) {
+	}
+
 	
 	rpc ConfirmPlanStatus(ConfirmPlanRequest) returns (ConfirmPlanReply) {
 	}	

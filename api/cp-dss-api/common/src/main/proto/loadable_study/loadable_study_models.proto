@@ -10,6 +10,7 @@ import "common.proto";
 	int64 dischargeStudyId = 1;
 }
 
+
 message DischargeStudyDetail{
 	string name = 1;
 	string enquiryDetails = 2;
