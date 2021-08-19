@@ -659,6 +659,7 @@ message LoadingSequenceReply {
   repeated LoadingSequence loadingSequences = 7;
   repeated LoadingPlanStabilityParameters loadingSequenceStabilityParameters = 8;
   ResponseStatus responseStatus = 9;
+  int64 portRotationId = 10;
 }
 
 message LoadingPlanReply {

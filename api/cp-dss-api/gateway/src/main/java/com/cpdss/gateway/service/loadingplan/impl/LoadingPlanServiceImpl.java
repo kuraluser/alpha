@@ -9,6 +9,7 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
@@ -488,9 +489,12 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     loadingPlanResponse.setLoadingInformation(loadingInformation);
 
+    List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
+        loadingPlanGrpcService.fetchLoadablePlanBallastDetails(
+            activeVoyage.getPatternId(), portRotation.get().getId());
     loadingPlanResponse.setPlanBallastDetails(
         loadingPlanBuilderService.buildLoadingPlanBallastFromRpc(
-            planReply.getPortLoadingPlanBallastDetailsList()));
+            planReply.getPortLoadingPlanBallastDetailsList(), loadablePlanBallastDetails));
     loadingPlanResponse.setPlanStowageDetails(
         loadingPlanBuilderService.buildLoadingPlanStowageFromRpc(
             planReply.getPortLoadingPlanStowageDetailsList()));

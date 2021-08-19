@@ -13,4 +13,5 @@ public class LoadingPlanBallastDetails {
   private String sounding;
   private Integer conditionType;
   private Integer valueType;
+  private String colorCode;
 }

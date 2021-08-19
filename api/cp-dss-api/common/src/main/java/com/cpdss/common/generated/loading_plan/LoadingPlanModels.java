@@ -92573,6 +92573,13 @@ public final class LoadingPlanModels {
     com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
     /** <code>.ResponseStatus responseStatus = 9;</code> */
     com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /**
+     * <code>int64 portRotationId = 10;</code>
+     *
+     * @return The portRotationId.
+     */
+    long getPortRotationId();
   }
   /** Protobuf type {@code LoadingSequenceReply} */
   public static final class LoadingSequenceReply extends com.google.protobuf.GeneratedMessageV3
@@ -92700,6 +92707,11 @@ public final class LoadingPlanModels {
                   responseStatus_ = subBuilder.buildPartial();
                 }
 
+                break;
+              }
+            case 80:
+              {
+                portRotationId_ = input.readInt64();
                 break;
               }
             default:
@@ -92936,6 +92948,17 @@ public final class LoadingPlanModels {
       return getResponseStatus();
     }
 
+    public static final int PORTROTATIONID_FIELD_NUMBER = 10;
+    private long portRotationId_;
+    /**
+     * <code>int64 portRotationId = 10;</code>
+     *
+     * @return The portRotationId.
+     */
+    public long getPortRotationId() {
+      return portRotationId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -92977,6 +93000,9 @@ public final class LoadingPlanModels {
       if (responseStatus_ != null) {
         output.writeMessage(9, getResponseStatus());
       }
+      if (portRotationId_ != 0L) {
+        output.writeInt64(10, portRotationId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -93016,6 +93042,9 @@ public final class LoadingPlanModels {
       if (responseStatus_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(9, getResponseStatus());
       }
+      if (portRotationId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(10, portRotationId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -93047,6 +93076,7 @@ public final class LoadingPlanModels {
       if (hasResponseStatus()) {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
+      if (getPortRotationId() != other.getPortRotationId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -93082,6 +93112,8 @@ public final class LoadingPlanModels {
         hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
         hash = (53 * hash) + getResponseStatus().hashCode();
       }
+      hash = (37 * hash) + PORTROTATIONID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortRotationId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -93264,6 +93296,8 @@ public final class LoadingPlanModels {
           responseStatus_ = null;
           responseStatusBuilder_ = null;
         }
+        portRotationId_ = 0L;
+
         return this;
       }
 
@@ -93329,6 +93363,7 @@ public final class LoadingPlanModels {
         } else {
           result.responseStatus_ = responseStatusBuilder_.build();
         }
+        result.portRotationId_ = portRotationId_;
         onBuilt();
         return result;
       }
@@ -93463,6 +93498,9 @@ public final class LoadingPlanModels {
         }
         if (other.hasResponseStatus()) {
           mergeResponseStatus(other.getResponseStatus());
+        }
+        if (other.getPortRotationId() != 0L) {
+          setPortRotationId(other.getPortRotationId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -94420,6 +94458,39 @@ public final class LoadingPlanModels {
           responseStatus_ = null;
         }
         return responseStatusBuilder_;
+      }
+
+      private long portRotationId_;
+      /**
+       * <code>int64 portRotationId = 10;</code>
+       *
+       * @return The portRotationId.
+       */
+      public long getPortRotationId() {
+        return portRotationId_;
+      }
+      /**
+       * <code>int64 portRotationId = 10;</code>
+       *
+       * @param value The portRotationId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortRotationId(long value) {
+
+        portRotationId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portRotationId = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortRotationId() {
+
+        portRotationId_ = 0L;
+        onChanged();
+        return this;
       }
 
       @java.lang.Override
@@ -115696,7 +115767,7 @@ public final class LoadingPlanModels {
           + "kId\030\004 \001(\003\022\020\n\010tankname\030\005 \001(\t\022\020\n\010quantity\030"
           + "\006 \001(\t\022\030\n\020arrivalDeparture\030\007 \001(\t\022\025\n\ractua"
           + "lPlanned\030\010 \001(\t\"/\n\026LoadingSequenceRequest"
-          + "\022\025\n\rloadingInfoId\030\001 \001(\003\"\254\002\n\024LoadingSeque"
+          + "\022\025\n\rloadingInfoId\030\001 \001(\003\"\304\002\n\024LoadingSeque"
           + "nceReply\022\020\n\010vesselId\030\001 \001(\003\022\020\n\010voyageId\030\002"
           + " \001(\003\022\031\n\021loadablePatternId\030\003 \001(\003\022\016\n\006portI"
           + "d\030\004 \001(\003\022\021\n\tstartDate\030\005 \001(\t\022\020\n\010interval\030\006"
@@ -115704,81 +115775,82 @@ public final class LoadingPlanModels {
           + "Sequence\022K\n\"loadingSequenceStabilityPara"
           + "meters\030\010 \003(\0132\037.LoadingPlanStabilityParam"
           + "eters\022\'\n\016responseStatus\030\t \001(\0132\017.Response"
-          + "Status\"\270\003\n\020LoadingPlanReply\022\'\n\016responseS"
-          + "tatus\030\007 \001(\0132\017.ResponseStatus\022\025\n\rloadingI"
-          + "nfoId\030\001 \001(\003\022/\n\022loadingInformation\030\010 \001(\0132"
-          + "\023.LoadingInformation\022*\n\020loadingSequences"
-          + "\030\002 \003(\0132\020.LoadingSequence\022>\n\035portLoadingP"
-          + "lanStowageDetails\030\003 \003(\0132\027.LoadingPlanTan"
-          + "kDetails\022>\n\035portLoadingPlanBallastDetail"
-          + "s\030\004 \003(\0132\027.LoadingPlanTankDetails\022:\n\031port"
-          + "LoadingPlanRobDetails\030\005 \003(\0132\027.LoadingPla"
-          + "nTankDetails\022K\n\"portLoadingPlanStability"
-          + "Parameters\030\006 \003(\0132\037.LoadingPlanStabilityP"
-          + "arameters\"1\n\024BillOfLaddingRequest\022\031\n\021car"
-          + "goNominationId\030\001 \001(\003\"/\n\022MaxQuantityReque"
-          + "st\022\031\n\021cargoNominationId\030\001 \003(\003\"m\n\023MaxQuan"
-          + "tityResponse\022-\n\020cargoMaxQuantity\030\001 \003(\0132\023"
-          + ".MaxQuantityDetails\022\'\n\016responseStatus\030\002 "
-          + "\001(\0132\017.ResponseStatus\"D\n\022MaxQuantityDetai"
-          + "ls\022\031\n\021cargoNominationId\030\001 \001(\003\022\023\n\013maxQuan"
-          + "tity\030\002 \001(\t\"\227\001\n LoadingInfoLoadicatorData"
-          + "Request\022\021\n\tprocessId\030\001 \001(\t\022\034\n\024loadingInf"
-          + "ormationId\030\002 \001(\003\022B\n\034loadingInfoLoadicato"
-          + "rDetails\030\003 \003(\0132\034.LoadingInfoLoadicatorDe"
-          + "tail\"\224\001\n\033LoadingInfoLoadicatorDetail\022\014\n\004"
-          + "time\030\001 \001(\005\022\027\n\006lDtrim\030\002 \001(\0132\007.LDtrim\022\037\n\nl"
-          + "DStrength\030\003 \001(\0132\013.LDStrength\022-\n\021lDIntact"
-          + "Stability\030\004 \001(\0132\022.LDIntactStability\"u\n\036L"
-          + "oadingInfoLoadicatorDataReply\022\021\n\tprocess"
-          + "Id\030\001 \001(\t\022\027\n\017loadableStudyId\030\002 \001(\003\022\'\n\016res"
-          + "ponseStatus\030\003 \001(\0132\017.ResponseStatus\"D\n\030Lo"
-          + "adingInfoStatusRequest\022\025\n\rloadingInfoId\030"
-          + "\001 \001(\003\022\021\n\tprocessId\030\002 \001(\t\"\240\001\n\026LoadingInfo"
-          + "StatusReply\022\025\n\rloadingInfoId\030\001 \001(\003\022\033\n\023lo"
-          + "adingInfoStatusId\030\002 \001(\003\022)\n!loadingInfoSt"
-          + "atusLastModifiedTime\030\003 \001(\t\022\'\n\016responseSt"
-          + "atus\030\004 \001(\0132\017.ResponseStatus\"\373\001\n\rBillOfLa"
-          + "nding\022\n\n\002id\030\001 \001(\003\022\030\n\020dischargeStudyId\030\002 "
-          + "\001(\003\022\016\n\006portId\030\003 \001(\003\022\017\n\007cargoId\030\004 \001(\003\022\023\n\013"
-          + "blRefNumber\030\005 \001(\t\022\020\n\010bblAt60f\030\006 \001(\003\022\022\n\nq"
-          + "uantityLt\030\007 \001(\003\022\022\n\nquantityMt\030\010 \001(\003\022\017\n\007k"
-          + "lAt15c\030\t \001(\003\022\013\n\003api\030\n \001(\003\022\023\n\013temperature"
-          + "\030\013 \001(\003\022\020\n\010isActive\030\014 \001(\003\022\017\n\007version\030\r \001("
-          + "\003\"\201\002\n\023BillOfLandingRemove\022\n\n\002id\030\001 \001(\003\022\030\n"
-          + "\020dischargeStudyId\030\002 \001(\003\022\016\n\006portId\030\003 \001(\003\022"
-          + "\017\n\007cargoId\030\004 \001(\003\022\023\n\013blRefNumber\030\005 \001(\t\022\020\n"
-          + "\010bblAt60f\030\006 \001(\003\022\022\n\nquantityLt\030\007 \001(\003\022\022\n\nq"
-          + "uantityMt\030\010 \001(\003\022\017\n\007klAt15c\030\t \001(\003\022\013\n\003api\030"
-          + "\n \001(\003\022\023\n\013temperature\030\013 \001(\003\022\020\n\010isActive\030\014"
-          + " \001(\003\022\017\n\007version\030\r \001(\003\"\373\001\n\014UpdateUllage\022\n"
-          + "\n\002id\030\001 \001(\003\022\034\n\024loadingInformationId\030\002 \001(\003"
-          + "\022\016\n\006tankId\030\003 \001(\003\022\023\n\013temperature\030\004 \001(\003\022\027\n"
-          + "\017correctedUllage\030\005 \001(\003\022\030\n\020correctionFact"
-          + "or\030\006 \001(\003\022\020\n\010quantity\030\007 \001(\003\022\022\n\nobservedM3"
-          + "\030\010 \001(\003\022\024\n\014fillingRatio\030\t \001(\003\022\013\n\003api\030\n \001("
-          + "\003\022\016\n\006ullage\030\013 \001(\003\022\020\n\010isUpdate\030\014 \001(\010\"\345\001\n\r"
-          + "BallastUpdate\022\034\n\024loadingInformationId\030\001 "
-          + "\001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013temperature\030\003 \001(\003"
-          + "\022\027\n\017correctedUllage\030\004 \001(\003\022\030\n\020correctionF"
-          + "actor\030\005 \001(\003\022\020\n\010quantity\030\006 \001(\003\022\022\n\nobserve"
-          + "dM3\030\007 \001(\003\022\024\n\014fillingRatio\030\010 \001(\003\022\020\n\010sound"
-          + "ing\030\t \001(\003\022\020\n\010isUpdate\030\n \001(\010\"\317\001\n\tRobUpdat"
-          + "e\022\034\n\024loadingInformationId\030\001 \001(\003\022\016\n\006tankI"
-          + "d\030\002 \001(\003\022\023\n\013temperature\030\003 \001(\003\022\027\n\017correcte"
-          + "dUllage\030\004 \001(\003\022\030\n\020correctionFactor\030\005 \001(\003\022"
-          + "\020\n\010quantity\030\006 \001(\003\022\022\n\nobservedM3\030\007 \001(\003\022\024\n"
-          + "\014fillingRatio\030\010 \001(\003\022\020\n\010isUpdate\030\013 \001(\010\"\354\001"
-          + "\n\021UllageBillRequest\022%\n\rbillOfLanding\030\001 \003"
-          + "(\0132\016.BillOfLanding\0221\n\023billOfLandingRemov"
-          + "e\030\002 \003(\0132\024.BillOfLandingRemove\022%\n\rBallast"
-          + "Update\030\003 \003(\0132\016.BallastUpdate\022#\n\014updateUl"
-          + "lage\030\004 \003(\0132\r.UpdateUllage\022\035\n\trobUpdate\030\005"
-          + " \003(\0132\n.RobUpdate\022\022\n\nisValidate\030\006 \001(\t\"X\n\017"
-          + "UllageBillReply\022\'\n\016responseStatus\030\001 \001(\0132"
-          + "\017.ResponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.Rul"
-          + "ePlansB+\n\'com.cpdss.common.generated.loa"
-          + "ding_planP\000b\006proto3"
+          + "Status\022\026\n\016portRotationId\030\n \001(\003\"\270\003\n\020Loadi"
+          + "ngPlanReply\022\'\n\016responseStatus\030\007 \001(\0132\017.Re"
+          + "sponseStatus\022\025\n\rloadingInfoId\030\001 \001(\003\022/\n\022l"
+          + "oadingInformation\030\010 \001(\0132\023.LoadingInforma"
+          + "tion\022*\n\020loadingSequences\030\002 \003(\0132\020.Loading"
+          + "Sequence\022>\n\035portLoadingPlanStowageDetail"
+          + "s\030\003 \003(\0132\027.LoadingPlanTankDetails\022>\n\035port"
+          + "LoadingPlanBallastDetails\030\004 \003(\0132\027.Loadin"
+          + "gPlanTankDetails\022:\n\031portLoadingPlanRobDe"
+          + "tails\030\005 \003(\0132\027.LoadingPlanTankDetails\022K\n\""
+          + "portLoadingPlanStabilityParameters\030\006 \003(\013"
+          + "2\037.LoadingPlanStabilityParameters\"1\n\024Bil"
+          + "lOfLaddingRequest\022\031\n\021cargoNominationId\030\001"
+          + " \001(\003\"/\n\022MaxQuantityRequest\022\031\n\021cargoNomin"
+          + "ationId\030\001 \003(\003\"m\n\023MaxQuantityResponse\022-\n\020"
+          + "cargoMaxQuantity\030\001 \003(\0132\023.MaxQuantityDeta"
+          + "ils\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseSt"
+          + "atus\"D\n\022MaxQuantityDetails\022\031\n\021cargoNomin"
+          + "ationId\030\001 \001(\003\022\023\n\013maxQuantity\030\002 \001(\t\"\227\001\n L"
+          + "oadingInfoLoadicatorDataRequest\022\021\n\tproce"
+          + "ssId\030\001 \001(\t\022\034\n\024loadingInformationId\030\002 \001(\003"
+          + "\022B\n\034loadingInfoLoadicatorDetails\030\003 \003(\0132\034"
+          + ".LoadingInfoLoadicatorDetail\"\224\001\n\033Loading"
+          + "InfoLoadicatorDetail\022\014\n\004time\030\001 \001(\005\022\027\n\006lD"
+          + "trim\030\002 \001(\0132\007.LDtrim\022\037\n\nlDStrength\030\003 \001(\0132"
+          + "\013.LDStrength\022-\n\021lDIntactStability\030\004 \001(\0132"
+          + "\022.LDIntactStability\"u\n\036LoadingInfoLoadic"
+          + "atorDataReply\022\021\n\tprocessId\030\001 \001(\t\022\027\n\017load"
+          + "ableStudyId\030\002 \001(\003\022\'\n\016responseStatus\030\003 \001("
+          + "\0132\017.ResponseStatus\"D\n\030LoadingInfoStatusR"
+          + "equest\022\025\n\rloadingInfoId\030\001 \001(\003\022\021\n\tprocess"
+          + "Id\030\002 \001(\t\"\240\001\n\026LoadingInfoStatusReply\022\025\n\rl"
+          + "oadingInfoId\030\001 \001(\003\022\033\n\023loadingInfoStatusI"
+          + "d\030\002 \001(\003\022)\n!loadingInfoStatusLastModified"
+          + "Time\030\003 \001(\t\022\'\n\016responseStatus\030\004 \001(\0132\017.Res"
+          + "ponseStatus\"\373\001\n\rBillOfLanding\022\n\n\002id\030\001 \001("
+          + "\003\022\030\n\020dischargeStudyId\030\002 \001(\003\022\016\n\006portId\030\003 "
+          + "\001(\003\022\017\n\007cargoId\030\004 \001(\003\022\023\n\013blRefNumber\030\005 \001("
+          + "\t\022\020\n\010bblAt60f\030\006 \001(\003\022\022\n\nquantityLt\030\007 \001(\003\022"
+          + "\022\n\nquantityMt\030\010 \001(\003\022\017\n\007klAt15c\030\t \001(\003\022\013\n\003"
+          + "api\030\n \001(\003\022\023\n\013temperature\030\013 \001(\003\022\020\n\010isActi"
+          + "ve\030\014 \001(\003\022\017\n\007version\030\r \001(\003\"\201\002\n\023BillOfLand"
+          + "ingRemove\022\n\n\002id\030\001 \001(\003\022\030\n\020dischargeStudyI"
+          + "d\030\002 \001(\003\022\016\n\006portId\030\003 \001(\003\022\017\n\007cargoId\030\004 \001(\003"
+          + "\022\023\n\013blRefNumber\030\005 \001(\t\022\020\n\010bblAt60f\030\006 \001(\003\022"
+          + "\022\n\nquantityLt\030\007 \001(\003\022\022\n\nquantityMt\030\010 \001(\003\022"
+          + "\017\n\007klAt15c\030\t \001(\003\022\013\n\003api\030\n \001(\003\022\023\n\013tempera"
+          + "ture\030\013 \001(\003\022\020\n\010isActive\030\014 \001(\003\022\017\n\007version\030"
+          + "\r \001(\003\"\373\001\n\014UpdateUllage\022\n\n\002id\030\001 \001(\003\022\034\n\024lo"
+          + "adingInformationId\030\002 \001(\003\022\016\n\006tankId\030\003 \001(\003"
+          + "\022\023\n\013temperature\030\004 \001(\003\022\027\n\017correctedUllage"
+          + "\030\005 \001(\003\022\030\n\020correctionFactor\030\006 \001(\003\022\020\n\010quan"
+          + "tity\030\007 \001(\003\022\022\n\nobservedM3\030\010 \001(\003\022\024\n\014fillin"
+          + "gRatio\030\t \001(\003\022\013\n\003api\030\n \001(\003\022\016\n\006ullage\030\013 \001("
+          + "\003\022\020\n\010isUpdate\030\014 \001(\010\"\345\001\n\rBallastUpdate\022\034\n"
+          + "\024loadingInformationId\030\001 \001(\003\022\016\n\006tankId\030\002 "
+          + "\001(\003\022\023\n\013temperature\030\003 \001(\003\022\027\n\017correctedUll"
+          + "age\030\004 \001(\003\022\030\n\020correctionFactor\030\005 \001(\003\022\020\n\010q"
+          + "uantity\030\006 \001(\003\022\022\n\nobservedM3\030\007 \001(\003\022\024\n\014fil"
+          + "lingRatio\030\010 \001(\003\022\020\n\010sounding\030\t \001(\003\022\020\n\010isU"
+          + "pdate\030\n \001(\010\"\317\001\n\tRobUpdate\022\034\n\024loadingInfo"
+          + "rmationId\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\023\n\013tempe"
+          + "rature\030\003 \001(\003\022\027\n\017correctedUllage\030\004 \001(\003\022\030\n"
+          + "\020correctionFactor\030\005 \001(\003\022\020\n\010quantity\030\006 \001("
+          + "\003\022\022\n\nobservedM3\030\007 \001(\003\022\024\n\014fillingRatio\030\010 "
+          + "\001(\003\022\020\n\010isUpdate\030\013 \001(\010\"\354\001\n\021UllageBillRequ"
+          + "est\022%\n\rbillOfLanding\030\001 \003(\0132\016.BillOfLandi"
+          + "ng\0221\n\023billOfLandingRemove\030\002 \003(\0132\024.BillOf"
+          + "LandingRemove\022%\n\rBallastUpdate\030\003 \003(\0132\016.B"
+          + "allastUpdate\022#\n\014updateUllage\030\004 \003(\0132\r.Upd"
+          + "ateUllage\022\035\n\trobUpdate\030\005 \003(\0132\n.RobUpdate"
+          + "\022\022\n\nisValidate\030\006 \001(\t\"X\n\017UllageBillReply\022"
+          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
+          + "\022\034\n\010rulePlan\030\002 \003(\0132\n.RulePlansB+\n\'com.cp"
+          + "dss.common.generated.loading_planP\000b\006pro"
+          + "to3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -116566,6 +116638,7 @@ public final class LoadingPlanModels {
               "LoadingSequences",
               "LoadingSequenceStabilityParameters",
               "ResponseStatus",
+              "PortRotationId",
             });
     internal_static_LoadingPlanReply_descriptor = getDescriptor().getMessageTypes().get(59);
     internal_static_LoadingPlanReply_fieldAccessorTable =
