@@ -2215,4 +2215,33 @@ public class LoadableStudyController {
           e);
     }
   }
+
+  /**
+   * @param updateUllageRequest
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/getUllageDetailsAlgo")
+  public UpdateUllage getUllageDetailsAlgo(
+          @RequestBody UpdateUllage updateUllageRequest, @RequestHeader HttpHeaders headers)
+          throws CommonRestException {
+    try {
+      log.info("updateUllage : {}", getClientIp());
+      log.info("updateUllage API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.getUllageDetailsAlgo(
+              updateUllageRequest, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in getUllageDetailsAlgo ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in getUllageDetailsAlgo ", e);
+      throw new CommonRestException(
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              headers,
+              HttpStatusCode.INTERNAL_SERVER_ERROR,
+              e.getMessage(),
+              e);
+    }
+  }
 }
