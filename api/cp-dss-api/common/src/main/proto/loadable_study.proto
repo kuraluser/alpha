@@ -130,9 +130,13 @@ service LoadableStudyService {
 	
 	rpc GetLoadablePlanDetails(LoadablePlanDetailsRequest) returns (LoadablePlanDetailsReply) {
 	}
-	
+
 	rpc updateUllage(UpdateUllageRequest) returns (UpdateUllageReply) {
 	}
+
+	rpc getUllage(UpdateUllageRequest) returns (UpdateUllageReply) {
+	}
+
 	
 	rpc ConfirmPlanStatus(ConfirmPlanRequest) returns (ConfirmPlanReply) {
 	}	
@@ -1428,6 +1432,7 @@ message LoadingPlanCommonResponse{
 	ResponseStatus responseStatus = 1;
 	repeated LoadingSynopticResponse synopticData = 2;
 	repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 3;
+	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 4;
 }
 
 message LoadingSynopticResponse{

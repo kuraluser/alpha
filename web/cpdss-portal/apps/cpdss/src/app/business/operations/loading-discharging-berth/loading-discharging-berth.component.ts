@@ -108,14 +108,14 @@ export class LoadingDischargingBerthComponent implements OnInit {
 * initialise berth details form
 */
   initFormArray() {
-    if (this.selectedBerths.length && this.availableBerths.length) {
+    if (this.selectedBerths?.length && this.availableBerths?.length) {
       this.selectedBerths = this.selectedBerths.map((berth) => {
         const foundedBerth = this.availableBerths.find((availBerth) => availBerth.berthId === berth.berthId);
-        berth.berthName = foundedBerth.berthName;
+        berth.berthName = foundedBerth?.berthName;
         return berth;
       });
       this.availableBerths = this.availableBerths.map(availBerth => this.selectedBerths.find(selectedBerth => selectedBerth.berthId === availBerth.berthId) || availBerth);
-      const initialBerthArray = this.selectedBerths.map((selectedBerth, i) => this.createBerth(selectedBerth, i));
+      const initialBerthArray = this.selectedBerths.map((selectedBerth, i) => this.createBerth(selectedBerth));
       this.berthForm = this.fb.group({
         berth: this.fb.array([...initialBerthArray])
       });
@@ -134,9 +134,9 @@ export class LoadingDischargingBerthComponent implements OnInit {
   *
   * @memberof LoadingDischargingBerthComponent
   */
-  createBerth(berth: IBerth, index: number): FormGroup {
+  createBerth(berth: IBerth): FormGroup {
     return this.fb.group({
-      name: this.fb.control(berth, [LoadingBerthDuplicateValidator(index)]),
+      name: this.fb.control(berth, [LoadingBerthDuplicateValidator]),
       edit: berth ? false : true
     });
   }
@@ -185,7 +185,21 @@ export class LoadingDischargingBerthComponent implements OnInit {
       this.disableAddBtn = false;
     }
     else {
-      this.berthFormArray.push(this.createBerth(berth, index));
+      let required;
+      this.berthFormArray.controls.forEach((berthDetails, i) => {
+        if (!berthDetails?.value?.name) {
+          required = true;
+          berthDetails.updateValueAndValidity();
+        } else {
+          this.berthFormArray.at(i).patchValue({
+            edit: false
+          })
+        }
+      });
+      if(!required) {
+        this.berthFormArray.push(this.createBerth(berth));
+      }
+      
     }
   }
 
@@ -195,6 +209,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @memberof LoadingDischargingBerthComponent
    */
   onBerthChange(event, index) {
+    this.updateFormValidity(this.berthFormArray.controls)
     const formControl = this.field(index, 'name');
     if (formControl.valid) {
       this.selectedBerths.push(event.value);
@@ -207,6 +222,48 @@ export class LoadingDischargingBerthComponent implements OnInit {
       })
       this.berthChange.emit(this.selectedBerths);
     }
+  }
+
+    /**
+     * Update validity of invalid rows if valid
+     *
+     * @memberof LoadingDischargingBerthComponent
+    */
+    updateFormValidity(formArray) {
+      formArray.forEach(async (row: FormGroup, index) => {
+        if (row.invalid && row.touched) {
+          const invalidFormControls = this.findInvalidControlsRecursive(row);
+          invalidFormControls.forEach((key) => {
+            const formControl = this.field(index, key);
+            formControl.updateValueAndValidity();
+          });
+        }
+      })
+    }
+
+  /**
+   * Method get all invalid fields in a row
+   *
+   * @private
+   * @param {FormGroup} formToInvestigate
+   * @returns {string[]}
+   * @memberof LoadingDischargingBerthComponent
+   */
+  private findInvalidControlsRecursive(formToInvestigate: FormGroup): string[] {
+    const invalidControls: string[] = [];
+    const recursiveFunc = (form: FormGroup | FormArray) => {
+      Object.keys(form.controls).forEach(field => {
+        const control = form.get(field);
+        if (control.invalid) invalidControls.push(field);
+        if (control instanceof FormGroup) {
+          recursiveFunc(control);
+        } else if (control instanceof FormArray) {
+          recursiveFunc(control);
+        }
+      });
+    }
+    recursiveFunc(formToInvestigate);
+    return invalidControls;
   }
 
   /**
@@ -315,7 +372,6 @@ export class LoadingDischargingBerthComponent implements OnInit {
       }
     });
     this.berthDetailsForm.enable();
- 
   }
 
   /**
@@ -337,7 +393,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
       rejectIcon: 'pi',
       rejectButtonStyleClass: 'btn btn-main',
       accept: async () => {
-        if (this.selectedBerths?.length > 1) {
+        if (this.selectedBerths?.length > 1 && event.value.name) {
           this.selectedBerths = this.selectedBerths?.filter((berth) => berth.berthId !== event.value.name.berthId) ?? [];
           this.berthFormArray.removeAt(index);
           if (this.selectedBerths?.length > 0) {
@@ -347,13 +403,16 @@ export class LoadingDischargingBerthComponent implements OnInit {
             this.berthDetailsForm.disable();
           }
           this.berthChange.emit(this.selectedBerths);
-        }
-        else {
+        } else if(!event.value.name) {
+          this.berthFormArray.removeAt(index);
+        } else {
           this.messageService.add({ severity: 'warn', summary: translationKeys['BERTH_DELETE_ERROR'], detail: translationKeys['BERTH_ERROR_SUMMARY'] });
         }
       }
+      
 
     });
+    
   }
 
   /**

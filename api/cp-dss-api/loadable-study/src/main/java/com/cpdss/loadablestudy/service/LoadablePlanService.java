@@ -2868,4 +2868,24 @@ public class LoadablePlanService {
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
   }
+
+    public LoadableStudy.UpdateUllageReply.Builder getUllage(
+            LoadableStudy.UpdateUllageRequest request,
+            LoadableStudy.UpdateUllageReply.Builder replyBuilder)
+            throws GenericServiceException {
+        Optional<LoadablePattern> loadablePatternOpt =
+                this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+        if (!loadablePatternOpt.isPresent()) {
+            throw new GenericServiceException(
+                    INVALID_LOADABLE_PATTERN_ID,
+                    CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                    HttpStatusCode.BAD_REQUEST);
+        }
+        UllageUpdateResponse algoResponse =
+                this.callAlgoUllageUpdateApi(
+                        this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+        replyBuilder.setLoadablePlanStowageDetails(this.buildUpdateUllageReply(algoResponse, request));
+        replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+        return replyBuilder;
+    }
 }

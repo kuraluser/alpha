@@ -14,17 +14,21 @@ import com.cpdss.loadingplan.entity.CargoToppingOffSequence;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
+import com.cpdss.loadingplan.repository.LoadingDelayReasonRepository;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class LoadingInformationBuilderService {
+
+  @Autowired LoadingDelayReasonRepository loadingDelayReasonRepository;
 
   public LoadingDetails buildLoadingDetailsMessage(LoadingInformation var1) {
     LoadingDetails.Builder builder = LoadingDetails.newBuilder();
@@ -181,6 +185,13 @@ public class LoadingInformationBuilderService {
       builder.addReasons(builder1);
     }
     for (com.cpdss.loadingplan.entity.LoadingDelay var : list6) {
+      List<LoadingDelayReason> activeReasons =
+          loadingDelayReasonRepository.findAllByLoadingDelayAndIsActiveTrue(var);
+      var.setLoadingDelayReasons(
+          new ArrayList<>()); // always set empty array, as the Lazy fetch not works :(
+      if (!activeReasons.isEmpty()) {
+        var.setLoadingDelayReasons(activeReasons);
+      }
       LoadingDelays.Builder builder1 = LoadingDelays.newBuilder();
       builder1.setId(var.getId());
       Optional.ofNullable(var.getLoadingInformation().getId())

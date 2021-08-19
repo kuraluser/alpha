@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities } from '../../voyage-status/models/voyage-status.model';
-import { QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { IBallastQuantities, IShipBallastTank, } from '../../voyage-status/models/voyage-status.model';
+import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
-import { ICargoQuantities, IShipCargoTank, ITank } from '../../core/models/common.model';
+import { ICargoQuantities, IShipCargoTank, ITank, ILoadableQuantityCargo } from '../../core/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 /**
  * Transformation Service for arrival condition
@@ -44,32 +44,6 @@ export class ArrivalConditionTransformationService {
       }
     }
     return ballastTank;
-  }
-
-  /**
-* Method for formatting ballast tanks data
-*
-* @param {IShipBunkerTank} bunkerTank
-* @param {IBunkerQuantities[]} bunkerTankQuantities
-* @returns {IShipBunkerTank}
-* @memberof VoyageStatusTransformationService
-*/
-  formatBunkerTanks(bunkerTank: IShipBunkerTank[][], bunkerTankQuantities: IBunkerQuantities[], mode: OHQ_MODE): IShipBunkerTank[][] {
-
-    for (let groupIndex = 0; groupIndex < bunkerTank?.length; groupIndex++) {
-      for (let tankIndex = 0; tankIndex < bunkerTank[groupIndex].length; tankIndex++) {
-        for (let index = 0; index < bunkerTankQuantities.length; index++) {
-          if (bunkerTankQuantities[index]?.tankId === bunkerTank[groupIndex][tankIndex]?.id) {
-            bunkerTank[groupIndex][tankIndex].commodity = bunkerTankQuantities[index];
-            const quantity = mode === OHQ_MODE.ARRIVAL ? bunkerTank[groupIndex][tankIndex]?.commodity?.actualArrivalQuantity : bunkerTank[groupIndex][tankIndex]?.commodity?.actualDepartureQuantity;
-            bunkerTank[groupIndex][tankIndex].commodity.quantity = quantity ? Number(quantity.toFixed(2)) : 0;
-            bunkerTank[groupIndex][tankIndex].commodity.volume = bunkerTank[groupIndex][tankIndex].commodity?.density ? bunkerTank[groupIndex][tankIndex].commodity.quantity / bunkerTank[groupIndex][tankIndex].commodity?.density : 0;
-            break;
-          }
-        }
-      }
-    }
-    return bunkerTank;
   }
 
   /**
@@ -116,5 +90,32 @@ export class ArrivalConditionTransformationService {
       fillingratio = 0;
     }
     return fillingratio;
+  }
+
+  /**
+   * Format congo condition data
+   * @returns {object}
+  */
+  formatCargoCondition(loadableQuantityCargoDetails: ILoadableQuantityCargo) {
+    const data = <ICargoConditions>{};
+    data.abbreviation = loadableQuantityCargoDetails.cargoAbbreviation;
+    data.actualWeight =  0;
+    data.plannedWeight = 0;
+    data.colorCode = loadableQuantityCargoDetails.colorCode;
+    return data;
+  }
+
+  /**
+   * Format congo quantity data
+   * @returns {object}
+  */
+  formatCargoQuantities(value: any, loadableQuantityCargoDetails: ILoadableQuantityCargo) {
+    const data = <ICargoQuantities> {};
+    data.abbreviation = loadableQuantityCargoDetails.cargoAbbreviation;
+    data.actualWeight = 0;
+    data.api = value.api;
+    data.cargoId = loadableQuantityCargoDetails.cargoId;
+    data.colorCode = loadableQuantityCargoDetails.colorCode;
+    return data;
   }
 }

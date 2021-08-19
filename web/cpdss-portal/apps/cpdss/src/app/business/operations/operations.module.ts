@@ -16,6 +16,9 @@ import { LoadingDischargingTransformationService } from './services/loading-disc
 import { QuantityPipeModule } from '../../shared/pipes/quantity/quantity-pipe.module';
 import { QuantityPipe } from '../../shared/pipes/quantity/quantity.pipe';
 import { OperationsApiService } from './services/operations-api.service';
+import { RateUnitDropdownModule } from '../core/components/rate-unit-dropdown/rate-unit-dropdown.module';
+import { QuantityDecimalFormatPipe } from '../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
+import { QuantityDecimalFormatPipeModule } from '../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
 
 /**
  * Module class for operations module
@@ -37,8 +40,10 @@ import { OperationsApiService } from './services/operations-api.service';
     PortRotationRibbonModule,
     AddPortPopupModule,
     RulesModule,
-    QuantityPipeModule
+    QuantityPipeModule,
+    RateUnitDropdownModule,
+    QuantityDecimalFormatPipeModule
   ],
-  providers: [VesselsApiService, RulesService, LoadingDischargingTransformationService, QuantityPipe, OperationsApiService ]
+  providers: [VesselsApiService, RulesService, LoadingDischargingTransformationService, QuantityPipe, OperationsApiService, QuantityDecimalFormatPipe ]
 })
 export class OperationsModule { }

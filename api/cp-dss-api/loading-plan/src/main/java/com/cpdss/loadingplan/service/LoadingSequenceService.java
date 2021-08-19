@@ -91,6 +91,7 @@ public class LoadingSequenceService {
     builder.setVoyageId(loadingInfoOpt.get().getVoyageId());
     builder.setPortId(loadingInfoOpt.get().getPortXId());
     builder.setLoadablePatternId(loadingInfoOpt.get().getLoadablePatternXId());
+    builder.setPortRotationId(loadingInfoOpt.get().getPortRotationXId());
     List<LoadingSequence> loadingSequences =
         loadingSequenceRepository.findByLoadingInformationAndIsActiveOrderBySequenceNumber(
             loadingInfoOpt.get(), true);

@@ -82,10 +82,11 @@ public class LoadableStudyServiceShore {
         new Gson().fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadableStudy.class);
 
     Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyage());
+    ModelMapper modelMapper = new ModelMapper();
     if (!checkIfLoadableStudyExist(loadableStudy.getName(), voyage)) {
 
       try {
-        ModelMapper modelMapper = new ModelMapper();
+
         loadableStudyEntity = saveLoadableStudyShore(loadableStudy, voyage);
         saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity);
         saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy, modelMapper);
@@ -97,6 +98,12 @@ public class LoadableStudyServiceShore {
       } catch (IOException e) {
         e.printStackTrace();
       }
+    } else {
+      loadableStudyEntity =
+          loadableStudyRepository.findByVoyageAndNameIgnoreCaseAndIsActiveAndPlanningTypeXId(
+              voyage, loadableStudy.getName(), true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
+      saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity);
+      saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy, modelMapper);
     }
     return loadableStudyEntity;
   }
@@ -154,12 +161,27 @@ public class LoadableStudyServiceShore {
               }
             });
     this.commingleCargoRepository.saveAll(commingleEntities);
-
+    List<CargoNomination> existingCargoNominationList =
+        this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
+            loadableStudyEntity.getId(), true);
     List<CargoNomination> cargoNominationEntities = new ArrayList<>();
     loadableStudy.getCargoNomination().stream()
         .forEach(
             cargoNom -> {
-              CargoNomination cargoNomination = new CargoNomination();
+              Optional<CargoNomination> existingCargoNomination = null;
+              CargoNomination cargoNomination = null;
+              if (!existingCargoNominationList.isEmpty()) {
+                existingCargoNomination =
+                    existingCargoNominationList.stream()
+                        .filter(
+                            exCargo ->
+                                (exCargo.getAbbreviation().equals(cargoNom.getAbbreviation())
+                                    && exCargo.getColor().equals(cargoNom.getColor())))
+                        .findFirst();
+              }
+              if (existingCargoNomination != null) {
+                cargoNomination = existingCargoNomination.get();
+              } else cargoNomination = new CargoNomination();
               cargoNomination.setLoadableStudyXId(loadableStudyEntity.getId());
               cargoNomination =
                   buildCargoNomination(
@@ -460,6 +482,7 @@ public class LoadableStudyServiceShore {
     loadableStudyPortRotation.setActive(true);
     CargoOperation operation = this.cargoOperationRepository.getOne(portRotation.getOperationId());
     loadableStudyPortRotation.setOperation(operation);
+    loadableStudyPortRotation.setIsPortRotationOhqComplete(true);
     if (!synopticalTableDetails.isEmpty()) {
       List<SynopticalTable> synopticalTableList =
           synopticalTableDetails.stream()
@@ -515,8 +538,7 @@ public class LoadableStudyServiceShore {
             ? null
             : new BigDecimal(request.getDepartureVolume()));
 
-    // entity.setDensity(isEmpty(request.getDensity()) ? null : new
-    // BigDecimal(request.getDensity()));
+    entity.setDensity(isEmpty(request.getDensity()) ? null : new BigDecimal(request.getDensity()));
     if (request.getPortId() != null) {
       LoadableStudyPortRotation lsPortRot =
           loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(

@@ -68,10 +68,8 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
         }
       }
 
-      if (!delay.getReasonForDelayIdsList().isEmpty()) {
-        buildLoadingDelay(delay, loadingDelay);
-        loadingDelayRepository.save(loadingDelay);
-      }
+      buildLoadingDelay(delay, loadingDelay);
+      loadingDelayRepository.save(loadingDelay);
       log.info(
           "Loading Delay Saved Id {}, Reasons {}",
           loadingDelay.getId(),
@@ -123,8 +121,9 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
   }
 
   private void deleteDelayReasons(List<LoadingDelayReason> reasonList) {
-    reasonList.forEach(v -> v.setIsActive(false));
-    loadingDelayReasonRepository.saveAll(reasonList);
+    reasonList.stream()
+        .map(LoadingDelayReason::getId)
+        .forEach(loadingDelayReasonRepository::deleteLoadingDelayReasonById);
   }
 
   private void deleteDelayAndReasons(com.cpdss.loadingplan.entity.LoadingDelay delay) {

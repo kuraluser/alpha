@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, EventEmitter, Output , ViewChild } from '@angular/core';
-import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
+import { QUANTITY_UNIT, RATE_UNIT } from '../../../../shared/models/common.model';
 import { ICargoVesselTankDetails, ILoadingDischargingStages, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { MessageService } from 'primeng/api';
@@ -27,13 +27,13 @@ export class LoadingInformationComponent implements OnInit {
   @ViewChild('manageSequence') manageSequence;
   @ViewChild('dischargeBerth') dischargeBerth;
   @ViewChild('machineryRef') machineryRef;
-  
+
   @Input() voyageId: number;
   @Input() vesselId: number;
   @Input() get cargos(): ICargo[] {
     return this._cargos;
   }
-  
+
   set cargos(cargos: ICargo[]) {
     this._cargos = cargos;
   }
@@ -63,6 +63,7 @@ export class LoadingInformationComponent implements OnInit {
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   hasUnSavedData = false;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+  currentRateSelectedUnit = <RATE_UNIT>localStorage.getItem('rate_unit');
   readonly OPERATIONS = OPERATIONS;
 
   constructor(private loadingDischargingInformationApiService: LoadingDischargingInformationApiService,
@@ -85,7 +86,7 @@ export class LoadingInformationComponent implements OnInit {
   */
   private async initSubscriptions() {
     this.loadingDischargingTransformationService.unitChange$.subscribe((res) => {
-      this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit
+      this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
     })
   }
@@ -251,13 +252,19 @@ export class LoadingInformationComponent implements OnInit {
 */
   async saveLoadingInformationData() {
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_INVALID_DATA','LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY', 'LOADING_INFORMATION_NO_BERTHS']).toPromise();
-   const isMachineryValid = await this.machineryRef.isMachineryValid();
+
     if(this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid) {
       this.manageSequence.loadingDischargingSequenceForm.markAsDirty();
       this.manageSequence.loadingDischargingSequenceForm.markAllAsTouched();
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_INVALID_DATA'] });
       return;
-    } else if(!isMachineryValid) {
+    }
+    const isMachineryValid = await this.machineryRef.isMachineryValid();
+    if(!isMachineryValid) {
+      return;
+    }
+    const iscargoAdded = await this.manageSequence.checkCargoCount();
+    if(!iscargoAdded) {
       return;
     }
     if(this.hasUnSavedData){

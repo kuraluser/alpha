@@ -9,6 +9,7 @@ import { LoadingDischargingCargoDetailsTableModule } from './../loading-discharg
 import { BallastLayoutModule } from '../../../business/core/components/ballast-layout/ballast-layout.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
+import { CargoToBeLoadedDischargedModule } from '../cargo-to-be-loaded-discharged/cargo-to-be-loaded-discharged.module';
 
 /**
  * Module for Departure condition block
@@ -26,7 +27,8 @@ import { TooltipModule } from 'primeng/tooltip';
     LoadingDischargingCargoDetailsTableModule,
     BallastLayoutModule,
     TranslateModule,
-    TooltipModule
+    TooltipModule,
+    CargoToBeLoadedDischargedModule
   ],
   exports: [DepartureConditionComponent],
   providers: [DepartureConditionTransformationService]

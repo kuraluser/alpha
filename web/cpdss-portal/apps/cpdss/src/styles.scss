@@ -10,6 +10,7 @@ body {
 body {
   font-family: 'Play', sans-serif;
   font-size: $font-size-normal!important;
+  overflow-x: hidden;
 }
 
 a {
@@ -2828,7 +2829,7 @@ textarea{
 .calendar-f-w {
   span.p-calendar {
     width: 100%;
-  } 
+  }
   &.fleet-calendar {
     input.p-inputtext {
       font-size: 11px;
@@ -2906,4 +2907,90 @@ textarea{
 
 .main-content-loading-and-discharging{
   max-width: calc(100% - 455px);
+}
+
+.sequence-chart-tank-column {
+  padding: 31px 16px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-chart-cargo-column {
+  padding: 31px 4.75px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-chart-ullage-column {
+  padding: 38.25px 3px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-chart-quantity-column {
+  padding: 31px 0px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-chart-cargo-pump-column {
+  padding: 31px 4.75px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-chart-ballast-column {
+  padding: 31px 4.75px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-chart-ballast-pump-column {
+  padding: 31px 4.75px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-icon {
+  color: #666666;
+  font-size: 1.5em;
+}
+
+.cow-legend {
+  .list-group-item {
+    background: none;
+    border: none;
+
+    .cow-legend-icon {
+      color: #666666; //TODO: need to be moved to theme file
+      font-size: 1.5em;
+      padding-right: 5px;
+      margin-top: -2px;
+    }
+
+    .cow-legend-label {
+      vertical-align: top;
+    }
+  }
+}
+
+.stabilityparams-chart {
+  .table-border {
+    stroke: #bebebe; //TODO: need to be moved to theme file
+    stroke-width: 1;
+  }
 }

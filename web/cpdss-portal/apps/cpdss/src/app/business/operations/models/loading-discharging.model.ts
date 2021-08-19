@@ -669,3 +669,64 @@ export interface ILoadedCargo extends ILoadableQuantityCargo {
   Strip_Eductor =  6 ,
   COW_Pump = 7
 }
+
+/**
+* Interface for loading plan details
+*
+* @export
+* @interface ILoadingPlanDetails
+*/
+export interface ILoadingPlanDetails {
+  cargoTanks: IShipCargoTank[][];
+  loadingInformation: ILoadingInformationResponse;
+  planBallastDetails: IPlanBallastAndRob[];
+  planRobDetails: IPlanBallastAndRob[];
+  planStabilityParams: IPlanStabilityParams[];
+  planStowageDetails: IPlanStowageDetails[];
+}
+
+/**
+* Interface for ballast and rob details
+*
+* @export
+* @interface IPlanBallastAndRob
+*/
+export interface IPlanBallastAndRob {
+  conditionType: number;
+  quantityM3: string;
+  quantityMT: string;
+  sounding: string;
+  tankId: number;
+  tankName: string;
+  valueType: number;
+}
+
+/**
+* Interface for loading plan stowage details
+*
+* @export
+* @interface IPlanStabilityParams
+*/
+export interface IPlanStabilityParams {
+  aftDraft: string;
+  bm: string;
+  conditionType: number;
+  foreDraft: string;
+  meanDraft: string;
+  sf: string;
+  trim: string;
+  valueType: number;
+}
+
+export interface IPlanStowageDetails {
+  api: string;
+  cargoNominationId: number;
+  conditionType: number;
+  quantityM3: string;
+  quantityMT: string;
+  tankId: string;
+  tankName: string;
+  temperature: string;
+  ullage: string;
+  valueType: number;
+}

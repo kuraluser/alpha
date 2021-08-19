@@ -7,6 +7,9 @@ import com.cpdss.loadingplan.entity.LoadingDelayReason;
 import com.cpdss.loadingplan.entity.ReasonForDelay;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface LoadingDelayReasonRepository
     extends CommonCrudRepository<LoadingDelayReason, Long> {
@@ -17,4 +20,9 @@ public interface LoadingDelayReasonRepository
       LoadingDelay var1, ReasonForDelay var2);
 
   List<LoadingDelayReason> findAllByLoadingDelayAndIsActiveTrue(LoadingDelay var1);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadingDelayReason SET isActive = false WHERE id = ?1")
+  int deleteLoadingDelayReasonById(Long id);
 }

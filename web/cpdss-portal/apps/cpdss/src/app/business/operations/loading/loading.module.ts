@@ -29,6 +29,7 @@ import { LoadingDischargingInformationApiService } from '../services/loading-dis
 import { LoadingDischargingManageSequenceModule } from '../loading-discharging-manage-sequence/loading-discharging-manage-sequence.module';
 import { LoadingInstructionApiService } from './../services/loading-instruction-api.service';
 import { CargoToBeLoadedDischargedModule } from '../cargo-to-be-loaded-discharged/cargo-to-be-loaded-discharged.module';
+import { LoadingPlanApiService } from './../services/loading-plan-api.service';
 import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
 
 /**
@@ -72,6 +73,6 @@ import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-
     QuantityDecimalFormatPipeModule
 
   ],
-  providers: [LoadingDischargingInformationApiService, LoadingInstructionApiService],
+  providers: [LoadingDischargingInformationApiService, LoadingInstructionApiService, LoadingPlanApiService],
 })
 export class LoadingModule { }

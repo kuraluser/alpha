@@ -85,6 +85,7 @@
   </div>
 
   <div class="row" *ngIf="currentTab === OPERATION_TAB.PLAN">
-    <cpdss-portal-loading-plan [cargos]="cargos"></cpdss-portal-loading-plan>
+    <cpdss-portal-loading-plan [cargos]="cargos" [vesselId]="vesselId" [voyageId]="voyageId"
+    [portRotationId]="portRotationId" [loadingInfoId]="loadingInfoId"></cpdss-portal-loading-plan>
   </div>
 </div>
