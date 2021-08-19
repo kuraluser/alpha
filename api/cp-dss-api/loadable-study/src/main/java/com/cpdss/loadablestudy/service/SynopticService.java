@@ -137,6 +137,9 @@ public class SynopticService {
         this.loadablePlanStowageBallastDetailsRepository
             .findByLoadablePatternIdAndPortRotationIdAndIsActive(
                 request.getPatternId(), request.getPortRotationId(), true);
+    if (!ballastDetails.isEmpty()) {
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    }
     ballastDetails.forEach(
         ballast -> {
           LoadablePlanBallastDetails.Builder ballastBuilder =

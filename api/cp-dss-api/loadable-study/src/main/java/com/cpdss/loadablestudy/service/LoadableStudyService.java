@@ -1532,8 +1532,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           } catch (IOException e) {
             log.error("FileNotFoundException in buildLoadableAttachment", e);
           }
-          List<com.cpdss.loadablestudy.domain.LoadableStudyAttachment> attachmentList = loadableStudy.getLoadableStudyAttachment();
-          if(attachmentList == null){
+          List<com.cpdss.loadablestudy.domain.LoadableStudyAttachment> attachmentList =
+              loadableStudy.getLoadableStudyAttachment();
+          if (attachmentList == null) {
             attachmentList = new ArrayList<>();
           }
           attachmentList.add(loadableAttachDto);
