@@ -14,4 +14,5 @@ public class OnHandQuantity {
   private String arrivalQuantity;
   private String departureVolume;
   private String departureQuantity;
+  private String density;
 }
