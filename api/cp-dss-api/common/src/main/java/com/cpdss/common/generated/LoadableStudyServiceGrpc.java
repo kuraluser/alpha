@@ -2163,6 +2163,53 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
+          com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
+      getGetUllageMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getUllage",
+      requestType = com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.UpdateUllageReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
+          com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
+      getGetUllageMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
+            com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
+        getGetUllageMethod;
+    if ((getGetUllageMethod = LoadableStudyServiceGrpc.getGetUllageMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetUllageMethod = LoadableStudyServiceGrpc.getGetUllageMethod) == null) {
+          LoadableStudyServiceGrpc.getGetUllageMethod =
+              getGetUllageMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
+                          com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "getUllage"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.UpdateUllageReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("getUllage"))
+                      .build();
+        }
+      }
+    }
+    return getGetUllageMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
           com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
       getConfirmPlanStatusMethod;
@@ -3868,6 +3915,14 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getUllage(
+        com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
+            responseObserver) {
+      asyncUnimplementedUnaryCall(getGetUllageMethod(), responseObserver);
+    }
+
+    /** */
     public void confirmPlanStatus(
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
@@ -4391,6 +4446,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
                       com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>(
                       this, METHODID_UPDATE_ULLAGE)))
+          .addMethod(
+              getGetUllageMethod(),
+              asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
+                      com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>(
+                      this, METHODID_GET_ULLAGE)))
           .addMethod(
               getConfirmPlanStatusMethod(),
               asyncUnaryCall(
@@ -5056,6 +5118,15 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public void getUllage(
+        com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
+            responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getGetUllageMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /** */
     public void confirmPlanStatus(
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
@@ -5668,6 +5739,12 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
+    public com.cpdss.common.generated.LoadableStudy.UpdateUllageReply getUllage(
+        com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request) {
+      return blockingUnaryCall(getChannel(), getGetUllageMethod(), getCallOptions(), request);
+    }
+
+    /** */
     public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply confirmPlanStatus(
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
       return blockingUnaryCall(
@@ -6255,6 +6332,13 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>
+        getUllage(com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request) {
+      return futureUnaryCall(getChannel().newCall(getGetUllageMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>
         confirmPlanStatus(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
       return futureUnaryCall(
@@ -6519,32 +6603,33 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_STUDY_STATUS = 39;
   private static final int METHODID_GET_LOADABLE_PLAN_DETAILS = 40;
   private static final int METHODID_UPDATE_ULLAGE = 41;
-  private static final int METHODID_CONFIRM_PLAN_STATUS = 42;
-  private static final int METHODID_CONFIRM_PLAN = 43;
-  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 44;
-  private static final int METHODID_SAVE_COMMENT = 45;
-  private static final int METHODID_SAVE_LOAD_ON_TOP = 46;
-  private static final int METHODID_GET_VOYAGES = 47;
-  private static final int METHODID_GET_LOADABLE_PLAN_REPORT = 48;
-  private static final int METHODID_GET_ALGO_ERRORS = 49;
-  private static final int METHODID_SAVE_VOYAGE_STATUS = 50;
-  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 51;
-  private static final int METHODID_GET_ALL_CARGO_HISTORY = 52;
-  private static final int METHODID_SAVE_JSON = 53;
-  private static final int METHODID_SAVE_ALGO_ERRORS = 54;
-  private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 55;
-  private static final int METHODID_GET_CARGO_HISTORY_BY_CARGO = 56;
-  private static final int METHODID_GET_ACTIVE_VOYAGES_BY_VESSEL = 57;
-  private static final int METHODID_GET_SYNOPTIC_DATA_FOR_LOADING_PLAN = 58;
-  private static final int METHODID_SAVE_LOADING_INFO_TO_SYNOPTIC_DATA = 59;
-  private static final int METHODID_GET_OR_SAVE_RULES_FOR_LOADABLE_STUDY = 60;
-  private static final int METHODID_GET_LOADABLE_PATTERN_DETAILS_JSON = 61;
-  private static final int METHODID_GET_LOADABLE_PATTERN_BY_VOYAGE_AND_STATUS = 62;
-  private static final int METHODID_GET_CARGO_NOMINATION_BY_CARGO_NOMINATION_ID = 63;
-  private static final int METHODID_GET_LOADABLE_COMMINGLE_BY_PATTERN_ID = 64;
-  private static final int METHODID_GET_LOADABLE_STUDY_SHORE = 65;
-  private static final int METHODID_GET_LOADABLE_STUDY_PORT_ROTATION_BY_PORT_ROTATION_ID = 66;
-  private static final int METHODID_GET_LOADABLE_STUDY_SIMULATOR_JSON_DATA = 67;
+  private static final int METHODID_GET_ULLAGE = 42;
+  private static final int METHODID_CONFIRM_PLAN_STATUS = 43;
+  private static final int METHODID_CONFIRM_PLAN = 44;
+  private static final int METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT = 45;
+  private static final int METHODID_SAVE_COMMENT = 46;
+  private static final int METHODID_SAVE_LOAD_ON_TOP = 47;
+  private static final int METHODID_GET_VOYAGES = 48;
+  private static final int METHODID_GET_LOADABLE_PLAN_REPORT = 49;
+  private static final int METHODID_GET_ALGO_ERRORS = 50;
+  private static final int METHODID_SAVE_VOYAGE_STATUS = 51;
+  private static final int METHODID_GET_CARGO_API_TEMP_HISTORY = 52;
+  private static final int METHODID_GET_ALL_CARGO_HISTORY = 53;
+  private static final int METHODID_SAVE_JSON = 54;
+  private static final int METHODID_SAVE_ALGO_ERRORS = 55;
+  private static final int METHODID_FETCH_ALL_ALGO_ERRORS = 56;
+  private static final int METHODID_GET_CARGO_HISTORY_BY_CARGO = 57;
+  private static final int METHODID_GET_ACTIVE_VOYAGES_BY_VESSEL = 58;
+  private static final int METHODID_GET_SYNOPTIC_DATA_FOR_LOADING_PLAN = 59;
+  private static final int METHODID_SAVE_LOADING_INFO_TO_SYNOPTIC_DATA = 60;
+  private static final int METHODID_GET_OR_SAVE_RULES_FOR_LOADABLE_STUDY = 61;
+  private static final int METHODID_GET_LOADABLE_PATTERN_DETAILS_JSON = 62;
+  private static final int METHODID_GET_LOADABLE_PATTERN_BY_VOYAGE_AND_STATUS = 63;
+  private static final int METHODID_GET_CARGO_NOMINATION_BY_CARGO_NOMINATION_ID = 64;
+  private static final int METHODID_GET_LOADABLE_COMMINGLE_BY_PATTERN_ID = 65;
+  private static final int METHODID_GET_LOADABLE_STUDY_SHORE = 66;
+  private static final int METHODID_GET_LOADABLE_STUDY_PORT_ROTATION_BY_PORT_ROTATION_ID = 67;
+  private static final int METHODID_GET_LOADABLE_STUDY_SIMULATOR_JSON_DATA = 68;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -6853,6 +6938,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>)
                   responseObserver);
           break;
+        case METHODID_GET_ULLAGE:
+          serviceImpl.getUllage(
+              (com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>)
+                  responseObserver);
+          break;
         case METHODID_CONFIRM_PLAN_STATUS:
           serviceImpl.confirmPlanStatus(
               (com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest) request,
@@ -7135,6 +7227,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadableStudyStatusMethod())
                       .addMethod(getGetLoadablePlanDetailsMethod())
                       .addMethod(getUpdateUllageMethod())
+                      .addMethod(getGetUllageMethod())
                       .addMethod(getConfirmPlanStatusMethod())
                       .addMethod(getConfirmPlanMethod())
                       .addMethod(getDownloadLoadableStudyAttachmentMethod())
