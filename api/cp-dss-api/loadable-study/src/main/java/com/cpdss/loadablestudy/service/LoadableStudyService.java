@@ -2900,7 +2900,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Override
   public void getUllage(
-          UpdateUllageRequest request, StreamObserver<UpdateUllageReply> responseObserver) {
+      UpdateUllageRequest request, StreamObserver<UpdateUllageReply> responseObserver) {
     log.info("Inside get getUllage in loadable study micro service");
     UpdateUllageReply.Builder replyBuilder = UpdateUllageReply.newBuilder();
     try {
@@ -2908,19 +2908,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in get ullage", e);
       replyBuilder.setResponseStatus(
-              ResponseStatus.newBuilder()
-                      .setCode(e.getCode())
-                      .setMessage(e.getMessage())
-                      .setStatus(FAILED)
-                      .build());
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
     } catch (Exception e) {
       log.error("Exception in update ullage", e);
       replyBuilder.setResponseStatus(
-              ResponseStatus.newBuilder()
-                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-                      .setMessage(e.getMessage())
-                      .setStatus(FAILED)
-                      .build());
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
