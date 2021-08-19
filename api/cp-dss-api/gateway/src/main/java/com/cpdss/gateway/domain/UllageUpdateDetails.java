@@ -29,4 +29,6 @@ public class UllageUpdateDetails {
   private BigDecimal api;
 
   private BigDecimal ullage;
+
+  private Boolean isUpdate;
 }

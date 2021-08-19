@@ -25,4 +25,6 @@ public class RobDetail {
   private BigDecimal observedM3;
 
   private BigDecimal fillingRatio;
+
+  private Boolean isUpdate;
 }

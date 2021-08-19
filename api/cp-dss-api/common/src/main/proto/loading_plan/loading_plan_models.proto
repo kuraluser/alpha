@@ -767,6 +767,7 @@ message UpdateUllage{
     int64 fillingRatio = 9;
     int64 api = 10;
     int64 ullage = 11;
+    bool isUpdate = 12;
 }
 
 message BallastUpdate{
@@ -779,6 +780,7 @@ message BallastUpdate{
   int64 observedM3 =7;
   int64 fillingRatio =8;
   int64 sounding = 9;
+  bool isUpdate = 10;
 }
 
 message RobUpdate{
@@ -790,6 +792,7 @@ message RobUpdate{
   int64 quantity =6;
   int64 observedM3 =7;
   int64 fillingRatio =8;
+  bool isUpdate = 11;
 }
 
 message UllageBillRequest{

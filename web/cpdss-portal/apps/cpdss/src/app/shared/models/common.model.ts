@@ -181,6 +181,17 @@ export enum QUANTITY_UNIT {
 }
 
 /**
+ * ENUM for units of rate
+ *
+ * @export
+ * @enum {number}
+ */
+export enum RATE_UNIT {
+  M3_PER_HR = "M3/HR",
+  BBLS_PER_HR = "BBLS/HR",
+}
+
+/**
  * Interface for time zone API response
  *
  * @export
@@ -317,6 +328,11 @@ export interface ISubTotal {
     plannedWeight: number;
     actualWeight: number;
     abbreviation?: string;
+    tankId?: number;
+    colorCode?: string;
+    cargoNominationId?: number;
+    api?: number;
+    temperature?: number;
 }
 
 /**

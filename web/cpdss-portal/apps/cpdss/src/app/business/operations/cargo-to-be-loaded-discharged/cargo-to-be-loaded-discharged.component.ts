@@ -104,7 +104,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
   * @memberof LoadingDischargingCargoDetailsComponent
   */
   updateCargoTobeLoadedData() {
-    this.cargoTobeLoadedDischarged = this.cargoVesselTankDetails.loadableQuantityCargoDetails?.map(cargo => {
+    this.cargoTobeLoadedDischarged = this.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(cargo => {
       if (cargo) {
         const minTolerence = this.loadingDischargingTransformationService.decimalConvertion(this._decimalPipe, cargo.minTolerence, '0.2-2');
         const maxTolerence = this.loadingDischargingTransformationService.decimalConvertion(this._decimalPipe, cargo.maxTolerence, '0.2-2');
@@ -116,7 +116,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
         cargo.orderedQuantity = this.quantityDecimalFormatPipe.transform(orderedQuantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,'');
         const loadableMT = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
         cargo.loadableMT = this.quantityDecimalFormatPipe.transform(loadableMT,this.currentQuantitySelectedUnit).toString().replace(/,/g,'');
-``
+
         const slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.slopQuantity.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
         cargo.slopQuantity = slopQuantity;
         cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');

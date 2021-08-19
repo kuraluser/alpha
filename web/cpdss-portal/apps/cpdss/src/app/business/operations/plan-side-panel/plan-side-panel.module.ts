@@ -8,6 +8,7 @@ import { DepartureConditionPanelModule } from './../departure-condition-panel/de
 import { PanelModule } from 'primeng/panel';
 import { ArrivalConditionPanelModule } from './../arrival-condition-panel/arrival-condition-panel.module';
 import { LoadingDischargingBerthModule } from '../loading-discharging-berth/loading-discharging-berth.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 /**
  * Module for plan tab side panel
@@ -24,7 +25,8 @@ import { LoadingDischargingBerthModule } from '../loading-discharging-berth/load
     LoadingRateModule,
     DepartureConditionPanelModule,
     ArrivalConditionPanelModule,
-    LoadingDischargingBerthModule
+    LoadingDischargingBerthModule,
+    TranslateModule
   ],
   exports: [PlanSidePanelComponent],
   providers: [PlanSidePanelTransformationService]

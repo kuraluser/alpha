@@ -482,6 +482,7 @@ public class LoadableStudyServiceShore {
     loadableStudyPortRotation.setActive(true);
     CargoOperation operation = this.cargoOperationRepository.getOne(portRotation.getOperationId());
     loadableStudyPortRotation.setOperation(operation);
+    loadableStudyPortRotation.setIsPortRotationOhqComplete(true);
     if (!synopticalTableDetails.isEmpty()) {
       List<SynopticalTable> synopticalTableList =
           synopticalTableDetails.stream()

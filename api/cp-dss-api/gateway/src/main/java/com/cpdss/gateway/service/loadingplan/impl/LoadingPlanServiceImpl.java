@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -1186,11 +1187,18 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       } else {
         errorValidationLandingMsg = "Required data for Update is missing";
       }
+
+      final Integer i = new Integer(0);
+
+      final AtomicReference<Integer> reference = new AtomicReference<>();
+
       if (inputData.getUllageUpdList().size() > 0) {
         inputData
             .getUllageUpdList()
             .forEach(
                 ullageList -> {
+                  reference.set(Integer.valueOf(ullageList.getLoadingInformationId() + ""));
+
                   updateUllageBuilder
                       .setId(
                           ullageList.getLoadingInformationId() == null
@@ -1225,6 +1233,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setApi(ullageList.getApi() == null ? 0 : ullageList.getApi().longValue())
                       .setUllage(
                           ullageList.getUllage() == null ? 0 : ullageList.getUllage().longValue())
+                      .setIsUpdate(ullageList.getIsUpdate())
                       .build();
                 });
 
@@ -1303,6 +1312,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getSounding() == null
                               ? 0
                               : ullageList.getSounding().longValue())
+                      .setIsUpdate(ullageList.getIsUpdate())
                       .build();
                 });
 
@@ -1348,6 +1358,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getFillingRatio() == null
                               ? 0
                               : ullageList.getFillingRatio().longValue())
+                      .setIsUpdate(ullageList.getIsUpdate())
                       .build();
                 });
 

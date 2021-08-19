@@ -27,4 +27,6 @@ public class BallastDetail {
   private BigDecimal fillingRatio;
 
   private BigDecimal sounding;
+
+  private Boolean isUpdate;
 }

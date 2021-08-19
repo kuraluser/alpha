@@ -1,11 +1,21 @@
-<div class="row">
-    <div class="col-md-12">
-        <cpdss-portal-arrival-condition-panel></cpdss-portal-arrival-condition-panel>
+<div class="row pt-30 heading-border no-gutters mb-10">
+    <div class="col-md-6">
+        <h5 class="text-uppercase">{{'LOADING_DISCHARGING_PLAN_ARRIVAL_CONDITION' | translate}}</h5>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <cpdss-portal-departure-condition-panel></cpdss-portal-departure-condition-panel>
+        <cpdss-portal-arrival-condition-panel [loadingPlanData]="loadingPlanData"></cpdss-portal-arrival-condition-panel>
+    </div>
+</div>
+<div class="row pt-30 heading-border no-gutters mb-10">
+    <div class="col-md-6">
+        <h5 class="text-uppercase">{{'LOADING_DISCHARGING_PLAN_DEPARTURE_CONDITION' | translate}}</h5>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <cpdss-portal-departure-condition-panel [loadingPlanData]="loadingPlanData"></cpdss-portal-departure-condition-panel>
     </div>
 </div>
 

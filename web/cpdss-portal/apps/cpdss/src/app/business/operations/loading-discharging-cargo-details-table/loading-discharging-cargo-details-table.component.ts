@@ -112,6 +112,9 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
     this.totalPlanned = this.totalPlanned ? Number(this.totalPlanned) : 0;
     this.totalActual = this.totalActual ? Number(this.totalActual) : 0;
     this.totalDifference = ((this.totalActual - this.totalPlanned) / this.totalPlanned) * 100;
+    if(isNaN(this.totalDifference)){
+      this.totalDifference = 0;
+    }
     this.totalDifference > 0 ? this.isTotalPositive = true : this.isTotalPositive = false;
   }
 
