@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE } from '../../../shared/components/datatable/datatable.model';
 import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities } from '../../voyage-status/models/voyage-status.model';
-import { QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
-import { ICargoQuantities, IShipCargoTank, ITank } from '../../core/models/common.model';
+import { ICargoQuantities, IShipCargoTank, ITank, ILoadableQuantityCargo } from '../../core/models/common.model';
 
 /**
  * Transformation Service for departure condition
@@ -26,54 +26,54 @@ export class DepartureConditionTransformationService {
    * @memberof DepartureConditionTransformationService
    */
 
-  departureDetailsColumns(){
+  departureDetailsColumns() {
     const columns: IDataTableColumn[] = [
-      { 
+      {
         field: 'cargoName',
         header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_KIND_OF_CARGO',
         editable: false
       },
-      { 
+      {
         field: 'api',
         header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_API',
         editable: false
       },
-      { 
+      {
         field: 'temp',
         header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_TEMP',
         editable: false
       },
-      { 
+      {
         field: 'maxLoadingRate',
         header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_MAX_LOADING_RATE',
         editable: false
       },
-      { 
+      {
         field: 'nomination',
         header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_NOMINATION',
         editable: false
       },
-      { 
+      {
         field: 'shipLoadable',
         header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_SHIP_LOADABLE',
         editable: false
       },
-      { 
+      {
         field: 'tolerance',
         header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_TOLERANCE',
         editable: false
       },
-      { 
+      {
         field: 'difference',
         header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_DIFFERENCE',
         editable: false
       },
-      { 
+      {
         field: 'loadTime',
         header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_LOAD_TIME',
         editable: false
       },
-      { 
+      {
         field: 'slopQty',
         header: 'LOADABLE_PLAN_DEPARTURE_CONDITION_SLOP_QTY',
         editable: false
@@ -179,5 +179,50 @@ export class DepartureConditionTransformationService {
       fillingratio = 0;
     }
     return fillingratio;
+  }
+
+  /**
+  *
+  * Get Formated Loadable Quantity Data
+  * @returns {decimal converted value us number}
+  */
+  decimalConvertion(_decimalPipe: any, value: string | number, decimalType: string) {
+    return _decimalPipe.transform(value, decimalType);
+  }
+
+  /**
+   * parse number from formatted string
+   * @returns {number}
+  */
+  convertToNumber(value: string) {
+    value = value?.replace(/,/g, '');
+    return Number(value)
+  }
+
+  /**
+   * Format congo condition data
+   * @returns {object}
+  */
+  formatCargoCondition(loadableQuantityCargoDetails: ILoadableQuantityCargo) {
+    const data = <ICargoConditions>{};
+    data.abbreviation = loadableQuantityCargoDetails.cargoAbbreviation;
+    data.actualWeight = 0;
+    data.plannedWeight = 0;
+    data.colorCode = loadableQuantityCargoDetails.colorCode;
+    return data;
+  }
+
+  /**
+   * Format congo quantity data
+   * @returns {object}
+  */
+  formatCargoQuantities(value: any, loadableQuantityCargoDetails: ILoadableQuantityCargo) {
+    const data = <ICargoQuantities>{};
+    data.abbreviation = loadableQuantityCargoDetails.cargoAbbreviation;
+    data.actualWeight = 0;
+    data.api = value.api;
+    data.cargoId = loadableQuantityCargoDetails.cargoId;
+    data.colorCode = loadableQuantityCargoDetails.colorCode;
+    return data;
   }
 }

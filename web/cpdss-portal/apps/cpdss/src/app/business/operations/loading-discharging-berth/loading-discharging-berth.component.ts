@@ -108,10 +108,10 @@ export class LoadingDischargingBerthComponent implements OnInit {
 * initialise berth details form
 */
   initFormArray() {
-    if (this.selectedBerths.length && this.availableBerths.length) {
+    if (this.selectedBerths?.length && this.availableBerths?.length) {
       this.selectedBerths = this.selectedBerths.map((berth) => {
         const foundedBerth = this.availableBerths.find((availBerth) => availBerth.berthId === berth.berthId);
-        berth.berthName = foundedBerth.berthName;
+        berth.berthName = foundedBerth?.berthName;
         return berth;
       });
       this.availableBerths = this.availableBerths.map(availBerth => this.selectedBerths.find(selectedBerth => selectedBerth.berthId === availBerth.berthId) || availBerth);

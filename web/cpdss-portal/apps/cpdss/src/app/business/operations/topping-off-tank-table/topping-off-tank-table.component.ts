@@ -39,6 +39,8 @@ export class ToppingOffTankTableComponent implements OnInit {
     }
   }
 
+  @Input() loadingPlanData: any;
+
 
   private _toppingOffSequence: IToppingOffSequence[];
   private _cargos: ICargo[];
@@ -68,12 +70,27 @@ export class ToppingOffTankTableComponent implements OnInit {
         topping.cargoName = cargo?.name;
         topping.cargoAbbreviation = cargo?.abbreviation;
         topping.shortName = foundTank?.shortName;
-        topping.colourCode = foundTank?.commodity?.colorCode;
+        topping.colourCode = foundTank?.commodity?.colorCode ? foundTank?.commodity?.colorCode : this.getColourCode(topping);
         return topping;
       })
       this.toppingOffSequence.sort((a, b) => (a.displayOrder > b.displayOrder) ? 1 : ((b.displayOrder > a.displayOrder) ? -1 : 0))
       this.initiToppingSequenceArray();
     }
+  }
+
+  /**
+* Method to getting colour code
+*
+* @memberof ToppingOffTankTableComponent
+*/
+  getColourCode(data) {
+    let colourCode = '';
+    this.loadingPlanData?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(item => {
+      if (item.cargoId === data.cargoId) {
+        colourCode = item.colorCode;
+      }
+    });
+    return colourCode;
   }
 
   /**
@@ -97,7 +114,7 @@ export class ToppingOffTankTableComponent implements OnInit {
 */
   initiToppingSequenceArray() {
 
-    this.cargoTypeList = Object.values( this.toppingOffSequence?.reduce((acc, obj) => {
+    this.cargoTypeList = Object.values(this.toppingOffSequence?.reduce((acc, obj) => {
       const key = obj['cargoId'];
       if (!acc[key]) {
         acc[key] = [];

@@ -15,6 +15,9 @@ import { ValueObject } from '../../../shared/models/common.model';
     temp: ValueObject<number>;
     cargoName: string;
     isAdd: boolean;
+    cargoNominationId: number;
+    portId: number;
+    cargoId: number;
 }
 
 /**
@@ -25,11 +28,27 @@ import { ValueObject } from '../../../shared/models/common.model';
  */
  export interface ICargoDetail {
     blRefNo:string;
-    bbl: number;
-    lt: number;
-    mt: number;
-    kl: number;
+    quantityBbls: number;
+    quantityLT: number;
+    quantityMt: number;
+    quantityKl: number;
     api: number;
-    temp: number;
+    temperature: number;
     cargoName: string;
+    portId: number;
+}
+
+/**
+ * Interface for tank details us value object
+ *
+ * @export
+ * @interface ITankDetailsValueObject
+ */
+ export interface ITankDetailsValueObject {
+    tankName: ValueObject<string>;
+    ullage: ValueObject<number>;
+    temperature?: ValueObject<number>;
+    api?: ValueObject<number>;
+    quantity?: ValueObject<number>;
+    density?: ValueObject<number>;
 }
