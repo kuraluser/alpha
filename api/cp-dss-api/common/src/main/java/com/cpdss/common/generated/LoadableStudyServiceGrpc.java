@@ -3481,60 +3481,6 @@ public final class LoadableStudyServiceGrpc {
     return getGetLoadableStudySimulatorJsonDataMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse>
-      getGetLoadableStudyByLoadablePatternIdMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "GetLoadableStudyByLoadablePatternId",
-      requestType = com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.class,
-      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse>
-      getGetLoadableStudyByLoadablePatternIdMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse>
-        getGetLoadableStudyByLoadablePatternIdMethod;
-    if ((getGetLoadableStudyByLoadablePatternIdMethod =
-            LoadableStudyServiceGrpc.getGetLoadableStudyByLoadablePatternIdMethod)
-        == null) {
-      synchronized (LoadableStudyServiceGrpc.class) {
-        if ((getGetLoadableStudyByLoadablePatternIdMethod =
-                LoadableStudyServiceGrpc.getGetLoadableStudyByLoadablePatternIdMethod)
-            == null) {
-          LoadableStudyServiceGrpc.getGetLoadableStudyByLoadablePatternIdMethod =
-              getGetLoadableStudyByLoadablePatternIdMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
-                          com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(
-                              SERVICE_NAME, "GetLoadableStudyByLoadablePatternId"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadableStudyServiceMethodDescriptorSupplier(
-                              "GetLoadableStudyByLoadablePatternId"))
-                      .build();
-        }
-      }
-    }
-    return getGetLoadableStudyByLoadablePatternIdMethod;
-  }
-
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -4146,14 +4092,6 @@ public final class LoadableStudyServiceGrpc {
       asyncUnimplementedUnaryCall(getGetLoadableStudySimulatorJsonDataMethod(), responseObserver);
     }
 
-    /** */
-    public void getLoadableStudyByLoadablePatternId(
-        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse>
-            responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadableStudyByLoadablePatternIdMethod(), responseObserver);
-    }
-
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -4635,13 +4573,6 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest,
                       com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply>(
                       this, METHODID_GET_LOADABLE_STUDY_SIMULATOR_JSON_DATA)))
-          .addMethod(
-              getGetLoadableStudyByLoadablePatternIdMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse>(
-                      this, METHODID_GET_LOADABLE_STUDY_BY_LOADABLE_PATTERN_ID)))
           .build();
     }
   }
@@ -5421,17 +5352,6 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
-
-    /** */
-    public void getLoadableStudyByLoadablePatternId(
-        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse>
-            responseObserver) {
-      asyncUnaryCall(
-          getChannel().newCall(getGetLoadableStudyByLoadablePatternIdMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
   }
 
   /** */
@@ -5943,14 +5863,6 @@ public final class LoadableStudyServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetLoadableStudySimulatorJsonDataMethod(), getCallOptions(), request);
-    }
-
-    /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse
-        getLoadableStudyByLoadablePatternId(
-            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return blockingUnaryCall(
-          getChannel(), getGetLoadableStudyByLoadablePatternIdMethod(), getCallOptions(), request);
     }
   }
 
@@ -6563,16 +6475,6 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getGetLoadableStudySimulatorJsonDataMethod(), getCallOptions()),
           request);
     }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse>
-        getLoadableStudyByLoadablePatternId(
-            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetLoadableStudyByLoadablePatternIdMethod(), getCallOptions()),
-          request);
-    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -6643,7 +6545,6 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_STUDY_SHORE = 65;
   private static final int METHODID_GET_LOADABLE_STUDY_PORT_ROTATION_BY_PORT_ROTATION_ID = 66;
   private static final int METHODID_GET_LOADABLE_STUDY_SIMULATOR_JSON_DATA = 67;
-  private static final int METHODID_GET_LOADABLE_STUDY_BY_LOADABLE_PATTERN_ID = 68;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -7128,13 +7029,6 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply>)
                   responseObserver);
           break;
-        case METHODID_GET_LOADABLE_STUDY_BY_LOADABLE_PATTERN_ID:
-          serviceImpl.getLoadableStudyByLoadablePatternId(
-              (com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse>)
-                  responseObserver);
-          break;
         default:
           throw new AssertionError();
       }
@@ -7267,7 +7161,6 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadableStudyShoreMethod())
                       .addMethod(getGetLoadableStudyPortRotationByPortRotationIdMethod())
                       .addMethod(getGetLoadableStudySimulatorJsonDataMethod())
-                      .addMethod(getGetLoadableStudyByLoadablePatternIdMethod())
                       .build();
         }
       }

@@ -10,6 +10,9 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
+import com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse.Builder;
+import com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.OperationsTable;
@@ -99,18 +102,54 @@ public class SynopticService {
       LoadableStudy.LoadingPlanCommonResponse.Builder builder,
       Common.ResponseStatus.Builder repBuilder)
       throws GenericServiceException {
-    Long id = request.getId();
-    switch (request.getIdType()) {
-      case "PORT_ROTATION":
-        this.buildPortRotationResponse(id, builder, repBuilder);
-        break;
-      default:
-        log.info("Synoptic Data for Loading Plan Default Case");
-        break;
-    }
+    // Not passing operation type and portId when calling for getting ballast details
+    if (!StringUtils.isEmpty(request.getOperationType())) {
+      Long id = request.getId();
+      switch (request.getIdType()) {
+        case "PORT_ROTATION":
+          this.buildPortRotationResponse(id, builder, repBuilder);
+          break;
+        default:
+          log.info("Synoptic Data for Loading Plan Default Case");
+          break;
+      }
 
-    // Cargo details based on port, and operation type
-    this.buildCargoToBeLoadedForPort(request, builder, repBuilder);
+      // Cargo details based on port, and operation type
+      this.buildCargoToBeLoadedForPort(request, builder, repBuilder);
+    }
+    // Ballast details based on port rotation
+    this.buildBallastDetailsBasedOnPort(request, builder, repBuilder);
+  }
+
+  /**
+   * Populates ballast Details based on Loadable Pattern Id and Port Rotation
+   *
+   * @param request
+   * @param builder
+   * @param repBuilder
+   */
+  private void buildBallastDetailsBasedOnPort(
+      LoadingPlanIdRequest request,
+      Builder builder,
+      com.cpdss.common.generated.Common.ResponseStatus.Builder repBuilder) {
+
+    List<LoadablePlanStowageBallastDetails> ballastDetails =
+        this.loadablePlanStowageBallastDetailsRepository
+            .findByLoadablePatternIdAndPortRotationIdAndIsActive(
+                request.getPatternId(), request.getPortRotationId(), true);
+    ballastDetails.forEach(
+        ballast -> {
+          LoadablePlanBallastDetails.Builder ballastBuilder =
+              LoadablePlanBallastDetails.newBuilder();
+          Optional.ofNullable(ballast.getColorCode()).ifPresent(ballastBuilder::setColorCode);
+          Optional.ofNullable(ballast.getCorrectionFactor())
+              .ifPresent(ballastBuilder::setCorrectionFactor);
+          Optional.ofNullable(ballast.getFillingPercentage())
+              .ifPresent(ballastBuilder::setPercentage);
+          Optional.ofNullable(ballast.getTankXId()).ifPresent(ballastBuilder::setTankId);
+          Optional.ofNullable(ballast.getOperationType()).ifPresent(ballast::setOperationType);
+          builder.addLoadablePlanBallastDetails(ballastBuilder.build());
+        });
   }
 
   // Single Entry with the Operation Type - ARR
