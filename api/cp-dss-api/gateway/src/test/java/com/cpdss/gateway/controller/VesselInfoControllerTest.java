@@ -176,8 +176,6 @@ public class VesselInfoControllerTest {
         .andExpect(status().isOk());
   }
 
-  
-
   private String createRuleRequest() throws JsonProcessingException {
     RuleRequest request = new RuleRequest();
     List<RulePlans> rulePlanList = new ArrayList<RulePlans>();
