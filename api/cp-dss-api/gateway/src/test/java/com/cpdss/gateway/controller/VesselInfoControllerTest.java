@@ -16,6 +16,14 @@ import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.Rules;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
+import com.cpdss.gateway.domain.VesselResponse;
+import com.cpdss.gateway.domain.VesselTankResponse;
+import com.cpdss.gateway.security.ship.ShipAuthenticationProvider;
+import com.cpdss.gateway.security.ship.ShipJwtService;
+import com.cpdss.gateway.security.ship.ShipTokenExtractor;
+import com.cpdss.gateway.security.ship.ShipUserAuthenticationProvider;
+import com.cpdss.gateway.security.ship.ShipUserDetailService;
+import com.cpdss.gateway.service.SyncRedisMasterService;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.VesselInfoServiceTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,11 +32,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -44,6 +54,15 @@ public class VesselInfoControllerTest {
   @MockBean private VesselInfoService vesselInfoService;
 
   @MockBean private VesselInfoServiceTest vesselInfoServiceTest;
+  @MockBean private SyncRedisMasterService syncRedisMasterService;
+  @MockBean private ShipJwtService shipJwtService;
+  @MockBean private ShipAuthenticationProvider shipAuthenticationProvider;
+  @MockBean private ShipUserAuthenticationProvider shipUserAuthenticationProvider;
+  @MockBean private ShipUserDetailService shipUserDetailService;
+  @MockBean private ShipTokenExtractor shipTokenExtractor;
+  @MockBean private AuthenticationFailureHandler authenticationFailureHandler;
+  // @MockBean private
+  //  @MockBean private
 
   private static final Long TEST_VESSEL_ID = 1L;
   private static final String CORRELATION_ID_HEADER = "correlationId";
@@ -52,6 +71,16 @@ public class VesselInfoControllerTest {
   private static final String CLOUD_API_URL_PREFIX = "/api/cloud";
   private static final String SHIP_API_URL_PREFIX = "/api/ship";
   private static final String GET_VESSEL_DETAILS_API_URL = "/vessel-details/{vesselId}";
+  private static final String GET_VESSEL_COMPANY_API_URL = "/vessels";
+  private static final String GET_VESSEL_TANKS_API_URL = "/vessel/{vesselId}/cargo-tanks";
+  private static final String GET_VESSEL_TANKS_API_URL_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + GET_VESSEL_TANKS_API_URL;
+  private static final String GET_VESSEL_TANKS_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + GET_VESSEL_TANKS_API_URL;
+  private static final String GET_VESSEL_COMPANY_API_URL_CLOUD_API_URL =
+      CLOUD_API_URL_PREFIX + GET_VESSEL_COMPANY_API_URL;
+  private static final String GET_VESSEL_COMPANY_SHIP_API_URL =
+      SHIP_API_URL_PREFIX + GET_VESSEL_COMPANY_API_URL;
   private static final String GET_VESSEL_DETAILS_API_URL_CLOUD_API_URL =
       CLOUD_API_URL_PREFIX + GET_VESSEL_DETAILS_API_URL;
   private static final String GET_VESSEL_DETAILS_SHIP_API_URL =
@@ -92,6 +121,29 @@ public class VesselInfoControllerTest {
 
   @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
   @ParameterizedTest
+  void testGetAllRulesForVesselRuntimeException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.vesselInfoService.getRulesByVesselIdAndSectionId(
+            anyLong(), anyLong(), Mockito.isNull(), anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(
+                    GET_VESSEL_RULE_CLOUD_API_URL, TEST_VESSEL_ID, TEST_RULE_SECTION_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
   void testGetVesselsDetailsRuntimeException(Class<? extends Exception> exceptionClass)
       throws Exception {
     Exception ex = new RuntimeException();
@@ -124,6 +176,8 @@ public class VesselInfoControllerTest {
         .andExpect(status().isOk());
   }
 
+  
+
   private String createRuleRequest() throws JsonProcessingException {
     RuleRequest request = new RuleRequest();
     List<RulePlans> rulePlanList = new ArrayList<RulePlans>();
@@ -152,5 +206,72 @@ public class VesselInfoControllerTest {
     request.setPlan(rulePlanList);
     ObjectMapper mapper = new ObjectMapper();
     return mapper.writeValueAsString(request);
+  }
+
+  @ValueSource(
+      strings = {GET_VESSEL_COMPANY_API_URL_CLOUD_API_URL, GET_VESSEL_COMPANY_SHIP_API_URL})
+  @ParameterizedTest
+  void testgetVesselsByCompany(String url) throws Exception {
+    Mockito.when(this.vesselInfoService.getVesselsByCompany(Mockito.anyLong(), Mockito.anyString()))
+        .thenReturn(new VesselResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testgetVesselsByCompanyRuntimeException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    when(this.vesselInfoService.getVesselsByCompany(Mockito.anyLong(), Mockito.anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(GET_VESSEL_COMPANY_API_URL_CLOUD_API_URL)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  @ValueSource(strings = {GET_VESSEL_TANKS_API_URL_CLOUD_API_URL, GET_VESSEL_TANKS_SHIP_API_URL})
+  @ParameterizedTest
+  void testgetVesselTanks(String url) throws Exception {
+    Mockito.when(this.vesselInfoService.getCargoVesselTanks(Mockito.anyLong(), Mockito.anyString()))
+        .thenReturn(new VesselTankResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  @ValueSource(classes = {GenericServiceException.class, RuntimeException.class})
+  @ParameterizedTest
+  void testgetVesselTanksRuntimeException(Class<? extends Exception> exceptionClass)
+      throws Exception {
+    Exception ex = new RuntimeException();
+    if (exceptionClass == GenericServiceException.class) {
+      ex =
+          new GenericServiceException(
+              "exception",
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    Mockito.when(this.vesselInfoService.getCargoVesselTanks(Mockito.anyLong(), Mockito.anyString()))
+        .thenThrow(ex);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(GET_VESSEL_TANKS_API_URL_CLOUD_API_URL, TEST_VESSEL_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
+        .andExpect(status().isInternalServerError());
   }
 }
