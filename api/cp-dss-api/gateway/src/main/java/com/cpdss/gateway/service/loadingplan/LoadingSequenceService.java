@@ -192,11 +192,9 @@ public class LoadingSequenceService {
     response.setStabilityParams(stabilityParams);
   }
 
-  /**
- * @param stabilityParams
- */
-private void inititalizeStabilityParams(List<StabilityParam> stabilityParams) {
-	StabilityParam foreDraft = new StabilityParam();
+  /** @param stabilityParams */
+  private void inititalizeStabilityParams(List<StabilityParam> stabilityParams) {
+    StabilityParam foreDraft = new StabilityParam();
     foreDraft.setName("fore_draft");
     foreDraft.setData(new ArrayList<>());
     StabilityParam aftDraft = new StabilityParam();
@@ -218,9 +216,9 @@ private void inititalizeStabilityParams(List<StabilityParam> stabilityParams) {
     sf.setName("sf");
     sf.setData(new ArrayList<>());
     stabilityParams.addAll(Arrays.asList(foreDraft, aftDraft, trim, ukc, gm, sf, bm));
-}
+  }
 
-/**
+  /**
    * @param reply
    * @param cargoNomDetails
    * @param response

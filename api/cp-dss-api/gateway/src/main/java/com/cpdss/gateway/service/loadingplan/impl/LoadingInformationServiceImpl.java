@@ -801,14 +801,14 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         algoResponse.setResponseStatus(successResponse);
         return algoResponse;
       } else {
-        log.error("Failed to save LoadingInformation {}", infoId);
+        log.error("Failed to generate Loading Plan for Loading Information {}", infoId);
         throw new GenericServiceException(
             "Failed to save Loading Information",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
     } catch (Exception e) {
-      log.error("Failed to save LoadingInformation {}", infoId);
+      log.error("Failed to generate Loading Plan for Loading Information {}", infoId);
       throw new GenericServiceException(
           "Failed to generate Loading Plan",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,

@@ -102,18 +102,17 @@ public class SynopticService {
       LoadableStudy.LoadingPlanCommonResponse.Builder builder,
       Common.ResponseStatus.Builder repBuilder)
       throws GenericServiceException {
+    Long id = request.getId();
+    switch (request.getIdType()) {
+      case "PORT_ROTATION":
+        this.buildPortRotationResponse(id, builder, repBuilder);
+        break;
+      default:
+        log.info("Synoptic Data for Loading Plan Default Case");
+        break;
+    }
     // Not passing operation type and portId when calling for getting ballast details
     if (!StringUtils.isEmpty(request.getOperationType())) {
-      Long id = request.getId();
-      switch (request.getIdType()) {
-        case "PORT_ROTATION":
-          this.buildPortRotationResponse(id, builder, repBuilder);
-          break;
-        default:
-          log.info("Synoptic Data for Loading Plan Default Case");
-          break;
-      }
-
       // Cargo details based on port, and operation type
       this.buildCargoToBeLoadedForPort(request, builder, repBuilder);
     }
@@ -136,7 +135,7 @@ public class SynopticService {
     List<LoadablePlanStowageBallastDetails> ballastDetails =
         this.loadablePlanStowageBallastDetailsRepository
             .findByLoadablePatternIdAndPortRotationIdAndIsActive(
-                request.getPatternId(), request.getPortRotationId(), true);
+                request.getPatternId(), request.getId(), true);
     if (!ballastDetails.isEmpty()) {
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     }
