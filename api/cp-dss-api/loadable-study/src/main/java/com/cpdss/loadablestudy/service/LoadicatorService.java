@@ -1036,6 +1036,7 @@ public class LoadicatorService {
         JsonFormat.parser()
             .ignoringUnknownFields()
             .merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
+        loadablePatternAlgoRequest.setHasLodicator(true);
         algoRespComm.setLoadablePatternAlgoRequest(loadablePatternAlgoRequest.build());
       }
       communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
