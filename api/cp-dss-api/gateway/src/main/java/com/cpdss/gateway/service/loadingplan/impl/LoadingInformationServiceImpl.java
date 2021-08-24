@@ -256,8 +256,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
       // Line Content Remaining
       if (rateFromLoading.getLineContentRemaining().isEmpty()) {
-        var d = extract.getDefaultValueForKey(AdminRuleTemplate.LINE_CONTENT_REMAINING);
-        loadingRates.setLineContentRemaining(d.isEmpty() ? null : new BigDecimal(d));
+        // Not needed at Loading Rate Section, also line content remaining is Boolean not number
+        // var d = extract.getDefaultValueForKey(AdminRuleTemplate.LINE_CONTENT_REMAINING);
+        // loadingRates.setLineContentRemaining(d.isEmpty() ? null : new BigDecimal(d));
       } else {
         loadingRates.setLineContentRemaining(
             rateFromLoading.getLineContentRemaining().isEmpty()

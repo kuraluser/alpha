@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option java_multiple_files = true; // to reduce generated file size
+option java_package = "com.cpdss.common.generated.discharge_plan";
+
+// import common definitions like ResponseStatus
+import "common.proto";
+
+// A generic request with Optional params
+message DischargeInformationRequest{
+  int64 companyId = 1;
+  int64 vesselId = 2;
+  int64 voyageId = 3;
+  int64 dischargeInfoId = 4;
+  int64 loadingPatternId = 5;
+  int64 portRotationId = 6;
+  int64 synopticTableId = 7;
+}
+
+message DischargeInformation {
+  ResponseStatus responseStatus = 1;
+}
