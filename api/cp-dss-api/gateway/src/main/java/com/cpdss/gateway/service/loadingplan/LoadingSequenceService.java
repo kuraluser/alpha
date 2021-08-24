@@ -120,7 +120,9 @@ public class LoadingSequenceService {
 
     log.info("Populating Loading Sequences");
     for (LoadingSequence loadingSequence : reply.getLoadingSequencesList()) {
-      start = loadingSequence.getStartTime();
+      if (!loadingSequence.getStageName().equalsIgnoreCase("topping")) {
+        start = loadingSequence.getStartTime();
+      }
       for (LoadingPlanPortWiseDetails portWiseDetails :
           loadingSequence.getLoadingPlanPortWiseDetailsList()) {
         List<LoadingPlanTankDetails> filteredStowage =
