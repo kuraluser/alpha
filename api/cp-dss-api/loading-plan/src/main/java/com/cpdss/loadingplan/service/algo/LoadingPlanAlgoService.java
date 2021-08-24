@@ -64,6 +64,8 @@ import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +84,9 @@ public class LoadingPlanAlgoService {
 
   @Value(value = "${algo.planGenerationUrl}")
   private String planGenerationUrl;
+
+  @Value(value = "${loadingplan.attachment.rootFolder}")
+  private String rootFolder;
 
   @Autowired RestTemplate restTemplate;
 
@@ -216,9 +221,18 @@ public class LoadingPlanAlgoService {
     jsonBuilder.setJsonTypeId(LoadingPlanConstants.LOADING_INFORMATION_REQUEST_JSON_TYPE_ID);
     ObjectMapper mapper = new ObjectMapper();
     try {
+      mapper.writeValue(
+          new File(this.rootFolder + "/json/loadingInformationRequest_" + loadingInfoId + ".json"),
+          algoRequest);
       jsonBuilder.setJson(mapper.writeValueAsString(algoRequest));
       this.loadableStudyService.saveJson(jsonBuilder.build());
     } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "Could not save request JSON to DB",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } catch (IOException e) {
       e.printStackTrace();
       throw new GenericServiceException(
           "Could not save request JSON to DB",
