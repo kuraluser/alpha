@@ -103,28 +103,7 @@ public class LoadingSequenceService {
     Set<Long> stageTickPositions = new LinkedHashSet<Long>();
     List<StabilityParam> stabilityParams = new ArrayList<StabilityParam>();
 
-    StabilityParam foreDraft = new StabilityParam();
-    foreDraft.setName("fore_draft");
-    foreDraft.setData(new ArrayList<>());
-    StabilityParam aftDraft = new StabilityParam();
-    aftDraft.setName("aft_draft");
-    aftDraft.setData(new ArrayList<>());
-    StabilityParam trim = new StabilityParam();
-    trim.setName("trim");
-    trim.setData(new ArrayList<>());
-    StabilityParam ukc = new StabilityParam();
-    ukc.setName("ukc");
-    ukc.setData(new ArrayList<>());
-    StabilityParam gm = new StabilityParam();
-    gm.setName("gm");
-    gm.setData(new ArrayList<>());
-    StabilityParam bm = new StabilityParam();
-    bm.setName("bm");
-    bm.setData(new ArrayList<>());
-    StabilityParam sf = new StabilityParam();
-    sf.setName("sf");
-    sf.setData(new ArrayList<>());
-    stabilityParams.addAll(Arrays.asList(foreDraft, aftDraft, trim, ukc, gm, sf, bm));
+    inititalizeStabilityParams(stabilityParams);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd'T'HH:mm");
     try {
@@ -214,6 +193,34 @@ public class LoadingSequenceService {
   }
 
   /**
+ * @param stabilityParams
+ */
+private void inititalizeStabilityParams(List<StabilityParam> stabilityParams) {
+	StabilityParam foreDraft = new StabilityParam();
+    foreDraft.setName("fore_draft");
+    foreDraft.setData(new ArrayList<>());
+    StabilityParam aftDraft = new StabilityParam();
+    aftDraft.setName("aft_draft");
+    aftDraft.setData(new ArrayList<>());
+    StabilityParam trim = new StabilityParam();
+    trim.setName("trim");
+    trim.setData(new ArrayList<>());
+    StabilityParam ukc = new StabilityParam();
+    ukc.setName("ukc");
+    ukc.setData(new ArrayList<>());
+    StabilityParam gm = new StabilityParam();
+    gm.setName("gm");
+    gm.setData(new ArrayList<>());
+    StabilityParam bm = new StabilityParam();
+    bm.setName("bm");
+    bm.setData(new ArrayList<>());
+    StabilityParam sf = new StabilityParam();
+    sf.setName("sf");
+    sf.setData(new ArrayList<>());
+    stabilityParams.addAll(Arrays.asList(foreDraft, aftDraft, trim, ukc, gm, sf, bm));
+}
+
+/**
    * @param reply
    * @param cargoNomDetails
    * @param response
@@ -275,6 +282,10 @@ public class LoadingSequenceService {
       cargo.setAbbreviation(cargoNomination.getAbbreviation());
       cargo.setCargoNominationId(cargoNomination.getId());
       cargo.setColor(cargoNomination.getColor());
+      cargo.setApi(
+          StringUtils.isEmpty(cargoNomination.getApi())
+              ? null
+              : new BigDecimal(cargoNomination.getApi()));
       BigDecimal total =
           portWiseDetails.getLoadingPlanStowageDetailsList().stream()
               .filter(
