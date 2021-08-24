@@ -556,7 +556,8 @@ export class PortsComponent implements OnInit, OnDestroy {
         break;
       }
     }
-    if (this.portsLists[this.portsLists.length - 1].operation.value.id !== OPERATIONS.DISCHARGING) {
+    
+    if (this.portsLists[this.portsLists.length - 1].operation.value?.id !== OPERATIONS.DISCHARGING) {
       orderError = true;
     }
     return orderError;

@@ -256,8 +256,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
       // Line Content Remaining
       if (rateFromLoading.getLineContentRemaining().isEmpty()) {
-        var d = extract.getDefaultValueForKey(AdminRuleTemplate.LINE_CONTENT_REMAINING);
-        loadingRates.setLineContentRemaining(d.isEmpty() ? null : new BigDecimal(d));
+        // Not needed at Loading Rate Section, also line content remaining is Boolean not number
+        // var d = extract.getDefaultValueForKey(AdminRuleTemplate.LINE_CONTENT_REMAINING);
+        // loadingRates.setLineContentRemaining(d.isEmpty() ? null : new BigDecimal(d));
       } else {
         loadingRates.setLineContentRemaining(
             rateFromLoading.getLineContentRemaining().isEmpty()
@@ -800,14 +801,14 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         algoResponse.setResponseStatus(successResponse);
         return algoResponse;
       } else {
-        log.error("Failed to save LoadingInformation {}", infoId);
+        log.error("Failed to generate Loading Plan for Loading Information {}", infoId);
         throw new GenericServiceException(
             "Failed to save Loading Information",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
     } catch (Exception e) {
-      log.error("Failed to save LoadingInformation {}", infoId);
+      log.error("Failed to generate Loading Plan for Loading Information {}", infoId);
       throw new GenericServiceException(
           "Failed to generate Loading Plan",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,

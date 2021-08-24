@@ -44,6 +44,6 @@ import { QuantityDecimalFormatPipeModule } from '../../shared/pipes/quantity-dec
     RateUnitDropdownModule,
     QuantityDecimalFormatPipeModule
   ],
-  providers: [VesselsApiService, RulesService, LoadingDischargingTransformationService, QuantityPipe, OperationsApiService, QuantityDecimalFormatPipe ]
+  providers: [VesselsApiService, RulesService, LoadingDischargingTransformationService, QuantityPipe, OperationsApiService , QuantityDecimalFormatPipe ]
 })
 export class OperationsModule { }

@@ -103,28 +103,7 @@ public class LoadingSequenceService {
     Set<Long> stageTickPositions = new LinkedHashSet<Long>();
     List<StabilityParam> stabilityParams = new ArrayList<StabilityParam>();
 
-    StabilityParam foreDraft = new StabilityParam();
-    foreDraft.setName("fore_draft");
-    foreDraft.setData(new ArrayList<>());
-    StabilityParam aftDraft = new StabilityParam();
-    aftDraft.setName("aft_draft");
-    aftDraft.setData(new ArrayList<>());
-    StabilityParam trim = new StabilityParam();
-    trim.setName("trim");
-    trim.setData(new ArrayList<>());
-    StabilityParam ukc = new StabilityParam();
-    ukc.setName("ukc");
-    ukc.setData(new ArrayList<>());
-    StabilityParam gm = new StabilityParam();
-    gm.setName("gm");
-    gm.setData(new ArrayList<>());
-    StabilityParam bm = new StabilityParam();
-    bm.setName("bm");
-    bm.setData(new ArrayList<>());
-    StabilityParam sf = new StabilityParam();
-    sf.setName("sf");
-    sf.setData(new ArrayList<>());
-    stabilityParams.addAll(Arrays.asList(foreDraft, aftDraft, trim, ukc, gm, sf, bm));
+    inititalizeStabilityParams(stabilityParams);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd'T'HH:mm");
     try {
@@ -141,7 +120,9 @@ public class LoadingSequenceService {
 
     log.info("Populating Loading Sequences");
     for (LoadingSequence loadingSequence : reply.getLoadingSequencesList()) {
-      start = loadingSequence.getStartTime();
+      if (!loadingSequence.getStageName().equalsIgnoreCase("topping")) {
+        start = loadingSequence.getStartTime();
+      }
       for (LoadingPlanPortWiseDetails portWiseDetails :
           loadingSequence.getLoadingPlanPortWiseDetailsList()) {
         List<LoadingPlanTankDetails> filteredStowage =
@@ -213,6 +194,32 @@ public class LoadingSequenceService {
     response.setStabilityParams(stabilityParams);
   }
 
+  /** @param stabilityParams */
+  private void inititalizeStabilityParams(List<StabilityParam> stabilityParams) {
+    StabilityParam foreDraft = new StabilityParam();
+    foreDraft.setName("fore_draft");
+    foreDraft.setData(new ArrayList<>());
+    StabilityParam aftDraft = new StabilityParam();
+    aftDraft.setName("aft_draft");
+    aftDraft.setData(new ArrayList<>());
+    StabilityParam trim = new StabilityParam();
+    trim.setName("trim");
+    trim.setData(new ArrayList<>());
+    StabilityParam ukc = new StabilityParam();
+    ukc.setName("ukc");
+    ukc.setData(new ArrayList<>());
+    StabilityParam gm = new StabilityParam();
+    gm.setName("gm");
+    gm.setData(new ArrayList<>());
+    StabilityParam bm = new StabilityParam();
+    bm.setName("bm");
+    bm.setData(new ArrayList<>());
+    StabilityParam sf = new StabilityParam();
+    sf.setName("sf");
+    sf.setData(new ArrayList<>());
+    stabilityParams.addAll(Arrays.asList(foreDraft, aftDraft, trim, ukc, gm, sf, bm));
+  }
+
   /**
    * @param reply
    * @param cargoNomDetails
@@ -275,6 +282,10 @@ public class LoadingSequenceService {
       cargo.setAbbreviation(cargoNomination.getAbbreviation());
       cargo.setCargoNominationId(cargoNomination.getId());
       cargo.setColor(cargoNomination.getColor());
+      cargo.setApi(
+          StringUtils.isEmpty(cargoNomination.getApi())
+              ? null
+              : new BigDecimal(cargoNomination.getApi()));
       BigDecimal total =
           portWiseDetails.getLoadingPlanStowageDetailsList().stream()
               .filter(
@@ -729,7 +740,7 @@ public class LoadingSequenceService {
     Optional.ofNullable(stage.getShearForce())
         .ifPresent(sf -> paramBuilder.setSf(String.valueOf(sf)));
     Optional.ofNullable(stage.getTime())
-        .ifPresent(time -> paramBuilder.setTime(Integer.valueOf(time)));
+        .ifPresent(time -> paramBuilder.setTime((new BigDecimal(time)).intValue()));
     Optional.ofNullable(stage.getMeanDraft())
         .ifPresent(meanDraft -> paramBuilder.setMeanDraft(String.valueOf(meanDraft)));
     Optional.ofNullable(stage.getTrim())
@@ -848,9 +859,12 @@ public class LoadingSequenceService {
               Optional.ofNullable(sequence.getStage()).ifPresent(sequenceBuilder::setStageName);
               sequenceBuilder.setSequenceNumber(sequenceNumber.incrementAndGet());
               Optional.ofNullable(sequence.getTimeEnd())
-                  .ifPresent(timeEnd -> sequenceBuilder.setEndTime(Integer.valueOf(timeEnd)));
+                  .ifPresent(
+                      timeEnd -> sequenceBuilder.setEndTime((new BigDecimal(timeEnd)).intValue()));
               Optional.ofNullable(sequence.getTimeStart())
-                  .ifPresent(timeStart -> sequenceBuilder.setStartTime(Integer.valueOf(timeStart)));
+                  .ifPresent(
+                      timeStart ->
+                          sequenceBuilder.setStartTime((new BigDecimal(timeStart)).intValue()));
               Optional.ofNullable(sequence.getToLoadicator())
                   .ifPresent(sequenceBuilder::setToLoadicator);
               builder.addLoadingSequences(sequenceBuilder.build());
@@ -871,7 +885,7 @@ public class LoadingSequenceService {
           this.buildStabilityParams(portWiseDetails, builder);
           this.buildLoadingPlanStowageDetails(portWiseDetails, builder);
           Optional.ofNullable(portWiseDetails.getTime())
-              .ifPresent(time -> builder.setTime(Integer.valueOf(time)));
+              .ifPresent(time -> builder.setTime((new BigDecimal(time)).intValue()));
           sequenceBuilder.addLoadingPlanPortWiseDetails(builder.build());
         });
   }
@@ -962,7 +976,7 @@ public class LoadingSequenceService {
                     .ifPresent(tankId -> rateBuilder.setTankId(Long.valueOf(tankId)));
                 Optional.ofNullable(entry.getValue()).ifPresent(rateBuilder::setDeBallastingRate);
                 Optional.ofNullable(portWiseDetails.getTime())
-                    .ifPresent(time -> rateBuilder.setTime(Integer.valueOf(time)));
+                    .ifPresent(time -> rateBuilder.setTime((new BigDecimal(time)).intValue()));
                 builder.addDeballastingRates(rateBuilder.build());
               });
     }
@@ -1027,9 +1041,10 @@ public class LoadingSequenceService {
             Optional.ofNullable(ballastOperation.getRate())
                 .ifPresent(rate -> builder.setRate(rate));
             Optional.ofNullable(ballastOperation.getTimeEnd())
-                .ifPresent(timeEnd -> builder.setEndTime(Integer.valueOf(timeEnd)));
+                .ifPresent(timeEnd -> builder.setEndTime((new BigDecimal(timeEnd)).intValue()));
             Optional.ofNullable(ballastOperation.getTimeStart())
-                .ifPresent(timeStart -> builder.setStartTime(Integer.valueOf(timeStart)));
+                .ifPresent(
+                    timeStart -> builder.setStartTime((new BigDecimal(timeStart)).intValue()));
             builder.setPumpXId(pumpId);
             Optional<VesselPump> vesselPumpOpt =
                 pumps.stream().filter(pump -> pump.getId() == builder.getPumpXId()).findFirst();

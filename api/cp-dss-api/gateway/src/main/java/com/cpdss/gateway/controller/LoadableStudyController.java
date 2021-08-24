@@ -1,7 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.controller;
 
-import static com.cpdss.gateway.utility.GatewayConstants.*;
+import static com.cpdss.gateway.common.GatewayConstants.*;
 
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
@@ -1944,6 +1944,30 @@ public class LoadableStudyController {
       log.info("getAlgoError: {}", getClientIp());
       return this.loadableStudyService.getAlgoErrorLoadableStudy(
           loadableStudyId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when getAlgoError", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error when getAlgoError", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/algo-errors")
+  public AlgoErrorResponse getAlgoErrorForDS(
+      @PathVariable Long dischargeStudyId, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("getAlgoError: {}", getClientIp());
+      return this.loadableStudyService.getAlgoErrorLoadableStudy(
+          dischargeStudyId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when getAlgoError", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

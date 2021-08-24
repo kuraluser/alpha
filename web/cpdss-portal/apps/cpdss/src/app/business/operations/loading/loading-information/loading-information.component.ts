@@ -6,7 +6,7 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ICargo, OPERATIONS } from '../../../core/models/common.model';
+import { ICargo, OPERATIONS , ILoadableQuantityCargo } from '../../../core/models/common.model';
 import {RulesService}from '../../services/rules/rules.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 
@@ -54,6 +54,7 @@ export class LoadingInformationComponent implements OnInit {
   stageOffsetList: IStageOffset[];
   stageDurationList: IStageDuration[];
   cargoVesselTankDetails: ICargoVesselTankDetails;
+  manageSequenceLoadableQuantityCargoDetails: ILoadableQuantityCargo[];
   loadingInformationPostData = <ILoadingInformation>{};
   loadingInfoId: number;
   trackStartEndStage: boolean;
@@ -132,6 +133,7 @@ export class LoadingInformationComponent implements OnInit {
     this.cargoVesselTankDetails = this.loadingInformationData?.cargoVesselTankDetails;
     this.stageOffsetList = this.loadingInformationData?.loadingStages.stageOffsetList;
     this.stageDurationList = this.loadingInformationData?.loadingStages.stageDurationList;
+    this.manageSequenceLoadableQuantityCargoDetails = JSON.parse(JSON.stringify(this.loadingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails));
     this.stageDuration = this.stageDurationList?.find(duration => duration.id === this.loadingInformationData?.loadingStages?.stageDuration);
     this.stageOffset = this.stageOffsetList?.find(offset => offset.id === this.loadingInformationData?.loadingStages?.stageOffset);
   }
