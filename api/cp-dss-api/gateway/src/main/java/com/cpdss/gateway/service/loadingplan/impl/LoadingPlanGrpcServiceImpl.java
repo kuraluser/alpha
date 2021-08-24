@@ -444,7 +444,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
         this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
             LoadableStudy.LoadingPlanIdRequest.newBuilder()
                 .setPatternId(patternId)
-                .setPortRotationId(portRotationId)
+                .setId(portRotationId)
                 .build());
 
     if (response.getResponseStatus().getStatus().equals(SUCCESS)) {
