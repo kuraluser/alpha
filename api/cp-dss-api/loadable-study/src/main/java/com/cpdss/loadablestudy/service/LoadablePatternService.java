@@ -104,11 +104,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -916,6 +912,16 @@ public class LoadablePatternService {
     lpd.getLoadablePlanPortWiseDetailsList()
         .forEach(
             lppwd -> {
+              LoadableStudyPortRotation portRotation =
+                  loadableStudyPortRotationRepository.findByIdAndIsActive(
+                      lppwd.getPortRotationId(), true);
+              if (Objects.isNull(portRotation)) {
+                portRotation =
+                    loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                        loadablePattern.getLoadableStudy(), lppwd.getPortId(), true);
+              }
+              Long portRotationid = portRotation.getId();
+
               lppwd
                   .getArrivalCondition()
                   .getLoadablePlanStowageDetailsList()
@@ -925,7 +931,7 @@ public class LoadablePatternService {
                             SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
                             lpsd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            portRotationid,
                             loadablePattern);
                       });
               lppwd
@@ -937,7 +943,7 @@ public class LoadablePatternService {
                             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
                             lpsd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            portRotationid,
                             loadablePattern);
                       });
               saveCargoToppingOffList(lppwd, loadablePattern, displayOrder);
@@ -1192,16 +1198,26 @@ public class LoadablePatternService {
           lpd.getLoadablePlanPortWiseDetailsList()) {
         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply arrivalCondition =
             portWiseDetails.getArrivalCondition();
+        LoadableStudyPortRotation portRotation =
+            loadableStudyPortRotationRepository.findByIdAndIsActive(
+                portWiseDetails.getPortRotationId(), true);
+        if (Objects.isNull(portRotation)) {
+          portRotation =
+              loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                  loadablePattern.getLoadableStudy(), portWiseDetails.getPortId(), true);
+        }
+        Long portRotationid = portRotation.getId();
+
         if (Optional.ofNullable(arrivalCondition).isPresent()) {
           loadicatorService.saveLodicatorDataForSynoptical(
-              loadablePattern, arrivalCondition, lpd, "ARR", portWiseDetails.getPortRotationId());
+              loadablePattern, arrivalCondition, lpd, "ARR", portRotationid);
         }
 
         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply departureCondition =
             portWiseDetails.getDepartureCondition();
         if (Optional.ofNullable(departureCondition).isPresent()) {
           loadicatorService.saveLodicatorDataForSynoptical(
-              loadablePattern, departureCondition, lpd, "DEP", portWiseDetails.getPortRotationId());
+              loadablePattern, departureCondition, lpd, "DEP", portRotationid);
         }
       }
     }
