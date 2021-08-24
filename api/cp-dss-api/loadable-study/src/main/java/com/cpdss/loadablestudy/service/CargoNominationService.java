@@ -829,6 +829,8 @@ public class CargoNominationService {
           this.getCargoInfoById(cargoReq.build());
       cargoNom.setCargoName(cargoDetailReply.getCargoDetail().getCrudeType());
       cargoNom.setCargoId(cargoNomination.getCargoXId());
+      Optional.ofNullable(cargoNomination.getApi())
+          .ifPresent(api -> cargoNom.setApi(api.toString()));
       builder.setCargoNominationdetail(cargoNom);
     }
     builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());

@@ -875,6 +875,9 @@ public class LoadableStudyRuleService {
                         if (isEnable.isPresent() && isEnable.get()) {
                           com.cpdss.loadablestudy.domain.Rules rule =
                               new com.cpdss.loadablestudy.domain.Rules();
+                          Optional.ofNullable(rules.getId())
+                              .filter(item -> item.trim().length() != 0)
+                              .ifPresentOrElse(rule::setId, () -> rule.setId(null));
                           Optional.ofNullable(rules.getEnable()).ifPresent(rule::setEnable);
                           Optional.ofNullable(rules.getDisplayInSettings())
                               .ifPresentOrElse(
@@ -886,7 +889,7 @@ public class LoadableStudyRuleService {
                           Optional.ofNullable(rules.getRuleType())
                               .filter(item -> item.length() != 0)
                               .ifPresent(rule::setRuleType);
-                          Optional.ofNullable(rule.getIsHardRule())
+                          Optional.ofNullable(rules.getIsHardRule())
                               .ifPresentOrElse(
                                   rule::setIsHardRule, () -> rule.setIsHardRule(false));
                           Optional.ofNullable(rules.getRuleTemplateId())
@@ -903,6 +906,10 @@ public class LoadableStudyRuleService {
                                   inputs -> {
                                     com.cpdss.loadablestudy.domain.RulesInputs ruleInput =
                                         new com.cpdss.loadablestudy.domain.RulesInputs();
+                                    Optional.ofNullable(inputs.getId())
+                                        .filter(item -> item.trim().length() != 0)
+                                        .ifPresentOrElse(
+                                            ruleInput::setId, () -> ruleInput.setId(null));
                                     Optional.ofNullable(inputs.getDefaultValue())
                                         .filter(item -> item.trim().length() != 0)
                                         .ifPresent(ruleInput::setDefaultValue);
@@ -1001,6 +1008,7 @@ public class LoadableStudyRuleService {
                                                       .ifPresent(ruleDropDownMaster::setValue);
                                                   ruleDropDownMasterList.add(ruleDropDownMaster);
                                                 });
+                                        ruleInput.setRuleDropDownMaster(ruleDropDownMasterList);
                                       } else {
                                         Optional<Long> ruleTempId =
                                             Optional.ofNullable(
@@ -1062,14 +1070,10 @@ public class LoadableStudyRuleService {
                 .ifPresent(item -> rules.setId(String.valueOf(item)));
             Optional.ofNullable(rulesList.getRuleTypeXId())
                 .filter(item -> item.equals(RuleType.ABSOLUTE.getId()))
-                .ifPresentOrElse(
-                    item -> rules.setRuleType(RuleType.ABSOLUTE.getRuleType()),
-                    () -> rules.setRuleType(""));
+                .ifPresent(item -> rules.setRuleType(RuleType.ABSOLUTE.getRuleType()));
             Optional.ofNullable(rulesList.getRuleTypeXId())
                 .filter(item -> item.equals(RuleType.PREFERABLE.getId()))
-                .ifPresentOrElse(
-                    item -> rules.setRuleType(RuleType.PREFERABLE.getRuleType()),
-                    () -> rules.setRuleType(""));
+                .ifPresent(item -> rules.setRuleType(RuleType.PREFERABLE.getRuleType()));
             Optional.ofNullable(rulesList.getIsHardRule())
                 .ifPresentOrElse(rules::setIsHardRule, () -> rules.setIsHardRule(false));
             Optional.ofNullable(rulesList.getVesselRuleXId())
@@ -1094,6 +1098,9 @@ public class LoadableStudyRuleService {
                   new com.cpdss.loadablestudy.domain.RulesInputs();
               LoadableStudyRuleInput loadableStudyRuleInput =
                   rulesList.getLoadableStudyRuleInputs().get(inputIndex);
+              Optional.ofNullable(loadableStudyRuleInput.getId())
+                  .ifPresentOrElse(
+                      (id) -> ruleInput.setId(String.valueOf(id)), () -> ruleInput.setId(null));
               Optional.ofNullable(loadableStudyRuleInput.getDefaultValue())
                   .filter(item -> item.trim().length() != 0)
                   .ifPresentOrElse(
@@ -1181,6 +1188,7 @@ public class LoadableStudyRuleService {
                                 .ifPresent(ruleDropDownMaster::setValue);
                             ruleDropDownMasterList.add(ruleDropDownMaster);
                           });
+                  ruleInput.setRuleDropDownMaster(ruleDropDownMasterList);
                 } else {
                   Optional<Long> ruleTempId = Optional.ofNullable(rulesList.getParentRuleXId());
                   if (ruleTempId.isPresent()) {

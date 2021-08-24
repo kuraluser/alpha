@@ -328,6 +328,11 @@ export interface ISubTotal {
     plannedWeight: number;
     actualWeight: number;
     abbreviation?: string;
+    tankId?: number;
+    colorCode?: string;
+    cargoNominationId?: number;
+    api?: number;
+    temperature?: number;
 }
 
 /**

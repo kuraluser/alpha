@@ -9,6 +9,7 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
@@ -39,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -487,9 +489,12 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     loadingPlanResponse.setLoadingInformation(loadingInformation);
 
+    List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
+        loadingPlanGrpcService.fetchLoadablePlanBallastDetails(
+            activeVoyage.getPatternId(), portRotation.get().getId());
     loadingPlanResponse.setPlanBallastDetails(
         loadingPlanBuilderService.buildLoadingPlanBallastFromRpc(
-            planReply.getPortLoadingPlanBallastDetailsList()));
+            planReply.getPortLoadingPlanBallastDetailsList(), loadablePlanBallastDetails));
     loadingPlanResponse.setPlanStowageDetails(
         loadingPlanBuilderService.buildLoadingPlanStowageFromRpc(
             planReply.getPortLoadingPlanStowageDetailsList()));
@@ -1182,11 +1187,18 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       } else {
         errorValidationLandingMsg = "Required data for Update is missing";
       }
+
+      final Integer i = new Integer(0);
+
+      final AtomicReference<Integer> reference = new AtomicReference<>();
+
       if (inputData.getUllageUpdList().size() > 0) {
         inputData
             .getUllageUpdList()
             .forEach(
                 ullageList -> {
+                  reference.set(Integer.valueOf(ullageList.getLoadingInformationId() + ""));
+
                   updateUllageBuilder
                       .setId(
                           ullageList.getLoadingInformationId() == null
@@ -1221,6 +1233,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setApi(ullageList.getApi() == null ? 0 : ullageList.getApi().longValue())
                       .setUllage(
                           ullageList.getUllage() == null ? 0 : ullageList.getUllage().longValue())
+                      .setIsUpdate(ullageList.getIsUpdate())
                       .build();
                 });
 
@@ -1299,6 +1312,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getSounding() == null
                               ? 0
                               : ullageList.getSounding().longValue())
+                      .setIsUpdate(ullageList.getIsUpdate())
                       .build();
                 });
 
@@ -1344,6 +1358,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getFillingRatio() == null
                               ? 0
                               : ullageList.getFillingRatio().longValue())
+                      .setIsUpdate(ullageList.getIsUpdate())
                       .build();
                 });
 

@@ -108,10 +108,10 @@ export class LoadingDischargingBerthComponent implements OnInit {
 * initialise berth details form
 */
   initFormArray() {
-    if (this.selectedBerths.length && this.availableBerths.length) {
+    if (this.selectedBerths?.length && this.availableBerths?.length) {
       this.selectedBerths = this.selectedBerths.map((berth) => {
         const foundedBerth = this.availableBerths.find((availBerth) => availBerth.berthId === berth.berthId);
-        berth.berthName = foundedBerth.berthName;
+        berth.berthName = foundedBerth?.berthName;
         return berth;
       });
       this.availableBerths = this.availableBerths.map(availBerth => this.selectedBerths.find(selectedBerth => selectedBerth.berthId === availBerth.berthId) || availBerth);
@@ -199,7 +199,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
       if(!required) {
         this.berthFormArray.push(this.createBerth(berth));
       }
-      
+      this.updateFormValidity(this.berthFormArray.controls);
     }
   }
 
@@ -209,10 +209,9 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @memberof LoadingDischargingBerthComponent
    */
   onBerthChange(event, index) {
-    this.updateFormValidity(this.berthFormArray.controls)
+    this.updateFormValidity(this.berthFormArray.controls);
     const formControl = this.field(index, 'name');
-    if (formControl.valid) {
-      this.selectedBerths.push(event.value);
+      this.selectedBerths[index] = event.value;
       this.setBerthDetails(event.value, index , true);
       this.selectedBerths = this.selectedBerths.map((berth) => {
         if (!berth.loadingBerthId) {
@@ -221,7 +220,6 @@ export class LoadingDischargingBerthComponent implements OnInit {
         return berth;
       })
       this.berthChange.emit(this.selectedBerths);
-    }
   }
 
     /**
@@ -394,7 +392,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
       rejectButtonStyleClass: 'btn btn-main',
       accept: async () => {
         if (this.selectedBerths?.length > 1 && event.value.name) {
-          this.selectedBerths = this.selectedBerths?.filter((berth) => berth.berthId !== event.value.name.berthId) ?? [];
+          this.selectedBerths.splice(index,1);
           this.berthFormArray.removeAt(index);
           if (this.selectedBerths?.length > 0) {
             this.setBerthDetails(this.selectedBerths[0], 0)
@@ -402,6 +400,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
             this.berthDetailsForm.reset();
             this.berthDetailsForm.disable();
           }
+          this.updateFormValidity(this.berthFormArray.controls);
           this.berthChange.emit(this.selectedBerths);
         } else if(!event.value.name) {
           this.berthFormArray.removeAt(index);

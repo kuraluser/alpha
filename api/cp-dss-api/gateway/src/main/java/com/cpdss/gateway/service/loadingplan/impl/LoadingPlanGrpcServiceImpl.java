@@ -11,6 +11,7 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
@@ -433,5 +434,22 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     UllageBillReply replyData = new UllageBillReply();
     replyData.setResponseStatus(new CommonSuccessResponse(reply.getStatus(), reply.getCode()));
     return replyData;
+  }
+
+  @Override
+  public List<LoadablePlanBallastDetails> fetchLoadablePlanBallastDetails(
+      Long patternId, Long portRotationId) {
+
+    LoadableStudy.LoadingPlanCommonResponse response =
+        this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
+            LoadableStudy.LoadingPlanIdRequest.newBuilder()
+                .setPatternId(patternId)
+                .setId(portRotationId)
+                .build());
+
+    if (response.getResponseStatus().getStatus().equals(SUCCESS)) {
+      return response.getLoadablePlanBallastDetailsList();
+    }
+    return new ArrayList<>();
   }
 }

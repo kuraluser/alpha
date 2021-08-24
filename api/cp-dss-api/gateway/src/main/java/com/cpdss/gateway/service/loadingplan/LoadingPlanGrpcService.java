@@ -51,6 +51,9 @@ public interface LoadingPlanGrpcService {
   List<LoadableStudy.LoadableQuantityCargoDetails> fetchLoadablePlanCargoDetails(
       Long patternId, String operationType, Long portRotationId, Long portId);
 
+  List<LoadableStudy.LoadablePlanBallastDetails> fetchLoadablePlanBallastDetails(
+      Long patternId, Long portRotationId);
+
   LoadingInfoSaveResponse saveLoadingInformation(LoadingInformation loadingInformation);
 
   Boolean updateUllageAtLoadingPlan(LoadingPlanModels.UpdateUllageLoadingRequest request)

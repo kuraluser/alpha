@@ -12,6 +12,7 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 
 /**
  * Component class for loading discharging manage sequence component
@@ -27,6 +28,7 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
 })
 export class LoadingDischargingManageSequenceComponent implements OnInit {
   @Input() cargos: ICargo[];
+
   @Input() loadableQuantityCargo: ILoadableQuantityCargo[];
   @Input() operation: OPERATIONS;
   @Input() loadingInfoId: number;
@@ -79,6 +81,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private translateService: TranslateService,
     private fb: FormBuilder,
+    private quantityPipe: QuantityPipe,
     private messageService: MessageService,
     private quantityDecimalFormatPipe: QuantityDecimalFormatPipe,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
@@ -95,7 +98,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   */
   async initiLoadingDischargingSequenceArray() {
     this.listData = await this.getDropdownData();
-
+    this.addInitialDelay = false;
     this.listData.reasonForDelays = this.loadingDischargingSequences.reasonForDelays;
     const initialDelay = this.loadingDischargingSequences.loadingDischargingDelays?.find(loadingDischargingDelay => !loadingDischargingDelay.cargoId && !loadingDischargingDelay.quantity)
     if (initialDelay) {
@@ -111,6 +114,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     });
     const loadingDischargingDelayArray = _loadingDischargingDelays?.map((loadingDischargingDelay, index) => {
       if (loadingDischargingDelay?.cargo?.value?.cargoId && loadingDischargingDelay?.quantity) {
+        loadingDischargingDelay.quantity = Number(this.quantityDecimalFormatPipe.transform(loadingDischargingDelay?.quantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,''));
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, false)
       } else {
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, true)
@@ -131,15 +135,17 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   unitConversion() {
     this.loadingDischargingDelays?.map(item => {
       if (item?.cargo?.value) {
-        this.loadingDischargingSequences.loadingDischargingDelays.map(el => {
+        this.listData.loadableQuantityCargo.map(el => {
           if (el.cargoNominationId === item?.cargo?.value?.cargoNominationId) {
-            item.quantity = this.loadingDischargingTransformationService.manageSequenceUnitConversion(Number(el.quantity), item, this.listData, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+            const loadableMT = this.loadingDischargingTransformationService.manageSequenceUnitConversion(Number(el.loadableMT), item, this.listData, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+            item.quantity = Number(loadableMT);
           }
         });
       }
     });
     const loadingDischargingDelayArray = this.loadingDischargingDelays?.map((loadingDischargingDelay, index) => {
       if (loadingDischargingDelay?.cargo?.value?.cargoId && loadingDischargingDelay?.quantity) {
+        loadingDischargingDelay.quantity = Number(this.quantityDecimalFormatPipe.transform(loadingDischargingDelay?.quantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,''));
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, false)
       } else {
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, true)
@@ -160,7 +166,6 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   async getDropdownData(): Promise<ILoadingSequenceDropdownData> {
     const cargoTobeLoaded = this.loadableQuantityCargo?.map(loadable => {
       if (loadable) {
-        loadable.loadableMT = this.quantityDecimalFormatPipe.transform(loadable.loadableMT, this.currentQuantitySelectedUnit).toString().replace(/,/g, '');
         loadable.grade = this.findCargo(loadable);
       }
       return loadable;
@@ -234,15 +239,16 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   onEditComplete(event) {
     const index = event.index;
     const form = this.row(index);
-    if (event.field === 'cargo') {
-      this.loadingDischargingDelays[index]['quantity'] = event.data.cargo.value.loadableMT;
+    if (event.field === 'cargo') {      
+      const loadableMT = this.quantityPipe.transform(event.data.cargo.value.loadableMT, this.prevQuantitySelectedUnit , this.currentQuantitySelectedUnit, event.data.cargo.value?.estimatedAPI , event.data.cargo.value?.estimatedTemp , -1);;
+      this.loadingDischargingDelays[index]['quantity'] =  Number(this.quantityDecimalFormatPipe.transform(loadableMT).toString().replace(/,/g,''));
       this.loadingDischargingDelays[index]['colorCode'] = event.data.cargo.value.colorCode;
-      this.updateField(index, 'quantity', event.data.cargo.value.loadableMT);
+      this.updateField(index, 'quantity', this.loadingDischargingDelays[index]['quantity']);
       this.updateField(index, 'colorCode', event.data.cargo.value.colorCode);
       this.updateFormValidity();
     }
     if (form.valid) {
-      const loadingDischargingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation)
+      const loadingDischargingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation  , this.listData);
       this.updateLoadingDischargingDelays.emit(loadingDischargingDelaysList);
     }
   }
@@ -325,7 +331,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       this.loadingDischargingDelays.splice(0, 1);
       dataTableControl.removeAt(0);
     }
-    const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation);
+    const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation,this.listData);
     this.updateLoadingDischargingDelays.emit(loadingDelaysList);
   }
 
@@ -373,7 +379,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     const dataTableControl = <FormArray>this.loadingDischargingSequenceForm.get('dataTable');
     dataTableControl.removeAt(event?.index);
     if (!event.data.isAdd) {
-      const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation);
+      const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation,this.listData);
       this.updateLoadingDischargingDelays.emit(loadingDelaysList);
     }
     if (event.index === 0) {

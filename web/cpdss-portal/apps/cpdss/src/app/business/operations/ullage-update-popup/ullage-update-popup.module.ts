@@ -17,6 +17,7 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
 import { NumberDirectiveModule } from '../../../shared/directives/number-directive/number-directive.module';
 import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
+import { UllageUpdateApiService } from './ullage-update-api.service';
 
 /**
  * Module for ullage update
@@ -45,6 +46,6 @@ import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-
     DropdownModule
   ],
   exports: [UllageUpdatePopupComponent],
-  providers: [UllageUpdatePopupTransformationService, QuantityPipe]
+  providers: [UllageUpdatePopupTransformationService, QuantityPipe, UllageUpdateApiService]
 })
 export class UllageUpdatePopupModule { }

@@ -538,8 +538,7 @@ public class LoadableStudyServiceShore {
             ? null
             : new BigDecimal(request.getDepartureVolume()));
 
-    // entity.setDensity(isEmpty(request.getDensity()) ? null : new
-    // BigDecimal(request.getDensity()));
+    entity.setDensity(isEmpty(request.getDensity()) ? null : new BigDecimal(request.getDensity()));
     if (request.getPortId() != null) {
       LoadableStudyPortRotation lsPortRot =
           loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(

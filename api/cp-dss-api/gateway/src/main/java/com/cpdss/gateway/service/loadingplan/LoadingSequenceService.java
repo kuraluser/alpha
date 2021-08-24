@@ -6,11 +6,7 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
-import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
-import com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse;
-import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
-import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
-import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.VesselInfo.PumpType;
 import com.cpdss.common.generated.VesselInfo.VesselIdRequest;
@@ -93,19 +89,10 @@ public class LoadingSequenceService {
     Map<Long, CargoNominationDetail> cargoNomDetails =
         this.getCargoNominationDetails(cargoNominationIds);
 
-    List<SynopticalBallastRecord> ballastDetails = new ArrayList<>();
-    SynopticalTableReply synopticalReply =
-        this.getSynopticalTableDetails(
-            reply.getVesselId(),
-            reply.getVoyageId(),
-            reply.getLoadablePatternId(),
-            reply.getPortId());
-    synopticalReply
-        .getSynopticalRecordsList()
-        .forEach(
-            record -> {
-              ballastDetails.addAll(record.getBallastList());
-            });
+    List<LoadablePlanBallastDetails> ballastDetails = new ArrayList<>();
+    ballastDetails.addAll(
+        loadingPlanGrpcService.fetchLoadablePlanBallastDetails(
+            reply.getLoadablePatternId(), reply.getPortRotationId()));
     List<Cargo> cargos = new ArrayList<Cargo>();
     List<Ballast> ballasts = new ArrayList<Ballast>();
     List<BallastPump> ballastPumps = new ArrayList<BallastPump>();
@@ -116,28 +103,7 @@ public class LoadingSequenceService {
     Set<Long> stageTickPositions = new LinkedHashSet<Long>();
     List<StabilityParam> stabilityParams = new ArrayList<StabilityParam>();
 
-    StabilityParam foreDraft = new StabilityParam();
-    foreDraft.setName("fore_draft");
-    foreDraft.setData(new ArrayList<>());
-    StabilityParam aftDraft = new StabilityParam();
-    aftDraft.setName("aft_draft");
-    aftDraft.setData(new ArrayList<>());
-    StabilityParam trim = new StabilityParam();
-    trim.setName("trim");
-    trim.setData(new ArrayList<>());
-    StabilityParam ukc = new StabilityParam();
-    ukc.setName("ukc");
-    ukc.setData(new ArrayList<>());
-    StabilityParam gm = new StabilityParam();
-    gm.setName("gm");
-    gm.setData(new ArrayList<>());
-    StabilityParam bm = new StabilityParam();
-    bm.setName("bm");
-    bm.setData(new ArrayList<>());
-    StabilityParam sf = new StabilityParam();
-    sf.setName("sf");
-    sf.setData(new ArrayList<>());
-    stabilityParams.addAll(Arrays.asList(foreDraft, aftDraft, trim, ukc, gm, sf, bm));
+    inititalizeStabilityParams(stabilityParams);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd'T'HH:mm");
     try {
@@ -226,6 +192,32 @@ public class LoadingSequenceService {
     response.setStabilityParams(stabilityParams);
   }
 
+  /** @param stabilityParams */
+  private void inititalizeStabilityParams(List<StabilityParam> stabilityParams) {
+    StabilityParam foreDraft = new StabilityParam();
+    foreDraft.setName("fore_draft");
+    foreDraft.setData(new ArrayList<>());
+    StabilityParam aftDraft = new StabilityParam();
+    aftDraft.setName("aft_draft");
+    aftDraft.setData(new ArrayList<>());
+    StabilityParam trim = new StabilityParam();
+    trim.setName("trim");
+    trim.setData(new ArrayList<>());
+    StabilityParam ukc = new StabilityParam();
+    ukc.setName("ukc");
+    ukc.setData(new ArrayList<>());
+    StabilityParam gm = new StabilityParam();
+    gm.setName("gm");
+    gm.setData(new ArrayList<>());
+    StabilityParam bm = new StabilityParam();
+    bm.setName("bm");
+    bm.setData(new ArrayList<>());
+    StabilityParam sf = new StabilityParam();
+    sf.setName("sf");
+    sf.setData(new ArrayList<>());
+    stabilityParams.addAll(Arrays.asList(foreDraft, aftDraft, trim, ukc, gm, sf, bm));
+  }
+
   /**
    * @param reply
    * @param cargoNomDetails
@@ -288,6 +280,10 @@ public class LoadingSequenceService {
       cargo.setAbbreviation(cargoNomination.getAbbreviation());
       cargo.setCargoNominationId(cargoNomination.getId());
       cargo.setColor(cargoNomination.getColor());
+      cargo.setApi(
+          StringUtils.isEmpty(cargoNomination.getApi())
+              ? null
+              : new BigDecimal(cargoNomination.getApi()));
       BigDecimal total =
           portWiseDetails.getLoadingPlanStowageDetailsList().stream()
               .filter(
@@ -385,12 +381,12 @@ public class LoadingSequenceService {
       Long portEta,
       Integer start,
       LoadingPlanPortWiseDetails portWiseDetails,
-      List<SynopticalBallastRecord> ballastDetails,
+      List<LoadablePlanBallastDetails> ballastDetails,
       List<Ballast> ballasts) {
     Ballast ballastDto = new Ballast();
     Optional<VesselTankDetail> tankDetailOpt =
         vesselTanks.stream().filter(tank -> tank.getTankId() == ballast.getTankId()).findAny();
-    Optional<SynopticalBallastRecord> ballastDetailsOpt =
+    Optional<LoadablePlanBallastDetails> ballastDetailsOpt =
         ballastDetails.stream()
             .filter(
                 details ->
@@ -400,9 +396,6 @@ public class LoadingSequenceService {
     buildBallast(ballast, ballastDto, portEta, start, portWiseDetails.getTime());
     tankDetailOpt.ifPresent(tank -> ballastDto.setTankName(tank.getShortName()));
     ballastDetailsOpt.ifPresent(details -> ballastDto.setColor(details.getColorCode()));
-    if (ballastDetailsOpt.isEmpty()) {
-      ballastDto.setColor("#01717D");
-    }
     ballasts.add(ballastDto);
   }
 
@@ -603,36 +596,6 @@ public class LoadingSequenceService {
         });
 
     return details;
-  }
-
-  private SynopticalTableReply getSynopticalTableDetails(
-      Long vesselId, Long voyageId, long loadablePatternId, long portId)
-      throws GenericServiceException {
-    LoadablePlanDetailsRequest.Builder builder = LoadablePlanDetailsRequest.newBuilder();
-    builder.setLoadablePatternId(loadablePatternId);
-    LoadableStudyResponse loadableStudyResponse =
-        loadableStudyGrpcService.getLoadableStudyByLoadablePatternId(builder.build());
-    SynopticalTableRequest.Builder synopticalBuilder = SynopticalTableRequest.newBuilder();
-    synopticalBuilder.setLoadableStudyId(loadableStudyResponse.getLoadableStudyId());
-    synopticalBuilder.setPortId(portId);
-    synopticalBuilder.setVesselId(vesselId);
-    synopticalBuilder.setVoyageId(voyageId);
-    log.info(
-        "fetching synoptical table for vessel {}, voyage {}, loadable study {}, port {}",
-        vesselId,
-        voyageId,
-        loadableStudyResponse.getLoadableStudyId(),
-        portId);
-    SynopticalTableReply reply =
-        loadableStudyGrpcService.getSynopticalDataByPortId(synopticalBuilder.build());
-    if (!reply.getResponseStatus().getStatus().equals(GatewayConstants.SUCCESS)) {
-      throw new GenericServiceException(
-          "Failed to get synoptical table ",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
-    log.info("Fetched Synoptical Table {}", reply.getId());
-    return reply;
   }
 
   private List<VesselTankDetail> getVesselTanks(Long vesselId) throws GenericServiceException {

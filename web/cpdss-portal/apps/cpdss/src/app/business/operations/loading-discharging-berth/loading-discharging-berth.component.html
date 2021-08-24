@@ -15,7 +15,7 @@
                 <p-dropdown  id="{{'berth_select_'+ i}}" styleClass="form-control dropdown-panel-auto" [filter]="true"
                     [options]="availableBerths" optionLabel="berthName"  [formControl]="berthData.controls['name']"
                     (onChange)="onBerthChange($event, i)"
-                    placeholder="{{'LOADING_DISCHARGING_BERTH_SELECT_LABEL' | translate}}" [readonly]="false"
+                    placeholder="{{'LOADING_DISCHARGING_BERTH_SELECT_LABEL' | translate}}" [readonly]="!editMode"
                     resetFilterOnHide="true">
                 </p-dropdown>
             </ng-container>

@@ -71,6 +71,7 @@ public class LoadableStudyController {
   private static final String CORRELATION_ID_HEADER = "correlationId";
   private static final String LOADABLE_PLAN_REPORT_FILE_NAME =
       "MOL_Stowage_Plan_Before_Loading.xlsx";
+  private static final String INVALID_LOADABLE_PATTERN_ID = "INVALID_LOADABLE_PATTERN_ID";
 
   /**
    * API for save voyage
@@ -2247,6 +2248,44 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error fetching discharge study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * @param updateUllageRequest
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/getUllageDetailsAlgo/{loadablePatternId}")
+  public UpdateUllage getUllageDetailsAlgo(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadablePatternId,
+      @RequestBody UpdateUllage updateUllageRequest,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("updateUllage : {}", getClientIp());
+      log.info("updateUllage API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      UpdateUllage reply =
+          loadableStudyService.getUllageDetailsAlgo(
+              updateUllageRequest, loadablePatternId, headers.getFirst(CORRELATION_ID_HEADER));
+      if (reply.getResponseStatus() != null
+          && "204".equals(reply.getResponseStatus().getStatus())) {
+        reply.setErrMessage(INVALID_LOADABLE_PATTERN_ID);
+      }
+      return reply;
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in getUllageDetailsAlgo ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in getUllageDetailsAlgo ", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
