@@ -297,11 +297,17 @@ public class LoadicatorService {
               Optional.ofNullable(
                       String.valueOf(cargoNomDetails.get(cargoNominationId).getAbbreviation()))
                   .ifPresent(cargoBuilder::setCargoAbbrev);
-              Optional.ofNullable(String.valueOf(cargoNomDetails.get(cargoNominationId).getApi()))
-                  .ifPresent(cargoBuilder::setApi);
-              Optional.ofNullable(
-                      String.valueOf(cargoNomDetails.get(cargoNominationId).getTemperature()))
-                  .ifPresent(cargoBuilder::setStandardTemp);
+              Optional<LoadingPlanStowageDetails> stowageOpt =
+                  stowageDetails.stream()
+                      .filter(stwg -> stwg.getCargoNominationId().equals(cargoNominationId))
+                      .findAny();
+              stowageOpt.ifPresent(
+                  stwg -> {
+                    Optional.ofNullable(String.valueOf(stwg.getApi()))
+                        .ifPresent(cargoBuilder::setApi);
+                    Optional.ofNullable(String.valueOf(stwg.getTemperature()))
+                        .ifPresent(cargoBuilder::setStandardTemp);
+                  });
               Optional.ofNullable(cargoNomDetails.get(cargoNominationId).getCargoId())
                   .ifPresent(cargoBuilder::setCargoId);
               Optional.ofNullable(loadingInformation.getPortXId())
