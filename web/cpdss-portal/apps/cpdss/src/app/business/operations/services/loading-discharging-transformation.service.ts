@@ -7,6 +7,7 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { ICargoQuantities, ILoadableQuantityCargo, IProtested, IShipCargoTank, OPERATIONS } from '../../core/models/common.model';
 import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
 import { ICOWDetails, IDischargeOperationListData, IDischargingInformation, IDischargingInformationResponse, ILoadedCargo, ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequenceValueObject, IReasonForDelays } from '../models/loading-discharging.model';
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { OPERATION_TAB } from '../models/operations.model';
 
 /**
@@ -31,7 +32,9 @@ export class LoadingDischargingTransformationService {
   rateUnitChange$ = this._rateUnitChangeSource.asObservable();
   tabChange$ = this._tabChangeSource.asObservable();
 
-  constructor(private quantityPipe: QuantityPipe) { }
+  constructor(
+    private quantityPipe: QuantityPipe,
+    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe) { }
 
   /** Set loading information complete status */
   setLoadingInformationValidity(isValid: boolean) {
@@ -193,7 +196,8 @@ export class LoadingDischargingTransformationService {
       },
       {
         field: 'quantity',
-        header: 'QUANTITY'
+        header: 'QUANTITY',
+        numberType: 'quantity'
       },
       {
         field: 'reasonForDelay',
@@ -267,7 +271,8 @@ export class LoadingDischargingTransformationService {
   */
   manageSequenceUnitConversion(value: number, loadingDischargingDelay: ILoadingDischargingSequenceValueObject, listData: ILoadingSequenceDropdownData, prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT){
     const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === loadingDischargingDelay?.cargo?.value?.cargoId);
-    return this.quantityPipe.transform(value, prevUnit, currUnit, cargoObj?.estimatedAPI);
+    const loadableMT = this.quantityPipe.transform(value, prevUnit, currUnit, cargoObj?.estimatedAPI , cargoObj?.estimatedTemp, -1);
+    return this.quantityDecimalFormatPipe.transform(loadableMT,currUnit).toString().replace(/,/g,'');
   }
 
 
@@ -278,7 +283,7 @@ export class LoadingDischargingTransformationService {
    * @returns {ILoadingDischargingDelays}
    * @memberof LoadingDischargingTransformationService
    */
-  getLoadingDischargingDelayAsValue(loadingDischargingDelayValueObject: ILoadingDischargingSequenceValueObject[], infoId: number, operation: OPERATIONS): ILoadingDischargingDelays[] {
+  getLoadingDischargingDelayAsValue(loadingDischargingDelayValueObject: ILoadingDischargingSequenceValueObject[], infoId: number, operation: OPERATIONS , listData: ILoadingSequenceDropdownData): ILoadingDischargingDelays[] {
     const loadingDischargingDelays: ILoadingDischargingDelays[] = [];
     loadingDischargingDelayValueObject.forEach((loadingValueObject) => {
       const _loadingDischargingDelays = <ILoadingDischargingDelays>{};
@@ -290,7 +295,12 @@ export class LoadingDischargingTransformationService {
       }
       _loadingDischargingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
       _loadingDischargingDelays.reasonForDelayIds = loadingValueObject?.reasonForDelay?.value?.map(a => a.id) ?? [];
-      _loadingDischargingDelays.quantity = loadingValueObject?.quantity;
+      if(_loadingDischargingDelays.cargoId) {
+        const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === _loadingDischargingDelays.cargoId);
+        _loadingDischargingDelays.quantity = Number(cargoObj.loadableMT);
+      } else {
+        _loadingDischargingDelays.quantity = loadingValueObject?.quantity;
+      }
       const minuteDuration = loadingValueObject?.duration?.value.split(':');
       _loadingDischargingDelays.duration = (Number(minuteDuration[0]) * 60) + Number(minuteDuration[1]);
       _loadingDischargingDelays.cargoNominationId = loadingValueObject?.cargo?.value?.cargoNominationId;
@@ -378,7 +388,8 @@ export class LoadingDischargingTransformationService {
       {
         field: 'loadableMT',
         header: 'LOADING_CARGO_TO_BE_LOADED_SHIP_LOADABLE',
-
+        numberType: 'quantity'
+      
       },
       {
         field: 'differencePercentage',
