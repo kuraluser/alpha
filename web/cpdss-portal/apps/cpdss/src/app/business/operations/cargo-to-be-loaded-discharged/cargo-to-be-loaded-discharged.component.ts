@@ -111,14 +111,12 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
         cargo.minMaxTolerance = maxTolerence + (minTolerence ? "/" + minTolerence : '');
         cargo.differencePercentage = cargo.differencePercentage ? (cargo.differencePercentage.includes('%') ? cargo.differencePercentage : cargo.differencePercentage + '%') : '';
         cargo.grade = this.findCargo(cargo);
-
         const orderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);   
         cargo.orderedQuantity = this.quantityDecimalFormatPipe.transform(orderedQuantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,'');
         const loadableMT = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
         cargo.loadableMT = this.quantityDecimalFormatPipe.transform(loadableMT,this.currentQuantitySelectedUnit).toString().replace(/,/g,'');
-
-        const slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.slopQuantity.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
-        cargo.slopQuantity = slopQuantity;
+        const slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(cargo?.slopQuantity.toString(), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
+        cargo.slopQuantity = Number(this.quantityDecimalFormatPipe.transform(slopQuantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,''));
         cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
       }
       return cargo;

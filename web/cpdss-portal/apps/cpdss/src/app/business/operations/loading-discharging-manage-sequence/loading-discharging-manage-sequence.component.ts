@@ -111,6 +111,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     });
     const loadingDischargingDelayArray = _loadingDischargingDelays?.map((loadingDischargingDelay, index) => {
       if (loadingDischargingDelay?.cargo?.value?.cargoId && loadingDischargingDelay?.quantity) {
+        loadingDischargingDelay.quantity = Number(this.quantityDecimalFormatPipe.transform(loadingDischargingDelay?.quantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,''));
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, false)
       } else {
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, true)
@@ -140,6 +141,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     });
     const loadingDischargingDelayArray = this.loadingDischargingDelays?.map((loadingDischargingDelay, index) => {
       if (loadingDischargingDelay?.cargo?.value?.cargoId && loadingDischargingDelay?.quantity) {
+        loadingDischargingDelay.quantity = Number(this.quantityDecimalFormatPipe.transform(loadingDischargingDelay?.quantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,''));
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, false)
       } else {
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, true)
@@ -160,7 +162,6 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   async getDropdownData(): Promise<ILoadingSequenceDropdownData> {
     const cargoTobeLoaded = this.loadableQuantityCargo?.map(loadable => {
       if (loadable) {
-        loadable.loadableMT = this.quantityDecimalFormatPipe.transform(loadable.loadableMT, this.currentQuantitySelectedUnit).toString().replace(/,/g, '');
         loadable.grade = this.findCargo(loadable);
       }
       return loadable;
