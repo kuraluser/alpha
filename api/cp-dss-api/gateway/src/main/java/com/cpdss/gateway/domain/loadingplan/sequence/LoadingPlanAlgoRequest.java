@@ -20,5 +20,5 @@ public class LoadingPlanAlgoRequest {
   // stability parameters per stage
   private List<LoadingSequenceStabilityParam> stages;
   private List<AlgoError> errors;
-  private Boolean hasLoadicator = true;
+  private Boolean hasLoadicator;
 }
