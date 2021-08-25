@@ -595,9 +595,15 @@
       const refreshedToken = syncResponse.headers.get('token');
       sync.refreshedToken = refreshedToken;
       sync.pattern = data;
+      sync.syncType = 'loadable-study-pattern-status';
       if (syncView?.responseStatus?.status === '200') {
         sync.status = syncView?.responseStatus?.status;
         currentStatus = syncView?.loadableStudyStatusId;
+        if (syncView?.loadableStudyStatusId === 21) {
+          sync.type = 'loadable-study-communicated-to-shore';
+          sync.statusId = syncView?.loadableStudyStatusId;
+          notifyClients(sync);
+        }
         if (syncView?.loadableStudyStatusId === 4 || syncView?.loadableStudyStatusId === 5) {
           sync.type = 'loadable-pattern-processing';
           sync.statusId = syncView?.loadableStudyStatusId;
@@ -667,10 +673,15 @@
         const refreshedToken = syncResponse.headers.get('token');
         sync.refreshedToken = refreshedToken;
         sync.pattern = data;
+        sync.syncType = 'discharge-study-plan-status';
         if (syncView?.responseStatus?.status === '200') {
-          sync.syncType = 'discharge-study';
           sync.status = syncView?.responseStatus?.status;
           currentStatus = syncView?.dischargeStudyId;
+          if (syncView?.loadableStudyStatusId === 21) {
+            sync.type = 'loadable-study-communicated-to-shore';
+            sync.statusId = syncView?.loadableStudyStatusId;
+            notifyClients(sync);
+          }
           if (syncView?.dischargeStudyId === 4 || syncView?.dischargeStudyId === 5) {
             sync.type = 'discharge-pattern-processing';
             sync.statusId = syncView?.dischargeStudyId;
@@ -708,7 +719,6 @@
       }, 3500);
       setTimeout(() => {
         if (currentStatus === 4) {
-          sync.syncType = 'discharge-study';
           sync.type = 'discharge-pattern-no-response';
           // sending default status
           sync.statusId = 1;

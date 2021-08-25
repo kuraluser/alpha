@@ -148,7 +148,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
  */
   private swMessageHandler = async event => {
     let isValidStatus = false;
-    if (event.data?.syncType === 'discharge-study') {
+    if (event.data?.syncType === 'discharge-study-plan-status') {
       isValidStatus = true;
     }
     if (event?.data?.status === '401' && event?.data?.errorCode === '210' && isValidStatus) {
@@ -540,7 +540,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       voyageId: this.voyageId,
       dischargeStudyId: this.dischargeStudyId,
       selectedVoyageNo: this.selectedVoyage?.voyageNo,
-      selectedLoadableStudyName: this.selectedDischargeStudy?.name,
+      selectedDischargeStudyName: this.selectedDischargeStudy?.name,
       processId: null
     }
 

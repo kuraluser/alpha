@@ -17,6 +17,9 @@
                 </div>
             </div>
         </div>
+        <div class="pr-5" *ngIf="selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION || selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_ERROR">
+            <button class="btn btn-main" id="view_error" (click)="viewError(true)">{{'DISCHARGE_STUDY_PLAN_VIEW_ERROR'| translate}}</button>
+        </div>
         <div class="col cargo-nomiantion-tab text-center">
             <a class="tab-btn"
                 [ngClass]="{'active': selectedTab === DISCHARGE_STUDY_DETAILS_TABS.CARGONOMINATION , 'disabled': !cargoNominationTabPermission?.view}"
