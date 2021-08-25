@@ -845,8 +845,13 @@ public class LoadablePatternService {
     lpd.getLoadablePlanPortWiseDetailsList()
         .forEach(
             lppwd -> {
-              LoadableStudyPortRotation loadableStudyPortRotation =
-                  this.loadableStudyPortRotationRepository.getOne(lppwd.getPortRotationId());
+              Long portRotationid = lppwd.getPortRotationId();
+              LoadableStudyPortRotation portRotation =
+                      loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                              loadablePattern.getLoadableStudy(), lppwd.getPortId(), true);
+              if (!Objects.isNull(portRotation)) portRotationid = portRotation.getId();
+
+              Long finalPortRotationid = portRotationid;
               lppwd
                   .getArrivalCondition()
                   .getLoadablePlanBallastDetailsList()
@@ -856,7 +861,7 @@ public class LoadablePatternService {
                             SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
                             lpbd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            finalPortRotationid,
                             loadablePattern);
                       });
               lppwd
@@ -868,7 +873,7 @@ public class LoadablePatternService {
                             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
                             lpbd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            finalPortRotationid,
                             loadablePattern);
                       });
             });
