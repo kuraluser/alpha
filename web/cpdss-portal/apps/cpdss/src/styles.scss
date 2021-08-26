@@ -1884,6 +1884,7 @@ height: 15px;
   .tank-outer-pattern{
     height: 100%;
     max-height: 350px;
+    min-height: 160px;
     .tank-inner-wrapper-pattern .tank-column-pattern > div {
       .tank-name{
       text-align: left;
@@ -2959,10 +2960,11 @@ textarea{
 
 .sequence-chart-ballast-pump-column {
   padding: 31px 4.75px;
-  white-space: normal;
   text-align: center;
   border-right: 0;
   border-bottom: 0;
+  position: absolute;
+  right: 0;
 }
 
 .sequence-icon {
@@ -2994,3 +2996,14 @@ textarea{
     stroke-width: 1;
   }
 }
+
+.font-main{
+  font-family: 'Play', sans-serif!important;
+}
+
+.highcharts-grid-axis{
+  p{
+    margin-bottom: 5px!important;
+  }
+}
+
