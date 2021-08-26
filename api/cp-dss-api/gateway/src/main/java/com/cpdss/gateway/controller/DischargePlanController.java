@@ -6,7 +6,6 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.CommonResponse;
-import com.cpdss.gateway.domain.DischargePlanDetailsResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
@@ -510,19 +509,17 @@ public class DischargePlanController {
    */
   @GetMapping(
       value =
-          "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/discharge-pattern-details/{dischargePatternId}")
-  public DischargePlanDetailsResponse getDischargePatternDetails(
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/discharge-pattern-details")
+  public DischargeStudyCargoResponse getDischargePatternDetails(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          Long loadableStudyId,
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-          Long loadablePatternId,
+          Long dischargeStudyId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
       return this.dischargeStudyService.getDischargePatternDetails(
-          loadablePatternId, loadableStudyId, vesselId, headers.getFirst(CORRELATION_ID_HEADER));
+          dischargeStudyId, vesselId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when getLoadablePatternDetails", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

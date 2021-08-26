@@ -847,8 +847,8 @@ public class LoadablePatternService {
             lppwd -> {
               Long portRotationid = lppwd.getPortRotationId();
               LoadableStudyPortRotation portRotation =
-                      loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
-                              loadablePattern.getLoadableStudy(), lppwd.getPortId(), true);
+                  loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                      loadablePattern.getLoadableStudy(), lppwd.getPortId(), true);
               if (!Objects.isNull(portRotation)) portRotationid = portRotation.getId();
 
               Long finalPortRotationid = portRotationid;
