@@ -98,7 +98,22 @@ public class CommunicationService {
   }
 
   private void saveValidatePlanRequestShore(EnvoyReader.EnvoyReaderResultReply erReply) {
-    String jsonResult = erReply.getPatternResultJson();
+    try{
+      String jsonResult = erReply.getPatternResultJson();
+      LoadableStudy loadableStudyEntity =
+              loadableStudyServiceShore.saveOrUpdateLSInShore(jsonResult, erReply.getMessageId());
+      if (loadableStudyEntity != null) {
+        voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
+        this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
+        //processAlgoFromShip(loadableStudyEntity);
+      }
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when generating pattern", e);
+    } catch (ResourceAccessException e) {
+      log.info("Error calling ALGO ");
+    } catch (Exception e) {
+      log.error("Exception when when calling algo  ", e);
+    }
   }
 
   public void getDataFromCommInShipSide(
