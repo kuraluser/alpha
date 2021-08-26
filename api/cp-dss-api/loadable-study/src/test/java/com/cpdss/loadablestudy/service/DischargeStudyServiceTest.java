@@ -35,6 +35,7 @@ import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
 import com.cpdss.loadablestudy.repository.JsonDataRepository;
 import com.cpdss.loadablestudy.repository.JsonTypeRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
@@ -129,6 +130,16 @@ class DischargeStudyServiceTest {
   @MockBean private LoadablePatternDetailsRepository loadablePatternDetailsRepository;
   @MockBean private LoadablePlanConstraintsRespository loadablePlanConstraintsRespository;
   @MockBean private PurposeOfCommingleRepository purposeOfCommingleRepository;
+  @MockBean private CargoNominationService cargoNominationService;
+  @MockBean private LoadableStudyPortRotationService loadableStudyPortRotationService;
+  @MockBean private LoadablePatternService loadablePatternService;
+  @MockBean private CowDetailService cowDetailService;
+  @MockBean private PortInstructionService portInstructionService;
+  @MockBean private BackLoadingService backLoadingService;
+
+  @MockBean
+  private DischargePatternQuantityCargoPortwiseRepository
+      dischargePatternQuantityCargoPortwiseRepository;
 
   @MockBean
   private LoadablePlanCommingleDetailsPortwiseRepository
@@ -278,8 +289,9 @@ class DischargeStudyServiceTest {
     status.setId(3L);
     status.setName("ACTIVE");
     voyage.setVoyageStatus(status);
-    when(this.loadableStudyRepository.findById(anyLong()))
-        .thenReturn(Optional.of(new LoadableStudy()));
+    voyage.setId(1L);
+    entity.setVoyage(voyage);
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
     when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(voyage);
     doNothing().when(this.voyageService).checkIfVoyageClosed(anyLong());
 
@@ -299,7 +311,7 @@ class DischargeStudyServiceTest {
     StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
 
     when(this.generateDischargeStudyJson.generateDischargePatterns(
-            request, any(AlgoReply.Builder.class)))
+            any(AlgoRequest.class), any(AlgoReply.Builder.class)))
         .thenReturn(reply);
 
     this.dischargeStudyService.generateDischargePatterns(request, responseObserver);
@@ -315,7 +327,7 @@ class DischargeStudyServiceTest {
     StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
 
     when(this.generateDischargeStudyJson.generateDischargePatterns(
-            request, any(AlgoReply.Builder.class)))
+            any(AlgoRequest.class), any(AlgoReply.Builder.class)))
         .thenThrow(GenericServiceException.class);
 
     this.dischargeStudyService.generateDischargePatterns(request, responseObserver);
@@ -332,7 +344,7 @@ class DischargeStudyServiceTest {
     StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
 
     when(this.generateDischargeStudyJson.generateDischargePatterns(
-            request, any(AlgoReply.Builder.class)))
+            any(AlgoRequest.class), any(AlgoReply.Builder.class)))
         .thenThrow(ResourceAccessException.class);
 
     this.dischargeStudyService.generateDischargePatterns(request, responseObserver);
@@ -348,7 +360,7 @@ class DischargeStudyServiceTest {
     StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
 
     when(this.generateDischargeStudyJson.generateDischargePatterns(
-            request, any(AlgoReply.Builder.class)))
+            any(AlgoRequest.class), any(AlgoReply.Builder.class)))
         .thenThrow(RuntimeException.class);
 
     this.dischargeStudyService.generateDischargePatterns(request, responseObserver);
