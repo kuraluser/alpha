@@ -5,6 +5,7 @@ option java_package = "com.cpdss.common.generated.discharge_plan";
 
 // import common definitions like ResponseStatus
 import "common.proto";
+import "loading_plan/loading_plan_models.proto";
 
 // A generic request with Optional params
 message DischargeInformationRequest{
@@ -12,11 +13,108 @@ message DischargeInformationRequest{
   int64 vesselId = 2;
   int64 voyageId = 3;
   int64 dischargeInfoId = 4;
-  int64 loadingPatternId = 5;
+  int64 dischargePatternId = 5;
   int64 portRotationId = 6;
   int64 synopticTableId = 7;
 }
 
 message DischargeInformation {
+  int64 dischargeInfoId = 8;
+  int64 synopticTableId = 9;
   ResponseStatus responseStatus = 1;
+  DischargeDetails dischargeDetails = 2;
+  DischargeRates dischargeRate = 3;
+  repeated DischargeBerths berthDetails = 4;
+  LoadingStages dischargeStage = 5; // reusing
+  DischargeDelay dischargeDelay = 6;
+  PostDischargeStageTime postDischargeStageTime = 7;
+}
+
+message DischargeDetails {
+  int64 id = 1;
+  string timeOfSunrise = 2;
+  string timeOfSunset =3;
+  string startTime = 4;
+  TrimAllowed trimAllowed = 5;
+  int64 voyageId = 6;
+}
+
+message DischargeRates {
+  string initialDischargeRate = 1;
+  string maxDischargeRate = 2;
+  string minBallastRate = 3;
+  string maxBallastRate = 4;
+}
+
+message DischargeBerths {
+  int64 id = 1; // primary key
+  int64 dischargeInfoId = 2;
+  int64 berthId = 3;
+  string depth = 4;
+  string maxManifoldHeight = 5;
+  string maxManifoldPressure = 6;
+  string hoseConnections = 7;
+  string seaDraftLimitation = 8;
+  string airDraftLimitation = 9;
+  bool airPurge = 10;
+  bool cargoCirculation = 11;
+  string lineDisplacement = 12;
+  string specialRegulationRestriction = 13;
+  string itemsToBeAgreedWith = 14;
+}
+
+message DischargeMachinesInUse{
+  int64 id = 1; // primary key
+  int64 dischargeInfoId = 2;
+  int64 machineId = 3;
+  string capacity = 4;
+  bool isUsing = 5;
+  MachineType machineType = 6;
+}
+
+message DischargeDelay {
+  repeated DelayReasons reasons = 1; // master data
+  repeated DischargeDelays delays = 2; // user data
+}
+
+message DischargeDelays {
+  int64 id = 1; // primary key
+  int64 dischargeInfoId = 2;
+  repeated int64 reasonForDelayIds = 3;
+  string duration = 4;
+  int64 cargoId = 5;
+  string quantity = 6;
+  int64 cargoNominationId = 7;
+}
+
+message PostDischargeStageTime {
+  string timeForDryCheck = 1;
+  string slopDischarging = 2;
+  string finalStripping = 3;
+  string freshOilWashing = 4;
+}
+
+message CowPlan {
+  string cowPlan = 1;
+  string noOfTanksForCow = 2;
+  string cowStartTime = 3;
+  string cowEndTime = 4;
+  string estCowDuration = 5;
+  string trimCowMin = 6;
+  string trimCowMax = 7;
+  bool needFreshCrudeStorage = 8;
+  bool needFlushingOil = 9;
+  repeated CowTankDetails cowTankDetails = 10;
+}
+
+message CowTankDetails {
+  COW_TYPE cowType = 1;
+  CargoForCow cargoForCow = 2;
+  repeated int64 tankIds = 3;
+}
+
+
+message CargoForCow {
+  int64 cargoId = 1;
+  int64 cargoNominationId = 2;
 }

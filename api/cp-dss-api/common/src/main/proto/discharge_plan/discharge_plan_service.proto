@@ -5,7 +5,6 @@ option java_package = "com.cpdss.common.generated.discharge_plan";
 
 // import common definitions like ResponseStatus
 import "common.proto";
-import "loading_plan/loading_plan_models.proto";
 import "discharge_plan/discharge_plan_models.proto";
 
 service DischargeInformationService {
