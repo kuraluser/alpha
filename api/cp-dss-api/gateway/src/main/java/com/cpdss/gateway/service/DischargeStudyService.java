@@ -429,6 +429,7 @@ public class DischargeStudyService {
               portRotation.setPercentage(port.getPercentage());
               portRotation.setTanks(port.getTanksList());
               portRotation.setInstructionId(port.getInstructionIdList());
+              portRotation.setDischargeRate(new BigDecimal(0));
               if (portIdsToCargoNominationMap.containsKey(port.getPortId())) {
                 List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =
                     portIdsToCargoNominationMap.get(port.getPortId());
@@ -475,6 +476,7 @@ public class DischargeStudyService {
                   cargoNominationDetail.getLoadingPortDetailsList().stream()
                       .filter(port -> portRotation.getPortId().equals(port.getPortId()))
                       .findFirst();
+              cargoNomination.setDischargeTime(new BigDecimal(cargoNominationDetail.getDischargingTime()));
               if (nominationPort.isPresent()) {
                 cargoNomination.setQuantity(new BigDecimal(nominationPort.get().getQuantity()));
                 cargoNomination.setMode(nominationPort.get().getMode());
