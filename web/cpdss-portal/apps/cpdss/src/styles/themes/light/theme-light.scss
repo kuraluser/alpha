@@ -533,6 +533,9 @@ tr:hover{
 .icon-status-11{
   background: url($images-theme + 'algo-error.png') no-repeat center center;
 }
+.icon-status-21{
+  background: url($images-theme + 'icon-status-21.png') no-repeat center center;
+}
 .icon-api-temp{
   background: url($images-theme + 'history-icon-api-and-temp.png') no-repeat center center;
 }
@@ -1514,4 +1517,14 @@ header{
 
 .right-border{
   border-right: 1px solid $border-color!important;
+}
+.sequence-chart-ballast-column, .sequence-chart-tank-column, .sequence-chart-ballast-pump-column, .highcharts-axis-title, .highcharts-axis-title, .sequence-chart-cargo-column, .sequence-chart-ullage-column, .sequence-chart-quantity-column{
+  color: $text-secondary;
+  fill: $text-secondary!important;
+}
+
+.sequence-chart.stabilityparams-chart{
+  .highcharts-axis-title{
+    fill: $text-secondary!important;
+  }
 }
