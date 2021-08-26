@@ -8,22 +8,26 @@ import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
+import com.cpdss.dischargeplan.service.DischargeInformationService;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
 @GrpcService
-public class DischargeInformationService
+public class DischargeInformationRPCService
     extends DischargeInformationServiceGrpc.DischargeInformationServiceImplBase {
+
+  @Autowired DischargeInformationService dischargeInformationService;
 
   @Override
   public void getDischargeInformation(
       DischargeInformationRequest request, StreamObserver<DischargeInformation> responseObserver) {
     DischargeInformation.Builder builder = DischargeInformation.newBuilder();
     try {
-      log.info("Hello World");
-      log.info(Utils.toJson(request));
+      log.info("Get Discharge Info Request Payload \n{}", Utils.toJson(request));
+      this.dischargeInformationService.getDischargeInformation(request, builder);
     } catch (Exception e) {
       e.printStackTrace();
       builder.setResponseStatus(
