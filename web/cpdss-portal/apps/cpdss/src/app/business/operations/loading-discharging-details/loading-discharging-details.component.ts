@@ -41,6 +41,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
   loadingDischargingDetailsResponse: ILoadingDischargingDetails;
   timeOfSunrisePermission: IPermission;
   timeOfSunsetPermission: IPermission;
+  selectedTime:any;
   constructor(private fb: FormBuilder,
     private permissionsService: PermissionsService,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
@@ -119,13 +120,19 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 */
   onTimeChange(fieldReferenceName, field) {
     fieldReferenceName.hideOverlay();
+    this.selectedTime = null;
     if (this.loadingDischargingDetailsForm.value[field]) {
-      const selectedTime = new Date(this.loadingDischargingDetailsForm.value[field]);
-      this.loadingDischargingDetailsResponse[field] = ((selectedTime.getHours() < 10 ? ('0' + selectedTime.getHours()) : selectedTime.getHours())) + ":" + ((selectedTime.getMinutes() < 10 ? ('0' + selectedTime.getMinutes()) : selectedTime.getMinutes()));
-      if (!this.fieldError(field)) {
-        this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
-      }
-
+      this.selectedTime = new Date(this.loadingDischargingDetailsForm.value[field]);
+     
+    }
+    else {
+      this.selectedTime = new Date();
+      this.selectedTime.setHours(fieldReferenceName.currentHour, fieldReferenceName.currentMinute);
+      this.loadingDischargingDetailsForm.controls[field].setValue(this.selectedTime);
+    }
+    this.loadingDischargingDetailsResponse[field] = ((this.selectedTime.getHours() < 10 ? ('0' + this.selectedTime.getHours()) : this.selectedTime.getHours())) + ":" + ((this.selectedTime.getMinutes() < 10 ? ('0' + this.selectedTime.getMinutes()) : this.selectedTime.getMinutes()));
+    if (!this.fieldError(field)) {
+      this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
     }
     this.loadingDischargingDetailsForm.controls.timeOfSunrise.updateValueAndValidity();
     this.loadingDischargingDetailsForm.controls.timeOfSunset.updateValueAndValidity();

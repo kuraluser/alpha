@@ -70,7 +70,7 @@ export class DischargeStudyDetailsApiService {
      * @memberof DischargeStudyDetailsApiService
      */
      getPortPendingUpdatesCount(vesselId: number, voyageId: number, dischargeStudyId: number): Promise<number> {
-        return this._portsDb.dischargePorts.where({ 'vesselId': vesselId, 'voyageId': voyageId, 'loadableStudyId': dischargeStudyId }).count();
+        return this._portsDb.dischargePorts.where({ 'vesselId': vesselId, 'voyageId': voyageId, 'dischargeStudyId': dischargeStudyId }).count();
      }
 
          /**
@@ -97,7 +97,7 @@ export class DischargeStudyDetailsApiService {
      * @memberof DischargeStudyDetailsApiService
      */
       getOHQPortRotation(vesselId: number, voyageId: number, dischargeStudyId: number): Observable<IOHQPortRotationResponse> {
-        return this.commonApiService.get<IOHQPortRotationResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${dischargeStudyId}/port-rotation`);
+        return this.commonApiService.get<IOHQPortRotationResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-studies/${dischargeStudyId}/port-rotation`);
       }
       /**
        * Method for fetching port specific ohq
@@ -110,6 +110,7 @@ export class DischargeStudyDetailsApiService {
        * @memberof DischargeStudyDetailsApiService
        */
       getPortOHQDetails(vesselId: number, voyageId: number, dischargeStudyId: number, portId: number): Observable<IDischargeStudyPortOHQResponse> {
+        debugger
           return this.commonApiService.get<IDischargeStudyPortOHQResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-studies/${dischargeStudyId}/port-rotation/${portId}/on-hand-quantities`);
       }
       /**
@@ -248,6 +249,6 @@ export class DischargeStudyDetailsApiService {
      * Get api for algo error response
      */
     getAlgoErrorDetails(vesselId: number, voyageId: number, dischargeStudyId: number): Observable<IAlgoResponse> {
-      return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${dischargeStudyId}/algo-errors`);
+      return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-studies/${dischargeStudyId}/algo-errors`);
     }
 }

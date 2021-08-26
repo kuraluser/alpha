@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component , OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -163,11 +163,11 @@ export class OperationsComponent implements OnInit, OnDestroy {
   async onPortSelection(port: IVoyagePortDetails) {
     await localStorage.setItem('selectedPortName', port?.name);
     this.operationId = port?.operationId;
-    if (port?.operationId === 1) {
-      this.router.navigate(['loading', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute });
-    } else if (port?.operationId === 2) {
-      this.router.navigate(['discharging', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute });
-    }
+      if (port?.operationId === 1) {
+        this.router.navigate(['loading', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute });
+      } else if (port?.operationId === 2) {
+        this.router.navigate(['discharging', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute });
+      }
   }
 
   /**

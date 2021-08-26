@@ -123,7 +123,7 @@
 
         <cpdss-portal-loading-discharging-manage-sequence  #manageSequence
         [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
-            [loadableQuantityCargo]="loadingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails"
+            [loadableQuantityCargo]="manageSequenceLoadableQuantityCargoDetails"
             [loadingDischargingSequences]="loadingInformationData?.loadingSequences" [loadingInfoId]="loadingInfoId"
             (updateLoadingDischargingDelays)="onUpdateLoadingDelays($event)">
         </cpdss-portal-loading-discharging-manage-sequence>

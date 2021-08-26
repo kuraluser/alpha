@@ -1,7 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service;
 
-import static com.cpdss.gateway.utility.GatewayConstants.*;
+import static com.cpdss.gateway.common.GatewayConstants.*;
 import static java.lang.String.valueOf;
 import static java.util.stream.Collectors.*;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -4929,6 +4929,34 @@ public class LoadableStudyService {
     return response;
   }
 
+  public UpdateUllage buildUpdateUllageResponse(UpdateUllageReply grpcReply, String correlationId) {
+    UpdateUllage response = new UpdateUllage();
+
+    response.setCorrectedUllage(
+        isEmpty(grpcReply.getLoadablePlanStowageDetails().getCorrectedUllage())
+            ? null
+            : new BigDecimal(grpcReply.getLoadablePlanStowageDetails().getCorrectedUllage()));
+    response.setCorrectionFactor(
+        isEmpty(grpcReply.getLoadablePlanStowageDetails().getCorrectionFactor())
+            ? null
+            : new BigDecimal(grpcReply.getLoadablePlanStowageDetails().getCorrectionFactor()));
+    response.setQuantityMt(
+        isEmpty(grpcReply.getLoadablePlanStowageDetails().getWeight())
+            ? null
+            : new BigDecimal(grpcReply.getLoadablePlanStowageDetails().getWeight()));
+    response.setFillingRatio(grpcReply.getLoadablePlanStowageDetails().getFillingRatio());
+    response.setIsBallast(grpcReply.getLoadablePlanStowageDetails().getIsBallast());
+    if ("INVALID_LOADABLE_PATTERN_ID".equals(grpcReply.getResponseStatus().getMessage())) {
+      response.setResponseStatus(
+          new CommonSuccessResponse(String.valueOf(HttpStatus.NO_CONTENT.value()), correlationId));
+    } else {
+      response.setResponseStatus(
+          new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    }
+
+    return response;
+  }
+
   private UpdateUllage buildeUpdateUllageResponseTemp(String correlationId) {
     UpdateUllage response = new UpdateUllage();
     response.setCorrectedUllage(new BigDecimal("10"));
@@ -4955,6 +4983,29 @@ public class LoadableStudyService {
    * @param grpcRequest void
    */
   public void buildUpdateUllageRequest(
+      UpdateUllage updateUllageRequest,
+      Long loadablePatternId,
+      com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.Builder grpcRequest) {
+    grpcRequest.setLoadablePatternId(loadablePatternId);
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
+    builder.setId(updateUllageRequest.getId());
+    builder.setTankId(updateUllageRequest.getTankId());
+    builder.setIsBallast(updateUllageRequest.getIsBallast());
+    Optional.ofNullable(updateUllageRequest.getCorrectedUllage())
+        .ifPresent(ullage -> builder.setCorrectedUllage(valueOf(ullage)));
+    builder.setApi(updateUllageRequest.getApi());
+    builder.setTemperature(updateUllageRequest.getTemperature());
+    builder.setSg(updateUllageRequest.getSg());
+    builder.setIsCommingle(updateUllageRequest.isCommingle());
+    grpcRequest.setLoadablePlanStowageDetails(builder.build());
+  }
+
+  /**
+   * @param updateUllageRequest
+   * @param grpcRequest void
+   */
+  public void buildgetUpdateUllageRequest(
       UpdateUllage updateUllageRequest,
       Long loadablePatternId,
       com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.Builder grpcRequest) {
@@ -6164,23 +6215,32 @@ public class LoadableStudyService {
     return jsonResponse;
   }
 
-  public UpdateUllage getUllageDetailsAlgo(UpdateUllage updateUllageRequest, String correlationId)
-          throws GenericServiceException {
+  public UpdateUllage getUllageDetailsAlgo(
+      UpdateUllage updateUllageRequest, Long loadablePatternId, String correlationId)
+      throws GenericServiceException {
     log.info("Inside getUllageRequest in gateway micro service");
 
     UpdateUllageRequest.Builder grpcRequest = UpdateUllageRequest.newBuilder();
-    buildUpdateUllageRequest(updateUllageRequest, null, grpcRequest);
+    buildgetUpdateUllageRequest(updateUllageRequest, loadablePatternId, grpcRequest);
     UpdateUllageReply grpcReply = this.getUllage(grpcRequest.build());
 
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-              "Failed in confirmPlanStatus from grpc service",
-              grpcReply.getResponseStatus().getCode(),
-              HttpStatusCode.valueOf(
-                      Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
+          "Failed in confirmPlanStatus from grpc service",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
-
-    return this.buildeUpdateUllageResponse(grpcReply, correlationId);
+    if ("INVALID_LOADABLE_PATTERN_ID".equals(grpcReply.getResponseStatus().getMessage())) {
+      ResponseStatus status =
+          ResponseStatus.newBuilder()
+              .setStatus(grpcReply.getResponseStatus().getStatus())
+              .setCode(grpcReply.getResponseStatus().getCode())
+              .setMessage(grpcReply.getResponseStatus().getMessage())
+              .build();
+      grpcReply = UpdateUllageReply.newBuilder().setResponseStatus(status.toBuilder()).build();
+    }
+    return this.buildUpdateUllageResponse(grpcReply, correlationId);
   }
 
   /**
@@ -6188,7 +6248,7 @@ public class LoadableStudyService {
    * @return RecalculateVolumeReply
    */
   public UpdateUllageReply getUllage(
-          com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest grpcRequest) {
+      com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest grpcRequest) {
     return this.loadableStudyServiceBlockingStub.getUllage(grpcRequest);
   }
 }

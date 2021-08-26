@@ -199,12 +199,14 @@ public class OnHandQuantityService {
     }
 
     List<OnHandQuantity> onHandQuantities =
-        this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-            loadableStudyOpt.get(), portRotation, true);
+        this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
+            loadableStudyOpt.get(), portRotation.getPortXId(), true);
     VesselInfo.VesselReply vesselReply = this.getOhqTanks(request);
     if (onHandQuantities.isEmpty()) {
       synopticService.populateOnHandQuantityData(loadableStudyOpt, portRotation);
-    } else if (!onHandQuantities.isEmpty() && !portRotation.getIsPortRotationOhqComplete()) {
+    } else if (!onHandQuantities.isEmpty()
+        && (portRotation.getIsPortRotationOhqComplete() != null)
+        && !portRotation.getIsPortRotationOhqComplete()) {
       // If ohq quanties already exist for the port rotation but the flag is false we set it to
       // true.
       this.loadableStudyPortRotationRepository.updateIsOhqCompleteByIdAndIsActiveTrue(

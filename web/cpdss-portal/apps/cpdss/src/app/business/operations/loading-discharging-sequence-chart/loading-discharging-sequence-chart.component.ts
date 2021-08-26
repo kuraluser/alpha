@@ -25,7 +25,13 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
 Theme(Highcharts);
 GanttChart(Highcharts);
 Annotations(Highcharts);
-
+Highcharts.setOptions({
+  chart: {
+    style: {
+      fontFamily: 'Play'
+    }
+  }
+});
 /**
  * Component class for loading / discharging sequence gantt chart
  *
@@ -386,10 +392,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
 
                 const duration = (stage?.end - stage?.start) / (60 * 60 * 1000);
                 const categoryLabel =
-                  `<div class="row">
-                    <div class="col-md-12 text-center">${cargosLabel}<br/>
-                      <span>(${duration.toFixed(2)} ${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_HRS']})</span>
-                    </div>
+                  `<div class=" font-main  text-center pl-5 pr-5">
+                    ${cargosLabel}
+                      <div class="content-ellipsis">(${duration.toFixed(2)} ${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_HRS']})</div>
                   </div>`;
 
                 return categoryLabel;
@@ -450,10 +455,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               });
 
               const categoryLabel =
-                `<div class="row">
-                  <div class="col-md-12 text-center">
-                    <span>${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(quantity, LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit)} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}</span>
-                  </div>
+                `<div class="font-main  text-center pl-5 pr-5"> 
+                <div class="content-ellipsis">${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(quantity, LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit)} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}</div>
                 </div>`;
 
               return categoryLabel;
@@ -484,10 +487,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 const rate = LoadingDischargingSequenceChartComponent.sequenceData?.cargoLoadingRates[equalIndex]?.loadingRates.join('/');
 
                 const categoryLabel =
-                  `<div class="row">
-                    <div class="col-md-12 text-center">
-                      <span>${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</span>
-                    </div>
+                  `<div class="font-main  text-center pl-5 pr-5"> 
+                      <div class="content-ellipsis">${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</div>
                   </div>`;
 
                 return categoryLabel;

@@ -122,17 +122,10 @@ public class LoadicatorService {
         loadingInformation.getId());
     Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
         Loadicator.LoadicatorRequest.newBuilder();
+    Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
     List<LoadingSequence> loadingSequences =
         loadingSequenceRepository.findByLoadingInformationAndIsActiveOrderBySequenceNumber(
             loadingInformation, true);
-    Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
-    cargoNominationIds.addAll(
-        loadingSequences.stream()
-            .map(sequence -> sequence.getCargoNominationXId())
-            .collect(Collectors.toList()));
-    Map<Long, CargoNominationDetail> cargoNomDetails =
-        this.getCargoNominationDetails(cargoNominationIds);
-
     List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetails =
         loadingPlanPortWiseDetailsRepository.findByLoadingInformationIdAndToLoadicatorAndIsActive(
             loadingInformation.getId(), true, true);
@@ -143,6 +136,12 @@ public class LoadicatorService {
     List<LoadingPlanStowageDetails> loadingPlanStowageDetails =
         loadingPlanStowageDetailsRepository.findByPortWiseDetailIdsAndIsActive(
             portWiseDetailIds, true);
+    cargoNominationIds.addAll(
+        loadingPlanStowageDetails.stream()
+            .map(stowage -> stowage.getCargoNominationId())
+            .collect(Collectors.toList()));
+    Map<Long, CargoNominationDetail> cargoNomDetails =
+        this.getCargoNominationDetails(cargoNominationIds);
     List<LoadingPlanBallastDetails> loadingPlanBallastDetails =
         loadingPlanBallastDetailsRepository.findByLoadingPlanPortWiseDetailIdsAndIsActive(
             portWiseDetailIds, true);
@@ -162,20 +161,48 @@ public class LoadicatorService {
         new HashMap<Integer, List<LoadingPlanRobDetails>>();
     loadingTimes.forEach(
         time -> {
+          Boolean isGradeSwitchWithoutDelay =
+              isGradeSwitchTimeWithoutDelay(loadingPlanPortWiseDetails, time);
+          Long portWiseDetailsId =
+              getPortWiseDetailsIdForGradeSwitchWithoutDelay(
+                  loadingSequences, loadingPlanPortWiseDetails, time);
           stowageMap.put(
               time,
               loadingPlanStowageDetails.stream()
                   .filter(stowage -> stowage.getLoadingPlanPortWiseDetails().getTime().equals(time))
+                  .filter(
+                      stowage ->
+                          isGradeSwitchWithoutDelay
+                              ? stowage
+                                  .getLoadingPlanPortWiseDetails()
+                                  .getId()
+                                  .equals(portWiseDetailsId)
+                              : true)
                   .collect(Collectors.toList()));
           ballastMap.put(
               time,
               loadingPlanBallastDetails.stream()
                   .filter(ballast -> ballast.getLoadingPlanPortWiseDetails().getTime().equals(time))
+                  .filter(
+                      ballast ->
+                          isGradeSwitchWithoutDelay
+                              ? ballast
+                                  .getLoadingPlanPortWiseDetails()
+                                  .getId()
+                                  .equals(portWiseDetailsId)
+                              : true)
                   .collect(Collectors.toList()));
           robMap.put(
               time,
               loadingPlanRobDetails.stream()
                   .filter(rob -> rob.getLoadingPlanPortWiseDetails().getTime().equals(time))
+                  .filter(
+                      rob ->
+                          isGradeSwitchWithoutDelay
+                              ? rob.getLoadingPlanPortWiseDetails()
+                                  .getId()
+                                  .equals(portWiseDetailsId)
+                              : true)
                   .collect(Collectors.toList()));
         });
 
@@ -222,6 +249,50 @@ public class LoadicatorService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  /**
+   * @param loadingSequences
+   * @param loadingPlanPortWiseDetails
+   * @param time
+   * @return
+   */
+  private Long getPortWiseDetailsIdForGradeSwitchWithoutDelay(
+      List<LoadingSequence> loadingSequences,
+      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetails,
+      Integer time) {
+    List<LoadingPlanPortWiseDetails> filteredPortDetails =
+        loadingPlanPortWiseDetails.stream()
+            .filter(portWiseDetails -> portWiseDetails.getTime().equals(time))
+            .collect(Collectors.toList());
+    if (filteredPortDetails.size() > 1) {
+      log.info("Found grade switch without delay stage at time {}", time);
+      return filteredPortDetails.get(0).getLoadingSequence().getSequenceNumber()
+              > filteredPortDetails.get(1).getLoadingSequence().getSequenceNumber()
+          ? filteredPortDetails.get(0).getId()
+          : filteredPortDetails.get(1).getId();
+    }
+    return null;
+  }
+
+  /**
+   * Returns whether there is a grade switch without delay at the given time. If there are multiple
+   * portWiseDetails for the same time, then it is actually due to a grade switch without any delay
+   *
+   * @param loadingPlanPortWiseDetails
+   * @param time
+   * @return
+   */
+  private Boolean isGradeSwitchTimeWithoutDelay(
+      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetails, Integer time) {
+    if (loadingPlanPortWiseDetails.stream()
+            .filter(portWiseDetails -> portWiseDetails.getTime().equals(time))
+            .collect(Collectors.toList())
+            .size()
+        > 1) {
+      return true;
+    }
+    return false;
   }
 
   public Loadicator.LoadicatorReply saveLoadicatorInfo(
@@ -297,11 +368,17 @@ public class LoadicatorService {
               Optional.ofNullable(
                       String.valueOf(cargoNomDetails.get(cargoNominationId).getAbbreviation()))
                   .ifPresent(cargoBuilder::setCargoAbbrev);
-              Optional.ofNullable(String.valueOf(cargoNomDetails.get(cargoNominationId).getApi()))
-                  .ifPresent(cargoBuilder::setApi);
-              Optional.ofNullable(
-                      String.valueOf(cargoNomDetails.get(cargoNominationId).getTemperature()))
-                  .ifPresent(cargoBuilder::setStandardTemp);
+              Optional<LoadingPlanStowageDetails> stowageOpt =
+                  stowageDetails.stream()
+                      .filter(stwg -> stwg.getCargoNominationId().equals(cargoNominationId))
+                      .findAny();
+              stowageOpt.ifPresent(
+                  stwg -> {
+                    Optional.ofNullable(String.valueOf(stwg.getApi()))
+                        .ifPresent(cargoBuilder::setApi);
+                    Optional.ofNullable(String.valueOf(stwg.getTemperature()))
+                        .ifPresent(cargoBuilder::setStandardTemp);
+                  });
               Optional.ofNullable(cargoNomDetails.get(cargoNominationId).getCargoId())
                   .ifPresent(cargoBuilder::setCargoId);
               Optional.ofNullable(loadingInformation.getPortXId())
