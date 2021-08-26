@@ -65,7 +65,7 @@
                       
                         <p-calendar formControlName="timeOfSunset" [timeOnly]="true" appendTo="body" readonly="true"
                             *ngIf="timeOfSunsetPermission?.edit" inputId="timeOfSunset"
-                            placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}" hourFormat="24" #timeOfSunSetCalender>
+                            placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}" hourFormat="24" [readonlyInput]="true" #timeOfSunSetCalender>
                             <p-footer>
                                 <div class="row">
                                     <div class="col">
@@ -98,7 +98,7 @@
                     <div class="col error-icon-wrapper">
                         <p-calendar  formControlName="startTime" styleClass="full-width-field" [timeOnly]="true" appendTo="body"
                             inputId="startTime"
-                            placeholder="{{'LOADING_DETAILS_START_TIME_CALENDER_LABEL' | translate}}" showTime="true"
+                            placeholder="{{'LOADING_DETAILS_START_TIME_CALENDER_LABEL' | translate}}" showTime="true" [readonlyInput]="true"
                             hourFormat="24"  #startTimeCalender>
                             <p-footer>
                                 <div class="row">
