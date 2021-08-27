@@ -50,4 +50,10 @@ public class PortLoadingPlanRobDetails extends EntityDoc {
 
   @Column(name = "actual_planned")
   private Integer valueType;
+
+  @Column(name = "density")
+  private BigDecimal density;
+
+  @Column(name = "colour_code")
+  private String colorCode;
 }

@@ -2,6 +2,7 @@
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.cpdss.gateway.domain.loadingplan.LoadablePlanCommingleDetails;
 import com.cpdss.gateway.domain.loadingplan.PortLoadablePlanBallastDetails;
 import com.cpdss.gateway.domain.loadingplan.PortLoadablePlanRobDetails;
 import com.cpdss.gateway.domain.loadingplan.PortLoadablePlanStowageDetails;
@@ -15,6 +16,7 @@ public class LoadingUpdateUllageResponse {
   private List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails;
   private List<PortLoadablePlanBallastDetails> portLoadablePlanBallastDetails;
   private List<PortLoadablePlanRobDetails> portLoadablePlanRobDetails;
+  private List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails;
   private List<UpdateUllageCargoQuantityDetail> cargoQuantityDetails;
   private List<List<VesselTank>> bunkerRearTanks;
   private List<List<VesselTank>> bunkerTanks;
