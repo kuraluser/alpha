@@ -1,14 +1,22 @@
-/* Licensed at AlphaOri Technologies */
 package com.cpdss.common.generated.discharge_plan;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
+import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
+import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ClientCalls.asyncUnaryCall;
+import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
 import static io.grpc.stub.ClientCalls.blockingUnaryCall;
 import static io.grpc.stub.ClientCalls.futureUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
+import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnaryCall;
+import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
-/** */
+/**
+ */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.27.1)",
     comments = "Source: discharge_plan/discharge_plan_service.proto")
@@ -19,129 +27,108 @@ public final class DischargeInformationServiceGrpc {
   public static final String SERVICE_NAME = "DischargeInformationService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
-          com.cpdss.common.generated.discharge_plan.DischargeInformation>
-      getGetDischargeInformationMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
+      com.cpdss.common.generated.discharge_plan.DischargeInformation> getGetDischargeInformationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "getDischargeInformation",
       requestType = com.cpdss.common.generated.discharge_plan.DischargeInformationRequest.class,
       responseType = com.cpdss.common.generated.discharge_plan.DischargeInformation.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
-          com.cpdss.common.generated.discharge_plan.DischargeInformation>
-      getGetDischargeInformationMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
-            com.cpdss.common.generated.discharge_plan.DischargeInformation>
-        getGetDischargeInformationMethod;
-    if ((getGetDischargeInformationMethod =
-            DischargeInformationServiceGrpc.getGetDischargeInformationMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
+      com.cpdss.common.generated.discharge_plan.DischargeInformation> getGetDischargeInformationMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.discharge_plan.DischargeInformationRequest, com.cpdss.common.generated.discharge_plan.DischargeInformation> getGetDischargeInformationMethod;
+    if ((getGetDischargeInformationMethod = DischargeInformationServiceGrpc.getGetDischargeInformationMethod) == null) {
       synchronized (DischargeInformationServiceGrpc.class) {
-        if ((getGetDischargeInformationMethod =
-                DischargeInformationServiceGrpc.getGetDischargeInformationMethod)
-            == null) {
-          DischargeInformationServiceGrpc.getGetDischargeInformationMethod =
-              getGetDischargeInformationMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
-                          com.cpdss.common.generated.discharge_plan.DischargeInformation>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "getDischargeInformation"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.discharge_plan.DischargeInformationRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.discharge_plan.DischargeInformation
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new DischargeInformationServiceMethodDescriptorSupplier(
-                              "getDischargeInformation"))
-                      .build();
+        if ((getGetDischargeInformationMethod = DischargeInformationServiceGrpc.getGetDischargeInformationMethod) == null) {
+          DischargeInformationServiceGrpc.getGetDischargeInformationMethod = getGetDischargeInformationMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.discharge_plan.DischargeInformationRequest, com.cpdss.common.generated.discharge_plan.DischargeInformation>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "getDischargeInformation"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.discharge_plan.DischargeInformationRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.discharge_plan.DischargeInformation.getDefaultInstance()))
+              .setSchemaDescriptor(new DischargeInformationServiceMethodDescriptorSupplier("getDischargeInformation"))
+              .build();
         }
       }
     }
     return getGetDischargeInformationMethod;
   }
 
-  /** Creates a new async stub that supports all call types for the service */
+  /**
+   * Creates a new async stub that supports all call types for the service
+   */
   public static DischargeInformationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceStub> factory =
-        new io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceStub>() {
-          @java.lang.Override
-          public DischargeInformationServiceStub newStub(
-              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-            return new DischargeInformationServiceStub(channel, callOptions);
-          }
-        };
+      new io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceStub>() {
+        @java.lang.Override
+        public DischargeInformationServiceStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new DischargeInformationServiceStub(channel, callOptions);
+        }
+      };
     return DischargeInformationServiceStub.newStub(factory, channel);
   }
 
   /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
-  public static DischargeInformationServiceBlockingStub newBlockingStub(io.grpc.Channel channel) {
+  public static DischargeInformationServiceBlockingStub newBlockingStub(
+      io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceBlockingStub> factory =
-        new io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceBlockingStub>() {
-          @java.lang.Override
-          public DischargeInformationServiceBlockingStub newStub(
-              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-            return new DischargeInformationServiceBlockingStub(channel, callOptions);
-          }
-        };
+      new io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceBlockingStub>() {
+        @java.lang.Override
+        public DischargeInformationServiceBlockingStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new DischargeInformationServiceBlockingStub(channel, callOptions);
+        }
+      };
     return DischargeInformationServiceBlockingStub.newStub(factory, channel);
   }
 
-  /** Creates a new ListenableFuture-style stub that supports unary calls on the service */
-  public static DischargeInformationServiceFutureStub newFutureStub(io.grpc.Channel channel) {
+  /**
+   * Creates a new ListenableFuture-style stub that supports unary calls on the service
+   */
+  public static DischargeInformationServiceFutureStub newFutureStub(
+      io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceFutureStub> factory =
-        new io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceFutureStub>() {
-          @java.lang.Override
-          public DischargeInformationServiceFutureStub newStub(
-              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-            return new DischargeInformationServiceFutureStub(channel, callOptions);
-          }
-        };
+      new io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceFutureStub>() {
+        @java.lang.Override
+        public DischargeInformationServiceFutureStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new DischargeInformationServiceFutureStub(channel, callOptions);
+        }
+      };
     return DischargeInformationServiceFutureStub.newStub(factory, channel);
   }
 
-  /** */
-  public abstract static class DischargeInformationServiceImplBase
-      implements io.grpc.BindableService {
+  /**
+   */
+  public static abstract class DischargeInformationServiceImplBase implements io.grpc.BindableService {
 
-    /** */
-    public void getDischargeInformation(
-        com.cpdss.common.generated.discharge_plan.DischargeInformationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.discharge_plan.DischargeInformation>
-            responseObserver) {
+    /**
+     */
+    public void getDischargeInformation(com.cpdss.common.generated.discharge_plan.DischargeInformationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.discharge_plan.DischargeInformation> responseObserver) {
       asyncUnimplementedUnaryCall(getGetDischargeInformationMethod(), responseObserver);
     }
 
-    @java.lang.Override
-    public final io.grpc.ServerServiceDefinition bindService() {
+    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
-              getGetDischargeInformationMethod(),
-              asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
-                      com.cpdss.common.generated.discharge_plan.DischargeInformation>(
-                      this, METHODID_GET_DISCHARGE_INFORMATION)))
+            getGetDischargeInformationMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
+                com.cpdss.common.generated.discharge_plan.DischargeInformation>(
+                  this, METHODID_GET_DISCHARGE_INFORMATION)))
           .build();
     }
   }
 
-  /** */
-  public static final class DischargeInformationServiceStub
-      extends io.grpc.stub.AbstractAsyncStub<DischargeInformationServiceStub> {
+  /**
+   */
+  public static final class DischargeInformationServiceStub extends io.grpc.stub.AbstractAsyncStub<DischargeInformationServiceStub> {
     private DischargeInformationServiceStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -153,21 +140,18 @@ public final class DischargeInformationServiceGrpc {
       return new DischargeInformationServiceStub(channel, callOptions);
     }
 
-    /** */
-    public void getDischargeInformation(
-        com.cpdss.common.generated.discharge_plan.DischargeInformationRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.discharge_plan.DischargeInformation>
-            responseObserver) {
+    /**
+     */
+    public void getDischargeInformation(com.cpdss.common.generated.discharge_plan.DischargeInformationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.discharge_plan.DischargeInformation> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetDischargeInformationMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getGetDischargeInformationMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
-  /** */
-  public static final class DischargeInformationServiceBlockingStub
-      extends io.grpc.stub.AbstractBlockingStub<DischargeInformationServiceBlockingStub> {
+  /**
+   */
+  public static final class DischargeInformationServiceBlockingStub extends io.grpc.stub.AbstractBlockingStub<DischargeInformationServiceBlockingStub> {
     private DischargeInformationServiceBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -179,17 +163,17 @@ public final class DischargeInformationServiceGrpc {
       return new DischargeInformationServiceBlockingStub(channel, callOptions);
     }
 
-    /** */
-    public com.cpdss.common.generated.discharge_plan.DischargeInformation getDischargeInformation(
-        com.cpdss.common.generated.discharge_plan.DischargeInformationRequest request) {
+    /**
+     */
+    public com.cpdss.common.generated.discharge_plan.DischargeInformation getDischargeInformation(com.cpdss.common.generated.discharge_plan.DischargeInformationRequest request) {
       return blockingUnaryCall(
           getChannel(), getGetDischargeInformationMethod(), getCallOptions(), request);
     }
   }
 
-  /** */
-  public static final class DischargeInformationServiceFutureStub
-      extends io.grpc.stub.AbstractFutureStub<DischargeInformationServiceFutureStub> {
+  /**
+   */
+  public static final class DischargeInformationServiceFutureStub extends io.grpc.stub.AbstractFutureStub<DischargeInformationServiceFutureStub> {
     private DischargeInformationServiceFutureStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -201,11 +185,10 @@ public final class DischargeInformationServiceGrpc {
       return new DischargeInformationServiceFutureStub(channel, callOptions);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.discharge_plan.DischargeInformation>
-        getDischargeInformation(
-            com.cpdss.common.generated.discharge_plan.DischargeInformationRequest request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.discharge_plan.DischargeInformation> getDischargeInformation(
+        com.cpdss.common.generated.discharge_plan.DischargeInformationRequest request) {
       return futureUnaryCall(
           getChannel().newCall(getGetDischargeInformationMethod(), getCallOptions()), request);
     }
@@ -213,11 +196,11 @@ public final class DischargeInformationServiceGrpc {
 
   private static final int METHODID_GET_DISCHARGE_INFORMATION = 0;
 
-  private static final class MethodHandlers<Req, Resp>
-      implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
-          io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
-          io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
-          io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
+  private static final class MethodHandlers<Req, Resp> implements
+      io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
     private final DischargeInformationServiceImplBase serviceImpl;
     private final int methodId;
 
@@ -231,11 +214,8 @@ public final class DischargeInformationServiceGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_GET_DISCHARGE_INFORMATION:
-          serviceImpl.getDischargeInformation(
-              (com.cpdss.common.generated.discharge_plan.DischargeInformationRequest) request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.discharge_plan.DischargeInformation>)
-                  responseObserver);
+          serviceImpl.getDischargeInformation((com.cpdss.common.generated.discharge_plan.DischargeInformationRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.discharge_plan.DischargeInformation>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -253,9 +233,8 @@ public final class DischargeInformationServiceGrpc {
     }
   }
 
-  private abstract static class DischargeInformationServiceBaseDescriptorSupplier
-      implements io.grpc.protobuf.ProtoFileDescriptorSupplier,
-          io.grpc.protobuf.ProtoServiceDescriptorSupplier {
+  private static abstract class DischargeInformationServiceBaseDescriptorSupplier
+      implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     DischargeInformationServiceBaseDescriptorSupplier() {}
 
     @java.lang.Override
@@ -297,12 +276,10 @@ public final class DischargeInformationServiceGrpc {
       synchronized (DischargeInformationServiceGrpc.class) {
         result = serviceDescriptor;
         if (result == null) {
-          serviceDescriptor =
-              result =
-                  io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
-                      .setSchemaDescriptor(new DischargeInformationServiceFileDescriptorSupplier())
-                      .addMethod(getGetDischargeInformationMethod())
-                      .build();
+          serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
+              .setSchemaDescriptor(new DischargeInformationServiceFileDescriptorSupplier())
+              .addMethod(getGetDischargeInformationMethod())
+              .build();
         }
       }
     }
