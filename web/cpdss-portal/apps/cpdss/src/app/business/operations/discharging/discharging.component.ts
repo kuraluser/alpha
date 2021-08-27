@@ -7,6 +7,8 @@ import { ComponentCanDeactivate, UnsavedChangesGuard } from '../../../shared/ser
 import { ICargo, ICargoResponseModel } from '../../core/models/common.model';
 import { OPERATION_TAB } from '../models/operations.model';
 import { OperationsApiService } from '../services/operations-api.service';
+import { OPERATIONS } from '../../core/models/common.model';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
  * Component for discharging module
@@ -38,6 +40,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   dischargingInstructionComplete: boolean;
 
   private ngUnsubscribe: Subject<any> = new Subject();
+  readonly OPERATIONS = OPERATIONS;
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
@@ -48,6 +51,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
     private activatedRoute: ActivatedRoute,
     private operationsApiService: OperationsApiService,
     private unsavedChangesGuard: UnsavedChangesGuard,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private ngxSpinnerService: NgxSpinnerService
   ) {}
 
@@ -105,6 +109,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
     const value = await this.unsavedChangesGuard.canDeactivate(this);
     if (!value) { return };
     this.currentTab = tab;
+    this.loadingDischargingTransformationService.setTabChange(tab);
   }
 
   /**
