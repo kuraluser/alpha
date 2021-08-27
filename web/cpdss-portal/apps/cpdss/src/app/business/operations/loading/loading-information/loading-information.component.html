@@ -44,9 +44,9 @@
         <div class="row">
           <div class="col pt-30">
             <h5 class="text-uppercase heading-border">{{ 'CARGO_TO_BE_LOADED' | translate }}</h5>
-            <cpdss-portal-cargo-to-be-loaded-discharged [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
+            <cpdss-portal-cargo-to-be-loaded-discharged [operation]="OPERATIONS.LOADING" [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
               [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
-              [cargoVesselTankDetails]="cargoVesselTankDetails" [operation]="OPERATIONS.LOADING">
+              [cargoVesselTankDetails]="cargoVesselTankDetails">
             </cpdss-portal-cargo-to-be-loaded-discharged>
           </div>
         </div>
@@ -121,8 +121,8 @@
             </div>
         </div>
 
-        <cpdss-portal-loading-discharging-manage-sequence  #manageSequence
-        [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
+        <cpdss-portal-loading-discharging-manage-sequence  #manageSequence *ngIf="cargos && currentQuantitySelectedUnit && loadingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails"
+        [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos" [operation]="OPERATIONS.LOADING"
             [loadableQuantityCargo]="manageSequenceLoadableQuantityCargoDetails"
             [loadingDischargingSequences]="loadingInformationData?.loadingSequences" [loadingInfoId]="loadingInfoId"
             (updateLoadingDischargingDelays)="onUpdateLoadingDelays($event)">

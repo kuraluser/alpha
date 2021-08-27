@@ -182,6 +182,9 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       loadingPlanService.getPortWiseStowageDetails(request, builder);
       loadingPlanService.getPortWiseBallastDetails(request, builder);
       loadingPlanService.getPortWiseRobDetails(request, builder);
+      loadingPlanService.getPortWiseStowageTempDetails(request, builder);
+      loadingPlanService.getPortWiseBallastTempDetails(request, builder);
+      loadingPlanService.getPortWiseCommingleDetails(request, builder);
       //      builder.setResponseStatus(
       //              ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
     } catch (Exception e) {

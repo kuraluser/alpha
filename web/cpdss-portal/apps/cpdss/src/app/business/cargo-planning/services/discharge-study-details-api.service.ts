@@ -110,7 +110,6 @@ export class DischargeStudyDetailsApiService {
        * @memberof DischargeStudyDetailsApiService
        */
       getPortOHQDetails(vesselId: number, voyageId: number, dischargeStudyId: number, portId: number): Observable<IDischargeStudyPortOHQResponse> {
-        debugger
           return this.commonApiService.get<IDischargeStudyPortOHQResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-studies/${dischargeStudyId}/port-rotation/${portId}/on-hand-quantities`);
       }
       /**

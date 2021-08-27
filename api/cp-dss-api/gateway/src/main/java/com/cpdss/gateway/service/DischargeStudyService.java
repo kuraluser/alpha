@@ -472,8 +472,11 @@ public class DischargeStudyService {
                   cargoNominationDetail.getLoadingPortDetailsList().stream()
                       .filter(port -> portRotation.getPortId().equals(port.getPortId()))
                       .findFirst();
-              cargoNomination.setDischargeTime(
-                  new BigDecimal(cargoNominationDetail.getDischargingTime()));
+              if (cargoNominationDetail.getDischargingTime() != null
+                  && !cargoNominationDetail.getDischargingTime().isBlank()) {
+                cargoNomination.setDischargeTime(
+                    new BigDecimal(cargoNominationDetail.getDischargingTime()));
+              }
               if (nominationPort.isPresent()) {
                 cargoNomination.setQuantity(new BigDecimal(nominationPort.get().getQuantity()));
                 cargoNomination.setMode(nominationPort.get().getMode());

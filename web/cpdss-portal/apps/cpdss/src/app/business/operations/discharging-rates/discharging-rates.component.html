@@ -3,9 +3,9 @@
     <h5 class="">{{'DISCHARGING_INFORMATION_DISCHARGING_RATES_HEADER' | translate}}</h5>
   </div>
   <div class="col-md-6 text-right" *ngIf="editMode">
-    <p-dropdown id="discharging_rate_conversion_dropdown" [options]="conversionDropdown" name="discharging_rate_conversion_dropdown"
-      [(ngModel)]="selectedConversion" (onChange)="onConversionChange()" optionLabel="value" optionValue="value"
-      resetFilterOnHide="true"></p-dropdown>
+    <p-dropdown id="discharging_rate_conversion_dropdown" [options]="conversionDropdown"
+      name="discharging_rate_conversion_dropdown" [(ngModel)]="selectedConversion" (onChange)="onConversionChange()"
+      optionLabel="value" optionValue="value" resetFilterOnHide="true"></p-dropdown>
   </div>
 </div>
 
@@ -13,6 +13,23 @@
   <div class="container-fluid">
     <div class="row item-row-wrapper">
       <div class="col">
+        <div class="row form-group">
+          <label for="min_discharging_rate" class="col-5 no-left-padding">{{'DISCHARGING_RATE_INITIAL_DISCHARGING_RATE'
+            |
+            translate}}</label>
+          <div class="col error-icon-wrapper">
+            <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+              *ngIf="editMode;else initialDischargingRate" id="initial_discharging_rate"
+              formControlName="initialDischargingRate"
+              placeholder="{{'DISCHARGING_RATE_INITIAL_DISCHARGING_RATE_PLACEHOLDER' | translate}}"
+              (change)="onChange('initialDischargingRate')" [readonly]="false">
+            <ng-template #initialDischargingRate>
+              <span>{{dischargingRatesFormGroupControl?.dischargingRatesFormGroupControl?.initialDischargingRate?.value}}</span>
+            </ng-template>
+            <cpdss-portal-validation-error [errors]="fieldError('initialDischargingRate')"
+              [errorMessages]="errorMesages?.initialDischargingRate"></cpdss-portal-validation-error>
+          </div>
+        </div>
         <div class="row form-group">
           <label for="max_discharging_rate" class="col-5 no-left-padding">{{'DISCHARGING_RATE_MAX_DISCHARGING_RATE' |
             translate}}</label>
@@ -29,30 +46,15 @@
 
         </div>
         <div class="row form-group">
-          <label for="min_discharging_rate" class="col-5 no-left-padding">{{'DISCHARGING_RATE_MIN_DISCHARGING_RATE' |
-            translate}}</label>
-          <div class="col error-icon-wrapper">
-            <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-              *ngIf="editMode;else minDischargingRate" id="min_discharging_rate" formControlName="minDischargingRate"
-              placeholder="{{'DISCHARGING_RATE_MIN_DISCHARGING_RATE_PLACEHOLDER' | translate}}"
-              (change)="onChange('minDischargingRate')" [readonly]="false">
-            <ng-template #minDischargingRate>
-              <span>{{dischargingRatesFormGroupControl?.dischargingRatesFormGroupControl?.minDischargingRate?.value}}</span>
-            </ng-template>
-            <cpdss-portal-validation-error [errors]="fieldError('minDischargingRate')"
-              [errorMessages]="errorMesages?.minDischargingRate"></cpdss-portal-validation-error>
-          </div>
-        </div>
-        <div class="row form-group">
           <label for="min_debellast_discharging_rate"
-            class="col-5 no-left-padding">{{'DISCHARGING_RATE_MIN_DEBALLAST_RATE'
+            class="col-5 no-left-padding">{{'DISCHARGING_RATE_MIN_BALLAST_RATE'
             |
             translate}}</label>
           <div class="col error-icon-wrapper">
             <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
               *ngIf="editMode;else minDeballstRef" id="min_debellast_discharging_rate"
               formControlName="minDeBallastingRate"
-              placeholder="{{'DISCHARGING_RATE_MIN_DEBALLAST_RATE_PLACEHOLDER'| translate}}"
+              placeholder="{{'DISCHARGING_RATE_MIN_BALLAST_RATE_PLACEHOLDER'| translate}}"
               (change)="onChange('minDeBallastingRate')" [readonly]="false">
             <ng-template #minDeballstRef><span>{{dischargingRatesFormGroupControl?.minDeBallastingRate?.value}}</span>
             </ng-template>
@@ -62,13 +64,13 @@
         </div>
         <div class="row form-group">
           <label for="max_de_ballast_discharging_rate"
-            class="col-5 no-left-padding">{{'DISCHARGING_RATE_MAX_DEBALLAST_RATE'|
+            class="col-5 no-left-padding">{{'DISCHARGING_RATE_MAX_BALLAST_RATE'|
             translate}}</label>
           <div class="col error-icon-wrapper">
             <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
               *ngIf="editMode;else maxDeballstRef" id="max_de_ballast_discharging_rate"
               formControlName="maxDeBallastingRate"
-              placeholder="{{'DISCHARGING_RATE_MAX_DEBALLAST_RATE_PLACEHOLDER'| translate}}"
+              placeholder="{{'DISCHARGING_RATE_MAX_BALLAST_RATE_PLACEHOLDER'| translate}}"
               (change)="onChange('maxDeBallastingRate')" [readonly]="false">
             <ng-template #maxDeballstRef><span>{{dischargingRatesFormGroupControl?.maxDeBallastingRate?.value}}</span>
             </ng-template>

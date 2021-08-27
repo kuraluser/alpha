@@ -31,9 +31,6 @@ public class LoadablePlanCommingleDetails extends EntityDoc {
   @JoinColumn(name = "loading_xid", referencedColumnName = "id")
   private LoadingInformation loadingInformation;
 
-  @Column(name = "loadable_plan_xid")
-  private Long loadablePlanId;
-
   @Column(name = "grade")
   private String grade;
 

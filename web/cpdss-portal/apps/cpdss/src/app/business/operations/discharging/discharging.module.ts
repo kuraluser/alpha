@@ -22,6 +22,8 @@ import { PostDischargeStageModule } from '../post-discharge-stage/post-discharge
 import { DischargingInstructionComponent } from './discharging-instruction/discharging-instruction/discharging-instruction.component';
 import { DischargingInstructionApiService } from '../services/discharging-instruction-api.service';
 import { LoadingInstructionApiService } from '../services/loading-instruction-api.service';
+import { DischargingSequenceComponent } from './discharging-sequence/discharging-sequence.component';
+import { LoadingDischargingSequenceChartModule } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.module';
 
 /**
  * Module for discharging operations
@@ -30,7 +32,7 @@ import { LoadingInstructionApiService } from '../services/loading-instruction-ap
  * @class DischargingModule
  */
 @NgModule({
-  declarations: [DischargingComponent, DischargingInformationComponent, DischargingInstructionComponent],
+  declarations: [DischargingComponent, DischargingInformationComponent, DischargingInstructionComponent, DischargingSequenceComponent],
   imports: [
     CommonModule,
     DischargingRoutingModule,
@@ -48,7 +50,8 @@ import { LoadingInstructionApiService } from '../services/loading-instruction-ap
     LoadingDischargingManageSequenceModule,
     LoadingDischargingCargoMachineryModule,
     CowPlanModule,
-    PostDischargeStageModule
+    PostDischargeStageModule,
+    LoadingDischargingSequenceChartModule
   ],
   providers: [LoadingDischargingInformationApiService, DischargingInstructionApiService, LoadingInstructionApiService]
 })

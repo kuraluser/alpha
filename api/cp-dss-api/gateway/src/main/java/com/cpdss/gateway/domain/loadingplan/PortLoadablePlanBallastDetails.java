@@ -3,6 +3,8 @@ package com.cpdss.gateway.domain.loadingplan;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class PortLoadablePlanBallastDetails {
   private Long cargoId;
@@ -13,12 +15,14 @@ public class PortLoadablePlanBallastDetails {
   private Long id;
   private boolean isActive;
   private Long loadablePatternId;
-  private String rdgUllage;
+  private BigDecimal rdgUllage;
   private Long tankId;
-  private String tankname;
-  private String temperature;
-  private String quantity;
+  private String tankName;
+  private String tankShortName;
+  private BigDecimal temperature;
+  private BigDecimal quantity;
   private String actualPlanned;
   private String arrivalDeparture;
-  private String sounding;
+  private BigDecimal sounding;
+  private BigDecimal sg;
 }

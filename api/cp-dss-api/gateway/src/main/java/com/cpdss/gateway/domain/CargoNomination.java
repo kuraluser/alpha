@@ -51,6 +51,6 @@ public class CargoNomination {
   private Long mode;
 
   private BigDecimal maxQuantity;
-  
+
   private BigDecimal dischargeTime;
 }

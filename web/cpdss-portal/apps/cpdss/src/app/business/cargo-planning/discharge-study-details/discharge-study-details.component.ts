@@ -568,7 +568,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
   async dischargeStudyView() {
     const value = await this.unsavedChangesGuard.canDeactivate(this);
     if (!value) { return };
-    this.router.navigate([`business/cargo-planning/discharge-study-plan/${this.vesselId}/${this.voyageId}/${this.dischargeStudyId}`]);
+    this.router.navigate([`business/cargo-planning/discharge-plan/${this.vesselId}/${this.voyageId}/${this.dischargeStudyId}`]);
   }
 
 }

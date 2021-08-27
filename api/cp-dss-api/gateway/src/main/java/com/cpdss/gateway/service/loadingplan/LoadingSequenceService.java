@@ -120,7 +120,7 @@ public class LoadingSequenceService {
 
     log.info("Populating Loading Sequences");
     for (LoadingSequence loadingSequence : reply.getLoadingSequencesList()) {
-      if (!loadingSequence.getStageName().equalsIgnoreCase("topping")) {
+      if (loadingSequence.getStageName().equalsIgnoreCase("initialCondition")) {
         start = loadingSequence.getStartTime();
       }
       for (LoadingPlanPortWiseDetails portWiseDetails :
@@ -139,8 +139,9 @@ public class LoadingSequenceService {
         }
         for (LoadingPlanTankDetails ballast : portWiseDetails.getLoadingPlanBallastDetailsList()) {
           // Adding ballasts
-          this.buildBallastSequence(
-              ballast, vesselTanks, portEta, start, portWiseDetails, ballastDetails, ballasts);
+          temp =
+              this.buildBallastSequence(
+                  ballast, vesselTanks, portEta, start, portWiseDetails, ballastDetails, ballasts);
         }
 
         start = temp;
@@ -377,7 +378,7 @@ public class LoadingSequenceService {
         });
   }
 
-  private void buildBallastSequence(
+  private Integer buildBallastSequence(
       LoadingPlanTankDetails ballast,
       List<VesselTankDetail> vesselTanks,
       Long portEta,
@@ -395,10 +396,11 @@ public class LoadingSequenceService {
                     (details.getTankId() == ballast.getTankId())
                         && !StringUtils.isEmpty(details.getColorCode()))
             .findFirst();
-    buildBallast(ballast, ballastDto, portEta, start, portWiseDetails.getTime());
+    Integer end = buildBallast(ballast, ballastDto, portEta, start, portWiseDetails.getTime());
     tankDetailOpt.ifPresent(tank -> ballastDto.setTankName(tank.getShortName()));
     ballastDetailsOpt.ifPresent(details -> ballastDto.setColor(details.getColorCode()));
     ballasts.add(ballastDto);
+    return end;
   }
 
   private Integer buildCargoSequence(
@@ -628,7 +630,7 @@ public class LoadingSequenceService {
             : new BigDecimal(operation.getQuantityM3()));
   }
 
-  private void buildBallast(
+  private Integer buildBallast(
       LoadingPlanTankDetails ballast,
       Ballast ballastDto,
       Long portEta,
@@ -641,6 +643,7 @@ public class LoadingSequenceService {
     ballastDto.setStart(portEta + (start * 60 * 1000));
     ballastDto.setEnd(portEta + (end * 60 * 1000));
     ballastDto.setTankId(ballast.getTankId());
+    return end;
   }
 
   private Integer buildCargo(

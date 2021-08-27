@@ -24,7 +24,8 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
   @Input() cargos: ICargo[];
   @Input() prevQuantitySelectedUnit: QUANTITY_UNIT;
   @Input() operation: OPERATIONS;
-  @Input()loadableStudyName:String
+  @Input() loadableStudyName: string;
+  @Input() dischargeStudyName: string;
   
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
@@ -44,7 +45,7 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
     this.init();
   }
   
-
+  readonly OPERATIONS = OPERATIONS;
   cargoTanks: IShipCargoTank[][];
   cargoConditions: any = [];
   cargoQuantities: ICargoQuantities[];

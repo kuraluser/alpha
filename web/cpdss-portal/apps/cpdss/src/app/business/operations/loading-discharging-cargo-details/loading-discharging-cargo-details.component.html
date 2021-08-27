@@ -1,7 +1,12 @@
 <div class="row">
-    <div class="col text-center">
-        <div><ng-container>{{'LOADABLE_STUDY_NAME_PREFIX' | translate}}</ng-container>{{loadableStudyName}}<ng-container>{{'LOADABLE_PATTERN' |translate}}</ng-container></div>
+  <div class="col text-center">
+    <div>
+      <div *ngIf="operation === OPERATIONS.LOADING else dischargeTemplate">{{'LOADABLE_STUDY_NAME_PREFIX' | translate}} {{loadableStudyName}} {{'LOADABLE_PATTERN' |translate}}
+      </div>
+      <ng-template #dischargeTemplate>{{'DISCHARGE_STUDY_NAME_PREFIX' | translate}} {{dischargeStudyName}} {{'DISCHARGE_PATTERN' |translate}}
+      </ng-template>
     </div>
+  </div>
 </div>
 <div class="row">
     <div class="col">

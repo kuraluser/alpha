@@ -579,6 +579,9 @@ message UpdateUllageDetailsResponse{
   repeated PortLoadablePlanStowageDetail portLoadablePlanStowageDetails = 3;
   repeated PortLoadingPlanBallastDetails portLoadingPlanBallastDetails = 4;
   repeated PortLoadingPlanRobDetails portLoadingPlanRobDetails = 5;
+  repeated PortLoadablePlanStowageDetail portLoadablePlanStowageTempDetails = 6;
+  repeated PortLoadingPlanBallastDetails portLoadingPlanBallastTempDetails = 7;
+  repeated LoadablePlanCommingleDetails loadablePlanCommingleDetails = 8;
 }
 
 message UllageCargoQuantityDetail{
@@ -632,6 +635,7 @@ message PortLoadingPlanBallastDetails {
   string actualPlanned = 16;
   string ullage = 17;
   string sounding = 18;
+  string sg = 19;
 }
 
 message PortLoadingPlanRobDetails {
@@ -643,6 +647,45 @@ message PortLoadingPlanRobDetails {
   string quantity = 6;
   string arrivalDeparture = 7;
   string actualPlanned = 8;
+  string density = 9;
+  string colorCode = 10;
+}
+
+message LoadablePlanCommingleDetails{
+ int64 id = 1;
+ int64 loadingInformationId = 2;
+ int64 loadablePlanId = 3;
+ string grade = 4;
+ string tankName = 5;
+ string quantity = 6;
+ string api = 7;
+ string temperature = 8;
+ string cargo1Abbreviation = 9;
+ string cargo2Abbreviation = 10;
+ string cargo2Percentage = 11;
+ string cargo1BblsDbs = 12;
+ string cargo2BblsDbs = 13;
+ string cargo1Bbls60f = 14;
+ string cargo2Bbls60f = 15;
+ string cargo1Lt = 16;
+ string cargo2Lt = 17;
+ string cargo1Mt = 18;
+ string cargo2Mt = 19;
+ string cargo1Kl = 20;
+ string cargo2Kl = 21;
+ bool isActive = 22;
+ int64 loadablePatternId = 23;
+ int64 priority = 24;
+ string orderQuantity = 25;
+ int64 loadingOrder = 26;
+ int64 tankId = 27;
+ string fillingRatio = 28;
+ string correctedUllage = 29;
+ string correctionFactor = 30;
+ string rdgUllage = 31;
+ string slopQuantity = 32;
+ string timeRequiredForLoading = 33;
+ string cargo1Percentage = 34;
 }
 
 message LoadingSequenceRequest {
