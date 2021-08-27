@@ -138,7 +138,7 @@ public class LoadicatorService {
             portWiseDetailIds, true);
     cargoNominationIds.addAll(
         loadingPlanStowageDetails.stream()
-            .map(stowage -> stowage.getCargoNominationId())
+            .map(LoadingPlanStowageDetails::getCargoNominationId)
             .collect(Collectors.toList()));
     Map<Long, CargoNominationDetail> cargoNomDetails =
         this.getCargoNominationDetails(cargoNominationIds);
@@ -150,7 +150,7 @@ public class LoadicatorService {
     Set<Integer> loadingTimes = new LinkedHashSet<Integer>();
     loadingTimes.addAll(
         loadingPlanPortWiseDetails.stream()
-            .map(portWiseDetails -> portWiseDetails.getTime())
+            .map(LoadingPlanPortWiseDetails::getTime)
             .sorted()
             .collect(Collectors.toList()));
     Map<Integer, List<LoadingPlanStowageDetails>> stowageMap =
@@ -389,7 +389,7 @@ public class LoadicatorService {
             });
   }
 
-  private Map<Long, CargoNominationDetail> getCargoNominationDetails(Set<Long> cargoNominationIds)
+  public Map<Long, CargoNominationDetail> getCargoNominationDetails(Set<Long> cargoNominationIds)
       throws GenericServiceException {
     Map<Long, CargoNominationDetail> details = new HashMap<Long, CargoNominationDetail>();
     cargoNominationIds.forEach(
