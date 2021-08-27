@@ -5,8 +5,7 @@ import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.Common;
-import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
@@ -19,7 +18,9 @@ import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequ
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
-import com.cpdss.common.generated.LoadableStudyServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargeStudyRuleReply;
+import com.cpdss.common.generated.discharge_plan.DischargeStudyRuleRequest;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail;
@@ -31,25 +32,13 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformat
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.AlgoPatternResponse;
-import com.cpdss.gateway.domain.BackLoading;
-import com.cpdss.gateway.domain.BillOfLadding;
-import com.cpdss.gateway.domain.Cargo;
-import com.cpdss.gateway.domain.CargoNomination;
-import com.cpdss.gateway.domain.CommonResponse;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyValue;
-import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
-import com.cpdss.gateway.domain.LoadableStudyResponse;
-import com.cpdss.gateway.domain.OnHandQuantity;
-import com.cpdss.gateway.domain.OnHandQuantityResponse;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.PortRotationResponse;
-import com.cpdss.gateway.domain.PortWiseCargo;
-import com.cpdss.gateway.domain.PortWiseCargoResponse;
+import com.cpdss.gateway.utility.RuleUtility;
 import java.math.BigDecimal;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -83,7 +72,14 @@ public class DischargeStudyService {
   private DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceBlockingStub
       dischargeStudyOperationServiceBlockingStub;
 
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
   @Autowired LoadableStudyService loadableStudyService;
+
+  @GrpcClient("dischargeInformationService")
+  private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
+      dischargeInfoServiceStub;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -476,7 +472,8 @@ public class DischargeStudyService {
                   cargoNominationDetail.getLoadingPortDetailsList().stream()
                       .filter(port -> portRotation.getPortId().equals(port.getPortId()))
                       .findFirst();
-              cargoNomination.setDischargeTime(new BigDecimal(cargoNominationDetail.getDischargingTime()));
+              cargoNomination.setDischargeTime(
+                  new BigDecimal(cargoNominationDetail.getDischargingTime()));
               if (nominationPort.isPresent()) {
                 cargoNomination.setQuantity(new BigDecimal(nominationPort.get().getQuantity()));
                 cargoNomination.setMode(nominationPort.get().getMode());
@@ -711,5 +708,36 @@ public class DischargeStudyService {
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
+  }
+
+  public RuleResponse getOrSaveRulesForDischargeStudy(
+      Long vesselId,
+      Long sectionId,
+      Long dischargeStudyId,
+      RuleRequest dischargeStudyRuleRequest,
+      String correlationId)
+      throws GenericServiceException {
+    DischargeStudyRuleRequest.Builder dischargeStudyRuleRequestBuilder =
+        DischargeStudyRuleRequest.newBuilder();
+    dischargeStudyRuleRequestBuilder.setVesselId(vesselId);
+    dischargeStudyRuleRequestBuilder.setSectionId(sectionId);
+    dischargeStudyRuleRequestBuilder.setDischargeStudyId(dischargeStudyId);
+    RuleUtility.buildRuleListForSaveDischargeStudy(
+        dischargeStudyRuleRequest, null, dischargeStudyRuleRequestBuilder, null, false, false);
+    DischargeStudyRuleReply dischargeStudyRuleReply =
+        dischargeInfoServiceStub.getOrSaveRulesForDischargeStudy(
+            dischargeStudyRuleRequestBuilder.build());
+    if (!SUCCESS.equals(dischargeStudyRuleReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get discharge study rules ",
+          dischargeStudyRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(dischargeStudyRuleReply.getResponseStatus().getCode())));
+    }
+    RuleResponse ruleResponse = new RuleResponse();
+    ruleResponse.setPlan(RuleUtility.buildDischargeRulePlan(dischargeStudyRuleReply));
+    ruleResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return ruleResponse;
   }
 }

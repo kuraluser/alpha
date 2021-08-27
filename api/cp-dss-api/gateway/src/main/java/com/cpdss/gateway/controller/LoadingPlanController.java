@@ -739,7 +739,7 @@ public class LoadingPlanController {
   }
 
   /**
-   * @param loadablePatternId
+   * @param infoId
    * @param headers
    * @return
    * @throws CommonRestException AlgoErrorResponse

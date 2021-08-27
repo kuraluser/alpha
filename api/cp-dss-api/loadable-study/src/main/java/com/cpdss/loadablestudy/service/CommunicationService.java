@@ -98,14 +98,14 @@ public class CommunicationService {
   }
 
   private void saveValidatePlanRequestShore(EnvoyReader.EnvoyReaderResultReply erReply) {
-    try{
+    try {
       String jsonResult = erReply.getPatternResultJson();
       LoadableStudy loadableStudyEntity =
-              loadableStudyServiceShore.saveOrUpdateLSInShore(jsonResult, erReply.getMessageId());
+          loadableStudyServiceShore.saveOrUpdateLSInShore(jsonResult, erReply.getMessageId());
       if (loadableStudyEntity != null) {
         voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
         this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
-        //processAlgoFromShip(loadableStudyEntity);
+        // processAlgoFromShip(loadableStudyEntity);
       }
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when generating pattern", e);

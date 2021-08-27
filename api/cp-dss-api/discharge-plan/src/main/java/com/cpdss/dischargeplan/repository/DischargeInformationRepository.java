@@ -14,4 +14,7 @@ public interface DischargeInformationRepository
 
   Optional<DischargeInformation> findByVesselXidAndVoyageXidAndPortRotationXidAndIsActiveTrue(
       Long var1, Long var2, Long var3);
+
+  Optional<DischargeInformation> findByIdAndIsActiveAndVesselXid(
+      long dischargeStudyId, boolean isActive, long vesselId);
 }

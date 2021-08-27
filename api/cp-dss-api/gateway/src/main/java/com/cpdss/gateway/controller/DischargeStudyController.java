@@ -7,25 +7,18 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.AlgoPatternResponse;
-import com.cpdss.gateway.domain.AlgoStatusRequest;
-import com.cpdss.gateway.domain.AlgoStatusResponse;
-import com.cpdss.gateway.domain.LoadablePlanRequest;
-import com.cpdss.gateway.domain.LoadableStudyStatusResponse;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.LoadableStudyService;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -45,7 +38,7 @@ public class DischargeStudyController {
   /**
    * @param vesselId
    * @param voyageId
-   * @param loadableStudiesId
+   * @param dischargeStudiesId
    * @param headers
    * @throws CommonRestException void
    */
@@ -118,7 +111,7 @@ public class DischargeStudyController {
   /**
    * @param vesselId
    * @param voyageId
-   * @param dischargeStudyId
+   * @param loadableStudyId
    * @param request
    * @param headers
    * @return
@@ -210,5 +203,94 @@ public class DischargeStudyController {
       remoteAddr = curRequest.getRemoteAddr();
     }
     return remoteAddr;
+  }
+
+  /**
+   * To save rule against discharge study
+   *
+   * @param vesselId
+   * @param dischargeStudyId
+   * @param sectionId
+   * @param dischargeRuleRequest
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value =
+          "/discharge-study-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}/dischargeStudyId/{dischargeStudyId}",
+      produces = MediaType.APPLICATION_JSON_VALUE,
+      consumes = MediaType.APPLICATION_JSON_VALUE)
+  public RuleResponse saveRulesForDischargeStudy(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long dischargeStudyId,
+      @PathVariable
+          @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          @Max(value = 3, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long sectionId,
+      @RequestBody RuleRequest dischargeRuleRequest,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.dischargeStudyService.getOrSaveRulesForDischargeStudy(
+          vesselId,
+          sectionId,
+          dischargeStudyId,
+          dischargeRuleRequest,
+          headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving rules against discharge study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when saving rules for discharge study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * To retrieve rule against discharge study
+   *
+   * @param vesselId
+   * @param dischargeStudyId
+   * @param sectionId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      value =
+          "/discharge-study-rule/vessels/{vesselId}/ruleMasterSectionId/{sectionId}/dischargeStudyId/{dischargeStudyId}",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public RuleResponse getRulesForLoadableStudy(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long dischargeStudyId,
+      @PathVariable
+          @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          @Max(value = 3, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long sectionId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.dischargeStudyService.getOrSaveRulesForDischargeStudy(
+          vesselId, sectionId, dischargeStudyId, null, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching rules against discharge study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when fetching rules for discharge study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
   }
 }

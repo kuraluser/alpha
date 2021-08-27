@@ -2162,20 +2162,33 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                             && item.trim().equalsIgnoreCase(TypeValue.DROPDOWN.getType())
                         || item.trim().equalsIgnoreCase(TypeValue.MULTISELECT.getType()));
     if (isTypeDropDownOrMultiSelect.isPresent()) {
-      Optional<String> isPrefixExist =
+      Optional<String> isPrefixExistCTankOne =
           Optional.ofNullable(vesselRule.getTemplateInputPrefix())
               .filter(
                   item ->
                       item.trim().length() != 0
-                          && item.trim().equalsIgnoreCase(RuleMasterData.CargoTank.getPrefix()));
-      Optional<String> isSuffixExist =
+                          && item.trim().equalsIgnoreCase(RuleMasterData.CargoTankOne.getPrefix()));
+      Optional<String> isSuffixExistCTankOne =
           Optional.ofNullable(vesselRule.getTemplateInputSuffix())
               .filter(
                   item ->
                       item.trim().length() != 0
-                          && item.trim().equalsIgnoreCase(RuleMasterData.CargoTank.getSuffix()));
+                          && item.trim().equalsIgnoreCase(RuleMasterData.CargoTankOne.getSuffix()));
+      Optional<String> isPrefixExistCTankTwo =
+          Optional.ofNullable(vesselRule.getTemplateInputPrefix())
+              .filter(
+                  item ->
+                      item.trim().length() != 0
+                          && item.trim().equalsIgnoreCase(RuleMasterData.CargoTankTwo.getPrefix()));
+      Optional<String> isSuffixExistCTankTwo =
+          Optional.ofNullable(vesselRule.getTemplateInputSuffix())
+              .filter(
+                  item ->
+                      item.trim().length() != 0
+                          && item.trim().equalsIgnoreCase(RuleMasterData.CargoTankTwo.getSuffix()));
       RuleDropDownMaster.Builder ruleDropDownMaster = RuleDropDownMaster.newBuilder();
-      if (isPrefixExist.isPresent() && isSuffixExist.isPresent()) {
+      if ((isPrefixExistCTankTwo.isPresent() && isSuffixExistCTankTwo.isPresent())
+          || (isPrefixExistCTankOne.isPresent() && isSuffixExistCTankOne.isPresent())) {
         cargoTankMaster.forEach(
             cargoTank -> {
               Optional.ofNullable(cargoTank.getId()).ifPresent(ruleDropDownMaster::setId);
@@ -2503,25 +2516,44 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                                                       TypeValue.MULTISELECT.getType()));
 
                           if (isTypeDropDownOrMultiSelect.isPresent()) {
-                            Optional<String> isPrefixExist =
+                            Optional<String> isPrefixExistCTankOne =
                                 Optional.ofNullable(input.getPrefix())
                                     .filter(
                                         item ->
                                             item.trim().length() != 0
                                                 && item.trim()
                                                     .equalsIgnoreCase(
-                                                        RuleMasterData.CargoTank.getPrefix()));
-                            Optional<String> isSuffixExist =
+                                                        RuleMasterData.CargoTankOne.getPrefix()));
+                            Optional<String> isSuffixExistCTankOne =
                                 Optional.ofNullable(input.getSuffix())
                                     .filter(
                                         item ->
                                             item.trim().length() != 0
                                                 && item.trim()
                                                     .equalsIgnoreCase(
-                                                        RuleMasterData.CargoTank.getSuffix()));
+                                                        RuleMasterData.CargoTankOne.getSuffix()));
+                            Optional<String> isPrefixExistCTankTwo =
+                                Optional.ofNullable(input.getPrefix())
+                                    .filter(
+                                        item ->
+                                            item.trim().length() != 0
+                                                && item.trim()
+                                                    .equalsIgnoreCase(
+                                                        RuleMasterData.CargoTankTwo.getPrefix()));
+                            Optional<String> isSuffixExistCTankTwo =
+                                Optional.ofNullable(input.getSuffix())
+                                    .filter(
+                                        item ->
+                                            item.trim().length() != 0
+                                                && item.trim()
+                                                    .equalsIgnoreCase(
+                                                        RuleMasterData.CargoTankTwo.getSuffix()));
 
                             try {
-                              if (isPrefixExist.isPresent() && isSuffixExist.isPresent()) {
+                              if ((isPrefixExistCTankOne.isPresent()
+                                      && isSuffixExistCTankOne.isPresent())
+                                  || (isPrefixExistCTankTwo.isPresent()
+                                      && isSuffixExistCTankTwo.isPresent())) {
                                 this.ruleMasterDropDownValidation(
                                     listOfDropDownValue,
                                     cargoTankMaster,

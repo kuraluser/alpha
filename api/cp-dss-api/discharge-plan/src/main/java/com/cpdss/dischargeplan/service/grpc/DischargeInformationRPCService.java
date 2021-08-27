@@ -2,9 +2,7 @@
 package com.cpdss.dischargeplan.service.grpc;
 
 import com.cpdss.common.generated.Common;
-import com.cpdss.common.generated.discharge_plan.DischargeInformation;
-import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
-import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
@@ -28,6 +26,27 @@ public class DischargeInformationRPCService
     try {
       log.info("Get Discharge Info Request Payload \n{}", Utils.toJson(request));
       this.dischargeInformationService.getDischargeInformation(request, builder);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(DischargePlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getOrSaveRulesForDischargeStudy(
+      DischargeStudyRuleRequest request, StreamObserver<DischargeStudyRuleReply> responseObserver) {
+    DischargeStudyRuleReply.Builder builder = DischargeStudyRuleReply.newBuilder();
+    try {
+      // log.info("Get or dave Discharge study rule \n{}", Utils.toJson(request));
+      this.dischargeInformationService.getOrSaveRulesForDischargeStudy(request, builder);
     } catch (Exception e) {
       e.printStackTrace();
       builder.setResponseStatus(

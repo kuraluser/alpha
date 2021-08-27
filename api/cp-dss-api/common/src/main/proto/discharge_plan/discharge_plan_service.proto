@@ -9,4 +9,5 @@ import "discharge_plan/discharge_plan_models.proto";
 
 service DischargeInformationService {
   rpc getDischargeInformation(DischargeInformationRequest) returns (DischargeInformation) {}
+  rpc getOrSaveRulesForDischargeStudy(DischargeStudyRuleRequest) returns (DischargeStudyRuleReply) {}
 }

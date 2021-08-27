@@ -3,6 +3,8 @@ package com.cpdss.gateway.utility;
 
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.discharge_plan.DischargeStudyRuleReply;
+import com.cpdss.common.generated.discharge_plan.DischargeStudyRuleRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.domain.*;
 import java.util.*;
@@ -44,6 +46,22 @@ public class RuleUtility {
   }
 
   public static List<RulePlans> buildLoadableRulePlan(LoadableStudy.LoadableRuleReply ruleReply) {
+    List<RulePlans> rulePlans = new ArrayList<>();
+    ruleReply
+        .getRulePlanList()
+        .forEach(
+            rulePlanList -> {
+              RulePlans rulePlan = new RulePlans();
+              Optional.of(rulePlanList.getHeader()).ifPresent(rulePlan::setHeader);
+              if (!CollectionUtils.isEmpty(rulePlanList.getRulesList())) {
+                rulePlan.setRules(buildRules(rulePlanList.getRulesList()));
+              }
+              rulePlans.add(rulePlan);
+            });
+    return rulePlans;
+  }
+
+  public static List<RulePlans> buildDischargeRulePlan(DischargeStudyRuleReply ruleReply) {
     List<RulePlans> rulePlans = new ArrayList<>();
     ruleReply
         .getRulePlanList()
@@ -218,6 +236,89 @@ public class RuleUtility {
                     planBuilder.addRulePlan(rulePlanBuilder);
                   } else {
                     loadableRuleRequestBuilder.addRulePlan(rulePlanBuilder);
+                  }
+                }
+              });
+    }
+  }
+
+  public static void buildRuleListForSaveDischargeStudy(
+      com.cpdss.gateway.domain.RuleRequest vesselRuleRequest,
+      VesselInfo.VesselRuleRequest.Builder vesselRuleBuilder,
+      DischargeStudyRuleRequest.Builder dischargeStudyRuleRequest,
+      LoadingPlanModels.LoadingPlanRuleRequest.Builder planBuilder,
+      boolean isAdminRule,
+      boolean isLoadingPlan) {
+
+    if (vesselRuleRequest != null && !CollectionUtils.isEmpty(vesselRuleRequest.getPlan())) {
+      vesselRuleRequest
+          .getPlan()
+          .forEach(
+              rulePlan -> {
+                if (!CollectionUtils.isEmpty(rulePlan.getRules())) {
+                  com.cpdss.common.generated.Common.RulePlans.Builder rulePlanBuilder =
+                      com.cpdss.common.generated.Common.RulePlans.newBuilder();
+                  rulePlan
+                      .getRules()
+                      .forEach(
+                          rule -> {
+                            com.cpdss.common.generated.Common.Rules.Builder ruleBuilder =
+                                com.cpdss.common.generated.Common.Rules.newBuilder();
+                            Optional.ofNullable(rule.getDisable())
+                                .ifPresent(ruleBuilder::setDisable);
+                            Optional.ofNullable(rule.getDisplayInSettings())
+                                .ifPresent(ruleBuilder::setDisplayInSettings);
+                            Optional.ofNullable(rule.getEnable()).ifPresent(ruleBuilder::setEnable);
+                            Optional.ofNullable(rule.getId()).ifPresent(ruleBuilder::setId);
+                            Optional.ofNullable(rule.getRuleTemplateId())
+                                .ifPresent(ruleBuilder::setRuleTemplateId);
+                            Optional.ofNullable(rule.getRuleType())
+                                .ifPresent(ruleBuilder::setRuleType);
+                            Optional.ofNullable(rule.getRuleType())
+                                .ifPresent(ruleBuilder::setRuleType);
+                            Optional.ofNullable(rule.getVesselRuleXId())
+                                .ifPresent(ruleBuilder::setVesselRuleXId);
+                            Optional.ofNullable(rule.getIsHardRule())
+                                .ifPresent(ruleBuilder::setIsHardRule);
+                            Optional.ofNullable(rule.getNumericPrecision())
+                                .ifPresent(ruleBuilder::setNumericPrecision);
+                            Optional.ofNullable(rule.getNumericScale())
+                                .ifPresent(ruleBuilder::setNumericScale);
+                            rule.getInputs()
+                                .forEach(
+                                    input -> {
+                                      com.cpdss.common.generated.Common.RulesInputs.Builder
+                                          ruleInputBuilder =
+                                              com.cpdss.common.generated.Common.RulesInputs
+                                                  .newBuilder();
+                                      Optional.ofNullable(input.getDefaultValue())
+                                          .ifPresent(ruleInputBuilder::setDefaultValue);
+                                      Optional.ofNullable(input.getId())
+                                          .ifPresent(ruleInputBuilder::setId);
+                                      Optional.ofNullable(input.getMax())
+                                          .ifPresent(ruleInputBuilder::setMax);
+                                      Optional.ofNullable(input.getMin())
+                                          .ifPresent(ruleInputBuilder::setMin);
+                                      Optional.ofNullable(input.getPrefix())
+                                          .ifPresent(ruleInputBuilder::setPrefix);
+                                      Optional.ofNullable(input.getSuffix())
+                                          .ifPresent(ruleInputBuilder::setSuffix);
+                                      Optional.ofNullable(input.getType())
+                                          .ifPresent(ruleInputBuilder::setType);
+                                      Optional.ofNullable(input.getValue())
+                                          .ifPresent(ruleInputBuilder::setValue);
+                                      Optional.ofNullable(input.getIsMandatory())
+                                          .ifPresent(ruleInputBuilder::setIsMandatory);
+                                      ruleBuilder.addInputs(ruleInputBuilder);
+                                    });
+                            rulePlanBuilder.addRules(ruleBuilder);
+                          });
+                  if ((isAdminRule)) {
+                    vesselRuleBuilder.addRulePlan(rulePlanBuilder);
+                  } else if (isLoadingPlan) {
+                    planBuilder.addRulePlan(rulePlanBuilder);
+                  } else {
+                    dischargeStudyRuleRequest.addRulePlan(rulePlanBuilder);
                   }
                 }
               });
