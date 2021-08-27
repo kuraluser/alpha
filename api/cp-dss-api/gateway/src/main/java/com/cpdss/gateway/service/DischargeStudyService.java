@@ -18,9 +18,6 @@ import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequ
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
-import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
-import com.cpdss.common.generated.discharge_plan.DischargeStudyRuleReply;
-import com.cpdss.common.generated.discharge_plan.DischargeStudyRuleRequest;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail;
@@ -38,7 +35,6 @@ import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyValue;
-import com.cpdss.gateway.utility.RuleUtility;
 import java.math.BigDecimal;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -76,10 +72,6 @@ public class DischargeStudyService {
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   @Autowired LoadableStudyService loadableStudyService;
-
-  @GrpcClient("dischargeInformationService")
-  private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
-      dischargeInfoServiceStub;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -711,36 +703,5 @@ public class DischargeStudyService {
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
-  }
-
-  public RuleResponse getOrSaveRulesForDischargeStudy(
-      Long vesselId,
-      Long sectionId,
-      Long dischargeStudyId,
-      RuleRequest dischargeStudyRuleRequest,
-      String correlationId)
-      throws GenericServiceException {
-    DischargeStudyRuleRequest.Builder dischargeStudyRuleRequestBuilder =
-        DischargeStudyRuleRequest.newBuilder();
-    dischargeStudyRuleRequestBuilder.setVesselId(vesselId);
-    dischargeStudyRuleRequestBuilder.setSectionId(sectionId);
-    dischargeStudyRuleRequestBuilder.setDischargeStudyId(dischargeStudyId);
-    RuleUtility.buildRuleListForSaveDischargeStudy(
-        dischargeStudyRuleRequest, null, dischargeStudyRuleRequestBuilder, null, false, false);
-    DischargeStudyRuleReply dischargeStudyRuleReply =
-        dischargeInfoServiceStub.getOrSaveRulesForDischargeStudy(
-            dischargeStudyRuleRequestBuilder.build());
-    if (!SUCCESS.equals(dischargeStudyRuleReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "failed to get discharge study rules ",
-          dischargeStudyRuleReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(
-              Integer.valueOf(dischargeStudyRuleReply.getResponseStatus().getCode())));
-    }
-    RuleResponse ruleResponse = new RuleResponse();
-    ruleResponse.setPlan(RuleUtility.buildDischargeRulePlan(dischargeStudyRuleReply));
-    ruleResponse.setResponseStatus(
-        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
-    return ruleResponse;
   }
 }

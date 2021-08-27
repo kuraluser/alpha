@@ -3,8 +3,8 @@ package com.cpdss.gateway.utility;
 
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.VesselInfo;
-import com.cpdss.common.generated.discharge_plan.DischargeStudyRuleReply;
-import com.cpdss.common.generated.discharge_plan.DischargeStudyRuleRequest;
+import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
+import com.cpdss.common.generated.discharge_plan.DischargeRuleRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.domain.*;
 import java.util.*;
@@ -61,7 +61,7 @@ public class RuleUtility {
     return rulePlans;
   }
 
-  public static List<RulePlans> buildDischargeRulePlan(DischargeStudyRuleReply ruleReply) {
+  public static List<RulePlans> buildDischargeRulePlan(DischargeRuleReply ruleReply) {
     List<RulePlans> rulePlans = new ArrayList<>();
     ruleReply
         .getRulePlanList()
@@ -245,7 +245,7 @@ public class RuleUtility {
   public static void buildRuleListForSaveDischargeStudy(
       com.cpdss.gateway.domain.RuleRequest vesselRuleRequest,
       VesselInfo.VesselRuleRequest.Builder vesselRuleBuilder,
-      DischargeStudyRuleRequest.Builder dischargeStudyRuleRequest,
+      DischargeRuleRequest.Builder dischargeStudyRuleRequest,
       LoadingPlanModels.LoadingPlanRuleRequest.Builder planBuilder,
       boolean isAdminRule,
       boolean isLoadingPlan) {

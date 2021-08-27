@@ -41,12 +41,12 @@ public class DischargeInformationRPCService
   }
 
   @Override
-  public void getOrSaveRulesForDischargeStudy(
-      DischargeStudyRuleRequest request, StreamObserver<DischargeStudyRuleReply> responseObserver) {
-    DischargeStudyRuleReply.Builder builder = DischargeStudyRuleReply.newBuilder();
+  public void getOrSaveRulesForDischarging(
+      DischargeRuleRequest request, StreamObserver<DischargeRuleReply> responseObserver) {
+    DischargeRuleReply.Builder builder = DischargeRuleReply.newBuilder();
     try {
-      // log.info("Get or dave Discharge study rule \n{}", Utils.toJson(request));
-      this.dischargeInformationService.getOrSaveRulesForDischargeStudy(request, builder);
+      // log.info("Get or dave Discharge rule \n{}", Utils.toJson(request));
+      this.dischargeInformationService.getOrSaveRulesForDischarge(request, builder);
     } catch (Exception e) {
       e.printStackTrace();
       builder.setResponseStatus(

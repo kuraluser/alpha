@@ -5,12 +5,12 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.discharge_plan.DischargeDetails;
 import com.cpdss.common.generated.discharge_plan.DischargeRates;
-import com.cpdss.common.generated.discharge_plan.DischargeStudyRuleReply;
+import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.dischargeplan.domain.RuleType;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
-import com.cpdss.dischargeplan.entity.DischargeStudyRuleInput;
-import com.cpdss.dischargeplan.entity.DischargeStudyRules;
+import com.cpdss.dischargeplan.entity.DischargePlanRuleInput;
+import com.cpdss.dischargeplan.entity.DischargePlanRules;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -85,9 +85,9 @@ public class DischargeInformationBuilderService {
    * @param vesselRuleReply
    */
   public void buildResponseForDSRules(
-      List<DischargeStudyRules> dStudyRulesList,
+      List<DischargePlanRules> dStudyRulesList,
       Common.RulePlans.Builder rulePlanBuilder,
-      DischargeStudyRuleReply.Builder builder,
+      DischargeRuleReply.Builder builder,
       VesselInfo.VesselRuleReply vesselRuleReply) {
     dStudyRulesList.forEach(
         ruleList -> {
@@ -125,18 +125,18 @@ public class DischargeInformationBuilderService {
               .ifPresentOrElse(
                   rulesBuilder::setNumericScale, () -> rulesBuilder.setNumericScale(0));
           Common.RulesInputs.Builder ruleInput = Common.RulesInputs.newBuilder();
-          List<DischargeStudyRuleInput> loadableStudyRuleInputs;
-          if (ruleList != null && ruleList.getDischargeStudyRuleInputs().size() != 0) {
+          List<DischargePlanRuleInput> loadableStudyRuleInputs;
+          if (ruleList != null && ruleList.getDischargePlanRuleInputList().size() != 0) {
             loadableStudyRuleInputs =
-                ruleList.getDischargeStudyRuleInputs().stream()
-                    .sorted(Comparator.comparingLong(DischargeStudyRuleInput::getId))
+                ruleList.getDischargePlanRuleInputList().stream()
+                    .sorted(Comparator.comparingLong(DischargePlanRuleInput::getId))
                     .collect(Collectors.toList());
           } else {
             loadableStudyRuleInputs = new ArrayList<>();
           }
           for (int inputIndex = 0; inputIndex < loadableStudyRuleInputs.size(); inputIndex++) {
             Common.RulesInputs.Builder finalRuleInput = ruleInput;
-            DischargeStudyRuleInput input = loadableStudyRuleInputs.get(inputIndex);
+            DischargePlanRuleInput input = loadableStudyRuleInputs.get(inputIndex);
             Optional.ofNullable(input.getDefaultValue())
                 .filter(item -> item.trim().length() != 0)
                 .ifPresentOrElse(
@@ -255,7 +255,7 @@ public class DischargeInformationBuilderService {
   }
 
   public void buildResponseForDefaultDSRules(
-      VesselInfo.VesselRuleReply vesselRuleReply, DischargeStudyRuleReply.Builder builder) {
+      VesselInfo.VesselRuleReply vesselRuleReply, DischargeRuleReply.Builder builder) {
     vesselRuleReply
         .getRulePlanList()
         .forEach(

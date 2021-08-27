@@ -6,18 +6,18 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
-import com.cpdss.common.generated.discharge_plan.DischargeStudyRuleReply;
-import com.cpdss.common.generated.discharge_plan.DischargeStudyRuleRequest;
+import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
+import com.cpdss.common.generated.discharge_plan.DischargeRuleRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.domain.RuleMasterSection;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
-import com.cpdss.dischargeplan.entity.DischargeStudyRuleInput;
-import com.cpdss.dischargeplan.entity.DischargeStudyRules;
+import com.cpdss.dischargeplan.entity.DischargePlanRuleInput;
+import com.cpdss.dischargeplan.entity.DischargePlanRules;
 import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
-import com.cpdss.dischargeplan.repository.DischargeStudyRulesInputRepository;
-import com.cpdss.dischargeplan.repository.DischargeStudyRulesRepository;
+import com.cpdss.dischargeplan.repository.DischargeRulesInputRepository;
+import com.cpdss.dischargeplan.repository.DischargeRulesRepository;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -40,9 +40,9 @@ public class DischargeInformationService {
 
   @Autowired DischargeInformationBuilderService informationBuilderService;
 
-  @Autowired DischargeStudyRulesRepository dischargeStudyRulesRepository;
+  @Autowired DischargeRulesRepository dischargeStudyRulesRepository;
 
-  @Autowired DischargeStudyRulesInputRepository dischargeStudyRulesInputRepository;
+  @Autowired DischargeRulesInputRepository dischargeStudyRulesInputRepository;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -94,8 +94,8 @@ public class DischargeInformationService {
             .build());
   }
 
-  public void getOrSaveRulesForDischargeStudy(
-      DischargeStudyRuleRequest request, DischargeStudyRuleReply.Builder builder)
+  public void getOrSaveRulesForDischarge(
+      DischargeRuleRequest request, DischargeRuleReply.Builder builder)
       throws GenericServiceException {
     if (!RuleMasterSection.Discharging.getId().equals(request.getSectionId())) {
       throw new GenericServiceException(
@@ -105,10 +105,9 @@ public class DischargeInformationService {
     }
     Optional<DischargeInformation> dischargeInformation =
         dischargeInformationRepository.findByIdAndIsActiveAndVesselXid(
-            request.getDischargeStudyId(), true, request.getVesselId());
+            request.getDischargeInfoId(), true, request.getVesselId());
     if (!dischargeInformation.isPresent()) {
-      log.error(
-          "Failed to get discharge study for get or save rule", request.getDischargeStudyId());
+      log.error("Failed to get discharge study for get or save rule", request.getDischargeInfoId());
       throw new GenericServiceException(
           "discharge study with given id does not exist",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
@@ -139,7 +138,7 @@ public class DischargeInformationService {
             .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
             .collect(Collectors.toList());
     // fetch discharge study rules based on vessel rule primary key id
-    List<DischargeStudyRules> dischargeStudyRulesList =
+    List<DischargePlanRules> dischargeStudyRulesList =
         dischargeStudyRulesRepository
             .findByDischargeInformationAndVesselXIdAndIsActiveAndVesselRuleXIdInOrderById(
                 dischargeInformation.get(), request.getVesselId(), true, ruleListId);
@@ -156,13 +155,13 @@ public class DischargeInformationService {
                     rulePlans.getRulesList().stream()
                         .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
                         .collect(Collectors.toList());
-                List<DischargeStudyRules> dStudyRulesList =
+                List<DischargePlanRules> dStudyRulesList =
                     dischargeStudyRulesList.stream()
                         .filter(lRuleList -> ruleId.contains(lRuleList.getVesselRuleXId()))
                         .collect(Collectors.toList());
-                List<DischargeStudyRules> sortedDStudyRulesList =
+                List<DischargePlanRules> sortedDStudyRulesList =
                     dStudyRulesList.stream()
-                        .sorted(Comparator.comparingLong(DischargeStudyRules::getId))
+                        .sorted(Comparator.comparingLong(DischargePlanRules::getId))
                         .collect(Collectors.toList());
                 informationBuilderService.buildResponseForDSRules(
                     sortedDStudyRulesList, rulePlanBuider, builder, vesselRuleReply);
@@ -183,10 +182,10 @@ public class DischargeInformationService {
    * @param vesselRuleReply
    */
   private void saveRulesAgainstDischargeStudy(
-      DischargeStudyRuleRequest request,
+      DischargeRuleRequest request,
       Optional<DischargeInformation> dischargeStudy,
       VesselInfo.VesselRuleReply vesselRuleReply) {
-    List<DischargeStudyRules> dischargeStudyRulesList = new ArrayList<>();
+    List<DischargePlanRules> dischargeStudyRulesList = new ArrayList<>();
     request
         .getRulePlanList()
         .forEach(
@@ -195,12 +194,12 @@ public class DischargeInformationService {
                   .getRulesList()
                   .forEach(
                       rule -> {
-                        DischargeStudyRules dischargeStudyRules = new DischargeStudyRules();
+                        DischargePlanRules dischargeStudyRules = new DischargePlanRules();
                         Optional<String> isRuleTemplateIdExist =
                             Optional.ofNullable(rule.getRuleTemplateId())
                                 .filter(item -> item.trim().length() != 0);
                         if (rule.getId() != null && rule.getId().trim().length() != 0) {
-                          Optional<DischargeStudyRules> rVesselMapping =
+                          Optional<DischargePlanRules> rVesselMapping =
                               dischargeStudyRulesRepository.findById(Long.valueOf(rule.getId()));
                           if (rVesselMapping.isPresent()) {
                             dischargeStudyRules = rVesselMapping.get();
@@ -211,7 +210,7 @@ public class DischargeInformationService {
                           }
                         } else {
                           if (isRuleTemplateIdExist.isPresent()) {
-                            Optional<DischargeStudyRules> loadableStudyRulesRecord =
+                            Optional<DischargePlanRules> loadableStudyRulesRecord =
                                 dischargeStudyRulesRepository.checkIsRuleTemplateExist(
                                     dischargeStudy.get().getId(),
                                     true,
@@ -226,7 +225,7 @@ public class DischargeInformationService {
                         }
                         dischargeStudyRules.setDischargeInformation(dischargeStudy.get());
                         dischargeStudyRules.setIsActive(true);
-                        DischargeStudyRules finalDischargeStudyRules = dischargeStudyRules;
+                        DischargePlanRules finalDischargeStudyRules = dischargeStudyRules;
                         Optional.ofNullable(rule.getDisplayInSettings())
                             .ifPresentOrElse(
                                 dischargeStudyRules::setDisplayInSettings,
@@ -269,12 +268,11 @@ public class DischargeInformationService {
                                 vesselRuleXId ->
                                     finalDischargeStudyRules.setVesselRuleXId(
                                         Long.parseLong(vesselRuleXId)));
-                        List<DischargeStudyRuleInput> ruleVesselMappingInputList =
-                            new ArrayList<>();
+                        List<DischargePlanRuleInput> ruleVesselMappingInputList = new ArrayList<>();
                         for (Common.RulesInputs input : rule.getInputsList()) {
-                          DischargeStudyRuleInput ruleTemplateInput = new DischargeStudyRuleInput();
+                          DischargePlanRuleInput ruleTemplateInput = new DischargePlanRuleInput();
                           if (input.getId() != null && input.getId().length() != 0) {
-                            Optional<DischargeStudyRuleInput> rTemplateInput =
+                            Optional<DischargePlanRuleInput> rTemplateInput =
                                 dischargeStudyRulesInputRepository.findById(
                                     Long.valueOf(input.getId()));
                             if (rTemplateInput.isPresent()) {
@@ -286,7 +284,7 @@ public class DischargeInformationService {
                                   "No record exist for this id in rule discharging study rule input table");
                             }
                           }
-                          DischargeStudyRuleInput finalRuleTemplateInput = ruleTemplateInput;
+                          DischargePlanRuleInput finalRuleTemplateInput = ruleTemplateInput;
                           Optional.ofNullable(input.getDefaultValue())
                               .filter(item -> item.trim().length() != 0)
                               .ifPresentOrElse(
@@ -312,7 +310,7 @@ public class DischargeInformationService {
                                   ruleTemplateInput::setIsMandatory,
                                   () -> finalRuleTemplateInput.setIsMandatory(false));
                           ruleTemplateInput.setIsActive(true);
-                          ruleTemplateInput.setDischargeStudyRules(dischargeStudyRules);
+                          ruleTemplateInput.setDischargePlanRules(dischargeStudyRules);
                           Optional<String> isTypeDropDownOrMultiSelect =
                               Optional.ofNullable(input.getType())
                                   .filter(
@@ -375,7 +373,8 @@ public class DischargeInformationService {
                           }
                           ruleVesselMappingInputList.add(ruleTemplateInput);
                         }
-                        dischargeStudyRules.setDischargeStudyRuleInputs(ruleVesselMappingInputList);
+                        dischargeStudyRules.setDischargePlanRuleInputList(
+                            ruleVesselMappingInputList);
                         dischargeStudyRulesList.add(dischargeStudyRules);
                       });
             });
@@ -398,7 +397,7 @@ public class DischargeInformationService {
       List<VesselInfo.CargoTankMaster> cargoTankMaster,
       boolean isCargoTankMaster,
       Common.RulesInputs input,
-      DischargeStudyRuleInput ruleTemplateInput,
+      DischargePlanRuleInput ruleTemplateInput,
       Common.Rules rule)
       throws GenericServiceException {
     Optional<String> isDefaultValueExist =

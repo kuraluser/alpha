@@ -771,11 +771,14 @@ public class LoadableStudyServiceShore {
   }
 
   public LoadableStudy saveOrUpdateLSInShore(String jsonResult, String messageId)
-          throws GenericServiceException {
+      throws GenericServiceException {
     LoadableStudy loadableStudyEntity = null;
     LoadabalePatternValidateRequest loadabalePatternValidateRequest =
-            new Gson().fromJson(jsonResult,com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest.class);
-    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy = loadabalePatternValidateRequest.getLoadableStudy();
+        new Gson()
+            .fromJson(
+                jsonResult, com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest.class);
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        loadabalePatternValidateRequest.getLoadableStudy();
     Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyage());
     if (!checkIfLoadableStudyExist(loadableStudy.getName(), voyage)) {
       try {
