@@ -445,7 +445,7 @@ public class LoadicatorService {
         });
   }
 
-  private void buildStowagePlan(
+  public void buildStowagePlan(
       LoadingInformation loadingInformation,
       Integer time,
       String processId,
@@ -486,7 +486,7 @@ public class LoadicatorService {
    * @return
    * @throws GenericServiceException
    */
-  private PortInfo.PortReply getPortInfoForLoadicator(LoadingInformation loadingInformation)
+  public PortInfo.PortReply getPortInfoForLoadicator(LoadingInformation loadingInformation)
       throws GenericServiceException {
     PortInfo.PortRequest portRequest =
         PortInfo.PortRequest.newBuilder()
@@ -514,8 +514,8 @@ public class LoadicatorService {
    * @return
    * @throws GenericServiceException
    */
-  private VesselInfo.VesselReply getVesselDetailsForLoadicator(
-      LoadingInformation loadingInformation) throws GenericServiceException {
+  public VesselInfo.VesselReply getVesselDetailsForLoadicator(LoadingInformation loadingInformation)
+      throws GenericServiceException {
     VesselInfo.VesselRequest replyBuilder =
         VesselInfo.VesselRequest.newBuilder()
             .setVesselId(loadingInformation.getVesselXId())
@@ -542,7 +542,7 @@ public class LoadicatorService {
    * @return
    * @throws GenericServiceException
    */
-  private CargoInfo.CargoReply getCargoInfoForLoadicator(LoadingInformation loadingInformation)
+  public CargoInfo.CargoReply getCargoInfoForLoadicator(LoadingInformation loadingInformation)
       throws GenericServiceException {
     CargoInfo.CargoRequest cargoRequest =
         CargoInfo.CargoRequest.newBuilder()
@@ -684,7 +684,7 @@ public class LoadicatorService {
     }
   }
 
-  private void saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest.Builder jsonBuilder) {
+  public void saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest.Builder jsonBuilder) {
     this.loadableStudyGrpcService.saveJson(jsonBuilder.build());
   }
 

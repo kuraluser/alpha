@@ -434,8 +434,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     this.loadableStudyPortRotationRepository.updateIsOhqCompleteByIdAndIsActiveTrue(
                         port.getId(), true);
                     ohqPortsBuilder.setIsPortRotationOhqComplete(true);
-                  } else if (port.getIsPortRotationOhqComplete() == null) {
-                    ohqPortsBuilder.setIsPortRotationOhqComplete(false);
                   }
                   builder.addOhqPorts(ohqPortsBuilder.build());
                 }
