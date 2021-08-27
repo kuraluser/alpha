@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { InputMaskModule } from 'primeng/inputmask';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 /**
  * Module for COW plan section component
@@ -22,7 +23,8 @@ import { InputMaskModule } from 'primeng/inputmask';
     ReactiveFormsModule,
     DropdownModule,
     MultiSelectModule,
-    InputMaskModule
+    InputMaskModule,
+    InputSwitchModule
   ],
   exports: [CowPlanComponent]
 })

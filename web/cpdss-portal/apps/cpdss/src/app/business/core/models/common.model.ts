@@ -659,7 +659,7 @@ export interface ICargoQuantities {
    differenceColor?: string
    cargoId?: number;
    minMaxTolerance?: string;
-   slopQuantity?: number;
+   slopQuantity?: number | ValueObject<number>;
    timeRequiredForLoading?: string;
    loadingPorts?: string[];
    loadingPortsLabels?: string;
