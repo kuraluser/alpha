@@ -9,16 +9,16 @@
             </div>
             <div class="row mb-15">
                 <div class="pl-15 pr-15">
-                    {{ 'DISCHARGE_STUDY_INSTRUCTION' | translate }} <span class="ml-5 sub-head-color"> {{getFeild(portIndex,'instruction','value')}}</span>
+                    {{ 'DISCHARGE_STUDY_INSTRUCTION' | translate }} <span class="ml-5 sub-head-color"> {{getFeild(portIndex,'instruction','instruction')}}</span>
                    
                 </div>
                 
                 <div  class="pl-15 pr-15">
-                    {{ 'DISCHARGE_STUDY_DRAFT_RESTRICTION' | translate }}
+                    {{ 'DISCHARGE_STUDY_DRAFT_RESTRICTION_VIEW_PLAN' | translate }}
                     <span class="ml-5 sub-head-color">{{getFeild(portIndex,'draftRestriction')}}</span>
                 </div>
                 <div  class="pl-15 pr-15">
-                    {{ 'DISCHARGE_STUDY_COW' | translate }}
+                    {{ 'DISCHARGE_STUDY_COW_VIEW_PLAN' | translate }}
                     <span class="ml-5 sub-head-color">{{getFeild(portIndex,'cow','name')}}</span>
                 </div>
                 <div  class="pl-15 pr-15">
@@ -33,7 +33,7 @@
                 </cpdss-portal-datatable>
             </div>
 
-            <div class="pt-20">
+            <div class="pt-20" *ngIf="getFeild(portIndex,'isBackLoadingEnabled')">
                 <div class="mb-10 sub-head-color">{{'DISCHARGE_STUDY_BACK_LOADING' | translate}}</div>
                 <cpdss-portal-datatable [tableId]="'discharge_cargo_back_loading'" [form]="getFeild(portIndex,'backLoadingDetails')" [columns]="backLoadingColumns"
                     [value]="portDetail?.backLoadingDetails"  [listData]="listData"
