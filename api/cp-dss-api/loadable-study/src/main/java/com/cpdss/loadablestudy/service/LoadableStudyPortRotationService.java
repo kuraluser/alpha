@@ -173,7 +173,7 @@ public class LoadableStudyPortRotationService {
           "Loadable study does not exist in database", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
     }
     List<LoadableStudyPortRotation> entityList = new ArrayList<>();
-    //Checking if request came from landing page - then fetching both DS and LS
+    // Checking if request came from landing page - then fetching both DS and LS
     if (request.getIsLandingPage()) {
       // Checking if Discharge started or not
       Optional<List<LoadableStudy>> dischargeStudyEntries =

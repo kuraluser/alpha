@@ -807,6 +807,7 @@ message LoadableStudyDetail{
 	bool isDischargingPortComplete=28;
 	repeated OhqPorts ohqPorts=29;
 	string lastEdited = 30;
+	string lastLoadingPortETD = 31;
 }
 
 message LoadableStudyReply{
