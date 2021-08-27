@@ -1723,22 +1723,23 @@ public class SynopticService {
     synopticalTableList =
         this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveOrderByPortOrder(
             lsId, true);
-
+    synopticalTableList.stream()
+        .forEach(item -> item.getLoadableStudyPortRotation().setPortRotationType(LOADING_PORT));
     if (dsId != null) {
       // Removing first discharge port added from LS
-      synopticalTableList =
-          synopticalTableList.stream()
-              .filter(
-                  item ->
-                      !(item.getLoadableStudyPortRotation()
-                          .getOperation()
-                          .getId()
-                          .equals(DISCHARGING_OPERATION_ID)))
-              .collect(Collectors.toList());
+      synopticalTableList.removeIf(
+          item ->
+              !(item.getLoadableStudyPortRotation()
+                  .getOperation()
+                  .getId()
+                  .equals(DISCHARGING_OPERATION_ID)));
       // Appending all discharge port details added from DS
       synopticalTableList.addAll(
           this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveOrderByPortOrder(
               dsId, true));
+      synopticalTableList.stream()
+          .filter(item -> item.getLoadableStudyPortRotation().getPortRotationType() == null)
+          .forEach(item -> item.getLoadableStudyPortRotation().setPortRotationType(DISCHARGE_PORT));
       // TODO sort if needed
     }
     return synopticalTableList;

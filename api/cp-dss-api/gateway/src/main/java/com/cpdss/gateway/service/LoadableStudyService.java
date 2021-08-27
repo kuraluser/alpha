@@ -843,6 +843,7 @@ public class LoadableStudyService {
    * @param voyageId - the voyage id
    * @param loadableStudyId - the loadable study id
    * @param planningType
+   * @param headers
    * @return {@link PortResponse}
    * @throws GenericServiceException
    */
@@ -851,15 +852,22 @@ public class LoadableStudyService {
       Long voyageId,
       Long loadableStudyId,
       Common.PLANNING_TYPE planningType,
-      String correlationId)
+      String correlationId,
+      HttpHeaders headers)
       throws GenericServiceException {
     PortRotationResponse response = new PortRotationResponse();
+    Boolean isLandingPage = false;
+    if (headers.get("Referer") != null
+        && (headers.get("Referer").get(0).contains(VOYAGE_STATUS_URI))) {
+      isLandingPage = true;
+    }
     PortRotationReply grpcReply =
         this.getLoadableStudyPortRotationList(
             PortRotationRequest.newBuilder()
                 .setLoadableStudyId(loadableStudyId)
                 .setVesselId(vesselId)
                 .setVoyageId(voyageId)
+                .setIsLandingPage(isLandingPage)
                 .build());
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -934,6 +942,7 @@ public class LoadableStudyService {
                   }
                 });
       }
+      port.setPortType(portDetail.getPortRotationType());
       response.getPortList().add(port);
       response.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));

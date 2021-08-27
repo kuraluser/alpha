@@ -166,16 +166,36 @@ public class LoadableStudyPortRotationService {
           com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
           com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder replyBuilder)
           throws GenericServiceException {
-    Optional<LoadableStudy> loadableStudyOpt =
+    Optional<LoadableStudy> studyOpt =
         this.loadableStudyRepository.findById(request.getLoadableStudyId());
-    if (!loadableStudyOpt.isPresent()) {
+    if (!studyOpt.isPresent()) {
       throw new GenericServiceException(
           "Loadable study does not exist in database", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
     }
+    List<LoadableStudyPortRotation> entityList = new ArrayList<>();
+    //Checking if request came from landing page - then fetching both DS and LS
+    if (request.getIsLandingPage()) {
+      // Checking if Discharge started or not
+      Optional<List<LoadableStudy>> dischargeStudyEntries =
+          synopticService.checkDischargeStarted(request.getVesselId(), request.getVoyageId());
+      if (dischargeStudyEntries.isPresent()
+          && studyOpt.get().getConfirmedLoadableStudyId() != null) {
+        // Fetching respective LS of DS
+        Optional<LoadableStudy> loadableStudyOpt =
+            this.loadableStudyRepository.findById(studyOpt.get().getConfirmedLoadableStudyId());
+        entityList = getPortRotationList(loadableStudyOpt.get(), true, DISCHARGE_PORT);
+        // Removing first discharge port
+        entityList.removeIf(
+            item -> !(item.getOperation().getId().equals(DISCHARGING_OPERATION_ID)));
+        // Appending all DS ports
+        entityList.addAll(getPortRotationList(studyOpt.get(), true, DISCHARGE_PORT));
+      } else {
+        entityList = getPortRotationList(studyOpt.get(), true, LOADING_PORT);
+      }
+    } else {
+      entityList = getPortRotationList(studyOpt.get(), true, null);
+    }
 
-    List<LoadableStudyPortRotation> entityList =
-        this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
-            loadableStudyOpt.get(), true);
     for (LoadableStudyPortRotation entity : entityList) {
       replyBuilder.addPorts(
           this.createPortDetail(
@@ -183,23 +203,37 @@ public class LoadableStudyPortRotationService {
               DateTimeFormatter.ofPattern(ETA_ETD_FORMAT),
               DateTimeFormatter.ofPattern(LAY_CAN_FORMAT)));
     }
+    // Last modified port rotation
+    if (studyOpt.isPresent()) {
+      Optional<LoadableQuantity> lq =
+          loadableQuantityRepository.findFirstByLoadableStudyXIdOrderByLastModifiedDateTimeDesc(
+              studyOpt.get());
+      if (lq.isPresent()) {
+        replyBuilder.setLastModifiedPort(lq.get().getLoadableStudyPortRotation().getId());
+      }
+    }
     List<CargoOperation> operationEntityList =
         this.cargoOperationRepository.findByIsActiveOrderById(true);
     for (CargoOperation entity : operationEntityList) {
       replyBuilder.addOperations(this.createOperationDetail(entity));
     }
 
-    // Last modified port rotation
-    if (loadableStudyOpt.isPresent()) {
-      Optional<LoadableQuantity> lq =
-          loadableQuantityRepository.findFirstByLoadableStudyXIdOrderByLastModifiedDateTimeDesc(
-              loadableStudyOpt.get());
-      if (lq.isPresent()) {
-        replyBuilder.setLastModifiedPort(lq.get().getLoadableStudyPortRotation().getId());
-      }
-    }
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
+  }
+
+  private List<LoadableStudyPortRotation> getPortRotationList(
+      LoadableStudy loadableStudy, Boolean isActive, String portType) {
+    List<LoadableStudyPortRotation> entityList =
+        this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+            loadableStudy, isActive);
+    if (portType != null) {
+      entityList.stream()
+          .filter(item -> item.getPortRotationType() == null)
+          .forEach(item -> item.setPortRotationType(portType));
+    }
+
+    return entityList;
   }
 
   /**
@@ -249,6 +283,7 @@ public class LoadableStudyPortRotationService {
     ofNullable(entity.getLayCanTo())
         .ifPresent(layCanTo -> builder.setLayCanTo(layCanFormatter.format(layCanTo)));
     ofNullable(entity.getPortOrder()).ifPresent(builder::setPortOrder);
+    ofNullable(entity.getPortRotationType()).ifPresent(builder::setPortRotationType);
     if (entity.getPortXId() != null && entity.getPortXId() > 0) {
       this.setPortTimezoneId(entity.getPortXId(), builder);
     }

@@ -311,7 +311,7 @@ public class DischargePlanController {
       throws CommonRestException {
     try {
       return this.dischargeStudyService.getDischargeStudyPortDataByVoyage(
-          vesselId, voyageId, dischargeStudyId, headers.getFirst(CORRELATION_ID_HEADER));
+          vesselId, voyageId, dischargeStudyId, headers.getFirst(CORRELATION_ID_HEADER), headers);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching getDischargeStudyPortByVoyage", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

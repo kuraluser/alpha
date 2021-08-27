@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
@@ -427,7 +428,12 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadableStudyPortList(String url) throws Exception {
     when(this.loadableStudyService.getLoadableStudyPortRotationList(
-            anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
+            anyLong(),
+            anyLong(),
+            anyLong(),
+            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            anyString(),
+            any(HttpHeaders.class)))
         .thenReturn(new PortRotationResponse());
     this.mockMvc
         .perform(
@@ -447,7 +453,12 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadableStudyPortListServiceException(String url) throws Exception {
     when(this.loadableStudyService.getLoadableStudyPortRotationList(
-            anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
+            anyLong(),
+            anyLong(),
+            anyLong(),
+            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            anyString(),
+            any(HttpHeaders.class)))
         .thenThrow(
             new GenericServiceException(
                 "test", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST));
@@ -469,7 +480,12 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadableStudyPortListRuntimeException(String url) throws Exception {
     when(this.loadableStudyService.getLoadableStudyPortRotationList(
-            anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
+            anyLong(),
+            anyLong(),
+            anyLong(),
+            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            anyString(),
+            any(HttpHeaders.class)))
         .thenThrow(RuntimeException.class);
     this.mockMvc
         .perform(

@@ -398,7 +398,8 @@ public class LoadableStudyController {
           voyageId,
           loadableStudyId,
           Common.PLANNING_TYPE.LOADABLE_STUDY,
-          headers.getFirst(CORRELATION_ID_HEADER));
+          headers.getFirst(CORRELATION_ID_HEADER),
+          headers);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when list loadable study - ports", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

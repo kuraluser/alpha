@@ -874,6 +874,7 @@ message PortRotationRequest{
 	repeated PortRotationDetail portRotationDetails = 6;
 	int64 cargoNominationId=7;
     bool isDischargingPortsComplete=8;
+    bool isLandingPage=9;
 
 }
 
@@ -905,6 +906,7 @@ message PortRotationDetail{
 	int64 cowId = 25;
 	int64 percentage = 26;
 	repeated int64 tanks = 27;
+	string portRotationType=28;
 	
 }
 

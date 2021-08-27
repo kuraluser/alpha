@@ -318,12 +318,12 @@ public class VoyageService {
           }
         } else {
           detailbuilder.setIsDischargeStarted(false);
-          confirmedStudy = getConfirmedStudy(entity, PLANNING_TYPE_LOADING);
-          if (confirmedStudy.isPresent()) {
-            detailbuilder.setConfirmedLoadableStudyId(confirmedStudy.get().getId());
-            Long noOfDays = this.getNumberOfDays(confirmedStudy.get());
-            Optional.ofNullable(noOfDays).ifPresent(item -> detailbuilder.setNoOfDays(item));
-          }
+        }
+        confirmedStudy = getConfirmedStudy(entity, PLANNING_TYPE_LOADING);
+        if (confirmedStudy.isPresent()) {
+          detailbuilder.setConfirmedLoadableStudyId(confirmedStudy.get().getId());
+          Long noOfDays = this.getNumberOfDays(confirmedStudy.get());
+          Optional.ofNullable(noOfDays).ifPresent(item -> detailbuilder.setNoOfDays(item));
         }
       }
       builder.addVoyages(detailbuilder.build());
@@ -338,8 +338,6 @@ public class VoyageService {
     Stream<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyStream =
         ofNullable(entity.getLoadableStudies()).map(Collection::stream).orElseGet(Stream::empty);
 
-    Stream<com.cpdss.loadablestudy.entity.LoadableStudy> temp =
-        ofNullable(entity.getLoadableStudies()).map(Collection::stream).orElseGet(Stream::empty);
     confirmedStudy =
         loadableStudyStream
             .filter(

@@ -192,4 +192,6 @@ public class LoadableStudiesConstants {
   public static final Long LOADABLE_STUDY_LOADICATOR_TYPE_ID = 1L;
   public static final Integer PLANNING_TYPE_LOADING = 1;
   public static final Integer PLANNING_TYPE_DISCHARGE = 2;
+  public static final String LOADING_PORT = "LOADING";
+  public static final String DISCHARGE_PORT = "DISCHARGE";
 }

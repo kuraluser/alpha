@@ -439,6 +439,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 }
               });
         }
+        if(request.getPlanningType().equals(Common.PLANNING_TYPE.forNumber(2))) {
+        	get last loading port ETD here 
+        }
         replyBuilder.addLoadableStudies(builder.build());
       }
 
