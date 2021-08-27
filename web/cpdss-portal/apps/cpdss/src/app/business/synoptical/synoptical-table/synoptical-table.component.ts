@@ -1625,13 +1625,13 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         otherControl.setValue(fc.value, { emitEvent: false });
         break;
       case 'calculatedDraftAftPlanned': case 'calculatedDraftAftActual':
-        this.synopticalService.synopticalRecords[colIndex]['finalDraftAft'] = fc.value + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0);
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftAft'] =  Number((fc.value + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0)).toFixed(2));
         break;
       case 'calculatedDraftFwdPlanned': case 'calculatedDraftFwdActual':
-        this.synopticalService.synopticalRecords[colIndex]['finalDraftFwd'] = fc.value + this.synopticalService.synopticalRecords[colIndex][field.key] + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0);
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftFwd'] = Number((fc.value + this.synopticalService.synopticalRecords[colIndex][field.key] + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0)).toFixed(2));
         break;
       case 'calculatedDraftMidPlanned': case 'calculatedDraftMidActual':
-        this.synopticalService.synopticalRecords[colIndex]['finalDraftMid'] = fc.value + this.synopticalService.synopticalRecords[colIndex][field.key] + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0);
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftMid'] = Number((fc.value + this.synopticalService.synopticalRecords[colIndex][field.key] + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0)).toFixed(2));
         break;
 
       default:

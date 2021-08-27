@@ -1,6 +1,6 @@
 import { IResponse , ValueObject , IMode  , IPercentage } from '../../../shared/models/common.model';
-import { ICargo, IInstruction , ITankDetails } from '../../core/models/common.model';
-
+import { ICargo, IInstruction , ITankDetails , IPort } from '../../core/models/common.model';
+import { IDischargeStudy } from './discharge-study-list.model';
 
 /**
  * Interface for discharge study list data
@@ -13,6 +13,8 @@ import { ICargo, IInstruction , ITankDetails } from '../../core/models/common.mo
     tank: ITankDetails[];
     instructions: IInstruction[];
     cargoList: ICargo[];
+    portList:IPort[];
+    percentageList: IPercentage[];
 }
 
 
@@ -25,10 +27,11 @@ import { ICargo, IInstruction , ITankDetails } from '../../core/models/common.mo
  export interface IPortDetailValueObject {
     portName: string;
     instruction: IInstruction;
-    draftRestriction: string;
+    draftRestriction: number;
     cargoDetail: IPortCargo[];
     cow: IMode;
-    dischargeRate: string,
+    dischargeRate: number,
+    isBackLoadingEnabled: boolean;
     backLoadingDetails: IBackLoadingDetails[];
 }
 /**
@@ -64,9 +67,77 @@ export interface IBackLoadingDetails {
     bbls: ValueObject<string>;
     mt: ValueObject<string>;
     kl: ValueObject<string>;
-    time: number;
+    dischargeTime: number;
     api: ValueObject<number>;
     temp: ValueObject<number>;
     maxKl: ValueObject<number>;
     abbreviation: ValueObject<string>;
+}
+
+/**
+ * Interface for discharge study backloading details
+ *
+ * @export
+ * @interface IDischargeStudyBackLoadingDetails
+ */
+ export interface IDischargeStudyBackLoadingDetails {
+    id: number | string;
+    color: string;
+    cargoId: number;
+    api: number;
+    temperature: number;
+    abbreviation: string;
+    quantity: number;
+}
+
+
+/**
+ * Interface for Discharge Study api response
+ *
+ * @export
+ * @interface IDischargeStudyDetailsResponse
+ */
+ export interface IDischargeStudyDetailsResponse {
+    responseStatus: IResponse;
+    dischargeStudyId: number;
+    portList: IDischargeStudyPortListDetails[];
+}
+
+/**
+ * Interface for discharge study port list
+ *
+ * @export
+ * @interface IDischargeStudyPortListDetails
+ */
+ export interface IDischargeStudyPortListDetails {
+    id: number;
+    portId: number;
+    maxDraft: number;
+    cowId: number;
+    percentage: number;
+    instructionId: number[];
+    isBackLoadingEnabled: boolean;
+    backLoading: IDischargeStudyBackLoadingDetails[];
+    tanks: number[];
+    dischargeRate: number;
+    cargoNominationList: IDischargeStudyCargoNominationList[];
+}
+
+
+/**
+ * Interface for discharge study cargo nomination
+ *
+ * @export
+ * @interface IDischargeStudyCargoNominationList
+ */
+ export interface IDischargeStudyCargoNominationList {
+    id: number | string;
+    maxQuantity: number;
+    color: string;
+    cargoId: number;
+    abbreviation: string;
+    quantity: number;
+    api: number;
+    temperature: number;
+    dischargeTime: number;
 }

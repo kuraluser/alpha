@@ -771,7 +771,7 @@ export class LoadingDischargingTransformationService {
     const flowRates = sequenceData?.flowRates?.map(tankFlowRate => {
       if (rateUnitTo === RATE_UNIT.BBLS_PER_HR) {
         tankFlowRate.data = tankFlowRate?.dataM3PerHr?.map(data => {
-          return [data[0], data[1] * AppConfigurationService.settings.unitConversionConstant];
+          return [data[0], Number((data[1] * AppConfigurationService.settings.unitConversionConstant).toFixed())];
         });
       } else {
         tankFlowRate.data = [...tankFlowRate.dataM3PerHr];

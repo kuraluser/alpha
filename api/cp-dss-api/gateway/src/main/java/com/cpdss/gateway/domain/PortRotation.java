@@ -69,7 +69,7 @@ public class PortRotation {
   private Long cowId;
 
   private Long percentage;
-  
+
   private BigDecimal dischargeRate;
 
   private List<Long> tanks = new ArrayList<>();
