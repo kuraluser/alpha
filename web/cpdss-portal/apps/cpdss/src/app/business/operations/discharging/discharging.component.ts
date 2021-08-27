@@ -1,5 +1,6 @@
 import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ComponentCanDeactivate, UnsavedChangesGuard } from '../../../shared/services/guards/unsaved-data-guard';
@@ -46,7 +47,8 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   constructor(
     private activatedRoute: ActivatedRoute,
     private operationsApiService: OperationsApiService,
-    private unsavedChangesGuard: UnsavedChangesGuard
+    private unsavedChangesGuard: UnsavedChangesGuard,
+    private ngxSpinnerService: NgxSpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -86,10 +88,12 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   * @memberof DischargingComponent
   */
   async getCargos() {
+    this.ngxSpinnerService.show();
     const cargos: ICargoResponseModel = await this.operationsApiService.getCargos().toPromise();
     if (cargos.responseStatus.status === '200') {
       this.cargos = cargos.cargos;
     }
+    this.ngxSpinnerService.hide();
   }
 
   /**

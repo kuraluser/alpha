@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
+import { QUANTITY_UNIT, ValueObject } from '../../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
@@ -128,7 +128,8 @@ export class DischargingInformationComponent implements OnInit {
     const cargoToBeDischarged = dischargingInformationData?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(cargo => {
       return this.fb.group({
         protested: this.fb.control(cargo.protested.value),
-        isCommingled: this.fb.control(cargo?.isCommingled.value)
+        isCommingled: this.fb.control(cargo?.isCommingled.value),
+        slopQuantity: this.fb.control((<ValueObject<number>>cargo?.slopQuantity)?.value),
       })
     });
     const tanksWashingWithDifferentCargo = dischargingInformationData?.cowDetails?.tanksWashingWithDifferentCargo?.map(item => {
@@ -139,10 +140,19 @@ export class DischargingInformationComponent implements OnInit {
       })
     });
     this.dischargingInformationForm = this.fb.group({
+      stageDetails: this.fb.group({
+        trackStartEndStage: this.fb.control(dischargingInformationData?.dischargingStages?.trackStartEndStage),
+        trackGradeSwitch: this.fb.control(dischargingInformationData?.dischargingStages?.trackGradeSwitch),
+        stageOffset: this.fb.control(dischargingInformationData?.dischargingStages?.stageOffset),
+        stageDuration: this.fb.control(dischargingInformationData?.dischargingStages?.stageDuration),
+      }),
+      dischargeSlopTanksFirst: this.fb.control(dischargingInformationData?.dischargeSlopTanksFirst),
+      dischargeCommingledCargoSeperately: this.fb.control(dischargingInformationData?.dischargeCommingledCargoSeperately),
       cargoTobeLoadedDischarged: this.fb.group({
         dataTable: this.fb.array([...cargoToBeDischarged])
       }),
       cowDetails: this.fb.group({
+        washTanksWithDifferentCargo: this.fb.control(dischargingInformationData?.cowDetails?.washTanksWithDifferentCargo),
         cowOption: this.fb.control(dischargingInformationData?.cowDetails?.cowOption),
         cowPercentage: this.fb.control(dischargingInformationData?.cowDetails?.cowPercentage),
         topCOWTanks: this.fb.control(dischargingInformationData?.cowDetails?.topCOWTanks),
@@ -208,7 +218,7 @@ export class DischargingInformationComponent implements OnInit {
   * @memberof DischargingInformationComponent
   */
   onStageOffsetValChange(event) {
-    this.stageOffset = event?.value;
+    this.dischargingInformationData.dischargingStages.stageOffset = event?.value;
     this.onUpdateDischargingStages();
   }
 
@@ -218,7 +228,7 @@ export class DischargingInformationComponent implements OnInit {
   * @memberof DischargingInformationComponent
   */
   onStageDurationValChange(event) {
-    this.stageDuration = event?.value;
+    this.dischargingInformationData.dischargingStages.stageDuration = event?.value;
     this.onUpdateDischargingStages();
   }
 
@@ -228,8 +238,8 @@ export class DischargingInformationComponent implements OnInit {
   * @memberof DischargingInformationComponent
   */
   onUpdateDischargingStages() {
-    this.dischargingInformationPostData.dischargingStages.stageOffset = this.stageOffset;
-    this.dischargingInformationPostData.dischargingStages.stageDuration = this.stageDuration;
+    this.dischargingInformationPostData.dischargingStages.stageOffset = this.dischargingInformationData?.dischargingStages?.stageOffset;
+    this.dischargingInformationPostData.dischargingStages.stageDuration = this.dischargingInformationData?.dischargingStages?.stageDuration;
     this.dischargingInformationPostData.dischargingStages.trackStartEndStage = this.dischargingInformationData?.dischargingStages?.trackStartEndStage;
     this.dischargingInformationPostData.dischargingStages.trackGradeSwitch = this.dischargingInformationData?.dischargingStages?.trackGradeSwitch;
     this.hasUnSavedData = true;

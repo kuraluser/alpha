@@ -7,6 +7,7 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
+import { OPERATIONS } from '../../core/models/common.model';
 
 @Component({
   selector: 'cpdss-portal-loading-discharging-details',
@@ -22,6 +23,8 @@ import { IPermission } from '../../../shared/models/user-profile.model';
  * @implements {OnInit}
  */
 export class LoadingDischargingDetailsComponent implements OnInit {
+  @Input() operation: OPERATIONS;
+
   @Input()
   get loadingDischargingDetails(): ILoadingDischargingDetails {
     return this._loadingDischargingDetails;
@@ -36,6 +39,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 
   private _loadingDischargingDetails: ILoadingDischargingDetails;
 
+  readonly OPERATIONS = OPERATIONS;
   loadingDischargingDetailsForm: FormGroup;
   errorMessages: any;
   loadingDischargingDetailsResponse: ILoadingDischargingDetails;
@@ -64,8 +68,13 @@ export class LoadingDischargingDetailsComponent implements OnInit {
       startTime: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.startTime), [Validators.required]),
       initialTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.initialTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(4)]),
       maximumTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.maximumTrim, [Validators.required, numberValidator(2, 1), Validators.min(1), Validators.max(3)]),
-      finalTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.finalTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)])
-    })
+    });
+
+    if(this.operation === OPERATIONS.DISCHARGING) {
+      this.loadingDischargingDetailsForm.addControl('topOffTrim', this.fb.control(this.loadingDischargingDetails.trimAllowed?.topOffTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)]));
+    } else {
+      this.loadingDischargingDetailsForm.addControl('finalTrim', this.fb.control(this.loadingDischargingDetails.trimAllowed?.finalTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)]));
+    }
    }
 
   /**
