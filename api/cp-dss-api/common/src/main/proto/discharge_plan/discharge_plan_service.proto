@@ -11,3 +11,7 @@ service DischargeInformationService {
   rpc getDischargeInformation(DischargeInformationRequest) returns (DischargeInformation) {}
   rpc getOrSaveRulesForDischarging(DischargeRuleRequest) returns (DischargeRuleReply) {}
 }
+
+service DischargePlanService{
+  rpc LoadingPlanSynchronization(DischargeStudyDataTransferRequest) returns (ResponseStatus) {}
+}

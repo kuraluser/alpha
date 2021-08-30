@@ -84,6 +84,16 @@ public final class DischargePlanModels {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_DischargeRuleReply_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_DischargeStudyDataTransferRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargeStudyDataTransferRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_PortData_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_PortData_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -154,9 +164,14 @@ public final class DischargePlanModels {
       "\0132\n.RulePlans\022\027\n\017dischargeInfoId\030\004 \001(\003\022\027" +
       "\n\017isNoDefaultRule\030\005 \001(\010\"[\n\022DischargeRule" +
       "Reply\022\'\n\016responseStatus\030\001 \001(\0132\017.Response" +
-      "Status\022\034\n\010rulePlan\030\002 \003(\0132\n.RulePlansB-\n)" +
-      "com.cpdss.common.generated.discharge_pla" +
-      "nP\001b\006proto3"
+      "Status\022\034\n\010rulePlan\030\002 \003(\0132\n.RulePlans\"\200\001\n" +
+      "!DischargeStudyDataTransferRequest\022\033\n\010po" +
+      "rtData\030\001 \003(\0132\t.PortData\022\032\n\022dischargePatt" +
+      "ernId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\020\n\010vesselI" +
+      "d\030\004 \001(\003\";\n\010PortData\022\026\n\016portRotationId\030\001 " +
+      "\001(\003\022\027\n\017synopticTableId\030\002 \001(\003B-\n)com.cpds" +
+      "s.common.generated.discharge_planP\001b\006pro" +
+      "to3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -248,6 +263,18 @@ public final class DischargePlanModels {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_DischargeRuleReply_descriptor,
         new java.lang.String[] { "ResponseStatus", "RulePlan", });
+    internal_static_DischargeStudyDataTransferRequest_descriptor =
+      getDescriptor().getMessageTypes().get(14);
+    internal_static_DischargeStudyDataTransferRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_DischargeStudyDataTransferRequest_descriptor,
+        new java.lang.String[] { "PortData", "DischargePatternId", "VoyageId", "VesselId", });
+    internal_static_PortData_descriptor =
+      getDescriptor().getMessageTypes().get(15);
+    internal_static_PortData_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_PortData_descriptor,
+        new java.lang.String[] { "PortRotationId", "SynopticTableId", });
     com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor();
   }
