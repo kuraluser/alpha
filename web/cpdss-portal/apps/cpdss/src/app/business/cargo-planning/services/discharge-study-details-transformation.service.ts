@@ -620,7 +620,8 @@ export class DischargeStudyDetailsTransformationService {
             'min': 'OHQ_MIN_VALUE',
             'groupTotal': 'OHQ_GROUP_TOTAL',
             'pattern': 'OHQ_PATTERN_ERROR',
-            'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY"
+            'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
+            'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR'
           }
         },
         {
@@ -640,6 +641,7 @@ export class DischargeStudyDetailsTransformationService {
             'groupTotal': 'OHQ_GROUP_TOTAL',
             'pattern': 'OHQ_PATTERN_ERROR',
             'max': "OHQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
+            'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR'
           }
         }
       ]
@@ -843,7 +845,9 @@ getDischargeStudyCargoDatatableColumns(): IDataTableColumn[] {
       errorMessages: {
         'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
         'greaterThanTotalQuantity': 'SUM_OF_QUANTITY_GREATER_THAN_TOTAL_QUANTITY',
-        'quantityNotEqual': 'QUANTITY_NOT_EQUAL'
+        'quantityNotEqual': 'QUANTITY_NOT_EQUAL',
+        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR',
+        'min': 'DISCHARGE_STUDY_QUANTITY_MIN_VALUE',
       }
     },
     {
@@ -939,7 +943,8 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission): IDataTabl
       fieldPlaceholder: 'DISCHARGE_STUDY_BACK_LOADING_KL',
       errorMessages: {
         'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
-        'min': 'DISCHARGE_STUDY_QUANTITY_MIN_VALUE'
+        'min': 'DISCHARGE_STUDY_QUANTITY_MIN_VALUE',
+        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR'
       }
     },
     {
@@ -1157,7 +1162,9 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission): IDataTabl
   setValidationMessageForDischargeStudy() {
     return {
       maxDraft: {
-        'whitespace': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
+        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
+        'min': 'DISCHARGE_STUDY_DRAFT_MIN_VALUE',
+        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR'
       },
       tank: {
         'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'

@@ -7,7 +7,7 @@ import { ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischa
 import { durationValidator } from '../validators/duration-validator.directive';
 import { ConfirmationService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { LoadingCargoDuplicateValidator } from '../validators/loading-cargo-duplicate-validator.directive';
+import { loadingCargoDuplicateValidator } from '../validators/loading-cargo-duplicate-validator.directive';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
@@ -112,9 +112,9 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     this.addInitialDelay = false;
     this.listData.reasonForDelays = this.loadingDischargingSequences.reasonForDelays;
     const initialDelay = this.loadingDischargingSequences.loadingDischargingDelays?.find(loadingDischargingDelay => !loadingDischargingDelay.cargoId && !loadingDischargingDelay.quantity);
-    initialDelay.isInitialDelay = true;
-
+    
     if (initialDelay) {
+      initialDelay.isInitialDelay = true;
       this.loadingDischargingSequences.loadingDischargingDelays = this.loadingDischargingSequences.loadingDischargingDelays?.filter(loadingDischargingDelay => loadingDischargingDelay?.cargoId && loadingDischargingDelay?.quantity);
       this.loadingDischargingSequences.loadingDischargingDelays.unshift(initialDelay)
     }
@@ -128,7 +128,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     });
     const loadingDischargingDelayArray = _loadingDischargingDelays?.map((loadingDischargingDelay, index) => {
       if (loadingDischargingDelay?.cargo?.value?.cargoId && loadingDischargingDelay?.quantity) {
-        loadingDischargingDelay.quantity.value = Number(this.quantityDecimalFormatPipe.transform(loadingDischargingDelay?.quantity?.value,this.currentQuantitySelectedUnit).toString().replace(/,/g,''));
+        loadingDischargingDelay.quantity = loadingDischargingDelay?.quantity;
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, false)
       } else {
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, true)
@@ -168,7 +168,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     });
     const loadingDischargingDelayArray = this.loadingDischargingDelays?.map((loadingDischargingDelay, index) => {
       if (loadingDischargingDelay?.cargo?.value?.cargoId && loadingDischargingDelay?.quantity) {
-        loadingDischargingDelay.quantity.value = Number(this.quantityDecimalFormatPipe.transform(loadingDischargingDelay?.quantity?.value,this.currentQuantitySelectedUnit).toString().replace(/,/g,''));
+        loadingDischargingDelay.quantity = loadingDischargingDelay?.quantity;
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, false)
       } else {
         return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, true)
@@ -229,7 +229,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       id: loadingDischargingDelay.id,
       reasonForDelay: this.fb.control(loadingDischargingDelay.reasonForDelay.value, initialDelay ? [Validators.required] : []),
       duration: this.fb.control(loadingDischargingDelay.duration.value, [Validators.required, durationValidator(24, 59)]),
-      cargo: this.fb.control(loadingDischargingDelay.cargo.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required] : [Validators.required, LoadingCargoDuplicateValidator(index)]),
+      cargo: this.fb.control(loadingDischargingDelay.cargo.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required] : [Validators.required, loadingCargoDuplicateValidator(index)]),
       quantity: this.fb.control(loadingDischargingDelay.quantity?.value, initialDelay ? [] : [Validators.required]),
       colorCode: this.fb.control(loadingDischargingDelay.colorCode)
     });
@@ -270,9 +270,9 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     const form = this.row(index);
     if (event.field === 'cargo') {
       const loadableMT = this.quantityPipe.transform(event.data.cargo.value.loadableMT, this.prevQuantitySelectedUnit , this.currentQuantitySelectedUnit, event.data.cargo.value?.estimatedAPI , event.data.cargo.value?.estimatedTemp , -1);;
-      this.loadingDischargingDelays[index].quantity.value =  Number(this.quantityDecimalFormatPipe.transform(loadableMT).toString().replace(/,/g,''));
+      this.loadingDischargingDelays[index]['quantity'].value =  Number(loadableMT);
       this.loadingDischargingDelays[index]['colorCode'] = event.data.cargo.value.colorCode;
-      this.updateField(index, 'quantity', this.loadingDischargingDelays[index]['quantity']);
+      this.updateField(index, 'quantity', this.loadingDischargingDelays[index]['quantity'].value);
       this.updateField(index, 'colorCode', event.data.cargo.value.colorCode);
       this.updateFormValidity();
     }

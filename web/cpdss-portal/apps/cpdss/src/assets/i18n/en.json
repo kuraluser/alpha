@@ -1484,7 +1484,7 @@
   "DISCHARGE_STUDY_COLOR_ALREADY_USED_ERROR": "Color already in use",
   "DISCHARGE_STUDY_ABBREVIATION_ALREADY_USED_ERROR": "Abbreviation already in use",
   "QUANTITY_NOT_EQUAL": "Sum of quantity should be equal to total quantity",
-  "LOADING_DETAILS_SUNRISE_FAILED_COMPARE": "Sunrise time should less than sunset time",
+  "LOADING_DETAILS_SUNRISE_FAILED_COMPARE": "Sunrise time should be less than sunset time",
   "LOADING_DETAILS_SUNSET_FAILED_COMPARE": "Sunset time should be greater than sunrise time",
   "MIN_LOADING_COMPARE": "Should less than maximum loading rate",
   "LOADING_INFORMATION_TRACK_START_AND_END_STAGE_LABEL": "Track start and end stage",
@@ -1877,7 +1877,9 @@
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_INFO": "Info",
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_DETAILS": "Loadable study communicated to shore",
   "DISCHARGE_STUDY_PLAN_VIEW_ERROR": "View Error",
-  "LOADING_PLAN":"LOADING PLAN",
-  "DISCHARGE_PLAN_VIEW_NO_PLAN_GENERATED": "Plan is not generated for this Discharge study"
+  "DISCHARGE_PLAN_VIEW_NO_PLAN_GENERATED": "Plan is not generated for this Discharge study",
+  "DISCHARGE_STUDY_INVALID_ERROR": "Invalid",
+  "DISCHARGE_STUDY_DRAFT_MIN_VALUE": "Value must be greater than or equal to 0",
+  "LOADING_PLAN":"LOADING PLAN"
 }
   

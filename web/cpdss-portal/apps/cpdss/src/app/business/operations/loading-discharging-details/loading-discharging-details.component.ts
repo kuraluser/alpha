@@ -32,6 +32,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 
   set loadingDischargingDetails(loadingDischargingDetails: ILoadingDischargingDetails) {
     this._loadingDischargingDetails = loadingDischargingDetails;
+    this.getPagePermission();
     this.initLoadingDischargingDetailsForm();
   }
 
@@ -61,10 +62,22 @@ export class LoadingDischargingDetailsComponent implements OnInit {
   * @memberof LoadingDischargingDetailsComponent
   */
   initLoadingDischargingDetailsForm() {
+    let timeOfSunriseValidation = [];
+    let timeOfSunsetValidation = [];
+    if(this.timeOfSunrisePermission.view || this.timeOfSunrisePermission.view === undefined) {
+      timeOfSunriseValidation = [Validators.required];
+    } 
+    if(this.timeOfSunsetPermission.view || this.timeOfSunsetPermission.view === undefined) {
+      timeOfSunsetValidation = [Validators.required];
+    }
+    if(this.timeOfSunrisePermission.view && this.timeOfSunsetPermission.view) {
+      timeOfSunsetValidation = [...timeOfSunsetValidation , loadingDetailsValidator('timeOfSunrise', '>')];
+      timeOfSunriseValidation = [...timeOfSunriseValidation , loadingDetailsValidator('timeOfSunset', '<')];
+    }
     this.loadingDischargingDetailsResponse = this.loadingDischargingDetails;
     this.loadingDischargingDetailsForm = this.fb.group({
-      timeOfSunrise: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunrise), [Validators.required, loadingDetailsValidator('timeOfSunset', '<')]),
-      timeOfSunset: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunset), [Validators.required, loadingDetailsValidator('timeOfSunrise', '>')]),
+      timeOfSunrise: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunrise), timeOfSunriseValidation),
+      timeOfSunset: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunset), timeOfSunsetValidation),
       startTime: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.startTime), [Validators.required]),
       initialTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.initialTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(4)]),
       maximumTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.maximumTrim, [Validators.required, numberValidator(2, 1), Validators.min(1), Validators.max(3)]),
@@ -140,6 +153,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
       this.loadingDischargingDetailsForm.controls[field].setValue(this.selectedTime);
     }
     this.loadingDischargingDetailsResponse[field] = ((this.selectedTime.getHours() < 10 ? ('0' + this.selectedTime.getHours()) : this.selectedTime.getHours())) + ":" + ((this.selectedTime.getMinutes() < 10 ? ('0' + this.selectedTime.getMinutes()) : this.selectedTime.getMinutes()));
+    
     if (!this.fieldError(field)) {
       this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
     }

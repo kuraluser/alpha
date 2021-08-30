@@ -95,7 +95,7 @@ export class LoadingDischargingTransformationService {
       },
       hoseConnections: {
         'maxlength': 'LOADING_DISCHARGING_BERTH_HOSECONNECTION_CHARACTER_LIMIT',
-        'textError':"LOADING_BETH_HOSE_CONNECTION_ERROR"
+        'textError': "LOADING_BETH_HOSE_CONNECTION_ERROR"
       },
       regulationAndRestriction: {
         'maxlength': 'LOADING_DISCHARGING_BERTH_REGULATION_RESTRICTION_CHARACTER_LIMIT'
@@ -236,7 +236,7 @@ export class LoadingDischargingTransformationService {
       }
     ];
 
-    if(operation === OPERATIONS.DISCHARGING) {
+    if (operation === OPERATIONS.DISCHARGING) {
       const column: IDataTableColumn = {
         field: 'sequenceNo',
         header: 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO',
@@ -275,7 +275,14 @@ export class LoadingDischargingTransformationService {
     const minute = loadingDischargingDelay.duration % 60;
     const minuteDuration = minute <= 0 ? '0' + minute : minute;
     _loadingDischargingDelay.duration = new ValueObject<string>(hourDuration + ':' + minuteDuration, true, isNewValue, false, true);
-    _loadingDischargingDelay.quantity = new ValueObject<number>(this.quantityPipe.transform(loadingDischargingDelay.quantity, prevUnit, currUnit, cargoObj?.estimatedAPI), true, operation === OPERATIONS.DISCHARGING && isNewValue &&!loadingDischargingDelay?.isInitialDelay, false, operation === OPERATIONS.DISCHARGING && !loadingDischargingDelay?.isInitialDelay);
+
+    if (loadingDischargingDelay.cargoId) {
+
+      const loadableMT = this.quantityPipe.transform(cargoObj.loadableMT, QUANTITY_UNIT.MT, currUnit, cargoObj?.estimatedAPI, cargoObj?.estimatedTemp, -1);
+      _loadingDischargingDelay.quantity = new ValueObject<number>(Number(loadableMT), true, operation === OPERATIONS.DISCHARGING && isNewValue && !loadingDischargingDelay?.isInitialDelay, false, operation === OPERATIONS.DISCHARGING && !loadingDischargingDelay?.isInitialDelay);
+    } else {
+      _loadingDischargingDelay.quantity = new ValueObject<number>(loadingDischargingDelay?.quantity, true, operation === OPERATIONS.DISCHARGING && isNewValue && !loadingDischargingDelay?.isInitialDelay, false, operation === OPERATIONS.DISCHARGING && !loadingDischargingDelay?.isInitialDelay);
+    }
     _loadingDischargingDelay.colorCode = cargoObj?.colorCode;
     _loadingDischargingDelay.cargo = new ValueObject<ILoadableQuantityCargo>(cargoObj, true, isEditable ? isNewValue : false, false, isEditable);
     _loadingDischargingDelay.reasonForDelay = new ValueObject<IReasonForDelays[]>(reasonDelayObj, true, isNewValue, false, true);
@@ -296,10 +303,10 @@ export class LoadingDischargingTransformationService {
   * @returns {string}
   * @memberof LoadingDischargingTransformationService
   */
-  manageSequenceUnitConversion(value: number, loadingDischargingDelay: ILoadingDischargingSequenceValueObject, listData: ILoadingSequenceDropdownData, prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT){
+  manageSequenceUnitConversion(value: number, loadingDischargingDelay: ILoadingDischargingSequenceValueObject, listData: ILoadingSequenceDropdownData, prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT) {
     const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === loadingDischargingDelay?.cargo?.value?.cargoId);
-    const loadableMT = this.quantityPipe.transform(value, prevUnit, currUnit, cargoObj?.estimatedAPI , cargoObj?.estimatedTemp, -1);
-    return this.quantityDecimalFormatPipe.transform(loadableMT,currUnit).toString().replace(/,/g,'');
+    const loadableMT = this.quantityPipe.transform(cargoObj.loadableMT, QUANTITY_UNIT.MT, currUnit, cargoObj?.estimatedAPI, cargoObj?.estimatedTemp, -1);
+    return loadableMT;
   }
 
 
@@ -310,7 +317,7 @@ export class LoadingDischargingTransformationService {
    * @returns {ILoadingDischargingDelays}
    * @memberof LoadingDischargingTransformationService
    */
-  getLoadingDischargingDelayAsValue(loadingDischargingDelayValueObject: ILoadingDischargingSequenceValueObject[], infoId: number, operation: OPERATIONS , listData: ILoadingSequenceDropdownData): ILoadingDischargingDelays[] {
+  getLoadingDischargingDelayAsValue(loadingDischargingDelayValueObject: ILoadingDischargingSequenceValueObject[], infoId: number, operation: OPERATIONS, listData: ILoadingSequenceDropdownData): ILoadingDischargingDelays[] {
     const loadingDischargingDelays: ILoadingDischargingDelays[] = [];
     loadingDischargingDelayValueObject.forEach((loadingValueObject) => {
       const _loadingDischargingDelays = <ILoadingDischargingDelays>{};
@@ -322,7 +329,7 @@ export class LoadingDischargingTransformationService {
       }
       _loadingDischargingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
       _loadingDischargingDelays.reasonForDelayIds = loadingValueObject?.reasonForDelay?.value?.map(a => a.id) ?? [];
-      if(_loadingDischargingDelays.cargoId) {
+      if (_loadingDischargingDelays.cargoId) {
         const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === _loadingDischargingDelays.cargoId);
         _loadingDischargingDelays.quantity = Number(cargoObj.loadableMT);
       } else {
@@ -417,7 +424,7 @@ export class LoadingDischargingTransformationService {
         header: 'LOADING_CARGO_TO_BE_LOADED_MIN_MAX_TOLERANCE'
       },
       {
-        field: 'loadableMT',
+        field: 'actualQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_SHIP_LOADABLE',
         numberType: 'quantity'
 
@@ -433,7 +440,7 @@ export class LoadingDischargingTransformationService {
       {
         field: 'slopQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_SLOP_QTY',
-        numberFormat: quantityNumberFormat
+        numberType: 'quantity'
       }
     ]
   }
@@ -831,8 +838,8 @@ export class LoadingDischargingTransformationService {
     const totalDurationInMinutes = this.convertTimeStringToMinutes(dischargingInformationResponse?.cowDetails?.totalDuration);
     const startTimeInMinutes = this.convertTimeStringToMinutes(dischargingInformationResponse?.cowDetails?.cowStart);
     const endTimeInMinutes = this.convertTimeStringToMinutes(dischargingInformationResponse?.cowDetails?.cowEnd);
-    const duration = totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes;
-    cowDetails.cowDuration = moment.utc(duration * 60 * 1000).format("HH:mm");
+    const _duration = totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes;
+    cowDetails.cowDuration = moment.utc(_duration * 60 * 1000).format("HH:mm");
     cowDetails.cowTrimMax = dischargingInformationResponse?.cowDetails?.cowTrimMax;
     cowDetails.cowTrimMin = dischargingInformationResponse?.cowDetails?.cowTrimMin;
     cowDetails.needFlushingOil = dischargingInformationResponse?.cowDetails?.needFlushingOil;
@@ -859,6 +866,8 @@ export class LoadingDischargingTransformationService {
           } else if (key === 'slopQuantity') {
             const _slopQuantity = Number(cargo.slopQuantity) ?? 0;
             _cargo.slopQuantity = new ValueObject<number>(_slopQuantity, true, true, false);
+          } else if(key === 'shipFigure') {
+            _cargo.loadableMT = cargo.shipFigure;
           } else {
             _cargo[key] = cargo[key];
           }

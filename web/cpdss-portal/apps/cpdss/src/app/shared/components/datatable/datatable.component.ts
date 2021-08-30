@@ -914,7 +914,7 @@ export class DatatableComponent implements OnInit {
       this.filteredValue.forEach(row => {
         if (row[col.field]) {
           const value = row[col.field].value ?? 0;
-          total += Number(value)
+          isNaN(Number(value)) ? total += 0 : total += Number(value)
         }
       })
       return total;
