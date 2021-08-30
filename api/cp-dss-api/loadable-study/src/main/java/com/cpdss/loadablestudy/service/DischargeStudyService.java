@@ -18,14 +18,14 @@ import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc.DischargeSt
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
-import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
-import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.CargoInfos;
 import com.cpdss.common.generated.PortInfo.CargoPortMapping;
@@ -44,6 +44,7 @@ import com.cpdss.loadablestudy.entity.BackLoading;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoOperation;
+import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
 import com.cpdss.loadablestudy.entity.DischargeStudyCowDetail;
 import com.cpdss.loadablestudy.entity.DischargeStudyPortInstruction;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -52,6 +53,7 @@ import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
@@ -103,6 +105,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private BackLoadingService backLoadingService;
   @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
   @Autowired private LoadablePlanService loadablePlanService;
+
+  @Autowired
+  private DischargePatternQuantityCargoPortwiseRepository
+      dischargePatternQuantityCargoPortwiseRepository;
 
   @GrpcClient("cargoService")
   private CargoInfoServiceBlockingStub cargoInfoGrpcService;
@@ -1241,12 +1247,60 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
 
   @Override
   public void getDischargePlanDetails(
-      LoadablePlanDetailsRequest request, StreamObserver<PortRotationReply> responseObserver) {
+      LoadablePlanDetailsRequest request, StreamObserver<CargoNominationReply> responseObserver) {
 
     log.info("inside getLoadablePlanDetails loadable study service");
-    LoadablePlanDetailsReply.Builder replyBuilder = LoadablePlanDetailsReply.newBuilder();
+    CargoNominationReply.Builder replyBuilder = CargoNominationReply.newBuilder();
     try {
-      loadablePlanService.getLoadablePlanDetails(request, replyBuilder);
+      Optional<LoadableStudy> dsOptional =
+          dischargeStudyRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+      if (dsOptional.isEmpty()) {
+        throw new GenericServiceException(
+            "DS ID not match",
+            CommonErrorCodes.E_CPDSS_NO_DISCHARGE_STUDY_FOUND,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      LoadableStudy DischargeStudy = dsOptional.get();
+      List<LoadableStudyPortRotation> ports =
+          loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+              DischargeStudy.getId(), true);
+      List<CargoNomination> cargos =
+          cargoNominationService.getCargoNominationByLoadableStudyId(DischargeStudy.getId());
+      List<DischargePatternQuantityCargoPortwiseDetails> generatedCargos =
+          dischargePatternQuantityCargoPortwiseRepository.findByCargoNominationIdIn(
+              cargos.stream().map(CargoNomination::getId).collect(Collectors.toList()));
+      Map<Long, List<DischargePatternQuantityCargoPortwiseDetails>> portWiseCargo =
+          generatedCargos.stream()
+              .collect(
+                  Collectors.groupingBy(
+                      DischargePatternQuantityCargoPortwiseDetails::getPortRotationId));
+      ports.stream()
+          .forEach(
+              port -> {
+                List<DischargePatternQuantityCargoPortwiseDetails> portCargos =
+                    portWiseCargo.get(port.getId());
+                portCargos.stream()
+                    .forEach(
+                        pCargo -> {
+                          CargoNominationDetail.Builder cargo = CargoNominationDetail.newBuilder();
+                          cargo.setAbbreviation(pCargo.getCargoAbbreviation());
+                          cargo.setApi(pCargo.getEstimatedAPI().toString());
+                          cargo.setCargoId(pCargo.getCargoId());
+                          cargo.setId(pCargo.getCargoNominationId());
+                          cargo.setTemperature(pCargo.getCargoNominationTemperature().toString());
+                          cargo.setColor(pCargo.getColorCode());
+                          cargo.setQuantity(pCargo.getDischargeMT().toString());
+                          cargo.setDischargingRate(pCargo.getDischargingRate().toString());
+                          cargo.setDischargingTime(
+                              pCargo.getTimeRequiredForDischarging().toString());
+                          LoadingPortDetail.Builder portDetail = LoadingPortDetail.newBuilder();
+                          portDetail.setPortId(port.getPortXId());
+                          portDetail.setQuantity(pCargo.getDischargeMT().toString());
+                          portDetail.setMode(2L);
+                          cargo.addLoadingPortDetails(portDetail);
+                          replyBuilder.addCargoNominations(cargo);
+                        });
+              });
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study - port data", e);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
@@ -1254,7 +1308,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       log.error("Exception when getLoadablePlanDetails ", e);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
     } finally {
-      responseObserver.onNext(null);
+      responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
   }

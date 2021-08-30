@@ -549,6 +549,8 @@ public class LoadableStudyPortRotationService {
     if (portEdited) {
       this.synopticalTableRepository.deleteByPortRotationId(entity.getId());
       this.loadableQuantityRepository.deleteByPortRotationId(entity.getId());
+      this.loadableStudyPortRotationRepository.updateIsOhqCompleteByIdAndIsActiveTrue(
+          entity.getId(), false);
       synopticService.buildPortsInfoSynopticalTable(
           entity, request.getOperationId(), request.getPortId());
     }

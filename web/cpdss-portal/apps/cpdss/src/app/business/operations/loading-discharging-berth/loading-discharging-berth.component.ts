@@ -7,6 +7,7 @@ import { IBerth, IBerthDetails } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { LoadingBerthDuplicateValidator } from '../validators/loading-berth-duplicate-validator.directive';
 import { alphaNumericSpecialCharacterValidator } from '../../core/directives/alpha-numeric-special-character-validator.directive.ts';
+import { OPERATIONS } from '../../core/models/common.model';
 
 /**
  * Component class for loading discharging berth component
@@ -24,6 +25,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
   @Input() editMode = true;
   @Input() loadingInfoId: number;
   @Input() dischargingInfoId: number;
+  @Input() operation: OPERATIONS;
   @Input() get berthDetails(): IBerthDetails {
     return this._berthDetails;
   }
@@ -42,6 +44,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
 
   private _berthDetails: IBerthDetails;
 
+  readonly OPERATIONS = OPERATIONS;
   berthDetailsForm: FormGroup;
   berthForm: FormGroup;
   selectedIndex: number;
@@ -67,7 +70,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
   * initialise berth details
   */
   initBerths() {
-    
+
     this.berthDetailsForm = this.fb.group({
       berthId: 0,
       berthName: '',
@@ -86,6 +89,12 @@ export class LoadingDischargingBerthComponent implements OnInit {
       maxDraft: '',
       lineDisplacement: this.fb.control('', [numberValidator(0, 6), Validators.min(500), Validators.max(200000)])
     });
+
+    if(this.operation === OPERATIONS.DISCHARGING) {
+      this.berthDetailsForm.addControl('maxManifoldPressure', this.fb.control('', [Validators.required, Validators.min(0.1), numberValidator(2, 2)]))
+      this.berthDetailsForm.addControl('cargoCirculation', this.fb.control(false));
+      this.berthDetailsForm.addControl('airPurge', this.fb.control(false));
+    }
     this.berthDetailsForm.disable();
     this.initFormArray();
   }
@@ -163,7 +172,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
             berth[field] = '';
           }
         }
-        
+
         return berth;
       })
     }
@@ -282,7 +291,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
    */
   setBerthDetails(berthInfo: IBerth, index: number, edit: boolean = false) {
     const lineDisplacement = Number(berthInfo.lineDisplacement);
-    this.berthDetailsForm.patchValue({
+    let berthDetailsForm = {
       berthId: berthInfo.berthId,
       portId: berthInfo.portId,
       berthName: berthInfo.berthName,
@@ -301,7 +310,17 @@ export class LoadingDischargingBerthComponent implements OnInit {
       maxLoa: berthInfo.maxLoa,
       maxDraft: berthInfo.maxDraft,
       lineDisplacement: lineDisplacement ? Math.trunc(lineDisplacement) : ''
-    });
+    };
+
+    if (this.operation === OPERATIONS.DISCHARGING) {
+      const additionalDetails = {
+        maxManifoldPressure: berthInfo?.maxManifoldPressure,
+        cargoCirculation: berthInfo?.cargoCirculation,
+        airPurge: berthInfo?.airPurge
+      }
+      berthDetailsForm = { ...berthDetailsForm, ...additionalDetails };
+    }
+    this.berthDetailsForm.patchValue(berthDetailsForm);
     setTimeout(() => {
       if (!edit) {
         this.berthFormArray.at(index).patchValue({
@@ -408,10 +427,10 @@ export class LoadingDischargingBerthComponent implements OnInit {
           this.messageService.add({ severity: 'warn', summary: translationKeys['BERTH_DELETE_ERROR'], detail: translationKeys['BERTH_ERROR_SUMMARY'] });
         }
       }
-      
+
 
     });
-    
+
   }
 
   /**

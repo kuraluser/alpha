@@ -32,10 +32,10 @@ public interface DischargeInformationRequestOrBuilder extends
   long getDischargeInfoId();
 
   /**
-   * <code>int64 loadingPatternId = 5;</code>
-   * @return The loadingPatternId.
+   * <code>int64 dischargePatternId = 5;</code>
+   * @return The dischargePatternId.
    */
-  long getLoadingPatternId();
+  long getDischargePatternId();
 
   /**
    * <code>int64 portRotationId = 6;</code>

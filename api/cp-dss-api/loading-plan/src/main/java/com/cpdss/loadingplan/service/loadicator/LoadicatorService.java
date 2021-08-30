@@ -122,17 +122,10 @@ public class LoadicatorService {
         loadingInformation.getId());
     Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
         Loadicator.LoadicatorRequest.newBuilder();
+    Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
     List<LoadingSequence> loadingSequences =
         loadingSequenceRepository.findByLoadingInformationAndIsActiveOrderBySequenceNumber(
             loadingInformation, true);
-    Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
-    cargoNominationIds.addAll(
-        loadingSequences.stream()
-            .map(sequence -> sequence.getCargoNominationXId())
-            .collect(Collectors.toList()));
-    Map<Long, CargoNominationDetail> cargoNomDetails =
-        this.getCargoNominationDetails(cargoNominationIds);
-
     List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetails =
         loadingPlanPortWiseDetailsRepository.findByLoadingInformationIdAndToLoadicatorAndIsActive(
             loadingInformation.getId(), true, true);
@@ -143,6 +136,12 @@ public class LoadicatorService {
     List<LoadingPlanStowageDetails> loadingPlanStowageDetails =
         loadingPlanStowageDetailsRepository.findByPortWiseDetailIdsAndIsActive(
             portWiseDetailIds, true);
+    cargoNominationIds.addAll(
+        loadingPlanStowageDetails.stream()
+            .map(LoadingPlanStowageDetails::getCargoNominationId)
+            .collect(Collectors.toList()));
+    Map<Long, CargoNominationDetail> cargoNomDetails =
+        this.getCargoNominationDetails(cargoNominationIds);
     List<LoadingPlanBallastDetails> loadingPlanBallastDetails =
         loadingPlanBallastDetailsRepository.findByLoadingPlanPortWiseDetailIdsAndIsActive(
             portWiseDetailIds, true);
@@ -151,7 +150,7 @@ public class LoadicatorService {
     Set<Integer> loadingTimes = new LinkedHashSet<Integer>();
     loadingTimes.addAll(
         loadingPlanPortWiseDetails.stream()
-            .map(portWiseDetails -> portWiseDetails.getTime())
+            .map(LoadingPlanPortWiseDetails::getTime)
             .sorted()
             .collect(Collectors.toList()));
     Map<Integer, List<LoadingPlanStowageDetails>> stowageMap =
@@ -162,20 +161,48 @@ public class LoadicatorService {
         new HashMap<Integer, List<LoadingPlanRobDetails>>();
     loadingTimes.forEach(
         time -> {
+          Boolean isGradeSwitchWithoutDelay =
+              isGradeSwitchTimeWithoutDelay(loadingPlanPortWiseDetails, time);
+          Long portWiseDetailsId =
+              getPortWiseDetailsIdForGradeSwitchWithoutDelay(
+                  loadingSequences, loadingPlanPortWiseDetails, time);
           stowageMap.put(
               time,
               loadingPlanStowageDetails.stream()
                   .filter(stowage -> stowage.getLoadingPlanPortWiseDetails().getTime().equals(time))
+                  .filter(
+                      stowage ->
+                          isGradeSwitchWithoutDelay
+                              ? stowage
+                                  .getLoadingPlanPortWiseDetails()
+                                  .getId()
+                                  .equals(portWiseDetailsId)
+                              : true)
                   .collect(Collectors.toList()));
           ballastMap.put(
               time,
               loadingPlanBallastDetails.stream()
                   .filter(ballast -> ballast.getLoadingPlanPortWiseDetails().getTime().equals(time))
+                  .filter(
+                      ballast ->
+                          isGradeSwitchWithoutDelay
+                              ? ballast
+                                  .getLoadingPlanPortWiseDetails()
+                                  .getId()
+                                  .equals(portWiseDetailsId)
+                              : true)
                   .collect(Collectors.toList()));
           robMap.put(
               time,
               loadingPlanRobDetails.stream()
                   .filter(rob -> rob.getLoadingPlanPortWiseDetails().getTime().equals(time))
+                  .filter(
+                      rob ->
+                          isGradeSwitchWithoutDelay
+                              ? rob.getLoadingPlanPortWiseDetails()
+                                  .getId()
+                                  .equals(portWiseDetailsId)
+                              : true)
                   .collect(Collectors.toList()));
         });
 
@@ -222,6 +249,50 @@ public class LoadicatorService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  /**
+   * @param loadingSequences
+   * @param loadingPlanPortWiseDetails
+   * @param time
+   * @return
+   */
+  private Long getPortWiseDetailsIdForGradeSwitchWithoutDelay(
+      List<LoadingSequence> loadingSequences,
+      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetails,
+      Integer time) {
+    List<LoadingPlanPortWiseDetails> filteredPortDetails =
+        loadingPlanPortWiseDetails.stream()
+            .filter(portWiseDetails -> portWiseDetails.getTime().equals(time))
+            .collect(Collectors.toList());
+    if (filteredPortDetails.size() > 1) {
+      log.info("Found grade switch without delay stage at time {}", time);
+      return filteredPortDetails.get(0).getLoadingSequence().getSequenceNumber()
+              > filteredPortDetails.get(1).getLoadingSequence().getSequenceNumber()
+          ? filteredPortDetails.get(0).getId()
+          : filteredPortDetails.get(1).getId();
+    }
+    return null;
+  }
+
+  /**
+   * Returns whether there is a grade switch without delay at the given time. If there are multiple
+   * portWiseDetails for the same time, then it is actually due to a grade switch without any delay
+   *
+   * @param loadingPlanPortWiseDetails
+   * @param time
+   * @return
+   */
+  private Boolean isGradeSwitchTimeWithoutDelay(
+      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetails, Integer time) {
+    if (loadingPlanPortWiseDetails.stream()
+            .filter(portWiseDetails -> portWiseDetails.getTime().equals(time))
+            .collect(Collectors.toList())
+            .size()
+        > 1) {
+      return true;
+    }
+    return false;
   }
 
   public Loadicator.LoadicatorReply saveLoadicatorInfo(
@@ -318,7 +389,7 @@ public class LoadicatorService {
             });
   }
 
-  private Map<Long, CargoNominationDetail> getCargoNominationDetails(Set<Long> cargoNominationIds)
+  public Map<Long, CargoNominationDetail> getCargoNominationDetails(Set<Long> cargoNominationIds)
       throws GenericServiceException {
     Map<Long, CargoNominationDetail> details = new HashMap<Long, CargoNominationDetail>();
     cargoNominationIds.forEach(
@@ -374,7 +445,7 @@ public class LoadicatorService {
         });
   }
 
-  private void buildStowagePlan(
+  public void buildStowagePlan(
       LoadingInformation loadingInformation,
       Integer time,
       String processId,
@@ -415,7 +486,7 @@ public class LoadicatorService {
    * @return
    * @throws GenericServiceException
    */
-  private PortInfo.PortReply getPortInfoForLoadicator(LoadingInformation loadingInformation)
+  public PortInfo.PortReply getPortInfoForLoadicator(LoadingInformation loadingInformation)
       throws GenericServiceException {
     PortInfo.PortRequest portRequest =
         PortInfo.PortRequest.newBuilder()
@@ -443,8 +514,8 @@ public class LoadicatorService {
    * @return
    * @throws GenericServiceException
    */
-  private VesselInfo.VesselReply getVesselDetailsForLoadicator(
-      LoadingInformation loadingInformation) throws GenericServiceException {
+  public VesselInfo.VesselReply getVesselDetailsForLoadicator(LoadingInformation loadingInformation)
+      throws GenericServiceException {
     VesselInfo.VesselRequest replyBuilder =
         VesselInfo.VesselRequest.newBuilder()
             .setVesselId(loadingInformation.getVesselXId())
@@ -471,7 +542,7 @@ public class LoadicatorService {
    * @return
    * @throws GenericServiceException
    */
-  private CargoInfo.CargoReply getCargoInfoForLoadicator(LoadingInformation loadingInformation)
+  public CargoInfo.CargoReply getCargoInfoForLoadicator(LoadingInformation loadingInformation)
       throws GenericServiceException {
     CargoInfo.CargoRequest cargoRequest =
         CargoInfo.CargoRequest.newBuilder()
@@ -613,7 +684,7 @@ public class LoadicatorService {
     }
   }
 
-  private void saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest.Builder jsonBuilder) {
+  public void saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest.Builder jsonBuilder) {
     this.loadableStudyGrpcService.saveJson(jsonBuilder.build());
   }
 

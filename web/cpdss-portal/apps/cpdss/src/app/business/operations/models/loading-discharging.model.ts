@@ -12,7 +12,7 @@ export interface ILoadingInformationResponse {
   loadingDetails: ILoadingDischargingDetails;
   loadingRates: ILoadingRates;
   berthDetails: IBerthDetails;
-  machineryInUses: IMachineryInUses;
+  machineryInUses: IMachineryInUsesResponse;
   loadingStages: ILoadingDischargingStagesResponse;
   loadingSequences: ILoadingDischargingSequencesResponse;
   toppingOffSequence: IToppingOffSequence[];
@@ -33,7 +33,7 @@ export interface IDischargingInformationResponse {
   dischargingDetails: ILoadingDischargingDetails;
   dischargingRates: IDischargingRates;
   berthDetails: IBerthDetails;
-  machineryInUses: IMachineryInUses;
+  machineryInUses: IMachineryInUsesResponse;
   dischargingStages: ILoadingDischargingStagesResponse;
   dischargingSequences: ILoadingDischargingSequencesResponse;
   cargoVesselTankDetails: ICargoVesselTankDetailsResponse;
@@ -43,6 +43,9 @@ export interface IDischargingInformationResponse {
   cowDetails: ICOWDetailsResponse;
   postDischargeStageTime: IPostDischargeStageTime;
   loadedCargos: ICargo[];
+  dischargeStudyName: string;
+  dischargeSlopTanksFirst?: boolean;
+  dischargeCommingledCargoSeperately?: boolean;
 }
 
 
@@ -70,7 +73,8 @@ export interface ILoadingDischargingDetails {
 export interface ITrimAllowed {
   initialTrim: number;
   maximumTrim: number;
-  finalTrim: number;
+  finalTrim?: number;
+  topOffTrim?: number;
 }
 
 /**
@@ -98,9 +102,24 @@ export interface IMachineryInUses {
   vesselManifold: IVesselManifoldBottomLine[];
   pumpTypes: IPumpTypes[];
   vesselPumps: IVesselPumps[];
-  //Note:- need to check 
-  loadingMachinesInUses?: Array<ILoadingMachinesInUse | IDischargingMachinesInUse>;
-  loadingDischargingMachinesInUses?: Array<IDischargingMachinesInUse>;
+  loadingDischargingMachinesInUses: Array<ILoadingMachinesInUse | IDischargingMachinesInUse>;
+}
+
+/**
+ * Interface for machinary in use in api response
+ *
+ * @export
+ * @interface IMachineryInUses
+ */
+export interface IMachineryInUsesResponse {
+  machineTypes: IMachineTypes;
+  tankTypes: IMachineTankTypes[];
+  vesselBottomLine: IVesselManifoldBottomLine[];
+  vesselManifold: IVesselManifoldBottomLine[];
+  pumpTypes: IPumpTypes[];
+  vesselPumps: IVesselPumps[];
+  loadingMachinesInUses?: Array<ILoadingMachinesInUse>;
+  dischargingMachinesInUses?: Array<IDischargingMachinesInUse>;
 }
 
 /**
@@ -236,11 +255,10 @@ export interface ILoadingRates {
  */
 export interface IDischargingRates {
   id: number;
-  initialDischargingRate?: number;
-  minDischargingRate: number;
+  initialDischargingRate: number;
   maxDischargingRate: number;
-  minDeBallastingRate: number;
-  maxDeBallastingRate: number;
+  minBallastingRate: number;
+  maxBallastingRate: number;
 }
 
 /**
@@ -268,6 +286,9 @@ export interface IBerth {
   maxLoa: string;
   maxDraft: string;
   lineDisplacement: string;
+  cargoCirculation: boolean;
+  airPurge: boolean;
+  maxManifoldPressure: number;
 }
 
 /**
@@ -384,6 +405,8 @@ export interface ILoadingDischargingDelays {
   cargoId: number;
   quantity: number;
   cargoNominationId?: number;
+  sequenceNo?: number;
+  isInitialDelay?: boolean;
 }
 
 /**
@@ -459,6 +482,9 @@ export interface IDischargingInformation {
   isDischargingInfoComplete: boolean;
   cargoTanks: ITank[];
   machineryInUses: IMachineryInUses;
+  dischargeStudyName: string;
+  dischargeSlopTanksFirst?: boolean;
+  dischargeCommingledCargoSeperately?: boolean;
 }
 
 /**
@@ -511,16 +537,18 @@ export interface IDischargingInformationSaveResponse {
  * Interface for ports value object
  *
  * @export
- * @interface ILoadingSequenceValueObject
+ * @interface ILoadingDischargingSequenceValueObject
  */
 export interface ILoadingDischargingSequenceValueObject {
   id: number;
   reasonForDelay: ValueObject<IReasonForDelays[]>;
   duration: ValueObject<string>;
   cargo: ValueObject<ILoadableQuantityCargo>;
-  quantity: number;
+  quantity: ValueObject<number>;
   isAdd: boolean;
   colorCode: string;
+  sequenceNo?: ValueObject<number>;
+  isInitialDelay?: boolean;
 }
 
 /**
@@ -567,6 +595,8 @@ export interface ICOWDetails {
   cowTrimMax: number;
   needFreshCrudeStorage: boolean;
   needFlushingOil: boolean;
+  washTanksWithDifferentCargo: boolean;
+  totalDuration: string;
 }
 
 /**
@@ -589,6 +619,8 @@ export interface ICOWDetailsResponse {
   cowTrimMax: number;
   needFreshCrudeStorage: boolean;
   needFlushingOil: boolean;
+  washTanksWithDifferentCargo: boolean;
+  totalDuration: string;
 }
 
 /**
@@ -627,6 +659,7 @@ export interface ILoadedCargoResponse extends ILoadableQuantityCargo {
   shipFigure?: string;
   protested?: boolean;
   isCommingled?: boolean;
+  slopQuantity?: number;
 }
 
 /**

@@ -25,7 +25,13 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
 Theme(Highcharts);
 GanttChart(Highcharts);
 Annotations(Highcharts);
-
+Highcharts.setOptions({
+  chart: {
+    style: {
+      fontFamily: 'Play'
+    }
+  }
+});
 /**
  * Component class for loading / discharging sequence gantt chart
  *
@@ -386,10 +392,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
 
                 const duration = (stage?.end - stage?.start) / (60 * 60 * 1000);
                 const categoryLabel =
-                  `<div class="row">
-                    <div class="col-md-12 text-center">${cargosLabel}<br/>
-                      <span>(${duration.toFixed(2)} ${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_HRS']})</span>
-                    </div>
+                  `<div class=" font-main  text-center pl-5 pr-5">
+                    ${cargosLabel}
+                      <div class="content-ellipsis">(${duration.toFixed(2)} ${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_HRS']})</div>
                   </div>`;
 
                 return categoryLabel;
@@ -450,10 +455,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               });
 
               const categoryLabel =
-                `<div class="row">
-                  <div class="col-md-12 text-center">
-                    <span>${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(quantity, LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit)} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}</span>
-                  </div>
+                `<div class="font-main  text-center pl-5 pr-5"> 
+                <div class="content-ellipsis">${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(quantity, LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit)} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}</div>
                 </div>`;
 
               return categoryLabel;
@@ -481,13 +484,14 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             formatter: function () {
               if (!this.isLast) {
                 const equalIndex = this.axis.tickPositions.findIndex(value => value === this.value);
-                const rate = LoadingDischargingSequenceChartComponent.sequenceData?.cargoLoadingRates[equalIndex]?.loadingRates.join('/');
-
+                const tempRateArray = [];
+                LoadingDischargingSequenceChartComponent.sequenceData?.cargoLoadingRates[equalIndex]?.loadingRates?.map(item=>{
+                  tempRateArray.push(item?.toFixed());
+                });
+                const rate = tempRateArray.join('/');
                 const categoryLabel =
-                  `<div class="row">
-                    <div class="col-md-12 text-center">
-                      <span>${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</span>
-                    </div>
+                  `<div class="font-main  text-center pl-5 pr-5"> 
+                      <div class="content-ellipsis">${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</div>
                   </div>`;
 
                 return categoryLabel;
@@ -616,15 +620,15 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
    */
   setCargoPumpSequenceData() {
     const cargoPumpSequenceSeriesData = [];
-    LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumps.forEach((dataObj: any) => {
-      const pumpIndex = LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumpCategories.findIndex(i => i?.id === dataObj.pumpId);
+    LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumps?.forEach((dataObj: any) => {
+      const pumpIndex = LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumpCategories?.findIndex(i => i?.id === dataObj.pumpId);
       cargoPumpSequenceSeriesData.push({
         pumpId: dataObj?.pumpId,
         start: dataObj?.start,
         end: dataObj?.end,
         className: dataObj?.className,
         pumpName: LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumpCategories[pumpIndex].pumpName,
-        rate: dataObj?.rate,
+        rate: dataObj?.rate?.toFixed(),
         id: dataObj?.id,
         color: dataObj?.id === 'stripping' ? '#f8f8f8' : dataObj.color,
         y: pumpIndex,
@@ -738,8 +742,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             useHTML: true,
             formatter: function () {
               if (!this.isLast) {
-                const stage = LoadingDischargingSequenceChartComponent.sequenceData?.cargoStages.find((data: any) => data.start <= this.value && data.end >= this.value);
-                const rate = 0;
+                const equalIndex = this.axis.tickPositions.findIndex(value => value === this.value);
+                const tempRateArray = [];
+                LoadingDischargingSequenceChartComponent.sequenceData?.cargoLoadingRates[equalIndex]?.loadingRates?.map(item=>{
+                  tempRateArray.push(item?.toFixed());
+                });
+                const rate = tempRateArray.join('/');
 
                 const categoryLabel =
                   `<div class="row">
@@ -784,7 +792,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 useHTML: true,
                 y: -45,
               },
-              categories: LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumpCategories.map(function (item) {
+              categories: LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumpCategories?.map(function (item) {
                 return item.pumpName;
               })
             }]
@@ -803,7 +811,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             rate = this?.point?.rate;
 
           return `<p>${pumpName}</p><br/>
-                  <p>${seriesName} <span>${rate}</span></p>`;
+                  <p>${seriesName} <span>${rate?.toFixed()}</span></p>`;
 
         },
       },
@@ -826,7 +834,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         end: dataObj?.end,
         className: dataObj?.className,
         tankName: LoadingDischargingSequenceChartComponent.sequenceData?.ballastTankCategories[tankIndex].tankName,
-        rate: dataObj?.rate,
+        rate: dataObj?.rate?.toFixed(),
         sounding: dataObj?.sounding,
         quantity: dataObj?.quantity,
         id: dataObj?.id,
@@ -1071,7 +1079,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         end: dataObj?.end,
         className: dataObj?.className,
         pumpName: LoadingDischargingSequenceChartComponent.sequenceData?.ballastPumpCategories[pumpIndex]?.pumpName,
-        rate: dataObj?.rate,
+        rate: dataObj?.rate?.toFixed(),
         id: dataObj?.id,
         color: dataObj?.id?.includes('gravity') || dataObj?.id === 'stripping' ? '#f8f8f8' : dataObj.color,
         y: pumpIndex,
@@ -1257,7 +1265,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             rate = this?.point?.rate;
 
           return `<p>${pumpName}</p><br/>
-                  <p>${seriesName} <span>${rate}</span></p>`;
+                  <p>${seriesName} <span>${rate?.toFixed()}</span></p>`;
 
         },
       },
@@ -1292,7 +1300,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           }
         });
       });
-      aggregateData?.push([xAxisTicks[i], parseFloat((sum / count).toFixed(2))]);
+      aggregateData?.push([xAxisTicks[i], parseFloat((sum / count).toFixed())]);
     }
     this.flowRateChartSeries = [
       {

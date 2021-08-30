@@ -6,10 +6,10 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { DischargeStudyComponent } from './discharge-study.component';
+import { DischargePlanComponent } from './discharge-plan.component';
 import { ViewPlanComponent } from './view-plan/view-plan.component';
-import { DischargeStudyViewPlanRoutingModule } from './discharge-study-view-plan-routing.module';
-import { DischargeStudyViewPlanApiService } from '../services/discharge-study-view-plan-api.service';
+import { DischargePlanRoutingModule } from './discharge-plan-routing.module';
+import { DischargePlanApiService } from '../services/discharge-plan-api.service';
 import { DischargeStudyViewPlanTransformationService } from '../services/discharge-study-view-plan-transformation.service';
 import { QuantityPipeModule } from '../../../shared/pipes/quantity/quantity-pipe.module';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe'; 
@@ -24,7 +24,7 @@ import { DatatableModule } from '../../../shared/components/datatable/datatable.
  */
 
 @NgModule({
-  declarations: [DischargeStudyComponent,ViewPlanComponent],
+  declarations: [DischargePlanComponent,ViewPlanComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -34,11 +34,12 @@ import { DatatableModule } from '../../../shared/components/datatable/datatable.
     TranslateModule,
     QuantityPipeModule,
     DatatableModule,
-    DischargeStudyViewPlanRoutingModule
+    DischargePlanRoutingModule
   ],
   providers: [
     QuantityPipe,
     DischargeStudyViewPlanTransformationService, 
-    DischargeStudyViewPlanApiService]
+    DischargePlanApiService
+  ]
 })
-export class DischargeStudyViewPlanModule { }
+export class DischargePlanModule { }

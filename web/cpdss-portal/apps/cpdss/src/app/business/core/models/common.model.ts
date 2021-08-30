@@ -402,7 +402,8 @@ export enum LOADABLE_STUDY_STATUS {
     PLAN_ALGO_PROCESSING_COMPETED = 5,
     PLAN_NO_SOLUTION = 6,
     PLAN_LOADICATOR_CHECKING = 7,
-    PLAN_ERROR = 11
+    PLAN_ERROR = 11,
+    PLAN_COMMUNICATED_TO_SHORE = 21
 }
 
 /**
@@ -419,7 +420,8 @@ export enum LOADABLE_STUDY_STATUS {
     PLAN_ALGO_PROCESSING_COMPETED = 5,
     PLAN_NO_SOLUTION = 6,
     PLAN_LOADICATOR_CHECKING = 7,
-    PLAN_ERROR = 11
+    PLAN_ERROR = 11,
+    PLAN_COMMUNICATED_TO_SHORE = 21
 }
 
 /**
@@ -436,7 +438,8 @@ export enum LOADABLE_STUDY_STATUS {
     PLAN_ALGO_PROCESSING_COMPETED = "ALGO Processing Completed",
     PLAN_NO_SOLUTION = "No Plan Available",
     PLAN_LOADICATOR_CHECKING = "Loadicator Processing Started",
-    PLAN_ERROR = "Error Occurred"
+    PLAN_ERROR = "Error Occurred",
+    PLAN_COMMUNICATED_TO_SHORE = "Loadable Study Communicated to Shore"
 }
 
 /**
@@ -453,7 +456,8 @@ export enum LOADABLE_STUDY_STATUS {
     PLAN_ALGO_PROCESSING_COMPETED = "ALGO Processing Completed",
     PLAN_NO_SOLUTION = "No Plan Available",
     PLAN_LOADICATOR_CHECKING = "Loadicator Processing Started",
-    PLAN_ERROR = "Error Occurred"
+    PLAN_ERROR = "Error Occurred",
+    PLAN_COMMUNICATED_TO_SHORE = "DischargeStudy Communicated to Shore"
 }
 
 /**
@@ -655,7 +659,7 @@ export interface ICargoQuantities {
    differenceColor?: string
    cargoId?: number;
    minMaxTolerance?: string;
-   slopQuantity?: number;
+   slopQuantity?: number | ValueObject<number>;
    timeRequiredForLoading?: string;
    loadingPorts?: string[];
    loadingPortsLabels?: string;

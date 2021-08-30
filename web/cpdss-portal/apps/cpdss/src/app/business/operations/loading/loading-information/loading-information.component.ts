@@ -128,6 +128,7 @@ export class LoadingInformationComponent implements OnInit {
     this.loadingInfoId = this.loadingInformationData?.loadingInfoId;
     this.loadingInformationId.emit(this.loadingInfoId);
     this.loadingInformationData.loadingSequences["loadingDischargingDelays"] = this.loadingInformationData.loadingSequences.loadingDelays;
+    this.loadingInformationData.machineryInUses['loadingDischargingMachinesInUses'] = this.loadingInformationData?.machineryInUses?.loadingMachinesInUses;
     this.trackStartEndStage = this.loadingInformationData?.loadingStages?.trackStartEndStage;
     this.trackGradeSwitch = this.loadingInformationData?.loadingStages?.trackGradeSwitch;
     this.cargoVesselTankDetails = this.loadingInformationData?.cargoVesselTankDetails;

@@ -11,6 +11,7 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
@@ -18,7 +19,6 @@ import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequ
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
-import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
@@ -37,7 +37,6 @@ import com.cpdss.gateway.domain.BillOfLadding;
 import com.cpdss.gateway.domain.Cargo;
 import com.cpdss.gateway.domain.CargoNomination;
 import com.cpdss.gateway.domain.CommonResponse;
-import com.cpdss.gateway.domain.DischargePlanDetailsResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
@@ -430,6 +429,7 @@ public class DischargeStudyService {
               portRotation.setPercentage(port.getPercentage());
               portRotation.setTanks(port.getTanksList());
               portRotation.setInstructionId(port.getInstructionIdList());
+              portRotation.setDischargeRate(new BigDecimal(0));
               if (portIdsToCargoNominationMap.containsKey(port.getPortId())) {
                 List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =
                     portIdsToCargoNominationMap.get(port.getPortId());
@@ -476,6 +476,11 @@ public class DischargeStudyService {
                   cargoNominationDetail.getLoadingPortDetailsList().stream()
                       .filter(port -> portRotation.getPortId().equals(port.getPortId()))
                       .findFirst();
+              if (cargoNominationDetail.getDischargingTime() != null
+                  && !cargoNominationDetail.getDischargingTime().isBlank()) {
+                cargoNomination.setDischargeTime(
+                    new BigDecimal(cargoNominationDetail.getDischargingTime()));
+              }
               if (nominationPort.isPresent()) {
                 cargoNomination.setQuantity(new BigDecimal(nominationPort.get().getQuantity()));
                 cargoNomination.setMode(nominationPort.get().getMode());
@@ -666,14 +671,29 @@ public class DischargeStudyService {
     return this.dischargeStudyOperationServiceBlockingStub.generateDischargePatterns(request);
   }
 
-  public DischargePlanDetailsResponse getDischargePatternDetails(
-      Long loadablePatternId, Long loadableStudyId, Long vesselId, String first)
-      throws GenericServiceException {
+  public DischargeStudyCargoResponse getDischargePatternDetails(
+      Long loadableStudyId, Long vesselId, String correlationId) throws GenericServiceException {
     LoadablePlanDetailsRequest.Builder request = LoadablePlanDetailsRequest.newBuilder();
-    request.setLoadablePatternId(loadablePatternId);
-    PortRotationReply dischargePlanDetails =
+    request.setLoadablePatternId(loadableStudyId);
+
+    CargoNominationReply cargos =
         dischargeStudyOperationServiceBlockingStub.getDischargePlanDetails(request.build());
-    return null;
+    LoadableStudy.PortRotationRequest portRotationRequest =
+        LoadableStudy.PortRotationRequest.newBuilder().setLoadableStudyId(loadableStudyId).build();
+    LoadableStudy.PortRotationReply portRotationReply =
+        loadableStudyService.getPortRotation(portRotationRequest);
+    if (!SUCCESS.equals(portRotationReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get Port Rotation",
+          portRotationReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(portRotationReply.getResponseStatus().getCode())));
+    }
+    DischargeStudyCargoResponse response = new DischargeStudyCargoResponse();
+    response.setDischargeStudyId(loadableStudyId);
+    response.setPortList(new ArrayList<>());
+    buildDischargeStudyCargoResponse(response, portRotationReply, cargos);
+
+    return response;
   }
 
   public CommonResponse confirmPlan(

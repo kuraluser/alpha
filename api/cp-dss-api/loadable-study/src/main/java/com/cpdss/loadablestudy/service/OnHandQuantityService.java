@@ -204,7 +204,9 @@ public class OnHandQuantityService {
     VesselInfo.VesselReply vesselReply = this.getOhqTanks(request);
     if (onHandQuantities.isEmpty()) {
       synopticService.populateOnHandQuantityData(loadableStudyOpt, portRotation);
-    } else if (!onHandQuantities.isEmpty() && !portRotation.getIsPortRotationOhqComplete()) {
+    } else if (!onHandQuantities.isEmpty()
+        && (portRotation.getIsPortRotationOhqComplete() != null)
+        && !portRotation.getIsPortRotationOhqComplete()) {
       // If ohq quanties already exist for the port rotation but the flag is false we set it to
       // true.
       this.loadableStudyPortRotationRepository.updateIsOhqCompleteByIdAndIsActiveTrue(

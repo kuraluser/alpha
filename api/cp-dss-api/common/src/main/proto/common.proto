@@ -80,3 +80,10 @@ message RuleDropDownMaster{
      string value = 2;
 }
 
+enum COW_TYPE {
+	EMPTY_COW_TYPE = 0;
+	TOP_COW = 1;
+	BOTTOM_COW = 2;
+	ALL_COW = 3;
+	CARGO = 4;
+}

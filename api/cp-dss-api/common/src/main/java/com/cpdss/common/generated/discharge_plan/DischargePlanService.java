@@ -24,8 +24,7 @@ public final class DischargePlanService {
   static {
     java.lang.String[] descriptorData = {
       "\n+discharge_plan/discharge_plan_service." +
-      "proto\032\014common.proto\032&loading_plan/loadin" +
-      "g_plan_models.proto\032*discharge_plan/disc" +
+      "proto\032\014common.proto\032*discharge_plan/disc" +
       "harge_plan_models.proto2o\n\033DischargeInfo" +
       "rmationService\022P\n\027getDischargeInformatio" +
       "n\022\034.DischargeInformationRequest\032\025.Discha" +
@@ -36,11 +35,9 @@ public final class DischargePlanService {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           com.cpdss.common.generated.Common.getDescriptor(),
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor(),
           com.cpdss.common.generated.discharge_plan.DischargePlanModels.getDescriptor(),
         });
     com.cpdss.common.generated.Common.getDescriptor();
-    com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor();
     com.cpdss.common.generated.discharge_plan.DischargePlanModels.getDescriptor();
   }
 

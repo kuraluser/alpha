@@ -74,7 +74,7 @@ private static final long serialVersionUID = 0L;
           }
           case 40: {
 
-            loadingPatternId_ = input.readInt64();
+            dischargePatternId_ = input.readInt64();
             break;
           }
           case 48: {
@@ -159,14 +159,14 @@ private static final long serialVersionUID = 0L;
     return dischargeInfoId_;
   }
 
-  public static final int LOADINGPATTERNID_FIELD_NUMBER = 5;
-  private long loadingPatternId_;
+  public static final int DISCHARGEPATTERNID_FIELD_NUMBER = 5;
+  private long dischargePatternId_;
   /**
-   * <code>int64 loadingPatternId = 5;</code>
-   * @return The loadingPatternId.
+   * <code>int64 dischargePatternId = 5;</code>
+   * @return The dischargePatternId.
    */
-  public long getLoadingPatternId() {
-    return loadingPatternId_;
+  public long getDischargePatternId() {
+    return dischargePatternId_;
   }
 
   public static final int PORTROTATIONID_FIELD_NUMBER = 6;
@@ -215,8 +215,8 @@ private static final long serialVersionUID = 0L;
     if (dischargeInfoId_ != 0L) {
       output.writeInt64(4, dischargeInfoId_);
     }
-    if (loadingPatternId_ != 0L) {
-      output.writeInt64(5, loadingPatternId_);
+    if (dischargePatternId_ != 0L) {
+      output.writeInt64(5, dischargePatternId_);
     }
     if (portRotationId_ != 0L) {
       output.writeInt64(6, portRotationId_);
@@ -249,9 +249,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt64Size(4, dischargeInfoId_);
     }
-    if (loadingPatternId_ != 0L) {
+    if (dischargePatternId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(5, loadingPatternId_);
+        .computeInt64Size(5, dischargePatternId_);
     }
     if (portRotationId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream
@@ -284,8 +284,8 @@ private static final long serialVersionUID = 0L;
         != other.getVoyageId()) return false;
     if (getDischargeInfoId()
         != other.getDischargeInfoId()) return false;
-    if (getLoadingPatternId()
-        != other.getLoadingPatternId()) return false;
+    if (getDischargePatternId()
+        != other.getDischargePatternId()) return false;
     if (getPortRotationId()
         != other.getPortRotationId()) return false;
     if (getSynopticTableId()
@@ -313,9 +313,9 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + DISCHARGEINFOID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
         getDischargeInfoId());
-    hash = (37 * hash) + LOADINGPATTERNID_FIELD_NUMBER;
+    hash = (37 * hash) + DISCHARGEPATTERNID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getLoadingPatternId());
+        getDischargePatternId());
     hash = (37 * hash) + PORTROTATIONID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
         getPortRotationId());
@@ -467,7 +467,7 @@ private static final long serialVersionUID = 0L;
 
       dischargeInfoId_ = 0L;
 
-      loadingPatternId_ = 0L;
+      dischargePatternId_ = 0L;
 
       portRotationId_ = 0L;
 
@@ -503,7 +503,7 @@ private static final long serialVersionUID = 0L;
       result.vesselId_ = vesselId_;
       result.voyageId_ = voyageId_;
       result.dischargeInfoId_ = dischargeInfoId_;
-      result.loadingPatternId_ = loadingPatternId_;
+      result.dischargePatternId_ = dischargePatternId_;
       result.portRotationId_ = portRotationId_;
       result.synopticTableId_ = synopticTableId_;
       onBuilt();
@@ -566,8 +566,8 @@ private static final long serialVersionUID = 0L;
       if (other.getDischargeInfoId() != 0L) {
         setDischargeInfoId(other.getDischargeInfoId());
       }
-      if (other.getLoadingPatternId() != 0L) {
-        setLoadingPatternId(other.getLoadingPatternId());
+      if (other.getDischargePatternId() != 0L) {
+        setDischargePatternId(other.getDischargePatternId());
       }
       if (other.getPortRotationId() != 0L) {
         setPortRotationId(other.getPortRotationId());
@@ -724,32 +724,32 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private long loadingPatternId_ ;
+    private long dischargePatternId_ ;
     /**
-     * <code>int64 loadingPatternId = 5;</code>
-     * @return The loadingPatternId.
+     * <code>int64 dischargePatternId = 5;</code>
+     * @return The dischargePatternId.
      */
-    public long getLoadingPatternId() {
-      return loadingPatternId_;
+    public long getDischargePatternId() {
+      return dischargePatternId_;
     }
     /**
-     * <code>int64 loadingPatternId = 5;</code>
-     * @param value The loadingPatternId to set.
+     * <code>int64 dischargePatternId = 5;</code>
+     * @param value The dischargePatternId to set.
      * @return This builder for chaining.
      */
-    public Builder setLoadingPatternId(long value) {
+    public Builder setDischargePatternId(long value) {
       
-      loadingPatternId_ = value;
+      dischargePatternId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>int64 loadingPatternId = 5;</code>
+     * <code>int64 dischargePatternId = 5;</code>
      * @return This builder for chaining.
      */
-    public Builder clearLoadingPatternId() {
+    public Builder clearDischargePatternId() {
       
-      loadingPatternId_ = 0L;
+      dischargePatternId_ = 0L;
       onChanged();
       return this;
     }

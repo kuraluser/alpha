@@ -201,28 +201,28 @@ public final class DischargeStudyOperationServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
-      com.cpdss.common.generated.LoadableStudy.PortRotationReply> getGetDischargePlanDetailsMethod;
+      com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getGetDischargePlanDetailsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetDischargePlanDetails",
       requestType = com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.class,
-      responseType = com.cpdss.common.generated.LoadableStudy.PortRotationReply.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.CargoNominationReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
-      com.cpdss.common.generated.LoadableStudy.PortRotationReply> getGetDischargePlanDetailsMethod() {
-    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest, com.cpdss.common.generated.LoadableStudy.PortRotationReply> getGetDischargePlanDetailsMethod;
+      com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getGetDischargePlanDetailsMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest, com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getGetDischargePlanDetailsMethod;
     if ((getGetDischargePlanDetailsMethod = DischargeStudyOperationServiceGrpc.getGetDischargePlanDetailsMethod) == null) {
       synchronized (DischargeStudyOperationServiceGrpc.class) {
         if ((getGetDischargePlanDetailsMethod = DischargeStudyOperationServiceGrpc.getGetDischargePlanDetailsMethod) == null) {
           DischargeStudyOperationServiceGrpc.getGetDischargePlanDetailsMethod = getGetDischargePlanDetailsMethod =
-              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest, com.cpdss.common.generated.LoadableStudy.PortRotationReply>newBuilder()
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest, com.cpdss.common.generated.LoadableStudy.CargoNominationReply>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetDischargePlanDetails"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.cpdss.common.generated.LoadableStudy.PortRotationReply.getDefaultInstance()))
+                  com.cpdss.common.generated.LoadableStudy.CargoNominationReply.getDefaultInstance()))
               .setSchemaDescriptor(new DischargeStudyOperationServiceMethodDescriptorSupplier("GetDischargePlanDetails"))
               .build();
         }
@@ -355,7 +355,7 @@ public final class DischargeStudyOperationServiceGrpc {
     /**
      */
     public void getDischargePlanDetails(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetDischargePlanDetailsMethod(), responseObserver);
     }
 
@@ -415,7 +415,7 @@ public final class DischargeStudyOperationServiceGrpc {
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
-                com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
+                com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
                   this, METHODID_GET_DISCHARGE_PLAN_DETAILS)))
           .addMethod(
             getConfirmPlanMethod(),
@@ -493,7 +493,7 @@ public final class DischargeStudyOperationServiceGrpc {
     /**
      */
     public void getDischargePlanDetails(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetDischargePlanDetailsMethod(), getCallOptions()), request, responseObserver);
     }
@@ -565,7 +565,7 @@ public final class DischargeStudyOperationServiceGrpc {
 
     /**
      */
-    public com.cpdss.common.generated.LoadableStudy.PortRotationReply getDischargePlanDetails(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
+    public com.cpdss.common.generated.LoadableStudy.CargoNominationReply getDischargePlanDetails(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetDischargePlanDetailsMethod(), getCallOptions(), request);
     }
@@ -642,7 +642,7 @@ public final class DischargeStudyOperationServiceGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PortRotationReply> getDischargePlanDetails(
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getDischargePlanDetails(
         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetDischargePlanDetailsMethod(), getCallOptions()), request);
@@ -709,7 +709,7 @@ public final class DischargeStudyOperationServiceGrpc {
           break;
         case METHODID_GET_DISCHARGE_PLAN_DETAILS:
           serviceImpl.getDischargePlanDetails((com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply>) responseObserver);
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply>) responseObserver);
           break;
         case METHODID_CONFIRM_PLAN:
           serviceImpl.confirmPlan((com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest) request,

@@ -1,19 +1,19 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { DischargeStudyComponent } from './discharge-study.component';
+import { DischargePlanComponent } from './discharge-plan.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: DischargeStudyComponent
+    component: DischargePlanComponent
   }
 ];
 
 /**
- *  this module will load routes for the discharge study plan.
+ *  this module will load routes for the discharge plan.
 */
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class DischargeStudyViewPlanRoutingModule { }
+export class DischargePlanRoutingModule { }

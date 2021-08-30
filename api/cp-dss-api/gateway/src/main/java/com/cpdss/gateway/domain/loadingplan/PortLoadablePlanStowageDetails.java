@@ -21,7 +21,8 @@ public class PortLoadablePlanStowageDetails {
   private String observedM3;
   private String rdgUllage;
   private Long tankId;
-  private String tankname;
+  private String tankName;
+  private String tankShortName;
   private String temperature;
   private String weight;
   private String quantity;
