@@ -1,24 +1,11 @@
 package com.cpdss.common.generated;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncUnaryCall;
-import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
-import static io.grpc.stub.ClientCalls.blockingUnaryCall;
-import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /**
  */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.27.1)",
+    value = "by gRPC proto compiler (version 1.36.0)",
     comments = "Source: loadable_study.proto")
 public final class DischargeStudyOperationServiceGrpc {
 
@@ -327,112 +314,112 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public void deleteDischargeStudy(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getDeleteDischargeStudyMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteDischargeStudyMethod(), responseObserver);
     }
 
     /**
      */
     public void saveDischargeStudy(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveDischargeStudyMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveDischargeStudyMethod(), responseObserver);
     }
 
     /**
      */
     public void updateDischargeStudy(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getUpdateDischargeStudyMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getUpdateDischargeStudyMethod(), responseObserver);
     }
 
     /**
      */
     public void getDischargeStudyPortWiseCargos(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetDischargeStudyPortWiseCargosMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetDischargeStudyPortWiseCargosMethod(), responseObserver);
     }
 
     /**
      */
     public void saveDischargeStudyBackLoading(com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveDischargeStudyBackLoadingMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveDischargeStudyBackLoadingMethod(), responseObserver);
     }
 
     /**
      */
     public void generateDischargePatterns(com.cpdss.common.generated.LoadableStudy.AlgoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGenerateDischargePatternsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGenerateDischargePatternsMethod(), responseObserver);
     }
 
     /**
      */
     public void getDischargePlanDetails(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetDischargePlanDetailsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetDischargePlanDetailsMethod(), responseObserver);
     }
 
     /**
      */
     public void confirmPlan(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getConfirmPlanMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getConfirmPlanMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
             getDeleteDischargeStudyMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest,
                 com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply>(
                   this, METHODID_DELETE_DISCHARGE_STUDY)))
           .addMethod(
             getSaveDischargeStudyMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail,
                 com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply>(
                   this, METHODID_SAVE_DISCHARGE_STUDY)))
           .addMethod(
             getUpdateDischargeStudyMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail,
                 com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply>(
                   this, METHODID_UPDATE_DISCHARGE_STUDY)))
           .addMethod(
             getGetDischargeStudyPortWiseCargosMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest,
                 com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply>(
                   this, METHODID_GET_DISCHARGE_STUDY_PORT_WISE_CARGOS)))
           .addMethod(
             getSaveDischargeStudyBackLoadingMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest,
                 com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply>(
                   this, METHODID_SAVE_DISCHARGE_STUDY_BACK_LOADING)))
           .addMethod(
             getGenerateDischargePatternsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.AlgoRequest,
                 com.cpdss.common.generated.LoadableStudy.AlgoReply>(
                   this, METHODID_GENERATE_DISCHARGE_PATTERNS)))
           .addMethod(
             getGetDischargePlanDetailsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
                 com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
                   this, METHODID_GET_DISCHARGE_PLAN_DETAILS)))
           .addMethod(
             getConfirmPlanMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
                 com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>(
@@ -459,7 +446,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public void deleteDischargeStudy(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDeleteDischargeStudyMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -467,7 +454,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public void saveDischargeStudy(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveDischargeStudyMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -475,7 +462,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public void updateDischargeStudy(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getUpdateDischargeStudyMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -483,7 +470,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public void getDischargeStudyPortWiseCargos(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetDischargeStudyPortWiseCargosMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -491,7 +478,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public void saveDischargeStudyBackLoading(com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveDischargeStudyBackLoadingMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -499,7 +486,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public void generateDischargePatterns(com.cpdss.common.generated.LoadableStudy.AlgoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGenerateDischargePatternsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -507,7 +494,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public void getDischargePlanDetails(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetDischargePlanDetailsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -515,7 +502,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public void confirmPlan(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getConfirmPlanMethod(), getCallOptions()), request, responseObserver);
     }
   }
@@ -537,56 +524,56 @@ public final class DischargeStudyOperationServiceGrpc {
     /**
      */
     public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply deleteDischargeStudy(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeleteDischargeStudyMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply saveDischargeStudy(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveDischargeStudyMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply updateDischargeStudy(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateDischargeStudyMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply getDischargeStudyPortWiseCargos(com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetDischargeStudyPortWiseCargosMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply saveDischargeStudyBackLoading(com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveDischargeStudyBackLoadingMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.AlgoReply generateDischargePatterns(com.cpdss.common.generated.LoadableStudy.AlgoRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGenerateDischargePatternsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.PortRotationReply getDischargePlanDetails(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetDischargePlanDetailsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply confirmPlan(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getConfirmPlanMethod(), getCallOptions(), request);
     }
   }
@@ -609,7 +596,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply> deleteDischargeStudy(
         com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDeleteDischargeStudyMethod(), getCallOptions()), request);
     }
 
@@ -617,7 +604,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply> saveDischargeStudy(
         com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveDischargeStudyMethod(), getCallOptions()), request);
     }
 
@@ -625,7 +612,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply> updateDischargeStudy(
         com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getUpdateDischargeStudyMethod(), getCallOptions()), request);
     }
 
@@ -633,7 +620,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply> getDischargeStudyPortWiseCargos(
         com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetDischargeStudyPortWiseCargosMethod(), getCallOptions()), request);
     }
 
@@ -641,7 +628,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply> saveDischargeStudyBackLoading(
         com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveDischargeStudyBackLoadingMethod(), getCallOptions()), request);
     }
 
@@ -649,7 +636,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.AlgoReply> generateDischargePatterns(
         com.cpdss.common.generated.LoadableStudy.AlgoRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGenerateDischargePatternsMethod(), getCallOptions()), request);
     }
 
@@ -657,7 +644,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PortRotationReply> getDischargePlanDetails(
         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetDischargePlanDetailsMethod(), getCallOptions()), request);
     }
 
@@ -665,7 +652,7 @@ public final class DischargeStudyOperationServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> confirmPlan(
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getConfirmPlanMethod(), getCallOptions()), request);
     }
   }

@@ -1,24 +1,11 @@
 package com.cpdss.common.generated.loading_plan;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncUnaryCall;
-import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
-import static io.grpc.stub.ClientCalls.blockingUnaryCall;
-import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /**
  */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.27.1)",
+    value = "by gRPC proto compiler (version 1.36.0)",
     comments = "Source: loading_plan/loading_plan_service.proto")
 public final class LoadingInstructionServiceGrpc {
 
@@ -234,70 +221,70 @@ public final class LoadingInstructionServiceGrpc {
      */
     public void getLoadingInstructions(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadingInstructionsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadingInstructionsMethod(), responseObserver);
     }
 
     /**
      */
     public void addLoadingInstruction(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
-      asyncUnimplementedUnaryCall(getAddLoadingInstructionMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getAddLoadingInstructionMethod(), responseObserver);
     }
 
     /**
      */
     public void updateLoadingInstructions(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
-      asyncUnimplementedUnaryCall(getUpdateLoadingInstructionsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getUpdateLoadingInstructionsMethod(), responseObserver);
     }
 
     /**
      */
     public void deleteLoadingInstructions(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
-      asyncUnimplementedUnaryCall(getDeleteLoadingInstructionsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteLoadingInstructionsMethod(), responseObserver);
     }
 
     /**
      */
     public void editInstructions(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
-      asyncUnimplementedUnaryCall(getEditInstructionsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getEditInstructionsMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
             getGetLoadingInstructionsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest,
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails>(
                   this, METHODID_GET_LOADING_INSTRUCTIONS)))
           .addMethod(
             getAddLoadingInstructionMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave,
                 com.cpdss.common.generated.Common.ResponseStatus>(
                   this, METHODID_ADD_LOADING_INSTRUCTION)))
           .addMethod(
             getUpdateLoadingInstructionsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate,
                 com.cpdss.common.generated.Common.ResponseStatus>(
                   this, METHODID_UPDATE_LOADING_INSTRUCTIONS)))
           .addMethod(
             getDeleteLoadingInstructionsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus,
                 com.cpdss.common.generated.Common.ResponseStatus>(
                   this, METHODID_DELETE_LOADING_INSTRUCTIONS)))
           .addMethod(
             getEditInstructionsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus,
                 com.cpdss.common.generated.Common.ResponseStatus>(
@@ -324,7 +311,7 @@ public final class LoadingInstructionServiceGrpc {
      */
     public void getLoadingInstructions(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadingInstructionsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -332,7 +319,7 @@ public final class LoadingInstructionServiceGrpc {
      */
     public void addLoadingInstruction(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getAddLoadingInstructionMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -340,7 +327,7 @@ public final class LoadingInstructionServiceGrpc {
      */
     public void updateLoadingInstructions(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getUpdateLoadingInstructionsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -348,7 +335,7 @@ public final class LoadingInstructionServiceGrpc {
      */
     public void deleteLoadingInstructions(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDeleteLoadingInstructionsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -356,7 +343,7 @@ public final class LoadingInstructionServiceGrpc {
      */
     public void editInstructions(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getEditInstructionsMethod(), getCallOptions()), request, responseObserver);
     }
   }
@@ -378,35 +365,35 @@ public final class LoadingInstructionServiceGrpc {
     /**
      */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails getLoadingInstructions(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadingInstructionsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.Common.ResponseStatus addLoadingInstruction(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getAddLoadingInstructionMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.Common.ResponseStatus updateLoadingInstructions(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateLoadingInstructionsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.Common.ResponseStatus deleteLoadingInstructions(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeleteLoadingInstructionsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.Common.ResponseStatus editInstructions(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getEditInstructionsMethod(), getCallOptions(), request);
     }
   }
@@ -429,7 +416,7 @@ public final class LoadingInstructionServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionDetails> getLoadingInstructions(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadingInstructionsMethod(), getCallOptions()), request);
     }
 
@@ -437,7 +424,7 @@ public final class LoadingInstructionServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.Common.ResponseStatus> addLoadingInstruction(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsSave request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getAddLoadingInstructionMethod(), getCallOptions()), request);
     }
 
@@ -445,7 +432,7 @@ public final class LoadingInstructionServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.Common.ResponseStatus> updateLoadingInstructions(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionsUpdate request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getUpdateLoadingInstructionsMethod(), getCallOptions()), request);
     }
 
@@ -453,7 +440,7 @@ public final class LoadingInstructionServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.Common.ResponseStatus> deleteLoadingInstructions(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDeleteLoadingInstructionsMethod(), getCallOptions()), request);
     }
 
@@ -461,7 +448,7 @@ public final class LoadingInstructionServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.Common.ResponseStatus> editInstructions(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInstructionStatus request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getEditInstructionsMethod(), getCallOptions()), request);
     }
   }

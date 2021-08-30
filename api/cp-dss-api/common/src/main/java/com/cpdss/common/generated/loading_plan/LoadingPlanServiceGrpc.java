@@ -1,24 +1,11 @@
 package com.cpdss.common.generated.loading_plan;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncUnaryCall;
-import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
-import static io.grpc.stub.ClientCalls.blockingUnaryCall;
-import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /**
  */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.27.1)",
+    value = "by gRPC proto compiler (version 1.36.0)",
     comments = "Source: loading_plan/loading_plan_service.proto")
 public final class LoadingPlanServiceGrpc {
 
@@ -389,140 +376,140 @@ public final class LoadingPlanServiceGrpc {
      */
     public void loadingPlanSynchronization(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getLoadingPlanSynchronizationMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getLoadingPlanSynchronizationMethod(), responseObserver);
     }
 
     /**
      */
     public void saveLoadingPlan(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveLoadingPlanMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveLoadingPlanMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadingPlan(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadingPlanMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadingPlanMethod(), responseObserver);
     }
 
     /**
      */
     public void getOrSaveRulesForLoadingPlan(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanRuleRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanRuleReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetOrSaveRulesForLoadingPlanMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetOrSaveRulesForLoadingPlanMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadingSequences(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadingSequencesMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadingSequencesMethod(), responseObserver);
     }
 
     /**
      */
     public void getUpdateUllageDetails(com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetUpdateUllageDetailsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetUpdateUllageDetailsMethod(), responseObserver);
     }
 
     /**
      */
     public void getBillOfLaddingDetails(com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetBillOfLaddingDetailsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetBillOfLaddingDetailsMethod(), responseObserver);
     }
 
     /**
      */
     public void getCargoNominationMaxQuantity(com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetCargoNominationMaxQuantityMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetCargoNominationMaxQuantityMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadicatorData(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadicatorDataMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadicatorDataMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadableStudyShoreTwo(com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadableStudyShoreTwoMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadableStudyShoreTwoMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
             getLoadingPlanSynchronizationMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails,
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>(
                   this, METHODID_LOADING_PLAN_SYNCHRONIZATION)))
           .addMethod(
             getSaveLoadingPlanMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest,
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse>(
                   this, METHODID_SAVE_LOADING_PLAN)))
           .addMethod(
             getGetLoadingPlanMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest,
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply>(
                   this, METHODID_GET_LOADING_PLAN)))
           .addMethod(
             getGetOrSaveRulesForLoadingPlanMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanRuleRequest,
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanRuleReply>(
                   this, METHODID_GET_OR_SAVE_RULES_FOR_LOADING_PLAN)))
           .addMethod(
             getGetLoadingSequencesMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest,
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply>(
                   this, METHODID_GET_LOADING_SEQUENCES)))
           .addMethod(
             getGetUpdateUllageDetailsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsRequest,
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsResponse>(
                   this, METHODID_GET_UPDATE_ULLAGE_DETAILS)))
           .addMethod(
             getGetBillOfLaddingDetailsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest,
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply>(
                   this, METHODID_GET_BILL_OF_LADDING_DETAILS)))
           .addMethod(
             getGetCargoNominationMaxQuantityMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>(
                   this, METHODID_GET_CARGO_NOMINATION_MAX_QUANTITY)))
           .addMethod(
             getGetLoadicatorDataMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest,
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataReply>(
                   this, METHODID_GET_LOADICATOR_DATA)))
           .addMethod(
             getGetLoadableStudyShoreTwoMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest,
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>(
@@ -549,7 +536,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public void loadingPlanSynchronization(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getLoadingPlanSynchronizationMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -557,7 +544,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public void saveLoadingPlan(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveLoadingPlanMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -565,7 +552,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public void getLoadingPlan(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadingPlanMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -573,7 +560,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public void getOrSaveRulesForLoadingPlan(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanRuleRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanRuleReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetOrSaveRulesForLoadingPlanMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -581,7 +568,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public void getLoadingSequences(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadingSequencesMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -589,7 +576,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public void getUpdateUllageDetails(com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsResponse> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetUpdateUllageDetailsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -597,7 +584,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public void getBillOfLaddingDetails(com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetBillOfLaddingDetailsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -605,7 +592,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public void getCargoNominationMaxQuantity(com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetCargoNominationMaxQuantityMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -613,7 +600,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public void getLoadicatorData(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadicatorDataMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -621,7 +608,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public void getLoadableStudyShoreTwo(com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadableStudyShoreTwoMethod(), getCallOptions()), request, responseObserver);
     }
   }
@@ -643,70 +630,70 @@ public final class LoadingPlanServiceGrpc {
     /**
      */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply loadingPlanSynchronization(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getLoadingPlanSynchronizationMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse saveLoadingPlan(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveLoadingPlanMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply getLoadingPlan(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadingPlanMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanRuleReply getOrSaveRulesForLoadingPlan(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanRuleRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetOrSaveRulesForLoadingPlanMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply getLoadingSequences(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadingSequencesMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsResponse getUpdateUllageDetails(com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetUpdateUllageDetailsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply getBillOfLaddingDetails(com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetBillOfLaddingDetailsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse getCargoNominationMaxQuantity(com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCargoNominationMaxQuantityMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataReply getLoadicatorData(com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadicatorDataMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply getLoadableStudyShoreTwo(com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadableStudyShoreTwoMethod(), getCallOptions(), request);
     }
   }
@@ -729,7 +716,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply> loadingPlanSynchronization(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getLoadingPlanSynchronizationMethod(), getCallOptions()), request);
     }
 
@@ -737,7 +724,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse> saveLoadingPlan(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveLoadingPlanMethod(), getCallOptions()), request);
     }
 
@@ -745,7 +732,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply> getLoadingPlan(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadingPlanMethod(), getCallOptions()), request);
     }
 
@@ -753,7 +740,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanRuleReply> getOrSaveRulesForLoadingPlan(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanRuleRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetOrSaveRulesForLoadingPlanMethod(), getCallOptions()), request);
     }
 
@@ -761,7 +748,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply> getLoadingSequences(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadingSequencesMethod(), getCallOptions()), request);
     }
 
@@ -769,7 +756,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsResponse> getUpdateUllageDetails(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetUpdateUllageDetailsMethod(), getCallOptions()), request);
     }
 
@@ -777,7 +764,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply> getBillOfLaddingDetails(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetBillOfLaddingDetailsMethod(), getCallOptions()), request);
     }
 
@@ -785,7 +772,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse> getCargoNominationMaxQuantity(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCargoNominationMaxQuantityMethod(), getCallOptions()), request);
     }
 
@@ -793,7 +780,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataReply> getLoadicatorData(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadicatorDataMethod(), getCallOptions()), request);
     }
 
@@ -801,7 +788,7 @@ public final class LoadingPlanServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply> getLoadableStudyShoreTwo(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadableStudyShoreTwoMethod(), getCallOptions()), request);
     }
   }

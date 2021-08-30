@@ -1,24 +1,11 @@
 package com.cpdss.common.generated;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncUnaryCall;
-import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
-import static io.grpc.stub.ClientCalls.blockingUnaryCall;
-import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /**
  */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.27.1)",
+    value = "by gRPC proto compiler (version 1.36.0)",
     comments = "Source: envoy_writer.proto")
 public final class EnvoyWriterServiceGrpc {
 
@@ -141,28 +128,28 @@ public final class EnvoyWriterServiceGrpc {
      */
     public void getCommunicationServer(com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyWriter.WriterReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetCommunicationServerMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetCommunicationServerMethod(), responseObserver);
     }
 
     /**
      */
     public void statusCheck(com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyWriter.WriterReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getStatusCheckMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getStatusCheckMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
             getGetCommunicationServerMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest,
                 com.cpdss.common.generated.EnvoyWriter.WriterReply>(
                   this, METHODID_GET_COMMUNICATION_SERVER)))
           .addMethod(
             getStatusCheckMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest,
                 com.cpdss.common.generated.EnvoyWriter.WriterReply>(
@@ -189,7 +176,7 @@ public final class EnvoyWriterServiceGrpc {
      */
     public void getCommunicationServer(com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyWriter.WriterReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetCommunicationServerMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -197,7 +184,7 @@ public final class EnvoyWriterServiceGrpc {
      */
     public void statusCheck(com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.EnvoyWriter.WriterReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getStatusCheckMethod(), getCallOptions()), request, responseObserver);
     }
   }
@@ -219,14 +206,14 @@ public final class EnvoyWriterServiceGrpc {
     /**
      */
     public com.cpdss.common.generated.EnvoyWriter.WriterReply getCommunicationServer(com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCommunicationServerMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.EnvoyWriter.WriterReply statusCheck(com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getStatusCheckMethod(), getCallOptions(), request);
     }
   }
@@ -249,7 +236,7 @@ public final class EnvoyWriterServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.EnvoyWriter.WriterReply> getCommunicationServer(
         com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCommunicationServerMethod(), getCallOptions()), request);
     }
 
@@ -257,7 +244,7 @@ public final class EnvoyWriterServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.EnvoyWriter.WriterReply> statusCheck(
         com.cpdss.common.generated.EnvoyWriter.EnvoyWriterRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getStatusCheckMethod(), getCallOptions()), request);
     }
   }
