@@ -118,3 +118,27 @@ message CargoForCow {
   int64 cargoId = 1;
   int64 cargoNominationId = 2;
 }
+
+message DischargeRuleRequest{
+  int64 vesselId = 1;
+  int64 sectionId = 2;
+  repeated RulePlans rulePlan = 3;
+  int64 dischargeInfoId = 4;
+  bool isNoDefaultRule = 5;
+}
+
+message DischargeRuleReply{
+  ResponseStatus responseStatus = 1;
+  repeated RulePlans rulePlan = 2;
+}
+
+message DischargeStudyDataTransferRequest{
+	repeated PortData portData = 1;
+	int64 dischargePatternId = 2;
+	int64 voyageId = 3;
+	int64 vesselId = 4;
+}
+message PortData{
+	int64 portRotationId = 1;
+    int64 synopticTableId = 2;
+}

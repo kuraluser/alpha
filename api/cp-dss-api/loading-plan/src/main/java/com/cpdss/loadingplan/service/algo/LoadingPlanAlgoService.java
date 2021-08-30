@@ -300,22 +300,6 @@ public class LoadingPlanAlgoService {
       deleteLoadingPlan(loadingInfoOpt.get().getId());
       saveLoadingPlan(request, loadingInfoOpt.get());
 
-      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-          loadingInfoStatusRepository.findByIdAndIsActive(
-              LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
-      if (loadingInfoStatusOpt.isEmpty()) {
-        throw new GenericServiceException(
-            "Could not find loading information status with id "
-                + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-
-      loadingInformationRepository.updateLoadingInformationStatus(
-          loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
-      updateLoadingInfoAlgoStatus(
-          loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
-
       if (request.getHasLoadicator()) {
         log.info("Passing Loading Sequence to Loadicator");
         loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
@@ -331,6 +315,22 @@ public class LoadingPlanAlgoService {
         }
         updateLoadingInfoAlgoStatus(
             loadingInfoOpt.get(), request.getProcessId(), loadicatorVerificationStatusOpt.get());
+      } else {
+        Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+            loadingInfoStatusRepository.findByIdAndIsActive(
+                LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
+        if (loadingInfoStatusOpt.isEmpty()) {
+          throw new GenericServiceException(
+              "Could not find loading information status with id "
+                  + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+
+        loadingInformationRepository.updateLoadingInformationStatus(
+            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
+        updateLoadingInfoAlgoStatus(
+            loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
       }
     }
   }

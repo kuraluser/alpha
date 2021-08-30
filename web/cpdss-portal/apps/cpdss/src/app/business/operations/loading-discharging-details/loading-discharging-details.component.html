@@ -26,7 +26,7 @@
 
                                 <p-calendar formControlName="timeOfSunrise" [timeOnly]="true" appendTo="body" inputId="timeOfSunrise"
                                     placeholder="{{'LOADING_DETAILS_SUNRISE_LABEL' | translate}}" hourFormat="24" [readonlyInput]="true"
-                                    [showButtonBar]="false" todayButtonStyleClass="hide" #timeOfSunRiseCalender>
+                                    [showButtonBar]="false" todayButtonStyleClass="hide" #timeOfSunRiseCalender (onClose)="onTimeChange(timeOfSunRiseCalender,'timeOfSunrise')">
                                     <p-footer>
                                         <div class="row">
                                             <div class="col">
@@ -65,7 +65,7 @@
 
                         <p-calendar formControlName="timeOfSunset" [timeOnly]="true" appendTo="body" readonly="true"
                             *ngIf="timeOfSunsetPermission?.edit" inputId="timeOfSunset"
-                            placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}" hourFormat="24" [readonlyInput]="true" #timeOfSunSetCalender>
+                            placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}" hourFormat="24" [readonlyInput]="true" #timeOfSunSetCalender (onClose)="onTimeChange(timeOfSunSetCalender,'timeOfSunset')">
                             <p-footer>
                                 <div class="row">
                                     <div class="col">

@@ -10,6 +10,7 @@ public class GatewayConstants {
   public static final String FAILED = "FAILED";
 
   public static final Long LOADING_RULE_MASTER_ID = 2l;
+  public static final Long DISCHARGING_RULE_MASTER_ID = 3l;
 
   public static final Long LOADING_INFORMATION_RESPONSE_JSON_ID = 10L;
   public static final List<Long> LOADING_VESSEL_PUMPS_VAL =

@@ -332,6 +332,9 @@ export class LoadingDischargingBerthComponent implements OnInit {
           edit: true
         })
         this.berthDetailsForm.enable();
+        this.berthDetailsForm.markAllAsTouched();
+        this.berthDetailsForm.markAsDirty();
+        this.berthDetailsForm.updateValueAndValidity();
       }
       this.berthFormArray.controls.forEach((berth, i) => {
         if (i !== index && berth?.value?.name) {
@@ -341,33 +344,6 @@ export class LoadingDischargingBerthComponent implements OnInit {
         }
       });
     })
-    //Note: - need to remove after after resolving DSS-3618
-    // setTimeout(() => {
-    //   if (!edit && this.berthDetailsForm.enabled) {
-    //     if (this.berthDetailsForm.valid) {
-    //       this.berthFormArray.at(index).patchValue({
-    //         edit: false
-    //       })
-    //       this.berthDetailsForm.disable();
-    //     } else {
-    //       this.berthFormArray.at(index).patchValue({
-    //         edit: true
-    //       })
-    //       this.berthDetailsForm.enable();
-    //       this.berthDetailsForm.markAsTouched();
-    //       this.berthDetailsForm.markAllAsTouched();
-    //       this.berthDetailsForm.markAsDirty();
-    //       this.berthDetailsForm.updateValueAndValidity();
-    //     }
-    //     this.berthFormArray.controls.forEach((berth, i) => {
-    //       if (i !== index && berth?.value?.name) {
-    //         this.berthFormArray.at(i).patchValue({
-    //           edit: false
-    //         })
-    //       }
-    //     });
-    //   }
-    // }, 200);
   }
 
   /**

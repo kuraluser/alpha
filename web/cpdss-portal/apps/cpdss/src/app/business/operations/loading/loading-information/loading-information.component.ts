@@ -27,9 +27,11 @@ export class LoadingInformationComponent implements OnInit {
   @ViewChild('manageSequence') manageSequence;
   @ViewChild('dischargeBerth') dischargeBerth;
   @ViewChild('machineryRef') machineryRef;
+  @ViewChild('dischargeDetails') dischargeDetails;
 
   @Input() voyageId: number;
   @Input() vesselId: number;
+  disableSaveButton: boolean;
   @Input() get cargos(): ICargo[] {
     return this._cargos;
   }
@@ -76,7 +78,8 @@ export class LoadingInformationComponent implements OnInit {
 
 
   async ngOnInit(): Promise<void> {
-    this.initSubscriptions();
+   
+    this.initSubscriptions();   
   }
 
   /**
@@ -89,6 +92,9 @@ export class LoadingInformationComponent implements OnInit {
     this.loadingDischargingTransformationService.unitChange$.subscribe((res) => {
       this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+    })
+    this.loadingDischargingTransformationService.disableSaveButton.subscribe((status) => {
+      this.disableSaveButton = status;
     })
   }
 
@@ -239,27 +245,49 @@ export class LoadingInformationComponent implements OnInit {
   }
 
   /**
-* Method for event topping off sequence update
-*
-* @memberof LoadingInformationComponent
-*/
+  * Method for saving loading information
+  *
+  * @memberof LoadingInformationComponent
+  */
+  saveDetails() {
+    setTimeout(() => {
+      this.saveLoadingInformationData();
+    })
+  }
+
+  /**
+  * Method for event topping off sequence update
+  *
+  * @memberof LoadingInformationComponent
+  */
   onUpdateToppingOff(event) {
     this.loadingInformationPostData.toppingOffSequence = event;
     this.hasUnSavedData = true;
   }
 
   /**
-* Method for event to save loading information data
-*
-* @memberof LoadingInformationComponent
-*/
+  * Method for event to save loading information data
+  *
+  * @memberof LoadingInformationComponent
+  */
   async saveLoadingInformationData() {
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_INVALID_DATA','LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY', 'LOADING_INFORMATION_NO_BERTHS']).toPromise();
-
-    if(this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid) {
+    
+    if(this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid ||
+      this.dischargeDetails.loadingDischargingDetailsForm.invalid) {
       this.manageSequence.loadingDischargingSequenceForm.markAsDirty();
       this.manageSequence.loadingDischargingSequenceForm.markAllAsTouched();
+
+      this.dischargeDetails.loadingDischargingDetailsForm.markAsDirty();
+      this.dischargeDetails.loadingDischargingDetailsForm.markAllAsTouched();
+
+      this.dischargeBerth.berthDetailsForm.markAsDirty();
+      this.dischargeBerth.berthDetailsForm.updateValueAndValidity();
+
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_INVALID_DATA'] });
+      if(document.querySelector('.error-icon') && !this.dischargeDetails.loadingDischargingDetailsForm.invalid) {
+        document.querySelector('.error-icon').scrollIntoView({ behavior: "smooth"});
+      }
       return;
     }
     const isMachineryValid = await this.machineryRef.isMachineryValid();

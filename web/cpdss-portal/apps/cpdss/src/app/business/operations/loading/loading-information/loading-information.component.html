@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col text-right">
-        <button class="btn btn-main mr-10" id="save_loading_information" (click)="saveLoadingInformationData()">
+        <button class="btn btn-main mr-10" id="save_loading_information" id="loadingInfoSaveBtn" (click)="saveDetails()" [disabled]="disableSaveButton">
             {{'LOADING_INFORMATION_SAVE_BUTTON_LABEL' |translate}}
         </button>
     </div>
@@ -12,7 +12,7 @@
                 <h5 class="text-uppercase heading-border">{{'LOADING_INFORMATION_LOADING_DETAILS_HEADER' | translate }}
                 </h5>
                 <cpdss-portal-loading-discharging-details [loadingDischargingDetails]="loadingInformationData?.loadingDetails"
-                    (updateLoadingDischargingDetails)="onUpdateLoadingDetails($event)">
+                    (updateLoadingDischargingDetails)="onUpdateLoadingDetails($event)" #dischargeDetails>
                 </cpdss-portal-loading-discharging-details>
             </div>
         </div>

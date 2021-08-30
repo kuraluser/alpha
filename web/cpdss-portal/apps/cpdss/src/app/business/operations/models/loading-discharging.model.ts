@@ -671,6 +671,7 @@ export interface ILoadedCargoResponse extends ILoadableQuantityCargo {
  */
 export interface ILoadedCargo extends ILoadableQuantityCargo {
   shipFigure?: string;
+  actualQuantity?: string;
   protested?: ValueObject<IProtested>;
   isCommingled?: ValueObject<boolean>;
   isAdd?: boolean;

@@ -1174,7 +1174,7 @@ tr:hover a.btn-secondary{
 }
 
 .p-overlaypanel{
-  background: $tolltip-bg;
+  background: $tooltip-bg;
   border: 1px solid $card-distance;
 }
 .p-overlaypanel.tank-tooltip{
@@ -1485,7 +1485,7 @@ header{
     &:hover{
       color:$active-color!important;
       background:  lighten($login-btn, 10%)!important;
-      
+
     }
     &:focus{
       box-shadow: 0 0 0 2px rgba($login-btn, 0.25);
@@ -1527,4 +1527,9 @@ header{
   .highcharts-axis-title{
     fill: $text-secondary!important;
   }
+}
+
+.highcharts-label-box.highcharts-tooltip-box {
+  fill:rgba($tooltip-bg, 1) !important;
+  stroke: $card-distance !important;
 }

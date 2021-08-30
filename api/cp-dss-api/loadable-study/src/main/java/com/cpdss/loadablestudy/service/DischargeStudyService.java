@@ -7,6 +7,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ERRO_CALL
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_INITIAL_STATUS_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
@@ -20,6 +21,7 @@ import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
+import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
@@ -30,6 +32,9 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.CargoInfos;
 import com.cpdss.common.generated.PortInfo.CargoPortMapping;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
+import com.cpdss.common.generated.discharge_plan.PortData;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest;
@@ -54,6 +59,7 @@ import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
@@ -105,6 +111,11 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private BackLoadingService backLoadingService;
   @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
   @Autowired private LoadablePlanService loadablePlanService;
+  @Autowired private LoadablePatternRepository loadablePatternRepository;
+
+  @GrpcClient("DischargeInformationService")
+  private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
+      dischargePlanServiceBlockingStub;
 
   @Autowired
   private DischargePatternQuantityCargoPortwiseRepository
@@ -1318,7 +1329,18 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     log.info("inside confirmPlan loadable study service");
     ConfirmPlanReply.Builder replyBuilder = ConfirmPlanReply.newBuilder();
     try {
-      loadablePatternService.confirmPlan(request, replyBuilder);
+      Builder reply = loadablePatternService.confirmPlan(request, replyBuilder);
+      if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "failed to confirm",
+            reply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+      }
+      com.cpdss.loadablestudy.entity.LoadablePattern loadablePatternOpt =
+          this.loadablePatternRepository
+              .findByIdAndIsActive(request.getLoadablePatternId(), true)
+              .get();
+      transferDSConfirmedPlanData(loadablePatternOpt.getLoadableStudy());
     } catch (Exception e) {
       log.error("Exception when confirmPlan ", e);
       replyBuilder.setResponseStatus(
@@ -1331,5 +1353,40 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  private void transferDSConfirmedPlanData(LoadableStudy dischargeStudy) {
+    List<LoadableStudyPortRotation> ports =
+        loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            dischargeStudy.getId(), true);
+    DischargeStudyDataTransferRequest.Builder request =
+        DischargeStudyDataTransferRequest.newBuilder();
+    request.setVoyageId(dischargeStudy.getVoyage().getId());
+    request.setVesselId(dischargeStudy.getVesselXId());
+    Optional<com.cpdss.loadablestudy.entity.LoadablePattern> confirmedLoadablePatternOpt =
+        this.loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+            dischargeStudy, CONFIRMED_STATUS_ID, true);
+    if (confirmedLoadablePatternOpt.isPresent()) {
+      request.setDischargePatternId(confirmedLoadablePatternOpt.get().getId());
+    }
+    ports.stream()
+        .forEach(
+            port -> {
+              PortData.Builder portDataBuilder = PortData.newBuilder();
+              portDataBuilder.setPortRotationId(port.getId());
+              Optional<SynopticalTable> synopticalTableOpt =
+                  port.getSynopticalTable().stream()
+                      .filter(
+                          synopticalTable ->
+                              synopticalTable.getIsActive()
+                                  && synopticalTable
+                                      .getOperationType()
+                                      .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL))
+                      .findFirst();
+              if (synopticalTableOpt.isPresent()) {
+                portDataBuilder.setSynopticTableId(synopticalTableOpt.get().getId());
+              }
+            });
+    dischargePlanServiceBlockingStub.dischargePlanSynchronization(request.build());
   }
 }

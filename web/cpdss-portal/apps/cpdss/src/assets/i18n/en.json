@@ -1484,7 +1484,7 @@
   "DISCHARGE_STUDY_COLOR_ALREADY_USED_ERROR": "Color already in use",
   "DISCHARGE_STUDY_ABBREVIATION_ALREADY_USED_ERROR": "Abbreviation already in use",
   "QUANTITY_NOT_EQUAL": "Sum of quantity should be equal to total quantity",
-  "LOADING_DETAILS_SUNRISE_FAILED_COMPARE": "Sunrise time should less than sunset time",
+  "LOADING_DETAILS_SUNRISE_FAILED_COMPARE": "Sunrise time should be less than sunset time",
   "LOADING_DETAILS_SUNSET_FAILED_COMPARE": "Sunset time should be greater than sunrise time",
   "MIN_LOADING_COMPARE": "Should less than maximum loading rate",
   "LOADING_INFORMATION_TRACK_START_AND_END_STAGE_LABEL": "Track start and end stage",
@@ -1653,8 +1653,8 @@
   "SEQUENCE_CHART_TRIM": "TRIM",
   "SEQUENCE_CHART_UKC": "UKC",
   "SEQUENCE_CHART_GM": "GM (M)",
-  "SEQUENCE_CHART_SF": "MAX. SHEARING FORCE (FR.NO./%)",
-  "SEQUENCE_CHART_BM": "MAX. BENDING MOMENT (FR.NO./%)",
+  "SEQUENCE_CHART_SF": "Max. Shearing Force (FR.NO./%)",
+  "SEQUENCE_CHART_BM": "Max. Bending Moment (FR.NO./%)",
   "SEQUENCE_CHART_FULL_WASH": "Full Wash",
   "SEQUENCE_CHART_TOP_WASH": "Top Wash",
   "SEQUENCE_CHART_BOTTOM_WASH": "Bottom Wash",
@@ -1840,6 +1840,26 @@
   "LOADING_INFORMATION_CARGO_MACHINERY_MANIFOLD": "Please select manifold in cargo machinery",
   "DISCHARGE_STUDY_SAVE_ERROR": "Error",
   "DISCHARGE_STUDY_SAVE_NO_DATA_ERROR": "No changed data for save",
+  "GENERATE_LODABLE_PLAN_INFO" : "Info",
+
+  "GENERATE_LODABLE_PLAN_PENDING":"Pending",
+  "GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE":"No Plan Available",
+  "GENERATE_LODABLE_PLAN_CONFIRMED":"Confirmed",
+  "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED":"ALGO Processing Started",
+  "GENERATE_LODABLE_PLAN_PLAN_GENERATED"  :"Plan Generated",
+
+  "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED":"ALGO Processing Completed",
+  "GENERATE_LODABLE_PLAN_ERROR_OCCURED":"Error Occurred",
+  "GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER":"Verification With Loadicator in progress",
+
+  "GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED":"Verification With Loadicator Completed",
+  "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION":"Verification With  ALGO in progress",
+  "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED":"Verification  With ALGO Completed",
+  "LOADING_INFORMATION_VIEW_ERROR":"View Error",
+  "GENERATE_LOADABLE_PLAN_ERROR_OCCURED": "Error",
+  "GENERATE_LOADABLE_PLAN_NO_RESPONSE_ERROR":"Error",
+  "GENERATE_LOADABLE_PLAN_COMPLETE_DONE":"Success",
+  "GENERATE_LOADING_PLAN":"Generate Loading Plan",
   "LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_SUMMERY": "Please add all planned cargos in manage sequence",
   "LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_ERROR":"Error",
   "DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO": "Sequence No.",
@@ -1857,5 +1877,9 @@
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_INFO": "Info",
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_DETAILS": "Loadable study communicated to shore",
   "DISCHARGE_STUDY_PLAN_VIEW_ERROR": "View Error",
-  "DISCHARGE_PLAN_VIEW_NO_PLAN_GENERATED": "Plan is not generated for this Discharge study"
+  "DISCHARGE_PLAN_VIEW_NO_PLAN_GENERATED": "Plan is not generated for this Discharge study",
+  "DISCHARGE_STUDY_INVALID_ERROR": "Invalid",
+  "DISCHARGE_STUDY_DRAFT_MIN_VALUE": "Value must be greater than or equal to 0",
+  "LOADING_PLAN":"LOADING PLAN"
 }
+  

@@ -5,9 +5,7 @@ import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.Common;
-import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
-import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
@@ -19,7 +17,6 @@ import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequ
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
-import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail;
@@ -82,6 +79,9 @@ public class DischargeStudyService {
   @GrpcClient("loadableStudyService")
   private DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceBlockingStub
       dischargeStudyOperationServiceBlockingStub;
+
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   @Autowired LoadableStudyService loadableStudyService;
 
