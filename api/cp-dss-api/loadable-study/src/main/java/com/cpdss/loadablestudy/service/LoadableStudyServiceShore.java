@@ -77,6 +77,7 @@ public class LoadableStudyServiceShore {
 
   public LoadableStudy setLoadablestudyShore(String jsonResult, String messageId)
       throws GenericServiceException {
+    log.info("inside setLoadablestudyShore ");
     LoadableStudy loadableStudyEntity = null;
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         new Gson().fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadableStudy.class);
