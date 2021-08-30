@@ -2,15 +2,10 @@
 package com.cpdss.common.generated;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncUnaryCall;
-import static io.grpc.stub.ClientCalls.blockingUnaryCall;
-import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /** */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.27.1)",
+    value = "by gRPC proto compiler (version 1.36.0)",
     comments = "Source: loadable_study.proto")
 public final class PortInstructionServiceGrpc {
 
@@ -123,7 +118,8 @@ public final class PortInstructionServiceGrpc {
         io.grpc.stub.StreamObserver<
                 com.cpdss.common.generated.loadableStudy.LoadableStudyModels.InstructionReply>
             responseObserver) {
-      asyncUnimplementedUnaryCall(getGetInstructionsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetInstructionsMethod(), responseObserver);
     }
 
     @java.lang.Override
@@ -131,7 +127,7 @@ public final class PortInstructionServiceGrpc {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
               getGetInstructionsMethod(),
-              asyncUnaryCall(
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
                       com.cpdss.common.generated.loadableStudy.LoadableStudyModels.EmptyRequest,
                       com.cpdss
@@ -163,7 +159,7 @@ public final class PortInstructionServiceGrpc {
         io.grpc.stub.StreamObserver<
                 com.cpdss.common.generated.loadableStudy.LoadableStudyModels.InstructionReply>
             responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetInstructionsMethod(), getCallOptions()),
           request,
           responseObserver);
@@ -188,7 +184,8 @@ public final class PortInstructionServiceGrpc {
     public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.InstructionReply
         getInstructions(
             com.cpdss.common.generated.loadableStudy.LoadableStudyModels.EmptyRequest request) {
-      return blockingUnaryCall(getChannel(), getGetInstructionsMethod(), getCallOptions(), request);
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetInstructionsMethod(), getCallOptions(), request);
     }
   }
 
@@ -211,7 +208,7 @@ public final class PortInstructionServiceGrpc {
             com.cpdss.common.generated.loadableStudy.LoadableStudyModels.InstructionReply>
         getInstructions(
             com.cpdss.common.generated.loadableStudy.LoadableStudyModels.EmptyRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetInstructionsMethod(), getCallOptions()), request);
     }
   }

@@ -1485,7 +1485,7 @@ header{
     &:hover{
       color:$active-color!important;
       background:  lighten($login-btn, 10%)!important;
-      
+
     }
     &:focus{
       box-shadow: 0 0 0 2px rgba($login-btn, 0.25);

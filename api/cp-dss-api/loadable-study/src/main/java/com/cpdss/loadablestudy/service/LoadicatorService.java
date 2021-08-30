@@ -94,6 +94,9 @@ public class LoadicatorService {
   @Value("${cpdss.communication.enable}")
   private boolean enableCommunication;
 
+  @Value("${cpdss.build.env}")
+  private String env;
+
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
@@ -962,7 +965,7 @@ public class LoadicatorService {
           this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
           loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
-          if (enableCommunication) {
+          if (enableCommunication && !env.equals("ship")) {
             passResultToCommunication(
                 objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
           }
@@ -998,7 +1001,7 @@ public class LoadicatorService {
       loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
           LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
 
-      if (enableCommunication) {
+      if (enableCommunication && !env.equals("ship")) {
         passResultToCommunication(
             objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
       }

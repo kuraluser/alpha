@@ -2,15 +2,10 @@
 package com.cpdss.common.generated;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncUnaryCall;
-import static io.grpc.stub.ClientCalls.blockingUnaryCall;
-import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /** */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.27.1)",
+    value = "by gRPC proto compiler (version 1.36.0)",
     comments = "Source: cargo_info.proto")
 public final class CargoInfoServiceGrpc {
 
@@ -260,7 +255,8 @@ public final class CargoInfoServiceGrpc {
         com.cpdss.common.generated.CargoInfo.CargoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>
             responseObserver) {
-      asyncUnimplementedUnaryCall(getGetCargoInfoMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetCargoInfoMethod(), responseObserver);
     }
 
     /** */
@@ -268,7 +264,8 @@ public final class CargoInfoServiceGrpc {
         com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>
             responseObserver) {
-      asyncUnimplementedUnaryCall(getGetCargoInfoByPagingMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetCargoInfoByPagingMethod(), responseObserver);
     }
 
     /** */
@@ -276,7 +273,8 @@ public final class CargoInfoServiceGrpc {
         com.cpdss.common.generated.CargoInfo.CargoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoDetailReply>
             responseObserver) {
-      asyncUnimplementedUnaryCall(getGetCargoInfoByIdMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetCargoInfoByIdMethod(), responseObserver);
     }
 
     /** */
@@ -284,7 +282,8 @@ public final class CargoInfoServiceGrpc {
         com.cpdss.common.generated.CargoInfo.CargoListRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>
             responseObserver) {
-      asyncUnimplementedUnaryCall(getGetCargoInfosByCargoIdsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetCargoInfosByCargoIdsMethod(), responseObserver);
     }
 
     @java.lang.Override
@@ -292,28 +291,28 @@ public final class CargoInfoServiceGrpc {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
               getGetCargoInfoMethod(),
-              asyncUnaryCall(
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
                       com.cpdss.common.generated.CargoInfo.CargoRequest,
                       com.cpdss.common.generated.CargoInfo.CargoReply>(
                       this, METHODID_GET_CARGO_INFO)))
           .addMethod(
               getGetCargoInfoByPagingMethod(),
-              asyncUnaryCall(
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
                       com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging,
                       com.cpdss.common.generated.CargoInfo.CargoReply>(
                       this, METHODID_GET_CARGO_INFO_BY_PAGING)))
           .addMethod(
               getGetCargoInfoByIdMethod(),
-              asyncUnaryCall(
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
                       com.cpdss.common.generated.CargoInfo.CargoRequest,
                       com.cpdss.common.generated.CargoInfo.CargoDetailReply>(
                       this, METHODID_GET_CARGO_INFO_BY_ID)))
           .addMethod(
               getGetCargoInfosByCargoIdsMethod(),
-              asyncUnaryCall(
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
                       com.cpdss.common.generated.CargoInfo.CargoListRequest,
                       com.cpdss.common.generated.CargoInfo.CargoReply>(
@@ -339,7 +338,7 @@ public final class CargoInfoServiceGrpc {
         com.cpdss.common.generated.CargoInfo.CargoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>
             responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetCargoInfoMethod(), getCallOptions()),
           request,
           responseObserver);
@@ -350,7 +349,7 @@ public final class CargoInfoServiceGrpc {
         com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>
             responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetCargoInfoByPagingMethod(), getCallOptions()),
           request,
           responseObserver);
@@ -361,7 +360,7 @@ public final class CargoInfoServiceGrpc {
         com.cpdss.common.generated.CargoInfo.CargoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoDetailReply>
             responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetCargoInfoByIdMethod(), getCallOptions()),
           request,
           responseObserver);
@@ -372,7 +371,7 @@ public final class CargoInfoServiceGrpc {
         com.cpdss.common.generated.CargoInfo.CargoListRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoReply>
             responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetCargoInfosByCargoIdsMethod(), getCallOptions()),
           request,
           responseObserver);
@@ -395,27 +394,28 @@ public final class CargoInfoServiceGrpc {
     /** */
     public com.cpdss.common.generated.CargoInfo.CargoReply getCargoInfo(
         com.cpdss.common.generated.CargoInfo.CargoRequest request) {
-      return blockingUnaryCall(getChannel(), getGetCargoInfoMethod(), getCallOptions(), request);
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetCargoInfoMethod(), getCallOptions(), request);
     }
 
     /** */
     public com.cpdss.common.generated.CargoInfo.CargoReply getCargoInfoByPaging(
         com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCargoInfoByPagingMethod(), getCallOptions(), request);
     }
 
     /** */
     public com.cpdss.common.generated.CargoInfo.CargoDetailReply getCargoInfoById(
         com.cpdss.common.generated.CargoInfo.CargoRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCargoInfoByIdMethod(), getCallOptions(), request);
     }
 
     /** */
     public com.cpdss.common.generated.CargoInfo.CargoReply getCargoInfosByCargoIds(
         com.cpdss.common.generated.CargoInfo.CargoListRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCargoInfosByCargoIdsMethod(), getCallOptions(), request);
     }
   }
@@ -437,7 +437,7 @@ public final class CargoInfoServiceGrpc {
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.CargoInfo.CargoReply>
         getCargoInfo(com.cpdss.common.generated.CargoInfo.CargoRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCargoInfoMethod(), getCallOptions()), request);
     }
 
@@ -445,7 +445,7 @@ public final class CargoInfoServiceGrpc {
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.CargoInfo.CargoReply>
         getCargoInfoByPaging(com.cpdss.common.generated.CargoInfo.CargoRequestWithPaging request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCargoInfoByPagingMethod(), getCallOptions()), request);
     }
 
@@ -453,7 +453,7 @@ public final class CargoInfoServiceGrpc {
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.CargoInfo.CargoDetailReply>
         getCargoInfoById(com.cpdss.common.generated.CargoInfo.CargoRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCargoInfoByIdMethod(), getCallOptions()), request);
     }
 
@@ -461,7 +461,7 @@ public final class CargoInfoServiceGrpc {
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.CargoInfo.CargoReply>
         getCargoInfosByCargoIds(com.cpdss.common.generated.CargoInfo.CargoListRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCargoInfosByCargoIdsMethod(), getCallOptions()), request);
     }
   }

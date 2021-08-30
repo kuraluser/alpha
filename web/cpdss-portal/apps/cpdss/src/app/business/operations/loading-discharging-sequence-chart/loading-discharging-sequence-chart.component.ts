@@ -455,7 +455,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
               });
 
               const categoryLabel =
-                `<div class="font-main  text-center pl-5 pr-5"> 
+                `<div class="font-main  text-center pl-5 pr-5">
                 <div class="content-ellipsis">${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(quantity, LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit)} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}</div>
                 </div>`;
 
@@ -490,7 +490,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 });
                 const rate = tempRateArray.join('/');
                 const categoryLabel =
-                  `<div class="font-main  text-center pl-5 pr-5"> 
+                  `<div class="font-main  text-center pl-5 pr-5">
                       <div class="content-ellipsis">${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</div>
                   </div>`;
 
@@ -586,11 +586,19 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         borderWidth: 1,
         borderRadius: 20,
         followPointer: true,
+        useHTML: true,
+        className: 'sequence-chart-tooltip container-fluid',
         formatter: function () {
           let tooltipContent, cargoNames, duration, startingTime, endingTime, quantity, ullage, isCOW = false;
           if (this?.point.options.className === "pi-sort-up") {
             isCOW = true;
-            tooltipContent = `${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_COW_ANGLE']} <br/> 150&deg`;
+            tooltipContent = `
+              <table>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_COW_ANGLE']}</th>
+                  <td>150&deg</td>
+                </tr>
+              </table>`;
           } else {
             cargoNames = this?.point?.abbreviation;
             const min = this.series.xAxis.min;
@@ -599,12 +607,34 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             duration = (this?.point?.end - min) / (1000 * 60 * 60);
             quantity = this?.point?.quantity;
             ullage = this?.point?.ullage;
-            tooltipContent = `<p>${cargoNames}</p><br/>
-                  <p>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_HOURS']} <span>${duration.toFixed(2)}</span></p><br/>
-                  <p>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_STARTING_TIME']} <span>${startingTime.toFixed(2)}</span></p><br/>
-                  <p>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_ENDING_TIME']} <span>${endingTime.toFixed(2)}</span></p><br/>
-                  <p>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_QUANTITY']} <span>${quantity}</span></p><br/>
-                  <p>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_ULLAGE']} <span>${ullage}</span></p>`;
+
+            tooltipContent = `
+              <table>
+                <tr>
+                  <th>${cargoNames}</th>
+                </tr>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_HOURS']}</th>
+                  <td>${duration.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_STARTING_TIME']}</th>
+                  <td>${startingTime.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_ENDING_TIME']}</th>
+                  <td>${endingTime.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_QUANTITY']}</th>
+                  <td>${quantity}</td>
+                </tr>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_ULLAGE']}</th>
+                  <td>${ullage}</td>
+                </tr>
+              </table>`;
+
           }
           return tooltipContent;
         },
@@ -805,13 +835,20 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         borderWidth: 1,
         borderRadius: 20,
         followPointer: true,
+        useHTML: true,
+        className: 'sequence-chart-tooltip container-fluid',
         formatter: function () {
           const pumpName = this?.point?.pumpName,
             seriesName = this?.series?.name,
             rate = this?.point?.rate;
 
-          return `<p>${pumpName}</p><br/>
-                  <p>${seriesName} <span>${rate?.toFixed()}</span></p>`;
+          return `
+            <table>
+              <tr>
+                <th>${pumpName}</th>
+                <td>${seriesName} <span>${rate?.toFixed()}</span></td>
+              </tr>
+            </table>`;
 
         },
       },
@@ -1045,17 +1082,37 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         borderWidth: 1,
         borderRadius: 20,
         followPointer: true,
+        useHTML: true,
+        className: 'sequence-chart-tooltip container-fluid',
         formatter: function () {
           const min = this.series.xAxis.min, startingTime = (this?.point?.start - min) / (1000 * 60 * 60),
             endingTime = (this?.point?.end - min) / (1000 * 60 * 60),
             duration = (this?.point?.end - min) / (1000 * 60 * 60),
             quantity = this?.point?.quantity,
             sounding = this?.point?.sounding,
-            tooltipContent = `<p>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_HOURS']} <span>${duration.toFixed(2)}</span></p><br/>
-                  <p>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_STARTING_TIME']} <span>${startingTime.toFixed(2)}</span></p><br/>
-                  <p>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_ENDING_TIME']} <span>${endingTime.toFixed(2)}</span></p><br/>
-                  <p>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_QUANTITY']} <span>${quantity}</span></p><br/>
-                  <p>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_SOUNDING']} <span>${sounding}</span></p>`;
+            tooltipContent = `
+              <table>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_HOURS']}</th>
+                  <td>${duration.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_STARTING_TIME']}</th>
+                  <td>${startingTime.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_ENDING_TIME']}</th>
+                  <td>${endingTime.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_QUANTITY']}</th>
+                  <td>${quantity}</td>
+                </tr>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_SOUNDING']}</th>
+                  <td>${sounding}</td>
+                </tr>
+              </table>`;
           return tooltipContent;
 
         },
@@ -1259,13 +1316,20 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         borderWidth: 1,
         borderRadius: 20,
         followPointer: true,
+        useHTML: true,
+        className: 'sequence-chart-tooltip container-fluid',
         formatter: function () {
           const pumpName = this?.point?.pumpName,
             seriesName = this?.series?.name,
             rate = this?.point?.rate;
 
-          return `<p>${pumpName}</p><br/>
-                  <p>${seriesName} <span>${rate?.toFixed()}</span></p>`;
+          return `
+            <table>
+              <tr>
+                <th>${pumpName}</th>
+                <td>${seriesName} <span>${rate?.toFixed()}</span></td>
+              </tr>
+            </table>`;
 
         },
       },
@@ -1577,7 +1641,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toFixed(2);
+              return number.toFixed(1);
             }
           },
           tickPositions: this.stageTickPositions,

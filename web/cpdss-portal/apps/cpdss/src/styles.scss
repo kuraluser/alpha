@@ -3007,3 +3007,10 @@ textarea{
   }
 }
 
+.highcharts-axis-labels.highcharts-xaxis-labels.highcharts-grid-axis, .highcharts-axis.highcharts-yaxis.highcharts-grid-axis {
+  z-index: -1 !important;
+}
+
+.sequence-chart-tooltip table {
+  border-spacing: 15px !important;
+}

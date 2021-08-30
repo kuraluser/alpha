@@ -18,6 +18,7 @@ appConfig {
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
+  unitTest = 'y'
   docker {
       imageName = 'cpdss-loadable-study'
       containerName = 'loadable-study-container'

@@ -30,6 +30,7 @@ export class LoadingInformationComponent implements OnInit {
 
   @Input() voyageId: number;
   @Input() vesselId: number;
+  disableSaveButton: boolean;
   @Input() get cargos(): ICargo[] {
     return this._cargos;
   }
@@ -76,7 +77,8 @@ export class LoadingInformationComponent implements OnInit {
 
 
   async ngOnInit(): Promise<void> {
-    this.initSubscriptions();
+   
+    this.initSubscriptions();   
   }
 
   /**
@@ -89,6 +91,9 @@ export class LoadingInformationComponent implements OnInit {
     this.loadingDischargingTransformationService.unitChange$.subscribe((res) => {
       this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+    })
+    this.loadingDischargingTransformationService.disableSaveButton.subscribe((status) => {
+      this.disableSaveButton = status;
     })
   }
 

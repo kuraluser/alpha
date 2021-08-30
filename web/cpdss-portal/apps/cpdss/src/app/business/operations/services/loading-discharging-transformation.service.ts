@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
 import * as moment from 'moment';
-import { Subject } from 'rxjs';
 import { DATATABLE_BUTTON, DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { QUANTITY_UNIT, RATE_UNIT, ValueObject } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
@@ -23,6 +23,7 @@ export class LoadingDischargingTransformationService {
   private _dischargingInformationSource: Subject<boolean> = new Subject();
   private _unitChangeSource: Subject<boolean> = new Subject();
   private _loadingInstructionSource: Subject<boolean> = new Subject();
+  public disableSaveButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _rateUnitChangeSource: Subject<boolean> = new Subject();
   private _tabChangeSource: Subject<OPERATION_TAB> = new Subject();
 
