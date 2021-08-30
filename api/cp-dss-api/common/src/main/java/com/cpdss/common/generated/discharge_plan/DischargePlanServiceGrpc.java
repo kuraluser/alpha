@@ -15,34 +15,34 @@ public final class DischargePlanServiceGrpc {
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest,
-      com.cpdss.common.generated.Common.ResponseStatus> getLoadingPlanSynchronizationMethod;
+      com.cpdss.common.generated.Common.ResponseStatus> getDischargePlanSynchronizationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "LoadingPlanSynchronization",
+      fullMethodName = SERVICE_NAME + '/' + "DischargePlanSynchronization",
       requestType = com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest.class,
       responseType = com.cpdss.common.generated.Common.ResponseStatus.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest,
-      com.cpdss.common.generated.Common.ResponseStatus> getLoadingPlanSynchronizationMethod() {
-    io.grpc.MethodDescriptor<com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest, com.cpdss.common.generated.Common.ResponseStatus> getLoadingPlanSynchronizationMethod;
-    if ((getLoadingPlanSynchronizationMethod = DischargePlanServiceGrpc.getLoadingPlanSynchronizationMethod) == null) {
+      com.cpdss.common.generated.Common.ResponseStatus> getDischargePlanSynchronizationMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest, com.cpdss.common.generated.Common.ResponseStatus> getDischargePlanSynchronizationMethod;
+    if ((getDischargePlanSynchronizationMethod = DischargePlanServiceGrpc.getDischargePlanSynchronizationMethod) == null) {
       synchronized (DischargePlanServiceGrpc.class) {
-        if ((getLoadingPlanSynchronizationMethod = DischargePlanServiceGrpc.getLoadingPlanSynchronizationMethod) == null) {
-          DischargePlanServiceGrpc.getLoadingPlanSynchronizationMethod = getLoadingPlanSynchronizationMethod =
+        if ((getDischargePlanSynchronizationMethod = DischargePlanServiceGrpc.getDischargePlanSynchronizationMethod) == null) {
+          DischargePlanServiceGrpc.getDischargePlanSynchronizationMethod = getDischargePlanSynchronizationMethod =
               io.grpc.MethodDescriptor.<com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest, com.cpdss.common.generated.Common.ResponseStatus>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "LoadingPlanSynchronization"))
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "DischargePlanSynchronization"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()))
-              .setSchemaDescriptor(new DischargePlanServiceMethodDescriptorSupplier("LoadingPlanSynchronization"))
+              .setSchemaDescriptor(new DischargePlanServiceMethodDescriptorSupplier("DischargePlanSynchronization"))
               .build();
         }
       }
     }
-    return getLoadingPlanSynchronizationMethod;
+    return getDischargePlanSynchronizationMethod;
   }
 
   /**
@@ -95,20 +95,20 @@ public final class DischargePlanServiceGrpc {
 
     /**
      */
-    public void loadingPlanSynchronization(com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest request,
+    public void dischargePlanSynchronization(com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getLoadingPlanSynchronizationMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDischargePlanSynchronizationMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
-            getLoadingPlanSynchronizationMethod(),
+            getDischargePlanSynchronizationMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest,
                 com.cpdss.common.generated.Common.ResponseStatus>(
-                  this, METHODID_LOADING_PLAN_SYNCHRONIZATION)))
+                  this, METHODID_DISCHARGE_PLAN_SYNCHRONIZATION)))
           .build();
     }
   }
@@ -129,10 +129,10 @@ public final class DischargePlanServiceGrpc {
 
     /**
      */
-    public void loadingPlanSynchronization(com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest request,
+    public void dischargePlanSynchronization(com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getLoadingPlanSynchronizationMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getDischargePlanSynchronizationMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -152,9 +152,9 @@ public final class DischargePlanServiceGrpc {
 
     /**
      */
-    public com.cpdss.common.generated.Common.ResponseStatus loadingPlanSynchronization(com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest request) {
+    public com.cpdss.common.generated.Common.ResponseStatus dischargePlanSynchronization(com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getLoadingPlanSynchronizationMethod(), getCallOptions(), request);
+          getChannel(), getDischargePlanSynchronizationMethod(), getCallOptions(), request);
     }
   }
 
@@ -174,14 +174,14 @@ public final class DischargePlanServiceGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.Common.ResponseStatus> loadingPlanSynchronization(
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.Common.ResponseStatus> dischargePlanSynchronization(
         com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getLoadingPlanSynchronizationMethod(), getCallOptions()), request);
+          getChannel().newCall(getDischargePlanSynchronizationMethod(), getCallOptions()), request);
     }
   }
 
-  private static final int METHODID_LOADING_PLAN_SYNCHRONIZATION = 0;
+  private static final int METHODID_DISCHARGE_PLAN_SYNCHRONIZATION = 0;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -200,8 +200,8 @@ public final class DischargePlanServiceGrpc {
     @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
-        case METHODID_LOADING_PLAN_SYNCHRONIZATION:
-          serviceImpl.loadingPlanSynchronization((com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest) request,
+        case METHODID_DISCHARGE_PLAN_SYNCHRONIZATION:
+          serviceImpl.dischargePlanSynchronization((com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>) responseObserver);
           break;
         default:
@@ -265,7 +265,7 @@ public final class DischargePlanServiceGrpc {
         if (result == null) {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new DischargePlanServiceFileDescriptorSupplier())
-              .addMethod(getLoadingPlanSynchronizationMethod())
+              .addMethod(getDischargePlanSynchronizationMethod())
               .build();
         }
       }

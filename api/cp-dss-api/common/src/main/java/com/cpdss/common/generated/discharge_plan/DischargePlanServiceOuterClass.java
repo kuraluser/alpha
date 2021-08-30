@@ -30,11 +30,11 @@ public final class DischargePlanServiceOuterClass {
       "on\022\034.DischargeInformationRequest\032\025.Disch" +
       "argeInformation\"\000\022L\n\034getOrSaveRulesForDi" +
       "scharging\022\025.DischargeRuleRequest\032\023.Disch" +
-      "argeRuleReply\"\0002k\n\024DischargePlanService\022" +
-      "S\n\032LoadingPlanSynchronization\022\".Discharg" +
-      "eStudyDataTransferRequest\032\017.ResponseStat" +
-      "us\"\000B-\n)com.cpdss.common.generated.disch" +
-      "arge_planP\001b\006proto3"
+      "argeRuleReply\"\0002m\n\024DischargePlanService\022" +
+      "U\n\034DischargePlanSynchronization\022\".Discha" +
+      "rgeStudyDataTransferRequest\032\017.ResponseSt" +
+      "atus\"\000B-\n)com.cpdss.common.generated.dis" +
+      "charge_planP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
