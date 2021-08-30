@@ -218,6 +218,8 @@ public class LoadablePatternService {
   @Value("${cpdss.communication.enable}")
   private boolean enableCommunication;
 
+  @Value("${cpdss.build.env}")
+  private String env;
   /**
    * @param loadableStudy
    * @throws GenericServiceException
@@ -361,7 +363,7 @@ public class LoadablePatternService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    if (enableCommunication && !request.getHasLodicator()) {
+    if (enableCommunication && !request.getHasLodicator() && !env.equals("ship")) {
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
               request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
@@ -1312,7 +1314,7 @@ public class LoadablePatternService {
           request.getLoadableStudyId(),
           LOADABLE_STUDY_REQUEST,
           objectMapper.writeValueAsString(loadableStudy));
-      if (enableCommunication) {
+      if (enableCommunication && env.equals("ship")) {
         this.voyageService.builVoyageDetails(modelMapper, loadableStudy);
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(
