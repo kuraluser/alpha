@@ -156,7 +156,7 @@ public class CommunicationService {
         voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
         this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
         log.info("processAlgo started");
-        processAlgo(loadableStudyEntity, "cloud");
+        processAlgoFromShore(loadableStudyEntity);
       }
 
     } catch (GenericServiceException e) {
@@ -170,7 +170,7 @@ public class CommunicationService {
     }
   }
 
-  private void processAlgo(LoadableStudy loadableStudyEntity, String env)
+  private void processAlgoFromShore(LoadableStudy loadableStudyEntity)
       throws GenericServiceException, IOException {
     ModelMapper modelMapper = new ModelMapper();
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
@@ -200,7 +200,7 @@ public class CommunicationService {
         loadableStudyEntity,
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID,
         "",
-        env.equals("Ship") ? false : true);
+true);
 
     loadableStudyRepository.updateLoadableStudyStatus(
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());
@@ -259,7 +259,6 @@ public class CommunicationService {
                       && statusReply
                           .getEventDownloadStatus()
                           .equals(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId()))) {
-                    processAlgo(loadableStudy.get(), "ship");
                   } else {
                     loadableStudyCommunicationStatusRepository
                         .updateLoadableStudyCommunicationStatus(
@@ -274,9 +273,8 @@ public class CommunicationService {
                     loadableStudyCommunicationStatusRepository
                         .updateLoadableStudyCommunicationStatus(
                             CommunicationStatus.TIME_OUT.getId(), loadableStudy.get().getId());
-                    processAlgo(loadableStudy.get(), "ship");
                   }
-                } catch (GenericServiceException | IOException e) {
+                } catch (GenericServiceException e) {
                   e.printStackTrace();
                 }
               });
