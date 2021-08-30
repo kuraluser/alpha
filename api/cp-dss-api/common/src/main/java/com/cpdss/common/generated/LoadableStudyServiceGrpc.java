@@ -1,24 +1,11 @@
 package com.cpdss.common.generated;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncUnaryCall;
-import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
-import static io.grpc.stub.ClientCalls.blockingUnaryCall;
-import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /**
  */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.27.1)",
+    value = "by gRPC proto compiler (version 1.36.0)",
     comments = "Source: loadable_study.proto")
 public final class LoadableStudyServiceGrpc {
 
@@ -2218,343 +2205,343 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveVoyage(com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveVoyageMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveVoyageMethod(), responseObserver);
     }
 
     /**
      */
     public void getVoyagesByVessel(com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageListReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetVoyagesByVesselMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetVoyagesByVesselMethod(), responseObserver);
     }
 
     /**
      */
     public void saveLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveLoadableQuantityMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveLoadableQuantityMethod(), responseObserver);
     }
 
     /**
      */
     public void findLoadableStudiesByVesselAndVoyage(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getFindLoadableStudiesByVesselAndVoyageMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getFindLoadableStudiesByVesselAndVoyageMethod(), responseObserver);
     }
 
     /**
      */
     public void saveLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveLoadableStudyMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveLoadableStudyMethod(), responseObserver);
     }
 
     /**
      */
     public void saveCargoNomination(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveCargoNominationMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveCargoNominationMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadableStudyPortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadableStudyPortRotationMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadableStudyPortRotationMethod(), responseObserver);
     }
 
     /**
      */
     public void getCargoNominationById(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetCargoNominationByIdMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetCargoNominationByIdMethod(), responseObserver);
     }
 
     /**
      */
     public void getValveSegregation(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetValveSegregationMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetValveSegregationMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadableQuantityMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadableQuantityMethod(), responseObserver);
     }
 
     /**
      */
     public void saveLoadableStudyPortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationDetail request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveLoadableStudyPortRotationMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveLoadableStudyPortRotationMethod(), responseObserver);
     }
 
     /**
      */
     public void saveLoadableStudyPortRotationList(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveLoadableStudyPortRotationListMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveLoadableStudyPortRotationListMethod(), responseObserver);
     }
 
     /**
      */
     public void deleteCargoNomination(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getDeleteCargoNominationMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteCargoNominationMethod(), responseObserver);
     }
 
     /**
      */
     public void saveDischargingPorts(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveDischargingPortsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveDischargingPortsMethod(), responseObserver);
     }
 
     /**
      */
     public void getPortRotationByLoadableStudyId(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetPortRotationByLoadableStudyIdMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetPortRotationByLoadableStudyIdMethod(), responseObserver);
     }
 
     /**
      */
     public void deleteLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getDeleteLoadableStudyMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteLoadableStudyMethod(), responseObserver);
     }
 
     /**
      */
     public void deletePortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getDeletePortRotationMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeletePortRotationMethod(), responseObserver);
     }
 
     /**
      */
     public void getOnHandQuantity(com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetOnHandQuantityMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetOnHandQuantityMethod(), responseObserver);
     }
 
     /**
      */
     public void saveOnHandQuantity(com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveOnHandQuantityMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveOnHandQuantityMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadablePatternDetails(com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadablePatternDetailsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadablePatternDetailsMethod(), responseObserver);
     }
 
     /**
      */
     public void saveLoadablePatterns(com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveLoadablePatternsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveLoadablePatternsMethod(), responseObserver);
     }
 
     /**
      */
     public void getPurposeOfCommingle(com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetPurposeOfCommingleMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetPurposeOfCommingleMethod(), responseObserver);
     }
 
     /**
      */
     public void getCommingleCargo(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetCommingleCargoMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetCommingleCargoMethod(), responseObserver);
     }
 
     /**
      */
     public void saveCommingleCargo(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveCommingleCargoMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveCommingleCargoMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadablePatternCommingleDetails(com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadablePatternCommingleDetailsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadablePatternCommingleDetailsMethod(), responseObserver);
     }
 
     /**
      */
     public void generateLoadablePatterns(com.cpdss.common.generated.LoadableStudy.AlgoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGenerateLoadablePatternsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGenerateLoadablePatternsMethod(), responseObserver);
     }
 
     /**
      */
     public void validateLoadablePlan(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getValidateLoadablePlanMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getValidateLoadablePlanMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadablePatternList(com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadablePatternListMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadablePatternListMethod(), responseObserver);
     }
 
     /**
      */
     public void getOnBoardQuantity(com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetOnBoardQuantityMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetOnBoardQuantityMethod(), responseObserver);
     }
 
     /**
      */
     public void saveOnBoardQuantity(com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveOnBoardQuantityMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveOnBoardQuantityMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadicatorData(com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadicatorDataMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadicatorDataMethod(), responseObserver);
     }
 
     /**
      */
     public void saveAlgoLoadableStudyStatus(com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoStatusReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveAlgoLoadableStudyStatusMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveAlgoLoadableStudyStatusMethod(), responseObserver);
     }
 
     /**
      */
     public void saveLoadicatorResults(com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveLoadicatorResultsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveLoadicatorResultsMethod(), responseObserver);
     }
 
     /**
      */
     public void savePatternValidateResult(com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSavePatternValidateResultMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSavePatternValidateResultMethod(), responseObserver);
     }
 
     /**
      */
     public void saveSynopticalTable(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveSynopticalTableMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveSynopticalTableMethod(), responseObserver);
     }
 
     /**
      */
     public void getSynopticalTable(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetSynopticalTableMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetSynopticalTableMethod(), responseObserver);
     }
 
     /**
      */
     public void getSynopticalDataByPortId(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetSynopticalDataByPortIdMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetSynopticalDataByPortIdMethod(), responseObserver);
     }
 
     /**
      */
     public void getSynopticalPortDataByPortId(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetSynopticalPortDataByPortIdMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetSynopticalPortDataByPortIdMethod(), responseObserver);
     }
 
     /**
      */
     public void getSynopticDataByLoadableStudyId(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetSynopticDataByLoadableStudyIdMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetSynopticDataByLoadableStudyIdMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadableStudyStatus(com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadableStudyStatusMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadableStudyStatusMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadablePlanDetails(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadablePlanDetailsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadablePlanDetailsMethod(), responseObserver);
     }
 
     /**
      */
     public void updateUllage(com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getUpdateUllageMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getUpdateUllageMethod(), responseObserver);
     }
 
     /**
      */
     public void getUllage(com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetUllageMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetUllageMethod(), responseObserver);
     }
 
     /**
      */
     public void confirmPlanStatus(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getConfirmPlanStatusMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getConfirmPlanStatusMethod(), responseObserver);
     }
 
     /**
      */
     public void confirmPlan(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getConfirmPlanMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getConfirmPlanMethod(), responseObserver);
     }
 
     /**
      */
     public void downloadLoadableStudyAttachment(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getDownloadLoadableStudyAttachmentMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDownloadLoadableStudyAttachmentMethod(), responseObserver);
     }
 
     /**
      */
     public void saveComment(com.cpdss.common.generated.LoadableStudy.SaveCommentRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SaveCommentReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveCommentMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveCommentMethod(), responseObserver);
     }
 
     /**
      */
     public void saveLoadOnTop(com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SaveCommentReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveLoadOnTopMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveLoadOnTopMethod(), responseObserver);
     }
 
     /**
      */
     public void getVoyages(com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageListReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetVoyagesMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetVoyagesMethod(), responseObserver);
     }
 
     /**
@@ -2564,623 +2551,623 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadablePlanReport(com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadablePlanReportMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadablePlanReportMethod(), responseObserver);
     }
 
     /**
      */
     public void getAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetAlgoErrorsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAlgoErrorsMethod(), responseObserver);
     }
 
     /**
      */
     public void saveVoyageStatus(com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveVoyageStatusMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveVoyageStatusMethod(), responseObserver);
     }
 
     /**
      */
     public void getCargoApiTempHistory(com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetCargoApiTempHistoryMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetCargoApiTempHistoryMethod(), responseObserver);
     }
 
     /**
      */
     public void getAllCargoHistory(com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetAllCargoHistoryMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAllCargoHistoryMethod(), responseObserver);
     }
 
     /**
      */
     public void saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.StatusReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveJsonMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveJsonMethod(), responseObserver);
     }
 
     /**
      */
     public void saveAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveAlgoErrorsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveAlgoErrorsMethod(), responseObserver);
     }
 
     /**
      */
     public void fetchAllAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
-      asyncUnimplementedUnaryCall(getFetchAllAlgoErrorsMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getFetchAllAlgoErrorsMethod(), responseObserver);
     }
 
     /**
      */
     public void getCargoHistoryByCargo(com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LatestCargoReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetCargoHistoryByCargoMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetCargoHistoryByCargoMethod(), responseObserver);
     }
 
     /**
      */
     public void getActiveVoyagesByVessel(com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ActiveVoyage> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetActiveVoyagesByVesselMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetActiveVoyagesByVesselMethod(), responseObserver);
     }
 
     /**
      */
     public void getSynopticDataForLoadingPlan(com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetSynopticDataForLoadingPlanMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetSynopticDataForLoadingPlanMethod(), responseObserver);
     }
 
     /**
      */
     public void saveLoadingInfoToSynopticData(com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveLoadingInfoToSynopticDataMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveLoadingInfoToSynopticDataMethod(), responseObserver);
     }
 
     /**
      */
     public void getOrSaveRulesForLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetOrSaveRulesForLoadableStudyMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetOrSaveRulesForLoadableStudyMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadablePatternDetailsJson(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadablePatternDetailsJsonMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadablePatternDetailsJsonMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadablePatternByVoyageAndStatus(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadablePatternByVoyageAndStatusMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadablePatternByVoyageAndStatusMethod(), responseObserver);
     }
 
     /**
      */
     public void getCargoNominationByCargoNominationId(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetCargoNominationByCargoNominationIdMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetCargoNominationByCargoNominationIdMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadableCommingleByPatternId(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadableCommingleByPatternIdMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadableCommingleByPatternIdMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadableStudyShore(com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadableStudyShoreMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadableStudyShoreMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadableStudyPortRotationByPortRotationId(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadableStudyPortRotationByPortRotationIdMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadableStudyPortRotationByPortRotationIdMethod(), responseObserver);
     }
 
     /**
      */
     public void getLoadableStudySimulatorJsonData(com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetLoadableStudySimulatorJsonDataMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetLoadableStudySimulatorJsonDataMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
             getSaveVoyageMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.VoyageRequest,
                 com.cpdss.common.generated.LoadableStudy.VoyageReply>(
                   this, METHODID_SAVE_VOYAGE)))
           .addMethod(
             getGetVoyagesByVesselMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.VoyageRequest,
                 com.cpdss.common.generated.LoadableStudy.VoyageListReply>(
                   this, METHODID_GET_VOYAGES_BY_VESSEL)))
           .addMethod(
             getSaveLoadableQuantityMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply>(
                   this, METHODID_SAVE_LOADABLE_QUANTITY)))
           .addMethod(
             getFindLoadableStudiesByVesselAndVoyageMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>(
                   this, METHODID_FIND_LOADABLE_STUDIES_BY_VESSEL_AND_VOYAGE)))
           .addMethod(
             getSaveLoadableStudyMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail,
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>(
                   this, METHODID_SAVE_LOADABLE_STUDY)))
           .addMethod(
             getSaveCargoNominationMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
                 com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
                   this, METHODID_SAVE_CARGO_NOMINATION)))
           .addMethod(
             getGetLoadableStudyPortRotationMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
                 com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
                   this, METHODID_GET_LOADABLE_STUDY_PORT_ROTATION)))
           .addMethod(
             getGetCargoNominationByIdMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
                 com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
                   this, METHODID_GET_CARGO_NOMINATION_BY_ID)))
           .addMethod(
             getGetValveSegregationMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest,
                 com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>(
                   this, METHODID_GET_VALVE_SEGREGATION)))
           .addMethod(
             getGetLoadableQuantityMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply,
                 com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse>(
                   this, METHODID_GET_LOADABLE_QUANTITY)))
           .addMethod(
             getSaveLoadableStudyPortRotationMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.PortRotationDetail,
                 com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
                   this, METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION)))
           .addMethod(
             getSaveLoadableStudyPortRotationListMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
                 com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
                   this, METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION_LIST)))
           .addMethod(
             getDeleteCargoNominationMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
                 com.cpdss.common.generated.LoadableStudy.CargoNominationReply>(
                   this, METHODID_DELETE_CARGO_NOMINATION)))
           .addMethod(
             getSaveDischargingPortsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
                 com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
                   this, METHODID_SAVE_DISCHARGING_PORTS)))
           .addMethod(
             getGetPortRotationByLoadableStudyIdMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
                 com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
                   this, METHODID_GET_PORT_ROTATION_BY_LOADABLE_STUDY_ID)))
           .addMethod(
             getDeleteLoadableStudyMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyReply>(
                   this, METHODID_DELETE_LOADABLE_STUDY)))
           .addMethod(
             getDeletePortRotationMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
                 com.cpdss.common.generated.LoadableStudy.PortRotationReply>(
                   this, METHODID_DELETE_PORT_ROTATION)))
           .addMethod(
             getGetOnHandQuantityMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest,
                 com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>(
                   this, METHODID_GET_ON_HAND_QUANTITY)))
           .addMethod(
             getSaveOnHandQuantityMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail,
                 com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply>(
                   this, METHODID_SAVE_ON_HAND_QUANTITY)))
           .addMethod(
             getGetLoadablePatternDetailsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>(
                   this, METHODID_GET_LOADABLE_PATTERN_DETAILS)))
           .addMethod(
             getSaveLoadablePatternsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest,
                 com.cpdss.common.generated.LoadableStudy.AlgoReply>(
                   this, METHODID_SAVE_LOADABLE_PATTERNS)))
           .addMethod(
             getGetPurposeOfCommingleMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest,
                 com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>(
                   this, METHODID_GET_PURPOSE_OF_COMMINGLE)))
           .addMethod(
             getGetCommingleCargoMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest,
                 com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>(
                   this, METHODID_GET_COMMINGLE_CARGO)))
           .addMethod(
             getSaveCommingleCargoMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest,
                 com.cpdss.common.generated.LoadableStudy.CommingleCargoReply>(
                   this, METHODID_SAVE_COMMINGLE_CARGO)))
           .addMethod(
             getGetLoadablePatternCommingleDetailsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply>(
                   this, METHODID_GET_LOADABLE_PATTERN_COMMINGLE_DETAILS)))
           .addMethod(
             getGenerateLoadablePatternsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.AlgoRequest,
                 com.cpdss.common.generated.LoadableStudy.AlgoReply>(
                   this, METHODID_GENERATE_LOADABLE_PATTERNS)))
           .addMethod(
             getValidateLoadablePlanMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
                 com.cpdss.common.generated.LoadableStudy.AlgoReply>(
                   this, METHODID_VALIDATE_LOADABLE_PLAN)))
           .addMethod(
             getGetLoadablePatternListMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadablePatternReply>(
                   this, METHODID_GET_LOADABLE_PATTERN_LIST)))
           .addMethod(
             getGetOnBoardQuantityMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest,
                 com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>(
                   this, METHODID_GET_ON_BOARD_QUANTITY)))
           .addMethod(
             getSaveOnBoardQuantityMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail,
                 com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply>(
                   this, METHODID_SAVE_ON_BOARD_QUANTITY)))
           .addMethod(
             getGetLoadicatorDataMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply>(
                   this, METHODID_GET_LOADICATOR_DATA)))
           .addMethod(
             getSaveAlgoLoadableStudyStatusMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
                 com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>(
                   this, METHODID_SAVE_ALGO_LOADABLE_STUDY_STATUS)))
           .addMethod(
             getSaveLoadicatorResultsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest,
                 com.cpdss.common.generated.LoadableStudy.AlgoReply>(
                   this, METHODID_SAVE_LOADICATOR_RESULTS)))
           .addMethod(
             getSavePatternValidateResultMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest,
                 com.cpdss.common.generated.LoadableStudy.AlgoReply>(
                   this, METHODID_SAVE_PATTERN_VALIDATE_RESULT)))
           .addMethod(
             getSaveSynopticalTableMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
                 com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
                   this, METHODID_SAVE_SYNOPTICAL_TABLE)))
           .addMethod(
             getGetSynopticalTableMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
                 com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
                   this, METHODID_GET_SYNOPTICAL_TABLE)))
           .addMethod(
             getGetSynopticalDataByPortIdMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
                 com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
                   this, METHODID_GET_SYNOPTICAL_DATA_BY_PORT_ID)))
           .addMethod(
             getGetSynopticalPortDataByPortIdMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
                 com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
                   this, METHODID_GET_SYNOPTICAL_PORT_DATA_BY_PORT_ID)))
           .addMethod(
             getGetSynopticDataByLoadableStudyIdMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
                 com.cpdss.common.generated.LoadableStudy.SynopticalTableReply>(
                   this, METHODID_GET_SYNOPTIC_DATA_BY_LOADABLE_STUDY_ID)))
           .addMethod(
             getGetLoadableStudyStatusMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply>(
                   this, METHODID_GET_LOADABLE_STUDY_STATUS)))
           .addMethod(
             getGetLoadablePlanDetailsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply>(
                   this, METHODID_GET_LOADABLE_PLAN_DETAILS)))
           .addMethod(
             getUpdateUllageMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
                 com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>(
                   this, METHODID_UPDATE_ULLAGE)))
           .addMethod(
             getGetUllageMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest,
                 com.cpdss.common.generated.LoadableStudy.UpdateUllageReply>(
                   this, METHODID_GET_ULLAGE)))
           .addMethod(
             getConfirmPlanStatusMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
                 com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>(
                   this, METHODID_CONFIRM_PLAN_STATUS)))
           .addMethod(
             getConfirmPlanMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
                 com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>(
                   this, METHODID_CONFIRM_PLAN)))
           .addMethod(
             getDownloadLoadableStudyAttachmentMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply>(
                   this, METHODID_DOWNLOAD_LOADABLE_STUDY_ATTACHMENT)))
           .addMethod(
             getSaveCommentMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.SaveCommentRequest,
                 com.cpdss.common.generated.LoadableStudy.SaveCommentReply>(
                   this, METHODID_SAVE_COMMENT)))
           .addMethod(
             getSaveLoadOnTopMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest,
                 com.cpdss.common.generated.LoadableStudy.SaveCommentReply>(
                   this, METHODID_SAVE_LOAD_ON_TOP)))
           .addMethod(
             getGetVoyagesMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.VoyageRequest,
                 com.cpdss.common.generated.LoadableStudy.VoyageListReply>(
                   this, METHODID_GET_VOYAGES)))
           .addMethod(
             getGetLoadablePlanReportMethod(),
-            asyncServerStreamingCall(
+            io.grpc.stub.ServerCalls.asyncServerStreamingCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>(
                   this, METHODID_GET_LOADABLE_PLAN_REPORT)))
           .addMethod(
             getGetAlgoErrorsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
                 com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>(
                   this, METHODID_GET_ALGO_ERRORS)))
           .addMethod(
             getSaveVoyageStatusMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest,
                 com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply>(
                   this, METHODID_SAVE_VOYAGE_STATUS)))
           .addMethod(
             getGetCargoApiTempHistoryMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest,
                 com.cpdss.common.generated.LoadableStudy.CargoHistoryReply>(
                   this, METHODID_GET_CARGO_API_TEMP_HISTORY)))
           .addMethod(
             getGetAllCargoHistoryMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest,
                 com.cpdss.common.generated.LoadableStudy.CargoHistoryReply>(
                   this, METHODID_GET_ALL_CARGO_HISTORY)))
           .addMethod(
             getSaveJsonMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.JsonRequest,
                 com.cpdss.common.generated.LoadableStudy.StatusReply>(
                   this, METHODID_SAVE_JSON)))
           .addMethod(
             getSaveAlgoErrorsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.AlgoErrors,
                 com.cpdss.common.generated.LoadableStudy.AlgoErrors>(
                   this, METHODID_SAVE_ALGO_ERRORS)))
           .addMethod(
             getFetchAllAlgoErrorsMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.AlgoErrors,
                 com.cpdss.common.generated.LoadableStudy.AlgoErrors>(
                   this, METHODID_FETCH_ALL_ALGO_ERRORS)))
           .addMethod(
             getGetCargoHistoryByCargoMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LatestCargoRequest,
                 com.cpdss.common.generated.LoadableStudy.LatestCargoReply>(
                   this, METHODID_GET_CARGO_HISTORY_BY_CARGO)))
           .addMethod(
             getGetActiveVoyagesByVesselMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.VoyageRequest,
                 com.cpdss.common.generated.LoadableStudy.ActiveVoyage>(
                   this, METHODID_GET_ACTIVE_VOYAGES_BY_VESSEL)))
           .addMethod(
             getGetSynopticDataForLoadingPlanMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>(
                   this, METHODID_GET_SYNOPTIC_DATA_FOR_LOADING_PLAN)))
           .addMethod(
             getSaveLoadingInfoToSynopticDataMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest,
                 com.cpdss.common.generated.Common.ResponseStatus>(
                   this, METHODID_SAVE_LOADING_INFO_TO_SYNOPTIC_DATA)))
           .addMethod(
             getGetOrSaveRulesForLoadableStudyMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadableRuleReply>(
                   this, METHODID_GET_OR_SAVE_RULES_FOR_LOADABLE_STUDY)))
           .addMethod(
             getGetLoadablePatternDetailsJsonMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson>(
                   this, METHODID_GET_LOADABLE_PATTERN_DETAILS_JSON)))
           .addMethod(
             getGetLoadablePatternByVoyageAndStatusMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply>(
                   this, METHODID_GET_LOADABLE_PATTERN_BY_VOYAGE_AND_STATUS)))
           .addMethod(
             getGetCargoNominationByCargoNominationIdMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.CargoNominationRequest,
                 com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply>(
                   this, METHODID_GET_CARGO_NOMINATION_BY_CARGO_NOMINATION_ID)))
           .addMethod(
             getGetLoadableCommingleByPatternIdMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>(
                   this, METHODID_GET_LOADABLE_COMMINGLE_BY_PATTERN_ID)))
           .addMethod(
             getGetLoadableStudyShoreMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest,
                 com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>(
                   this, METHODID_GET_LOADABLE_STUDY_SHORE)))
           .addMethod(
             getGetLoadableStudyPortRotationByPortRotationIdMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.PortRotationRequest,
                 com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>(
                   this, METHODID_GET_LOADABLE_STUDY_PORT_ROTATION_BY_PORT_ROTATION_ID)))
           .addMethod(
             getGetLoadableStudySimulatorJsonDataMethod(),
-            asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
                 com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest,
                 com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply>(
@@ -3207,7 +3194,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveVoyage(com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveVoyageMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3215,7 +3202,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getVoyagesByVessel(com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageListReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetVoyagesByVesselMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3223,7 +3210,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveLoadableQuantityMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3231,7 +3218,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void findLoadableStudiesByVesselAndVoyage(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getFindLoadableStudiesByVesselAndVoyageMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3239,7 +3226,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveLoadableStudyMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3247,7 +3234,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveCargoNomination(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveCargoNominationMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3255,7 +3242,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadableStudyPortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadableStudyPortRotationMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3263,7 +3250,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getCargoNominationById(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetCargoNominationByIdMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3271,7 +3258,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getValveSegregation(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetValveSegregationMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3279,7 +3266,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadableQuantityMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3287,7 +3274,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveLoadableStudyPortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationDetail request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveLoadableStudyPortRotationMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3295,7 +3282,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveLoadableStudyPortRotationList(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveLoadableStudyPortRotationListMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3303,7 +3290,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void deleteCargoNomination(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDeleteCargoNominationMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3311,7 +3298,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveDischargingPorts(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveDischargingPortsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3319,7 +3306,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getPortRotationByLoadableStudyId(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetPortRotationByLoadableStudyIdMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3327,7 +3314,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void deleteLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDeleteLoadableStudyMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3335,7 +3322,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void deletePortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDeletePortRotationMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3343,7 +3330,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getOnHandQuantity(com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetOnHandQuantityMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3351,7 +3338,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveOnHandQuantity(com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveOnHandQuantityMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3359,7 +3346,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadablePatternDetails(com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadablePatternDetailsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3367,7 +3354,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveLoadablePatterns(com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveLoadablePatternsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3375,7 +3362,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getPurposeOfCommingle(com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetPurposeOfCommingleMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3383,7 +3370,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getCommingleCargo(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetCommingleCargoMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3391,7 +3378,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveCommingleCargo(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveCommingleCargoMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3399,7 +3386,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadablePatternCommingleDetails(com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadablePatternCommingleDetailsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3407,7 +3394,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void generateLoadablePatterns(com.cpdss.common.generated.LoadableStudy.AlgoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGenerateLoadablePatternsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3415,7 +3402,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void validateLoadablePlan(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getValidateLoadablePlanMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3423,7 +3410,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadablePatternList(com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadablePatternListMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3431,7 +3418,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getOnBoardQuantity(com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetOnBoardQuantityMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3439,7 +3426,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveOnBoardQuantity(com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveOnBoardQuantityMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3447,7 +3434,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadicatorData(com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadicatorDataMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3455,7 +3442,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveAlgoLoadableStudyStatus(com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoStatusReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveAlgoLoadableStudyStatusMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3463,7 +3450,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveLoadicatorResults(com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveLoadicatorResultsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3471,7 +3458,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void savePatternValidateResult(com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSavePatternValidateResultMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3479,7 +3466,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveSynopticalTable(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveSynopticalTableMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3487,7 +3474,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getSynopticalTable(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetSynopticalTableMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3495,7 +3482,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getSynopticalDataByPortId(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetSynopticalDataByPortIdMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3503,7 +3490,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getSynopticalPortDataByPortId(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetSynopticalPortDataByPortIdMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3511,7 +3498,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getSynopticDataByLoadableStudyId(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetSynopticDataByLoadableStudyIdMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3519,7 +3506,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadableStudyStatus(com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadableStudyStatusMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3527,7 +3514,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadablePlanDetails(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadablePlanDetailsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3535,7 +3522,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void updateUllage(com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getUpdateUllageMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3543,7 +3530,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getUllage(com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetUllageMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3551,7 +3538,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void confirmPlanStatus(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getConfirmPlanStatusMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3559,7 +3546,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void confirmPlan(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getConfirmPlanMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3567,7 +3554,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void downloadLoadableStudyAttachment(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDownloadLoadableStudyAttachmentMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3575,7 +3562,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveComment(com.cpdss.common.generated.LoadableStudy.SaveCommentRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SaveCommentReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveCommentMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3583,7 +3570,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveLoadOnTop(com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SaveCommentReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveLoadOnTopMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3591,7 +3578,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getVoyages(com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageListReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetVoyagesMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3602,7 +3589,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadablePlanReport(com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply> responseObserver) {
-      asyncServerStreamingCall(
+      io.grpc.stub.ClientCalls.asyncServerStreamingCall(
           getChannel().newCall(getGetLoadablePlanReportMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3610,7 +3597,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetAlgoErrorsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3618,7 +3605,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveVoyageStatus(com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveVoyageStatusMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3626,7 +3613,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getCargoApiTempHistory(com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetCargoApiTempHistoryMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3634,7 +3621,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getAllCargoHistory(com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetAllCargoHistoryMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3642,7 +3629,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.StatusReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveJsonMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3650,7 +3637,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveAlgoErrorsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3658,7 +3645,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void fetchAllAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrors> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getFetchAllAlgoErrorsMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3666,7 +3653,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getCargoHistoryByCargo(com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LatestCargoReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetCargoHistoryByCargoMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3674,7 +3661,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getActiveVoyagesByVessel(com.cpdss.common.generated.LoadableStudy.VoyageRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.ActiveVoyage> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetActiveVoyagesByVesselMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3682,7 +3669,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getSynopticDataForLoadingPlan(com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetSynopticDataForLoadingPlanMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3690,7 +3677,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void saveLoadingInfoToSynopticData(com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveLoadingInfoToSynopticDataMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3698,7 +3685,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getOrSaveRulesForLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetOrSaveRulesForLoadableStudyMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3706,7 +3693,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadablePatternDetailsJson(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadablePatternDetailsJsonMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3714,7 +3701,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadablePatternByVoyageAndStatus(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadablePatternByVoyageAndStatusMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3722,7 +3709,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getCargoNominationByCargoNominationId(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetCargoNominationByCargoNominationIdMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3730,7 +3717,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadableCommingleByPatternId(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadableCommingleByPatternIdMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3738,7 +3725,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadableStudyShore(com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadableStudyShoreMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3746,7 +3733,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadableStudyPortRotationByPortRotationId(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadableStudyPortRotationByPortRotationIdMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -3754,7 +3741,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public void getLoadableStudySimulatorJsonData(com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply> responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadableStudySimulatorJsonDataMethod(), getCallOptions()), request, responseObserver);
     }
   }
@@ -3776,343 +3763,343 @@ public final class LoadableStudyServiceGrpc {
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.VoyageReply saveVoyage(com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveVoyageMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.VoyageListReply getVoyagesByVessel(com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetVoyagesByVesselMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply saveLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveLoadableQuantityMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadableStudyReply findLoadableStudiesByVesselAndVoyage(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getFindLoadableStudiesByVesselAndVoyageMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadableStudyReply saveLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveLoadableStudyMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.CargoNominationReply saveCargoNomination(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveCargoNominationMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.PortRotationReply getLoadableStudyPortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadableStudyPortRotationMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.CargoNominationReply getCargoNominationById(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCargoNominationByIdMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.ValveSegregationReply getValveSegregation(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetValveSegregationMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse getLoadableQuantity(com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadableQuantityMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.PortRotationReply saveLoadableStudyPortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationDetail request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveLoadableStudyPortRotationMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.PortRotationReply saveLoadableStudyPortRotationList(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveLoadableStudyPortRotationListMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.CargoNominationReply deleteCargoNomination(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeleteCargoNominationMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.PortRotationReply saveDischargingPorts(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveDischargingPortsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.PortRotationReply getPortRotationByLoadableStudyId(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetPortRotationByLoadableStudyIdMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadableStudyReply deleteLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeleteLoadableStudyMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.PortRotationReply deletePortRotation(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeletePortRotationMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply getOnHandQuantity(com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetOnHandQuantityMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply saveOnHandQuantity(com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveOnHandQuantityMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadablePatternReply getLoadablePatternDetails(com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadablePatternDetailsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.AlgoReply saveLoadablePatterns(com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveLoadablePatternsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply getPurposeOfCommingle(com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetPurposeOfCommingleMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.CommingleCargoReply getCommingleCargo(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCommingleCargoMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.CommingleCargoReply saveCommingleCargo(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveCommingleCargoMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply getLoadablePatternCommingleDetails(com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadablePatternCommingleDetailsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.AlgoReply generateLoadablePatterns(com.cpdss.common.generated.LoadableStudy.AlgoRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGenerateLoadablePatternsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.AlgoReply validateLoadablePlan(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getValidateLoadablePlanMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadablePatternReply getLoadablePatternList(com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadablePatternListMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply getOnBoardQuantity(com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetOnBoardQuantityMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply saveOnBoardQuantity(com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveOnBoardQuantityMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply getLoadicatorData(com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadicatorDataMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.AlgoStatusReply saveAlgoLoadableStudyStatus(com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveAlgoLoadableStudyStatusMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.AlgoReply saveLoadicatorResults(com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveLoadicatorResultsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.AlgoReply savePatternValidateResult(com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSavePatternValidateResultMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply saveSynopticalTable(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveSynopticalTableMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply getSynopticalTable(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetSynopticalTableMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply getSynopticalDataByPortId(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetSynopticalDataByPortIdMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply getSynopticalPortDataByPortId(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetSynopticalPortDataByPortIdMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.SynopticalTableReply getSynopticDataByLoadableStudyId(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetSynopticDataByLoadableStudyIdMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply getLoadableStudyStatus(com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadableStudyStatusMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply getLoadablePlanDetails(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadablePlanDetailsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.UpdateUllageReply updateUllage(com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateUllageMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.UpdateUllageReply getUllage(com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetUllageMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply confirmPlanStatus(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getConfirmPlanStatusMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply confirmPlan(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getConfirmPlanMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply downloadLoadableStudyAttachment(com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDownloadLoadableStudyAttachmentMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.SaveCommentReply saveComment(com.cpdss.common.generated.LoadableStudy.SaveCommentRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveCommentMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.SaveCommentReply saveLoadOnTop(com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveLoadOnTopMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.VoyageListReply getVoyages(com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetVoyagesMethod(), getCallOptions(), request);
     }
 
@@ -4123,140 +4110,140 @@ public final class LoadableStudyServiceGrpc {
      */
     public java.util.Iterator<com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply> getLoadablePlanReport(
         com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request) {
-      return blockingServerStreamingCall(
+      return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
           getChannel(), getGetLoadablePlanReportMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.AlgoErrorReply getAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAlgoErrorsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply saveVoyageStatus(com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveVoyageStatusMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.CargoHistoryReply getCargoApiTempHistory(com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCargoApiTempHistoryMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.CargoHistoryReply getAllCargoHistory(com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAllCargoHistoryMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.StatusReply saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveJsonMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.AlgoErrors saveAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveAlgoErrorsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.AlgoErrors fetchAllAlgoErrors(com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getFetchAllAlgoErrorsMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LatestCargoReply getCargoHistoryByCargo(com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCargoHistoryByCargoMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.ActiveVoyage getActiveVoyagesByVessel(com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetActiveVoyagesByVesselMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse getSynopticDataForLoadingPlan(com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetSynopticDataForLoadingPlanMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.Common.ResponseStatus saveLoadingInfoToSynopticData(com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveLoadingInfoToSynopticDataMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadableRuleReply getOrSaveRulesForLoadableStudy(com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetOrSaveRulesForLoadableStudyMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson getLoadablePatternDetailsJson(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadablePatternDetailsJsonMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply getLoadablePatternByVoyageAndStatus(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadablePatternByVoyageAndStatusMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply getCargoNominationByCargoNominationId(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCargoNominationByCargoNominationIdMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply getLoadableCommingleByPatternId(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadableCommingleByPatternIdMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse getLoadableStudyShore(com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadableStudyShoreMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply getLoadableStudyPortRotationByPortRotationId(com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadableStudyPortRotationByPortRotationIdMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply getLoadableStudySimulatorJsonData(com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadableStudySimulatorJsonDataMethod(), getCallOptions(), request);
     }
   }
@@ -4279,7 +4266,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.VoyageReply> saveVoyage(
         com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveVoyageMethod(), getCallOptions()), request);
     }
 
@@ -4287,7 +4274,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.VoyageListReply> getVoyagesByVessel(
         com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetVoyagesByVesselMethod(), getCallOptions()), request);
     }
 
@@ -4295,7 +4282,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply> saveLoadableQuantity(
         com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveLoadableQuantityMethod(), getCallOptions()), request);
     }
 
@@ -4303,7 +4290,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> findLoadableStudiesByVesselAndVoyage(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getFindLoadableStudiesByVesselAndVoyageMethod(), getCallOptions()), request);
     }
 
@@ -4311,7 +4298,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> saveLoadableStudy(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveLoadableStudyMethod(), getCallOptions()), request);
     }
 
@@ -4319,7 +4306,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> saveCargoNomination(
         com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveCargoNominationMethod(), getCallOptions()), request);
     }
 
@@ -4327,7 +4314,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PortRotationReply> getLoadableStudyPortRotation(
         com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadableStudyPortRotationMethod(), getCallOptions()), request);
     }
 
@@ -4335,7 +4322,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> getCargoNominationById(
         com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCargoNominationByIdMethod(), getCallOptions()), request);
     }
 
@@ -4343,7 +4330,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> getValveSegregation(
         com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetValveSegregationMethod(), getCallOptions()), request);
     }
 
@@ -4351,7 +4338,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse> getLoadableQuantity(
         com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadableQuantityMethod(), getCallOptions()), request);
     }
 
@@ -4359,7 +4346,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PortRotationReply> saveLoadableStudyPortRotation(
         com.cpdss.common.generated.LoadableStudy.PortRotationDetail request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveLoadableStudyPortRotationMethod(), getCallOptions()), request);
     }
 
@@ -4367,7 +4354,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PortRotationReply> saveLoadableStudyPortRotationList(
         com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveLoadableStudyPortRotationListMethod(), getCallOptions()), request);
     }
 
@@ -4375,7 +4362,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CargoNominationReply> deleteCargoNomination(
         com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDeleteCargoNominationMethod(), getCallOptions()), request);
     }
 
@@ -4383,7 +4370,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PortRotationReply> saveDischargingPorts(
         com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveDischargingPortsMethod(), getCallOptions()), request);
     }
 
@@ -4391,7 +4378,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PortRotationReply> getPortRotationByLoadableStudyId(
         com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetPortRotationByLoadableStudyIdMethod(), getCallOptions()), request);
     }
 
@@ -4399,7 +4386,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableStudyReply> deleteLoadableStudy(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDeleteLoadableStudyMethod(), getCallOptions()), request);
     }
 
@@ -4407,7 +4394,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PortRotationReply> deletePortRotation(
         com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDeletePortRotationMethod(), getCallOptions()), request);
     }
 
@@ -4415,7 +4402,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply> getOnHandQuantity(
         com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetOnHandQuantityMethod(), getCallOptions()), request);
     }
 
@@ -4423,7 +4410,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply> saveOnHandQuantity(
         com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveOnHandQuantityMethod(), getCallOptions()), request);
     }
 
@@ -4431,7 +4418,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadablePatternReply> getLoadablePatternDetails(
         com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadablePatternDetailsMethod(), getCallOptions()), request);
     }
 
@@ -4439,7 +4426,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.AlgoReply> saveLoadablePatterns(
         com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveLoadablePatternsMethod(), getCallOptions()), request);
     }
 
@@ -4447,7 +4434,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply> getPurposeOfCommingle(
         com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetPurposeOfCommingleMethod(), getCallOptions()), request);
     }
 
@@ -4455,7 +4442,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> getCommingleCargo(
         com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCommingleCargoMethod(), getCallOptions()), request);
     }
 
@@ -4463,7 +4450,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> saveCommingleCargo(
         com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveCommingleCargoMethod(), getCallOptions()), request);
     }
 
@@ -4471,7 +4458,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsReply> getLoadablePatternCommingleDetails(
         com.cpdss.common.generated.LoadableStudy.LoadablePatternCommingleDetailsRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadablePatternCommingleDetailsMethod(), getCallOptions()), request);
     }
 
@@ -4479,7 +4466,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.AlgoReply> generateLoadablePatterns(
         com.cpdss.common.generated.LoadableStudy.AlgoRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGenerateLoadablePatternsMethod(), getCallOptions()), request);
     }
 
@@ -4487,7 +4474,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.AlgoReply> validateLoadablePlan(
         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getValidateLoadablePlanMethod(), getCallOptions()), request);
     }
 
@@ -4495,7 +4482,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadablePatternReply> getLoadablePatternList(
         com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadablePatternListMethod(), getCallOptions()), request);
     }
 
@@ -4503,7 +4490,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply> getOnBoardQuantity(
         com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetOnBoardQuantityMethod(), getCallOptions()), request);
     }
 
@@ -4511,7 +4498,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply> saveOnBoardQuantity(
         com.cpdss.common.generated.LoadableStudy.OnBoardQuantityDetail request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveOnBoardQuantityMethod(), getCallOptions()), request);
     }
 
@@ -4519,7 +4506,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadicatorDataReply> getLoadicatorData(
         com.cpdss.common.generated.LoadableStudy.LoadicatorDataRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadicatorDataMethod(), getCallOptions()), request);
     }
 
@@ -4527,7 +4514,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.AlgoStatusReply> saveAlgoLoadableStudyStatus(
         com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveAlgoLoadableStudyStatusMethod(), getCallOptions()), request);
     }
 
@@ -4535,7 +4522,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.AlgoReply> saveLoadicatorResults(
         com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveLoadicatorResultsMethod(), getCallOptions()), request);
     }
 
@@ -4543,7 +4530,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.AlgoReply> savePatternValidateResult(
         com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSavePatternValidateResultMethod(), getCallOptions()), request);
     }
 
@@ -4551,7 +4538,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> saveSynopticalTable(
         com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveSynopticalTableMethod(), getCallOptions()), request);
     }
 
@@ -4559,7 +4546,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> getSynopticalTable(
         com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetSynopticalTableMethod(), getCallOptions()), request);
     }
 
@@ -4567,7 +4554,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> getSynopticalDataByPortId(
         com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetSynopticalDataByPortIdMethod(), getCallOptions()), request);
     }
 
@@ -4575,7 +4562,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> getSynopticalPortDataByPortId(
         com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetSynopticalPortDataByPortIdMethod(), getCallOptions()), request);
     }
 
@@ -4583,7 +4570,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> getSynopticDataByLoadableStudyId(
         com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetSynopticDataByLoadableStudyIdMethod(), getCallOptions()), request);
     }
 
@@ -4591,7 +4578,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusReply> getLoadableStudyStatus(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadableStudyStatusMethod(), getCallOptions()), request);
     }
 
@@ -4599,7 +4586,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply> getLoadablePlanDetails(
         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadablePlanDetailsMethod(), getCallOptions()), request);
     }
 
@@ -4607,7 +4594,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply> updateUllage(
         com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getUpdateUllageMethod(), getCallOptions()), request);
     }
 
@@ -4615,7 +4602,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply> getUllage(
         com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetUllageMethod(), getCallOptions()), request);
     }
 
@@ -4623,7 +4610,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> confirmPlanStatus(
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getConfirmPlanStatusMethod(), getCallOptions()), request);
     }
 
@@ -4631,7 +4618,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> confirmPlan(
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getConfirmPlanMethod(), getCallOptions()), request);
     }
 
@@ -4639,7 +4626,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentReply> downloadLoadableStudyAttachment(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyAttachmentRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDownloadLoadableStudyAttachmentMethod(), getCallOptions()), request);
     }
 
@@ -4647,7 +4634,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.SaveCommentReply> saveComment(
         com.cpdss.common.generated.LoadableStudy.SaveCommentRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveCommentMethod(), getCallOptions()), request);
     }
 
@@ -4655,7 +4642,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.SaveCommentReply> saveLoadOnTop(
         com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveLoadOnTopMethod(), getCallOptions()), request);
     }
 
@@ -4663,7 +4650,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.VoyageListReply> getVoyages(
         com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetVoyagesMethod(), getCallOptions()), request);
     }
 
@@ -4671,7 +4658,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply> getAlgoErrors(
         com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetAlgoErrorsMethod(), getCallOptions()), request);
     }
 
@@ -4679,7 +4666,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply> saveVoyageStatus(
         com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveVoyageStatusMethod(), getCallOptions()), request);
     }
 
@@ -4687,7 +4674,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> getCargoApiTempHistory(
         com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCargoApiTempHistoryMethod(), getCallOptions()), request);
     }
 
@@ -4695,7 +4682,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> getAllCargoHistory(
         com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetAllCargoHistoryMethod(), getCallOptions()), request);
     }
 
@@ -4703,7 +4690,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.StatusReply> saveJson(
         com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveJsonMethod(), getCallOptions()), request);
     }
 
@@ -4711,7 +4698,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.AlgoErrors> saveAlgoErrors(
         com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveAlgoErrorsMethod(), getCallOptions()), request);
     }
 
@@ -4719,7 +4706,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.AlgoErrors> fetchAllAlgoErrors(
         com.cpdss.common.generated.LoadableStudy.AlgoErrors request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getFetchAllAlgoErrorsMethod(), getCallOptions()), request);
     }
 
@@ -4727,7 +4714,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LatestCargoReply> getCargoHistoryByCargo(
         com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCargoHistoryByCargoMethod(), getCallOptions()), request);
     }
 
@@ -4735,7 +4722,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.ActiveVoyage> getActiveVoyagesByVessel(
         com.cpdss.common.generated.LoadableStudy.VoyageRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetActiveVoyagesByVesselMethod(), getCallOptions()), request);
     }
 
@@ -4743,7 +4730,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse> getSynopticDataForLoadingPlan(
         com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetSynopticDataForLoadingPlanMethod(), getCallOptions()), request);
     }
 
@@ -4751,7 +4738,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.Common.ResponseStatus> saveLoadingInfoToSynopticData(
         com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveLoadingInfoToSynopticDataMethod(), getCallOptions()), request);
     }
 
@@ -4759,7 +4746,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply> getOrSaveRulesForLoadableStudy(
         com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetOrSaveRulesForLoadableStudyMethod(), getCallOptions()), request);
     }
 
@@ -4767,7 +4754,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson> getLoadablePatternDetailsJson(
         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadablePatternDetailsJsonMethod(), getCallOptions()), request);
     }
 
@@ -4775,7 +4762,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply> getLoadablePatternByVoyageAndStatus(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadablePatternByVoyageAndStatusMethod(), getCallOptions()), request);
     }
 
@@ -4783,7 +4770,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply> getCargoNominationByCargoNominationId(
         com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCargoNominationByCargoNominationIdMethod(), getCallOptions()), request);
     }
 
@@ -4791,7 +4778,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply> getLoadableCommingleByPatternId(
         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadableCommingleByPatternIdMethod(), getCallOptions()), request);
     }
 
@@ -4799,7 +4786,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse> getLoadableStudyShore(
         com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadableStudyShoreMethod(), getCallOptions()), request);
     }
 
@@ -4807,7 +4794,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply> getLoadableStudyPortRotationByPortRotationId(
         com.cpdss.common.generated.LoadableStudy.PortRotationRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadableStudyPortRotationByPortRotationIdMethod(), getCallOptions()), request);
     }
 
@@ -4815,7 +4802,7 @@ public final class LoadableStudyServiceGrpc {
      */
     public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply> getLoadableStudySimulatorJsonData(
         com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadableStudySimulatorJsonDataMethod(), getCallOptions()), request);
     }
   }

@@ -36,5 +36,4 @@ dependencies {
 	compile group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
     compile group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE'
-    testRuntimeOnly 'org.junit.platform:junit-platform-commons:1.7.0'
 }
