@@ -309,9 +309,9 @@ public class VoyageService {
         Optional<List<com.cpdss.loadablestudy.entity.LoadableStudy>> dischargeStudyEntries =
             synopticService.checkDischargeStarted(entity.getVesselXId(), entity.getId());
         if (dischargeStudyEntries.isPresent()) {
+          detailbuilder.setIsDischargeStarted(true);
           confirmedStudy = getConfirmedStudy(entity, PLANNING_TYPE_DISCHARGE);
           if (confirmedStudy.isPresent()) {
-            detailbuilder.setIsDischargeStarted(true);
             detailbuilder.setConfirmedDischargeStudyId(confirmedStudy.get().getId());
             Long noOfDays = this.getNumberOfDays(confirmedStudy.get());
             Optional.ofNullable(noOfDays).ifPresent(item -> detailbuilder.setNoOfDays(item));

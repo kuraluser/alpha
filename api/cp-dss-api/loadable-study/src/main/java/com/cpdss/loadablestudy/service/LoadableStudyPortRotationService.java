@@ -179,14 +179,14 @@ public class LoadableStudyPortRotationService {
       Optional<List<LoadableStudy>> dischargeStudyEntries =
           synopticService.checkDischargeStarted(request.getVesselId(), request.getVoyageId());
       if (dischargeStudyEntries.isPresent()
-          && studyOpt.get().getConfirmedLoadableStudyId() != null) {
+          && studyOpt.get().getConfirmedLoadableStudyId() != null
+          && studyOpt.get().getLoadableStudyStatus().getName().equals(STATUS_CONFIRMED)) {
         // Fetching respective LS of DS
         Optional<LoadableStudy> loadableStudyOpt =
             this.loadableStudyRepository.findById(studyOpt.get().getConfirmedLoadableStudyId());
         entityList = getPortRotationList(loadableStudyOpt.get(), true, DISCHARGE_PORT);
         // Removing first discharge port
-        entityList.removeIf(
-            item -> !(item.getOperation().getId().equals(DISCHARGING_OPERATION_ID)));
+        entityList.removeIf(item -> item.getOperation().getId().equals(DISCHARGING_OPERATION_ID));
         // Appending all DS ports
         entityList.addAll(getPortRotationList(studyOpt.get(), true, DISCHARGE_PORT));
       } else {
