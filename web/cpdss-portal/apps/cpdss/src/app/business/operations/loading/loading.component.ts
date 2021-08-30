@@ -46,6 +46,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   cargos: ICargo[]
   loadingInstructionComplete: boolean;
   loadingSequenceComplete: boolean;
+  loadingPlanComplete:boolean;
   OPERATIONS = OPERATIONS;
   errorMessage: IAlgoError[];
   disableGenerateLoadableButton: boolean = true;
@@ -184,7 +185,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     if (event?.data?.errorCode === '210') {
       this.globalErrorHandler.sessionOutMessage();
     }
-    this.loadingSequenceComplete = (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED)
+    this.loadingSequenceComplete = this.loadingPlanComplete = (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED)
     if (event?.data.statusId === OPERATIONS_PLAN_STATUS.ERROR_OCCURED) {
       this.setButtonStatus();
       this.disableViewErrorButton = false;
@@ -251,6 +252,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   setButtonStatus() {
     this.disableGenerateLoadableButton = false;
     this.processing = false;
+    this.loadingSequenceComplete =true;    
+    this.loadingPlanComplete = true;
     this.loadingDischargingTransformationService.disableSaveButton.next(false);
   }
   
@@ -263,6 +266,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   setButtonStatusInProcessing() {
     this.disableGenerateLoadableButton = true;
     this.processing = true;
+    this.loadingSequenceComplete =false;    
+    this.loadingPlanComplete = false;
   }
   /**
    * Method to call on generate loading plan
