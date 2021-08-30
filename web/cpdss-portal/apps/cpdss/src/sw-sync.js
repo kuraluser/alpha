@@ -565,11 +565,8 @@
         switch (syncView?.loadingInfoStatusId) {
           case 1:
             sync.type = "pending";
-            clearInterval(timer);
-            break;
           case 2:
             sync.type = "confirmed"
-            clearInterval(timer);
             break;
           case 3:
             sync.type = "algo-processing-started";
@@ -591,11 +588,9 @@
             break;
           case 8:
             sync.type = "verification-with-loadicator"
-            clearInterval(timer);
             break;
           case 9:
             sync.type = "verification-with-loadicator-completed";
-            clearInterval(timer);
             break;
           case 10:
             sync.type = "loadicator-verification-with-algo";
