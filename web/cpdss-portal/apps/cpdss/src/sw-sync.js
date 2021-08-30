@@ -499,6 +499,7 @@
 
   const syncStore = {}
   self.addEventListener('message', event => {
+    
     if (event.data.type === 'loadable-pattern-status') {
       // get a unique id to save the data
       const id = event.data.data.loadableStudyId;
@@ -514,6 +515,11 @@
       syncStore[id] = event.data;
       self.registration.sync.register(id);
     }
+    else if (event.data.type === 'loading-plan-status') {
+      const id = event.data.data.processId;
+      syncStore[id] = event.data;
+      self.registration.sync.register(id);
+    }
   })
 
 
@@ -525,7 +531,87 @@
     } else if (syncStore[event.tag].type === 'discharge-study-pattern-status') {
       event.waitUntil(checkDischargeStudyStatus(syncStore[event.tag].data));
     }
+    else if (syncStore[event.tag].type === 'loading-plan-status') {      
+      
+      event.waitUntil(checkLoadingPlanStatus(syncStore[event.tag].data));
+    }
   });
+
+  /**
+   * Method to set loading plan status
+   * @param {*} data 
+   */
+
+  async function checkLoadingPlanStatus(data) {  
+    const timer = setInterval(async () => {
+      var headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + await getToken()
+      }
+      const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/loading-info/${data?.loadingInfoId}/algo-status`, {
+        method: 'POST',
+        body: JSON.stringify({ processId: data?.processId}),
+        headers: headers
+      });
+      const syncView = await syncResponse.json();
+      const refreshedToken = syncResponse.headers.get('token');
+      const sync = {};
+      sync.refreshedToken = refreshedToken;
+      sync.pattern = data;
+      if (syncView?.responseStatus?.status==="SUCCESS") {
+        sync.status = syncView?.responseStatus?.status;
+        sync.statusId = syncView?.loadingInfoStatusId;
+        switch (syncView?.loadingInfoStatusId) {
+          case 1:
+            sync.type = "pending";
+            clearInterval(timer);
+            break;
+          case 2:
+            sync.type = "confirmed"
+            clearInterval(timer);
+            break;
+          case 3:
+            sync.type = "algo-processing-started";
+            break;
+          case 4:
+            sync.type = "algo-rocessing-completed"
+            break;
+          case 5:
+            sync.type = "plan-generated";
+            clearInterval(timer);
+           break;
+          case 6:
+            sync.type = "no-plan-available"
+            clearInterval(timer);
+            break;
+          case 7:
+            sync.type = "error-occurred";
+            clearInterval(timer);
+            break;
+          case 8:
+            sync.type = "verification-with-loadicator"
+            clearInterval(timer);
+            break;
+          case 9:
+            sync.type = "verification-with-loadicator-completed";
+            clearInterval(timer);
+            break;
+          case 10:
+            sync.type = "loadicator-verification-with-algo";
+            break;
+
+          case 11:
+            sync.type = "loadicator-verification-with-algo-completed"
+            break;
+        }
+        notifyClients(sync)
+    
+      }
+     
+    }, 3500);
+  }
+
 
   async function checkSaveAndValidateStatus(data) {
     let currentStatus;

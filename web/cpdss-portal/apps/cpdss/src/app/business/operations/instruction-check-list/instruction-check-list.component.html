@@ -55,9 +55,9 @@
                                     </cpdss-portal-validation-error>
                             </div>
                             <div>
-                                <button *ngIf="rowNode.node.data.editable" (click)="saveData(rowNode)"
-                                    class="btn-main btn mr-10">{{ 'SAVE' | translate}}</button>
-                                <button *ngIf="rowNode.node.data.editable" (click)="cancel(rowNode)"
+                                <button *ngIf="rowNode.node.data.editable" id="saveRowBtn" (click)="saveData(rowNode)"
+                                    class="btn-main btn mr-10"  [disabled]="disableSaveButton">{{ 'SAVE' | translate}}</button>
+                                <button *ngIf="rowNode.node.data.editable" id="cancelBtn" (click)="cancel(rowNode)"
                                     class="btn-main btn mr-15">{{'CANCEL' | translate}}</button>
                             </div>
                         </div>
@@ -69,6 +69,7 @@
 </div>
 <div class="row" *ngIf="instructionListData?.length">
     <div class="col text-right pt-10">
-        <button (click)="saveAll()" class="btn btn-main mr-15">{{ 'SAVE' | translate}}</button>
+        <button (click)="saveAll()" id="btnSave" class="btn btn-main mr-15" [disabled]="disableSaveButton">{{ 'SAVE' |
+            translate}}</button>
     </div>
 </div>
