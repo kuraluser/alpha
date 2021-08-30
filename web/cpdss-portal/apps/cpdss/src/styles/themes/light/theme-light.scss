@@ -1528,3 +1528,8 @@ header{
     fill: $text-secondary!important;
   }
 }
+
+.highcharts-label-box.highcharts-tooltip-box {
+  fill:rgba($tooltip-bg, 1) !important;
+  stroke: $card-distance !important;
+}
