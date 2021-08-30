@@ -1012,12 +1012,24 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 ballastDetails.setId(portWiseBallastDetail.getId());
                 ballastDetails.setLoadablePatternId(portWiseBallastDetail.getLoadablePatternId());
                 ballastDetails.setTankId(portWiseBallastDetail.getTankId());
-                ballastDetails.setTemperature(!portWiseBallastDetail.getTemperature().isEmpty() ? new BigDecimal(portWiseBallastDetail.getTemperature()) : null);
-                ballastDetails.setQuantity(!portWiseBallastDetail.getQuantity().isEmpty() ? new BigDecimal(portWiseBallastDetail.getQuantity()) : null);
+                ballastDetails.setTemperature(
+                    !portWiseBallastDetail.getTemperature().isEmpty()
+                        ? new BigDecimal(portWiseBallastDetail.getTemperature())
+                        : null);
+                ballastDetails.setQuantity(
+                    !portWiseBallastDetail.getQuantity().isEmpty()
+                        ? new BigDecimal(portWiseBallastDetail.getQuantity())
+                        : null);
                 ballastDetails.setArrivalDeparture(portWiseBallastDetail.getArrivalDeparture());
                 ballastDetails.setActualPlanned(portWiseBallastDetail.getActualPlanned());
-                ballastDetails.setSounding(!portWiseBallastDetail.getSounding().isEmpty() ? new BigDecimal(portWiseBallastDetail.getSounding()) : null);
-                ballastDetails.setSg(!portWiseBallastDetail.getSg().isEmpty() ? new BigDecimal(portWiseBallastDetail.getSg()) : null);
+                ballastDetails.setSounding(
+                    !portWiseBallastDetail.getSounding().isEmpty()
+                        ? new BigDecimal(portWiseBallastDetail.getSounding())
+                        : null);
+                ballastDetails.setSg(
+                    !portWiseBallastDetail.getSg().isEmpty()
+                        ? new BigDecimal(portWiseBallastDetail.getSg())
+                        : null);
 
                 Optional<VesselInfo.VesselTankDetail> tankDetail =
                     sortedTankList.stream()
