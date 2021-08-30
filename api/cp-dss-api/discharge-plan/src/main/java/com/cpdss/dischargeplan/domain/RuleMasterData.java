@@ -1,7 +1,8 @@
 /* Licensed at AlphaOri Technologies */
-package com.cpdss.vesselinfo.domain;
+package com.cpdss.dischargeplan.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Enum value for type value
@@ -11,8 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 public enum RuleMasterData {
-  CargoTankOne("only", "tank can be filled with commingled cargo"),
-  CargoTankTwo("Commence loading only in", "tanks");
+  CargoTank("only", "tank can be filled with commingled cargo");
 
   private String prefix;
   private String suffix;

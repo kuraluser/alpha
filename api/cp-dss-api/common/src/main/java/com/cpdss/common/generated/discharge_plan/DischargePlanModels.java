@@ -74,6 +74,16 @@ public final class DischargePlanModels {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_CargoForCow_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_DischargeRuleRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargeRuleRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_DischargeRuleReply_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargeRuleReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -139,8 +149,14 @@ public final class DischargePlanModels {
       "\t.COW_TYPE\022!\n\013cargoForCow\030\002 \001(\0132\014.CargoF" +
       "orCow\022\017\n\007tankIds\030\003 \003(\003\"9\n\013CargoForCow\022\017\n" +
       "\007cargoId\030\001 \001(\003\022\031\n\021cargoNominationId\030\002 \001(" +
-      "\003B-\n)com.cpdss.common.generated.discharg" +
-      "e_planP\001b\006proto3"
+      "\003\"\213\001\n\024DischargeRuleRequest\022\020\n\010vesselId\030\001" +
+      " \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePlan\030\003 \003(" +
+      "\0132\n.RulePlans\022\027\n\017dischargeInfoId\030\004 \001(\003\022\027" +
+      "\n\017isNoDefaultRule\030\005 \001(\010\"[\n\022DischargeRule" +
+      "Reply\022\'\n\016responseStatus\030\001 \001(\0132\017.Response" +
+      "Status\022\034\n\010rulePlan\030\002 \003(\0132\n.RulePlansB-\n)" +
+      "com.cpdss.common.generated.discharge_pla" +
+      "nP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -220,6 +236,18 @@ public final class DischargePlanModels {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_CargoForCow_descriptor,
         new java.lang.String[] { "CargoId", "CargoNominationId", });
+    internal_static_DischargeRuleRequest_descriptor =
+      getDescriptor().getMessageTypes().get(12);
+    internal_static_DischargeRuleRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_DischargeRuleRequest_descriptor,
+        new java.lang.String[] { "VesselId", "SectionId", "RulePlan", "DischargeInfoId", "IsNoDefaultRule", });
+    internal_static_DischargeRuleReply_descriptor =
+      getDescriptor().getMessageTypes().get(13);
+    internal_static_DischargeRuleReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_DischargeRuleReply_descriptor,
+        new java.lang.String[] { "ResponseStatus", "RulePlan", });
     com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor();
   }
