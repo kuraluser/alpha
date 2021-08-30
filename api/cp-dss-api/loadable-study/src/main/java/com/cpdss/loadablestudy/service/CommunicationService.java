@@ -71,9 +71,12 @@ public class CommunicationService {
   public void getDataFromCommInShoreSide(
       Map<String, String> taskReqParams, EnumSet<MessageTypes> shore)
       throws GenericServiceException {
+    log.info("inside getDataFromCommInShoreSide ");
     for (MessageTypes messageType : shore) {
       try {
+        log.info("inside getDataFromCommInShoreSide messageType "+messageType.getMessageType());
         if (messageType.getMessageType().equals("LoadableStudy")) {
+          log.info("inside getDataFromCommInShoreSide messageType ");
           EnvoyReader.EnvoyReaderResultReply erReply =
               getResultFromEnvoyReaderShore(taskReqParams, messageType);
           if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
@@ -82,8 +85,10 @@ public class CommunicationService {
                 erReply.getResponseStatus().getCode(),
                 HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
           }
-          if (erReply != null && !erReply.getPatternResultJson().isEmpty())
+          if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
+            log.info("LoadableStudy received at shore ");
             saveLoadableStudyShore(erReply);
+          }
         } /*else if (messageType.getMessageType().equals("ValidatePlan")) {
             saveValidatePlanRequestShore(erReply);
           }*/
@@ -150,8 +155,8 @@ public class CommunicationService {
       if (loadableStudyEntity != null) {
         voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
         this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
-
-        processAlgoFromShore(loadableStudyEntity);
+        log.info("processAlgo started");
+        processAlgo(loadableStudyEntity, "cloud");
       }
 
     } catch (GenericServiceException e) {
@@ -165,7 +170,7 @@ public class CommunicationService {
     }
   }
 
-  private void processAlgoFromShore(LoadableStudy loadableStudyEntity)
+  private void processAlgo(LoadableStudy loadableStudyEntity, String env)
       throws GenericServiceException, IOException {
     ModelMapper modelMapper = new ModelMapper();
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
@@ -195,7 +200,7 @@ public class CommunicationService {
         loadableStudyEntity,
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID,
         "",
-        true);
+        env.equals("Ship") ? false : true);
 
     loadableStudyRepository.updateLoadableStudyStatus(
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());
@@ -203,6 +208,7 @@ public class CommunicationService {
 
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore(
       Map<String, String> taskReqParams, MessageTypes messageType) {
+    log.info("inside getResultFromEnvoyReaderShore ");
     EnvoyReader.EnvoyReaderResultRequest.Builder request =
         EnvoyReader.EnvoyReaderResultRequest.newBuilder();
     request.setMessageType(messageType.getMessageType());
@@ -253,6 +259,7 @@ public class CommunicationService {
                       && statusReply
                           .getEventDownloadStatus()
                           .equals(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId()))) {
+                    processAlgo(loadableStudy.get(), "ship");
                   } else {
                     loadableStudyCommunicationStatusRepository
                         .updateLoadableStudyCommunicationStatus(
@@ -263,11 +270,13 @@ public class CommunicationService {
                           .getTime();
                   long end = start + timeLimit * 1000; // 60 seconds * 1000 ms/sec
                   if (System.currentTimeMillis() > end) {
+
                     loadableStudyCommunicationStatusRepository
                         .updateLoadableStudyCommunicationStatus(
                             CommunicationStatus.TIME_OUT.getId(), loadableStudy.get().getId());
+                    processAlgo(loadableStudy.get(), "ship");
                   }
-                } catch (GenericServiceException e) {
+                } catch (GenericServiceException | IOException e) {
                   e.printStackTrace();
                 }
               });
