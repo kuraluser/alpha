@@ -570,7 +570,7 @@ public class DischargePlanController {
    * @throws CommonRestException
    */
   @PostMapping(
-      value = "/vessels/{vesselId}/discharge-info/{dischargingInfoId}",
+      value = "/vessels/{vesselId}/discharge-info-rule/{dischargingInfoId}",
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE)
   public RuleResponse saveRulesForDischarging(
@@ -610,7 +610,7 @@ public class DischargePlanController {
    * @throws CommonRestException
    */
   @GetMapping(
-      value = "/vessels/{vesselId}/discharge-info/{dischargingInfoId}",
+      value = "/vessels/{vesselId}/discharge-info-rule/{dischargingInfoId}",
       produces = MediaType.APPLICATION_JSON_VALUE)
   public RuleResponse getRulesForDischarging(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
