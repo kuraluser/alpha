@@ -39,12 +39,14 @@ public interface PortLoadingPlanBallastDetailsRepository
   @Modifying
   @Query(
       "Update PortLoadingPlanBallastDetails set quantity = ?1, sounding = ?2, quantityM3 = ?3"
-          + " where tankXId = ?4 and isActive = ?5 and isActive = ?6")
+          + " where tankXId = ?4 and isActive = ?5 and isActive = ?6 and loading_information_xid =?7 and arrival_departutre =?8")
   public void updateLoadingPlanBallastDetailsRepository(
       @Param("quantity") BigDecimal quantity,
       @Param("sounding") BigDecimal sounding,
       @Param("quantity_m3") BigDecimal quantityM3,
       @Param("tank_xid") Long tankXId,
       @Param("is_active") Boolean isActive,
-      @Param("port_xid") Long portXId);
+      @Param("port_xid") Long portXId,
+      @Param("loading_information_xid") Long loadingId,
+      @Param("arrival_departutre") Long arrivalDepartutre);
 }
