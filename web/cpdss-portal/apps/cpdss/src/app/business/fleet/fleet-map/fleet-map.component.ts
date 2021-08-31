@@ -76,12 +76,14 @@ export class FleetMapComponent implements OnInit {
     this.ngxSpinnerService.show();
     const vesselDetailsResponse: IFleetVesselResponse = await this.fleetApiService.getVesselDaetails().toPromise();
     if (vesselDetailsResponse.responseStatus.status === '200') {
-      this.vessels = vesselDetailsResponse.shoreList;
-      this.vessels.forEach(vessel => {
-        return vessel.voyagePorts && this.fleetTansformationService.mapIconsOnVoyagePort(vessel.voyagePorts);
-      });
-      await this.initMap(this.vessels[0]?.id);
-      await this.initPortPopupOnMap();
+      this.vessels = vesselDetailsResponse.shoreList.length ? vesselDetailsResponse.shoreList : null;
+      if (this.vessels) {
+        this.vessels.forEach(vessel => {
+          return vessel.voyagePorts && this.fleetTansformationService.mapIconsOnVoyagePort(vessel.voyagePorts);
+        });
+        await this.initMap(this.vessels[0]?.id);
+        await this.initPortPopupOnMap();
+      }
       this.ngxSpinnerService.hide();
     }
   }

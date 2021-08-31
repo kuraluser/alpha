@@ -3,7 +3,6 @@ import { Routes } from '@angular/router';
 export class BusinessRoutingCommonConfig {
     static getRoutesForEnvironment(): Routes {
         return [
-            { path: '', redirectTo: 'voyage-status', pathMatch: 'full' },
             {
                 path: 'voyage-status',
                 loadChildren: () => import('../../voyage-status/voyage-status.module').then(m => m.VoyageStatusModule)

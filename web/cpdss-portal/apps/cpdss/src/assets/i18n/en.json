@@ -1902,6 +1902,7 @@
   "DISCHARGE_PLAN_VIEW_NO_PLAN_GENERATED": "Plan is not generated for this Discharge study",
   "DISCHARGE_STUDY_INVALID_ERROR": "Invalid",
   "DISCHARGE_STUDY_DRAFT_MIN_VALUE": "Value must be greater than or equal to 0",
-  "LOADING_PLAN":"LOADING PLAN"
+  "LOADING_PLAN":"LOADING PLAN",
+  "FILES": "Files"
 }
   
