@@ -47,5 +47,6 @@ public interface PortLoadingPlanBallastTempDetailsRepository
           @Param("tank_xid") Long tankXId,
           @Param("is_active") Boolean isActive,
           @Param("port_xid") Long portXId,
-          @Param("loading_information_xid") Long loading_information_xid,
-          @Param("arrival_departutre") Long arrival
+          @Param("loading_information_xid") Long loadingId,
+          @Param("arrival_departutre") Long arrivalDepartutre);
+}
