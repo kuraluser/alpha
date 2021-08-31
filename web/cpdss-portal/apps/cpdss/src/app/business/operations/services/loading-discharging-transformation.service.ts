@@ -26,6 +26,9 @@ export class LoadingDischargingTransformationService {
   public disableSaveButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _rateUnitChangeSource: Subject<boolean> = new Subject();
   private _tabChangeSource: Subject<OPERATION_TAB> = new Subject();
+  private _validateUllageData: Subject<any> = new Subject();
+  private _setUllageBtnStatus: Subject<any> = new Subject();
+  private _showUllageErrorPopup: Subject<boolean> = new Subject();
 
   loadingInformationValidity$ = this._loadingInformationSource.asObservable();
   dischargingInformationValidity$ = this._dischargingInformationSource.asObservable();
@@ -33,6 +36,9 @@ export class LoadingDischargingTransformationService {
   loadingInstructionValidity$ = this._loadingInstructionSource.asObservable();
   rateUnitChange$ = this._rateUnitChangeSource.asObservable();
   tabChange$ = this._tabChangeSource.asObservable();
+  validateUllageData$ = this._validateUllageData.asObservable();
+  setUllageBtnStatus$ = this._setUllageBtnStatus.asObservable();
+  showUllageErrorPopup$ = this._showUllageErrorPopup.asObservable(); 
 
   constructor(
     private quantityPipe: QuantityPipe,
@@ -918,5 +924,32 @@ export class LoadingDischargingTransformationService {
   convertTimeStringToMinutes(time: string) {
     const timeArr = time.split(':');
     return Number(timeArr[0]) * 60 + Number(timeArr[1]);
+  }
+
+  /**
+   * Method for validate ullage
+   *
+   * @memberof LoadingDischargingTransformationService
+   */
+  validateUllage(data){
+    this._validateUllageData.next(data);
+  }
+
+  /**
+   * Method for updating button status
+   *
+   * @memberof LoadingDischargingTransformationService
+   */
+  setUllageBtnStatus(value){
+    this._setUllageBtnStatus.next(value);
+  }
+
+  /**
+   * Method for showing errors
+   *
+   * @memberof LoadingDischargingTransformationService
+   */
+  showUllageError(value){
+    this._showUllageErrorPopup.next(value)
   }
 }

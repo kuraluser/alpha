@@ -1,6 +1,6 @@
 import { FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
 /**
  * Validator function for validating OBS. M3 should be less than tank capacity

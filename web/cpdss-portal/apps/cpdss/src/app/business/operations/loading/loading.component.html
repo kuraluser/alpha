@@ -4,11 +4,11 @@
       {{selectedPortName}}
     </div>
     <div class="col text-right">
-      <button class="btn btn-main mr-10" id="in_use" [disabled]="disableViewErrorButton"  (click)="viewError(true)">
-     
+      <button class="btn btn-main mr-10" id="in_use" [disabled]="disableViewErrorButton" (click)="viewError(true)">
+
         {{'LOADING_INFORMATION_VIEW_ERROR' |translate}}
       </button>
-      <button class="btn btn-main mr-10" id="in_use" >
+      <button class="btn btn-main mr-10" id="in_use">
         <span class="pi pi-check check-rounded v-t-bottom"></span>
         {{'LOADING_INFORMATION_IN_USE_BUTTON_LABEL' |translate}}
       </button>
@@ -44,11 +44,12 @@
           </div>
         </ng-template>
       </a>
-      <button class="btn btn-main tab-center-btn" id="loadingPlanBtn" (click)="onGenerateLoadingPlan()" [disabled]="disableGenerateLoadableButton ">
+      <button class="btn btn-main tab-center-btn" id="loadingPlanBtn" (click)="onGenerateLoadingPlan()"
+        [disabled]="disableGenerateLoadableButton ">
         {{'GENERATE_LOADING_PLAN' | translate}}
       </button>
-      <a (click)="switchTab(OPERATION_TAB.SEQUENCE)" [ngClass]="{'active' : currentTab === OPERATION_TAB.SEQUENCE,'disabled':processing}"
-        class="tab-btn">
+      <a (click)="switchTab(OPERATION_TAB.SEQUENCE)"
+        [ngClass]="{'active' : currentTab === OPERATION_TAB.SEQUENCE,'disabled':processing}" class="tab-btn">
         {{'LOADING_SEQUENCE' | translate}}
         <div *ngIf="loadingSequenceComplete else notGenerated" class="pt-5">
           <div class="tab-status-icon pi pi-check completed"></div> {{'GENERATED'|translate}}
@@ -59,18 +60,18 @@
           </div>
         </ng-template>
       </a>
-      <a (click)="switchTab(OPERATION_TAB.PLAN)" [ngClass]="{'active' : currentTab === OPERATION_TAB.PLAN ,'disabled':processing}"
-      class="tab-btn">
-      {{'LOADING_PLAN' | translate}}
-      <div *ngIf="loadingPlanComplete else incomplete" class="pt-5">
-        <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
-      </div>
-      <ng-template #incomplete>
-        <div class="pt-5">
-          <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
+      <a (click)="switchTab(OPERATION_TAB.PLAN)"
+        [ngClass]="{'active' : currentTab === OPERATION_TAB.PLAN ,'disabled':processing}" class="tab-btn">
+        {{'LOADING_PLAN' | translate}}
+        <div *ngIf="loadingPlanComplete else incomplete" class="pt-5">
+          <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
         </div>
-      </ng-template>
-    </a>
+        <ng-template #incomplete>
+          <div class="pt-5">
+            <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
+          </div>
+        </ng-template>
+      </a>
     </div>
   </div>
 
@@ -93,7 +94,7 @@
 
   <div class="row" *ngIf="currentTab === OPERATION_TAB.PLAN">
     <cpdss-portal-loading-plan [cargos]="cargos" [vesselId]="vesselId" [voyageId]="voyageId"
-    [portRotationId]="portRotationId" [loadingInfoId]="loadingInfoId"></cpdss-portal-loading-plan>
+      [portRotationId]="portRotationId" [loadingInfoId]="loadingInfoId"></cpdss-portal-loading-plan>
   </div>
 </div>
 <cpdss-portal-error-log-popup [(visible)]="errorPopUp" (visibleChange)="viewError($event)"

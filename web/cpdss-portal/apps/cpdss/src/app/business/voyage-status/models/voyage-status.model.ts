@@ -1,5 +1,5 @@
 import { ICargoConditions, IResponseStatus } from '../../../shared/models/common.model';
-import { ICargoQuantities, IShipCargoTank, ITank } from '../../core/models/common.model';
+import { ICargoQuantities, IShipCargoTank, ITank, IShipBallastTank, IBallastQuantities, IBunkerQuantities, IShipBunkerTank } from '../../core/models/common.model';
 
 
 /**
@@ -46,102 +46,6 @@ export class IBunkerConditionParameterList {
     numberFormat?: string;
 }
 
-
-/**
- * Interface for bunker tanks
- *
- * @export
- * @interface IShipBunkerTank
- * @extends {ITank}
- */
-export interface IShipBunkerTank extends ITank {
-    id: number;
-    categoryId: number;
-    categoryName: string;
-    name: string;
-    frameNumberFrom: number;
-    frameNumberTo: number;
-    shortName: string;
-    heightFrom?: number;
-    heightTo?: number;
-    fullCapacityCubm?: string;
-    density: number;
-    group: number;
-    order: number;
-    slopTank: boolean;
-    commodity?: IBunkerQuantities;
-    gridColumn?: string;
-    percentageFilled?: string;
-}
-
-/**
- * Interface for bunker quantites model
- * @export
- * @interface IBunkerQuantities
- */
-export interface IBunkerQuantities {
-    id: number;
-    fuelTypeId: number;
-    fuelTypeName: string;
-    fuelTypeShortName?: string;
-    tankId: number;
-    tankName: string;
-    arrivalVolume: number;
-    arrivalQuantity: number;
-    actualArrivalQuantity: number;
-    departureVolume: number;
-    departureQuantity: number;
-    actualDepartureQuantity: number;
-    colorCode?: string;
-    density: number;
-    quantity: number;
-    volume: number;
-}
-
-
-
-/**
- * Interface for ballast Tank details
- * @export
- * @interface IShipBallastTank
- */
-export interface IShipBallastTank extends ITank {
-    id: number,
-    categoryId: number,
-    categoryName: string,
-    name: string,
-    frameNumberFrom: number,
-    frameNumberTo: number,
-    shortName: string,
-    fullCapacityCubm: string,
-    density: number,
-    group: number,
-    order: number,
-    slopTank: boolean,
-    commodity: IBallastQuantities;
-}
-
-/**
- * Interface for cargo quantity
- *
- * @export
- * @interface IBallastQuantities
- */
-export interface IBallastQuantities {
-    fillingRatio: string;
-    abbreviation: string;
-    actualWeight: number;
-    capacity: number;
-    cargoId: number;
-    colorCode: string;
-    correctedUllage: number;
-    plannedWeight: number;
-    tankId: number;
-    tankName: string;
-    sg?: string;
-    volume?: number;
-    percentageFilled?: string;
-}
 
 
 /**

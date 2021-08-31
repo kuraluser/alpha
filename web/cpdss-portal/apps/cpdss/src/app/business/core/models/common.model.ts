@@ -175,7 +175,7 @@ export interface ILoadableCargo {
     isCommingle?: boolean;
     volume?: number;
     ullage?: number;
-	fillingRatio?: string;
+    fillingRatio?: string;
 }
 
 /**
@@ -206,7 +206,7 @@ export interface IBallastStowageDetails {
     inertia: string;
     colorCode?: string;
     fullCapacityCubm?: string;
-    api?:number;
+    api?: number;
     temperature?: number;
     tankShortName: string;
     fillingRatio?: string;
@@ -293,7 +293,7 @@ export interface IPortsDetailsResponse {
  * @export
  * @interface IDischargePortsDetailsResponse
  */
- export interface IDischargePortsDetailsResponse {
+export interface IDischargePortsDetailsResponse {
     responseStatus: IResponseStatus;
     portList: IDischargeStudyPortList[];
     operations: IOperations[];
@@ -339,7 +339,7 @@ export interface IPortList {
  * @export
  * @interface IDischargeStudyPortList
  */
- export interface IDischargeStudyPortList {
+export interface IDischargeStudyPortList {
     id: number;
     portOrder: number;
     dischargeStudyId: number;
@@ -412,7 +412,7 @@ export enum LOADABLE_STUDY_STATUS {
  * @export
  * @enum {number}
  */
- export enum DISCHARGE_STUDY_STATUS {
+export enum DISCHARGE_STUDY_STATUS {
     PLAN_PENDING = 1,
     PLAN_CONFIRMED = 2,
     PLAN_GENERATED = 3,
@@ -430,7 +430,7 @@ export enum LOADABLE_STUDY_STATUS {
  * @export
  * @enum {string}
  */
- export enum LOADABLE_STUDY_STATUS_TEXT {
+export enum LOADABLE_STUDY_STATUS_TEXT {
     PLAN_PENDING = "Pending",
     PLAN_CONFIRMED = "Confirmed",
     PLAN_GENERATED = "Plan Generated",
@@ -448,7 +448,7 @@ export enum LOADABLE_STUDY_STATUS {
  * @export
  * @enum {string}
  */
- export enum DISCHARGE_STUDY_STATUS_TEXT {
+export enum DISCHARGE_STUDY_STATUS_TEXT {
     PLAN_PENDING = "Pending",
     PLAN_CONFIRMED = "Confirmed",
     PLAN_GENERATED = "Plan Generated",
@@ -463,7 +463,7 @@ export enum LOADABLE_STUDY_STATUS {
 /**
  * Interface for Edit port rotation response
  */
- export interface IPortResponseModel {
+export interface IPortResponseModel {
     responseStatus: IResponseStatus;
 }
 
@@ -477,7 +477,7 @@ export interface IEditPortRotationModel {
 /**
  *  Interface for edit port rotation
  */
-export interface IEditPortRotation{
+export interface IEditPortRotation {
     id: number;
     portOrder: number;
     portTimezoneId?: number;
@@ -519,7 +519,7 @@ export interface IEditPortRotation{
 /**
  * Interface for Port Voyage Details model
  */
- export class IVoyagePortDetails {
+export class IVoyagePortDetails {
     portOrder: number;
     operationType: string;
     portId?: number;
@@ -531,7 +531,7 @@ export interface IEditPortRotation{
 /**
  * Model for new voyage
  */
- export class NewVoyageModel {
+export class NewVoyageModel {
     public voyageNo!: string;
     public captainId!: number;
     public chiefOfficerId!: number;
@@ -553,36 +553,36 @@ export class NewVoyageResponseModel implements IResponse {
     voyageId: number;
 }
 
- /**
- * Interface for algo response
- *
- * @export
- * @interface IAlgoResponse
- */
-  export interface IAlgoResponse {
+/**
+* Interface for algo response
+*
+* @export
+* @interface IAlgoResponse
+*/
+export interface IAlgoResponse {
     responseStatus: IResponseStatus;
     algoErrors: IAlgoError[]
- }
+}
 
- /**
- * Interface for algo error
- *
- * @export
- * @interface IAlgoError
- */
- export interface IAlgoError {
+/**
+* Interface for algo error
+*
+* @export
+* @interface IAlgoError
+*/
+export interface IAlgoError {
     errorHeading: string,
     errorDetails: string[]
- }
+}
 
 
- /**
- * Interface for cargo tanks
- *
- * @export
- * @interface IShipCargoTank
- * @extends {ITank}
- */
+/**
+* Interface for cargo tanks
+*
+* @export
+* @interface IShipCargoTank
+* @extends {ITank}
+*/
 export interface IShipCargoTank extends ITank {
     id: number;
     categoryId: number;
@@ -629,7 +629,7 @@ export interface ICargoQuantities {
     percentageFilled?: string;
     isCommingle?: boolean;
     isCommingleCargo?: boolean;
-    temperature?:any;
+    temperature?: any;
 }
 
 /**
@@ -638,37 +638,37 @@ export interface ICargoQuantities {
  * @export
  * @interface ILoadableQuantityCargo
  */
- export interface ILoadableQuantityCargo {
-   id: number,
-   grade: string,
-   estimatedAPI: string,
-   estimatedTemp: string,
-   orderBblsdbs?: string,
-   orderBbls60f?: string,
-   maxLoadingRate?: string,
-   orderedQuantity?: string,
-   minTolerence?: string,
-   maxTolerence?: string,
-   loadableBblsdbs?: string,
-   loadableBbls60f?: string,
-   loadableLT?: string,
-   loadableMT?: string,
-   loadableKL?: string,
-   differencePercentage?: string,
-   differencePercentageValue?: number;
-   differenceColor?: string
-   cargoId?: number;
-   minMaxTolerance?: string;
-   slopQuantity?: number | ValueObject<number>;
-   timeRequiredForLoading?: string;
-   loadingPorts?: string[];
-   loadingPortsLabels?: string;
-   cargoAbbreviation?: string;
-   cargoNominationId?: number;
-   colorCode?: string;
-   maxDischargingRate?: string;
-   blFigure?: string;
-   timeRequiredForDischarging?: string;
+export interface ILoadableQuantityCargo {
+    id: number,
+    grade: string,
+    estimatedAPI: string,
+    estimatedTemp: string,
+    orderBblsdbs?: string,
+    orderBbls60f?: string,
+    maxLoadingRate?: string,
+    orderedQuantity?: string,
+    minTolerence?: string,
+    maxTolerence?: string,
+    loadableBblsdbs?: string,
+    loadableBbls60f?: string,
+    loadableLT?: string,
+    loadableMT?: string,
+    loadableKL?: string,
+    differencePercentage?: string,
+    differencePercentageValue?: number;
+    differenceColor?: string
+    cargoId?: number;
+    minMaxTolerance?: string;
+    slopQuantity?: number | ValueObject<number>;
+    timeRequiredForLoading?: string;
+    loadingPorts?: string[];
+    loadingPortsLabels?: string;
+    cargoAbbreviation?: string;
+    cargoNominationId?: number;
+    colorCode?: string;
+    maxDischargingRate?: string;
+    blFigure?: string;
+    timeRequiredForDischarging?: string;
 }
 
 /**
@@ -678,8 +678,8 @@ export interface ICargoQuantities {
  * @interface IProtested
  */
 export interface IProtested {
-  id: number;
-  name: string;
+    id: number;
+    name: string;
 }
 
 /**
@@ -689,8 +689,8 @@ export interface IProtested {
  * @interface IPortsResponse
  */
 export interface IPortsResponse {
-  responseStatus: IResponseStatus;
-  ports: IPort[];
+    responseStatus: IResponseStatus;
+    ports: IPort[];
 }
 
 /**
@@ -700,16 +700,16 @@ export interface IPortsResponse {
  * @interface ICargo
  */
 export interface ICargo {
-  id: number;
-  companyId?: number;
-  actualWeight?: string;
-  plannedWeight?: string;
-  name?: string;
-  abbreviation?: string;
-  api?: number;
-  ports?: IPort[];
-  temp?: string;
-  colorCode?: string;
+    id: number;
+    companyId?: number;
+    actualWeight?: string;
+    plannedWeight?: string;
+    name?: string;
+    abbreviation?: string;
+    api?: number;
+    ports?: IPort[];
+    temp?: string;
+    colorCode?: string;
 }
 
 /**
@@ -719,10 +719,10 @@ export interface ICargo {
  * @interface IFuelType
  */
 export interface IFuelType {
-  id: number;
-  name: string;
-  colorCode: string;
-  shortName: string;
+    id: number;
+    name: string;
+    colorCode: string;
+    shortName: string;
 }
 
 /**
@@ -731,8 +731,8 @@ export interface IFuelType {
  * @interface
  */
 export interface ICargoResponseModel {
-  cargos: ICargo[],
-  responseStatus: IResponseStatus;
+    cargos: ICargo[],
+    responseStatus: IResponseStatus;
 }
 
 /**
@@ -742,10 +742,10 @@ export interface ICargoResponseModel {
  * @interface IConfirmStatusResponse
  */
 export interface IConfirmStatusResponse {
-  responseStatus: IResponse;
-  confirmed: boolean;
-  loadablePatternStatusId: number;
-  validated: boolean;
+    responseStatus: IResponse;
+    confirmed: boolean;
+    loadablePatternStatusId: number;
+    validated: boolean;
 }
 
 /**
@@ -754,7 +754,7 @@ export interface IConfirmStatusResponse {
  * @export
  * @interface IInstruction
  */
- export interface IInstruction {
+export interface IInstruction {
     instruction: string;
     id: number;
 }
@@ -765,7 +765,7 @@ export interface IConfirmStatusResponse {
  * @export
  * @interface IInstructionResponse
  */
- export interface IInstructionResponse {
+export interface IInstructionResponse {
     responseStatus: IResponseStatus;
     instructions: IInstruction[];
 }
@@ -792,7 +792,7 @@ export interface ITankDetails {
  * @export
  * @interface ITankResponse
  */
- export interface ITankResponse {
+export interface ITankResponse {
     responseStatus: IResponseStatus;
     cargoVesselTanks: ITankDetails[];
 }
@@ -805,8 +805,8 @@ export interface ITankDetails {
  * @interface IPortsResponse
  */
 export interface IPortsResponse {
-  responseStatus: IResponseStatus;
-  ports: IPort[];
+    responseStatus: IResponseStatus;
+    ports: IPort[];
 }
 
 /**
@@ -816,12 +816,12 @@ export interface IPortsResponse {
  * @enum {number}
  */
 export enum OPERATIONS {
-  LOADING = 1,
-  DISCHARGING = 2,
-  BUNKERING = 3,
-  TRANSIT = 4,
-  STSLOADING = 5,
-  STSDISCHARGING = 6
+    LOADING = 1,
+    DISCHARGING = 2,
+    BUNKERING = 3,
+    TRANSIT = 4,
+    STSLOADING = 5,
+    STSDISCHARGING = 6
 }
 
 /**
@@ -831,17 +831,111 @@ export enum OPERATIONS {
  * @enum {number}
  */
 export enum OPERATIONS_LABEL {
-  LOADING = 'LOADING',
-  DISCHARGING = 'DISCHARGING'
+    LOADING = 'LOADING',
+    DISCHARGING = 'DISCHARGING'
 }
 
 /**
- *Enum for operations loading plan
+ * Interface for ballast Tank details
+ * @export
+ * @interface IShipBallastTank
+ */
+export interface IShipBallastTank extends ITank {
+    id: number,
+    categoryId: number,
+    categoryName: string,
+    name: string,
+    frameNumberFrom: number,
+    frameNumberTo: number,
+    shortName: string,
+    fullCapacityCubm: string,
+    density: number,
+    group: number,
+    order: number,
+    slopTank: boolean,
+    commodity: IBallastQuantities;
+}
+
+/**
+ * Interface for cargo quantity
  *
  * @export
- * @enum {number}
+ * @interface IBallastQuantities
  */
-export enum OPERATIONS_PLAN_STATUS{
+export interface IBallastQuantities {
+    fillingRatio: string;
+    abbreviation: string;
+    actualWeight: number;
+    capacity: number;
+    cargoId: number;
+    colorCode: string;
+    correctedUllage: number;
+    plannedWeight: number;
+    tankId: number;
+    tankName: string;
+    sg?: string;
+    volume?: number;
+    percentageFilled?: string;
+}
+
+/**
+ * Interface for bunker tanks
+ *
+ * @export
+ * @interface IShipBunkerTank
+ * @extends {ITank}
+ */
+export interface IShipBunkerTank extends ITank {
+    id: number;
+    categoryId: number;
+    categoryName: string;
+    name: string;
+    frameNumberFrom: number;
+    frameNumberTo: number;
+    shortName: string;
+    heightFrom?: number;
+    heightTo?: number;
+    fullCapacityCubm?: string;
+    density: number;
+    group: number;
+    order: number;
+    slopTank: boolean;
+    commodity?: IBunkerQuantities;
+    gridColumn?: string;
+    percentageFilled?: string;
+}
+
+/**
+ * Interface for bunker quantites model
+ * @export
+ * @interface IBunkerQuantities
+ */
+export interface IBunkerQuantities {
+    id: number;
+    fuelTypeId: number;
+    fuelTypeName: string;
+    fuelTypeShortName?: string;
+    tankId: number;
+    tankName: string;
+    arrivalVolume: number;
+    arrivalQuantity: number;
+    actualArrivalQuantity: number;
+    departureVolume: number;
+    departureQuantity: number;
+    actualDepartureQuantity: number;
+    colorCode?: string;
+    density: number;
+    quantity: number;
+    volume: number;
+}
+
+/**
+*Enum for operations loading plan
+*
+* @export
+* @enum {number}
+*/
+export enum OPERATIONS_PLAN_STATUS {
     PENDING = 1,
     CONFIRMED = 2,
     PLAN_ALGO_PROCESSING_STARTED = 3,
