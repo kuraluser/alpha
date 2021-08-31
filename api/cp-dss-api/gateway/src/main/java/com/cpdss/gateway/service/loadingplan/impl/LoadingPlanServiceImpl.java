@@ -463,6 +463,15 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             planReply.getLoadingInformation().getLoadingStage());
     loadingInformation.setLoadingStages(loadingStages);
 
+    loadingInformation.setLoadingInfoStatusId(
+        planReply.getLoadingInformation().getLoadingInfoStatusId());
+    loadingInformation.setLoadingPlanArrStatusId(
+        planReply.getLoadingInformation().getLoadingPlanArrStatusId());
+    loadingInformation.setLoadingPlanDepStatusId(
+        planReply.getLoadingInformation().getLoadingPlanDepStatusId());
+    loadingInformation.setLoadablePatternId(
+        planReply.getLoadingInformation().getLoadablePatternId());
+
     CargoVesselTankDetails vesselTankDetails =
         this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
             vesselId,
@@ -911,9 +920,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   }
 
   private List<PortLoadablePlanStowageDetails> buildPortLoadablePlanStowageDetails(
-          LoadingPlanModels.UpdateUllageDetailsResponse response,
-          String arrivalDeparture,
-          List<VesselInfo.VesselTankDetail> sortedTankList) {
+      LoadingPlanModels.UpdateUllageDetailsResponse response,
+      String arrivalDeparture,
+      List<VesselInfo.VesselTankDetail> sortedTankList) {
     List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetailsList = new ArrayList<>();
     List<LoadingPlanModels.PortLoadablePlanStowageDetail> portLoadablePlanStowageDetails =
         response.getPortLoadablePlanStowageDetailsList().stream()
@@ -1012,12 +1021,24 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 ballastDetails.setId(portWiseBallastDetail.getId());
                 ballastDetails.setLoadablePatternId(portWiseBallastDetail.getLoadablePatternId());
                 ballastDetails.setTankId(portWiseBallastDetail.getTankId());
-                ballastDetails.setTemperature(!portWiseBallastDetail.getTemperature().isEmpty() ? new BigDecimal(portWiseBallastDetail.getTemperature()) : null);
-                ballastDetails.setQuantity(!portWiseBallastDetail.getQuantity().isEmpty() ? new BigDecimal(portWiseBallastDetail.getQuantity()) : null);
+                ballastDetails.setTemperature(
+                    !portWiseBallastDetail.getTemperature().isEmpty()
+                        ? new BigDecimal(portWiseBallastDetail.getTemperature())
+                        : null);
+                ballastDetails.setQuantity(
+                    !portWiseBallastDetail.getQuantity().isEmpty()
+                        ? new BigDecimal(portWiseBallastDetail.getQuantity())
+                        : null);
                 ballastDetails.setArrivalDeparture(portWiseBallastDetail.getArrivalDeparture());
                 ballastDetails.setActualPlanned(portWiseBallastDetail.getActualPlanned());
-                ballastDetails.setSounding(!portWiseBallastDetail.getSounding().isEmpty() ? new BigDecimal(portWiseBallastDetail.getSounding()) : null);
-                ballastDetails.setSg(!portWiseBallastDetail.getSg().isEmpty() ? new BigDecimal(portWiseBallastDetail.getSg()) : null);
+                ballastDetails.setSounding(
+                    !portWiseBallastDetail.getSounding().isEmpty()
+                        ? new BigDecimal(portWiseBallastDetail.getSounding())
+                        : null);
+                ballastDetails.setSg(
+                    !portWiseBallastDetail.getSg().isEmpty()
+                        ? new BigDecimal(portWiseBallastDetail.getSg())
+                        : null);
 
                 Optional<VesselInfo.VesselTankDetail> tankDetail =
                     sortedTankList.stream()
@@ -1053,7 +1074,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 robDetail.setQuantity(portWiseRobDetail.getQuantity());
                 robDetail.setArrivalDeparture(portWiseRobDetail.getArrivalDeparture());
                 robDetail.setActualPlanned(portWiseRobDetail.getActualPlanned());
-                robDetail.setDensity(portWiseRobDetail.getDensity().isEmpty() ? null : new BigDecimal(portWiseRobDetail.getDensity()));
+                robDetail.setDensity(
+                    portWiseRobDetail.getDensity().isEmpty()
+                        ? null
+                        : new BigDecimal(portWiseRobDetail.getDensity()));
                 robDetail.setColorCode(portWiseRobDetail.getColorCode());
 
                 Optional<VesselInfo.VesselTankDetail> tankDetail =

@@ -44,6 +44,10 @@ message LoadingInformation{
   int64 loadingInfoId = 12;
   int64 synopticTableId = 13;
   bool isLoadingInfoComplete = 14;
+  int64 loadingInfoStatusId = 15;
+  int64 loadingPlanArrStatusId = 16;
+  int64 loadingPlanDepStatusId = 17;
+  int64 loadablePatternId = 18;
 }
 
 message LoadingDetails{

@@ -39,5 +39,6 @@ public class LoadingInformationAlgoStatus extends EntityDoc {
   @Column(name = "process_id")
   private String processId;
 
+  @Column(name = "type_xid")
   private Integer conditionType;
 }

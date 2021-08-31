@@ -327,8 +327,11 @@ public class LoadingPlanAlgoService {
               HttpStatusCode.BAD_REQUEST);
         }
 
-        loadingInformationRepository.updateLoadingInformationStatus(
-            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
+        loadingInformationRepository.updateLoadingInformationStatuses(
+            loadingInfoStatusOpt.get(),
+            loadingInfoStatusOpt.get(),
+            loadingInfoStatusOpt.get(),
+            loadingInfoOpt.get().getId());
         updateLoadingInfoAlgoStatus(
             loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
       }

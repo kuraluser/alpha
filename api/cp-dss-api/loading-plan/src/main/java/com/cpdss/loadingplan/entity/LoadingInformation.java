@@ -122,4 +122,12 @@ public class LoadingInformation extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "loading_status_xid")
   private LoadingInformationStatus loadingInformationStatus;
+
+  @ManyToOne
+  @JoinColumn(name = "arrival_status_xid")
+  private LoadingInformationStatus arrivalStatus;
+
+  @ManyToOne
+  @JoinColumn(name = "departure_status_xid")
+  private LoadingInformationStatus departureStatus;
 }
