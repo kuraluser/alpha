@@ -29,14 +29,15 @@ class LoadingPlanServiceTest {
         .when(repos)
         .updateBillOfLandingRepository(
             "09",
-            BigDecimal.valueOf(0),
-            BigDecimal.valueOf(0),
-            BigDecimal.valueOf(0),
-            BigDecimal.valueOf(0),
-            BigDecimal.valueOf(0),
-            BigDecimal.valueOf(0),
-            Integer.valueOf(0 + ""),
-            Integer.valueOf(0 + ""));
+                BigDecimal.valueOf(0),
+                BigDecimal.valueOf(0),
+                BigDecimal.valueOf(0),
+                BigDecimal.valueOf(0),
+                BigDecimal.valueOf(0),
+                BigDecimal.valueOf(0),
+                Integer.valueOf(0 + ""),
+                Integer.valueOf(0 + ""),
+                Integer.valueOf(0 + ""));
 
     verify(repos, times(0))
         .updateBillOfLandingRepository(
@@ -47,8 +48,9 @@ class LoadingPlanServiceTest {
             BigDecimal.valueOf(0),
             BigDecimal.valueOf(0),
             BigDecimal.valueOf(0),
-            Integer.valueOf(0 + ""),
-            Integer.valueOf(0 + ""));
+                Integer.valueOf(0 + ""),
+                Integer.valueOf(0 + ""),
+                Integer.valueOf(0 + ""));
   }
 
   @Test
