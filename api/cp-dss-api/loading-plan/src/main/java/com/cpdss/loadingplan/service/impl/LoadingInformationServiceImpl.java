@@ -216,7 +216,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         });
     List<LoadingInstruction> listLoadingInstruction =
         loadingInstructionRepository.getAllLoadingInstructions(
-            request.getVesselId(), request.getLoadingPlanId(), request.getPortRotationId());
+            request.getVesselId(), var1.get().getId(), request.getPortRotationId());
     if (!listLoadingInstruction.isEmpty()) {
       builder.setIsLoadingInstructionsComplete(true);
     } else {
