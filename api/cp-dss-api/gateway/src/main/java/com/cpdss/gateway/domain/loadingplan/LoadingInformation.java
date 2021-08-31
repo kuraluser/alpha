@@ -34,4 +34,7 @@ public class LoadingInformation {
   private Long loadingPlanArrStatusId;
   private Long loadingPlanDepStatusId;
   private Long loadablePatternId;
+  private Boolean isLoadingInstructionsComplete;
+  private Boolean isLoadingSequenceGenerated;
+  private Boolean isLoadingPlanGenerated;
 }
