@@ -122,4 +122,21 @@ public class LoadingInformation extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "loading_status_xid")
   private LoadingInformationStatus loadingInformationStatus;
+
+  @ManyToOne
+  @JoinColumn(name = "arrival_status_xid")
+  private LoadingInformationStatus arrivalStatus;
+
+  @ManyToOne
+  @JoinColumn(name = "departure_status_xid")
+  private LoadingInformationStatus departureStatus;
+
+  @Column(name = "is_loading_instructions_complete")
+  private Boolean isLoadingInstructionsComplete;
+
+  @Column(name = "is_loading_sequence_generated")
+  private Boolean isLoadingSequenceGenerated;
+
+  @Column(name = "is_loading_plan_generated")
+  private Boolean isLoadingPlanGenerated;
 }

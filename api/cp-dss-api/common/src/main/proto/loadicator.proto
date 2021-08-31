@@ -16,7 +16,7 @@ message LoadicatorRequest{
 	repeated StowagePlan stowagePlanDetails=1;
 	bool isPattern=2;
 	int64 typeId = 3;
-	bool isLoadingPlan = 4;
+	bool isUllageUpdate = 4;
 }
 
 message StowagePlan{

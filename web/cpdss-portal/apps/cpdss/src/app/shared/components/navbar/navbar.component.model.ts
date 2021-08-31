@@ -13,7 +13,8 @@ export interface IMenuItem {
     addLoadableStudyId?: boolean;
     addLoadablePatternId?: boolean;
     routerLinkActive: string;
-    isActive: boolean;
+    isActive?: boolean;
+    isShoreActive: boolean;
 }
 /**
  * Interface for submenu
@@ -22,6 +23,7 @@ export interface ISubMenu {
     name: string;
     subMenuLink: string;
     permissionMapping: string;
+    isVisible: boolean;
 }
 
 /**

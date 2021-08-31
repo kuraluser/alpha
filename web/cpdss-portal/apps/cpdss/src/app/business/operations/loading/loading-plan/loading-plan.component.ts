@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ICargo, ILoadableQuantityCargo, IShipCargoTank } from '../../../core/models/common.model';
+import { ICargo, ILoadableQuantityCargo, IShipCargoTank, IAlgoResponse, IAlgoError } from '../../../core/models/common.model';
 import { ILoadingDischargingSequences, IToppingOffSequence } from '../../models/loading-discharging.model';
 import { LoadingPlanApiService } from './../../services/loading-plan-api.service';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
@@ -7,6 +7,9 @@ import { LoadingDischargingTransformationService } from '../../services/loading-
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ILoadingPlanDetails } from '../../models/loading-discharging.model';
+import { LoadingApiService } from '../../services/loading-api.service';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 /**
  * Component class for loading plan component
  *
@@ -43,12 +46,17 @@ export class LoadingPlanComponent implements OnInit {
   loadingPlanDetails: ILoadingPlanDetails;
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+  errorMessage: IAlgoError[];
+  errorPopUp = false;
 
 
   constructor(
     private loadingPlanApiService: LoadingPlanApiService,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
-    private ngxSpinnerService: NgxSpinnerService
+    private ngxSpinnerService: NgxSpinnerService,
+    private loadingApiService: LoadingApiService,
+    private messageService: MessageService,
+    private translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
@@ -87,7 +95,35 @@ export class LoadingPlanComponent implements OnInit {
     this.loadingDischargingTransformationService.unitChange$.subscribe((res) => {
       this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
-    })
+    });
+
+    this.loadingDischargingTransformationService.showUllageErrorPopup$.subscribe((res)=>{
+      this.getAlgoErrorMessage(res);
+    });
+  }
+
+  /**
+   * Method to get algo error 
+   *
+   * @memberof LoadingComponent
+   */
+   async getAlgoErrorMessage(status) {
+    const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PLAN_ERROR_OCCURED', 'GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE']).toPromise();
+    const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId, status.status).toPromise();
+    if (algoError.responseStatus.status === 'SUCCESS') {
+      this.errorMessage = algoError.algoErrors;
+      this.errorPopUp = status.value;
+    }
+    this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PLAN_ERROR_OCCURED'], detail: translationKeys["GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE"] });
+  }
+
+  /**
+   * Method to display view error pop up.
+   *
+   * @memberof LoadingComponent
+   */
+   viewError(status) {
+    this.errorPopUp = status;
   }
 
 }

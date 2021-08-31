@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,7 @@ public class UllageUpdateLoadicatorService {
    * @param request
    * @throws GenericServiceException
    */
-  public void saveLoadicatorInfoForUllageUpdate(UllageBillRequest request)
+  public String saveLoadicatorInfoForUllageUpdate(UllageBillRequest request)
       throws GenericServiceException {
     Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
         Loadicator.LoadicatorRequest.newBuilder();
@@ -92,6 +93,8 @@ public class UllageUpdateLoadicatorService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+
+    String processId = UUID.randomUUID().toString();
 
     List<PortLoadingPlanStowageDetails> stowageDetails =
         portLoadingPlanStowageDetailsRepository.findByLoadingInformationAndIsActive(
@@ -123,9 +126,10 @@ public class UllageUpdateLoadicatorService {
     PortInfo.PortReply portReply = loadicatorService.getPortInfoForLoadicator(loadingInfoOpt.get());
 
     loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
+    loadicatorRequestBuilder.setIsUllageUpdate(true);
     StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
     loadicatorService.buildStowagePlan(
-        loadingInfoOpt.get(), 0, "", cargoReply, vesselReply, portReply, stowagePlanBuilder);
+        loadingInfoOpt.get(), 0, processId, cargoReply, vesselReply, portReply, stowagePlanBuilder);
     buildStowagePlanDetails(
         loadingInfoOpt.get(),
         tempStowageDetails,
@@ -149,14 +153,20 @@ public class UllageUpdateLoadicatorService {
 
     Optional<LoadingInformationStatus> loadingInfoStatusOpt =
         loadingInformationStatusRepository.findByIdAndIsActive(
-            LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
+            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID, true);
     if (loadingInfoStatusOpt.isEmpty()) {
       throw new GenericServiceException(
           "Could not find loading information status with id "
-              + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
+              + LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID,
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+    loadingPlanAlgoService.createLoadingInformationAlgoStatus(
+        loadingInfoOpt.get(),
+        processId,
+        loadingInfoStatusOpt.get(),
+        Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()));
+    return processId;
   }
 
   /**

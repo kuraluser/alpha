@@ -749,6 +749,122 @@ public final class LoadingInformationServiceGrpc {
     return getGetLoadingInfoAlgoErrorsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailStatusReply>
+      getUploadPortTideDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "UploadPortTideDetails",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailStatusReply
+              .class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailStatusReply>
+      getUploadPortTideDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailStatusReply>
+        getUploadPortTideDetailsMethod;
+    if ((getUploadPortTideDetailsMethod =
+            LoadingInformationServiceGrpc.getUploadPortTideDetailsMethod)
+        == null) {
+      synchronized (LoadingInformationServiceGrpc.class) {
+        if ((getUploadPortTideDetailsMethod =
+                LoadingInformationServiceGrpc.getUploadPortTideDetailsMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getUploadPortTideDetailsMethod =
+              getUploadPortTideDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .UploadTideDetailRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .UploadTideDetailStatusReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "UploadPortTideDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .UploadTideDetailRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .UploadTideDetailStatusReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "UploadPortTideDetails"))
+                      .build();
+        }
+      }
+    }
+    return getUploadPortTideDetailsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailStatusReply>
+      getDownloadPortTideDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DownloadPortTideDetails",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailStatusReply
+              .class,
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailStatusReply>
+      getDownloadPortTideDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailStatusReply>
+        getDownloadPortTideDetailsMethod;
+    if ((getDownloadPortTideDetailsMethod =
+            LoadingInformationServiceGrpc.getDownloadPortTideDetailsMethod)
+        == null) {
+      synchronized (LoadingInformationServiceGrpc.class) {
+        if ((getDownloadPortTideDetailsMethod =
+                LoadingInformationServiceGrpc.getDownloadPortTideDetailsMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getDownloadPortTideDetailsMethod =
+              getDownloadPortTideDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .DownloadTideDetailRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .DownloadTideDetailStatusReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "DownloadPortTideDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .DownloadTideDetailRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .DownloadTideDetailStatusReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "DownloadPortTideDetails"))
+                      .build();
+        }
+      }
+    }
+    return getDownloadPortTideDetailsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingInformationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceStub> factory =
@@ -963,6 +1079,28 @@ public final class LoadingInformationServiceGrpc {
           getGetLoadingInfoAlgoErrorsMethod(), responseObserver);
     }
 
+    /** */
+    public void uploadPortTideDetails(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .UploadTideDetailStatusReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getUploadPortTideDetailsMethod(), responseObserver);
+    }
+
+    /** */
+    public void downloadPortTideDetails(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .DownloadTideDetailStatusReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getDownloadPortTideDetailsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1063,6 +1201,23 @@ public final class LoadingInformationServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
                       com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>(
                       this, METHODID_GET_LOADING_INFO_ALGO_ERRORS)))
+          .addMethod(
+              getUploadPortTideDetailsMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .UploadTideDetailRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .UploadTideDetailStatusReply>(this, METHODID_UPLOAD_PORT_TIDE_DETAILS)))
+          .addMethod(
+              getDownloadPortTideDetailsMethod(),
+              io.grpc.stub.ServerCalls.asyncServerStreamingCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .DownloadTideDetailRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .DownloadTideDetailStatusReply>(
+                      this, METHODID_DOWNLOAD_PORT_TIDE_DETAILS)))
           .build();
     }
   }
@@ -1275,6 +1430,32 @@ public final class LoadingInformationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void uploadPortTideDetails(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .UploadTideDetailStatusReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getUploadPortTideDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void downloadPortTideDetails(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .DownloadTideDetailStatusReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncServerStreamingCall(
+          getChannel().newCall(getDownloadPortTideDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1435,6 +1616,25 @@ public final class LoadingInformationServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadingInfoAlgoErrorsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailStatusReply
+        uploadPortTideDetails(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest
+                request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUploadPortTideDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public java.util.Iterator<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailStatusReply>
+        downloadPortTideDetails(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest
+                request) {
+      return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
+          getChannel(), getDownloadPortTideDetailsMethod(), getCallOptions(), request);
     }
   }
 
@@ -1612,6 +1812,16 @@ public final class LoadingInformationServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadingInfoAlgoErrorsMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailStatusReply>
+        uploadPortTideDetails(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest
+                request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getUploadPortTideDetailsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_LOADING_INFORMATION = 0;
@@ -1627,6 +1837,8 @@ public final class LoadingInformationServiceGrpc {
   private static final int METHODID_GENERATE_LOADING_PLAN = 10;
   private static final int METHODID_GET_LOADING_INFO_ALGO_STATUS = 11;
   private static final int METHODID_GET_LOADING_INFO_ALGO_ERRORS = 12;
+  private static final int METHODID_UPLOAD_PORT_TIDE_DETAILS = 13;
+  private static final int METHODID_DOWNLOAD_PORT_TIDE_DETAILS = 14;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1757,6 +1969,24 @@ public final class LoadingInformationServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>)
                   responseObserver);
           break;
+        case METHODID_UPLOAD_PORT_TIDE_DETAILS:
+          serviceImpl.uploadPortTideDetails(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .UploadTideDetailStatusReply>)
+                  responseObserver);
+          break;
+        case METHODID_DOWNLOAD_PORT_TIDE_DETAILS:
+          serviceImpl.downloadPortTideDetails(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .DownloadTideDetailStatusReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1834,6 +2064,8 @@ public final class LoadingInformationServiceGrpc {
                       .addMethod(getGenerateLoadingPlanMethod())
                       .addMethod(getGetLoadingInfoAlgoStatusMethod())
                       .addMethod(getGetLoadingInfoAlgoErrorsMethod())
+                      .addMethod(getUploadPortTideDetailsMethod())
+                      .addMethod(getDownloadPortTideDetailsMethod())
                       .build();
         }
       }

@@ -401,6 +401,7 @@ message AlgoErrorRequest {
 	int64 loadableStudyId = 1;
 	int64 loadablePatternId = 2;
 	int64 loadingInformationId = 3;
+	int32 conditionType = 4;
 }
 
 message AlgoErrorReply {

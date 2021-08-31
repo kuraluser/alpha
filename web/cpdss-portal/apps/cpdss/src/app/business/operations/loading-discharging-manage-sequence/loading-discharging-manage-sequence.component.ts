@@ -99,6 +99,9 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.columns = this.loadingDischargingTransformationService.getLoadingDischargingDelayDatatableColumns(this.operation);
+    if(!this.editable){
+      this.columns.splice((this.columns.length - 1),1);
+    }
     await this.initiLoadingDischargingSequenceArray();
   }
 

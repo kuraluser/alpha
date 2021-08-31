@@ -47,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -299,6 +300,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     var1.setToppingOffSequence(toppingSequence);
     var1.setCargoVesselTankDetails(vesselTankDetails);
     var1.setLoadingSequences(loadingSequences);
+    var1.setIsLoadingInstructionsComplete(loadingInfo.getIsLoadingInstructionsComplete());
+    var1.setIsLoadingSequenceGenerated(loadingInfo.getIsLoadingSequenceGenerated());
+    var1.setIsLoadingPlanGenerated(loadingInfo.getIsLoadingPlanGenerated());
     var1.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return var1;
   }
@@ -461,6 +465,15 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         this.loadingInformationService.getLoadingStagesAndMasters(
             planReply.getLoadingInformation().getLoadingStage());
     loadingInformation.setLoadingStages(loadingStages);
+
+    loadingInformation.setLoadingInfoStatusId(
+        planReply.getLoadingInformation().getLoadingInfoStatusId());
+    loadingInformation.setLoadingPlanArrStatusId(
+        planReply.getLoadingInformation().getLoadingPlanArrStatusId());
+    loadingInformation.setLoadingPlanDepStatusId(
+        planReply.getLoadingInformation().getLoadingPlanDepStatusId());
+    loadingInformation.setLoadablePatternId(
+        planReply.getLoadingInformation().getLoadablePatternId());
 
     CargoVesselTankDetails vesselTankDetails =
         this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
@@ -1678,5 +1691,17 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               });
     }
     return loadablePlanCommingleDetailsList;
+  }
+
+  @Override
+  public UploadTideDetailResponse uploadLoadingTideDetails(
+      Long loadingId, MultipartFile file, String correlationId)
+      throws IOException, GenericServiceException {
+    return loadingInformationService.uploadLoadingTideDetails(loadingId, file, correlationId);
+  }
+
+  @Override
+  public byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException {
+    return loadingInformationService.downloadLoadingPortTideDetails(loadingId);
   }
 }
