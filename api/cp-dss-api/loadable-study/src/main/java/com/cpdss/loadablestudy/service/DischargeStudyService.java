@@ -43,6 +43,9 @@ import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStud
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortWiseCargo;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StowageAndBillOfLaddingValidationRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.BackLoading;
@@ -127,6 +130,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
+
   @Override
   public void saveDischargeStudy(
       DischargeStudyDetail request, StreamObserver<DischargeStudyReply> responseObserver) {
@@ -159,6 +165,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       }
       LoadableStudy loadableStudy = loadables.get(0);
       LoadableStudyPortRotation loadableStudyPortRotation = getportRotationData(loadableStudy);
+      validateActuals(loadableStudy);
       List<SynopticalTable> synopticalData =
           this.synopticalTableRepository
               .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
@@ -215,6 +222,35 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  private void validateActuals(LoadableStudy loadableStudy) throws GenericServiceException {
+
+    List<CargoNomination> cargoNominations =
+        cargoNominationService.getCargoNominationByLoadableStudyId(loadableStudy.getId());
+    List<LoadableStudyPortRotation> ports =
+        loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            loadableStudy.getId(), true);
+    StowageAndBillOfLaddingValidationRequest.Builder request =
+        StowageAndBillOfLaddingValidationRequest.newBuilder();
+    ports.forEach(
+        port -> {
+          PortWiseCargo.Builder portBuilder = PortWiseCargo.newBuilder();
+          portBuilder.setPortRotationId(port.getId());
+          portBuilder.setPortId(port.getPortXId());
+          List<Long> cargoIds =
+              cargoNominations.stream()
+                  .filter(
+                      cargo ->
+                          cargo.getCargoNominationPortDetails().stream()
+                              .anyMatch(portData -> portData.getPortId().equals(port.getPortXId())))
+                  .map(CargoNomination::getId)
+                  .collect(Collectors.toList());
+
+          portBuilder.addAllCargoIds(cargoIds);
+          request.addPortWiseCargos(portBuilder);
+        });
+    loadingPlanServiceBlockingStub.validateStowageAndBillOfLadding(request.build());
   }
 
   /**

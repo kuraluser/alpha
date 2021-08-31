@@ -52,6 +52,6 @@ public interface PortLoadingPlanStowageDetailsRepository
       @Param("loading_information_xid") Long loadingId,
       @Param("arrival_departutre") Long arrivalDepartutre);
 
-  public List<PortLoadingPlanStowageDetails> findByPortRotationIdInAndIsActive(
+  public List<PortLoadingPlanStowageDetails> findByPortRotationXIdInAndIsActive(
       List<Long> portRotationId, Boolean isActive);
 }

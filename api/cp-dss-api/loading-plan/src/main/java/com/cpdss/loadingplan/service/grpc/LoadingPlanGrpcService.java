@@ -358,7 +358,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
               .map(PortWiseCargo::getPortRotationId)
               .collect(Collectors.toList());
       List<PortLoadingPlanStowageDetails> stowageDetails =
-          portLoadingPlanStowageDetailsRepository.findByPortRotationIdInAndIsActive(
+          portLoadingPlanStowageDetailsRepository.findByPortRotationXIdInAndIsActive(
               portRotationIds, true);
       Map<Long, List<PortLoadingPlanStowageDetails>> portWiseStowages =
           stowageDetails.stream()
@@ -401,7 +401,8 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                   return;
                 }
               });
-
+      builder.setStatus(LoadingPlanConstants.SUCCESS);
+      
     } catch (Exception e) {
       e.printStackTrace();
       builder.setStatus(LoadingPlanConstants.FAILED);
