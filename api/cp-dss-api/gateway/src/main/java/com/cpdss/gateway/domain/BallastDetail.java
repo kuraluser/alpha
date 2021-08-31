@@ -28,5 +28,19 @@ public class BallastDetail {
 
   private BigDecimal sounding;
 
+  private BigDecimal filling_percentage;
+
+  private BigDecimal arrival_departutre;
+
+  private BigDecimal actual_planned;
+
+  private String color_code;
+
+  private BigDecimal sg;
+
   private Boolean isUpdate;
+
+  private Long portXId;
+
+  private Long portRotationXId;
 }

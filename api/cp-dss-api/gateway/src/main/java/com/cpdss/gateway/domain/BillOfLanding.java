@@ -8,9 +8,7 @@ import lombok.*;
 @Data
 public class BillOfLanding {
 
-  private Long id;
-
-  private Long dischargeStudyId;
+  private Long loadingId;
 
   private Long portId;
 
@@ -33,4 +31,6 @@ public class BillOfLanding {
   private BigDecimal isActive;
 
   private Long version;
+
+  private Boolean isUpdate;
 }
