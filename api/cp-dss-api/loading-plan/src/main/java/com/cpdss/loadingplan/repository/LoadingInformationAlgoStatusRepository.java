@@ -29,4 +29,8 @@ public interface LoadingInformationAlgoStatusRepository
   @Query(
       "UPDATE LoadingInformationAlgoStatus SET isActive = false WHERE loadingInformation.id = ?1 AND processId = ?2")
   public void deleteLoadingInformationAlgoStatus(Long loadingInfoId, String processId);
+
+  Optional<LoadingInformationAlgoStatus>
+      findByProcessIdAndLoadingInformationIdAndConditionTypeAndIsActiveTrue(
+          String processId, Long loadingInfoId, Integer conditionType);
 }

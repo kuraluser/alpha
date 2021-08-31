@@ -15,6 +15,8 @@ public final class LoadingPlanConstants {
   public static final Long LOADING_INFORMATION_REQUEST_JSON_TYPE_ID = 9L;
   public static final Long LOADING_INFORMATION_LOADICATOR_REQUEST_JSON_TYPE_ID = 13L;
   public static final Long LOADING_INFORMATION_LOADICATOR_RESPONSE_JSON_TYPE_ID = 14L;
+  public static final Long LOADING_PLAN_EDIT_LOADICATOR_REQUEST_JSON_TYPE_ID = 15L;
+  public static final Long LOADING_PLAN_EDIT_LOADICATOR_RESPONSE_JSON_TYPE_ID = 16L;
 
   public static final Integer DEFAULT_STAGE_OFFSET_VALUE = 4;
   public static final Integer DEFAULT_STAGE_DURATION_VALUE = 4;

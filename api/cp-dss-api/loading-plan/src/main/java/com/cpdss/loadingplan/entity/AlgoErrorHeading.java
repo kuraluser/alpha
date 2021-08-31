@@ -37,4 +37,6 @@ public class AlgoErrorHeading extends EntityDoc {
 
   @OneToMany(mappedBy = "algoErrorHeading", fetch = FetchType.LAZY)
   private List<AlgoErrors> algoErrors;
+
+  private Integer conditionType;
 }

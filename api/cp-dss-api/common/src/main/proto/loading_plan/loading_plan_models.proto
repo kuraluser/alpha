@@ -738,6 +738,7 @@ message LoadingInfoLoadicatorDataRequest {
   string processId = 1;
   int64 loadingInformationId = 2;
   repeated LoadingInfoLoadicatorDetail loadingInfoLoadicatorDetails = 3;
+  bool isUllageUpdate = 4;
 }
 
 message LoadingInfoLoadicatorDetail {
@@ -756,6 +757,7 @@ message LoadingInfoLoadicatorDataReply {
 message LoadingInfoStatusRequest {
   int64 loadingInfoId = 1;
   string processId = 2;
+  int32 conditionType = 3;
 }
 
 message LoadingInfoStatusReply {

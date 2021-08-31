@@ -65,7 +65,8 @@ public interface LoadingInformationService {
   LoadingInfoAlgoResponse generateLoadingPlan(Long infoId) throws GenericServiceException;
 
   LoadingInfoAlgoStatus getLoadingInfoAlgoStatus(
-      Long vesselId, Long voyageId, Long infoId, String processId) throws GenericServiceException;
+      Long vesselId, Long voyageId, Long infoId, String processId, Integer conditionType)
+      throws GenericServiceException;
 
   /**
    * Fetches ALGO Errors of Loading Information
@@ -73,9 +74,11 @@ public interface LoadingInformationService {
    * @param vesselId
    * @param voyageId
    * @param infoId
+   * @param conditionType
    * @return
    * @throws GenericServiceException
    */
-  AlgoErrorResponse getLoadingInfoAlgoErrors(Long vesselId, Long voyageId, Long infoId)
+  AlgoErrorResponse getLoadingInfoAlgoErrors(
+      Long vesselId, Long voyageId, Long infoId, Integer conditionType)
       throws GenericServiceException;
 }

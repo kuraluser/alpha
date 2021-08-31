@@ -818,11 +818,13 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
   @Override
   public LoadingInfoAlgoStatus getLoadingInfoAlgoStatus(
-      Long vesselId, Long voyageId, Long infoId, String processId) throws GenericServiceException {
+      Long vesselId, Long voyageId, Long infoId, String processId, Integer conditionType)
+      throws GenericServiceException {
     log.info("Fetching ALGO status of Loading Information {} from Loading-Info MS", infoId);
     LoadingInfoStatusRequest.Builder requestBuilder = LoadingInfoStatusRequest.newBuilder();
     requestBuilder.setLoadingInfoId(infoId);
     requestBuilder.setProcessId(processId);
+    Optional.ofNullable(conditionType).ifPresent(requestBuilder::setConditionType);
     LoadingInfoStatusReply reply =
         this.loadingPlanGrpcService.getLoadingInfoAlgoStatus(requestBuilder.build());
     LoadingInfoAlgoStatus algoStatus = new LoadingInfoAlgoStatus();
@@ -839,11 +841,13 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
-  public AlgoErrorResponse getLoadingInfoAlgoErrors(Long vesselId, Long voyageId, Long infoId)
+  public AlgoErrorResponse getLoadingInfoAlgoErrors(
+      Long vesselId, Long voyageId, Long infoId, Integer conditionType)
       throws GenericServiceException {
     log.info("Fetching ALGO errors of Loading Information {} from Loading-Info MS", infoId);
     AlgoErrorRequest.Builder requestBuilder = AlgoErrorRequest.newBuilder();
     requestBuilder.setLoadingInformationId(infoId);
+    Optional.ofNullable(conditionType).ifPresent(requestBuilder::setConditionType);
     AlgoErrorResponse algoResponse = new AlgoErrorResponse();
     AlgoErrorReply reply =
         this.loadingPlanGrpcService.getLoadingInfoAlgoErrors(requestBuilder.build());
