@@ -898,3 +898,11 @@ message DownloadTideDetailStatusReply {
 	bytes data = 2;
 	int32 size = 3;
 }
+
+message StowageAndBillOfLaddingValidationRequest {
+	repeated PortWiseCargo portWiseCargos = 1;
+}
+message PortWiseCargo {
+	int64 portRotationId = 1;
+	repeated int64 cargoIds = 2;
+}
