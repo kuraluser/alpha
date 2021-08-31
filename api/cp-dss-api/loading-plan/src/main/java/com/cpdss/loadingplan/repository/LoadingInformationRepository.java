@@ -53,4 +53,19 @@ public interface LoadingInformationRepository
       LoadingInformationStatus arrivalStatus,
       LoadingInformationStatus departureStatus,
       Long id);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadingInformation li SET li.isLoadingInstructionsComplete = ?2 WHERE id = ?1")
+  void updateIsLoadingInstructionsCompletedStatus(Long id, boolean status);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadingInformation li SET li.isLoadingSequenceGenerated = ?2 WHERE id = ?1")
+  void updateIsLoadingSequenceGeneratedStatus(Long id, boolean status);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadingInformation li SET li.isLoadingPlanGenerated = ?2 WHERE id = ?1")
+  void updateIsLoadingPlanGeneratedStatus(Long id, boolean status);
 }
