@@ -79,7 +79,7 @@ export class UllageUpdatePopupComponent implements OnInit {
 
 
   currentQuantitySelectedUnit: QUANTITY_UNIT = null;
-  selectedPortDetails: any = {};
+
   blFigure: any = [];
   cargoQuantityList: any = [];
   bunkerTanksList: any = [];
@@ -168,7 +168,6 @@ export class UllageUpdatePopupComponent implements OnInit {
 
 
     this.currentQuantitySelectedUnit = QUANTITY_UNIT.MT;
-    this.selectedPortDetails = { "portOrder": 1, "operationType": "ARR", "portId": 359, "portRotationId": 107678 };
 
     this.cargoColumns = this.ullageUpdatePopupTransformationService.getCargoTableColumn();
     this.ballastColumns = this.ullageUpdatePopupTransformationService.getBallastTankColumns();
@@ -913,7 +912,9 @@ export class UllageUpdatePopupComponent implements OnInit {
             klAt15c: row.cargo.kl.value,
             api: row.cargo.api.value,
             temperature: row.cargo.temp.value,
-            isUpdate: row.cargo.isAdd ? false : true
+            isUpdate: row.cargo.isAdd ? false : true,
+            isActive: '',
+            version: ''
           }
         )
       });
@@ -929,10 +930,14 @@ export class UllageUpdatePopupComponent implements OnInit {
         fillingPercentage: item.percentageFilled,
         cargo_nomination_xid: item.cargoNominationId,
         arrival_departutre: item.arrivalDeparture,
-        actual_planned: item.actualPlanned,
+        actual_planned: 1,
         correction_factor: item.correctionFactor,
         api: item.api,
-        isUpdate: true
+        isUpdate: true,
+        port_xid: '',
+        port_rotation_xid: '',
+        grade: '',
+
       })
     });
 
@@ -949,7 +954,9 @@ export class UllageUpdatePopupComponent implements OnInit {
           klAt15c: item.kl.value,
           api: item.api.value,
           temperature: item.temp.value,
-          isUpdate: true
+          isUpdate: true,
+          isActive: '',
+          version: ''
         }
       )
     });
@@ -964,9 +971,13 @@ export class UllageUpdatePopupComponent implements OnInit {
         correctionFactor: item.correctionFactor,
         filling_percentage: item.fillingPercentage.value,
         arrival_departutre: item.arrivalDeparture,
-        actual_planned: item.actualPlanned,
+        actual_planned: 1,
         color_code: item.colorCode,
         sg: item.sg,
+        observedM3: '',
+        fillingRatio: '',
+        port_xid: '',
+        port_rotation_xid: '',
         isUpdate: true
       });
     });
@@ -977,10 +988,17 @@ export class UllageUpdatePopupComponent implements OnInit {
         tankId: item.tankId,
         quantity: item.quantity.value,
         isUpdate: true,
-        density: item.density,
+        density: item.density.value,
         colour_code: item.colorCode,
-        actual_planned: item.actualPlanned,
-        arrival_departutre: item.arrivalDeparture
+        actual_planned: 1,
+        arrival_departutre: item.arrivalDeparture,
+        port_xid: '',
+        port_rotation_xid: '',
+        observedM3: '',
+        temperature: '',
+        correctedUllage: '',
+        correctionFactor: '',
+        fillingRatio: '',
       })
     });
     try {
@@ -989,7 +1007,7 @@ export class UllageUpdatePopupComponent implements OnInit {
       const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_SUCCESS_LABEL', 'ULLAGE_UPDATE_SUCCESS_MESSAGE']).toPromise();
       this.messageService.add({ severity: 'success', summary: translationKeys['ULLAGE_UPDATE_SUCCESS_LABEL'], detail: translationKeys['ULLAGE_UPDATE_SUCCESS_MESSAGE'] });
       if (validate) {
-        this.loadingDischargingTransformationService.validateUllage({ validate: true, processId: '3058eeb3-6001-4c11-ba1e-03a6899ed655' });
+        this.loadingDischargingTransformationService.validateUllage({ validate: true, processId: '3058eeb3-6001-4c11-ba1e-03a6899ed655', status: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2 });
       }
       setTimeout(() => {
         this.ngxSpinnerService.hide();

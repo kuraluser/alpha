@@ -5,7 +5,7 @@ import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.m
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { DecimalPipe } from '@angular/common';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { ULLAGE_STATUS } from '../models/loading-discharging.model';
+import { ULLAGE_STATUS, ULLAGE_STATUS_TEXT } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
@@ -68,6 +68,7 @@ export class DepartureConditionComponent implements OnInit {
   selectedTab = TANKTYPE.CARGO;
   readonly OPERATIONS = OPERATIONS;
   readonly ULLAGE_STATUS = ULLAGE_STATUS;
+  readonly ULLAGE_STATUS_TEXT = ULLAGE_STATUS_TEXT;
 
   constructor(
     private departureConditionTransformationService: DepartureConditionTransformationService,
@@ -285,7 +286,7 @@ export class DepartureConditionComponent implements OnInit {
    * @memberof DepartureConditionComponent
    */
   showError(){
-    this.loadingDischargingTransformationService.showUllageError(true);
+    this.loadingDischargingTransformationService.showUllageError({ value: true, status: 2});
   }
 
 }

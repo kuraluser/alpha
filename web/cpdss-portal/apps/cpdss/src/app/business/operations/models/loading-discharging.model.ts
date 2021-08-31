@@ -881,6 +881,8 @@ export interface IBillOfLandingList {
   api: number;
   temperature: number;
   isUpdate?: boolean;
+  isActive?: string;
+  version?: string;
 
 }
 
@@ -903,6 +905,10 @@ export interface IUllageUpdList {
   correction_factor: number;
   api: number;
   isUpdate: boolean;
+  port_xid?: string;
+  port_rotation_xid?: string;
+  grade?: string;
+
 }
 
 /**
@@ -925,6 +931,10 @@ export interface IBallastUpdateList {
   color_code: string;
   sg: number;
   isUpdate: boolean;
+  observedM3?: string;
+  fillingRatio?: string;
+  port_xid?: string;
+  port_rotation_xid?: string;
 }
 
 /**
@@ -942,6 +952,13 @@ export interface IRobUpdateList {
   colour_code: string;
   actual_planned: number;
   arrival_departutre: number;
+  port_xid?: string;
+  port_rotation_xid?: string;
+  observedM3?: string;
+  temperature?: string;
+  correctedUllage?: string;
+  correctionFactor?: string;
+  fillingRatio?: string;
 }
 
 /**
@@ -1121,4 +1138,17 @@ export interface IUllageQuantityResponse {
   isBallast: boolean;
   quantityMt: number;
   responseStatus: IResponse;
+}
+
+/**
+* Interface for ullage quantity response
+*
+* @export
+* @enum ULLAGE_STATUS_TEXT
+*/
+export enum ULLAGE_STATUS_TEXT {
+  'Plan Generated'= 5,
+  'Validation In Progress' = 12,
+  'Validation Successfull' = 13,
+  'Validation Failed' = 14,
 }
