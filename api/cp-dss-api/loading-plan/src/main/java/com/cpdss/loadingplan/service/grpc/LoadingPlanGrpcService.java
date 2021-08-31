@@ -17,9 +17,13 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortWiseCargo;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StowageAndBillOfLaddingValidationRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
+import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.service.LoadingPlanService;
@@ -334,6 +338,75 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
               .setMessage(e.getMessage())
               .setStatus(LoadingPlanConstants.FAILED)
               .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @SuppressWarnings("unlikely-arg-type")
+  @Override
+  public void validateStowageAndBillOfLadding(
+      StowageAndBillOfLaddingValidationRequest request,
+      StreamObserver<ResponseStatus> responseObserver) {
+
+    ResponseStatus.Builder builder = ResponseStatus.newBuilder();
+    try {
+      List<PortWiseCargo> portWiseCargosList = request.getPortWiseCargosList();
+      List<Long> portRotationIds =
+          portWiseCargosList.stream()
+              .map(PortWiseCargo::getPortRotationId)
+              .collect(Collectors.toList());
+      List<PortLoadingPlanStowageDetails> stowageDetails =
+          portLoadingPlanStowageDetailsRepository.findByPortRotationIdInAndIsActive(
+              portRotationIds, true);
+      Map<Long, List<PortLoadingPlanStowageDetails>> portWiseStowages =
+          stowageDetails.stream()
+              .collect(Collectors.groupingBy(PortLoadingPlanStowageDetails::getPortRotationXId));
+      List<com.cpdss.loadingplan.entity.BillOfLadding> blList =
+          billOfLaddingRepository.findByPortIdInAndIsActive(portRotationIds, true);
+      Map<Long, List<com.cpdss.loadingplan.entity.BillOfLadding>> portWiseBL =
+          blList.stream()
+              .collect(
+                  Collectors.groupingBy(com.cpdss.loadingplan.entity.BillOfLadding::getPortId));
+      portWiseCargosList.stream()
+          .forEach(
+              port -> {
+                List<PortLoadingPlanStowageDetails> stowages =
+                    portWiseStowages.get(port.getPortRotationId());
+                if (stowages==null) {
+                  builder.setStatus(LoadingPlanConstants.FAILED);
+                  return;
+                }
+                List<Long> dbCargos =
+                    stowages.stream()
+                        .map(PortLoadingPlanStowageDetails::getCargoNominationXId)
+                        .collect(Collectors.toList());
+                if (!port.getCargoIdsList().equals(dbCargos)) {
+                  builder.setStatus(LoadingPlanConstants.FAILED);
+                  return;
+                }
+                List<com.cpdss.loadingplan.entity.BillOfLadding> bLValues =
+                    portWiseBL.get(port.getPortRotationId());
+                if (bLValues==null) {
+                  builder.setStatus(LoadingPlanConstants.FAILED);
+                  return;
+                }
+                List<Long> dbBLCargos =
+                    bLValues.stream()
+                        .map(com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId)
+                        .collect(Collectors.toList());
+                if (!port.getCargoIdsList().equals(dbBLCargos)) {
+                  builder.setStatus(LoadingPlanConstants.FAILED);
+                  return;
+                }
+              });
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setStatus(LoadingPlanConstants.FAILED);
+      builder.setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value());
+      builder.setMessage(e.getMessage());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
