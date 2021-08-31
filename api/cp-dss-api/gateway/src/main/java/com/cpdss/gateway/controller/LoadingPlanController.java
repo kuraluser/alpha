@@ -20,10 +20,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Log4j2
 @Validated
@@ -42,6 +45,8 @@ public class LoadingPlanController {
   @Autowired private LoadingInformationBuilderService loadingInformationBuilderService;
 
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
+
+  private static final String LOADING_PORT_TIDE_DETAIL_FILE_NAME = "Loading_port_tide_details.xlsx";
 
   /**
    * Get API to collect the port rotation details of active Voyage
@@ -811,5 +816,79 @@ public class LoadingPlanController {
           e);
     }
     return reply;
+  }
+
+  /**
+   * To upload and save the loading tide details to database
+   *
+   * @param headers
+   * @param file
+   * @return UploadTideDetailResponse
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value = "/loading/{loadingId}/upload/port-tide-details",
+      consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public UploadTideDetailResponse UploadTideDetails(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long loadingId,
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(name = "file", required = true) MultipartFile file)
+      throws CommonRestException {
+    try {
+      log.debug("inside controller");
+      return loadingPlanService.uploadLoadingTideDetails(
+          loadingId, file, headers.getFirst(CORRELATION_ID_HEADER));
+
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when upload tide details", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when upload tide details", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * API to download loading port tide details
+   *
+   * @return Port tide details in .xlsx format
+   * @throws CommonRestException Exception object
+   */
+  @GetMapping(
+      value = "/loading/download/port-tide-template",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public HttpEntity<ByteArrayResource> getLoadablePlanReport(
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = false, defaultValue = "0") Long loadingId)
+      throws CommonRestException {
+
+    try {
+      log.debug("inside controller");
+      HttpHeaders header = new HttpHeaders();
+      header.setContentType(new MediaType("application", "force-download"));
+      header.set(
+          HttpHeaders.CONTENT_DISPOSITION,
+          "attachment; filename=" + LOADING_PORT_TIDE_DETAIL_FILE_NAME);
+      return new HttpEntity<>(
+          new ByteArrayResource(loadingPlanService.downloadLoadingPortTideDetails(loadingId)),
+          header);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in downloadLoadingPortTideDetails method", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception in downloadLoadingPortTideDetails method", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
   }
 }

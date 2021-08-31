@@ -47,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -1647,5 +1648,17 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               });
     }
     return loadablePlanCommingleDetailsList;
+  }
+
+  @Override
+  public UploadTideDetailResponse uploadLoadingTideDetails(
+      Long loadingId, MultipartFile file, String correlationId)
+      throws IOException, GenericServiceException {
+    return loadingInformationService.uploadLoadingTideDetails(loadingId, file, correlationId);
+  }
+
+  @Override
+  public byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException {
+    return loadingInformationService.downloadLoadingPortTideDetails(loadingId);
   }
 }

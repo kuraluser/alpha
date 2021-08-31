@@ -42,6 +42,10 @@ service LoadingInformationService {
   rpc GetLoadingInfoAlgoStatus(LoadingInfoStatusRequest) returns (LoadingInfoStatusReply) {}
   
   rpc GetLoadingInfoAlgoErrors(AlgoErrorRequest) returns (AlgoErrorReply) {}
+  
+  rpc UploadPortTideDetails(UploadTideDetailRequest) returns (UploadTideDetailStatusReply){}
+  
+  rpc DownloadPortTideDetails(DownloadTideDetailRequest) returns (stream DownloadTideDetailStatusReply) {}
 }
 
 service LoadingInstructionService {
