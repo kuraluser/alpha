@@ -74,7 +74,7 @@ public class CommunicationService {
     log.info("inside getDataFromCommInShoreSide ");
     for (MessageTypes messageType : shore) {
       try {
-        log.info("inside getDataFromCommInShoreSide messageType "+messageType.getMessageType());
+        log.info("inside getDataFromCommInShoreSide messageType " + messageType.getMessageType());
         if (messageType.getMessageType().equals("LoadableStudy")) {
           log.info("inside getDataFromCommInShoreSide messageType ");
           EnvoyReader.EnvoyReaderResultReply erReply =
@@ -200,7 +200,7 @@ public class CommunicationService {
         loadableStudyEntity,
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID,
         "",
-true);
+        true);
 
     loadableStudyRepository.updateLoadableStudyStatus(
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());

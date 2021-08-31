@@ -774,7 +774,7 @@ message LoadingInfoStatusReply {
 
 message BillOfLanding{
   int64 id = 1;
-  int64 dischargeStudyId = 2;
+  int64 loadingId = 2;
   int64 portId = 3;
   int64 cargoId = 4;
   string blRefNumber = 5;
@@ -786,11 +786,12 @@ message BillOfLanding{
   int64 temperature = 11;
   int64 isActive = 12;
   int64 version = 13;
+  bool isUpdate = 14;
 }
 
 message BillOfLandingRemove{
   int64 id = 1;
-  int64 dischargeStudyId = 2;
+  int64 loadingId = 2;
   int64 portId = 3;
   int64 cargoId = 4;
   string blRefNumber = 5;
@@ -803,20 +804,26 @@ message BillOfLandingRemove{
   int64 isActive = 12;
   int64 version = 13;
 }
-
 message UpdateUllage{
-    int64 id = 1;
-    int64 loadingInformationId = 2;
-    int64 tankId = 3;
-    int64 temperature = 4;
-    int64 correctedUllage = 5;
-    int64 correctionFactor = 6;
-    int64 quantity = 7;
-    int64 observedM3 = 8;
-    int64 fillingRatio = 9;
-    int64 api = 10;
-    int64 ullage = 11;
-    bool isUpdate = 12;
+  int64 id = 1;
+  int64 loadingInformationId = 2;
+  int64 tankId = 3;
+  int64 temperature = 4;
+  int64 correctedUllage = 5;
+  int64 correctionFactor = 6;
+  int64 quantity = 7;
+  int64 observedM3 = 8;
+  int64 fillingRatio = 9;
+  int64 api = 10;
+  int64 port_xid = 11;
+  int64 port_rotation_xid = 12;
+  int64 arrival_departutre = 13;
+  int64 actual_planned = 14;
+  int64 grade = 15;
+  int64 fillingPercentage = 16;
+  int64 ullage = 17;
+  bool isUpdate = 18;
+  int64 cargo_nomination_xid = 19;
 }
 
 message BallastUpdate{
@@ -829,7 +836,14 @@ message BallastUpdate{
   int64 observedM3 =7;
   int64 fillingRatio =8;
   int64 sounding = 9;
-  bool isUpdate = 10;
+  int64 filling_percentage= 10;
+  int64 arrival_departutre= 11;
+  int64 actual_planned= 12;
+  string color_code= 13;
+  int64 sg= 14;
+  bool isUpdate = 15;
+  int64 port_xid = 16;
+  int64 port_rotation_xid = 17;
 }
 
 message RobUpdate{
@@ -841,7 +855,13 @@ message RobUpdate{
   int64 quantity =6;
   int64 observedM3 =7;
   int64 fillingRatio =8;
-  bool isUpdate = 11;
+  string colour_code = 9;
+  int64 density =10;
+  int64 arrival_departutre =11;
+  int64 actual_planned =12;
+  bool isUpdate = 13;
+  int64 port_xid = 14;
+  int64 port_rotation_xid = 15;
 }
 
 message UllageBillRequest{

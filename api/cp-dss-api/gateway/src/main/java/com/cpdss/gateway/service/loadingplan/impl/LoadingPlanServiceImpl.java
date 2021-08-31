@@ -40,7 +40,6 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -1282,21 +1281,24 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             .forEach(
                 billLanding -> {
                   billOfLandingBuilder
+                      .setLoadingId(
+                          billLanding.getLoadingId() == null ? 0 : billLanding.getLoadingId())
+                      .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
+                      .setCargoId(billLanding.getCargoId() == null ? 0 : billLanding.getCargoId())
+                      .setBlRefNumber(
+                          billLanding.getBlRefNumber() == null ? "" : billLanding.getBlRefNumber())
                       .setBblAt60F(
                           billLanding.getBblAt60f() == null
                               ? null
                               : billLanding.getBblAt60f().longValue())
-                      .setId(billLanding.getId() == 0 ? 0 : billLanding.getId())
-                      .setPortId(billLanding.getPortId() == 0 ? 0 : billLanding.getPortId())
-                      .setCargoId(billLanding.getCargoId() == 0 ? 0 : billLanding.getCargoId())
-                      .setBlRefNumber(
-                          billLanding.getBlRefNumber() == null ? "" : billLanding.getBlRefNumber())
                       .setQuantityLt(billLanding.getQuantityLt().longValue())
+                      .setQuantityMt(billLanding.getQuantityMt().longValue())
                       .setKlAt15C(billLanding.getKlAt15c().longValue())
                       .setApi(billLanding.getApi().longValue())
                       .setTemperature(billLanding.getTemperature().longValue())
                       .setIsActive(billLanding.getIsActive().longValue())
-                      .setVersion(billLanding.getVersion() == 0 ? 0 : billLanding.getVersion())
+                      .setVersion(billLanding.getVersion() == null ? 0 : billLanding.getVersion())
+                      .setIsUpdate(billLanding.getIsUpdate())
                       .build();
                 });
 
@@ -1305,19 +1307,32 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         errorValidationLandingMsg = "Required data for Update is missing";
       }
 
-      final Integer i = new Integer(0);
+      if (inputData.getBillOfLandingListRemove().size() > 0) {
+        errorValidationLandingMsg = "";
+        inputData
+            .getBillOfLandingListRemove()
+            .forEach(
+                billLanding -> {
+                  updateBillRemoveBuilder
+                      .setLoadingId(
+                          billLanding.getLoadingId() == null ? 0 : billLanding.getLoadingId())
+                      .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
+                      .setCargoId(billLanding.getCargoId() == null ? 0 : billLanding.getCargoId())
+                      .build();
+                });
 
-      final AtomicReference<Integer> reference = new AtomicReference<>();
+        builder.addBillOfLandingRemove(updateBillRemoveBuilder.build());
+      } else {
+        errorValidationLandingMsg = "Required data for Update is missing";
+      }
 
       if (inputData.getUllageUpdList().size() > 0) {
         inputData
             .getUllageUpdList()
             .forEach(
                 ullageList -> {
-                  reference.set(Integer.valueOf(ullageList.getLoadingInformationId() + ""));
-
                   updateUllageBuilder
-                      .setId(
+                      .setLoadingInformationId(
                           ullageList.getLoadingInformationId() == null
                               ? 0
                               : ullageList.getLoadingInformationId().longValue())
@@ -1331,60 +1346,51 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getCorrectedUllage() == null
                               ? 0
                               : ullageList.getCorrectedUllage().longValue())
-                      .setCorrectionFactor(
-                          ullageList.getCorrectionFactor() == null
-                              ? 0
-                              : ullageList.getCorrectionFactor().longValue())
                       .setQuantity(
                           ullageList.getQuantity() == null
                               ? 0
                               : ullageList.getQuantity().longValue())
-                      .setObservedM3(
-                          ullageList.getObservedM3() == null
+                      .setFillingPercentage(
+                          ullageList.getFillingPercentage() == null
                               ? 0
-                              : ullageList.getObservedM3().longValue())
-                      .setFillingRatio(
-                          ullageList.getFillingRatio() == null
-                              ? 0
-                              : ullageList.getFillingRatio().longValue())
+                              : ullageList.getFillingPercentage())
+                      // .setFillingRatio(ullageList.getFillingRatio() == null? 0:
+                      // ullageList.getFillingRatio().longValue())
                       .setApi(ullageList.getApi() == null ? 0 : ullageList.getApi().longValue())
-                      .setUllage(
-                          ullageList.getUllage() == null ? 0 : ullageList.getUllage().longValue())
+                      .setCargoNominationXid(
+                          ullageList.getCargoNominationId() == null
+                              ? 0
+                              : ullageList.getCargoNominationId().longValue())
+                      // .setUllage(ullageList.getUllage() == null ? 0 :
+                      // ullageList.getUllage().longValue())
+                      .setPortXid(
+                          ullageList.getPort_xid() == null
+                              ? 0
+                              : ullageList.getPort_xid().longValue())
+                      .setPortRotationXid(
+                          ullageList.getPort_rotation_xid() == null
+                              ? 0
+                              : ullageList.getPort_rotation_xid().longValue())
+                      .setArrivalDepartutre(
+                          ullageList.getArrival_departutre() == null
+                              ? 0
+                              : ullageList.getArrival_departutre().longValue())
+                      .setActualPlanned(
+                          ullageList.getActual_planned() == null
+                              ? 0
+                              : ullageList.getActual_planned().longValue())
+                      .setGrade(
+                          ullageList.getGrade() == null ? 0 : ullageList.getGrade().longValue())
+                      .setCorrectionFactor(
+                          ullageList.getCorrectionFactor() == null
+                              ? 0
+                              : ullageList.getCorrectionFactor().longValue())
                       .setIsUpdate(ullageList.getIsUpdate())
                       .build();
                 });
 
         builder.addUpdateUllage(updateUllageBuilder.build());
 
-      } else {
-        errorValidationUllageMsg = "Required data for Update is missing";
-      }
-
-      if (inputData.getBillOfLandingListRemove().size() > 0) {
-        inputData
-            .getBillOfLandingListRemove()
-            .forEach(
-                billLanding -> {
-                  updateBillRemoveBuilder
-                      .setBblAt60F(
-                          billLanding.getBblAt60f() == null
-                              ? null
-                              : billLanding.getBblAt60f().longValue())
-                      .setId(billLanding.getId() == 0 ? 0 : billLanding.getId())
-                      .setPortId(billLanding.getPortId() == 0 ? 0 : billLanding.getPortId())
-                      .setCargoId(billLanding.getCargoId() == 0 ? 0 : billLanding.getCargoId())
-                      .setBlRefNumber(
-                          billLanding.getBlRefNumber() == null ? "" : billLanding.getBlRefNumber())
-                      .setQuantityLt(billLanding.getQuantityLt().longValue())
-                      .setKlAt15C(billLanding.getKlAt15c().longValue())
-                      .setApi(billLanding.getApi().longValue())
-                      .setTemperature(billLanding.getTemperature().longValue())
-                      .setIsActive(billLanding.getIsActive().longValue())
-                      .setVersion(billLanding.getVersion() == 0 ? 0 : billLanding.getVersion())
-                      .build();
-                });
-
-        builder.addBillOfLandingRemove(updateBillRemoveBuilder.build());
       } else {
         errorValidationUllageMsg = "Required data for Update is missing";
       }
@@ -1429,6 +1435,23 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getSounding() == null
                               ? 0
                               : ullageList.getSounding().longValue())
+                      .setFillingPercentage(
+                          ullageList.getFilling_percentage() == null
+                              ? 0
+                              : ullageList.getFilling_percentage().longValue())
+                      .setArrivalDepartutre(
+                          ullageList.getArrival_departutre() == null
+                              ? 0
+                              : ullageList.getArrival_departutre().longValue())
+                      .setActualPlanned(
+                          ullageList.getActual_planned() == null
+                              ? 0
+                              : ullageList.getActual_planned().longValue())
+                      .setColorCode(
+                          ullageList.getColor_code() == null ? "" : ullageList.getColor_code())
+                      .setSg(ullageList.getSg() == null ? 0 : ullageList.getSg().longValue())
+                      .setPortXid(ullageList.getPortXId())
+                      .setPortRotationXid(ullageList.getPortRotationXId())
                       .setIsUpdate(ullageList.getIsUpdate())
                       .build();
                 });
@@ -1455,27 +1478,33 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getTemperature() == null
                               ? 0
                               : ullageList.getTemperature().longValue())
-                      .setCorrectedUllage(
-                          ullageList.getCorrectedUllage() == null
-                              ? 0
-                              : ullageList.getCorrectedUllage().longValue())
-                      .setCorrectionFactor(
-                          ullageList.getCorrectionFactor() == null
-                              ? 0
-                              : ullageList.getCorrectionFactor().longValue())
+                      // .setCorrectedUllage(ullageList.getCorrectedUllage() == null? 0:
+                      // ullageList.getCorrectedUllage().longValue())
+                      // .setCorrectionFactor(ullageList.getCorrectionFactor() == null ? 0:
+                      // ullageList.getCorrectionFactor().longValue())
                       .setQuantity(
                           ullageList.getQuantity() == null
                               ? 0
                               : ullageList.getQuantity().longValue())
-                      .setObservedM3(
-                          ullageList.getObservedM3() == null
-                              ? 0
-                              : ullageList.getObservedM3().longValue())
-                      .setFillingRatio(
-                          ullageList.getFillingRatio() == null
-                              ? 0
-                              : ullageList.getFillingRatio().longValue())
                       .setIsUpdate(ullageList.getIsUpdate())
+                      .setDensity(
+                          ullageList.getDensity() == null ? 0 : ullageList.getDensity().longValue())
+                      // .setObservedM3(ullageList.getObservedM3() == null? 0:
+                      // ullageList.getObservedM3().longValue())
+                      // .setFillingRatio(ullageList.getFillingRatio() == null? 0:
+                      // ullageList.getFillingRatio().longValue())
+                      .setColourCode(
+                          ullageList.getColourCode() == null ? "" : ullageList.getColourCode())
+                      .setArrivalDepartutre(
+                          ullageList.getArrival_departutre() == null
+                              ? 0
+                              : ullageList.getArrival_departutre().longValue())
+                      .setActualPlanned(
+                          ullageList.getActual_planned() == null
+                              ? 0
+                              : ullageList.getActual_planned().longValue())
+                      .setPortXid(ullageList.getPortXId())
+                      .setPortRotationXid(ullageList.getPortRotationXId())
                       .build();
                 });
 
