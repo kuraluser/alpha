@@ -252,8 +252,6 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   setButtonStatus() {
     this.disableGenerateLoadableButton = false;
     this.processing = false;
-    this.loadingSequenceComplete =true;    
-    this.loadingPlanComplete = true;
     this.loadingDischargingTransformationService.disableSaveButton.next(false);
   }
   
@@ -266,8 +264,6 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   setButtonStatusInProcessing() {
     this.disableGenerateLoadableButton = true;
     this.processing = true;
-    this.loadingSequenceComplete =false;    
-    this.loadingPlanComplete = false;
   }
   /**
    * Method to call on generate loading plan
