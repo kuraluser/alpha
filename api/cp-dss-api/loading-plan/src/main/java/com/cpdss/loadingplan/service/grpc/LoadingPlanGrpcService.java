@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.grpc;
 
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.BillOfLadding;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
@@ -357,6 +358,8 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
           portWiseCargosList.stream()
               .map(PortWiseCargo::getPortRotationId)
               .collect(Collectors.toList());
+      List<Long> portIds =
+          portWiseCargosList.stream().map(PortWiseCargo::getPortId).collect(Collectors.toList());
       List<PortLoadingPlanStowageDetails> stowageDetails =
           portLoadingPlanStowageDetailsRepository.findByPortRotationXIdInAndIsActive(
               portRotationIds, true);
@@ -364,45 +367,47 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
           stowageDetails.stream()
               .collect(Collectors.groupingBy(PortLoadingPlanStowageDetails::getPortRotationXId));
       List<com.cpdss.loadingplan.entity.BillOfLadding> blList =
-          billOfLaddingRepository.findByPortIdInAndIsActive(portRotationIds, true);
+          billOfLaddingRepository.findByPortIdInAndIsActive(portIds, true);
       Map<Long, List<com.cpdss.loadingplan.entity.BillOfLadding>> portWiseBL =
           blList.stream()
               .collect(
                   Collectors.groupingBy(com.cpdss.loadingplan.entity.BillOfLadding::getPortId));
-      portWiseCargosList.stream()
-          .forEach(
-              port -> {
-                List<PortLoadingPlanStowageDetails> stowages =
-                    portWiseStowages.get(port.getPortRotationId());
-                if (stowages==null) {
-                  builder.setStatus(LoadingPlanConstants.FAILED);
-                  return;
-                }
-                List<Long> dbCargos =
-                    stowages.stream()
-                        .map(PortLoadingPlanStowageDetails::getCargoNominationXId)
-                        .collect(Collectors.toList());
-                if (!port.getCargoIdsList().equals(dbCargos)) {
-                  builder.setStatus(LoadingPlanConstants.FAILED);
-                  return;
-                }
-                List<com.cpdss.loadingplan.entity.BillOfLadding> bLValues =
-                    portWiseBL.get(port.getPortId());
-                if (bLValues==null) {
-                  builder.setStatus(LoadingPlanConstants.FAILED);
-                  return;
-                }
-                List<Long> dbBLCargos =
-                    bLValues.stream()
-                        .map(com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId)
-                        .collect(Collectors.toList());
-                if (!port.getCargoIdsList().equals(dbBLCargos)) {
-                  builder.setStatus(LoadingPlanConstants.FAILED);
-                  return;
-                }
-              });
+      if (!portWiseStowages.keySet().containsAll(portRotationIds)
+          || !portWiseBL.keySet().containsAll(portIds)) {
+        builder.setStatus(LoadingPlanConstants.FAILED);
+        return;
+      } else {
+        portWiseCargosList.stream()
+            .forEach(
+                port -> {
+                  try {
+                    List<PortLoadingPlanStowageDetails> stowages =
+                        portWiseStowages.get(port.getPortRotationId());
+                    List<com.cpdss.loadingplan.entity.BillOfLadding> bLValues =
+                        portWiseBL.get(port.getPortId());
+                    List<Long> dbCargos =
+                        stowages.stream()
+                            .map(PortLoadingPlanStowageDetails::getCargoNominationXId)
+                            .collect(Collectors.toList());
+                    List<Long> dbBLCargos =
+                        bLValues.stream()
+                            .map(com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId)
+                            .collect(Collectors.toList());
+                    if (!dbCargos.containsAll(port.getCargoIdsList())
+                        || !dbBLCargos.containsAll(port.getCargoIdsList())) {
+                      builder.setStatus(LoadingPlanConstants.FAILED);
+                      throw new GenericServiceException(
+                          "LS actuals or BL values are missing",
+                          "",
+                          HttpStatusCode.SERVICE_UNAVAILABLE);
+                    }
+                  } catch (Exception e) {
+                    builder.setStatus(LoadingPlanConstants.FAILED);
+                  }
+                });
+      }
+
       builder.setStatus(LoadingPlanConstants.SUCCESS);
-      
     } catch (Exception e) {
       e.printStackTrace();
       builder.setStatus(LoadingPlanConstants.FAILED);

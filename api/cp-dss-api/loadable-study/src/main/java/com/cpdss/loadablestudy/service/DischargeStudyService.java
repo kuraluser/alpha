@@ -145,13 +145,6 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      if (dischargeStudyRepository.existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
-          request.getName(), 2, voyage, true)) {
-        throw new GenericServiceException(
-            "name already exists",
-            CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
-            HttpStatusCode.BAD_REQUEST);
-      }
 
       List<LoadableStudy> loadables =
           this.dischargeStudyRepository
@@ -166,6 +159,13 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       LoadableStudy loadableStudy = loadables.get(0);
       LoadableStudyPortRotation loadableStudyPortRotation = getportRotationData(loadableStudy);
       validateActuals(loadableStudy);
+      if (dischargeStudyRepository.existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
+          request.getName(), 2, voyage, true)) {
+        throw new GenericServiceException(
+            "name already exists",
+            CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
+            HttpStatusCode.BAD_REQUEST);
+      }
       List<SynopticalTable> synopticalData =
           this.synopticalTableRepository
               .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
@@ -250,7 +250,14 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           portBuilder.addAllCargoIds(cargoIds);
           request.addPortWiseCargos(portBuilder);
         });
-    loadingPlanServiceBlockingStub.validateStowageAndBillOfLadding(request.build());
+    ResponseStatus response =
+        loadingPlanServiceBlockingStub.validateStowageAndBillOfLadding(request.build());
+    if (!SUCCESS.equalsIgnoreCase(response.getStatus())) {
+      throw new GenericServiceException(
+          "No Atcuals",
+          CommonErrorCodes.E_CPDSS_NO_ACUTALS_OR_BL_VALUES_FOUND,
+          HttpStatusCode.BAD_REQUEST);
+    }
   }
 
   /**
