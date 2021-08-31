@@ -18,7 +18,7 @@ public interface LoadingInstructionRepository
           "select * from loading_instructions LI "
               + " join loading_information LIF on LI.loading_xid = LIF.id"
               + " where LIF.vessel_xid=:vesselId and LI.loading_xid= :loadingInfoId and LIF.port_rotation_xid =:portRotationId "
-              + "and LI.is_active = true and LIF.is_active =true",
+              + "and LI.is_active = true and LIF.is_active =true order by LI.created_date",
       nativeQuery = true)
   public List<LoadingInstruction> getAllLoadingInstructions(
       @Param("vesselId") long vesselId,
