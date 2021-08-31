@@ -968,7 +968,7 @@ export class UllageUpdatePopupComponent implements OnInit {
         quantity: item.quantity.value,
         sounding: item.sounding.value,
         correctedUllage: item.correctedUllage,
-        correctionFactor: item.correctionFactor,
+        correctionFactor: item.correctionFactor ? item.correctionFactor : '',
         filling_percentage: item.fillingPercentage.value,
         arrival_departutre: item.arrivalDeparture,
         actual_planned: 1,
@@ -978,6 +978,7 @@ export class UllageUpdatePopupComponent implements OnInit {
         fillingRatio: '',
         port_xid: '',
         port_rotation_xid: '',
+        isValidate: '',
         isUpdate: true
       });
     });
