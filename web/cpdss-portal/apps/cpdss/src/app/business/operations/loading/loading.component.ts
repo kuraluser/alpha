@@ -2,7 +2,7 @@ import { Component, ComponentRef, HostListener, OnDestroy, OnInit, ViewChild } f
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { IAlgoError, IAlgoResponse, ICargo, ICargoResponseModel, OPERATIONS ,OPERATIONS_PLAN_STATUS} from '../../core/models/common.model';
+import { IAlgoError, IAlgoResponse, ICargo, ICargoResponseModel, OPERATIONS, OPERATIONS_PLAN_STATUS } from '../../core/models/common.model';
 import { OPERATION_TAB } from '../models/operations.model';
 import { LoadingInformationComponent } from './loading-information/loading-information.component';
 import { UnsavedChangesGuard, ComponentCanDeactivate } from './../../../shared/services/guards/unsaved-data-guard';
@@ -46,7 +46,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   cargos: ICargo[]
   loadingInstructionComplete: boolean;
   loadingSequenceComplete: boolean;
-  loadingPlanComplete:boolean;
+  loadingPlanComplete: boolean;
   OPERATIONS = OPERATIONS;
   errorMessage: IAlgoError[];
   disableGenerateLoadableButton: boolean = true;
@@ -54,7 +54,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   private ngUnsubscribe: Subject<any> = new Subject();
   errorPopUp: boolean = false;
   disableViewErrorButton: boolean = true;
-  processing: boolean =true;
+  processing: boolean = true;
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
@@ -66,19 +66,19 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     private activatedRoute: ActivatedRoute,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private operationsApiService: OperationsApiService,
-    private loadingApiService:LoadingApiService,
+    private loadingApiService: LoadingApiService,
     private unsavedChangesGuard: UnsavedChangesGuard,
     private translateService: TranslateService,
     private messageService: MessageService,
-    private globalErrorHandler:GlobalErrorHandler,
-    private router:Router,
+    private globalErrorHandler: GlobalErrorHandler,
+    private router: Router,
     private ngxSpinnerService: NgxSpinnerService
-    ) {
+  ) {
   }
 
 
 
-    ngOnInit(): void {
+  ngOnInit(): void {
     this.initSubsciptions();
     this.getCargos();
     this.listenEvents();
@@ -120,6 +120,29 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.disableGenerateLoadableButton = false;
       }
     });
+
+    this.loadingDischargingTransformationService.validateUllageData$.subscribe((res) => {
+      if (res?.validate) {
+        this.validateUllage(res);
+      }
+    });
+  }
+
+  /**
+   * validate ullage values
+   *
+   * @memberof LoadingComponent
+   */
+  validateUllage(value) {
+    const data = {
+      processId: value.processId,
+      vesselId: this.vesselId,
+      voyageId: this.voyageId,
+      loadingInfoId: this.loadingInfoId,
+      type: 'ullage-update-status'
+    }
+    navigator.serviceWorker.controller.postMessage({ type: 'ullage-update-status', data });
+
   }
 
 
@@ -155,7 +178,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   * @memberof LoadingComponent
   */
 
-  setLoadingInfoId(data){
+  setLoadingInfoId(data) {
     this.loadingInfoId = data;
   }
 
@@ -165,7 +188,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @private
    * @memberof LoadingComponent
    */
-  private listenEvents() {    
+  private listenEvents() {
     navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
   }
 
@@ -185,65 +208,116 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     if (event?.data?.errorCode === '210') {
       this.globalErrorHandler.sessionOutMessage();
     }
-    this.loadingSequenceComplete = this.loadingPlanComplete = (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED)
-    if (event?.data.statusId === OPERATIONS_PLAN_STATUS.ERROR_OCCURED) {
-      this.setButtonStatus();
-      this.disableViewErrorButton = false;
-      await this.getAlgoErrorMessage(true);
-      this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PLAN_ERROR_OCCURED'], detail: translationKeys["GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE"] });
-    }
-    else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE) {
-      this.setButtonStatus();
-      this.messageService.clear();
-      await this.getAlgoErrorMessage(true);
-      this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PLAN_ERROR_OCCURED'], detail: translationKeys["GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE"] });
-    }
-    else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED) {
-      this.setButtonStatus();
-      this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: translationKeys["GENERATE_LODABLE_PLAN_PLAN_GENERATED"] });
-    }
-
-    if (this.router.url.includes('operations/loading')) {
-     
-      switch (event?.data?.statusId) {
-        case OPERATIONS_PLAN_STATUS.PENDING:
-          this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_PENDING"] });
-          this.setButtonStatusInProcessing();
-          break;
-        case OPERATIONS_PLAN_STATUS.CONFIRMED:
-          this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_CONFIRMED"] });
-          this.setButtonStatusInProcessing();
-          break;
-        case OPERATIONS_PLAN_STATUS.PLAN_ALGO_PROCESSING_STARTED:
-          this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED"] });
-          this.setButtonStatusInProcessing();
-          break;
-        case OPERATIONS_PLAN_STATUS.VERIFICATION_WITH_LOADICATOR:
-          this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER"] });
-          this.setButtonStatusInProcessing();
-          break;
-        case OPERATIONS_PLAN_STATUS.VERFICATION_WITH_LOADICATOT_COMPLETED:
-          this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED"] });
-          this.setButtonStatusInProcessing();
-          break;
-        case OPERATIONS_PLAN_STATUS.ALGO_PROCESSING_COMPLETED:
-          this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED"] });
-          this.setButtonStatusInProcessing();
-          break;
-        case  OPERATIONS_PLAN_STATUS.ERROR_OCCURED:
-          this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ERROR_OCCURED"] });
-          this.setButtonStatusInProcessing();
-          break;
-        case  OPERATIONS_PLAN_STATUS.LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED:
-          this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED"] });
-          this.setButtonStatusInProcessing();
-          break;
+    if (event?.data?.pattern?.type === 'loading-plan-status') {
+      this.loadingSequenceComplete = this.loadingPlanComplete = (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED)
+      if (event?.data.statusId === OPERATIONS_PLAN_STATUS.ERROR_OCCURED) {
+        this.setButtonStatus();
+        this.disableViewErrorButton = false;
+        await this.getAlgoErrorMessage(true);
+        this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PLAN_ERROR_OCCURED'], detail: translationKeys["GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE"] });
+      }
+      else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE) {
+        this.setButtonStatus();
+        this.messageService.clear();
+        await this.getAlgoErrorMessage(true);
+        this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PLAN_ERROR_OCCURED'], detail: translationKeys["GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE"] });
+      }
+      else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED) {
+        this.setButtonStatus();
+        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: translationKeys["GENERATE_LODABLE_PLAN_PLAN_GENERATED"] ,sticky: true, closable: true });
       }
 
+      if (this.router.url.includes('operations/loading')) {
+
+        switch (event?.data?.statusId) {
+          case OPERATIONS_PLAN_STATUS.PENDING:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_PENDING"] });
+            this.setButtonStatusInProcessing();
+            break;
+          case OPERATIONS_PLAN_STATUS.CONFIRMED:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_CONFIRMED"] });
+            this.setButtonStatusInProcessing();
+            break;
+          case OPERATIONS_PLAN_STATUS.PLAN_ALGO_PROCESSING_STARTED:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED"] });
+            this.setButtonStatusInProcessing();
+            break;
+          case OPERATIONS_PLAN_STATUS.VERIFICATION_WITH_LOADICATOR:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER"] });
+            this.setButtonStatusInProcessing();
+            break;
+          case OPERATIONS_PLAN_STATUS.VERFICATION_WITH_LOADICATOT_COMPLETED:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED"] });
+            this.setButtonStatusInProcessing();
+            break;
+          case OPERATIONS_PLAN_STATUS.ALGO_PROCESSING_COMPLETED:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED"] });
+            this.setButtonStatusInProcessing();
+            break;
+          case OPERATIONS_PLAN_STATUS.ERROR_OCCURED:
+            this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ERROR_OCCURED"] });
+            this.setButtonStatusInProcessing();
+            break;
+          case OPERATIONS_PLAN_STATUS.LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED"] });
+            this.setButtonStatusInProcessing();
+            break;
+        }
+
+      }
+    }
+    if (event?.data?.pattern?.type === 'ullage-update-status') {
+      if (event?.data.statusId === OPERATIONS_PLAN_STATUS.ERROR_OCCURED) {
+        this.loadingDischargingTransformationService.showUllageError(true);
+      } else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE) {
+        this.messageService.clear();
+        this.loadingDischargingTransformationService.showUllageError(true);
+      } else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED) {
+        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: translationKeys["GENERATE_LODABLE_PLAN_PLAN_GENERATED"] });
+      }
+
+      if (this.router.url.includes('operations/loading')) {
+
+        switch (event?.data?.statusId) {
+          case OPERATIONS_PLAN_STATUS.PENDING:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_PENDING"] });
+
+            break;
+          case OPERATIONS_PLAN_STATUS.CONFIRMED:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_CONFIRMED"] });
+
+            break;
+          case OPERATIONS_PLAN_STATUS.PLAN_ALGO_PROCESSING_STARTED:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED"] });
+
+            break;
+          case OPERATIONS_PLAN_STATUS.VERIFICATION_WITH_LOADICATOR:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER"] });
+
+            break;
+          case OPERATIONS_PLAN_STATUS.VERFICATION_WITH_LOADICATOT_COMPLETED:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED"] });
+
+            break;
+          case OPERATIONS_PLAN_STATUS.ALGO_PROCESSING_COMPLETED:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED"] });
+
+            break;
+          case OPERATIONS_PLAN_STATUS.ERROR_OCCURED:
+            this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ERROR_OCCURED"] });
+
+            break;
+          case OPERATIONS_PLAN_STATUS.LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED"] });
+
+            break;
+        }
+
+      }
     }
 
   }
- 
+
   /**
    *Method to set button status.
    *
@@ -254,7 +328,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.processing = false;
     this.loadingDischargingTransformationService.disableSaveButton.next(false);
   }
-  
+
 
   /**
    * Method to set button status in processing stage
@@ -279,7 +353,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       processId: result.processId,
       vesselId: this.vesselId,
       voyageId: this.voyageId,
-      loadingInfoId: this.loadingInfoId
+      loadingInfoId: this.loadingInfoId,
+      type: 'loading-plan-status'
     }
     if (result.responseStatus.status == "SUCCESS") {
       if (result.processId) {
@@ -290,12 +365,12 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   }
 
-  
-/**
- * Method to get algo error 
- *
- * @memberof LoadingComponent
- */
+
+  /**
+   * Method to get algo error 
+   *
+   * @memberof LoadingComponent
+   */
   async getAlgoErrorMessage(status) {
     const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
     if (algoError.responseStatus.status === 'SUCCESS') {
