@@ -300,6 +300,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     var1.setToppingOffSequence(toppingSequence);
     var1.setCargoVesselTankDetails(vesselTankDetails);
     var1.setLoadingSequences(loadingSequences);
+    var1.setIsLoadingInstructionsComplete(loadingInfo.getIsLoadingInstructionsComplete());
+    var1.setIsLoadingSequenceGenerated(loadingInfo.getIsLoadingSequenceGenerated());
+    var1.setIsLoadingPlanGenerated(loadingInfo.getIsLoadingPlanGenerated());
     var1.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return var1;
   }

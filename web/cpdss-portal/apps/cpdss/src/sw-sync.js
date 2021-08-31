@@ -557,7 +557,7 @@
       }
       const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/loading-info/${data?.loadingInfoId}/algo-status`, {
         method: 'POST',
-        body: JSON.stringify({ processId: data?.processId }),
+        body: JSON.stringify({ processId: data?.processId, conditionType : data?.status ? data?.status : null }),
         headers: headers
       });
       const syncView = await syncResponse.json();

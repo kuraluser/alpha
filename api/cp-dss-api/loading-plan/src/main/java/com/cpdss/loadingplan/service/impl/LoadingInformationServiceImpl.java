@@ -91,6 +91,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Autowired LoadingMachineryInUseService loadingMachineryInUseService;
   @Autowired CargoToppingOffSequenceService toppingOffSequenceService;
   @Autowired PortTideDetailsRepository portTideDetailsRepository;
+  @Autowired LoadingInstructionRepository loadingInstructionRepository;
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoServiceBlockingStub;
@@ -213,7 +214,26 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             builder.setIsLoadingInfoComplete(v.getIsLoadingInfoComplete());
           }
         });
-
+    List<LoadingInstruction> listLoadingInstruction =
+        loadingInstructionRepository.getAllLoadingInstructions(
+            request.getVesselId(), var1.get().getId(), request.getPortRotationId());
+    if (!listLoadingInstruction.isEmpty()) {
+      builder.setIsLoadingInstructionsComplete(true);
+    } else {
+      builder.setIsLoadingInstructionsComplete(false);
+    }
+    var1.ifPresent(
+        v -> {
+          if (v.getIsLoadingSequenceGenerated() != null) {
+            builder.setIsLoadingSequenceGenerated(v.getIsLoadingSequenceGenerated());
+          }
+        });
+    var1.ifPresent(
+        v -> {
+          if (v.getIsLoadingPlanGenerated() != null) {
+            builder.setIsLoadingPlanGenerated(v.getIsLoadingPlanGenerated());
+          }
+        });
     // Loading Details
     LoadingPlanModels.LoadingDetails details =
         this.informationBuilderService.buildLoadingDetailsMessage(var1.orElse(null));

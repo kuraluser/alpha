@@ -109,10 +109,10 @@ export class LoadingPlanComponent implements OnInit {
    */
    async getAlgoErrorMessage(status) {
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PLAN_ERROR_OCCURED', 'GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE']).toPromise();
-    const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
+    const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId, status.status).toPromise();
     if (algoError.responseStatus.status === 'SUCCESS') {
       this.errorMessage = algoError.algoErrors;
-      this.errorPopUp = status;
+      this.errorPopUp = status.value;
     }
     this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PLAN_ERROR_OCCURED'], detail: translationKeys["GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE"] });
   }

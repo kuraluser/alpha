@@ -50,7 +50,7 @@ export class DepartureConditionPanelComponent implements OnInit {
     this.loadingPlanData?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(cargo => {
       let cargoQuantity = 0;
       this.loadingPlanData?.planStowageDetails?.map(item => {
-        if (item.conditionType === 1 && cargo.cargoNominationId === item.cargoNominationId) {
+        if (item.conditionType === 2 && cargo.cargoNominationId === item.cargoNominationId) {
           cargoQuantity += Number(item.quantityMT);
         }
       });
@@ -60,7 +60,7 @@ export class DepartureConditionPanelComponent implements OnInit {
     this.departureConditionCargoTotalQuantity = Number(this.departureConditionCargoTotalQuantity.toFixed(2));
     let ballastQuantity = 0;
     this.loadingPlanData?.planBallastDetails?.map(item => {
-      if (item.conditionType === 1) {
+      if (item.conditionType === 2) {
         ballastQuantity += Number(item.quantityMT);
       }
     });
@@ -70,7 +70,7 @@ export class DepartureConditionPanelComponent implements OnInit {
     let draftMValue = 0;
     let trimValue = 0;
     this.loadingPlanData?.planStabilityParams?.map(item => {
-      if (item.conditionType === 1) {
+      if (item.conditionType === 2) {
         draftFValue += Number(item?.foreDraft);
         draftAValue += Number(item?.aftDraft);
         draftMValue += Number(item?.meanDraft);

@@ -297,13 +297,15 @@ public class LoadingPlanAlgoService {
                 saveLoadingSequence(sequence, loadingInfoOpt.get());
               });
       deleteLoadingSequences(loadingInfoOpt.get().getId(), oldLoadingSequences);
-
+      loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
+          loadingInfoOpt.get().getId(), true);
       deleteLoadingSequenceStabilityParams(loadingInfoOpt.get().getId());
       saveLoadingSequenceStabilityParams(request, loadingInfoOpt.get());
 
       deleteLoadingPlan(loadingInfoOpt.get().getId());
       saveLoadingPlan(request, loadingInfoOpt.get());
-
+      loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
+          loadingInfoOpt.get().getId(), true);
       if (request.getHasLoadicator()) {
         log.info("Passing Loading Sequence to Loadicator");
         loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());

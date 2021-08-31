@@ -3,7 +3,7 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { ITankOptions, IShipCargoTank, IVoyagePortDetails, TANKTYPE, ICargoQuantities, IShipBallastTank } from '../../core/models/common.model';
 import { ArrivalConditionTransformationService } from './arrival-condition-transformation.service';
 import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
-import { ULLAGE_STATUS } from '../models/loading-discharging.model';
+import { ULLAGE_STATUS, ULLAGE_STATUS_TEXT } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
@@ -66,6 +66,7 @@ export class ArrivalConditionComponent implements OnInit {
   selectedTab = TANKTYPE.CARGO;
 
   readonly ULLAGE_STATUS = ULLAGE_STATUS;
+  readonly ULLAGE_STATUS_TEXT = ULLAGE_STATUS_TEXT;
 
   constructor(
     private arrivalConditionTransformationService: ArrivalConditionTransformationService,
@@ -263,7 +264,7 @@ export class ArrivalConditionComponent implements OnInit {
    * @memberof ArrivalConditionComponent
    */
   showError() {
-    this.loadingDischargingTransformationService.showUllageError(true);
+    this.loadingDischargingTransformationService.showUllageError({ value: true, status: 1});
   }
 
 }

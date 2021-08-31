@@ -12,7 +12,6 @@ import { LoadingApiService } from '../services/loading-api.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
-import { environment } from '../../../../environments/environment';
 import { SecurityService } from '../../../shared/services/security/security.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { RATE_UNIT } from '../../../shared/models/common.model';
@@ -139,7 +138,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       vesselId: this.vesselId,
       voyageId: this.voyageId,
       loadingInfoId: this.loadingInfoId,
-      type: 'ullage-update-status'
+      type: 'ullage-update-status',
+      status: value.status
     }
     navigator.serviceWorker.controller.postMessage({ type: 'ullage-update-status', data });
 
