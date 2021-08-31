@@ -44,6 +44,10 @@ message LoadingInformation{
   int64 loadingInfoId = 12;
   int64 synopticTableId = 13;
   bool isLoadingInfoComplete = 14;
+  int64 loadingInfoStatusId = 15;
+  int64 loadingPlanArrStatusId = 16;
+  int64 loadingPlanDepStatusId = 17;
+  int64 loadablePatternId = 18;
 }
 
 message LoadingDetails{
@@ -738,6 +742,7 @@ message LoadingInfoLoadicatorDataRequest {
   string processId = 1;
   int64 loadingInformationId = 2;
   repeated LoadingInfoLoadicatorDetail loadingInfoLoadicatorDetails = 3;
+  bool isUllageUpdate = 4;
 }
 
 message LoadingInfoLoadicatorDetail {
@@ -756,6 +761,7 @@ message LoadingInfoLoadicatorDataReply {
 message LoadingInfoStatusRequest {
   int64 loadingInfoId = 1;
   string processId = 2;
+  int32 conditionType = 3;
 }
 
 message LoadingInfoStatusReply {

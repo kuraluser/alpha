@@ -181,7 +181,14 @@ public class LoadingPlanService {
       LoadingPlanModels.LoadingDelay loadingDelay =
           this.informationBuilderService.buildLoadingDelayMessage(list5, list6);
       loadingInformation.setLoadingDelays(loadingDelay);
-
+      Optional.ofNullable(var1.get().getLoadingInformationStatus())
+          .ifPresent(status -> loadingInformation.setLoadingInfoStatusId(status.getId()));
+      Optional.ofNullable(var1.get().getArrivalStatus())
+          .ifPresent(status -> loadingInformation.setLoadingPlanArrStatusId(status.getId()));
+      Optional.ofNullable(var1.get().getDepartureStatus())
+          .ifPresent(status -> loadingInformation.setLoadingPlanDepStatusId(status.getId()));
+      Optional.ofNullable(var1.get().getLoadablePatternXId())
+          .ifPresent(loadingInformation::setLoadablePatternId);
       masterBuilder.setLoadingInformation(loadingInformation.build());
 
       // <---Loading Information End-->

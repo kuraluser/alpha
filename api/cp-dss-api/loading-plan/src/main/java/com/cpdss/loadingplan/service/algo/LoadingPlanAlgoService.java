@@ -327,8 +327,11 @@ public class LoadingPlanAlgoService {
               HttpStatusCode.BAD_REQUEST);
         }
 
-        loadingInformationRepository.updateLoadingInformationStatus(
-            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
+        loadingInformationRepository.updateLoadingInformationStatuses(
+            loadingInfoStatusOpt.get(),
+            loadingInfoStatusOpt.get(),
+            loadingInfoStatusOpt.get(),
+            loadingInfoOpt.get().getId());
         updateLoadingInfoAlgoStatus(
             loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
       }
@@ -755,9 +758,18 @@ public class LoadingPlanAlgoService {
           builder)
       throws GenericServiceException {
     log.info("Fetching ALGO status of Loading Information {}", request.getLoadingInfoId());
-    Optional<LoadingInformationAlgoStatus> algoStatusOpt =
-        loadingInfoAlgoStatusRepository.findByProcessIdAndLoadingInformationIdAndIsActiveTrue(
-            request.getProcessId(), request.getLoadingInfoId());
+    Optional<LoadingInformationAlgoStatus> algoStatusOpt = null;
+    if (request.getConditionType() == 0) {
+      algoStatusOpt =
+          loadingInfoAlgoStatusRepository
+              .findByProcessIdAndLoadingInformationIdAndConditionTypeAndIsActiveTrue(
+                  request.getProcessId(), request.getLoadingInfoId(), null);
+    } else {
+      algoStatusOpt =
+          loadingInfoAlgoStatusRepository
+              .findByProcessIdAndLoadingInformationIdAndConditionTypeAndIsActiveTrue(
+                  request.getProcessId(), request.getLoadingInfoId(), request.getConditionType());
+    }
     if (algoStatusOpt.isEmpty()) {
       throw new GenericServiceException(
           "Could not find loading info status for loading information "
@@ -783,9 +795,16 @@ public class LoadingPlanAlgoService {
       com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder builder)
       throws GenericServiceException {
     log.info("Fetching ALGO errors of Loading Information {}", request.getLoadingInformationId());
-    List<AlgoErrorHeading> errorHeaders =
-        algoErrorHeadingRepository.findByLoadingInformationIdAndIsActiveTrue(
-            request.getLoadingInformationId());
+    List<AlgoErrorHeading> errorHeaders = null;
+    if (request.getConditionType() == 0) {
+      errorHeaders =
+          algoErrorHeadingRepository.findByLoadingInformationIdAndConditionTypeAndIsActiveTrue(
+              request.getLoadingInformationId(), null);
+    } else {
+      errorHeaders =
+          algoErrorHeadingRepository.findByLoadingInformationIdAndConditionTypeAndIsActiveTrue(
+              request.getLoadingInformationId(), request.getConditionType());
+    }
     errorHeaders.forEach(
         header -> {
           com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder errorBuilder =

@@ -721,7 +721,7 @@ public class LoadingPlanController {
           voyageId,
           infoId);
       return loadingInformationService.getLoadingInfoAlgoStatus(
-          vesselId, voyageId, infoId, request.getProcessId());
+          vesselId, voyageId, infoId, request.getProcessId(), request.getConditionType());
     } catch (GenericServiceException e) {
       log.error("Exception in Get Loading Sequence API");
       e.printStackTrace();
@@ -749,12 +749,15 @@ public class LoadingPlanController {
    * @return
    * @throws CommonRestException AlgoErrorResponse
    */
-  @GetMapping(value = "/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/algo-errors")
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/algo-errors/{conditionType}")
   public AlgoErrorResponse getAlgoErrors(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
-      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId)
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable(required = false) Integer conditionType)
       throws CommonRestException {
     try {
       log.info(
@@ -763,7 +766,8 @@ public class LoadingPlanController {
           vesselId,
           voyageId,
           infoId);
-      return loadingInformationService.getLoadingInfoAlgoErrors(vesselId, voyageId, infoId);
+      return loadingInformationService.getLoadingInfoAlgoErrors(
+          vesselId, voyageId, infoId, conditionType);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when getAlgoErrors", e);
       throw new CommonRestException(

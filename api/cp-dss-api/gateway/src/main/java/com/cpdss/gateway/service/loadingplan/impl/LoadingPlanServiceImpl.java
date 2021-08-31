@@ -463,6 +463,15 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             planReply.getLoadingInformation().getLoadingStage());
     loadingInformation.setLoadingStages(loadingStages);
 
+    loadingInformation.setLoadingInfoStatusId(
+        planReply.getLoadingInformation().getLoadingInfoStatusId());
+    loadingInformation.setLoadingPlanArrStatusId(
+        planReply.getLoadingInformation().getLoadingPlanArrStatusId());
+    loadingInformation.setLoadingPlanDepStatusId(
+        planReply.getLoadingInformation().getLoadingPlanDepStatusId());
+    loadingInformation.setLoadablePatternId(
+        planReply.getLoadingInformation().getLoadablePatternId());
+
     CargoVesselTankDetails vesselTankDetails =
         this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
             vesselId,
