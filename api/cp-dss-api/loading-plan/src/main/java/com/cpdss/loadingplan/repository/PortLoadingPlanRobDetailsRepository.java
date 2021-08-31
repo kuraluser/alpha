@@ -37,11 +37,9 @@ public interface PortLoadingPlanRobDetailsRepository
   @Transactional
   @Modifying
   @Query(
-      "Update PortLoadingPlanRobDetails set quantity = ?1, quantityM3 = ?2"
-          + " where tankXId = ?3 and isActive = ?4")
+      "Update PortLoadingPlanRobDetails set quantity = ?1, quantityM3 = ?2" + " where tankXId = ?3")
   public void updatePortLoadingPlanRobDetailsRepository(
       @Param("quantity") BigDecimal quantity,
       @Param("quantity_m3") BigDecimal quantityM3,
-      @Param("tank_xid") Long tankXId,
-      @Param("is_active") Boolean isActive);
+      @Param("tank_xid") Long tankXId);
 }

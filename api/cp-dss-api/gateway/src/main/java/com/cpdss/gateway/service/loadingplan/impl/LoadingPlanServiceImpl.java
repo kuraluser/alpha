@@ -1242,6 +1242,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     String errorValidationLandingMsg = "";
     String errorValidationUllageMsg = "";
+    String errorValidationBallastMsg = "";
+    String errorValidationRobMsg = "";
 
     LoadingPlanModels.UllageBillRequest.Builder builder =
         LoadingPlanModels.UllageBillRequest.newBuilder();
@@ -1282,14 +1284,30 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           billLanding.getBblAt60f() == null
                               ? null
                               : billLanding.getBblAt60f().longValue())
-                      .setQuantityLt(billLanding.getQuantityLt().longValue())
-                      .setQuantityMt(billLanding.getQuantityMt().longValue())
-                      .setKlAt15C(billLanding.getKlAt15c().longValue())
-                      .setApi(billLanding.getApi().longValue())
-                      .setTemperature(billLanding.getTemperature().longValue())
-                      .setIsActive(billLanding.getIsActive().longValue())
+                      .setQuantityLt(
+                          billLanding.getQuantityLt() == null
+                              ? 0
+                              : billLanding.getQuantityLt().longValue())
+                      .setQuantityMt(
+                          billLanding.getQuantityMt() == null
+                              ? 0
+                              : billLanding.getQuantityMt().longValue())
+                      .setKlAt15C(
+                          billLanding.getKlAt15c() == null
+                              ? 0
+                              : billLanding.getKlAt15c().longValue())
+                      .setApi(billLanding.getApi() == null ? 0 : billLanding.getApi().longValue())
+                      .setTemperature(
+                          billLanding.getTemperature() == null
+                              ? 0
+                              : billLanding.getTemperature().longValue())
+                      .setIsActive(
+                          billLanding.getIsActive() == null
+                              ? 0
+                              : billLanding.getIsActive().longValue())
                       .setVersion(billLanding.getVersion() == null ? 0 : billLanding.getVersion())
-                      .setIsUpdate(billLanding.getIsUpdate())
+                      .setIsUpdate(
+                          billLanding.getIsUpdate() == false ? false : billLanding.getIsUpdate())
                       .build();
                 });
 
@@ -1441,16 +1459,20 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setColorCode(
                           ullageList.getColor_code() == null ? "" : ullageList.getColor_code())
                       .setSg(ullageList.getSg() == null ? 0 : ullageList.getSg().longValue())
-                      .setPortXid(ullageList.getPortXId())
-                      .setPortRotationXid(ullageList.getPortRotationXId())
-                      .setIsUpdate(ullageList.getIsUpdate())
+                      .setPortXid(ullageList.getPortXId() == null ? 0 : ullageList.getPortXId())
+                      .setPortRotationXid(
+                          ullageList.getPortRotationXId() == null
+                              ? 0
+                              : ullageList.getPortRotationXId())
+                      .setIsUpdate(
+                          ullageList.getIsUpdate() == false ? false : ullageList.getIsUpdate())
                       .build();
                 });
 
         builder.addBallastUpdate(updateBallastBuilder.build());
 
       } else {
-        errorValidationUllageMsg = "Required data for Update is missing";
+        errorValidationBallastMsg = "Required data for Update is missing";
       }
 
       if (inputData.getRobUpdateList().size() > 0) {
@@ -1494,23 +1516,32 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getActual_planned() == null
                               ? 0
                               : ullageList.getActual_planned().longValue())
-                      .setPortXid(ullageList.getPortXId())
-                      .setPortRotationXid(ullageList.getPortRotationXId())
+                      .setPortXid(ullageList.getPortXId() == null ? 0 : ullageList.getPortXId())
+                      .setPortRotationXid(
+                          ullageList.getPortRotationXId() == null
+                              ? 0
+                              : ullageList.getPortRotationXId())
                       .build();
                 });
 
         builder.addRobUpdate(updateRobBuilder.build());
 
       } else {
-        errorValidationUllageMsg = "Required data for Update is missing";
+        errorValidationRobMsg = "Required data for Update is missing";
       }
     } catch (Exception e) {
       log.error("GenericServiceException when update LoadableStudy", e);
+      throw new GenericServiceException(
+          "failed to get or save UllageBill ",
+          replays.getResponseStatus().getStatus(),
+          HttpStatusCode.valueOf(500));
     }
 
     Common.ResponseStatus.Builder ruleResponse = Common.ResponseStatus.newBuilder();
     if (errorValidationLandingMsg == "Required data for Update is missing"
-        && errorValidationUllageMsg == "Required data for Update is missing") {
+        && errorValidationUllageMsg == "Required data for Update is missing"
+        && errorValidationBallastMsg == "Required data for Update is missing"
+        && errorValidationRobMsg == "Required data for Update is missing") {
       ruleResponse.setCode("200").setStatus("Invalid Input Error");
     } else {
       replays = loadingPlanGrpcService.getLoadableStudyShoreTwo(correlationID, builder);
