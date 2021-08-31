@@ -224,7 +224,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
       else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED) {
         this.setButtonStatus();
-        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: translationKeys["GENERATE_LODABLE_PLAN_PLAN_GENERATED"] });
+        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: translationKeys["GENERATE_LODABLE_PLAN_PLAN_GENERATED"] ,sticky: true, closable: true });
       }
 
       if (this.router.url.includes('operations/loading')) {

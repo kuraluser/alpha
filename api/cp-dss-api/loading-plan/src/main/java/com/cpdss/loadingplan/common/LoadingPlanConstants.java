@@ -17,8 +17,8 @@ public final class LoadingPlanConstants {
   public static final Long LOADING_INFORMATION_REQUEST_JSON_TYPE_ID = 9L;
   public static final Long LOADING_INFORMATION_LOADICATOR_REQUEST_JSON_TYPE_ID = 13L;
   public static final Long LOADING_INFORMATION_LOADICATOR_RESPONSE_JSON_TYPE_ID = 14L;
-  public static final Long LOADING_PLAN_EDIT_LOADICATOR_REQUEST_JSON_TYPE_ID = 15L;
-  public static final Long LOADING_PLAN_EDIT_LOADICATOR_RESPONSE_JSON_TYPE_ID = 16L;
+  public static final Long UPDATE_ULLAGE_LOADICATOR_REQUEST_JSON_TYPE_ID = 15L;
+  public static final Long UPDATE_ULLAGE_EDIT_LOADICATOR_RESPONSE_JSON_TYPE_ID = 16L;
 
   public static final Integer DEFAULT_STAGE_OFFSET_VALUE = 4;
   public static final Integer DEFAULT_STAGE_DURATION_VALUE = 4;
@@ -29,6 +29,10 @@ public final class LoadingPlanConstants {
   public static final Long LOADING_INFORMATION_NO_PLAN_AVAILABLE_ID = 6L;
   public static final Long LOADING_INFORMATION_ERROR_OCCURRED_ID = 7L;
   public static final Long LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID = 8L;
+
+  // Loading Plan Update Ullage Status IDs
+  public static final Long UPDATE_ULLAGE_VALIDATION_STARTED_ID = 12L;
+  public static final Long UPDATE_ULLAGE_VALIDATION_SUCCESS_ID = 13L;
 
   // Loading Plan Conditions
   public static final Integer LOADING_PLAN_ARRIVAL_CONDITION_VALUE = 1;

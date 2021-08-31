@@ -166,7 +166,7 @@ public class LoadingPlanAlgoService {
     loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
     loadingInformationRepository.save(loadingInfoOpt.get());
     createLoadingInformationAlgoStatus(
-        loadingInfoOpt.get(), response.getProcessId(), loadingInfoStatusOpt.get());
+        loadingInfoOpt.get(), response.getProcessId(), loadingInfoStatusOpt.get(), null);
     builder.setLoadingInfoId(loadingInfoOpt.get().getId());
     builder.setProcessId(response.getProcessId());
     ;
@@ -195,11 +195,15 @@ public class LoadingPlanAlgoService {
    * @param status
    */
   public void createLoadingInformationAlgoStatus(
-      LoadingInformation loadingInformation, String processId, LoadingInformationStatus status) {
+      LoadingInformation loadingInformation,
+      String processId,
+      LoadingInformationStatus status,
+      Integer conditionType) {
     LoadingInformationAlgoStatus algoStatus = new LoadingInformationAlgoStatus();
     algoStatus.setIsActive(true);
     algoStatus.setLoadingInformation(loadingInformation);
     algoStatus.setLoadingInformationStatus(status);
+    algoStatus.setConditionType(conditionType);
     algoStatus.setProcessId(processId);
     algoStatus.setVesselXId(loadingInformation.getVesselXId());
     loadingInfoAlgoStatusRepository.save(algoStatus);
@@ -390,7 +394,7 @@ public class LoadingPlanAlgoService {
       throws GenericServiceException {
 
     this.loadingInfoAlgoStatusRepository.updateLoadingInformationAlgoStatus(
-        loadingInformationStatus.getId(), processId);
+        loadingInformationStatus.getId(), loadingInformation.getId(), processId);
   }
 
   private void deleteLoadingSequenceStabilityParams(Long loadingInfoId) {

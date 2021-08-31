@@ -33,4 +33,11 @@ public interface LoadingInformationAlgoStatusRepository
   Optional<LoadingInformationAlgoStatus>
       findByProcessIdAndLoadingInformationIdAndConditionTypeAndIsActiveTrue(
           String processId, Long loadingInfoId, Integer conditionType);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE LoadingInformationAlgoStatus SET loadingInformationStatus.id = ?1 WHERE loadingInformation.id = ?2 AND processId = ?3")
+  public void updateLoadingInformationAlgoStatus(
+      Long loadingInformationStatusId, Long loadingInfoId, String processId);
 }

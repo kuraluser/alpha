@@ -153,15 +153,19 @@ public class UllageUpdateLoadicatorService {
 
     Optional<LoadingInformationStatus> loadingInfoStatusOpt =
         loadingInformationStatusRepository.findByIdAndIsActive(
-            LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
+            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID, true);
     if (loadingInfoStatusOpt.isEmpty()) {
       throw new GenericServiceException(
           "Could not find loading information status with id "
-              + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
+              + LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID,
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-
+    loadingPlanAlgoService.createLoadingInformationAlgoStatus(
+        loadingInfoOpt.get(),
+        processId,
+        loadingInfoStatusOpt.get(),
+        Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()));
     return processId;
   }
 
