@@ -3014,3 +3014,9 @@ textarea{
 .sequence-chart-tooltip table {
   border-spacing: 15px !important;
 }
+
+.sequence-chart.stabilityparams-chart{
+  .highcharts-axis-title{
+    text-transform: uppercase;
+  }
+}
