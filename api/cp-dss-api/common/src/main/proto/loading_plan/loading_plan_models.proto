@@ -904,5 +904,6 @@ message StowageAndBillOfLaddingValidationRequest {
 }
 message PortWiseCargo {
 	int64 portRotationId = 1;
-	repeated int64 cargoIds = 2;
+	int64 portId = 2;
+	repeated int64 cargoIds = 3;
 }

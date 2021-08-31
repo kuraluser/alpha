@@ -387,7 +387,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                   return;
                 }
                 List<com.cpdss.loadingplan.entity.BillOfLadding> bLValues =
-                    portWiseBL.get(port.getPortRotationId());
+                    portWiseBL.get(port.getPortId());
                 if (bLValues==null) {
                   builder.setStatus(LoadingPlanConstants.FAILED);
                   return;
