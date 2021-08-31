@@ -8,11 +8,17 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailStatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest.Builder;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailStatusReply;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -30,15 +36,19 @@ import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.utility.AdminRuleTemplate;
 import com.cpdss.gateway.utility.AdminRuleValueExtract;
+import com.google.protobuf.ByteString;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Loading Information Tab Grid Data Populate here
@@ -62,6 +72,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Autowired LoadingInformationBuilderService loadingInfoBuilderService;
 
   @Autowired LoadableStudyService loadableStudyService;
+
+  @GrpcClient("loadingInformationService")
+  private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
+      loadingInfoServiceBlockingStub;
 
   /**
    * Sunset/Sunrise Only Collect from Synoptic Table in LS
@@ -880,5 +894,50 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             });
     algoResponse.setAlgoErrors(algoErrors);
     algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
+  }
+
+  /** Upload Tide data from excel to db */
+  @Override
+  public UploadTideDetailResponse uploadLoadingTideDetails(
+      Long loadingId, MultipartFile file, String correlationId)
+      throws IOException, GenericServiceException {
+    String originalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
+    if (!(originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())
+        .equals("xlsx")) {
+      throw new GenericServiceException(
+          "unsupported file type", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+    }
+    Builder builder = UploadTideDetailRequest.newBuilder();
+    builder.setTideDetaildata(ByteString.copyFrom(file.getBytes()));
+    builder.setLoadingId(loadingId);
+    UploadTideDetailStatusReply statusReply =
+        loadingInfoServiceBlockingStub.uploadPortTideDetails(builder.build());
+    if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          statusReply.getResponseStatus().getMessage(),
+          statusReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(statusReply.getResponseStatus().getHttpStatusCode()));
+    }
+    UploadTideDetailResponse response = new UploadTideDetailResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  @Override
+  public byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException {
+
+    com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest.Builder
+        builder = DownloadTideDetailRequest.newBuilder();
+    builder.setLoadingId(loadingId);
+    DownloadTideDetailStatusReply statusReply =
+        loadingInfoServiceBlockingStub.downloadPortTideDetails(builder.build()).next();
+    if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          statusReply.getResponseStatus().getMessage(),
+          statusReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(statusReply.getResponseStatus().getHttpStatusCode()));
+    }
+    return statusReply.getData().toByteArray();
   }
 }

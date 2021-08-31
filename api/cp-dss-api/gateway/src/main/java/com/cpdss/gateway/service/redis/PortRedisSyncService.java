@@ -25,7 +25,10 @@ public class PortRedisSyncService extends CommonKeyValueStore<PortInfo>
   @Override
   public void fetchDomainDataFromService() {
     PortRequestWithPaging request =
-        PortRequestWithPaging.newBuilder().setOffset(OFFSET_VAL).setLimit(PAGE_COUNT).build();
+        PortRequestWithPaging.newBuilder()
+            .setOffset(OFFSET_VAL)
+            .setLimit(PAGE_COUNT)
+            .build();
     PortReply reply = portInfoServiceBlockingStub.getPortInfoByPaging(request);
     List<PortInfo.PortInfoDomain> portInfoDomains = new ArrayList<>();
     if (!reply.getPortsList().isEmpty()) {

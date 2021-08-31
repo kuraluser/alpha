@@ -878,3 +878,23 @@ message UllageBillReply{
   ResponseStatus responseStatus = 1;
   repeated RulePlans rulePlan = 2;
 }
+
+message UploadTideDetailRequest {
+	bytes tideDetaildata = 1;
+	ResponseStatus responseStatus = 2;
+	int64 loadingId = 3;
+}
+
+message UploadTideDetailStatusReply {
+	ResponseStatus responseStatus = 1;
+}
+
+message DownloadTideDetailRequest {
+	int64 loadingId = 1;
+}
+
+message DownloadTideDetailStatusReply {
+	ResponseStatus responseStatus = 1;
+	bytes data = 2;
+	int32 size = 3;
+}
