@@ -338,13 +338,13 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       throws InterruptedException {
     boolean status = false;
     do {
-      if (request.getTypeId() == 1) {
+      if (request.getTypeId() == 1) { // Loadable Study
         log.info(
             "Checking loadicator status of "
                 + (!request.getIsPattern()
                     ? ("Loadable Study " + request.getStowagePlanDetails(0).getBookingListId())
                     : ("Loadable Pattern " + request.getStowagePlanDetails(0).getStowageId())));
-      } else if (request.getTypeId() == 2) {
+      } else if (request.getTypeId() == 2) { // Loading Plan
         log.info(
             "Checking loadicator status of Loading Information "
                 + request.getStowagePlanDetails(0).getBookingListId());
@@ -358,7 +358,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           stowagePlanList.stream().filter(plan -> plan.getStatus().equals(3L)).count();
       if (statusCount.equals(stowagePlanList.stream().count())) {
         status = true;
-        if (request.getTypeId() == 1) {
+        if (request.getTypeId() == 1) { // Loadable Study
           LoadicatorDataRequest loadableStudyrequest =
               this.sendLoadicatorData(stowagePlanList, request.getIsPattern());
           log.info(
@@ -368,7 +368,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
                       : ("Loadable Pattern " + request.getStowagePlanDetails(0).getStowageId())));
 
           this.getLoadicatorDatas(loadableStudyrequest);
-        } else if (request.getTypeId() == 2) {
+        } else if (request.getTypeId() == 2) { // Loading Plan
           log.info(
               "Loadicator check completed for loading information {}",
               request.getStowagePlanDetails(0).getBookingListId());

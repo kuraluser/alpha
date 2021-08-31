@@ -605,6 +605,11 @@ public class LoadicatorService {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+      loadingInformationRepository.updateLoadingInformationStatuses(
+          loadingInfoStatusOpt.get(),
+          loadingInfoStatusOpt.get(),
+          loadingInfoStatusOpt.get(),
+          loadingInfoOpt.get().getId());
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
     } else {
@@ -624,11 +629,11 @@ public class LoadicatorService {
 
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingInformationStatusRepository.findByIdAndIsActive(
-              LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID, true);
       if (loadingInfoStatusOpt.isEmpty()) {
         throw new GenericServiceException(
             "Could not find loading information status with id "
-                + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
+                + LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID,
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
@@ -648,8 +653,7 @@ public class LoadicatorService {
     log.info("Saving Loadicator request to Loadable study DB");
     JsonRequest.Builder jsonBuilder = JsonRequest.newBuilder();
     jsonBuilder.setReferenceId(loadingInfoId);
-    jsonBuilder.setJsonTypeId(
-        LoadingPlanConstants.LOADING_PLAN_EDIT_LOADICATOR_REQUEST_JSON_TYPE_ID);
+    jsonBuilder.setJsonTypeId(LoadingPlanConstants.UPDATE_ULLAGE_LOADICATOR_REQUEST_JSON_TYPE_ID);
     ObjectMapper mapper = new ObjectMapper();
     try {
       mapper.writeValue(
