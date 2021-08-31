@@ -313,8 +313,9 @@ public class VoyageService {
           confirmedStudy = getConfirmedStudy(entity, PLANNING_TYPE_DISCHARGE);
           if (confirmedStudy.isPresent()) {
             detailbuilder.setConfirmedDischargeStudyId(confirmedStudy.get().getId());
-            Long noOfDays = this.getNumberOfDays(confirmedStudy.get());
-            Optional.ofNullable(noOfDays).ifPresent(item -> detailbuilder.setNoOfDays(item));
+            //            Long noOfDays = this.getNumberOfDays(confirmedStudy.get());
+            //            Optional.ofNullable(noOfDays).ifPresent(item ->
+            // detailbuilder.setNoOfDays(item));
           }
         } else {
           detailbuilder.setIsDischargeStarted(false);
