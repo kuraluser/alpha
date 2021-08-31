@@ -440,6 +440,9 @@ public class LoadableStudyService {
                 portRotationList.add(portRotation);
               });
       dto.setOhqPorts(portRotationList);
+      if (planningType == 2) {
+        dto.setLastLoadingPortETD(grpcReply.getLastLoadingPortETD());
+      }
       list.add(dto);
     }
     LoadableStudyResponse response = new LoadableStudyResponse();

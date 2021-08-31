@@ -81,4 +81,6 @@ public class LoadableStudy {
   private List<PortRotation> ohqPorts;
 
   private String lastEdited;
+
+  private String lastLoadingPortETD;
 }

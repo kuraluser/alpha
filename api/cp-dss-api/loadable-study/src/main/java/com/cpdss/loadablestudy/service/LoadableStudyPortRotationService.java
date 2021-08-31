@@ -184,7 +184,7 @@ public class LoadableStudyPortRotationService {
         // Fetching respective LS of DS
         Optional<LoadableStudy> loadableStudyOpt =
             this.loadableStudyRepository.findById(studyOpt.get().getConfirmedLoadableStudyId());
-        entityList = getPortRotationList(loadableStudyOpt.get(), true, DISCHARGE_PORT);
+        entityList = getPortRotationList(loadableStudyOpt.get(), true, LOADING_PORT);
         // Removing first discharge port
         entityList.removeIf(item -> item.getOperation().getId().equals(DISCHARGING_OPERATION_ID));
         // Appending all DS ports
