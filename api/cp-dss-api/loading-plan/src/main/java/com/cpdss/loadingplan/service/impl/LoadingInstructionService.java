@@ -346,18 +346,17 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
     List<LoadingInstruction> subHeaderList =
         listLoadingInstruction.stream()
             .filter(item -> item.getParentInstructionXId() == null)
-            .sorted(Comparator.comparing(LoadingInstruction::getCreatedDate))
+            .sorted(Comparator.comparing(LoadingInstruction::getCreatedDateTime))
             .collect(Collectors.toList());
 
     List<LoadingInstruction> instructionList =
         listLoadingInstruction.stream()
             .filter(item -> item.getParentInstructionXId() != null)
-            .sorted(Comparator.comparing(LoadingInstruction::getCreatedDate))
+            .sorted(Comparator.comparing(LoadingInstruction::getCreatedDateTime))
             .collect(Collectors.toList());
 
     List<LoadingInstructionSubHeader> subHeaderBuilderList = new ArrayList<>();
     for (LoadingInstruction headerInstruction : subHeaderList) {
-      log.info("inside  header loop");
       LoadingInstructionSubHeader.Builder subHeaderBuilder =
           LoadingInstructionSubHeader.newBuilder();
       Optional.ofNullable(headerInstruction.getId()).ifPresent(subHeaderBuilder::setSubHeaderId);
