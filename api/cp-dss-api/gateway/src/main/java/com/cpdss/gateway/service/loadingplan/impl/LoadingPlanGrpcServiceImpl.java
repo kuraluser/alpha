@@ -133,8 +133,8 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   }
 
   @Override
-  public LoadableStudy.LoadingSynopticResponse fetchSynopticRecordForPortRotationArrivalCondition(
-      Long portRId) throws GenericServiceException {
+  public LoadableStudy.LoadingSynopticResponse fetchSynopticRecordForPortRotation(
+      Long portRId, String operationType) throws GenericServiceException {
     LoadableStudy.LoadingPlanCommonResponse response =
         this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
             LoadableStudy.LoadingPlanIdRequest.newBuilder()
@@ -154,7 +154,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
       return null;
     } else {
       return response.getSynopticDataList().stream()
-          .filter(v -> v.getOperationType().equalsIgnoreCase("ARR"))
+          .filter(v -> v.getOperationType().equalsIgnoreCase(operationType))
           .findFirst()
           .get();
     }

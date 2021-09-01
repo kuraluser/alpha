@@ -14,18 +14,17 @@ import lombok.Setter;
 @Entity
 @Table(name = "discharging_delay_reason")
 public class DischargingDelayReason extends EntityDoc {
-  private static final long serialVersionUID = 1L;
 
   @Column(name = "is_active")
   private Boolean isActive;
 
   // bi-directional many-to-one association to DischargingDelay
   @ManyToOne
-  @JoinColumn(name = "discharging_delay_xid")
+  @JoinColumn(name = "discharging_delay_xid", referencedColumnName = "id")
   private DischargingDelay dischargingDelay;
 
   // bi-directional many-to-one association to ReasonForDelay
   @ManyToOne
-  @JoinColumn(name = "reason_xid")
+  @JoinColumn(name = "reason_xid", referencedColumnName = "id")
   private ReasonForDelay reasonForDelay;
 }

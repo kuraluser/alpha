@@ -11,7 +11,7 @@
             <div class="col">
                 <h5 class="text-uppercase heading-border">{{'LOADING_INFORMATION_LOADING_DETAILS_HEADER' | translate }}
                 </h5>
-                <cpdss-portal-loading-discharging-details [loadingDischargingDetails]="loadingInformationData?.loadingDetails"
+                <cpdss-portal-loading-discharging-details [operation]="OPERATIONS.LOADING" [loadingInfoId]="loadingInfoId" [loadingDischargingDetails]="loadingInformationData?.loadingDetails"
                     (updateLoadingDischargingDetails)="onUpdateLoadingDetails($event)" #dischargeDetails>
                 </cpdss-portal-loading-discharging-details>
             </div>

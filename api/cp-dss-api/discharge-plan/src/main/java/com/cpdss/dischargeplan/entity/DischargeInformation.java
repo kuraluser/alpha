@@ -18,7 +18,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "discharging_information")
 public class DischargeInformation extends EntityDoc {
-  private static final long serialVersionUID = 1L;
 
   @Column(name = "discharging_pattern_xid")
   private Long dischargingPatternXid;
@@ -107,34 +106,38 @@ public class DischargeInformation extends EntityDoc {
   @Column(name = "time_for_slop_discharging")
   private BigDecimal timeForSlopDischarging;
 
-  // bi-directional many-to-one association to DischargingBerthDetail
-  @OneToMany(mappedBy = "dischargingInformation")
-  private List<DischargingBerthDetail> dischargingBerthDetails;
-
-  // bi-directional many-to-one association to DischargingDelay
-  @OneToMany(mappedBy = "dischargingInformation")
-  private List<DischargingDelay> dischargingDelays;
-
   // bi-directional many-to-one association to DischargingInformationStatus
   @ManyToOne
   @JoinColumn(name = "discharging_status_xid")
   private DischargingInformationStatus dischargingInformationStatus;
-
-  // bi-directional many-to-one association to DischargingStagesDuration
-  @ManyToOne
-  @JoinColumn(name = "stages_duration_xid")
-  private DischargingStagesDuration dischargingStagesDuration;
 
   // bi-directional many-to-one association to DischargingStagesMinAmount
   @ManyToOne
   @JoinColumn(name = "stages_min_amount_xid")
   private DischargingStagesMinAmount dischargingStagesMinAmount;
 
+  // bi-directional many-to-one association to DischargingStagesDuration
+  @ManyToOne
+  @JoinColumn(name = "stages_duration_xid")
+  private DischargingStagesDuration dischargingStagesDuration;
+
+  // bi-directional many-to-one association to DischargingDelay
+  @OneToMany(mappedBy = "dischargingInformation")
+  private List<DischargingDelay> dischargingDelays;
+
   // bi-directional many-to-one association to DischargingMachineryInUse
   @OneToMany(mappedBy = "dischargingInformation")
   private List<DischargingMachineryInUse> dischargingMachineryInUses;
 
+  /*   // bi-directional many-to-one association to DischargingBerthDetail
+  @OneToMany(mappedBy = "dischargingInformation", cascade = CascadeType.ALL)
+  private List<DischargingBerthDetail> dischargingBerthDetails;
+
   // bi-directional many-to-one association to DischargingPump
   @OneToMany(mappedBy = "dischargingInformation")
-  private List<DischargingPump> dischargingPumps;
+  private List<DischargingPump> dischargingPumps;*/
+
+  public DischargeInformation(Long pk) {
+    this.setId(pk);
+  }
 }

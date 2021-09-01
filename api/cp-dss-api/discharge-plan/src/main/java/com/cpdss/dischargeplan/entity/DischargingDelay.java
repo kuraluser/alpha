@@ -16,7 +16,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "discharging_delay")
 public class DischargingDelay extends EntityDoc {
-  private static final long serialVersionUID = 1L;
 
   @Column(name = "cargo_nomination_xid")
   private Long cargoNominationXid;
@@ -34,12 +33,15 @@ public class DischargingDelay extends EntityDoc {
   @Column(name = "reason_xid")
   private Long reasonXid;
 
+  // @Column(name = "discharging_xid")
+  // private Long dischargingXid;
+
   // bi-directional many-to-one association to DischargingInformation
   @ManyToOne
-  @JoinColumn(name = "discharging_xid")
+  @JoinColumn(name = "discharging_xid", referencedColumnName = "id")
   private DischargeInformation dischargingInformation;
 
   // bi-directional many-to-one association to DischargingDelayReason
-  @OneToMany(mappedBy = "dischargingDelay")
+  @OneToMany(mappedBy = "dischargingDelay", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private List<DischargingDelayReason> dischargingDelayReasons;
 }

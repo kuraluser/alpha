@@ -15,7 +15,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "discharging_pumps")
 public class DischargingPump extends EntityDoc {
-  private static final long serialVersionUID = 1L;
 
   private BigDecimal capacity;
 
