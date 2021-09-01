@@ -407,7 +407,7 @@ public class LoadingPlanService {
     }
   }
 
-    public LoadingPlanModels.UllageBillReply getLoadableStudyShoreTwo(
+  public LoadingPlanModels.UllageBillReply getLoadableStudyShoreTwo(
       LoadingPlanModels.UllageBillRequest request,
       StreamObserver<LoadingPlanModels.UllageBillReply> responseObserver) {
 
@@ -587,7 +587,7 @@ public class LoadingPlanService {
     // log.info("getLoadableStudyShoreTwo ", request);
     return builder.build();
   }
-  
+
   private void validateAndSaveData(LoadingPlanModels.UllageBillRequest request) {
 
     // Validation pending since API from ALGO is not yet created.
@@ -615,6 +615,7 @@ public class LoadingPlanService {
                 info.setPortXId(ullageInsert.getPortXid());
                 info.setLoadablePatternXId(ullageInsert.getLoadingInformationId());
                 details.setLoadingInformation(info);
+
                 details.setPortRotationXId(ullageInsert.getPortRotationXid());
                 details.setPortXId(ullageInsert.getPortXid());
                 details.setTankXId(ullageInsert.getTankId());
