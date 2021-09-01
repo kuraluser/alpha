@@ -60,7 +60,7 @@ export class DepartureConditionComponent implements OnInit {
   rearBallastTanks: IShipBallastTank[][];
   frontBallastTanks: IShipBallastTank[][];
   centerBallastTanks: IShipBallastTank[][];
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit };
   prevQuantitySelectedUnit: QUANTITY_UNIT;
 
 
@@ -86,8 +86,9 @@ export class DepartureConditionComponent implements OnInit {
       "ullageField": "correctedUllage",
       "ullageUnit": AppConfigurationService.settings?.ullageUnit,
       "densityField": "api",
-      "weightField": "actualWeight",
-      "commodityNameField": "abbreviation"
+      "weightField": "plannedWeight",
+      "commodityNameField": "abbreviation",
+      weightUnit: AppConfigurationService.settings.baseUnit
     };
         
     this.departureDetailsColumns = this.departureConditionTransformationService.departureDetailsColumns();
@@ -106,7 +107,7 @@ export class DepartureConditionComponent implements OnInit {
     this.loadingPlanData?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(item => {
       let actualWeight = 0, plannedWeight = 0;
       this.loadingPlanData?.planStowageDetails?.map(stowage => {
-        if (stowage.conditionType === 2 && stowage.cargoNominationId === stowage.cargoNominationId) {
+        if (stowage.conditionType === 2 && item.cargoNominationId === stowage.cargoNominationId) {
           if (stowage.valueType === 1) {
             actualWeight += Number(stowage.quantityMT);
           }
@@ -146,6 +147,7 @@ export class DepartureConditionComponent implements OnInit {
         this.loadingPlanData?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(el=>{
           if(el.cargoNominationId === data.cargoNominationId){
             data.colorCode = el.colorCode;
+            data.abbreviation = el.cargoAbbreviation;
           }
         });
         this.departureCargoTankQuantity.push(data);
