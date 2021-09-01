@@ -16,6 +16,7 @@ import { IDischargeStudyPortListDetails } from './../models/discharge-study-view
 import { VoyageService } from '../../core/services/voyage.service';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
 /**
  * Component class of discharge plan
@@ -71,6 +72,7 @@ export class DischargePlanComponent implements OnInit {
    * @memberof DischargePlanComponent
   */
   ngOnInit(): void {
+    this.setPagePermissionContext();
     this.getPorts();
     this.getCargos();
     this.activatedRoute.paramMap
@@ -86,6 +88,17 @@ export class DischargePlanComponent implements OnInit {
       });
 
   }
+
+  /**
+   * Set page permission
+   *
+   * @memberof DischargePlanComponent
+   */
+  setPagePermissionContext() {
+    this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyViewPlan'], true);
+  }
+
+
 
   /**
   * Method for fetching all cargo from master

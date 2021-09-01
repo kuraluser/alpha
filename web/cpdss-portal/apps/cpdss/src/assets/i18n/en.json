@@ -1899,10 +1899,18 @@
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_INFO": "Info",
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_DETAILS": "Loadable study communicated to shore",
   "DISCHARGE_STUDY_PLAN_VIEW_ERROR": "View Error",
+  "LOADING_DISCHARGING_FILE_FORMAT_ERROR": "Only the file with following extensions are allowed : xls , xlsx",
+  "LOADING_DISCHARGING_FILE_SIZE_ERROR": "File size too large. Allowed maximum size file is 1MB",
   "DISCHARGE_PLAN_VIEW_NO_PLAN_GENERATED": "Plan is not generated for this Discharge study",
   "DISCHARGE_STUDY_INVALID_ERROR": "Invalid",
   "DISCHARGE_STUDY_DRAFT_MIN_VALUE": "Value must be greater than or equal to 0",
   "LOADING_PLAN":"LOADING PLAN",
-  "FILES": "Files"
+  "LOADING_INFO_INVALID_DATA":"Invalid data",
+  "LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS": "Success",
+  "LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS_DETAILS": "File uploaded successfully",
+  "LOADING_DICHARGING_EXCEL_EXPORT_ERROR": "File uploaded failed",
+  "LOADING_DISCHARGING_EXCEL_ERROR": "Error",
+  "FILES": "Files",
+  "NEW_DISCHARGE_STUDY_POPUP_BILL_OF_LADDING": "Please add bill of ladding details to create discharge study"
 }
   

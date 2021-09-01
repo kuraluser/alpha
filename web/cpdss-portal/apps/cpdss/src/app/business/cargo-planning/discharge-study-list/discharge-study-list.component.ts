@@ -176,7 +176,7 @@ export class DischargeStudyListComponent implements OnInit {
    */
 
   onRowSelect(event: any) {
-    if (event?.field != "actions") {
+    if (event?.field !== "actions") {
       this.display = true;
       this.selectedDischargeStudy = null;
       this.router.navigate([`/business/cargo-planning/discharge-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
