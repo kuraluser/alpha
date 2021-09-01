@@ -155,8 +155,23 @@ export class UllageUpdatePopupComponent implements OnInit {
     this.ngxSpinnerService.show();
     try {
       const status = this.status === ULLAGE_STATUS.ARRIVAL ? 'ARR' : 'DEP';
-      const data = await this.ullageUpdateApiService.getUllageDetails(1, 4886, 113696, status).toPromise();
-      // const data = await this.ullageUpdateApiService.getUllageDetails(this.vesselId, this.patternId, this.portRotationId, status).toPromise();
+      const data = await this.ullageUpdateApiService.getUllageDetails(this.vesselId, this.patternId, this.portRotationId, status).toPromise();
+      if (data?.isPlannedValues) {
+        data.portLoadablePlanStowageDetails?.map(item => {
+          item.quantity = 0;
+          item.ullage = 0;
+          item.temperature = 0;
+          item.api = 0;
+        });
+        data.portLoadablePlanBallastDetails?.map(item => {
+          item.quantity = 0;
+          item.sounding = 0;
+        });
+        data.portLoadablePlanRobDetails?.map(item => {
+          item.quantity = 0;
+          item.density = 0;
+        });
+      }
       this.display = true;
       this.ngxSpinnerService.hide();
       this.ullageResponseData = JSON.parse(JSON.stringify(data));
@@ -248,9 +263,9 @@ export class UllageUpdatePopupComponent implements OnInit {
           cargo.actual.lt = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, cargo.api);
           cargo.actual.mt = isNaN(actualQuantity) ? 0 : Number(Number(actualQuantity).toFixed(2));
 
-          cargo.blFigure.bbl = this.quantityPipe.transform(bblQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo.api);
-          cargo.blFigure.kl = this.quantityPipe.transform(klQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargo.api);
-          cargo.blFigure.lt = this.quantityPipe.transform(ltQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, cargo.api);;
+          cargo.blFigure.bbl = this.quantityPipe.transform(bblQuantity, QUANTITY_UNIT.BBLS, QUANTITY_UNIT.BBLS, cargo.api);
+          cargo.blFigure.kl = this.quantityPipe.transform(klQuantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.KL, cargo.api);
+          cargo.blFigure.lt = this.quantityPipe.transform(ltQuantity, QUANTITY_UNIT.LT, QUANTITY_UNIT.LT, cargo.api);;
           cargo.blFigure.mt = isNaN(mtQuantity) ? 0 : Number(Number(mtQuantity).toFixed(2));
 
           cargo.difference.bbl = this.decimalPipe.transform((cargo.actual.bbl - cargo.blFigure.bbl), AppConfigurationService.settings.quantityNumberFormatBBLS);
@@ -318,7 +333,7 @@ export class UllageUpdatePopupComponent implements OnInit {
   setBunkerQuantities(data) {
     this.bunkerTanksList = [];
     data.map(item => {
-      this.bunkerTanksList.push(this.ullageUpdatePopupTransformationService.getFormatedTankDetailsBunker(item, true, true))
+      this.bunkerTanksList.push(this.ullageUpdatePopupTransformationService.getFormatedTankDetailsBunker(item, true, false, true))
     });
   }
 
@@ -330,7 +345,7 @@ export class UllageUpdatePopupComponent implements OnInit {
   setBallastQuantities(data) {
     this.ballastQuantities = [];
     data.map(item => {
-      this.ballastQuantities.push(this.ullageUpdatePopupTransformationService.getFormatedTankDetailsBallast(item, true, true))
+      this.ballastQuantities.push(this.ullageUpdatePopupTransformationService.getFormatedTankDetailsBallast(item, true, false, true))
     });
   }
 
@@ -343,7 +358,7 @@ export class UllageUpdatePopupComponent implements OnInit {
     this.cargoQuantities = [];
     this.ullageResponseData?.portLoadablePlanStowageDetails?.map(item => {
       if (this.selectedCargo.cargoNominationId === item.cargoNominationId) {
-        this.cargoQuantities.push(this.ullageUpdatePopupTransformationService.getFormatedTankDetailsCargo(item, true, true))
+        this.cargoQuantities.push(this.ullageUpdatePopupTransformationService.getFormatedTankDetailsCargo(item, true, false, true))
       }
     });
   }
@@ -354,6 +369,9 @@ export class UllageUpdatePopupComponent implements OnInit {
    * @memberof UllageUpdatePopupComponent
    */
   getCargoTankFormGroup() {
+    this.cargoTankForm = this.fb.group({
+      dataTable: this.fb.array([])
+    });
     const items: any = this.cargoTankForm.get('dataTable') as FormArray;
     this.cargoQuantities?.map(item => {
       items.push(this.cargoTankFormGroup(item));
@@ -815,10 +833,13 @@ export class UllageUpdatePopupComponent implements OnInit {
     this.ngxSpinnerService.hide();
     if (result.responseStatus.status === '200') {
       this.ullageResponseData?.portLoadablePlanStowageDetails.map(item => {
-        if (item.cargoNominationId === event.data.cargoNominationId) {
+        if (item.cargoNominationId === event.data.cargoNominationId && item.tankId === event.data.tankId) {
           item.quantity = result.quantityMt;
           item.correctedUllage = result.correctedUllage;
           item.percentageFilled = result.fillingRatio;
+          item.ullage = result.correctedUllage;
+          item.api = event.data.api.value;
+          item.temperature = event.data.temperature.value;
         }
       });
       this.cargoQuantities[event.index].quantity.value = result.quantityMt;
@@ -852,7 +873,7 @@ export class UllageUpdatePopupComponent implements OnInit {
       isBallast: true,
       sg: '1.025',
       tankId: event.data.tankId,
-      temperature: event.data.temperature
+      temperature: event.data.temperature.value
     };
     this.ngxSpinnerService.show();
     const result = await this.ullageUpdateApiService.getUllageQuantity(param, event.data.loadablePatternId).toPromise();
@@ -890,6 +911,7 @@ export class UllageUpdatePopupComponent implements OnInit {
     if (this.tableForm.invalid || this.cargoTankForm.invalid || this.ballastTankForm.invalid || this.bunkerTankForm.invalid) {
       return;
     }
+
     const data: IUllageSaveDetails = {
       isValidate: validate,
       billOfLandingList: [],
@@ -902,16 +924,16 @@ export class UllageUpdatePopupComponent implements OnInit {
       item.map(row => {
         data.billOfLandingList.push(
           {
-            loadingId: this.loadingInfoId,
-            portId: row.cargo.portId,
-            cargoId: row.cargo.cargoId,
-            blRefNumber: row.cargo.blRefNo.value,
-            bblAt60f: row.cargo.bbl.value,
-            quantityLt: row.cargo.lt.value,
-            quantityMt: row.cargo.mt.value,
-            klAt15c: row.cargo.kl.value,
-            api: row.cargo.api.value,
-            temperature: row.cargo.temp.value,
+            loadingId: this.loadingInfoId ? this.loadingInfoId?.toString() : '',
+            portId: row.cargo.portId ? row.cargo.portId?.toString() : '',
+            cargoId: row.cargo.cargoId ? row.cargo.cargoId?.toString() : '',
+            blRefNumber: row.cargo.blRefNo.value ? row.cargo.blRefNo.value?.toString() : '',
+            bblAt60f: row.cargo.bbl.value ? row.cargo.bbl.value?.toString() : '',
+            quantityLt: row.cargo.lt.value ? row.cargo.lt.value?.toString() : '',
+            quantityMt: row.cargo.mt.value ? row.cargo.mt.value?.toString() : '',
+            klAt15c: row.cargo.kl.value ? row.cargo.kl.value?.toString() : '',
+            api: row.cargo.api.value ? Number(row.cargo.api.value) : '',
+            temperature: row.cargo.temp.value ? row.cargo.temp.value : '',
             isUpdate: row.cargo.isAdd ? false : true,
             isActive: '',
             version: ''
@@ -922,17 +944,17 @@ export class UllageUpdatePopupComponent implements OnInit {
 
     this.ullageResponseData?.portLoadablePlanStowageDetails.map(item => {
       data.ullageUpdList.push({
-        loadingInformationId: this.loadingInfoId,
-        tankId: item.tankId,
-        temperature: item.temperature,
-        correctedUllage: item.correctedUllage,
-        quantity: item.quantity,
-        fillingPercentage: item.percentageFilled,
-        cargo_nomination_xid: item.cargoNominationId,
-        arrival_departutre: item.arrivalDeparture,
+        loadingInformationId: this.loadingInfoId?.toString(),
+        tankId: item.tankId?.toString(),
+        temperature: item.temperature?.toString(),
+        correctedUllage: item.correctedUllage?.toString(),
+        quantity: item.quantity?.toString(),
+        fillingPercentage: item.percentageFilled ? Number(item.percentageFilled) : '',
+        cargo_nomination_xid: item.cargoNominationId ? Number(item.cargoNominationId) : '',
+        arrival_departutre: item.arrivalDeparture ? Number(item.arrivalDeparture) : '',
         actual_planned: 1,
-        correction_factor: item.correctionFactor,
-        api: item.api,
+        correction_factor: item.correctionFactor?.toString(),
+        api: item.api ? Number(item.api) : '',
         isUpdate: true,
         port_xid: '',
         port_rotation_xid: '',
@@ -944,16 +966,16 @@ export class UllageUpdatePopupComponent implements OnInit {
     this.billOfLaddingRemovedList.map(item => {
       data.billOfLandingListRemove.push(
         {
-          loadingId: this.loadingInfoId,
-          portId: item.portId,
-          cargoId: item.cargoId,
-          blRefNumber: item.blRefNo.value,
-          bblAt60f: item.bbl.value,
-          quantityLt: item.lt.value,
-          quantityMt: item.mt.value,
-          klAt15c: item.kl.value,
-          api: item.api.value,
-          temperature: item.temp.value,
+          loadingId: this.loadingInfoId ? this.loadingInfoId?.toString() : '',
+          portId: item.cargo.portId ? item.cargo.portId?.toString() : '',
+          cargoId: item.cargo.cargoId ? item.cargo.cargoId?.toString() : '',
+          blRefNumber: item.cargo.blRefNo.value ? item.cargo.blRefNo.value?.toString() : '',
+          bblAt60f: item.cargo.bbl.value ? item.cargo.bbl.value?.toString() : '',
+          quantityLt: item.cargo.lt.value ? item.cargo.lt.value?.toString() : '',
+          quantityMt: item.cargo.mt.value ? item.cargo.mt.value?.toString() : '',
+          klAt15c: item.cargo.kl.value ? item.cargo.kl.value?.toString() : '',
+          api: item.cargo.api.value ? Number(item.cargo.api.value) : '',
+          temperature: item.cargo.temp.value ? item.cargo.temp.value : '',
           isUpdate: true,
           isActive: '',
           version: ''
@@ -962,18 +984,18 @@ export class UllageUpdatePopupComponent implements OnInit {
     });
     this.ballastQuantities.map(item => {
       data.ballastUpdateList.push({
-        loadingInformationId: this.loadingInfoId,
-        tankId: item.tankId,
-        temperature: item.temperature.value,
-        quantity: item.quantity.value,
-        sounding: item.sounding.value,
-        correctedUllage: item.correctedUllage,
-        correctionFactor: item.correctionFactor ? item.correctionFactor : '',
-        filling_percentage: item.fillingPercentage.value,
-        arrival_departutre: item.arrivalDeparture,
-        actual_planned: 1,
+        loadingInformationId: this.loadingInfoId?.toString(),
+        tankId: item.tankId?.toString(),
+        temperature: item.temperature.value?.toString(),
+        quantity: item.quantity.value?.toString(),
+        sounding: item.sounding.value?.toString(),
+        correctedUllage: item.correctedUllage?.toString(),
+        correctionFactor: item.correctionFactor ? item.correctionFactor?.toString() : '',
+        filling_percentage: item.fillingPercentage.value?.toString(),
+        arrival_departutre: item.arrivalDeparture?.toString(),
+        actual_planned: '1',
         color_code: item.colorCode,
-        sg: item.sg,
+        sg: item.sg ? item.sg?.toString() : '',
         observedM3: '',
         fillingRatio: '',
         port_xid: '',
@@ -985,14 +1007,14 @@ export class UllageUpdatePopupComponent implements OnInit {
 
     this.bunkerTanksList.map(item => {
       data.robUpdateList.push({
-        loadingInformationId: this.loadingInfoId,
-        tankId: item.tankId,
-        quantity: item.quantity.value,
+        loadingInformationId: this.loadingInfoId?.toString(),
+        tankId: item.tankId?.toString(),
+        quantity: item.quantity.value?.toString(),
         isUpdate: true,
-        density: item.density.value,
+        density: item.density.value?.toString(),
         colour_code: item.colorCode,
-        actual_planned: 1,
-        arrival_departutre: item.arrivalDeparture,
+        actual_planned: '1',
+        arrival_departutre: item.arrivalDeparture?.toString(),
         port_xid: '',
         port_rotation_xid: '',
         observedM3: '',

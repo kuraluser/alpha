@@ -829,13 +829,13 @@ export interface ITankDetailsValueObject {
   ullage: ValueObject<number>;
   temperature?: ValueObject<number>;
   api?: ValueObject<number>;
-  quantity?: ValueObject<number>;
+  quantity?: ValueObject<number | string>;
   density?: ValueObject<number>;
   id?: ValueObject<number>;
   tankId?: number;
   loadablePatternId?: ValueObject<number>;
   fillingPercentage?: ValueObject<number>;
-  sounding?: ValueObject<number>;
+  sounding?: ValueObject<number|string>;
   cargoNominationId?: ValueObject<number>;
   isAdd?: boolean;
   arrivalDeparture?: number;
@@ -879,7 +879,7 @@ export interface IUllageSaveDetails {
 * @interface IBillOfLandingList
 */
 export interface IBillOfLandingList {
-  loadingId?: number;
+  loadingId?: number | string;
   portId: number;
   cargoId: number;
   blRefNumber: string;
@@ -887,7 +887,7 @@ export interface IBillOfLandingList {
   quantityLt: number;
   quantityMt: number;
   klAt15c: number;
-  api: number;
+  api: number | string;
   temperature: number;
   isUpdate?: boolean;
   isActive?: string;
@@ -902,17 +902,17 @@ export interface IBillOfLandingList {
 * @interface IUllageUpdList
 */
 export interface IUllageUpdList {
-  loadingInformationId: number;
+  loadingInformationId: number | string;
   tankId: number;
   temperature: number;
   correctedUllage: number;
   quantity: number;
-  fillingPercentage: number;
-  cargo_nomination_xid: number;
-  arrival_departutre: number;
+  fillingPercentage: number | string;
+  cargo_nomination_xid: number | string;
+  arrival_departutre: number | string;
   actual_planned: number;
   correction_factor: number;
-  api: number;
+  api: number | string;
   isUpdate: boolean;
   port_xid?: string;
   port_rotation_xid?: string;
@@ -927,18 +927,18 @@ export interface IUllageUpdList {
 * @interface IBallastUpdateList
 */
 export interface IBallastUpdateList {
-  loadingInformationId: number;
-  tankId: number;
-  temperature: number;
-  quantity: number;
-  sounding: number;
-  correctedUllage: number;
+  loadingInformationId: number | string;
+  tankId: number | string;
+  temperature: number | string;
+  quantity: number | string;
+  sounding: number | string;
+  correctedUllage: number | string;
   correctionFactor: string | number;
-  filling_percentage: number;
-  arrival_departutre: number;
-  actual_planned: number;
+  filling_percentage: number | string;
+  arrival_departutre: number | string;
+  actual_planned: number | string;
   color_code: string;
-  sg: number;
+  sg: number | string;
   isUpdate: boolean;
   observedM3?: string;
   fillingRatio?: string;
@@ -954,13 +954,13 @@ export interface IBallastUpdateList {
 * @interface IRobUpdateList
 */
 export interface IRobUpdateList {
-  loadingInformationId: number;
+  loadingInformationId: number | string;
   tankId: number;
   quantity: number;
   isUpdate?: boolean;
   density: number;
   colour_code: string;
-  actual_planned: number;
+  actual_planned: number | string;
   arrival_departutre: number;
   port_xid?: string;
   port_rotation_xid?: string;
@@ -989,6 +989,7 @@ export interface IUllageUpdateDetails {
   portLoadablePlanBallastDetails: ILoadablePlanBallastDetails[];
   portLoadablePlanRobDetails: ILoadablePlanRobDetails[];
   portLoadablePlanStowageDetails: ILoadablePlanStowageDetails[];
+  isPlannedValues?: boolean;
 }
 
 /**
@@ -1056,7 +1057,7 @@ export interface ILoadablePlanBallastDetails {
   loadablePatternId: number;
   quantity: number;
   rdgUllage: number;
-  sg: number;
+  sg: number | string;
   sounding: number;
   tankId: number;
   tankName: string;

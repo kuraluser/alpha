@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { QUANTITY_UNIT } from './../../../shared/models/common.model';
+import { QUANTITY_UNIT, LENGTH_UNIT } from './../../../shared/models/common.model';
 
 /**
  * Component class for departure condition panel
@@ -36,6 +36,7 @@ export class DepartureConditionPanelComponent implements OnInit {
   manifoldHeight: number;
 
   readonly QUANTITY_UNIT = QUANTITY_UNIT;
+  readonly LENGTH_UNIT = LENGTH_UNIT;
   constructor() { }
 
   ngOnInit(): void {

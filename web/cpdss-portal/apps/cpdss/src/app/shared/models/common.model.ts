@@ -382,3 +382,13 @@ export interface IMonth {
   id: number;
   month: string;
 }
+
+/**
+ * ENUM for units of LENGTH
+ *
+ * @export
+ * @enum {number}
+ */
+ export enum LENGTH_UNIT {
+    M = "M"
+}

@@ -364,22 +364,22 @@ export class UllageUpdatePopupTransformationService {
     return _cargoDetail;
   }
 
-/**
-* Method to convert cargo tank details to value object
-*
-* @param cargoTankDetail
-* @param {boolean} [isEditMode=true]
-* @param {boolean} [isAdd=true]
-* @returns {ITankDetailsValueObject}
-* @memberof UllageUpdatePopupTransformationService
-*/
-  getFormatedTankDetailsCargo(cargoTank: any, isEditMode = true, isAdd = true) {
+  /**
+  * Method to convert cargo tank details to value object
+  *
+  * @param cargoTankDetail
+  * @param {boolean} [isEditMode=true]
+  * @param {boolean} [isAdd=true]
+  * @returns {ITankDetailsValueObject}
+  * @memberof UllageUpdatePopupTransformationService
+  */
+  getFormatedTankDetailsCargo(cargoTank: any, isEditMode = true, isPlanned: boolean, isAdd = true) {
     const _tankDetails = <ITankDetailsValueObject>{};
-    _tankDetails.tankName = new ValueObject<string>(cargoTank?.tankShortName ? cargoTank?.tankShortName : '', true, false, false, true);
-    _tankDetails.ullage = new ValueObject<number>(cargoTank?.ullage ? cargoTank?.ullage : '', true, isEditMode, false, true);
-    _tankDetails.temperature = new ValueObject<number>(cargoTank?.temperature ? cargoTank?.temperature : '', true, isEditMode, false, true);
-    _tankDetails.api = new ValueObject<number>(cargoTank?.api ? cargoTank?.api : '', true, isEditMode, false, true);
-    _tankDetails.quantity = new ValueObject<number>(cargoTank?.quantity ? cargoTank?.quantity : '', true, false, false, true);
+    _tankDetails.tankName = new ValueObject<string>(cargoTank?.tankShortName ? cargoTank?.tankShortName : 0, true, false, false, true);
+    _tankDetails.ullage = new ValueObject<number>(cargoTank?.ullage && !isPlanned ? cargoTank?.ullage : 0, true, isEditMode, false, true);
+    _tankDetails.temperature = new ValueObject<number>(cargoTank?.temperature && !isPlanned ? cargoTank?.temperature : 0, true, isEditMode, false, true);
+    _tankDetails.api = new ValueObject<number>(cargoTank?.api && !isPlanned ? cargoTank?.api : 0, true, isEditMode, false, true);
+    _tankDetails.quantity = new ValueObject<number>(cargoTank?.quantity && !isPlanned ? cargoTank?.quantity : 0, true, false, false, true);
     _tankDetails.id = cargoTank.id;
     _tankDetails.tankId = cargoTank.tankId;
     _tankDetails.loadablePatternId = cargoTank.loadablePatternId;
@@ -392,20 +392,20 @@ export class UllageUpdatePopupTransformationService {
     return _tankDetails;
   }
 
-/**
-* Method to convert ballast tank details to value object
-*
-* @param ballastTank
-* @param {boolean} [isEditMode=true]
-* @param {boolean} [isAdd=true]
-* @returns {ITankDetailsValueObject}
-* @memberof UllageUpdatePopupTransformationService
-*/
-  getFormatedTankDetailsBallast(ballastTank: any, isEditMode = true, isAdd = true) {
+  /**
+  * Method to convert ballast tank details to value object
+  *
+  * @param ballastTank
+  * @param {boolean} [isEditMode=true]
+  * @param {boolean} [isAdd=true]
+  * @returns {ITankDetailsValueObject}
+  * @memberof UllageUpdatePopupTransformationService
+  */
+  getFormatedTankDetailsBallast(ballastTank: any, isEditMode = true, isPlanned: boolean, isAdd = true) {
     const _tankDetails = <ITankDetailsValueObject>{};
-    _tankDetails.tankName = new ValueObject<string>(ballastTank?.tankShortName ? ballastTank?.tankShortName : '', true, false, false, true);
-    _tankDetails.quantity = new ValueObject<number>(ballastTank?.quantity ? ballastTank?.quantity : '', true, false, false, true);
-    _tankDetails.sounding = new ValueObject<number>(ballastTank.sounding ? ballastTank.sounding : '', true, isEditMode, false, true);
+    _tankDetails.tankName = new ValueObject<string>(ballastTank?.tankShortName ? ballastTank?.tankShortName : 0, true, false, false, true);
+    _tankDetails.quantity = new ValueObject<number | string>(ballastTank?.quantity && !isPlanned ? ballastTank?.quantity : 0, true, false, false, true);
+    _tankDetails.sounding = new ValueObject<number | string>(ballastTank.sounding && !isPlanned ? ballastTank.sounding : 0, true, isEditMode, false, true);
     _tankDetails.tankId = ballastTank.tankId;
     _tankDetails.loadablePatternId = ballastTank.loadablePatternId;
     _tankDetails.temperature = new ValueObject<number>(ballastTank.temperature ? ballastTank.temperature : '', true, false, false, true);
@@ -429,13 +429,13 @@ export class UllageUpdatePopupTransformationService {
 * @returns {ITankDetailsValueObject}
 * @memberof UllageUpdatePopupTransformationService
 */
-  getFormatedTankDetailsBunker(bunkerTank: any, isEditMode = true, isAdd = true) {
-    
+  getFormatedTankDetailsBunker(bunkerTank: any, isEditMode = true, isPlanned: boolean, isAdd = true) {
+
     const _tankDetails = <ITankDetailsValueObject>{};
     _tankDetails.tankName = new ValueObject<string>(bunkerTank?.tankShortName ? bunkerTank?.tankShortName : '', true, false, false, true);
-    _tankDetails.quantity = new ValueObject<number>(bunkerTank?.quantity ? bunkerTank?.quantity : '', true, isEditMode, false, true);
+    _tankDetails.quantity = new ValueObject<number>(bunkerTank?.quantity && !isPlanned? bunkerTank?.quantity : 0, true, isEditMode, false, true);
     _tankDetails.tankId = bunkerTank.tankId;
-    _tankDetails.density = new ValueObject<number>(bunkerTank.density ? bunkerTank.density : '', true, false, false, true);
+    _tankDetails.density = new ValueObject<number>(bunkerTank.density && !isPlanned ? bunkerTank.density : 0, true, false, false, true);
     _tankDetails.loadablePatternId = bunkerTank.loadablePatternId;
     _tankDetails.temperature = bunkerTank?.temperature;
     _tankDetails.colorCode = bunkerTank?.colorCode;

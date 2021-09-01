@@ -2,7 +2,7 @@
     <div class="col-md-6">
         <h5 class="">{{'LOADING_INFORMATION_LOADING_RATES_HEADER' | translate}}</h5>
     </div>
-    <div class="col-md-6 text-right" *ngIf="editMode">
+    <div class="col-md-6 text-right" >
         <p-dropdown id="loading_rate_conversion_dropdown" [options]="conversionDropdown" [(ngModel)]="selectedConversion"
         (onChange)="onConversionChange()" optionLabel="value" optionValue="value" resetFilterOnHide="true" ></p-dropdown>
     </div>
@@ -46,7 +46,7 @@
                         <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else minLoadingRate"
                         id="min_loading_rate" formControlName="minLoadingRate"  placeholder="{{'LOADING_RATE_MIN_LOADING_RATE_PLACEHOLDER' | translate}}"
                         (change)="onChange('minLoadingRate')" [readonly]="false">
-                        <ng-template #minLoadingRate><span>{{loadingRatesFormGroupControl?.loadingRatesFormGroupControl?.minLoadingRate?.value}}</span></ng-template>
+                        <ng-template #minLoadingRate><span>{{loadingRatesFormGroupControl?.minLoadingRate?.value}}</span></ng-template>
                         <cpdss-portal-validation-error [errors]="fieldError('minLoadingRate')"
                             [errorMessages]="errorMesages?.minLoadingRate"></cpdss-portal-validation-error>
                     </div>
