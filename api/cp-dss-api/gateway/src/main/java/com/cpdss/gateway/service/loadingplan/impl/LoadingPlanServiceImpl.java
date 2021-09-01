@@ -1409,9 +1409,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               : ullageList.getCorrectionFactor().longValue())
                       .setIsUpdate(ullageList.getIsUpdate())
                       .build();
+                  builder.addUpdateUllage(updateUllageBuilder.build());
                 });
-
-        builder.addUpdateUllage(updateUllageBuilder.build());
 
       } else {
         errorValidationUllageMsg = "Required data for Update is missing";
@@ -1480,9 +1479,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setIsUpdate(
                           ullageList.getIsUpdate() == false ? false : ullageList.getIsUpdate())
                       .build();
+                  builder.addBallastUpdate(updateBallastBuilder.build());
                 });
-
-        builder.addBallastUpdate(updateBallastBuilder.build());
 
       } else {
         errorValidationBallastMsg = "Required data for Update is missing";
@@ -1535,9 +1533,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               ? 0
                               : ullageList.getPortRotationXId())
                       .build();
+                  builder.addRobUpdate(updateRobBuilder.build());
                 });
-
-        builder.addRobUpdate(updateRobBuilder.build());
 
       } else {
         errorValidationRobMsg = "Required data for Update is missing";
