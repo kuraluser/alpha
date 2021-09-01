@@ -47,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -1340,37 +1341,53 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 billLanding -> {
                   billOfLandingBuilder
                       .setLoadingId(
-                          billLanding.getLoadingId() == null ? 0 : billLanding.getLoadingId())
-                      .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
-                      .setCargoId(billLanding.getCargoId() == null ? 0 : billLanding.getCargoId())
+                          StringUtils.isEmpty(billLanding.getLoadingId())
+                              ? 0
+                              : billLanding.getLoadingId())
+                      .setPortId(
+                          StringUtils.isEmpty(billLanding.getPortId())
+                              ? 0
+                              : billLanding.getPortId())
+                      .setCargoId(
+                          StringUtils.isEmpty(billLanding.getCargoId())
+                              ? 0
+                              : billLanding.getCargoId())
                       .setBlRefNumber(
-                          billLanding.getBlRefNumber() == null ? "" : billLanding.getBlRefNumber())
+                          StringUtils.isEmpty(billLanding.getBlRefNumber())
+                              ? ""
+                              : billLanding.getBlRefNumber())
                       .setBblAt60F(
-                          billLanding.getBblAt60f() == null
-                              ? null
+                          StringUtils.isEmpty(billLanding.getBblAt60f())
+                              ? 0
                               : billLanding.getBblAt60f().longValue())
                       .setQuantityLt(
-                          billLanding.getQuantityLt() == null
+                          StringUtils.isEmpty(billLanding.getQuantityLt())
                               ? 0
                               : billLanding.getQuantityLt().longValue())
                       .setQuantityMt(
-                          billLanding.getQuantityMt() == null
+                          StringUtils.isEmpty(billLanding.getQuantityMt())
                               ? 0
                               : billLanding.getQuantityMt().longValue())
                       .setKlAt15C(
-                          billLanding.getKlAt15c() == null
+                          StringUtils.isEmpty(billLanding.getKlAt15c())
                               ? 0
                               : billLanding.getKlAt15c().longValue())
-                      .setApi(billLanding.getApi() == null ? 0 : billLanding.getApi().longValue())
+                      .setApi(
+                          StringUtils.isEmpty(billLanding.getApi())
+                              ? 0
+                              : billLanding.getKlAt15c().longValue())
                       .setTemperature(
-                          billLanding.getTemperature() == null
+                          StringUtils.isEmpty(billLanding.getTemperature())
                               ? 0
                               : billLanding.getTemperature().longValue())
                       .setIsActive(
-                          billLanding.getIsActive() == null
+                          StringUtils.isEmpty(billLanding.getIsActive())
                               ? 0
                               : billLanding.getIsActive().longValue())
-                      .setVersion(billLanding.getVersion() == null ? 0 : billLanding.getVersion())
+                      .setVersion(
+                          StringUtils.isEmpty(billLanding.getVersion())
+                              ? 0
+                              : billLanding.getVersion())
                       .setIsUpdate(
                           billLanding.getIsUpdate() == false ? false : billLanding.getIsUpdate())
                       .build();
@@ -1753,4 +1770,21 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   public byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException {
     return loadingInformationService.downloadLoadingPortTideDetails(loadingId);
   }
+
+  private Long castInput(String inputData) {
+    return StringUtils.isEmpty(inputData) ? 0 : Long.parseLong(inputData);
+  }
+
+  /*
+  private Long castInput(String input){
+    if (input == null || input.isEmpty() || input.isBlank()){
+      return 0l;
+    }
+    try{
+      return Long.parseLong(input);
+    }catch(Exception e) {
+      return 0l;
+    }
+
+  }*/
 }
