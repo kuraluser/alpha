@@ -27,4 +27,6 @@ public class VesselRule {
   private Long ruleOrder;
   private Long numericPrecision;
   private Long numericScale;
+  private Boolean templateInputIsActive;
+  private Boolean templateIsActive;
 }

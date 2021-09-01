@@ -27,7 +27,7 @@ export class RulesService {
   * Method to initialize variables in the service
   */
   async init() {
-    this.vessels = await this.vesselsApiService.getVesselsInfo().toPromise();
+    this.vessels = await this.vesselsApiService.getVesselsInfo(true).toPromise();
   }
 
 

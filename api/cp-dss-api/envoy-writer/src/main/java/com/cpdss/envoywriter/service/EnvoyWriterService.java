@@ -38,10 +38,10 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class EnvoyWriterService {
 
-  @Value("${cpdss.communucation.ship.writer.url}")
+  @Value("${cpdss.communication.ship.writer.url}")
   private String writerShipUrl;
 
-  @Value("${cpdss.communucation.shore.writer.url}")
+  @Value("${cpdss.communication.shore.writer.url}")
   private String writerShoreUrl;
 
   @Value("${cpdss.build.env}")
@@ -62,8 +62,13 @@ public class EnvoyWriterService {
       EnvoyWriterRequest request, Builder writerBuilder) throws IOException {
 
     Optional<SequenceNumber> numberOpt = sequenceNumberRepository.findById(SEQUENCE_NUMBER_ID);
-    Long sequenceNumber = numberOpt.get().getSequenceNumber();
-    updateSequenceNumber(sequenceNumber, numberOpt.get());
+    SequenceNumber obj = new SequenceNumber();
+    Long sequenceNumber = 0L;
+    if (numberOpt.isPresent()) {
+      sequenceNumber = numberOpt.get().getSequenceNumber();
+      obj = numberOpt.get();
+    }
+    updateSequenceNumber(sequenceNumber, obj);
     String uuid = null;
     if (request.getMessageId().isEmpty()) uuid = UUID.randomUUID().toString();
     else uuid = request.getMessageId();

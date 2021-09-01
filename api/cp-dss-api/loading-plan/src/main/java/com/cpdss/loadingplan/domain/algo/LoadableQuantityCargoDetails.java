@@ -8,15 +8,13 @@ import lombok.Data;
 
 /** @Author jerin.g */
 @Data
+@JsonInclude(Include.NON_NULL)
 public class LoadableQuantityCargoDetails {
   @JsonInclude(Include.NON_NULL)
   private Long id;
 
   @JsonInclude(Include.NON_NULL)
   private String grade;
-
-  private String estimatedAPI;
-  private String estimatedTemp;
 
   @JsonInclude(Include.NON_NULL)
   private String orderBblsdbs;
@@ -46,17 +44,20 @@ public class LoadableQuantityCargoDetails {
   @JsonInclude(Include.NON_NULL)
   private String differenceColor;
 
-  private Long cargoId;
   private String orderedQuantity;
   private String cargoAbbreviation;
   private String colorCode;
   private Integer priority;
   private Integer loadingOrder;
-  private Long cargoNominationId;
 
   private String slopQuantity;
   private String timeRequiredForLoading;
 
   @JsonInclude(Include.NON_NULL)
   private List<String> loadingPorts;
+
+  private String estimatedAPI;
+  private String estimatedTemp;
+  private Long cargoId;
+  private Long cargoNominationId;
 }

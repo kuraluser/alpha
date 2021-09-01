@@ -6,6 +6,9 @@ import com.cpdss.loadingplan.entity.PortTideDetail;
 import com.cpdss.loadingplan.repository.projections.PortTideAlgo;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface PortTideDetailsRepository extends CommonCrudRepository<PortTideDetail, Long> {
 
@@ -13,4 +16,11 @@ public interface PortTideDetailsRepository extends CommonCrudRepository<PortTide
 
   List<PortTideAlgo> findAllByPortXidAndIsActiveTrueOrderByTideDateDescTideTimeDesc(
       Long portId, Pageable page);
+
+  List<PortTideDetail> findByLoadingXidAndIsActive(Long loadingXid, boolean active);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE PortTideDetail SET isActive = false WHERE loadingXid = ?1")
+  void updatePortDetailActiveState(Long id);
 }

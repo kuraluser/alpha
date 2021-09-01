@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true; // to reduce generated file size
+option java_package = "com.cpdss.common.generated.discharge_plan";
+
+// import common definitions like ResponseStatus
+import "common.proto";
+import "discharge_plan/discharge_plan_models.proto";
+
+service DischargeInformationService {
+  rpc getDischargeInformation(DischargeInformationRequest) returns (DischargeInformation) {}
+  rpc getOrSaveRulesForDischarging(DischargeRuleRequest) returns (DischargeRuleReply) {}
+}
+
+service DischargePlanService{
+  rpc DischargePlanSynchronization(DischargeStudyDataTransferRequest) returns (ResponseStatus) {}
+}

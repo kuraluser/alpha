@@ -7,12 +7,11 @@ import { IPortAllDropdownData, IPortsValueObject, IPortsEvent } from '../../mode
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { OPERATIONS } from '../../models/cargo-planning.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { portDateRangeValidator } from '../../directives/validator/port-daterange-validator.directive';
 import { portDateCompareValidator } from '../../directives/validator/port-date-compare-validator.directive';
 import { portDuplicationValidator } from '../../directives/validator/port-duplication-validator.directive';
-import { IPortList, IPortsDetailsResponse, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { IPortList, IPortsDetailsResponse, LOADABLE_STUDY_STATUS, OPERATIONS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { portEtaEtdValidator } from '../../directives/validator/port-eta-etd-validator.directive'
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
@@ -527,7 +526,7 @@ export class PortsComponent implements OnInit, OnDestroy {
               }
             }
           }
-          
+
         }
       }
     });
@@ -557,7 +556,8 @@ export class PortsComponent implements OnInit, OnDestroy {
         break;
       }
     }
-    if (this.portsLists[this.portsLists.length - 1].operation.value.id !== OPERATIONS.DISCHARGING) {
+    
+    if (this.portsLists[this.portsLists.length - 1].operation.value?.id !== OPERATIONS.DISCHARGING) {
       orderError = true;
     }
     return orderError;
@@ -618,7 +618,7 @@ export class PortsComponent implements OnInit, OnDestroy {
         }
         this.loadableStudyDetailsTransformationService.setPortValidity(this.portsForm.valid && this.portsLists?.filter(item => !item?.isAdd).length > 0 && !this.portOrderValidation());
       }
-      
+
 
     } else {
       this.row(event.index).markAllAsTouched();

@@ -1,50 +1,69 @@
-<div class="vessel-card mr-10 mb-10 pt-10 pl-10 pb-10" [ngClass]="{'active-vessel': vessel.id === selectedVesselId}"
-  (click)="onClickVesselCard($event, vessel)" *ngFor="let vessel of vesselValues">
-  <div class="">
-    <img src="{{vessel.flagImage}}" width="30" height="20">
-  </div>
-  <div class="">
-    <div class="vessel-card-content">
-      <div class="col text-lead">{{vessel.vesselName}}</div>
-    </div>
-    <div class="vessel-card-content">
-      <div class="col">{{'VESSEL_INFO_IMO' | translate}} {{vessel.imoNo}}</div>
-    </div>
-    <div class="vessel-card-content">
-      <div class="col"> &nbsp; </div>
-    </div>
-    <div class="vessel-card-content">
-      <div class="col-6 text-medium">{{'FLEET_PORT_ATD' | translate}} {{vessel.atd | momentFormat: 'DD-MMM-YYYY'}}</div>
-      <div class="col-6 text-right text-medium" *ngIf="vessel?.ata">{{'FLEET_PORT_ATA' | translate}} {{vessel.ata | momentFormat: 'DD-MMM-YYYY'}}</div>
-      <div class="col-6 text-right text-medium" *ngIf="!vessel?.ata">{{'FLEET_PORT_ETA' | translate}} {{vessel.eta | momentFormat: 'DD-MMM-YYYY'}}</div>
-    </div>
-    <div class="vessel-card-content">
-      <div class="col-6">
-        <div class="text-medium">{{vessel.voyageStart}}</div>
-      </div>
-      <div class="col-6 text-right">
-        <div class="text-medium">{{vessel.voyageEnd}}</div>
-      </div>
-    </div>
+<div class="row no-gutters vessel-card-fleet-container">
+  <div class="col vessel-card-fleet-wrapper" *ngFor="let vessel of vesselValues">
+    <div class="vessel-card mb-10 pt-10 pb-10" [ngClass]="{'active-vessel': vessel.id === selectedVesselId}"
+      (click)="onClickVesselCard($event, vessel)">
+      <div class="row">
+        <div class="">
+          <img src="{{vessel.flagName}}" width="30" height="20">
+        </div>
+        <div class="col">
+          <div class="">
+            <div class="vessel-card-content">
+              <div class="row">
+                <div class="col">
+                  <div class="vessel-card-heading">{{vessel?.vesselName}}</div>
+                  <div>{{'VESSEL_INFO_IMO' | translate}} {{vessel?.imoNo}}</div>
+                </div>
+              </div>
 
-    <!-- Will use in future -->
-    <!-- <div class="vessel-card-content">
-      <div class="col-12">
-        <div class="progress progress-vessel">
-          <div class="progress-bar bg-success" [style.width.%]=20 tooltip="20%" role="progressbar">
-            <img src="../../../../assets/images/arrow-green.png" class="arrow-end" style="display: inherit; width: auto;">
+              <div class="row vessel-card-bottom-content pt-20">
+                <div class="col-6 pr-0 text-medium">{{'FLEET_PORT_ATD' | translate}}
+                  {{vessel?.atd ? (vessel?.atd | momentFormat: dateFormat) : '-'}}
+                  <br>
+                  {{vessel?.voyageStart}}
+                </div>
+                <div class="col-6 pl-0 text-right text-medium" *ngIf="vessel?.ata">{{'FLEET_PORT_ATA' | translate}}
+                  {{vessel?.ata ? (vessel?.ata | momentFormat: dateFormat) : '-'}}
+                  <br>
+                  {{vessel?.voyageEnd}}
+                </div>
+                <div class="col-6 pl-0 text-right text-medium" *ngIf="!vessel?.ata">{{'FLEET_PORT_ETA' | translate}}
+                  {{vessel?.eta ? (vessel?.eta | momentFormat: dateFormat) : '-'}}
+                  <br>{{vessel?.voyageEnd}}
+                </div>
+              </div>
+
+              <!-- Will use in future -->
+              <!-- <div class="row">
+                <div class="col-sm-12">
+                  <div class="progress">
+                    <div class="progress-bar bg-success" style="width:60%" role="progressbar">
+                      <img src="../../../assets/images/arrow-green.png" class="arrow-end">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>-->
+            </div>
           </div>
         </div>
+
+        <div class="vessel-card-submenu">
+          <ul>
+            <li>
+              <a pTooltip="{{'DASHBOARD' | translate}}" tooltipPosition="top" (click)="navigateToPage('voyage-status', vessel)" class="menu-item-icon status"></a>
+            </li>
+            <li>
+              <a pTooltip="{{'FILES' | translate}} - Comming Soon" tooltipPosition="top" class="menu-item-icon files"></a>
+            </li>
+            <li>
+              <a pTooltip="{{'VOYAGES' | translate}}" tooltipPosition="top" (click)="navigateToPage('voyages', vessel)" class="menu-item-icon voyages"></a>
+            </li>
+            <li>
+              <a pTooltip="{{'SYNOPTICAL' | translate}}" tooltipPosition="top" (click)="navigateToPage('synoptical', vessel)" class="menu-item-icon synoptical-table"></a>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div> -->
+    </div>
   </div>
-
-  <div class="vessel-card-submenu">
-    <ul class="pl-0">
-      <li><div [routerLink]="['/business/voyage-status']" class="menu-item-icon status"></div></li>
-      <li><div [routerLink]="['/business/cargo-planning']" class="menu-item-icon cargo-planning"></div></li>
-      <li><div [routerLink]="['/business/voyages']" class="menu-item-icon voyages"></div></li>
-    </ul>
-  </div>
-
-</div>

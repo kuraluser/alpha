@@ -1,17 +1,44 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_CENTER_TANK;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_FRONT_TANK;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_REAR_TANK;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_TANK_CATEGORIES;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_TANK_COLOR_CODE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_BALLAST_TANK_CATEGORIES;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_TANK_CATEGORIES;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.COMMINGLE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CREATED_DATE_FORMAT;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DICHARGE_STUDY;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.INVALID_LOADABLE_PATTERN_COMMINGLE_DETAIL_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.INVALID_LOADABLE_PATTERN_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.INVALID_LOADABLE_STUDY_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_PATTERN_VALIDATION_FAILED_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_PATTERN_VALIDATION_SUCCESS_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_COMMUNICATED_TO_SHORE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_REQUEST;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.VALIDATED_CONDITIONS;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication;
-import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
-import com.cpdss.common.generated.LoadableStudy.LoadableStudyResponse.Builder;
 import com.cpdss.common.generated.LoadableStudy.StabilityParameter;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
@@ -21,11 +48,54 @@ import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
-import com.cpdss.loadablestudy.entity.*;
-import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.entity.CowTypeMaster;
+import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
+import com.cpdss.loadablestudy.entity.DischargePlanCowDetailFromAlgo;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
+import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
+import com.cpdss.loadablestudy.entity.LoadablePatternCargoToppingOffSequence;
+import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanConstraints;
+import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetailsTemp;
+import com.cpdss.loadablestudy.entity.LoadableQuantity;
+import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
+import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.StabilityParameters;
+import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
+import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
+import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.CowTypeMasterRepository;
+import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
+import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsTempRepository;
+import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyCommunicationStatusRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
+import com.cpdss.loadablestudy.repository.StabilityParameterRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
+import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
-import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
@@ -148,6 +218,8 @@ public class LoadablePatternService {
   @Value("${cpdss.communication.enable}")
   private boolean enableCommunication;
 
+  @Value("${cpdss.build.env}")
+  private String env;
   /**
    * @param loadableStudy
    * @throws GenericServiceException
@@ -291,7 +363,7 @@ public class LoadablePatternService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    if (enableCommunication && !request.getHasLodicator()) {
+    if (enableCommunication && !request.getHasLodicator() && !env.equals("ship")) {
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
               request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
@@ -775,8 +847,13 @@ public class LoadablePatternService {
     lpd.getLoadablePlanPortWiseDetailsList()
         .forEach(
             lppwd -> {
-              LoadableStudyPortRotation loadableStudyPortRotation =
-                  this.loadableStudyPortRotationRepository.getOne(lppwd.getPortRotationId());
+              Long portRotationid = lppwd.getPortRotationId();
+              LoadableStudyPortRotation portRotation =
+                  loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                      loadablePattern.getLoadableStudy(), lppwd.getPortId(), true);
+              if (!Objects.isNull(portRotation)) portRotationid = portRotation.getId();
+
+              Long finalPortRotationid = portRotationid;
               lppwd
                   .getArrivalCondition()
                   .getLoadablePlanBallastDetailsList()
@@ -786,7 +863,7 @@ public class LoadablePatternService {
                             SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
                             lpbd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            finalPortRotationid,
                             loadablePattern);
                       });
               lppwd
@@ -798,7 +875,7 @@ public class LoadablePatternService {
                             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
                             lpbd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            finalPortRotationid,
                             loadablePattern);
                       });
             });
@@ -842,6 +919,13 @@ public class LoadablePatternService {
     lpd.getLoadablePlanPortWiseDetailsList()
         .forEach(
             lppwd -> {
+              Long portRotationid = lppwd.getPortRotationId();
+              LoadableStudyPortRotation portRotation =
+                  loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                      loadablePattern.getLoadableStudy(), lppwd.getPortId(), true);
+              if (!Objects.isNull(portRotation)) portRotationid = portRotation.getId();
+
+              Long finalPortRotationid = portRotationid;
               lppwd
                   .getArrivalCondition()
                   .getLoadablePlanStowageDetailsList()
@@ -851,7 +935,7 @@ public class LoadablePatternService {
                             SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
                             lpsd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            finalPortRotationid,
                             loadablePattern);
                       });
               lppwd
@@ -863,7 +947,7 @@ public class LoadablePatternService {
                             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
                             lpsd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            finalPortRotationid,
                             loadablePattern);
                       });
               saveCargoToppingOffList(lppwd, loadablePattern, displayOrder);
@@ -1118,16 +1202,22 @@ public class LoadablePatternService {
           lpd.getLoadablePlanPortWiseDetailsList()) {
         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply arrivalCondition =
             portWiseDetails.getArrivalCondition();
+
+        Long portRotationid = portWiseDetails.getPortRotationId();
+        LoadableStudyPortRotation portRotation =
+            loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                loadablePattern.getLoadableStudy(), portWiseDetails.getPortId(), true);
+        if (!Objects.isNull(portRotation)) portRotationid = portRotation.getId();
         if (Optional.ofNullable(arrivalCondition).isPresent()) {
           loadicatorService.saveLodicatorDataForSynoptical(
-              loadablePattern, arrivalCondition, lpd, "ARR", portWiseDetails.getPortRotationId());
+              loadablePattern, arrivalCondition, lpd, "ARR", portRotationid);
         }
 
         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply departureCondition =
             portWiseDetails.getDepartureCondition();
         if (Optional.ofNullable(departureCondition).isPresent()) {
           loadicatorService.saveLodicatorDataForSynoptical(
-              loadablePattern, departureCondition, lpd, "DEP", portWiseDetails.getPortRotationId());
+              loadablePattern, departureCondition, lpd, "DEP", portRotationid);
         }
       }
     }
@@ -1224,7 +1314,7 @@ public class LoadablePatternService {
           request.getLoadableStudyId(),
           LOADABLE_STUDY_REQUEST,
           objectMapper.writeValueAsString(loadableStudy));
-      if (enableCommunication) {
+      if (enableCommunication && env.equals("ship")) {
         this.voyageService.builVoyageDetails(modelMapper, loadableStudy);
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(
@@ -1924,26 +2014,5 @@ public class LoadablePatternService {
     } catch (InvalidProtocolBufferException | GenericServiceException e) {
       e.printStackTrace();
     }
-  }
-
-  /**
-   * @param request
-   * @param builder
-   * @throws GenericServiceException
-   */
-  public void getLoadableStudyDetailsByLoadablePatternId(
-      LoadablePlanDetailsRequest request, Builder builder) throws GenericServiceException {
-
-    Optional<LoadablePattern> loadablePatternOpt =
-        this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
-
-    if (loadablePatternOpt.isEmpty()) {
-      throw new GenericServiceException(
-          "Loadable pattern does not exist",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
-
-    builder.setLoadableStudyId(loadablePatternOpt.get().getLoadableStudy().getId());
   }
 }

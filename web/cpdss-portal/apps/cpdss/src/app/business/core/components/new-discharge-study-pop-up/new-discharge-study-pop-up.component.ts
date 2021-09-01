@@ -5,7 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { DischargeStudyListApiService } from '../../../cargo-planning/services/discharge-study-list-api.service';
 import { DischargeStudyListTransformationApiService } from '../../../cargo-planning/services/discharge-study-list-transformation-api.service';
-
+import { isAlphaCharacterAvaiable } from '../../directives/alpha-validator.directive';
 
 /**
  * Component class for NewDischargeStudyPopUpComponent
@@ -108,7 +108,7 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
   initialiseForm()
   {
     this.dischargeStudyForm = this.formBuilder.group({
-      'newDischargeStudyName':['', [Validators.required]],
+      'newDischargeStudyName':['', [Validators.required , isAlphaCharacterAvaiable]],
       'enquiryDetails': ['', [Validators.maxLength(1000)]],
     });
   }
@@ -168,9 +168,9 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
     this.ngxSpinnerService.show();
     let result;
     if (this.dischargeStudyForm.valid) {
-      let newModel = {
+      const newModel = {
         name: this.dischargeStudyForm.value.newDischargeStudyName,
-        detail: this.dischargeStudyForm.value.enquiryDetails
+        detail: this.dischargeStudyForm.value.enquiryDetails ? this.dischargeStudyForm.value.enquiryDetails : ''
       }
 
       const translationKeys = await this.translateService.get(['NEW_DISCHARGE_STUDY_POPUP__NAME_EXIST', 'DISCHARGE_STUDY_CREATE_SUCCESS', 'DISCHARGE_STUDY_CREATE_SUCCESS','DISCHARGE_STUDY_CREATED_SUCCESSFULLY', 'DISCHARGE_STUDY_CREATE_ERROR', 'DISCHARGE_STUDY_ALREADY_EXIST', 'DISCHARGE_STUDY_UPDATE_SUCCESS', 'DISCHARGE_STUDY_UPDATED_SUCCESSFULLY']).toPromise();
@@ -201,6 +201,9 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
       catch (error) {
         if (error.error.errorCode === 'ERR-RICO-105') {
           this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_DISCHARGE_STUDY_POPUP__NAME_EXIST'] });
+          this.ngxSpinnerService.hide();
+        } else if(error.error.errorCode === 'ERR-RICO-151') {
+          this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_DISCHARGE_STUDY_POPUP_BILL_OF_LADDING'] });
           this.ngxSpinnerService.hide();
         }
       }

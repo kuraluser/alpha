@@ -2,15 +2,10 @@
 package com.cpdss.common.generated;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncUnaryCall;
-import static io.grpc.stub.ClientCalls.blockingUnaryCall;
-import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /** */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.27.1)",
+    value = "by gRPC proto compiler (version 1.36.0)",
     comments = "Source: loadicator.proto")
 public final class LoadicatorServiceGrpc {
 
@@ -116,7 +111,8 @@ public final class LoadicatorServiceGrpc {
         com.cpdss.common.generated.Loadicator.LoadicatorRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Loadicator.LoadicatorReply>
             responseObserver) {
-      asyncUnimplementedUnaryCall(getSaveLoadicatorInfoMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveLoadicatorInfoMethod(), responseObserver);
     }
 
     @java.lang.Override
@@ -124,7 +120,7 @@ public final class LoadicatorServiceGrpc {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
               getSaveLoadicatorInfoMethod(),
-              asyncUnaryCall(
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
                       com.cpdss.common.generated.Loadicator.LoadicatorRequest,
                       com.cpdss.common.generated.Loadicator.LoadicatorReply>(
@@ -151,7 +147,7 @@ public final class LoadicatorServiceGrpc {
         com.cpdss.common.generated.Loadicator.LoadicatorRequest request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Loadicator.LoadicatorReply>
             responseObserver) {
-      asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveLoadicatorInfoMethod(), getCallOptions()),
           request,
           responseObserver);
@@ -175,7 +171,7 @@ public final class LoadicatorServiceGrpc {
     /** */
     public com.cpdss.common.generated.Loadicator.LoadicatorReply saveLoadicatorInfo(
         com.cpdss.common.generated.Loadicator.LoadicatorRequest request) {
-      return blockingUnaryCall(
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveLoadicatorInfoMethod(), getCallOptions(), request);
     }
   }
@@ -197,7 +193,7 @@ public final class LoadicatorServiceGrpc {
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.Loadicator.LoadicatorReply>
         saveLoadicatorInfo(com.cpdss.common.generated.Loadicator.LoadicatorRequest request) {
-      return futureUnaryCall(
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveLoadicatorInfoMethod(), getCallOptions()), request);
     }
   }

@@ -130,9 +130,13 @@ service LoadableStudyService {
 	
 	rpc GetLoadablePlanDetails(LoadablePlanDetailsRequest) returns (LoadablePlanDetailsReply) {
 	}
-	
+
 	rpc updateUllage(UpdateUllageRequest) returns (UpdateUllageReply) {
 	}
+
+	rpc getUllage(UpdateUllageRequest) returns (UpdateUllageReply) {
+	}
+
 	
 	rpc ConfirmPlanStatus(ConfirmPlanRequest) returns (ConfirmPlanReply) {
 	}	
@@ -192,18 +196,34 @@ service LoadableStudyService {
 
 	rpc getCargoNominationByCargoNominationId(CargoNominationRequest) returns (CargoNominationDetailReply){}
 	rpc getLoadableCommingleByPatternId(LoadablePlanDetailsRequest) returns (LoadableCommingleDetailsReply){}
+
+	rpc GetLoadableStudyShore(LoadableStudyShoreRequest) returns (LoadableStudyShoreResponse){}
+
+	rpc GetLoadableStudyPortRotationByPortRotationId(PortRotationRequest) returns (PortRotationDetailReply) {}
+
+	rpc GetLoadableStudySimulatorJsonData(SimulatorJsonRequest) returns (SimulatorJsonReply){}
 }
 
 service DischargeStudyOperationService {
   rpc deleteDischargeStudy(DischargeStudyRequest) returns (DischargeStudyReply) {}
   rpc SaveDischargeStudy (DischargeStudyDetail) returns (DischargeStudyReply){}
   rpc UpdateDischargeStudy (DischargeStudyDetail) returns (UpdateDischargeStudyReply){}
+  rpc getDischargeStudyPortWiseCargos(DischargeStudyRequest) returns (DishargeStudyCargoReply) {}
+  rpc SaveDischargeStudyBackLoading (DishargeStudyBackLoadingSaveRequest) returns (DischargeStudyReply){}
+  rpc GenerateDischargePatterns (AlgoRequest) returns (AlgoReply) {}
+  rpc GetDischargePlanDetails(LoadablePlanDetailsRequest) returns (CargoNominationReply) {}
+  rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {}
 }
 
 service PortInstructionService {
     rpc getInstructions (EmptyRequest)  returns (InstructionReply){}
 }
 
+message DischargePlanDetailsReply {
+	ResponseStatus responseStatus = 1;
+	repeated CargoNominationDetail cargoNominations= 2;
+	repeated BackLoading backLoading = 3;
+}
 message CargoNominationDetailReply{
 	CargoNominationDetail cargoNominationdetail = 1;
 	ResponseStatus responseStatus = 2;
@@ -374,12 +394,14 @@ message LoadablePatternAlgoRequest {
 	bool validated = 5;
 	repeated AlgoErrors algoErrors = 6;
 	int64 loadablePatternId = 7;
-	
+	string requestType = 8; // LS or DS for re usability
 }
 
 message AlgoErrorRequest {
 	int64 loadableStudyId = 1;
 	int64 loadablePatternId = 2;
+	int64 loadingInformationId = 3;
+	int32 conditionType = 4;
 }
 
 message AlgoErrorReply {
@@ -402,6 +424,7 @@ message StabilityParameter {
 	string heel = 5;
 	string bendinMoment = 6;
 	string shearForce = 7;
+	string airDraft = 8; //DS field
 }
 
 message LoadablePlanPortWiseDetails {
@@ -410,6 +433,8 @@ message LoadablePlanPortWiseDetails {
 	int64 portRotationId = 3;
 	LoadablePlanDetailsReply arrivalCondition = 4;
 	LoadablePlanDetailsReply departureCondition = 5;
+	string seaWaterTemperature = 6;
+	string ambientTemperature = 7;
 }
 
 message LoadablePlanDetailsRequest {
@@ -475,6 +500,8 @@ message LoadablePlanBallastDetails {
 	string correctedLevelOrginal = 20; //same as corrected ullage
 	string metricTonOrginal = 21; //quantity
 	string percentageOrginal = 22;
+	string volume = 23; //DS field
+	string maxTankVolume = 24; //DS field
 }
 
 message LoadablePlanStowageDetails {
@@ -506,6 +533,8 @@ message LoadablePlanStowageDetails {
   string rdgUllageOrginal = 25;
   string weightOrginal = 26; // MT
   string cargoNominationTemperature = 27;
+  string onboard = 28; //DS field
+  string maxTankVolume = 29; //DS field
  }
 
 
@@ -577,6 +606,18 @@ message LoadableQuantityCargoDetails {
 	 string cargoNominationTemperature = 27;
 	 string cargoNominationQuantity = 28;
 	 string orderQuantity = 29;
+	 string dischargeMT = 30;
+	 string dischargingRate = 31;
+	 string timeRequiredForDischarging = 32;
+	 repeated COWDetail cowDetails = 33;
+	 
+	 
+}
+
+message COWDetail {
+  int64 tankId = 1;
+  string shortName = 2;
+  string washType = 3;
 }
 
 message CargoToppingOffSequenceDetails {
@@ -777,6 +818,7 @@ message LoadingPortDetail{
 	int64 portId = 1;
 	string quantity = 2;
 	string name=3;
+	int64 mode = 4;
 }
 
 message segregationDetail{
@@ -803,6 +845,9 @@ message CargoNominationDetail {
 	string api = 17;
 	string temperature = 18;
 	int64 mode = 19;
+	string maxQuantity = 20;
+	string dischargingRate = 21;
+	string dischargingTime = 22;
 }
 
 message CargoNominationRequest {
@@ -1379,7 +1424,7 @@ message ActiveVoyage{
 // Usage at LoadingPlanGrpcServiceImpl.fetchSynopticRecordForPortRotationArrivalCondition
 message LoadingPlanIdRequest {
 	int64 id = 1;
-	string idType = 2; // Expected values - PORT/PORT_ROTATION/LOADABLE_STUDY
+	string idType = 2; // Expected values - PORT/PORT_ROTATION/LOADABLE_STUDY/LOADING_INFO_ID
 	int64 patternId = 3;
 	string operationType = 4;
 	int64 portRotationId = 5;
@@ -1390,6 +1435,7 @@ message LoadingPlanCommonResponse{
 	ResponseStatus responseStatus = 1;
 	repeated LoadingSynopticResponse synopticData = 2;
 	repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 3;
+	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 4;
 }
 
 message LoadingSynopticResponse{
@@ -1428,8 +1474,69 @@ message LoadablePatternPortWiseDetailsJson {
 	int64 loadableStudyId = 3;
 }
 
+
+message LoadableStudyShoreResponse{
+		repeated LoadableStudyShore shoreList = 1;
+	  ResponseStatus responseStatus = 2;
+}
+
+message LoadableStudyShoreRequest{
+	int64 vesselId = 1;
+}
+
+message	LoadableStudyShore{
+	int64 id = 1;
+	string vesselName = 2;
+	int64 imoNo = 3;
+	string flagName = 4;
+	string atd = 5;
+	string eta = 6;
+	string voyageName = 7;
+	int64 voyageId = 8;
+	repeated VoyagePorts voyagePorts = 9;
+}
+
+message	VoyagePorts{
+	string portName =1;
+	string portType =2;
+	string portOrder =3;
+	string anchorage =4;
+	string iconUrl =5;
+	string ata =6;
+	string atd =7;
+	string etd =8;
+	string eta =9;
+	string lat =10;
+	string lon =11;
+}
+
+message DishargeStudyBackLoadingSaveRequest {
+	repeated DishargeStudyBackLoadingDetail dsBackLoading= 1;
+	int64 dischargeStudyId = 2;
+}
+message DishargeStudyBackLoadingDetail {
+	PortRotationDetail portDetails=1;
+	repeated CargoNominationDetail portCargoDetails= 2;
+}
+
+message PortRotationDetailReply {
+  PortRotationDetail portRotationDetail = 1;
+  ResponseStatus responseStatus = 2;
+}
+
 message AlgoResponseCommunication{
 		LoadablePatternAlgoRequest loadablePatternAlgoRequest = 1;
 		LoadicatorResultsRequest loadicatorResultsRequest = 2;
 	  string messageId = 3;
+}
+
+message SimulatorJsonRequest{
+    int64 vesselId = 1;
+    int64 loadableStudyId = 2;
+    int64 caseNumber = 3;
+}
+
+message SimulatorJsonReply{
+    ResponseStatus responseStatus = 1;
+    string departureCondition = 2;
 }

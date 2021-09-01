@@ -1,15 +1,19 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { ICargo, ICargoResponseModel } from '../../../shared/models/common.model';
-import { ILoadableQuantityCargo } from '../../core/models/common.model';
-import { ILoadingDelays, ILoadingSequences } from '../models/loading-information.model';
-import { LoadingDischargingManageSequenceTransformationService } from './services/loading-discharging-manage-sequence-transformation.service';
-import { ILoadingSequenceListData, ILoadingSequenceValueObject } from './models/loading-discharging-manage-sequence.model';
-import { durationValidator } from './validators/duration-validator.directive';
-import { cargoQuantityValidator } from './validators/cargo-quantity-validator.directive';
+import { ICargo, ILoadableQuantityCargo, OPERATIONS } from '../../core/models/common.model';
+import { ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequences, ILoadingDischargingSequenceValueObject } from '../models/loading-discharging.model';
+import { durationValidator } from '../validators/duration-validator.directive';
 import { ConfirmationService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { loadingCargoDuplicateValidator } from '../validators/loading-cargo-duplicate-validator.directive';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
+import { numberValidator } from '../../core/directives/number-validator.directive';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 
 /**
  * Component class for loading discharging manage sequence component
@@ -25,18 +29,30 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class LoadingDischargingManageSequenceComponent implements OnInit {
   @Input() cargos: ICargo[];
+
   @Input() loadableQuantityCargo: ILoadableQuantityCargo[];
-
+  @Input() operation: OPERATIONS;
   @Input() loadingInfoId: number;
-
-  @Input() get loadingSequences(): ILoadingSequences {
-    return this._loadingSequences;
+  @Input() dischargingInfoId: number;
+  prevQuantitySelectedUnit: QUANTITY_UNIT = AppConfigurationService.settings.baseUnit;
+  @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
+    return this._currentQuantitySelectedUnit;
+  }
+  set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
+    this._currentQuantitySelectedUnit = value;
+    if (this.loadingDischargingSequences) {
+      this.unitConversion();
+    }
   }
 
-  set loadingSequences(loadingSequences: ILoadingSequences) {
-    this._loadingSequences = loadingSequences;
-    if (this.loadingSequences) {
-      this.initiLoadingSequenceArray();
+  @Input() get loadingDischargingSequences(): ILoadingDischargingSequences {
+    return this._loadingDischargingSequences;
+  }
+
+  set loadingDischargingSequences(loadingDischargingSequences: ILoadingDischargingSequences) {
+    this._loadingDischargingSequences = loadingDischargingSequences;
+    if (this.loadingDischargingSequences) {
+      this.initiLoadingDischargingSequenceArray();
     }
   }
 
@@ -48,91 +64,158 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     this._editable = editable;
   }
 
-  @Output() updateLoadingDelays: EventEmitter<ILoadingDelays[]> = new EventEmitter();
+  @Input() form: FormGroup;
 
-  private _loadingSequences: ILoadingSequences;
-  private _editable: boolean = true;
+  get loadingDischargingSequenceForm() {
+    return <FormGroup>this.form.get('loadingDischargingSequence');
+  }
 
-  loadingSequenceForm: FormGroup;
+  set loadingDischargingSequenceForm(form: FormGroup) {
+    this.form.setControl('loadingDischargingSequence', form);
+  }
+
+  @Output() updateLoadingDischargingDelays: EventEmitter<ILoadingDischargingDelays[]> = new EventEmitter();
+
   columns: IDataTableColumn[];
-  listData = <ILoadingSequenceListData>{};
-  cargoTobeLoaded: ILoadableQuantityCargo[];
-  loadingDelays: ILoadingSequenceValueObject[] = [];
+  listData = <ILoadingSequenceDropdownData>{};
+  loadingDischargingDelays: ILoadingDischargingSequenceValueObject[] = [];
   editMode: DATATABLE_EDITMODE = DATATABLE_EDITMODE.CELL;
-  loadingDelayList: ILoadingDelays[];
+  loadingDischargingDelayList: ILoadingDischargingDelays[];
   addInitialDelay = false;
+  loadableQuantityCargoCount: number;
+
+  private _loadingDischargingSequences: ILoadingDischargingSequences;
+  private _editable = true;
+  private _currentQuantitySelectedUnit: QUANTITY_UNIT;
+
   constructor(
     private confirmationService: ConfirmationService,
     private translateService: TranslateService,
     private fb: FormBuilder,
-    private loadingDischargingManageSequenceTransformationService: LoadingDischargingManageSequenceTransformationService) { }
+    private quantityPipe: QuantityPipe,
+    private messageService: MessageService,
+    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
 
   async ngOnInit(): Promise<void> {
-    this.columns = this.loadingDischargingManageSequenceTransformationService.getDatatableColumns();
-    await this.initiLoadingSequenceArray();
+    this.columns = this.loadingDischargingTransformationService.getLoadingDischargingDelayDatatableColumns(this.operation);
+    if(!this.editable){
+      this.columns.splice((this.columns.length - 1),1);
+    }
+    await this.initiLoadingDischargingSequenceArray();
   }
 
   /**
-* Method for init loading sequence array
-*
-* @memberof LoadingDischargingManageSequenceComponent
-*/
-  async initiLoadingSequenceArray() {
+  * Method for init loading sequence array
+  *
+  * @memberof LoadingDischargingManageSequenceComponent
+  */
+  async initiLoadingDischargingSequenceArray() {
     this.listData = await this.getDropdownData();
-    this.listData.reasonForDelays = this.loadingSequences.reasonForDelays;
-    const initialDelay = this.loadingSequences.loadingDelays?.find(loadingDelay => !loadingDelay.cargoId && !loadingDelay.quantity)
-    if(initialDelay){
-      this.loadingSequences.loadingDelays = this.loadingSequences.loadingDelays?.filter(loadingDelay => loadingDelay?.cargoId && loadingDelay?.quantity);
-      this.loadingSequences.loadingDelays.unshift(initialDelay)
+    this.addInitialDelay = false;
+    this.listData.reasonForDelays = this.loadingDischargingSequences.reasonForDelays;
+    const initialDelay = this.loadingDischargingSequences.loadingDischargingDelays?.find(loadingDischargingDelay => !loadingDischargingDelay.cargoId && !loadingDischargingDelay.quantity);
+    
+    if (initialDelay) {
+      initialDelay.isInitialDelay = true;
+      this.loadingDischargingSequences.loadingDischargingDelays = this.loadingDischargingSequences.loadingDischargingDelays?.filter(loadingDischargingDelay => loadingDischargingDelay?.cargoId && loadingDischargingDelay?.quantity);
+      this.loadingDischargingSequences.loadingDischargingDelays.unshift(initialDelay)
     }
-    const _loadingDelays = this.loadingSequences.loadingDelays?.map((loadingDelay) => {
-      const loadingSequenceData = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValueObject(loadingDelay, false, this.editable, this.listData);
-      if (!loadingDelay.cargoId && !loadingDelay.quantity) {
+    const _loadingDischargingDelays = this.loadingDischargingSequences.loadingDischargingDelays?.map((loadingDischargingDelay) => {
+      const loadingSequenceData = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValueObject(loadingDischargingDelay, false, this.editable, this.listData, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, this.operation);
+
+      if (!loadingDischargingDelay.cargoId && !loadingDischargingDelay.quantity) {
         this.addInitialDelay = true;
       }
       return loadingSequenceData;
     });
-    const loadingDelayArray = _loadingDelays?.map((loadingDelay, index) =>
-      this.initLoadingSequenceFormGroup(loadingDelay, index, false)
+    const loadingDischargingDelayArray = _loadingDischargingDelays?.map((loadingDischargingDelay, index) => {
+      if (loadingDischargingDelay?.cargo?.value?.cargoId && loadingDischargingDelay?.quantity) {
+        loadingDischargingDelay.quantity = loadingDischargingDelay?.quantity;
+        return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, false)
+      } else {
+        return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, true)
+      }
+    }
     );
-    this.loadingDelays = _loadingDelays;
-    this.loadingSequenceForm = this.fb.group({
-      dataTable: this.fb.array([...loadingDelayArray])
+    this.loadingDischargingDelays = _loadingDischargingDelays;
+
+    if (this.operation === OPERATIONS.DISCHARGING) {
+      this.loadingDischargingSequenceForm = this.fb.group({
+        dataTable: this.fb.array([...loadingDischargingDelayArray])
+      });
+    } else {
+      this.form = this.fb.group({
+        loadingDischargingSequence: this.fb.group({
+          dataTable: this.fb.array([...loadingDischargingDelayArray])
+        })
+      });
+    }
+  }
+
+  /**
+  * Method for Unit conversion
+  *
+  * @memberof LoadingDischargingManageSequenceComponent
+  */
+  unitConversion() {
+    this.loadingDischargingDelays?.map(item => {
+      if (item?.cargo?.value) {
+        this.listData.loadableQuantityCargo.map(el => {
+          if (el.cargoNominationId === item?.cargo?.value?.cargoNominationId) {
+            const loadableMT = this.loadingDischargingTransformationService.manageSequenceUnitConversion(Number(el.loadableMT), item, this.listData, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+            item.quantity.value = Number(loadableMT);
+          }
+        });
+      }
+    });
+    const loadingDischargingDelayArray = this.loadingDischargingDelays?.map((loadingDischargingDelay, index) => {
+      if (loadingDischargingDelay?.cargo?.value?.cargoId && loadingDischargingDelay?.quantity) {
+        loadingDischargingDelay.quantity = loadingDischargingDelay?.quantity;
+        return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, false)
+      } else {
+        return this.initLoadingDischargingSequenceFormGroup(loadingDischargingDelay, index, true)
+      }
+    }
+    );
+    this.loadingDischargingSequenceForm = this.fb.group({
+      dataTable: this.fb.array([...loadingDischargingDelayArray])
     });
   }
 
   /**
-* Get all lookups for loading sequence screen
-*
-* @returns {Promise<ILoadingSequenceListData>}
-* @memberof LoadingDischargingManageSequenceComponent
-*/
-  async getDropdownData(): Promise<ILoadingSequenceListData> {
+  * Get all lookups for loading sequence screen
+  *
+  * @returns {Promise<ILoadingSequenceDropdownData>}
+  * @memberof LoadingDischargingManageSequenceComponent
+  */
+  async getDropdownData(): Promise<ILoadingSequenceDropdownData> {
     const cargoTobeLoaded = this.loadableQuantityCargo?.map(loadable => {
       if (loadable) {
         loadable.grade = this.findCargo(loadable);
       }
       return loadable;
     })
-    this.listData = <ILoadingSequenceListData>{};
+    this.listData = <ILoadingSequenceDropdownData>{};
     this.listData.loadableQuantityCargo = cargoTobeLoaded;
+
     return this.listData;
   }
 
 
 
   /**
- * Method to find out cargo
- *
- * @memberof LoadingDischargingManageSequenceComponent
- */
+   * Method to find out cargo
+   *
+   * @memberof LoadingDischargingManageSequenceComponent
+   */
   findCargo(loadableQuantityCargoDetails): string {
     let cargoDetail;
     this.cargos?.map((cargo) => {
       if (cargo.id === loadableQuantityCargoDetails?.cargoId) {
         cargoDetail = cargo;
       }
-    })
+    });
     return cargoDetail?.name;
   }
 
@@ -140,18 +223,25 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   * Method for initializing loading sequence row
   *
   * @private
-  * @param {ILoadingSequenceValueObject} loadingDelay
+  * @param {ILoadingDischargingSequenceValueObject} loadingDischargingDelay
   * @returns
   * @memberof LoadingDischargingManageSequenceComponent
   */
-  initLoadingSequenceFormGroup(loadingDelay: ILoadingSequenceValueObject, index: number, initialDelay: boolean) {
-    return this.fb.group({
-      id: loadingDelay.id,
-      reasonForDelay: this.fb.control(loadingDelay.reasonForDelay.value, [Validators.required]),
-      duration: this.fb.control(loadingDelay.duration.value, [Validators.required, durationValidator(24, 59)]),
-      cargo: this.fb.control(loadingDelay.cargo.value, initialDelay ? [] : [Validators.required, cargoQuantityValidator('cargo')]),
-      quantity: this.fb.control(loadingDelay.quantity.value, initialDelay ? [] : [Validators.required, cargoQuantityValidator('quantity')])
-    })
+  initLoadingDischargingSequenceFormGroup(loadingDischargingDelay: ILoadingDischargingSequenceValueObject, index: number, initialDelay: boolean) {
+    const formGroup =  this.fb.group({
+      id: loadingDischargingDelay.id,
+      reasonForDelay: this.fb.control(loadingDischargingDelay.reasonForDelay.value, initialDelay ? [Validators.required] : []),
+      duration: this.fb.control(loadingDischargingDelay.duration.value, [Validators.required, durationValidator(24, 59)]),
+      cargo: this.fb.control(loadingDischargingDelay.cargo.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required] : [Validators.required, loadingCargoDuplicateValidator(index)]),
+      quantity: this.fb.control(loadingDischargingDelay.quantity?.value, initialDelay ? [] : [Validators.required]),
+      colorCode: this.fb.control(loadingDischargingDelay.colorCode)
+    });
+
+    if (this.operation === OPERATIONS.DISCHARGING) {
+      formGroup.addControl('sequenceNo', this.fb.control(loadingDischargingDelay?.sequenceNo?.value, [Validators.required, numberValidator(0, null, false)]));
+    }
+
+    return formGroup;
   }
 
 
@@ -161,39 +251,87 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
    * @private
    * @memberof LoadingDischargingManageSequenceComponent
    */
-  addLoadingSequence(loadingDelay: ILoadingDelays = null) {
-    loadingDelay = loadingDelay ?? <ILoadingDelays>{ id: 0, loadingInfoId: null, reasonForDelayId: null, duration: null, cargoId: null, quantity: null };
-    const _loadingDelays = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValueObject(loadingDelay, true, true, this.listData);
-    const dataTableControl = <FormArray>this.loadingSequenceForm.get('dataTable');
-    dataTableControl.push(this.initLoadingSequenceFormGroup(_loadingDelays, this.loadingDelays.length, false));
-    this.loadingDelays = [...this.loadingDelays, _loadingDelays];
-
+  addLoadingDischargingSequence(loadingDischargingDelay: ILoadingDischargingDelays = null) {
+    loadingDischargingDelay = loadingDischargingDelay ?? <ILoadingDischargingDelays>{ id: 0, loadingInfoId: null, dischargingInfoId: null, reasonForDelayIds: null, duration: null, cargoId: null, quantity: null };
+    const _loadingDischargingDelays = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValueObject(loadingDischargingDelay, true, true, this.listData, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, this.operation);
+    const dataTableControl = <FormArray>this.loadingDischargingSequenceForm.get('dataTable');
+    const loadableQuantityCargoCount = this.listData.loadableQuantityCargo.length;
+    this.loadableQuantityCargoCount = this.addInitialDelay ? loadableQuantityCargoCount + 1: loadableQuantityCargoCount
+    if (dataTableControl.controls.length !== this.loadableQuantityCargoCount || this.operation === OPERATIONS.DISCHARGING) {
+      dataTableControl.push(this.initLoadingDischargingSequenceFormGroup(_loadingDischargingDelays, this.loadingDischargingDelays.length, false));
+      this.loadingDischargingDelays = [...this.loadingDischargingDelays, _loadingDischargingDelays];
+    }
   }
 
   /**
-     * Event handler for edit complete event
-     *
-     * @memberof LoadingDischargingManageSequenceComponent
-     */
+   * Event handler for edit complete event
+   *
+   * @memberof LoadingDischargingManageSequenceComponent
+   */
   onEditComplete(event) {
     const index = event.index;
     const form = this.row(index);
-    if(event.field === 'cargo'){
-      form.controls.quantity.updateValueAndValidity();
-    }
-    if(event.field === 'quantity'){
-      form.controls.cargo.updateValueAndValidity();
+    if (event.field === 'cargo') {
+      const loadableMT = this.quantityPipe.transform(event.data.cargo.value.loadableMT, this.prevQuantitySelectedUnit , this.currentQuantitySelectedUnit, event.data.cargo.value?.estimatedAPI , event.data.cargo.value?.estimatedTemp , -1);;
+      this.loadingDischargingDelays[index]['quantity'].value =  Number(loadableMT);
+      this.loadingDischargingDelays[index]['colorCode'] = event.data.cargo.value.colorCode;
+      this.updateField(index, 'quantity', this.loadingDischargingDelays[index]['quantity'].value);
+      this.updateField(index, 'colorCode', event.data.cargo.value.colorCode);
+      this.updateFormValidity();
     }
     if (form.valid) {
-      const loadingDelaysList = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValue(this.loadingDelays, this.loadingInfoId)
-      this.updateLoadingDelays.emit(loadingDelaysList);
-      for (const key in this.loadingDelays[index]) {
-        if (this.loadingDelays[index]?.hasOwnProperty(key) && this.loadingDelays[index][key]?.hasOwnProperty('_isEditMode')) {
-          this.loadingDelays[index][key].isEditMode = false;
-        }
-      }
+      const loadingDischargingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation  , this.listData);
+      this.updateLoadingDischargingDelays.emit(loadingDischargingDelaysList);
     }
   }
+
+  /**
+ * Update validity of invalid rows if valid
+ *
+ * @memberof LoadingDischargingManageSequenceComponent
+ */
+  updateFormValidity() {
+    const formArray = (<FormArray>this.loadingDischargingSequenceForm.get('dataTable')).controls;
+    formArray.forEach(async (row: FormGroup, index) => {
+      if (row.invalid && row.touched) {
+        const invalidFormControls = this.findInvalidControlsRecursive(row);
+        invalidFormControls.forEach((key) => {
+          const formControl = this.field(index, key);
+          formControl.updateValueAndValidity();
+          if (formControl.invalid) {
+            this.loadingDischargingDelays[index][key]['isEditMode'] = true;
+          }
+        });
+      }
+    })
+  }
+
+
+  /**
+ * Method get all invalid fields in a row
+ *
+ * @private
+ * @param {FormGroup} formToInvestigate
+ * @returns {string[]}
+ * @memberof LoadingDischargingManageSequenceComponent
+ */
+  private findInvalidControlsRecursive(formToInvestigate: FormGroup): string[] {
+    const invalidControls: string[] = [];
+    const recursiveFunc = (form: FormGroup | FormArray) => {
+      Object.keys(form.controls).forEach(field => {
+        const control = form.get(field);
+        if (control.invalid) invalidControls.push(field);
+        if (control instanceof FormGroup) {
+          recursiveFunc(control);
+        } else if (control instanceof FormArray) {
+          recursiveFunc(control);
+        }
+      });
+    }
+    recursiveFunc(formToInvestigate);
+    return invalidControls;
+  }
+
 
   /**
   * Method for fetching form group
@@ -204,36 +342,43 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   * @memberof LoadingDischargingManageSequenceComponent
   */
   private row(formGroupIndex: number): FormGroup {
-    const formGroup = <FormGroup>(<FormArray>this.loadingSequenceForm.get('dataTable')).at(formGroupIndex);
+    const formGroup = <FormGroup>(<FormArray>this.loadingDischargingSequenceForm.get('dataTable')).at(formGroupIndex);
     return formGroup;
   }
 
   /**
-* Method for add initial delay
-*
-* @private
-* @memberof LoadingDischargingManageSequenceComponent
-*/
-  onAddInitialDelay(loadingDelay: ILoadingDelays = null) {
-    const dataTableControl = <FormArray>this.loadingSequenceForm.get('dataTable');
+  * Method for add initial delay
+  *
+  * @private
+  * @memberof LoadingDischargingManageSequenceComponent
+  */
+  onAddInitialDelay(loadingDischargingDelay: ILoadingDischargingDelays = null) {
+    const dataTableControl = <FormArray>this.loadingDischargingSequenceForm.get('dataTable');
     if (this.addInitialDelay) {
-      loadingDelay = loadingDelay ?? <ILoadingDelays>{ id: 0, loadingInfoId: null, reasonForDelayId: null, duration: null, cargoId: null, quantity: null };
-      const _loadingDelays = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValueObject(loadingDelay, true, !this.addInitialDelay, this.listData);
-      dataTableControl.insert(0, this.initLoadingSequenceFormGroup(_loadingDelays, this.loadingDelays.length, true));
-      this.loadingDelays = [_loadingDelays, ...this.loadingDelays];
+      loadingDischargingDelay = loadingDischargingDelay ?? <ILoadingDischargingDelays>{ id: 0, loadingInfoId: null, dischargingInfoId: null, reasonForDelayIds: null, duration: null, cargoId: null, quantity: null };
+      loadingDischargingDelay.isInitialDelay = true;
+      const _loadingDischargingDelays = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValueObject(loadingDischargingDelay, true, !this.addInitialDelay, this.listData, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, this.operation);
+      dataTableControl.insert(0, this.initLoadingDischargingSequenceFormGroup(_loadingDischargingDelays, this.loadingDischargingDelays.length, true));
+      this.loadingDischargingDelays = [_loadingDischargingDelays, ...this.loadingDischargingDelays];
     } else {
-      this.loadingDelays.splice(0, 1);
+      this.loadingDischargingDelays.splice(0, 1);
       dataTableControl.removeAt(0);
+      if(this.operation === OPERATIONS.DISCHARGING) {
+        dataTableControl.at(0).get('sequenceNo').setValue(1);
+        this.loadingDischargingDelays[0].sequenceNo.value = 1;
+      }
     }
+    const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation,this.listData);
+    this.updateLoadingDischargingDelays.emit(loadingDelaysList);
   }
 
   /**
-* Method for delete row
-*
-* @private
-* @param {event} event
-* @memberof LoadingDischargingManageSequenceComponent
-*/
+  * Method for delete row
+  *
+  * @private
+  * @param {event} event
+  * @memberof LoadingDischargingManageSequenceComponent
+  */
   async onDelete(event) {
     const translationKeys = await this.translateService.get(['LOADING_MANAGE_SEQUENCE_DELETE_SUMMARY', 'LOADING_MANAGE_SEQUENCE_DELETE_CONFIRM_DETAILS', 'LOADING_MANAGE_SEQUENCE_DELETE_CONFIRM_LABEL', 'LOADING_MANAGE_SEQUENCE_DELETE_REJECT_LABEL']).toPromise();
     if (!event?.data?.isAdd) {
@@ -260,23 +405,76 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   }
 
   /**
- * Method to remove loading delay from list
- *
- * @param {*} event
- * @memberof LoadingDischargingManageSequenceComponent
- */
+   * Method to remove loading delay from list
+   *
+   * @param {*} event
+   * @memberof LoadingDischargingManageSequenceComponent
+   */
   async removeFromLoadingDelay(event) {
-    this.loadingDelays.splice(event.index, 1);
-    this.loadingDelays = [...this.loadingDelays];
-    const dataTableControl = <FormArray>this.loadingSequenceForm.get('dataTable');
+    this.loadingDischargingDelays.splice(event.index, 1);
+    this.loadingDischargingDelays = [...this.loadingDischargingDelays];
+    const dataTableControl = <FormArray>this.loadingDischargingSequenceForm.get('dataTable');
     dataTableControl.removeAt(event?.index);
-    if (!event.data.isAdd) {
-      const loadingDelaysList = this.loadingDischargingManageSequenceTransformationService.getLoadingDelayAsValue(this.loadingDelays, this.loadingInfoId);
-      this.updateLoadingDelays.emit(loadingDelaysList);
-    }
     if (event.index === 0) {
       this.addInitialDelay = false;
+      if (this.operation === OPERATIONS.DISCHARGING) {
+        dataTableControl.at(0).get('sequenceNo').setValue(1);
+        this.loadingDischargingDelays[0].sequenceNo.value = 1;
+      }
+    }
+    if (!event.data.isAdd) {
+      const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation,this.listData);
+      this.updateLoadingDischargingDelays.emit(loadingDelaysList);
     }
   }
+
+  /**
+  * Method for updating form field
+  *
+  * @private
+  * @param {number} index
+  * @param {string} field
+  * @param {*} value
+  * @memberof LoadingDischargingManageSequenceComponent
+  */
+  private updateField(index: number, field: string, value?: any) {
+    const control = this.field(index, field);
+    control.setValue(value);
+    control.markAsDirty();
+    control.markAsTouched();
+  }
+
+  /**
+   * Method for fetching form fields
+   *
+   * @private
+   * @param {number} formGroupIndex
+   * @param {string} formControlName
+   * @returns {FormControl}
+   * @memberof LoadingDischargingManageSequenceComponent
+   */
+  private field(formGroupIndex: number, formControlName: string): FormControl {
+    const formControl = <FormControl>(<FormArray>this.loadingDischargingSequenceForm.get('dataTable')).at(formGroupIndex).get(formControlName);
+    return formControl;
+  }
+
+  /**
+  * Method for update cargo
+  *
+  * @memberof LoadingDischargingManageSequenceComponent
+  */
+  async checkCargoCount() {
+    let cargoCount = this.listData.loadableQuantityCargo.length;
+    cargoCount = this.addInitialDelay ? cargoCount + 1: cargoCount;
+    const dataTableControl = <FormArray>this.loadingDischargingSequenceForm.get('dataTable');
+    if(this.loadingDischargingSequenceForm.valid && dataTableControl.length < cargoCount) {
+      const translationKeys = await this.translateService.get(['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_ERROR', 'LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_SUMMERY']).toPromise();
+      this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_ERROR'], detail: translationKeys['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_SUMMERY'] });
+      return false;
+    } else {
+      return true;
+    }
+  }
+
 
 }

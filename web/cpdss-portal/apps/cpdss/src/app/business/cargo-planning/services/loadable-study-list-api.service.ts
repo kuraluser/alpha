@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable, of } from 'rxjs';
 import { IResponse } from '../../../shared/models/common.model';
-import { environment } from '../../../../environments/environment';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { INewLoadableStudy } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.model';
 import { ILoadablePatternsResponse, ILoadableStudiesResponse, ILoadableStudyResponse, LoadableStudy } from '../models/loadable-study-list.model'

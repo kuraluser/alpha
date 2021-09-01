@@ -2,6 +2,7 @@
 package com.cpdss.gateway.domain;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.cpdss.gateway.domain.vessel.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import lombok.Data;
@@ -32,4 +33,10 @@ public class VesselDetailsResponse {
 
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private Object vesselValveSequence;
+
+  private List<PumpType> pumpTypes;
+  private List<VesselPumpResponse> vesselPumps;
+  private List<TankType> tankTypes;
+  private List<VesselManiFold> vesselManifold;
+  private List<VesselBottomLine> vesselBottomLine;
 }

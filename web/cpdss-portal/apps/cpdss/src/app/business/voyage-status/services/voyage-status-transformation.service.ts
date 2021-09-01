@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities } from '../models/voyage-status.model';
 import { IDataTableColumn , DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { ICargoQuantities, IShipCargoTank, ITank } from '../../core/models/common.model';
+import { ICargoQuantities, IShipCargoTank, ITank, IBallastQuantities, IShipBallastTank, IShipBunkerTank, IBunkerQuantities } from '../../core/models/common.model';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 
 /**
@@ -88,11 +87,11 @@ export class VoyageStatusTransformationService {
         for (let index = 0; index < cargoTankQuantities?.length; index++) {
           if (cargoTankQuantities[index]?.tankId === cargoTank[groupIndex][tankIndex]?.id) {
             cargoTank[groupIndex][tankIndex].commodity = cargoTankQuantities[index];
-            const plannedWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
+            const plannedWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api, cargoTankQuantities[index]?.temperature, -1);
             cargoTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight) : 0;
-            const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
-            cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight) : 0;         
-            cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, QUANTITY_UNIT.OBSKL, cargoTank[groupIndex][tankIndex].commodity?.api,cargoTank[groupIndex][tankIndex].commodity?.temperature);
+            const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api, cargoTankQuantities[index]?.temperature, -1);
+            cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight) : 0;
+            cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, QUANTITY_UNIT.OBSKL, cargoTank[groupIndex][tankIndex].commodity?.api, cargoTank[groupIndex][tankIndex].commodity?.temperature, -1);
             cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex]);
             if (cargoTank[groupIndex][tankIndex].commodity?.isCommingleCargo) {
               cargoTank[groupIndex][tankIndex].commodity.colorCode = AppConfigurationService.settings.commingleColor;
@@ -143,11 +142,13 @@ export class VoyageStatusTransformationService {
       },
       {
         field: 'plannedWeight',
-        header: 'QUANTITY BEFORE LOADING'
+        header: 'QUANTITY BEFORE LOADING',
+        numberType: 'quantity'
       },
       {
         field: 'actualWeight',
-        header: 'QUANTITY AFTER LOADING'
+        header: 'QUANTITY AFTER LOADING',
+        numberType: 'quantity'
       },
       {
         field: 'api',

@@ -249,7 +249,7 @@ export class LoadableQuantityComponent implements OnInit {
         this.loadableQuantity = {
           portRotationId: this.portRotationId,
           loadableQuantityId: this.loadableQuantityId,
-          portId: this.loadableQuantityForm.controls.portName.value.id,
+          portId: this.loadableQuantityForm.controls.portName.value.portId,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
           displacmentDraftRestriction: this.loadableQuantityForm.controls.displacement.value,
           vesselLightWeight: this.loadableQuantityForm.controls.lwt.value,
@@ -281,7 +281,7 @@ export class LoadableQuantityComponent implements OnInit {
         this.loadableQuantity = {
           portRotationId: this.portRotationId,
           loadableQuantityId: this.loadableQuantityId,
-          portId: this.loadableQuantityForm.controls.portName.value.id,
+          portId: this.loadableQuantityForm.controls.portName.value.portId,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
           displacmentDraftRestriction: this.loadableQuantityForm.controls.displacement.value,
           vesselLightWeight: this.loadableQuantityForm.controls.lwt.value,
@@ -305,7 +305,7 @@ export class LoadableQuantityComponent implements OnInit {
         this.loadableQuantity = {
           portRotationId: this.portRotationId,
           loadableQuantityId: this.loadableQuantityId,
-          portId: this.loadableQuantityForm.controls.portName.value.id,
+          portId: this.loadableQuantityForm.controls.portName.value.portId,
           draftRestriction: this.loadableQuantityForm.controls.arrivalMaxDraft.value,
           displacmentDraftRestriction: this.loadableQuantityForm.controls.displacement.value,
           vesselLightWeight: this.loadableQuantityForm.controls.lwt.value,
@@ -354,6 +354,7 @@ export class LoadableQuantityComponent implements OnInit {
    * Cancel popup
    */
   cancel() {
+    this.loadableStudyDetailsTransformationService.setLoadLineChange(false);
     this.displayPopUp.emit(false);
   }
 

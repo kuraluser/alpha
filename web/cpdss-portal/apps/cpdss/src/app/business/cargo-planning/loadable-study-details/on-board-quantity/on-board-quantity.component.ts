@@ -610,11 +610,9 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
           this.obqForm.controls.quantity.setValue(obqTankDetail.quantity.value);
         }
 
-        const _prevFullcapacitySelectedUnit = this._prevQuantitySelectedUnit ?? AppConfigurationService.settings.volumeBaseUnit;
-        if (_prevFullcapacitySelectedUnit !== this.quantitySelectedUnit) {
-          const fullCapacity = this.quantityPipe.transform(obqTankDetail.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value);
-          obqTankDetail.fullCapacity = fullCapacity ?? 0;
-        }
+        const _prevFullcapacitySelectedUnit =  AppConfigurationService.settings.volumeBaseUnit;
+        const fullCapacity = this.quantityPipe.transform(obqTankDetail.fullCapacityCubm, _prevFullcapacitySelectedUnit, this.quantitySelectedUnit, obqTankDetail.api.value);
+        obqTankDetail.fullCapacity = fullCapacity ?? 0;
       }
 
       return obqTankDetail;

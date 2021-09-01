@@ -293,12 +293,24 @@ export class DatatableComponent implements OnInit {
     if (this.editMode && (colEditable === undefined || colEditable) && event?.data[event.field]?.isEditable && !event.data?.isAdd && event.field !== 'actions') {
       for(let i= event.index; i >= 0; i--){
         const control = this.field(i, event.field);
-        if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.DATERANGE && event.data[event.field].value) {
+        if (col?.fieldType !== this.fieldType.DATETIME && col?.fieldType !== this.fieldType.MULTISELECT && col?.fieldType !== this.fieldType.DATERANGE && event.data[event.field].value) {
           event.data[event.field].isEditMode = control?.invalid;
           control.updateValueAndValidity();
         }
       }
     }
+  }
+
+  /**
+   * Handler for on multiselect close event
+   *
+   * @param {IDataTableEvent} event
+   * @memberof DatatableComponent
+   */
+  onMultiselectClose(rowData, rowIndex, col){
+    const control = this.field(rowIndex, col.field);
+    rowData[col.field].isEditMode = control?.invalid;
+    control.updateValueAndValidity();
   }
 
   /**
@@ -353,9 +365,9 @@ export class DatatableComponent implements OnInit {
    * @param col
    * @param colIndex
    */
-  onFocus(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
+  onKeyChange(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
     const code = (event.keyCode ? event.keyCode : event.which);
-    if (code === 9 && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable && !rowData?.isAdd) {
+    if ((code === 9 || code === 13) && col.fieldType !== this.fieldType.ACTION && (col.editable === undefined || col.editable) && rowData[col.field]?.isEditable && !rowData?.isAdd) {
       const prevField = this.columns[colIndex - 1].field;
       if (prevField && rowData[prevField]) {
         const control = this.field(rowIndex, prevField);
@@ -375,7 +387,7 @@ export class DatatableComponent implements OnInit {
    */
   onFocusKeyDown(event, rowData: any, col: IDataTableColumn, colIndex: number, rowIndex: number) {
     const nextField = this.columns[colIndex + 1];
-    if(event.keyCode === 9 && !event.shiftKey && nextField.fieldType === 'DATETIME') {
+    if((event.keyCode === 9 || event.keyCode === 13) && !event.shiftKey && nextField.fieldType === 'DATETIME') {
       const id = `${nextField.field}_${rowIndex}input`;
       setTimeout(() => {
         if(document.getElementById(id) !== document.activeElement && this.value[rowIndex][nextField.field].isEditMode) {
@@ -473,6 +485,7 @@ export class DatatableComponent implements OnInit {
     }
   }
 
+
   /**
    * Handler for row delete event
    *
@@ -550,6 +563,47 @@ export class DatatableComponent implements OnInit {
       }
       return option;
     });
+  }
+
+  /**
+   * Method for options for icon 
+   *
+   * @param {*} rowData
+   * @param {*} col
+   * @returns
+   * @memberof DatatableComponent
+   */
+  isIconVisible(rowData: any,col) {
+    const action = col.actions?.length ? col.actions[0] : null;
+    if(!action) { return false };
+    let iconVisible;
+    switch(action) {
+      case DATATABLE_ACTION.SAVE: {
+        if (rowData?.isAdd) {
+          iconVisible =  true;
+        }
+      }
+      break;
+      case DATATABLE_ACTION.EDIT: {
+        if (rowData?.isEditable === undefined || rowData?.isEditable) {
+          iconVisible =  true;
+        }
+      }
+      break;
+      case DATATABLE_ACTION.DELETE: {
+        if (rowData?.isDeletable === undefined || rowData?.isDeletable) {
+          iconVisible =  true;
+        }
+      }
+      break;
+      case DATATABLE_ACTION.DUPLICATE: {
+        if (rowData?.isDuplicate === undefined || rowData?.isDuplicate) {
+          iconVisible =  true;
+        }
+      }
+      break;
+    }
+    return iconVisible;
   }
 
   // private methods
@@ -860,7 +914,7 @@ export class DatatableComponent implements OnInit {
       this.filteredValue.forEach(row => {
         if (row[col.field]) {
           const value = row[col.field].value ?? 0;
-          total += Number(value)
+          isNaN(Number(value)) ? total += 0 : total += Number(value)
         }
       })
       return total;
@@ -981,6 +1035,17 @@ export class DatatableComponent implements OnInit {
     } else {
       return moment(dateTime).format(AppConfigurationService.settings?.dateFormat);
     }
+  }
+
+   /**
+   * get the label from multi slected array
+   *
+   * @param {any} multiSelectedArray
+   * @param {string} fieldOptionLabel
+   * @memberof DatatableComponent
+   */
+  getMultiselectedDataAsLabel(multiSelectedArray:any, fieldOptionLabel: string){
+    return multiSelectedArray?.map(e => e[fieldOptionLabel]).join(",") ?? '';
   }
 
 }

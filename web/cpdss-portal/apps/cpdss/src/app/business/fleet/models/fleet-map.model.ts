@@ -1,22 +1,14 @@
+import { IResponseStatus } from "../../../shared/models/common.model";
+
 /**
- * interface for Voyage-ports details
+ * interface for vessel details response
  *
  * @export
- * @interface IFleetVoyagePorts
+ * @interface IFleetVesselResponse
  */
-export interface IFleetVoyagePorts {
-    portname: string;
-    portType: string;
-    portOrder: number;
-    anchorage: boolean;
-    vesselName?: string;
-    atd?: string;
-    ata?: string;
-    etd?: string;
-    eta?: string;
-    iconUrl: string;
-    lat: number;
-    lon: number;
+export interface IFleetVesselResponse {
+    responseStatus: IResponseStatus;
+    shoreList: IFleetVessel[];
 }
 
 /**
@@ -28,15 +20,37 @@ export interface IFleetVoyagePorts {
 export interface IFleetVessel {
     id: number;
     voyageName: string;
+    voyageId: number;
     voyageStart?: string;
     voyageEnd?: string;
     vesselName: string;
-    flagImage: string;
+    flagName: string;
     atd: string;
     eta: string;
     ata?: string;
     imoNo: number;
     voyagePorts?: IFleetVoyagePorts[];
+}
+
+/**
+ * interface for Voyage-ports details
+ *
+ * @export
+ * @interface IFleetVoyagePorts
+ */
+export interface IFleetVoyagePorts {
+    portName: string;
+    portType: string;
+    portOrder: number | string;
+    vesselName?: string;
+    atd?: string;
+    ata?: string;
+    etd?: string;
+    eta?: string;
+    iconUrl?: string;
+    portTypeIconUrl?: string;
+    lat: number | string;
+    lon: number | string;
 }
 
 /**
@@ -65,6 +79,12 @@ export interface IFleetNotifications {
     dateTime?: Date;
 }
 
+/**
+ * interface for vessel-notifications api response
+ *
+ * @export
+ * @interface IFleetNotificationResponse
+ */
 export interface IFleetNotificationResponse {
     current: IFleetNotifications[];
     all: IFleetNotifications[];

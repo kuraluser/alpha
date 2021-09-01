@@ -7,11 +7,11 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
-import { IBallastTank, ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS, IBallastStowageDetails, ILoadableQuantityCargo } from '../../core/models/common.model';
+import { IBallastTank, ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS, IBallastStowageDetails, ILoadableQuantityCargo, ICargo, ICargoResponseModel } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, IAlgoError, IloadableQuantityCargoDetails, ILoadablePlanCommentsDetails, VALIDATION_AND_SAVE_STATUS, IAlgoResponse } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, IAlgoError, IloadableQuantityCargoDetails, ILoadablePlanCommentsDetails, VALIDATION_AND_SAVE_STATUS, IAlgoResponse, ILoadablePlanSimulatorResponse } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
-import { ICargoResponseModel, ICargo, ITimeZone, ISubTotal } from '../../../shared/models/common.model';
+import { ITimeZone, ISubTotal } from '../../../shared/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
@@ -25,7 +25,7 @@ import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
 import { saveAs } from 'file-saver';
 import { SecurityService } from '../../../shared/services/security/security.service';
 import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
-import { environment } from 'apps/cpdss/src/environments/environment';
+import { environment } from '../../../../environments/environment';
 
 /**
  * Component class of loadable plan
@@ -110,6 +110,7 @@ export class LoadablePlanComponent implements OnInit {
   loadableQuantityCargo: IloadableQuantityCargoDetails[];
   portRotationId: number;
   vesselLightWeight: number;
+  simulatorMenu: any;
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -139,7 +140,7 @@ export class LoadablePlanComponent implements OnInit {
     *
     * @memberof LoadablePlanComponent
   */
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.getPagePermission();
     this.activatedRoute.paramMap.subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
@@ -157,6 +158,17 @@ export class LoadablePlanComponent implements OnInit {
       this.getVoyages(this.vesselId, this.voyageId);
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
     });
+    const translationKeys = await this.translateService.get(['LOADABLE_PLAN_USER_ROLE_SELECT_MASTER_LABEL', 'LOADABLE_PLAN_USER_ROLE_SELECT_VIEWER_LABEL']).toPromise();
+    this.simulatorMenu = [
+      {
+        label: translationKeys['LOADABLE_PLAN_USER_ROLE_SELECT_MASTER_LABEL'].toUpperCase(),
+        command: () => { this.onLoadSimulator(translationKeys['LOADABLE_PLAN_USER_ROLE_SELECT_MASTER_LABEL']) }
+      },
+      {
+        label: translationKeys['LOADABLE_PLAN_USER_ROLE_SELECT_VIEWER_LABEL'].toUpperCase(),
+        command: () => { this.onLoadSimulator(translationKeys['LOADABLE_PLAN_USER_ROLE_SELECT_VIEWER_LABEL']) }
+      }
+    ];
 
   }
 
@@ -178,10 +190,10 @@ export class LoadablePlanComponent implements OnInit {
  */
   private swMessageHandler = async event => {
     let isValidStatus = false;
-    if([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED , VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED ,  VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS].includes(event.data.statusId)) {
+    if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS].includes(event.data.statusId)) {
       isValidStatus = true;
     }
-    if(isValidStatus) {
+    if (isValidStatus) {
       if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
         this.globalErrorHandler.sessionOutMessage();
       } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200')) {
@@ -189,8 +201,8 @@ export class LoadablePlanComponent implements OnInit {
       }
       if (event.data.type === 'loadable-pattern-validation-started' && this.router.url.includes('loadable-plan')) {
         const urlsplit = this.router.url?.split('/');
-        let  loadablePatternId;
-        if(urlsplit?.length) {
+        let loadablePatternId;
+        if (urlsplit?.length) {
           loadablePatternId = urlsplit[urlsplit.length - 1];
         }
         if (event.data.pattern?.loadablePatternId === this.loadablePatternId && (loadablePatternId && this.loadablePatternId === Number(loadablePatternId))) {
@@ -436,7 +448,7 @@ export class LoadablePlanComponent implements OnInit {
     if (loadableQuantityResult.responseStatus.status === "200") {
       loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantity = Number(loadableQuantityResult.loadableQuantity.totalQuantity);
       this.vesselLightWeight = Number(loadableQuantityResult?.loadableQuantity?.vesselLightWeight);
-	}
+    }
   }
 
   /**
@@ -704,6 +716,56 @@ export class LoadablePlanComponent implements OnInit {
     if (e.success) {
       this.confirmPlanEligibility = false;
       this.confirmPlan();
+    }
+  }
+
+  /**
+   * Method to load simulator
+   *
+   * @memberof LoadablePlanComponent
+   */
+  async onLoadSimulator(role) {
+    const simulatorJSON: ILoadablePlanSimulatorResponse = await this.loadablePlanApiService.getSimulatorJsonData(this.vesselId, this.loadableStudyId, this.caseNumber).toPromise();
+    if (simulatorJSON.responseStatus.status === "200") {
+      const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+      const data = {
+        ship: this.vesselInfo.name,
+        path: `$.departureCondition`,
+        json: simulatorJSON.departureCondition,
+        user: userDetails.rolePermissions.role,
+        role: role
+      };
+
+      const url = AppConfigurationService.settings.simulatorDomainUrl + "/sims/cargo/embedded.html";
+      let child = window.open(url, "_blank", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no");
+      self.addEventListener('message', function (event) {
+        let msg = event.data;
+        if (event.origin === AppConfigurationService.settings.simulatorDomainUrl) {
+          try {
+            msg = JSON.parse(msg);
+            switch (msg.method) {
+              case 'onLoad': {
+                const request = {
+                  method: 'loadStowagePlan',
+                  args: {
+                    ship: data.ship,
+                    json: data.json,
+                    path: data.path,
+                    user: data.user,
+                    role: data.role
+                  }
+                };
+                if (event.origin === AppConfigurationService.settings.simulatorDomainUrl) {
+                  child.postMessage(JSON.stringify(request), event.origin);
+                }
+              }
+            }
+          }
+          catch (err) {
+            console.log(err);
+          }
+        }
+      });
     }
   }
 

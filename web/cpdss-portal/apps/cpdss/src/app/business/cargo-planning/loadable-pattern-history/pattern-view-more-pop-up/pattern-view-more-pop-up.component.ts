@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { ICargo, QUANTITY_UNIT } from '../../../../shared/models/common.model';
+import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
-import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableQuantityCargo, ITankOptions, TANKTYPE } from '../../../core/models/common.model';
+import { IBallastStowageDetails, IBallastTank, ICargo, ICargoTank, ILoadableQuantityCargo, ITankOptions, TANKTYPE } from '../../../core/models/common.model';
 import { ILoadablePattern } from '../../models/loadable-pattern.model';
 import { LoadableStudyPatternTransformationService } from '../../services/loadable-study-pattern-transformation.service'
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
@@ -193,7 +193,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
         const slopQuantity = loadable?.slopQuantity ? this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.slopQuantity.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1) : 0;
         loadable.slopQuantity = slopQuantity;
 
-          loadable.loadingPort = loadable?.loadingPorts?.join(',');
+          loadable.loadingPortsLabels = loadable?.loadingPorts?.join(',');
       }
       return loadable;
     })

@@ -14,7 +14,7 @@
                     placeholder="{{'LOADING_PORT_POPUP_DROPDOWN_PLACEHOLDER'| translate}}" filter="true" resetFilterOnHide="true" [disabled]="loadingPort?.length >= 5" focusTrap>
                 </p-dropdown>
                 <button id="add_port_button" class="btn btn-main w-auto ml-10" [disabled]="!loadingPortsFrom.get('addPort').value"
-                    (click)="addPort(loadingPortsFrom.get('addPort').value)">{{'LOADING_PORT_POPUP_ADD_BUTTON'| translate}}</button>
+                    (click)="addPort(loadingPortsFrom.get('addPort').value)"  focusTrap>{{'LOADING_PORT_POPUP_ADD_BUTTON'| translate}}</button>
             </div>
             
         </div>
@@ -23,6 +23,7 @@
                 [editMode]="editMode" (editComplete)="onEditComplete($event)" (deleteRow)="onDeleteRow($event)"></cpdss-portal-datatable>
         </div>
     </div>
+    <p class="text-danger" >{{'CARGO_NOMINATION_ADD_PORT_NOTE' | translate}}</p>
     </form>
     <p-footer>
         <button id="port_cancel_btn" class="btn btn-main"

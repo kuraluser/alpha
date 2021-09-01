@@ -1,59 +1,14 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.controller;
 
+import static com.cpdss.gateway.common.GatewayConstants.*;
+
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.AlgoError;
-import com.cpdss.gateway.domain.AlgoErrorResponse;
-import com.cpdss.gateway.domain.AlgoPatternResponse;
-import com.cpdss.gateway.domain.AlgoStatusRequest;
-import com.cpdss.gateway.domain.AlgoStatusResponse;
-import com.cpdss.gateway.domain.CargoHistoryRequest;
-import com.cpdss.gateway.domain.CargoHistoryResponse;
-import com.cpdss.gateway.domain.CargoNomination;
-import com.cpdss.gateway.domain.CargoNominationResponse;
-import com.cpdss.gateway.domain.Comment;
-import com.cpdss.gateway.domain.CommingleCargo;
-import com.cpdss.gateway.domain.CommingleCargoResponse;
-import com.cpdss.gateway.domain.CommonResponse;
-import com.cpdss.gateway.domain.ConfirmPlanStatusResponse;
-import com.cpdss.gateway.domain.DischargingPortRequest;
-import com.cpdss.gateway.domain.LatestApiTempCargoResponse;
-import com.cpdss.gateway.domain.LoadOnTopRequest;
-import com.cpdss.gateway.domain.LoadablePatternDetailsResponse;
-import com.cpdss.gateway.domain.LoadablePatternResponse;
-import com.cpdss.gateway.domain.LoadablePlanDetailsResponse;
-import com.cpdss.gateway.domain.LoadablePlanRequest;
-import com.cpdss.gateway.domain.LoadableQuantity;
-import com.cpdss.gateway.domain.LoadableQuantityResponse;
-import com.cpdss.gateway.domain.LoadableStudy;
-import com.cpdss.gateway.domain.LoadableStudyAttachmentResponse;
-import com.cpdss.gateway.domain.LoadableStudyResponse;
-import com.cpdss.gateway.domain.LoadableStudyStatusResponse;
-import com.cpdss.gateway.domain.LoadicatorResultsRequest;
-import com.cpdss.gateway.domain.OnBoardQuantity;
-import com.cpdss.gateway.domain.OnBoardQuantityResponse;
-import com.cpdss.gateway.domain.OnHandQuantity;
-import com.cpdss.gateway.domain.OnHandQuantityResponse;
-import com.cpdss.gateway.domain.PatternValidateResultRequest;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.PortRotationRequest;
-import com.cpdss.gateway.domain.PortRotationResponse;
-import com.cpdss.gateway.domain.RuleRequest;
-import com.cpdss.gateway.domain.RuleResponse;
-import com.cpdss.gateway.domain.SaveCommentResponse;
-import com.cpdss.gateway.domain.SynopticalTableRequest;
-import com.cpdss.gateway.domain.SynopticalTableResponse;
-import com.cpdss.gateway.domain.UpdateUllage;
-import com.cpdss.gateway.domain.Voyage;
-import com.cpdss.gateway.domain.VoyageActionRequest;
-import com.cpdss.gateway.domain.VoyageActionResponse;
-import com.cpdss.gateway.domain.VoyageResponse;
-import com.cpdss.gateway.domain.VoyageStatusRequest;
-import com.cpdss.gateway.domain.VoyageStatusResponse;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.service.AlgoErrorService;
 import com.cpdss.gateway.service.LoadableStudyCargoService;
 import com.cpdss.gateway.service.LoadableStudyService;
@@ -116,7 +71,7 @@ public class LoadableStudyController {
   private static final String CORRELATION_ID_HEADER = "correlationId";
   private static final String LOADABLE_PLAN_REPORT_FILE_NAME =
       "MOL_Stowage_Plan_Before_Loading.xlsx";
-
+  private static final String INVALID_LOADABLE_PATTERN_ID = "INVALID_LOADABLE_PATTERN_ID";
   /**
    * API for save voyage
    *
@@ -504,7 +459,6 @@ public class LoadableStudyController {
    *
    * @param request
    * @param loadableStudyId
-   * @param id
    * @param headers
    * @return
    * @throws CommonRestException
@@ -770,8 +724,11 @@ public class LoadableStudyController {
       log.info("saveLoadablePatterns : {}", getClientIp());
       log.info(
           "saveLoadablePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
-      return loadableStudyService.saveLoadablePatterns(
-          loadablePlanRequest, loadableStudiesId, headers.getFirst(CORRELATION_ID_HEADER));
+      return loadableStudyService.saveAlgoPatterns(
+          loadablePlanRequest,
+          loadableStudiesId,
+          LOADABLE_STUDY_SAVE_REQUEST,
+          headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in saveLoadablePatterns ", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
@@ -829,7 +786,6 @@ public class LoadableStudyController {
    * @param voyageId
    * @param loadableStudiesId
    * @param loadablePatternId
-   * @param loadablePatternDetailsId
    * @param headers
    * @return
    * @throws CommonRestException LoadablePatternDetailsResponse
@@ -870,7 +826,6 @@ public class LoadableStudyController {
   /**
    * @param vesselId
    * @param voyageId
-   * @param loadableStudiesId
    * @param loadablePatternId
    * @param updateUllageRequest
    * @param headers
@@ -994,7 +949,6 @@ public class LoadableStudyController {
    *
    * @param vesselId
    * @param loadableStudyId
-   * @param portId
    * @param headers
    * @return
    * @throws CommonRestException
@@ -2004,6 +1958,30 @@ public class LoadableStudyController {
     }
   }
 
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/algo-errors")
+  public AlgoErrorResponse getAlgoErrorForDS(
+      @PathVariable Long dischargeStudyId, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("getAlgoError: {}", getClientIp());
+      return this.loadableStudyService.getAlgoErrorLoadableStudy(
+          dischargeStudyId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when getAlgoError", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error when getAlgoError", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
   @GetMapping(value = "test")
   public void test(@RequestHeader HttpHeaders headers) throws CommonRestException {
     try {
@@ -2190,6 +2168,107 @@ public class LoadableStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when fetching rules for loadable study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * To retrieve rule against loadable study
+   *
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(value = "/loadble-study/shore-detail", produces = MediaType.APPLICATION_JSON_VALUE)
+  public LoadableStudyShoreResponse getLoadableStudyShore(@RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.loadableStudyService.getLoadableStudyShore(
+          headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching rules against loadable study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when fetching rules for loadable study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * To retrieve simulator json data against loadable study and case number
+   *
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      value =
+          "/simulator-json/vessels/{vesselId}/loadableStudyId/{loadableStudyId}/caseNumber/{caseNumber}",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public SimulatorJsonResponse getSimulatorJsonDataForLoadableStudy(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadableStudyId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long caseNumber,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.loadableStudyService.getSimulatorJsonDataForLoadableStudy(
+          vesselId, loadableStudyId, caseNumber, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error(
+          "GenericServiceException when fetching simulator json data against loadable study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when fetching simulator json data for loadable study", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * @param updateUllageRequest
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/getUllageDetailsAlgo/{loadablePatternId}")
+  public UpdateUllage getUllageDetailsAlgo(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long loadablePatternId,
+      @RequestBody UpdateUllage updateUllageRequest,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("updateUllage : {}", getClientIp());
+      log.info("updateUllage API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      UpdateUllage reply =
+          loadableStudyService.getUllageDetailsAlgo(
+              updateUllageRequest, loadablePatternId, headers.getFirst(CORRELATION_ID_HEADER));
+      if (reply.getResponseStatus() != null
+          && "204".equals(reply.getResponseStatus().getStatus())) {
+        reply.setErrMessage(INVALID_LOADABLE_PATTERN_ID);
+      }
+      return reply;
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in getUllageDetailsAlgo ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in getUllageDetailsAlgo ", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

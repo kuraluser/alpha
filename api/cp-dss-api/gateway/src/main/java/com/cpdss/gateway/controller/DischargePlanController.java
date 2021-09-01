@@ -10,7 +10,10 @@ import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.service.DischargeStudyService;
+import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
+import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -20,7 +23,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -34,6 +45,10 @@ public class DischargePlanController {
   private static final String CORRELATION_ID_HEADER = "correlationId";
 
   @Autowired private DischargeStudyService dischargeStudyService;
+
+  @Autowired private DischargeInformationGrpcService dischargeInformationGrpcService;
+
+  @Autowired private DischargeInformationService dischargeInformationService;
 
   /**
    * Delete port rotation by id
@@ -58,6 +73,44 @@ public class DischargePlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when deleting port rotation", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Save and update discharge study with back loading if there is any
+   *
+   * @param vesselId - the vessel id for which discharge study is created
+   * @param voyageId - the voyage id for which discharge study is created
+   * @param request - the request body {@link DischargeStudyRequest}
+   * @param headers - the http request header
+   * @return {@link LoadableStudyResponse}
+   * @throws CommonRestException
+   */
+  @PostMapping(value = "/discharge-studies")
+  public LoadableStudyResponse saveDischargeStudyWithBackloading(
+      @RequestBody final DischargeStudyCargoResponse request, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      if (request.getDischargeStudyId() == null || request.getDischargeStudyId() == 0) {
+        throw new GenericServiceException(
+            "No DischargeStudy found",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      log.info("saveDischargeStudy: {}", getClientIp());
+      return this.dischargeStudyService.saveDischargeStudyWithBackloaing(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving discharge study", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error when saving discharge study", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
@@ -204,6 +257,33 @@ public class DischargePlanController {
           e.getMessage(),
           e);
     }
+  }
+
+  /**
+   * Retrieve cargos information from cargo master based on the ports
+   *
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping("/discharge-studies/{dischargeStudyId}/port-cargos")
+  public PortWiseCargoResponse getCargosByPorts(
+      @PathVariable Long dischargeStudyId, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    PortWiseCargoResponse response = null;
+    try {
+      log.info("getCargos: {}", getClientIp());
+      response = dischargeStudyService.getCargosByPorts(dischargeStudyId, headers);
+    } catch (Exception e) {
+      log.error("Error in getCargos ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
   }
 
   /**
@@ -410,6 +490,173 @@ public class DischargePlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error fetching getDischargeStudyByVoyage", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * @param vesselId
+   * @param voyageId
+   * @param dischargeStudyId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/discharge-pattern-details")
+  public DischargeStudyCargoResponse getDischargePatternDetails(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long dischargeStudyId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.dischargeStudyService.getDischargePatternDetails(
+          dischargeStudyId, vesselId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when getLoadablePatternDetails", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when getLoadablePatternDetails", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+  /**
+   * @param dischargeStudyId
+   * @param dischargePatternId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(value = "discharge-studies/{dischargeStudyId}/confirm-plan/{dischargePatternId}")
+  public CommonResponse confirmPlan(
+      @PathVariable Long dischargeStudyId,
+      @PathVariable Long dischargePatternId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.dischargeStudyService.confirmPlan(
+          dischargeStudyId, dischargePatternId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when confirmPlan", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when confirmPlan", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * To save rule against discharging
+   *
+   * @param vesselId
+   * @param dischargingInfoId
+   * @param dischargeRuleRequest
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value = "/vessels/{vesselId}/discharge-info-rule/{dischargingInfoId}",
+      produces = MediaType.APPLICATION_JSON_VALUE,
+      consumes = MediaType.APPLICATION_JSON_VALUE)
+  public RuleResponse saveRulesForDischarging(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long dischargingInfoId,
+      @RequestBody RuleRequest dischargeRuleRequest,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.dischargeInformationGrpcService.getOrSaveRulesForDischarge(
+          vesselId,
+          dischargingInfoId,
+          dischargeRuleRequest,
+          headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving rules against discharge", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when saving rules for discharge", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * To retrieve rule against discharge
+   *
+   * @param vesselId
+   * @param dischargingInfoId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      value = "/vessels/{vesselId}/discharge-info-rule/{dischargingInfoId}",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public RuleResponse getRulesForDischarging(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long dischargingInfoId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.dischargeInformationGrpcService.getOrSaveRulesForDischarge(
+          vesselId, dischargingInfoId, null, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching rules against discharge", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when fetching rules for discharge", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @GetMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/discharge-info/{infoId}/port-rotation/{portRotationId}")
+  public DischargeInformation getDischargeInformationByPortRId(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId)
+      throws CommonRestException {
+    try {
+      return dischargeInformationService.getDischargeInformation(
+          vesselId, voyageId, portRotationId);
+    } catch (GenericServiceException e) {
+      log.error("get discharge info", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      e.printStackTrace();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

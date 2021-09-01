@@ -26,4 +26,5 @@ public class LoadingInformationRequest {
   private List<ToppingOffSequence> toppingOffSequence;
 
   private LoadingStagesRequest loadingStages;
+  private Boolean isLoadingInfoComplete; // validation logic at Front-end
 }

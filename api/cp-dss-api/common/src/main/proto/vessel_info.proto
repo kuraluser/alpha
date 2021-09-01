@@ -46,6 +46,20 @@ service VesselInfoService {
 	rpc GetLoadingInfoRules(LoadingInfoRulesRequest) returns (LoadingInfoRulesReply) {}
 }
 
+// Mapped to pump_type Table in vessel DB
+enum VesselPumpTypes {
+		EMPTY_PUMP = 0;
+		CARGO_PUMP = 1;
+		BALLAST_PUMP = 2;
+		GS_PUMP = 3;
+		IG_PUMP = 4;
+		STRIPPING_PUMP = 5;
+		STRIP_EDUCTOR = 6;
+		COW_PUMP = 7;
+		BALLAST_EDUCTOR = 8;
+		TANK_CLEANING_PUMP = 9;
+}
+
 message VesselRequestWithPaging{
 	int64 offset = 1;
 	int64 limit = 2;
@@ -120,6 +134,7 @@ message VesselLoadableQuantityDetails {
 	string dwt = 5;
 	string draftConditionName = 6;
 	bool hasLoadicator = 7;
+	double deadWeightConstant = 8;
 }
 
 message VesselTankDetail{
@@ -174,6 +189,13 @@ message VesselReply {
 		repeated UllageDetails ullageDetails = 8;
 		repeated UllageTrimCorrection ullageTrimCorrection = 9;
 		repeated SelectableParameter selectableParameter = 10;
+
+		repeated PumpType pumpType = 11;
+        repeated VesselPump vesselPump = 12;
+        repeated TankType tankType = 13;
+        repeated VesselComponent vesselManifold = 14;
+        repeated VesselComponent vesselBottomLine = 15;
+
 }
 
 message BendingMomentType2 {
@@ -199,7 +221,7 @@ message BendingMomentType4 {
 	string isActive = 10;
 }
 
-message ShearingForce {
+message ShearingForceType1 {
 	int64 id = 1;
 	string frameNumber = 2;
 	string baseDraft = 3;
@@ -294,8 +316,8 @@ message VesselTankTCG {
 }
 
 message BMAndSF {
-	repeated BendingMoment bendingMoment = 1;
-	repeated ShearingForce shearingForce = 2;
+	repeated BendingMomentType1 bendingMomentType1 = 1;
+	repeated ShearingForceType1 shearingForceType1 = 2;
 	repeated CalculationSheet calculationSheet = 3;
 	repeated CalculationSheetTankGroup calculationSheetTankGroup = 4;
 	repeated MinMaxValuesForBMAndSf minMaxValuesForBMAndSf = 5;
@@ -308,7 +330,7 @@ message BMAndSF {
 	repeated BendingMomentShearingForceType3 bendingMomentShearingForce3 = 12;
 }
 
-message BendingMoment {
+message BendingMomentType1 {
 	int64 id = 1;
 	string frameNumber = 2;
 	string baseDraft = 3;
@@ -431,7 +453,24 @@ message BendingMoment {
 		ResponseStatus responseStatus = 1;
 		repeated PumpType pumpType = 2;
 		repeated VesselPump vesselPump = 3;
+		repeated TankType tankType = 5;
 		VesselDetail vesselDetails = 4;
+
+		repeated VesselComponent vesselManifold = 6;
+		repeated VesselComponent vesselBottomLine = 7;
+	}
+
+	message VesselComponent {
+		int64 id = 1;
+		int64 vesselId = 2;
+		string componentName = 3;
+		string componentCode = 4;
+		int64 componentType = 5;
+	}
+
+	message TankType {
+	int64 id = 1;
+	string typeName = 2;
 	}
 
 	message PumpType{
@@ -452,6 +491,7 @@ message BendingMoment {
 		int64 sectionId = 2;
 		repeated RulePlans rulePlan = 3;
 		bool isNoDefaultRule = 4;
+		bool isFetchEnabledRules = 5;
 	}
 
 	message VesselRuleReply{
@@ -471,10 +511,14 @@ message BendingMoment {
 	message VesselValveSequence{
 		 int64 id = 1;
 		 bool isCommonValve = 2;
+		 bool isShut = 24;
 		 int32 pipelineId = 3;
 		 string pipelineColor = 4;
 		 string pipelineName = 5;
 		 string pipelineType = 6;
+		 string pumpCode = 25;
+		 string pumpName = 26;
+		 string pumpType = 27;
 		 string sequenceNumber = 7; // BigDecimal
 		 int32 sequenceOperationId = 8;
 		 string sequenceOperationName = 9;
@@ -482,15 +526,16 @@ message BendingMoment {
 		 string sequenceTypeName = 11;
 		 int32 sequenceVesselMappingId = 12;
 		 string tankShortName = 13;
+		 string stageNumber = 28;
 		 string valveCategory = 14;
 		 int32 valveCategoryId = 15;
+		 int32 valveId = 29;
 		 string valveNumber = 16;
 		 int32 valveSide = 17;
 		 int32 valveTypeId = 18;
 		 string valveTypeName = 19;
 		 string vesselName = 20;
 		 int32 vesselTankXid = 21;
-		 int32 vesselValveMappingId = 22;
 		 int64 vesselXid = 23;
 	}
 
@@ -502,6 +547,9 @@ message BendingMoment {
 		string valveNumber =5;
 		int32 eductorId = 6;
 		int32 eductionProcessMasterId = 7;
+		int32 stageNumber = 8;
+		int32 valveId = 9;
+		string stageName = 10;
 	}
 	
 	message LoadingInfoRulesRequest {

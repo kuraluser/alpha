@@ -1,4 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { AppConfigurationService } from './../../../shared/services/app-configuration/app-configuration.service';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 import { IFleetVessel, IFleetVesselCardEvent } from '../models/fleet-map.model';
@@ -18,8 +21,8 @@ export class FleetVesselCardComponent implements OnInit {
   set vesselValues(vessels: IFleetVessel[]) {
     const formatOptions: IDateTimeFormatOptions = { stringToDate: true };
     vessels.map(vessel => {
-      vessel.voyageStart = vessel.voyageName.split('-')[0].trim();
-      vessel.voyageEnd = vessel.voyageName.split('-')[1].trim();
+      vessel.voyageStart = vessel.voyageName && vessel.voyageName.split('-')[0].trim();
+      vessel.voyageEnd = vessel.voyageName && vessel.voyageName.split('-')[1].trim();
       if (vessel.ata) { vessel.ata = this.timeZoneTransformationService.formatDateTime(vessel?.ata, formatOptions); }
       if (vessel.atd) { vessel.atd = this.timeZoneTransformationService.formatDateTime(vessel?.atd, formatOptions); }
       if (vessel.eta) { vessel.eta = this.timeZoneTransformationService.formatDateTime(vessel?.eta, formatOptions); }
@@ -28,20 +31,57 @@ export class FleetVesselCardComponent implements OnInit {
     this.selectedVesselId = vessels[0].id;
     this._vesselValues = vessels;
   }
+
   @Output() selectVessel = new EventEmitter<IFleetVesselCardEvent>();
+
   selectedVesselId: number;
+  dateFormat: string;
   _vesselValues: IFleetVessel[];
 
   constructor(
+    private router: Router,
     private timeZoneTransformationService: TimeZoneTransformationService
   ) { }
 
   ngOnInit(): void {
+    this.dateFormat = AppConfigurationService.settings.dateFormat.split(' ')[0];
   }
 
+  /**
+   * function to re-plot map with clicked vessel card voyage ports
+   *
+   * @param {*} event
+   * @param {IFleetVessel} vessel
+   * @memberof FleetVesselCardComponent
+   */
   onClickVesselCard(event, vessel: IFleetVessel) {
     this.selectedVesselId = vessel.id;
-    this.selectVessel.emit({vesselId: vessel.id, originalEvent: event});
+    this.selectVessel.emit({ vesselId: vessel.id, originalEvent: event });
+  }
+
+  /**
+   * function to navigate from vessel card to other pages
+   *
+   * @param {string} key
+   * @param {IFleetVessel} vessel
+   * @memberof FleetVesselCardComponent
+   */
+  navigateToPage(key: string, vessel: IFleetVessel) {
+    localStorage.setItem("vesselId", vessel.id.toString());
+    switch (key) {
+      case 'voyage-status':
+        this.router.navigate(['/business/voyage-status']);
+        break;
+      case 'cargo-planning':
+        this.router.navigate(['/business/cargo-planning/loadable-study-list']);
+        break;
+      case 'voyages':
+        this.router.navigate(['/business/voyages']);
+        break;
+      case 'synoptical':
+        this.router.navigate(['/business/synoptical' + '/' + vessel.id + '/' + vessel.voyageId]);
+        break;
+    }
   }
 
 }

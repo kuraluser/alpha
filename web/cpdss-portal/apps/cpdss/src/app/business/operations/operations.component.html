@@ -3,20 +3,27 @@
         <div class="col vessel-info-wrapper">
             <cpdss-portal-vessel-info [vesselDetails]="vessel"></cpdss-portal-vessel-info>
         </div>
-        <div *ngIf="vessel && voyages">
+        <div *ngIf="vessel && voyages" class="voyage-label">
             <label for="">Voyage</label>
-            <p-dropdown styleClass="dropdown-w-100" [options]="voyages" optionLabel="voyageNo"
-                [(ngModel)]="selectedVoyage" resetFilterOnHide="true"></p-dropdown>
+                {{selectedVoyage?.voyageNo}}
         </div>
         <div class="col">
             <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
+            <cpdss-portal-rate-unit-dropdown *ngIf="currentTab === OPERATION_TAB.SEQUENCE" (unitChange)="onRateUnitChange($event)"></cpdss-portal-rate-unit-dropdown>
         </div>
-        <div class="pr-15">Voyage Distance</div>
+        <div class="pr-15 pt-10 col text-right">
+          {{'OPERATIONS_VOYAGE_DISTANCE' | translate}}
+        </div>
+        <div class="pr-30 pt-10 ">
+          {{voyageDistance? (voyageDistance | number) : 0}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
+        </div>
+        <cpdss-portal-rules [visible]="true" *ngIf="isRuleModalVisible" (popUpClosed)="onRulesPopUpClose($event)"></cpdss-portal-rules>
         <!-- TODO : Remove comment after get confirmation -->
         <!-- <div class="float-right">
             <a class="btn btn-link icon-btn plus-icon-rounded ml-15 disabled" id="show-popup"
                 (click)="addPort()">{{'OPERATIONS_ADD_PORT_BUTTON_LABEL' | translate}}</a>
         </div> -->
+        <button id="rulesButton" class="btn btn-main  mr-10" (click)="isRuleModalVisible = !isRuleModalVisible">{{'RULES'|translate}}</button>
     </div>
     <div class="row">
         <div class="col">
@@ -26,7 +33,14 @@
             </cpdss-portal-port-rotation-ribbon>
         </div>
     </div>
-    <router-outlet *ngIf="vessel && selectedVoyage"></router-outlet>
+     <router-outlet *ngIf="vessel && selectedVoyage && [OPERATIONS.LOADING , OPERATIONS.DISCHARGING].includes(operationId)"></router-outlet>
+    <ng-container *ngIf="![OPERATIONS.LOADING , OPERATIONS.DISCHARGING].includes(operationId)">
+        <div class="text-center pt-25">
+        <div class="well-custom">
+            <div class="text-info"><span class="icon-info-rounded">!</span> {{'LOADING_PLAN_ONLY_LOADING_DISCHARGING' | translate}}</div>
+        </div>
+    </div>
+     </ng-container> 
 </div>
 <cpdss-portal-add-port-popup *ngIf="showAddPortPopup" [display]="showAddPortPopup"
     (displayPopUp)="closeAddPortPoup($event)"></cpdss-portal-add-port-popup>

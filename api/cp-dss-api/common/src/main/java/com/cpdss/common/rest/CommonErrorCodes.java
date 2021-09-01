@@ -49,4 +49,6 @@ public interface CommonErrorCodes {
   //  5XX – Server Error
   String E_CPDSS_LS_INVALID_LQ = "521";
   String E_CPDSS_NO_ACTIVE_VOYAGE_FOUND = "522";
+  String E_CPDSS_NO_DISCHARGE_STUDY_FOUND = "150";
+  String E_CPDSS_NO_ACUTALS_OR_BL_VALUES_FOUND = "151";
 }

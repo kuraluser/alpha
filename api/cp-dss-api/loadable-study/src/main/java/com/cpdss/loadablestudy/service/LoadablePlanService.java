@@ -15,6 +15,7 @@ import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.CargoNomination;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
@@ -3090,6 +3091,29 @@ public class LoadablePlanService {
           request.getLoadablePatternId(),
           entity.getComments());
     }
+    replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    return replyBuilder;
+  }
+
+  public LoadableStudy.UpdateUllageReply.Builder getUllage(
+      LoadableStudy.UpdateUllageRequest request,
+      LoadableStudy.UpdateUllageReply.Builder replyBuilder)
+      throws GenericServiceException {
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
+    if (!loadablePatternOpt.isPresent()) {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(SUCCESS)
+              .setCode(CommonErrorCodes.E_HTTP_ILLEGAL_URL_PARAM)
+              .setMessage(INVALID_LOADABLE_PATTERN_ID)
+              .build());
+      return replyBuilder;
+    }
+    UllageUpdateResponse algoResponse =
+        this.callAlgoUllageUpdateApi(
+            this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    replyBuilder.setLoadablePlanStowageDetails(this.buildUpdateUllageReply(algoResponse, request));
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
   }

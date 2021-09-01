@@ -1,6 +1,6 @@
 {
     "apiUrl" : "",
-    "keycloakUrl": "https://keyclock.thinkpalm.info:8443/auth/",
+    "keycloakUrl": "",
     "path": "",
     "redirectPath": ":9002",
     "clientId": "frontend",
@@ -20,5 +20,7 @@
     "sgNumberFormat": "1.4-4",
     "restrictMaxNumberOfCargo": true,
     "maxCargoLimit": 7,
-    "ullageUnit": "M"
+    "ullageUnit": "M",
+    "simulatorDomainUrl": "https://ec2-13-250-56-222.ap-southeast-1.compute.amazonaws.com",
+    "unitConversionConstant": 6.28981
 }

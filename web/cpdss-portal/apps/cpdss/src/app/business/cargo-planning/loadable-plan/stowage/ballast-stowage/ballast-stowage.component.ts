@@ -9,7 +9,7 @@ import { IBallastStowageDetails } from '../../../../core/models/common.model';
 import { LoadablePlanTransformationService } from '../../../services/loadable-plan-transformation.service';
 import { LoadablePlanApiService } from '../../../services/loadable-plan-api.service';
 import { IPortsEvent, IBallastTankDetailValueObject , VALIDATION_AND_SAVE_STATUS } from '../../../models/loadable-plan.model';
-import { tankCapacityValidator } from '../../directives/tankCapacityValidator.directive';
+import { tankCapacityValidator } from '../../../../core/directives/tankCapacityValidator.directive';
 import { DATATABLE_EDITMODE } from '../../../../../shared/components/datatable/datatable.model';
 
 /**

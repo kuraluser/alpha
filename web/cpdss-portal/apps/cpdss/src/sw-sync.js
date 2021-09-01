@@ -235,86 +235,86 @@
   }
 
 
-    /**
-   * Fuction for sync of discharge port indexdb and server
-   *
-   */
-     async function serverSyncDischargeChargePorts(token) {
-      // Remove all records with api initiated as status true
-      db.dischargePorts.where({ 'status': 1 }).delete();
-  
-      await db.dischargePorts.orderBy('storeKey').uniqueKeys((storeKeys) => {
-        storeKeys.forEach(async (key) => {
-          const timeStamp = Date.now - 60000;
-          //Get all primary keys with storekey where status not equal to 1 (ie: all new records) or status equal to one and has been in pending state for more that 1 minute.
-          const primaryKey = await db.dischargePorts.where({ 'storeKey': key }).and(data => data.status !== 1 || !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
-  
-          //Get last update record of particular store key
-          const port = await db.dischargePorts.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
-          if (port) {
-            const updated = await db.dischargePorts.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
-            if (updated) {
-              if (port?.isDelete) {
-                // send delete sync request to the server
-                var headers = {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Bearer ' + token
-                }
-                const syncResponse = await fetch(`${apiUrl}/vessels/${port?.vesselId}/voyages/${port?.voyageId}/discharge-studies/${port?.dischargeStudyId}/ports/${port.id}`, {
-                  method: 'DELETE',
-                  headers: headers
-                });
-  
-                if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
-                  const sync = await syncResponse.json();
-                  sync.storeKey = port.storeKey;
-                  sync.type = 'discharge_ports_sync_finished';
-                  const refreshedToken = syncResponse.headers.get('token');
-                  sync.refreshedToken = refreshedToken;
-                  //on success of api call remove all rows of selected primary keys
-                  primaryKey.forEach(async (primaryKey) => await db.dischargePorts.delete(primaryKey))
-                  return notifyClients(sync);
-                }
-  
-                return Promise.reject('sync failed: ' + syncResponse.status);
-              } else {
-                // send update or add sync request to the server
-                var headers = {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Bearer ' + token
-                }
-                const syncResponse = await fetch(`${apiUrl}/vessels/${port?.vesselId}/voyages/${port?.voyageId}/discharge-studies/${port?.loadableStudyId}/ports/${port?.id}`, {
-                  method: 'POST',
-                  body: JSON.stringify(port),
-                  headers: headers
-                });
-  
-                if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
-                  const sync = await syncResponse.json();
-                  sync.storeKey = port.storeKey;
-                  sync.type = 'discharge_ports_sync_finished';
-                  const refreshedToken = syncResponse.headers.get('token');
-                  sync.refreshedToken = refreshedToken;
-                  // update id of port if there are any new rows with same storekey
-                  const updated = await db.dischargePorts.where({ 'storeKey': key }).modify({ 'id': port?.id });
-                  if (updated) {
-                    //on success of api call remove all rows of selected primary keys
-                    primaryKey.forEach(async (primaryKey) => await db.dischargePorts.delete(primaryKey));
-                  }
-  
-                  return notifyClients(sync);
-                }
-  
-                return Promise.reject('sync failed: ' + syncResponse.status);
+  /**
+ * Fuction for sync of discharge port indexdb and server
+ *
+ */
+  async function serverSyncDischargeChargePorts(token) {
+    // Remove all records with api initiated as status true
+    db.dischargePorts.where({ 'status': 1 }).delete();
+
+    await db.dischargePorts.orderBy('storeKey').uniqueKeys((storeKeys) => {
+      storeKeys.forEach(async (key) => {
+        const timeStamp = Date.now - 60000;
+        //Get all primary keys with storekey where status not equal to 1 (ie: all new records) or status equal to one and has been in pending state for more that 1 minute.
+        const primaryKey = await db.dischargePorts.where({ 'storeKey': key }).and(data => data.status !== 1 || !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
+
+        //Get last update record of particular store key
+        const port = await db.dischargePorts.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
+        if (port) {
+          const updated = await db.dischargePorts.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
+          if (updated) {
+            if (port?.isDelete) {
+              // send delete sync request to the server
+              var headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
               }
+              const syncResponse = await fetch(`${apiUrl}/vessels/${port?.vesselId}/voyages/${port?.voyageId}/discharge-studies/${port?.dischargeStudyId}/ports/${port.id}`, {
+                method: 'DELETE',
+                headers: headers
+              });
+
+              if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
+                const sync = await syncResponse.json();
+                sync.storeKey = port.storeKey;
+                sync.type = 'discharge_ports_sync_finished';
+                const refreshedToken = syncResponse.headers.get('token');
+                sync.refreshedToken = refreshedToken;
+                //on success of api call remove all rows of selected primary keys
+                primaryKey.forEach(async (primaryKey) => await db.dischargePorts.delete(primaryKey))
+                return notifyClients(sync);
+              }
+
+              return Promise.reject('sync failed: ' + syncResponse.status);
+            } else {
+              // send update or add sync request to the server
+              var headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+              }
+              const syncResponse = await fetch(`${apiUrl}/vessels/${port?.vesselId}/voyages/${port?.voyageId}/discharge-studies/${port?.dischargeStudyId}/ports/${port?.id}`, {
+                method: 'POST',
+                body: JSON.stringify(port),
+                headers: headers
+              });
+
+              if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
+                const sync = await syncResponse.json();
+                sync.storeKey = port.storeKey;
+                sync.type = 'discharge_ports_sync_finished';
+                const refreshedToken = syncResponse.headers.get('token');
+                sync.refreshedToken = refreshedToken;
+                // update id of port if there are any new rows with same storekey
+                const updated = await db.dischargePorts.where({ 'storeKey': key }).modify({ 'id': port?.id });
+                if (updated) {
+                  //on success of api call remove all rows of selected primary keys
+                  primaryKey.forEach(async (primaryKey) => await db.dischargePorts.delete(primaryKey));
+                }
+
+                return notifyClients(sync);
+              }
+
+              return Promise.reject('sync failed: ' + syncResponse.status);
             }
           }
-        });
+        }
       });
-    }
-    
+    });
+  }
+
   /**
    * Fuction for sync of indexdb and server for ohq
    *
@@ -371,62 +371,62 @@
     });
   }
 
-    /**
-   * Fuction for sync of indexdb and server for ohq
-   *
-   */
-     async function serverSyncDischargeChargeOHQ(token) {
-      // Remove all records with api initiated as status true
-      db.dischargeOhq.where({ 'status': 1 }).delete();
-  
-      //Get all store keys
-      await db.dischargeOhq.orderBy('storeKey').uniqueKeys((storeKeys) => {
-        storeKeys.forEach(async (key) => {
-          const timeStamp = Date.now - 60000;
-          //Get all primary keys with storekey where status not equal to 1 (ie: all new records) or status equal to one and has been in pending state for more that 1 minute.
-          const primaryKey = await db.dischargeOhq.where({ 'storeKey': key }).and(data => data.status !== 1 || !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
-  
-          if (primaryKey?.length) {
-            //Get last update record of particular store key
-            const ohq = await db.dischargeOhq.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
-            if (ohq) {
-              const updated = await db.dischargeOhq.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
-              if (updated) {
-                // send update or add sync request to the server
-                var headers = {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Bearer ' + token
-                }
-                const syncResponse = await fetch(`${apiUrl}/vessels/${ohq?.vesselId}/voyages/${ohq?.voyageId}/discharge-studies/${ohq?.dischargeStudyId}/port-rotation/${ohq?.portRotationId}/on-hand-quantities/${ohq?.id}`, {
-                  method: 'POST',
-                  body: JSON.stringify(ohq),
-                  headers: headers
-                });
-  
-                if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
-                  const sync = await syncResponse.json();
-                  sync.storeKey = ohq.storeKey;
-                  sync.type = 'ohq_sync_finished';
-                  const refreshedToken = syncResponse.headers.get('token');
-                  sync.refreshedToken = refreshedToken;
-                  // update id of ohq if there are any new rows with same storekey
-                  const updated = await db.dischargeOhq.where({ 'storeKey': key }).modify({ 'id': ohq?.id });
-                  if (updated) {
-                    //on success of api call remove all rows of selected primary keys
-                    primaryKey.forEach(async (primaryKey) => await db.dischargeOhq.delete(primaryKey));
-                  }
-                  return notifyClients(sync);
-                }
-  
-                return Promise.reject('sync failed: ' + syncResponse.status);
+  /**
+ * Fuction for sync of indexdb and server for ohq
+ *
+ */
+  async function serverSyncDischargeChargeOHQ(token) {
+    // Remove all records with api initiated as status true
+    db.dischargeOhq.where({ 'status': 1 }).delete();
+
+    //Get all store keys
+    await db.dischargeOhq.orderBy('storeKey').uniqueKeys((storeKeys) => {
+      storeKeys.forEach(async (key) => {
+        const timeStamp = Date.now - 60000;
+        //Get all primary keys with storekey where status not equal to 1 (ie: all new records) or status equal to one and has been in pending state for more that 1 minute.
+        const primaryKey = await db.dischargeOhq.where({ 'storeKey': key }).and(data => data.status !== 1 || !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
+
+        if (primaryKey?.length) {
+          //Get last update record of particular store key
+          const ohq = await db.dischargeOhq.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
+          if (ohq) {
+            const updated = await db.dischargeOhq.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
+            if (updated) {
+              // send update or add sync request to the server
+              var headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
               }
+              const syncResponse = await fetch(`${apiUrl}/vessels/${ohq?.vesselId}/voyages/${ohq?.voyageId}/discharge-studies/${ohq?.dischargeStudyId}/port-rotation/${ohq?.portRotationId}/on-hand-quantities/${ohq?.id}`, {
+                method: 'POST',
+                body: JSON.stringify(ohq),
+                headers: headers
+              });
+
+              if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
+                const sync = await syncResponse.json();
+                sync.storeKey = ohq.storeKey;
+                sync.type = 'ohq_sync_finished';
+                const refreshedToken = syncResponse.headers.get('token');
+                sync.refreshedToken = refreshedToken;
+                // update id of ohq if there are any new rows with same storekey
+                const updated = await db.dischargeOhq.where({ 'storeKey': key }).modify({ 'id': ohq?.id });
+                if (updated) {
+                  //on success of api call remove all rows of selected primary keys
+                  primaryKey.forEach(async (primaryKey) => await db.dischargeOhq.delete(primaryKey));
+                }
+                return notifyClients(sync);
+              }
+
+              return Promise.reject('sync failed: ' + syncResponse.status);
             }
           }
-        });
+        }
       });
-    }
-  
+    });
+  }
+
 
   /**
    * Fuction for sync of indexdb and server for obq
@@ -486,63 +486,6 @@
 
 
   /**
- * Fuction for sync of indexdb and server for loading information data
- *
- */
-  async function serverSyncLoadingInformation(token) {
-    // Remove all records with api initiated as status true
-    db.loadingInformations.where({ 'status': 1 }).delete();
-
-    //Get all store keys
-    await db.loadingInformations.orderBy('storeKey').uniqueKeys((storeKeys) => {
-      storeKeys.forEach(async (key) => {
-        const timeStamp = Date.now - 60000;
-        //Get all primary keys with storekey where status not equal to 1 (ie: all new records) or status equal to one and has been in pending state for more that 1 minute.
-        const primaryKey = await db.loadingInformations.where({ 'storeKey': key }).and(data => data.status !== 1 || !data.timeStamp || data.timeStamp < timeStamp).primaryKeys();
-
-        if (primaryKey?.length) {
-          //Get last update record of particular store key
-          const loadingInformation = await db.loadingInformations.where({ ':id': primaryKey.sort((a, b) => b - a)[0] }).first();
-          if (loadingInformation) {
-            const updated = await db.loadingInformations.where({ 'storeKey': key }).modify({ 'timeStamp': Date.now(), status: 1 });
-            if (updated) {
-              // send update or add sync request to the server
-              var headers = {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-
-              }
-              const syncResponse = await fetch(`${apiUrl}/vessels/${loadingInformation?.vesselId}/voyages/${loadingInformation?.voyageId}/loading-info`, {
-                method: 'POST',
-                body: JSON.stringify(loadingInformation),
-                headers: headers
-              });
-
-              if (syncResponse.status === 200 || syncResponse.status === 400 || syncResponse.status === 401) {
-                const sync = await syncResponse.json();
-                sync.storeKey = loadingInformation?.storeKey;
-                sync.type = 'loading_information_sync_finished';
-                const refreshedToken = syncResponse.headers.get('token');
-                sync.refreshedToken = refreshedToken;
-                // update id of loading information if there are any new rows with same storekey
-                const updated = await db.loadingInformations?.where({ 'storeKey': key }).modify({ 'id': loadingInformation?.id });
-                if (updated) {
-                  //on success of api call remove all rows of selected primary keys
-                  primaryKey.forEach(async (primaryKey) => await db.loadingInformations?.delete(primaryKey));
-                }
-                return notifyClients(sync);
-              }
-
-              return Promise.reject('sync failed: ' + syncResponse.status);
-            }
-          }
-        }
-      });
-    });
-  }
-
-  /**
    * Notify all clents of service worker with events
    *
    * @param {*} sync
@@ -556,6 +499,7 @@
 
   const syncStore = {}
   self.addEventListener('message', event => {
+
     if (event.data.type === 'loadable-pattern-status') {
       // get a unique id to save the data
       const id = event.data.data.loadableStudyId;
@@ -564,6 +508,19 @@
       self.registration.sync.register(id)
     } else if (event.data.type === 'validate-and-save') {
       const id = event.data.data.loadablePatternId;
+      syncStore[id] = event.data;
+      self.registration.sync.register(id);
+    } else if (event.data.type === 'discharge-study-pattern-status') {
+      const id = event.data.data.dischargeStudyId;
+      syncStore[id] = event.data;
+      self.registration.sync.register(id);
+    }
+    else if (event.data.type === 'loading-plan-status') {
+      const id = event.data.data.processId;
+      syncStore[id] = event.data;
+      self.registration.sync.register(id);
+    } else if (event.data.type === 'ullage-update-status') {
+      const id = event.data.data.processId;
       syncStore[id] = event.data;
       self.registration.sync.register(id);
     }
@@ -575,8 +532,96 @@
       event.waitUntil(checkLoadableStudyStatus(syncStore[event.tag].data));
     } else if (syncStore[event.tag].type === 'validate-and-save') {
       event.waitUntil(checkSaveAndValidateStatus(syncStore[event.tag].data));
+    } else if (syncStore[event.tag].type === 'discharge-study-pattern-status') {
+      event.waitUntil(checkDischargeStudyStatus(syncStore[event.tag].data));
+    }
+    else if (syncStore[event.tag].type === 'loading-plan-status') {
+
+      event.waitUntil(checkLoadingPlanStatus(syncStore[event.tag].data));
+    } else if(syncStore[event.tag].type === 'ullage-update-status'){
+      event.waitUntil(checkLoadingPlanStatus(syncStore[event.tag].data));
     }
   });
+
+  /**
+   * Method to set loading plan status
+   * @param {*} data 
+   */
+
+  async function checkLoadingPlanStatus(data) {
+    const timer = setInterval(async () => {
+      var headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + await getToken()
+      }
+      const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/loading-info/${data?.loadingInfoId}/algo-status`, {
+        method: 'POST',
+        body: JSON.stringify({ processId: data?.processId, conditionType : data?.status ? data?.status : null }),
+        headers: headers
+      });
+      const syncView = await syncResponse.json();
+      const refreshedToken = syncResponse.headers.get('token');
+      const sync = {};
+      sync.refreshedToken = refreshedToken;
+      sync.pattern = data;
+      if (syncView?.responseStatus?.status === "SUCCESS") {
+        sync.status = syncView?.responseStatus?.status;
+        sync.statusId = syncView?.loadingInfoStatusId;
+        switch (syncView?.loadingInfoStatusId) {
+          case 1:
+            sync.type = "pending";
+          case 2:
+            sync.type = "confirmed"
+            break;
+          case 3:
+            sync.type = "algo-processing-started";
+            break;
+          case 4:
+            sync.type = "algo-rocessing-completed"
+            break;
+          case 5:
+            sync.type = "plan-generated";
+            clearInterval(timer);
+            break;
+          case 6:
+            sync.type = "no-plan-available"
+            clearInterval(timer);
+            break;
+          case 7:
+            sync.type = "error-occurred";
+            clearInterval(timer);
+            break;
+          case 8:
+            sync.type = "verification-with-loadicator"
+            break;
+          case 9:
+            sync.type = "verification-with-loadicator-completed";
+            break;
+          case 10:
+            sync.type = "loadicator-verification-with-algo";
+            break;
+
+          case 11:
+            sync.type = "loadicator-verification-with-algo-completed"
+            break;
+        }
+        notifyClients(sync)
+
+      }
+
+    }, 3500);
+    setTimeout(() => {
+      if (currentStatus === 3) {
+        sync.type = 'loading-plan-no-response';
+        // sending default status
+        sync.statusId = 1;
+        notifyClients(sync);
+        clearInterval(timer);
+      }
+    }, 7200000);
+  }
+
 
   async function checkSaveAndValidateStatus(data) {
     let currentStatus;
@@ -646,9 +691,15 @@
       const refreshedToken = syncResponse.headers.get('token');
       sync.refreshedToken = refreshedToken;
       sync.pattern = data;
+      sync.syncType = 'loadable-study-pattern-status';
       if (syncView?.responseStatus?.status === '200') {
         sync.status = syncView?.responseStatus?.status;
         currentStatus = syncView?.loadableStudyStatusId;
+        if (syncView?.loadableStudyStatusId === 21) {
+          sync.type = 'loadable-study-communicated-to-shore';
+          sync.statusId = syncView?.loadableStudyStatusId;
+          notifyClients(sync);
+        }
         if (syncView?.loadableStudyStatusId === 4 || syncView?.loadableStudyStatusId === 5) {
           sync.type = 'loadable-pattern-processing';
           sync.statusId = syncView?.loadableStudyStatusId;
@@ -687,6 +738,84 @@
     setTimeout(() => {
       if (currentStatus === 4) {
         sync.type = 'loadable-pattern-no-response';
+        // sending default status
+        sync.statusId = 1;
+        notifyClients(sync);
+        clearInterval(timer);
+      }
+    }, 7200000);
+  }
+
+  /**
+ * Method for monitoring discharge study status after plan generetion is started
+ *
+ * @param {*} data
+ */
+  async function checkDischargeStudyStatus(data) {
+    let currentStatus;
+    const sync = {};
+    const timer = setInterval(async () => {
+      var headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + await getToken()
+      }
+      const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/discharge-studies/${data?.dischargeStudyId}/discharge-pattern-status`, {
+        method: 'POST',
+        body: JSON.stringify({ processId: data?.processId }),
+        headers: headers
+      });
+      const syncView = await syncResponse.json();
+      const refreshedToken = syncResponse.headers.get('token');
+      sync.refreshedToken = refreshedToken;
+      sync.pattern = data;
+      sync.syncType = 'discharge-study-plan-status';
+      if (syncView?.responseStatus?.status === '200') {
+        sync.status = syncView?.responseStatus?.status;
+        currentStatus = syncView?.dischargeStudyId;
+        if (syncView?.loadableStudyStatusId === 21) {
+          sync.type = 'loadable-study-communicated-to-shore';
+          sync.statusId = syncView?.loadableStudyStatusId;
+          notifyClients(sync);
+        }
+        if (syncView?.dischargeStudyId === 4 || syncView?.dischargeStudyId === 5) {
+          sync.type = 'discharge-pattern-processing';
+          sync.statusId = syncView?.dischargeStudyId;
+          notifyClients(sync);
+        }
+        if (syncView?.dischargeStudyId === 7) {
+          sync.type = 'discharge-pattern-loadicator-checking';
+          sync.statusId = syncView?.dischargeStudyId;
+          notifyClients(sync);
+        }
+        if (syncView?.dischargeStudyId === 3) {
+          clearInterval(timer);
+          sync.type = 'discharge-pattern-completed';
+          sync.statusId = syncView?.dischargeStudyId;
+          notifyClients(sync);
+        }
+        if (syncView?.dischargeStudyId === 6) {
+          clearInterval(timer);
+          sync.type = 'discharge-pattern-no-solution';
+          sync.statusId = syncView?.dischargeStudyId;
+          notifyClients(sync);
+        }
+        if (syncView?.loadableStudyStatusId === 11) {
+          clearInterval(timer);
+          sync.type = 'discharge-pattern-error-occured';
+          sync.statusId = syncView?.dischargeStudyId;
+          notifyClients(sync);
+        }
+      } else if (syncView?.status === '401' || syncView?.status === '400') {
+        notifyClients(syncView);
+      }
+      else if (syncView?.responseStatus?.status === '500') {
+        clearInterval(timer);
+      }
+    }, 3500);
+    setTimeout(() => {
+      if (currentStatus === 4) {
+        sync.type = 'discharge-pattern-no-response';
         // sending default status
         sync.statusId = 1;
         notifyClients(sync);

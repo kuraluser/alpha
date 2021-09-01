@@ -184,6 +184,24 @@ a {
         background: url($images-menu-icons + 'operation-icon-hover.png') no-repeat;
     }
   }
+  &.fleet {
+    &:before {
+        background: url($images-menu-icons + 'fleet-icon.png') no-repeat;
+    }
+
+    &:after {
+        background: url($images-menu-icons + 'fleet-icon-hover.png') no-repeat;
+    }
+  }
+  &.files {
+    &:before {
+        background: url($images-menu-icons + 'files-icon.png') no-repeat;
+    }
+
+    &:after {
+        background: url($images-menu-icons + 'files-icon-hover.png') no-repeat;
+    }
+  }
 }
 
 header .header-nav .nav li.active {
@@ -523,6 +541,9 @@ tr:hover{
 }
 .icon-status-11{
   background: url($images-theme + 'algo-error.png') no-repeat center center;
+}
+.icon-status-21{
+  background: url($images-theme + 'icon-status-21.png') no-repeat center center;
 }
 .icon-api-temp{
   background: url($images-theme + 'history-icon-api-and-temp.png') no-repeat center center;
@@ -1162,7 +1183,7 @@ tr:hover a.btn-secondary{
 }
 
 .p-overlaypanel{
-  background: $tolltip-bg;
+  background: $tooltip-bg;
   border: 1px solid $card-distance;
 }
 .p-overlaypanel.tank-tooltip{
@@ -1404,4 +1425,120 @@ header{
 
 .sub-head-color{
   color: $text-secondary;
+}
+.p-checkbox-icon.pi-check:before{
+  border: solid $radio-btn;
+}
+
+.rowspan-no-border{
+  td{
+    border-bottom: 0!important;
+    &.row-border{
+      border-bottom: 1px solid $table-border!important;
+    }
+  }
+}
+
+.vessel-card-submenu {
+  background: url($images-theme + 'vessel-card-menu-bg.png') no-repeat center center;
+}
+
+.vessel-card, .notification-panel{
+  background: $body-bg;
+}
+.vessel-card-heading{
+  color:  $main-head;
+}
+
+.vessel-card {
+  .progress {
+    background: $card-distance;
+  }
+}
+
+.notification-list{
+  border-top: 1px solid $table-border;
+  border-bottom: 1px solid $table-border;
+}
+
+.notification-item:not(:last-child) {
+  border-bottom: 1px solid $table-border;
+}
+
+.notification-item:hover {
+  background: $selected-bg;
+}
+
+.ol-control{
+  button{
+      border: 1px solid $body-bg;
+  }
+}
+
+.vessel-card-expand-collapse-btn{
+  background: $body-bg;
+  color: $text-primary;
+}
+.port-popup{
+  background: $body-bg;
+  &:after{
+    border-right:10px solid $body-bg;
+  }
+}
+
+.btn{
+  &.btn-main.btn-primary{
+    border: 1px solid $login-btn!important;
+    background:  $login-btn!important;
+    color: $active-color;
+    &:hover{
+      color:$active-color!important;
+      background:  lighten($login-btn, 10%)!important;
+
+    }
+    &:focus{
+      box-shadow: 0 0 0 2px rgba($login-btn, 0.25);
+      background:  $login-btn!important;
+      color: $active-color;
+    }
+  }
+}
+
+.search-wrapper{
+  .pi-search{
+    color: $heading-color;
+  }
+}
+
+.p-menu .p-menuitem-link:not(.p-disabled):hover{
+  background: $dropdown-menu-hover-bg;
+}
+.text-info{
+  color: $info!important;
+}
+
+.icon-info-rounded{
+  border: 1px solid $info!important;
+}
+.well-custom{
+  border: 1px solid $border-color!important;
+}
+
+.right-border{
+  border-right: 1px solid $border-color!important;
+}
+.sequence-chart-ballast-column, .sequence-chart-tank-column, .sequence-chart-ballast-pump-column, .highcharts-axis-title, .highcharts-axis-title, .sequence-chart-cargo-column, .sequence-chart-ullage-column, .sequence-chart-quantity-column{
+  color: $text-secondary;
+  fill: $text-secondary!important;
+}
+
+.sequence-chart.stabilityparams-chart{
+  .highcharts-axis-title{
+    fill: $text-secondary!important;
+  }
+}
+
+.highcharts-label-box.highcharts-tooltip-box {
+  fill:rgba($tooltip-bg, 1) !important;
+  stroke: $card-distance !important;
 }

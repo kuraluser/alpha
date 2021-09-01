@@ -32,7 +32,8 @@ import { DialogModule } from 'primeng/dialog';
     DatatableModule,
     TranslateModule,
     DropdownModule,
-    NumberDirectiveModule    
+    NumberDirectiveModule,
+    DatatableModule  
   ]
 })
 export class PortMasterModule { }

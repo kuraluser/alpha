@@ -5,6 +5,7 @@ appConfig {
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
+  unitTest = 'y'
   javaMainClass = "com.cpdss.userauthorization.Application"
 }
 

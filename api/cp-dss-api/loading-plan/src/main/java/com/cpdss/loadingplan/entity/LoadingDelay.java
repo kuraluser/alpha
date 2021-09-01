@@ -3,12 +3,8 @@ package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import java.util.List;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,9 +24,8 @@ public class LoadingDelay extends EntityDoc {
   @JoinColumn(name = "loading_xid", referencedColumnName = "id")
   private LoadingInformation loadingInformation;
 
-  @ManyToOne
-  @JoinColumn(name = "reason_xid", referencedColumnName = "id")
-  private ReasonForDelay reasonForDelay;
+  @OneToMany(mappedBy = "loadingDelay", cascade = CascadeType.ALL)
+  private List<LoadingDelayReason> loadingDelayReasons;
 
   @Column(name = "duration")
   private BigDecimal duration;
@@ -43,4 +38,7 @@ public class LoadingDelay extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "cargo_nomination_xid")
+  private Long cargoNominationId;
 }

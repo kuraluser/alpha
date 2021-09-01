@@ -43,8 +43,7 @@ public interface LoadablePlanStowageBallastDetailsRepository
   @Query("UPDATE LoadablePlanStowageBallastDetails SET isActive = ?1 WHERE loadablePatternId = ?2")
   public void deleteLoadablePlanStowageBallastDetails(Boolean isActive, Long loadablePatternId);
 
-  @Query(
-      "FROM LoadablePlanStowageBallastDetails lp WHERE lp.loadablePatternId = ?1 AND lp.portXId = ?2 and lp.isActive = true")
-  List<LoadablePlanStowageBallastDetails> findAllByLoadablePatternIdAndPortXId(
-      Long var1, Long var2);
+  public List<LoadablePlanStowageBallastDetails>
+      findByLoadablePatternIdAndPortRotationIdAndIsActive(
+          Long loadablePatternId, Long portId, boolean isActive);
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { IValidationErrorMessages } from 'apps/cpdss/src/app/shared/components/validation-error/validation-error.model';
@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RULE_TYPES } from '../../models/rules.model'
 import { numberValidator } from '../../../core/directives/number-validator.directive'
-import {RulesValidator} from '../../../core/directives/rules-validator-directive'
+import { RulesValidator } from '../../../core/directives/rules-validator-directive'
 import { NgxSpinnerService } from 'ngx-spinner';
 
 /**
@@ -22,8 +22,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
   templateUrl: './rules-table.component.html',
   styleUrls: ['./rules-table.component.scss']
 })
-export class RulesTableComponent implements OnInit, OnDestroy {
- 
+export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
+
   selectedTab = 'plan';
   data = 'plan';
   tabIndex = 1;
@@ -33,7 +33,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
     { value: RULE_TYPES.ABSOLUTE },
     { value: RULE_TYPES.PREFERRABLE }
   ]
-  columns = [   
+  columns = [
     { header: "" },
     { header: "Rule Type" },
     { header: "Enable/Disable" }
@@ -44,20 +44,22 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   rulesForm: FormArray = new FormArray([])
   errorMessages: IValidationErrorMessages = {
     'required': 'RULES_REQUIRED',
+    'invalidNumber': 'RULES_INVALID'
   }
- 
   selectedIndex = 0;
   @Input() rulesJson;
-  @Input()rulesService;
+  @Input() rulesService;
   @Input() displaySettings = true;
   @Output() isSaveClicked: EventEmitter<any> = new EventEmitter();
   @Output() formChanges: EventEmitter<any> = new EventEmitter();
-  @Input()isCancelChanges = false;
-  rulesFormTemp :any;
+  @Input() isCancelChanges = false;
+  @Input() pageName = "Admin"
+
+  rulesFormTemp: any;
   rules: any;
 
   constructor(private translateService: TranslateService,
-    private messageService: MessageService,private ngxSpinner: NgxSpinnerService,) { }
+    private messageService: MessageService, private ngxSpinner: NgxSpinnerService,) { }
 
   /**
   * Component lifecycle ngOnInit
@@ -69,14 +71,14 @@ export class RulesTableComponent implements OnInit, OnDestroy {
     this.ngxSpinner.show()
     this.rulesService.init();
     this.showHideDisplaySetttingsColumn();
-    this.initActionSubscriptions();  
-    this.setIndex(this.selectedIndex);  
+    this.initActionSubscriptions();
+    this.setIndex(this.selectedIndex);
     this.initForm();
     this.disableForm();
-    this.checkForFormValueChanges();  
-    if (this.rulesJson &&  this.rulesJson[this.data] && this.rulesJson[this.data][this.selectedIndex])
-      this.rules = this.rulesJson[this.data][this.selectedIndex].rules; 
-    this.ngxSpinner.hide(); 
+    this.checkForFormValueChanges();
+    if (this.rulesJson && this.rulesJson[this.data] && this.rulesJson[this.data][this.selectedIndex])
+      this.rules = this.rulesJson[this.data][this.selectedIndex].rules;
+    this.ngxSpinner.hide();
   }
 
   /**
@@ -84,8 +86,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
    *
    * @memberof RulesTableComponent
    */
-  showHideDisplaySetttingsColumn()
-  {
+  showHideDisplaySetttingsColumn() {
     if (this.displaySettings) {
       this.columns.unshift({ header: "Display in Settings" });
     }
@@ -97,12 +98,12 @@ export class RulesTableComponent implements OnInit, OnDestroy {
    * @param {SimpleChanges} changes
    * @memberof RulesTableComponent
    */
-  ngOnChanges(changes: SimpleChanges) {  
+  ngOnChanges(changes: SimpleChanges) {
     this.ngxSpinner.show();
     this.resetForm(changes);
-    this.ngxSpinner.hide(); 
+    this.ngxSpinner.hide();
   }
-  
+
 
   /**
    * Method to reset form when cancel changes button is clicked.
@@ -111,35 +112,38 @@ export class RulesTableComponent implements OnInit, OnDestroy {
    * @memberof RulesTableComponent
    */
 
-  resetForm(changes) {   
+  resetForm(changes) {
     if (changes?.isCancelChanges?.currentValue) {
       this.initForm();
-      this.disableForm(); 
+      this.disableForm();
     }
-    if (changes?.rulesJson)
-    { 
-      
-      this.initForm(); 
+    if (changes?.rulesJson) {
+
+      this.initForm();
       this.selectedIndex = 0;
+
       this.rulesJson[this.data] = changes?.rulesJson?.currentValue?.plan;
-      this.rules = this.rulesJson[this.data][this.selectedIndex].rules;  
-      this.disableForm();     
+      if (this.rulesJson[this.data]?.length > 0) {
+        this.rules = this.rulesJson[this.data][this.selectedIndex].rules;
+        this.disableForm();
+      }
     }
   }
- 
-/**
- * Method to check whether values of form has changed.
- *
- * @memberof RulesTableComponent
- */
+
+  /**
+   * Method to check whether values of form has changed.
+   *
+   * @memberof RulesTableComponent
+   */
 
   checkForFormValueChanges() {
+    console.log("checkForFormValueChanges")
     if (this.rulesForm.dirty) {
       this.formChanges.emit(true);
     }
   }
 
-   
+
   /**
    * Method to set index.
    *
@@ -151,19 +155,19 @@ export class RulesTableComponent implements OnInit, OnDestroy {
     this.setRules();
   }
 
-  
- /**
-  * Method to set rules.
-  *
-  * @memberof RulesTableComponent
-  */
+
+  /**
+   * Method to set rules.
+   *
+   * @memberof RulesTableComponent
+   */
 
   setRules() {
     if (!this.rulesJson[this.data]) {
       this.rules = [];
     }
     else {
-      if (this.rulesJson[this.data]) {
+      if (this.rulesJson[this.data]?.length > 0) {
         this.rules = this.rulesJson[this.data][this.selectedIndex].rules;
       }
     }
@@ -176,7 +180,7 @@ export class RulesTableComponent implements OnInit, OnDestroy {
    * @memberof RulesTableComponent
    */
   setTabError(index: any) {
-    if (this.rulesForm?.controls[index]?.valid == false && this.rulesForm?.controls[index]?.touched ) {
+    if (!this.rulesForm?.controls[index]?.valid && this.rulesForm?.controls[index]?.touched) {
       this.error[index] = true;
     }
     else {
@@ -224,45 +228,45 @@ export class RulesTableComponent implements OnInit, OnDestroy {
         this.setTabError(i);
       }
     }
-    let isError = this.error.find(err => err == true);
+    const isError = this.error.find(err => err === true);
     if (!isError) {
       for (let index = 0; index < this.rulesForm.controls.length; index++) {
         for (let j = 0; j < this.rulesForm.controls[index]['controls'].length; j++) {
-          let controls = this.rulesForm.controls[index]['controls'][j];
-              for (let t in controls["controls"]["inputs"].controls) {
-                if (this.rulesJson[this.data][index] && this.rulesJson["plan"][index]["rules"][j]) {
-                  if (this.rulesJson[this.data][index]["rules"][j]["inputs"] && this.rulesJson["plan"][index]["rules"][j]["inputs"][t]) {
-                    if (Array.isArray(controls["controls"]["inputs"]["controls"][t].value)) {
-                      this.rulesJson[this.data][index]["rules"][j]["inputs"][t].defaultValue = this.convertIntoString(controls["controls"]["inputs"]["controls"][t].value, 'id','Array');
-                    }
-                    else if(typeof controls["controls"]["inputs"]["controls"][t].value=='object' ){
-                      this.rulesJson[this.data][index]["rules"][j]["inputs"][t].defaultValue = this.convertIntoString(controls["controls"]["inputs"]["controls"][t].value, 'id','Object');
-                    }
-  
-                    else {
-                      this.rulesJson[this.data][index]["rules"][j]["inputs"][t].defaultValue = controls["controls"]["inputs"]["controls"][t].value;
-                    }
-                  }
-                  this.rulesJson[this.data][index]["rules"][j].enable = controls["controls"]["enable"].value;
-                  if (this.rulesJson[this.data][index]["rules"][j]) {
-                    this.rulesJson[this.data][index]["rules"][j].ruleType = controls["controls"]["ruleType"].value.value;
-                  }
-
-                  if (this.displaySettings) {
-                    this.rulesJson[this.data][index]["rules"][j].displayInSettings = controls["controls"]["displayInSettings"].value;
-                  }
+          const controls = this.rulesForm.controls[index]['controls'][j];
+          for (const t in controls["controls"]["inputs"].controls) {
+            if (this.rulesJson[this.data][index] && this.rulesJson["plan"][index]["rules"][j]) {
+              if (this.rulesJson[this.data][index]["rules"][j]["inputs"] && this.rulesJson["plan"][index]["rules"][j]["inputs"][t]) {
+                if (Array.isArray(controls["controls"]["inputs"]["controls"][t].value)) {
+                  this.rulesJson[this.data][index]["rules"][j]["inputs"][t].defaultValue = this.convertIntoString(controls["controls"]["inputs"]["controls"][t].value, 'id', 'Array');
                 }
-              }         
+                else if (typeof controls["controls"]["inputs"]["controls"][t].value == 'object') {
+                  this.rulesJson[this.data][index]["rules"][j]["inputs"][t].defaultValue = this.convertIntoString(controls["controls"]["inputs"]["controls"][t].value, 'id', 'Object');
+                }
+
+                else {
+                  this.rulesJson[this.data][index]["rules"][j]["inputs"][t].defaultValue = controls["controls"]["inputs"]["controls"][t].value;
+                }
+              }
+              this.rulesJson[this.data][index]["rules"][j].enable = controls["controls"]["enable"].value;
+              if (this.rulesJson[this.data][index]["rules"][j]) {
+                this.rulesJson[this.data][index]["rules"][j].ruleType = controls["controls"]["ruleType"].value.value;
+              }
+
+              if (this.displaySettings) {
+                this.rulesJson[this.data][index]["rules"][j].displayInSettings = controls["controls"]["displayInSettings"].value;
+              }
+            }
+          }
         }
       }
-      let postData = {
+      const postData = {
         [this.data]: this.rulesJson[this.data]
       }
       this.isSaveClicked.emit(postData);
     }
     else {
-      let msgkeys = ['RULES_UPDATE_INVALID_HEADER', 'RULES_UPDATE_INVALID_FIELDS']
-      let severity = 'warn';
+      const msgkeys = ['RULES_UPDATE_INVALID_HEADER', 'RULES_UPDATE_INVALID_FIELDS']
+      const severity = 'warn';
       const translationKeys = await this.translateService.get(msgkeys).toPromise();
       this.messageService.add({ severity: severity, summary: translationKeys[msgkeys[0]], detail: translationKeys[msgkeys[1]] });
     }
@@ -278,74 +282,72 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   initForm() {
     this.ngxSpinner.show();
     let errorMessageGreater, errorMessageLesser;
-      this.translateService.get(['ADMIN_RULE_GREATER_THAN', 'ADMIN_RULE_LESSER_THAN']).subscribe((res) => {
-        errorMessageGreater = res['ADMIN_RULE_GREATER_THAN'];
-        errorMessageLesser = res['ADMIN_RULE_LESSER_THAN'];
-      })
+    this.translateService.get(['ADMIN_RULE_GREATER_THAN', 'ADMIN_RULE_LESSER_THAN']).subscribe((res) => {
+      errorMessageGreater = res['ADMIN_RULE_GREATER_THAN'];
+      errorMessageLesser = res['ADMIN_RULE_LESSER_THAN'];
+    })
     this.rulesForm = new FormArray([]);
     if (!this.displaySettings) {
       this.rulesJson[this.selectedTab].forEach(element => {
         element.rules = element.rules.filter(el => el.displayInSettings);
       });
     }
-    this.rulesJson[this.selectedTab].forEach(element => {
-      let formArrayTemp = new FormArray([])
-      element.rules.forEach((rule,rowIndex) => {
+    this.rulesJson[this.selectedTab].forEach((element, elementIndex) => {
+      const formArrayTemp = new FormArray([])
+      element.rules.forEach((rule, rowIndex) => {
         const formGroup = new FormGroup({})
-        formGroup.addControl('ruleType', new FormControl({value : rule.ruleType}))
+        formGroup.addControl('ruleType', new FormControl({ value: rule.ruleType }))
         if (this.displaySettings) {
           formGroup.addControl('displayInSettings', new FormControl(rule.displayInSettings))
         }
 
         formGroup.addControl('enable', new FormControl(rule.enable))
+
         const formArray = new FormArray([])
-        if (rule?.inputs.length > 0) {   
-          rule.inputs.forEach((input,inputIndex) => {                 
+        if (rule?.inputs.length > 0) {
+          rule.inputs.forEach((input, inputIndex) => {
+
             let value = null;
-            if(input.type ==='String' || input.type==='Number' || input.type === 'number' || input.type==='Boolean')
-            {
+            if (input.type === 'String' || input.type === 'Number' || input.type === 'number' || input.type === 'Boolean') {
               if (input?.value) {
                 value = input.value;
-
-
               }
               else if (input?.defaultValue) {
                 value = input.defaultValue
-
               }
             }
-          if(input.type==='MultiSelect' && input.ruleDropDownMaster!=null){
-            value = [];
-             let defaultValuesArray = input?.defaultValue?.split(',');
-             defaultValuesArray?.forEach(element => {
-               let result = input?.ruleDropDownMaster?.find(r=>r.id===Number(element))
-               value?.push(result);
-             });
+            if (input.type === 'MultiSelect' && input.ruleDropDownMaster != null) {
+              value = [];
+              const defaultValuesArray = input?.defaultValue?.split(',');
+              defaultValuesArray?.forEach((elem: any) => {
+                const result = input?.ruleDropDownMaster?.find(r => r.id === Number(elem))
+                value?.push(result);
+              });
             }
-            if(input.type=="Dropdown"  && input.ruleDropDownMaster!=null ){
-              value = input?.ruleDropDownMaster?.find(r=>r.id===Number(input?.defaultValue))
+            if (input.type === "Dropdown" && input.ruleDropDownMaster != null) {
+              value = input?.ruleDropDownMaster?.find(r => r.id === Number(input?.defaultValue))
             }
-            let validationArray = [];
-            if (input.isMandatory && rule?.isHardRule == false) {
+            const validationArray = [];
+            if (input.isMandatory && rule?.isHardRule == false && input.type) {
               validationArray.push(Validators.required);
             }
+            if (input && (input.max || input.min)) {
+              if (input?.max) {
+                const maxkey = elementIndex + '_' + rowIndex + '_' + inputIndex + '_' + 'max';
+                this.errorMessages[maxkey] = errorMessageLesser + input.max;
+              }
 
-            if (input?.max) {
-              validationArray.push(RulesValidator('inputs', rowIndex, inputIndex, input?.max, input?.min))
-              let maxkey = rowIndex + 'input' + '_' + inputIndex + '_' + input?.max;
-              this.errorMessages[maxkey] = errorMessageLesser + input?.max;
+              if (input?.min) {
+                const minkey = elementIndex + '_' + rowIndex + '_' + inputIndex + '_' + 'min';
+                this.errorMessages[minkey] = errorMessageGreater + input.min;
+              }
+              validationArray.push(RulesValidator('inputs', elementIndex, rowIndex, inputIndex, input.max, input.min))
             }
 
-            if (input?.min) {
-              validationArray.push(RulesValidator('inputs', rowIndex, inputIndex, input?.max, input?.min))
-              let minkey = rowIndex + 'input' + '_' + inputIndex + '_' + input?.min;
-              this.errorMessages[minkey] = errorMessageGreater + input?.min;
-            }
-              
-            
-            if (input.type === 'Number' || input.type == 'number') {
-              if (rule.numericScale !== 0 || rule.numericPrecision != 0) {
-                validationArray.push(numberValidator(rule.numericScale,(rule.numericPrecision - rule.numericScale)))
+
+            if (input.type === 'Number' || input.type === 'number') {
+              if (rule.numericPrecision !== 0) {
+                validationArray.push(numberValidator(rule.numericScale, (rule.numericPrecision - rule.numericScale)))
               }
             }
             formArray.push(new FormControl(value, validationArray))
@@ -353,12 +355,13 @@ export class RulesTableComponent implements OnInit, OnDestroy {
 
           formGroup.addControl('inputs', formArray)
         }
+        this.disableOrEnableRule(rowIndex, formGroup)
         formArrayTemp.push(formGroup);
       }
       )
       this.rulesForm.push(formArrayTemp);
     })
-  this.ngxSpinner.hide();
+    this.ngxSpinner.hide();
   }
 
 
@@ -370,12 +373,13 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   * @memberof RulesTableComponent
   */
   getControl(key: string, rowIndex: number, inputIndex: number = null): FormControl {
-   
     const temp: FormArray = <FormArray>this.rulesForm.at(this.selectedIndex);
     if (inputIndex !== null) {
       return <FormControl>(<FormArray>(<FormGroup>temp?.at(rowIndex))?.get(key))?.at(inputIndex)
     }
-    return <FormControl>(<FormGroup>temp?.at(rowIndex))?.get(key);
+    else {
+      return <FormControl>(<FormGroup>temp?.at(rowIndex))?.get(key);
+    }
   }
 
   /**
@@ -388,7 +392,6 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   */
   fieldError(key: string, rowIndex: number, inputIndex: number = null): ValidationErrors {
     const formControl = this.getControl(key, rowIndex, inputIndex);
- 
     return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }
 
@@ -398,16 +401,16 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   * @returns {void}
   * @memberof RulesTableComponent
   */
-  disableForm() {    
-    this.rulesJson[this.selectedTab].forEach((element,index) => {
+  disableForm() {
+    this.rulesJson[this.selectedTab].forEach((element, index) => {
       const temp: FormArray = <FormArray>this.rulesForm.at(index);
-      element.rules.forEach((rule,rowIndex) => {     
-      if (rule?.isHardRule) {
-        temp?.at(rowIndex)?.disable()
-      }
-    })
-  }
-  )
+      element.rules.forEach((rule, rowIndex) => {
+        if (rule?.isHardRule) {
+          temp?.at(rowIndex)?.disable()
+        }
+      })
+    }
+    )
   }
 
 
@@ -419,7 +422,8 @@ export class RulesTableComponent implements OnInit, OnDestroy {
   onRuleTypeSelected() {
     this.checkForFormValueChanges()
   }
-  
+
+
   /**
    *Method to convert array into string, seperated by commas based on property.
    *
@@ -442,7 +446,22 @@ export class RulesTableComponent implements OnInit, OnDestroy {
       }
     }
   }
-    
+
+  /**
+ *Method to disable or enable rule
+ *
+ * @memberof RulesTableComponent
+ */
+  disableOrEnableRule(rowIndex, fg = null) {
+    const formGroup = fg ? fg : <FormGroup>(<FormArray>this.rulesForm.at(this.selectedIndex)).at(rowIndex);
+    if (formGroup.get('enable').value) {
+      formGroup.enable()
+    } else {
+      formGroup.disable();
+      formGroup.get('enable').enable();
+    }
+  }
+
 }
 
 

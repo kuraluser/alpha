@@ -2,15 +2,27 @@
 package com.cpdss.gateway.service.loadingplan.impl;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailStatusReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest.Builder;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailStatusReply;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.vessel.PumpType;
@@ -24,15 +36,19 @@ import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.utility.AdminRuleTemplate;
 import com.cpdss.gateway.utility.AdminRuleValueExtract;
+import com.google.protobuf.ByteString;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Loading Information Tab Grid Data Populate here
@@ -47,8 +63,6 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
 
-  private final Long LOADING_RULE_MASTER_ID = 2l;
-
   @Autowired VesselInfoService vesselInfoService;
 
   @Autowired PortInfoService portInfoService;
@@ -58,6 +72,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Autowired LoadingInformationBuilderService loadingInfoBuilderService;
 
   @Autowired LoadableStudyService loadableStudyService;
+
+  @GrpcClient("loadingInformationService")
+  private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
+      loadingInfoServiceBlockingStub;
 
   /**
    * Sunset/Sunrise Only Collect from Synoptic Table in LS
@@ -81,7 +99,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         // RPC call to vessel info, Get Rules (default value for Loading Info)
         RuleResponse ruleResponse =
             vesselInfoService.getRulesByVesselIdAndSectionId(
-                vesselId, LOADING_RULE_MASTER_ID, null, null);
+                vesselId, GatewayConstants.LOADING_RULE_MASTER_ID, null, null);
         AdminRuleValueExtract extract =
             AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
 
@@ -123,7 +141,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
       // For Sunrise and Sunset, 1st  call to LS
       LoadableStudy.LoadingSynopticResponse response =
-          this.loadingPlanGrpcService.fetchSynopticRecordForPortRotationArrivalCondition(portRId);
+          this.loadingPlanGrpcService.fetchSynopticRecordForPortRotation(
+              portRId, GatewayConstants.OPERATION_TYPE_ARR);
       var.setTimeOfSunrise(
           response.getTimeOfSunrise().isEmpty() ? null : response.getTimeOfSunrise());
       var.setTimeOfSunset(response.getTimeOfSunset().isEmpty() ? null : response.getTimeOfSunset());
@@ -163,7 +182,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       // RPC call to vessel info, Get Rules (default value for Loading Info)
       RuleResponse ruleResponse =
           vesselInfoService.getRulesByVesselIdAndSectionId(
-              vesselId, LOADING_RULE_MASTER_ID, null, null);
+              vesselId, GatewayConstants.LOADING_RULE_MASTER_ID, null, null);
 
       // RPC call to vessel info, Get Vessel Details
       VesselInfo.VesselDetail vesselDetail = vesselInfoService.getVesselInfoByVesselId(vesselId);
@@ -252,8 +271,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
       // Line Content Remaining
       if (rateFromLoading.getLineContentRemaining().isEmpty()) {
-        var d = extract.getDefaultValueForKey(AdminRuleTemplate.LINE_CONTENT_REMAINING);
-        loadingRates.setLineContentRemaining(d.isEmpty() ? null : new BigDecimal(d));
+        // Not needed at Loading Rate Section, also line content remaining is Boolean not number
+        // var d = extract.getDefaultValueForKey(AdminRuleTemplate.LINE_CONTENT_REMAINING);
+        // loadingRates.setLineContentRemaining(d.isEmpty() ? null : new BigDecimal(d));
       } else {
         loadingRates.setLineContentRemaining(
             rateFromLoading.getLineContentRemaining().isEmpty()
@@ -305,7 +325,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           dto.setAirDraftLimitation(
               bd.getAirDraftLimitation().isEmpty()
                   ? BigDecimal.ZERO
-                  : new BigDecimal(bd.getSeaDraftLimitation()));
+                  : new BigDecimal(bd.getAirDraftLimitation()));
           dto.setMaxManifoldHeight(
               bd.getMaxManifoldHeight().isEmpty()
                   ? BigDecimal.ZERO
@@ -315,9 +335,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
               .ifPresent(dto::setRegulationAndRestriction);
           dto.setMaxLoa(
               bd.getMaxLoa().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxLoa()));
-          dto.setMaxShipDepth(
-              bd.getMaxDraft().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxDraft()));
           dto.setLineDisplacement(bd.getLineDisplacement());
+          dto.setHoseConnections(bd.getHoseConnection());
           berthDetails.add(dto);
         }
       } catch (Exception e) {
@@ -368,6 +387,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     VesselInfo.VesselPumpsResponse grpcReply =
         vesselInfoService.getVesselPumpsFromVesselInfo(vesselId);
     CargoMachineryInUse machineryInUse = new CargoMachineryInUse();
+
+    // Setting master data
     if (grpcReply != null) {
       try {
         List<PumpType> pumpTypes = new ArrayList<>();
@@ -381,13 +402,61 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         List<VesselPump> vesselPumps = new ArrayList<>();
         if (grpcReply.getVesselPumpCount() > 0) {
           for (VesselInfo.VesselPump vp : grpcReply.getVesselPumpList()) {
-            VesselPump pump = new VesselPump();
-            BeanUtils.copyProperties(vp, pump);
-            vesselPumps.add(pump);
+            // created an array of ids from constants.
+            if (GatewayConstants.LOADING_VESSEL_PUMPS_VAL.contains(vp.getPumpTypeId())) {
+              VesselPump pump = new VesselPump();
+              BeanUtils.copyProperties(vp, pump);
+              Optional.ofNullable(vp.getPumpCapacity())
+                  .ifPresent(v -> pump.setPumpCapacity(new BigDecimal(v)));
+              pump.setMachineType(Common.MachineType.VESSEL_PUMP_VALUE);
+              vesselPumps.add(pump);
+            }
           }
         }
         machineryInUse.setPumpTypes(pumpTypes);
         machineryInUse.setVesselPumps(vesselPumps);
+
+        if (!grpcReply.getVesselManifoldList().isEmpty()) {
+          List<VesselComponent> list1 = new ArrayList<>();
+          for (VesselInfo.VesselComponent vc : grpcReply.getVesselManifoldList()) {
+            VesselComponent vcDto = new VesselComponent();
+            vcDto.setId(vc.getId());
+            vcDto.setComponentCode(vc.getComponentCode());
+            vcDto.setComponentName(vc.getComponentName());
+            vcDto.setVesselId(vc.getVesselId());
+            vcDto.setComponentType(vc.getComponentType());
+            vcDto.setMachineTypeId(Common.MachineType.MANIFOLD_VALUE);
+            list1.add(vcDto);
+          }
+          machineryInUse.setVesselManifold(list1);
+        }
+
+        if (!grpcReply.getVesselBottomLineList().isEmpty()) {
+          List<VesselComponent> list2 = new ArrayList<>();
+          for (VesselInfo.VesselComponent vc : grpcReply.getVesselBottomLineList()) {
+            VesselComponent vcDto = new VesselComponent();
+            vcDto.setId(vc.getId());
+            vcDto.setComponentCode(vc.getComponentCode());
+            vcDto.setComponentName(vc.getComponentName());
+            vcDto.setVesselId(vc.getVesselId());
+            vcDto.setComponentType(vc.getComponentType());
+            vcDto.setMachineTypeId(Common.MachineType.BOTTOM_LINE_VALUE);
+            list2.add(vcDto);
+          }
+          machineryInUse.setVesselBottomLine(list2);
+        }
+
+        if (!grpcReply.getTankTypeList().isEmpty()) {
+          List<PumpType> tankTypes = new ArrayList<>();
+          for (VesselInfo.TankType type : grpcReply.getTankTypeList()) {
+            PumpType type1 = new PumpType();
+            type1.setId(type.getId());
+            type1.setName(type.getTypeName());
+            tankTypes.add(type1);
+          }
+          machineryInUse.setTankTypes(tankTypes);
+        }
+
         log.info(
             "Get loading info, Cargo machines Pump List Size {}, Type Size {} from Vessel Info",
             vesselPumps.size(),
@@ -398,15 +467,18 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       }
     }
 
+    // Setting Loading info Data
     if (!var1.isEmpty()) {
       List<LoadingMachinesInUse> list2 = new ArrayList<>();
       for (LoadingPlanModels.LoadingMachinesInUse lm : var1) {
         LoadingMachinesInUse var2 = new LoadingMachinesInUse();
         var2.setId(lm.getId());
-        var2.setPumpId(lm.getPumpId());
+        var2.setMachineId(lm.getMachineId());
         var2.setLoadingInfoId(lm.getLoadingInfoId());
+        var2.setMachineTypeId(lm.getMachineType().getNumber());
         var2.setCapacity(
             lm.getCapacity().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lm.getCapacity()));
+        var2.setIsUsing(lm.getIsUsing());
         list2.add(var2);
       }
       log.info("Loading plan machine in use added, Size {}", var1.size());
@@ -516,6 +588,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                 if (!v.isEmpty()) val1.setQuantity(new BigDecimal(v));
               });
       BeanUtils.copyProperties(var2, val1);
+      val1.setReasonForDelayIds(var2.getReasonForDelayIdsList());
       loadingDelays.add(val1);
     }
     loadingSequences.setReasonForDelays(reasonForDelays);
@@ -547,7 +620,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setMinTolerence(lqcd.getMinTolerence());
       cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());
       cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
-      cargoDetails.setOrderedQuantity(lqcd.getOrderedMT());
+      cargoDetails.setOrderedQuantity(lqcd.getOrderQuantity());
 
       cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
       cargoDetails.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
@@ -736,24 +809,136 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     try {
       log.info("Calling generateLoadingPlan in loading-plan microservice via GRPC");
       LoadingInfoAlgoResponse algoResponse = new LoadingInfoAlgoResponse();
-      ResponseStatus response = this.loadingPlanGrpcService.generateLoadingPlan(infoId);
-      if (response.getStatus().equalsIgnoreCase(SUCCESS)) {
+      LoadingInfoAlgoReply response = this.loadingPlanGrpcService.generateLoadingPlan(infoId);
+      if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
         CommonSuccessResponse successResponse = new CommonSuccessResponse("SUCCESS", "");
+        algoResponse.setProcessId(response.getProcessId());
         algoResponse.setResponseStatus(successResponse);
         return algoResponse;
       } else {
-        log.error("Failed to save LoadingInformation {}", infoId);
+        log.error("Failed to generate Loading Plan for Loading Information {}", infoId);
         throw new GenericServiceException(
             "Failed to save Loading Information",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
     } catch (Exception e) {
-      log.error("Failed to save LoadingInformation {}", infoId);
+      log.error("Failed to generate Loading Plan for Loading Information {}", infoId);
       throw new GenericServiceException(
           "Failed to generate Loading Plan",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  @Override
+  public LoadingInfoAlgoStatus getLoadingInfoAlgoStatus(
+      Long vesselId, Long voyageId, Long infoId, String processId, Integer conditionType)
+      throws GenericServiceException {
+    log.info("Fetching ALGO status of Loading Information {} from Loading-Info MS", infoId);
+    LoadingInfoStatusRequest.Builder requestBuilder = LoadingInfoStatusRequest.newBuilder();
+    requestBuilder.setLoadingInfoId(infoId);
+    requestBuilder.setProcessId(processId);
+    Optional.ofNullable(conditionType).ifPresent(requestBuilder::setConditionType);
+    LoadingInfoStatusReply reply =
+        this.loadingPlanGrpcService.getLoadingInfoAlgoStatus(requestBuilder.build());
+    LoadingInfoAlgoStatus algoStatus = new LoadingInfoAlgoStatus();
+    if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      throw new GenericServiceException(
+          "Failed to fetch Loading Information ALGO status",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    algoStatus.setLoadingInfoStatusId(reply.getLoadingInfoStatusId());
+    algoStatus.setLoadingInfoStatusLastModifiedTime(reply.getLoadingInfoStatusLastModifiedTime());
+    algoStatus.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
+    return algoStatus;
+  }
+
+  @Override
+  public AlgoErrorResponse getLoadingInfoAlgoErrors(
+      Long vesselId, Long voyageId, Long infoId, Integer conditionType)
+      throws GenericServiceException {
+    log.info("Fetching ALGO errors of Loading Information {} from Loading-Info MS", infoId);
+    AlgoErrorRequest.Builder requestBuilder = AlgoErrorRequest.newBuilder();
+    requestBuilder.setLoadingInformationId(infoId);
+    Optional.ofNullable(conditionType).ifPresent(requestBuilder::setConditionType);
+    AlgoErrorResponse algoResponse = new AlgoErrorResponse();
+    AlgoErrorReply reply =
+        this.loadingPlanGrpcService.getLoadingInfoAlgoErrors(requestBuilder.build());
+    if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      throw new GenericServiceException(
+          "Failed to fetch Loading Information ALGO status",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    this.buildAlgoErrors(reply, algoResponse);
+    return algoResponse;
+  }
+
+  /**
+   * Builds ALGO error response
+   *
+   * @param reply
+   * @param algoResponse
+   */
+  private void buildAlgoErrors(AlgoErrorReply reply, AlgoErrorResponse algoResponse) {
+    List<AlgoError> algoErrors = new ArrayList<AlgoError>();
+    reply
+        .getAlgoErrorsList()
+        .forEach(
+            error -> {
+              AlgoError algoError = new AlgoError();
+              algoError.setErrorHeading(error.getErrorHeading());
+              algoError.setErrorDetails(error.getErrorMessagesList());
+              algoErrors.add(algoError);
+            });
+    algoResponse.setAlgoErrors(algoErrors);
+    algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
+  }
+
+  /** Upload Tide data from excel to db */
+  @Override
+  public UploadTideDetailResponse uploadLoadingTideDetails(
+      Long loadingId, MultipartFile file, String correlationId)
+      throws IOException, GenericServiceException {
+    String originalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
+    if (!(originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())
+        .equals("xlsx")) {
+      throw new GenericServiceException(
+          "unsupported file type", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+    }
+    Builder builder = UploadTideDetailRequest.newBuilder();
+    builder.setTideDetaildata(ByteString.copyFrom(file.getBytes()));
+    builder.setLoadingId(loadingId);
+    UploadTideDetailStatusReply statusReply =
+        loadingInfoServiceBlockingStub.uploadPortTideDetails(builder.build());
+    if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          statusReply.getResponseStatus().getMessage(),
+          statusReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(statusReply.getResponseStatus().getHttpStatusCode()));
+    }
+    UploadTideDetailResponse response = new UploadTideDetailResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  @Override
+  public byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException {
+
+    com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest.Builder
+        builder = DownloadTideDetailRequest.newBuilder();
+    builder.setLoadingId(loadingId);
+    DownloadTideDetailStatusReply statusReply =
+        loadingInfoServiceBlockingStub.downloadPortTideDetails(builder.build()).next();
+    if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          statusReply.getResponseStatus().getMessage(),
+          statusReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(statusReply.getResponseStatus().getHttpStatusCode()));
+    }
+    return statusReply.getData().toByteArray();
   }
 }

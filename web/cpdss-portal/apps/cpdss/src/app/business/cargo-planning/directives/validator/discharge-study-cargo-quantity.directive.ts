@@ -1,5 +1,5 @@
 import { FormArray, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { iif } from 'rxjs';
+
 
 /**
  * Validator Function for CargoQuantity
@@ -13,7 +13,6 @@ export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormC
   const portDetails = control.root.get('portDetails') as FormArray;
   let totalParentQuantityIndex;
   let calculatedTotalQuantity = 0;
-  let totalQuantity = 0;
   let maxQuantity;
   let isAutoModeAvailable;
   let noCargoFoundtStatus;
@@ -24,14 +23,12 @@ export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormC
     if (totalParentQuantityIndex === undefined) {
       const dischargeCargoFormControls = item.get('cargoDetail').get('dataTable') as FormArray;
       dischargeCargoFormControls['controls'].map((backLoadingItems) => {
-        if (control.parent?.value?.color && backLoadingItems.get('color').value === control.parent?.value?.color) {
+        if (control.parent?.value?.color && backLoadingItems.get('storedKey').value === control.parent?.value?.storedKey) {
           totalParentQuantityIndex = itemIndex;
           if(backLoadingItems.get('mode').value.id === 2) {
-            totalQuantity = Number(backLoadingItems.get('maxKl').value) - Number(backLoadingItems.get('kl').value);
             calculatedTotalQuantity += Number(backLoadingItems.get('kl').value);
           } else {
             isAutoModeAvailable = true;
-            totalQuantity = Number(backLoadingItems.get('maxKl').value);
           }
           maxQuantity = Number(backLoadingItems.get('maxKl').value);
         }
@@ -39,10 +36,9 @@ export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormC
 
       const backLoadingDetailsFormControls = item.get('backLoadingDetails').get('dataTable') as FormArray;
       backLoadingDetailsFormControls['controls'].map((backLoadingItems) => {
-        if (control.parent?.value?.color && backLoadingItems.get('color').value === control.parent?.value?.color) {
+        if (control.parent?.value?.color && backLoadingItems.get('storedKey').value === control.parent?.value?.storedKey) {
           totalParentQuantityIndex = itemIndex;
-          totalQuantity = Number(backLoadingItems.get('kl').value);
-          maxQuantity = totalQuantity;
+          maxQuantity = Number(backLoadingItems.get('kl').value);
         }
       })
       if(calculatedTotalQuantity === maxQuantity) {
@@ -51,7 +47,7 @@ export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormC
     } else {
       const cargoDataTable = item.get('cargoDetail').get('dataTable') as FormArray;
       const findCargo = cargoDataTable['controls'].find((cargoDetailItems, cargoDetailIndex) => {
-        if (control.parent.value.color && cargoDetailItems.get('color').value === control.parent.value.color) {
+        if (control.parent.value.color && cargoDetailItems.get('storedKey').value === control.parent.value.storedKey) {
           if(cargoDetailItems.get('mode').value?.id === 1) {
             isAutoModeAvailable = true;
           }
@@ -69,7 +65,6 @@ export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormC
       }
     }
   })
-  
   if(!isQuantityAutoCorrect && calculatedTotalQuantity > maxQuantity) {
     return { greaterThanTotalQuantity: true }
   } else if(!noCargoFoundtStatus && !isAutoModeAvailable && calculatedTotalQuantity !== maxQuantity && !isQuantityAutoCorrect) {

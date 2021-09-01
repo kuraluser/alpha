@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
+import { IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { IDischargeStudiesResponse, IDischargeStudy, IDischargeStudyResponse } from '../models/discharge-study-list.model';
 
@@ -42,5 +43,14 @@ export class DischargeStudyListApiService {
        return this.commonApiService.putFormData<IDischargeStudyResponse>(`discharge-studies/${dischargeStudyId}`,formData)
       }
     }
-
+  
+   /**
+    * Method to delete discharge study.
+    *
+    * @memberof DischargeStudyListApiService
+    */
+   deleteDischargeStudy(dischargeStudyId:any)
+   {
+    return this.commonApiService.delete<IResponse>(`discharge-studies/${dischargeStudyId}`)
+   } 
 }

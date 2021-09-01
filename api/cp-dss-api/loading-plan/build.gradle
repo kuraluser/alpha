@@ -4,6 +4,7 @@ ext{
   dbUser = System.getenv('DB_USER') ?: ""
   dbPassword = System.getenv('DB_PASSWORD') ?: ""
   grpcPort = System.getenv('GRPC_PORT') ?: ""
+  algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
 }
 
 appConfig {
@@ -13,6 +14,8 @@ appConfig {
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
+  unitTest = 'y'
+  keyvaluestore = 'y'
 docker {
     imageName = 'cpdss-loading-plan'
     containerName = 'loading-plan-container'
@@ -23,7 +26,8 @@ docker {
       replicas = 1
       rollbackOnUpdateFailure = true
     }
-    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword]
+    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword,
+    'ALGO_BASE_URL': algoBaseURL, 'ATTACHMENT_ROOT_PATH': '/data']
   }
   javaMainClass = "com.cpdss.loadingplan.Application"
 }
@@ -32,5 +36,7 @@ dependencies {
     implementation project(':common')
 	compile group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
+	compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
     compile group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE'
 }

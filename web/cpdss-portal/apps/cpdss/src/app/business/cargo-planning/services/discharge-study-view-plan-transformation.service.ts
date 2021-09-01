@@ -2,20 +2,24 @@ import { Injectable } from '@angular/core';
 
 import { ValueObject } from '../../../shared/models/common.model';
 
-import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_BUTTON, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, ISubTotal , IMode , ICargo } from '../../../shared/models/common.model';
-import { IPortDetailValueObject , IBackLoadingDetails , IPortCargo , IDischargeStudyDropdownData } from '../models/discharge-study-view-plan.model';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 
-@Injectable()
+import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_BUTTON, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, ISubTotal , IMode } from '../../../shared/models/common.model';
+import { IPortDetailValueObject , IBackLoadingDetails , IPortCargo , IDischargeStudyDropdownData , IDischargeStudyBackLoadingDetails , IDischargeStudyPortListDetails , IDischargeStudyCargoNominationList} from '../models/discharge-study-view-plan.model';
+import { ICargo } from '../../core/models/common.model';
 
 /**
- * Transformation service for Discharge study Details module
+ * Transformation service for Discharge Plan Details module
  *
  * @export
  * @class DischargeStudyViewPlanTransformationService
 */
+@Injectable()
 
 export class DischargeStudyViewPlanTransformationService {
+
+  private quantityPipe: QuantityPipe = new QuantityPipe();
 
   constructor() { }
 
@@ -79,7 +83,7 @@ export class DischargeStudyViewPlanTransformationService {
         numberType: 'quantity'
       },
       {
-        field: 'time',
+        field: 'dischargeTime',
         header: 'DISCHARGE_STUDY_VIEW_PLAN_TIME'
       }
     ]
@@ -161,26 +165,38 @@ export class DischargeStudyViewPlanTransformationService {
  * Method to convert loadable plan tank details to value object
  *
  * @param {boolean} isLastIndex
- * @param {*} portDetail
+ * @param {IDischargeStudyPortListDetails} portDetail
  * @param {ITankDetails} tankDetails
  * @param {boolean} [isNewValue=true]
  * @returns {IPortDetailValueObject}
  * @memberof DischargeStudyViewPlanTransformationService
  */
-  getPortDetailAsValueObject(portDetail: any, listData: IDischargeStudyDropdownData, isLastIndex: boolean, isNewValue = true): IPortDetailValueObject {
+  getPortDetailAsValueObject(portDetail: IDischargeStudyPortListDetails, listData: IDischargeStudyDropdownData, isLastIndex: boolean, isNewValue = true): IPortDetailValueObject {
     const _portDetail = <IPortDetailValueObject>{};
-    _portDetail.portName = portDetail.portName;
-    _portDetail.instruction = portDetail.instruction ? portDetail.instruction : listData.instructions[0];
-    _portDetail.draftRestriction = portDetail.draftRestriction;
-    _portDetail.cargoDetail = portDetail.cargo.map((cargoDetail) => {
-      return this.getCargoDetailsAsValueObject(cargoDetail, listData);
+    const port = listData.portList.find((portItem) =>{
+      if(portItem.id === portDetail.portId) {
+        return portItem;
+      }
     })
-    const cow: IMode = listData.mode.find(modeDetails => modeDetails.id === portDetail.cow);
+    _portDetail.portName = port.name;
+    _portDetail.isBackLoadingEnabled = portDetail.isBackLoadingEnabled;
+    if(portDetail.instructionId?.length) {
+      _portDetail.instruction = listData.instructions.find((instruction) => {
+        return portDetail.instructionId.some((instructionId) => {
+          return instructionId === instruction.id;
+        })
+      })
+    }
+    _portDetail.draftRestriction = portDetail.maxDraft;
+    _portDetail.cargoDetail = portDetail.cargoNominationList ? portDetail.cargoNominationList?.map((cargoDetail) => {
+      return this.getCargoDetailsAsValueObject(cargoDetail, listData);
+    }): []
+    const cow: IMode = listData.mode.find(modeDetails => modeDetails.id === portDetail.cowId);
     _portDetail.cow = cow;
     _portDetail.dischargeRate = portDetail.dischargeRate;
-    _portDetail.backLoadingDetails = portDetail.backLoadingDetails.map((backLoadingDetail) => {
+    _portDetail.backLoadingDetails = portDetail.backLoading ? portDetail.backLoading?.map((backLoadingDetail) => {
       return this.getBackLoadingDetailAsValueObject(backLoadingDetail, listData, isNewValue);
-    });
+    }) : [];
     return _portDetail;
   }
 
@@ -193,48 +209,54 @@ export class DischargeStudyViewPlanTransformationService {
   * @returns {IPortDetailValueObject}
   * @memberof DischargeStudyViewPlanTransformationService
   */
-  getCargoDetailsAsValueObject(cargoDetail: any, listData: IDischargeStudyDropdownData, isNewValue = true) {
+  getCargoDetailsAsValueObject(cargoDetail: IDischargeStudyCargoNominationList, listData: IDischargeStudyDropdownData, isNewValue = true) {
     const _cargoDetailValuObject = <IPortCargo>{};
-    const mode = listData.mode.find(modeDetails => modeDetails.id === cargoDetail.mode);
+    
     const cargoObj = listData.cargoList.find(cargo => cargo.id === cargoDetail.cargoId);
-    const isKlEditable = mode?.id === 2 ? true : false;
-    _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color, true, false);
-    _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? cargoDetail.bbls : '-', true, false);
+    
+    const unitConversion = {
+      kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature),
+      bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature)
+    }
+    _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color, true, false , false);
+    _cargoDetailValuObject.bbls = new ValueObject<string>(unitConversion.bbls?.toString(), true, false);
     _cargoDetailValuObject.cargo = new ValueObject<ICargo>(cargoObj, true, false);
-    _cargoDetailValuObject.kl = new ValueObject<string>(isKlEditable ? cargoDetail.kl : '-', true, false, false, isKlEditable);
-    _cargoDetailValuObject.maxKl = new ValueObject<number>(cargoDetail.maxKl, false, false);
-    _cargoDetailValuObject.mt = new ValueObject<string>(isKlEditable ? cargoDetail.mt : '-', true, false);
-    _cargoDetailValuObject.time = cargoDetail.time;
+    _cargoDetailValuObject.kl = new ValueObject<string>(unitConversion.kl?.toString(), true, false, false, false);
+    
+    _cargoDetailValuObject.mt = new ValueObject<string>(cargoDetail.quantity?.toString(), true, false);
+    _cargoDetailValuObject.dischargeTime = cargoDetail.dischargeTime;
     _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true, false);
     _cargoDetailValuObject.api = new ValueObject<number>(cargoDetail.api);
-    _cargoDetailValuObject.temp = new ValueObject<number>(cargoDetail.temp);
+    _cargoDetailValuObject.temp = new ValueObject<number>(cargoDetail.temperature);
     return _cargoDetailValuObject;
   }
 
 
-  /**
-  * Method to convert loadable plan tank details to value object
-  *
-  * @param {*} portDetail
-  * @param {ITankDetails} tankDetails
-  * @param {boolean} [isNewValue=true]
-  * @returns {IPortDetailValueObject}
-  * @memberof DischargeStudyViewPlanTransformationService
-  */
-  getBackLoadingDetailAsValueObject(backLoadingDetail: any, listData: IDischargeStudyDropdownData, isNewValue = true): IBackLoadingDetails {
-    const _backLoadingDetailDetail = <IBackLoadingDetails>{};
-    const cargoObj: ICargo = backLoadingDetail.cargoId ? listData.cargoList.find(cargo => cargo.id === backLoadingDetail.cargoId) : null;
-    _backLoadingDetailDetail.color = new ValueObject<string>(backLoadingDetail.color, true, isNewValue);
-    _backLoadingDetailDetail.bbls = new ValueObject<number>(backLoadingDetail.bbls, true, false);
-    _backLoadingDetailDetail.cargo = new ValueObject<ICargo>(cargoObj, true, isNewValue);
-    _backLoadingDetailDetail.kl = new ValueObject<number>(backLoadingDetail.kl, true, isNewValue);
-    _backLoadingDetailDetail.mt = new ValueObject<number>(backLoadingDetail.mt, true, false);
-    _backLoadingDetailDetail.api = new ValueObject<string>(backLoadingDetail.api, true, isNewValue);
-    _backLoadingDetailDetail.temp = new ValueObject<string>(backLoadingDetail.temp, true, isNewValue);
-    _backLoadingDetailDetail.isDelete = true;
-    _backLoadingDetailDetail.isAdd = isNewValue;
-    _backLoadingDetailDetail.abbreviation = new ValueObject<string>(backLoadingDetail.abbreviation);
-    _backLoadingDetailDetail.cargoAbbreviation = Math.random().toString();
-    return _backLoadingDetailDetail;
-  }
+   /**
+   * Method to convert loadable plan tank details to value object
+   *
+   * @param {IDischargeStudyBackLoadingDetails} backLoadingDetail
+   * @param {IDischargeStudyDropdownData} listData
+   * @param {boolean} [isNewValue=true]
+   * @returns {IPortDetailValueObject}
+   * @memberof DischargeStudyDetailsTransformationService
+   */
+    getBackLoadingDetailAsValueObject(backLoadingDetail: IDischargeStudyBackLoadingDetails, listData:IDischargeStudyDropdownData ,isNewValue = true): IBackLoadingDetails {
+      const _backLoadingDetailDetail = <IBackLoadingDetails>{};
+      const unitConversion = {
+        kl: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature),
+        bbls: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, backLoadingDetail.api, backLoadingDetail.temperature),
+      }
+      const cargoObj: ICargo = backLoadingDetail.cargoId ? listData.cargoList.find(cargo => cargo.id === backLoadingDetail.cargoId) : null;
+      _backLoadingDetailDetail.color = new ValueObject<string>(backLoadingDetail.color , true , isNewValue);
+      _backLoadingDetailDetail.bbls = new ValueObject<number>(unitConversion.bbls ? unitConversion.bbls : 0, true , false);
+      _backLoadingDetailDetail.cargo = new ValueObject<ICargo>(cargoObj, true , isNewValue);
+      _backLoadingDetailDetail.kl = new ValueObject<number>(unitConversion.kl ? unitConversion.kl : 0 , true , isNewValue);
+      _backLoadingDetailDetail.mt = new ValueObject<number>(backLoadingDetail.quantity  , true , false);
+      _backLoadingDetailDetail.api = new ValueObject<string>(backLoadingDetail.api?.toString() , true , isNewValue);
+      _backLoadingDetailDetail.temp = new ValueObject<string>(backLoadingDetail.temperature?.toString() , true , isNewValue);
+
+      _backLoadingDetailDetail.abbreviation = new ValueObject<string>(backLoadingDetail.abbreviation, true , isNewValue);
+      return _backLoadingDetailDetail;
+    }
 }

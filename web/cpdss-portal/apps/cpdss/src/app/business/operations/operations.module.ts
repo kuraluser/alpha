@@ -10,8 +10,23 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { PortRotationRibbonModule } from '../core/components/port-rotation-ribbon/port-rotation-ribbon.module';
 import { AddPortPopupModule } from './add-port-popup/add-port-popup.module';
-import { LoadingTransformationService } from './services/loading-transformation.service';
+import { RulesModule } from './rules/rules.module';
+import { RulesService } from './services/rules/rules.service';
+import { LoadingDischargingTransformationService } from './services/loading-discharging-transformation.service';
+import { QuantityPipeModule } from '../../shared/pipes/quantity/quantity-pipe.module';
+import { QuantityPipe } from '../../shared/pipes/quantity/quantity.pipe';
+import { OperationsApiService } from './services/operations-api.service';
+import { RateUnitDropdownModule } from '../core/components/rate-unit-dropdown/rate-unit-dropdown.module';
+import { QuantityDecimalFormatPipe } from '../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
+import { QuantityDecimalFormatPipeModule } from '../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
+import { LoadingApiService } from './services/loading-api.service';
 
+/**
+ * Module class for operations module
+ *
+ * @export
+ * @class OperationsModule
+ */
 @NgModule({
   declarations: [
     OperationsComponent
@@ -24,8 +39,12 @@ import { LoadingTransformationService } from './services/loading-transformation.
     VesselInfoModule,
     UnitDropdownModule,
     PortRotationRibbonModule,
-    AddPortPopupModule
+    AddPortPopupModule,
+    RulesModule,
+    QuantityPipeModule,
+    RateUnitDropdownModule,
+    QuantityDecimalFormatPipeModule
   ],
-  providers: [VesselsApiService, LoadingTransformationService ]
+  providers: [VesselsApiService, RulesService, LoadingDischargingTransformationService, QuantityPipe, OperationsApiService , QuantityDecimalFormatPipe ,LoadingApiService]
 })
 export class OperationsModule { }

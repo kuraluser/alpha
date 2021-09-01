@@ -4,7 +4,7 @@ import { ICargoConditions, QUANTITY_UNIT } from '../../../shared/models/common.m
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ICargoQuantities } from '../../core/models/common.model';
-import { LoadingDischargingCargoDetailsTableTransformationService } from './loading-discharging-cargo-details-table-transformation.service';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 @Component({
   selector: 'cpdss-portal-loading-discharging-cargo-details-table',
@@ -56,8 +56,8 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _cargoQuantities: any[];
   constructor(
-    private loadingDischargingCargoDetailsTableTransformationService: LoadingDischargingCargoDetailsTableTransformationService,
-    private quantityPipe: QuantityPipe
+    private quantityPipe: QuantityPipe,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService
   ) { }
 
   /**
@@ -66,7 +66,7 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
    * @memberof LoadingDischargingCargoDetailsTableComponent
    */
   ngOnInit(): void {
-    this.columns = this.loadingDischargingCargoDetailsTableTransformationService.getColumnFields();
+    this.columns = this.loadingDischargingTransformationService.getLoadingDischargingCargoDetailTableColumn();
   }
 
   /**
@@ -103,16 +103,18 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
       cargoList.actualWeight = actualWeight ? Number(actualWeight) : 0;
 
       this.totalPlanned = cargoList.plannedWeight + this.totalPlanned;
-      const difference = cargoList.actualWeight - cargoList.plannedWeight;
+      const difference = (Number(cargoList.actualWeight - cargoList.plannedWeight) / cargoList.plannedWeight) * 100;
       this.totalActual = cargoList.actualWeight + this.totalActual;
       cargoList.difference = difference ? Number(difference) : 0;
-      this.totalDifference = difference + this.totalDifference;
-      difference > 0 ? cargoList.isPositive = true : cargoList.isPositive = false;
+      cargoList.isPositive = difference > 0 ? true : false;
     });
 
     this.totalPlanned = this.totalPlanned ? Number(this.totalPlanned) : 0;
     this.totalActual = this.totalActual ? Number(this.totalActual) : 0;
-    this.totalDifference = this.totalDifference ? Number(this.totalDifference) : 0;
+    this.totalDifference = ((this.totalActual - this.totalPlanned) / this.totalPlanned) * 100;
+    if(isNaN(this.totalDifference)){
+      this.totalDifference = 0;
+    }
     this.totalDifference > 0 ? this.isTotalPositive = true : this.isTotalPositive = false;
   }
 

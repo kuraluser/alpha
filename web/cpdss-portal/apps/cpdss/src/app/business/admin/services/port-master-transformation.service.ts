@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE } from '../../../shared/components/datatable/datatable.model';
+import { IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FIELD_TYPE, DATATABLE_ACTION } from '../../../shared/components/datatable/datatable.model';
 import { AdminModule } from '../admin.module';
 
 /**
@@ -226,5 +226,106 @@ export class PortMasterTransformationService {
         lon: selectedPortLocation[1],
       }
     }
+  }
+
+
+  /**
+   * Method to get berth grid columns list.
+   *
+   * @memberof PortMasterTransformationService
+   */
+  getBerthGridColumns()  {
+    let columns :IDataTableColumn[] = 
+    [
+      {
+        field: 'slNo',
+        header: 'SL',
+        fieldType: DATATABLE_FIELD_TYPE.SLNO,
+        fieldHeaderClass: 'column-sl',
+        fieldClass: 'sl'
+      },
+      {
+        field: 'berthName',
+        header: 'PORTMASTER_BERTH_NAME',
+        filter: true,
+        filterPlaceholder: '',
+        filterType: DATATABLE_FILTER_TYPE.TEXT,
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterField: 'berthName',
+        sortable: true,
+        sortField: 'berthName',
+        editable: true,
+
+      },
+      {
+        field: 'berthDepth',
+        header: 'PORTMASTER_BERTH_DEPTH',
+        filter: true,
+        filterPlaceholder: '',
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        filterType: DATATABLE_FILTER_TYPE.TEXT,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterField: 'berthDepth',
+        sortable: true,
+        sortField: 'berthDepth',
+        editable: true
+      },
+      {
+        field: 'maxLoa',
+        header: 'PORTMASTER_BERTH_MAXIMUM_LOA',
+        filter: true,
+        filterPlaceholder: '',
+        
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        filterField: 'maxLoa',
+        sortable: true,
+        sortField: 'maxLoa',
+        editable: true
+      },
+      {
+        field: 'maxDwt',
+        header: 'PORTMASTER_BERTH_MAXIMUM_DWT',
+        filter: true,
+        filterPlaceholder: '',
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        filterField: 'maxDwt',
+        sortable: true,
+        sortField: 'maxDwt',
+        editable: true
+      },
+      {
+        field: 'maxManifoldHeight',
+        header: 'PORTMASTER_BERTH_MANIFOLD_HEIGHT',
+        filter: true,
+        filterPlaceholder: '',
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        filterField: 'maxManifoldHeight',
+        sortable: true,
+        sortField: 'maxManifoldHeight',
+        editable: true
+      },
+      {
+        field: 'minUkc',
+        header: 'PORTMASTER_BERTH_MINIMUM_UKC',
+        filter: true,
+        filterPlaceholder: '',
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        filterField: 'minUkc',
+        sortable: true,
+        sortField: 'minUkc',
+        editable: true
+      }
+    ];
+    const actions: DATATABLE_ACTION[] = [];     
+      const action: IDataTableColumn = {
+        field: 'actions',
+        header: '',
+        fieldType: DATATABLE_FIELD_TYPE.ACTION,
+        fieldValueIcon: '##',
+        actions: actions
+      };
+      columns = [...columns, action];  
+    return columns;
   }
 }

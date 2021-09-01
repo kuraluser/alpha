@@ -7,7 +7,7 @@ import { SecurityService } from '../../services/security/security.service';
 import { ThemeService } from '../../services/theme-service/theme.service';
 import { IMenuItem, IPermission, INotificationItem } from './navbar.component.model';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
-import { environment } from 'apps/cpdss/src/environments/environment';
+import { environment } from '../../../../environments/environment';
 import { NavbarApiService } from './navbar-api.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
@@ -24,6 +24,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isToggle = true;
   darkMode$: Observable<boolean>;
   menuList: IMenuItem[] = [];
+  menuListConstant: IMenuItem[];
   showUserIconDropdown = false;
   companyLogo = '';
   userPermission: any;
@@ -65,13 +66,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
     this.navigationEvent$ = this.router.events.pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(event => {
+    this.getPagePermission(this.menuListConstant);
+
         this.activeRoute(event['url']);
       });
 
     /**
      * Array for showing nav
      */
-    const menuList = [
+    this.menuListConstant = [
       {
         'menu': 'DASHBOARD',
         'menuIcon': 'status',
@@ -79,19 +82,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
         'routerLinkActive': 'voyage-status',
         'subMenu': [],
         'isSubMenuOpen': false,
-        'permissionMapping': AppConfigurationService.settings.permissionMapping['VoyageStatusComponent']
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['VoyageStatusComponent'],
+        'isShoreActive': false
       },
       {
         'menu': 'CARGO_PLANNING',
         'menuIcon': 'cargo-planning',
         'menuLink': '',
         'routerLinkActive': 'cargo-planning',
-         'subMenu': [
+        'subMenu': [
           { 'name': 'LOADABLE_STUDY', 'subMenuLink': 'business/cargo-planning/loadable-study-list', 'permissionMapping': AppConfigurationService.settings.permissionMapping['LoadableStudyListComponent'], 'isVisible': false },
           { 'name': 'DISCHARGE_STUDY', 'subMenuLink': 'business/cargo-planning/discharge-study-list', 'permissionMapping': AppConfigurationService.settings.permissionMapping['DischargeStudyListing'], 'isVisible': false },
         ],
         'isSubMenuOpen': false,
-        'permissionMapping': AppConfigurationService.settings.permissionMapping['CargoPlanningComponent']
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['CargoPlanningComponent'],
+        'isShoreActive': false
       },
       {
         'menu': 'VOYAGES',
@@ -100,7 +105,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
         'routerLinkActive': 'voyage-list',
         'subMenu': [],
         'isSubMenuOpen': false,
-        'permissionMapping': AppConfigurationService.settings.permissionMapping['voyagesComponent']
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['voyagesComponent'],
+        'isShoreActive': false
       },
       {
         'menu': 'SYNOPTICAL',
@@ -114,6 +120,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         'addVoyageId': true,
         'addLoadableStudyId': true,
         'addLoadablePatternId': true,
+        'isShoreActive': false
       },
       {
         'menu': 'ADMIN',
@@ -123,11 +130,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['AdminComponent'],
         'subMenu': [
+          { 'name': 'VESSEL_INFORMATION', 'subMenuLink': '/business/admin/vessel-information', 'permissionMapping': AppConfigurationService.settings.permissionMapping['VesselInformationComponent'], 'isVisible': false },
           { 'name': 'USER_ROLE_PERMISSION', 'subMenuLink': '/business/admin/user-role-permission', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserRoleListing'], 'isVisible': false },
           { 'name': 'ADMIN_USER_LABEL', 'subMenuLink': '/business/admin/user-listing', 'permissionMapping': AppConfigurationService.settings.permissionMapping['UserListingComponent'], 'isVisible': false },
-          { 'name': 'PORT_MASTER', 'subMenuLink': '/business/admin/port-listing','permissionMapping': AppConfigurationService.settings.permissionMapping['PortListingComponent'],'isVisible': false },
-          { 'name': 'ADMIN_RULES', 'subMenuLink': '/business/admin/rules','permissionMapping': AppConfigurationService.settings.permissionMapping['AdminRuleComponent'],'isVisible': true },       
+          { 'name': 'PORT_MASTER', 'subMenuLink': '/business/admin/port-listing', 'permissionMapping': AppConfigurationService.settings.permissionMapping['PortListingComponent'], 'isVisible': false },
+          { 'name': 'ADMIN_RULES', 'subMenuLink': '/business/admin/rules', 'permissionMapping': AppConfigurationService.settings.permissionMapping['AdminRuleComponent'], 'isVisible': true },
+          { 'name': 'CARGO_MASTER', 'subMenuLink': '/business/admin/cargo-master', 'permissionMapping': AppConfigurationService.settings.permissionMapping['CargoMasterComponent'], 'isVisible': true },
+
         ],
+        'isShoreActive': true
       },
       {
         'menu': 'OPERATIONS',
@@ -137,40 +148,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
         'isSubMenuOpen': false,
         'permissionMapping': AppConfigurationService.settings.permissionMapping['OperationsComponent'],
         'subMenu': [],
-      },
-      /*
-      {
-        'menu': 'VOYAGES',
-        'menuIcon': 'voyages',
-        'menuLink': 'voyages',
-        'subMenu': [
-
-        ]
-      },
-      {
-        'menu': 'REPORTERS',
-        'menuIcon': 'voyages',
-        'menuLink': 'admin',
-        'subMenu': []
-      },
-      {
-        'menu': 'ADMIN',
-        'menuIcon': 'voyages',
-        'menuLink': 'admin',
-        'subMenu': []
-      } */
-
+        'isShoreActive': false
+      }
     ];
 
     if (this.isShore) {
-      menuList.push({
+      this.menuListConstant.unshift({
         'menu': 'FLEET',
-        'menuIcon': '',
+        'menuIcon': 'fleet',
         'menuLink': 'fleet',
         'routerLinkActive': 'fleet',
         'subMenu': [],
         'isSubMenuOpen': false,
-        'permissionMapping': AppConfigurationService.settings.permissionMapping['FleetComponent']
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['FleetComponent'],
+        'isShoreActive': true
       });
     }
 
@@ -178,7 +169,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       if (JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'))) {
         this.userPermission = JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'));
         clearInterval(isUserPermissionAvailable);
-        this.getPagePermission(menuList);
+        this.getPagePermission(this.menuListConstant);
         this.activeRoute(this.router.url);
       }
     }, 50);
@@ -202,7 +193,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
  */
   getPagePermission(menuList) {
     this.menuList = []
-    const list = [...menuList];
+    let list = [...menuList];
+    const currentPage = this.router.url.split('business/')[1];
+    if (this.isShore && currentPage === 'fleet') {
+      list = menuList.filter(menu => menu.isShoreActive);
+    }
     list?.map((menuItem: IMenuItem, index) => {
       const permission = this.getPermission(menuItem.permissionMapping);
       const menuListItem = [];
@@ -309,19 +304,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * @memberof NavbarComponent
    */
   logout() {
-    try {
-      const redirectUrl = window.location.protocol + '//' + window.location.hostname + AppConfigurationService.settings.redirectPath;
-      SecurityService.userLogoutAction();
-      if (environment.name === 'shore') {
-        this.keycloakService.logout(redirectUrl);
-      } else {
-        window.location.href = redirectUrl;
-      }
-
-    }
-    catch {
-      console.error('Something went wrong');
-    }
+    this.router.navigate(['logout']);
   }
 
   /**

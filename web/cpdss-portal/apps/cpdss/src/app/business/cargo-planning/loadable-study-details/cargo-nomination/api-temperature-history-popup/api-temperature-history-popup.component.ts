@@ -9,8 +9,9 @@ import { LoadableStudyDetailsTransformationService } from '../../../services/loa
 
 import { IPermission } from './../../../../../shared/models/user-profile.model';
 import { IDataTableColumn } from './../../../../../shared/components/datatable/datatable.model';
-import { IApiTempPortHistory, IApiTempMonthWiseHistory, IApiTempPopupData, ICargoApiTempHistoryResponse, IMonths } from '../../../models/cargo-planning.model';
+import { IApiTempPortHistory, IApiTempMonthWiseHistory, IApiTempPopupData, ICargoApiTempHistoryResponse } from '../../../models/cargo-planning.model';
 import * as moment from 'moment';
+import { IMonth } from '../../../../../shared/models/common.model';
 
 /**
  * To show the History of cargo Api & Temperature
@@ -53,9 +54,9 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
   apiTempHistoryColumns: IDataTableColumn[];
   apiTempHistoryData: IApiTempPortHistory[];
   monthwiseCargoHistory: IApiTempMonthWiseHistory[];
-  apiTempHistoryMonths: IMonths[];
+  apiTempHistoryMonths: IMonth[];
   apiTempHistoryForm: FormGroup;
-  monthWithPreccedingSucceedingArr: IMonths[] = [];
+  monthWithPreccedingSucceedingArr: IMonth[] = [];
   selectedPortID: number;
   filteredMonthwiseHistory: IApiTempMonthWiseHistory[] = [];
   hideMonthWiseGrid: boolean = true;

@@ -19,7 +19,7 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
                 const appSettings: IAppConfiguration = await appConfig.load();
 
                 const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json');
-                await http.get(appSettings.apiUrl + environment.uriPath + hostUrl, { headers: httpHeaders }).toPromise().then(function (response: any) {
+                await http.get(appSettings.apiUrl + environment.uriPath + hostUrl, { headers: httpHeaders }).toPromise().then(async function (response: any) {
                     if (response) {
                         localStorage.setItem('keycloakIdpConfig', response.providers);
                         localStorage.setItem('realm', response.realm);
@@ -34,10 +34,18 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
                                 clientId: appSettings.clientId,
                             }
     
-                            keycloak.init({
+                            const isLoggedIn = await keycloak.init({
                                 config: keycloakConfig,
+                                initOptions: {
+                                    onLoad: 'check-sso',
+                                    checkLoginIframe: false
+                                },
                                 enableBearerInterceptor: false
                             });
+
+                            if(isLoggedIn){
+                                location.href = window.location.protocol + '//' + window.location.hostname + appSettings.path;
+                            }
                         }
                     }
                 });

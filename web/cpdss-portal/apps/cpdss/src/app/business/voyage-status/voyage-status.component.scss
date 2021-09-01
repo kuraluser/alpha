@@ -2,7 +2,7 @@
     width: 270px;
     max-width: 270px;
     min-width: 270px;
-    height: calc(100vh - 380px);
+    height: calc(100vh - 388px);
     padding-top: 73px;
 }
 
@@ -11,7 +11,7 @@
     max-width: 400px;
     min-width: 400px;
     &.tank-parameters-right{
-        height: calc(100vh - 380px);
+        height: calc(100vh - 388px);
         padding-top: 73px;
     }
 }
@@ -30,4 +30,8 @@
 .activeVoyageLabel{
     font-weight: bold;
     padding: 10px;
+}
+.content-scroll{
+    max-height: 100%;
+    overflow-y: auto;
 }

@@ -15,6 +15,7 @@ appConfig {
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
+  unitTest = 'y'
   docker {
     imageName = 'cpdss-vessel-info'
     containerName = 'vessel-info-container'

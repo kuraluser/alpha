@@ -36,18 +36,25 @@ public final class Loadicator {
     boolean getIsPattern();
 
     /**
-     * <code>int64 loadableStudyId = 3;</code>
+     * <code>int64 typeId = 3;</code>
      *
-     * @return The loadableStudyId.
+     * @return The typeId.
      */
-    long getLoadableStudyId();
+    long getTypeId();
 
     /**
-     * <code>int64 loadablePatternId = 4;</code>
+     * <code>bool isUllageUpdate = 4;</code>
      *
-     * @return The loadablePatternId.
+     * @return The isUllageUpdate.
      */
-    long getLoadablePatternId();
+    boolean getIsUllageUpdate();
+
+    /**
+     * <code>int32 conditionType = 5;</code>
+     *
+     * @return The conditionType.
+     */
+    int getConditionType();
   }
   /** Protobuf type {@code LoadicatorRequest} */
   public static final class LoadicatorRequest extends com.google.protobuf.GeneratedMessageV3
@@ -114,12 +121,17 @@ public final class Loadicator {
               }
             case 24:
               {
-                loadableStudyId_ = input.readInt64();
+                typeId_ = input.readInt64();
                 break;
               }
             case 32:
               {
-                loadablePatternId_ = input.readInt64();
+                isUllageUpdate_ = input.readBool();
+                break;
+              }
+            case 40:
+              {
+                conditionType_ = input.readInt32();
                 break;
               }
             default:
@@ -195,26 +207,37 @@ public final class Loadicator {
       return isPattern_;
     }
 
-    public static final int LOADABLESTUDYID_FIELD_NUMBER = 3;
-    private long loadableStudyId_;
+    public static final int TYPEID_FIELD_NUMBER = 3;
+    private long typeId_;
     /**
-     * <code>int64 loadableStudyId = 3;</code>
+     * <code>int64 typeId = 3;</code>
      *
-     * @return The loadableStudyId.
+     * @return The typeId.
      */
-    public long getLoadableStudyId() {
-      return loadableStudyId_;
+    public long getTypeId() {
+      return typeId_;
     }
 
-    public static final int LOADABLEPATTERNID_FIELD_NUMBER = 4;
-    private long loadablePatternId_;
+    public static final int ISULLAGEUPDATE_FIELD_NUMBER = 4;
+    private boolean isUllageUpdate_;
     /**
-     * <code>int64 loadablePatternId = 4;</code>
+     * <code>bool isUllageUpdate = 4;</code>
      *
-     * @return The loadablePatternId.
+     * @return The isUllageUpdate.
      */
-    public long getLoadablePatternId() {
-      return loadablePatternId_;
+    public boolean getIsUllageUpdate() {
+      return isUllageUpdate_;
+    }
+
+    public static final int CONDITIONTYPE_FIELD_NUMBER = 5;
+    private int conditionType_;
+    /**
+     * <code>int32 conditionType = 5;</code>
+     *
+     * @return The conditionType.
+     */
+    public int getConditionType() {
+      return conditionType_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -237,11 +260,14 @@ public final class Loadicator {
       if (isPattern_ != false) {
         output.writeBool(2, isPattern_);
       }
-      if (loadableStudyId_ != 0L) {
-        output.writeInt64(3, loadableStudyId_);
+      if (typeId_ != 0L) {
+        output.writeInt64(3, typeId_);
       }
-      if (loadablePatternId_ != 0L) {
-        output.writeInt64(4, loadablePatternId_);
+      if (isUllageUpdate_ != false) {
+        output.writeBool(4, isUllageUpdate_);
+      }
+      if (conditionType_ != 0) {
+        output.writeInt32(5, conditionType_);
       }
       unknownFields.writeTo(output);
     }
@@ -259,11 +285,14 @@ public final class Loadicator {
       if (isPattern_ != false) {
         size += com.google.protobuf.CodedOutputStream.computeBoolSize(2, isPattern_);
       }
-      if (loadableStudyId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, loadableStudyId_);
+      if (typeId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, typeId_);
       }
-      if (loadablePatternId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, loadablePatternId_);
+      if (isUllageUpdate_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(4, isUllageUpdate_);
+      }
+      if (conditionType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(5, conditionType_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -283,8 +312,9 @@ public final class Loadicator {
 
       if (!getStowagePlanDetailsList().equals(other.getStowagePlanDetailsList())) return false;
       if (getIsPattern() != other.getIsPattern()) return false;
-      if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
-      if (getLoadablePatternId() != other.getLoadablePatternId()) return false;
+      if (getTypeId() != other.getTypeId()) return false;
+      if (getIsUllageUpdate() != other.getIsUllageUpdate()) return false;
+      if (getConditionType() != other.getConditionType()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -302,10 +332,12 @@ public final class Loadicator {
       }
       hash = (37 * hash) + ISPATTERN_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsPattern());
-      hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
-      hash = (37 * hash) + LOADABLEPATTERNID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadablePatternId());
+      hash = (37 * hash) + TYPEID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getTypeId());
+      hash = (37 * hash) + ISULLAGEUPDATE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsUllageUpdate());
+      hash = (37 * hash) + CONDITIONTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getConditionType();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -455,9 +487,11 @@ public final class Loadicator {
         }
         isPattern_ = false;
 
-        loadableStudyId_ = 0L;
+        typeId_ = 0L;
 
-        loadablePatternId_ = 0L;
+        isUllageUpdate_ = false;
+
+        conditionType_ = 0;
 
         return this;
       }
@@ -496,8 +530,9 @@ public final class Loadicator {
           result.stowagePlanDetails_ = stowagePlanDetailsBuilder_.build();
         }
         result.isPattern_ = isPattern_;
-        result.loadableStudyId_ = loadableStudyId_;
-        result.loadablePatternId_ = loadablePatternId_;
+        result.typeId_ = typeId_;
+        result.isUllageUpdate_ = isUllageUpdate_;
+        result.conditionType_ = conditionType_;
         onBuilt();
         return result;
       }
@@ -580,11 +615,14 @@ public final class Loadicator {
         if (other.getIsPattern() != false) {
           setIsPattern(other.getIsPattern());
         }
-        if (other.getLoadableStudyId() != 0L) {
-          setLoadableStudyId(other.getLoadableStudyId());
+        if (other.getTypeId() != 0L) {
+          setTypeId(other.getTypeId());
         }
-        if (other.getLoadablePatternId() != 0L) {
-          setLoadablePatternId(other.getLoadablePatternId());
+        if (other.getIsUllageUpdate() != false) {
+          setIsUllageUpdate(other.getIsUllageUpdate());
+        }
+        if (other.getConditionType() != 0) {
+          setConditionType(other.getConditionType());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -871,68 +909,101 @@ public final class Loadicator {
         return this;
       }
 
-      private long loadableStudyId_;
+      private long typeId_;
       /**
-       * <code>int64 loadableStudyId = 3;</code>
+       * <code>int64 typeId = 3;</code>
        *
-       * @return The loadableStudyId.
+       * @return The typeId.
        */
-      public long getLoadableStudyId() {
-        return loadableStudyId_;
+      public long getTypeId() {
+        return typeId_;
       }
       /**
-       * <code>int64 loadableStudyId = 3;</code>
+       * <code>int64 typeId = 3;</code>
        *
-       * @param value The loadableStudyId to set.
+       * @param value The typeId to set.
        * @return This builder for chaining.
        */
-      public Builder setLoadableStudyId(long value) {
+      public Builder setTypeId(long value) {
 
-        loadableStudyId_ = value;
+        typeId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 loadableStudyId = 3;</code>
+       * <code>int64 typeId = 3;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearLoadableStudyId() {
+      public Builder clearTypeId() {
 
-        loadableStudyId_ = 0L;
+        typeId_ = 0L;
         onChanged();
         return this;
       }
 
-      private long loadablePatternId_;
+      private boolean isUllageUpdate_;
       /**
-       * <code>int64 loadablePatternId = 4;</code>
+       * <code>bool isUllageUpdate = 4;</code>
        *
-       * @return The loadablePatternId.
+       * @return The isUllageUpdate.
        */
-      public long getLoadablePatternId() {
-        return loadablePatternId_;
+      public boolean getIsUllageUpdate() {
+        return isUllageUpdate_;
       }
       /**
-       * <code>int64 loadablePatternId = 4;</code>
+       * <code>bool isUllageUpdate = 4;</code>
        *
-       * @param value The loadablePatternId to set.
+       * @param value The isUllageUpdate to set.
        * @return This builder for chaining.
        */
-      public Builder setLoadablePatternId(long value) {
+      public Builder setIsUllageUpdate(boolean value) {
 
-        loadablePatternId_ = value;
+        isUllageUpdate_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 loadablePatternId = 4;</code>
+       * <code>bool isUllageUpdate = 4;</code>
        *
        * @return This builder for chaining.
        */
-      public Builder clearLoadablePatternId() {
+      public Builder clearIsUllageUpdate() {
 
-        loadablePatternId_ = 0L;
+        isUllageUpdate_ = false;
+        onChanged();
+        return this;
+      }
+
+      private int conditionType_;
+      /**
+       * <code>int32 conditionType = 5;</code>
+       *
+       * @return The conditionType.
+       */
+      public int getConditionType() {
+        return conditionType_;
+      }
+      /**
+       * <code>int32 conditionType = 5;</code>
+       *
+       * @param value The conditionType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConditionType(int value) {
+
+        conditionType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 conditionType = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearConditionType() {
+
+        conditionType_ = 0;
         onChanged();
         return this;
       }
@@ -11534,49 +11605,49 @@ public final class Loadicator {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\020loadicator.proto\032\014common.proto\"\204\001\n\021Loa"
+      "\n\020loadicator.proto\032\014common.proto\"\217\001\n\021Loa"
           + "dicatorRequest\022(\n\022stowagePlanDetails\030\001 \003"
-          + "(\0132\014.StowagePlan\022\021\n\tisPattern\030\002 \001(\010\022\027\n\017l"
-          + "oadableStudyId\030\003 \001(\003\022\031\n\021loadablePatternI"
-          + "d\030\004 \001(\003\"\300\004\n\013StowagePlan\022\n\n\002id\030\001 \001(\003\022\020\n\010v"
-          + "esselId\030\002 \001(\003\022\021\n\timoNumber\030\003 \001(\t\022\021\n\tcomp"
-          + "anyId\030\004 \001(\003\022\020\n\010shipType\030\005 \001(\t\022\022\n\nvesselC"
-          + "ode\030\006 \001(\t\022\025\n\rbookingListId\030\007 \001(\003\022\021\n\tstow"
-          + "ageId\030\010 \001(\003\022\016\n\006portId\030\t \001(\003\022\020\n\010portCode\030"
-          + "\n \001(\t\022\016\n\006status\030\013 \001(\003\022\032\n\022deadweightConst"
-          + "ant\030\014 \001(\t\022\033\n\023provisionalConstant\030\r \001(\t\022\020"
-          + "\n\010calCount\030\016 \001(\003\022\022\n\nsaveStatus\030\017 \001(\t\022\023\n\013"
-          + "saveMessage\030\020 \001(\t\022\021\n\tdamageCal\030\021 \001(\010\022\020\n\010"
-          + "dataSave\030\022 \001(\010\022\021\n\tprocessId\030\023 \001(\t\022\024\n\014syn"
-          + "opticalId\030\024 \001(\003\022\'\n\016stowageDetails\030\025 \003(\0132"
-          + "\017.StowageDetails\022\035\n\tcargoInfo\030\026 \003(\0132\n.Ca"
-          + "rgoInfo\022%\n\rotherTankInfo\030\027 \003(\0132\016.OtherTa"
-          + "nkInfo\022!\n\013ballastInfo\030\030 \003(\0132\014.BallastInf"
-          + "o\022\027\n\017seaWaterDensity\030\031 \001(\t\"\343\001\n\016StowageDe"
-          + "tails\022\025\n\rstowagePlanId\030\001 \001(\003\022\017\n\007cargoId\030"
-          + "\002 \001(\003\022\023\n\013cargoBookId\030\003 \001(\003\022\021\n\tcargoName\030"
-          + "\004 \001(\t\022\027\n\017specificGravity\030\005 \001(\t\022\020\n\010quanti"
-          + "ty\030\006 \001(\t\022\016\n\006tankId\030\007 \001(\003\022\021\n\tshortName\030\010 "
-          + "\001(\t\022\020\n\010tankName\030\t \001(\t\022\021\n\tstowageId\030\n \001(\003"
-          + "\022\016\n\006portId\030\013 \001(\003\"\335\001\n\tCargoInfo\022\025\n\rstowag"
-          + "ePlanId\030\001 \001(\003\022\017\n\007cargoId\030\002 \001(\003\022\021\n\tcargoN"
-          + "ame\030\003 \001(\t\022\023\n\013cargoAbbrev\030\004 \001(\t\022\024\n\014standa"
-          + "rdTemp\030\005 \001(\t\022\r\n\005grade\030\006 \001(\t\022\017\n\007density\030\007"
-          + " \001(\t\022\013\n\003api\030\010 \001(\t\022\014\n\004degf\030\t \001(\t\022\014\n\004degc\030"
-          + "\n \001(\t\022\021\n\tstowageId\030\013 \001(\003\022\016\n\006portId\030\014 \001(\003"
-          + "\"\251\001\n\rOtherTankInfo\022\025\n\rstowagePlanId\030\001 \001("
-          + "\003\022\016\n\006tankId\030\002 \001(\003\022\020\n\010tankName\030\003 \001(\t\022\020\n\010q"
-          + "uantity\030\004 \001(\t\022\021\n\tshortName\030\005 \001(\t\022\027\n\017load"
-          + "ableStudyId\030\006 \001(\003\022\021\n\tstowageId\030\007 \001(\003\022\016\n\006"
-          + "portId\030\010 \001(\003\":\n\017LoadicatorReply\022\'\n\016respo"
-          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\"\216\001\n\013Bal"
-          + "lastInfo\022\025\n\rstowagePlanId\030\001 \001(\003\022\016\n\006tankI"
-          + "d\030\002 \001(\003\022\020\n\010tankName\030\003 \001(\t\022\020\n\010quantity\030\004 "
-          + "\001(\t\022\021\n\tshortName\030\005 \001(\t\022\021\n\tstowageId\030\006 \001("
-          + "\003\022\016\n\006portId\030\007 \001(\0032Q\n\021LoadicatorService\022<"
-          + "\n\022saveLoadicatorInfo\022\022.LoadicatorRequest"
-          + "\032\020.LoadicatorReply\"\000B\036\n\032com.cpdss.common"
-          + ".generatedP\000b\006proto3"
+          + "(\0132\014.StowagePlan\022\021\n\tisPattern\030\002 \001(\010\022\016\n\006t"
+          + "ypeId\030\003 \001(\003\022\026\n\016isUllageUpdate\030\004 \001(\010\022\025\n\rc"
+          + "onditionType\030\005 \001(\005\"\300\004\n\013StowagePlan\022\n\n\002id"
+          + "\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\021\n\timoNumber\030\003 "
+          + "\001(\t\022\021\n\tcompanyId\030\004 \001(\003\022\020\n\010shipType\030\005 \001(\t"
+          + "\022\022\n\nvesselCode\030\006 \001(\t\022\025\n\rbookingListId\030\007 "
+          + "\001(\003\022\021\n\tstowageId\030\010 \001(\003\022\016\n\006portId\030\t \001(\003\022\020"
+          + "\n\010portCode\030\n \001(\t\022\016\n\006status\030\013 \001(\003\022\032\n\022dead"
+          + "weightConstant\030\014 \001(\t\022\033\n\023provisionalConst"
+          + "ant\030\r \001(\t\022\020\n\010calCount\030\016 \001(\003\022\022\n\nsaveStatu"
+          + "s\030\017 \001(\t\022\023\n\013saveMessage\030\020 \001(\t\022\021\n\tdamageCa"
+          + "l\030\021 \001(\010\022\020\n\010dataSave\030\022 \001(\010\022\021\n\tprocessId\030\023"
+          + " \001(\t\022\024\n\014synopticalId\030\024 \001(\003\022\'\n\016stowageDet"
+          + "ails\030\025 \003(\0132\017.StowageDetails\022\035\n\tcargoInfo"
+          + "\030\026 \003(\0132\n.CargoInfo\022%\n\rotherTankInfo\030\027 \003("
+          + "\0132\016.OtherTankInfo\022!\n\013ballastInfo\030\030 \003(\0132\014"
+          + ".BallastInfo\022\027\n\017seaWaterDensity\030\031 \001(\t\"\343\001"
+          + "\n\016StowageDetails\022\025\n\rstowagePlanId\030\001 \001(\003\022"
+          + "\017\n\007cargoId\030\002 \001(\003\022\023\n\013cargoBookId\030\003 \001(\003\022\021\n"
+          + "\tcargoName\030\004 \001(\t\022\027\n\017specificGravity\030\005 \001("
+          + "\t\022\020\n\010quantity\030\006 \001(\t\022\016\n\006tankId\030\007 \001(\003\022\021\n\ts"
+          + "hortName\030\010 \001(\t\022\020\n\010tankName\030\t \001(\t\022\021\n\tstow"
+          + "ageId\030\n \001(\003\022\016\n\006portId\030\013 \001(\003\"\335\001\n\tCargoInf"
+          + "o\022\025\n\rstowagePlanId\030\001 \001(\003\022\017\n\007cargoId\030\002 \001("
+          + "\003\022\021\n\tcargoName\030\003 \001(\t\022\023\n\013cargoAbbrev\030\004 \001("
+          + "\t\022\024\n\014standardTemp\030\005 \001(\t\022\r\n\005grade\030\006 \001(\t\022\017"
+          + "\n\007density\030\007 \001(\t\022\013\n\003api\030\010 \001(\t\022\014\n\004degf\030\t \001"
+          + "(\t\022\014\n\004degc\030\n \001(\t\022\021\n\tstowageId\030\013 \001(\003\022\016\n\006p"
+          + "ortId\030\014 \001(\003\"\251\001\n\rOtherTankInfo\022\025\n\rstowage"
+          + "PlanId\030\001 \001(\003\022\016\n\006tankId\030\002 \001(\003\022\020\n\010tankName"
+          + "\030\003 \001(\t\022\020\n\010quantity\030\004 \001(\t\022\021\n\tshortName\030\005 "
+          + "\001(\t\022\027\n\017loadableStudyId\030\006 \001(\003\022\021\n\tstowageI"
+          + "d\030\007 \001(\003\022\016\n\006portId\030\010 \001(\003\":\n\017LoadicatorRep"
+          + "ly\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSta"
+          + "tus\"\216\001\n\013BallastInfo\022\025\n\rstowagePlanId\030\001 \001"
+          + "(\003\022\016\n\006tankId\030\002 \001(\003\022\020\n\010tankName\030\003 \001(\t\022\020\n\010"
+          + "quantity\030\004 \001(\t\022\021\n\tshortName\030\005 \001(\t\022\021\n\tsto"
+          + "wageId\030\006 \001(\003\022\016\n\006portId\030\007 \001(\0032Q\n\021Loadicat"
+          + "orService\022<\n\022saveLoadicatorInfo\022\022.Loadic"
+          + "atorRequest\032\020.LoadicatorReply\"\000B\036\n\032com.c"
+          + "pdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -11589,7 +11660,7 @@ public final class Loadicator {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_LoadicatorRequest_descriptor,
             new java.lang.String[] {
-              "StowagePlanDetails", "IsPattern", "LoadableStudyId", "LoadablePatternId",
+              "StowagePlanDetails", "IsPattern", "TypeId", "IsUllageUpdate", "ConditionType",
             });
     internal_static_StowagePlan_descriptor = getDescriptor().getMessageTypes().get(1);
     internal_static_StowagePlan_fieldAccessorTable =

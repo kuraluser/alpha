@@ -1,4 +1,5 @@
 import Dexie from 'dexie';
+import { IPort } from '../../business/core/models/common.model';
 
 /**
  * Class for converting values to value object with additional status like modified, visible, edited etc
@@ -180,132 +181,14 @@ export enum QUANTITY_UNIT {
 }
 
 /**
- * Interface for port
+ * ENUM for units of rate
  *
  * @export
- * @interface IPort
+ * @enum {number}
  */
-export interface IPort {
-    id: number;
-    name: string;
-    code: string;
-    maxAirDraft: number;
-    maxDraft: number;
-    waterDensity: number;
-}
-
-/**
- * Interface for port api response
- *
- * @export
- * @interface IPortsResponse
- */
-export interface IPortsResponse {
-    responseStatus: IResponseStatus;
-    ports: IPort[];
-}
-
-/**
- * Interface for Operations
- *
- * @export
- * @interface IOperations
- */
-export interface IOperations {
-    id: number;
-    operationName: string;
-}
-/**
- * Interface for Ports api response
- *
- * @export
- * @interface IPortsDetailsResponse
- */
-export interface IPortsDetailsResponse {
-    responseStatus: IResponseStatus;
-    portList: IPortList[];
-    operations: IOperations[];
-    portId?: number;
-}
-
-/**
- * Interface for port
- *
- * @export
- * @interface IPortList
- */
-export interface IPortList {
-    id: number;
-    portOrder: number;
-    loadableStudyId: number;
-    portId: number;
-    operationId: number;
-    seaWaterDensity: number;
-    distanceBetweenPorts: number;
-    timeOfStay: number;
-    maxDraft: number;
-    maxAirDraft: number;
-    eta: string;
-    etd: string;
-    layCanFrom: string;
-    layCanTo: string;
-    isDelete?: boolean;
-    isAdd?: boolean;
-    storeKey?: number;
-    vesselId?: number;
-    voyageId?: number;
-    etaActual?: string;
-    etdActual?: string;
-}
-
-/**
- * Interface for fuel type
- *
- * @export
- * @interface IFuelType
- */
-export interface IFuelType {
-    id: number;
-    name: string;
-    colorCode: string;
-    shortName: string;
-}
-
-/**
- * Interface for cargo response
- * @export
- * @interface 
- */
-export interface ICargoResponseModel {
-    cargos: ICargo[],
-    responseStatus: IResponseStatus;
-}
-
-/**
- * Interface for cargo
- *
- * @export
- * @interface ICargo
- */
-export interface ICargo {
-    id: number;
-    name?: string;
-    abbreviation?: string;
-    api?: number;
-    ports?: IPort[];
-}
-
-/**
- * Interface for get confirm status
- *
- * @export
- * @interface IConfirmStatusResponse
- */
- export interface IConfirmStatusResponse {
-    responseStatus: IResponse;
-    confirmed: boolean;
-    loadablePatternStatusId: number;
-    validated: boolean;
+export enum RATE_UNIT {
+  M3_PER_HR = "M3/HR",
+  BBLS_PER_HR = "BBLS/HR",
 }
 
 /**
@@ -445,6 +328,11 @@ export interface ISubTotal {
     plannedWeight: number;
     actualWeight: number;
     abbreviation?: string;
+    tankId?: number;
+    colorCode?: string;
+    cargoNominationId?: number;
+    api?: number;
+    temperature?: number;
 }
 
 /**
@@ -459,16 +347,6 @@ export interface ISubTotal {
 }
 
 
-/**
- * Interface for instruction
- *
- * @export
- * @interface IInstruction
- */
-export interface IInstruction {
-    value: string;
-}
-
 
 /**
  * Interface for percentage
@@ -477,34 +355,30 @@ export interface IInstruction {
  * @interface IPercentage
  */
  export interface IPercentage {
-    value: string;
+    value: number;
     name: string;
 }
 
-export interface ITankDetails {
-    displayOrder: number,
-    group: number,
-    id: number,
-    name: string,
-    order: number,
-    shortName: string,
-    slopTank: boolean,
+
+/**
+ * Interface for country
+ *
+ * @export
+ * @interface ICountry
+ */
+export interface ICountry {
+  id: number;
+  name: string;
+  code: string;
 }
 
 /**
- * Interface for cargo
+ * Interface for list months.
  *
  * @export
- * @interface ICargo
+ * @interface IMonth
  */
- export interface ICargo {
-    id: number;
-    companyId: number;
-    actualWeight: string;
-    plannedWeight: string;
-    name?: string;
-    abbreviation?: string;
-    api?: number;
-    ports?: IPort[];
-    temp: string;
+export interface IMonth {
+  id: number;
+  month: string;
 }

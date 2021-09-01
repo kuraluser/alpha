@@ -1,15 +1,21 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators, FormBuilder  } from '@angular/forms';
-import { DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE } from '../../../shared/components/datatable/datatable.model';
-import { ICargoQuantities, IShipCargoTank, ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
+import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators, FormBuilder } from '@angular/forms';
+import { DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE } from '../../../shared/components/datatable/datatable.model';
+import { ICargoQuantities, IShipCargoTank, ITankOptions, IVoyagePortDetails, TANKTYPE, IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../core/models/common.model';
 import { UllageUpdatePopupTransformationService } from './ullage-update-popup-transformation.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../voyage-status/models/voyage-status.model';
-import { IFuelType, QUANTITY_UNIT } from '../../../shared/models/common.model';
-import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
-import { ICargoDetail , ICargoDetailValueObject } from '../models/ullage-update-popup.model';
+import { QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { ICargoDetail, ICargoDetailValueObject, ITankDetailsValueObject, ULLAGE_STATUS, IUllageSaveDetails } from '../models/loading-discharging.model';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 import { IBlFigureTotal } from '../models/operations.model';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
+import { DecimalPipe } from '@angular/common';
+import { UllageUpdateApiService } from './ullage-update-api.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
+import { tankCapacityValidator } from './../../core/directives/tankCapacityValidator.directive';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
  * Component class for ullage update
@@ -25,16 +31,77 @@ import { IBlFigureTotal } from '../models/operations.model';
 })
 export class UllageUpdatePopupComponent implements OnInit {
 
-  vesselInfo: any = {};
-  selectedVoyage: any = {};
-  currentQuantitySelectedUnit: any = null;
-  selectedPortDetails: any = {};
-  voyageStatusResponse: any = {};
+  @Input() loadingInfoId: number;
+  @Input() status: ULLAGE_STATUS;
+  @Input() vesselId: number;
+  @Input() patternId: number;
+  @Input() portRotationId: number;
+
+  get selectedTankId(): number {
+    return this.selectedTank?.tankId;
+  }
+
+  set selectedTankId(tankId: number) {
+    if (this.selectedTab === this.tankType.CARGO) {
+      this.selectedTank = this.cargoQuantities.find(tank => tank?.tankId === tankId);
+      this.cargoTanks.map(el => {
+        el.map(tank => {
+          if (tank.id === tankId) {
+            this.percentageFilled = tank.percentageFilled + '%';
+          }
+        })
+      })
+    }
+    if (this.selectedTab === this.tankType.BALLAST) {
+      this.selectedTank = this.ballastQuantities.find(tank => tank?.tankId === tankId);
+    }
+    if (this.selectedTab === this.tankType.BUNKER) {
+      this.percentageFilled = null;
+      this.selectedTank = this.bunkerTanksList.find(tank => tank?.tankId === tankId);
+      this.bunkerTanks?.map(el => {
+        el?.map(tank => {
+          if (tank.id === tankId) {
+            this.percentageFilled = tank.percentageFilled;
+          }
+        });
+      })
+      if (!this.percentageFilled) {
+        this.rearBunkerTanks?.map(el => {
+          el?.map(tank => {
+            if (tank.id === tankId) {
+              this.percentageFilled = tank.percentageFilled;
+            }
+          });
+        })
+      }
+    }
+  }
+
+
+  currentQuantitySelectedUnit: QUANTITY_UNIT = null;
+
   blFigure: any = [];
   cargoQuantityList: any = [];
   bunkerTanksList: any = [];
+  ullageResponseData: any;
+  ullageResponseDataCopy: any;
+  selectedTank: any;
+  percentageFilled: string;
+
+  showAs = {
+    id: 1, label: 'Actual'
+  };
+  showAsOptions = [
+    {
+      id: 1, label: 'Actual'
+    },
+    {
+      id: 2, label: 'As Per B/L'
+    }
+  ];
 
   readonly tankType = TANKTYPE;
+  readonly ULLAGE_STATUS = ULLAGE_STATUS;
 
   cargoTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api', weightField: 'actualWeight', commodityNameField: 'abbreviation' };
   ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit };
@@ -50,2717 +117,330 @@ export class UllageUpdatePopupComponent implements OnInit {
   ballastColumns: IDataTableColumn[];
   bunkerColumns: IDataTableColumn[];
   blFigureColumns: IDataTableColumn[];
-  cargoQuantities: ICargoQuantities[];
-  ballastQuantities: IBallastQuantities[];
-  fuelTypes:any=[];
+  cargoQuantities: ITankDetailsValueObject[];
+
+  ballastQuantities: ITankDetailsValueObject[];
+  fuelTypes: any = [];
   prevQuantitySelectedUnit: QUANTITY_UNIT;
-  loadablePatternCargoDetails: any[];
   selectedCargo: any;
+  billOfLaddingRemovedList: any = [];
 
   selectedTab = TANKTYPE.CARGO;
   readonly fieldType = DATATABLE_FIELD_TYPE;
+  readonly selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
   tableForm: FormGroup;
-  public editMode = true;
+  cargoTankForm: FormGroup;
+  ballastTankForm: FormGroup;
+  bunkerTankForm: FormGroup;
+  public editMode: DATATABLE_EDITMODE = DATATABLE_EDITMODE.CELL;
   public blFigureTotal: IBlFigureTotal;
 
-statu: boolean;
+  statu: boolean;
 
-  display:boolean;
+  display: boolean;
   @Output() closePopup = new EventEmitter();
   constructor(
     private ullageUpdatePopupTransformationService: UllageUpdatePopupTransformationService,
-    private fb: FormBuilder
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService,
+    private fb: FormBuilder,
+    private quantityPipe: QuantityPipe,
+    private decimalPipe: DecimalPipe,
+    private ullageUpdateApiService: UllageUpdateApiService,
+    private ngxSpinnerService: NgxSpinnerService,
+    private messageService: MessageService,
+    private translateService: TranslateService
   ) { }
 
-  ngOnInit(): void {
-    this.display = true;
-    this.vesselInfo = {
-      "id": 1,
-      "name": "KAZUSA",
-      "imoNumber": "9513402",
-      "flagPath": "assets/images/flags/japan.png",
-      "chiefOfficerId": 10,
-      "chiefOfficerName": "null null",
-      "captainId": 1,
-      "captainName": "Thomas Alex",
-      "charterer": "Reliance",
-      "loadlines": [
-        {
-          "id": 1,
-          "name": "Summer",
-          "draftMarks": [
-            20.943,
-            19.888
-          ]
-        },
-        {
-          "id": 2,
-          "name": "Tropical",
-          "draftMarks": [
-            21.376
-          ]
-        },
-        {
-          "id": 5,
-          "name": "Winter and WNA",
-          "draftMarks": [
-            20.808
-          ]
-        },
-        {
-          "id": 7,
-          "name": "Tropical to Summer",
-          "draftMarks": [
-            20.943,
-            19.888
-          ]
-        },
-        {
-          "id": 8,
-          "name": "Tropical to Winter",
-          "draftMarks": [
-            20.808
-          ]
-        },
-        {
-          "id": 9,
-          "name": "Summer to Winter",
-          "draftMarks": [
-            20.808
-          ]
-        },
-        {
-          "id": 10,
-          "name": "Winter to Summer",
-          "draftMarks": [
-            20.943,
-            19.888
-          ]
-        },
-        {
-          "id": 11,
-          "name": "Winter to Tropical",
-          "draftMarks": [
-            21.376
-          ]
-        },
-        {
-          "id": 12,
-          "name": "Summer to Tropical",
-          "draftMarks": [
-            21.376
-          ]
-        }
-      ]
-    };
+  async ngOnInit(): Promise<void> {
+    this.ngxSpinnerService.show();
+    try {
+      const status = this.status === ULLAGE_STATUS.ARRIVAL ? 'ARR' : 'DEP';
+      const data = await this.ullageUpdateApiService.getUllageDetails(1, 4886, 113696, status).toPromise();
+      // const data = await this.ullageUpdateApiService.getUllageDetails(this.vesselId, this.patternId, this.portRotationId, status).toPromise();
+      this.display = true;
+      this.ngxSpinnerService.hide();
+      this.ullageResponseData = JSON.parse(JSON.stringify(data));
+      this.ullageResponseDataCopy = JSON.parse(JSON.stringify(data));
+    } catch (e) {
+      this.ngxSpinnerService.hide();
+      this.closePopup.emit(true);
+    }
 
-    this.selectedVoyage = {
-      "voyageNo": "RisVoyage",
-      "id": 1901,
-      "startDate": "10-04-2021 11:19",
-      "endDate": "30-04-2021 11:19",
-      "status": "Active",
-      "confirmedLoadableStudyId": 5829,
-      "actualStartDate": "10-04-2021",
-      "actualEndDate": "30-04-2021",
-      "statusId": 3,
-      "noOfDays": -7412
-    };
-    this.currentQuantitySelectedUnit = "MT";
-    this.selectedPortDetails = { "portOrder": 1, "operationType": "ARR", "portId": 359, "portRotationId": 107678 };
-    this.voyageStatusResponse = {
-      "responseStatus": {
-        "status": "200"
-      },
-      "cargoQuantities": [
-        {
-          "tankId": 25580,
-          "tankName": "1C",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 30229.5,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25581,
-          "tankName": "2C",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 28201.6,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25582,
-          "tankName": "3C",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 28201.6,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25583,
-          "tankName": "4C",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 28201.6,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25584,
-          "tankName": "5C",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 33725.1,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25585,
-          "tankName": "1P",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 20797.7,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25586,
-          "tankName": "1S",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 20797.7,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25587,
-          "tankName": "2P",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 20290.8,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25588,
-          "tankName": "2S",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 20290.8,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25589,
-          "tankName": "3P",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 20290.8,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25590,
-          "tankName": "3S",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 20290.8,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25591,
-          "tankName": "4P",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 20290.8,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25592,
-          "tankName": "4S",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 20290.8,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25593,
-          "tankName": "5P",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 17277.4,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25594,
-          "tankName": "5S",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 17277.4,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25595,
-          "tankName": "SLP",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 4117.3,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25596,
-          "tankName": "SLS",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 4117.3,
-          "abbreviation": "",
-          "cargoId": 0,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": 0,
-          "sg": null,
-          "isCommingleCargo": false,
-          "volume": null,
-          "percentageFilled": "0.00"
-        }
-      ],
-      "ballastQuantities": [
-        {
-          "tankId": 25606,
-          "tankName": "WB5P",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 8561.9,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25607,
-          "tankName": "WB5S",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 8560.4,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25608,
-          "tankName": "AWBP",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 1024.9,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25609,
-          "tankName": "AWBS",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 1024.9,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25610,
-          "tankName": "APT",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 2574.4,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25611,
-          "tankName": "FPTU",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 5156.5,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25599,
-          "tankName": "WB1S",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 8904.4,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25600,
-          "tankName": "WB2P",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 8873.6,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25601,
-          "tankName": "WB2S",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 8871.5,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25602,
-          "tankName": "WB3P",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 8875.8,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25603,
-          "tankName": "WB3S",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 8873.8,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25604,
-          "tankName": "WB4P",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 8743.7,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25605,
-          "tankName": "WB4S",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 8741.7,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25597,
-          "tankName": "FPTL",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 5444.2,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        },
-        {
-          "tankId": 25598,
-          "tankName": "WB1P",
-          "actualWeight": 0,
-          "plannedWeight": 0,
-          "capacity": 8906.5,
-          "abbreviation": null,
-          "cargoId": null,
-          "colorCode": "",
-          "correctedUllage": 0,
-          "api": null,
-          "sg": "",
-          "isCommingleCargo": null,
-          "volume": 0,
-          "percentageFilled": "0.00"
-        }
-      ],
-      "bunkerQuantities": [
-        {
-          "id": 116911,
-          "portId": 359,
-          "fuelTypeId": 5,
-          "fuelTypeName": "Fuel Oil Tank",
-          "fuelTypeShortName": "FOT",
-          "tankId": 25619,
-          "tankName": "BFOSRV",
-          "arrivalVolume": 25,
-          "arrivalQuantity": 20,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 25,
-          "departureQuantity": 20,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#c60a09",
-          "density": 0.8,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 117184,
-          "portId": 359,
-          "fuelTypeId": 5,
-          "fuelTypeName": "Fuel Oil Tank",
-          "fuelTypeShortName": "FOT",
-          "tankId": 25614,
-          "tankName": "FO2P",
-          "arrivalVolume": 0,
-          "arrivalQuantity": 0,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 0,
-          "departureQuantity": 0,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#c60a09",
-          "density": 0,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 117185,
-          "portId": 359,
-          "fuelTypeId": 5,
-          "fuelTypeName": "Fuel Oil Tank",
-          "fuelTypeShortName": "FOT",
-          "tankId": 25615,
-          "tankName": "FO2S",
-          "arrivalVolume": 0,
-          "arrivalQuantity": 0,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 0,
-          "departureQuantity": 0,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#c60a09",
-          "density": 0,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 116909,
-          "portId": 359,
-          "fuelTypeId": 6,
-          "fuelTypeName": "Diesel Oil Tank",
-          "fuelTypeShortName": "DOT",
-          "tankId": 25624,
-          "tankName": "DOSRV1",
-          "arrivalVolume": 25,
-          "arrivalQuantity": 20,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 25,
-          "departureQuantity": 20,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#fa8424",
-          "density": 0.8,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 117191,
-          "portId": 359,
-          "fuelTypeId": 6,
-          "fuelTypeName": "Diesel Oil Tank",
-          "fuelTypeShortName": "DOT",
-          "tankId": 25625,
-          "tankName": "DOSRV2",
-          "arrivalVolume": 0,
-          "arrivalQuantity": 0,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 0,
-          "departureQuantity": 0,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#fa8424",
-          "density": 0,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 116910,
-          "portId": 359,
-          "fuelTypeId": 3,
-          "fuelTypeName": "Fresh Water Tank",
-          "fuelTypeShortName": "FWT",
-          "tankId": 25636,
-          "tankName": "DRWT",
-          "arrivalVolume": 200,
-          "arrivalQuantity": 200,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 200,
-          "departureQuantity": 200,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#5aa1a3",
-          "density": 1,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 117196,
-          "portId": 359,
-          "fuelTypeId": 3,
-          "fuelTypeName": "Fresh Water Tank",
-          "fuelTypeShortName": "FWT",
-          "tankId": 25637,
-          "tankName": "FRWT",
-          "arrivalVolume": 0,
-          "arrivalQuantity": 0,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 0,
-          "departureQuantity": 0,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#5aa1a3",
-          "density": 0,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 117198,
-          "portId": 359,
-          "fuelTypeId": 3,
-          "fuelTypeName": "Fresh Water Tank",
-          "fuelTypeShortName": "FWT",
-          "tankId": 25638,
-          "tankName": "DSWTP",
-          "arrivalVolume": 0,
-          "arrivalQuantity": 0,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 0,
-          "departureQuantity": 0,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#5aa1a3",
-          "density": 0,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 117199,
-          "portId": 359,
-          "fuelTypeId": 3,
-          "fuelTypeName": "Fresh Water Tank",
-          "fuelTypeShortName": "FWT",
-          "tankId": 25639,
-          "tankName": "DSWTS",
-          "arrivalVolume": 0,
-          "arrivalQuantity": 0,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 0,
-          "departureQuantity": 0,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#5aa1a3",
-          "density": 0,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 117192,
-          "portId": 359,
-          "fuelTypeId": 6,
-          "fuelTypeName": "Diesel Oil Tank",
-          "fuelTypeShortName": "DOT",
-          "tankId": 25622,
-          "tankName": "DO1S",
-          "arrivalVolume": 0,
-          "arrivalQuantity": 0,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 0,
-          "departureQuantity": 0,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#fa8424",
-          "density": 0,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 117186,
-          "portId": 359,
-          "fuelTypeId": 5,
-          "fuelTypeName": "Fuel Oil Tank",
-          "fuelTypeShortName": "FOT",
-          "tankId": 25612,
-          "tankName": "FO1P",
-          "arrivalVolume": 0,
-          "arrivalQuantity": 0,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 0,
-          "departureQuantity": 0,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#c60a09",
-          "density": 0,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 117187,
-          "portId": 359,
-          "fuelTypeId": 5,
-          "fuelTypeName": "Fuel Oil Tank",
-          "fuelTypeShortName": "FOT",
-          "tankId": 25613,
-          "tankName": "FO1S",
-          "arrivalVolume": 0,
-          "arrivalQuantity": 0,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 0,
-          "departureQuantity": 0,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#c60a09",
-          "density": 0,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 117188,
-          "portId": 359,
-          "fuelTypeId": 5,
-          "fuelTypeName": "Fuel Oil Tank",
-          "fuelTypeShortName": "FOT",
-          "tankId": 25616,
-          "tankName": "HFOSRV",
-          "arrivalVolume": 0,
-          "arrivalQuantity": 0,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 0,
-          "departureQuantity": 0,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#c60a09",
-          "density": 0,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 117189,
-          "portId": 359,
-          "fuelTypeId": 5,
-          "fuelTypeName": "Fuel Oil Tank",
-          "fuelTypeShortName": "FOT",
-          "tankId": 25617,
-          "tankName": "HFOSET",
-          "arrivalVolume": 0,
-          "arrivalQuantity": 0,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 0,
-          "departureQuantity": 0,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#c60a09",
-          "density": 0,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        },
-        {
-          "id": 117194,
-          "portId": 359,
-          "fuelTypeId": 6,
-          "fuelTypeName": "Diesel Oil Tank",
-          "fuelTypeShortName": "DOT",
-          "tankId": 25623,
-          "tankName": "DO2S",
-          "arrivalVolume": 0,
-          "arrivalQuantity": 0,
-          "actualArrivalQuantity": 0,
-          "departureVolume": 0,
-          "departureQuantity": 0,
-          "actualDepartureQuantity": 0,
-          "colorCode": "#fa8424",
-          "density": 0,
-          "portRotationId": 107678,
-          "quantity": 0,
-          "volume": 0
-        }
-      ],
-      "cargoTanks": [
-        [
-          {
-            "id": 25595,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "SLOP TANK",
-            "frameNumberFrom": "49",
-            "frameNumberTo": "52",
-            "shortName": "SLP",
-            "fullCapacityCubm": "4117.3000",
-            "density": 1.3,
-            "group": 1,
-            "order": 1,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25595,
-              "tankName": "SLP",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 4117.3,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 4",
-            "percentageFilled": "0.00"
-          },
-          {
-            "id": 25593,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.5 WING CARGO OIL TANK",
-            "frameNumberFrom": "52",
-            "frameNumberTo": "61",
-            "shortName": "5P",
-            "fullCapacityCubm": "17277.4000",
-            "density": 1.3,
-            "group": 1,
-            "order": 2,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25593,
-              "tankName": "5P",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 17277.4,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "4 / 13",
-            "percentageFilled": "0.00"
-          },
-          {
-            "id": 25584,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.5 CENTER CARGO OIL TANK",
-            "frameNumberFrom": "49",
-            "frameNumberTo": "61",
-            "shortName": "5C",
-            "fullCapacityCubm": "33725.1000",
-            "density": 1.3,
-            "group": 1,
-            "order": 3,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25584,
-              "tankName": "5C",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 33725.1,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 13",
-            "percentageFilled": "0.00"
-          },
-          {
-            "id": 25596,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "SLOP TANK",
-            "frameNumberFrom": "49",
-            "frameNumberTo": "52",
-            "shortName": "SLS",
-            "fullCapacityCubm": "4117.3000",
-            "density": 1.3,
-            "group": 1,
-            "order": 4,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25596,
-              "tankName": "SLS",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 4117.3,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 4",
-            "percentageFilled": "0.00"
-          },
-          {
-            "id": 25594,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.5 WING CARGO OIL TANK",
-            "frameNumberFrom": "52",
-            "frameNumberTo": "61",
-            "shortName": "5S",
-            "fullCapacityCubm": "17277.4000",
-            "density": 1.3,
-            "group": 1,
-            "order": 5,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25594,
-              "tankName": "5S",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 17277.4,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "4 / 13",
-            "percentageFilled": "0.00"
-          }
-        ],
-        [
-          {
-            "id": 25591,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.4 WING CARGO OIL TANK",
-            "frameNumberFrom": "61",
-            "frameNumberTo": "71",
-            "shortName": "4P",
-            "fullCapacityCubm": "20290.8000",
-            "density": 1.3,
-            "group": 2,
-            "order": 1,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25591,
-              "tankName": "4P",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 20290.8,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 11",
-            "percentageFilled": "0.00"
-          },
-          {
-            "id": 25583,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.4 CENTER CARGO OIL TANK",
-            "frameNumberFrom": "61",
-            "frameNumberTo": "71",
-            "shortName": "4C",
-            "fullCapacityCubm": "28201.6000",
-            "density": 1.3,
-            "group": 2,
-            "order": 2,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25583,
-              "tankName": "4C",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 28201.6,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 11",
-            "percentageFilled": "0.00"
-          },
-          {
-            "id": 25592,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.4 WING CARGO OIL TANK",
-            "frameNumberFrom": "61",
-            "frameNumberTo": "71",
-            "shortName": "4S",
-            "fullCapacityCubm": "20290.8000",
-            "density": 1.3,
-            "group": 2,
-            "order": 3,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25592,
-              "tankName": "4S",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 20290.8,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 11",
-            "percentageFilled": "0.00"
-          }
-        ],
-        [
-          {
-            "id": 25589,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.3 WING CARGO OIL TANK",
-            "frameNumberFrom": "71",
-            "frameNumberTo": "81",
-            "shortName": "3P",
-            "fullCapacityCubm": "20290.8000",
-            "density": 1.3,
-            "group": 3,
-            "order": 1,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25589,
-              "tankName": "3P",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 20290.8,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 11",
-            "percentageFilled": "0.00"
-          },
-          {
-            "id": 25582,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.3 CENTER CARGO OIL TANK",
-            "frameNumberFrom": "71",
-            "frameNumberTo": "81",
-            "shortName": "3C",
-            "fullCapacityCubm": "28201.6000",
-            "density": 1.3,
-            "group": 3,
-            "order": 2,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25582,
-              "tankName": "3C",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 28201.6,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 11",
-            "percentageFilled": "0.00"
-          },
-          {
-            "id": 25590,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.3 WING CARGO OIL TANK",
-            "frameNumberFrom": "71",
-            "frameNumberTo": "81",
-            "shortName": "3S",
-            "fullCapacityCubm": "20290.8000",
-            "density": 1.3,
-            "group": 3,
-            "order": 3,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25590,
-              "tankName": "3S",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 20290.8,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 11",
-            "percentageFilled": "0.00"
-          }
-        ],
-        [
-          {
-            "id": 25587,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.2 WING CARGO OIL TANK",
-            "frameNumberFrom": "81",
-            "frameNumberTo": "91",
-            "shortName": "2P",
-            "fullCapacityCubm": "20290.8000",
-            "density": 1.3,
-            "group": 4,
-            "order": 1,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25587,
-              "tankName": "2P",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 20290.8,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 11",
-            "percentageFilled": "0.00"
-          },
-          {
-            "id": 25581,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.2 CENTER CARGO OIL TANK",
-            "frameNumberFrom": "81",
-            "frameNumberTo": "91",
-            "shortName": "2C",
-            "fullCapacityCubm": "28201.6000",
-            "density": 1.3,
-            "group": 4,
-            "order": 2,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25581,
-              "tankName": "2C",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 28201.6,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 11",
-            "percentageFilled": "0.00"
-          },
-          {
-            "id": 25588,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.2 WING CARGO OIL TANK",
-            "frameNumberFrom": "81",
-            "frameNumberTo": "91",
-            "shortName": "2S",
-            "fullCapacityCubm": "20290.8000",
-            "density": 1.3,
-            "group": 4,
-            "order": 3,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25588,
-              "tankName": "2S",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 20290.8,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 11",
-            "percentageFilled": "0.00"
-          }
-        ],
-        [
-          {
-            "id": 25585,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.1  WING CARGO OIL TANK",
-            "frameNumberFrom": "91",
-            "frameNumberTo": "103",
-            "shortName": "1P",
-            "fullCapacityCubm": "20797.7000",
-            "density": 1.3,
-            "group": 5,
-            "order": 1,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25585,
-              "tankName": "1P",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 20797.7,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 13",
-            "percentageFilled": "0.00"
-          },
-          {
-            "id": 25580,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.1 CENTER CARGO OIL TANK",
-            "frameNumberFrom": "91",
-            "frameNumberTo": "103",
-            "shortName": "1C",
-            "fullCapacityCubm": "30229.5000",
-            "density": 1.3,
-            "group": 5,
-            "order": 2,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25580,
-              "tankName": "1C",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 30229.5,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 13",
-            "percentageFilled": "0.00"
-          },
-          {
-            "id": 25586,
-            "categoryId": 1,
-            "categoryName": "Cargo Tank",
-            "name": "NO.1  WING CARGO OIL TANK",
-            "frameNumberFrom": "91",
-            "frameNumberTo": "103",
-            "shortName": "1S",
-            "fullCapacityCubm": "20797.7000",
-            "density": 1.3,
-            "group": 5,
-            "order": 3,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25586,
-              "tankName": "1S",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 20797.7,
-              "abbreviation": "",
-              "cargoId": 0,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": 0,
-              "sg": null,
-              "isCommingleCargo": false,
-              "volume": null,
-              "percentageFilled": "0.00"
-            },
-            "gridColumn": "1 / 13",
-            "percentageFilled": "0.00"
-          }
-        ]
-      ],
-      "bunkerTanks": [
-        [
-          {
-            "id": 25614,
-            "categoryId": 5,
-            "categoryName": "Fuel Oil Tank",
-            "name": "NO.2  FUEL OIL TANK",
-            "frameNumberFrom": "15",
-            "frameNumberTo": "39",
-            "shortName": "FO2P",
-            "fullCapacityCubm": "1852.0000",
-            "density": 0.98,
-            "group": 2,
-            "order": 1,
-            "slopTank": false,
-            "commodity": {
-              "id": 117184,
-              "portId": 359,
-              "fuelTypeId": 5,
-              "fuelTypeName": "Fuel Oil Tank",
-              "fuelTypeShortName": "FOT",
-              "tankId": 25614,
-              "tankName": "FO2P",
-              "arrivalVolume": 0,
-              "arrivalQuantity": 0,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 0,
-              "departureQuantity": 0,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#c60a09",
-              "density": 0,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 25612,
-            "categoryId": 5,
-            "categoryName": "Fuel Oil Tank",
-            "name": "NO.1  FUEL OIL TANK",
-            "frameNumberFrom": "39",
-            "frameNumberTo": "49",
-            "shortName": "FO1P",
-            "fullCapacityCubm": "2490.5000",
-            "density": 0.98,
-            "group": 2,
-            "order": 2,
-            "slopTank": false,
-            "commodity": {
-              "id": 117186,
-              "portId": 359,
-              "fuelTypeId": 5,
-              "fuelTypeName": "Fuel Oil Tank",
-              "fuelTypeShortName": "FOT",
-              "tankId": 25612,
-              "tankName": "FO1P",
-              "arrivalVolume": 0,
-              "arrivalQuantity": 0,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 0,
-              "departureQuantity": 0,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#c60a09",
-              "density": 0,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 26004,
-            "categoryId": 22,
-            "categoryName": "Fuel Void",
-            "name": "FUEL VOID 1",
-            "frameNumberFrom": "15",
-            "frameNumberTo": "49",
-            "shortName": "VOID",
-            "group": 2,
-            "order": 3,
-            "slopTank": false
-          },
-          {
-            "id": 26005,
-            "categoryId": 22,
-            "categoryName": "Fuel Void",
-            "name": "FUEL VOID 2",
-            "frameNumberFrom": "15",
-            "frameNumberTo": "43",
-            "shortName": "VOID",
-            "group": 2,
-            "order": 4,
-            "slopTank": false
-          },
-          {
-            "id": 25616,
-            "categoryId": 5,
-            "categoryName": "Fuel Oil Tank",
-            "name": "H.F.O.SERV. TANK",
-            "frameNumberFrom": "43",
-            "frameNumberTo": "47",
-            "shortName": "HFOSRV",
-            "fullCapacityCubm": "66.8000",
-            "density": 0.98,
-            "group": 2,
-            "order": 5,
-            "slopTank": false,
-            "commodity": {
-              "id": 117188,
-              "portId": 359,
-              "fuelTypeId": 5,
-              "fuelTypeName": "Fuel Oil Tank",
-              "fuelTypeShortName": "FOT",
-              "tankId": 25616,
-              "tankName": "HFOSRV",
-              "arrivalVolume": 0,
-              "arrivalQuantity": 0,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 0,
-              "departureQuantity": 0,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#c60a09",
-              "density": 0,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 25625,
-            "categoryId": 6,
-            "categoryName": "Diesel Oil Tank",
-            "name": "NO.2 D.O.SERV.TANK",
-            "frameNumberFrom": "22",
-            "frameNumberTo": "24",
-            "shortName": "DOSRV2",
-            "fullCapacityCubm": "27.4000",
-            "density": 0.85,
-            "group": 2,
-            "order": 6,
-            "slopTank": false,
-            "commodity": {
-              "id": 117191,
-              "portId": 359,
-              "fuelTypeId": 6,
-              "fuelTypeName": "Diesel Oil Tank",
-              "fuelTypeShortName": "DOT",
-              "tankId": 25625,
-              "tankName": "DOSRV2",
-              "arrivalVolume": 0,
-              "arrivalQuantity": 0,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 0,
-              "departureQuantity": 0,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#fa8424",
-              "density": 0,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 25624,
-            "categoryId": 6,
-            "categoryName": "Diesel Oil Tank",
-            "name": "NO.1 D.O. SERV.TANK",
-            "frameNumberFrom": "24",
-            "frameNumberTo": "26",
-            "shortName": "DOSRV1",
-            "fullCapacityCubm": "32.4000",
-            "density": 0.85,
-            "group": 2,
-            "order": 7,
-            "slopTank": false,
-            "commodity": {
-              "id": 116909,
-              "portId": 359,
-              "fuelTypeId": 6,
-              "fuelTypeName": "Diesel Oil Tank",
-              "fuelTypeShortName": "DOT",
-              "tankId": 25624,
-              "tankName": "DOSRV1",
-              "arrivalVolume": 25,
-              "arrivalQuantity": 20,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 25,
-              "departureQuantity": 20,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#fa8424",
-              "density": 0.8,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 25617,
-            "categoryId": 5,
-            "categoryName": "Fuel Oil Tank",
-            "name": "H.F.O.SETT. TANK",
-            "frameNumberFrom": "39",
-            "frameNumberTo": "43",
-            "shortName": "HFOSET",
-            "fullCapacityCubm": "64.1000",
-            "density": 0.98,
-            "group": 2,
-            "order": 8,
-            "slopTank": false,
-            "commodity": {
-              "id": 117189,
-              "portId": 359,
-              "fuelTypeId": 5,
-              "fuelTypeName": "Fuel Oil Tank",
-              "fuelTypeShortName": "FOT",
-              "tankId": 25617,
-              "tankName": "HFOSET",
-              "arrivalVolume": 0,
-              "arrivalQuantity": 0,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 0,
-              "departureQuantity": 0,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#c60a09",
-              "density": 0,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 25623,
-            "categoryId": 6,
-            "categoryName": "Diesel Oil Tank",
-            "name": "NO.2 DIESEL OIL TANK",
-            "frameNumberFrom": "15",
-            "frameNumberTo": "22",
-            "shortName": "DO2S",
-            "fullCapacityCubm": "278.1000",
-            "density": 0.85,
-            "group": 2,
-            "order": 9,
-            "slopTank": false,
-            "commodity": {
-              "id": 117194,
-              "portId": 359,
-              "fuelTypeId": 6,
-              "fuelTypeName": "Diesel Oil Tank",
-              "fuelTypeShortName": "DOT",
-              "tankId": 25623,
-              "tankName": "DO2S",
-              "arrivalVolume": 0,
-              "arrivalQuantity": 0,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 0,
-              "departureQuantity": 0,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#fa8424",
-              "density": 0,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 25622,
-            "categoryId": 6,
-            "categoryName": "Diesel Oil Tank",
-            "name": "NO.1 DIESEL OIL TANK",
-            "frameNumberFrom": "22",
-            "frameNumberTo": "26",
-            "shortName": "DO1S",
-            "fullCapacityCubm": "175.2000",
-            "density": 0.85,
-            "group": 2,
-            "order": 10,
-            "slopTank": false,
-            "commodity": {
-              "id": 117192,
-              "portId": 359,
-              "fuelTypeId": 6,
-              "fuelTypeName": "Diesel Oil Tank",
-              "fuelTypeShortName": "DOT",
-              "tankId": 25622,
-              "tankName": "DO1S",
-              "arrivalVolume": 0,
-              "arrivalQuantity": 0,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 0,
-              "departureQuantity": 0,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#fa8424",
-              "density": 0,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 25619,
-            "categoryId": 5,
-            "categoryName": "Fuel Oil Tank",
-            "name": "BOILER F.O.SERV.TANK",
-            "frameNumberFrom": "34",
-            "frameNumberTo": "39",
-            "shortName": "BFOSRV",
-            "fullCapacityCubm": "67.2000",
-            "density": 0.98,
-            "group": 2,
-            "order": 11,
-            "slopTank": false,
-            "commodity": {
-              "id": 116911,
-              "portId": 359,
-              "fuelTypeId": 5,
-              "fuelTypeName": "Fuel Oil Tank",
-              "fuelTypeShortName": "FOT",
-              "tankId": 25619,
-              "tankName": "BFOSRV",
-              "arrivalVolume": 25,
-              "arrivalQuantity": 20,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 25,
-              "departureQuantity": 20,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#c60a09",
-              "density": 0.8,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 25615,
-            "categoryId": 5,
-            "categoryName": "Fuel Oil Tank",
-            "name": "NO.2  FUEL OIL TANK",
-            "frameNumberFrom": "26",
-            "frameNumberTo": "39",
-            "shortName": "FO2S",
-            "fullCapacityCubm": "1259.2000",
-            "density": 0.98,
-            "group": 2,
-            "order": 12,
-            "slopTank": false,
-            "commodity": {
-              "id": 117185,
-              "portId": 359,
-              "fuelTypeId": 5,
-              "fuelTypeName": "Fuel Oil Tank",
-              "fuelTypeShortName": "FOT",
-              "tankId": 25615,
-              "tankName": "FO2S",
-              "arrivalVolume": 0,
-              "arrivalQuantity": 0,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 0,
-              "departureQuantity": 0,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#c60a09",
-              "density": 0,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 25613,
-            "categoryId": 5,
-            "categoryName": "Fuel Oil Tank",
-            "name": "NO.1  FUEL OIL TANK",
-            "frameNumberFrom": "39",
-            "frameNumberTo": "49",
-            "shortName": "FO1S",
-            "fullCapacityCubm": "2154.3000",
-            "density": 0.98,
-            "group": 2,
-            "order": 13,
-            "slopTank": false,
-            "commodity": {
-              "id": 117187,
-              "portId": 359,
-              "fuelTypeId": 5,
-              "fuelTypeName": "Fuel Oil Tank",
-              "fuelTypeShortName": "FOT",
-              "tankId": 25613,
-              "tankName": "FO1S",
-              "arrivalVolume": 0,
-              "arrivalQuantity": 0,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 0,
-              "departureQuantity": 0,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#c60a09",
-              "density": 0,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          }
-        ]
-      ],
-      "bunkerRearTanks": [
-        [
-          {
-            "id": 25636,
-            "categoryId": 3,
-            "categoryName": "Fresh Water Tank",
-            "name": "DRINKING WATER TANK",
-            "frameNumberFrom": "5",
-            "frameNumberTo": "13",
-            "shortName": "DRWT",
-            "fullCapacityCubm": "369.4000",
-            "density": 1,
-            "group": 1,
-            "order": 1,
-            "slopTank": false,
-            "commodity": {
-              "id": 116910,
-              "portId": 359,
-              "fuelTypeId": 3,
-              "fuelTypeName": "Fresh Water Tank",
-              "fuelTypeShortName": "FWT",
-              "tankId": 25636,
-              "tankName": "DRWT",
-              "arrivalVolume": 200,
-              "arrivalQuantity": 200,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 200,
-              "departureQuantity": 200,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#5aa1a3",
-              "density": 1,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 25638,
-            "categoryId": 3,
-            "categoryName": "Fresh Water Tank",
-            "name": "DIST.WATER TANK",
-            "frameNumberFrom": "13",
-            "frameNumberTo": "15",
-            "shortName": "DSWTP",
-            "fullCapacityCubm": "117.0000",
-            "density": 1,
-            "group": 1,
-            "order": 2,
-            "slopTank": false,
-            "commodity": {
-              "id": 117198,
-              "portId": 359,
-              "fuelTypeId": 3,
-              "fuelTypeName": "Fresh Water Tank",
-              "fuelTypeShortName": "FWT",
-              "tankId": 25638,
-              "tankName": "DSWTP",
-              "arrivalVolume": 0,
-              "arrivalQuantity": 0,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 0,
-              "departureQuantity": 0,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#5aa1a3",
-              "density": 0,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 26003,
-            "categoryId": 23,
-            "categoryName": "Fresh Tank Void",
-            "name": "APT",
-            "frameNumberFrom": "0",
-            "frameNumberTo": "15",
-            "shortName": "APT",
-            "group": 1,
-            "order": 3,
-            "slopTank": false
-          },
-          {
-            "id": 25639,
-            "categoryId": 3,
-            "categoryName": "Fresh Water Tank",
-            "name": "DIST.WATER TANK",
-            "frameNumberFrom": "13",
-            "frameNumberTo": "15",
-            "shortName": "DSWTS",
-            "fullCapacityCubm": "117.0000",
-            "density": 1,
-            "group": 1,
-            "order": 4,
-            "slopTank": false,
-            "commodity": {
-              "id": 117199,
-              "portId": 359,
-              "fuelTypeId": 3,
-              "fuelTypeName": "Fresh Water Tank",
-              "fuelTypeShortName": "FWT",
-              "tankId": 25639,
-              "tankName": "DSWTS",
-              "arrivalVolume": 0,
-              "arrivalQuantity": 0,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 0,
-              "departureQuantity": 0,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#5aa1a3",
-              "density": 0,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          },
-          {
-            "id": 25637,
-            "categoryId": 3,
-            "categoryName": "Fresh Water Tank",
-            "name": "FRESH WATER TANK",
-            "frameNumberFrom": "5",
-            "frameNumberTo": "13",
-            "shortName": "FRWT",
-            "fullCapacityCubm": "369.4000",
-            "density": 1,
-            "group": 1,
-            "order": 5,
-            "slopTank": false,
-            "commodity": {
-              "id": 117196,
-              "portId": 359,
-              "fuelTypeId": 3,
-              "fuelTypeName": "Fresh Water Tank",
-              "fuelTypeShortName": "FWT",
-              "tankId": 25637,
-              "tankName": "FRWT",
-              "arrivalVolume": 0,
-              "arrivalQuantity": 0,
-              "actualArrivalQuantity": 0,
-              "departureVolume": 0,
-              "departureQuantity": 0,
-              "actualDepartureQuantity": 0,
-              "colorCode": "#5aa1a3",
-              "density": 0,
-              "portRotationId": 107678,
-              "quantity": 0,
-              "volume": 0
-            }
-          }
-        ]
-      ],
-      "ballastFrontTanks": [
-        [
-          {
-            "id": 25611,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "FORE PEAK TANK(PORT USE)",
-            "frameNumberFrom": "103",
-            "frameNumberTo": "FE",
-            "shortName": "FPTU",
-            "fullCapacityCubm": "5156.5000",
-            "density": 1.025,
-            "group": 0,
-            "order": 1,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25611,
-              "tankName": "FPTU",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 5156.5,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          },
-          {
-            "id": 25597,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "FORE PEAK TANK",
-            "frameNumberFrom": "103",
-            "frameNumberTo": "FE",
-            "shortName": "FPTL",
-            "fullCapacityCubm": "5444.2000",
-            "density": 1.025,
-            "group": 0,
-            "order": 2,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25597,
-              "tankName": "FPTL",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 5444.2,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          }
-        ]
-      ],
-      "ballastCenterTanks": [
-        [
-          {
-            "id": 25608,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "AFT WATER BALLAST TANK",
-            "frameNumberFrom": "15",
-            "frameNumberTo": "39",
-            "shortName": "AWBP",
-            "fullCapacityCubm": "1024.9000",
-            "density": 1.025,
-            "group": 0,
-            "order": 1,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25608,
-              "tankName": "AWBP",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 1024.9,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          },
-          {
-            "id": 25606,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "NO.5 WATER BALLAST TANK",
-            "frameNumberFrom": "49",
-            "frameNumberTo": "61",
-            "shortName": "WB5P",
-            "fullCapacityCubm": "8561.9000",
-            "density": 1.025,
-            "group": 0,
-            "order": 3,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25606,
-              "tankName": "WB5P",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 8561.9,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          },
-          {
-            "id": 25604,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "NO.4 WATER BALLAST TANK",
-            "frameNumberFrom": "61",
-            "frameNumberTo": "71",
-            "shortName": "WB4P",
-            "fullCapacityCubm": "8743.7000",
-            "density": 1.025,
-            "group": 0,
-            "order": 4,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25604,
-              "tankName": "WB4P",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 8743.7,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          },
-          {
-            "id": 25602,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "NO.3 WATER BALLAST TANK",
-            "frameNumberFrom": "71",
-            "frameNumberTo": "81",
-            "shortName": "WB3P",
-            "fullCapacityCubm": "8875.8000",
-            "density": 1.025,
-            "group": 0,
-            "order": 5,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25602,
-              "tankName": "WB3P",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 8875.8,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          },
-          {
-            "id": 25600,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "NO.2 WATER BALLAST TANK",
-            "frameNumberFrom": "81",
-            "frameNumberTo": "91",
-            "shortName": "WB2P",
-            "fullCapacityCubm": "8873.6000",
-            "density": 1.025,
-            "group": 0,
-            "order": 6,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25600,
-              "tankName": "WB2P",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 8873.6,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          },
-          {
-            "id": 25598,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "NO.1 WATER BALLAST TANK",
-            "frameNumberFrom": "91",
-            "frameNumberTo": "103",
-            "shortName": "WB1P",
-            "fullCapacityCubm": "8906.5000",
-            "density": 1.025,
-            "group": 0,
-            "order": 7,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25598,
-              "tankName": "WB1P",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 8906.5,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          },
-          {
-            "id": 25609,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "AFT WATER BALLAST TANK",
-            "frameNumberFrom": "15",
-            "frameNumberTo": "39",
-            "shortName": "AWBS",
-            "fullCapacityCubm": "1024.9000",
-            "density": 1.025,
-            "group": 0,
-            "order": 8,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25609,
-              "tankName": "AWBS",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 1024.9,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          },
-          {
-            "id": 25607,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "NO.5 WATER BALLAST TANK",
-            "frameNumberFrom": "49",
-            "frameNumberTo": "61",
-            "shortName": "WB5S",
-            "fullCapacityCubm": "8560.4000",
-            "density": 1.025,
-            "group": 0,
-            "order": 10,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25607,
-              "tankName": "WB5S",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 8560.4,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          },
-          {
-            "id": 25605,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "NO.4 WATER BALLAST TANK",
-            "frameNumberFrom": "61",
-            "frameNumberTo": "71",
-            "shortName": "WB4S",
-            "fullCapacityCubm": "8741.7000",
-            "density": 1.025,
-            "group": 0,
-            "order": 11,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25605,
-              "tankName": "WB4S",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 8741.7,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          },
-          {
-            "id": 25603,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "NO.3 WATER BALLAST TANK",
-            "frameNumberFrom": "71",
-            "frameNumberTo": "81",
-            "shortName": "WB3S",
-            "fullCapacityCubm": "8873.8000",
-            "density": 1.025,
-            "group": 0,
-            "order": 12,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25603,
-              "tankName": "WB3S",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 8873.8,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          },
-          {
-            "id": 25601,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "NO.2 WATER BALLAST TANK",
-            "frameNumberFrom": "81",
-            "frameNumberTo": "91",
-            "shortName": "WB2S",
-            "fullCapacityCubm": "8871.5000",
-            "density": 1.025,
-            "group": 0,
-            "order": 13,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25601,
-              "tankName": "WB2S",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 8871.5,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          },
-          {
-            "id": 25599,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "NO.1 WATER BALLAST TANK",
-            "frameNumberFrom": "91",
-            "frameNumberTo": "103",
-            "shortName": "WB1S",
-            "fullCapacityCubm": "8904.4000",
-            "density": 1.025,
-            "group": 0,
-            "order": 14,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25599,
-              "tankName": "WB1S",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 8904.4,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          }
-        ]
-      ],
-      "ballastRearTanks": [
-        [
-          {
-            "id": 25610,
-            "categoryId": 2,
-            "categoryName": "Water Ballast Tank",
-            "name": "AFT PEAK TANK",
-            "frameNumberFrom": "AE",
-            "frameNumberTo": "15",
-            "shortName": "APT",
-            "fullCapacityCubm": "2574.4000",
-            "density": 1.025,
-            "group": 0,
-            "order": 1,
-            "slopTank": false,
-            "commodity": {
-              "tankId": 25610,
-              "tankName": "APT",
-              "actualWeight": 0,
-              "plannedWeight": 0,
-              "capacity": 2574.4,
-              "abbreviation": null,
-              "cargoId": null,
-              "colorCode": "",
-              "correctedUllage": 0,
-              "api": null,
-              "sg": "",
-              "isCommingleCargo": null,
-              "volume": 0,
-              "percentageFilled": "0.00"
-            }
-          }
-        ]
-      ],
-      "cargoConditions": [
-        {
-          "id": 0,
-          "plannedWeight": 0,
-          "actualWeight": 0
-        }
-      ],
-      "stabilityConditions": {
-        "list": 0,
-        "hogSag": 0,
-        "finalDraftFwd": 0,
-        "finalDraftAft": 0,
-        "finalDraftMid": 0,
-        "calculatedDraftFwdActual": 0,
-        "calculatedDraftAftActual": 0,
-        "calculatedDraftMidActual": 0,
-        "calculatedTrimActual": 0
-      },
-      "bunkerConditions": {
-        "dieselOilWeight": 0,
-        "fuelOilWeight": 0,
-        "ballastWeight": 0,
-        "freshWaterWeight": 0,
-        "othersWeight": 0,
-        "totalDwtWeight": 0,
-        "displacement": 0,
-        "specificGravity": 1.025
-      }
-    };
-    this.loadablePatternCargoDetails = [
-      {"priority":1,"cargoAbbreviation":"AEL","cargoColor":"#b82121","quantity":"105000.0","isCommingle":false,"loadablePatternCommingleDetailsId":0,"orderedQuantity":"100000.0000","loadingOrder":1,"api":"40.0000","tankName":"","tankId":null,"fillingRatio":null,"temperature":"102.0000",
-      "cargo": [
-        {
-          cargoName: 'KU',
-          cargoDetails: [
-            {
-              blRefNo: null,
-              cargoName: 'KU',
-              bbl: 5000,
-              lt: 100000,
-              mt: 100000,
-              kl: 100000,
-              api: 30.00,
-              temp: 31.9
-            },
-            {
-              blRefNo: null,
-              cargoName: 'KU',
-              bbl: 5000,
-              lt: 29000,
-              mt: 31954,
-              kl: 58988,
-              api: 8.60,
-              temp: 56.0
-            }
-          ]
-        },
-      ]
-      },
-      {"priority":1,"cargoAbbreviation":"KWE","cargoColor":"#2158b8","quantity":"105000.0","isCommingle":false,"loadablePatternCommingleDetailsId":0,"orderedQuantity":"100000.0000","loadingOrder":2,"api":"30.0000","tankName":"","tankId":null,"fillingRatio":null,"temperature":"102.0000",
-      "cargo": [
-        {
-          cargoName: 'KU',
-          cargoDetails: [
-            {
-              blRefNo: null,
-              bbl: 5000,
-              lt: 100000,
-              mt: 100000,
-              kl: 100000,
-              api: 30.00,
-              temp: 31.9,
-              cargoName: 'KU',
-            },
-            {
-              blRefNo: null,
-              bbl: 5000,
-              lt: 29000,
-              mt: 31954,
-              kl: 58988,
-              api: 8.60,
-              temp: 56.0,
-              cargoName: 'KU',
-            }
-          ]
-        },
-      ]}
-    ]
+
+    this.currentQuantitySelectedUnit = QUANTITY_UNIT.MT;
+
     this.cargoColumns = this.ullageUpdatePopupTransformationService.getCargoTableColumn();
     this.ballastColumns = this.ullageUpdatePopupTransformationService.getBallastTankColumns();
     this.bunkerColumns = this.ullageUpdatePopupTransformationService.getBunkerTankColumns();
     this.blFigureColumns = this.ullageUpdatePopupTransformationService.getBLFigureColumns();
-    this.selectedCargo = this.loadablePatternCargoDetails[0];
+    this.formatCargoQuantity(this.ullageResponseData.cargoQuantityDetails);
     this.tableForm = this.fb.group({
       items: this.fb.array([])
-    })
-    this.blFigGrid();
-
-    this.cargoQuantityList = [
-      {
-        cargoName: 'KU',
-        nominationFig: 1000000,
-        tolerance: {
-          min: -10,
-          max: 10
-        },
-        quantity: {
-          max: 1100000,
-          min: 900000
-        },
-        plan: {
-          bbl: 1000000,
-          lt: 129000,
-          mt: 131954,
-          kl: 158988,
-          api: 38.60,
-          temp: 114
-        },
-        actual: {
-          bbl: 1000000,
-          lt: 129000,
-          mt: 131954,
-          kl: 158988,
-          api: 38.60,
-          temp: 114
-        },
-        blFigure: {
-          bbl: 1000000,
-          lt: 129000,
-          mt: 131954,
-          kl: 158988,
-          api: 38.60,
-          temp: 114
-        },
-        diff: {
-          bbl: -2000,
-          lt: -2000,
-          mt: -263.91,
-          kl: 317,
-        },
-        diffPercentage: {
-          bbl: -0.20,
-          lt: -0.20,
-          mt: -0.20,
-          kl: -0.20,
-        }
-      },
-      {
-        cargoName: 'TU',
-        nominationFig: 1000000,
-        tolerance: {
-          min: -10,
-          max: 10
-        },
-        quantity: {
-          max: 1100000,
-          min: 900000
-        },
-        plan: {
-          bbl: 1000000,
-          lt: 129000,
-          mt: 131954,
-          kl: 158988,
-          api: 38.60,
-          temp: 114
-        },
-        actual: {
-          bbl: 1000000,
-          lt: 129000,
-          mt: 131954,
-          kl: 158988,
-          api: 38.60,
-          temp: 114
-        },
-        blFigure: {
-          bbl: 1000000,
-          lt: 129000,
-          mt: 131954,
-          kl: 158988,
-          api: 38.60,
-          temp: 114
-        },
-        diff: {
-          bbl: -2000,
-          lt: -2000,
-          mt: -263.91,
-          kl: 317,
-        },
-        diffPercentage: {
-          bbl: -0.20,
-          lt: -0.20,
-          mt: -0.20,
-          kl: -0.20,
-        }
-      }
-    ];
+    });
+    this.cargoTankForm = this.fb.group({
+      dataTable: this.fb.array([])
+    });
+    this.ballastTankForm = this.fb.group({
+      dataTable: this.fb.array([])
+    });
+    this.bunkerTankForm = this.fb.group({
+      dataTable: this.fb.array([])
+    });
+    this.selectedCargo = this.ullageResponseData?.billOfLaddingList[0];
+    this.blFigGrid(this.ullageResponseData);
     this.getShipLandingTanks();
+    this.setCargoQuantities();
+    this.setBallastQuantities(this.ullageResponseData?.portLoadablePlanBallastDetails);
+    this.setBunkerQuantities(this.ullageResponseData?.portLoadablePlanRobDetails);
+    this.getCargoTankFormGroup();
+    this.getBallastTankFormGroup();
+    this.getBunkerTankFormGroup();
+    this.updateCargoQuantiyData();
   }
 
+  /**
+  * Method for show as dropdown change
+  *
+  * @memberof UllageUpdatePopupComponent
+  */
+  showAsChange(event) {
+    this.updateCargoQuantiyData();
+    if (this.showAs.id === 2) {
+      this.updateCargoTanks();
+    } else {
+      this.cargoTanks = this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseDataCopy?.cargoTanks, this.ullageResponseDataCopy?.portLoadablePlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0);
+    }
+  }
+
+  /**
+   * Method for updating the cargo quantity table
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  updateCargoQuantiyData() {
+    this.ullageResponseData?.billOfLaddingList.map(bl => {
+      let actualQuantity = 0;
+      this.ullageResponseData?.portLoadablePlanStowageDetails.map(item => {
+        if (bl.cargoNominationId === item.cargoNominationId) {
+          actualQuantity += Number(item.quantity);
+        }
+      });
+
+      let mtQuantity = 0;
+      let bblQuantity = 0;
+      let klQuantity = 0;
+      let ltQuantity = 0;
+      this.blFigure['items'].map(item => {
+        item.map(blq => {
+          if (blq.cargo.cargoNominationId === bl.cargoNominationId) {
+            mtQuantity += blq.cargo.mt.value;
+            bblQuantity += blq.cargo.bbl.value;
+            klQuantity += blq.cargo.kl.value;
+            ltQuantity += blq.cargo.lt.value;
+          }
+        })
+      });
+
+      this.cargoQuantityList?.map(cargo => {
+        if (cargo.cargoNominationId === bl.cargoNominationId) {
+          cargo.actual.bbl = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo.api);
+          cargo.actual.kl = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargo.api);
+          cargo.actual.lt = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, cargo.api);
+          cargo.actual.mt = isNaN(actualQuantity) ? 0 : Number(Number(actualQuantity).toFixed(2));
+
+          cargo.blFigure.bbl = this.quantityPipe.transform(bblQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo.api);
+          cargo.blFigure.kl = this.quantityPipe.transform(klQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargo.api);
+          cargo.blFigure.lt = this.quantityPipe.transform(ltQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, cargo.api);;
+          cargo.blFigure.mt = isNaN(mtQuantity) ? 0 : Number(Number(mtQuantity).toFixed(2));
+
+          cargo.difference.bbl = this.decimalPipe.transform((cargo.actual.bbl - cargo.blFigure.bbl), AppConfigurationService.settings.quantityNumberFormatBBLS);
+          cargo.difference.bbl = cargo.difference.bbl ? Number(cargo.difference.bbl.replace(',', '')) : 0;
+          cargo.difference.kl = this.decimalPipe.transform((cargo.actual.kl - cargo.blFigure.kl), AppConfigurationService.settings.quantityNumberFormatKL);
+          cargo.difference.kl = cargo.difference.kl ? Number(cargo.difference.kl.replace(',', '')) : 0;
+          cargo.difference.lt = this.decimalPipe.transform((cargo.actual.lt - cargo.blFigure.lt), AppConfigurationService.settings.quantityNumberFormatLT);
+          cargo.difference.lt = cargo.difference.lt ? Number(cargo.difference.lt.replace(',', '')) : 0;
+          cargo.difference.mt = this.decimalPipe.transform((cargo.actual.mt - cargo.blFigure.mt), AppConfigurationService.settings.quantityNumberFormatMT);
+          cargo.difference.mt = cargo.difference.mt ? Number(cargo.difference.mt.replace(',', '')) : 0;
+
+          cargo.diffPercentage.bbl = Number(((cargo.difference.bbl / cargo.actual.bbl) * 100).toFixed(2));
+          cargo.diffPercentage.bbl = isNaN(cargo.diffPercentage.bbl) ? 0 : cargo.diffPercentage.bbl;
+          cargo.diffPercentage.kl = Number(((cargo.difference.kl / cargo.actual.kl) * 100).toFixed(2));
+          cargo.diffPercentage.kl = isNaN(cargo.diffPercentage.kl) ? 0 : cargo.diffPercentage.kl;
+          cargo.diffPercentage.lt = Number(((cargo.difference.lt / cargo.actual.lt) * 100).toFixed(2));
+          cargo.diffPercentage.lt = isNaN(cargo.diffPercentage.lt) ? 0 : cargo.diffPercentage.lt;
+          cargo.diffPercentage.mt = Number(((cargo.difference.mt / cargo.actual.mt) * 100).toFixed(2));
+          cargo.diffPercentage.mt = isNaN(cargo.diffPercentage.mt) ? 0 : cargo.diffPercentage.mt;
+        }
+      });
+
+    });
+
+  }
+
+  /**
+   * Method for updating the cargo tanks
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  async updateCargoTanks() {
+    let fillingPercentageError = false;
+    let tankName = null;
+    this.cargoQuantityList.map(item => {
+      const differenecPercentage = item.diffPercentage.mt;
+      this.cargoTanks.map(tank => {
+        tank.map(elem => {
+          if (elem?.commodity && elem?.commodity['cargoNominationId'] === item.cargoNominationId) {
+            const changeInQty = (differenecPercentage / 100) * Number(elem.commodity.quantity);
+            elem.commodity.quantity = differenecPercentage >= 0 ? Number(elem.commodity.quantity) + changeInQty : Number(elem.commodity.quantity) - changeInQty;
+            elem.commodity.actualWeight = elem.commodity.quantity;
+            elem.commodity.volume = this.quantityPipe.transform(elem.commodity.actualWeight, this.currentQuantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, elem.commodity.api);
+            elem.commodity.percentageFilled = this.ullageUpdatePopupTransformationService.getFillingPercentage(elem);
+            if (Number(elem.commodity.percentageFilled) > 98.5 && !fillingPercentageError) {
+              fillingPercentageError = true;
+              tankName = elem.shortName;
+            }
+          }
+        });
+      })
+    });
+    this.cargoTanks = [...this.cargoTanks];
+    if (fillingPercentageError) {
+      const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_ERROR_LABEL', 'ULLAGE_UPDATE_FILLING_PERCENTAGE_ERROR_ONE', 'ULLAGE_UPDATE_FILLING_PERCENTAGE_ERROR_TWO']).toPromise();
+      this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILLING_PERCENTAGE_ERROR_ONE'] + " " + tankName + " " + translationKeys['ULLAGE_UPDATE_FILLING_PERCENTAGE_ERROR_TWO'] });
+    }
+  }
+
+  /**
+   * Method for seting bunker quantities
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  setBunkerQuantities(data) {
+    this.bunkerTanksList = [];
+    data.map(item => {
+      this.bunkerTanksList.push(this.ullageUpdatePopupTransformationService.getFormatedTankDetailsBunker(item, true, true))
+    });
+  }
+
+  /**
+   * Method for seting ballast quantities
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  setBallastQuantities(data) {
+    this.ballastQuantities = [];
+    data.map(item => {
+      this.ballastQuantities.push(this.ullageUpdatePopupTransformationService.getFormatedTankDetailsBallast(item, true, true))
+    });
+  }
+
+  /**
+   * Method for seting cargo quantities
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  setCargoQuantities() {
+    this.cargoQuantities = [];
+    this.ullageResponseData?.portLoadablePlanStowageDetails?.map(item => {
+      if (this.selectedCargo.cargoNominationId === item.cargoNominationId) {
+        this.cargoQuantities.push(this.ullageUpdatePopupTransformationService.getFormatedTankDetailsCargo(item, true, true))
+      }
+    });
+  }
+
+  /**
+   * Method for initializing cargo formGroup
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  getCargoTankFormGroup() {
+    const items: any = this.cargoTankForm.get('dataTable') as FormArray;
+    this.cargoQuantities?.map(item => {
+      items.push(this.cargoTankFormGroup(item));
+    });
+  }
+
+  /**
+   * Method for initializing ballast formGroup
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  getBallastTankFormGroup() {
+    const items: any = this.ballastTankForm.get('dataTable') as FormArray;
+    this.ballastQuantities?.map(item => {
+      items.push(this.ballastTankFormGroup(item));
+    });
+  }
+
+  /**
+   * Method for initializing bunker formGroup
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  getBunkerTankFormGroup() {
+    const items: any = this.bunkerTankForm.get('dataTable') as FormArray;
+    this.bunkerTanksList?.map(item => {
+      items.push(this.bunkerTankFormGroup(item));
+    });
+  }
+
+  /**
+   * Method for initializing bunker formGroup
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  bunkerTankFormGroup(tank) {
+    return this.fb.group({
+      tankName: this.fb.control(tank.tankName.value),
+      quantity: this.fb.control(tank.quantity.value),
+    });
+  }
+  /**
+   * Method for initializing ballast formGroup
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  ballastTankFormGroup(tank) {
+    return this.fb.group({
+      tankName: this.fb.control(tank.tankName.value),
+      quantity: this.fb.control(tank.quantity.value),
+      sounding: this.fb.control(tank.sounding.value, [tankCapacityValidator(null, null, 'sounding', 'fillingPercentage')]),
+    });
+  }
+
+  /**
+   * Method for initializing cargo formGroup
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  cargoTankFormGroup(tank) {
+    return this.fb.group({
+      tankName: this.fb.control(tank.tankName.value),
+      ullage: this.fb.control(tank.ullage.value, [tankCapacityValidator(null, null, 'ullage', 'fillingPercentage')]),
+      temperature: this.fb.control(tank.temperature.value, [tankCapacityValidator(null, null, 'temperature', 'fillingPercentage')]),
+      api: this.fb.control(tank.api.value, [tankCapacityValidator(null, null, 'api', 'fillingPercentage')]),
+      quantity: this.fb.control(tank.quantity.value),
+      fillingPercentage: this.fb.control(tank.fillingPercentage.value)
+    });
+  }
+
+  /**
+   * Method for initializing cargo quantity table data
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  formatCargoQuantity(data) {
+    this.cargoQuantityList = [];
+    data?.map(item => {
+      this.cargoQuantityList.push(this.ullageUpdatePopupTransformationService.formatCargoQuantity(item));
+    });
+  }
+
+  /**
+   * Method for close ullage update pop up
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
   closeDialog() {
     this.closePopup.emit(true);
   }
@@ -2773,6 +453,7 @@ statu: boolean;
    */
   onTabClick(selectedTab: TANKTYPE) {
     this.selectedTab = selectedTab;
+    this.percentageFilled = null;
   }
 
 
@@ -2792,17 +473,15 @@ statu: boolean;
   * @memberof UllageUpdatePopupComponent
   */
   convertQuantityToSelectedUnit() {
-    const mode = this.selectedPortDetails?.operationType === 'ARR' ? OHQ_MODE.ARRIVAL : OHQ_MODE.DEPARTURE;
-    this.cargoQuantities = this.voyageStatusResponse?.cargoQuantities ?? [];
-    this.ballastQuantities = this.voyageStatusResponse?.ballastQuantities ?? [];
-    this.bunkerTanks = this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.voyageStatusResponse?.bunkerTanks, this.voyageStatusResponse?.bunkerQuantities, mode);
-    this.rearBunkerTanks = this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.voyageStatusResponse?.bunkerRearTanks, this.voyageStatusResponse?.bunkerQuantities, mode);
-    this.cargoTanks = this.ullageUpdatePopupTransformationService.formatCargoTanks(this.voyageStatusResponse?.cargoTanks, this.voyageStatusResponse?.cargoQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.rearBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.voyageStatusResponse?.ballastRearTanks, this.voyageStatusResponse?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.centerBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.voyageStatusResponse?.ballastCenterTanks, this.voyageStatusResponse?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.frontBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.voyageStatusResponse?.ballastFrontTanks, this.voyageStatusResponse?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.fuelTypes = [...new Map(this.voyageStatusResponse.bunkerQuantities.map(item => [item['fuelTypeId'], { id: item?.fuelTypeId, name: item?.fuelTypeName, colorCode: item?.colorCode, shortName: item?.fuelTypeShortName }])).values()];
-    this.bunkerTanksList = this.bunkerTanks[0];
+
+    this.bunkerTanks = this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerTanks, this.ullageResponseData?.portLoadablePlanRobDetails, this.status);
+    this.rearBunkerTanks = this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerRearTanks, this.ullageResponseData?.portLoadablePlanRobDetails, this.status);
+    this.cargoTanks = this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portLoadablePlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.rearBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastRearTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.centerBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastCenterTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.frontBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastFrontTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.fuelTypes = [...new Map(this.ullageResponseData.portLoadablePlanRobDetails.map(item => [item['id'], { id: item?.id, name: item?.tankName, colorCode: item?.colorCode, shortName: item?.tankShortName }])).values()];
+
   }
 
   /**
@@ -2812,7 +491,7 @@ statu: boolean;
    * @memberof UllageUpdatePopupComponent
    */
   isCellVisable(index: number, col: any, rowData) {
-    if(index !== 0 && col.field === 'cargoName') {
+    if (index !== 0 && col.field === 'cargoName') {
       return false;
     }
     return true
@@ -2825,8 +504,8 @@ statu: boolean;
    * @param {number} rowIndex
    * @memberof UllageUpdatePopupComponent
    */
-  calculateRowSpan(index: number,colIndex: number, rowIndex: number) {
-    if(index === 0 && colIndex === 0) {
+  calculateRowSpan(index: number, colIndex: number, rowIndex: number) {
+    if (index === 0 && colIndex === 0) {
       return this.blFigure.items[rowIndex].length;
     }
   }
@@ -2839,7 +518,7 @@ statu: boolean;
   * @returns {AbstractControl}
   * @memberof UllageUpdatePopupComponent
   */
-  getControl(rowIndex: number,colIndex: number, key: string): AbstractControl {
+  getControl(rowIndex: number, colIndex: number, key: string): AbstractControl {
     return this.getCargoItems(rowIndex).at(colIndex).get(key);
   }
 
@@ -2851,8 +530,8 @@ statu: boolean;
    * @returns {ValidationErrors}
    * @memberof UllageUpdatePopupComponent
   */
-  fieldError(rowIndex: number,colIndex: number, key: string): ValidationErrors {
-    const formControl = this.getControl(rowIndex,colIndex,key);
+  fieldError(rowIndex: number, colIndex: number, key: string): ValidationErrors {
+    const formControl = this.getControl(rowIndex, colIndex, key);
     return formControl?.invalid && (formControl?.dirty || formControl?.touched) ? formControl.errors : null;
   }
 
@@ -2863,7 +542,9 @@ statu: boolean;
   */
   changeCargo(data: any) {
     this.selectedCargo = data.value;
-    this.blFigGrid();
+    this.setCargoQuantities();
+    this.getCargoTankFormGroup();
+
   }
 
   /**
@@ -2871,27 +552,56 @@ statu: boolean;
    *
    * @memberof UllageUpdatePopupComponent
   */
-  blFigGrid() {
+  blFigGrid(data) {
     this.blFigure['items'] = [];
-   this.loadablePatternCargoDetails.forEach((cargoDetails) => {
-    const cargos = cargoDetails.cargo;
-    let cargoItem = [];
-    cargos.map((cargo) => {
-      const cargoInfo = cargo.cargoDetails;
-      cargoItem = cargoInfo.map((cargoDetail) => {
-        return {'cargo': this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(cargoDetail, false)};
-      })
-    })
-    this.blFigure['items'].push(cargoItem)
-    })
-    this.blFigure.items.forEach((blItems, blRowIndex) => {
-      const  items = this.tableForm.get('items') as FormArray;
+    const blData = data?.billOfLaddingList ? data?.billOfLaddingList : [];
+    blData.map(item => {
+      const cargoData = [];
+      if (item?.billOfLaddings?.length) {
+        item?.billOfLaddings?.map(bl => {
+          cargoData.push({ 'cargo': this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(bl, item, false, false) });
+        });
+      } else {
+        cargoData.push({ 'cargo': this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{}, item, true, true) });
+      }
+      this.blFigure['items'].push(cargoData);
+    });
+    this.blFigure.items.map((blItems, blRowIndex) => {
+      const items = this.tableForm.get('items') as FormArray;
       items.push(this.initItems())
       blItems.forEach((cargoDetails, index) => {
         this.addCargoItems(blRowIndex, cargoDetails.cargo);
       });
     })
     this.calculateTotal();
+    this.enableDisableBLFigure();
+  }
+
+  /**
+   * Method for enable and disable bl figure fields
+   *
+   * @memberof UllageUpdatePopupComponent
+  */
+  enableDisableBLFigure() {
+    this.ullageResponseData?.billOfLaddingList?.map(item => {
+      let totQuantity = 0;
+      this.ullageResponseData?.portLoadablePlanStowageDetails.map(stowage => {
+        if (item.cargoNominationId === stowage.cargoNominationId) {
+          totQuantity += Number(stowage.quantity);
+        }
+      });
+      this.tableForm.controls.items['controls'].map(form => {
+        form.controls.cargos.controls.map(child => {
+          if (child.controls.cargoNominationId.value === item.cargoNominationId) {
+            if (totQuantity > 0) {
+              child.enable();
+            } else {
+              child.disable();
+            }
+          }
+        });
+      });
+    });
   }
 
   /**
@@ -2908,9 +618,10 @@ statu: boolean;
    * @param {number} colIndex
    * @memberof UllageUpdatePopupComponent
   */
-  newCargo(rowIndex: number,colIndex: number) {
-    this.blFigure.items[rowIndex].push({ cargo : this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{}, true , false)});
-    this.getCargoItems(rowIndex).push(this.initCargoDetails(this.blFigure.items[rowIndex][this.blFigure.items[rowIndex].length-1].cargo));
+  newCargo(rowIndex: number, colIndex: number) {
+    if (this.getCargoItems(rowIndex).disabled) { return; }
+    this.blFigure.items[rowIndex].push({ cargo: this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{}, this.ullageResponseData?.billOfLaddingList[rowIndex], true, true) });
+    this.getCargoItems(rowIndex).push(this.initCargoDetails(this.blFigure.items[rowIndex][this.blFigure.items[rowIndex].length - 1].cargo));
   }
 
   /**
@@ -2920,7 +631,10 @@ statu: boolean;
    * @memberof UllageUpdatePopupComponent
   */
   deleteCargo(rowIndex: number, colIndex: number) {
-    this.blFigure.items[rowIndex].splice(colIndex,1)
+    const removedItem = this.blFigure.items[rowIndex].splice(colIndex, 1);
+    if (removedItem?.length && !removedItem[0].cargo.isAdd) {
+      this.billOfLaddingRemovedList.push(removedItem[0]);
+    }
     this.getCargoItems(rowIndex).removeAt(colIndex);
     this.calculateTotal();
   }
@@ -2941,7 +655,7 @@ statu: boolean;
    * @param {number} cargoIndex
    * @memberof UllageUpdatePopupComponent
   */
-  addCargoItems(cargoIndex: number,cargo) {
+  addCargoItems(cargoIndex: number, cargo) {
     this.getCargoItems(cargoIndex).push(this.initCargoDetails(cargo));
   }
 
@@ -2962,13 +676,14 @@ statu: boolean;
   */
   initCargoDetails(cargo: any): FormGroup {
     return this.fb.group({
-      blRefNo: this.fb.control(cargo.blRefNo.value, [Validators.required]),
+      blRefNo: this.fb.control(cargo.blRefNo.value, [Validators.required, Validators.minLength(4), Validators.maxLength(12), Validators.pattern(/^[ A-Za-z0-9#&()/":-=+*]*$/)]),
       bbl: this.fb.control(cargo.bbl.value, [Validators.required]),
       lt: this.fb.control(cargo.lt.value, [Validators.required]),
       mt: this.fb.control(cargo.mt.value, [Validators.required]),
       kl: this.fb.control(cargo.kl.value, [Validators.required]),
-      api: this.fb.control(cargo.api.value, [Validators.required, Validators.min(0) , numberValidator(2, 3)]),
-      temp: this.fb.control(cargo.temp.value, [Validators.required , numberValidator(2, 3)])
+      api: this.fb.control(cargo.api.value, [Validators.required, Validators.min(0), numberValidator(2, 3)]),
+      temp: this.fb.control(cargo.temp.value, [Validators.required, numberValidator(2, 3)]),
+      cargoNominationId: this.fb.control(cargo.cargoNominationId),
     });
   }
 
@@ -2977,28 +692,28 @@ statu: boolean;
    * @memberof UllageUpdatePopupComponent
   */
   calculateTotal() {
-    this.blFigureTotal = <IBlFigureTotal>{ lt: 0, mt: 0,api: 0, kl: 0, bbl: 0};
+    this.blFigureTotal = <IBlFigureTotal>{ lt: 0, mt: 0, api: 0, kl: 0, bbl: 0 };
     this.blFigure.items.forEach((blItems, blRowIndex) => {
       blItems.forEach((cargoDetails, index) => {
         this.blFigureTotal.lt += cargoDetails.cargo.lt.value ? Number(cargoDetails.cargo.lt.value) : 0;
         this.blFigureTotal.mt += cargoDetails.cargo.mt.value ? Number(cargoDetails.cargo.mt.value) : 0;
         this.blFigureTotal.kl += cargoDetails.cargo.kl.value ? Number(cargoDetails.cargo.kl.value) : 0;
-        this.blFigureTotal.bbl += cargoDetails.cargo.bbl.value ? Number(cargoDetails.cargo.bbl.value): 0;
+        this.blFigureTotal.bbl += cargoDetails.cargo.bbl.value ? Number(cargoDetails.cargo.bbl.value) : 0;
         this.blFigureTotal.api += cargoDetails.cargo.api.value ? Number(cargoDetails.cargo.api.value) : 0;
       });
     })
   }
 
-    /**
-  * Handler for cell on click event
-  * @param event
-  * @param rowData
-  * @param rowIndex
-  * @param col
-  * @param colIndex
-  */
+  /**
+* Handler for cell on click event
+* @param event
+* @param rowData
+* @param rowIndex
+* @param col
+* @param colIndex
+*/
   onClick(event, rowData, rowIndex, col: IDataTableColumn) {
-    if (rowData[col.field]?.isEditable &&  this.editMode && (col.editable === undefined || col.editable)) {
+    if (rowData[col.field]?.isEditable && this.editMode && (col.editable === undefined || col.editable)) {
       rowData[col.field].isEditMode = true;
     }
   }
@@ -3011,12 +726,296 @@ statu: boolean;
   * @param col
   * @param colIndex
   */
-  onEditComplete(event:any, rowData: any, key: string, rowIndex: number,index: number) {
+  onEditComplete(event: any, rowData: any, key: string, rowIndex: number, index: number) {
     rowData[key]['value'] = event.target.value;
-    const control = this.getControl(rowIndex,index,key);
-    if(control.valid && rowData['isAdd']) {
+    const control = this.getControl(rowIndex, index, key);
+    if (control.valid && rowData['isAdd']) {
       rowData[key].isEditMode = false;
     }
     this.calculateTotal();
+    this.updateCargoQuantiyData();
+    if (this.showAs.id === 2) {
+      this.updateCargoTanks();
+    }
+
+    let mtQty = 0, bblQty = 0, klQty = 0, ltQty = 0;
+    this.blFigure?.items?.map(item => {
+      item.map(cargo => {
+        if (cargo.cargo.cargoNominationId === rowData.cargoNominationId) {
+          mtQty += Number(cargo.cargo.mt.value);
+          bblQty += Number(cargo.cargo.bbl.value);
+          klQty += Number(cargo.cargo.kl.value);
+          ltQty += Number(cargo.cargo.lt.value);
+        }
+      })
+    });
+    let cargoQuantityData = null;
+    this.cargoQuantityList.map(item => {
+      if (item.cargoNominationId === rowData.cargoNominationId) {
+        cargoQuantityData = item;
+      }
+    });
+    switch (key) {
+      case 'mt':
+        if (mtQty > (Number(cargoQuantityData?.actual?.mt) * 0.1) + Number(cargoQuantityData?.actual?.mt)
+          || mtQty < (Number(cargoQuantityData?.actual?.mt) * 0.1) - Number(cargoQuantityData?.actual?.mt)) {
+          control.setErrors({ rangeError: true });
+        } else {
+          control.setErrors(null);
+        }
+        break;
+      case 'bbl':
+        if (bblQty > (Number(cargoQuantityData?.actual?.bbl) * 0.1) + Number(cargoQuantityData?.actual?.bbl)
+          || bblQty < (Number(cargoQuantityData?.actual?.bbl) * 0.1) - Number(cargoQuantityData?.actual?.bbl)) {
+          control.setErrors({ rangeError: true });
+        } else {
+          control.setErrors(null);
+        }
+        break;
+      case 'kl':
+        if (klQty > (Number(cargoQuantityData?.actual?.kl) * 0.1) + Number(cargoQuantityData?.actual?.kl)
+          || klQty < (Number(cargoQuantityData?.actual?.kl) * 0.1) - Number(cargoQuantityData?.actual?.kl)) {
+          control.setErrors({ rangeError: true });
+        } else {
+          control.setErrors(null);
+        }
+        break;
+      case 'lt':
+        if (ltQty > (Number(cargoQuantityData?.actual?.lt) * 0.1) + Number(cargoQuantityData?.actual?.lt)
+          || ltQty < (Number(cargoQuantityData?.actual?.lt) * 0.1) - Number(cargoQuantityData?.actual?.lt)) {
+          control.setErrors({ rangeError: true });
+        } else {
+          control.setErrors(null);
+        }
+        break;
+      default:
+        control.setErrors(null);
+    }
+
+  }
+
+  /**
+   * Method for cargo quantity update api call
+   * @param event
+   * @memberof UllageUpdatePopupComponent
+   */
+  async cargoEditCompleted(event) {
+    const param = {
+      api: event.data.api.value,
+      correctedUllage: event.data.ullage.value,
+      id: event.data.id,
+      isBallast: false,
+      isCommingle: false,
+      sg: '',
+      tankId: event.data.tankId,
+      temperature: event.data.temperature.value
+    };
+    this.ngxSpinnerService.show();
+    const result = await this.ullageUpdateApiService.getUllageQuantity(param, event.data.loadablePatternId).toPromise();
+    this.ngxSpinnerService.hide();
+    if (result.responseStatus.status === '200') {
+      this.ullageResponseData?.portLoadablePlanStowageDetails.map(item => {
+        if (item.cargoNominationId === event.data.cargoNominationId) {
+          item.quantity = result.quantityMt;
+          item.correctedUllage = result.correctedUllage;
+          item.percentageFilled = result.fillingRatio;
+        }
+      });
+      this.cargoQuantities[event.index].quantity.value = result.quantityMt;
+      this.cargoQuantities[event.index].fillingPercentage.value = result.fillingRatio;
+      const formControls = <FormControl>(<FormArray>this.cargoTankForm.get('dataTable')).at(event.index);
+      formControls['controls'].quantity.setValue(result.quantityMt);
+      formControls['controls'].fillingPercentage.setValue(result.fillingRatio);
+      formControls['controls'].quantity.updateValueAndValidity();
+      formControls['controls'].fillingPercentage.updateValueAndValidity();
+      formControls['controls'][event.field].updateValueAndValidity();
+
+      this.updateCargoQuantiyData();
+      if (this.showAs.id === 2) {
+        this.updateCargoTanks();
+      }
+
+    }
+    this.enableDisableBLFigure();
+  }
+
+  /**
+   * Method for ballast quantity update api call
+   * @param event
+   * @memberof UllageUpdatePopupComponent
+   */
+  async ballastEditCompleted(event) {
+    const param = {
+      api: '',
+      correctedUllage: event.data.sounding.value,
+      id: event.data.id,
+      isBallast: true,
+      sg: '1.025',
+      tankId: event.data.tankId,
+      temperature: event.data.temperature
+    };
+    this.ngxSpinnerService.show();
+    const result = await this.ullageUpdateApiService.getUllageQuantity(param, event.data.loadablePatternId).toPromise();
+    this.ngxSpinnerService.hide();
+    if (result.responseStatus.status === '200') {
+      this.ballastQuantities?.map(item => {
+        if (item.tankId === event.data.tankId) {
+          item.quantity.value = result.quantityMt;
+          item.sounding.value = result.correctedUllage;
+          item.ullage.value = result.correctedUllage;
+        }
+      });
+      const formControl = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get('quantity');
+      formControl.setValue(result.quantityMt);
+      formControl.updateValueAndValidity();
+      formControl['controls'][event.field].updateValueAndValidity();
+
+    }
+  }
+  /**
+   * Method for cargo row selection for datatable
+   * @param event
+   * @memberof UllageUpdatePopupComponent
+   */
+  onRowSelection(event) {
+    this.selectedTankId = event.data.tankId;
+  }
+
+  /**
+   * Method for save ullage update 
+   * @param validate
+   * @memberof UllageUpdatePopupComponent
+   */
+  async saveUllage(validate) {
+    if (this.tableForm.invalid || this.cargoTankForm.invalid || this.ballastTankForm.invalid || this.bunkerTankForm.invalid) {
+      return;
+    }
+    const data: IUllageSaveDetails = {
+      isValidate: validate,
+      billOfLandingList: [],
+      ullageUpdList: [],
+      billOfLandingListRemove: [],
+      ballastUpdateList: [],
+      robUpdateList: []
+    }
+    this.blFigure.items.map(item => {
+      item.map(row => {
+        data.billOfLandingList.push(
+          {
+            loadingId: this.loadingInfoId,
+            portId: row.cargo.portId,
+            cargoId: row.cargo.cargoId,
+            blRefNumber: row.cargo.blRefNo.value,
+            bblAt60f: row.cargo.bbl.value,
+            quantityLt: row.cargo.lt.value,
+            quantityMt: row.cargo.mt.value,
+            klAt15c: row.cargo.kl.value,
+            api: row.cargo.api.value,
+            temperature: row.cargo.temp.value,
+            isUpdate: row.cargo.isAdd ? false : true,
+            isActive: '',
+            version: ''
+          }
+        )
+      });
+    });
+
+    this.ullageResponseData?.portLoadablePlanStowageDetails.map(item => {
+      data.ullageUpdList.push({
+        loadingInformationId: this.loadingInfoId,
+        tankId: item.tankId,
+        temperature: item.temperature,
+        correctedUllage: item.correctedUllage,
+        quantity: item.quantity,
+        fillingPercentage: item.percentageFilled,
+        cargo_nomination_xid: item.cargoNominationId,
+        arrival_departutre: item.arrivalDeparture,
+        actual_planned: 1,
+        correction_factor: item.correctionFactor,
+        api: item.api,
+        isUpdate: true,
+        port_xid: '',
+        port_rotation_xid: '',
+        grade: '',
+
+      })
+    });
+
+    this.billOfLaddingRemovedList.map(item => {
+      data.billOfLandingListRemove.push(
+        {
+          loadingId: this.loadingInfoId,
+          portId: item.portId,
+          cargoId: item.cargoId,
+          blRefNumber: item.blRefNo.value,
+          bblAt60f: item.bbl.value,
+          quantityLt: item.lt.value,
+          quantityMt: item.mt.value,
+          klAt15c: item.kl.value,
+          api: item.api.value,
+          temperature: item.temp.value,
+          isUpdate: true,
+          isActive: '',
+          version: ''
+        }
+      )
+    });
+    this.ballastQuantities.map(item => {
+      data.ballastUpdateList.push({
+        loadingInformationId: this.loadingInfoId,
+        tankId: item.tankId,
+        temperature: item.temperature.value,
+        quantity: item.quantity.value,
+        sounding: item.sounding.value,
+        correctedUllage: item.correctedUllage,
+        correctionFactor: item.correctionFactor ? item.correctionFactor : '',
+        filling_percentage: item.fillingPercentage.value,
+        arrival_departutre: item.arrivalDeparture,
+        actual_planned: 1,
+        color_code: item.colorCode,
+        sg: item.sg,
+        observedM3: '',
+        fillingRatio: '',
+        port_xid: '',
+        port_rotation_xid: '',
+        isValidate: '',
+        isUpdate: true
+      });
+    });
+
+    this.bunkerTanksList.map(item => {
+      data.robUpdateList.push({
+        loadingInformationId: this.loadingInfoId,
+        tankId: item.tankId,
+        quantity: item.quantity.value,
+        isUpdate: true,
+        density: item.density.value,
+        colour_code: item.colorCode,
+        actual_planned: 1,
+        arrival_departutre: item.arrivalDeparture,
+        port_xid: '',
+        port_rotation_xid: '',
+        observedM3: '',
+        temperature: '',
+        correctedUllage: '',
+        correctionFactor: '',
+        fillingRatio: '',
+      })
+    });
+    try {
+      this.ngxSpinnerService.show();
+      const result = await this.ullageUpdateApiService.updateUllage(data).toPromise();
+      const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_SUCCESS_LABEL', 'ULLAGE_UPDATE_SUCCESS_MESSAGE']).toPromise();
+      this.messageService.add({ severity: 'success', summary: translationKeys['ULLAGE_UPDATE_SUCCESS_LABEL'], detail: translationKeys['ULLAGE_UPDATE_SUCCESS_MESSAGE'] });
+      if (validate) {
+        this.loadingDischargingTransformationService.validateUllage({ validate: true, processId: '3058eeb3-6001-4c11-ba1e-03a6899ed655', status: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2 });
+      }
+      setTimeout(() => {
+        this.ngxSpinnerService.hide();
+        this.closePopup.emit(true);
+      }, 500);
+    } catch (e) {
+      this.ngxSpinnerService.hide();
+    }
   }
 }

@@ -15,8 +15,9 @@ service LoadicatorService {
 message LoadicatorRequest{
 	repeated StowagePlan stowagePlanDetails=1;
 	bool isPattern=2;
-	int64 loadableStudyId = 3;
-	int64 loadablePatternId = 4;
+	int64 typeId = 3;
+	bool isUllageUpdate = 4;
+	int32 conditionType = 5;
 }
 
 message StowagePlan{

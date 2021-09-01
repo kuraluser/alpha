@@ -3,7 +3,7 @@ package com.cpdss.common.generated;
 
 /** */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.27.1)",
+    value = "by gRPC proto compiler (version 1.36.0)",
     comments = "Source: loadable_plan.proto")
 public final class LoadablePlanServiceGrpc {
 

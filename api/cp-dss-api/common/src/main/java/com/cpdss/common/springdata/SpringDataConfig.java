@@ -106,7 +106,7 @@ public class SpringDataConfig {
         ds.setJdbcUrl("jdbc:postgresql://" + host + ":5432/" + databaseName);
       }
       ds.addDataSourceProperty("useSSL", false);
-      ds.setMaximumPoolSize(12);
+      ds.setMaximumPoolSize(30);
       ds.setUsername(userName);
       ds.setPassword(password);
       ds.addDataSourceProperty("cachePrepStmts", true);

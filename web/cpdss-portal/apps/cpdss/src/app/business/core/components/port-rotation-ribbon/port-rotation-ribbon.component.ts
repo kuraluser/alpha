@@ -6,13 +6,13 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { PortRotationService } from '../../services/port-rotation.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { IEditPortRotation, IPortsDetailsResponse, IVoyagePortDetails, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { IEditPortRotation, IOperations, IPortsDetailsResponse, IVoyagePortDetails, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { Voyage } from '../../../core/models/common.model';
 import { Subscription, fromEvent, Observable } from 'rxjs';
 import { OnDestroy } from '@angular/core';
 import { portEtaEtdValidator } from '../../directives/port-eta-etd-validator.directive';
 import { portTimeValidator } from '../../directives/port-time-validator.directive';
-import { IDateTimeFormatOptions, IOperations, ITimeZone } from './../../../../shared/models/common.model';
+import { IDateTimeFormatOptions, ITimeZone } from './../../../../shared/models/common.model';
 import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import * as moment from 'moment';
 
@@ -310,6 +310,13 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
         const result = await this.editPortRotationApiService.savePortRotationRibbon(this.vesselDetails.id, this.voyageId, this.loadableStudyId, port).toPromise();
         if (result.responseStatus.status === "200") {
           this.messageService.add({ severity: 'success', summary: translationKeys['PORT_ROTATION_RIBBON_SUCCESS'], detail: translationKeys['PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY'] });
+          let voyageDistance = 0;
+          for (let i = 0; i < this.portList?.length; i++) {
+            if(this.portList[i]?.type === 'Departure'){
+              voyageDistance += this.portList[i].distanceBetweenPorts;
+            }
+          }
+          this.editPortRotationApiService.updateVoyageDistance(voyageDistance);
         }
       }
       catch (errorResponse) {
@@ -396,10 +403,11 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     const result = await this.editPortRotationApiService.getPorts().toPromise();
     const portsFormData: IPortsDetailsResponse = await this.editPortRotationApiService.getPortsDetails(this.vesselDetails.id, this.voyageId, this.loadableStudyId).toPromise();
     this.portCarousel = [];
-    this.editPortRotationApiService.voyageDistance = 0
+    let voyageDistance = 0;
     for (let i = 0; i < portsFormData?.portList?.length; i++) {
-      this.editPortRotationApiService.voyageDistance = portsFormData?.portList[i].distanceBetweenPorts + this.editPortRotationApiService.voyageDistance;
+      voyageDistance += portsFormData?.portList[i].distanceBetweenPorts;
     }
+    this.editPortRotationApiService.updateVoyageDistance(voyageDistance);
     const portData: IEditPortRotation[] = portsFormData?.portList?.map(itm => ({
       ...result.find((item) => (item.id === itm.portId) && item),
       ...itm

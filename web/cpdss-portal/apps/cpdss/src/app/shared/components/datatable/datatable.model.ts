@@ -56,6 +56,7 @@ export interface IDataTableColumn {
     numberType?: string;
     maskFormat?: string;
     badgeColorField?: string;
+    filterClass?: string;
 }
 
 /**
@@ -98,7 +99,9 @@ export enum DATATABLE_FIELD_TYPE {
   TIME = "TIME",
   BUTTON = 'BUTTON',
   MASK = 'MASK',
-  BADGE = 'BADGE'
+  BADGE = 'BADGE',
+  CHECKBOX = 'CHECKBOX',
+  MULTISELECT = 'MULTISELECT'
 }
 
 /**
@@ -210,7 +213,7 @@ export enum DATATABLE_ACTION {
 }
 
 /**
- * Interface for datatable 
+ * Interface for datatable
  *
  * @export
  * @interface IDataTablePageChangeEvent
@@ -223,7 +226,7 @@ export interface IDataTablePageChangeEvent {
 }
 
 /**
- * Interface for Paginator 
+ * Interface for Paginator
  *
  * @export
  * @interface IPaginator
@@ -234,7 +237,7 @@ export interface IPaginator {
 }
 
 /**
- * Interface for sort 
+ * Interface for sort
  *
  * @export
  * @interface ISort

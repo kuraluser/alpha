@@ -94,6 +94,9 @@ public class LoadicatorService {
   @Value("${cpdss.communication.enable}")
   private boolean enableCommunication;
 
+  @Value("${cpdss.build.env}")
+  private String env;
+
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
@@ -157,8 +160,6 @@ public class LoadicatorService {
               : new BigDecimal(stabilityParameter.getShearForce()));
       synopticalTableLoadicatorData.setActive(true);
       synopticalTableLoadicatorData.setSynopticalTable(synData.get());
-      synopticalTableLoadicatorData.setPortId(lsPortRotOption.getPortXId());
-      synopticalTableLoadicatorData.setOperationId(lsPortRotOption.getOperation().getId());
       synopticalTableLoadicatorDataRepository.save(synopticalTableLoadicatorData);
     }
   }
@@ -939,8 +940,6 @@ public class LoadicatorService {
               true,
               algoResponse.getFeedbackLoopCount(),
               LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED);
-          Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
-              this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
           if (loadableStudyOpt.isPresent()) {
             log.info("Deleting existing patterns");
             this.loadablePatternRepository
@@ -966,7 +965,7 @@ public class LoadicatorService {
           this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
           loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
-          if (enableCommunication) {
+          if (enableCommunication && !env.equals("ship")) {
             passResultToCommunication(
                 objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
           }
@@ -1001,35 +1000,10 @@ public class LoadicatorService {
       this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
       loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
           LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
-      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
-          this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-      Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
-          this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
-              request.getLoadableStudyId(), String.valueOf(MessageTypes.LOADABLESTUDY));
 
-      if (loadableStudyCommunicationStatus.get().getMessageUUID() != null) {
-        LoadableStudy.AlgoResponseCommunication.Builder algoRespComm =
-            LoadableStudy.AlgoResponseCommunication.newBuilder();
-        algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
-        LoadableStudy.LoadicatorResultsRequest.Builder loadicatorResultsRequest =
-            LoadableStudy.LoadicatorResultsRequest.newBuilder();
-        JsonFormat.parser()
-            .ignoringUnknownFields()
-            .merge(objectMapper.writeValueAsString(algoResponse), loadicatorResultsRequest);
-        algoRespComm.setLoadicatorResultsRequest(loadicatorResultsRequest.build());
-        Optional<JsonData> patternJson =
-            this.jsonDataService.getJsonData(
-                loadableStudyOpt.get().getId(),
-                LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
-        if (patternJson != null) {
-          LoadableStudy.LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest =
-              LoadableStudy.LoadablePatternAlgoRequest.newBuilder();
-          JsonFormat.parser()
-              .ignoringUnknownFields()
-              .merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
-          algoRespComm.setLoadablePatternAlgoRequest(loadablePatternAlgoRequest.build());
-        }
-        communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
+      if (enableCommunication && !env.equals("ship")) {
+        passResultToCommunication(
+            objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
       }
     }
     replyBuilder =
@@ -1037,6 +1011,39 @@ public class LoadicatorService {
             .setResponseStatus(
                 Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
     return replyBuilder;
+  }
+
+  private void passResultToCommunication(
+      ObjectMapper objectMapper,
+      LoadicatorAlgoResponse algoResponse,
+      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt,
+      Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus)
+      throws InvalidProtocolBufferException, JsonProcessingException, GenericServiceException {
+    if (loadableStudyCommunicationStatus.get().getMessageUUID() != null) {
+      LoadableStudy.AlgoResponseCommunication.Builder algoRespComm =
+          LoadableStudy.AlgoResponseCommunication.newBuilder();
+      algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
+      LoadableStudy.LoadicatorResultsRequest.Builder loadicatorResultsRequest =
+          LoadableStudy.LoadicatorResultsRequest.newBuilder();
+      JsonFormat.parser()
+          .ignoringUnknownFields()
+          .merge(objectMapper.writeValueAsString(algoResponse), loadicatorResultsRequest);
+      algoRespComm.setLoadicatorResultsRequest(loadicatorResultsRequest.build());
+      Optional<JsonData> patternJson =
+          this.jsonDataService.getJsonData(
+              loadableStudyOpt.get().getId(),
+              LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
+      if (patternJson != null) {
+        LoadableStudy.LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest =
+            LoadableStudy.LoadablePatternAlgoRequest.newBuilder();
+        JsonFormat.parser()
+            .ignoringUnknownFields()
+            .merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
+        loadablePatternAlgoRequest.setHasLodicator(true);
+        algoRespComm.setLoadablePatternAlgoRequest(loadablePatternAlgoRequest.build());
+      }
+      communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
+    }
   }
 
   /**

@@ -2,6 +2,7 @@
 package com.cpdss.gateway.domain.loadingplan;
 
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -9,8 +10,9 @@ public class LoadingDelays {
 
   private Long id;
   private Long loadingInfoId;
-  private Long reasonForDelayId;
+  private List<Long> reasonForDelayIds;
   private BigDecimal duration;
   private Long cargoId;
+  private Long cargoNominationId;
   private BigDecimal quantity;
 }

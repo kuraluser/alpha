@@ -12,17 +12,6 @@ export enum OPERATION_TAB {
 }
 
 /**
- * Enum for operation mode
- *
- * @export
- * @enum {number}
- */
-export enum OPERATION {
-  LOADING = 'LOADING',
-  DISCHARGING = 'DISCHARGING'
-}
-
-/**
  * Interface for Loadable patten cargo details
  *
  * @export
@@ -57,3 +46,4 @@ export interface IBlFigureTotal {
   kl: number,
   bbl: number;
 }
+

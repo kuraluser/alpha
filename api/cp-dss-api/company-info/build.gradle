@@ -13,10 +13,12 @@ appConfig {
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
+  unitTest = 'y'
   monitoring = 'y'
   docker {
    imageName = 'cpdss-company-info'
    containerName = 'company-info-container'
+   creationTime = 'USE_CURRENT_TIMESTAMP'
    hostPortMapping {
       hostRestPort = 8081
    }
@@ -27,7 +29,8 @@ appConfig {
      replicas = 1
      rollbackOnUpdateFailure = true
    }
-      environment = ['DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword]
+   environment = ['DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword]
+   labels = ["Key1":"testLabel"]
   }
   
   javaMainClass = "com.cpdss.companyinfo.Application"

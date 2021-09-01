@@ -1,32 +1,72 @@
-<p-table [value]="values" styleClass="body-header-row-span-table">
-    <ng-template pTemplate="colgroup" >
-        <colgroup>
-            <col class="table-header-machinery">
-            <col class="checkbox-column">
-            <col class="name-column">
-            <col class="">
-        </colgroup>
-    </ng-template>
-    <ng-template pTemplate="header">
-        <tr>
-            <th>CARGO MACHINERY IN USE</th>
-            <th>USING</th>
-            <th>NAME</th>
-            <th>CAPACITY(M3)</th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-row let-index>
-        <ng-container *ngFor="let column of row.columns; let i=index">
-            <tr>
-                <td *ngIf="i === 0" [attr.rowspan]="row.columns.length">{{row.machine}}</td>
-                <td>
-                    <input type="checkbox" [(ngModel)]="column.isUsing" (change)="onUse(column)">
-                </td>
-                <td>{{column?.pumpName}}</td>
-                <td>
-                    <input type="text" cpdssPortalNumberDecimal [(ngModel)]="column.capacity" class="form-control" [disabled]="!column.isUsing" (change)="onChange(column)">
-                </td>
-            </tr>
-        </ng-container>    
-    </ng-template>
-</p-table>
+<div>
+  <div class="row">
+    <ng-container *ngFor="let key of machineriesKey; let i = index;">
+      <div class="col" [ngClass]="{'col-12' : operation === OPERATIONS.DISCHARGING}">
+        <div class="row">
+          <div class="col">
+            <h5 class="text-uppercase heading-border pt-25 mb-10">
+              {{ (key === 'cargoMachineryValues' ? 'LOADING_MACHINERY_MACHINERY_IN_USE_HEADER' :
+              'LOADING_MACHINERY_PUMP_IN_USE_HEADER') | translate}}
+            </h5>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <p-table [value]="machineries[key]" styleClass="body-header-row-span-table rowspan-no-border">
+              <ng-template pTemplate="colgroup">
+                <colgroup>
+                  <col class="table-header-machinery">
+                  <col *ngIf="key === 'cargoMachineryValues'" class="type-column">
+                  <col class="checkbox-column">
+                  <col class="name-column">
+                  <col *ngIf="key === 'pumpValues'" class="capacity-column">
+                </colgroup>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>{{key === 'cargoMachineryValues' ? ('LOADING_MACHINERY_HEADER_MACHINERY' | translate) :
+                    ('LOADING_MACHINERY_HEADER_PUMP' | translate)}}</th>
+                  <th *ngIf="key === 'cargoMachineryValues'">{{'LOADING_MACHINERY_TYPE_HEADER' | translate}}</th>
+                  <th class="text-center">{{'LOADING_MACHINERY_USING_HEADER' | translate}}</th>
+                  <th>{{'LOADING_MACHINERY_NAME_HEADER' | translate}}</th>
+                  <th *ngIf="key === 'pumpValues'">{{'LOADING_MACHINERY_CAPACITY_HEADER' | translate}}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-row let-index>
+                <ng-container *ngFor="let column of row.columns; let i=index">
+                  <tr>
+                    <td *ngIf="i === 0" [attr.rowspan]="row.columns.length">{{row.machine}}</td>
+                    <td *ngIf="key === 'cargoMachineryValues' && i === 0" [attr.rowspan]="row.columns.length">
+                      <p-dropdown *ngIf="row.machine === 'Manifold'" styleClass="dropdown-w-180 form-control"
+                        [options]="machineryInUses.tankTypes" [(ngModel)]="selectedType" optionLabel="name"
+                        [filter]="true" placeholder="{{ 'LOADING_INFORMATION_MACHINERY_TYPE_SELECT' | translate}}"
+                        resetFilterOnHide="true" (onChange)="onTypeChange($event)">
+                      </p-dropdown>
+                    </td>
+                    <td class="text-center">
+                      <label class="checkbox-custom">
+                        <input type="checkbox" [(ngModel)]="column.isUsing" (change)="onUse(column)">
+                        <span class="checkmark"></span>
+                      </label>
+                    </td>
+                    <td>{{column[row.field]}}</td>
+                    <td *ngIf="key === 'pumpValues'">
+                      <input type="text" cpdssPortalNumberDecimal [(ngModel)]="column.capacity" class="form-control"
+                        [disabled]="!column.isUsing" (change)="onChange(column)">
+                    </td>
+                  </tr>
+                </ng-container>
+                <ng-container *ngIf="row?.columns?.length">
+                  <tr>
+                    <td colspan="4" class="row-border">
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

@@ -15,6 +15,9 @@ import com.cpdss.common.generated.Loadicator.LoadicatorReply;
 import com.cpdss.common.generated.Loadicator.LoadicatorRequest;
 import com.cpdss.common.generated.Loadicator.OtherTankInfo;
 import com.cpdss.common.generated.LoadicatorServiceGrpc.LoadicatorServiceImplBase;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDetail;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.loadicatorintegration.domain.StowagePlanDetail;
 import com.cpdss.loadicatorintegration.entity.CargoData;
@@ -67,6 +70,9 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceBlockingStub loadableStudyService;
 
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceBlockingStub loadingPlanService;
+
   private static final String FAILED = "FAILED";
   private static final String SUCCESS = "SUCCESS";
 
@@ -107,11 +113,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       this.taskExecutor.execute(
           () -> {
             try {
-              this.getStatus(
-                  stowagePlanList,
-                  request.getIsPattern(),
-                  request.getLoadableStudyId(),
-                  request.getLoadablePatternId());
+              this.getStatus(stowagePlanList, request);
             } catch (InterruptedException e) {
               log.error("Encounted error while checking loadicator status");
               replyBuilder.setResponseStatus(
@@ -332,19 +334,22 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
     return stowagePlan;
   }
 
-  public void getStatus(
-      List<StowagePlan> stowagePlans,
-      Boolean isPattern,
-      Long loadableStudyId,
-      Long loadablePatternId)
+  public void getStatus(List<StowagePlan> stowagePlans, LoadicatorRequest request)
       throws InterruptedException {
     boolean status = false;
     do {
-      log.info(
-          "Checking loadicator status of "
-              + (!isPattern
-                  ? ("Loadable Study " + loadableStudyId)
-                  : ("Loadable Pattern " + loadablePatternId)));
+      if (request.getTypeId() == 1) { // Loadable Study
+        log.info(
+            "Checking loadicator status of "
+                + (!request.getIsPattern()
+                    ? ("Loadable Study " + request.getStowagePlanDetails(0).getBookingListId())
+                    : ("Loadable Pattern " + request.getStowagePlanDetails(0).getStowageId())));
+      } else if (request.getTypeId() == 2) { // Loading Plan
+        log.info(
+            "Checking loadicator status of Loading Information "
+                + request.getStowagePlanDetails(0).getBookingListId());
+      }
+
       Thread.sleep(10000);
       List<Long> stowagePlanIds =
           stowagePlans.stream().map(StowagePlan::getId).collect(Collectors.toList());
@@ -353,17 +358,72 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           stowagePlanList.stream().filter(plan -> plan.getStatus().equals(3L)).count();
       if (statusCount.equals(stowagePlanList.stream().count())) {
         status = true;
-        log.info(
-            "Loadicator check completed for "
-                + (!isPattern
-                    ? ("Loadable Study " + loadableStudyId)
-                    : ("Loadable Pattern " + loadablePatternId)));
-        LoadicatorDataRequest loadableStudyrequest =
-            this.sendLoadicatorData(stowagePlanList, isPattern);
+        if (request.getTypeId() == 1) { // Loadable Study
+          LoadicatorDataRequest loadableStudyrequest =
+              this.sendLoadicatorData(stowagePlanList, request.getIsPattern());
+          log.info(
+              "Loadicator check completed for "
+                  + (!request.getIsPattern()
+                      ? ("Loadable Study " + request.getStowagePlanDetails(0).getBookingListId())
+                      : ("Loadable Pattern " + request.getStowagePlanDetails(0).getStowageId())));
 
-        this.getLoadicatorDatas(loadableStudyrequest);
+          this.getLoadicatorDatas(loadableStudyrequest);
+        } else if (request.getTypeId() == 2) { // Loading Plan
+          log.info(
+              "Loadicator check completed for loading information {}",
+              request.getStowagePlanDetails(0).getBookingListId());
+          LoadingInfoLoadicatorDataRequest loadingInformationRequest =
+              this.buildLoadingInfoLoadicatorData(stowagePlanList, request.getIsUllageUpdate(), request.getConditionType());
+          this.getLoadingInfoLoadicatorData(loadingInformationRequest);
+        }
       }
     } while (!status);
+  }
+
+  private void getLoadingInfoLoadicatorData(
+      LoadingInfoLoadicatorDataRequest loadingInformationRequest) {
+    this.loadingPlanService.getLoadicatorData(loadingInformationRequest);
+  }
+
+  private LoadingInfoLoadicatorDataRequest buildLoadingInfoLoadicatorData(
+      List<StowagePlan> stowagePlanList, Boolean isUllageUpdate, Integer conditionType) {
+    LoadingInfoLoadicatorDataRequest.Builder builder =
+        LoadingInfoLoadicatorDataRequest.newBuilder();
+    builder.setLoadingInformationId(stowagePlanList.get(0).getBookingListId());
+    builder.setProcessId(stowagePlanList.get(0).getProcessId());
+    builder.setIsUllageUpdate(isUllageUpdate);
+    builder.setConditionType(conditionType);
+    stowagePlanList.forEach(
+        stowagePlan -> {
+          LoadingInfoLoadicatorDetail.Builder detailBuilder =
+              LoadingInfoLoadicatorDetail.newBuilder();
+          this.buildLoadingInfoLoadicatorDetails(stowagePlan, detailBuilder);
+          builder.addLoadingInfoLoadicatorDetails(detailBuilder.build());
+        });
+    return builder.build();
+  }
+
+  private void buildLoadingInfoLoadicatorDetails(
+      StowagePlan stowagePlan,
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDetail.Builder
+          detailBuilder) {
+
+    detailBuilder.setTime(stowagePlan.getStowageId().intValue());
+
+    LoadicatorTrim loadicatorTrim =
+        loadicatorTrimRepository.findByStowagePlanId(stowagePlan.getId());
+    LDtrim.Builder trimBuilder = this.buildLoadicatorTrimDetails(loadicatorTrim);
+    detailBuilder.setLDtrim(trimBuilder.build());
+
+    LoadicatorStrength loadicatorStrength =
+        loadicatorStrengthRepository.findByStowagePlanId(stowagePlan.getId());
+    LDStrength.Builder strengthBuilder = this.buildStrengthDetails(loadicatorStrength);
+    detailBuilder.setLDStrength(strengthBuilder.build());
+
+    IntactStability intactStability =
+        loadicatorIntactStabilityRepository.findByStowagePlanId(stowagePlan.getId());
+    LDIntactStability.Builder intactStabilityBuilder = this.buildStabilityDetails(intactStability);
+    detailBuilder.setLDIntactStability(intactStabilityBuilder.build());
   }
 
   /**

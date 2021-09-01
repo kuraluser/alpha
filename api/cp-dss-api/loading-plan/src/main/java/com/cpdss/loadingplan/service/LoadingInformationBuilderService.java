@@ -3,23 +3,32 @@ package com.cpdss.loadingplan.service;
 
 import static com.cpdss.loadingplan.common.LoadingPlanConstants.TIME_FORMATTER;
 
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.entity.CargoToppingOffSequence;
 import com.cpdss.loadingplan.entity.LoadingInformation;
+import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
+import com.cpdss.loadingplan.repository.LoadingDelayReasonRepository;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class LoadingInformationBuilderService {
+
+  @Autowired LoadingDelayReasonRepository loadingDelayReasonRepository;
 
   public LoadingDetails buildLoadingDetailsMessage(LoadingInformation var1) {
     LoadingDetails.Builder builder = LoadingDetails.newBuilder();
@@ -107,9 +116,15 @@ public class LoadingInformationBuilderService {
       Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
       Optional.ofNullable(var1.getLoadingInformation().getId())
           .ifPresent(builder::setLoadingInfoId);
-      Optional.ofNullable(var1.getPumpXId()).ifPresent(builder::setPumpId);
+      Optional.ofNullable(var1.getMachineXId()).ifPresent(builder::setMachineId);
+      Optional.ofNullable(var1.getMachineTypeXid())
+          .ifPresent(
+              v -> {
+                builder.setMachineTypeValue(v);
+              });
       Optional.ofNullable(var1.getCapacity())
           .ifPresent(value -> builder.setCapacity(value.toString()));
+      Optional.ofNullable(var1.getIsUsing()).ifPresent(builder::setIsUsing);
       machinery.add(builder.build());
     }
     return machinery;
@@ -170,16 +185,26 @@ public class LoadingInformationBuilderService {
       builder.addReasons(builder1);
     }
     for (com.cpdss.loadingplan.entity.LoadingDelay var : list6) {
+      List<LoadingDelayReason> activeReasons =
+          loadingDelayReasonRepository.findAllByLoadingDelayAndIsActiveTrue(var);
+      var.setLoadingDelayReasons(
+          new ArrayList<>()); // always set empty array, as the Lazy fetch not works :(
+      if (!activeReasons.isEmpty()) {
+        var.setLoadingDelayReasons(activeReasons);
+      }
       LoadingDelays.Builder builder1 = LoadingDelays.newBuilder();
       builder1.setId(var.getId());
       Optional.ofNullable(var.getLoadingInformation().getId())
           .ifPresent(builder1::setLoadingInfoId);
-      Optional.ofNullable(var.getReasonForDelay().getId()).ifPresent(builder1::setReasonForDelayId);
+      Optional.ofNullable(var.getLoadingDelayReasons())
+          .ifPresent(
+              v -> v.forEach(s -> builder1.addReasonForDelayIds(s.getReasonForDelay().getId())));
       Optional.ofNullable(var.getDuration())
           .ifPresent(value -> builder1.setDuration(value.toString()));
       Optional.ofNullable(var.getCargoXId()).ifPresent(builder1::setCargoId);
       Optional.ofNullable(var.getQuantity())
           .ifPresent(value -> builder1.setQuantity(value.toString()));
+      Optional.ofNullable(var.getCargoNominationId()).ifPresent(builder1::setCargoNominationId);
       builder.addDelays(builder1);
     }
     // Cargo List for drop down, at gate way
@@ -234,5 +259,162 @@ public class LoadingInformationBuilderService {
             new BigDecimal(source.getLoadingDetail().getTrimAllowed().getMaximumTrim()));
     }
     return target;
+  }
+
+  public List<LoadingPlanTankDetails> buildLoadingPlanTankBallastMessage(
+      List<PortLoadingPlanBallastDetails> list) throws GenericServiceException {
+    log.info("Loading Plan, Ballast Builder");
+    List<LoadingPlanTankDetails> response = new ArrayList<>();
+    for (PortLoadingPlanBallastDetails var1 : list) {
+      response.add(
+          this.buildLoadingPlanTankBuilder(
+              var1.getId(),
+              null,
+              null,
+              null,
+              var1.getQuantity(),
+              var1.getTankXId(),
+              null,
+              var1.getQuantityM3(),
+              var1.getSounding(),
+              var1.getConditionType(),
+              var1.getValueType()));
+    }
+    return response;
+  }
+
+  public List<LoadingPlanTankDetails> buildLoadingPlanTankStowageMessage(
+      List<PortLoadingPlanStowageDetails> list) throws GenericServiceException {
+    log.info("Loading Plan, Stowage Builder");
+    List<LoadingPlanTankDetails> response = new ArrayList<>();
+    for (PortLoadingPlanStowageDetails var1 : list) {
+      response.add(
+          this.buildLoadingPlanTankBuilder(
+              var1.getId(),
+              var1.getApi(),
+              var1.getTemperature(),
+              var1.getCargoNominationXId(),
+              var1.getQuantity(),
+              var1.getTankXId(),
+              var1.getUllage(),
+              var1.getQuantityM3(),
+              null,
+              var1.getConditionType(),
+              var1.getValueType()));
+    }
+    return response;
+  }
+
+  public List<LoadingPlanTankDetails> buildLoadingPlanTankRobMessage(
+      List<PortLoadingPlanRobDetails> list) throws GenericServiceException {
+    log.info("Loading Plan, Rob Builder");
+    List<LoadingPlanTankDetails> response = new ArrayList<>();
+    for (PortLoadingPlanRobDetails var1 : list) {
+      response.add(
+          this.buildLoadingPlanTankBuilder(
+              var1.getId(),
+              null,
+              null,
+              null,
+              var1.getQuantity(),
+              var1.getTankXId(),
+              null,
+              var1.getQuantityM3(),
+              null,
+              var1.getConditionType(),
+              var1.getValueType()));
+    }
+    return response;
+  }
+
+  public List<LoadingPlanModels.LoadingPlanStabilityParameters>
+      buildLoadingPlanTankStabilityMessage(List<PortLoadingPlanStabilityParameters> list)
+          throws GenericServiceException {
+    log.info("Loading Plan, Rob Builder");
+    List<LoadingPlanModels.LoadingPlanStabilityParameters> response = new ArrayList<>();
+    for (PortLoadingPlanStabilityParameters var1 : list) {
+      response.add(
+          this.buildLoadingPlanStabilityBuilder(
+              var1.getForeDraft(),
+              var1.getMeanDraft(),
+              var1.getAftDraft(),
+              var1.getTrim(),
+              var1.getBendingMoment(),
+              var1.getShearingForce(),
+              var1.getConditionType(),
+              var1.getValueType()));
+    }
+    return response;
+  }
+
+  private LoadingPlanModels.LoadingPlanStabilityParameters buildLoadingPlanStabilityBuilder(
+      BigDecimal foreDraft,
+      BigDecimal meanDraft,
+      BigDecimal aftDraft,
+      BigDecimal trim,
+      BigDecimal bm,
+      BigDecimal sf,
+      Integer conditionType,
+      Integer valueType)
+      throws GenericServiceException {
+    try {
+      LoadingPlanModels.LoadingPlanStabilityParameters builder =
+          LoadingPlanModels.LoadingPlanStabilityParameters.newBuilder()
+              .setForeDraft(foreDraft != null ? foreDraft.toString() : "")
+              .setMeanDraft(meanDraft != null ? meanDraft.toString() : "")
+              .setAftDraft(aftDraft != null ? aftDraft.toString() : "")
+              .setTrim(trim != null ? trim.toString() : "")
+              .setBm(bm != null ? bm.toString() : "")
+              .setSf(sf != null ? sf.toString() : "")
+              .setConditionType(conditionType != null ? conditionType : 0)
+              .setValueType(valueType != null ? valueType : 0)
+              .build();
+      return builder;
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "LoadingPlanStabilityParameters Object Build failed",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  private LoadingPlanTankDetails buildLoadingPlanTankBuilder(
+      Long id,
+      BigDecimal api,
+      BigDecimal temp,
+      Long nominationId,
+      BigDecimal quantity,
+      Long tankId,
+      BigDecimal ullage,
+      BigDecimal quantityM3,
+      BigDecimal sounding,
+      Integer conditionType,
+      Integer valueType)
+      throws GenericServiceException {
+
+    try {
+      LoadingPlanTankDetails builder =
+          LoadingPlanTankDetails.newBuilder()
+              .setId(id != null ? id : 0)
+              .setApi(api != null ? api.toString() : "")
+              .setTemperature(temp != null ? temp.toString() : "")
+              .setCargoNominationId(nominationId != null ? nominationId : 0)
+              .setQuantity(quantity != null ? quantity.toString() : "")
+              .setTankId(tankId != null ? tankId : 0)
+              .setUllage(ullage != null ? ullage.toString() : "")
+              .setQuantityM3(quantityM3 != null ? quantityM3.toString() : "")
+              .setSounding(sounding != null ? sounding.toString() : "")
+              .setConditionType(conditionType != null ? conditionType : 0)
+              .setValueType(valueType != null ? valueType : 0)
+              .build();
+      return builder;
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "LoadingPlanTankDetails Object Build failed",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
   }
 }

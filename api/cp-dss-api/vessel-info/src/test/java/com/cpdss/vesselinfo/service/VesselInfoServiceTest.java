@@ -4,43 +4,17 @@ package com.cpdss.vesselinfo.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
-import com.cpdss.vesselinfo.entity.BendingMoment;
-import com.cpdss.vesselinfo.entity.CalculationSheet;
-import com.cpdss.vesselinfo.entity.CalculationSheetTankgroup;
-import com.cpdss.vesselinfo.entity.HydrostaticTable;
-import com.cpdss.vesselinfo.entity.InnerBulkHeadValues;
-import com.cpdss.vesselinfo.entity.MinMaxValuesForBmsf;
-import com.cpdss.vesselinfo.entity.ShearingForce;
-import com.cpdss.vesselinfo.entity.StationValues;
-import com.cpdss.vesselinfo.entity.TankCategory;
-import com.cpdss.vesselinfo.entity.UllageTableData;
-import com.cpdss.vesselinfo.entity.UllageTrimCorrection;
-import com.cpdss.vesselinfo.entity.Vessel;
-import com.cpdss.vesselinfo.entity.VesselDraftCondition;
-import com.cpdss.vesselinfo.entity.VesselTank;
-import com.cpdss.vesselinfo.entity.VesselTankTcg;
-import com.cpdss.vesselinfo.repository.BendingMomentRepository;
-import com.cpdss.vesselinfo.repository.CalculationSheetRepository;
-import com.cpdss.vesselinfo.repository.CalculationSheetTankgroupRepository;
-import com.cpdss.vesselinfo.repository.HydrostaticTableRepository;
-import com.cpdss.vesselinfo.repository.InnerBulkHeadValuesRepository;
-import com.cpdss.vesselinfo.repository.MinMaxValuesForBmsfRepository;
-import com.cpdss.vesselinfo.repository.ShearingForceRepository;
-import com.cpdss.vesselinfo.repository.StationValuesRepository;
-import com.cpdss.vesselinfo.repository.TankCategoryRepository;
-import com.cpdss.vesselinfo.repository.UllageTableDataRepository;
-import com.cpdss.vesselinfo.repository.VesselChartererMappingRepository;
-import com.cpdss.vesselinfo.repository.VesselDraftConditionRepository;
-import com.cpdss.vesselinfo.repository.VesselRepository;
-import com.cpdss.vesselinfo.repository.VesselTankRepository;
-import com.cpdss.vesselinfo.repository.VesselTankTcgRepository;
+import com.cpdss.vesselinfo.entity.*;
+import com.cpdss.vesselinfo.repository.*;
 import io.grpc.internal.testing.StreamRecorder;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -49,30 +23,29 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringJUnitConfig(classes = {VesselInfoService.class})
+@ExtendWith(MockitoExtension.class)
 class VesselInfoServiceTest {
 
-  @Autowired private VesselInfoService vesselInfoService;
+  @InjectMocks private VesselInfoService vesselInfoService;
 
-  @MockBean private VesselRepository vesselRepository;
-  @MockBean private VesselChartererMappingRepository chartererMappingRepository;
-  @MockBean private TankCategoryRepository tankCategoryRepository;
-  @MockBean private VesselTankRepository vesselTankRepository;
-  @MockBean private HydrostaticTableRepository hydrostaticTableRepository;
-  @MockBean private VesselDraftConditionRepository vesselDraftConditionRepository;
-  @MockBean private VesselTankTcgRepository vesselTankTcgRepository;
-  @MockBean private BendingMomentRepository bendingMomentRepository;
-  @MockBean private ShearingForceRepository shearingForceRepository;
-  @MockBean private CalculationSheetRepository calculationSheetRepository;
-  @MockBean private CalculationSheetTankgroupRepository calculationSheetTankgroupRepository;
-  @MockBean private MinMaxValuesForBmsfRepository minMaxValuesForBmsfRepository;
-  @MockBean private StationValuesRepository stationValuesRepository;
-  @MockBean private InnerBulkHeadValuesRepository innerBulkHeadValuesRepository;
-  @MockBean private UllageTableDataRepository ullageTableDataRepository;
+  @Mock private VesselRepository vesselRepository;
+  @Mock private VesselTankRepository vesselTankRepository;
+  @Mock private HydrostaticTableRepository hydrostaticTableRepository;
+  @Mock private VesselDraftConditionRepository vesselDraftConditionRepository;
+  @Mock private VesselTankTcgRepository vesselTankTcgRepository;
+  @Mock private CalculationSheetRepository calculationSheetRepository;
+  @Mock private CalculationSheetTankgroupRepository calculationSheetTankgroupRepository;
+  @Mock private MinMaxValuesForBmsfRepository minMaxValuesForBmsfRepository;
+  @Mock private StationValuesRepository stationValuesRepository;
+  @Mock private InnerBulkHeadValuesRepository innerBulkHeadValuesRepository;
+  @Mock private UllageTableDataRepository ullageTableDataRepository;
+  @Mock private VesselFlowRateRepository vesselFlowRateRepository;
+  @Mock private VesselPumpService vesselPumpService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -82,7 +55,6 @@ class VesselInfoServiceTest {
   void testGetVesselTanks() {
     Vessel vessel = new Vessel();
     when(this.vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(vessel);
-    when(this.tankCategoryRepository.getOne(anyLong())).thenReturn(new TankCategory());
     when(this.vesselTankRepository.findByVesselAndTankCategoryInAndIsActive(
             any(Vessel.class), anyList(), anyBoolean()))
         .thenReturn(this.prepareVesselTankEntities());
@@ -151,7 +123,7 @@ class VesselInfoServiceTest {
   }
 
   @Test
-  void testGetVesselDetailsForAlgo() {
+  void testGetVesselDetailsForAlgo() throws GenericServiceException {
     Vessel vessel = new Vessel();
     this.setUllageTrimCorrections(vessel);
     when(this.vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(vessel);
@@ -164,10 +136,6 @@ class VesselInfoServiceTest {
         .thenReturn(Arrays.asList(new HydrostaticTable()));
     when(this.vesselTankTcgRepository.findByVesselIdAndIsActive(any(), anyBoolean()))
         .thenReturn(Arrays.asList(new VesselTankTcg()));
-    when(this.bendingMomentRepository.findByVessel(any(Vessel.class)))
-        .thenReturn(Arrays.asList(new BendingMoment()));
-    when(this.shearingForceRepository.findByVessel(any(Vessel.class)))
-        .thenReturn(Arrays.asList(new ShearingForce()));
     when(this.calculationSheetRepository.findByVessel(any(Vessel.class)))
         .thenReturn(Arrays.asList(new CalculationSheet()));
     when(this.calculationSheetTankgroupRepository.findByVessel(any(Vessel.class)))
@@ -181,6 +149,15 @@ class VesselInfoServiceTest {
     when(this.ullageTableDataRepository.findByVesselOrderByVesselTankAscUllageDepthAsc(
             (any(Vessel.class))))
         .thenReturn(Arrays.asList(new UllageTableData()));
+    when(this.vesselFlowRateRepository.findByVessel((any(Vessel.class))))
+        .thenReturn(Arrays.asList(new VesselFlowRate()));
+    VesselInfo.VesselPumpsResponse.Builder vesselPumpResponseBuilder =
+        VesselInfo.VesselPumpsResponse.newBuilder();
+    lenient()
+        .when(
+            this.vesselPumpService.getVesselPumpsAndTypes(
+                vesselPumpResponseBuilder, vessel.getId()))
+        .thenReturn(vesselPumpResponseBuilder.build());
 
     StreamRecorder<VesselAlgoReply> responseObserver = StreamRecorder.create();
     this.vesselInfoService.getVesselDetailsForAlgo(

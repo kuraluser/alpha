@@ -1,11 +1,21 @@
-<div class="row">
-    <div class="col-md-12">
-        <cpdss-portal-arrival-condition-panel></cpdss-portal-arrival-condition-panel>
+<div class="row pt-30 heading-border no-gutters mb-10">
+    <div class="col-md-6">
+        <h5 class="text-uppercase">{{'LOADING_DISCHARGING_PLAN_ARRIVAL_CONDITION' | translate}}</h5>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <cpdss-portal-departure-condition-panel></cpdss-portal-departure-condition-panel>
+        <cpdss-portal-arrival-condition-panel [loadingPlanData]="loadingPlanData"></cpdss-portal-arrival-condition-panel>
+    </div>
+</div>
+<div class="row pt-30 heading-border no-gutters mb-10">
+    <div class="col-md-6">
+        <h5 class="text-uppercase">{{'LOADING_DISCHARGING_PLAN_DEPARTURE_CONDITION' | translate}}</h5>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <cpdss-portal-departure-condition-panel [loadingPlanData]="loadingPlanData"></cpdss-portal-departure-condition-panel>
     </div>
 </div>
 
@@ -17,14 +27,15 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <cpdss-portal-loading-discharging-berth [editMode]="false" [availableBerths]="selectedBerths" [selectedBerths]="selectedBerths"></cpdss-portal-loading-discharging-berth>
+        <cpdss-portal-loading-discharging-berth [editMode]="false" [berthDetails]="berthDetails" ></cpdss-portal-loading-discharging-berth>
     </div>
 </div>
-<div class="row">
+<div class="row item-row-wrapper">
     <div class="col-md-12">
-            <ul class="list-group bg-transparent list-group-flush bg-transparent">
-                <li class="list-group-item bg-transparent">Trim<span class="pull-right">For Berthing Not Exceeding 3.0 M
-                        8/5 During Cargo Operation</span></li>
-            </ul>
+        <div class="row">
+            <div class="col">Trim</div>
+            <div class="col text-right">For Berthing Not Exceeding 3.0 M
+                8/5 During Cargo Operation</div>
+        </div>
     </div>
 </div>

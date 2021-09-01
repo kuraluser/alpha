@@ -2,11 +2,20 @@
     <div class="col-md-2">
         <label>{{'TOPPING_OFF_TANK' | translate }}</label>
     </div>
-    <div class="col-md-10 table-column-flexible-wrapper" >
-        <ng-container *ngFor="let cargoType of cargoTypeList; let i = index;">
-            <cpdss-portal-datatable [tableId]="'drparture-details-tbl'"  [columns]="cargoTypeColumns"
-            [value]="cargoType"  [scrollable]="false" [showHeader]="i === 0" >
-        </cpdss-portal-datatable>
-        </ng-container>
+    <div class="col-md-10" >
+        <div class="row">
+            <div class="col ">
+                <div class="table-column-flexible-wrapper">
+                <ng-container *ngFor="let cargoType of cargoTypeList; let i = index;">
+                    <div class="pb-15">
+                    <cpdss-portal-datatable [tableId]="'drparture-details-tbl'"  [columns]="cargoTypeColumns"
+                    [value]="cargoType"  [scrollable]="false" [showHeader]="i === 0" >
+                </cpdss-portal-datatable>
+            </div>
+                </ng-container>
+            </div>
+            </div>
+        </div>
+        
     </div>
 </div>

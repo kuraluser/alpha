@@ -1,5 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { LoadingInstructionApiService } from './../../services/loading-instruction-api.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { Observable } from 'rxjs';
+import { UnsavedChangesGuard, ComponentCanDeactivate } from './../../../../shared/services/guards/unsaved-data-guard';
+import { ILoadingInstructionGroup, ILoadingInstructionSubHeaderData } from './../../models/loading-instruction.model';
+import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 @Component({
   selector: 'cpdss-portal-loading-instruction',
   templateUrl: './loading-instruction.component.html',
@@ -14,83 +19,141 @@ import { Component, OnInit } from '@angular/core';
  * @implements {OnInit}
  */
 
-export class LoadingInstructionComponent implements OnInit {
+export class LoadingInstructionComponent implements OnInit, ComponentCanDeactivate {
 
-  panelList = [];
-  instructionList = [];
-  instructionData = [];
-  constructor() { }
+  @Input() vesselId: number;
+  @Input() voyageId: number;
+  @Input() portRotationId: number;
+  @Input() loadingInfoId: number;
+
+  @ViewChild('instructionCheckList') instructionCheckList;
+
+  panelList: ILoadingInstructionGroup[] = [];
+  instructionList: ILoadingInstructionSubHeaderData[] = [];
+  instructionData: ILoadingInstructionSubHeaderData[] = [];
+  groupId: number;
+
+  constructor(
+    private loadingInstructionApiService: LoadingInstructionApiService,
+    private ngxSpinnerService: NgxSpinnerService,
+    private unsavedChangesGuard: UnsavedChangesGuard,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService
+  ) { }
 
   ngOnInit(): void {
-
-    this.panelList = [
-      { id: 1, label: 'Preparation for entering and cargo loading', selected: true },
-      { id: 2, label: 'Deballasting Operation', selected: false },
-      { id: 3, label: 'Precautions/Recording', selected: false },
-      { id: 4, label: 'Others', selected: false }
-    ];
-
-    this.instructionData = [
-      {
-        groupId: 1, id:1, label: 'Oil spill Equipment - 1', checked: false, subList: [
-          { id: 1.1, label: 'Oil spill Equipment to be displayed and ready for use before cargo operation start-11', checked: false },
-          { id: 1.2, label: 'Oil spill Equipment to be displayed and ready for use before cargo operation start- 232', checked: false },
-
-        ]
-      },
-      {
-        groupId: 1, id:2, label: 'Oil spill Equipment - 5', checked: false, subList: [
-          { id: 1.1, label: 'Oil spill Equipment to be displayed and ready for use before cargo operation start -new', checked: false },
-          { id: 1.2, label: 'Oil spill Equipment to be displayed and ready for use before cargo operation start-old', checked: false },
-
-        ]
-      },
-      { groupId: 2, id:3, label: 'Oil spill Equipment - 2', checked: false, subList: [
-        { id: 1.1, label: 'Oil spill Equipment to be displayed and ready for use before cargo operation start -1', checked: false },
-        { id: 1.2, label: 'Oil spill Equipment to be displayed and ready for use before cargo operation start - 2', checked: false },
-
-      ] },
-      { groupId: 2, id:4, label: 'Oil spill Equipment - 3', checked: false, subList: [] },
-      {
-        groupId: 3, id:5, label: 'Oil spill Equipment - 3', checked: false, subList: [
-          { id: 3.1, label: 'Oil spill Equipment to be displayed and ready for use before cargo operation start-3', checked: false },
-          { id: 3.2, label: 'Oil spill Equipment to be displayed and ready for use before cargo operation start-4', checked: false },
-
-        ]
-      },
-      {
-        groupId: 4, id:6, label: 'Oil spill Equipment - 3', checked: false, subList: [
-          { id: 4.1, label: 'Oil spill Equipment to be displayed and ready for use before cargo operation start - 4.1', checked: false },
-          { id: 4.2, label: 'Oil spill Equipment to be displayed and ready for use before cargo operation start- 4.2', checked: false },
-          { id: 4.3, label: 'Oil spill Equipment to be displayed and ready for use before cargo operation start- 4.3', checked: false },
-
-        ]
-      }
-    ];
-
-    this.setInstructionList(1);
+    this.getLoadingInstructionDetails();
   }
 
   /**
    * filter instruction list
    *
    * @param id
-   * @memberof LoadingComponent
+   * @memberof LoadingInstructionComponent
    */
   setInstructionList(id) {
-    this.instructionList = this.instructionData.filter(item => item.groupId === id);
+    if (!id) { return; }
+    this.instructionList = this.instructionData.filter(item => item.instructionHeaderId === id);
+  }
+
+  /**
+   * Check for unsaved changes on side panel click
+   *
+   * @param id
+   * @memberof LoadingInstructionComponent
+   */
+  canDeactivate(): Observable<boolean> | boolean {
+    return !(this.instructionCheckList?.hasUnsavedChanges || this.instructionCheckList?.instructionForm?.dirty);
   }
 
   /**
    * Row selection of instruction side panel
    *
    * @param event
-   * @memberof LoadingComponent
+   * @memberof LoadingInstructionComponent
    */
-  sidePanelInstructionChange(event) {
-    if (event) {
-      this.setInstructionList(event.id)
+  async sidePanelInstructionChange(event) {
+    if (event && this.groupId !== event.groupId) {
+      const result = await this.unsavedChangesGuard.canDeactivate(this);
+      if (!result) {
+        this.panelList.map(item => {
+          item.selected = (item.groupId === this.groupId);
+        });
+        return;
+      }
+      this.instructionCheckList.hasUnsavedChanges = false;
+      this.instructionCheckList.instructionForm.reset();
+      this.setInstructionList(event.groupId);
+      this.groupId = event.groupId;
     }
+  }
+
+  /**
+   * Get loading instruction data
+   *
+   * @memberof LoadingInstructionComponent
+   */
+  async getLoadingInstructionDetails() {
+    try {
+      this.ngxSpinnerService.show();
+      const result = await this.loadingInstructionApiService.getLoadingInstructionData(this.vesselId, this.loadingInfoId, this.portRotationId).toPromise();
+      this.instructionData = result?.loadingInstructionSubHeader?.length ? result?.loadingInstructionSubHeader : [];
+      this.panelList = result?.loadingInstructionGroupList?.length ? this.formatPanelList(result?.loadingInstructionGroupList) : [];
+      this.setInstructionSelected();
+      this.ngxSpinnerService.hide();
+    } catch {
+      this.panelList = [];
+      this.instructionData = [];
+      this.ngxSpinnerService.hide();
+    }
+  }
+
+  /**
+   * Set instruction selection
+   *
+   * @memberof LoadingInstructionComponent
+   */
+  setInstructionSelected() {
+    this.setInstructionList(this.groupId ? this.groupId : this.panelList[0]?.groupId);
+    this.groupId = this.groupId ? this.groupId : this.panelList[0]?.groupId;
+    if (this.groupId) {
+      this.panelList.map(item => {
+        if (item.groupId === this.groupId) {
+          item.selected = true;
+        }
+      });
+    } else {
+      this.panelList[0].selected = true;
+    }
+  }
+
+  /**
+   * Update instruction tab details
+   *
+   * @memberof LoadingInstructionComponent
+   */
+  updateData() {
+    this.getLoadingInstructionDetails();
+  }
+
+  /**
+   * Unselect panel data
+   *
+   * @memberof LoadingInstructionComponent
+   */
+  formatPanelList(data) {
+    data.map(item => {
+      item.selected = false;
+    });
+    return data;
+  }
+
+  /**
+   * set tab status - complete/incomplete
+   *
+   * @memberof LoadingInstructionComponent
+   */
+  setTabStatus(event){
+    this.loadingDischargingTransformationService.setLoadingInstructionValidity(event);
   }
 
 }

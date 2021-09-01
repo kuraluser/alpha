@@ -1,4 +1,4 @@
-<p-dialog id="dialog_newLoadableStudyPopup" header="{{'UPDATE ULLAGE' | translate}}" [(visible)]="display"
+<p-dialog id="dialog_newLoadableStudyPopup" header="{{'UPDATE ULLAGE' | translate}}" [visible]="true" *ngIf="display"
     [modal]="true" styleClass="new-loadable-study-pop-up" [draggable]="false" [responsive]="true" [minY]="70"
     [closable]="false">
 
@@ -9,16 +9,10 @@
             </div>
             <div class="col-md-4">
                 <label for="">{{'LOADABLE_PLAN_ULLAGE_UPDATE_STATUS_LABEL' | translate}}</label> <span class="pl-20">
-                    <p-dropdown  filter="true" optionLabel="voyageNo"
-                        resetFilterOnHide="true"></p-dropdown>
+                    <label>{{ status === ULLAGE_STATUS.ARRIVAL ? ('ULLAGE_UPDATE_STATUS_LABEL_ARRIVAL' | translate) : ('ULLAGE_UPDATE_STATUS_LABEL_DEPARTURE' | translate)}}</label>
                 </span>
             </div>
-            <div class="col-md-4">
-                <label for="">{{'LOADABLE_PLAN_ULLAGE_UPDATE_SHOW_AS_LABEL'| translate}}</label> <span class="pl-20">
-                    <p-dropdown  filter="true" optionLabel="voyageNo"
-                        resetFilterOnHide="true"></p-dropdown>
-                </span>
-            </div>
+            
         </div>
         <div class="row">
             <div class="col-md-12 text-center">
@@ -40,47 +34,53 @@
         <div class="row pt-20">
             <div class="col-md-4">
                 <cpdss-portal-datatable *ngIf="selectedTab === tankType.CARGO" [value]="cargoQuantities" [filterable]="false"
-                    [tableId]="'user_list'" [columns]="cargoColumns"></cpdss-portal-datatable>
-                    <cpdss-portal-datatable *ngIf="selectedTab === tankType.BALLAST" [value]="ballastQuantities" [filterable]="false"
-                    [tableId]="'user_list'" [columns]="ballastColumns"></cpdss-portal-datatable>
-                    <cpdss-portal-datatable *ngIf="selectedTab === tankType.BUNKER" [value]="bunkerTanksList" [filterable]="false"
-                    [tableId]="'user_list'" [columns]="bunkerColumns"></cpdss-portal-datatable>
+                    [tableId]="'user_list'" [selectionMode]="selectionMode" (columnClick)="onRowSelection($event)" [(selection)]="selectedTank" (editComplete)="cargoEditCompleted($event)" [form]="cargoTankForm"  [editMode]="editMode" [columns]="cargoColumns"></cpdss-portal-datatable>
+                    <cpdss-portal-datatable [selectionMode]="selectionMode" [form]="ballastTankForm" [editMode]="editMode" *ngIf="selectedTab === tankType.BALLAST" (editComplete)="ballastEditCompleted($event)" [value]="ballastQuantities" [filterable]="false"
+                    [tableId]="'user_list'" (columnClick)="onRowSelection($event)" [(selection)]="selectedTank" [columns]="ballastColumns"></cpdss-portal-datatable>
+                    <cpdss-portal-datatable [selectionMode]="selectionMode" *ngIf="selectedTab === tankType.BUNKER" [value]="bunkerTanksList" [filterable]="false"
+                    [tableId]="'user_list'" (columnClick)="onRowSelection($event)" [(selection)]="selectedTank" [form]="bunkerTankForm" [editMode]="editMode" [columns]="bunkerColumns"></cpdss-portal-datatable>
             </div>
             <div class="col-md-8">
-                <!-- <cpdss-portal-ship-landing-tanks [vesselId]="vesselInfo?.id" [voyageId]="selectedVoyage?.id"
-                    [loadableStudyId]="selectedVoyage?.confirmedLoadableStudyId"
-                    [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
-                    [selectedPortDetails]="selectedPortDetails" [shipLandingTanks]="voyageStatusResponse">
-                </cpdss-portal-ship-landing-tanks> -->
+                
                 <div>
                     <div class="row">
-                        <!-- <div *ngIf="selectedTab === tankType.CARGO || selectedTab === tankType.BALLAST" class="col-7 pb-5 m-auto text-right">
-                            <div class="switch-wrapper">
-                                <span class="switch-label">View All</span>
-                                <p-inputSwitch [(ngModel)]="viewAll"></p-inputSwitch>
+                        
+                        <div class="col landing-page-tank-wrapper m-auto" *ngIf="selectedTab === tankType.CARGO">
+                            <div class="col">
+                                <div class="col">
+                                    <label for="">{{'LOADABLE_PLAN_ULLAGE_UPDATE_SHOW_AS_LABEL'| translate}}</label> <span class="pl-20">
+                                        <p-dropdown [(ngModel)]="showAs"  filter="true"  (onChange)="showAsChange($event)" [options]="showAsOptions" optionLabel="label"
+                                            resetFilterOnHide="true"></p-dropdown>
+                                    </span>
+                                </div>
                             </div>
-                           </div> -->
-                        <div class="col col-11 landing-page-tank-wrapper m-auto" *ngIf="selectedTab === tankType.CARGO">
-                            <span>{{'LOADABLE_PLANE_CARGO_GRADE' | translate}}</span>
-                            <p-dropdown styleClass="form-control" [options]="loadablePatternCargoDetails" appendTo="body" 
-                            id="cargo_name"  optionLabel="cargoAbbreviation"
-                            focusTrap resetFilterOnHide="true" [filter]="true" (onChange)="changeCargo($event)"></p-dropdown>
-
-                            <span>{{'LOADABLE_PLANE_CARGO_GRADE' | translate}}</span>
-                            <ul class="list-inline text-center tank-order mb-5">
-                                <li class="list-inline-item" *ngFor="let cargoDetail of loadablePatternCargoDetails">
-                                    <span class="badge-custom mr-5" class="badge-custom" [ngClass]="cargoDetail?.isCommingle ? 'commingle' : ''"
-                                    [ngStyle]="!cargoDetail?.isCommingle && {'background': cargoDetail.cargoColor}">
-                                        {{cargoDetail.cargoAbbreviation}} </span> <span class="ml-5 mr-5">></span>
-                                </li>
-                            </ul>
-                            <span>{{'LOADABLE_PLAN_FILLED' | translate}}</span>
-                            <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="cargoTankOptions">
-                            </cpdss-portal-cargo-tank-layout>
+                            <div class="col">
+                                <span>{{'LOADABLE_PLANE_CARGO_GRADE' | translate}}</span>
+                                <p-dropdown styleClass="form-control" [(ngModel)]="selectedCargo" [options]="ullageResponseData?.billOfLaddingList" appendTo="body" 
+                                id="cargo_name"  optionLabel="cargoAbbrevation"
+                                focusTrap resetFilterOnHide="true" [filter]="true" (onChange)="changeCargo($event)"></p-dropdown>
+    
+                                <span>{{'LOADABLE_PLANE_CARGO_GRADE' | translate}}</span>
+                                <ul class="list-inline text-center tank-order mb-5">
+                                    <li class="list-inline-item" *ngFor="let cargoDetail of ullageResponseData?.billOfLaddingList">
+                                        <span class="badge-custom mr-5" class="badge-custom" [ngClass]="cargoDetail?.isCommingle ? 'commingle' : ''"
+                                        [ngStyle]="!cargoDetail?.isCommingle && {'background': cargoDetail.cargoColor}">
+                                            {{cargoDetail.cargoAbbrevation}} </span> <span class="ml-5 mr-5">></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="col">
+                                <ng-container *ngIf="percentageFilled">
+                                    <span>{{percentageFilled }}</span><span>{{'LOADABLE_PLAN_FILLED' | translate}}</span>
+                                </ng-container>
+                                <cpdss-portal-cargo-tank-layout [(selectedTankId)]="selectedTankId" [tanks]="cargoTanks" [options]="cargoTankOptions">
+                                </cpdss-portal-cargo-tank-layout>
+                            </div>
                             
                         </div>
                         <div class="col-11 m-auto loadable-plan-ballast landing-page-tank-wrapper" *ngIf="selectedTab === tankType.BALLAST">
-                            <cpdss-portal-ballast-layout [tanks]="centerBallastTanks" [rearTanks]="rearBallastTanks"
+                            <cpdss-portal-ballast-layout [(selectedTankId)]="selectedTankId" [tanks]="centerBallastTanks" [rearTanks]="rearBallastTanks"
                                     [frontTanks]="frontBallastTanks" [options]="ballastTankOptions">
                                 </cpdss-portal-ballast-layout>
                                 
@@ -94,7 +94,10 @@
                                 </ng-container>
                 
                             </div>
-                            <cpdss-portal-bunkering-layout [tanks]="bunkerTanks" [rearTanks]="rearBunkerTanks" [options]="ohqTankOptions">
+                            <ng-container *ngIf="percentageFilled">
+                                <span>{{percentageFilled }}</span><span>{{'LOADABLE_PLAN_FILLED' | translate}}</span>
+                            </ng-container>
+                            <cpdss-portal-bunkering-layout [(selectedTankId)]="selectedTankId" [tanks]="bunkerTanks" [rearTanks]="rearBunkerTanks" [options]="ohqTankOptions">
                             </cpdss-portal-bunkering-layout>
                         </div>
                     </div>
@@ -146,7 +149,7 @@
                                 
                                    <ng-container *ngSwitchCase="fieldType.NUMBER">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
-                                        <input type="text" cpdssPortalNumberDecimal [max]="1000" [min]="0" class="form-control"
+                                        <input type="text" cpdssPortalNumberDecimal [min]="0" class="form-control"
                                         id="{{rowIndex+col.field+index}}" [formControl]="getControl(rowIndex,index,col.field)" 
                                         (blur)="onEditComplete($event,rowData,col.field,rowIndex,index)"
                                         >
@@ -174,7 +177,7 @@
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.ACTION">
-                                    <i class="pi pi-minus-circle" *ngIf="!rowData.isAdd" (click)="deleteCargo(rowIndex,index)"></i>
+                                    <i class="pi pi-minus-circle" *ngIf="index !== 0" (click)="deleteCargo(rowIndex,index)"></i>
                                     <i class="pi pi-plus-circle" *ngIf="index === 0" (click)="newCargo(rowIndex,index)"></i>
                                 </ng-container>
                                 
@@ -214,10 +217,8 @@
                 <p-table [value]="cargoQuantityList">
                     <ng-template pTemplate="header">
                         <tr>
-                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_QUANTITY_TABLE' | translate}}</th>
-                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_QUANTITY_TABLE' | translate}}</th>
-                            <th colspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_TOLERANCE' | translate}}</th>
-                            <th colspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_QUANTITY' | translate}}</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_NAME' | translate}}</th>
+                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_NOMINATION_FIG_IN_BBLS' | translate}}</th>
                             <th rowspan="2"></th>
                             <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_BBLS@60F'| translate}}</th>
                             <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_LT'| translate}}</th>
@@ -226,23 +227,12 @@
                             <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_API'| translate}}</th>
                             <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_TEMP'| translate}}</th>
                         </tr>
-                        <tr>
-                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_MAX'| translate}}</th>
-                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_MIN'| translate}}</th>
-                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_MAX'| translate}}</th>
-                            <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_MIN'| translate}}</th>
-                        </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-row let-index>
-                        <!-- <ng-container *ngFor="let column of row.cargoDetails; let i=index"> -->
                             <tr>
-                                <td rowspan="4">{{row.cargoName}}</td>
-                                <td rowspan="4">{{row.nominationFig}}</td>
-                                <td rowspan="4">{{row.tolerance.max}}</td>
-                                <td rowspan="4">{{row.tolerance.min}}</td>
-                                <td rowspan="4">{{row.quantity.max}}</td>
-                                <td rowspan="4">{{row.quantity.min}}</td>
-                                <td>PLAN</td>
+                                <td rowspan="4">{{row.cargoAbbrevation}}</td>
+                                <td rowspan="4">{{row.nominationTotal}}</td>
+                                <td>{{'ULLAGE_UPDATE_PLAN_LABEL' | translate}}</td>
                                 <td>{{row.plan.bbl}}</td>
                                 <td>{{row.plan.lt}}</td>
                                 <td>{{row.plan.mt}}</td>
@@ -251,7 +241,7 @@
                                 <td>{{row.plan.temp}}</td>
                             </tr>
                             <tr>
-                                <td>ACTUAL</td>
+                                <td>{{'ULLAGE_UPDATE_ACTUAL_LABEL' | translate}}</td>
                                 <td>{{row.actual.bbl}}</td>
                                 <td>{{row.actual.lt}}</td>
                                 <td>{{row.actual.mt}}</td>
@@ -260,7 +250,7 @@
                                 <td>{{row.actual.temp}}</td>
                             </tr>
                             <tr>
-                                <td>B/L FIG</td>
+                                <td>{{'ULLAGE_UPDATE_BLFIG_LABEL' | translate}}</td>
                                 <td>{{row.blFigure.bbl}}</td>
                                 <td>{{row.blFigure.lt}}</td>
                                 <td>{{row.blFigure.mt}}</td>
@@ -269,17 +259,17 @@
                                 <td>{{row.blFigure.temp}}</td>
                             </tr>
                             <tr>
-                                <td>DIFF</td>
-                                <td>{{row.diff.bbl}}</td>
-                                <td>{{row.diff.lt}}</td>
-                                <td>{{row.diff.mt}}</td>
-                                <td>{{row.diff.kl}}</td>
-                                <td>{{row.diff.api}}</td>
-                                <td>{{row.diff.temp}}</td>
+                                <td>{{'ULLAGE_UPDATE_DIFF_LABEL' | translate}}</td>
+                                <td>{{row.difference.bbl}}</td>
+                                <td>{{row.difference.lt}}</td>
+                                <td>{{row.difference.mt}}</td>
+                                <td>{{row.difference.kl}}</td>
+                                <td>{{row.difference.api}}</td>
+                                <td>{{row.difference.temp}}</td>
                             </tr>
                             <tr>
-                                <td colspan="6"></td>
-                                <td>DIFF%</td>
+                                <td colspan="2"></td>
+                                <td>{{'ULLAGE_UPDATE_DIFFPER_LABEL' | translate}}</td>
                                 <td>{{row.diffPercentage.bbl}}</td>
                                 <td>{{row.diffPercentage.lt}}</td>
                                 <td>{{row.diffPercentage.mt}}</td>
@@ -287,7 +277,6 @@
                                 <td>{{row.diffPercentage.api}}</td>
                                 <td>{{row.diffPercentage.temp}}</td>
                             </tr>
-                        <!-- </ng-container>     -->
                     </ng-template>
                 </p-table>
             </div>
@@ -299,8 +288,10 @@
             <div class="col-sm-12 text-right">
                 <button type="button" class="btn btn-main" (click)="closeDialog()" id="new-loadable-study-popup-cancel"
                     focusTrap>{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
-                <button type="submit" class="btn btn-main" id="new-loadable-study-popup-save" form="fg_newLoadableStudy"
+                <button (click)="saveUllage(false)" class="btn btn-main" id="new-loadable-study-popup-save" form="fg_newLoadableStudy"
                     autofocus focusTrap>{{'SAVE' | translate}}</button>
+                    <button (click)="saveUllage(true)" class="btn btn-main" id="new-loadable-study-popup-save" form="fg_newLoadableStudy"
+                    autofocus focusTrap>{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' | translate}}</button>
             </div>
         </div>
     </p-footer>

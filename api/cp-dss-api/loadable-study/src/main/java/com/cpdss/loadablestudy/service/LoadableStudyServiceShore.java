@@ -8,7 +8,6 @@ import static org.springframework.util.StringUtils.isEmpty;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
-import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -75,6 +74,9 @@ public class LoadableStudyServiceShore {
   @Autowired private CargoOperationRepository cargoOperationRepository;
   @Autowired private LoadableStudyRuleService loadableStudyRuleService;
   @Autowired private LoadableStudyRuleRepository loadableStudyRuleRepository;
+
+  @Autowired
+  private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
   @Autowired private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
   @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
   @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
@@ -88,6 +90,7 @@ public class LoadableStudyServiceShore {
 
   public LoadableStudy setLoadablestudyShore(String jsonResult, String messageId)
       throws GenericServiceException {
+    log.info("inside setLoadablestudyShore ");
     LoadableStudy loadableStudyEntity = null;
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         new Gson().fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadableStudy.class);
@@ -99,7 +102,7 @@ public class LoadableStudyServiceShore {
       try {
 
         loadableStudyEntity = saveLoadableStudyShore(loadableStudy, voyage);
-        saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity, MessageTypes.LOADABLESTUDY);
+        saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity);
         saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy, modelMapper);
         if (loadableStudyEntity != null) {
           loadableStudyRepository.updateLoadableStudyStatus(
@@ -113,20 +116,20 @@ public class LoadableStudyServiceShore {
       loadableStudyEntity =
           loadableStudyRepository.findByVoyageAndNameIgnoreCaseAndIsActiveAndPlanningTypeXId(
               voyage, loadableStudy.getName(), true, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
-      saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity, MessageTypes.LOADABLESTUDY);
+      saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity);
       saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy, modelMapper);
     }
     return loadableStudyEntity;
   }
 
   private void saveLoadableStudyCommunicaionStatus(
-          String messageId, LoadableStudy loadableStudyEntity, MessageTypes messageType) {
+      String messageId, LoadableStudy loadableStudyEntity) {
     LoadableStudyCommunicationStatus lsCommunicationStatus = new LoadableStudyCommunicationStatus();
     lsCommunicationStatus.setMessageUUID(messageId);
     lsCommunicationStatus.setCommunicationStatus(
         CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId());
     lsCommunicationStatus.setReferenceId(loadableStudyEntity.getId());
-    lsCommunicationStatus.setMessageType(messageType.getMessageType());
+    lsCommunicationStatus.setMessageType(MessageTypes.LOADABLESTUDY.getMessageType());
     lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
     this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
   }
@@ -345,7 +348,7 @@ public class LoadableStudyServiceShore {
 
       this.loadableQuantityRepository.save(loadableQuantity);
     }
-    if (!loadableStudy.getLoadableStudyRuleList().isEmpty()) {
+    /* if (!loadableStudy.getLoadableStudyRuleList().isEmpty()) {
       VesselInfo.VesselRuleRequest.Builder vesselRuleBuilder =
           VesselInfo.VesselRuleRequest.newBuilder();
       vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
@@ -453,7 +456,7 @@ public class LoadableStudyServiceShore {
                         });
               });
       this.loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
-    }
+    }*/
   }
 
   private LoadableStudyPortRotation buildLoadableStudyPortRotation(
@@ -493,6 +496,7 @@ public class LoadableStudyServiceShore {
     loadableStudyPortRotation.setActive(true);
     CargoOperation operation = this.cargoOperationRepository.getOne(portRotation.getOperationId());
     loadableStudyPortRotation.setOperation(operation);
+    loadableStudyPortRotation.setIsPortRotationOhqComplete(true);
     if (!synopticalTableDetails.isEmpty()) {
       List<SynopticalTable> synopticalTableList =
           synopticalTableDetails.stream()
@@ -548,8 +552,7 @@ public class LoadableStudyServiceShore {
             ? null
             : new BigDecimal(request.getDepartureVolume()));
 
-    // entity.setDensity(isEmpty(request.getDensity()) ? null : new
-    // BigDecimal(request.getDensity()));
+    entity.setDensity(isEmpty(request.getDensity()) ? null : new BigDecimal(request.getDensity()));
     if (request.getPortId() != null) {
       LoadableStudyPortRotation lsPortRot =
           loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
@@ -728,12 +731,10 @@ public class LoadableStudyServiceShore {
     this.setCaseNo(entity);
     /*entity.setDischargeCargoId(loadableStudy.getD);*/
     entity.setLoadOnTop(loadableStudy.getLoadOnTop() != null ? loadableStudy.getLoadOnTop() : null);
-    entity.setDischargeCargoNominationId(loadableStudy.getCargoToBeDischargeFirstId() != null ? loadableStudy.getCargoToBeDischargeFirstId() : null);
-    /*entity.setIsCargoNominationComplete(loadableStudy.getIsCargoNominationComplete());
-    entity.setIsDischargePortsComplete(loadableStudy.getIsDischargePortsComplete());
-    entity.setIsObqComplete(loadableStudy.getIsObqComplete());
-    entity.setIsOhqComplete(loadableStudy.getIsOhqComplete());
-    entity.setIsPortsComplete(loadableStudy.getIsPortsComplete());*/
+    entity.setIsCargoNominationComplete(true);
+    entity.setIsDischargePortsComplete(true);
+    entity.setIsObqComplete(true);
+    entity.setIsPortsComplete(true);
     Set<LoadableStudyAttachments> attachmentCollection = new HashSet<>();
     if (null != loadableStudy.getLoadableStudyAttachment()) {
       String folderLocation = constructFolderPath(entity);
@@ -783,246 +784,111 @@ public class LoadableStudyServiceShore {
     return valueOf(pathBuilder);
   }
 
-    public LoadableStudy saveOrUpdateLSInShore(String jsonResult, String messageId)
-            throws GenericServiceException {
-        LoadableStudy loadableStudyEntity = null;
-        LoadabalePatternValidateRequest loadabalePatternValidateRequest =
-                new Gson().fromJson(jsonResult,com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest.class);
-        com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy = loadabalePatternValidateRequest.getLoadableStudy();
-        Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyage());
-        if (!checkIfLoadableStudyExist(loadableStudy.getName(), voyage)) {
-            try {
-                LoadableStudy entity = new LoadableStudy();
-                loadableStudyEntity = saveOrUpdateLoadableStudyShore(loadableStudy, voyage, entity);
-                saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity, MessageTypes.VALIDATEPLAN);
-                saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy);
-                saveLoadablePlanStowageTempDetails(loadabalePatternValidateRequest);
-                //savePattern(loadabalePatternValidateRequest, loadableStudyEntity);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }else{
-            try {
-                Optional<LoadableStudy> lsEntity = loadableStudyRepository.findByNameAndVoyageAndPlanningTypeXIdAndIsActive(loadableStudy.getName(), voyage,
-                        Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE, true);
-                if(lsEntity.isPresent()){
-                    loadableStudyEntity = saveOrUpdateLoadableStudyShore(loadableStudy, voyage, lsEntity.get());
-                }
+  public LoadableStudy saveOrUpdateLSInShore(String jsonResult, String messageId)
+      throws GenericServiceException {
+    LoadableStudy loadableStudyEntity = null;
+    LoadabalePatternValidateRequest loadabalePatternValidateRequest =
+        new Gson()
+            .fromJson(
+                jsonResult, com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest.class);
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        loadabalePatternValidateRequest.getLoadableStudy();
+    Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyage());
+    if (!checkIfLoadableStudyExist(loadableStudy.getName(), voyage)) {
+      try {
+        LoadableStudy entity = new LoadableStudy();
+        loadableStudyEntity = saveLoadableStudyShore(loadableStudy, voyage);
+        // saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity,
+        // MessageTypes.VALIDATEPLAN);
+        saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity);
+        ModelMapper modelMapper = new ModelMapper();
+        saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy, modelMapper);
+        // saveLoadablePlanStowageTempDetails(loadabalePatternValidateRequest);
+        // savePattern(loadabalePatternValidateRequest, loadableStudyEntity);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    } else {
+      // try {
+      //        Optional<LoadableStudy> lsEntity =
+      // loadableStudyRepository.findByNameAndVoyageAndPlanningTypeXIdAndIsActive(loadableStudy.getName(), voyage,
+      //                Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE, true);
+      //        if(lsEntity.isPresent()){
+      //          loadableStudyEntity = saveOrUpdateLoadableStudyShore(loadableStudy, voyage,
+      // lsEntity.get());
+      //        }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return loadableStudyEntity;
+      //      } catch (IOException e) {
+      //        e.printStackTrace();
+      //     }
     }
+    return loadableStudyEntity;
+  }
 
-//    private List<LoadablePattern> savePattern(LoadabalePatternValidateRequest loadabalePatternValidateRequest, LoadableStudy loadableStudyEntity) {
-//        List<LoadablePattern> loadablePatterns = new ArrayList<>();
-//      Long lastLoadingPort =
-//                loadableStudyPortRotationService.getLastPort(
-//                        loadableStudyEntity, this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
-//
-//      if(loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails() != null){
-//          Optional<LoadablePlanPortWiseDetails>
-//                                    lppwdOptional =
-//                  loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream()
-//                                            .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
-//                                            .findAny();
-//          LoadablePattern loadablePattern = null;
-//          if(lppwdOptional.isPresent()){
-//              loadableQuantityService.saveLoadableQuantity(lppwdOptional.get(), loadablePattern);
-//                                saveLoadablePlanCommingleCargo(
-//                                        lppwdOptional
-//                                                .get()
-//                                                .getDepartureCondition()
-//                                                .getLoadableQuantityCargoDetails(),
-//                                        loadablePattern);
-//                                saveLoadablePlanStowageDetails(
-//                                        lppwdOptional.get().getDepartureCondition().getLoadablePlanStowageDetails(),
-//                                        loadablePattern);
-//                                saveLoadablePlanBallastDetails(
-//                                        lppwdOptional.get().getDepartureCondition().getLoadablePlanBallastDetailsList(),
-//                                        loadablePattern);
-//          }
-//      }
-//      return loadablePatterns;
-//    }
-//    private List<LoadablePattern> savePatternDetails(
-//            com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
-//            Optional<LoadableStudy> loadableStudyOpt) {
-//        Long lastLoadingPort =
-//                loadableStudyPortRotationService.getLastPort(
-//                        loadableStudyOpt.get(), this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
-//        List<LoadablePattern> loadablePatterns = new ArrayList<LoadablePattern>();
-//        request
-//                .getLoadablePlanDetailsList()
-//                .forEach(
-//                        lpd -> {
-//                            LoadablePattern loadablePattern =
-//                                    saveloadablePattern(lpd, loadableStudyOpt.get(), request.getHasLodicator());
-//                            loadablePatterns.add(loadablePattern);
-//                            saveConstrains(lpd, loadablePattern);
-//                            Optional<com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails>
-//                                    lppwdOptional =
-//                                    lpd.getLoadablePlanPortWiseDetailsList().stream()
-//                                            .filter(lppwd -> lppwd.getPortId() == lastLoadingPort)
-//                                            .findAny();
-//
-//                            if (lppwdOptional.isPresent()) {
-//                                loadableQuantityService.saveLoadableQuantity(lppwdOptional.get(), loadablePattern);
-//                                saveLoadablePlanCommingleCargo(
-//                                        lppwdOptional
-//                                                .get()
-//                                                .getDepartureCondition()
-//                                                .getLoadableQuantityCommingleCargoDetailsList(),
-//                                        loadablePattern);
-//                                saveLoadablePlanStowageDetails(
-//                                        lppwdOptional.get().getDepartureCondition().getLoadablePlanStowageDetailsList(),
-//                                        loadablePattern);
-//                                saveLoadablePlanBallastDetails(
-//                                        lppwdOptional.get().getDepartureCondition().getLoadablePlanBallastDetailsList(),
-//                                        loadablePattern);
-//                            }
-//
-//                            AtomicInteger displayOrder = new AtomicInteger(0);
-//                            saveLoadableQuantityCommingleCargoPortwiseDetails(
-//                                    lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern, displayOrder);
-//                            // saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);//Coe added for UAT
-//                            // no need to persist in stabilityParameter table
-//                            saveLoadablePlanStowageDetails(loadablePattern, lpd, displayOrder);
-//                            saveLoadablePlanBallastDetails(loadablePattern, lpd);
-//                            saveStabilityParameterForNonLodicator(
-//                                    request.getHasLodicator(), loadablePattern, lpd);
-//                        });
-//        return loadablePatterns;
-//    }
-
-    private void saveLoadablePlanStowageTempDetails(LoadabalePatternValidateRequest loadabalePatternValidateRequest) {
-        if(loadabalePatternValidateRequest.getLoadablePlanStowageTempDetails() != null){
-            loadabalePatternValidateRequest.getLoadablePlanStowageTempDetails().forEach(stowageTemp->{
-                LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp = new LoadablePlanStowageDetailsTemp();
-                Optional<Long> isBallastExist = Optional.ofNullable(stowageTemp.getBallastDetailsId());
-                if(isBallastExist.isPresent()){
-                    LoadablePlanBallastDetails ballastDetails =
-                            this.loadablePlanBallastDetailsRepository.getOne(stowageTemp.getBallastDetailsId());
-                    loadablePlanStowageDetailsTemp.setLoadablePlanBallastDetails(ballastDetails);
-                }
-                Optional<Boolean> isCommingleExist = Optional.ofNullable(stowageTemp.getIsCommingle());
-                if(isCommingleExist.isPresent()){
-                    LoadablePlanCommingleDetails commingleDetails =
-                            this.loadablePlanCommingleDetailsRepository.getOne(stowageTemp.getCommingleDetailId());
-                    loadablePlanStowageDetailsTemp.setLoadablePlanCommingleDetails(commingleDetails);
-                }
-                Optional<Long> isStowageExist = Optional.ofNullable(stowageTemp.getStowageDetailsId());
-                if(isStowageExist.isPresent()){
-                    LoadablePlanStowageDetails stowageDetails =
-                            this.loadablePlanStowageDetailsRespository.getOne(stowageTemp.getStowageDetailsId());
-                    loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(stowageDetails);
-                }
-                Optional<LoadablePattern> loadablePatternOpt =
-                        this.loadablePatternRepository.findByIdAndIsActive(stowageTemp.getLoadablePatternId(), true);
-                if(loadablePatternOpt.isPresent()){
-                    loadablePlanStowageDetailsTemp.setLoadablePattern(loadablePatternOpt.get());
-                }
-                loadablePlanStowageDetailsTemp.setIsActive(true);
-                loadablePlanStowageDetailsTemp.setCorrectedUllage(
-                        isEmpty(stowageTemp.getCorrectedUllage())
-                                ? null
-                                : stowageTemp.getCorrectedUllage());
-                loadablePlanStowageDetailsTemp.setCorrectionFactor(
-                        isEmpty(stowageTemp.getCorrectionFactor())
-                                ? null
-                                : stowageTemp.getCorrectionFactor());
-
-                loadablePlanStowageDetailsTemp.setQuantity(
-                        isEmpty(stowageTemp.getQuantity())
-                                ? null
-                                : stowageTemp.getQuantity());
-                loadablePlanStowageDetailsTemp.setRdgUllage(
-                        isEmpty(stowageTemp.getRdgUllage())
-                                ? null
-                                : stowageTemp.getRdgUllage());
-                loadablePlanStowageDetailsTemp.setIsBallast(stowageTemp.getIsBallast());
-                loadablePlanStowageDetailsTemp.setIsCommingle(stowageTemp.getIsCommingle());
-                loadablePlanStowageDetailsTemp.setFillingRatio(
-                        isEmpty(stowageTemp.getFillingRatio())
-                                ? null
-                                : stowageTemp.getFillingRatio());
-                stowageDetailsTempRepository.save(loadablePlanStowageDetailsTemp);
-              }
-            );
-        }
-    }
-
-    private LoadableStudy saveOrUpdateLoadableStudyShore(
-            com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy, Voyage voyage, LoadableStudy entity)
-            throws IOException {
-        Optional.of(entity.getId()).ifPresent(entity::setId);
-        entity.setVesselXId(loadableStudy.getVesselId());
-        entity.setVoyage(voyage);
-        entity.setName(loadableStudy.getName());
-        entity.setDetails(loadableStudy.getDetails());
-        entity.setCharterer(loadableStudy.getCharterer());
-        entity.setSubCharterer(loadableStudy.getSubCharterer());
-        entity.setDraftMark(new BigDecimal(loadableStudy.getDraftMark()));
-        entity.setLoadLineXId(loadableStudy.getLoadlineId());
-        entity.setDraftRestriction(
-                loadableStudy.getDraftRestriction() != null
-                        ? new BigDecimal(loadableStudy.getDraftRestriction())
-                        : null);
-        entity.setEstimatedMaxSag(
-                loadableStudy.getEstimatedMaxSG() != null
-                        ? new BigDecimal(loadableStudy.getEstimatedMaxSG())
-                        : null);
-        entity.setMaxAirTemperature(
-                loadableStudy.getMaxAirTemp() != null
-                        ? new BigDecimal(loadableStudy.getMaxAirTemp())
-                        : null);
-        entity.setMaxWaterTemperature(
-                loadableStudy.getMaxWaterTemp() != null
-                        ? new BigDecimal(loadableStudy.getMaxWaterTemp())
-                        : null);
-        entity.setActive(true);
-        this.setCaseNo(entity);
-        /*entity.setDischargeCargoId(loadableStudy.getD);*/
-        entity.setLoadOnTop(loadableStudy.getLoadOnTop() != null ? loadableStudy.getLoadOnTop() : null);
-        entity.setDischargeCargoNominationId(loadableStudy.getCargoToBeDischargeFirstId() != null ? loadableStudy.getCargoToBeDischargeFirstId() : null);
-        /*entity.setIsCargoNominationComplete(loadableStudy.getIsCargoNominationComplete());
-        entity.setIsDischargePortsComplete(loadableStudy.getIsDischargePortsComplete());
-        entity.setIsObqComplete(loadableStudy.getIsObqComplete());
-        entity.setIsOhqComplete(loadableStudy.getIsOhqComplete());
-        entity.setIsPortsComplete(loadableStudy.getIsPortsComplete());*/
-//        Optional<Long> checkLsIdExistOrNot = Optional.ofNullable(entity.getId());
-//        if(checkLsIdExistOrNot.isPresent()){
-//
-//        }
-        Set<LoadableStudyAttachments> attachmentCollection = new HashSet<>();
-        if (null != loadableStudy.getLoadableStudyAttachment()) {
-            String folderLocation = constructFolderPath(entity);
-            Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
-            for (com.cpdss.loadablestudy.domain.LoadableStudyAttachment attachment :
-                    loadableStudy.getLoadableStudyAttachment()) {
-                String fileName =
-                        attachment.getFileName().substring(0, attachment.getFileName().lastIndexOf("."));
-                String extension =
-                        attachment
-                                .getFileName()
-                                .substring(attachment.getFileName().lastIndexOf("."))
-                                .toLowerCase();
-                String filePath = folderLocation + fileName + "_" + System.currentTimeMillis() + extension;
-                Path path = Paths.get(this.rootFolder + filePath);
-                Files.createFile(path);
-                Files.write(path, attachment.getContent());
-                LoadableStudyAttachments attachmentEntity = new LoadableStudyAttachments();
-                attachmentEntity.setUploadedFileName(attachment.getFileName());
-                attachmentEntity.setFilePath(filePath);
-                attachmentEntity.setLoadableStudy(entity);
-                attachmentEntity.setIsActive(true);
-                attachmentCollection.add(attachmentEntity);
-            }
-            entity.setAttachments(attachmentCollection);
-        }
-        entity = this.loadableStudyRepository.save(entity);
-        return entity;
-    }
+  // private void saveLoadablePlanStowageTempDetails(LoadabalePatternValidateRequest
+  // loadabalePatternValidateRequest) {
+  //    if(loadabalePatternValidateRequest.getLoadablePlanStowageTempDetails() != null){
+  //      loadabalePatternValidateRequest.getLoadablePlanStowageTempDetails().forEach(stowageTemp->{
+  //                LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp = new
+  // LoadablePlanStowageDetailsTemp();
+  //                Optional<Long> isBallastExist =
+  // Optional.ofNullable(stowageTemp.getBallastDetailsId());
+  //                if(isBallastExist.isPresent()){
+  //                  LoadablePlanBallastDetails ballastDetails =
+  //
+  // this.loadablePlanBallastDetailsRepository.getOne(stowageTemp.getBallastDetailsId());
+  //                  loadablePlanStowageDetailsTemp.setLoadablePlanBallastDetails(ballastDetails);
+  //                }
+  //                Optional<Boolean> isCommingleExist =
+  // Optional.ofNullable(stowageTemp.getIsCommingle());
+  //                if(isCommingleExist.isPresent()){
+  //                  LoadablePlanCommingleDetails commingleDetails =
+  //
+  // this.loadablePlanCommingleDetailsRepository.getOne(stowageTemp.getCommingleDetailId());
+  //
+  // loadablePlanStowageDetailsTemp.setLoadablePlanCommingleDetails(commingleDetails);
+  //                }
+  //                Optional<Long> isStowageExist =
+  // Optional.ofNullable(stowageTemp.getStowageDetailsId());
+  //                if(isStowageExist.isPresent()){
+  //                  LoadablePlanStowageDetails stowageDetails =
+  //
+  // this.loadablePlanStowageDetailsRespository.getOne(stowageTemp.getStowageDetailsId());
+  //                  loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(stowageDetails);
+  //                }
+  //                Optional<LoadablePattern> loadablePatternOpt =
+  //
+  // this.loadablePatternRepository.findByIdAndIsActive(stowageTemp.getLoadablePatternId(), true);
+  //                if(loadablePatternOpt.isPresent()){
+  //                  loadablePlanStowageDetailsTemp.setLoadablePattern(loadablePatternOpt.get());
+  //                }
+  //                loadablePlanStowageDetailsTemp.setIsActive(true);
+  //                loadablePlanStowageDetailsTemp.setCorrectedUllage(
+  //                        isEmpty(stowageTemp.getCorrectedUllage())
+  //                                ? null
+  //                                : stowageTemp.getCorrectedUllage());
+  //                loadablePlanStowageDetailsTemp.setCorrectionFactor(
+  //                        isEmpty(stowageTemp.getCorrectionFactor())
+  //                                ? null
+  //                                : stowageTemp.getCorrectionFactor());
+  //
+  //                loadablePlanStowageDetailsTemp.setQuantity(
+  //                        isEmpty(stowageTemp.getQuantity())
+  //                                ? null
+  //                                : stowageTemp.getQuantity());
+  //                loadablePlanStowageDetailsTemp.setRdgUllage(
+  //                        isEmpty(stowageTemp.getRdgUllage())
+  //                                ? null
+  //                                : stowageTemp.getRdgUllage());
+  //                loadablePlanStowageDetailsTemp.setIsBallast(stowageTemp.getIsBallast());
+  //                loadablePlanStowageDetailsTemp.setIsCommingle(stowageTemp.getIsCommingle());
+  //                loadablePlanStowageDetailsTemp.setFillingRatio(
+  //                        isEmpty(stowageTemp.getFillingRatio())
+  //                                ? null
+  //                                : stowageTemp.getFillingRatio());
+  //                stowageDetailsTempRepository.save(loadablePlanStowageDetailsTemp);
+  //              }
+  //      );
+  //    }
+  //  }
 }

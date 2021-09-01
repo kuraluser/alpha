@@ -8376,6 +8376,3780 @@ public final class LoadableStudyModels {
     }
   }
 
+  public interface DishargeStudyCargoDetailOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:DishargeStudyCargoDetail)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    long getId();
+
+    /**
+     * <code>string crudeType = 2;</code>
+     *
+     * @return The crudeType.
+     */
+    java.lang.String getCrudeType();
+    /**
+     * <code>string crudeType = 2;</code>
+     *
+     * @return The bytes for crudeType.
+     */
+    com.google.protobuf.ByteString getCrudeTypeBytes();
+
+    /**
+     * <code>string abbreviation = 3;</code>
+     *
+     * @return The abbreviation.
+     */
+    java.lang.String getAbbreviation();
+    /**
+     * <code>string abbreviation = 3;</code>
+     *
+     * @return The bytes for abbreviation.
+     */
+    com.google.protobuf.ByteString getAbbreviationBytes();
+
+    /**
+     * <code>string api = 4;</code>
+     *
+     * @return The api.
+     */
+    java.lang.String getApi();
+    /**
+     * <code>string api = 4;</code>
+     *
+     * @return The bytes for api.
+     */
+    com.google.protobuf.ByteString getApiBytes();
+
+    /**
+     * <code>bool isCondensateCargo = 5;</code>
+     *
+     * @return The isCondensateCargo.
+     */
+    boolean getIsCondensateCargo();
+
+    /**
+     * <code>bool isHrvpCargo = 6;</code>
+     *
+     * @return The isHrvpCargo.
+     */
+    boolean getIsHrvpCargo();
+  }
+  /** Protobuf type {@code DishargeStudyCargoDetail} */
+  public static final class DishargeStudyCargoDetail extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:DishargeStudyCargoDetail)
+      DishargeStudyCargoDetailOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use DishargeStudyCargoDetail.newBuilder() to construct.
+    private DishargeStudyCargoDetail(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private DishargeStudyCargoDetail() {
+      crudeType_ = "";
+      abbreviation_ = "";
+      api_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new DishargeStudyCargoDetail();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private DishargeStudyCargoDetail(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                id_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                crudeType_ = s;
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                abbreviation_ = s;
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                api_ = s;
+                break;
+              }
+            case 40:
+              {
+                isCondensateCargo_ = input.readBool();
+                break;
+              }
+            case 48:
+              {
+                isHrvpCargo_ = input.readBool();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss
+          .common
+          .generated
+          .loadableStudy
+          .LoadableStudyModels
+          .internal_static_DishargeStudyCargoDetail_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+          .internal_static_DishargeStudyCargoDetail_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyCargoDetail
+                  .class,
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyCargoDetail
+                  .Builder
+                  .class);
+    }
+
+    public static final int ID_FIELD_NUMBER = 1;
+    private long id_;
+    /**
+     * <code>int64 id = 1;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+
+    public static final int CRUDETYPE_FIELD_NUMBER = 2;
+    private volatile java.lang.Object crudeType_;
+    /**
+     * <code>string crudeType = 2;</code>
+     *
+     * @return The crudeType.
+     */
+    public java.lang.String getCrudeType() {
+      java.lang.Object ref = crudeType_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        crudeType_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string crudeType = 2;</code>
+     *
+     * @return The bytes for crudeType.
+     */
+    public com.google.protobuf.ByteString getCrudeTypeBytes() {
+      java.lang.Object ref = crudeType_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        crudeType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ABBREVIATION_FIELD_NUMBER = 3;
+    private volatile java.lang.Object abbreviation_;
+    /**
+     * <code>string abbreviation = 3;</code>
+     *
+     * @return The abbreviation.
+     */
+    public java.lang.String getAbbreviation() {
+      java.lang.Object ref = abbreviation_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        abbreviation_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string abbreviation = 3;</code>
+     *
+     * @return The bytes for abbreviation.
+     */
+    public com.google.protobuf.ByteString getAbbreviationBytes() {
+      java.lang.Object ref = abbreviation_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        abbreviation_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int API_FIELD_NUMBER = 4;
+    private volatile java.lang.Object api_;
+    /**
+     * <code>string api = 4;</code>
+     *
+     * @return The api.
+     */
+    public java.lang.String getApi() {
+      java.lang.Object ref = api_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        api_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string api = 4;</code>
+     *
+     * @return The bytes for api.
+     */
+    public com.google.protobuf.ByteString getApiBytes() {
+      java.lang.Object ref = api_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        api_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ISCONDENSATECARGO_FIELD_NUMBER = 5;
+    private boolean isCondensateCargo_;
+    /**
+     * <code>bool isCondensateCargo = 5;</code>
+     *
+     * @return The isCondensateCargo.
+     */
+    public boolean getIsCondensateCargo() {
+      return isCondensateCargo_;
+    }
+
+    public static final int ISHRVPCARGO_FIELD_NUMBER = 6;
+    private boolean isHrvpCargo_;
+    /**
+     * <code>bool isHrvpCargo = 6;</code>
+     *
+     * @return The isHrvpCargo.
+     */
+    public boolean getIsHrvpCargo() {
+      return isHrvpCargo_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (id_ != 0L) {
+        output.writeInt64(1, id_);
+      }
+      if (!getCrudeTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, crudeType_);
+      }
+      if (!getAbbreviationBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, abbreviation_);
+      }
+      if (!getApiBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, api_);
+      }
+      if (isCondensateCargo_ != false) {
+        output.writeBool(5, isCondensateCargo_);
+      }
+      if (isHrvpCargo_ != false) {
+        output.writeBool(6, isHrvpCargo_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (id_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, id_);
+      }
+      if (!getCrudeTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, crudeType_);
+      }
+      if (!getAbbreviationBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, abbreviation_);
+      }
+      if (!getApiBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, api_);
+      }
+      if (isCondensateCargo_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(5, isCondensateCargo_);
+      }
+      if (isHrvpCargo_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(6, isHrvpCargo_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj
+          instanceof
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail other =
+          (com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail)
+              obj;
+
+      if (getId() != other.getId()) return false;
+      if (!getCrudeType().equals(other.getCrudeType())) return false;
+      if (!getAbbreviation().equals(other.getAbbreviation())) return false;
+      if (!getApi().equals(other.getApi())) return false;
+      if (getIsCondensateCargo() != other.getIsCondensateCargo()) return false;
+      if (getIsHrvpCargo() != other.getIsHrvpCargo()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+      hash = (37 * hash) + CRUDETYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getCrudeType().hashCode();
+      hash = (37 * hash) + ABBREVIATION_FIELD_NUMBER;
+      hash = (53 * hash) + getAbbreviation().hashCode();
+      hash = (37 * hash) + API_FIELD_NUMBER;
+      hash = (53 * hash) + getApi().hashCode();
+      hash = (37 * hash) + ISCONDENSATECARGO_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsCondensateCargo());
+      hash = (37 * hash) + ISHRVPCARGO_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsHrvpCargo());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        parseFrom(java.nio.ByteBuffer data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        parseFrom(
+            java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        parseFrom(com.google.protobuf.ByteString data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        parseFrom(
+            com.google.protobuf.ByteString data,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        parseFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        parseFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        parseFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+            prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code DishargeStudyCargoDetail} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:DishargeStudyCargoDetail)
+        com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetailOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .internal_static_DishargeStudyCargoDetail_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+            .internal_static_DishargeStudyCargoDetail_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyCargoDetail
+                    .class,
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyCargoDetail
+                    .Builder
+                    .class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        id_ = 0L;
+
+        crudeType_ = "";
+
+        abbreviation_ = "";
+
+        api_ = "";
+
+        isCondensateCargo_ = false;
+
+        isHrvpCargo_ = false;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .internal_static_DishargeStudyCargoDetail_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+          build() {
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+            result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+          buildPartial() {
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+            result =
+                new com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyCargoDetail(this);
+        result.id_ = id_;
+        result.crudeType_ = crudeType_;
+        result.abbreviation_ = abbreviation_;
+        result.api_ = api_;
+        result.isCondensateCargo_ = isCondensateCargo_;
+        result.isHrvpCargo_ = isHrvpCargo_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other
+            instanceof
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail) {
+          return mergeFrom(
+              (com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyCargoDetail)
+                  other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+              other) {
+        if (other
+            == com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+                .getDefaultInstance()) return this;
+        if (other.getId() != 0L) {
+          setId(other.getId());
+        }
+        if (!other.getCrudeType().isEmpty()) {
+          crudeType_ = other.crudeType_;
+          onChanged();
+        }
+        if (!other.getAbbreviation().isEmpty()) {
+          abbreviation_ = other.abbreviation_;
+          onChanged();
+        }
+        if (!other.getApi().isEmpty()) {
+          api_ = other.api_;
+          onChanged();
+        }
+        if (other.getIsCondensateCargo() != false) {
+          setIsCondensateCargo(other.getIsCondensateCargo());
+        }
+        if (other.getIsHrvpCargo() != false) {
+          setIsHrvpCargo(other.getIsHrvpCargo());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+            parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyCargoDetail)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private long id_;
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return The id.
+       */
+      public long getId() {
+        return id_;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(long value) {
+
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 id = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+
+        id_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object crudeType_ = "";
+      /**
+       * <code>string crudeType = 2;</code>
+       *
+       * @return The crudeType.
+       */
+      public java.lang.String getCrudeType() {
+        java.lang.Object ref = crudeType_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          crudeType_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string crudeType = 2;</code>
+       *
+       * @return The bytes for crudeType.
+       */
+      public com.google.protobuf.ByteString getCrudeTypeBytes() {
+        java.lang.Object ref = crudeType_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          crudeType_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string crudeType = 2;</code>
+       *
+       * @param value The crudeType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCrudeType(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        crudeType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string crudeType = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCrudeType() {
+
+        crudeType_ = getDefaultInstance().getCrudeType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string crudeType = 2;</code>
+       *
+       * @param value The bytes for crudeType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCrudeTypeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        crudeType_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object abbreviation_ = "";
+      /**
+       * <code>string abbreviation = 3;</code>
+       *
+       * @return The abbreviation.
+       */
+      public java.lang.String getAbbreviation() {
+        java.lang.Object ref = abbreviation_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          abbreviation_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string abbreviation = 3;</code>
+       *
+       * @return The bytes for abbreviation.
+       */
+      public com.google.protobuf.ByteString getAbbreviationBytes() {
+        java.lang.Object ref = abbreviation_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          abbreviation_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string abbreviation = 3;</code>
+       *
+       * @param value The abbreviation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAbbreviation(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        abbreviation_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string abbreviation = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearAbbreviation() {
+
+        abbreviation_ = getDefaultInstance().getAbbreviation();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string abbreviation = 3;</code>
+       *
+       * @param value The bytes for abbreviation to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAbbreviationBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        abbreviation_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object api_ = "";
+      /**
+       * <code>string api = 4;</code>
+       *
+       * @return The api.
+       */
+      public java.lang.String getApi() {
+        java.lang.Object ref = api_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          api_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string api = 4;</code>
+       *
+       * @return The bytes for api.
+       */
+      public com.google.protobuf.ByteString getApiBytes() {
+        java.lang.Object ref = api_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          api_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string api = 4;</code>
+       *
+       * @param value The api to set.
+       * @return This builder for chaining.
+       */
+      public Builder setApi(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        api_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string api = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearApi() {
+
+        api_ = getDefaultInstance().getApi();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string api = 4;</code>
+       *
+       * @param value The bytes for api to set.
+       * @return This builder for chaining.
+       */
+      public Builder setApiBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        api_ = value;
+        onChanged();
+        return this;
+      }
+
+      private boolean isCondensateCargo_;
+      /**
+       * <code>bool isCondensateCargo = 5;</code>
+       *
+       * @return The isCondensateCargo.
+       */
+      public boolean getIsCondensateCargo() {
+        return isCondensateCargo_;
+      }
+      /**
+       * <code>bool isCondensateCargo = 5;</code>
+       *
+       * @param value The isCondensateCargo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsCondensateCargo(boolean value) {
+
+        isCondensateCargo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isCondensateCargo = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsCondensateCargo() {
+
+        isCondensateCargo_ = false;
+        onChanged();
+        return this;
+      }
+
+      private boolean isHrvpCargo_;
+      /**
+       * <code>bool isHrvpCargo = 6;</code>
+       *
+       * @return The isHrvpCargo.
+       */
+      public boolean getIsHrvpCargo() {
+        return isHrvpCargo_;
+      }
+      /**
+       * <code>bool isHrvpCargo = 6;</code>
+       *
+       * @param value The isHrvpCargo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsHrvpCargo(boolean value) {
+
+        isHrvpCargo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool isHrvpCargo = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearIsHrvpCargo() {
+
+        isHrvpCargo_ = false;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:DishargeStudyCargoDetail)
+    }
+
+    // @@protoc_insertion_point(class_scope:DishargeStudyCargoDetail)
+    private static final com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE =
+          new com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyCargoDetail();
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetail
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<DishargeStudyCargoDetail> PARSER =
+        new com.google.protobuf.AbstractParser<DishargeStudyCargoDetail>() {
+          @java.lang.Override
+          public DishargeStudyCargoDetail parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new DishargeStudyCargoDetail(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<DishargeStudyCargoDetail> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<DishargeStudyCargoDetail> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface DishargeStudyPortCargoMappingOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:DishargeStudyPortCargoMapping)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>int64 portId = 1;</code>
+     *
+     * @return The portId.
+     */
+    long getPortId();
+
+    /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+    java.util.List<
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail>
+        getCargosList();
+    /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+    com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail getCargos(
+        int index);
+    /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+    int getCargosCount();
+    /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+    java.util.List<
+            ? extends
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyCargoDetailOrBuilder>
+        getCargosOrBuilderList();
+    /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+    com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetailOrBuilder
+        getCargosOrBuilder(int index);
+  }
+  /** Protobuf type {@code DishargeStudyPortCargoMapping} */
+  public static final class DishargeStudyPortCargoMapping
+      extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:DishargeStudyPortCargoMapping)
+      DishargeStudyPortCargoMappingOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use DishargeStudyPortCargoMapping.newBuilder() to construct.
+    private DishargeStudyPortCargoMapping(
+        com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private DishargeStudyPortCargoMapping() {
+      cargos_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new DishargeStudyPortCargoMapping();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private DishargeStudyPortCargoMapping(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8:
+              {
+                portId_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  cargos_ =
+                      new java.util.ArrayList<
+                          com.cpdss
+                              .common
+                              .generated
+                              .loadableStudy
+                              .LoadableStudyModels
+                              .DishargeStudyCargoDetail>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                cargos_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+                            .DishargeStudyCargoDetail.parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          cargos_ = java.util.Collections.unmodifiableList(cargos_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss
+          .common
+          .generated
+          .loadableStudy
+          .LoadableStudyModels
+          .internal_static_DishargeStudyPortCargoMapping_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+          .internal_static_DishargeStudyPortCargoMapping_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMapping
+                  .class,
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMapping
+                  .Builder
+                  .class);
+    }
+
+    public static final int PORTID_FIELD_NUMBER = 1;
+    private long portId_;
+    /**
+     * <code>int64 portId = 1;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+
+    public static final int CARGOS_FIELD_NUMBER = 2;
+    private java.util.List<
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail>
+        cargos_;
+    /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+    public java.util.List<
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail>
+        getCargosList() {
+      return cargos_;
+    }
+    /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+    public java.util.List<
+            ? extends
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyCargoDetailOrBuilder>
+        getCargosOrBuilderList() {
+      return cargos_;
+    }
+    /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+    public int getCargosCount() {
+      return cargos_.size();
+    }
+    /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+    public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+        getCargos(int index) {
+      return cargos_.get(index);
+    }
+    /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+    public com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoDetailOrBuilder
+        getCargosOrBuilder(int index) {
+      return cargos_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (portId_ != 0L) {
+        output.writeInt64(1, portId_);
+      }
+      for (int i = 0; i < cargos_.size(); i++) {
+        output.writeMessage(2, cargos_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (portId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, portId_);
+      }
+      for (int i = 0; i < cargos_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, cargos_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj
+          instanceof
+          com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyPortCargoMapping)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping
+          other =
+              (com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyPortCargoMapping)
+                  obj;
+
+      if (getPortId() != other.getPortId()) return false;
+      if (!getCargosList().equals(other.getCargosList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + PORTID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
+      if (getCargosCount() > 0) {
+        hash = (37 * hash) + CARGOS_FIELD_NUMBER;
+        hash = (53 * hash) + getCargosList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        parseFrom(java.nio.ByteBuffer data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        parseFrom(
+            java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        parseFrom(com.google.protobuf.ByteString data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        parseFrom(
+            com.google.protobuf.ByteString data,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        parseFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        parseFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        parseFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping
+            prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code DishargeStudyPortCargoMapping} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:DishargeStudyPortCargoMapping)
+        com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMappingOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .internal_static_DishargeStudyPortCargoMapping_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+            .internal_static_DishargeStudyPortCargoMapping_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyPortCargoMapping
+                    .class,
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyPortCargoMapping
+                    .Builder
+                    .class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getCargosFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        portId_ = 0L;
+
+        if (cargosBuilder_ == null) {
+          cargos_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          cargosBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .internal_static_DishargeStudyPortCargoMapping_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyPortCargoMapping
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+            .DishargeStudyPortCargoMapping.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyPortCargoMapping
+          build() {
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping
+            result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyPortCargoMapping
+          buildPartial() {
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping
+            result =
+                new com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyPortCargoMapping(this);
+        int from_bitField0_ = bitField0_;
+        result.portId_ = portId_;
+        if (cargosBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            cargos_ = java.util.Collections.unmodifiableList(cargos_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.cargos_ = cargos_;
+        } else {
+          result.cargos_ = cargosBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other
+            instanceof
+            com.cpdss
+                .common
+                .generated
+                .loadableStudy
+                .LoadableStudyModels
+                .DishargeStudyPortCargoMapping) {
+          return mergeFrom(
+              (com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyPortCargoMapping)
+                  other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping
+              other) {
+        if (other
+            == com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+                .DishargeStudyPortCargoMapping.getDefaultInstance()) return this;
+        if (other.getPortId() != 0L) {
+          setPortId(other.getPortId());
+        }
+        if (cargosBuilder_ == null) {
+          if (!other.cargos_.isEmpty()) {
+            if (cargos_.isEmpty()) {
+              cargos_ = other.cargos_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureCargosIsMutable();
+              cargos_.addAll(other.cargos_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.cargos_.isEmpty()) {
+            if (cargosBuilder_.isEmpty()) {
+              cargosBuilder_.dispose();
+              cargosBuilder_ = null;
+              cargos_ = other.cargos_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              cargosBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getCargosFieldBuilder()
+                      : null;
+            } else {
+              cargosBuilder_.addAllMessages(other.cargos_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping
+            parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyPortCargoMapping)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private long portId_;
+      /**
+       * <code>int64 portId = 1;</code>
+       *
+       * @return The portId.
+       */
+      public long getPortId() {
+        return portId_;
+      }
+      /**
+       * <code>int64 portId = 1;</code>
+       *
+       * @param value The portId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortId(long value) {
+
+        portId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portId = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortId() {
+
+        portId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<
+              com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail>
+          cargos_ = java.util.Collections.emptyList();
+
+      private void ensureCargosIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          cargos_ =
+              new java.util.ArrayList<
+                  com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyCargoDetail>(cargos_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail,
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyCargoDetail
+                  .Builder,
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyCargoDetailOrBuilder>
+          cargosBuilder_;
+
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public java.util.List<
+              com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail>
+          getCargosList() {
+        if (cargosBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(cargos_);
+        } else {
+          return cargosBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public int getCargosCount() {
+        if (cargosBuilder_ == null) {
+          return cargos_.size();
+        } else {
+          return cargosBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+          getCargos(int index) {
+        if (cargosBuilder_ == null) {
+          return cargos_.get(index);
+        } else {
+          return cargosBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public Builder setCargos(
+          int index,
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+              value) {
+        if (cargosBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargosIsMutable();
+          cargos_.set(index, value);
+          onChanged();
+        } else {
+          cargosBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public Builder setCargos(
+          int index,
+          com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyCargoDetail
+                  .Builder
+              builderForValue) {
+        if (cargosBuilder_ == null) {
+          ensureCargosIsMutable();
+          cargos_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          cargosBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public Builder addCargos(
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+              value) {
+        if (cargosBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargosIsMutable();
+          cargos_.add(value);
+          onChanged();
+        } else {
+          cargosBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public Builder addCargos(
+          int index,
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail
+              value) {
+        if (cargosBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargosIsMutable();
+          cargos_.add(index, value);
+          onChanged();
+        } else {
+          cargosBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public Builder addCargos(
+          com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyCargoDetail
+                  .Builder
+              builderForValue) {
+        if (cargosBuilder_ == null) {
+          ensureCargosIsMutable();
+          cargos_.add(builderForValue.build());
+          onChanged();
+        } else {
+          cargosBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public Builder addCargos(
+          int index,
+          com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyCargoDetail
+                  .Builder
+              builderForValue) {
+        if (cargosBuilder_ == null) {
+          ensureCargosIsMutable();
+          cargos_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          cargosBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public Builder addAllCargos(
+          java.lang.Iterable<
+                  ? extends
+                      com.cpdss
+                          .common
+                          .generated
+                          .loadableStudy
+                          .LoadableStudyModels
+                          .DishargeStudyCargoDetail>
+              values) {
+        if (cargosBuilder_ == null) {
+          ensureCargosIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, cargos_);
+          onChanged();
+        } else {
+          cargosBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public Builder clearCargos() {
+        if (cargosBuilder_ == null) {
+          cargos_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          cargosBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public Builder removeCargos(int index) {
+        if (cargosBuilder_ == null) {
+          ensureCargosIsMutable();
+          cargos_.remove(index);
+          onChanged();
+        } else {
+          cargosBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyCargoDetail
+              .Builder
+          getCargosBuilder(int index) {
+        return getCargosFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyCargoDetailOrBuilder
+          getCargosOrBuilder(int index) {
+        if (cargosBuilder_ == null) {
+          return cargos_.get(index);
+        } else {
+          return cargosBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public java.util.List<
+              ? extends
+                  com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyCargoDetailOrBuilder>
+          getCargosOrBuilderList() {
+        if (cargosBuilder_ != null) {
+          return cargosBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(cargos_);
+        }
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyCargoDetail
+              .Builder
+          addCargosBuilder() {
+        return getCargosFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+                    .DishargeStudyCargoDetail.getDefaultInstance());
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyCargoDetail
+              .Builder
+          addCargosBuilder(int index) {
+        return getCargosFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+                    .DishargeStudyCargoDetail.getDefaultInstance());
+      }
+      /** <code>repeated .DishargeStudyCargoDetail cargos = 2;</code> */
+      public java.util.List<
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyCargoDetail
+                  .Builder>
+          getCargosBuilderList() {
+        return getCargosFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoDetail,
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyCargoDetail
+                  .Builder,
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyCargoDetailOrBuilder>
+          getCargosFieldBuilder() {
+        if (cargosBuilder_ == null) {
+          cargosBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyCargoDetail,
+                  com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyCargoDetail
+                      .Builder,
+                  com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyCargoDetailOrBuilder>(
+                  cargos_, ((bitField0_ & 0x00000001) != 0), getParentForChildren(), isClean());
+          cargos_ = null;
+        }
+        return cargosBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:DishargeStudyPortCargoMapping)
+    }
+
+    // @@protoc_insertion_point(class_scope:DishargeStudyPortCargoMapping)
+    private static final com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE =
+          new com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyPortCargoMapping();
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<DishargeStudyPortCargoMapping> PARSER =
+        new com.google.protobuf.AbstractParser<DishargeStudyPortCargoMapping>() {
+          @java.lang.Override
+          public DishargeStudyPortCargoMapping parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new DishargeStudyPortCargoMapping(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<DishargeStudyPortCargoMapping> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<DishargeStudyPortCargoMapping> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface DishargeStudyCargoReplyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:DishargeStudyCargoReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+    java.util.List<
+            com.cpdss
+                .common
+                .generated
+                .loadableStudy
+                .LoadableStudyModels
+                .DishargeStudyPortCargoMapping>
+        getPortCargosList();
+    /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+    com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping
+        getPortCargos(int index);
+    /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+    int getPortCargosCount();
+    /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+    java.util.List<
+            ? extends
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyPortCargoMappingOrBuilder>
+        getPortCargosOrBuilderList();
+    /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+    com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMappingOrBuilder
+        getPortCargosOrBuilder(int index);
+  }
+  /** Protobuf type {@code DishargeStudyCargoReply} */
+  public static final class DishargeStudyCargoReply extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:DishargeStudyCargoReply)
+      DishargeStudyCargoReplyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use DishargeStudyCargoReply.newBuilder() to construct.
+    private DishargeStudyCargoReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private DishargeStudyCargoReply() {
+      portCargos_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new DishargeStudyCargoReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private DishargeStudyCargoReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            case 18:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  portCargos_ =
+                      new java.util.ArrayList<
+                          com.cpdss
+                              .common
+                              .generated
+                              .loadableStudy
+                              .LoadableStudyModels
+                              .DishargeStudyPortCargoMapping>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                portCargos_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+                            .DishargeStudyPortCargoMapping.parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          portCargos_ = java.util.Collections.unmodifiableList(portCargos_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss
+          .common
+          .generated
+          .loadableStudy
+          .LoadableStudyModels
+          .internal_static_DishargeStudyCargoReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+          .internal_static_DishargeStudyCargoReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyCargoReply
+                  .class,
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyCargoReply
+                  .Builder
+                  .class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    public static final int PORTCARGOS_FIELD_NUMBER = 2;
+    private java.util.List<
+            com.cpdss
+                .common
+                .generated
+                .loadableStudy
+                .LoadableStudyModels
+                .DishargeStudyPortCargoMapping>
+        portCargos_;
+    /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+    public java.util.List<
+            com.cpdss
+                .common
+                .generated
+                .loadableStudy
+                .LoadableStudyModels
+                .DishargeStudyPortCargoMapping>
+        getPortCargosList() {
+      return portCargos_;
+    }
+    /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+    public java.util.List<
+            ? extends
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyPortCargoMappingOrBuilder>
+        getPortCargosOrBuilderList() {
+      return portCargos_;
+    }
+    /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+    public int getPortCargosCount() {
+      return portCargos_.size();
+    }
+    /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+    public com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMapping
+        getPortCargos(int index) {
+      return portCargos_.get(index);
+    }
+    /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+    public com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyPortCargoMappingOrBuilder
+        getPortCargosOrBuilder(int index) {
+      return portCargos_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      for (int i = 0; i < portCargos_.size(); i++) {
+        output.writeMessage(2, portCargos_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      for (int i = 0; i < portCargos_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, portCargos_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj
+          instanceof
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply other =
+          (com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply)
+              obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!getPortCargosList().equals(other.getPortCargosList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      if (getPortCargosCount() > 0) {
+        hash = (37 * hash) + PORTCARGOS_FIELD_NUMBER;
+        hash = (53 * hash) + getPortCargosList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        parseFrom(java.nio.ByteBuffer data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        parseFrom(
+            java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        parseFrom(com.google.protobuf.ByteString data)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        parseFrom(
+            com.google.protobuf.ByteString data,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        parseFrom(byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        parseFrom(byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        parseFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        parseFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        parseDelimitedFrom(java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        parseDelimitedFrom(
+            java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        parseFrom(com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        parseFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply
+            prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code DishargeStudyCargoReply} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:DishargeStudyCargoReply)
+        com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .internal_static_DishargeStudyCargoReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+            .internal_static_DishargeStudyCargoReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyCargoReply
+                    .class,
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyCargoReply
+                    .Builder
+                    .class);
+      }
+
+      // Construct using
+      // com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getPortCargosFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        if (portCargosBuilder_ == null) {
+          portCargos_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          portCargosBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .internal_static_DishargeStudyCargoReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply
+            .getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply
+          build() {
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply
+            result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply
+          buildPartial() {
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply
+            result =
+                new com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DishargeStudyCargoReply(this);
+        int from_bitField0_ = bitField0_;
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        if (portCargosBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            portCargos_ = java.util.Collections.unmodifiableList(portCargos_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.portCargos_ = portCargos_;
+        } else {
+          result.portCargos_ = portCargosBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other
+            instanceof
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply) {
+          return mergeFrom(
+              (com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply)
+                  other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply
+              other) {
+        if (other
+            == com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply
+                .getDefaultInstance()) return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        if (portCargosBuilder_ == null) {
+          if (!other.portCargos_.isEmpty()) {
+            if (portCargos_.isEmpty()) {
+              portCargos_ = other.portCargos_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensurePortCargosIsMutable();
+              portCargos_.addAll(other.portCargos_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.portCargos_.isEmpty()) {
+            if (portCargosBuilder_.isEmpty()) {
+              portCargosBuilder_.dispose();
+              portCargosBuilder_ = null;
+              portCargos_ = other.portCargos_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              portCargosBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getPortCargosFieldBuilder()
+                      : null;
+            } else {
+              portCargosBuilder_.addAllMessages(other.portCargos_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply
+            parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      private java.util.List<
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMapping>
+          portCargos_ = java.util.Collections.emptyList();
+
+      private void ensurePortCargosIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          portCargos_ =
+              new java.util.ArrayList<
+                  com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyPortCargoMapping>(portCargos_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMapping,
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMapping
+                  .Builder,
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMappingOrBuilder>
+          portCargosBuilder_;
+
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public java.util.List<
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMapping>
+          getPortCargosList() {
+        if (portCargosBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(portCargos_);
+        } else {
+          return portCargosBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public int getPortCargosCount() {
+        if (portCargosBuilder_ == null) {
+          return portCargos_.size();
+        } else {
+          return portCargosBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyPortCargoMapping
+          getPortCargos(int index) {
+        if (portCargosBuilder_ == null) {
+          return portCargos_.get(index);
+        } else {
+          return portCargosBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public Builder setPortCargos(
+          int index,
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping
+              value) {
+        if (portCargosBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePortCargosIsMutable();
+          portCargos_.set(index, value);
+          onChanged();
+        } else {
+          portCargosBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public Builder setPortCargos(
+          int index,
+          com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMapping
+                  .Builder
+              builderForValue) {
+        if (portCargosBuilder_ == null) {
+          ensurePortCargosIsMutable();
+          portCargos_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          portCargosBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public Builder addPortCargos(
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping
+              value) {
+        if (portCargosBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePortCargosIsMutable();
+          portCargos_.add(value);
+          onChanged();
+        } else {
+          portCargosBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public Builder addPortCargos(
+          int index,
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping
+              value) {
+        if (portCargosBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePortCargosIsMutable();
+          portCargos_.add(index, value);
+          onChanged();
+        } else {
+          portCargosBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public Builder addPortCargos(
+          com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMapping
+                  .Builder
+              builderForValue) {
+        if (portCargosBuilder_ == null) {
+          ensurePortCargosIsMutable();
+          portCargos_.add(builderForValue.build());
+          onChanged();
+        } else {
+          portCargosBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public Builder addPortCargos(
+          int index,
+          com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMapping
+                  .Builder
+              builderForValue) {
+        if (portCargosBuilder_ == null) {
+          ensurePortCargosIsMutable();
+          portCargos_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          portCargosBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public Builder addAllPortCargos(
+          java.lang.Iterable<
+                  ? extends
+                      com.cpdss
+                          .common
+                          .generated
+                          .loadableStudy
+                          .LoadableStudyModels
+                          .DishargeStudyPortCargoMapping>
+              values) {
+        if (portCargosBuilder_ == null) {
+          ensurePortCargosIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, portCargos_);
+          onChanged();
+        } else {
+          portCargosBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public Builder clearPortCargos() {
+        if (portCargosBuilder_ == null) {
+          portCargos_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          portCargosBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public Builder removePortCargos(int index) {
+        if (portCargosBuilder_ == null) {
+          ensurePortCargosIsMutable();
+          portCargos_.remove(index);
+          onChanged();
+        } else {
+          portCargosBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyPortCargoMapping
+              .Builder
+          getPortCargosBuilder(int index) {
+        return getPortCargosFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyPortCargoMappingOrBuilder
+          getPortCargosOrBuilder(int index) {
+        if (portCargosBuilder_ == null) {
+          return portCargos_.get(index);
+        } else {
+          return portCargosBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public java.util.List<
+              ? extends
+                  com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyPortCargoMappingOrBuilder>
+          getPortCargosOrBuilderList() {
+        if (portCargosBuilder_ != null) {
+          return portCargosBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(portCargos_);
+        }
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyPortCargoMapping
+              .Builder
+          addPortCargosBuilder() {
+        return getPortCargosFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+                    .DishargeStudyPortCargoMapping.getDefaultInstance());
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyPortCargoMapping
+              .Builder
+          addPortCargosBuilder(int index) {
+        return getPortCargosFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+                    .DishargeStudyPortCargoMapping.getDefaultInstance());
+      }
+      /** <code>repeated .DishargeStudyPortCargoMapping portCargos = 2;</code> */
+      public java.util.List<
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMapping
+                  .Builder>
+          getPortCargosBuilderList() {
+        return getPortCargosFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMapping,
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMapping
+                  .Builder,
+              com.cpdss
+                  .common
+                  .generated
+                  .loadableStudy
+                  .LoadableStudyModels
+                  .DishargeStudyPortCargoMappingOrBuilder>
+          getPortCargosFieldBuilder() {
+        if (portCargosBuilder_ == null) {
+          portCargosBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyPortCargoMapping,
+                  com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyPortCargoMapping
+                      .Builder,
+                  com.cpdss
+                      .common
+                      .generated
+                      .loadableStudy
+                      .LoadableStudyModels
+                      .DishargeStudyPortCargoMappingOrBuilder>(
+                  portCargos_, ((bitField0_ & 0x00000001) != 0), getParentForChildren(), isClean());
+          portCargos_ = null;
+        }
+        return portCargosBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:DishargeStudyCargoReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:DishargeStudyCargoReply)
+    private static final com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE =
+          new com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DishargeStudyCargoReply();
+    }
+
+    public static com.cpdss
+            .common
+            .generated
+            .loadableStudy
+            .LoadableStudyModels
+            .DishargeStudyCargoReply
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<DishargeStudyCargoReply> PARSER =
+        new com.google.protobuf.AbstractParser<DishargeStudyCargoReply>() {
+          @java.lang.Override
+          public DishargeStudyCargoReply parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new DishargeStudyCargoReply(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<DishargeStudyCargoReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<DishargeStudyCargoReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_DischargeStudyRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -8412,6 +12186,18 @@ public final class LoadableStudyModels {
       internal_static_EmptyRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_EmptyRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DishargeStudyCargoDetail_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DishargeStudyCargoDetail_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DishargeStudyPortCargoMapping_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DishargeStudyPortCargoMapping_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DishargeStudyCargoReply_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DishargeStudyCargoReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -8442,9 +12228,18 @@ public final class LoadableStudyModels {
           + "structionDetails\030\001 \003(\0132\022.InstructionDeta"
           + "il\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseSta"
           + "tus\"4\n\021InstructionDetail\022\n\n\002id\030\001 \001(\003\022\023\n\013"
-          + "instruction\030\002 \001(\t\"\016\n\014EmptyRequestB,\n(com"
-          + ".cpdss.common.generated.loadableStudyP\000b"
-          + "\006proto3"
+          + "instruction\030\002 \001(\t\"\016\n\014EmptyRequest\"\214\001\n\030Di"
+          + "shargeStudyCargoDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcr"
+          + "udeType\030\002 \001(\t\022\024\n\014abbreviation\030\003 \001(\t\022\013\n\003a"
+          + "pi\030\004 \001(\t\022\031\n\021isCondensateCargo\030\005 \001(\010\022\023\n\013i"
+          + "sHrvpCargo\030\006 \001(\010\"Z\n\035DishargeStudyPortCar"
+          + "goMapping\022\016\n\006portId\030\001 \001(\003\022)\n\006cargos\030\002 \003("
+          + "\0132\031.DishargeStudyCargoDetail\"v\n\027Disharge"
+          + "StudyCargoReply\022\'\n\016responseStatus\030\001 \001(\0132"
+          + "\017.ResponseStatus\0222\n\nportCargos\030\002 \003(\0132\036.D"
+          + "ishargeStudyPortCargoMappingB,\n(com.cpds"
+          + "s.common.generated.loadableStudyP\000b\006prot"
+          + "o3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -8513,6 +12308,28 @@ public final class LoadableStudyModels {
     internal_static_EmptyRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_EmptyRequest_descriptor, new java.lang.String[] {});
+    internal_static_DishargeStudyCargoDetail_descriptor = getDescriptor().getMessageTypes().get(9);
+    internal_static_DishargeStudyCargoDetail_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DishargeStudyCargoDetail_descriptor,
+            new java.lang.String[] {
+              "Id", "CrudeType", "Abbreviation", "Api", "IsCondensateCargo", "IsHrvpCargo",
+            });
+    internal_static_DishargeStudyPortCargoMapping_descriptor =
+        getDescriptor().getMessageTypes().get(10);
+    internal_static_DishargeStudyPortCargoMapping_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DishargeStudyPortCargoMapping_descriptor,
+            new java.lang.String[] {
+              "PortId", "Cargos",
+            });
+    internal_static_DishargeStudyCargoReply_descriptor = getDescriptor().getMessageTypes().get(11);
+    internal_static_DishargeStudyCargoReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DishargeStudyCargoReply_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus", "PortCargos",
+            });
     com.cpdss.common.generated.Common.getDescriptor();
   }
 

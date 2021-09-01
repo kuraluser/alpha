@@ -25,9 +25,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoadingInstructionComponent } from './loading-instruction/loading-instruction.component';
 import { ToppingOffTankTableModule } from './../topping-off-tank-table/topping-off-tank-table.module';
 import { CheckboxModule } from 'primeng/checkbox';
-import { LoadingInformationApiService } from '../services/loading-information-api.service';
+import { LoadingDischargingInformationApiService } from '../services/loading-discharging-information-api.service';
 import { LoadingDischargingManageSequenceModule } from '../loading-discharging-manage-sequence/loading-discharging-manage-sequence.module';
-import { LoadingApiService } from '../services/loading-api.service';
+import { LoadingInstructionApiService } from './../services/loading-instruction-api.service';
+import { CargoToBeLoadedDischargedModule } from '../cargo-to-be-loaded-discharged/cargo-to-be-loaded-discharged.module';
+import { LoadingPlanApiService } from './../services/loading-plan-api.service';
+import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
+import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error-log-popup.module';
 
 /**
  * Module for loading operation
@@ -65,9 +69,12 @@ import { LoadingApiService } from '../services/loading-api.service';
     ReactiveFormsModule,
     ToppingOffTankTableModule,
     CheckboxModule,
-    LoadingDischargingManageSequenceModule
+    LoadingDischargingManageSequenceModule,
+    CargoToBeLoadedDischargedModule,
+    QuantityDecimalFormatPipeModule,
+    ErrorLogPopupModule
 
   ],
-  providers: [LoadingInformationApiService, LoadingApiService],
+  providers: [LoadingDischargingInformationApiService, LoadingInstructionApiService, LoadingPlanApiService],
 })
 export class LoadingModule { }

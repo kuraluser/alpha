@@ -1,92 +1,61 @@
-
 buildscript {
-   repositories {
-     mavenCentral()
-   }
+    repositories {
+        mavenCentral()
+    }
 }
 
 plugins {
-  id 'io.spring.dependency-management' version "1.0.8.RELEASE" apply false
-  id 'org.springframework.boot' version "2.2.4.RELEASE" apply false
-  id "name.remal.sonarlint" version "1.0.200" apply false
-  id "io.freefair.lombok" version "5.1.0" apply false
-  id "com.diffplug.gradle.spotless" version "3.28.0" apply false
-  id 'com.google.cloud.tools.jib' version '2.7.1' apply false
-  id 'com.github.rico.common' version '3.8' apply false
-  id 'com.github.rico.ro-app' version '3.8' apply false
-  id 'com.github.rico.dockerRun' version '3.8' apply false
-  id 'com.github.rico.swarm' version '3.8' apply false
-}
-
-ext {
-  protobufVersion = "3.11.4"
-  protocJavaVersion = "1.27.1"
-}
-
-//Compile only libraries for common application
-project(':common') {
-  apply plugin: 'java'
-  apply plugin: 'java-library'
-  apply plugin: 'com.github.rico.common'
+    id 'org.springframework.boot' version "2.2.4.RELEASE" apply false
+    id "name.remal.sonarlint" version "1.5.0" apply false
+    id "com.diffplug.gradle.spotless" version "3.28.0" apply false
+    id 'com.github.rico.general' version '3.10' apply false
 }
 
 // Configurations applied to all subprojects
 subprojects {
 
-  group = 'com.cpdss'
-  version = '0.0.1-SNAPSHOT'
+    group = 'com.cpdss'
+    version = '0.0.1-SNAPSHOT'
 
-  repositories {
-    mavenCentral()
-  }
-
-  /*applyplugin: 'name.remal.sonarlint'*/
-  apply plugin: 'io.spring.dependency-management'
-  apply plugin: 'io.freefair.lombok'
-  apply plugin: 'com.diffplug.gradle.spotless'
-  
-  // Applying sonarlint plugin
- /* sonarlint {
-     ignoreFailures = true
-	 excludes {
-	      source 'com/cpdss/common/generated/*'
-	 }
-   }
-   */
-  // Applying spotless plugin with google java formatter
-   spotless {
-    java {
-      googleJavaFormat()
-      licenseHeader '/* Licensed at AlphaOri Technologies */'
+    repositories {
+        mavenCentral()
     }
-  }
-  
-  it.tasks.build.dependsOn it.tasks.spotlessApply
-  
-  //apply to all sub project except common
-  if (!it.name.startsWith('common')) {
-    apply plugin: 'application'
-    apply plugin: 'com.github.rico.ro-app'
-	apply plugin: 'org.springframework.boot'
 
-   }
-  
-  sourceCompatibility = '11'
-  targetCompatibility = '11'
- 
- configurations {
-    all {
-          exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-      }
-      developmentOnly
-      runtimeClasspath {
-          extendsFrom developmentOnly
-      }
- }
- 
- dependencyManagement {
-    imports {
-      mavenBom("org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE")
+    apply plugin: 'com.github.rico.general'
+    apply plugin: 'name.remal.sonarlint'
+    apply plugin: 'com.diffplug.gradle.spotless'
+
+    // Applying sonarlint plugin
+    sonarlint {
+        ignoreFailures = true
+        excludes {
+            source 'com/cpdss/common/generated/*'
+        }
     }
-  }
+
+    // Applying spotless plugin with google java formatter
+    spotless {
+        java {
+            googleJavaFormat()
+            licenseHeader '/* Licensed at AlphaOri Technologies */'
+        }
+    }
+
+    it.tasks.build.dependsOn it.tasks.spotlessApply
+
+    configurations {
+        all {
+            exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        }
+        developmentOnly
+        runtimeClasspath {
+            extendsFrom developmentOnly
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+        }
+    }
 }

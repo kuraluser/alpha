@@ -1,0 +1,38 @@
+<h5 class="text-uppercase heading-border">{{'DISCHARGING_TIME_FOR_POST_DISCHARGE_STAGE' | translate }}
+</h5>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col auto-layout">
+      <p-table [value]="postDischargeStageTimeData">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ 'DISCHARGING_TIME_FOR_DRY_CHECK' | translate }}</th>
+            <th>{{ 'DISCHARGING_TIME_FOR_SLOP_DISCHARGING' | translate }}</th>
+            <th>{{ 'DISCHARGING_TIME_FOR_FINAL_STRIPPING' | translate }}</th>
+            <th>{{ 'DISCHARGING_TIME_FOR_FRESH_OIL_DISCHARGE' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body">
+          <tr [formGroup]="postDischargeStageTimeForm">
+            <td>
+              <p-inputMask type="text" styleClass="form-control" formControlName="dryCheckTime" mask="99:99">
+              </p-inputMask>
+            </td>
+            <td>
+              <p-inputMask type="text" styleClass="form-control" formControlName="slopDischargingTime" mask="99:99">
+              </p-inputMask>
+            </td>
+            <td>
+              <p-inputMask type="text" styleClass="form-control" formControlName="finalStrippingTime" mask="99:99">
+              </p-inputMask>
+            </td>
+            <td>
+              <p-inputMask type="text" styleClass="form-control" formControlName="freshOilWashingTime" mask="99:99">
+              </p-inputMask>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

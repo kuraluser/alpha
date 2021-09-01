@@ -1,18 +1,25 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ACTIVE_VOYAGE_STATUS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_TIME_FORMAT;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_TIME_FORMAT_LAST_MODIFIED;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGING_OPERATION_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ERRO_CALLING_ALGO;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_INITIAL_STATUS_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
-import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
-import com.cpdss.common.generated.EnvoyWriterServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
@@ -61,6 +68,7 @@ import com.cpdss.common.generated.LoadableStudy.OnHandQuantityDetail;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
 import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
+import com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply;
@@ -80,15 +88,22 @@ import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceImplBase;
+import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.PortReply;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.ArrivalDepartureConditionJson;
+import com.cpdss.loadablestudy.domain.LoadablePlanDetailsAlgoJson;
+import com.cpdss.loadablestudy.domain.LoadableStudyAlgoJson;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
+import com.cpdss.loadablestudy.entity.JsonData;
 import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -101,9 +116,12 @@ import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.repository.BillOfLandingRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.JsonDataRepository;
+import com.cpdss.loadablestudy.repository.JsonTypeRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
@@ -120,6 +138,7 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
 import java.io.IOException;
@@ -210,12 +229,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @GrpcClient("cargoService")
   private CargoInfoServiceBlockingStub cargoInfoGrpcService;
-
-  @GrpcClient("envoyWriterService")
-  private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterGrpcService;
-
-  @GrpcClient("envoyReaderService")
-  private EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
@@ -409,15 +422,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   Optional.ofNullable(port.getIsPortRotationOhqComplete())
                       .ifPresent(ohqPortsBuilder::setIsPortRotationOhqComplete);
                   List<OnHandQuantity> onHandQuantities =
-                      this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                          entity, port, true);
+                      this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                          entity, port.getPortXId(), true);
 
                   // If there are ohqQuantities for the port rotation and the port rotation
                   // ohqComplete flag is false we set the flag as true since the ohq is already
                   //  there for the port rotation in the DB.
                   if (!onHandQuantities.isEmpty()
-                      && (port.getIsPortRotationOhqComplete() != null
-                          && !port.getIsPortRotationOhqComplete())) {
+                      && (port.getIsPortRotationOhqComplete() != null)
+                      && !port.getIsPortRotationOhqComplete()) {
                     this.loadableStudyPortRotationRepository.updateIsOhqCompleteByIdAndIsActiveTrue(
                         port.getId(), true);
                     ohqPortsBuilder.setIsPortRotationOhqComplete(true);
@@ -1509,7 +1522,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           ofNullable(loadableAttach.getFilePath())
               .ifPresent(filePath -> loadableAttachDto.setFilePath(String.valueOf(filePath)));
           ofNullable(loadableAttach.getUploadedFileName())
-              .ifPresent(fileName -> loadableAttachDto.setFilePath(String.valueOf(fileName)));
+              .ifPresent(fileName -> loadableAttachDto.setFileName(String.valueOf(fileName)));
 
           try {
             File file = ResourceUtils.getFile(this.rootFolder + loadableAttachDto.getFilePath());
@@ -1519,7 +1532,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           } catch (IOException e) {
             log.error("FileNotFoundException in buildLoadableAttachment", e);
           }
-          loadableStudy.getLoadableStudyAttachment().add(loadableAttachDto);
+          List<com.cpdss.loadablestudy.domain.LoadableStudyAttachment> attachmentList =
+              loadableStudy.getLoadableStudyAttachment();
+          if (attachmentList == null) {
+            attachmentList = new ArrayList<>();
+          }
+          attachmentList.add(loadableAttachDto);
         });
   }
 
@@ -2881,17 +2899,30 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   @Override
-  public void getLoadableStudyByLoadablePatternId(
-      LoadablePlanDetailsRequest request, StreamObserver<LoadableStudyResponse> responseObserver) {
-    LoadableStudyResponse.Builder builder = LoadableStudyResponse.newBuilder();
+  public void getUllage(
+      UpdateUllageRequest request, StreamObserver<UpdateUllageReply> responseObserver) {
+    log.info("Inside get getUllage in loadable study micro service");
+    UpdateUllageReply.Builder replyBuilder = UpdateUllageReply.newBuilder();
     try {
-      this.loadablePatternService.getLoadableStudyDetailsByLoadablePatternId(request, builder);
-      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      loadablePlanService.getUllage(request, replyBuilder);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in get ullage", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
     } catch (Exception e) {
-      e.printStackTrace();
-      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+      log.error("Exception in update ullage", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
     } finally {
-      responseObserver.onNext(builder.build());
+      responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
   }

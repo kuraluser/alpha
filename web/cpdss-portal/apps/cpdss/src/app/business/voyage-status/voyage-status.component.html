@@ -8,18 +8,18 @@
             <div class="" *ngIf="vesselInfo && voyageInfo">
                 <label for="">{{'VOYAGE_STATUS_ACTIVE_VOYAGE'| translate }}</label>
                 <p-dropdown styleClass="dropdown-w-180" [options]="voyageInfo" optionLabel="voyageNo"
-                    [(ngModel)]="selectedVoyage" resetFilterOnHide="true"></p-dropdown>
+                    [(ngModel)]="selectedVoyage" resetFilterOnHide="true"  (onChange)="onVoyageSelected()"></p-dropdown>
             </div>
-            
+
             <div class="pr-15 pt-10 col text-right">
                 {{'SHIP_LANDING_VOYAGE_DISTANCE' | translate}}
             </div>
             <div class="pr-30 pt-10 ">
-                {{portRotationService.voyageDistance? (portRotationService.voyageDistance | number) :
+                {{voyageDistance? (voyageDistance | number) :
                 0}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
             </div>
-            <div class=" text-right" *ngIf="vesselInfo">
-               
+            <div class="" *ngIf="vesselInfo">
+
                 <ng-container *ngIf="selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">
 
             <!--
@@ -33,7 +33,7 @@
             </ng-container>
             <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
             <a class="btn btn-main   ml-30" (click)="showDialog()"
-            id="show-popup" *cpdssPortalPermission="newVoyagePermissionContext">{{'NEW_VOYAGE_BUTTON_VOYAGE_STATUS' | translate}}</a>
+            id="show-popup" *cpdssPortalPermission="newVoyagePermissionContext">{{'VOYAGE_LIST_CREATE_NEW_VOYAGE_BUTTON_LABEL' | translate}}</a>
         </div>
         </div>
         <div class="row">
@@ -66,9 +66,11 @@
                 </cpdss-portal-ship-landing-tanks>
             </div>
             <div class="col sidebar-right-landing tank-parameters-right">
+                <div class="content-scroll">
                 <cpdss-portal-cargo-details *ngIf="cargoConditions && cargoQuantities"
                     [cargoConditions]="cargoConditions" [cargoQuantities]="cargoQuantities"
                     [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"></cpdss-portal-cargo-details>
+                </div>
             </div>
         </div>
 
@@ -78,13 +80,13 @@
                     [list]="voyageStatusResponse?.stabilityConditions?.list"></cpdss-portal-list-condition>
             </div>
             <div class="col">
-                <cpdss-portal-trim-condition *ngIf="voyageStatusResponse?.stabilityConditions"
+                <cpdss-portal-trim-condition *ngIf="voyageStatusResponse?.stabilityConditions && vesselInfo"
                     [trim]="voyageStatusResponse?.stabilityConditions?.calculatedTrimActual"
-                    [hogSag]="voyageStatusResponse?.stabilityConditions?.hogSag"></cpdss-portal-trim-condition>
+                    [deflection]="voyageStatusResponse?.stabilityConditions?.deflection" [hasLoadicator]="vesselInfo?.hasLoadicator"></cpdss-portal-trim-condition>
             </div>
             <div class="col sidebar-right-landing">
                 <cpdss-portal-draft-condition *ngIf="voyageStatusResponse?.stabilityConditions"
-                    [draftCondition]="voyageStatusResponse?.stabilityConditions"></cpdss-portal-draft-condition>
+                    [draftCondition]="voyageStatusResponse?.stabilityConditions" [hasLoadicator]="vesselInfo?.hasLoadicator" ></cpdss-portal-draft-condition>
             </div>
         </div>
     </div>

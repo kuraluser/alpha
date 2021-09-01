@@ -14,6 +14,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { whiteSpaceValidator } from '../../directives/space-validator.directive';
 import { saveAs } from 'file-saver';
 import { LoadableStudyDetailsTransformationService } from '../../../cargo-planning/services/loadable-study-details-transformation.service';
+import { isAlphaCharacterAvaiable } from '../../directives/alpha-validator.directive';
 
 /**
  *  popup for creating / editing loadable-study
@@ -126,7 +127,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   async createNewLoadableStudyFormGroup() {
     this.newLoadableStudyFormGroup = this.formBuilder.group({
       duplicateExisting: '',
-      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), whiteSpaceValidator]),
+      newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), whiteSpaceValidator , isAlphaCharacterAvaiable]),
       enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
       attachMail: null,
       charterer: this.vesselInfoList?.charterer,
@@ -177,7 +178,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           if (result.responseStatus.status === "200") {
             if (this.isEdit) {
               if (this.isLoadlineChanged()) {
-                this.loadableStudyDetailsTransformationService.setLoadLineChange();
+                this.loadableStudyDetailsTransformationService.setLoadLineChange(true);
               }
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
               this.loadableStudyDetailsTransformationService.updateLoadableStudyData(true);

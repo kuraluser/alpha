@@ -5,6 +5,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TreeTableModule } from 'primeng/treetable';
 import { TreeModule } from 'primeng/tree';
 import { TranslateModule } from '@ngx-translate/core';
+import { InstructionCheckListApiService } from './services/instruction-check-list-api.service';
+import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
 
 /**
  * Module for instructions check list
@@ -20,8 +22,10 @@ import { TranslateModule } from '@ngx-translate/core';
     ReactiveFormsModule,
     TreeTableModule,
     TreeModule,
+    ValidationErrorModule,
     TranslateModule
   ],
-  exports: [InstructionCheckListComponent]
+  exports: [InstructionCheckListComponent],
+  providers: [InstructionCheckListApiService]
 })
 export class InstructionCheckListModule { }

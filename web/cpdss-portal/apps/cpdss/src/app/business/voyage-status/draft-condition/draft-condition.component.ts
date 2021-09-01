@@ -26,10 +26,19 @@ export class DraftConditionComponent implements OnInit {
     this.setConditions();
   }
 
+  @Input() get hasLoadicator(): number {
+    return this._hasLoadicator;
+  };
+
+  set hasLoadicator(value: number) {
+    this._hasLoadicator = value;
+    this.setConditions();
+  }
   columns: IDataTableColumn[];
   value = [];
 
   private _draftCondition: IDraftCondition;
+  private _hasLoadicator: number;
 
   constructor(private voyageStatusTransformationService: VoyageStatusTransformationService) { }
 
@@ -43,8 +52,10 @@ export class DraftConditionComponent implements OnInit {
    * @memberof DraftConditionComponent
    */
   setConditions() {
+    let deflection;
+    deflection = this.hasLoadicator && this.draftCondition?.deflection > 0 ? (this.draftCondition?.deflection / 100) : 0;
     this.value = [
-      { header: 'VOYAGE_STATUS_DRAFT_CONDITION_CALCULATED', aft: this.draftCondition?.finalDraftAft - this.draftCondition?.hogSag , mid: this.draftCondition?.finalDraftMid - this.draftCondition?.hogSag, fore: this.draftCondition?.finalDraftFwd - this.draftCondition?.hogSag},
+      { header: 'VOYAGE_STATUS_DRAFT_CONDITION_CALCULATED', aft: this.draftCondition?.finalDraftAft - deflection, mid: this.draftCondition?.finalDraftMid - deflection, fore: this.draftCondition?.finalDraftFwd - deflection },
       { header: 'VOYAGE_STATUS_DRAFT_CONDITION_CORRECTED', aft: this.draftCondition?.finalDraftAft, mid: this.draftCondition?.finalDraftMid, fore: this.draftCondition?.finalDraftFwd }
     ]
   }

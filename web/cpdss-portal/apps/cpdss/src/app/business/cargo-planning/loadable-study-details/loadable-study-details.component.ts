@@ -247,7 +247,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.isDischargePortAvailable();
       if (this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ERROR) {
         this.getAlgoErrorMessage(false);
-      } else if (this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING) {
+      } else if (this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED || this.selectedLoadableStudy.statusId === LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING) {
         this.isGenerateClicked = true;
       }
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.selectedLoadableStudy.isCargoNominationComplete)
@@ -380,7 +380,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
     });
     this.loadableStudyDetailsTransformationService.loadLineChange$.subscribe((res) => {
-      this.displayLoadableQuntity = true;
+      this.displayLoadableQuntity = res;
     });
     this.loadableStudyDetailsTransformationService.loadablePatternBtnDisable$.subscribe(value=>{
       this.isServiceWorkerCallActive = value;
@@ -405,8 +405,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    */
   private swMessageHandler = async event => {
     let isValidStatus = false;
-    if ([LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_CONFIRMED, LOADABLE_STUDY_STATUS.PLAN_GENERATED, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED,
-    LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(event.data.statusId)) {
+    if (event?.data?.syncType === 'loadable-study-pattern-status') {
       isValidStatus = true;
     }
     if (event?.data?.status === '401' && event?.data?.errorCode === '210' && isValidStatus) {
@@ -418,6 +417,17 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       if (event.data.pattern?.loadableStudyId === this.loadableStudyId) {
         this.isGenerateClicked = true;
         this.processingMessage();
+      } else {
+        this.messageService.clear();
+      }
+    } else if(event.data.type === 'loadable-study-communicated-to-shore' && this.router.url.includes('loadable-study-details')) {
+      if (event.data.pattern?.loadableStudyId === this.loadableStudyId) { 
+        this.isGenerateClicked = true;
+        this.selectedLoadableStudy.statusId = LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE;
+        this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_COMMUNICATED_TO_SHORE;
+        this.messageService.clear();
+        const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_DETAILS', 'GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_INFO']).toPromise();
+        this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_INFO'], detail: translationKeys['GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_DETAILS'], life: 1000, closable: false });
       } else {
         this.messageService.clear();
       }
@@ -535,6 +545,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           case 11:
             loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ERROR
             break;
+          case 21:
+            loadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_COMMUNICATED_TO_SHORE
+            break;
           default:
             break;
         }
@@ -553,7 +566,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           }
         }
       } else if (!loadableStudyId && !statusId) {
-        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) ? false : true;
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE , LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) ? false : true;
         loadableStudy.isEditable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
         loadableStudy.isDeletable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
       }
@@ -797,12 +810,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.dischargingPorts = [];
     }
     this.dischargingPortsNames = this.dischargingPorts?.map(port => port?.name).join(", ");
-    if (this.selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && !this.dischargingPorts?.length) {
-      this.messageService.clear();
-      const translationKeys = await this.translateService.get(['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY', 'CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS']).toPromise();
-      this.isSelectedDischargePort = false;
-      this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY'], detail: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS'] });
-    }
   }
 
   /**
@@ -962,8 +969,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (loadableQuantityResult.responseStatus.status === "200") {
       this.ngxSpinnerService.hide();
       let calculatedTotQty = this.sliceToTwoDecimalPoint(this.getSubTotal(loadableQuantityResult), 2);
-      let databaseTotQty = this.sliceToTwoDecimalPoint(Number(loadableQuantityResult.loadableQuantity.totalQuantity).toString(), 2);
-      if (calculatedTotQty === databaseTotQty) {
+      let databaseTotQty = this.sliceToTwoDecimalPoint(loadableQuantityResult.loadableQuantity.totalQuantity, 2);
+      if (Number(calculatedTotQty) === Number(databaseTotQty)) {
         this.generateLoadablePattern(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedVoyage.voyageNo, this.selectedLoadableStudy.name);
       } else {
         this.messageService.clear();
@@ -1015,8 +1022,13 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       const res = await this.loadableStudyDetailsApiService.generateLoadablePattern(vesselId, voyageId, loadableStudyId).toPromise();
       if (res.responseStatus.status === '200') {
         this.isGenerateClicked = true;
-        this.selectedLoadableStudy.statusId = 4;
-        this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ALGO_PROCESSING;
+        if(environment.name === 'shore') {
+          this.selectedLoadableStudy.statusId = LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING;
+          this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ALGO_PROCESSING;
+        } else {
+          this.selectedLoadableStudy.statusId = LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE;
+          this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_COMMUNICATED_TO_SHORE;
+        }
         data.processId = res.processId;
         if (res.processId) {
           navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
@@ -1030,6 +1042,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
     }
     catch (errorResponse) {
+      this.selectedLoadableStudy.statusId = 11;
+      this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ERROR;
       this.selectedLoadableStudy.isActionsEnabled = true;
       if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
         const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_ERROR', 'LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR']).toPromise();

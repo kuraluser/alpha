@@ -1,11 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ICargoQuantities, IShipCargoTank, ITankOptions, IVoyagePortDetails, TANKTYPE } from '../../core/models/common.model';
+import { ICargoQuantities, IFuelType, IShipCargoTank, ITankOptions, IVoyagePortDetails, TANKTYPE, IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../core/models/common.model';
 import { VoyageStatusTransformationService } from '../services/voyage-status-transformation.service';
-import { IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../models/voyage-status.model';
 import { IVoyageStatus } from '../models/voyage-status.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { IFuelType, QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
 /**
@@ -26,7 +25,7 @@ export class ShipLandingTanksComponent implements OnInit {
   @Input() voyageId: number;
   @Input() loadableStudyId: number;
   @Input() selectedPortDetails: IVoyagePortDetails;
-  @Input() get shipLandingTanks() : IVoyageStatus {
+  @Input() get shipLandingTanks(): IVoyageStatus {
     return this._shipLandingTanks;
   }
 
@@ -35,7 +34,7 @@ export class ShipLandingTanksComponent implements OnInit {
     this.getShipLandingTanks();
   }
 
-  @Input() get currentQuantitySelectedUnit() : QUANTITY_UNIT {
+  @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
   }
 
@@ -64,8 +63,8 @@ export class ShipLandingTanksComponent implements OnInit {
 
   readonly tankType = TANKTYPE;
 
-  cargoTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api', weightField: 'actualWeight', commodityNameField: 'abbreviation'};
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit};
+  cargoTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api', weightField: 'actualWeight', commodityNameField: 'abbreviation' };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit };
   ohqTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, densityField: 'density', weightField: 'quantity', weightUnit: AppConfigurationService.settings.baseUnit };
 
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
@@ -104,6 +103,7 @@ export class ShipLandingTanksComponent implements OnInit {
    * @memberof ShipLandingTanksComponent
    */
   convertQuantityToSelectedUnit() {
+    this.cargoTankOptions.weightUnit = this.currentQuantitySelectedUnit;
     const mode = this.selectedPortDetails?.operationType === 'ARR' ? OHQ_MODE.ARRIVAL : OHQ_MODE.DEPARTURE;
     this.cargoQuantities = this.shipLandingTanks?.cargoQuantities ?? [];
     this.ballastQuantities = this.shipLandingTanks?.ballastQuantities ?? [];

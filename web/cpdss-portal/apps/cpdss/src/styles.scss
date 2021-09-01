@@ -10,6 +10,7 @@ body {
 body {
   font-family: 'Play', sans-serif;
   font-size: $font-size-normal!important;
+  overflow-x: hidden;
 }
 
 a {
@@ -831,7 +832,7 @@ tr{
   width: 50px!important;
 }
 .column-color{
-  width: 70px !important;
+  width: 60px !important;
 }
 .column-loader {
   width: 20px!important;
@@ -977,6 +978,7 @@ input[type=number] {
   height: calc(100vh - 220px);
   padding-right: 15px;
   margin-right: 2px;
+  padding-bottom: 10px;
 }
 
 .p-datatable-wrapper, .p-datatable-scrollable-wrapper{
@@ -1014,13 +1016,17 @@ input[type=number] {
     &.api, &.temperature{
       > div{
         min-width: 80px!important;
-        max-width: 80px;
+        max-width: 100px;
         height: 25px;
         line-height: 25px;
+        padding-right: 36px!important;
         .icon-api-temp{
-          right: -20px!important;
+          right: 0px!important;
           position: absolute;
           top: 5px;
+        }
+        .error-icon{
+          right: 21px;
         }
         input{
           padding-left: 5px;
@@ -1274,7 +1280,7 @@ td.sl div{
 }
 
 .p-multiselect-label{
-  line-height: 25px;
+  line-height: 17px;
     height: 25px;
     padding: 0 5px!important;
 }
@@ -1406,6 +1412,7 @@ td.sl div{
 }
 .loadable-plan-ballast .tank-outer-pattern, .loadable-plan-stowage.tank-outer-pattern{
       height: 40vh;
+      min-height: 260px;
       padding: 0 10% 0 110px;
       .ship-front-pattern{
         width: 10%;
@@ -1877,6 +1884,7 @@ height: 15px;
   .tank-outer-pattern{
     height: 100%;
     max-height: 350px;
+    min-height: 160px;
     .tank-inner-wrapper-pattern .tank-column-pattern > div {
       .tank-name{
       text-align: left;
@@ -1997,20 +2005,23 @@ width: 50px !important;
 }
 }
 .column-priority{
-  width: 85px!important;
+  width: 87px!important;
 }
 .column-qty{
-  width: 120px!important;
+  width: 132px!important;
 }
 .column-api, .column-temp{
   width: 105px!important;
 }
 
 .column-max-tol, .column-min-tol{
-  width: 115px!important;
+  width: 84px!important;
 }
 .column-segregation{
-  width: 120px!important;
+  width: 115px!important;
+}
+.column-abbreviation{
+  width: 110px!important;
 }
 .column-fuel-type{
   width: 150px!important;
@@ -2452,6 +2463,7 @@ textarea{
   }
 }
 .carousel-card{
+  height: 138px;
   .p-calendar .p-inputtext{
     padding: 0 8px;
     margin-bottom: 2px;
@@ -2513,7 +2525,7 @@ textarea{
 }
 
 .loadable-plan-ballast .tank-outer-pattern .tank-filling-percentage{
- max-width: none; 
+ max-width: none;
 }
 
 .sidebar-menu{
@@ -2629,45 +2641,6 @@ textarea{
   width: 80px;
 }
 
-.table-rules{
-  input.form-control{
-    width: 83px;
-    margin-bottom: 3px;
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-}
-
-.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
-  transform: translateX(1rem);
-}
-
-
-.loading-discharging-tank-layout{
-  .tank-btn-rounded{
-    margin-left: 2px;
-  }
-  .tank-outer-pattern .tank-inner-wrapper-pattern .tank-column-pattern > div .tank-name{
-    top: 3px !important;
-    left: 14px !important;
-    margin-top: 0 !important;
-    width: auto !important;
-  }
-  .tank-item-valign{
-    position: absolute;
-    left: 2px;
-    top: 13px;
-  }
-  .tank-filling-percentage{
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    text-align: right;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
 
 .table-column-flexible-wrapper{
   .column-class{
@@ -2727,14 +2700,22 @@ textarea{
     position: absolute;
     left: 2px;
     top: 13px;
+    right: 2px;
   }
   .tank-filling-percentage{
     position: absolute;
     bottom: 5px;
     right: 5px;
-    text-align: right;
+    left: 2px;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .tank-commodity-weight{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    display: block;
   }
 }
 
@@ -2759,6 +2740,283 @@ textarea{
   border-width: 0 2px 2px 0 !important;
   transform: rotate(45deg);
   position: absolute;
-  top: -4px; 
+  top: -4px;
   right: -2px;
+}
+
+.check-list-table{
+  .p-treetable-header{
+    border-top: 0;
+  }
+}
+
+.sidebar-loading-and-discharging{
+  max-width: 455px;
+  min-width: 455px;
+}
+
+.item-row-wrapper{
+  .row{
+      margin-left: 0;
+      margin-right: 0;
+      margin-bottom: 0;
+      padding:2px 0;
+  }
+}
+
+.rowspan-no-border{
+  td{
+    border-bottom: 0!important;
+    vertical-align: baseline;
+    padding: 3px 2px !important;
+    &.row-border{
+     padding: 0!important;
+    }
+    &[rowspan]{
+      vertical-align: baseline;
+    }
+  }
+}
+
+.no-min-width{
+  min-width: 0px !important;
+}
+
+.text-right{
+  input{
+    text-align: right;
+  }
+}
+
+.no-ediable-field div{
+  padding-right: 0!important;
+}
+
+.ol-control{
+  width: 20px;
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  opacity: 0.8;
+  button{
+      margin: 6px 0;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 2px;
+      width: 28px;
+      height: 28px;
+  }
+}
+
+.ol-rotate, .ol-attribution{
+  display: none;
+}
+
+.vessel-card-container {
+  &.collapsed{
+    .vessel-card-fleet-container{
+      height: 100px;
+      overflow: hidden;
+    }
+  }
+}
+
+.calendar-f-w {
+  span.p-calendar {
+    width: 100%;
+  }
+}
+
+.calendar-f-w {
+  span.p-calendar {
+    width: 100%;
+  }
+  &.fleet-calendar {
+    input.p-inputtext {
+      font-size: 11px;
+    }
+  }
+}
+
+.discharge-study-pop-up{
+  width: 540px;
+}
+
+.search-wrapper{
+  position: relative;
+  input{
+    width: 100%;
+    padding-left: 17px;
+  }
+  .pi-search{
+    position: absolute;
+    left: 0px;
+    top: 5px;
+  }
+}
+
+.color-rounded{
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  display: inline-block;
+  padding-right: 0!important;
+  vertical-align: text-bottom;
+  margin-right: 2px;
+}
+
+.v-top{
+  vertical-align: top;
+}
+
+.dropdown-panel-auto .p-dropdown-panel{
+  max-width: none!important;
+}
+
+.simulator-menu-drop-down{
+  width: 102px;
+}
+
+.dropdown-berth .form-control.p-dropdown{
+  max-width: 180px;
+}
+
+.icon-info-rounded{
+  font-size: 18px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+  text-align: center;
+    line-height: 20px;
+    vertical-align: bottom;
+}
+
+.well-custom{
+  padding: 10px 15px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.p-calendar{
+  width: 100%;
+}
+.font-small {
+  font-size: $font-size-small!important;
+}
+
+.main-content-loading-and-discharging{
+  max-width: calc(100% - 455px);
+}
+
+.sequence-chart-tank-column {
+  padding: 31px 16px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-chart-cargo-column {
+  padding: 31px 4.75px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-chart-ullage-column {
+  padding: 38.25px 3px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-chart-quantity-column {
+  padding: 31px 0px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-chart-cargo-pump-column {
+  padding: 31px 4.75px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-chart-ballast-column {
+  padding: 31px 4.75px;
+  white-space: normal;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.sequence-chart-ballast-pump-column {
+  padding: 31px 4.75px;
+  text-align: center;
+  border-right: 0;
+  border-bottom: 0;
+  position: absolute;
+  right: 0;
+}
+
+.sequence-icon {
+  color: #666666;
+  font-size: 1.5em;
+}
+
+.cow-legend {
+  .list-group-item {
+    background: none;
+    border: none;
+
+    .cow-legend-icon {
+      color: #666666; //TODO: need to be moved to theme file
+      font-size: 1.5em;
+      padding-right: 5px;
+      margin-top: -2px;
+    }
+
+    .cow-legend-label {
+      vertical-align: top;
+    }
+  }
+}
+
+.stabilityparams-chart {
+  .table-border {
+    stroke: #bebebe; //TODO: need to be moved to theme file
+    stroke-width: 1;
+  }
+}
+
+.font-main{
+  font-family: 'Play', sans-serif!important;
+}
+
+.highcharts-grid-axis{
+  p{
+    margin-bottom: 5px!important;
+  }
+}
+
+.highcharts-axis-labels.highcharts-xaxis-labels.highcharts-grid-axis, .highcharts-axis.highcharts-yaxis.highcharts-grid-axis {
+  z-index: -1 !important;
+}
+
+.sequence-chart-tooltip table {
+  border-spacing: 15px !important;
+}
+
+.sequence-chart.stabilityparams-chart{
+  .highcharts-axis-title{
+    text-transform: uppercase;
+  }
 }

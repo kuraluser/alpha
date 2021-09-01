@@ -16,10 +16,12 @@ public class BillOfLadding {
   private BigDecimal quantityBbls;
   private BigDecimal quantityMt;
   private BigDecimal quantityKl;
+  private BigDecimal quantityLT;
   private BigDecimal api;
   private BigDecimal temperature;
   private String cargoColor;
   private String cargoName;
   private String cargoAbbrevation;
+  private String blRefNo;
   private List<Long> loadingPort;
 }

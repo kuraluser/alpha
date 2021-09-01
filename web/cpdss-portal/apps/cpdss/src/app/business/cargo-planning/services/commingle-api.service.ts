@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
+import { ICargoResponseModel } from '../../core/models/common.model';
 import { ICommingleResponseModel } from '../models/commingle.model';
-import { ICargoResponseModel } from '../../../shared/models/common.model';
 
 
 /**
@@ -59,6 +59,7 @@ export class CommingleApiService {
 
       preferredTanks: {
         'required': 'COMMINGLE_PREFERRED_TANK_REQUIRED',
+        'maxlength': 'COMMINGLE_POPUP_PREFERRED_TANK_MAX_LIMIT'
       },
       cargo1: {
         'required': 'COMMINGLE_CARGO_SELECT_ERROR',
@@ -67,5 +68,5 @@ export class CommingleApiService {
         'required': 'COMMINGLE_CARGO_SELECT_ERROR',
       },
     }
-  }    
+  }
 }
