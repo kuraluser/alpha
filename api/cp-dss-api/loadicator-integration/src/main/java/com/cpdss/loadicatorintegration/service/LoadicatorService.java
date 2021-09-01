@@ -373,7 +373,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
               "Loadicator check completed for loading information {}",
               request.getStowagePlanDetails(0).getBookingListId());
           LoadingInfoLoadicatorDataRequest loadingInformationRequest =
-              this.buildLoadingInfoLoadicatorData(stowagePlanList, request.getIsUllageUpdate());
+              this.buildLoadingInfoLoadicatorData(stowagePlanList, request.getIsUllageUpdate(), request.getConditionType());
           this.getLoadingInfoLoadicatorData(loadingInformationRequest);
         }
       }
@@ -386,12 +386,13 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   }
 
   private LoadingInfoLoadicatorDataRequest buildLoadingInfoLoadicatorData(
-      List<StowagePlan> stowagePlanList, Boolean isUllageUpdate) {
+      List<StowagePlan> stowagePlanList, Boolean isUllageUpdate, Integer conditionType) {
     LoadingInfoLoadicatorDataRequest.Builder builder =
         LoadingInfoLoadicatorDataRequest.newBuilder();
     builder.setLoadingInformationId(stowagePlanList.get(0).getBookingListId());
     builder.setProcessId(stowagePlanList.get(0).getProcessId());
     builder.setIsUllageUpdate(isUllageUpdate);
+    builder.setConditionType(conditionType);
     stowagePlanList.forEach(
         stowagePlan -> {
           LoadingInfoLoadicatorDetail.Builder detailBuilder =

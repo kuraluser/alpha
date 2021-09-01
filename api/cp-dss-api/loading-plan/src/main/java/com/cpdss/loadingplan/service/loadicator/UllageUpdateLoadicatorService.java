@@ -19,10 +19,8 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.LoadingInformationStatus;
-import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanBallastTempDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
-import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageTempDetails;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
@@ -93,12 +91,6 @@ public class UllageUpdateLoadicatorService {
 
     String processId = UUID.randomUUID().toString();
 
-    List<PortLoadingPlanStowageDetails> stowageDetails =
-        portLoadingPlanStowageDetailsRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get(), true);
-    List<PortLoadingPlanBallastDetails> ballastDetails =
-        portLoadingPlanBallastDetailsRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get(), true);
     List<PortLoadingPlanStowageTempDetails> tempStowageDetails =
         portLoadingPlanStowageDetailsTempRepository.findByLoadingInformationAndIsActive(
             loadingInfoOpt.get(), true);
@@ -124,6 +116,8 @@ public class UllageUpdateLoadicatorService {
 
     loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
     loadicatorRequestBuilder.setIsUllageUpdate(true);
+    loadicatorRequestBuilder.setConditionType(
+        Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()));
     StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
     loadicatorService.buildStowagePlan(
         loadingInfoOpt.get(), 0, processId, cargoReply, vesselReply, portReply, stowagePlanBuilder);
@@ -151,6 +145,15 @@ public class UllageUpdateLoadicatorService {
     Optional<LoadingInformationStatus> loadingInfoStatusOpt =
         loadingPlanAlgoService.getLoadingInformationStatus(
             LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
+    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE.equals(
+        request.getUpdateUllage(0).getArrivalDepartutre())) {
+      loadingInformationRepository.updateLoadingInformationArrivalStatus(
+          loadingInfoStatusOpt.get(), loadingInfoId);
+    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE.equals(
+        request.getUpdateUllage(0).getArrivalDepartutre())) {
+      loadingInformationRepository.updateLoadingInformationDepartureStatus(
+          loadingInfoStatusOpt.get(), loadingInfoId);
+    }
     loadingPlanAlgoService.createLoadingInformationAlgoStatus(
         loadingInfoOpt.get(),
         processId,

@@ -427,12 +427,13 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   public UllageBillReply getLoadableStudyShoreTwo(
       String first, LoadingPlanModels.UllageBillRequest.Builder inputData)
       throws GenericServiceException {
-    Common.ResponseStatus reply =
-        loadingPlanServiceBlockingStub
-            .getLoadableStudyShoreTwo(inputData.build())
-            .getResponseStatus();
+    LoadingPlanModels.UllageBillReply reply =
+        loadingPlanServiceBlockingStub.getLoadableStudyShoreTwo(inputData.build());
     UllageBillReply replyData = new UllageBillReply();
-    replyData.setResponseStatus(new CommonSuccessResponse(reply.getStatus(), reply.getCode()));
+    replyData.setProcessId(reply.getProcessId());
+    replyData.setResponseStatus(
+        new CommonSuccessResponse(
+            reply.getResponseStatus().getStatus(), reply.getResponseStatus().getCode()));
     return replyData;
   }
 

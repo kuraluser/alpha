@@ -746,6 +746,7 @@ message LoadingInfoLoadicatorDataRequest {
   int64 loadingInformationId = 2;
   repeated LoadingInfoLoadicatorDetail loadingInfoLoadicatorDetails = 3;
   bool isUllageUpdate = 4;
+  int32 conditionType = 5;
 }
 
 message LoadingInfoLoadicatorDetail {
@@ -880,6 +881,7 @@ message UllageBillRequest{
 message UllageBillReply{
   ResponseStatus responseStatus = 1;
   repeated RulePlans rulePlan = 2;
+  string processId = 3;
 }
 
 message UploadTideDetailRequest {
