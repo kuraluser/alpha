@@ -110,6 +110,11 @@ export class LoadingInformationComponent implements OnInit {
       this.hasUnSavedData = false;
       this.loadingInformationPostData = <ILoadingInformation>{};
       this.loadingInformationData = await this.loadingDischargingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
+      this.loadingDischargingTransformationService._loadingInformationSource.next(this.loadingInformationData?.isLoadingInfoComplete)
+      this.loadingDischargingTransformationService._loadingInstructionSource.next(this.loadingInformationData?.isLoadingInstructionsComplete)
+      
+      this.loadingDischargingTransformationService.isLoadingSequenceGenerated.next(this.loadingInformationData?.isLoadingSequenceGenerated)
+      this.loadingDischargingTransformationService.isLoadingPlanGenerated.next(this.loadingInformationData?.isLoadingPlanGenerated);
       this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
     }

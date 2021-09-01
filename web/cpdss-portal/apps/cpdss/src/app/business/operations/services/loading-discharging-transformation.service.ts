@@ -19,16 +19,20 @@ import { OPERATION_TAB } from '../models/operations.model';
  */
 @Injectable()
 export class LoadingDischargingTransformationService {
-  private _loadingInformationSource: Subject<boolean> = new Subject();
+  public _loadingInformationSource: Subject<boolean> = new Subject();
   private _dischargingInformationSource: Subject<boolean> = new Subject();
   private _unitChangeSource: Subject<boolean> = new Subject();
-  private _loadingInstructionSource: Subject<boolean> = new Subject();
+  public _loadingInstructionSource: Subject<boolean> = new Subject();
   public disableSaveButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _rateUnitChangeSource: Subject<boolean> = new Subject();
   private _tabChangeSource: Subject<OPERATION_TAB> = new Subject();
   private _validateUllageData: Subject<any> = new Subject();
   private _setUllageBtnStatus: Subject<any> = new Subject();
   private _showUllageErrorPopup: Subject<boolean> = new Subject();
+  public isLoadingInfoComplete: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public isLoadingInstructionsComplete: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public isLoadingPlanGenerated: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public isLoadingSequenceGenerated: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   loadingInformationValidity$ = this._loadingInformationSource.asObservable();
   dischargingInformationValidity$ = this._dischargingInformationSource.asObservable();
