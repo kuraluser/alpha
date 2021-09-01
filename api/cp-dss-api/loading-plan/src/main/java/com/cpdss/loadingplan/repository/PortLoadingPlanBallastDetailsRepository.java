@@ -49,4 +49,11 @@ public interface PortLoadingPlanBallastDetailsRepository
       @Param("port_xid") Long portXId,
       @Param("loading_information_xid") Long loadingId,
       @Param("arrival_departutre") Long arrivalDepartutre);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "Update PortLoadingPlanBallastDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and isActive = true")
+  public void deleteExistingByLoadingInfoAndConditionType(
+      Long loadingInfoId, Integer conditionType);
 }
