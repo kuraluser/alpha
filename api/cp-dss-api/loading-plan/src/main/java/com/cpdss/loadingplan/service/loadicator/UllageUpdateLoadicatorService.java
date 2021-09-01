@@ -25,7 +25,6 @@ import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageTempDetails;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
-import com.cpdss.loadingplan.repository.LoadingInformationStatusRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastTempDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
@@ -67,8 +66,6 @@ public class UllageUpdateLoadicatorService {
 
   @Autowired
   PortLoadingPlanBallastTempDetailsRepository portLoadingPlanBallastDetailsTempRepository;
-
-  @Autowired LoadingInformationStatusRepository loadingInformationStatusRepository;
 
   @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
   @Autowired LoadicatorService loadicatorService;
@@ -152,15 +149,8 @@ public class UllageUpdateLoadicatorService {
     }
 
     Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-        loadingInformationStatusRepository.findByIdAndIsActive(
-            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID, true);
-    if (loadingInfoStatusOpt.isEmpty()) {
-      throw new GenericServiceException(
-          "Could not find loading information status with id "
-              + LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID,
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
+        loadingPlanAlgoService.getLoadingInformationStatus(
+            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
     loadingPlanAlgoService.createLoadingInformationAlgoStatus(
         loadingInfoOpt.get(),
         processId,
@@ -170,7 +160,7 @@ public class UllageUpdateLoadicatorService {
   }
 
   /**
-   * Build ballastDetails for Stowage Plan
+   * Build ROB details for Stowage Plan
    *
    * @param loadingInformation
    * @param robDetails
