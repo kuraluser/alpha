@@ -1,11 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DepartureConditionTransformationService } from './departure-condition-transformation.service';
-import { ITankOptions, IVoyagePortDetails, TANKTYPE, ICargo, OPERATIONS, ICargoQuantities, IShipCargoTank} from '../../core/models/common.model';
-import { IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../voyage-status/models/voyage-status.model';
+import { ITankOptions, IVoyagePortDetails, TANKTYPE, ICargo, OPERATIONS, ICargoQuantities, IShipCargoTank, IBallastQuantities, IShipBallastTank, IShipBunkerTank} from '../../core/models/common.model';
 import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { DecimalPipe } from '@angular/common';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { ULLAGE_STATUS, ULLAGE_STATUS_TEXT } from '../models/loading-discharging.model';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
  * Component class for departure condition block
@@ -31,6 +32,9 @@ export class DepartureConditionComponent implements OnInit {
     this.convertQuantityToSelectedUnit();
   }
   @Input() cargos: any;
+  @Input() loadingInfoId: number;
+  @Input() vesselId: number;
+  @Input() portRotationId: number;
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
   }
@@ -63,9 +67,12 @@ export class DepartureConditionComponent implements OnInit {
   readonly tankType = TANKTYPE;
   selectedTab = TANKTYPE.CARGO;
   readonly OPERATIONS = OPERATIONS;
+  readonly ULLAGE_STATUS = ULLAGE_STATUS;
+  readonly ULLAGE_STATUS_TEXT = ULLAGE_STATUS_TEXT;
 
   constructor(
     private departureConditionTransformationService: DepartureConditionTransformationService,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private quantityPipe: QuantityPipe,
     private _decimalPipe: DecimalPipe
   ) { }
@@ -184,8 +191,10 @@ export class DepartureConditionComponent implements OnInit {
       item.map(tank => {
         let actualQty = 0, planedQty = 0;
         const data: any = {};
+        let colorCode = null;
         this.loadingPlanData?.planBallastDetails?.map(ballast => {
           if (tank.id === ballast.tankId) {
+            colorCode = ballast.colorCode;
             if (ballast.conditionType === 2 && ballast.valueType === 1) {
               actualQty += Number(ballast.quantityMT);
             }
@@ -197,6 +206,7 @@ export class DepartureConditionComponent implements OnInit {
         data.plannedWeight = planedQty;
         data.actualWeight = actualQty;
         data.tankId = tank.id;
+        data.colorCode = colorCode;
         this.ballastTankQuantity.push(data);
       });
     });
@@ -204,8 +214,10 @@ export class DepartureConditionComponent implements OnInit {
       item.map(tank => {
         let actualQty = 0, planedQty = 0;
         const data: any = {};
+        let colorCode = null;
         this.loadingPlanData?.planBallastDetails?.map(ballast => {
           if (tank.id === ballast.tankId) {
+            colorCode = ballast.colorCode;
             if (ballast.conditionType === 2 && ballast.valueType === 1) {
               actualQty += Number(ballast.quantityMT);
             }
@@ -217,6 +229,7 @@ export class DepartureConditionComponent implements OnInit {
         data.plannedWeight = planedQty;
         data.actualWeight = actualQty;
         data.tankId = tank.id;
+        data.colorCode = colorCode;
         this.ballastTankQuantity.push(data);
       });
     });
@@ -224,8 +237,10 @@ export class DepartureConditionComponent implements OnInit {
       item.map(tank => {
         let actualQty = 0, planedQty = 0;
         const data: any = {};
+        let colorCode = null;
         this.loadingPlanData?.planBallastDetails?.map(ballast => {
           if (tank.id === ballast.tankId) {
+            colorCode = ballast.colorCode;
             if (ballast.conditionType === 2 && ballast.valueType === 1) {
               actualQty += Number(ballast.quantityMT);
             }
@@ -237,6 +252,7 @@ export class DepartureConditionComponent implements OnInit {
         data.plannedWeight = planedQty;
         data.actualWeight = actualQty;
         data.tankId = tank.id;
+        data.colorCode = colorCode;
         this.ballastTankQuantity.push(data);
       });
     });
@@ -254,8 +270,23 @@ export class DepartureConditionComponent implements OnInit {
   onTabClick(selectedTab: TANKTYPE) {
     this.selectedTab = selectedTab;
   }
+
+  /**
+   * Handler for pop up close
+   *
+   * @memberof DepartureConditionComponent
+   */
   closePopUp(evnet) {
     this.display = false;
+  }
+
+  /**
+   * Handler for showing error pop up
+   *
+   * @memberof DepartureConditionComponent
+   */
+  showError(){
+    this.loadingDischargingTransformationService.showUllageError({ value: true, status: 2});
   }
 
 }

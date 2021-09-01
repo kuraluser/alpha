@@ -44,6 +44,13 @@ message LoadingInformation{
   int64 loadingInfoId = 12;
   int64 synopticTableId = 13;
   bool isLoadingInfoComplete = 14;
+  int64 loadingInfoStatusId = 15;
+  int64 loadingPlanArrStatusId = 16;
+  int64 loadingPlanDepStatusId = 17;
+  int64 loadablePatternId = 18;
+  bool isLoadingInstructionsComplete = 19;
+  bool isLoadingSequenceGenerated = 20;
+  bool isLoadingPlanGenerated = 21;
 }
 
 message LoadingDetails{
@@ -738,6 +745,7 @@ message LoadingInfoLoadicatorDataRequest {
   string processId = 1;
   int64 loadingInformationId = 2;
   repeated LoadingInfoLoadicatorDetail loadingInfoLoadicatorDetails = 3;
+  bool isUllageUpdate = 4;
 }
 
 message LoadingInfoLoadicatorDetail {
@@ -756,6 +764,7 @@ message LoadingInfoLoadicatorDataReply {
 message LoadingInfoStatusRequest {
   int64 loadingInfoId = 1;
   string processId = 2;
+  int32 conditionType = 3;
 }
 
 message LoadingInfoStatusReply {
@@ -871,4 +880,24 @@ message UllageBillRequest{
 message UllageBillReply{
   ResponseStatus responseStatus = 1;
   repeated RulePlans rulePlan = 2;
+}
+
+message UploadTideDetailRequest {
+	bytes tideDetaildata = 1;
+	ResponseStatus responseStatus = 2;
+	int64 loadingId = 3;
+}
+
+message UploadTideDetailStatusReply {
+	ResponseStatus responseStatus = 1;
+}
+
+message DownloadTideDetailRequest {
+	int64 loadingId = 1;
+}
+
+message DownloadTideDetailStatusReply {
+	ResponseStatus responseStatus = 1;
+	bytes data = 2;
+	int32 size = 3;
 }

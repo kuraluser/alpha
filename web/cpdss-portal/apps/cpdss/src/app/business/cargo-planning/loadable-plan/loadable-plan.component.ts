@@ -25,7 +25,7 @@ import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
 import { saveAs } from 'file-saver';
 import { SecurityService } from '../../../shared/services/security/security.service';
 import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
-import { environment } from 'apps/cpdss/src/environments/environment';
+import { environment } from '../../../../environments/environment';
 
 /**
  * Component class of loadable plan

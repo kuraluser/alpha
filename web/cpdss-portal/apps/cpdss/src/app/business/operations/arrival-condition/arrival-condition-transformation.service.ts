@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { IBallastQuantities, IShipBallastTank, } from '../../voyage-status/models/voyage-status.model';
 import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
 import { OHQ_MODE } from '../../cargo-planning/models/cargo-planning.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
-import { ICargoQuantities, IShipCargoTank, ITank, ILoadableQuantityCargo } from '../../core/models/common.model';
+import { ICargoQuantities, IShipCargoTank, ITank, ILoadableQuantityCargo, IBallastQuantities, IShipBallastTank } from '../../core/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 /**
  * Transformation Service for arrival condition
@@ -36,7 +35,7 @@ export class ArrivalConditionTransformationService {
             ballastTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight.toFixed(2)) : 0;
             const actualWeight = ballastTank[groupIndex][tankIndex].commodity.actualWeight;
             ballastTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight.toFixed(2)) : 0;
-            ballastTank[groupIndex][tankIndex].commodity.volume = ballastTank[groupIndex][tankIndex].density ? Number((ballastTank[groupIndex][tankIndex].commodity.actualWeight / ballastTank[groupIndex][tankIndex].density).toFixed(2)) : 0;
+            ballastTank[groupIndex][tankIndex].commodity.volume = ballastTank[groupIndex][tankIndex].density ? Number((ballastTank[groupIndex][tankIndex].commodity.plannedWeight / ballastTank[groupIndex][tankIndex].density).toFixed(2)) : 0;
             ballastTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(ballastTank[groupIndex][tankIndex])
             break;
           }
@@ -65,7 +64,7 @@ export class ArrivalConditionTransformationService {
             cargoTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight.toFixed(2)) : 0;
             const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
             cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight.toFixed(2)) : 0;
-            cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, AppConfigurationService.settings.volumeBaseUnit, cargoTank[groupIndex][tankIndex].commodity?.api);
+            cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, currUnit, AppConfigurationService.settings.volumeBaseUnit, cargoTank[groupIndex][tankIndex].commodity?.api);
             cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex])
             break;
           }

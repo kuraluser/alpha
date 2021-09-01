@@ -1,4 +1,4 @@
-<h5 class="text-uppercase heading-border">{{'DISCHARGING_COW_PLAN' | translate }}
+<h5 class="text-uppercase heading-border pt-30">{{'DISCHARGING_COW_PLAN' | translate }}
 </h5>
 <div class="container-fluid" *ngIf="cowDetails && cowDetailsForm" [formGroup]="cowDetailsForm">
   <div class="row">
@@ -67,15 +67,16 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col pt-20">
+      <div class="row pt-20">
+        <div class="col ">
           <h5 class="text-uppercase">
             <div class="switch-wrapper">
               <span class="switch-label">{{'DISCHARGING_SELECT_TANKS_FOR_WASHING_WITH_DIFFERENT_CARGO' | translate }}</span>
-              <p-inputSwitch formControlName="washTanksWithDifferentCargo" (onChange)="onWashWithDifferentCargoChange($event)"></p-inputSwitch>
+              
             </div>
           </h5>
         </div>
+        <div class="pr-15"><p-inputSwitch formControlName="washTanksWithDifferentCargo" (onChange)="onWashWithDifferentCargoChange($event)"></p-inputSwitch></div>
       </div>
       <div class="row">
         <div class="col" formArrayName="tanksWashingWithDifferentCargo">
@@ -113,9 +114,9 @@
       <div class="row">
         <div class="col">
           <div class="row">
-            <label for="cow_option" class="col-4 col-form-label">{{ 'DISCHARGING_COW_START_TIME' |
+            <label for="cow_option" class="col-3 pr-0 col-form-label">{{ 'DISCHARGING_COW_START_TIME' |
               translate}}</label>
-            <div class="col-2">
+            <div class="col-3">
               <p-inputMask type="text" styleClass="form-control" formControlName="cowStart" mask="99:99" (onComplete)="onCowStartEndChange()">
               </p-inputMask>
             </div>
@@ -124,9 +125,9 @@
             </div>
           </div>
           <div class="row">
-            <label for="cow_option" class="col-4 col-form-label">{{ 'DISCHARGING_COW_END_TIME' |
+            <label for="cow_option" class="col-3 pr-0 col-form-label">{{ 'DISCHARGING_COW_END_TIME' |
               translate}}</label>
-            <div class="col-2">
+            <div class="col-3">
               <p-inputMask type="text" styleClass="form-control" formControlName="cowEnd" mask="99:99" (onComplete)="onCowStartEndChange()">
               </p-inputMask>
             </div>
@@ -135,9 +136,9 @@
             </div>
           </div>
           <div class="row">
-            <label for="cow_option" class="col-4 col-form-label">{{ 'DISCHARGING_EST_COW_DURATION' |
+            <label for="cow_option" class="col-3 col-form-label">{{ 'DISCHARGING_EST_COW_DURATION' |
               translate}}</label>
-            <div class="col-2">
+            <div class="col-3">
               <p-inputMask type="text" styleClass="form-control" formControlName="cowDuration" mask="99:99" readonly>
               </p-inputMask>
             </div>

@@ -34,6 +34,7 @@ import com.cpdss.loadingplan.domain.algo.LoadicatorAlgoRequest;
 import com.cpdss.loadingplan.domain.algo.LoadicatorAlgoResponse;
 import com.cpdss.loadingplan.domain.algo.LoadicatorResult;
 import com.cpdss.loadingplan.domain.algo.LoadicatorStage;
+import com.cpdss.loadingplan.domain.algo.UllageEditLoadicatorAlgoRequest;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import com.cpdss.loadingplan.entity.LoadingPlanBallastDetails;
@@ -211,6 +212,7 @@ public class LoadicatorService {
     PortInfo.PortReply portReply = getPortInfoForLoadicator(loadingInformation);
 
     loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
+    loadicatorRequestBuilder.setIsUllageUpdate(false);
     loadingTimes.forEach(
         time -> {
           StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
@@ -570,9 +572,6 @@ public class LoadicatorService {
               .Builder
           reply)
       throws GenericServiceException {
-    log.info(
-        "Recieved stability parameters of Loading Information {} from Loadicator",
-        request.getLoadingInformationId());
     Optional<LoadingInformation> loadingInfoOpt =
         loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingInformationId());
     if (loadingInfoOpt.isEmpty()) {
@@ -582,28 +581,130 @@ public class LoadicatorService {
           HttpStatusCode.BAD_REQUEST);
     }
 
-    LoadicatorAlgoRequest algoRequest = new LoadicatorAlgoRequest();
-    buildLoadicatorAlgoRequest(loadingInfoOpt.get(), request, algoRequest);
-    saveLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
+    if (!request.getIsUllageUpdate()) {
+      log.info(
+          "Recieved stability parameters of Loading Information {} from Loadicator",
+          request.getLoadingInformationId());
+      LoadicatorAlgoRequest algoRequest = new LoadicatorAlgoRequest();
+      buildLoadicatorAlgoRequest(loadingInfoOpt.get(), request, algoRequest);
+      saveLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
 
-    LoadicatorAlgoResponse algoResponse =
-        restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
-    saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
+      LoadicatorAlgoResponse algoResponse =
+          restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+      saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
 
-    saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
+      saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
 
-    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-        loadingInformationStatusRepository.findByIdAndIsActive(
-            LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
-    if (loadingInfoStatusOpt.isEmpty()) {
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          loadingInformationStatusRepository.findByIdAndIsActive(
+              LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
+      if (loadingInfoStatusOpt.isEmpty()) {
+        throw new GenericServiceException(
+            "Could not find loading information status with id "
+                + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      loadingInformationRepository.updateLoadingInformationStatuses(
+          loadingInfoStatusOpt.get(),
+          loadingInfoStatusOpt.get(),
+          loadingInfoStatusOpt.get(),
+          loadingInfoOpt.get().getId());
+      loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+          loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+    } else {
+      log.info(
+          "Recieved stability parameters of Loading Plam of Loading Information {} from Loadicator",
+          request.getLoadingInformationId());
+      UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
+      buildUllageEditLoadicatorAlgoRequest(loadingInfoOpt.get(), request, algoRequest);
+      saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
+
+      //    	    LoadicatorAlgoResponse algoResponse =
+      //    	        restTemplate.postForObject(loadicatorUrl, algoRequest,
+      // LoadicatorAlgoResponse.class);
+      //    	    saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
+      //
+      //    	    saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
+
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          loadingInformationStatusRepository.findByIdAndIsActive(
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID, true);
+      if (loadingInfoStatusOpt.isEmpty()) {
+        throw new GenericServiceException(
+            "Could not find loading information status with id "
+                + LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID,
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+          loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+    }
+  }
+
+  /**
+   * @param algoRequest
+   * @param id
+   * @throws GenericServiceException
+   */
+  private void saveUllageEditLoadicatorRequestJson(
+      UllageEditLoadicatorAlgoRequest algoRequest, Long loadingInfoId)
+      throws GenericServiceException {
+    log.info("Saving Loadicator request to Loadable study DB");
+    JsonRequest.Builder jsonBuilder = JsonRequest.newBuilder();
+    jsonBuilder.setReferenceId(loadingInfoId);
+    jsonBuilder.setJsonTypeId(LoadingPlanConstants.UPDATE_ULLAGE_LOADICATOR_REQUEST_JSON_TYPE_ID);
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      mapper.writeValue(
+          new File(
+              this.rootFolder
+                  + "/json/loadingPlanEditLoadicatorRequest_"
+                  + loadingInfoId
+                  + ".json"),
+          algoRequest);
+      jsonBuilder.setJson(mapper.writeValueAsString(algoRequest));
+      saveJson(jsonBuilder);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
       throw new GenericServiceException(
-          "Could not find loading information status with id "
-              + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
+          "Could not save request JSON to DB",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } catch (IOException e) {
+      throw new GenericServiceException(
+          "Could not save request JSON to Filesystem",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
-        loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+  }
+
+  /**
+   * @param loadingInformation
+   * @param request
+   * @param algoRequest
+   */
+  private void buildUllageEditLoadicatorAlgoRequest(
+      LoadingInformation loadingInformation,
+      LoadingInfoLoadicatorDataRequest request,
+      UllageEditLoadicatorAlgoRequest algoRequest) {
+    algoRequest.setLoadingInformationId(loadingInformation.getId());
+    algoRequest.setProcessId(request.getProcessId());
+    algoRequest.setVesselId(loadingInformation.getVesselXId());
+    algoRequest.setPortId(loadingInformation.getPortXId());
+    List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
+    request
+        .getLoadingInfoLoadicatorDetailsList()
+        .forEach(
+            loadicatorDetails -> {
+              LoadicatorStage loadicatorStage = new LoadicatorStage();
+              loadicatorStage.setTime(loadicatorDetails.getTime());
+              buildLdTrim(loadicatorDetails.getLDtrim(), loadicatorStage);
+              buildLdIntactStability(loadicatorDetails.getLDIntactStability(), loadicatorStage);
+              buildLdStrength(loadicatorDetails.getLDStrength(), loadicatorStage);
+              stages.add(loadicatorStage);
+            });
+    algoRequest.setStages(stages);
   }
 
   /**

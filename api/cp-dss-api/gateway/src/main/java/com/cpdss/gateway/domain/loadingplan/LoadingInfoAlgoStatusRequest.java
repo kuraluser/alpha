@@ -8,4 +8,5 @@ import lombok.Data;
 public class LoadingInfoAlgoStatusRequest {
 
   private String processId;
+  private Integer conditionType;
 }

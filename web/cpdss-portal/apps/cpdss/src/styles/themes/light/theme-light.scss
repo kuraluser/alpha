@@ -193,6 +193,15 @@ a {
         background: url($images-menu-icons + 'fleet-icon-hover.png') no-repeat;
     }
   }
+  &.files {
+    &:before {
+        background: url($images-menu-icons + 'files-icon.png') no-repeat;
+    }
+
+    &:after {
+        background: url($images-menu-icons + 'files-icon-hover.png') no-repeat;
+    }
+  }
 }
 
 header .header-nav .nav li.active {

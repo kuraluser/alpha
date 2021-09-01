@@ -3,7 +3,7 @@ package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.LocalTime;
 import java.util.Date;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
@@ -44,5 +44,5 @@ public class PortTideDetail extends EntityDoc {
   private BigDecimal tideHeight;
 
   @Column(name = "tide_time")
-  private Timestamp tideTime;
+  private LocalTime tideTime;
 }

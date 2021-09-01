@@ -10,6 +10,8 @@ import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
+import java.io.IOException;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface LoadingPlanService {
 
@@ -44,4 +46,10 @@ public interface LoadingPlanService {
 
   UllageBillReply getLoadableStudyShoreTwo(String first, UllageBillRequest inputData)
       throws GenericServiceException;
+
+  UploadTideDetailResponse uploadLoadingTideDetails(
+      Long loadingId, MultipartFile file, String correlationId)
+      throws IOException, GenericServiceException;
+
+  byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException;
 }

@@ -12,6 +12,8 @@ import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailStatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
@@ -21,6 +23,8 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStat
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailStatusReply;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.loadingplan.service.*;
@@ -30,6 +34,7 @@ import io.grpc.stub.StreamObserver;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -523,6 +528,53 @@ public class LoadingInformationGrpcService
               .setMessage(e.getMessage())
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void uploadPortTideDetails(
+      UploadTideDetailRequest request,
+      StreamObserver<UploadTideDetailStatusReply> responseObserver) {
+    UploadTideDetailStatusReply.Builder uploadTideDetailStatusReplyBuilder =
+        UploadTideDetailStatusReply.newBuilder();
+    try {
+      this.loadingInformationService.uploadPortTideDetails(request);
+      uploadTideDetailStatusReplyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder().setStatus(SUCCESS));
+    } catch (GenericServiceException e) {
+      uploadTideDetailStatusReplyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(e.getCode())
+              .setHttpStatusCode(e.getStatus().value()));
+    } catch (Exception e) {
+      uploadTideDetailStatusReplyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder().setStatus(FAILED));
+    } finally {
+      responseObserver.onNext(uploadTideDetailStatusReplyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void downloadPortTideDetails(
+      DownloadTideDetailRequest request,
+      StreamObserver<DownloadTideDetailStatusReply> responseObserver) {
+
+    com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailStatusReply.Builder
+        builder = DownloadTideDetailStatusReply.newBuilder();
+    try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+      loadingInformationService.downloadPortTideDetails(workbook, request, builder);
+    } catch (Exception e) {
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR));
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

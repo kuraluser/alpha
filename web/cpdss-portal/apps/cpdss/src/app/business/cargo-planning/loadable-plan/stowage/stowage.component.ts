@@ -11,7 +11,7 @@ import { PermissionsService } from '../../../../shared/services/permissions/perm
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { LoadablePlanApiService } from '../../services/loadable-plan-api.service';
-import { tankCapacityValidator } from '../directives/tankCapacityValidator.directive';
+import { tankCapacityValidator } from '../../../core/directives/tankCapacityValidator.directive';
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 import { QUANTITY_UNIT, IValidateAndSaveResponse } from '../../../../shared/models/common.model';
 import { DecimalPipe } from '@angular/common';

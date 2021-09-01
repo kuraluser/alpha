@@ -1,4 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { AppConfigurationService } from './../../../shared/services/app-configuration/app-configuration.service';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 import { IFleetVessel, IFleetVesselCardEvent } from '../models/fleet-map.model';
@@ -32,16 +35,53 @@ export class FleetVesselCardComponent implements OnInit {
   @Output() selectVessel = new EventEmitter<IFleetVesselCardEvent>();
 
   selectedVesselId: number;
+  dateFormat: string;
   _vesselValues: IFleetVessel[];
 
-  constructor(private timeZoneTransformationService: TimeZoneTransformationService) { }
+  constructor(
+    private router: Router,
+    private timeZoneTransformationService: TimeZoneTransformationService
+  ) { }
 
   ngOnInit(): void {
+    this.dateFormat = AppConfigurationService.settings.dateFormat.split(' ')[0];
   }
 
+  /**
+   * function to re-plot map with clicked vessel card voyage ports
+   *
+   * @param {*} event
+   * @param {IFleetVessel} vessel
+   * @memberof FleetVesselCardComponent
+   */
   onClickVesselCard(event, vessel: IFleetVessel) {
     this.selectedVesselId = vessel.id;
     this.selectVessel.emit({ vesselId: vessel.id, originalEvent: event });
+  }
+
+  /**
+   * function to navigate from vessel card to other pages
+   *
+   * @param {string} key
+   * @param {IFleetVessel} vessel
+   * @memberof FleetVesselCardComponent
+   */
+  navigateToPage(key: string, vessel: IFleetVessel) {
+    localStorage.setItem("vesselId", vessel.id.toString());
+    switch (key) {
+      case 'voyage-status':
+        this.router.navigate(['/business/voyage-status']);
+        break;
+      case 'cargo-planning':
+        this.router.navigate(['/business/cargo-planning/loadable-study-list']);
+        break;
+      case 'voyages':
+        this.router.navigate(['/business/voyages']);
+        break;
+      case 'synoptical':
+        this.router.navigate(['/business/synoptical' + '/' + vessel.id + '/' + vessel.voyageId]);
+        break;
+    }
   }
 
 }
