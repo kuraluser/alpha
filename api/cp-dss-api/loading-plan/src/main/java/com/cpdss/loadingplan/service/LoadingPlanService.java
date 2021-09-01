@@ -14,10 +14,13 @@ import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import io.grpc.stub.StreamObserver;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -685,8 +688,68 @@ public class LoadingPlanService {
   }
 
   public void saveUpdatedLoadingPlanDetails(
-      LoadingInformation loadingInformation, Integer conditionType) {
-    // TODO Save Loading Plan Details
+      LoadingInformation loadingInformation, Integer conditionType)
+      throws IllegalAccessException, InvocationTargetException {
+    // Method used for Updating port loading plan stowage and ballast details from  temp table to
+    // permanent after loadicator done
+
+    List<PortLoadingPlanStowageTempDetails> tempStowageList =
+        portLoadingPlanStowageTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInformation, conditionType, true);
+    if (!tempStowageList.isEmpty()) {
+      List<PortLoadingPlanStowageDetails> stowageEntityList = new ArrayList<>();
+      for (PortLoadingPlanStowageTempDetails tempStowageEntity : tempStowageList) {
+        PortLoadingPlanStowageDetails stowageEntity = new PortLoadingPlanStowageDetails();
+        BeanUtils.copyProperties(stowageEntity, tempStowageEntity);
+        stowageEntity.setId(null);
+        stowageEntity.setCreatedBy(null);
+        stowageEntity.setCreatedDate(null);
+        stowageEntity.setCreatedDateTime(null);
+        stowageEntity.setLastModifiedBy(null);
+        stowageEntity.setLastModifiedDate(null);
+        stowageEntity.setLastModifiedDateTime(null);
+        stowageEntity.setIsActive(true);
+
+        stowageEntityList.add(stowageEntity);
+      }
+      // Deleting existing entry from actual table before pushing new records
+      portLoadingPlanStowageDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
+          loadingInformation.getId(), conditionType);
+      portLoadingPlanStowageDetailsRepository.saveAll(stowageEntityList);
+    }
+
+    List<PortLoadingPlanBallastTempDetails> tempBallastList =
+        portLoadingPlanBallastTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInformation, conditionType, true);
+    if (!tempBallastList.isEmpty()) {
+      List<PortLoadingPlanBallastDetails> ballastEntityList = new ArrayList<>();
+      for (PortLoadingPlanBallastTempDetails tempBallastEntity : tempBallastList) {
+        PortLoadingPlanBallastDetails ballastEntity = new PortLoadingPlanBallastDetails();
+        BeanUtils.copyProperties(ballastEntity, tempBallastEntity);
+        ballastEntity.setId(null);
+        ballastEntity.setCreatedBy(null);
+        ballastEntity.setCreatedDate(null);
+        ballastEntity.setCreatedDateTime(null);
+        ballastEntity.setLastModifiedBy(null);
+        ballastEntity.setLastModifiedDate(null);
+        ballastEntity.setLastModifiedDateTime(null);
+        ballastEntity.setIsActive(true);
+
+        ballastEntityList.add(ballastEntity);
+      }
+      // Deleting existing entry from actual table before pushing new records
+      portLoadingPlanBallastDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
+          loadingInformation.getId(), conditionType);
+      portLoadingPlanBallastDetailsRepository.saveAll(ballastEntityList);
+    }
+
+    // Deleting existing entry from temp tables
+    portLoadingPlanStowageTempDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
+        loadingInformation.getId(), conditionType);
+    portLoadingPlanBallastTempDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
+        loadingInformation.getId(), conditionType);
   }
 
   public void getPortWiseStowageTempDetails(

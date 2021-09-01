@@ -51,8 +51,14 @@ public interface PortLoadingPlanStowageDetailsRepository
       @Param("port_xid") Long portXId,
       @Param("loading_information_xid") Long loadingId,
       @Param("arrival_departutre") Long arrivalDepartutre);
-  
+
   public List<PortLoadingPlanStowageDetails> findByPortRotationXIdInAndIsActive(
       List<Long> portRotationId, Boolean isActive);
 
+  @Transactional
+  @Modifying
+  @Query(
+      "Update PortLoadingPlanStowageDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and isActive = true")
+  public void deleteExistingByLoadingInfoAndConditionType(
+      Long loadingInfoId, Integer conditionType);
 }
