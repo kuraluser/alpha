@@ -332,9 +332,9 @@ public class LoadingPlanAlgoService {
         updateLoadingInfoAlgoStatus(
             loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
         loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
-                loadingInfoOpt.get().getId(), true);
+            loadingInfoOpt.get().getId(), true);
         loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
-                loadingInfoOpt.get().getId(), true);
+            loadingInfoOpt.get().getId(), true);
       }
     }
   }

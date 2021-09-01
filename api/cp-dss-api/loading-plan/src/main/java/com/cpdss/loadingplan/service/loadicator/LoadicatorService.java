@@ -605,9 +605,9 @@ public class LoadicatorService {
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
       loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
-              loadingInfoOpt.get().getId(), true);
+          loadingInfoOpt.get().getId(), true);
       loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
-              loadingInfoOpt.get().getId(), true);
+          loadingInfoOpt.get().getId(), true);
     } else {
       log.info(
           "Recieved stability parameters of Loading Plam of Loading Information {} from Loadicator",
@@ -637,7 +637,8 @@ public class LoadicatorService {
       }
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
-      loadingPlanService.saveUpdatedLoadingPlanDetails(loadingInfoOpt.get(), request.getConditionType());
+      loadingPlanService.saveUpdatedLoadingPlanDetails(
+          loadingInfoOpt.get(), request.getConditionType());
     }
   }
 
