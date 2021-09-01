@@ -113,11 +113,11 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.ngxSpinnerService.show();
     this.loadingDischargingTransformationService.isLoadingPlanGenerated.subscribe((status) => {     
         this.loadingPlanComplete = status;  
-        this.processing = false; 
+        this.processing = !status; 
     })
     this.loadingDischargingTransformationService.isLoadingSequenceGenerated.subscribe((status) => {     
         this.loadingSequenceComplete = status; 
-        this.processing = false;   
+        this.processing = !status;   
     })  
 
     this.loadingDischargingTransformationService.validateUllageData$.subscribe((res) => {
