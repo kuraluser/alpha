@@ -419,7 +419,7 @@ public class LoadingPlanService {
 
     LoadingPlanModels.UllageBillReply.Builder builder =
         LoadingPlanModels.UllageBillReply.newBuilder();
-    String processId = null;
+
     try {
 
       request
@@ -578,10 +578,9 @@ public class LoadingPlanService {
                 });
 
       } else {
-        processId = validateAndSaveData(request);
+        validateAndSaveData(request);
       }
 
-      Optional.ofNullable(processId).ifPresent(builder::setProcessId);
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
       e.printStackTrace();

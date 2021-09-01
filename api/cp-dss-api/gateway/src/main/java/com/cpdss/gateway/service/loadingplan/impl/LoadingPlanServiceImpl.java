@@ -47,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -748,9 +749,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       LoadableStudy.CargoNominationReply cargoNominationReply,
       List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails,
       CargoInfo.CargoReply cargoReply) {
-    //Setting actual or planned
+    // Setting actual or planned
     boolean isPlanned = true;
-    if(portLoadablePlanStowageDetails.size() > 0 && portLoadablePlanStowageDetails.get(0).getActualPlanned().equalsIgnoreCase("1")){
+    if (portLoadablePlanStowageDetails.size() > 0
+        && portLoadablePlanStowageDetails.get(0).getActualPlanned().equalsIgnoreCase("1")) {
       isPlanned = false;
     }
     outResponse.setIsPlannedValues(isPlanned);
@@ -933,43 +935,43 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       List<VesselInfo.VesselTankDetail> sortedTankList) {
     List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetailsList = new ArrayList<>();
     List<LoadingPlanModels.PortLoadablePlanStowageDetail> portLoadablePlanStowageDetails =
-            response.getPortLoadablePlanStowageTempDetailsList().stream()
-                    .filter(
-                            portWiseStowageTempDetail ->
-                                    portWiseStowageTempDetail
-                                            .getArrivalDeparture()
-                                            .equalsIgnoreCase(arrivalDeparture)
-                                            && portWiseStowageTempDetail.getActualPlanned().equalsIgnoreCase("1"))
-                    .collect(Collectors.toList());
+        response.getPortLoadablePlanStowageTempDetailsList().stream()
+            .filter(
+                portWiseStowageTempDetail ->
+                    portWiseStowageTempDetail
+                            .getArrivalDeparture()
+                            .equalsIgnoreCase(arrivalDeparture)
+                        && portWiseStowageTempDetail.getActualPlanned().equalsIgnoreCase("1"))
+            .collect(Collectors.toList());
     // if no value in temp take actual
     if (portLoadablePlanStowageDetails.size() == 0) {
       portLoadablePlanStowageDetails =
-              response.getPortLoadablePlanStowageDetailsList().stream()
-                      .filter(
-                              portWiseStowageDetail ->
-                                      portWiseStowageDetail.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
-                                              && portWiseStowageDetail.getActualPlanned().equalsIgnoreCase("1"))
-                      .collect(Collectors.toList());
+          response.getPortLoadablePlanStowageDetailsList().stream()
+              .filter(
+                  portWiseStowageDetail ->
+                      portWiseStowageDetail.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
+                          && portWiseStowageDetail.getActualPlanned().equalsIgnoreCase("1"))
+              .collect(Collectors.toList());
     }
-    //if no values take planned
+    // if no values take planned
     if (portLoadablePlanStowageDetails.size() == 0) {
       portLoadablePlanStowageDetails =
-              response.getPortLoadablePlanStowageDetailsList().stream()
-                      .filter(
-                              portWiseStowageDetail ->
-                                      portWiseStowageDetail.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
-                                              && portWiseStowageDetail.getActualPlanned().equalsIgnoreCase("2"))
-                      .collect(Collectors.toList());
+          response.getPortLoadablePlanStowageDetailsList().stream()
+              .filter(
+                  portWiseStowageDetail ->
+                      portWiseStowageDetail.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
+                          && portWiseStowageDetail.getActualPlanned().equalsIgnoreCase("2"))
+              .collect(Collectors.toList());
     }
     // if no values take departure
     if (portLoadablePlanStowageDetails.size() == 0) {
       portLoadablePlanStowageDetails =
-              response.getPortLoadablePlanStowageDetailsList().stream()
-                      .filter(
-                              portWiseStowageDetail ->
-                                      portWiseStowageDetail.getArrivalDeparture().equalsIgnoreCase("2")
-                                              && portWiseStowageDetail.getActualPlanned().equalsIgnoreCase("2"))
-                      .collect(Collectors.toList());
+          response.getPortLoadablePlanStowageDetailsList().stream()
+              .filter(
+                  portWiseStowageDetail ->
+                      portWiseStowageDetail.getArrivalDeparture().equalsIgnoreCase("2")
+                          && portWiseStowageDetail.getActualPlanned().equalsIgnoreCase("2"))
+              .collect(Collectors.toList());
     }
     if (portLoadablePlanStowageDetails.size() > 0) {
       portLoadablePlanStowageDetails.stream()
@@ -1017,36 +1019,36 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       List<VesselInfo.VesselTankDetail> sortedTankList) {
     List<PortLoadablePlanBallastDetails> portLoadablePlanBallastDetailsList = new ArrayList<>();
     List<LoadingPlanModels.PortLoadingPlanBallastDetails> portLoadablePlanBallastDetails =
-            response.getPortLoadingPlanBallastTempDetailsList().stream()
-                    .filter(
-                            portLoadablePlanBallastDetail ->
-                                    portLoadablePlanBallastDetail
-                                            .getArrivalDeparture()
-                                            .equalsIgnoreCase(arrivalDeparture)
-                                            && portLoadablePlanBallastDetail.getActualPlanned().equalsIgnoreCase("1"))
-                    .collect(Collectors.toList());
+        response.getPortLoadingPlanBallastTempDetailsList().stream()
+            .filter(
+                portLoadablePlanBallastDetail ->
+                    portLoadablePlanBallastDetail
+                            .getArrivalDeparture()
+                            .equalsIgnoreCase(arrivalDeparture)
+                        && portLoadablePlanBallastDetail.getActualPlanned().equalsIgnoreCase("1"))
+            .collect(Collectors.toList());
 
     if (portLoadablePlanBallastDetails.size() == 0) {
       portLoadablePlanBallastDetails =
-              response.getPortLoadingPlanBallastDetailsList().stream()
-                      .filter(
-                              portLoadablePlanBallastDetail ->
-                                      portLoadablePlanBallastDetail
-                                              .getArrivalDeparture()
-                                              .equalsIgnoreCase(arrivalDeparture)
-                                              && portLoadablePlanBallastDetail.getActualPlanned().equalsIgnoreCase("1"))
-                      .collect(Collectors.toList());
+          response.getPortLoadingPlanBallastDetailsList().stream()
+              .filter(
+                  portLoadablePlanBallastDetail ->
+                      portLoadablePlanBallastDetail
+                              .getArrivalDeparture()
+                              .equalsIgnoreCase(arrivalDeparture)
+                          && portLoadablePlanBallastDetail.getActualPlanned().equalsIgnoreCase("1"))
+              .collect(Collectors.toList());
     }
     if (portLoadablePlanBallastDetails.size() == 0) {
       portLoadablePlanBallastDetails =
-              response.getPortLoadingPlanBallastDetailsList().stream()
-                      .filter(
-                              portLoadablePlanBallastDetail ->
-                                      portLoadablePlanBallastDetail
-                                              .getArrivalDeparture()
-                                              .equalsIgnoreCase(arrivalDeparture)
-                                              && portLoadablePlanBallastDetail.getActualPlanned().equalsIgnoreCase("2"))
-                      .collect(Collectors.toList());
+          response.getPortLoadingPlanBallastDetailsList().stream()
+              .filter(
+                  portLoadablePlanBallastDetail ->
+                      portLoadablePlanBallastDetail
+                              .getArrivalDeparture()
+                              .equalsIgnoreCase(arrivalDeparture)
+                          && portLoadablePlanBallastDetail.getActualPlanned().equalsIgnoreCase("2"))
+              .collect(Collectors.toList());
     }
     if (portLoadablePlanBallastDetails.size() > 0) {
       portLoadablePlanBallastDetails.stream()
@@ -1101,50 +1103,52 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       LoadingPlanModels.UpdateUllageDetailsResponse response,
       String arrivalDeparture,
       List<VesselInfo.VesselTankDetail> sortedTankList) {
-    List<PortLoadablePlanRobDetails> portLoadablePlanRobDetailsList =
-        new ArrayList<>();
+    List<PortLoadablePlanRobDetails> portLoadablePlanRobDetailsList = new ArrayList<>();
     List<LoadingPlanModels.PortLoadingPlanRobDetails> portLoadablePlanRobDetails =
-            response.getPortLoadingPlanRobDetailsList().stream()
-                    .filter(item -> item.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
-                            && item.getActualPlanned().equalsIgnoreCase("1"))
-                    .collect(Collectors.toList());
-    if(portLoadablePlanRobDetails.size() == 0){
+        response.getPortLoadingPlanRobDetailsList().stream()
+            .filter(
+                item ->
+                    item.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
+                        && item.getActualPlanned().equalsIgnoreCase("1"))
+            .collect(Collectors.toList());
+    if (portLoadablePlanRobDetails.size() == 0) {
       portLoadablePlanRobDetails =
-              response.getPortLoadingPlanRobDetailsList().stream()
-                      .filter(item -> item.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
-                              && item.getActualPlanned().equalsIgnoreCase("2"))
-                      .collect(Collectors.toList());
+          response.getPortLoadingPlanRobDetailsList().stream()
+              .filter(
+                  item ->
+                      item.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
+                          && item.getActualPlanned().equalsIgnoreCase("2"))
+              .collect(Collectors.toList());
     }
     if (portLoadablePlanRobDetails.size() > 0) {
-      portLoadablePlanRobDetails
-          .forEach(
-              portWiseRobDetail -> {
-                PortLoadablePlanRobDetails robDetail = new PortLoadablePlanRobDetails();
-                robDetail.setId(portWiseRobDetail.getId());
-                robDetail.setLoadablePatternId(portWiseRobDetail.getLoadablePatternId());
-                robDetail.setTankId(portWiseRobDetail.getTankId());
-                robDetail.setQuantity(portWiseRobDetail.getQuantity());
-                robDetail.setArrivalDeparture(portWiseRobDetail.getArrivalDeparture());
-                robDetail.setActualPlanned(portWiseRobDetail.getActualPlanned());
-                robDetail.setDensity(
-                    portWiseRobDetail.getDensity().isEmpty()
-                        ? null
-                        : new BigDecimal(portWiseRobDetail.getDensity()));
-                robDetail.setColorCode(portWiseRobDetail.getColorCode());
+      portLoadablePlanRobDetails.forEach(
+          portWiseRobDetail -> {
+            PortLoadablePlanRobDetails robDetail = new PortLoadablePlanRobDetails();
+            robDetail.setId(portWiseRobDetail.getId());
+            robDetail.setLoadablePatternId(portWiseRobDetail.getLoadablePatternId());
+            robDetail.setTankId(portWiseRobDetail.getTankId());
+            robDetail.setQuantity(portWiseRobDetail.getQuantity());
+            robDetail.setArrivalDeparture(portWiseRobDetail.getArrivalDeparture());
+            robDetail.setActualPlanned(portWiseRobDetail.getActualPlanned());
+            robDetail.setDensity(
+                portWiseRobDetail.getDensity().isEmpty()
+                    ? null
+                    : new BigDecimal(portWiseRobDetail.getDensity()));
+            robDetail.setColorCode(portWiseRobDetail.getColorCode());
 
-                Optional<VesselInfo.VesselTankDetail> tankDetail =
-                    sortedTankList.stream()
-                        .filter(
-                            vesselTankDetail ->
-                                vesselTankDetail.getTankId() == portWiseRobDetail.getTankId())
-                        .findFirst();
-                if (tankDetail.isPresent()) {
-                  robDetail.setTankName(tankDetail.get().getTankName());
-                  robDetail.setTankShortName(tankDetail.get().getShortName());
-                }
+            Optional<VesselInfo.VesselTankDetail> tankDetail =
+                sortedTankList.stream()
+                    .filter(
+                        vesselTankDetail ->
+                            vesselTankDetail.getTankId() == portWiseRobDetail.getTankId())
+                    .findFirst();
+            if (tankDetail.isPresent()) {
+              robDetail.setTankName(tankDetail.get().getTankName());
+              robDetail.setTankShortName(tankDetail.get().getShortName());
+            }
 
-                portLoadablePlanRobDetailsList.add(robDetail);
-              });
+            portLoadablePlanRobDetailsList.add(robDetail);
+          });
     }
     return portLoadablePlanRobDetailsList;
   }
@@ -1337,37 +1341,53 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 billLanding -> {
                   billOfLandingBuilder
                       .setLoadingId(
-                          billLanding.getLoadingId() == null ? 0 : billLanding.getLoadingId())
-                      .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
-                      .setCargoId(billLanding.getCargoId() == null ? 0 : billLanding.getCargoId())
+                          StringUtils.isEmpty(billLanding.getLoadingId())
+                              ? 0
+                              : billLanding.getLoadingId())
+                      .setPortId(
+                          StringUtils.isEmpty(billLanding.getPortId())
+                              ? 0
+                              : billLanding.getPortId())
+                      .setCargoId(
+                          StringUtils.isEmpty(billLanding.getCargoId())
+                              ? 0
+                              : billLanding.getCargoId())
                       .setBlRefNumber(
-                          billLanding.getBlRefNumber() == null ? "" : billLanding.getBlRefNumber())
+                          StringUtils.isEmpty(billLanding.getBlRefNumber())
+                              ? ""
+                              : billLanding.getBlRefNumber())
                       .setBblAt60F(
-                          billLanding.getBblAt60f() == null
-                              ? null
+                          StringUtils.isEmpty(billLanding.getBblAt60f())
+                              ? 0
                               : billLanding.getBblAt60f().longValue())
                       .setQuantityLt(
-                          billLanding.getQuantityLt() == null
+                          StringUtils.isEmpty(billLanding.getQuantityLt())
                               ? 0
                               : billLanding.getQuantityLt().longValue())
                       .setQuantityMt(
-                          billLanding.getQuantityMt() == null
+                          StringUtils.isEmpty(billLanding.getQuantityMt())
                               ? 0
                               : billLanding.getQuantityMt().longValue())
                       .setKlAt15C(
-                          billLanding.getKlAt15c() == null
+                          StringUtils.isEmpty(billLanding.getKlAt15c())
                               ? 0
                               : billLanding.getKlAt15c().longValue())
-                      .setApi(billLanding.getApi() == null ? 0 : billLanding.getApi().longValue())
+                      .setApi(
+                          StringUtils.isEmpty(billLanding.getApi())
+                              ? 0
+                              : billLanding.getKlAt15c().longValue())
                       .setTemperature(
-                          billLanding.getTemperature() == null
+                          StringUtils.isEmpty(billLanding.getTemperature())
                               ? 0
                               : billLanding.getTemperature().longValue())
                       .setIsActive(
-                          billLanding.getIsActive() == null
+                          StringUtils.isEmpty(billLanding.getIsActive())
                               ? 0
                               : billLanding.getIsActive().longValue())
-                      .setVersion(billLanding.getVersion() == null ? 0 : billLanding.getVersion())
+                      .setVersion(
+                          StringUtils.isEmpty(billLanding.getVersion())
+                              ? 0
+                              : billLanding.getVersion())
                       .setIsUpdate(
                           billLanding.getIsUpdate() == false ? false : billLanding.getIsUpdate())
                       .build();
@@ -1750,4 +1770,21 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   public byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException {
     return loadingInformationService.downloadLoadingPortTideDetails(loadingId);
   }
+
+  private Long castInput(String inputData) {
+    return StringUtils.isEmpty(inputData) ? 0 : Long.parseLong(inputData);
+  }
+
+  /*
+  private Long castInput(String input){
+    if (input == null || input.isEmpty() || input.isBlank()){
+      return 0l;
+    }
+    try{
+      return Long.parseLong(input);
+    }catch(Exception e) {
+      return 0l;
+    }
+
+  }*/
 }

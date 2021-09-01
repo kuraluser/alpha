@@ -1511,6 +1511,7 @@
   "RULES_UPDATE_SUCCESSFULLY": "Rules Updated Successfully",
   "RULES_UPDATE_SUCCESS": "Success",
   "RULES_REQUIRED": "Required",
+  "RULES_INVALID": "Invalid",
   "RULES_CANCEL": "Cancel Changes",
   "RULES_UPDATE_ERROR": "Error",
   "RULES_UPDATE_FAILED": "Rules update failed",
