@@ -102,7 +102,8 @@ public class LoadingSequenceService {
     List<LoadingRate> loadingRates = new ArrayList<LoadingRate>();
     Set<Long> stageTickPositions = new LinkedHashSet<Long>();
     List<StabilityParam> stabilityParams = new ArrayList<StabilityParam>();
-
+    Set<TankCategory> cargoTankCategories = new LinkedHashSet<TankCategory>();
+    Set<TankCategory> ballastTankCategories = new LinkedHashSet<TankCategory>();
     inititalizeStabilityParams(stabilityParams);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd'T'HH:mm");
@@ -135,13 +136,27 @@ public class LoadingSequenceService {
           // Adding cargos
           temp =
               this.buildCargoSequence(
-                  stowage, vesselTanks, cargoNomDetails, portEta, start, portWiseDetails, cargos);
+                  stowage,
+                  vesselTanks,
+                  cargoNomDetails,
+                  portEta,
+                  start,
+                  portWiseDetails,
+                  cargos,
+                  cargoTankCategories);
         }
         for (LoadingPlanTankDetails ballast : portWiseDetails.getLoadingPlanBallastDetailsList()) {
           // Adding ballasts
           temp =
               this.buildBallastSequence(
-                  ballast, vesselTanks, portEta, start, portWiseDetails, ballastDetails, ballasts);
+                  ballast,
+                  vesselTanks,
+                  portEta,
+                  start,
+                  portWiseDetails,
+                  ballastDetails,
+                  ballasts,
+                  ballastTankCategories);
         }
 
         start = temp;
@@ -181,8 +196,6 @@ public class LoadingSequenceService {
     this.updateCargoLoadingRateIntervals(cargoLoadingRates, stageTickPositions);
     this.buildStabilityParamSequence(reply, portEta, stabilityParams);
     this.buildFlowRates(loadingRates, vesselTanks, portEta, response);
-    this.buildCargoTankCategories(reply, vesselTanks, response);
-    this.buildBallastTankCategories(reply, vesselTanks, response);
     this.buildBallastPumpCategories(vesselId, response);
     this.buildCargoStages(reply, cargoNomDetails, portEta, response);
 
@@ -193,6 +206,8 @@ public class LoadingSequenceService {
     response.setCargoLoadingRates(cargoLoadingRates);
     response.setStageTickPositions(stageTickPositions);
     response.setStabilityParams(stabilityParams);
+    response.setCargoTankCategories(cargoTankCategories);
+    response.setBallastTankCategories(ballastTankCategories);
   }
 
   /** @param stabilityParams */
@@ -391,7 +406,8 @@ public class LoadingSequenceService {
       Integer start,
       LoadingPlanPortWiseDetails portWiseDetails,
       List<LoadablePlanBallastDetails> ballastDetails,
-      List<Ballast> ballasts) {
+      List<Ballast> ballasts,
+      Set<TankCategory> ballastTankCategories) {
     Ballast ballastDto = new Ballast();
     Optional<VesselTankDetail> tankDetailOpt =
         vesselTanks.stream().filter(tank -> tank.getTankId() == ballast.getTankId()).findAny();
@@ -403,8 +419,15 @@ public class LoadingSequenceService {
                         && !StringUtils.isEmpty(details.getColorCode()))
             .findFirst();
     Integer end = buildBallast(ballast, ballastDto, portEta, start, portWiseDetails.getTime());
-    tankDetailOpt.ifPresent(tank -> ballastDto.setTankName(tank.getShortName()));
+    TankCategory tankCategory = new TankCategory();
+    tankCategory.setId(ballast.getTankId());
+    tankDetailOpt.ifPresent(
+        tank -> {
+          ballastDto.setTankName(tank.getShortName());
+          tankCategory.setTankName(tank.getShortName());
+        });
     ballastDetailsOpt.ifPresent(details -> ballastDto.setColor(details.getColorCode()));
+    ballastTankCategories.add(tankCategory);
     ballasts.add(ballastDto);
     return end;
   }
@@ -416,13 +439,15 @@ public class LoadingSequenceService {
       Long portEta,
       Integer start,
       LoadingPlanPortWiseDetails portWiseDetails,
-      List<Cargo> cargos) {
+      List<Cargo> cargos,
+      Set<TankCategory> cargoTankCategories) {
     Cargo cargo = new Cargo();
     Optional<VesselTankDetail> tankDetailOpt =
         vesselTanks.stream().filter(tank -> tank.getTankId() == stowage.getTankId()).findAny();
     CargoNominationDetail cargoNomination = cargoNomDetails.get(stowage.getCargoNominationId());
     Integer end =
         buildCargo(stowage, cargo, cargoNomination, portEta, start, portWiseDetails.getTime());
+    buildCargoTankCategory(stowage, tankDetailOpt, cargoTankCategories);
     tankDetailOpt.ifPresent(tank -> cargo.setTankName(tank.getShortName()));
     cargos.add(cargo);
     return end;
@@ -474,72 +499,21 @@ public class LoadingSequenceService {
     response.setBallastPumpCategories(ballastPumpCategories);
   }
 
-  private void buildBallastTankCategories(
-      LoadingSequenceReply reply,
-      List<VesselTankDetail> vesselTanks,
-      LoadingSequenceResponse response) {
-    log.info("Populating ballast tank categories");
-    List<TankCategory> ballastTankCategories = new ArrayList<>();
-    if (reply.getLoadingSequencesCount() > 0) {
-      LoadingSequence initialSequence = reply.getLoadingSequences(0);
-      if (initialSequence.getLoadingPlanPortWiseDetailsCount() > 0) {
-        LoadingPlanPortWiseDetails portWiseDetails =
-            initialSequence.getLoadingPlanPortWiseDetails(0);
-        portWiseDetails
-            .getLoadingPlanBallastDetailsList()
-            .forEach(
-                ballast -> {
-                  TankCategory tankCategory = new TankCategory();
-                  tankCategory.setId(ballast.getTankId());
-                  Optional<VesselTankDetail> tankDetailOpt =
-                      vesselTanks.stream()
-                          .filter(tank -> tank.getTankId() == ballast.getTankId())
-                          .findAny();
-                  tankDetailOpt.ifPresent(tank -> tankCategory.setTankName(tank.getShortName()));
-                  ballastTankCategories.add(tankCategory);
-                });
-      }
+  private void buildCargoTankCategory(
+      LoadingPlanTankDetails stowage,
+      Optional<VesselTankDetail> tankDetailOpt,
+      Set<TankCategory> cargoTankCategories) {
+    TankCategory tankCategory = new TankCategory();
+    tankDetailOpt.ifPresent(tank -> tankCategory.setTankName(tank.getShortName()));
+    if (cargoTankCategories.stream().anyMatch(cargo -> cargo.getId().equals(stowage.getTankId()))) {
+      cargoTankCategories.removeIf(cargo -> cargo.getId().equals(stowage.getTankId()));
     }
-    response.setBallastTankCategories(ballastTankCategories);
-  }
-
-  private void buildCargoTankCategories(
-      LoadingSequenceReply reply,
-      List<VesselTankDetail> vesselTanks,
-      LoadingSequenceResponse response) {
-    log.info("Populating cargo tank categories");
-    List<TankCategory> cargoTankCategories = new ArrayList<>();
-    if (reply.getLoadingSequencesCount() > 0) {
-      LoadingSequence finalSequence =
-          reply.getLoadingSequences(reply.getLoadingSequencesCount() - 1);
-      if (finalSequence.getLoadingPlanPortWiseDetailsCount() > 0) {
-        LoadingPlanPortWiseDetails portWiseDetails =
-            finalSequence.getLoadingPlanPortWiseDetails(
-                finalSequence.getLoadingPlanPortWiseDetailsCount() - 1);
-        portWiseDetails
-            .getLoadingPlanStowageDetailsList()
-            .forEach(
-                stowage -> {
-                  TankCategory tankCategory = new TankCategory();
-                  Optional<VesselTankDetail> tankDetailOpt =
-                      vesselTanks.stream()
-                          .filter(tank -> tank.getTankId() == stowage.getTankId())
-                          .findAny();
-                  tankDetailOpt.ifPresent(tank -> tankCategory.setTankName(tank.getShortName()));
-                  tankCategory.setId(stowage.getTankId());
-                  tankCategory.setQuantity(
-                      StringUtils.isEmpty(stowage.getQuantity())
-                          ? null
-                          : new BigDecimal(stowage.getQuantity()));
-                  tankCategory.setUllage(
-                      StringUtils.isEmpty(stowage.getUllage())
-                          ? null
-                          : new BigDecimal(stowage.getUllage()));
-                  cargoTankCategories.add(tankCategory);
-                });
-      }
-    }
-    response.setCargoTankCategories(cargoTankCategories);
+    tankCategory.setId(stowage.getTankId());
+    tankCategory.setQuantity(
+        StringUtils.isEmpty(stowage.getQuantity()) ? null : new BigDecimal(stowage.getQuantity()));
+    tankCategory.setUllage(
+        StringUtils.isEmpty(stowage.getUllage()) ? null : new BigDecimal(stowage.getUllage()));
+    cargoTankCategories.add(tankCategory);
   }
 
   private void buildFlowRates(
