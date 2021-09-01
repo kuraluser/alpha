@@ -13,6 +13,7 @@ import lombok.Data;
 public class LoadingUpdateUllageResponse {
   private CommonSuccessResponse responseStatus;
   private List<CargoBillOfLadding> billOfLaddingList;
+  private Boolean isPlannedValues;
   private List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails;
   private List<PortLoadablePlanBallastDetails> portLoadablePlanBallastDetails;
   private List<PortLoadablePlanRobDetails> portLoadablePlanRobDetails;
