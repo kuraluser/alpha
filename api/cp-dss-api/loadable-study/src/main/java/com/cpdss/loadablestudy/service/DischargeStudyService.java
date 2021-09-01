@@ -6,8 +6,27 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGI
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ERRO_CALLING_ALGO;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_INITIAL_STATUS_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.ResourceAccessException;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
@@ -69,26 +88,11 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+
 import io.grpc.stub.StreamObserver;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.ResourceAccessException;
 
 /** @author arun.j */
 @Log4j2
@@ -230,7 +234,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         cargoNominationService.getCargoNominationByLoadableStudyId(loadableStudy.getId());
     List<LoadableStudyPortRotation> ports =
         loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-            loadableStudy.getId(), true);
+            loadableStudy.getId(), true).stream().filter(p->p.getOperation().getId().equals(LOADING_OPERATION_ID)).collect(Collectors.toList());
     StowageAndBillOfLaddingValidationRequest.Builder request =
         StowageAndBillOfLaddingValidationRequest.newBuilder();
     ports.forEach(
