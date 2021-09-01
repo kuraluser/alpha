@@ -78,4 +78,7 @@ service LoadingPlanService {
   rpc GetLoadicatorData(LoadingInfoLoadicatorDataRequest) returns (LoadingInfoLoadicatorDataReply) {}
  
   rpc GetLoadableStudyShoreTwo(UllageBillRequest) returns (UllageBillReply){}
+  
+  rpc validateStowageAndBillOfLadding(StowageAndBillOfLaddingValidationRequest) returns (ResponseStatus){}
+  
 }
