@@ -30,8 +30,8 @@ public interface LoadingPlanGrpcService {
 
   Object getPortRotationDetailsForActiveVoyage(Long vesselId);
 
-  LoadableStudy.LoadingSynopticResponse fetchSynopticRecordForPortRotationArrivalCondition(
-      Long portRId) throws GenericServiceException;
+  LoadableStudy.LoadingSynopticResponse fetchSynopticRecordForPortRotation(
+      Long portRId, String operationType) throws GenericServiceException;
 
   PortInfo.PortDetail fetchPortDetailByPortId(Long portId) throws GenericServiceException;
 

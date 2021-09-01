@@ -15,6 +15,8 @@ import com.cpdss.dischargeplan.domain.RuleMasterSection;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargePlanRuleInput;
 import com.cpdss.dischargeplan.entity.DischargePlanRules;
+import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
+import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
 import com.cpdss.dischargeplan.repository.DischargeRulesInputRepository;
 import com.cpdss.dischargeplan.repository.DischargeRulesRepository;
@@ -39,6 +41,8 @@ public class DischargeInformationService {
   @Autowired DischargeInformationRepository dischargeInformationRepository;
 
   @Autowired DischargeInformationBuilderService informationBuilderService;
+
+  @Autowired DischargeBerthDetailRepository dischargeBerthDetailRepository;
 
   @Autowired DischargeRulesRepository dischargeStudyRulesRepository;
 
@@ -74,6 +78,7 @@ public class DischargeInformationService {
     }
 
     try {
+      assert disEntity != null;
       builder.setDischargeInfoId(disEntity.getId());
       builder.setSynopticTableId(disEntity.getSynopticTableXid());
       log.info("Setting Discharge PK and Synoptic Id");
@@ -86,6 +91,28 @@ public class DischargeInformationService {
 
     // Set Discharge Rates
     this.informationBuilderService.buildDischargeRateMessageFromEntity(disEntity, builder);
+
+    // Set Discharge berth
+    List<DischargingBerthDetail> listVarB =
+        this.dischargeBerthDetailRepository.findAllByDischargingInformationIdAndIsActiveTrue(
+            disEntity.getId());
+    this.informationBuilderService.buildDischargeBerthMessageFromEntity(
+        disEntity, listVarB, builder);
+
+    // Set Stages
+    this.informationBuilderService.buildDischargeStageMessageFromEntity(disEntity, builder);
+
+    // Set Delay
+    this.informationBuilderService.buildDischargeDelaysMessageFromEntity(disEntity, builder);
+
+    // Set Post Discharge stage
+    this.informationBuilderService.buildPostDischargeStageMessageFromEntity(disEntity, builder);
+
+    // set Pump and Machine Details
+    this.informationBuilderService.buildMachineInUseMessageFromEntity(disEntity, builder);
+
+    // Set Cow Details
+    this.informationBuilderService.buildCowPlanMessageFromEntity(disEntity, builder);
 
     builder.setResponseStatus(
         Common.ResponseStatus.newBuilder()
@@ -106,8 +133,9 @@ public class DischargeInformationService {
     Optional<DischargeInformation> dischargeInformation =
         dischargeInformationRepository.findByIdAndIsActiveAndVesselXid(
             request.getDischargeInfoId(), true, request.getVesselId());
-    if (!dischargeInformation.isPresent()) {
-      log.error("Failed to get discharge study for get or save rule", request.getDischargeInfoId());
+    if (dischargeInformation.isEmpty()) {
+      log.error(
+          "Failed to get discharge study for get or save rule {}", request.getDischargeInfoId());
       throw new GenericServiceException(
           "discharge study with given id does not exist",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,

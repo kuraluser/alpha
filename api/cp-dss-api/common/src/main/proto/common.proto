@@ -87,3 +87,9 @@ enum COW_TYPE {
 	ALL_COW = 3;
 	CARGO = 4;
 }
+
+enum COW_OPTION_TYPE {
+	EMPTY_COW_OPTION_TYPE = 0;
+	AUTO = 1;
+	MANUAL = 2;
+}
