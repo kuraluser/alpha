@@ -28,7 +28,9 @@ import com.cpdss.loadingplan.repository.PortLoadingPlanBallastTempDetailsReposit
 import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageTempDetailsRepository;
+import com.cpdss.loadingplan.service.LoadingPlanService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -67,15 +69,18 @@ public class UllageUpdateLoadicatorService {
 
   @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
   @Autowired LoadicatorService loadicatorService;
+  @Autowired LoadingPlanService loadingPlanService;
 
   /**
    * Sends StowagePlans to loadicator-integration MS for Loadicator processing.
    *
    * @param request
    * @throws GenericServiceException
+   * @throws InvocationTargetException
+   * @throws IllegalAccessException
    */
   public String saveLoadicatorInfoForUllageUpdate(UllageBillRequest request)
-      throws GenericServiceException {
+      throws GenericServiceException, IllegalAccessException, InvocationTargetException {
     Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
         Loadicator.LoadicatorRequest.newBuilder();
     Long loadingInfoId = request.getUpdateUllage(0).getLoadingInformationId();
@@ -110,6 +115,8 @@ public class UllageUpdateLoadicatorService {
           processId,
           loadingInfoStatusOpt.get(),
           Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()));
+      loadingPlanService.saveUpdatedLoadingPlanDetails(
+          loadingInfoOpt.get(), Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()));
       return processId;
     }
     List<PortLoadingPlanStowageTempDetails> tempStowageDetails =

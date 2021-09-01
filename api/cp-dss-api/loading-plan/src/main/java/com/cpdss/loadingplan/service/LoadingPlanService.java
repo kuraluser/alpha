@@ -596,7 +596,7 @@ public class LoadingPlanService {
   }
 
   private String validateAndSaveData(LoadingPlanModels.UllageBillRequest request)
-      throws GenericServiceException {
+      throws GenericServiceException, IllegalAccessException, InvocationTargetException {
 
     return ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(request);
     //    loadingPlanBallastDetailsTempRepository.deleteByLoadingInformationId(null);
