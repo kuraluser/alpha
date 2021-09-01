@@ -90,7 +90,28 @@ public class UllageUpdateLoadicatorService {
     }
 
     String processId = UUID.randomUUID().toString();
-
+    VesselInfo.VesselReply vesselReply =
+        loadicatorService.getVesselDetailsForLoadicator(loadingInfoOpt.get());
+    if (!vesselReply.getVesselsList().get(0).getHasLoadicator()) {
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          loadingPlanAlgoService.getLoadingInformationStatus(
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+      if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE.equals(
+          request.getUpdateUllage(0).getArrivalDepartutre())) {
+        loadingInformationRepository.updateLoadingInformationArrivalStatus(
+            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
+      } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE.equals(
+          request.getUpdateUllage(0).getArrivalDepartutre())) {
+        loadingInformationRepository.updateLoadingInformationDepartureStatus(
+            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
+      }
+      loadingPlanAlgoService.createLoadingInformationAlgoStatus(
+          loadingInfoOpt.get(),
+          processId,
+          loadingInfoStatusOpt.get(),
+          Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()));
+      return processId;
+    }
     List<PortLoadingPlanStowageTempDetails> tempStowageDetails =
         portLoadingPlanStowageDetailsTempRepository.findByLoadingInformationAndIsActive(
             loadingInfoOpt.get(), true);
@@ -110,8 +131,6 @@ public class UllageUpdateLoadicatorService {
         loadicatorService.getCargoNominationDetails(cargoNominationIds);
     CargoInfo.CargoReply cargoReply =
         loadicatorService.getCargoInfoForLoadicator(loadingInfoOpt.get());
-    VesselInfo.VesselReply vesselReply =
-        loadicatorService.getVesselDetailsForLoadicator(loadingInfoOpt.get());
     PortInfo.PortReply portReply = loadicatorService.getPortInfoForLoadicator(loadingInfoOpt.get());
 
     loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
