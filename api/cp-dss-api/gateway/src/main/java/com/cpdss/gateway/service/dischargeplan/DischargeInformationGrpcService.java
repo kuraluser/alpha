@@ -30,6 +30,9 @@ public class DischargeInformationGrpcService {
       throws GenericServiceException {
 
     DischargeInformationRequest.Builder reqBuilder = DischargeInformationRequest.newBuilder();
+    reqBuilder.setVoyageId(voyageId);
+    reqBuilder.setVesselId(vesselId);
+    reqBuilder.setPortRotationId(portRotationId);
     DischargeInformation rpcReplay =
         this.dischargeInfoServiceStub.getDischargeInformation(reqBuilder.build());
     if (!rpcReplay.getResponseStatus().getStatus().equals(SUCCESS)) {

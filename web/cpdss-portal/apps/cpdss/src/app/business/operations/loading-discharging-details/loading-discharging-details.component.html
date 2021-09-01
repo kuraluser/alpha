@@ -167,11 +167,10 @@
                         <div class="upload-file v-bottom">
                             {{'LOADING_DETAILS_BROWSE_BUTTON_LABEL' | translate}}
                             <input type="file" name="fl_attachMail" #fileUpload
-                                accept="image/jpeg,image/jpg,image/png,application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document,.eml,.msg"
-                                title="No file selected"  focusTrap/>
+                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                title="No file selected"  focusTrap (change)="selectFilesToUpload()"/>
                         </div>
-                        <a type="button" class="download-icon ml-10 mr-10"></a>
-                        <a type="button" class="pencil-icon"></a>
+                        <a type="button" class="download-icon ml-10 mr-10" (click)="downloadTemplate()"></a>
                     </div>
                     <!-- <div class="col error-column">
                         <cpdss-portal-validation-error [errors]="fieldError('portName')"

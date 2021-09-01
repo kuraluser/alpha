@@ -25,8 +25,10 @@ message DischargeInformation {
   DischargeDetails dischargeDetails = 2;
   DischargeRates dischargeRate = 3;
   repeated DischargeBerths berthDetails = 4;
+  repeated LoadingMachinesInUse machineInUse = 10;
   LoadingStages dischargeStage = 5; // reusing
   DischargeDelay dischargeDelay = 6;
+  CowPlan cowPlan = 11;
   PostDischargeStageTime postDischargeStageTime = 7;
 }
 
@@ -95,8 +97,8 @@ message PostDischargeStageTime {
 }
 
 message CowPlan {
-  string cowPlan = 1;
-  string noOfTanksForCow = 2;
+  COW_OPTION_TYPE cowOptionType = 1;
+  string cowTankPercent = 2;
   string cowStartTime = 3;
   string cowEndTime = 4;
   string estCowDuration = 5;
@@ -109,14 +111,17 @@ message CowPlan {
 
 message CowTankDetails {
   COW_TYPE cowType = 1;
-  CargoForCow cargoForCow = 2;
-  repeated int64 tankIds = 3;
+  repeated int64 tankIds = 2;
+  repeated CargoForCow cargoForCow = 3;
 }
 
 
 message CargoForCow {
   int64 cargoId = 1;
   int64 cargoNominationId = 2;
+  int64 washingCargoId = 3;
+  int64 washingCargoNominationId = 4;
+  repeated int64 tankIds = 5;
 }
 
 message DischargeRuleRequest{

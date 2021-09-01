@@ -15,7 +15,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "discharging_information_status")
 public class DischargingInformationStatus extends EntityDoc {
-  private static final long serialVersionUID = 1L;
 
   @Column(name = "is_active")
   private Boolean isActive;

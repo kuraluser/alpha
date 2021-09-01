@@ -20,6 +20,10 @@ export interface ILoadingInformationResponse {
   loadingInfoId: number;
   synopticTableId: number;
   isLoadingInfoComplete: boolean;
+
+  isLoadingInstructionsComplete: boolean;
+  isLoadingPlanGenerated: boolean;
+  isLoadingSequenceGenerated: boolean;
 }
 
 /**
@@ -454,6 +458,11 @@ export interface ILoadingInformation {
   vesselId?: number;
   voyageId?: number;
   isLoadingInfoComplete: boolean;
+  isLoadingPlanGenerated:boolean;
+  isLoadingSequenceGenerated: boolean;
+  isLoadingInstructionsComplete: boolean
+
+
 }
 
 /**

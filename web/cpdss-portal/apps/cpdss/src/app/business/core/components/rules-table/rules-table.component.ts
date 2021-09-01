@@ -44,6 +44,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
   rulesForm: FormArray = new FormArray([])
   errorMessages: IValidationErrorMessages = {
     'required': 'RULES_REQUIRED',
+    'invalidNumber': 'RULES_INVALID'
   }
   selectedIndex = 0;
   @Input() rulesJson;
@@ -345,7 +346,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
 
 
             if (input.type === 'Number' || input.type === 'number') {
-              if (rule.numericScale !== 0 || rule.numericPrecision !== 0) {
+              if (rule.numericPrecision !== 0) {
                 validationArray.push(numberValidator(rule.numericScale, (rule.numericPrecision - rule.numericScale)))
               }
             }

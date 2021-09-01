@@ -25,9 +25,10 @@ public class DischargeInformation {
 
   // reusing common class from loading
   private LoadingDetails dischargeDetails;
-  private LoadingRates dischargeRates;
+  private DischargeRates dischargeRates;
   private LoadingBerthDetails berthDetails;
   private CargoMachineryInUse machineryInUses;
   private LoadingStages dischargeStages;
   private LoadingSequences dischargeSequences;
+  private CowPlan cowPlan;
 }

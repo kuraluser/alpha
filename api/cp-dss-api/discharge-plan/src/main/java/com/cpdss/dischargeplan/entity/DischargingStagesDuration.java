@@ -15,7 +15,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "discharging_stages_duration")
 public class DischargingStagesDuration extends EntityDoc {
-  private static final long serialVersionUID = 1L;
 
   private Integer duration;
 
@@ -24,5 +23,5 @@ public class DischargingStagesDuration extends EntityDoc {
 
   // bi-directional many-to-one association to DischargingInformation
   @OneToMany(mappedBy = "dischargingStagesDuration")
-  private List<DischargeInformation> dischargingInformations;
+  private List<DischargeInformation> dischargingInformation;
 }

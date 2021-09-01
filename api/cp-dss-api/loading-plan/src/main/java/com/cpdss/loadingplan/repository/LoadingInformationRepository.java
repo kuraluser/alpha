@@ -68,4 +68,15 @@ public interface LoadingInformationRepository
   @Modifying
   @Query("UPDATE LoadingInformation li SET li.isLoadingPlanGenerated = ?2 WHERE id = ?1")
   void updateIsLoadingPlanGeneratedStatus(Long id, boolean status);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadingInformation SET arrivalStatus = ?1 WHERE id = ?2")
+  public void updateLoadingInformationArrivalStatus(
+      LoadingInformationStatus arrivalStatus, Long id);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadingInformation SET departureStatus = ?1 WHERE id = ?2")
+  public void updateLoadingInformationDepartureStatus(LoadingInformationStatus depStatus, Long id);
 }

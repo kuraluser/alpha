@@ -570,6 +570,65 @@ public final class LoadingPlanServiceGrpc {
     return getGetLoadableStudyShoreTwoMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .StowageAndBillOfLaddingValidationRequest,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getValidateStowageAndBillOfLaddingMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "validateStowageAndBillOfLadding",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .StowageAndBillOfLaddingValidationRequest.class,
+      responseType = com.cpdss.common.generated.Common.ResponseStatus.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .StowageAndBillOfLaddingValidationRequest,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getValidateStowageAndBillOfLaddingMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .StowageAndBillOfLaddingValidationRequest,
+            com.cpdss.common.generated.Common.ResponseStatus>
+        getValidateStowageAndBillOfLaddingMethod;
+    if ((getValidateStowageAndBillOfLaddingMethod =
+            LoadingPlanServiceGrpc.getValidateStowageAndBillOfLaddingMethod)
+        == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getValidateStowageAndBillOfLaddingMethod =
+                LoadingPlanServiceGrpc.getValidateStowageAndBillOfLaddingMethod)
+            == null) {
+          LoadingPlanServiceGrpc.getValidateStowageAndBillOfLaddingMethod =
+              getValidateStowageAndBillOfLaddingMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .StowageAndBillOfLaddingValidationRequest,
+                          com.cpdss.common.generated.Common.ResponseStatus>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "validateStowageAndBillOfLadding"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .StowageAndBillOfLaddingValidationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.ResponseStatus
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier(
+                              "validateStowageAndBillOfLadding"))
+                      .build();
+        }
+      }
+    }
+    return getValidateStowageAndBillOfLaddingMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingPlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingPlanServiceStub> factory =
@@ -719,6 +778,17 @@ public final class LoadingPlanServiceGrpc {
           getGetLoadableStudyShoreTwoMethod(), responseObserver);
     }
 
+    /** */
+    public void validateStowageAndBillOfLadding(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .StowageAndBillOfLaddingValidationRequest
+            request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getValidateStowageAndBillOfLaddingMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -802,6 +872,14 @@ public final class LoadingPlanServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest,
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>(
                       this, METHODID_GET_LOADABLE_STUDY_SHORE_TWO)))
+          .addMethod(
+              getValidateStowageAndBillOfLaddingMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .StowageAndBillOfLaddingValidationRequest,
+                      com.cpdss.common.generated.Common.ResponseStatus>(
+                      this, METHODID_VALIDATE_STOWAGE_AND_BILL_OF_LADDING)))
           .build();
     }
   }
@@ -943,6 +1021,19 @@ public final class LoadingPlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void validateStowageAndBillOfLadding(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .StowageAndBillOfLaddingValidationRequest
+            request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getValidateStowageAndBillOfLaddingMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1047,6 +1138,15 @@ public final class LoadingPlanServiceGrpc {
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadableStudyShoreTwoMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.ResponseStatus validateStowageAndBillOfLadding(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .StowageAndBillOfLaddingValidationRequest
+            request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getValidateStowageAndBillOfLaddingMethod(), getCallOptions(), request);
     }
   }
 
@@ -1164,6 +1264,18 @@ public final class LoadingPlanServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadableStudyShoreTwoMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.ResponseStatus>
+        validateStowageAndBillOfLadding(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .StowageAndBillOfLaddingValidationRequest
+                request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getValidateStowageAndBillOfLaddingMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_LOADING_PLAN_SYNCHRONIZATION = 0;
@@ -1176,6 +1288,7 @@ public final class LoadingPlanServiceGrpc {
   private static final int METHODID_GET_CARGO_NOMINATION_MAX_QUANTITY = 7;
   private static final int METHODID_GET_LOADICATOR_DATA = 8;
   private static final int METHODID_GET_LOADABLE_STUDY_SHORE_TWO = 9;
+  private static final int METHODID_VALIDATE_STOWAGE_AND_BILL_OF_LADDING = 10;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1282,6 +1395,14 @@ public final class LoadingPlanServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>)
                   responseObserver);
           break;
+        case METHODID_VALIDATE_STOWAGE_AND_BILL_OF_LADDING:
+          serviceImpl.validateStowageAndBillOfLadding(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .StowageAndBillOfLaddingValidationRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1356,6 +1477,7 @@ public final class LoadingPlanServiceGrpc {
                       .addMethod(getGetCargoNominationMaxQuantityMethod())
                       .addMethod(getGetLoadicatorDataMethod())
                       .addMethod(getGetLoadableStudyShoreTwoMethod())
+                      .addMethod(getValidateStowageAndBillOfLaddingMethod())
                       .build();
         }
       }

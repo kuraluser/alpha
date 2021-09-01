@@ -154,25 +154,43 @@ public class LoadingPlanAlgoService {
 
     // Set Loading Status
     Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-        loadingInfoStatusRepository.findByIdAndIsActive(
-            LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID, true);
-    if (loadingInfoStatusOpt.isEmpty()) {
-      throw new GenericServiceException(
-          "Could not find loading information status with id "
-              + LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID,
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
+        getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID);
     loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
+    loadingInfoOpt.get().setIsLoadingSequenceGenerated(false);
+    loadingInfoOpt.get().setIsLoadingPlanGenerated(false);
     loadingInformationRepository.save(loadingInfoOpt.get());
     createLoadingInformationAlgoStatus(
         loadingInfoOpt.get(), response.getProcessId(), loadingInfoStatusOpt.get(), null);
     builder.setLoadingInfoId(loadingInfoOpt.get().getId());
     builder.setProcessId(response.getProcessId());
-    ;
   }
 
-  /** @param request void */
+  /**
+   * Fetches Loading Information Status based on status ID.
+   *
+   * @param loadingInformationProcessingStartedId
+   * @return
+   * @throws GenericServiceException
+   */
+  public Optional<LoadingInformationStatus> getLoadingInformationStatus(
+      Long loadingInformationStatusId) throws GenericServiceException {
+    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+        loadingInfoStatusRepository.findByIdAndIsActive(loadingInformationStatusId, true);
+    if (loadingInfoStatusOpt.isEmpty()) {
+      throw new GenericServiceException(
+          "Could not find loading information status with id " + loadingInformationStatusId,
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    return loadingInfoStatusOpt;
+  }
+
+  /**
+   * Saves the ALGO status.
+   *
+   * @param request void
+   */
   public void saveAlgoLoadingPlanStatus(AlgoStatusRequest request) throws GenericServiceException {
     Optional<LoadingInformationAlgoStatus> loadingInfoStatusOpt =
         loadingInfoAlgoStatusRepository.findByProcessIdAndIsActiveTrue(request.getProcesssId());
@@ -268,15 +286,8 @@ public class LoadingPlanAlgoService {
     if (request.getLoadingSequencesList().isEmpty()) {
       log.info("No Plans Available for Loading Information {}", loadingInfoOpt.get().getId());
       Optional<LoadingInformationStatus> noPlanAvailableStatusOpt =
-          loadingInfoStatusRepository.findByIdAndIsActive(
-              LoadingPlanConstants.LOADING_INFORMATION_NO_PLAN_AVAILABLE_ID, true);
-      if (noPlanAvailableStatusOpt.isEmpty()) {
-        throw new GenericServiceException(
-            "Could not find loading information status with id "
-                + LoadingPlanConstants.LOADING_INFORMATION_NO_PLAN_AVAILABLE_ID,
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
+          getLoadingInformationStatus(
+              LoadingPlanConstants.LOADING_INFORMATION_NO_PLAN_AVAILABLE_ID);
       loadingInformationRepository.updateLoadingInformationStatus(
           noPlanAvailableStatusOpt.get(), loadingInfoOpt.get().getId());
       updateLoadingInfoAlgoStatus(
@@ -297,42 +308,22 @@ public class LoadingPlanAlgoService {
                 saveLoadingSequence(sequence, loadingInfoOpt.get());
               });
       deleteLoadingSequences(loadingInfoOpt.get().getId(), oldLoadingSequences);
-      loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
-          loadingInfoOpt.get().getId(), true);
       deleteLoadingSequenceStabilityParams(loadingInfoOpt.get().getId());
       saveLoadingSequenceStabilityParams(request, loadingInfoOpt.get());
 
       deleteLoadingPlan(loadingInfoOpt.get().getId());
       saveLoadingPlan(request, loadingInfoOpt.get());
-      loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
-          loadingInfoOpt.get().getId(), true);
       if (request.getHasLoadicator()) {
         log.info("Passing Loading Sequence to Loadicator");
         loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
         Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
-            loadingInfoStatusRepository.findByIdAndIsActive(
-                LoadingPlanConstants.LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID, true);
-        if (loadicatorVerificationStatusOpt.isEmpty()) {
-          throw new GenericServiceException(
-              "Could not find loading information status with id "
-                  + LoadingPlanConstants.LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID,
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
-        }
+            getLoadingInformationStatus(
+                LoadingPlanConstants.LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID);
         updateLoadingInfoAlgoStatus(
             loadingInfoOpt.get(), request.getProcessId(), loadicatorVerificationStatusOpt.get());
       } else {
         Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-            loadingInfoStatusRepository.findByIdAndIsActive(
-                LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
-        if (loadingInfoStatusOpt.isEmpty()) {
-          throw new GenericServiceException(
-              "Could not find loading information status with id "
-                  + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
-        }
-
+            getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID);
         loadingInformationRepository.updateLoadingInformationStatuses(
             loadingInfoStatusOpt.get(),
             loadingInfoStatusOpt.get(),
@@ -340,6 +331,10 @@ public class LoadingPlanAlgoService {
             loadingInfoOpt.get().getId());
         updateLoadingInfoAlgoStatus(
             loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+        loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
+            loadingInfoOpt.get().getId(), true);
+        loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
+            loadingInfoOpt.get().getId(), true);
       }
     }
   }
@@ -374,15 +369,7 @@ public class LoadingPlanAlgoService {
                       });
             });
     Optional<LoadingInformationStatus> errorOccurredStatusOpt =
-        loadingInfoStatusRepository.findByIdAndIsActive(
-            LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID, true);
-    if (errorOccurredStatusOpt.isEmpty()) {
-      throw new GenericServiceException(
-          "Could not find loading information status with id "
-              + LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID,
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
+        getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
     loadingInformationRepository.updateLoadingInformationStatus(
         errorOccurredStatusOpt.get(), loadingInformation.getId());
     updateLoadingInfoAlgoStatus(

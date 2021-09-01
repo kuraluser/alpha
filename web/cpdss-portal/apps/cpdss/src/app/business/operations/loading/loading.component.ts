@@ -49,6 +49,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   OPERATIONS = OPERATIONS;
   errorMessage: IAlgoError[];
   disableGenerateLoadableButton: boolean = true;
+  loadinfoTemp:number;
 
   private ngUnsubscribe: Subject<any> = new Subject();
   errorPopUp: boolean = false;
@@ -78,6 +79,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
 
   ngOnInit(): void {
+    this.ngxSpinnerService.show();
     this.initSubsciptions();
     this.getCargos();
     this.listenEvents();
@@ -107,24 +109,48 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @memberof LoadingComponent
    */
   private async initSubsciptions() {
-    this.loadingDischargingTransformationService.loadingInformationValidity$.subscribe((res) => {
-      this.loadingInformationComplete = res;
-      if (this.loadingInstructionComplete && this.loadingInstructionComplete) {
-        this.disableGenerateLoadableButton = false;
-      }
-    });
-    this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((res) => {
-      this.loadingInstructionComplete = res;
-      if (this.loadingInstructionComplete && this.loadingInstructionComplete) {
-        this.disableGenerateLoadableButton = false;
-      }
-    });
+  
+    this.ngxSpinnerService.show();
+    this.loadingDischargingTransformationService.isLoadingPlanGenerated.subscribe((status) => {     
+        this.loadingPlanComplete = status;  
+        this.processing = !status; 
+        this.disableGenerateLoadableButton = !status;
+    })
+    this.loadingDischargingTransformationService.isLoadingSequenceGenerated.subscribe((status) => {     
+        this.loadingSequenceComplete = status; 
+        this.processing = !status;   
+        this.disableGenerateLoadableButton = !status;
+    })  
 
     this.loadingDischargingTransformationService.validateUllageData$.subscribe((res) => {
       if (res?.validate) {
         this.validateUllage(res);
       }
     });
+
+    this.loadingDischargingTransformationService.loadingInformationValidity$.subscribe((res) => {  
+        this.loadingInformationComplete = res;
+        if (this.loadingInstructionComplete && this.loadingInformationComplete) {
+          this.disableGenerateLoadableButton = false;
+        }
+        else {
+          this.disableGenerateLoadableButton = true;
+        }
+    
+    });
+    this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((res) => {
+    
+        this.loadingInstructionComplete = res;
+        if (this.loadingInstructionComplete && this.loadingInformationComplete) {
+          this.disableGenerateLoadableButton = false;
+        }
+        else {
+          this.disableGenerateLoadableButton = true;
+        }
+     
+    });    
+  this.ngxSpinnerService.hide();
+ 
   }
 
   /**
@@ -202,14 +228,18 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    */
 
   private swMessageHandler = async event => {
-    this.ngxSpinnerService.hide();
     const translationKeys = await this.translateService.get(["GENERATE_LODABLE_PLAN_PENDING", "GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE", "GENERATE_LODABLE_PLAN_CONFIRMED", "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED", "GENERATE_LODABLE_PLAN_PLAN_GENERATED", "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED", "GENERATE_LODABLE_PLAN_ERROR_OCCURED", "GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER", "GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED",
       "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION", "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED"]).toPromise();
     if (event?.data?.errorCode === '210') {
       this.globalErrorHandler.sessionOutMessage();
     }
     if (event?.data?.pattern?.type === 'loading-plan-status') {
-      this.loadingSequenceComplete = this.loadingPlanComplete = (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED)
+      this.loadinfoTemp = event?.data?.pattern?.loadingInfoId
+      if(this.loadingInfoId === this.loadinfoTemp){
+        this.loadingDischargingTransformationService.isLoadingSequenceGenerated.next(  event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED);
+        this.loadingDischargingTransformationService.isLoadingPlanGenerated.next( event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED);
+      }
+      this.ngxSpinnerService.hide();
       if (event?.data.statusId === OPERATIONS_PLAN_STATUS.ERROR_OCCURED) {
         this.setButtonStatus();
         this.disableViewErrorButton = false;
@@ -225,6 +255,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED) {
         this.setButtonStatus();
         this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: translationKeys["GENERATE_LODABLE_PLAN_PLAN_GENERATED"] ,sticky: true, closable: true });
+      
       }
 
       if (this.router.url.includes('operations/loading')) {
@@ -277,7 +308,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
 
       if (this.router.url.includes('operations/loading')) {
-
+        
         switch (event?.data?.statusId) {
           case OPERATIONS_PLAN_STATUS.PENDING:
             this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_PENDING"] });
@@ -324,9 +355,15 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @memberof LoadingComponent
    */
   setButtonStatus() {
-    this.disableGenerateLoadableButton = false;
-    this.processing = false;
-    this.loadingDischargingTransformationService.disableSaveButton.next(false);
+    if (this.loadinfoTemp == this.loadingInfoId) {
+
+      this.disableGenerateLoadableButton = false;
+      this.processing = false;
+      this.loadingDischargingTransformationService.disableSaveButton.next(false);
+      this.ngxSpinnerService.hide();
+
+    }
+
   }
 
 
@@ -336,8 +373,12 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @memberof LoadingComponent
    */
   setButtonStatusInProcessing() {
-    this.disableGenerateLoadableButton = true;
-    this.processing = true;
+    if (this.loadingInfoId == this.loadinfoTemp) {
+      this.disableGenerateLoadableButton = true;
+      this.processing = true;
+    }
+    this.ngxSpinnerService.hide();
+
   }
   /**
    * Method to call on generate loading plan
@@ -372,10 +413,12 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @memberof LoadingComponent
    */
   async getAlgoErrorMessage(status) {
-    const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
-    if (algoError.responseStatus.status === 'SUCCESS') {
-      this.errorMessage = algoError.algoErrors;
-      this.errorPopUp = status;
+    if (this.loadinfoTemp == this.loadingInfoId) {
+      const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
+      if (algoError.responseStatus.status === 'SUCCESS') {
+        this.errorMessage = algoError.algoErrors;
+        this.errorPopUp = status;
+      }
     }
 
   }

@@ -15,7 +15,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "discharging_berth_details")
 public class DischargingBerthDetail extends EntityDoc {
-  private static final long serialVersionUID = 1L;
 
   @Column(name = "air_draft_limitation")
   private BigDecimal airDraftLimitation;
@@ -51,6 +50,9 @@ public class DischargingBerthDetail extends EntityDoc {
 
   @Column(name = "special_regulation_restriction")
   private String specialRegulationRestriction;
+
+  @Column(name = "max_manifold_pressure")
+  private BigDecimal maxManifoldPressure;
 
   // bi-directional many-to-one association to DischargingInformation
   @ManyToOne

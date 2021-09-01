@@ -23,4 +23,8 @@ public class BerthDetails {
   private BigDecimal maxDraft;
   private String itemsToBeAgreedWith;
   private String lineDisplacement;
+
+  private String maxManifoldPressure;
+  private Boolean airPurge;
+  private Boolean cargoCirculation;
 }

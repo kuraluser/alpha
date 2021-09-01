@@ -63,12 +63,12 @@
       <a (click)="switchTab(OPERATION_TAB.PLAN)"
         [ngClass]="{'active' : currentTab === OPERATION_TAB.PLAN ,'disabled':processing}" class="tab-btn">
         {{'LOADING_PLAN' | translate}}
-        <div *ngIf="loadingPlanComplete else incomplete" class="pt-5">
-          <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
+        <div *ngIf="loadingPlanComplete else incompletePlan" class="pt-5">
+          <div class="tab-status-icon pi pi-check completed"></div> {{'GENERATED'|translate}}
         </div>
-        <ng-template #incomplete>
+        <ng-template #incompletePlan>
           <div class="pt-5">
-            <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
+            <div class="tab-status-icon pi pi-check"></div> {{'NOT_GENERATED'|translate}}
           </div>
         </ng-template>
       </a>

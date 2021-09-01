@@ -12,6 +12,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
+import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.util.List;
@@ -67,6 +68,8 @@ public class LoadingPlanService {
   @Autowired StageDurationRepository stageDurationRepository;
   @Autowired ReasonForDelayRepository reasonForDelayRepository;
   @Autowired LoadingDelayRepository loadingDelayRepository;
+
+  @Autowired UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
 
   /**
    * @param request
@@ -674,6 +677,12 @@ public class LoadingPlanService {
                 loadingPlanStowageDetailsRepository.save(tempData);
               }
             });
+  }
+
+
+  public void saveUpdatedLoadingPlanDetails(
+      LoadingInformation loadingInformation, Integer conditionType) {
+    // TODO Save Loading Plan Details
   }
 
   public void getPortWiseStowageTempDetails(

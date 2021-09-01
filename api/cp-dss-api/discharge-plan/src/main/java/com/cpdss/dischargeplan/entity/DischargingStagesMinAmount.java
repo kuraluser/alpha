@@ -15,7 +15,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "discharging_stages_min_amount")
 public class DischargingStagesMinAmount extends EntityDoc {
-  private static final long serialVersionUID = 1L;
 
   @Column(name = "is_active")
   private Boolean isActive;

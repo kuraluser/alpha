@@ -133,8 +133,8 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   }
 
   @Override
-  public LoadableStudy.LoadingSynopticResponse fetchSynopticRecordForPortRotationArrivalCondition(
-      Long portRId) throws GenericServiceException {
+  public LoadableStudy.LoadingSynopticResponse fetchSynopticRecordForPortRotation(
+      Long portRId, String operationType) throws GenericServiceException {
     LoadableStudy.LoadingPlanCommonResponse response =
         this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
             LoadableStudy.LoadingPlanIdRequest.newBuilder()
@@ -154,7 +154,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
       return null;
     } else {
       return response.getSynopticDataList().stream()
-          .filter(v -> v.getOperationType().equalsIgnoreCase("ARR"))
+          .filter(v -> v.getOperationType().equalsIgnoreCase(operationType))
           .findFirst()
           .get();
     }
@@ -427,12 +427,13 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   public UllageBillReply getLoadableStudyShoreTwo(
       String first, LoadingPlanModels.UllageBillRequest.Builder inputData)
       throws GenericServiceException {
-    Common.ResponseStatus reply =
-        loadingPlanServiceBlockingStub
-            .getLoadableStudyShoreTwo(inputData.build())
-            .getResponseStatus();
+    LoadingPlanModels.UllageBillReply reply =
+        loadingPlanServiceBlockingStub.getLoadableStudyShoreTwo(inputData.build());
     UllageBillReply replyData = new UllageBillReply();
-    replyData.setResponseStatus(new CommonSuccessResponse(reply.getStatus(), reply.getCode()));
+    replyData.setProcessId(reply.getProcessId());
+    replyData.setResponseStatus(
+        new CommonSuccessResponse(
+            reply.getResponseStatus().getStatus(), reply.getResponseStatus().getCode()));
     return replyData;
   }
 

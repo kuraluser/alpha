@@ -141,7 +141,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
       // For Sunrise and Sunset, 1st  call to LS
       LoadableStudy.LoadingSynopticResponse response =
-          this.loadingPlanGrpcService.fetchSynopticRecordForPortRotationArrivalCondition(portRId);
+          this.loadingPlanGrpcService.fetchSynopticRecordForPortRotation(
+              portRId, GatewayConstants.OPERATION_TYPE_ARR);
       var.setTimeOfSunrise(
           response.getTimeOfSunrise().isEmpty() ? null : response.getTimeOfSunrise());
       var.setTimeOfSunset(response.getTimeOfSunset().isEmpty() ? null : response.getTimeOfSunset());

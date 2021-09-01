@@ -168,7 +168,7 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
     this.ngxSpinnerService.show();
     let result;
     if (this.dischargeStudyForm.valid) {
-      let newModel = {
+      const newModel = {
         name: this.dischargeStudyForm.value.newDischargeStudyName,
         detail: this.dischargeStudyForm.value.enquiryDetails ? this.dischargeStudyForm.value.enquiryDetails : ''
       }
@@ -201,6 +201,9 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
       catch (error) {
         if (error.error.errorCode === 'ERR-RICO-105') {
           this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_DISCHARGE_STUDY_POPUP__NAME_EXIST'] });
+          this.ngxSpinnerService.hide();
+        } else if(error.error.errorCode === 'ERR-RICO-151') {
+          this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_DISCHARGE_STUDY_POPUP_BILL_OF_LADDING'] });
           this.ngxSpinnerService.hide();
         }
       }

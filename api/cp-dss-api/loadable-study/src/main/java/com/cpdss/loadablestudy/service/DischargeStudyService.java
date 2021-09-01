@@ -6,8 +6,27 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGI
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ERRO_CALLING_ALGO;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_INITIAL_STATUS_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.ResourceAccessException;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
@@ -43,6 +62,9 @@ import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStud
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortWiseCargo;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StowageAndBillOfLaddingValidationRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.BackLoading;
@@ -66,26 +88,11 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+
 import io.grpc.stub.StreamObserver;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.ResourceAccessException;
 
 /** @author arun.j */
 @Log4j2
@@ -127,6 +134,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
+
   @Override
   public void saveDischargeStudy(
       DischargeStudyDetail request, StreamObserver<DischargeStudyReply> responseObserver) {
@@ -137,13 +147,6 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         throw new GenericServiceException(
             "Voyage does not exist",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      if (dischargeStudyRepository.existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
-          request.getName(), 2, voyage, true)) {
-        throw new GenericServiceException(
-            "name already exists",
-            CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
             HttpStatusCode.BAD_REQUEST);
       }
 
@@ -159,6 +162,14 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       }
       LoadableStudy loadableStudy = loadables.get(0);
       LoadableStudyPortRotation loadableStudyPortRotation = getportRotationData(loadableStudy);
+      validateActuals(loadableStudy);
+      if (dischargeStudyRepository.existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
+          request.getName(), 2, voyage, true)) {
+        throw new GenericServiceException(
+            "name already exists",
+            CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
+            HttpStatusCode.BAD_REQUEST);
+      }
       List<SynopticalTable> synopticalData =
           this.synopticalTableRepository
               .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
@@ -214,6 +225,42 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  private void validateActuals(LoadableStudy loadableStudy) throws GenericServiceException {
+
+    List<CargoNomination> cargoNominations =
+        cargoNominationService.getCargoNominationByLoadableStudyId(loadableStudy.getId());
+    List<LoadableStudyPortRotation> ports =
+        loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            loadableStudy.getId(), true).stream().filter(p->p.getOperation().getId().equals(LOADING_OPERATION_ID)).collect(Collectors.toList());
+    StowageAndBillOfLaddingValidationRequest.Builder request =
+        StowageAndBillOfLaddingValidationRequest.newBuilder();
+    ports.forEach(
+        port -> {
+          PortWiseCargo.Builder portBuilder = PortWiseCargo.newBuilder();
+          portBuilder.setPortRotationId(port.getId());
+          portBuilder.setPortId(port.getPortXId());
+          List<Long> cargoIds =
+              cargoNominations.stream()
+                  .filter(
+                      cargo ->
+                          cargo.getCargoNominationPortDetails().stream()
+                              .anyMatch(portData -> portData.getPortId().equals(port.getPortXId())))
+                  .map(CargoNomination::getId)
+                  .collect(Collectors.toList());
+
+          portBuilder.addAllCargoIds(cargoIds);
+          request.addPortWiseCargos(portBuilder);
+        });
+    ResponseStatus response =
+        loadingPlanServiceBlockingStub.validateStowageAndBillOfLadding(request.build());
+    if (!SUCCESS.equalsIgnoreCase(response.getStatus())) {
+      throw new GenericServiceException(
+          "No Atcuals",
+          CommonErrorCodes.E_CPDSS_NO_ACUTALS_OR_BL_VALUES_FOUND,
+          HttpStatusCode.BAD_REQUEST);
     }
   }
 

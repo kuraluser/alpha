@@ -21,8 +21,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DischargePlanRuleInput extends EntityDoc {
 
-  private static final long serialVersionUID = 1L;
-
   @ManyToOne
   @JoinColumn(name = "discharging_rule_xid", referencedColumnName = "id")
   private DischargePlanRules dischargePlanRules;
