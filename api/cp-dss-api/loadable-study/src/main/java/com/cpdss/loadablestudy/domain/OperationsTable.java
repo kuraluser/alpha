@@ -14,10 +14,10 @@ public class OperationsTable {
   private String laycanRange;
   private String eta;
   private String etd;
-  private String arrFwdDraft;
-  private String arrAftDraft;
-  private String arrDisplacement;
-  private String depFwdDraft;
-  private String depAftDraft;
-  private String depDisp;
+  private double arrFwdDraft;
+  private double arrAftDraft;
+  private double arrDisplacement;
+  private double depFwdDraft;
+  private double depAftDraft;
+  private double depDisp;
 }

@@ -19,6 +19,8 @@ public class LoadableStudiesConstants {
 
   public static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
 
+  public static final String VOYAGE_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
+
   public static final String INVALID_LOADABLE_STUDY_ID = "INVALID_LOADABLE_STUDY_ID";
   public static final String INVALID_LOADABLE_QUANTITY = "INVALID_LOADABLE_QUANTITY";
 
@@ -140,6 +142,8 @@ public class LoadableStudiesConstants {
   public static final Long LOADABLE_STUDY_STATUS_FEEDBACK_LOOP_STARTED = 16L;
   public static final Long LOADABLE_PATTERN_VALIDATION_FEEDBACK_LOOP_STARTED = 18L;
   public static final Long LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID = 6L;
+  public static final Long LOADABLE_STUDY_COMMUNICATED_TO_SHORE = 21L;
+  public static final Long PROCESSING_WITH_SHIP_SIDE_ALGO = 22L;
   public static final String ERRO_CALLING_ALGO = "ERROR_CALLING_ALGO";
   public static final int CASE_1 = 1;
   public static final int CASE_2 = 2;
@@ -169,6 +173,8 @@ public class LoadableStudiesConstants {
   public static final String BALLAST_TANK_COLOR_CODE = "#01717D";
   public static final long STOWAGE_STATUS = 1L;
 
+  public static final String LOADABLE_STUDY = "LS";
+  public static final String DICHARGE_STUDY = "DS";
   public static final Long LOADABLE_STUDY_REQUEST = 1L;
   public static final Long LOADABLE_STUDY_LOADICATOR_REQUEST = 3L;
   public static final Long LOADABLE_STUDY_LOADICATOR_RESPONSE = 4L;
@@ -177,5 +183,11 @@ public class LoadableStudiesConstants {
   public static final Long LOADABLE_PATTERN_EDIT_LOADICATOR_RESPONSE = 8L;
 
   public static final String TYPE_DEPARTURE = "Departure";
+
+  public static final String LOADABLE_STUDY_JSON_MODULE_NAME = "LOADABLE";
+  public static final String DISCHARGE_STUDY_JSON_MODULE_NAME = "DISCHARGE";
+  public static final Long DISCHARGE_STUDY_REQUEST = 11L;
   public static final Long LOADABLE_STUDY_RESULT_JSON_ID = 2L;
+
+  public static final Long LOADABLE_STUDY_LOADICATOR_TYPE_ID = 1L;
 }

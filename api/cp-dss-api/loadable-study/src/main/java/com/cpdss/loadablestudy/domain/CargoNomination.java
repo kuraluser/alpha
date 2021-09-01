@@ -12,6 +12,8 @@ public class CargoNomination {
 
   private Long loadableStudyId;
 
+  private Long dischargeStudyId;
+
   private Long priority;
 
   private String color;

@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -151,6 +152,8 @@ import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRuleInputRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRuleRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
@@ -212,15 +215,16 @@ class LoadableStudyServiceTest {
   @MockBean private VoyageRepository voyageRepository;
   @MockBean private LoadableStudyRepository loadableStudyRepository;
   @MockBean private LoadableQuantityRepository loadableQuantityRepository;
-
+  @MockBean private DischargeStudyService dischargeStudyService;
   @MockBean private CargoNominationRepository cargoNominationRepository;
   @MockBean private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @MockBean private CargoOperationRepository cargoOperationRepository;
   @MockBean private LoadableStudyStatusRepository loadableStudyStatusRepository;
-
+  @MockBean private VoyageService voyageService;
   @MockBean private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
   @MockBean private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
   @MockBean private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
+  @MockBean private SynopticService synopticService;
 
   @MockBean
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -231,6 +235,20 @@ class LoadableStudyServiceTest {
   @MockBean private LoadablePatternRepository loadablePatternRepository;
   @MockBean private LoadablePlanConstraintsRespository loadablePlanConstraintsRespository;
   @MockBean private PurposeOfCommingleRepository purposeOfCommingleRepository;
+  @MockBean private LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
+  @MockBean private LoadableStudyRuleRepository loadableStudyRuleRepository;
+  @MockBean private LoadablePatternService loadablePatternService;
+  @MockBean private LoadableStudyPortRotationService loadableStudyPortRotationService;
+  @MockBean private LoadableStudyRuleService loadableStudyRuleService;
+  @MockBean private LoadicatorService loadicatorService;
+  @MockBean private OnBoardQuantityService onBoardQuantityService;
+  @MockBean private AlgoService algoService;
+  @MockBean private CommunicationService communicationService;
+  @MockBean private JsonDataService jsonDataService;
+  @MockBean private OnHandQuantityService onHandQuantityService;
+  @MockBean private LoadablePlanService loadablePlanService;
+  @MockBean private CargoNominationService cargoNominationService;
+  @MockBean private CargoService cargoService;
 
   @MockBean
   private LoadablePlanCommingleDetailsPortwiseRepository
@@ -1236,7 +1254,7 @@ class LoadableStudyServiceTest {
   @ParameterizedTest
   @ValueSource(longs = {0, 1})
   void testSaveLoadableStudyPortRotation(Long id)
-      throws InstantiationException, IllegalAccessException {
+      throws InstantiationException, IllegalAccessException, GenericServiceException {
     Voyage voyage = new Voyage();
     voyage.setId(1L);
     VoyageStatus status = new VoyageStatus();
@@ -1254,6 +1272,13 @@ class LoadableStudyServiceTest {
       when(this.loadableStudyPortRotationRepository.findById(id))
           .thenReturn(Optional.of(new LoadableStudyPortRotation()));
     }
+    doNothing()
+        .when(this.dischargeStudyService)
+        .addCargoNominationForPortRotation(anyLong(), anyLong());
+    doNothing()
+        .when(this.dischargeStudyService)
+        .resetCargoNominationQuantityAndBackLoading(anyLong(), anyLong());
+
     this.loadableStudyService.saveLoadableStudyPortRotation(
         this.createPortRotationRequest().setId(id).build(), responseObserver);
     List<PortRotationReply> replies = responseObserver.getValues();

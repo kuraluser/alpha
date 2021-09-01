@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
@@ -54,6 +55,6 @@ public interface LoadablePlanStowageDetailsTempRepository
   public LoadablePlanStowageDetailsTemp findByLoadablePlanCommingleDetailsAndIsActive(
       LoadablePlanCommingleDetails commingleDetails, boolean isActive);
 
-  public List<LoadablePlanStowageDetailsTemp> findByLoadablePattern_idAndIsActive(
-      Long loadablePatternId, boolean isActive);
+  public List<LoadablePlanStowageDetailsTemp> findByLoadablePatternAndIsActive(
+      LoadablePattern loadablePattern, boolean isActive);
 }

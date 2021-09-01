@@ -8,6 +8,12 @@ import static java.util.Optional.ofNullable;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.*;
@@ -65,6 +71,10 @@ public class CargoNominationService {
 
   @GrpcClient("cargoService")
   private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
+
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceBlockingStub loadingPlanGrpcService;
+
   /**
    * fetch cargo nomination based on the loadable study id
    *
@@ -74,8 +84,7 @@ public class CargoNominationService {
    */
   public List<CargoNomination> getCargoNominationByLoadableStudyId(Long loadableStudyId)
       throws GenericServiceException {
-    List<CargoNomination> cargos =
-        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+    List<CargoNomination> cargos = getCargoNominations(loadableStudyId);
     if (cargos.isEmpty()) {
       throw new GenericServiceException(
           "cargo nomination data missing",
@@ -86,21 +95,29 @@ public class CargoNominationService {
     return cargos;
   }
 
+  public List<CargoNomination> getCargoNominations(Long loadableStudyId) {
+    List<CargoNomination> cargos =
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+    return cargos;
+  }
+
   public List<CargoNomination> saveDsichargeStudyCargoNominations(
       Long dischargeStudyId, Long loadableStudyId, Long portId) throws GenericServiceException {
     List<CargoNomination> cargos = getCargoNominationByLoadableStudyId(loadableStudyId);
     List<CargoNomination> dischargeStudycargos = new ArrayList<>();
-
+    // Fetching max quantity from Bill of Ladding
+    getMaxQuantityMTFromBillofLadding(cargos);
     cargos
         .parallelStream()
         .forEach(
             cargo -> {
               dischargeStudycargos.add(createDsCargoNomination(dischargeStudyId, cargo, portId));
             });
+
     return cargoNominationRepository.saveAll(dischargeStudycargos);
   }
 
-  private CargoNomination createDsCargoNomination(
+  public CargoNomination createDsCargoNomination(
       Long dischargeStudyId, CargoNomination cargo, Long portId) {
     CargoNomination dischargeStudyCargo = new CargoNomination();
     dischargeStudyCargo.setAbbreviation(cargo.getAbbreviation());
@@ -116,22 +133,62 @@ public class CargoNominationService {
     dischargeStudyCargo.setSegregationXId(cargo.getSegregationXId());
     dischargeStudyCargo.setTemperature(cargo.getTemperature());
     dischargeStudyCargo.setVersion(cargo.getVersion());
+    dischargeStudyCargo.setLsCargoNominationId(cargo.getId());
     dischargeStudyCargo.setCargoNominationPortDetails(
         createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId));
-    dischargeStudyCargo.setMode(2L);
     return dischargeStudyCargo;
   }
 
-  private Set<CargoNominationPortDetails> createCargoNominationPortDetails(
+  private void getMaxQuantityMTFromBillofLadding(List<CargoNomination> dischargeStudycargos)
+      throws GenericServiceException {
+
+    List<Long> cargoIds =
+        dischargeStudycargos
+            .parallelStream()
+            .map(CargoNomination::getId)
+            .collect(Collectors.toList());
+    MaxQuantityRequest.Builder request = MaxQuantityRequest.newBuilder();
+    request.addAllCargoNominationId(cargoIds);
+    MaxQuantityResponse cargoNominationMaxQuantityResponse =
+        loadingPlanGrpcService.getCargoNominationMaxQuantity(request.build());
+    if (!SUCCESS.equals(cargoNominationMaxQuantityResponse.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "max quantity from loading plan is not available",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    List<MaxQuantityDetails> cargoMaxQuantityList =
+        cargoNominationMaxQuantityResponse.getCargoMaxQuantityList();
+    dischargeStudycargos.forEach(
+        item -> {
+          Optional<MaxQuantityDetails> itemQuantity =
+              cargoMaxQuantityList.stream()
+                  .filter(quantity -> item.getId().equals(quantity.getCargoNominationId()))
+                  .findFirst();
+          item.setQuantity(
+              itemQuantity.isPresent()
+                  ? new BigDecimal(itemQuantity.get().getMaxQuantity())
+                  : null);
+        });
+  }
+
+  public Set<CargoNominationPortDetails> createCargoNominationPortDetails(
       CargoNomination dischargeStudyCargo, CargoNomination cargo, Long portId) {
     CargoNominationPortDetails portDetail = new CargoNominationPortDetails();
     portDetail.setPortId(portId);
     portDetail.setIsActive(true);
     portDetail.setCargoNomination(dischargeStudyCargo);
-    portDetail.setQuantity(
-        cargo.getCargoNominationPortDetails().stream()
-            .map(CargoNominationPortDetails::getQuantity)
-            .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+    if (cargo != null) {
+      portDetail.setQuantity(
+          cargo.getCargoNominationPortDetails().stream()
+              .map(CargoNominationPortDetails::getQuantity)
+              .reduce(BigDecimal.ZERO, BigDecimal::add));
+      portDetail.setMode(2L);
+    } else {
+      portDetail.setQuantity(new BigDecimal(0));
+      portDetail.setMode(1L);
+    }
     return new HashSet<CargoNominationPortDetails>(Arrays.asList(portDetail));
   }
 
@@ -355,6 +412,7 @@ public class CargoNominationService {
                   this.cargoNominationRepository.getCountCargoNominationWithPortIds(
                       cargoNomination.getLoadableStudyXId(), cargoNomination, existingPortId);
               if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))) {
+                log.info("deleting port {}", existingPortId);
                 loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
                     loadableStudy, existingPortId);
                 synopticalTableRepository.deleteSynopticalPorts(
@@ -405,13 +463,12 @@ public class CargoNominationService {
       loadableStudyPortRotationService.setPortOrdering(loadableStudy);
     }
 
-    AtomicLong newPortOrder = new AtomicLong(0);
-    loadableStudyPortRotations.forEach(
-        portRotation -> {
-          portRotation.setPortOrder(newPortOrder.incrementAndGet());
-        });
-
-    this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
+    //    AtomicLong newPortOrder = new AtomicLong(0);
+    //    loadableStudyPortRotations.forEach(
+    //        portRotation -> {
+    //          portRotation.setPortOrder(newPortOrder.incrementAndGet());
+    //        });
+    // this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
   }
 
   /**
@@ -527,7 +584,6 @@ public class CargoNominationService {
             ofNullable(cargoNomination.getColor()).ifPresent(builder::setColor);
             ofNullable(cargoNomination.getCargoXId()).ifPresent(builder::setCargoId);
             ofNullable(cargoNomination.getAbbreviation()).ifPresent(builder::setAbbreviation);
-            ofNullable(cargoNomination.getMode()).ifPresent(builder::setMode);
             Optional.ofNullable(cargoNomination.getApi())
                 .ifPresent(val -> builder.setApi(String.valueOf(val)));
             Optional.ofNullable(cargoNomination.getTemperature())
@@ -541,15 +597,20 @@ public class CargoNominationService {
                   .getCargoNominationPortDetails()
                   .forEach(
                       loadingPort -> {
-                        LoadableStudy.LoadingPortDetail.Builder loadingPortDetailBuilder =
-                            LoadableStudy.LoadingPortDetail.newBuilder();
-                        ofNullable(loadingPort.getPortId())
-                            .ifPresent(loadingPortDetailBuilder::setPortId);
-                        ofNullable(loadingPort.getQuantity())
-                            .ifPresent(
-                                quantity ->
-                                    loadingPortDetailBuilder.setQuantity(String.valueOf(quantity)));
-                        builder.addLoadingPortDetails(loadingPortDetailBuilder);
+                        if (loadingPort.getIsActive()) {
+                          LoadableStudy.LoadingPortDetail.Builder loadingPortDetailBuilder =
+                              LoadableStudy.LoadingPortDetail.newBuilder();
+                          ofNullable(loadingPort.getPortId())
+                              .ifPresent(loadingPortDetailBuilder::setPortId);
+                          ofNullable(loadingPort.getQuantity())
+                              .ifPresent(
+                                  quantity ->
+                                      loadingPortDetailBuilder.setQuantity(
+                                          String.valueOf(quantity)));
+                          ofNullable(loadingPort.getMode())
+                              .ifPresent(mode -> loadingPortDetailBuilder.setMode(mode));
+                          builder.addLoadingPortDetails(loadingPortDetailBuilder);
+                        }
                       });
             }
 
@@ -583,6 +644,8 @@ public class CargoNominationService {
             ofNullable(cargoNomination.getMinTolerance())
                 .ifPresent(minTolerance -> builder.setMinTolerance(String.valueOf(minTolerance)));
             ofNullable(cargoNomination.getSegregationXId()).ifPresent(builder::setSegregationId);
+            ofNullable(getMaxQuantityFromBillOfLadding(cargoNomination.getLsCargoNominationId()))
+                .ifPresent(builder::setMaxQuantity);
             cargoNominationReplyBuilder.addCargoNominations(builder);
 
             if (!CollectionUtils.isEmpty(apiTempHistoriesAll)) {
@@ -616,6 +679,33 @@ public class CargoNominationService {
             }
           });
     }
+  }
+
+  // Get max Quantity in a Cargo Nomination
+  public String getMaxQuantityFromBillOfLadding(Long cargoNominationId) {
+    if (cargoNominationId != null) {
+
+      log.info(
+          "Getting max quantity of each cargo nomination, from loading plan {}", cargoNominationId);
+      BillOfLaddingRequest request =
+          BillOfLaddingRequest.newBuilder().setCargoNominationId(cargoNominationId).build();
+      LoadingInformationSynopticalReply reply =
+          loadingPlanGrpcService.getBillOfLaddingDetails(request);
+      if (SUCCESS.equals(reply.getResponseStatus().getStatus())
+          && !CollectionUtils.isEmpty(reply.getBillOfLaddingList())) {
+        if (reply.getBillOfLaddingList().size() == 1) {
+          return reply.getBillOfLaddingList().get(0).getQuantityKl();
+        } else {
+          return String.valueOf(
+              reply.getBillOfLaddingList().stream()
+                  .map(item -> new BigDecimal(item.getQuantityKl()))
+                  .reduce(BigDecimal::add)
+                  .get());
+        }
+      }
+    }
+    log.info("No Bill of ladding data present for cargo nomination {}", cargoNominationId);
+    return null;
   }
 
   public LoadableStudy.ValveSegregationReply.Builder getValveSegregation(
@@ -838,5 +928,43 @@ public class CargoNominationService {
               String.valueOf(cargoNominationOperationDetail.getQuantity()));
           loadableStudy.getCargoNominationOperationDetails().add(cargoNominationOperationDetailDto);
         });
+  }
+
+  public void saveAll(List<CargoNomination> entities) {
+    cargoNominationRepository.saveAll(entities);
+  }
+
+  public List<CargoNomination> getMaxQuantityForCargoNomination(
+      List<Long> cargoNominations, Set<CargoNomination> firstPortCargos)
+      throws GenericServiceException {
+    MaxQuantityRequest.Builder request = MaxQuantityRequest.newBuilder();
+    request.addAllCargoNominationId(cargoNominations);
+    MaxQuantityResponse cargoNominationMaxQuantityResponse =
+        loadingPlanGrpcService.getCargoNominationMaxQuantity(request.build());
+    if (!SUCCESS.equals(cargoNominationMaxQuantityResponse.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "max quantity from loading plan is not available",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    List<MaxQuantityDetails> cargoMaxQuantityList =
+        cargoNominationMaxQuantityResponse.getCargoMaxQuantityList();
+    cargoMaxQuantityList
+        .parallelStream()
+        .forEach(
+            quantity -> {
+              Optional<CargoNomination> cargoNomination =
+                  firstPortCargos.stream()
+                      .filter(
+                          cargo ->
+                              cargo
+                                  .getLsCargoNominationId()
+                                  .equals(quantity.getCargoNominationId()))
+                      .findFirst();
+              if (cargoNomination.isPresent()) {
+                cargoNomination.get().setQuantity(new BigDecimal(quantity.getMaxQuantity()));
+              }
+            });
+    return new ArrayList<CargoNomination>(firstPortCargos);
   }
 }

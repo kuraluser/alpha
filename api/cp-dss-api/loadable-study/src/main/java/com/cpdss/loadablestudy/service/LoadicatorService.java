@@ -18,7 +18,9 @@ import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import java.io.File;
 import java.math.BigDecimal;
@@ -88,6 +90,9 @@ public class LoadicatorService {
 
   @Value("${algo.loadicator.api.url}")
   private String loadicatorUrl;
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -172,18 +177,18 @@ public class LoadicatorService {
     Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
         Loadicator.LoadicatorRequest.newBuilder();
     try {
+      loadicatorRequestBuilder.setTypeId(
+          LoadableStudiesConstants.LOADABLE_STUDY_LOADICATOR_TYPE_ID);
       List<LoadablePattern> loadablePatterns = null;
       if (patternId == 0) {
         loadablePatterns = loadablePatternsList;
         loadicatorRequestBuilder.setIsPattern(false);
-        loadicatorRequestBuilder.setLoadableStudyId(loadableStudyEntity.getId());
       } else {
         Optional<LoadablePattern> lpOpt =
             this.loadablePatternRepository.findByIdAndIsActive(patternId, true);
         loadablePatterns =
             lpOpt.isPresent() ? new ArrayList<LoadablePattern>(Arrays.asList(lpOpt.get())) : null;
         loadicatorRequestBuilder.setIsPattern(true);
-        loadicatorRequestBuilder.setLoadablePatternId(lpOpt.get().getId());
       }
       if (null == loadablePatterns) {
         throw new GenericServiceException(
@@ -917,6 +922,11 @@ public class LoadicatorService {
     LoadicatorAlgoResponse algoResponse =
         restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
     this.saveLoadicatorAlgoResponse(request, algoResponse, objectMapper);
+    Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
+        this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+    Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
+        this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
+            request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
     if (algoResponse.getFeedbackLoop() != null) {
       if (!request.getIsPattern()) {
         if (algoResponse.getFeedbackLoop()) {
@@ -956,6 +966,10 @@ public class LoadicatorService {
           this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
           loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
+          if (enableCommunication) {
+            passResultToCommunication(
+                objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
+          }
         }
       } else {
         if (algoResponse.getFeedbackLoop()) {

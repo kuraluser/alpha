@@ -204,6 +204,11 @@ public class OnHandQuantityService {
     VesselInfo.VesselReply vesselReply = this.getOhqTanks(request);
     if (onHandQuantities.isEmpty()) {
       synopticService.populateOnHandQuantityData(loadableStudyOpt, portRotation);
+    } else if (!onHandQuantities.isEmpty() && !portRotation.getIsPortRotationOhqComplete()) {
+      // If ohq quanties already exist for the port rotation but the flag is false we set it to
+      // true.
+      this.loadableStudyPortRotationRepository.updateIsOhqCompleteByIdAndIsActiveTrue(
+          portRotation.getId(), true);
     }
     onHandQuantities =
         this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
@@ -426,5 +431,21 @@ public class OnHandQuantityService {
           onHandQuantityDto.setTankId(onHandQuantity.getTankXId());
           loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
         });
+  }
+
+  public void deletePortRotationDetails(
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
+      LoadableStudyPortRotation entity) {
+    List<OnHandQuantity> ohqs =
+        onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+            loadableStudy, entity, true);
+    if (!ohqs.isEmpty()) {
+      ohqs.parallelStream()
+          .forEach(
+              ohq -> {
+                ohq.setIsActive(false);
+              });
+      onHandQuantityRepository.saveAll(ohqs);
+    }
   }
 }

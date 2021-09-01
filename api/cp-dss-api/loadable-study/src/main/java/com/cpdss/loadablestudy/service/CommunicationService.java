@@ -62,7 +62,7 @@ public class CommunicationService {
   @GrpcClient("envoyReaderService")
   private EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
 
-  @GrpcClient("envoyReaderService")
+  @GrpcClient("envoyWriterService")
   private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterService;
 
   @Value("${loadablestudy.communication.timelimit}")
@@ -71,21 +71,27 @@ public class CommunicationService {
   public void getDataFromCommInShoreSide(
       Map<String, String> taskReqParams, EnumSet<MessageTypes> shore)
       throws GenericServiceException {
+    log.info("inside getDataFromCommInShoreSide ");
     for (MessageTypes messageType : shore) {
       try {
-        EnvoyReader.EnvoyReaderResultReply erReply =
-            getResultFromEnvoyReaderShore(taskReqParams, messageType);
-        if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
-          throw new GenericServiceException(
-              "Failed to get Result from Communication Server",
-              erReply.getResponseStatus().getCode(),
-              HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
-        }
-        if (String.valueOf(messageType).equals("LoadableStudy")) {
-          saveLoadableStudyShore(erReply);
-        } else if (messageType.equals("ValidatePlan")) {
-          saveValidatePlanRequestShore(erReply);
-        }
+        log.info("inside getDataFromCommInShoreSide messageType " + messageType.getMessageType());
+        if (messageType.getMessageType().equals("LoadableStudy")) {
+          log.info("inside getDataFromCommInShoreSide messageType ");
+          EnvoyReader.EnvoyReaderResultReply erReply =
+              getResultFromEnvoyReaderShore(taskReqParams, messageType);
+          if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+            throw new GenericServiceException(
+                "Failed to get Result from Communication Server",
+                erReply.getResponseStatus().getCode(),
+                HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
+          }
+          if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
+            log.info("LoadableStudy received at shore ");
+            saveLoadableStudyShore(erReply);
+          }
+        } /*else if (messageType.getMessageType().equals("ValidatePlan")) {
+            saveValidatePlanRequestShore(erReply);
+          }*/
       } catch (GenericServiceException e) {
         throw new GenericServiceException(
             e.getMessage(),
@@ -97,7 +103,22 @@ public class CommunicationService {
   }
 
   private void saveValidatePlanRequestShore(EnvoyReader.EnvoyReaderResultReply erReply) {
-    String jsonResult = erReply.getPatternResultJson();
+    try {
+      String jsonResult = erReply.getPatternResultJson();
+      LoadableStudy loadableStudyEntity =
+          loadableStudyServiceShore.saveOrUpdateLSInShore(jsonResult, erReply.getMessageId());
+      if (loadableStudyEntity != null) {
+        voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
+        this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
+        // processAlgoFromShip(loadableStudyEntity);
+      }
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when generating pattern", e);
+    } catch (ResourceAccessException e) {
+      log.info("Error calling ALGO ");
+    } catch (Exception e) {
+      log.error("Exception when when calling algo  ", e);
+    }
   }
 
   public void getDataFromCommInShipSide(
@@ -113,7 +134,7 @@ public class CommunicationService {
               erReply.getResponseStatus().getCode(),
               HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
         }
-        if (String.valueOf(messageType).equals("AlgoResult")) saveAlgoPatternFromShore(erReply);
+        if (messageType.getMessageType().equals("AlgoResult")) saveAlgoPatternFromShore(erReply);
       } catch (GenericServiceException e) {
         throw new GenericServiceException(
             e.getMessage(),
@@ -134,8 +155,8 @@ public class CommunicationService {
       if (loadableStudyEntity != null) {
         voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
         this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
-
-        processAlgoFromShip(loadableStudyEntity);
+        log.info("processAlgo started");
+        processAlgoFromShore(loadableStudyEntity);
       }
 
     } catch (GenericServiceException e) {
@@ -149,7 +170,7 @@ public class CommunicationService {
     }
   }
 
-  private void processAlgoFromShip(LoadableStudy loadableStudyEntity)
+  private void processAlgoFromShore(LoadableStudy loadableStudyEntity)
       throws GenericServiceException, IOException {
     ModelMapper modelMapper = new ModelMapper();
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
@@ -177,7 +198,9 @@ public class CommunicationService {
     loadablePatternService.updateProcessIdForLoadableStudy(
         algoResponse.getProcessId(),
         loadableStudyEntity,
-        LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID);
+        LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID,
+        "",
+        true);
 
     loadableStudyRepository.updateLoadableStudyStatus(
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());
@@ -185,9 +208,10 @@ public class CommunicationService {
 
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore(
       Map<String, String> taskReqParams, MessageTypes messageType) {
+    log.info("inside getResultFromEnvoyReaderShore ");
     EnvoyReader.EnvoyReaderResultRequest.Builder request =
         EnvoyReader.EnvoyReaderResultRequest.newBuilder();
-    request.setMessageType(String.valueOf(messageType));
+    request.setMessageType(messageType.getMessageType());
     request.setClientId(taskReqParams.get("ClientId"));
     request.setShipId(taskReqParams.get("ShipId"));
     return this.envoyReaderGrpcService.getResultFromCommServer(request.build());
@@ -235,7 +259,6 @@ public class CommunicationService {
                       && statusReply
                           .getEventDownloadStatus()
                           .equals(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId()))) {
-                    processAlgoFromShip(loadableStudy.get());
                   } else {
                     loadableStudyCommunicationStatusRepository
                         .updateLoadableStudyCommunicationStatus(
@@ -246,11 +269,12 @@ public class CommunicationService {
                           .getTime();
                   long end = start + timeLimit * 1000; // 60 seconds * 1000 ms/sec
                   if (System.currentTimeMillis() > end) {
+
                     loadableStudyCommunicationStatusRepository
                         .updateLoadableStudyCommunicationStatus(
                             CommunicationStatus.TIME_OUT.getId(), loadableStudy.get().getId());
                   }
-                } catch (GenericServiceException | IOException e) {
+                } catch (GenericServiceException e) {
                   e.printStackTrace();
                 }
               });
@@ -274,7 +298,7 @@ public class CommunicationService {
       writerRequest.setJsonPayload(jsonPayload);
       writerRequest.setClientId(vesselReply.getName());
       writerRequest.setImoNumber(vesselReply.getImoNumber());
-      writerRequest.setMessageType(String.valueOf(MessageTypes.ALGORESULT));
+      writerRequest.setMessageType(MessageTypes.ALGORESULT.getMessageType());
       writerRequest.setMessageId(algoResponseCommunication.getMessageId());
       return this.envoyWriterService.getCommunicationServer(writerRequest.build());
 

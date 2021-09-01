@@ -53,6 +53,10 @@ public class LoadablePlanService {
 
   @Autowired CargoNominationRepository cargoNominationRepository;
 
+  @Autowired LoadablePatternCargoDetailsRepository lpCargoDetailsRepository;
+
+  @Autowired LoadableStudyPortRotationRepository portRotationRepository;
+
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
 
   @Autowired private LoadableStudyPortRotationService loadableStudyPortRotationService;
@@ -318,13 +322,12 @@ public class LoadablePlanService {
       return false;
     }
     List<Long> lpPortRotationIds =
-        loadablePatternCargoDetailsRepository.findAllPortRotationIdByCargoNomination(
+        lpCargoDetailsRepository.findAllPortRotationIdByCargoNomination(
             lpQuantity.getCargoNominationId());
     log.info("Port Rotation Ids From Loadable Plan Quantity, Size {}", lpPortRotationIds.size());
     if (!lpPortRotationIds.isEmpty()) { // all unique, because it fetch by distinct query
       for (Long id : lpPortRotationIds) {
-        LoadableStudyPortRotation lsPR =
-            loadableStudyPortRotationRepository.findByIdAndIsActive(id, true);
+        LoadableStudyPortRotation lsPR = portRotationRepository.findByIdAndIsActive(id, true);
         if (lsPR != null) {
           if (lsPR.getOperation().getId().equals(LOADING_OPERATION_ID)) {
             LoadableStudy.LoadingPortDetail.Builder a =
@@ -1489,12 +1492,13 @@ public class LoadablePlanService {
             operationsValueCell.setCellValue(portOperationDetails.getDepDisp());
             break;
         }
+
         XSSFCellStyle cellStyle =
             getCellStyle(
                 spreadsheet,
                 TableCellStyle.PORT_OPERATIONS_VALUES,
                 Optional.empty(),
-                Optional.empty());
+                Optional.of(portOperationsTableTitle.getFormat()));
         operationsValueCell.setCellStyle(cellStyle);
         portColumnIndex++;
       }
@@ -2074,14 +2078,14 @@ public class LoadablePlanService {
     //        .isEmpty()) replyBuilder.setValidated(true);
     if (!status.isEmpty()) {
       if (stowageDetailsTempRepository
-              .findByLoadablePattern_idAndIsActive(loadablePattern.getId(), true)
+              .findByLoadablePatternAndIsActive(loadablePattern, true)
               .isEmpty()
           || VALIDATED_CONDITIONS.contains(replyBuilder.getLoadablePatternStatusId())) {
         replyBuilder.setValidated(true);
       }
     } else {
       if (stowageDetailsTempRepository
-          .findByLoadablePattern_idAndIsActive(loadablePattern.getId(), true)
+          .findByLoadablePatternAndIsActive(loadablePattern, true)
           .isEmpty()) {
         replyBuilder.setValidated(true);
       }
@@ -2481,44 +2485,39 @@ public class LoadablePlanService {
     loadablePlanQuantities.forEach(
         lpq -> {
           LoadableStudy.LoadableQuantityCargoDetails.Builder builder =
-              getLoadablePlanQtyBuilder(lpq);
+              LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
+          ofNullable(lpq.getId()).ifPresent(builder::setId);
+          ofNullable(lpq.getDifferenceColor()).ifPresent(builder::setDifferenceColor);
+          ofNullable(lpq.getDifferencePercentage())
+              .ifPresent(
+                  diffPercentage ->
+                      builder.setDifferencePercentage(String.valueOf(diffPercentage)));
+          ofNullable(lpq.getEstimatedApi())
+              .ifPresent(estimatedApi -> builder.setEstimatedAPI(String.valueOf(estimatedApi)));
+          ofNullable(lpq.getCargoNominationTemperature())
+              .ifPresent(
+                  estimatedTemperature ->
+                      builder.setEstimatedTemp(String.valueOf(estimatedTemperature)));
+          ofNullable(lpq.getGrade()).ifPresent(builder::setGrade);
+          ofNullable(lpq.getLoadableBbls60f()).ifPresent(builder::setLoadableBbls60F);
+          ofNullable(lpq.getLoadableBblsDbs()).ifPresent(builder::setLoadableBblsdbs);
+          ofNullable(lpq.getLoadableKl()).ifPresent(builder::setLoadableKL);
+          ofNullable(lpq.getLoadableLt()).ifPresent(builder::setLoadableLT);
+          ofNullable(lpq.getLoadableMt()).ifPresent(builder::setLoadableMT);
+          ofNullable(lpq.getMaxTolerence()).ifPresent(builder::setMaxTolerence);
+          ofNullable(lpq.getMinTolerence()).ifPresent(builder::setMinTolerence);
+          ofNullable(lpq.getOrderBbls60f()).ifPresent(builder::setOrderBbls60F);
+          ofNullable(lpq.getOrderBblsDbs()).ifPresent(builder::setOrderBblsdbs);
+          ofNullable(lpq.getCargoXId()).ifPresent(builder::setCargoId);
+          ofNullable(lpq.getOrderQuantity())
+              .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
+          Optional.of(lpq.getCargoColor()).ifPresent(builder::setColorCode);
+          Optional.of(lpq.getCargoAbbreviation()).ifPresent(builder::setCargoAbbreviation);
+          Optional.ofNullable(lpq.getTimeRequiredForLoading())
+              .ifPresent(builder::setTimeRequiredForLoading);
+          Optional.of(lpq.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
           replyBuilder.addLoadableQuantityCargoDetails(builder);
         });
-  }
-
-  private LoadableStudy.LoadableQuantityCargoDetails.Builder getLoadablePlanQtyBuilder(
-      LoadablePlanQuantity lpq) {
-    LoadableStudy.LoadableQuantityCargoDetails.Builder builder =
-        LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
-    ofNullable(lpq.getId()).ifPresent(builder::setId);
-    ofNullable(lpq.getDifferenceColor()).ifPresent(builder::setDifferenceColor);
-    ofNullable(lpq.getDifferencePercentage())
-        .ifPresent(
-            diffPercentage -> builder.setDifferencePercentage(String.valueOf(diffPercentage)));
-    ofNullable(lpq.getEstimatedApi())
-        .ifPresent(estimatedApi -> builder.setEstimatedAPI(String.valueOf(estimatedApi)));
-    ofNullable(lpq.getCargoNominationTemperature())
-        .ifPresent(
-            estimatedTemperature -> builder.setEstimatedTemp(String.valueOf(estimatedTemperature)));
-    ofNullable(lpq.getGrade()).ifPresent(builder::setGrade);
-    ofNullable(lpq.getLoadableBbls60f()).ifPresent(builder::setLoadableBbls60F);
-    ofNullable(lpq.getLoadableBblsDbs()).ifPresent(builder::setLoadableBblsdbs);
-    ofNullable(lpq.getLoadableKl()).ifPresent(builder::setLoadableKL);
-    ofNullable(lpq.getLoadableLt()).ifPresent(builder::setLoadableLT);
-    ofNullable(lpq.getLoadableMt()).ifPresent(builder::setLoadableMT);
-    ofNullable(lpq.getMaxTolerence()).ifPresent(builder::setMaxTolerence);
-    ofNullable(lpq.getMinTolerence()).ifPresent(builder::setMinTolerence);
-    ofNullable(lpq.getOrderBbls60f()).ifPresent(builder::setOrderBbls60F);
-    ofNullable(lpq.getOrderBblsDbs()).ifPresent(builder::setOrderBblsdbs);
-    ofNullable(lpq.getCargoXId()).ifPresent(builder::setCargoId);
-    ofNullable(lpq.getOrderQuantity())
-        .ifPresent(orderQuantity -> builder.setOrderedMT(String.valueOf(orderQuantity)));
-    Optional.of(lpq.getCargoColor()).ifPresent(builder::setColorCode);
-    Optional.of(lpq.getCargoAbbreviation()).ifPresent(builder::setCargoAbbreviation);
-    Optional.ofNullable(lpq.getTimeRequiredForLoading())
-        .ifPresent(builder::setTimeRequiredForLoading);
-    Optional.of(lpq.getCargoNominationId()).ifPresent(builder::setCargoNominationId);
-    return builder;
   }
 
   public LoadableStudy.AlgoReply.Builder validateLoadablePlan(

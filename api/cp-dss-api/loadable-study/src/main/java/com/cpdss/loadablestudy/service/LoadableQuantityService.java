@@ -130,12 +130,18 @@ public class LoadableQuantityService {
         log.info(
             "Loadable Quantity, Port Rotation Operation Type - {}",
             portRotation.getOperation().getId());
-        minDraftValue.add(portRotation.getMaxDraft());
+        if (portRotation.getMaxDraft() != null) {
+          minDraftValue.add(portRotation.getMaxDraft());
+        }
         // minDraftValue.add(loadableStudy.get().getDraftMark());
         Optional<BigDecimal> minVal =
             minDraftValue.stream().min(Comparator.comparing(BigDecimal::doubleValue));
-        log.info("Minimum draft value among 2 {}", minVal.get());
-        draftRestriction1 = minVal.isPresent() ? String.valueOf(minVal.get()) : "";
+        if (minVal.isPresent()) {
+          log.info("Minimum draft value among 2 {}", minVal.get());
+          draftRestriction1 = String.valueOf(minVal.get());
+        } else {
+          draftRestriction1 = "";
+        }
         seaWaterDensity =
             portRotation.getSeaWaterDensity() != null
                 ? String.valueOf(portRotation.getSeaWaterDensity())
@@ -615,7 +621,10 @@ public class LoadableQuantityService {
               loadablePlanQuantity.setCargoXId(lqcd.getCargoId());
               loadablePlanQuantity.setIsActive(true);
               loadablePlanQuantity.setLoadableMt(lqcd.getLoadableMT());
-              loadablePlanQuantity.setOrderQuantity(new BigDecimal(lqcd.getOrderedMT()));
+              loadablePlanQuantity.setOrderQuantity(
+                  (lqcd.getOrderedMT() != null && !lqcd.getOrderedMT().isEmpty())
+                      ? new BigDecimal(lqcd.getOrderedMT())
+                      : new BigDecimal(0));
               loadablePlanQuantity.setLoadablePattern(loadablePattern);
               loadablePlanQuantity.setCargoAbbreviation(lqcd.getCargoAbbreviation());
               loadablePlanQuantity.setCargoColor(lqcd.getColorCode());
@@ -626,7 +635,10 @@ public class LoadableQuantityService {
               loadablePlanQuantity.setSlopQuantity(lqcd.getSlopQuantity());
               loadablePlanQuantity.setCargoNominationId(lqcd.getCargoNominationId());
               loadablePlanQuantity.setCargoNominationTemperature(
-                  new BigDecimal(lqcd.getCargoNominationTemperature()));
+                  (lqcd.getCargoNominationTemperature() != null
+                          && !lqcd.getCargoNominationTemperature().isEmpty())
+                      ? new BigDecimal(lqcd.getCargoNominationTemperature())
+                      : new BigDecimal(0));
               loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
               lqcd.getToppingOffSequencesList()

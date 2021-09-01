@@ -18,7 +18,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DischargeStudyCowDetail extends EntityDoc {
   private static final long serialVersionUID = 6722941798154545447L;
-  private Long id;
 
   @Column(name = "discharge_study_xid")
   private Long dischargeStudyStudyId;
@@ -33,7 +32,7 @@ public class DischargeStudyCowDetail extends EntityDoc {
   private Long percentage;
 
   @Column(name = "is_active")
-  private Boolean isActive;
+  private Boolean isActive = true;
 
   @Column(name = "tank_xid")
   private String tankIds;

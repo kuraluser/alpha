@@ -16,7 +16,7 @@ public interface LoadableStudyCommunicationStatusRepository
   public Optional<LoadableStudyCommunicationStatus> findByReferenceIdAndMessageType(
       Long referenceId, String messageType);
 
-  public Optional<LoadableStudyCommunicationStatus> findByMessageUUID(Long messageUUID);
+  public Optional<LoadableStudyCommunicationStatus> findByMessageUUID(String messageUUID);
 
   @Query(
       "FROM LoadableStudyCommunicationStatus LS WHERE LS.messageUUID IS NOT NULL AND LS.communicationStatus = ?1 ")

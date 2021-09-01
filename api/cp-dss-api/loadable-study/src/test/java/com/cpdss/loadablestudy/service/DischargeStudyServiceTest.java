@@ -11,6 +11,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy.AlgoReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest;
@@ -88,6 +90,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -173,10 +176,12 @@ class DischargeStudyServiceTest {
   @MockBean private LoadablePlanService loadablePlanService;
   @MockBean private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
   @MockBean private LoadableQuantityService loadableQuantityService;
+  @MockBean private GenerateDischargeStudyJson generateDischargeStudyJson;
 
   DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
   private static final String SUCCESS = "SUCCESS";
+  private static final String FAILED = "FAILED";
 
   @BeforeAll
   public static void beforeAll() {
@@ -285,6 +290,72 @@ class DischargeStudyServiceTest {
     assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGenerateDischargeStudy() throws GenericServiceException, Exception {
+    AlgoRequest request = AlgoRequest.newBuilder().setLoadableStudyId(1L).build();
+    AlgoReply.Builder reply = AlgoReply.newBuilder().setProcesssId("123");
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+
+    when(this.generateDischargeStudyJson.generateDischargePatterns(
+            request, any(AlgoReply.Builder.class)))
+        .thenReturn(reply);
+
+    this.dischargeStudyService.generateDischargePatterns(request, responseObserver);
+    List<AlgoReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGenerateDischargeStudyGenericException() throws GenericServiceException, Exception {
+    AlgoRequest request = AlgoRequest.newBuilder().setLoadableStudyId(1L).build();
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+
+    when(this.generateDischargeStudyJson.generateDischargePatterns(
+            request, any(AlgoReply.Builder.class)))
+        .thenThrow(GenericServiceException.class);
+
+    this.dischargeStudyService.generateDischargePatterns(request, responseObserver);
+    List<AlgoReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGenerateDischargeStudyResourceAccessException()
+      throws GenericServiceException, Exception {
+    AlgoRequest request = AlgoRequest.newBuilder().setLoadableStudyId(1L).build();
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+
+    when(this.generateDischargeStudyJson.generateDischargePatterns(
+            request, any(AlgoReply.Builder.class)))
+        .thenThrow(ResourceAccessException.class);
+
+    this.dischargeStudyService.generateDischargePatterns(request, responseObserver);
+    List<AlgoReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGenerateDischargeStudyException() throws GenericServiceException, Exception {
+    AlgoRequest request = AlgoRequest.newBuilder().setLoadableStudyId(1L).build();
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+
+    when(this.generateDischargeStudyJson.generateDischargePatterns(
+            request, any(AlgoReply.Builder.class)))
+        .thenThrow(RuntimeException.class);
+
+    this.dischargeStudyService.generateDischargePatterns(request, responseObserver);
+    List<AlgoReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
   }
 
   private List<OnHandQuantity> createOnHandQuantityList() {

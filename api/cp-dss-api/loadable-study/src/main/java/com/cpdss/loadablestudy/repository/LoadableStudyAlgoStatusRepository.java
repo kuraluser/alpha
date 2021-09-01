@@ -23,7 +23,17 @@ public interface LoadableStudyAlgoStatusRepository
   public void updateLoadableStudyAlgoStatus(
       Long loadableStudyStatusId, String processId, Boolean isActive);
 
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE LoadableStudyAlgoStatus SET loadableStudyStatus.id = ?1 WHERE messageId = ?2 and isActive = ?3")
+  public void updateLoadableStudyAlgoStatusByMessageId(
+      Long loadableStudyStatusId, String messageId, Boolean isActive);
+
   public Optional<LoadableStudyAlgoStatus> findByLoadableStudyIdAndProcessIdAndIsActive(
+      Long loadableStudyId, String processId, Boolean isActive);
+
+  public Optional<LoadableStudyAlgoStatus> findByLoadableStudyIdAndMessageIdAndIsActive(
       Long loadableStudyId, String processId, Boolean isActive);
 
   public List<LoadableStudyAlgoStatus> findByLoadableStudyIdAndIsActive(
