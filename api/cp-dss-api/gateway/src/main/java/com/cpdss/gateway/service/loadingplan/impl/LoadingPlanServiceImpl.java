@@ -1322,9 +1322,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setIsUpdate(
                           billLanding.getIsUpdate() == false ? false : billLanding.getIsUpdate())
                       .build();
+                  builder.addBillOfLanding(billOfLandingBuilder.build());
                 });
 
-        builder.addBillOfLanding(billOfLandingBuilder.build());
       } else {
         errorValidationLandingMsg = "Required data for Update is missing";
       }
