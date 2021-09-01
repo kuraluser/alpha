@@ -611,6 +611,15 @@
       }
 
     }, 3500);
+    setTimeout(() => {
+      if (currentStatus === 3) {
+        sync.type = 'loading-plan-no-response';
+        // sending default status
+        sync.statusId = 1;
+        notifyClients(sync);
+        clearInterval(timer);
+      }
+    }, 7200000);
   }
 
 

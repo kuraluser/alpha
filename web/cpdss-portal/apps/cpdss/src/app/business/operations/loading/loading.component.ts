@@ -114,10 +114,12 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.loadingDischargingTransformationService.isLoadingPlanGenerated.subscribe((status) => {     
         this.loadingPlanComplete = status;  
         this.processing = !status; 
+        this.disableGenerateLoadableButton = !status;
     })
     this.loadingDischargingTransformationService.isLoadingSequenceGenerated.subscribe((status) => {     
         this.loadingSequenceComplete = status; 
         this.processing = !status;   
+        this.disableGenerateLoadableButton = !status;
     })  
 
     this.loadingDischargingTransformationService.validateUllageData$.subscribe((res) => {
