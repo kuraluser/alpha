@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { IResponse } from './../../../shared/models/common.model';
+import { OPERATIONS } from '../../core/models/common.model';
+
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { IDischargingInformationResponse, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse } from '../models/loading-discharging.model';
 
@@ -1517,5 +1520,34 @@ export class LoadingDischargingInformationApiService {
       ]
     };
     return of(response);
+  }
+
+  /**
+   * Method to download template
+   *
+   * @param {number} id
+   * @return {*}  {Observable<any>}
+   * @memberof LoadingDischargingInformationApiService
+ */
+  downloadTemplate(id: number, operation: OPERATIONS): Observable<any> {
+    if (operation === OPERATIONS.LOADING) {
+      return this.commonApiService.get<any>(`loading/download/port-tide-template?loadingId=${id}`, { responseType: 'blob' as 'json' });
+    }
+  }
+
+  /**
+  * Method to upload template
+  *
+  * @param {number} loadingId
+  * @param {*} file
+  * @return {*}  {Observable<IResponse>}
+  * @memberof LoadingDischargingInformationApiService
+  */
+  uploadTemplate(loadingId: number, file: any, operation: OPERATIONS): Observable<IResponse> {
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    if (operation === OPERATIONS.LOADING) {
+      return this.commonApiService.postFormData<any>(`loading/${loadingId}/upload/port-tide-details`, formData);
+    }
   }
 }

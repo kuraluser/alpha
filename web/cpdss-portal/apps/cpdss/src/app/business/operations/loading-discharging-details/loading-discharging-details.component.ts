@@ -1,5 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output , ViewChild , ElementRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
+import { MessageService } from 'primeng/api';
+import { saveAs } from 'file-saver';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { ILoadingDischargingDetails } from '../models/loading-discharging.model';
 import { loadingDetailsValidator } from '../directives/validator/loading-details-time-validator.directive';
 import { numberValidator } from '../../core/directives/number-validator.directive';
@@ -8,6 +12,7 @@ import { PermissionsService } from '../../../shared/services/permissions/permiss
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { OPERATIONS } from '../../core/models/common.model';
+import { LoadingDischargingInformationApiService } from '../services/loading-discharging-information-api.service';
 
 @Component({
   selector: 'cpdss-portal-loading-discharging-details',
@@ -23,7 +28,12 @@ import { OPERATIONS } from '../../core/models/common.model';
  * @implements {OnInit}
  */
 export class LoadingDischargingDetailsComponent implements OnInit {
+
+  @ViewChild('fileUpload') fileUploadVariable: ElementRef;
+
   @Input() operation: OPERATIONS;
+  @Input() loadingInfoId: number;
+  @Input() dischargingInfoId: number;
 
   @Input()
   get loadingDischargingDetails(): ILoadingDischargingDetails {
@@ -48,7 +58,11 @@ export class LoadingDischargingDetailsComponent implements OnInit {
   timeOfSunsetPermission: IPermission;
   selectedTime:any;
   constructor(private fb: FormBuilder,
+    private translateService: TranslateService,
     private permissionsService: PermissionsService,
+    private messageService: MessageService,
+    private ngxSpinnerService: NgxSpinnerService,
+    private loadingDischargingInformationApiService: LoadingDischargingInformationApiService,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
 
   ngOnInit(): void {
@@ -185,15 +199,81 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 
 
   /**
-* Method for when trim value update
-*
-* @memberof LoadingDischargingDetailsComponent
-*/
+  * Method for when trim value update
+  *
+  * @memberof LoadingDischargingDetailsComponent
+  */
   trimValueChange(field) {
     if (this.loadingDischargingDetailsForm.valid && this.loadingDischargingDetailsForm.value[field]) {
       this.loadingDischargingDetailsResponse.trimAllowed[field] = this.loadingDischargingDetailsForm.value[field];
       this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
     }
+  }
+
+  /**
+  * Method for download file
+  *
+  * @memberof LoadingDischargingDetailsComponent
+  */
+  downloadTemplate() {
+    let id;
+    if(this.operation === OPERATIONS.DISCHARGING) {
+      id = this.dischargingInfoId;
+    } else {
+      id = this.loadingInfoId;
+    }
+    this.loadingDischargingInformationApiService.downloadTemplate(id,this.operation).subscribe((data) => {
+      const blob = new Blob([data], { type: data.type })
+      const fileurl = window.URL.createObjectURL(blob)
+      saveAs(fileurl, 'Loading port tide details.xlsx');
+    });
+  }
+
+  /**
+  * Method for uploading file
+  *
+  * @memberof LoadingDischargingDetailsComponent
+  */
+  async selectFilesToUpload() {
+    this.ngxSpinnerService.show();
+    const translationKeys = await this.translateService.get(['LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS_DETAILS','LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS','LOADING_DICHARGING_EXCEL_EXPORT_ERROR','LOADING_DISCHARGING_EXCEL_ERROR','LOADING_DISCHARGING_FILE_FORMAT_ERROR', 'LOADING_DISCHARGING_FILE_SIZE_ERROR']).toPromise();
+    this.fileUploadVariable.nativeElement.disabled = true;
+    let id;
+    if(this.operation === OPERATIONS.DISCHARGING) {
+      id = this.dischargingInfoId;
+    } else {
+      id = this.loadingInfoId;
+    }
+    try {
+    const uploadedFileVar = this.fileUploadVariable.nativeElement.files;
+    const extensions = ["xlsx"];
+    let uploadError;
+      for (let i = 0; i < uploadedFileVar.length; i++) {
+        const fileExtension = uploadedFileVar[i].name.substr((uploadedFileVar[i].name.lastIndexOf('.') + 1));
+        if (extensions.includes(fileExtension.toLowerCase())) {
+          if(uploadedFileVar[i].size / 1024 / 1024 >= 1) {
+            uploadError = 'LOADING_DISCHARGING_FILE_SIZE_ERROR';
+          }
+        } else {
+          uploadError = 'LOADING_DISCHARGING_FILE_FORMAT_ERROR';
+        }
+      }
+      if(uploadError) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys[uploadError] });
+      } else {
+        const result = await this.loadingDischargingInformationApiService.uploadTemplate(id,uploadedFileVar[0],this.operation).toPromise();
+        if(result.responseStatus.status === '200') {
+          this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS'], detail: translationKeys['LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS_DETAILS'] });
+        }
+      }
+    } catch(err) {
+      if(err.error.errorCode === "ERR-RICO-400") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_EXPORT_ERROR'] });
+      }
+    }
+    this.fileUploadVariable.nativeElement.disabled = false;
+    this.fileUploadVariable.nativeElement.value = "";
+    this.ngxSpinnerService.hide();
   }
 
 }
