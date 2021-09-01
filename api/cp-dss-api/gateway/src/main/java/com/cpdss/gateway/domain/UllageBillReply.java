@@ -6,5 +6,6 @@ import lombok.Data;
 
 @Data
 public class UllageBillReply {
+  private String processId;
   private CommonSuccessResponse responseStatus;
 }

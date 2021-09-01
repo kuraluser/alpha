@@ -50,6 +50,7 @@ import com.cpdss.loadingplan.repository.LoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceStabiltyParametersRepository;
+import com.cpdss.loadingplan.service.LoadingPlanService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -95,6 +96,7 @@ public class LoadicatorService {
   LoadingSequenceStabiltyParametersRepository loadingSequenceStabiltyParametersRepository;
 
   @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
+  @Autowired LoadingPlanService loadingPlanService;
 
   @Autowired RestTemplate restTemplate;
 
@@ -602,6 +604,10 @@ public class LoadicatorService {
           loadingInfoOpt.get().getId());
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+      loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
+              loadingInfoOpt.get().getId(), true);
+      loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
+              loadingInfoOpt.get().getId(), true);
     } else {
       log.info(
           "Recieved stability parameters of Loading Plam of Loading Information {} from Loadicator",
@@ -620,8 +626,18 @@ public class LoadicatorService {
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+      if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE.equals(
+          request.getConditionType())) {
+        loadingInformationRepository.updateLoadingInformationArrivalStatus(
+            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
+      } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE.equals(
+          request.getConditionType())) {
+        loadingInformationRepository.updateLoadingInformationDepartureStatus(
+            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
+      }
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+      loadingPlanService.saveUpdatedLoadingPlanDetails(loadingInfoOpt.get());
     }
   }
 
