@@ -90,7 +90,11 @@ public class UllageUpdateLoadicatorService {
     }
 
     String processId = UUID.randomUUID().toString();
-
+    VesselInfo.VesselReply vesselReply =
+            loadicatorService.getVesselDetailsForLoadicator(loadingInfoOpt.get());
+        if (!vesselReply.getVesselsList().get(0).getHasLoadicator()) {
+        	return processId;
+        }
     List<PortLoadingPlanStowageTempDetails> tempStowageDetails =
         portLoadingPlanStowageDetailsTempRepository.findByLoadingInformationAndIsActive(
             loadingInfoOpt.get(), true);
@@ -110,8 +114,6 @@ public class UllageUpdateLoadicatorService {
         loadicatorService.getCargoNominationDetails(cargoNominationIds);
     CargoInfo.CargoReply cargoReply =
         loadicatorService.getCargoInfoForLoadicator(loadingInfoOpt.get());
-    VesselInfo.VesselReply vesselReply =
-        loadicatorService.getVesselDetailsForLoadicator(loadingInfoOpt.get());
     PortInfo.PortReply portReply = loadicatorService.getPortInfoForLoadicator(loadingInfoOpt.get());
 
     loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);

@@ -637,7 +637,7 @@ public class LoadicatorService {
       }
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
-      loadingPlanService.saveUpdatedLoadingPlanDetails(loadingInfoOpt.get());
+      loadingPlanService.saveUpdatedLoadingPlanDetails(loadingInfoOpt.get(), request.getConditionType());
     }
   }
 

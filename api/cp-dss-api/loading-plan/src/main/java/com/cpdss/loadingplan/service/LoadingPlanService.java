@@ -684,7 +684,7 @@ public class LoadingPlanService {
     //            });
   }
 
-  public void saveUpdatedLoadingPlanDetails(LoadingInformation loadingInformation) {
+  public void saveUpdatedLoadingPlanDetails(LoadingInformation loadingInformation, Integer conditionType) {
     // TODO Save Loading Plan Details
   }
 
