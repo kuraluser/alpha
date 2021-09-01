@@ -407,7 +407,7 @@ public class LoadingPlanService {
     }
   }
 
-  public LoadingPlanModels.UllageBillReply getLoadableStudyShoreTwo(
+    public LoadingPlanModels.UllageBillReply getLoadableStudyShoreTwo(
       LoadingPlanModels.UllageBillRequest request,
       StreamObserver<LoadingPlanModels.UllageBillReply> responseObserver) {
 
@@ -459,7 +459,7 @@ public class LoadingPlanService {
                     Integer.valueOf(billOfLanding.getLoadingId() + ""));
               });
 
-      if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
+      if (request.getIsValidate() != null && request.getIsValidate().equals("false")) {
 
         request
             .getBallastUpdateList()
@@ -468,12 +468,13 @@ public class LoadingPlanService {
                   if (ullageInsert.getIsUpdate()) {
                     loadingPlanBallastDetailsTempRepository
                         .updateLoadingPlanBallastDetailsRepository(
+                            BigDecimal.valueOf(ullageInsert.getSg()),
+                            BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
+                            ullageInsert.getColorCode(),
                             BigDecimal.valueOf(ullageInsert.getQuantity()),
                             BigDecimal.valueOf(ullageInsert.getSounding()),
                             BigDecimal.valueOf(ullageInsert.getQuantity()),
                             Long.valueOf(ullageInsert.getTankId()),
-                            true,
-                            Long.valueOf(ullageInsert.getPortXid()),
                             Long.valueOf(ullageInsert.getLoadingInformationId()),
                             Long.valueOf(ullageInsert.getArrivalDepartutre()));
                   } else {
@@ -517,8 +518,6 @@ public class LoadingPlanService {
                             BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
                             BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
                             Long.valueOf(ullageInsert.getTankId()),
-                            true,
-                            Long.valueOf(ullageInsert.getTankId()),
                             ullageInsert.getLoadingInformationId(),
                             ullageInsert.getArrivalDepartutre());
                   } else {
@@ -556,8 +555,7 @@ public class LoadingPlanService {
                     loadingPlanRobDetailsRepository.updatePortLoadingPlanRobDetailsRepository(
                         BigDecimal.valueOf(ullageInsert.getQuantity()),
                         BigDecimal.valueOf(ullageInsert.getQuantity()),
-                        Long.valueOf(ullageInsert.getTankId()),
-                        true);
+                        Long.valueOf(ullageInsert.getTankId()));
                   } else {
                     PortLoadingPlanRobDetails robDet = new PortLoadingPlanRobDetails();
                     LoadingInformation info = new LoadingInformation();
@@ -589,7 +587,7 @@ public class LoadingPlanService {
     // log.info("getLoadableStudyShoreTwo ", request);
     return builder.build();
   }
-
+  
   private void validateAndSaveData(LoadingPlanModels.UllageBillRequest request) {
 
     // Validation pending since API from ALGO is not yet created.

@@ -44,7 +44,6 @@ import com.cpdss.loadingplan.entity.LoadingPlanStowageDetails;
 import com.cpdss.loadingplan.entity.LoadingSequence;
 import com.cpdss.loadingplan.entity.LoadingSequenceStabilityParameters;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
-import com.cpdss.loadingplan.repository.LoadingInformationStatusRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanPortWiseDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanRobDetailsRepository;
@@ -94,8 +93,6 @@ public class LoadicatorService {
 
   @Autowired
   LoadingSequenceStabiltyParametersRepository loadingSequenceStabiltyParametersRepository;
-
-  @Autowired LoadingInformationStatusRepository loadingInformationStatusRepository;
 
   @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
 
@@ -596,15 +593,8 @@ public class LoadicatorService {
       saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
 
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-          loadingInformationStatusRepository.findByIdAndIsActive(
-              LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
-      if (loadingInfoStatusOpt.isEmpty()) {
-        throw new GenericServiceException(
-            "Could not find loading information status with id "
-                + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
+          loadingPlanAlgoService.getLoadingInformationStatus(
+              LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID);
       loadingInformationRepository.updateLoadingInformationStatuses(
           loadingInfoStatusOpt.get(),
           loadingInfoStatusOpt.get(),
@@ -628,15 +618,8 @@ public class LoadicatorService {
       //    	    saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
 
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-          loadingInformationStatusRepository.findByIdAndIsActive(
-              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID, true);
-      if (loadingInfoStatusOpt.isEmpty()) {
-        throw new GenericServiceException(
-            "Could not find loading information status with id "
-                + LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID,
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
+          loadingPlanAlgoService.getLoadingInformationStatus(
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
     }

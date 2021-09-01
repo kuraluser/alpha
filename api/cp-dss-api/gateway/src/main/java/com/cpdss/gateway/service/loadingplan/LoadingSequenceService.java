@@ -309,6 +309,12 @@ public class LoadingSequenceService {
     }
   }
 
+  /**
+   * Adjusts interval of cargo loading rate based on stage tick positions.
+   *
+   * @param cargoLoadingRates
+   * @param stageTickPositions
+   */
   private void updateCargoLoadingRateIntervals(
       List<CargoLoadingRate> cargoLoadingRates, Set<Long> stageTickPositions) {
     cargoLoadingRates.forEach(

@@ -20,6 +20,10 @@ export interface ILoadingInformationResponse {
   loadingInfoId: number;
   synopticTableId: number;
   isLoadingInfoComplete: boolean;
+
+  isLoadingInstructionsComplete: boolean;
+  isLoadingPlanGenerated: boolean;
+  isLoadingSequenceGenerated: boolean;
 }
 
 /**
@@ -454,6 +458,11 @@ export interface ILoadingInformation {
   vesselId?: number;
   voyageId?: number;
   isLoadingInfoComplete: boolean;
+  isLoadingPlanGenerated:boolean;
+  isLoadingSequenceGenerated: boolean;
+  isLoadingInstructionsComplete: boolean
+
+
 }
 
 /**
@@ -924,7 +933,7 @@ export interface IBallastUpdateList {
   quantity: number;
   sounding: number;
   correctedUllage: number;
-  correctionFactor: number;
+  correctionFactor: string | number;
   filling_percentage: number;
   arrival_departutre: number;
   actual_planned: number;
@@ -935,6 +944,7 @@ export interface IBallastUpdateList {
   fillingRatio?: string;
   port_xid?: string;
   port_rotation_xid?: string;
+  isValidate?: string;
 }
 
 /**

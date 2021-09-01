@@ -8,8 +8,6 @@ import lombok.Data;
 @Data
 public class UllageUpdateDetails {
 
-  private Long id;
-
   private BigDecimal loadingInformationId;
 
   private BigDecimal tankId;
