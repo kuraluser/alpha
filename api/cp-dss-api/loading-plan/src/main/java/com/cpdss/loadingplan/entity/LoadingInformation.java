@@ -119,7 +119,7 @@ public class LoadingInformation extends EntityDoc {
   @Column(name = "shore_loading_rate")
   private BigDecimal shoreLoadingRate;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.MERGE)
   @JoinColumn(name = "loading_status_xid", nullable = true)
   private LoadingInformationStatus loadingInformationStatus;
 
