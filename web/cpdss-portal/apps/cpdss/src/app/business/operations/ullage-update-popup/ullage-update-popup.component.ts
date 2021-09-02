@@ -955,7 +955,7 @@ export class UllageUpdatePopupComponent implements OnInit {
         actual_planned: 1,
         correction_factor: item.correctionFactor?.toString(),
         api: item.api ? Number(item.api) : '',
-        isUpdate: true,
+        isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
         port_xid: '',
         port_rotation_xid: '',
         grade: '',
@@ -1001,7 +1001,7 @@ export class UllageUpdatePopupComponent implements OnInit {
         port_xid: '',
         port_rotation_xid: '',
         isValidate: '',
-        isUpdate: true
+        isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
       });
     });
 
@@ -1010,7 +1010,7 @@ export class UllageUpdatePopupComponent implements OnInit {
         loadingInformationId: this.loadingInfoId?.toString(),
         tankId: item.tankId?.toString(),
         quantity: item.quantity.value?.toString(),
-        isUpdate: true,
+        isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
         density: item.density.value?.toString(),
         colour_code: item.colorCode,
         actual_planned: '1',
@@ -1030,7 +1030,7 @@ export class UllageUpdatePopupComponent implements OnInit {
       const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_SUCCESS_LABEL', 'ULLAGE_UPDATE_SUCCESS_MESSAGE']).toPromise();
       this.messageService.add({ severity: 'success', summary: translationKeys['ULLAGE_UPDATE_SUCCESS_LABEL'], detail: translationKeys['ULLAGE_UPDATE_SUCCESS_MESSAGE'] });
       if (validate) {
-        this.loadingDischargingTransformationService.validateUllage({ validate: true, processId: '3058eeb3-6001-4c11-ba1e-03a6899ed655', status: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2 });
+        this.loadingDischargingTransformationService.validateUllage({ validate: true, processId: result['processId'], status: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2 });
       }
       setTimeout(() => {
         this.ngxSpinnerService.hide();
