@@ -115,11 +115,12 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.loadingPlanComplete = status;  
         this.processing = !status; 
         this.disableGenerateLoadableButton = !status;
+        this.loadingDischargingTransformationService.disableSaveButton.next(!status)
     })
     this.loadingDischargingTransformationService.isLoadingSequenceGenerated.subscribe((status) => {     
         this.loadingSequenceComplete = status; 
         this.processing = !status;   
-        this.disableGenerateLoadableButton = !status;
+        this.loadingDischargingTransformationService.disableSaveButton.next(!status)
     })  
 
     this.loadingDischargingTransformationService.validateUllageData$.subscribe((res) => {
@@ -132,9 +133,12 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.loadingInformationComplete = res;
         if (this.loadingInstructionComplete && this.loadingInformationComplete) {
           this.disableGenerateLoadableButton = false;
+          this.loadingDischargingTransformationService.disableSaveButton.next(false)
         }
         else {
           this.disableGenerateLoadableButton = true;
+          this.loadingDischargingTransformationService.disableSaveButton.next(true)
+
         }
     
     });
@@ -143,9 +147,13 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.loadingInstructionComplete = res;
         if (this.loadingInstructionComplete && this.loadingInformationComplete) {
           this.disableGenerateLoadableButton = false;
+          this.loadingDischargingTransformationService.disableSaveButton.next(false)
+
         }
         else {
           this.disableGenerateLoadableButton = true;
+          this.loadingDischargingTransformationService.disableSaveButton.next(true)
+
         }
      
     });    
