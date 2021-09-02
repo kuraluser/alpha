@@ -14,6 +14,8 @@ export function loadingDetailsValidator(field, compareOperation): ValidatorFn {
                     return { failedCompare: true };
                 } else if (compareOperation === '>' && compareDate.getTime() > checkDate.getTime()) {
                     return { failedCompare: true };
+                } else {
+                    return null;
                 }
             }
         }

@@ -3,7 +3,8 @@ import { IDataTableColumn } from '../../../shared/components/datatable/datatable
 import { ICargo, IShipCargoTank } from '../../core/models/common.model';
 import { IToppingOffSequence } from '../models/loading-discharging.model';
 import { ToppingOffTankTableTransformationService } from './topping-off-tank-table-transformation.service';
-
+import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 /**
  * Component class for loading topping off tank component
  *
@@ -18,6 +19,17 @@ import { ToppingOffTankTableTransformationService } from './topping-off-tank-tab
 })
 export class ToppingOffTankTableComponent implements OnInit {
   @Input() cargoTanks: IShipCargoTank[][];
+  @Input() loadingDischargingPLanData: any;
+  @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
+    return this._currentQuantitySelectedUnit;
+  }
+
+  set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
+    this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
+    this._currentQuantitySelectedUnit = value;
+    this.initToppingOffSequence();
+  }
+  private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   @Input() get cargos(): ICargo[] {
     return this._cargos;
   }
@@ -41,7 +53,7 @@ export class ToppingOffTankTableComponent implements OnInit {
 
   @Input() loadingPlanData: any;
 
-
+  prevQuantitySelectedUnit: QUANTITY_UNIT;
   private _toppingOffSequence: IToppingOffSequence[];
   private _cargos: ICargo[];
 
@@ -113,8 +125,21 @@ export class ToppingOffTankTableComponent implements OnInit {
 * @memberof ToppingOffTankTableComponent
 */
   initiToppingSequenceArray() {
-
+    const cargoQuantity = [];
+    this.loadingDischargingPLanData?.planStowageDetails?.map(item=>{
+      if(item.conditionType === 2 && item.valueType === 2){
+        cargoQuantity.push(item);
+      }
+    });
+    const cargoTanks = this.toppingOffTankTableTransformationService.formatCargoTanks(this.cargoTanks, cargoQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.cargoTypeList = Object.values(this.toppingOffSequence?.reduce((acc, obj) => {
+      cargoTanks.map(item=>{
+        item?.map(tank=>{
+          if(tank.id === obj.tankId){
+            obj.fillingRatio = Number(tank.commodity?.percentageFilled);
+          }
+        });
+      });
       const key = obj['cargoId'];
       if (!acc[key]) {
         acc[key] = [];
@@ -123,7 +148,6 @@ export class ToppingOffTankTableComponent implements OnInit {
       acc[key].push(obj);
       return acc;
     }, {}));
-
   }
 
 

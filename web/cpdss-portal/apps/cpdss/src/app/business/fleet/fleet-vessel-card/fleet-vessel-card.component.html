@@ -17,19 +17,34 @@
               </div>
 
               <div class="row vessel-card-bottom-content pt-20">
-                <div class="col-6 pr-0 text-medium">{{'FLEET_PORT_ATD' | translate}}
-                  {{vessel?.atd ? (vessel?.atd | momentFormat: dateFormat) : '-'}}
+                <div class="col-6 pr-0 text-medium" *ngIf="vessel?.voyageStart?.atd">{{'FLEET_PORT_ATD' | translate}}
+                  {{vessel?.voyageStart?.atd ? (vessel?.voyageStart?.atd | momentFormat: dateFormat) : '-'}}
                   <br>
-                  {{vessel?.voyageStart}}
+                  {{vessel?.voyageStart?.portName}}
                 </div>
-                <div class="col-6 pl-0 text-right text-medium" *ngIf="vessel?.ata">{{'FLEET_PORT_ATA' | translate}}
-                  {{vessel?.ata ? (vessel?.ata | momentFormat: dateFormat) : '-'}}
+                <div class="col-6 pr-0 text-medium" *ngIf="!vessel?.voyageStart?.atd && vessel?.voyageStart?.ata && vessel?.voyageStart?.etd">{{'FLEET_PORT_ETD' | translate}}
+                  {{vessel?.voyageStart?.etd ? (vessel?.voyageStart?.etd | momentFormat: dateFormat) : '-'}}
                   <br>
-                  {{vessel?.voyageEnd}}
+                  {{vessel?.voyageStart?.portName}}
                 </div>
-                <div class="col-6 pl-0 text-right text-medium" *ngIf="!vessel?.ata">{{'FLEET_PORT_ETA' | translate}}
-                  {{vessel?.eta ? (vessel?.eta | momentFormat: dateFormat) : '-'}}
-                  <br>{{vessel?.voyageEnd}}
+                <div class="col-6 pr-0 text-medium" *ngIf="!vessel?.voyageStart?.atd && !vessel?.voyageStart?.ata && vessel?.voyageStart?.eta">{{'FLEET_PORT_ETA' | translate}}
+                  {{vessel?.voyageStart?.eta ? (vessel?.voyageStart?.eta | momentFormat: dateFormat) : '-'}}
+                  <br>
+                  {{vessel?.voyageStart?.portName}}
+                </div>
+
+                <div class="col-6 pl-0 text-right text-medium" *ngIf="vessel?.voyageEnd?.ata">{{'FLEET_PORT_ATA' | translate}}
+                  {{vessel?.voyageEnd?.ata ? (vessel?.voyageEnd?.ata | momentFormat: dateFormat) : '-'}}
+                  <br>
+                  {{vessel?.voyageEnd?.portName}}
+                </div>
+                <div class="col-6 pl-0 text-right text-medium" *ngIf="!vessel?.voyageEnd?.ata">{{'FLEET_PORT_ETA' | translate}}
+                  {{vessel?.voyageEnd?.eta ? (vessel?.voyageEnd?.eta | momentFormat: dateFormat) : '-'}}
+                  <br>{{vessel?.voyageEnd?.portName}}
+                </div>
+
+                <div class="col-6 pl-0 text-right text-medium" *ngIf="!vessel?.voyageId">{{'FLEET_PORT_ETA' | translate}}
+                  {{'FLEET_VESSEL_NO_ACTIVE_VOYAGE' | translate}}
                 </div>
               </div>
 

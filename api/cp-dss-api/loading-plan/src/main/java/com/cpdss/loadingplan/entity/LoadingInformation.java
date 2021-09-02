@@ -2,8 +2,6 @@
 package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
-import com.cpdss.loadingplan.common.LoadingPlanConstants;
-
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Set;
@@ -121,15 +119,15 @@ public class LoadingInformation extends EntityDoc {
   @Column(name = "shore_loading_rate")
   private BigDecimal shoreLoadingRate;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.MERGE)
   @JoinColumn(name = "loading_status_xid", nullable = true)
   private LoadingInformationStatus loadingInformationStatus;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.MERGE)
   @JoinColumn(name = "arrival_status_xid", nullable = true)
   private LoadingInformationStatus arrivalStatus;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.MERGE)
   @JoinColumn(name = "departure_status_xid", nullable = true)
   private LoadingInformationStatus departureStatus;
 
