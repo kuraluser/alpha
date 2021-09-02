@@ -19,7 +19,7 @@ public class PortLoadingPlanBallastTempDetails extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
 
-  @ManyToOne
+  @ManyToOne(cascade = {CascadeType.ALL})
   @JoinColumn(name = "loading_information_xid", referencedColumnName = "id")
   private LoadingInformation loadingInformation;
 
