@@ -3,7 +3,7 @@ package com.cpdss.loadingplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadingplan.entity.LoadingInformation;
-import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanRobTempDetails;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,31 +13,33 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface PortLoadingPlanRobDetailsRepository
-    extends CommonCrudRepository<PortLoadingPlanRobDetails, Long> {
+public interface PortLoadingPlanRobDetailsRepositoryTemp
+    extends CommonCrudRepository<PortLoadingPlanRobTempDetails, Long> {
 
-  public List<PortLoadingPlanRobDetails> findByLoadingInformationAndIsActive(
+  public List<PortLoadingPlanRobTempDetails> findByLoadingInformationAndIsActive(
       LoadingInformation loadingInformation, Boolean isActive);
 
   @Query(
-      "FROM PortLoadingPlanRobDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
-  public List<PortLoadingPlanRobDetails> findByPatternIdAndPortRotationIdAndIsActive(
+      "FROM PortLoadingPlanRobTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
+  public List<PortLoadingPlanRobTempDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
 
   @Modifying
   @Transactional
-  @Query("UPDATE PortLoadingPlanRobDetails SET isActive = false WHERE id = ?1")
+  @Query("UPDATE PortLoadingPlanRobTempDetails SET isActive = false WHERE id = ?1")
   public void deleteById(Long id);
 
   @Modifying
   @Transactional
-  @Query("UPDATE PortLoadingPlanRobDetails SET isActive = false WHERE loadingInformation.id = ?1")
+  @Query(
+      "UPDATE PortLoadingPlanRobTempDetails SET isActive = false WHERE loadingInformation.id = ?1")
   public void deleteByLoadingInformationId(Long loadingInfoId);
 
   @Transactional
   @Modifying
   @Query(
-      "Update PortLoadingPlanRobDetails set quantity = ?1, quantityM3 = ?2" + " where tankXId = ?3")
+      "Update PortLoadingPlanRobTempDetails set quantity = ?1, quantityM3 = ?2"
+          + " where tankXId = ?3")
   public void updatePortLoadingPlanRobDetailsRepository(
       @Param("quantity") BigDecimal quantity,
       @Param("quantity_m3") BigDecimal quantityM3,
@@ -46,7 +48,7 @@ public interface PortLoadingPlanRobDetailsRepository
   @Modifying
   @Query(
       value =
-          "insert into PortLoadingPlanRobDetails (loading_information_xid, tank_xid, quantity_mt, density,"
+          "insert into PortLoadingPlanRobTempDetails (loading_information_xid, tank_xid, quantity_mt, density,"
               + "colour_code, actual_planned, arrival_departutre) values"
               + " (:loading_information_xid, :tank_xid, :quantity_mt, :density, :colour_code, :actual_planned, :arrival_departutre)",
       nativeQuery = true)
