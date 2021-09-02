@@ -89,9 +89,20 @@ public class CommunicationService {
             log.info("LoadableStudy received at shore ");
             saveLoadableStudyShore(erReply);
           }
-        } /*else if (messageType.getMessageType().equals("ValidatePlan")) {
-            saveValidatePlanRequestShore(erReply);
-          }*/
+        } else if (messageType.getMessageType().equals("ValidatePlan")) {
+            EnvoyReader.EnvoyReaderResultReply erReply =
+                    getResultFromEnvoyReaderShore(taskReqParams, messageType);
+            if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+              throw new GenericServiceException(
+                      "Failed to get Result from Communication Server",
+                      erReply.getResponseStatus().getCode(),
+                      HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
+            }
+            if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
+              log.info("LoadableStudy received at shore ");
+              saveValidatePlanRequestShore(erReply);
+            }
+        }
       } catch (GenericServiceException e) {
         throw new GenericServiceException(
             e.getMessage(),

@@ -17,8 +17,6 @@ import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.CommingleCargo;
-import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
@@ -38,7 +36,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -77,6 +74,7 @@ public class LoadableStudyServiceShore {
 
   @Autowired
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
+
   @Autowired private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
   @Autowired private LoadablePlanBallastDetailsRepository loadablePlanBallastDetailsRepository;
   @Autowired private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
@@ -84,9 +82,6 @@ public class LoadableStudyServiceShore {
   @Autowired private LoadablePatternRepository loadablePatternRepository;
   @Autowired private LoadableStudyPortRotationService loadableStudyPortRotationService;
   @Autowired private LoadableQuantityService loadableQuantityService;
-
-  @Autowired
-  private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
   public LoadableStudy setLoadablestudyShore(String jsonResult, String messageId)
       throws GenericServiceException {
