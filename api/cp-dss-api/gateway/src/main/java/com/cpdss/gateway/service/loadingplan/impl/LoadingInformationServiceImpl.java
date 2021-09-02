@@ -153,7 +153,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       }
 
       // If not found in LS, Synoptic Go to Port Master
-      if (var.getTimeOfSunrise() == null || var.getTimeOfSunset() == null) {
+      if (var.getTimeOfSunrise() == null && var.getTimeOfSunset() == null) {
         PortInfo.PortDetail response2 = this.loadingPlanGrpcService.fetchPortDetailByPortId(portId);
         var.setTimeOfSunrise(response2.getSunriseTime());
         var.setTimeOfSunset(response2.getSunsetTime());
@@ -678,6 +678,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           loadingInfoBuilderService.saveDataAsync(request);
       if (request.getLoadingDetails() != null) {
         // Updating synoptic table (time)
+        log.info(
+            "Saving Loading info Times details at Synoptic Table - id {}",
+            request.getSynopticalTableId());
         this.updateSynopticalTable(request.getLoadingDetails(), request.getSynopticalTableId());
       }
       if (response == null) {
