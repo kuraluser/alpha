@@ -186,7 +186,8 @@ export class LoadingDischargingDetailsComponent implements OnInit {
     fieldReferenceName.value = null;
     fieldReferenceName.hideOverlay();
     this.loadingDischargingDetailsForm.controls[field].setValue(null);
-    
+    this.loadingDischargingDetailsForm.controls.timeOfSunrise.updateValueAndValidity();
+    this.loadingDischargingDetailsForm.controls.timeOfSunset.updateValueAndValidity();
   }
 
 /**
@@ -286,10 +287,12 @@ export class LoadingDischargingDetailsComponent implements OnInit {
   * @memberof LoadingDischargingDetailsComponent
   */
   onBlur(fieldReferenceName: any, field: string) {
-    if(!fieldReferenceName.value) {
-      this.loadingDischargingDetailsForm.controls[field].updateValueAndValidity();
-    }
+    this.loadingDischargingDetailsForm.controls.timeOfSunrise.updateValueAndValidity();
+    this.loadingDischargingDetailsForm.controls.timeOfSunset.updateValueAndValidity();
     fieldReferenceName.hideOverlay();
+    if (!this.fieldError(field)) {
+      this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
+    }
   }
 
 }
