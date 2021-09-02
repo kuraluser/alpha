@@ -20,37 +20,34 @@ public interface CowTankDetailsOrBuilder
   com.cpdss.common.generated.Common.COW_TYPE getCowType();
 
   /**
-   * <code>.CargoForCow cargoForCow = 2;</code>
-   *
-   * @return Whether the cargoForCow field is set.
-   */
-  boolean hasCargoForCow();
-  /**
-   * <code>.CargoForCow cargoForCow = 2;</code>
-   *
-   * @return The cargoForCow.
-   */
-  com.cpdss.common.generated.discharge_plan.CargoForCow getCargoForCow();
-  /** <code>.CargoForCow cargoForCow = 2;</code> */
-  com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder getCargoForCowOrBuilder();
-
-  /**
-   * <code>repeated int64 tankIds = 3;</code>
+   * <code>repeated int64 tankIds = 2;</code>
    *
    * @return A list containing the tankIds.
    */
   java.util.List<java.lang.Long> getTankIdsList();
   /**
-   * <code>repeated int64 tankIds = 3;</code>
+   * <code>repeated int64 tankIds = 2;</code>
    *
    * @return The count of tankIds.
    */
   int getTankIdsCount();
   /**
-   * <code>repeated int64 tankIds = 3;</code>
+   * <code>repeated int64 tankIds = 2;</code>
    *
    * @param index The index of the element to return.
    * @return The tankIds at the given index.
    */
   long getTankIds(int index);
+
+  /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+  java.util.List<com.cpdss.common.generated.discharge_plan.CargoForCow> getCargoForCowList();
+  /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+  com.cpdss.common.generated.discharge_plan.CargoForCow getCargoForCow(int index);
+  /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+  int getCargoForCowCount();
+  /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+  java.util.List<? extends com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder>
+      getCargoForCowOrBuilderList();
+  /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+  com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder getCargoForCowOrBuilder(int index);
 }
