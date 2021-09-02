@@ -20,9 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,7 +66,6 @@ public class LoadingPlanService {
   @Autowired PortLoadingPlanBallastDetailsRepository loadingPlanBallastDetailsRepository;
   @Autowired PortLoadingPlanRobDetailsRepository loadingPlanRobDetailsRepository;
   @Autowired PortLoadingPlanRobDetailsRepositoryTemp loadingPlanRobDetailsTempRepository;
-
 
   @Autowired StageOffsetRepository stageOffsetRepository;
   @Autowired StageDurationRepository stageDurationRepository;
@@ -208,7 +205,7 @@ public class LoadingPlanService {
       List<PortLoadingPlanStowageDetails> plpStowageList =
           plpStowageDetailsRepository.findByLoadingInformationAndIsActive(var1.get(), true);
       List<PortLoadingPlanRobDetails> plpRobList =
-          plpRobDetailsRepository.findByLoadingInformationAndIsActive(var1.get(), true);
+          plpRobDetailsRepository.findByLoadingInformationAndIsActive(var1.get().getId(), true);
       List<PortLoadingPlanStabilityParameters> plpStabilityList =
           plpStabilityParametersRepository.findByLoadingInformationAndIsActive(var1.get(), true);
 
@@ -566,7 +563,7 @@ public class LoadingPlanService {
                     robDet.setPortXId(Long.valueOf(ullageInsert.getPortXid()));
                     robDet.setPortRotationXId(Long.valueOf(ullageInsert.getPortRotationXid()));
                     robDet.setConditionType(
-                            Integer.valueOf(ullageInsert.getCorrectedUllage() + ""));
+                        Integer.valueOf(ullageInsert.getCorrectedUllage() + ""));
                     loadingPlanRobDetailsRepository.save(robDet);
                   }
                 });
@@ -694,7 +691,7 @@ public class LoadingPlanService {
       List<PortLoadingPlanStowageDetails> stowageEntityList = new ArrayList<>();
       for (PortLoadingPlanStowageTempDetails tempStowageEntity : tempStowageList) {
         PortLoadingPlanStowageDetails stowageEntity = new PortLoadingPlanStowageDetails();
-        //BeanUtils.copyProperties(stowageEntity, tempStowageEntity);
+        // BeanUtils.copyProperties(stowageEntity, tempStowageEntity);
         stowageEntity.setId(null);
         stowageEntity.setCreatedBy(null);
         stowageEntity.setCreatedDate(null);
@@ -720,7 +717,7 @@ public class LoadingPlanService {
       List<PortLoadingPlanBallastDetails> ballastEntityList = new ArrayList<>();
       for (PortLoadingPlanBallastTempDetails tempBallastEntity : tempBallastList) {
         PortLoadingPlanBallastDetails ballastEntity = new PortLoadingPlanBallastDetails();
-        //BeanUtils.copyProperties(ballastEntity, tempBallastEntity);
+        // BeanUtils.copyProperties(ballastEntity, tempBallastEntity);
         ballastEntity.setId(null);
         ballastEntity.setCreatedBy(null);
         ballastEntity.setCreatedDate(null);

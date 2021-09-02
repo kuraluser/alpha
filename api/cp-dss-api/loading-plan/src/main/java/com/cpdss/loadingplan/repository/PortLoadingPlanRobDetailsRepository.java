@@ -2,7 +2,6 @@
 package com.cpdss.loadingplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
-import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,7 +16,7 @@ public interface PortLoadingPlanRobDetailsRepository
     extends CommonCrudRepository<PortLoadingPlanRobDetails, Long> {
 
   public List<PortLoadingPlanRobDetails> findByLoadingInformationAndIsActive(
-      LoadingInformation loadingInformation, Boolean isActive);
+      Long fkId, Boolean isActive);
 
   @Query(
       "FROM PortLoadingPlanRobDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
