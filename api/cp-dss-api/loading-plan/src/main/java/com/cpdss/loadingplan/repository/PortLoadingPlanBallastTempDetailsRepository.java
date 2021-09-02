@@ -20,31 +20,45 @@ public interface PortLoadingPlanBallastTempDetailsRepository
       LoadingInformation loadingInformation, Boolean isActive);
 
   @Query(
-      "FROM PortLoadingPlanBallastDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
+      "FROM PortLoadingPlanBallastTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
   public List<PortLoadingPlanBallastTempDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
 
   @Modifying
   @Transactional
-  @Query("UPDATE PortLoadingPlanBallastDetails SET isActive = false WHERE id = ?1")
+  @Query("UPDATE PortLoadingPlanBallastTempDetails SET isActive = false WHERE id = ?1")
   public void deleteById(Long id);
 
   @Modifying
   @Transactional
   @Query(
-      "UPDATE PortLoadingPlanBallastDetails SET isActive = false WHERE loadingInformation.id = ?1")
+      "UPDATE PortLoadingPlanBallastTempDetails SET isActive = false WHERE loadingInformation.id = ?1")
   public void deleteByLoadingInformationId(Long loadingInfoId);
 
   @Transactional
   @Modifying
   @Query(
-      "Update PortLoadingPlanBallastDetails set quantity = ?1, sounding = ?2, quantityM3 = ?3"
-          + " where tankXId = ?4 and isActive = ?5 and isActive = ?6")
+      "Update PortLoadingPlanBallastTempDetails set sg =?1, corrected_ullage =?2, color_code =?3, quantity = ?4, sounding = ?5, quantityM3 = ?6"
+          + " where tankXId = ?7 and loading_information_xid =?8 and arrival_departutre =?9")
   public void updateLoadingPlanBallastDetailsRepository(
+      @Param("sg") BigDecimal sg,
+      @Param("corrected_ullage") BigDecimal corrected_ullage,
+      @Param("color_code") String colorCode,
       @Param("quantity") BigDecimal quantity,
       @Param("sounding") BigDecimal sounding,
       @Param("quantity_m3") BigDecimal quantityM3,
       @Param("tank_xid") Long tankXId,
-      @Param("is_active") Boolean isActive,
-      @Param("port_xid") Long portXId);
+      @Param("loading_information_xid") Long loadingId,
+      @Param("arrival_departutre") Long arrivalDepartutre);
+
+  public List<PortLoadingPlanBallastTempDetails>
+      findByLoadingInformationAndConditionTypeAndIsActive(
+          LoadingInformation loadingInformation, Integer conditionType, boolean b);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "Update PortLoadingPlanBallastTempDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and isActive = true")
+  public void deleteExistingByLoadingInfoAndConditionType(
+      Long loadingInfoId, Integer conditionType);
 }

@@ -193,6 +193,15 @@ a {
         background: url($images-menu-icons + 'fleet-icon-hover.png') no-repeat;
     }
   }
+  &.files {
+    &:before {
+        background: url($images-menu-icons + 'files-icon.png') no-repeat;
+    }
+
+    &:after {
+        background: url($images-menu-icons + 'files-icon-hover.png') no-repeat;
+    }
+  }
 }
 
 header .header-nav .nav li.active {
@@ -532,6 +541,9 @@ tr:hover{
 }
 .icon-status-11{
   background: url($images-theme + 'algo-error.png') no-repeat center center;
+}
+.icon-status-21{
+  background: url($images-theme + 'icon-status-21.png') no-repeat center center;
 }
 .icon-api-temp{
   background: url($images-theme + 'history-icon-api-and-temp.png') no-repeat center center;
@@ -1171,7 +1183,7 @@ tr:hover a.btn-secondary{
 }
 
 .p-overlaypanel{
-  background: $tolltip-bg;
+  background: $tooltip-bg;
   border: 1px solid $card-distance;
 }
 .p-overlaypanel.tank-tooltip{
@@ -1482,7 +1494,7 @@ header{
     &:hover{
       color:$active-color!important;
       background:  lighten($login-btn, 10%)!important;
-      
+
     }
     &:focus{
       box-shadow: 0 0 0 2px rgba($login-btn, 0.25);
@@ -1514,4 +1526,19 @@ header{
 
 .right-border{
   border-right: 1px solid $border-color!important;
+}
+.sequence-chart-ballast-column, .sequence-chart-tank-column, .sequence-chart-ballast-pump-column, .highcharts-axis-title, .highcharts-axis-title, .sequence-chart-cargo-column, .sequence-chart-ullage-column, .sequence-chart-quantity-column{
+  color: $text-secondary;
+  fill: $text-secondary!important;
+}
+
+.sequence-chart.stabilityparams-chart{
+  .highcharts-axis-title{
+    fill: $text-secondary!important;
+  }
+}
+
+.highcharts-label-box.highcharts-tooltip-box {
+  fill:rgba($tooltip-bg, 1) !important;
+  stroke: $card-distance !important;
 }

@@ -11,27 +11,43 @@
             <div class="vessel-card-content">
               <div class="row">
                 <div class="col">
-                  <div class="vessel-card-heading">{{vessel.vesselName}}</div>
-                  <div>{{'VESSEL_INFO_IMO' | translate}} {{vessel.imoNo}}</div>
+                  <div class="vessel-card-heading">{{vessel?.vesselName}}</div>
+                  <div>{{'VESSEL_INFO_IMO' | translate}} {{vessel?.imoNo}}</div>
                 </div>
               </div>
 
               <div class="row vessel-card-bottom-content pt-20">
-                <div class="col-6 pr-0 text-medium">{{'FLEET_PORT_ATD' | translate}}
-                  {{vessel.atd | momentFormat: 'DD-MMM-YYYY'}}
+                <div class="col-6 pr-0 text-medium" *ngIf="vessel?.voyageStart?.atd">{{'FLEET_PORT_ATD' | translate}}
+                  {{vessel?.voyageStart?.atd ? (vessel?.voyageStart?.atd | momentFormat: dateFormat) : '-'}}
                   <br>
-                  {{vessel.voyageStart}}
+                  {{vessel?.voyageStart?.portName}}
                 </div>
-                <div class="col-6 pl-0 text-right text-medium" *ngIf="vessel?.ata">{{'FLEET_PORT_ATA' | translate}}
-                  {{vessel.ata | momentFormat: 'DD-MMM-YYYY'}}
+                <div class="col-6 pr-0 text-medium" *ngIf="!vessel?.voyageStart?.atd && vessel?.voyageStart?.ata && vessel?.voyageStart?.etd">{{'FLEET_PORT_ETD' | translate}}
+                  {{vessel?.voyageStart?.etd ? (vessel?.voyageStart?.etd | momentFormat: dateFormat) : '-'}}
                   <br>
-                  {{vessel.voyageEnd}}
+                  {{vessel?.voyageStart?.portName}}
                 </div>
-                <div class="col-6 pl-0 text-right text-medium" *ngIf="!vessel?.ata">{{'FLEET_PORT_ETA' | translate}}
-                  {{vessel.eta | momentFormat: 'DD-MMM-YYYY'}}
-                  <br>{{vessel.voyageEnd}}
+                <div class="col-6 pr-0 text-medium" *ngIf="!vessel?.voyageStart?.atd && !vessel?.voyageStart?.ata && vessel?.voyageStart?.eta">{{'FLEET_PORT_ETA' | translate}}
+                  {{vessel?.voyageStart?.eta ? (vessel?.voyageStart?.eta | momentFormat: dateFormat) : '-'}}
+                  <br>
+                  {{vessel?.voyageStart?.portName}}
+                </div>
+
+                <div class="col-6 pl-0 text-right text-medium" *ngIf="vessel?.voyageEnd?.ata">{{'FLEET_PORT_ATA' | translate}}
+                  {{vessel?.voyageEnd?.ata ? (vessel?.voyageEnd?.ata | momentFormat: dateFormat) : '-'}}
+                  <br>
+                  {{vessel?.voyageEnd?.portName}}
+                </div>
+                <div class="col-6 pl-0 text-right text-medium" *ngIf="!vessel?.voyageEnd?.ata">{{'FLEET_PORT_ETA' | translate}}
+                  {{vessel?.voyageEnd?.eta ? (vessel?.voyageEnd?.eta | momentFormat: dateFormat) : '-'}}
+                  <br>{{vessel?.voyageEnd?.portName}}
+                </div>
+
+                <div class="col-6 pl-0 text-right text-medium" *ngIf="!vessel?.voyageId">{{'FLEET_PORT_ETA' | translate}}
+                  {{'FLEET_VESSEL_NO_ACTIVE_VOYAGE' | translate}}
                 </div>
               </div>
+
               <!-- Will use in future -->
               <!-- <div class="row">
                 <div class="col-sm-12">
@@ -50,16 +66,16 @@
         <div class="vessel-card-submenu">
           <ul>
             <li>
-              <div pTooltip="{{'DASHBOARD' | translate}}" tooltipPosition="top" [routerLink]="['/business/voyage-status']" class="menu-item-icon status"></div>
+              <a pTooltip="{{'DASHBOARD' | translate}}" tooltipPosition="top" (click)="navigateToPage('voyage-status', vessel)" class="menu-item-icon status"></a>
             </li>
             <li>
-              <div pTooltip="{{'CARGO_PLANNING' | translate}}" tooltipPosition="top" [routerLink]="['/business/cargo-planning/loadable-study-list']" class="menu-item-icon cargo-planning"></div>
+              <a pTooltip="{{'FILES' | translate}} - Comming Soon" tooltipPosition="top" class="menu-item-icon files"></a>
             </li>
             <li>
-              <div pTooltip="{{'VOYAGES' | translate}}" tooltipPosition="top" [routerLink]="['/business/voyages']" class="menu-item-icon voyages"></div>
+              <a pTooltip="{{'VOYAGES' | translate}}" tooltipPosition="top" (click)="navigateToPage('voyages', vessel)" class="menu-item-icon voyages"></a>
             </li>
             <li>
-              <div pTooltip="{{'SYNOPTICAL' | translate}}" tooltipPosition="top" [routerLink]="['/business/synoptical']" class="menu-item-icon synoptical-table"></div>
+              <a pTooltip="{{'SYNOPTICAL' | translate}}" tooltipPosition="top" (click)="navigateToPage('synoptical', vessel)" class="menu-item-icon synoptical-table"></a>
             </li>
           </ul>
         </div>

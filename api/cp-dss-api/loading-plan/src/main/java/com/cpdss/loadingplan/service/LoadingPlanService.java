@@ -12,11 +12,15 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
+import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import io.grpc.stub.StreamObserver;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +51,14 @@ public class LoadingPlanService {
   @Autowired PortLoadingPlanBallastDetailsRepository portLoadingPlanBallastDetailsRepository;
   @Autowired PortLoadingPlanRobDetailsRepository portLoadingPlanRobDetailsRepository;
 
+  @Autowired
+  PortLoadingPlanStowageTempDetailsRepository portLoadingPlanStowageTempDetailsRepository;
+
+  @Autowired
+  PortLoadingPlanBallastTempDetailsRepository portLoadingPlanBallastTempDetailsRepository;
+
+  @Autowired LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
+
   @Autowired BillOfLandingRepository billOfLandingRepository;
 
   @Autowired PortLoadingPlanStowageTempDetailsRepository loadingPlanStowageDetailsTempRepository;
@@ -59,6 +71,8 @@ public class LoadingPlanService {
   @Autowired StageDurationRepository stageDurationRepository;
   @Autowired ReasonForDelayRepository reasonForDelayRepository;
   @Autowired LoadingDelayRepository loadingDelayRepository;
+
+  @Autowired UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
 
   /**
    * @param request
@@ -173,7 +187,14 @@ public class LoadingPlanService {
       LoadingPlanModels.LoadingDelay loadingDelay =
           this.informationBuilderService.buildLoadingDelayMessage(list5, list6);
       loadingInformation.setLoadingDelays(loadingDelay);
-
+      Optional.ofNullable(var1.get().getLoadingInformationStatus())
+          .ifPresent(status -> loadingInformation.setLoadingInfoStatusId(status.getId()));
+      Optional.ofNullable(var1.get().getArrivalStatus())
+          .ifPresent(status -> loadingInformation.setLoadingPlanArrStatusId(status.getId()));
+      Optional.ofNullable(var1.get().getDepartureStatus())
+          .ifPresent(status -> loadingInformation.setLoadingPlanDepStatusId(status.getId()));
+      Optional.ofNullable(var1.get().getLoadablePatternXId())
+          .ifPresent(loadingInformation::setLoadablePatternId);
       masterBuilder.setLoadingInformation(loadingInformation.build());
 
       // <---Loading Information End-->
@@ -353,6 +374,8 @@ public class LoadingPlanService {
           portWiseBallastDetail.getSounding() != null
               ? portWiseBallastDetail.getSounding().toString()
               : "");
+      newBuilder.setSg(
+          portWiseBallastDetail.getSg() != null ? portWiseBallastDetail.getSg().toString() : "");
       builder.addPortLoadingPlanBallastDetails(newBuilder);
     }
   }
@@ -382,6 +405,10 @@ public class LoadingPlanService {
           portWiseRobDetail.getConditionType() != null
               ? portWiseRobDetail.getConditionType().toString()
               : "");
+      newBuilder.setDensity(
+          portWiseRobDetail.getDensity() != null ? portWiseRobDetail.getDensity().toString() : "");
+      newBuilder.setColorCode(
+          portWiseRobDetail.getColorCode() != null ? portWiseRobDetail.getColorCode() : "");
       builder.addPortLoadingPlanRobDetails(newBuilder);
     }
   }
@@ -399,16 +426,33 @@ public class LoadingPlanService {
           .getBillOfLandingList()
           .forEach(
               billOfLanding -> {
-                billOfLandingRepository.updateBillOfLandingRepository(
-                    billOfLanding.getBlRefNumber(),
-                    BigDecimal.valueOf(billOfLanding.getBblAt60F()),
-                    BigDecimal.valueOf(billOfLanding.getQuantityLt()),
-                    BigDecimal.valueOf(billOfLanding.getQuantityMt()),
-                    BigDecimal.valueOf(billOfLanding.getKlAt15C()),
-                    BigDecimal.valueOf(billOfLanding.getApi()),
-                    BigDecimal.valueOf(billOfLanding.getTemperature()),
-                    Integer.valueOf(billOfLanding.getCargoId() + ""),
-                    Integer.valueOf(billOfLanding.getPortId() + ""));
+                if (billOfLanding.getIsUpdate()) {
+                  billOfLandingRepository.updateBillOfLandingRepository(
+                      billOfLanding.getBlRefNumber(),
+                      BigDecimal.valueOf(billOfLanding.getBblAt60F()),
+                      BigDecimal.valueOf(billOfLanding.getQuantityLt()),
+                      BigDecimal.valueOf(billOfLanding.getQuantityMt()),
+                      BigDecimal.valueOf(billOfLanding.getKlAt15C()),
+                      BigDecimal.valueOf(billOfLanding.getApi()),
+                      BigDecimal.valueOf(billOfLanding.getTemperature()),
+                      Integer.valueOf(billOfLanding.getCargoId() + ""),
+                      Integer.valueOf(billOfLanding.getPortId() + ""),
+                      Integer.valueOf(billOfLanding.getLoadingId() + ""));
+                } else {
+                  BillOfLanding landing = new BillOfLanding();
+                  landing.setLoadingId(billOfLanding.getLoadingId());
+                  landing.setPortId(billOfLanding.getPortId());
+                  landing.setCargoId(billOfLanding.getCargoId());
+                  landing.setBlRefNumber(billOfLanding.getBlRefNumber());
+                  landing.setBblAt60f(BigDecimal.valueOf(billOfLanding.getBblAt60F()));
+                  landing.setKlAt15c(BigDecimal.valueOf(billOfLanding.getKlAt15C()));
+                  landing.setQuantityLt(BigDecimal.valueOf(billOfLanding.getQuantityLt()));
+                  landing.setQuantityMt(BigDecimal.valueOf(billOfLanding.getQuantityMt()));
+                  landing.setApi(BigDecimal.valueOf(billOfLanding.getApi()));
+                  landing.setTemperature(BigDecimal.valueOf(billOfLanding.getTemperature()));
+                  landing.setVersion(billOfLanding.getVersion());
+                  billOfLandingRepository.save(landing);
+                }
               });
 
       request
@@ -416,27 +460,12 @@ public class LoadingPlanService {
           .forEach(
               billOfLanding -> {
                 billOfLandingRepository.deleteBillOfLandingRepository(
-                    Boolean.valueOf(billOfLanding.getIsActive() == 0 ? false : true),
                     Integer.valueOf(billOfLanding.getCargoId() + ""),
-                    Integer.valueOf(billOfLanding.getPortId() + ""));
+                    Integer.valueOf(billOfLanding.getPortId() + ""),
+                    Integer.valueOf(billOfLanding.getLoadingId() + ""));
               });
 
-      request
-          .getRobUpdateList()
-          .forEach(
-              ullageInsert -> {
-                if (ullageInsert.getIsUpdate()) {
-                  loadingPlanRobDetailsRepository.updatePortLoadingPlanRobDetailsRepository(
-                      BigDecimal.valueOf(ullageInsert.getQuantity()),
-                      BigDecimal.valueOf(ullageInsert.getQuantity()),
-                      Long.valueOf(ullageInsert.getTankId()),
-                      true);
-                } else {
-                  loadingPlanRobDetailsRepository.save(new PortLoadingPlanRobDetails());
-                }
-              });
-
-      if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
+      if (request.getIsValidate() != null && request.getIsValidate().equals("false")) {
 
         request
             .getBallastUpdateList()
@@ -445,15 +474,40 @@ public class LoadingPlanService {
                   if (ullageInsert.getIsUpdate()) {
                     loadingPlanBallastDetailsTempRepository
                         .updateLoadingPlanBallastDetailsRepository(
+                            BigDecimal.valueOf(ullageInsert.getSg()),
+                            BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
+                            ullageInsert.getColorCode(),
                             BigDecimal.valueOf(ullageInsert.getQuantity()),
                             BigDecimal.valueOf(ullageInsert.getSounding()),
                             BigDecimal.valueOf(ullageInsert.getQuantity()),
                             Long.valueOf(ullageInsert.getTankId()),
-                            true,
-                            Long.valueOf(ullageInsert.getTankId()));
+                            Long.valueOf(ullageInsert.getLoadingInformationId()),
+                            Long.valueOf(ullageInsert.getArrivalDepartutre()));
                   } else {
-                    loadingPlanBallastDetailsTempRepository.save(
-                        new PortLoadingPlanBallastTempDetails());
+                    PortLoadingPlanBallastTempDetails details =
+                        new PortLoadingPlanBallastTempDetails();
+                    details.setLoadingInformation(new LoadingInformation());
+                    LoadingInformation info = new LoadingInformation();
+                    info.setPortXId(ullageInsert.getPortXid());
+                    info.setLoadablePatternXId(ullageInsert.getLoadingInformationId());
+                    details.setLoadingInformation(info);
+                    details.setPortRotationXId(ullageInsert.getPortRotationXid());
+                    details.setPortXId(ullageInsert.getPortXid());
+                    details.setTankXId(ullageInsert.getTankId());
+                    details.setTemperature(BigDecimal.valueOf(ullageInsert.getTemperature()));
+                    details.setCorrectedUllage(
+                        BigDecimal.valueOf(ullageInsert.getCorrectedUllage()));
+                    details.setQuantity(BigDecimal.valueOf(ullageInsert.getQuantity()));
+                    details.setObservedM3(BigDecimal.valueOf(ullageInsert.getObservedM3()));
+                    details.setFillingPercentage(
+                        BigDecimal.valueOf(ullageInsert.getFillingRatio()));
+                    details.setSounding(BigDecimal.valueOf(ullageInsert.getSounding()));
+                    details.setValueType(Integer.valueOf(ullageInsert.getActualPlanned() + ""));
+                    details.setConditionType(
+                        Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
+                    details.setColorCode(ullageInsert.getColorCode());
+                    details.setSg(BigDecimal.valueOf(ullageInsert.getSg()));
+                    loadingPlanBallastDetailsTempRepository.save(details);
                   }
                 });
 
@@ -470,13 +524,59 @@ public class LoadingPlanService {
                             BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
                             BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
                             Long.valueOf(ullageInsert.getTankId()),
-                            true,
-                            Long.valueOf(ullageInsert.getTankId()));
+                            ullageInsert.getLoadingInformationId(),
+                            ullageInsert.getArrivalDepartutre());
                   } else {
-                    loadingPlanStowageDetailsTempRepository.save(
-                        new PortLoadingPlanStowageTempDetails());
+                    PortLoadingPlanStowageTempDetails tempData =
+                        new PortLoadingPlanStowageTempDetails();
+                    LoadingInformation info = new LoadingInformation();
+                    info.setPortXId(ullageInsert.getPortXid());
+                    info.setLoadablePatternXId(ullageInsert.getLoadingInformationId());
+                    tempData.setLoadingInformation(info);
+                    tempData.setTankXId(ullageInsert.getTankId());
+                    tempData.setTemperature(BigDecimal.valueOf(ullageInsert.getTemperature()));
+                    tempData.setCorrectedUllage(
+                        BigDecimal.valueOf(ullageInsert.getCorrectedUllage()));
+                    tempData.setQuantity(BigDecimal.valueOf(ullageInsert.getQuantity()));
+                    tempData.setFillingPercentage(
+                        BigDecimal.valueOf(ullageInsert.getFillingPercentage()));
+                    tempData.setApi(BigDecimal.valueOf(ullageInsert.getApi()));
+                    tempData.setCargoNominationXId(ullageInsert.getCargoNominationXid());
+                    tempData.setPortXId(ullageInsert.getPortXid());
+                    tempData.setPortRotationXId(ullageInsert.getPortRotationXid());
+                    tempData.setValueType(Integer.valueOf(ullageInsert.getActualPlanned() + ""));
+                    tempData.setConditionType(
+                        Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
+                    tempData.setCorrectionFactor(
+                        BigDecimal.valueOf(ullageInsert.getCorrectionFactor()));
+                    loadingPlanStowageDetailsTempRepository.save(tempData);
                   }
                 });
+
+        request
+            .getRobUpdateList()
+            .forEach(
+                ullageInsert -> {
+                  if (ullageInsert.getIsUpdate()) {
+                    loadingPlanRobDetailsRepository.updatePortLoadingPlanRobDetailsRepository(
+                        BigDecimal.valueOf(ullageInsert.getQuantity()),
+                        BigDecimal.valueOf(ullageInsert.getQuantity()),
+                        Long.valueOf(ullageInsert.getTankId()));
+                  } else {
+                    PortLoadingPlanRobDetails robDet = new PortLoadingPlanRobDetails();
+                    LoadingInformation info = new LoadingInformation();
+                    info.setPortXId(ullageInsert.getPortXid());
+                    info.setLoadablePatternXId(ullageInsert.getLoadingInformationId());
+                    robDet.setLoadingInformation(info);
+                    robDet.setQuantity(BigDecimal.valueOf(ullageInsert.getQuantity()));
+                    robDet.setPortXId(Long.valueOf(ullageInsert.getPortXid()));
+                    robDet.setPortRotationXId(Long.valueOf(ullageInsert.getPortRotationXid()));
+                    robDet.setConditionType(
+                        Integer.valueOf(ullageInsert.getCorrectedUllage() + ""));
+                    loadingPlanRobDetailsRepository.save(robDet);
+                  }
+                });
+
       } else {
         validateAndSaveData(request);
       }
@@ -494,46 +594,412 @@ public class LoadingPlanService {
     return builder.build();
   }
 
-  private void validateAndSaveData(LoadingPlanModels.UllageBillRequest request) {
+  private String validateAndSaveData(LoadingPlanModels.UllageBillRequest request)
+      throws GenericServiceException, IllegalAccessException, InvocationTargetException {
 
-    // Validation pending since API from ALGO is not yet created.
+    return ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(request);
+    //    loadingPlanBallastDetailsTempRepository.deleteByLoadingInformationId(null);
+    //
+    //    request
+    //        .getBallastUpdateList()
+    //        .forEach(
+    //            ullageInsert -> {
+    //              if (ullageInsert.getIsUpdate()) {
+    //                loadingPlanBallastDetailsRepository.updateLoadingPlanBallastDetailsRepository(
+    //                    BigDecimal.valueOf(ullageInsert.getQuantity()),
+    //                    BigDecimal.valueOf(ullageInsert.getSounding()),
+    //                    BigDecimal.valueOf(ullageInsert.getQuantity()),
+    //                    Long.valueOf(ullageInsert.getTankId()),
+    //                    true,
+    //                    Long.valueOf(ullageInsert.getPortXid()),
+    //                    Long.valueOf(ullageInsert.getLoadingInformationId()),
+    //                    Long.valueOf(ullageInsert.getArrivalDepartutre()));
+    //              } else {
+    //                PortLoadingPlanBallastDetails details = new PortLoadingPlanBallastDetails();
+    //                details.setLoadingInformation(new LoadingInformation());
+    //                LoadingInformation info = new LoadingInformation();
+    //                info.setPortXId(ullageInsert.getPortXid());
+    //                info.setLoadablePatternXId(ullageInsert.getLoadingInformationId());
+    //                details.setLoadingInformation(info);
+    //                details.setPortRotationXId(ullageInsert.getPortRotationXid());
+    //                details.setPortXId(ullageInsert.getPortXid());
+    //                details.setTankXId(ullageInsert.getTankId());
+    //                details.setTemperature(BigDecimal.valueOf(ullageInsert.getTemperature()));
+    //
+    // details.setCorrectedUllage(BigDecimal.valueOf(ullageInsert.getCorrectedUllage()));
+    //                details.setQuantity(BigDecimal.valueOf(ullageInsert.getQuantity()));
+    //                details.setObservedM3(BigDecimal.valueOf(ullageInsert.getObservedM3()));
+    //
+    // details.setFillingPercentage(BigDecimal.valueOf(ullageInsert.getFillingRatio()));
+    //                details.setSounding(BigDecimal.valueOf(ullageInsert.getSounding()));
+    //                details.setValueType(Integer.valueOf(ullageInsert.getActualPlanned() + ""));
+    //                details.setConditionType(Integer.valueOf(ullageInsert.getArrivalDepartutre() +
+    // ""));
+    //                details.setColorCode(ullageInsert.getColorCode());
+    //                details.setSg(BigDecimal.valueOf(ullageInsert.getSg()));
+    //                loadingPlanBallastDetailsRepository.save(details);
+    //              }
+    //            });
+    //
+    //    loadingPlanStowageDetailsTempRepository.deleteByLoadingInformationId(null);
+    //    request
+    //        .getUpdateUllageList()
+    //        .forEach(
+    //            ullageInsert -> {
+    //              if (ullageInsert.getIsUpdate()) {
+    //
+    // loadingPlanStowageDetailsRepository.updatePortLoadingPlanStowageDetailsRepository(
+    //                    BigDecimal.valueOf(ullageInsert.getQuantity()),
+    //                    BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
+    //                    BigDecimal.valueOf(ullageInsert.getQuantity()),
+    //                    BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
+    //                    BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
+    //                    Long.valueOf(ullageInsert.getTankId()),
+    //                    true,
+    //                    Long.valueOf(ullageInsert.getTankId()),
+    //                    ullageInsert.getLoadingInformationId(),
+    //                    ullageInsert.getArrivalDepartutre());
+    //              } else {
+    //                PortLoadingPlanStowageDetails tempData = new PortLoadingPlanStowageDetails();
+    //                LoadingInformation info = new LoadingInformation();
+    //                info.setPortXId(ullageInsert.getPortXid());
+    //                info.setLoadablePatternXId(ullageInsert.getLoadingInformationId());
+    //                tempData.setLoadingInformation(info);
+    //                tempData.setTankXId(ullageInsert.getTankId());
+    //                tempData.setTemperature(BigDecimal.valueOf(ullageInsert.getTemperature()));
+    //
+    // tempData.setCorrectedUllage(BigDecimal.valueOf(ullageInsert.getCorrectedUllage()));
+    //                tempData.setQuantity(BigDecimal.valueOf(ullageInsert.getQuantity()));
+    //                tempData.setFillingPercentage(
+    //                    BigDecimal.valueOf(ullageInsert.getFillingPercentage()));
+    //                tempData.setApi(BigDecimal.valueOf(ullageInsert.getApi()));
+    //                tempData.setCargoNominationXId(ullageInsert.getCargoNominationXid());
+    //                tempData.setPortXId(ullageInsert.getPortXid());
+    //                tempData.setPortRotationXId(ullageInsert.getPortRotationXid());
+    //                tempData.setValueType(Integer.valueOf(ullageInsert.getActualPlanned() + ""));
+    //                tempData.setConditionType(
+    //                    Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
+    //                tempData.setCorrectionFactor(
+    //                    BigDecimal.valueOf(ullageInsert.getCorrectionFactor()));
+    //                loadingPlanStowageDetailsRepository.save(tempData);
+    //              }
+    //            });
+  }
 
-    loadingPlanBallastDetailsTempRepository.deleteByLoadingInformationId(null);
-    request
-        .getBallastUpdateList()
-        .forEach(
-            ullageInsert -> {
-              if (ullageInsert.getIsUpdate()) {
-                loadingPlanBallastDetailsRepository.updateLoadingPlanBallastDetailsRepository(
-                    BigDecimal.valueOf(ullageInsert.getQuantity()),
-                    BigDecimal.valueOf(ullageInsert.getSounding()),
-                    BigDecimal.valueOf(ullageInsert.getQuantity()),
-                    Long.valueOf(ullageInsert.getTankId()),
-                    true,
-                    Long.valueOf(ullageInsert.getTankId()));
-              } else {
-                loadingPlanBallastDetailsRepository.save(new PortLoadingPlanBallastDetails());
-              }
-            });
+  public void saveUpdatedLoadingPlanDetails(
+      LoadingInformation loadingInformation, Integer conditionType)
+      throws IllegalAccessException, InvocationTargetException {
+    // Method used for Updating port loading plan stowage and ballast details from  temp table to
+    // permanent after loadicator done
 
-    loadingPlanStowageDetailsRepository.deleteByLoadingInformationId(null);
-    request
-        .getUpdateUllageList()
-        .forEach(
-            ullageInsert -> {
-              if (ullageInsert.getIsUpdate()) {
-                loadingPlanStowageDetailsRepository.updatePortLoadingPlanStowageDetailsRepository(
-                    BigDecimal.valueOf(ullageInsert.getQuantity()),
-                    BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
-                    BigDecimal.valueOf(ullageInsert.getQuantity()),
-                    BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
-                    BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
-                    Long.valueOf(ullageInsert.getTankId()),
-                    true,
-                    Long.valueOf(ullageInsert.getTankId()));
-              } else {
-                loadingPlanStowageDetailsRepository.save(new PortLoadingPlanStowageDetails());
-              }
-            });
+    List<PortLoadingPlanStowageTempDetails> tempStowageList =
+        portLoadingPlanStowageTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInformation, conditionType, true);
+    if (!tempStowageList.isEmpty()) {
+      List<PortLoadingPlanStowageDetails> stowageEntityList = new ArrayList<>();
+      for (PortLoadingPlanStowageTempDetails tempStowageEntity : tempStowageList) {
+        PortLoadingPlanStowageDetails stowageEntity = new PortLoadingPlanStowageDetails();
+        BeanUtils.copyProperties(stowageEntity, tempStowageEntity);
+        stowageEntity.setId(null);
+        stowageEntity.setCreatedBy(null);
+        stowageEntity.setCreatedDate(null);
+        stowageEntity.setCreatedDateTime(null);
+        stowageEntity.setLastModifiedBy(null);
+        stowageEntity.setLastModifiedDate(null);
+        stowageEntity.setLastModifiedDateTime(null);
+        stowageEntity.setIsActive(true);
+
+        stowageEntityList.add(stowageEntity);
+      }
+      // Deleting existing entry from actual table before pushing new records
+      portLoadingPlanStowageDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
+          loadingInformation.getId(), conditionType);
+      portLoadingPlanStowageDetailsRepository.saveAll(stowageEntityList);
+    }
+
+    List<PortLoadingPlanBallastTempDetails> tempBallastList =
+        portLoadingPlanBallastTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInformation, conditionType, true);
+    if (!tempBallastList.isEmpty()) {
+      List<PortLoadingPlanBallastDetails> ballastEntityList = new ArrayList<>();
+      for (PortLoadingPlanBallastTempDetails tempBallastEntity : tempBallastList) {
+        PortLoadingPlanBallastDetails ballastEntity = new PortLoadingPlanBallastDetails();
+        BeanUtils.copyProperties(ballastEntity, tempBallastEntity);
+        ballastEntity.setId(null);
+        ballastEntity.setCreatedBy(null);
+        ballastEntity.setCreatedDate(null);
+        ballastEntity.setCreatedDateTime(null);
+        ballastEntity.setLastModifiedBy(null);
+        ballastEntity.setLastModifiedDate(null);
+        ballastEntity.setLastModifiedDateTime(null);
+        ballastEntity.setIsActive(true);
+
+        ballastEntityList.add(ballastEntity);
+      }
+      // Deleting existing entry from actual table before pushing new records
+      portLoadingPlanBallastDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
+          loadingInformation.getId(), conditionType);
+      portLoadingPlanBallastDetailsRepository.saveAll(ballastEntityList);
+    }
+
+    // Deleting existing entry from temp tables
+    portLoadingPlanStowageTempDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
+        loadingInformation.getId(), conditionType);
+    portLoadingPlanBallastTempDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
+        loadingInformation.getId(), conditionType);
+  }
+
+  public void getPortWiseStowageTempDetails(
+      LoadingPlanModels.UpdateUllageDetailsRequest request,
+      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+    List<PortLoadingPlanStowageTempDetails> portWiseStowageTempDetails =
+        portLoadingPlanStowageTempDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
+            request.getPatternId(), request.getPortRotationId(), true);
+    for (PortLoadingPlanStowageTempDetails portWiseStowageDetail : portWiseStowageTempDetails) {
+      LoadingPlanModels.PortLoadablePlanStowageDetail.Builder newBuilder =
+          LoadingPlanModels.PortLoadablePlanStowageDetail.newBuilder();
+      newBuilder.setAbbreviation(
+          portWiseStowageDetail.getAbbreviation() != null
+              ? portWiseStowageDetail.getAbbreviation()
+              : "");
+      newBuilder.setApi(
+          portWiseStowageDetail.getApi() != null ? portWiseStowageDetail.getApi().toString() : "");
+      newBuilder.setCargoNominationId(portWiseStowageDetail.getCargoNominationXId());
+      newBuilder.setColorCode(
+          portWiseStowageDetail.getColorCode() != null
+              ? portWiseStowageDetail.getColorCode().toString()
+              : "");
+      newBuilder.setCorrectedUllage(
+          portWiseStowageDetail.getCorrectedUllage() != null
+              ? portWiseStowageDetail.getCorrectedUllage().toString()
+              : "");
+      newBuilder.setCorrectionFactor(
+          portWiseStowageDetail.getCorrectionFactor() != null
+              ? portWiseStowageDetail.getCorrectionFactor().toString()
+              : "");
+      newBuilder.setFillingPercentage(
+          portWiseStowageDetail.getFillingPercentage() != null
+              ? portWiseStowageDetail.getFillingPercentage().toString()
+              : "");
+      newBuilder.setId(portWiseStowageDetail.getId());
+      newBuilder.setLoadablePatternId(request.getPatternId());
+      newBuilder.setRdgUllage(
+          portWiseStowageDetail.getRdgUllage() != null
+              ? portWiseStowageDetail.getRdgUllage().toString()
+              : "");
+      newBuilder.setTankId(portWiseStowageDetail.getTankXId());
+      newBuilder.setTemperature(
+          portWiseStowageDetail.getTemperature() != null
+              ? portWiseStowageDetail.getTemperature().toString()
+              : "");
+      newBuilder.setWeight(
+          portWiseStowageDetail.getWeight() != null
+              ? portWiseStowageDetail.getWeight().toString()
+              : "");
+      newBuilder.setQuantity(
+          portWiseStowageDetail.getQuantity() != null
+              ? portWiseStowageDetail.getQuantity().toString()
+              : "");
+      newBuilder.setActualPlanned(
+          portWiseStowageDetail.getValueType() != null
+              ? portWiseStowageDetail.getValueType().toString()
+              : "");
+      newBuilder.setArrivalDeparture(
+          portWiseStowageDetail.getConditionType() != null
+              ? portWiseStowageDetail.getConditionType().toString()
+              : "");
+      newBuilder.setUllage(
+          portWiseStowageDetail.getUllage() != null
+              ? portWiseStowageDetail.getUllage().toString()
+              : "");
+      builder.addPortLoadablePlanStowageTempDetails(newBuilder);
+    }
+  }
+
+  public void getPortWiseBallastTempDetails(
+      LoadingPlanModels.UpdateUllageDetailsRequest request,
+      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+    List<PortLoadingPlanBallastTempDetails> portWiseBallastTempDetails =
+        portLoadingPlanBallastTempDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
+            request.getPatternId(), request.getPortRotationId(), true);
+    for (PortLoadingPlanBallastTempDetails portWiseBallastDetail : portWiseBallastTempDetails) {
+      LoadingPlanModels.PortLoadingPlanBallastDetails.Builder newBuilder =
+          LoadingPlanModels.PortLoadingPlanBallastDetails.newBuilder();
+
+      newBuilder.setColorCode(
+          portWiseBallastDetail.getColorCode() != null
+              ? portWiseBallastDetail.getColorCode().toString()
+              : "");
+      newBuilder.setCorrectedUllage(
+          portWiseBallastDetail.getCorrectedUllage() != null
+              ? portWiseBallastDetail.getCorrectedUllage().toString()
+              : "");
+      newBuilder.setCorrectionFactor(
+          portWiseBallastDetail.getCorrectionFactor() != null
+              ? portWiseBallastDetail.getCorrectionFactor().toString()
+              : "");
+      newBuilder.setFillingPercentage(
+          portWiseBallastDetail.getFillingPercentage() != null
+              ? portWiseBallastDetail.getFillingPercentage().toString()
+              : "");
+      newBuilder.setId(portWiseBallastDetail.getId());
+      newBuilder.setLoadablePatternId(request.getPatternId());
+      newBuilder.setTankId(portWiseBallastDetail.getTankXId());
+      newBuilder.setTemperature(
+          portWiseBallastDetail.getTemperature() != null
+              ? portWiseBallastDetail.getTemperature().toString()
+              : "");
+      newBuilder.setQuantity(
+          portWiseBallastDetail.getQuantity() != null
+              ? portWiseBallastDetail.getQuantity().toString()
+              : "");
+      newBuilder.setActualPlanned(
+          portWiseBallastDetail.getValueType() != null
+              ? portWiseBallastDetail.getValueType().toString()
+              : "");
+      newBuilder.setArrivalDeparture(
+          portWiseBallastDetail.getConditionType() != null
+              ? portWiseBallastDetail.getConditionType().toString()
+              : "");
+      newBuilder.setSounding(
+          portWiseBallastDetail.getSounding() != null
+              ? portWiseBallastDetail.getSounding().toString()
+              : "");
+      builder.addPortLoadingPlanBallastTempDetails(newBuilder);
+    }
+  }
+
+  public void getPortWiseCommingleDetails(
+      LoadingPlanModels.UpdateUllageDetailsRequest request,
+      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+    List<LoadablePlanCommingleDetails> portWiseRobDetails =
+        loadablePlanCommingleDetailsRepository.findByLoadablePatternXIdAndIsActive(
+            request.getPatternId(), true);
+
+    for (LoadablePlanCommingleDetails portWiseCommingleDetail : portWiseRobDetails) {
+      LoadingPlanModels.LoadablePlanCommingleDetails.Builder newBuilder =
+          LoadingPlanModels.LoadablePlanCommingleDetails.newBuilder();
+
+      newBuilder.setLoadablePatternId(request.getPatternId());
+      newBuilder.setId(portWiseCommingleDetail.getId());
+      newBuilder.setLoadingInformationId(portWiseCommingleDetail.getLoadingInformation().getId());
+      newBuilder.setLoadablePlanId(portWiseCommingleDetail.getLoadablePatternXId());
+      newBuilder.setGrade(
+          portWiseCommingleDetail.getGrade() == null ? "" : portWiseCommingleDetail.getGrade());
+      newBuilder.setTankName(
+          portWiseCommingleDetail.getTankName() == null
+              ? ""
+              : portWiseCommingleDetail.getTankName());
+      newBuilder.setQuantity(
+          portWiseCommingleDetail.getQuantity() == null
+              ? ""
+              : portWiseCommingleDetail.getQuantity());
+      newBuilder.setApi(
+          portWiseCommingleDetail.getApi() == null ? "" : portWiseCommingleDetail.getApi());
+      newBuilder.setTemperature(
+          portWiseCommingleDetail.getTemperature() == null
+              ? ""
+              : portWiseCommingleDetail.getTemperature());
+      newBuilder.setCargo1Abbreviation(
+          portWiseCommingleDetail.getCargo1Abbreviation() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1Abbreviation());
+      newBuilder.setCargo2Abbreviation(
+          portWiseCommingleDetail.getCargo2Abbreviation() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2Abbreviation());
+      newBuilder.setCargo1Percentage(
+          portWiseCommingleDetail.getCargo1Percentage() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1Percentage());
+      newBuilder.setCargo2Percentage(
+          portWiseCommingleDetail.getCargo2Percentage() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2Percentage());
+      newBuilder.setCargo1BblsDbs(
+          portWiseCommingleDetail.getCargo1BblsDbs() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1BblsDbs());
+      newBuilder.setCargo2BblsDbs(
+          portWiseCommingleDetail.getCargo2BblsDbs() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2BblsDbs());
+      newBuilder.setCargo1Bbls60F(
+          portWiseCommingleDetail.getCargo1Bbls60f() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1Bbls60f());
+      newBuilder.setCargo2Bbls60F(
+          portWiseCommingleDetail.getCargo2Bbls60f() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2Bbls60f());
+      newBuilder.setCargo1Lt(
+          portWiseCommingleDetail.getCargo1Lt() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1Lt());
+      newBuilder.setCargo2Lt(
+          portWiseCommingleDetail.getCargo2Lt() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2Lt());
+      newBuilder.setCargo1Mt(
+          portWiseCommingleDetail.getCargo1Mt() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1Mt());
+      newBuilder.setCargo2Mt(
+          portWiseCommingleDetail.getCargo2Mt() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2Mt());
+      newBuilder.setCargo1Kl(
+          portWiseCommingleDetail.getCargo1Kl() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1Kl());
+      newBuilder.setCargo2Kl(
+          portWiseCommingleDetail.getCargo2Kl() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2Kl());
+      newBuilder.setIsActive(portWiseCommingleDetail.getIsActive());
+      newBuilder.setPriority(
+          portWiseCommingleDetail.getPriority() == null
+              ? Long.valueOf(0)
+              : portWiseCommingleDetail.getPriority().longValue());
+      newBuilder.setOrderQuantity(
+          portWiseCommingleDetail.getOrderQuantity() == null
+              ? ""
+              : portWiseCommingleDetail.getOrderQuantity());
+      newBuilder.setLoadingOrder(
+          portWiseCommingleDetail.getLoadingOrder() == null
+              ? Long.valueOf(0)
+              : portWiseCommingleDetail.getLoadingOrder().longValue());
+      newBuilder.setTankId(
+          portWiseCommingleDetail.getTankId() == null
+              ? Long.valueOf(0)
+              : portWiseCommingleDetail.getTankId().longValue());
+      newBuilder.setFillingRatio(
+          portWiseCommingleDetail.getFillingRatio() == null
+              ? ""
+              : portWiseCommingleDetail.getFillingRatio());
+      newBuilder.setCorrectedUllage(
+          portWiseCommingleDetail.getCorrectedUllage() == null
+              ? ""
+              : portWiseCommingleDetail.getCorrectedUllage());
+      newBuilder.setCorrectionFactor(
+          portWiseCommingleDetail.getCorrectionFactor() == null
+              ? ""
+              : portWiseCommingleDetail.getCorrectionFactor());
+      newBuilder.setRdgUllage(
+          portWiseCommingleDetail.getRdgUllage() == null
+              ? ""
+              : portWiseCommingleDetail.getRdgUllage());
+      newBuilder.setSlopQuantity(
+          portWiseCommingleDetail.getSlopQuantity() == null
+              ? ""
+              : portWiseCommingleDetail.getSlopQuantity());
+      newBuilder.setTimeRequiredForLoading(
+          portWiseCommingleDetail.getTimeRequiredForLoading() == null
+              ? ""
+              : portWiseCommingleDetail.getTimeRequiredForLoading());
+      builder.addLoadablePlanCommingleDetails(newBuilder);
+    }
   }
 }

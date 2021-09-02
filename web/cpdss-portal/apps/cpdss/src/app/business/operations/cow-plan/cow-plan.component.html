@@ -1,18 +1,18 @@
-<h5 class="text-uppercase heading-border">{{'DISCHARGING_COW_PLAN' | translate }}
+<h5 class="text-uppercase heading-border pt-30">{{'DISCHARGING_COW_PLAN' | translate }}
 </h5>
-<div class="container-fluid" [formGroup]="cowDetailsForm">
+<div class="container-fluid" *ngIf="cowDetails && cowDetailsForm" [formGroup]="cowDetailsForm">
   <div class="row">
     <div class="col ml-15">
-          <div class="row">
-            <label for="cow_option" class="col-3 col-form-label">{{ 'DISCHARGING_SELECT_COW_OPTION' |
-              translate}}</label>
-            <div class="col-2">
-              <p-dropdown [options]="listData?.cowOptions" formControlName="cowOption" optionLabel="name"
-                styleClass="form-control">
-              </p-dropdown>
-            </div>
-          </div>
-          <div class="row">
+      <div class="row">
+        <label for="cow_option" class="col-3 col-form-label">{{ 'DISCHARGING_SELECT_COW_OPTION' |
+          translate}}</label>
+        <div class="col-2">
+          <p-dropdown [options]="listData?.cowOptions" formControlName="cowOption" optionLabel="name"
+            styleClass="form-control" (onChange)="onCowOptionChange($event)">
+          </p-dropdown>
+        </div>
+      </div>
+      <div class="row">
         <label for="cow_option" class="col-3 col-form-label">{{ 'DISCHARGING_NO_OF_TANKS' | translate}}</label>
         <div class="col-2">
           <p-dropdown [options]="listData?.cowPercentages" formControlName="cowPercentage" optionLabel="name"
@@ -20,155 +20,159 @@
           </p-dropdown>
         </div>
       </div>
-     
     </div>
   </div>
+  <div class="row">
+    <div class="col ml-15 pt-20">
+      <h5 class="text-uppercase">{{'DISCHARGING_SELECT_COW_OPTIONS' | translate }}
+      </h5>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-6 pl-30 right-border">
       <div class="row">
-        <div class="col ml-15 pt-20">
-          <h5 class="text-uppercase">{{'DISCHARGING_SELECT_COW_OPTIONS' | translate }}
+        <div class="col">
+          <div class="row">
+            <label class="col-5 col-form-label">{{ 'DISCHARGING_COW_TYPE' |
+              translate}}</label>
+            <label class="col-7 col-form-label">{{ 'DISCHARGING_COW_TANKS' |
+              translate}}</label>
+          </div>
+          <div class="row">
+            <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_TOP_COW' |
+              translate}}</label>
+            <div class="col-7">
+              <p-multiSelect [options]="cargoTanks" optionLabel="shortName" styleClass="form-control"
+                formControlName="topCOWTanks">
+              </p-multiSelect>
+            </div>
+          </div>
+          <div class="row">
+            <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_BOTTOM_COW' |
+              translate}}</label>
+            <div class="col-7">
+              <p-multiSelect [options]="cargoTanks" optionLabel="shortName" styleClass="form-control"
+                formControlName="bottomCOWTanks">
+              </p-multiSelect>
+            </div>
+          </div>
+          <div class="row">
+            <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_ALL_COW' |
+              translate}}</label>
+            <div class="col-7">
+              <p-multiSelect [options]="cargoTanks" optionLabel="shortName" styleClass="form-control"
+                formControlName="allCOWTanks">
+              </p-multiSelect>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-20">
+        <div class="col ">
+          <h5 class="text-uppercase">
+            <div class="switch-wrapper">
+              <span class="switch-label">{{'DISCHARGING_SELECT_TANKS_FOR_WASHING_WITH_DIFFERENT_CARGO' | translate }}</span>
+              
+            </div>
+          </h5>
+        </div>
+        <div class="pr-15"><p-inputSwitch formControlName="washTanksWithDifferentCargo" (onChange)="onWashWithDifferentCargoChange($event)"></p-inputSwitch></div>
+      </div>
+      <div class="row">
+        <div class="col" formArrayName="tanksWashingWithDifferentCargo">
+          <div class="row">
+            <label class="col-2 col-form-label">{{ 'DISCHARGING_CARGO' |
+              translate}}</label>
+            <label class="col-6 col-form-label">{{ 'DISCHARGING_TANKS' |
+              translate}}</label>
+            <label class="col-4 col-form-label">{{ 'DISCHARGING_WASHING_CARGO' |
+              translate}}</label>
+          </div>
+          <ng-container *ngIf="cowDetails?.tanksWashingWithDifferentCargo">
+            <div class="row" *ngFor="let cargoDetails of cowDetails?.tanksWashingWithDifferentCargo; let index = index;"
+              formGroupName="{{index}}">
+              <div class="col-2 mb-5">
+                <span class="badge-custom"
+                  [ngStyle]="{'background': cargoDetails?.cargo?.colorCode }">{{cargoDetails?.cargo?.abbreviation}}</span>
+              </div>
+              <div class="col-6 mb-5">
+                <p-multiSelect [options]="cargoDetails?.selectedTanks" optionLabel="shortName" styleClass="form-control"
+                  formControlName="tanks">
+                </p-multiSelect>
+              </div>
+              <div class="col-4 mb-5">
+                <p-dropdown [options]="loadedCargos" optionLabel="abbreviation" formControlName="washingCargo"
+                  styleClass="form-control">
+                </p-dropdown>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 pt-30">
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            <label for="cow_option" class="col-3 pr-0 col-form-label">{{ 'DISCHARGING_COW_START_TIME' |
+              translate}}</label>
+            <div class="col-3">
+              <p-inputMask type="text" styleClass="form-control" formControlName="cowStart" mask="99:99" (onComplete)="onCowStartEndChange()">
+              </p-inputMask>
+            </div>
+            <div class="col-6 pl-0 form-text font-small text-muted">
+              {{ 'DISCHARGING_COW_START_TIME_HELP' | translate}}
+            </div>
+          </div>
+          <div class="row">
+            <label for="cow_option" class="col-3 pr-0 col-form-label">{{ 'DISCHARGING_COW_END_TIME' |
+              translate}}</label>
+            <div class="col-3">
+              <p-inputMask type="text" styleClass="form-control" formControlName="cowEnd" mask="99:99" (onComplete)="onCowStartEndChange()">
+              </p-inputMask>
+            </div>
+            <div class="col-6 pl-0 form-text font-small text-muted">
+              {{ 'DISCHARGING_COW_END_TIME_HELP' | translate}}
+            </div>
+          </div>
+          <div class="row">
+            <label for="cow_option" class="col-3 col-form-label">{{ 'DISCHARGING_EST_COW_DURATION' |
+              translate}}</label>
+            <div class="col-3">
+              <p-inputMask type="text" styleClass="form-control" formControlName="cowDuration" mask="99:99" readonly>
+              </p-inputMask>
+            </div>
+            <div class="col-6 pl-0 form-text font-small text-muted">
+              {{ 'DISCHARGING_EST_COW_DURATION_HELP' | translate}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col pt-25">
+          <h5 class="text-uppercase">{{'DISCHARGING_PREFERRED_TRIM_FOR_COW' | translate }}
           </h5>
         </div>
       </div>
       <div class="row">
-        <div class="col-6 pl-30 right-border">
-          <div class="row">
-            <div class="col">
-              <div class="row">
-                <label class="col-5 col-form-label">{{ 'DISCHARGING_COW_TYPE' |
-                  translate}}</label>
-                <label class="col-7 col-form-label">{{ 'DISCHARGING_COW_TANKS' |
-                  translate}}</label>
-              </div>
-              <div class="row">
-                <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_TOP_COW' |
-                  translate}}</label>
-                <div class="col-7">
-                  <p-multiSelect [options]="cargoTanks" optionLabel="shortName" styleClass="form-control"
-                    formControlName="topCOWTanks">
-                  </p-multiSelect>
-                </div>
-              </div>
-              <div class="row">
-                <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_BOTTOM_COW' |
-                  translate}}</label>
-                <div class="col-7">
-                  <p-multiSelect [options]="cargoTanks" optionLabel="shortName" styleClass="form-control"
-                    formControlName="bottomCOWTanks">
-                  </p-multiSelect>
-                </div>
-              </div>
-              <div class="row">
-                <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_ALL_COW' |
-                  translate}}</label>
-                <div class="col-7">
-                  <p-multiSelect [options]="cargoTanks" optionLabel="shortName" styleClass="form-control"
-                    formControlName="allCOWTanks">
-                  </p-multiSelect>
-                </div>
-              </div>
+        <div class="col">
+          <div class="form-row">
+            <div class="col-auto">
+              <label for="cow_option">{{ 'DISCHARGING_TRIM_MIN' |
+                translate}}</label>
+              <input type="number" formControlName="cowTrimMin" class="form-control" />
             </div>
-          </div>
-          <div class="row">
-            <div class="col pt-20">
-              <h5 class="text-uppercase">{{'DISCHARGING_SELECT_TANKS_FOR_WASHING_WITH_DIFFERENT_CARGO' | translate }}
-              </h5>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col" formArrayName="tanksWashingWithDifferentCargo">
-              <div class="row">
-                <label class="col-2 col-form-label">{{ 'DISCHARGING_CARGO' |
-                  translate}}</label>
-                <label class="col-6 col-form-label">{{ 'DISCHARGING_TANKS' |
-                  translate}}</label>
-                <label class="col-4 col-form-label">{{ 'DISCHARGING_WASHING_CARGO' |
-                  translate}}</label>
-              </div>
-              <div class="row"
-                *ngFor="let cargoDetails of cowDetails?.tanksWashingWithDifferentCargo; let index = index;"
-                formGroupName="{{index}}">
-                <div class="col-2 mb-5">
-                  <span class="badge-custom"
-                    [ngStyle]="{'background': cargoDetails?.cargo?.colorCode }">{{cargoDetails?.cargo?.abbreviation}}</span>
-                </div>
-                <div class="col-6 mb-5">
-                  <p-multiSelect [options]="cargoDetails?.selectedTanks" optionLabel="shortName"
-                    styleClass="form-control" formControlName="tanks">
-                  </p-multiSelect>
-                </div>
-                <div class="col-4 mb-5">
-                  <p-dropdown [options]="loadedCargos" optionLabel="abbreviation" formControlName="warshingCargo"
-                    styleClass="form-control">
-                  </p-dropdown>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-6 pt-30">
-          <div class="row">
-            <div class="col">
-              <div class="row">
-                <label for="cow_option" class="col-4 col-form-label">{{ 'DISCHARGING_COW_START_TIME' |
-                  translate}}</label>
-                <div class="col-2">
-                  <p-inputMask type="text" styleClass="form-control" formControlName="cowStart" mask="99:99">
-                  </p-inputMask>
-                </div>
-                <div class="col-6 pl-0 form-text font-small text-muted">
-                  {{ 'DISCHARGING_COW_START_TIME_HELP' | translate}}
-                </div>
-              </div>
-              <div class="row">
-                <label for="cow_option" class="col-4 col-form-label">{{ 'DISCHARGING_COW_END_TIME' |
-                  translate}}</label>
-                <div class="col-2">
-                  <p-inputMask type="text" styleClass="form-control" formControlName="cowEnd" mask="99:99">
-                  </p-inputMask>
-                </div>
-                <div class="col-6 pl-0 form-text font-small text-muted">
-                  {{ 'DISCHARGING_COW_END_TIME_HELP' | translate}}
-                </div>
-              </div>
-              <div class="row">
-                <label for="cow_option" class="col-4 col-form-label">{{ 'DISCHARGING_EST_COW_DURATION' |
-                  translate}}</label>
-                <div class="col-2">
-                  <p-inputMask type="text" styleClass="form-control" formControlName="cowDuration" mask="99:99"
-                    readonly>
-                  </p-inputMask>
-                </div>
-                <div class="col-6 pl-0 form-text font-small text-muted">
-                  {{ 'DISCHARGING_EST_COW_DURATION_HELP' | translate}}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col pt-25">
-              <h5 class="text-uppercase">{{'DISCHARGING_PREFERRED_TRIM_FOR_COW' | translate }}
-              </h5>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <div class="form-row">
-                <div class="col-auto">
-                  <label for="cow_option">{{ 'DISCHARGING_TRIM_MIN' |
-                    translate}}</label>
-                  <input type="number" formControlName="cowTrimMin" class="form-control" />
-                </div>
-                <div class="col-auto">
-                  <label for="cow_option">{{ 'DISCHARGING_TRIM_MAX' |
-                    translate}}</label>
-                  <input type="number" formControlName="cowTrimMax" class="form-control" />
-                </div>
-              </div>
+            <div class="col-auto">
+              <label for="cow_option">{{ 'DISCHARGING_TRIM_MAX' |
+                translate}}</label>
+              <input type="number" formControlName="cowTrimMax" class="form-control" />
             </div>
           </div>
         </div>
       </div>
-  
+    </div>
+  </div>
+
   <div class="row mb-20">
     <div class="col">
       <div class="row">

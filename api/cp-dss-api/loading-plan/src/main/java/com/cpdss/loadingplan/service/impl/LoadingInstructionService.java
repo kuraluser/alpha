@@ -29,6 +29,7 @@ import com.cpdss.loadingplan.repository.LoadingInstructionRepository;
 import com.cpdss.loadingplan.repository.LoadingInstructionTemplateRepository;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -345,16 +346,17 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
     List<LoadingInstruction> subHeaderList =
         listLoadingInstruction.stream()
             .filter(item -> item.getParentInstructionXId() == null)
+            .sorted(Comparator.comparing(LoadingInstruction::getCreatedDateTime))
             .collect(Collectors.toList());
 
     List<LoadingInstruction> instructionList =
         listLoadingInstruction.stream()
             .filter(item -> item.getParentInstructionXId() != null)
+            .sorted(Comparator.comparing(LoadingInstruction::getCreatedDateTime))
             .collect(Collectors.toList());
 
     List<LoadingInstructionSubHeader> subHeaderBuilderList = new ArrayList<>();
     for (LoadingInstruction headerInstruction : subHeaderList) {
-      log.info("inside  header loop");
       LoadingInstructionSubHeader.Builder subHeaderBuilder =
           LoadingInstructionSubHeader.newBuilder();
       Optional.ofNullable(headerInstruction.getId()).ifPresent(subHeaderBuilder::setSubHeaderId);

@@ -42,6 +42,10 @@ service LoadingInformationService {
   rpc GetLoadingInfoAlgoStatus(LoadingInfoStatusRequest) returns (LoadingInfoStatusReply) {}
   
   rpc GetLoadingInfoAlgoErrors(AlgoErrorRequest) returns (AlgoErrorReply) {}
+  
+  rpc UploadPortTideDetails(UploadTideDetailRequest) returns (UploadTideDetailStatusReply){}
+  
+  rpc DownloadPortTideDetails(DownloadTideDetailRequest) returns (stream DownloadTideDetailStatusReply) {}
 }
 
 service LoadingInstructionService {
@@ -74,4 +78,7 @@ service LoadingPlanService {
   rpc GetLoadicatorData(LoadingInfoLoadicatorDataRequest) returns (LoadingInfoLoadicatorDataReply) {}
  
   rpc GetLoadableStudyShoreTwo(UllageBillRequest) returns (UllageBillReply){}
+  
+  rpc validateStowageAndBillOfLadding(StowageAndBillOfLaddingValidationRequest) returns (ResponseStatus){}
+  
 }

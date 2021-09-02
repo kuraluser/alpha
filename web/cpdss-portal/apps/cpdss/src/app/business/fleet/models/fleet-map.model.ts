@@ -20,8 +20,9 @@ export interface IFleetVesselResponse {
 export interface IFleetVessel {
     id: number;
     voyageName: string;
-    voyageStart?: string;
-    voyageEnd?: string;
+    voyageId: number;
+    voyageStart?: IFleetVoyagePorts;
+    voyageEnd?: IFleetVoyagePorts;
     vesselName: string;
     flagName: string;
     atd: string;

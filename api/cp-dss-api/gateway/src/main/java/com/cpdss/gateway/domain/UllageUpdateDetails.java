@@ -8,8 +8,6 @@ import lombok.Data;
 @Data
 public class UllageUpdateDetails {
 
-  private Long id;
-
   private BigDecimal loadingInformationId;
 
   private BigDecimal tankId;
@@ -30,5 +28,19 @@ public class UllageUpdateDetails {
 
   private BigDecimal ullage;
 
+  private Long port_xid;
+
+  private Long port_rotation_xid;
+
+  private Long arrival_departutre;
+
+  private Long actual_planned;
+
+  private Long grade;
+
+  private Long fillingPercentage;
+
   private Boolean isUpdate;
+
+  private BigDecimal cargoNominationId;
 }

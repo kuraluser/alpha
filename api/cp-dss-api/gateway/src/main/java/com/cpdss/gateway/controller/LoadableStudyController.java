@@ -1,7 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.controller;
 
-import static com.cpdss.gateway.utility.GatewayConstants.*;
+import static com.cpdss.gateway.common.GatewayConstants.*;
 
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;

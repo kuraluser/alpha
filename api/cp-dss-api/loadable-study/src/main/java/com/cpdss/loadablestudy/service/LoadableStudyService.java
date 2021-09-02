@@ -430,8 +430,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   // ohqComplete flag is false we set the flag as true since the ohq is already
                   //  there for the port rotation in the DB.
                   if (!onHandQuantities.isEmpty()
-                      && (port.getIsPortRotationOhqComplete() != null
-                          && !port.getIsPortRotationOhqComplete())) {
+                      && (port.getIsPortRotationOhqComplete() != null)
+                      && !port.getIsPortRotationOhqComplete()) {
                     this.loadableStudyPortRotationRepository.updateIsOhqCompleteByIdAndIsActiveTrue(
                         port.getId(), true);
                     ohqPortsBuilder.setIsPortRotationOhqComplete(true);

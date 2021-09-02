@@ -62,8 +62,13 @@ public class EnvoyWriterService {
       EnvoyWriterRequest request, Builder writerBuilder) throws IOException {
 
     Optional<SequenceNumber> numberOpt = sequenceNumberRepository.findById(SEQUENCE_NUMBER_ID);
-    Long sequenceNumber = numberOpt.get().getSequenceNumber();
-    updateSequenceNumber(sequenceNumber, numberOpt.get());
+    SequenceNumber obj = new SequenceNumber();
+    Long sequenceNumber = 0L;
+    if (numberOpt.isPresent()) {
+      sequenceNumber = numberOpt.get().getSequenceNumber();
+      obj = numberOpt.get();
+    }
+    updateSequenceNumber(sequenceNumber, obj);
     String uuid = null;
     if (request.getMessageId().isEmpty()) uuid = UUID.randomUUID().toString();
     else uuid = request.getMessageId();

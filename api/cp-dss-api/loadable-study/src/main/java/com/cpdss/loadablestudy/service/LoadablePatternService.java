@@ -104,11 +104,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -222,6 +218,8 @@ public class LoadablePatternService {
   @Value("${cpdss.communication.enable}")
   private boolean enableCommunication;
 
+  @Value("${cpdss.build.env}")
+  private String env;
   /**
    * @param loadableStudy
    * @throws GenericServiceException
@@ -365,7 +363,7 @@ public class LoadablePatternService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    if (enableCommunication && !request.getHasLodicator()) {
+    if (enableCommunication && !request.getHasLodicator() && !env.equals("ship")) {
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
               request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
@@ -849,8 +847,13 @@ public class LoadablePatternService {
     lpd.getLoadablePlanPortWiseDetailsList()
         .forEach(
             lppwd -> {
-              LoadableStudyPortRotation loadableStudyPortRotation =
-                  this.loadableStudyPortRotationRepository.getOne(lppwd.getPortRotationId());
+              Long portRotationid = lppwd.getPortRotationId();
+              LoadableStudyPortRotation portRotation =
+                  loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                      loadablePattern.getLoadableStudy(), lppwd.getPortId(), true);
+              if (!Objects.isNull(portRotation)) portRotationid = portRotation.getId();
+
+              Long finalPortRotationid = portRotationid;
               lppwd
                   .getArrivalCondition()
                   .getLoadablePlanBallastDetailsList()
@@ -860,7 +863,7 @@ public class LoadablePatternService {
                             SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
                             lpbd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            finalPortRotationid,
                             loadablePattern);
                       });
               lppwd
@@ -872,7 +875,7 @@ public class LoadablePatternService {
                             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
                             lpbd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            finalPortRotationid,
                             loadablePattern);
                       });
             });
@@ -916,6 +919,13 @@ public class LoadablePatternService {
     lpd.getLoadablePlanPortWiseDetailsList()
         .forEach(
             lppwd -> {
+              Long portRotationid = lppwd.getPortRotationId();
+              LoadableStudyPortRotation portRotation =
+                  loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                      loadablePattern.getLoadableStudy(), lppwd.getPortId(), true);
+              if (!Objects.isNull(portRotation)) portRotationid = portRotation.getId();
+
+              Long finalPortRotationid = portRotationid;
               lppwd
                   .getArrivalCondition()
                   .getLoadablePlanStowageDetailsList()
@@ -925,7 +935,7 @@ public class LoadablePatternService {
                             SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
                             lpsd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            finalPortRotationid,
                             loadablePattern);
                       });
               lppwd
@@ -937,7 +947,7 @@ public class LoadablePatternService {
                             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
                             lpsd,
                             lppwd.getPortId(),
-                            lppwd.getPortRotationId(),
+                            finalPortRotationid,
                             loadablePattern);
                       });
               saveCargoToppingOffList(lppwd, loadablePattern, displayOrder);
@@ -1192,16 +1202,22 @@ public class LoadablePatternService {
           lpd.getLoadablePlanPortWiseDetailsList()) {
         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply arrivalCondition =
             portWiseDetails.getArrivalCondition();
+
+        Long portRotationid = portWiseDetails.getPortRotationId();
+        LoadableStudyPortRotation portRotation =
+            loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                loadablePattern.getLoadableStudy(), portWiseDetails.getPortId(), true);
+        if (!Objects.isNull(portRotation)) portRotationid = portRotation.getId();
         if (Optional.ofNullable(arrivalCondition).isPresent()) {
           loadicatorService.saveLodicatorDataForSynoptical(
-              loadablePattern, arrivalCondition, lpd, "ARR", portWiseDetails.getPortRotationId());
+              loadablePattern, arrivalCondition, lpd, "ARR", portRotationid);
         }
 
         com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply departureCondition =
             portWiseDetails.getDepartureCondition();
         if (Optional.ofNullable(departureCondition).isPresent()) {
           loadicatorService.saveLodicatorDataForSynoptical(
-              loadablePattern, departureCondition, lpd, "DEP", portWiseDetails.getPortRotationId());
+              loadablePattern, departureCondition, lpd, "DEP", portRotationid);
         }
       }
     }
@@ -1298,7 +1314,7 @@ public class LoadablePatternService {
           request.getLoadableStudyId(),
           LOADABLE_STUDY_REQUEST,
           objectMapper.writeValueAsString(loadableStudy));
-      if (enableCommunication) {
+      if (enableCommunication && env.equals("ship")) {
         this.voyageService.builVoyageDetails(modelMapper, loadableStudy);
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(

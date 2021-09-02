@@ -30,7 +30,7 @@ export class LoadingDischargingSequenceApiService {
    */
   getSequenceData(vesselId: number, voyageId: number, infoId: number, operation: OPERATIONS): Observable<ISequenceDataResponse> {
     let apiUrl = `vessels/${vesselId}/voyages/${voyageId}/`;
-    apiUrl += operation === OPERATIONS.LOADING ? `loading-info/${infoId}/loading-sequence` : `discharging-info/${infoId}/discharging-sequence`;
+    apiUrl += operation === OPERATIONS.LOADING ? `loading-info/${infoId}/loading-sequence` : `loading-info/165/loading-sequence`;
     return this.commonApiService.get<ISequenceDataResponse>(apiUrl);
   }
 

@@ -1483,6 +1483,14 @@ td.sl div{
       }
 }
 
+.loading-discharging-tank-layout{
+  .tank-outer-pattern{
+    min-height: 200px;
+    height: 21vh;
+    max-height: 500px;
+  }
+}
+
 .ship-front-pattern{
   position: absolute;
   width: 10%;
@@ -1884,6 +1892,7 @@ height: 15px;
   .tank-outer-pattern{
     height: 100%;
     max-height: 350px;
+    min-height: 160px;
     .tank-inner-wrapper-pattern .tank-column-pattern > div {
       .tank-name{
       text-align: left;
@@ -2959,10 +2968,11 @@ textarea{
 
 .sequence-chart-ballast-pump-column {
   padding: 31px 4.75px;
-  white-space: normal;
   text-align: center;
   border-right: 0;
   border-bottom: 0;
+  position: absolute;
+  right: 0;
 }
 
 .sequence-icon {
@@ -2993,4 +3003,37 @@ textarea{
     stroke: #bebebe; //TODO: need to be moved to theme file
     stroke-width: 1;
   }
+}
+
+.font-main{
+  font-family: 'Play', sans-serif!important;
+}
+
+.highcharts-grid-axis{
+  p{
+    margin-bottom: 5px!important;
+  }
+}
+
+.highcharts-axis-labels.highcharts-xaxis-labels.highcharts-grid-axis, .highcharts-axis.highcharts-yaxis.highcharts-grid-axis {
+  z-index: -1 !important;
+}
+
+.sequence-chart-tooltip table {
+  border-spacing: 15px !important;
+}
+
+.sequence-chart.stabilityparams-chart{
+  .highcharts-axis-title{
+    text-transform: uppercase;
+  }
+}
+
+.arrival-condition-pop-up, .departure-condition-pop-up{
+  width: 1290px;
+}
+
+.tank-tabs{
+  width: 57px;
+  height: 35px;
 }

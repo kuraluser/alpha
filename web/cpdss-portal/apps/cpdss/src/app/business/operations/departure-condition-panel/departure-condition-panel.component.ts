@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { QUANTITY_UNIT } from './../../../shared/models/common.model';
+import { QUANTITY_UNIT, LENGTH_UNIT } from './../../../shared/models/common.model';
 
 /**
  * Component class for departure condition panel
@@ -36,6 +36,7 @@ export class DepartureConditionPanelComponent implements OnInit {
   manifoldHeight: number;
 
   readonly QUANTITY_UNIT = QUANTITY_UNIT;
+  readonly LENGTH_UNIT = LENGTH_UNIT;
   constructor() { }
 
   ngOnInit(): void {
@@ -50,7 +51,7 @@ export class DepartureConditionPanelComponent implements OnInit {
     this.loadingPlanData?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(cargo => {
       let cargoQuantity = 0;
       this.loadingPlanData?.planStowageDetails?.map(item => {
-        if (item.conditionType === 1 && cargo.cargoNominationId === item.cargoNominationId) {
+        if (item.conditionType === 2 && cargo.cargoNominationId === item.cargoNominationId) {
           cargoQuantity += Number(item.quantityMT);
         }
       });
@@ -60,7 +61,7 @@ export class DepartureConditionPanelComponent implements OnInit {
     this.departureConditionCargoTotalQuantity = Number(this.departureConditionCargoTotalQuantity.toFixed(2));
     let ballastQuantity = 0;
     this.loadingPlanData?.planBallastDetails?.map(item => {
-      if (item.conditionType === 1) {
+      if (item.conditionType === 2) {
         ballastQuantity += Number(item.quantityMT);
       }
     });
@@ -70,7 +71,7 @@ export class DepartureConditionPanelComponent implements OnInit {
     let draftMValue = 0;
     let trimValue = 0;
     this.loadingPlanData?.planStabilityParams?.map(item => {
-      if (item.conditionType === 1) {
+      if (item.conditionType === 2) {
         draftFValue += Number(item?.foreDraft);
         draftAValue += Number(item?.aftDraft);
         draftMValue += Number(item?.meanDraft);

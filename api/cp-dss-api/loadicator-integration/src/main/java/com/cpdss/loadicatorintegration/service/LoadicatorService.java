@@ -338,13 +338,13 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       throws InterruptedException {
     boolean status = false;
     do {
-      if (request.getTypeId() == 1) {
+      if (request.getTypeId() == 1) { // Loadable Study
         log.info(
             "Checking loadicator status of "
                 + (!request.getIsPattern()
                     ? ("Loadable Study " + request.getStowagePlanDetails(0).getBookingListId())
                     : ("Loadable Pattern " + request.getStowagePlanDetails(0).getStowageId())));
-      } else if (request.getTypeId() == 2) {
+      } else if (request.getTypeId() == 2) { // Loading Plan
         log.info(
             "Checking loadicator status of Loading Information "
                 + request.getStowagePlanDetails(0).getBookingListId());
@@ -358,7 +358,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           stowagePlanList.stream().filter(plan -> plan.getStatus().equals(3L)).count();
       if (statusCount.equals(stowagePlanList.stream().count())) {
         status = true;
-        if (request.getTypeId() == 1) {
+        if (request.getTypeId() == 1) { // Loadable Study
           LoadicatorDataRequest loadableStudyrequest =
               this.sendLoadicatorData(stowagePlanList, request.getIsPattern());
           log.info(
@@ -368,12 +368,12 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
                       : ("Loadable Pattern " + request.getStowagePlanDetails(0).getStowageId())));
 
           this.getLoadicatorDatas(loadableStudyrequest);
-        } else if (request.getTypeId() == 2) {
+        } else if (request.getTypeId() == 2) { // Loading Plan
           log.info(
               "Loadicator check completed for loading information {}",
               request.getStowagePlanDetails(0).getBookingListId());
           LoadingInfoLoadicatorDataRequest loadingInformationRequest =
-              this.buildLoadingInfoLoadicatorData(stowagePlanList);
+              this.buildLoadingInfoLoadicatorData(stowagePlanList, request.getIsUllageUpdate(), request.getConditionType());
           this.getLoadingInfoLoadicatorData(loadingInformationRequest);
         }
       }
@@ -386,11 +386,13 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   }
 
   private LoadingInfoLoadicatorDataRequest buildLoadingInfoLoadicatorData(
-      List<StowagePlan> stowagePlanList) {
+      List<StowagePlan> stowagePlanList, Boolean isUllageUpdate, Integer conditionType) {
     LoadingInfoLoadicatorDataRequest.Builder builder =
         LoadingInfoLoadicatorDataRequest.newBuilder();
     builder.setLoadingInformationId(stowagePlanList.get(0).getBookingListId());
     builder.setProcessId(stowagePlanList.get(0).getProcessId());
+    builder.setIsUllageUpdate(isUllageUpdate);
+    builder.setConditionType(conditionType);
     stowagePlanList.forEach(
         stowagePlan -> {
           LoadingInfoLoadicatorDetail.Builder detailBuilder =

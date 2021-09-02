@@ -26,5 +26,17 @@ public class RobDetail {
 
   private BigDecimal fillingRatio;
 
+  private String colourCode;
+
+  private BigDecimal density;
+
+  private BigDecimal arrival_departutre;
+
+  private BigDecimal actual_planned;
+
   private Boolean isUpdate;
+
+  private Long portXId;
+
+  private Long portRotationXId;
 }

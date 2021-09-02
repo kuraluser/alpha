@@ -39,7 +39,7 @@ public interface PortLoadingPlanStowageTempDetailsRepository
   @Modifying
   @Query(
       "Update PortLoadingPlanStowageTempDetails set quantity = ?1, ullage = ?2, quantityM3 = ?3, api = ?4, temperature = ?5"
-          + " where tankXId = ?6 and isActive = ?7 and portXId= ?8")
+          + " where tankXId = ?6 and loading_information_xid =?7 and arrival_departutre =?8")
   public void updatePortLoadingPlanStowageDetailsRepository(
       @Param("quantity") BigDecimal quantity,
       @Param("ullage") BigDecimal ullage,
@@ -47,6 +47,17 @@ public interface PortLoadingPlanStowageTempDetailsRepository
       @Param("api") BigDecimal api,
       @Param("temperature") BigDecimal temperature,
       @Param("tank_xid") Long tankXId,
-      @Param("is_active") Boolean isActive,
-      @Param("port_xid") Long portXId);
+      @Param("loading_information_xid") Long loadingId,
+      @Param("arrival_departutre") Long arrivalDepartutre);
+
+  public List<PortLoadingPlanStowageTempDetails>
+      findByLoadingInformationAndConditionTypeAndIsActive(
+          LoadingInformation loadingInformation, Integer conditionType, boolean b);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "Update PortLoadingPlanStowageTempDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and isActive = true")
+  public void deleteExistingByLoadingInfoAndConditionType(
+      Long loadingInfoId, Integer conditionType);
 }

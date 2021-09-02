@@ -3,10 +3,21 @@ package com.cpdss.loadingplan.service.impl;
 
 import static com.cpdss.loadingplan.common.LoadingPlanConstants.*;
 
+import com.cpdss.common.constants.RedisConfigConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.PortInfo.PortDetail;
+import com.cpdss.common.generated.PortInfo.PortReply;
+import com.cpdss.common.generated.PortInfo.PortRequestWithPaging;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailStatusReply.Builder;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationDetail;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.domain.LoadingInfoResponse;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
@@ -16,11 +27,37 @@ import com.cpdss.loadingplan.service.LoadingDelayService;
 import com.cpdss.loadingplan.service.LoadingInformationBuilderService;
 import com.cpdss.loadingplan.service.LoadingInformationService;
 import com.cpdss.loadingplan.service.LoadingMachineryInUseService;
+import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
+import com.google.protobuf.ByteString;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +91,12 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Autowired LoadingDelayService loadingDelayService;
   @Autowired LoadingMachineryInUseService loadingMachineryInUseService;
   @Autowired CargoToppingOffSequenceService toppingOffSequenceService;
+  @Autowired PortTideDetailsRepository portTideDetailsRepository;
+  @Autowired LoadingInstructionRepository loadingInstructionRepository;
+  @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
+
+  @GrpcClient("portInfoService")
+  private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoServiceBlockingStub;
 
   @Override
   public LoadingInformation saveLoadingInformationDetail(
@@ -85,6 +128,19 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     }
     loadingInformation.setIsLoadingInfoComplete(false);
     loadingInformation.setIsActive(true);
+    Optional<LoadingInformationStatus> pendingStatusOpt;
+    try {
+      pendingStatusOpt =
+          loadingPlanAlgoService.getLoadingInformationStatus(LOADING_INFORMATION_PENDING_ID);
+      pendingStatusOpt.ifPresent(
+          status -> {
+            loadingInformation.setLoadingInformationStatus(status);
+            loadingInformation.setArrivalStatus(status);
+            loadingInformation.setDepartureStatus(status);
+          });
+    } catch (GenericServiceException e) {
+      log.info("Failed to fetch status with id {}", LOADING_INFORMATION_PENDING_ID);
+    }
     return loadingInformationRepository.save(loadingInformation);
   }
 
@@ -173,7 +229,28 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             builder.setIsLoadingInfoComplete(v.getIsLoadingInfoComplete());
           }
         });
-
+    List<LoadingInstruction> listLoadingInstruction =
+        loadingInstructionRepository.getAllLoadingInstructions(
+            request.getVesselId(), var1.get().getId(), request.getPortRotationId());
+    if (!listLoadingInstruction.isEmpty()) {
+      builder.setIsLoadingInstructionsComplete(true);
+    } else {
+      builder.setIsLoadingInstructionsComplete(false);
+    }
+    var1.ifPresent(
+        v -> {
+          if (v.getIsLoadingSequenceGenerated() != null) {
+            builder.setIsLoadingSequenceGenerated(v.getIsLoadingSequenceGenerated());
+          }
+        });
+    var1.ifPresent(
+        v -> {
+          if (v.getIsLoadingPlanGenerated() != null) {
+            builder.setIsLoadingPlanGenerated(v.getIsLoadingPlanGenerated());
+          }
+        });
+    Optional.ofNullable(var1.get().getLoadingInformationStatus())
+        .ifPresent(status -> builder.setLoadingInfoStatusId(status.getId()));
     // Loading Details
     LoadingPlanModels.LoadingDetails details =
         this.informationBuilderService.buildLoadingDetailsMessage(var1.orElse(null));
@@ -458,5 +535,185 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     } else {
       loadingInformation.setIsLoadingInfoComplete(false);
     }
+  }
+
+  /**
+   * upload Port Tide Details to DB.
+   *
+   * @param request - UploadTideDetailRequest.
+   * @throws GenericServiceException - throws GenericServiceException from the method.
+   */
+  @Override
+  public void uploadPortTideDetails(UploadTideDetailRequest request)
+      throws GenericServiceException {
+
+    try {
+      ByteString tideDetaildata = request.getTideDetaildata();
+      Map<Long, String> portDetails = getPortDetailsFromPortService();
+      InputStream bin = new ByteArrayInputStream(tideDetaildata.toByteArray());
+      Workbook workbook = WorkbookFactory.create(bin);
+      Sheet sheetAt = workbook.getSheet(SHEET);
+      Iterator<Row> rowIterator = sheetAt.iterator();
+      if (rowIterator.hasNext()) {
+        rowIterator.next();
+      }
+      List<PortTideDetail> tideDetails = new ArrayList<>();
+      while (rowIterator.hasNext()) {
+        PortTideDetail tideDetail = new PortTideDetail();
+        tideDetail.setLoadingXid(request.getLoadingId());
+        tideDetail.setIsActive(true);
+        Row row = rowIterator.next();
+        Iterator<Cell> cellIterator = row.cellIterator();
+        for (int rowCell = 0; rowCell <= 3; rowCell++) {
+          Cell cell = cellIterator.next();
+          CellType cellType = cell.getCellType();
+          if (rowCell == 0) {
+            if (!cellType.equals(CellType.STRING)) {
+              throw new IllegalStateException("port name field is invalid");
+            }
+            Optional<Long> findFirst =
+                portDetails.entrySet().stream()
+                    .filter(e -> cell.getStringCellValue().equalsIgnoreCase(e.getValue()))
+                    .map(Map.Entry::getKey)
+                    .findFirst();
+            if (!findFirst.isPresent()) {
+              throw new IllegalStateException("port name is invalid");
+            }
+            tideDetail.setPortXid(findFirst.get());
+          }
+          if (rowCell == 1) {
+            if (!cellType.equals(CellType.NUMERIC)) {
+              throw new IllegalStateException("tide date value is invalid type");
+            }
+            tideDetail.setTideDate(cell.getDateCellValue());
+          }
+          if (rowCell == 2) {
+            if (!cellType.equals(CellType.NUMERIC)) {
+              throw new IllegalStateException("tide time value is invalid type");
+            }
+            tideDetail.setTideTime(cell.getLocalDateTimeCellValue().toLocalTime());
+          }
+          if (rowCell == 3) {
+            if (!cellType.equals(CellType.NUMERIC)) {
+              throw new IllegalStateException("tide height value is invalid type");
+            }
+            tideDetail.setTideHeight(
+                new BigDecimal(cell.getNumericCellValue(), MathContext.DECIMAL64));
+          }
+        }
+        tideDetails.add(tideDetail);
+      }
+      portTideDetailsRepository.updatePortDetailActiveState(request.getLoadingId());
+      portTideDetailsRepository.saveAll(tideDetails);
+    } catch (IllegalStateException e) {
+      throw new GenericServiceException(
+          e.getMessage(), CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+    } catch (Exception e) {
+      throw new GenericServiceException(
+          e.getMessage(),
+          CommonErrorCodes.E_HTTP_INTERNAL_SERVER_ERROR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  /**
+   * download Port Tide Details template
+   *
+   * @param workbook - XSSFWorkbook
+   * @param request - DownloadTideDetailRequest
+   * @param builder - Builder class
+   * @throws GenericServiceException - throws GenericServiceException from the method.
+   */
+  @Override
+  public void downloadPortTideDetails(
+      XSSFWorkbook workbook, DownloadTideDetailRequest request, Builder builder)
+      throws GenericServiceException, IOException {
+    try {
+      XSSFSheet spreadsheet = workbook.createSheet(SHEET);
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      int rowNo = 0;
+      XSSFRow titleRow = spreadsheet.createRow(rowNo);
+      XSSFCellStyle cellStyle = workbook.createCellStyle();
+      XSSFFont font = workbook.createFont();
+      font.setFontName(PORT_TITLE_FONT_STYLE);
+      font.setFontHeight(PORT_TITLE_FONT_HEIGHT);
+      font.setBold(true);
+      cellStyle.setFont(font);
+      for (int columnNo = 0; columnNo < PORT_EXCEL_TEMPLATE_TITLES.size(); columnNo++) {
+        spreadsheet.setColumnWidth(columnNo, 17 * 256);
+        XSSFCell titleCell = titleRow.createCell(columnNo);
+        titleCell.setCellStyle(cellStyle);
+        titleCell.setCellValue(PORT_EXCEL_TEMPLATE_TITLES.get(columnNo));
+      }
+      long loadingId = request.getLoadingId();
+      if (loadingId != 0) {
+        List<PortTideDetail> list =
+            portTideDetailsRepository.findByLoadingXidAndIsActive(request.getLoadingId(), true);
+        if (!list.isEmpty()) {
+          Map<Long, String> portsMap = getPortDetailsFromPortService();
+          for (rowNo = 0; rowNo < list.size(); rowNo++) {
+            XSSFRow row = spreadsheet.createRow(rowNo + 1);
+            for (int columnNo = 0; columnNo < PORT_EXCEL_TEMPLATE_TITLES.size(); columnNo++) {
+              XSSFCell cell = row.createCell(columnNo);
+              if (PORT_EXCEL_TEMPLATE_TITLES.get(columnNo).equals(PORT)) {
+                cell.setCellType(CellType.STRING);
+                cell.setCellValue(portsMap.get(list.get(rowNo).getPortXid()));
+              }
+              if (PORT_EXCEL_TEMPLATE_TITLES.get(columnNo).equals(TIDE_DATE)) {
+                cell.setCellType(CellType.NUMERIC);
+                cell.setCellValue(
+                    new SimpleDateFormat(DATE_FORMAT).format(list.get(rowNo).getTideDate()));
+              }
+              if (PORT_EXCEL_TEMPLATE_TITLES.get(columnNo).equals(TIDE_TIME)) {
+                cell.setCellType(CellType.NUMERIC);
+                cell.setCellValue(list.get(rowNo).getTideTime().toString());
+              }
+              if (PORT_EXCEL_TEMPLATE_TITLES.get(columnNo).equals(TIDE_HEIGHT)) {
+                cell.setCellType(CellType.NUMERIC);
+                cell.setCellValue(list.get(rowNo).getTideHeight().doubleValue());
+              }
+            }
+          }
+        }
+      }
+      workbook.write(byteArrayOutputStream);
+      byte[] bytes = byteArrayOutputStream.toByteArray();
+      builder
+          .setData(ByteString.copyFrom(bytes))
+          .setSize(bytes.length)
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setStatus(SUCCESS)
+                  .setCode(HttpStatusCode.OK.getReasonPhrase())
+                  .build())
+          .build();
+      byteArrayOutputStream.close();
+    } catch (Exception e) {
+      throw new GenericServiceException(
+          e.getMessage(),
+          CommonErrorCodes.E_HTTP_INTERNAL_SERVER_ERROR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  /**
+   * To fetch port details from port service.
+   *
+   * @return Map of Key value pair
+   */
+  private Map<Long, String> getPortDetailsFromPortService() {
+    PortRequestWithPaging redisRequest =
+        PortRequestWithPaging.newBuilder()
+            .setOffset(RedisConfigConstants.OFFSET_VAL)
+            .setLimit(RedisConfigConstants.PAGE_COUNT)
+            .build();
+    PortReply reply = portInfoServiceBlockingStub.getPortInfoByPaging(redisRequest);
+    List<PortDetail> portsList = reply.getPortsList();
+    Map<Long, String> portsMap = new HashMap<>();
+    if (!portsList.isEmpty()) {
+      portsMap =
+          portsList.stream().collect(Collectors.toMap(map -> map.getId(), map -> map.getName()));
+    }
+    return portsMap;
   }
 }

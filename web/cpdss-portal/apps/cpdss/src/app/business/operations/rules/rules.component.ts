@@ -5,6 +5,7 @@ import { MessageService } from 'primeng/api';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { RulesService } from '../services/rules/rules.service'
 
 /**
@@ -32,10 +33,12 @@ export class RulesComponent implements OnInit {
   formChanges: boolean = false;
   vesselId: number;
   voyageId : number;
+  disableSaveButton: boolean = false;
   constructor(private translateService: TranslateService, public rulesService: RulesService,
     private vesselsApiService: VesselsApiService,
     private ngxSpinner: NgxSpinnerService,private messageService: MessageService,
-    private voyageService: VoyageService,) { }
+    private voyageService: VoyageService,private loadingDischargingTransformationService:LoadingDischargingTransformationService
+    ) { }
 
   /**
    * Component lifecycle ngoninit.
@@ -51,6 +54,7 @@ export class RulesComponent implements OnInit {
     const result = await this.voyageService.getVoyagesByVesselId(vesselDetails?.id).toPromise();   
     this.voyageId = result.find(voy=>voy.status==='Active').id;    
     this.getRulesJson();
+    this.getSaveButtonStatus()
     this.ngxSpinner.hide();
   }
 
@@ -109,6 +113,17 @@ export class RulesComponent implements OnInit {
   updateCancelChangesButton(event) {
     this.formChanges = event
     this.isCancelChanges = !event;
+  }
+
+  /**
+   * Method to get save button status.
+   *
+   * @memberof RulesComponent
+   */
+  getSaveButtonStatus() {
+    this.loadingDischargingTransformationService.disableSaveButton.subscribe((status) => {
+      this.disableSaveButton = status;
+    })
   }
  
   /**

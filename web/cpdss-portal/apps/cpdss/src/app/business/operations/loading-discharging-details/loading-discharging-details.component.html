@@ -19,14 +19,15 @@
                     </ng-template>
                     <div class="col error-icon-wrapper" *ngIf="timeOfSunrisePermission?.view">
                         <ng-template *ngIf="timeOfSunrisePermission?.edit;then editable else nonEditable">
-                            
+
                         </ng-template>
-                       
+
                             <ng-template #editable>
-                        
+
                                 <p-calendar formControlName="timeOfSunrise" [timeOnly]="true" appendTo="body" inputId="timeOfSunrise"
                                     placeholder="{{'LOADING_DETAILS_SUNRISE_LABEL' | translate}}" hourFormat="24" [readonlyInput]="true"
-                                    [showButtonBar]="false" todayButtonStyleClass="hide" #timeOfSunRiseCalender>
+                                    [showButtonBar]="false" todayButtonStyleClass="hide" #timeOfSunRiseCalender 
+                                    (onClose)="onBlur(timeOfSunRiseCalender,'timeOfSunrise')">
                                     <p-footer>
                                         <div class="row">
                                             <div class="col">
@@ -46,15 +47,15 @@
                                 <cpdss-portal-validation-error [errors]="fieldError('timeOfSunrise')"
                                     [errorMessages]="errorMessages.timeOfSunrise">
                                 </cpdss-portal-validation-error>
-                        
+
                             </ng-template>
-                        
+
                             <ng-template #nonEditable>
                                 <label>{{this.loadingDischargingDetailsResponse?.timeOfSunrise}}</label>
                             </ng-template>
 
-                        </div>           
-                    
+                        </div>
+
                     <div class="pt-5" *ngIf="timeOfSunrisePermission?.view && timeOfSunsetPermission?.view">
                         /
                     </div>
@@ -62,10 +63,11 @@
                     <ng-template  *ngIf="timeOfSunsetPermission?.edit;then editSunSet else nonEditableSunSet">
                     </ng-template>
                     <ng-template #editSunSet>
-                      
+
                         <p-calendar formControlName="timeOfSunset" [timeOnly]="true" appendTo="body" readonly="true"
                             *ngIf="timeOfSunsetPermission?.edit" inputId="timeOfSunset"
-                            placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}" hourFormat="24" #timeOfSunSetCalender>
+                            placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}" hourFormat="24" [readonlyInput]="true" #timeOfSunSetCalender 
+                            (onClose)="onBlur(timeOfSunSetCalender,'timeOfSunset')">
                             <p-footer>
                                 <div class="row">
                                     <div class="col">
@@ -79,8 +81,8 @@
                                             translate}}</button>
                                     </div>
                                 </div>
-                            </p-footer>                            
-                      
+                            </p-footer>
+
                         </p-calendar>
                         <cpdss-portal-validation-error [errors]="fieldError('timeOfSunset')"
                         [errorMessages]="errorMessages.timeOfSunset">
@@ -88,9 +90,9 @@
                     </ng-template>
                     <ng-template #nonEditableSunSet>
                        <label> {{this.loadingDischargingDetailsResponse?.timeOfSunset}}</label>
-                    </ng-template>                       
+                    </ng-template>
                 </div>
-               
+
                 </div>
                 <div class="row form-group">
                     <label for="startTime" class="col-5 no-left-padding">{{'LOADING_DETAILS_START_TIME_LABEL' |
@@ -98,7 +100,7 @@
                     <div class="col error-icon-wrapper">
                         <p-calendar  formControlName="startTime" styleClass="full-width-field" [timeOnly]="true" appendTo="body"
                             inputId="startTime"
-                            placeholder="{{'LOADING_DETAILS_START_TIME_CALENDER_LABEL' | translate}}" showTime="true"
+                            placeholder="{{'LOADING_DETAILS_START_TIME_CALENDER_LABEL' | translate}}" showTime="true" [readonlyInput]="true"
                             hourFormat="24"  #startTimeCalender>
                             <p-footer>
                                 <div class="row">
@@ -109,7 +111,7 @@
                                         <button class="btn btn-default" (click)="onTimeChange(startTimeCalender,'startTime')">{{'DATA_TABLE_OK_BUTTON_LABEL' | translate}}</button>
                                     </div>
                                 </div>
-                            </p-footer> 
+                            </p-footer>
                         </p-calendar>
                             <cpdss-portal-validation-error [errors]="fieldError('startTime')"
                             [errorMessages]="errorMessages.startTime">
@@ -117,7 +119,7 @@
                     </div>
                 </div>
                 <div class="row form-group">
-                    <label for="trim" class="col-5 no-left-padding">{{'LOADING_DETAILS_TRIM_ALLOWED_LABEL' |
+                    <label for="trim" class="col-5 no-left-padding">{{(operation === OPERATIONS.DISCHARGING ? 'DISCHARGING_DETAILS_TRIM_ALLOWED_LABEL' : 'LOADING_DETAILS_TRIM_ALLOWED_LABEL') |
                         translate}}</label>
                     <div class="col error-icon-wrapper">
                         <input type="text" cpdssPortalNumberDecimal [negative]="false"  class="form-control" id="trim"
@@ -142,15 +144,23 @@
                     <div class="pt-5">
                         /
                     </div>
-                    <div class="col error-icon-wrapper">
-                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                            id="trim-final" formControlName="finalTrim"
-                            placeholder="{{'LOADING_DETAILS_TRIM_FINAL' | translate}}" (change)="trimValueChange('finalTrim')"
-                            [readonly]="false">
-                        <cpdss-portal-validation-error [errors]="fieldError('finalTrim')"
-                            [errorMessages]="errorMessages.finalTrim">
-                        </cpdss-portal-validation-error>
+                    <div class="col error-icon-wrapper" *ngIf="operation === OPERATIONS.DISCHARGING else finalTrim">
+                      <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" id="trim-final"
+                        formControlName="topOffTrim" placeholder="{{'DISCHARGING_DETAILS_TRIM_TOP_OFF' | translate}}"
+                        (change)="trimValueChange('topOffTrim')">
+                      <cpdss-portal-validation-error [errors]="fieldError('topOffTrim')" [errorMessages]="errorMessages.topOffTrim">
+                      </cpdss-portal-validation-error>
                     </div>
+                    <ng-template #finalTrim>
+                      <div class="col error-icon-wrapper">
+                        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" id="trim-final"
+                          formControlName="finalTrim"
+                          placeholder="{{'LOADING_DETAILS_TRIM_FINAL' | translate}}"
+                          (change)="trimValueChange('finalTrim')" [readonly]="false">
+                        <cpdss-portal-validation-error [errors]="fieldError('finalTrim')" [errorMessages]="errorMessages.finalTrim">
+                        </cpdss-portal-validation-error>
+                      </div>
+                    </ng-template>
                 </div>
                 <div class="row form-group">
                     <label for="tide-details" class="col-5 no-left-padding">{{'LOADING_DETAILS_TIDE_DETAIL_LABEL' |
@@ -159,11 +169,10 @@
                         <div class="upload-file v-bottom">
                             {{'LOADING_DETAILS_BROWSE_BUTTON_LABEL' | translate}}
                             <input type="file" name="fl_attachMail" #fileUpload
-                                accept="image/jpeg,image/jpg,image/png,application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document,.eml,.msg"
-                                title="No file selected"  focusTrap/>
+                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                title="No file selected"  focusTrap (change)="selectFilesToUpload()"/>
                         </div>
-                        <a type="button" class="download-icon ml-10 mr-10"></a>
-                        <a type="button" class="pencil-icon"></a>
+                        <a type="button" class="download-icon ml-10 mr-10" (click)="downloadTemplate()"></a>
                     </div>
                     <!-- <div class="col error-column">
                         <cpdss-portal-validation-error [errors]="fieldError('portName')"

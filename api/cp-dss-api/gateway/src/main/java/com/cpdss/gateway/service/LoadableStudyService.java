@@ -1,7 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service;
 
-import static com.cpdss.gateway.utility.GatewayConstants.*;
+import static com.cpdss.gateway.common.GatewayConstants.*;
 import static java.lang.String.valueOf;
 import static java.util.stream.Collectors.*;
 import static org.springframework.util.StringUtils.isEmpty;

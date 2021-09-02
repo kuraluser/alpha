@@ -119,7 +119,24 @@ public class LoadingInformation extends EntityDoc {
   @Column(name = "shore_loading_rate")
   private BigDecimal shoreLoadingRate;
 
-  @ManyToOne
-  @JoinColumn(name = "loading_status_xid")
+  @ManyToOne(cascade = CascadeType.MERGE)
+  @JoinColumn(name = "loading_status_xid", nullable = true)
   private LoadingInformationStatus loadingInformationStatus;
+
+  @ManyToOne(cascade = CascadeType.MERGE)
+  @JoinColumn(name = "arrival_status_xid", nullable = true)
+  private LoadingInformationStatus arrivalStatus;
+
+  @ManyToOne(cascade = CascadeType.MERGE)
+  @JoinColumn(name = "departure_status_xid", nullable = true)
+  private LoadingInformationStatus departureStatus;
+
+  @Column(name = "is_loading_instructions_complete")
+  private Boolean isLoadingInstructionsComplete;
+
+  @Column(name = "is_loading_sequence_generated")
+  private Boolean isLoadingSequenceGenerated;
+
+  @Column(name = "is_loading_plan_generated")
+  private Boolean isLoadingPlanGenerated;
 }

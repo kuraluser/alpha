@@ -31,6 +31,7 @@ import { LoadingInstructionApiService } from './../services/loading-instruction-
 import { CargoToBeLoadedDischargedModule } from '../cargo-to-be-loaded-discharged/cargo-to-be-loaded-discharged.module';
 import { LoadingPlanApiService } from './../services/loading-plan-api.service';
 import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
+import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error-log-popup.module';
 
 /**
  * Module for loading operation
@@ -70,7 +71,8 @@ import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-
     CheckboxModule,
     LoadingDischargingManageSequenceModule,
     CargoToBeLoadedDischargedModule,
-    QuantityDecimalFormatPipeModule
+    QuantityDecimalFormatPipeModule,
+    ErrorLogPopupModule
 
   ],
   providers: [LoadingDischargingInformationApiService, LoadingInstructionApiService, LoadingPlanApiService],

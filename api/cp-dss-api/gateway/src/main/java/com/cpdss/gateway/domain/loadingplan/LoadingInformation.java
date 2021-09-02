@@ -30,4 +30,11 @@ public class LoadingInformation {
   private LoadingSequences loadingSequences;
   private List<ToppingOffSequence> toppingOffSequence;
   private CargoVesselTankDetails cargoVesselTankDetails;
+  private Long loadingInfoStatusId;
+  private Long loadingPlanArrStatusId;
+  private Long loadingPlanDepStatusId;
+  private Long loadablePatternId;
+  private Boolean isLoadingInstructionsComplete;
+  private Boolean isLoadingSequenceGenerated;
+  private Boolean isLoadingPlanGenerated;
 }

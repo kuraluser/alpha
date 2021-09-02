@@ -7,6 +7,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { IInstructionDetails, IDeleteData, ISaveStatusData } from './models/instruction-check-list.model';
 import { whiteSpaceValidator } from '../../core/directives/space-validator.directive';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 @Component({
   selector: 'cpdss-portal-instruction-check-list',
   templateUrl: './instruction-check-list.component.html',
@@ -29,6 +30,7 @@ export class InstructionCheckListComponent implements OnInit {
     this.hasUnsavedChanges = false;
     this.setSelectedData();
   }
+  disableSaveButton: boolean = false;
 
   get instructionList(): TreeNode[] {
     return this.instructionListData;
@@ -58,11 +60,25 @@ export class InstructionCheckListComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private instructionCheckListApiService: InstructionCheckListApiService,
     private ngxSpinnerService: NgxSpinnerService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private loadingDischargingTransformationService:LoadingDischargingTransformationService
   ) { }
 
   ngOnInit(): void {
     this.formGroupInit();
+    this.getSaveButtonStatus();
+  }
+
+  /**
+   *Method to get status of save button.
+   *
+   * @memberof InstructionCheckListComponent
+   */
+
+  getSaveButtonStatus() {
+    this.loadingDischargingTransformationService.disableSaveButton.subscribe((status) => {
+      this.disableSaveButton = status;
+    })
   }
 
   /**
@@ -117,14 +133,14 @@ export class InstructionCheckListComponent implements OnInit {
       list.push({
         label: item.subHeaderName,
         expanded: true,
-        data: item,
+        data: {...item},
         children: [],
       });
       if (item?.loadingInstructionsList?.length) {
         item.loadingInstructionsList.map(subList => {
           list[list.length - 1].children.push({
             label: subList.instruction,
-            data: subList,
+            data: {...subList},
           });
         });
       }

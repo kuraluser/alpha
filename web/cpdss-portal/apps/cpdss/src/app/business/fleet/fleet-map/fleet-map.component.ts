@@ -76,12 +76,14 @@ export class FleetMapComponent implements OnInit {
     this.ngxSpinnerService.show();
     const vesselDetailsResponse: IFleetVesselResponse = await this.fleetApiService.getVesselDaetails().toPromise();
     if (vesselDetailsResponse.responseStatus.status === '200') {
-      this.vessels = vesselDetailsResponse.shoreList;
-      this.vessels.forEach(vessel => {
-        return vessel.voyagePorts && this.fleetTansformationService.mapIconsOnVoyagePort(vessel.voyagePorts);
-      });
-      await this.initMap(this.vessels[0]?.id);
-      await this.initPortPopupOnMap();
+      this.vessels = vesselDetailsResponse.shoreList.length ? vesselDetailsResponse.shoreList : null;
+      if (this.vessels) {
+        this.vessels.forEach(vessel => {
+          return vessel.voyagePorts && this.fleetTansformationService.mapIconsOnVoyagePort(vessel.voyagePorts);
+        });
+        await this.initMap(this.vessels[0]?.id);
+        await this.initPortPopupOnMap();
+      }
       this.ngxSpinnerService.hide();
     }
   }
@@ -98,12 +100,10 @@ export class FleetMapComponent implements OnInit {
     this.voyagePorts = [...this.selectedVessel.voyagePorts].map((port, index) => {
       port.vesselName = this.selectedVessel.vesselName;
       port.portTypeIconUrl = this.fleetTansformationService.setPortTypePopupIcon(port.portType.toLowerCase());
-      port.eta = port.eta !== '' ? this.timeZoneTransformationService.formatDateTime(port?.eta, formatOptions) : null;
-      port.etd = port.etd !== '' ? this.timeZoneTransformationService.formatDateTime(port?.etd, formatOptions) : null;
-      port.ata = port.ata !== '' ? this.timeZoneTransformationService.formatDateTime(port?.ata, formatOptions) : null;
-      port.atd = port.atd !== '' ? this.timeZoneTransformationService.formatDateTime(port?.atd, formatOptions) : null;
-      if (index === 0) { port.eta = null; port.ata = null; }
-      if (index === this.selectedVessel.voyagePorts.length-1) { port.etd = null; port.atd = null; }
+      port.eta = (port.eta !== '' && port.eta !== null) ? this.timeZoneTransformationService.formatDateTime(port?.eta, formatOptions) : null;
+      port.etd = (port.etd !== '' && port.etd !== null) ? this.timeZoneTransformationService.formatDateTime(port?.etd, formatOptions) : null;
+      port.ata = (port.ata !== '' && port.ata !== null) ? this.timeZoneTransformationService.formatDateTime(port?.ata, formatOptions) : null;
+      port.atd = (port.atd !== '' && port.atd !== null) ? this.timeZoneTransformationService.formatDateTime(port?.atd, formatOptions) : null;
       return port;
     });
 
@@ -161,7 +161,7 @@ export class FleetMapComponent implements OnInit {
           scale: 1.5
         }),
         text: new StyleText({
-          text: _port.portName,
+          text: _port.portOrder + '. ' + _port.portName,
           font: 'normal 14px Play',
           textAlign: 'left',
           textBaseline: 'middle',

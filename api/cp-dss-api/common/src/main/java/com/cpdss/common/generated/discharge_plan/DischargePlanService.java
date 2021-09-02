@@ -19,24 +19,23 @@ public final class DischargePlanService {
   static {
     java.lang.String[] descriptorData = {
       "\n+discharge_plan/discharge_plan_service."
-          + "proto\032\014common.proto\032&loading_plan/loadin"
-          + "g_plan_models.proto\032*discharge_plan/disc"
-          + "harge_plan_models.proto2o\n\033DischargeInfo"
-          + "rmationService\022P\n\027getDischargeInformatio"
-          + "n\022\034.DischargeInformationRequest\032\025.Discha"
-          + "rgeInformation\"\000B-\n)com.cpdss.common.gen"
-          + "erated.discharge_planP\001b\006proto3"
+          + "proto\032\014common.proto\032*discharge_plan/disc"
+          + "harge_plan_models.proto2\275\001\n\033DischargeInf"
+          + "ormationService\022P\n\027getDischargeInformati"
+          + "on\022\034.DischargeInformationRequest\032\025.Disch"
+          + "argeInformation\"\000\022L\n\034getOrSaveRulesForDi"
+          + "scharging\022\025.DischargeRuleRequest\032\023.Disch"
+          + "argeRuleReply\"\000B-\n)com.cpdss.common.gene"
+          + "rated.discharge_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
             descriptorData,
             new com.google.protobuf.Descriptors.FileDescriptor[] {
               com.cpdss.common.generated.Common.getDescriptor(),
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor(),
               com.cpdss.common.generated.discharge_plan.DischargePlanModels.getDescriptor(),
             });
     com.cpdss.common.generated.Common.getDescriptor();
-    com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor();
     com.cpdss.common.generated.discharge_plan.DischargePlanModels.getDescriptor();
   }
 

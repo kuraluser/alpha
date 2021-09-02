@@ -1,5 +1,5 @@
 import { ICargoConditions, IMode, IPercentage, IResponse, ValueObject } from "../../../shared/models/common.model";
-import { ICargo, ICargoQuantities, ILoadableQuantityCargo, IProtested, IShipCargoTank, ITank } from "../../core/models/common.model";
+import { ICargo, ICargoQuantities, ILoadableQuantityCargo, IProtested, IShipCargoTank, ITank, IShipBallastTank, IShipBunkerTank } from "../../core/models/common.model";
 
 /**
  * Interface for Loadable information api response
@@ -12,7 +12,7 @@ export interface ILoadingInformationResponse {
   loadingDetails: ILoadingDischargingDetails;
   loadingRates: ILoadingRates;
   berthDetails: IBerthDetails;
-  machineryInUses: IMachineryInUses;
+  machineryInUses: IMachineryInUsesResponse;
   loadingStages: ILoadingDischargingStagesResponse;
   loadingSequences: ILoadingDischargingSequencesResponse;
   toppingOffSequence: IToppingOffSequence[];
@@ -20,6 +20,10 @@ export interface ILoadingInformationResponse {
   loadingInfoId: number;
   synopticTableId: number;
   isLoadingInfoComplete: boolean;
+
+  isLoadingInstructionsComplete: boolean;
+  isLoadingPlanGenerated: boolean;
+  isLoadingSequenceGenerated: boolean;
 }
 
 /**
@@ -33,7 +37,7 @@ export interface IDischargingInformationResponse {
   dischargingDetails: ILoadingDischargingDetails;
   dischargingRates: IDischargingRates;
   berthDetails: IBerthDetails;
-  machineryInUses: IMachineryInUses;
+  machineryInUses: IMachineryInUsesResponse;
   dischargingStages: ILoadingDischargingStagesResponse;
   dischargingSequences: ILoadingDischargingSequencesResponse;
   cargoVesselTankDetails: ICargoVesselTankDetailsResponse;
@@ -43,6 +47,9 @@ export interface IDischargingInformationResponse {
   cowDetails: ICOWDetailsResponse;
   postDischargeStageTime: IPostDischargeStageTime;
   loadedCargos: ICargo[];
+  dischargeStudyName: string;
+  dischargeSlopTanksFirst?: boolean;
+  dischargeCommingledCargoSeperately?: boolean;
 }
 
 
@@ -70,7 +77,8 @@ export interface ILoadingDischargingDetails {
 export interface ITrimAllowed {
   initialTrim: number;
   maximumTrim: number;
-  finalTrim: number;
+  finalTrim?: number;
+  topOffTrim?: number;
 }
 
 /**
@@ -98,9 +106,24 @@ export interface IMachineryInUses {
   vesselManifold: IVesselManifoldBottomLine[];
   pumpTypes: IPumpTypes[];
   vesselPumps: IVesselPumps[];
-  //Note:- need to check 
-  loadingMachinesInUses?: Array<ILoadingMachinesInUse | IDischargingMachinesInUse>;
-  loadingDischargingMachinesInUses?: Array<IDischargingMachinesInUse>;
+  loadingDischargingMachinesInUses: Array<ILoadingMachinesInUse | IDischargingMachinesInUse>;
+}
+
+/**
+ * Interface for machinary in use in api response
+ *
+ * @export
+ * @interface IMachineryInUses
+ */
+export interface IMachineryInUsesResponse {
+  machineTypes: IMachineTypes;
+  tankTypes: IMachineTankTypes[];
+  vesselBottomLine: IVesselManifoldBottomLine[];
+  vesselManifold: IVesselManifoldBottomLine[];
+  pumpTypes: IPumpTypes[];
+  vesselPumps: IVesselPumps[];
+  loadingMachinesInUses?: Array<ILoadingMachinesInUse>;
+  dischargingMachinesInUses?: Array<IDischargingMachinesInUse>;
 }
 
 /**
@@ -236,11 +259,10 @@ export interface ILoadingRates {
  */
 export interface IDischargingRates {
   id: number;
-  initialDischargingRate?: number;
-  minDischargingRate: number;
+  initialDischargingRate: number;
   maxDischargingRate: number;
-  minDeBallastingRate: number;
-  maxDeBallastingRate: number;
+  minBallastingRate: number;
+  maxBallastingRate: number;
 }
 
 /**
@@ -268,6 +290,9 @@ export interface IBerth {
   maxLoa: string;
   maxDraft: string;
   lineDisplacement: string;
+  cargoCirculation: boolean;
+  airPurge: boolean;
+  maxManifoldPressure: number;
 }
 
 /**
@@ -384,6 +409,8 @@ export interface ILoadingDischargingDelays {
   cargoId: number;
   quantity: number;
   cargoNominationId?: number;
+  sequenceNo?: number;
+  isInitialDelay?: boolean;
 }
 
 /**
@@ -430,7 +457,12 @@ export interface ILoadingInformation {
   toppingOffSequence: IToppingOffSequence[];
   vesselId?: number;
   voyageId?: number;
-  isLoadingInfoComplete:boolean;
+  isLoadingInfoComplete: boolean;
+  isLoadingPlanGenerated:boolean;
+  isLoadingSequenceGenerated: boolean;
+  isLoadingInstructionsComplete: boolean
+
+
 }
 
 /**
@@ -459,6 +491,9 @@ export interface IDischargingInformation {
   isDischargingInfoComplete: boolean;
   cargoTanks: ITank[];
   machineryInUses: IMachineryInUses;
+  dischargeStudyName: string;
+  dischargeSlopTanksFirst?: boolean;
+  dischargeCommingledCargoSeperately?: boolean;
 }
 
 /**
@@ -511,16 +546,18 @@ export interface IDischargingInformationSaveResponse {
  * Interface for ports value object
  *
  * @export
- * @interface ILoadingSequenceValueObject
+ * @interface ILoadingDischargingSequenceValueObject
  */
 export interface ILoadingDischargingSequenceValueObject {
   id: number;
   reasonForDelay: ValueObject<IReasonForDelays[]>;
   duration: ValueObject<string>;
   cargo: ValueObject<ILoadableQuantityCargo>;
-  quantity: number;
+  quantity: ValueObject<number>;
   isAdd: boolean;
   colorCode: string;
+  sequenceNo?: ValueObject<number>;
+  isInitialDelay?: boolean;
 }
 
 /**
@@ -567,6 +604,8 @@ export interface ICOWDetails {
   cowTrimMax: number;
   needFreshCrudeStorage: boolean;
   needFlushingOil: boolean;
+  washTanksWithDifferentCargo: boolean;
+  totalDuration: string;
 }
 
 /**
@@ -589,6 +628,8 @@ export interface ICOWDetailsResponse {
   cowTrimMax: number;
   needFreshCrudeStorage: boolean;
   needFlushingOil: boolean;
+  washTanksWithDifferentCargo: boolean;
+  totalDuration: string;
 }
 
 /**
@@ -627,6 +668,7 @@ export interface ILoadedCargoResponse extends ILoadableQuantityCargo {
   shipFigure?: string;
   protested?: boolean;
   isCommingled?: boolean;
+  slopQuantity?: number;
 }
 
 /**
@@ -638,6 +680,7 @@ export interface ILoadedCargoResponse extends ILoadableQuantityCargo {
  */
 export interface ILoadedCargo extends ILoadableQuantityCargo {
   shipFigure?: string;
+  actualQuantity?: string;
   protested?: ValueObject<IProtested>;
   isCommingled?: ValueObject<boolean>;
   isAdd?: boolean;
@@ -648,11 +691,11 @@ export interface ILoadedCargo extends ILoadableQuantityCargo {
  * @export
  * @enum {number}
  */
- export enum MACHINE_TYPES {
+export enum MACHINE_TYPES {
   EMPTY = 0,
   VESSEL_PUMP = 1,
-  BOTTOM_LINE =  3,
-  MANIFOLD =  2
+  BOTTOM_LINE = 3,
+  MANIFOLD = 2
 }
 
 /**
@@ -660,13 +703,13 @@ export interface ILoadedCargo extends ILoadableQuantityCargo {
  * @export
  * @enum {number}
  */
- export enum Pump_TYPES {
+export enum Pump_TYPES {
   Cargo_Pump = 1,
   Ballast_Pump = 2,
-  GS_Pump =  3,
-  IG_Pump =  4,
+  GS_Pump = 3,
+  IG_Pump = 4,
   Stripping_Pump = 5,
-  Strip_Eductor =  6 ,
+  Strip_Eductor = 6,
   COW_Pump = 7
 }
 
@@ -683,6 +726,11 @@ export interface ILoadingPlanDetails {
   planRobDetails: IPlanBallastAndRob[];
   planStabilityParams: IPlanStabilityParams[];
   planStowageDetails: IPlanStowageDetails[];
+  ballastCenterTanks: IShipBallastTank[][];
+  ballastFrontTanks: IShipBallastTank[][];
+  ballastRearTanks: IShipBallastTank[][];
+  bunkerRearTanks: IShipBunkerTank[][];
+  bunkerTanks: IShipBunkerTank[][];
 }
 
 /**
@@ -729,4 +777,389 @@ export interface IPlanStowageDetails {
   temperature: string;
   ullage: string;
   valueType: number;
+}
+
+/**
+ * Interface for cargo details us value object
+ *
+ * @export
+ * @interface ICargoDetailValueObject
+ */
+export interface ICargoDetailValueObject {
+  blRefNo: ValueObject<string>;
+  bbl: ValueObject<number>;
+  lt: ValueObject<number>;
+  mt: ValueObject<number>;
+  kl: ValueObject<number>;
+  api: ValueObject<number>;
+  temp: ValueObject<number>;
+  cargoName: string;
+  isAdd: boolean;
+  cargoNominationId: number;
+  portId: number;
+  cargoId: number;
+}
+
+/**
+* Interface for cargo details
+*
+* @export
+* @interface ICargoDetail
+*/
+export interface ICargoDetail {
+  blRefNo: string;
+  quantityBbls: number;
+  quantityLT: number;
+  quantityMt: number;
+  quantityKl: number;
+  api: number;
+  temperature: number;
+  cargoName: string;
+  portId: number;
+}
+
+/**
+* Interface for tank details us value object
+*
+* @export
+* @interface ITankDetailsValueObject
+*/
+export interface ITankDetailsValueObject {
+  tankName: ValueObject<string>;
+  ullage: ValueObject<number>;
+  temperature?: ValueObject<number>;
+  api?: ValueObject<number>;
+  quantity?: ValueObject<number | string>;
+  density?: ValueObject<number>;
+  id?: ValueObject<number>;
+  tankId?: number;
+  loadablePatternId?: ValueObject<number>;
+  fillingPercentage?: ValueObject<number>;
+  sounding?: ValueObject<number|string>;
+  cargoNominationId?: ValueObject<number>;
+  isAdd?: boolean;
+  arrivalDeparture?: number;
+  actualPlanned?: number;
+  correctionFactor?: number;
+  correctedUllage?: number;
+  colorCode?: string;
+  sg?: number;
+}
+
+/**
+* enum for ullage status
+*
+* @export
+* @enum ULLAGE_STATUS
+*/
+export enum ULLAGE_STATUS {
+  ARRIVAL = 'ARRIVAL',
+  DEPARTURE = 'DEPARTURE'
+}
+
+/**
+* Interface for ullage save/update
+*
+* @export
+* @interface IUllageSaveDetails
+*/
+export interface IUllageSaveDetails {
+  billOfLandingList: IBillOfLandingList[];
+  ullageUpdList: IUllageUpdList[];
+  billOfLandingListRemove: IBillOfLandingList[];
+  ballastUpdateList: IBallastUpdateList[];
+  robUpdateList: IRobUpdateList[];
+  isValidate: boolean
+}
+
+/**
+* Interface for bill of ladding save
+*
+* @export
+* @interface IBillOfLandingList
+*/
+export interface IBillOfLandingList {
+  loadingId?: number | string;
+  portId: number;
+  cargoId: number;
+  blRefNumber: string;
+  bblAt60f: number;
+  quantityLt: number;
+  quantityMt: number;
+  klAt15c: number;
+  api: number | string;
+  temperature: number;
+  isUpdate?: boolean;
+  isActive?: string;
+  version?: string;
+
+}
+
+/**
+* Interface for ullage update save data
+*
+* @export
+* @interface IUllageUpdList
+*/
+export interface IUllageUpdList {
+  loadingInformationId: number | string;
+  tankId: number;
+  temperature: number;
+  correctedUllage: number;
+  quantity: number;
+  fillingPercentage: number | string;
+  cargo_nomination_xid: number | string;
+  arrival_departutre: number | string;
+  actual_planned: number;
+  correction_factor: number;
+  api: number | string;
+  isUpdate: boolean;
+  port_xid?: string;
+  port_rotation_xid?: string;
+  grade?: string;
+
+}
+
+/**
+* Interface for ballast update list
+*
+* @export
+* @interface IBallastUpdateList
+*/
+export interface IBallastUpdateList {
+  loadingInformationId: number | string;
+  tankId: number | string;
+  temperature: number | string;
+  quantity: number | string;
+  sounding: number | string;
+  correctedUllage: number | string;
+  correctionFactor: string | number;
+  filling_percentage: number | string;
+  arrival_departutre: number | string;
+  actual_planned: number | string;
+  color_code: string;
+  sg: number | string;
+  isUpdate: boolean;
+  observedM3?: string;
+  fillingRatio?: string;
+  port_xid?: string;
+  port_rotation_xid?: string;
+  isValidate?: string;
+}
+
+/**
+* Interface for rob update list
+*
+* @export
+* @interface IRobUpdateList
+*/
+export interface IRobUpdateList {
+  loadingInformationId: number | string;
+  tankId: number;
+  quantity: number;
+  isUpdate?: boolean;
+  density: number;
+  colour_code: string;
+  actual_planned: number | string;
+  arrival_departutre: number;
+  port_xid?: string;
+  port_rotation_xid?: string;
+  observedM3?: string;
+  temperature?: string;
+  correctedUllage?: string;
+  correctionFactor?: string;
+  fillingRatio?: string;
+}
+
+/**
+* Interface for ullage update list
+*
+* @export
+* @interface IUllageUpdateDetails
+*/
+export interface IUllageUpdateDetails {
+  ballastCenterTanks: IShipBallastTank[][];
+  ballastFrontTanks: IShipBallastTank[][];
+  ballastRearTanks: IShipBallastTank[][];
+  billOfLaddingList: IBillOfLandingListGetResponse[];
+  bunkerRearTanks: IShipBunkerTank[][];
+  bunkerTanks: IShipBunkerTank[][];
+  cargoQuantityDetails: ICargoQuantityGetResponse[];
+  cargoTanks: IShipCargoTank[][];
+  portLoadablePlanBallastDetails: ILoadablePlanBallastDetails[];
+  portLoadablePlanRobDetails: ILoadablePlanRobDetails[];
+  portLoadablePlanStowageDetails: ILoadablePlanStowageDetails[];
+  isPlannedValues?: boolean;
+}
+
+/**
+* Interface for bill of ladding list get response
+*
+* @export
+* @interface IBillOfLandingListGetResponse
+*/
+export interface IBillOfLandingListGetResponse {
+  cargoNominationId: number;
+  cargoName: string;
+  cargoId: number;
+  cargoColor: string;
+  cargoAbbrevation: string;
+  billOfLaddings: [];
+}
+
+/**
+* Interface for cargo quantity get response
+*
+* @export
+* @interface ICargoQuantityGetResponse
+*/
+export interface ICargoQuantityGetResponse {
+  actualAvgApi: number;
+  actualAvgTemp: number;
+  actualQuantityTotal: number;
+  blAvgApi: number;
+  blAvgTemp: number
+  blQuantityBblsTotal: number
+  blQuantityKLTotal: number;
+  blQuantityLTTotal: number
+  blQuantityMTTotal: number
+  cargoAbbrevation: string
+  cargoColor: string
+  cargoId: number
+  cargoName: string;
+  cargoNominationId: 17759
+  difference: number;
+  maxQuantity: number;
+  maxTolerance: number;
+  minQuantity: number;
+  minTolerance: number
+  nominationApi: number
+  nominationTemp: number
+  nominationTotal: number;
+}
+
+/**
+* Interface for loadable plan ballast details
+*
+* @export
+* @interface ILoadablePlanBallastDetails
+*/
+export interface ILoadablePlanBallastDetails {
+  active: boolean;
+  actualPlanned: number;
+  arrivalDeparture: number;
+  cargoId: number;
+  colorCode: string;
+  correctedUllage: number;
+  correctionFactor: number;
+  fillingPercentage: string;
+  id: number;
+  loadablePatternId: number;
+  quantity: number;
+  rdgUllage: number;
+  sg: number | string;
+  sounding: number;
+  tankId: number;
+  tankName: string;
+  tankShortName: string;
+
+}
+
+/**
+* Interface for loadable plan rob details
+*
+* @export
+* @interface ILoadablePlanRobDetails
+*/
+export interface ILoadablePlanRobDetails {
+  active: boolean;
+  actualPlanned: number;
+  arrivalDeparture: number;
+  colorCode: string;
+  density: number;
+  id: number;
+  loadablePatternId: number;
+  quantity: number;
+  tankId: number
+  tankName: string;
+  tankShortName: string;
+}
+
+/**
+* Interface for loadable plan stowage details
+*
+* @export
+* @interface ILoadablePlanStowageDetails
+*/
+export interface ILoadablePlanStowageDetails {
+  abbreviation: string;
+  active: boolean;
+  actualPlanned: number;
+  api: number;
+  arrivalDeparture: number;
+  cargoId: number;
+  cargoNominationId: number;
+  colorCode: string;
+  correctedUllage: number;
+  correctionFactor: number;
+  fillingPercentage: string
+  id: number;
+  loadablePatternId: number;
+  observedBarrels: number;
+  observedBarrelsAt60: number;
+  observedM3: number;
+  quantity: number;
+  rdgUllage: number;
+  tankId: number;
+  tankName: string;
+  tankShortName: string;
+  temperature: number;
+  ullage: number;
+  weight: number;
+}
+
+/**
+* Interface for ullage quantity stowage request
+*
+* @export
+* @interface IUllageQuantityRequest
+*/
+export interface IUllageQuantityRequest {
+  api?: number;
+  correctedUllage?: number;
+  id: number;
+  isBallast?: boolean;
+  isCommingle?: boolean;
+  sg?: number;
+  tankId?: number;
+  temperature?: number;
+}
+/**
+* Interface for ullage quantity response
+*
+* @export
+* @interface IUllageQuantityResponse
+*/
+
+export interface IUllageQuantityResponse {
+  commingle: boolean;
+  correctedUllage: number;
+  correctionFactor: number;
+  fillingRatio: number;
+  isBallast: boolean;
+  quantityMt: number;
+  responseStatus: IResponse;
+}
+
+/**
+* Interface for ullage quantity response
+*
+* @export
+* @enum ULLAGE_STATUS_TEXT
+*/
+export enum ULLAGE_STATUS_TEXT {
+  'Plan Generated'= 5,
+  'Validation In Progress' = 12,
+  'Validation Successfull' = 13,
+  'Validation Failed' = 14,
 }

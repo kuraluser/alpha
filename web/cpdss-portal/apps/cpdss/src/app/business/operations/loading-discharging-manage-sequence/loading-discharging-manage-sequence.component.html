@@ -22,10 +22,10 @@
 
     </div>
 </div>
-<div class="row">
-    <div class="col ml-30 pt-20">
+<div class="row" *ngIf="form">
+    <div class="col ml-30 pt-20 auto-layout" [formGroup]="form">
         <cpdss-portal-datatable *ngIf="columns && loadingDischargingSequenceForm && loadingDischargingDelays" [tableId]="'loading-discharging-sequence'" [form]="loadingDischargingSequenceForm"
-            [columns]="columns" [value]="loadingDischargingDelays" [editMode]="editMode" [listData]="listData"
+            [columns]="columns" [value]="loadingDischargingDelays" [editMode]="editable" [listData]="listData"
             (editComplete)="onEditComplete($event)" (buttonClick)="onDelete($event)" [scrollable]="false"></cpdss-portal-datatable>
     </div>
 </div>

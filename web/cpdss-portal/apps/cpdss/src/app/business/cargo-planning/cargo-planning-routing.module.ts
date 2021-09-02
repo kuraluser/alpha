@@ -38,8 +38,8 @@ const routes: Routes = [
         loadChildren: () => import('./discharge-study-details/discharge-study-details.module').then(m => m.DischargeStudyDetailsModule)
       },
       {
-        path: 'discharge-study-plan/:vesselId/:voyageId/:dischargeStudyId',
-        loadChildren: () => import('./discharge-study-view-plan/discharge-study-view-plan.module').then(m => m.DischargeStudyViewPlanModule)
+        path: 'discharge-plan/:vesselId/:voyageId/:dischargeStudyId',
+        loadChildren: () => import('./discharge-plan/discharge-plan.module').then(m => m.DischargePlanModule)
       }
     ]
   },

@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.grpc;
 
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.BillOfLadding;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
@@ -17,9 +18,13 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortWiseCargo;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StowageAndBillOfLaddingValidationRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
+import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.service.LoadingPlanService;
@@ -182,6 +187,9 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       loadingPlanService.getPortWiseStowageDetails(request, builder);
       loadingPlanService.getPortWiseBallastDetails(request, builder);
       loadingPlanService.getPortWiseRobDetails(request, builder);
+      loadingPlanService.getPortWiseStowageTempDetails(request, builder);
+      loadingPlanService.getPortWiseBallastTempDetails(request, builder);
+      loadingPlanService.getPortWiseCommingleDetails(request, builder);
       //      builder.setResponseStatus(
       //              ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
     } catch (Exception e) {
@@ -331,6 +339,80 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
               .setMessage(e.getMessage())
               .setStatus(LoadingPlanConstants.FAILED)
               .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @SuppressWarnings("unlikely-arg-type")
+  @Override
+  public void validateStowageAndBillOfLadding(
+      StowageAndBillOfLaddingValidationRequest request,
+      StreamObserver<ResponseStatus> responseObserver) {
+
+    ResponseStatus.Builder builder = ResponseStatus.newBuilder();
+    try {
+      List<PortWiseCargo> portWiseCargosList = request.getPortWiseCargosList();
+      List<Long> portRotationIds =
+          portWiseCargosList.stream()
+              .map(PortWiseCargo::getPortRotationId)
+              .collect(Collectors.toList());
+      List<Long> portIds =
+          portWiseCargosList.stream().map(PortWiseCargo::getPortId).collect(Collectors.toList());
+      List<PortLoadingPlanStowageDetails> stowageDetails =
+          portLoadingPlanStowageDetailsRepository.findByPortRotationXIdInAndIsActive(
+              portRotationIds, true);
+      Map<Long, List<PortLoadingPlanStowageDetails>> portWiseStowages =
+          stowageDetails.stream()
+              .collect(Collectors.groupingBy(PortLoadingPlanStowageDetails::getPortRotationXId));
+      List<com.cpdss.loadingplan.entity.BillOfLadding> blList =
+          billOfLaddingRepository.findByPortIdInAndIsActive(portIds, true);
+      Map<Long, List<com.cpdss.loadingplan.entity.BillOfLadding>> portWiseBL =
+          blList.stream()
+              .collect(
+                  Collectors.groupingBy(com.cpdss.loadingplan.entity.BillOfLadding::getPortId));
+      if (!portWiseStowages.keySet().containsAll(portRotationIds)
+          || !portWiseBL.keySet().containsAll(portIds)) {
+        builder.setStatus(LoadingPlanConstants.FAILED);
+        return;
+      } else {
+        portWiseCargosList.stream()
+            .forEach(
+                port -> {
+                  try {
+                    List<PortLoadingPlanStowageDetails> stowages =
+                        portWiseStowages.get(port.getPortRotationId());
+                    List<com.cpdss.loadingplan.entity.BillOfLadding> bLValues =
+                        portWiseBL.get(port.getPortId());
+                    List<Long> dbCargos =
+                        stowages.stream()
+                            .map(PortLoadingPlanStowageDetails::getCargoNominationXId)
+                            .collect(Collectors.toList());
+                    List<Long> dbBLCargos =
+                        bLValues.stream()
+                            .map(com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId)
+                            .collect(Collectors.toList());
+                    if (!dbCargos.containsAll(port.getCargoIdsList())
+                        || !dbBLCargos.containsAll(port.getCargoIdsList())) {
+                      builder.setStatus(LoadingPlanConstants.FAILED);
+                      throw new GenericServiceException(
+                          "LS actuals or BL values are missing",
+                          "",
+                          HttpStatusCode.SERVICE_UNAVAILABLE);
+                    }
+                  } catch (Exception e) {
+                    builder.setStatus(LoadingPlanConstants.FAILED);
+                  }
+                });
+      }
+
+      builder.setStatus(LoadingPlanConstants.SUCCESS);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setStatus(LoadingPlanConstants.FAILED);
+      builder.setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value());
+      builder.setMessage(e.getMessage());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

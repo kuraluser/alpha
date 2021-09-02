@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { IResponse } from './../../../shared/models/common.model';
+import { OPERATIONS } from '../../core/models/common.model';
+
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { IDischargingInformationResponse, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse } from '../models/loading-discharging.model';
 
@@ -57,6 +60,7 @@ export class LoadingDischargingInformationApiService {
         "status": "200"
       },
       "dischargingInfoId": 136,
+      "dischargeStudyName": "DS1",
       "synopticTableId": 89426,
       "isDischargingInfoComplete": false,
       "dischargingDetails": {
@@ -66,14 +70,14 @@ export class LoadingDischargingInformationApiService {
         "trimAllowed": {
           "initialTrim": 1.0000,
           "maximumTrim": 1.0000,
-          "finalTrim": 1.0000
+          "topOffTrim": 1.0000
         }
       },
       "dischargingRates": {
         "maxDischargingRate": 20500.0000,
-        "minDeBallastingRate": 2500.0000,
-        "maxDeBallastingRate": 6000.0000,
-        "minDischargingRate": 1000.0000,
+        "minBallastingRate": 2500.0000,
+        "maxBallastingRate": 6000.0000,
+        "initialDischargingRate": 1000.0000,
         "id": 136
       },
       "berthDetails": {
@@ -94,7 +98,10 @@ export class LoadingDischargingInformationApiService {
             "maxLoa": "250.0000",
             "maxDraft": null,
             "itemsToBeAgreedWith": "itemsToBeAgreedWith",
-            "lineDisplacement": ""
+            "lineDisplacement": "",
+            "cargoCirculation": true,
+            "airPurge": true,
+            "maxManifoldPressure": 99
           }
         ],
         "selectedBerths": [
@@ -114,7 +121,10 @@ export class LoadingDischargingInformationApiService {
             "maxLoa": null,
             "maxDraft": null,
             "itemsToBeAgreedWith": "itemsToBeAgreedWith",
-            "lineDisplacement": "1000.0000"
+            "lineDisplacement": "1000.0000",
+            "cargoCirculation": true,
+            "airPurge": true,
+            "maxManifoldPressure": 99
           }
         ]
       },
@@ -258,7 +268,7 @@ export class LoadingDischargingInformationApiService {
             "machineTypeId": 3
           }
         ],
-        "loadingDischargingMachinesInUses": [
+        "dischargingMachinesInUses": [
           {
             "id": 89,
             "dischargingInfoId": 136,
@@ -383,8 +393,10 @@ export class LoadingDischargingInformationApiService {
           { "id": 3, "reason": "Reason 3" }
         ],
         "dischargingDelays": [
-          { "id": 106, "dischargingInfoId": 141, "reasonForDelayIds": [1], "duration": 111, "cargoId": 33, "cargoNominationId": 0, "quantity": 27500 },
-          { "id": 107, "dischargingInfoId": 141, "reasonForDelayIds": [1], "duration": 1320, "cargoId": 0, "cargoNominationId": 0, "quantity": null }]
+          { "id": 197, "dischargingInfoId": 141, "reasonForDelayIds": [2], "duration": 0, "cargoId": 0, "cargoNominationId": 0, "quantity": null },
+          { "id": 199, "dischargingInfoId": 141, "reasonForDelayIds": [2], "duration": 60, "cargoId": 32, "cargoNominationId": 17760, "quantity": 577108, "sequenceNo": 1 },
+          { "id": 198, "dischargingInfoId": 141, "reasonForDelayIds": [2, 1], "duration": 0, "cargoId": 33, "cargoNominationId": 17759, "quantity": 1070147, "sequenceNo": 2 }
+        ]
       },
       "cargoVesselTankDetails": {
         "cargoTanks": [
@@ -909,7 +921,8 @@ export class LoadingDischargingInformationApiService {
             "blFigure": "118729.5000",
             "maxDischargingRate": "20500.0000",
             "protested": true,
-            "isCommingled": true
+            "isCommingled": true,
+            "slopQuantity": 3301
           },
           {
             "id": 9253,
@@ -947,6 +960,7 @@ export class LoadingDischargingInformationApiService {
       "cowDetails": {
         "cowOption": 1,
         "cowPercentage": 25,
+        "washTanksWithDifferentCargo": true,
         "topCOWTanks": [
           {
             "id": 25595,
@@ -1480,6 +1494,7 @@ export class LoadingDischargingInformationApiService {
         "cowStart": "01:00",
         "cowEnd": "01:00",
         "cowDuration": "12:00",
+        "totalDuration": "14:00",
         "cowTrimMin": 1,
         "cowTrimMax": 1,
         "needFreshCrudeStorage": true,
@@ -1505,5 +1520,34 @@ export class LoadingDischargingInformationApiService {
       ]
     };
     return of(response);
+  }
+
+  /**
+   * Method to download template
+   *
+   * @param {number} id
+   * @return {*}  {Observable<any>}
+   * @memberof LoadingDischargingInformationApiService
+ */
+  downloadTemplate(id: number, operation: OPERATIONS): Observable<any> {
+    if (operation === OPERATIONS.LOADING) {
+      return this.commonApiService.get<any>(`loading/download/port-tide-template?loadingId=${id}`, { responseType: 'blob' as 'json' });
+    }
+  }
+
+  /**
+  * Method to upload template
+  *
+  * @param {number} loadingId
+  * @param {*} file
+  * @return {*}  {Observable<IResponse>}
+  * @memberof LoadingDischargingInformationApiService
+  */
+  uploadTemplate(loadingId: number, file: any, operation: OPERATIONS): Observable<IResponse> {
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    if (operation === OPERATIONS.LOADING) {
+      return this.commonApiService.postFormData<any>(`loading/${loadingId}/upload/port-tide-details`, formData);
+    }
   }
 }

@@ -9,6 +9,7 @@ export class BusinessRoutingConfig {
                 path: '',
                 component: BusinessComponent,
                 children: [
+                    { path: '', redirectTo: 'voyage-status', pathMatch: 'full' },
                     ...BusinessRoutingCommonConfig.getRoutesForEnvironment(),
                 ]
             }

@@ -46,12 +46,10 @@
 
                             <td class="text-center" *ngIf="displaySettings">
                                 <label class="checkbox-custom">
-                                    <input type="checkbox" [formControl]="getControl('displayInSettings',rowIndex)"  [attr.disabled]="!disabledStatus[selectedIndex.toString()+rowIndex.toString()]?'disabled':null">
+                                    <input type="checkbox" [formControl]="getControl('displayInSettings',rowIndex)">
                                     <span class="checkmark"></span>
                                 </label>
                             </td>
-
-
 
                             <td *ngIf="rowData.inputs.length>0">
                                 <ng-container *ngFor="let input of rowData.inputs; let inputIndex = index">
@@ -59,23 +57,22 @@
                                     <span *ngIf="input?.type" class="mr-5">{{input.prefix}}</span>
                                     <span *ngIf="!input?.type">{{input.prefix}}</span>
                                     <ng-container *ngIf="input?.type=='Boolean'">
-                                        <label class="radio-custom">{{'RULES_TRUE' | translate}}
-                                            <input type="radio" [name]="radio + '_' + rowIndex + '_' + inputIndex"
+                                        <label class="radio-custom">
+                                            {{'RULES_TRUE' | translate}}
+                                            <input type="radio" [id]="'radio_true_' + rowIndex + '_' + inputIndex"
+                                                class="custom-control-input"
+                                                [name]="'radio_' + rowIndex + '_' + inputIndex"
                                                 [formControl]="getControl('inputs',rowIndex,inputIndex)" value="true"
-                                                (change)="checkForFormValueChanges()"
-                                                [attr.disabled]="!disabledStatus[selectedIndex.toString() + rowIndex.toString()]"
-                                                >
+                                                (change)="checkForFormValueChanges()">
                                             <span class="checkmark"></span>
                                         </label>
-
-
-
-                                        <label class="radio-custom">{{'RULES_FALSE' | translate}}
-                                            <input type="radio" [name]="radio + '_' + rowIndex + '_' + inputIndex"
+                                        <label class="radio-custom">
+                                            {{'RULES_FALSE' | translate}}
+                                            <input type="radio" [id]="'radio_false_' + rowIndex + '_' + inputIndex"
+                                                class="custom-control-input"
+                                                [name]="'radio_' + rowIndex + '_' + inputIndex"
                                                 [formControl]="getControl('inputs',rowIndex,inputIndex)" value="false"
-                                                (change)="checkForFormValueChanges()"
-                                                [attr.disabled]="!disabledStatus[selectedIndex.toString() + rowIndex.toString()]"
-                                                >
+                                                (change)="checkForFormValueChanges()">
                                             <span class="checkmark"></span>
                                         </label>
                                     </ng-container>
@@ -84,23 +81,17 @@
                                         <input *ngIf="input?.type=='string'" [id]="rowIndex + 'input' + inputIndex"
                                             class="form-control"
                                             [formControl]="getControl('inputs',rowIndex,inputIndex)"
-                                            (blur)="checkForFormValueChanges()"
-                                            [attr.disabled]="!disabledStatus[selectedIndex.toString() + rowIndex.toString()]?'disabled':null"
-                                            >
+                                            (blur)="checkForFormValueChanges()">
                                         <input *ngIf="input?.type=='Number' || input?.type=='number'" type="text"
                                             cpdssPortalNumberDecimal [id]="rowIndex + 'input' + inputIndex"
                                             class="form-control"
                                             [formControl]="getControl('inputs',rowIndex,inputIndex)"
-                                            (blur)="checkForFormValueChanges()" 
-                                            [attr.disabled]="!disabledStatus[selectedIndex.toString() + rowIndex.toString()]?'disabled':null"
-                                            >
+                                            (blur)="checkForFormValueChanges()">
 
                                         <p-multiSelect
                                             *ngIf="input.type==='MultiSelect' && input.ruleDropDownMaster!='null'"
                                             [options]="input.ruleDropDownMaster" optionLabel="value"
-                                            [formControl]="getControl('inputs',rowIndex,inputIndex)"
-                                            [disabled]="!disabledStatus[selectedIndex.toString() + rowIndex.toString()]?'disabled':null"
-                                            >
+                                            [formControl]="getControl('inputs',rowIndex,inputIndex)">
                                         </p-multiSelect>
                                         <cpdss-portal-validation-error *ngIf="input?.type"
                                             [errors]="fieldError('inputs',rowIndex,inputIndex)"
@@ -109,9 +100,7 @@
                                         <p-dropdown *ngIf="input.type==='Dropdown'" [options]="input.ruleDropDownMaster"
                                             styleClass="form-control"
                                             [formControl]="getControl('inputs',rowIndex,inputIndex)" optionLabel="value"
-                                            resetFilterOnHide="true"
-                                            [disabled]="!disabledStatus[selectedIndex.toString() + rowIndex.toString()]"
-                                            >
+                                            resetFilterOnHide="true">
                                         </p-dropdown>
                                     </div>
                                     {{input.suffix}}
@@ -121,14 +110,12 @@
                                 <p-dropdown [id]="'rule_type' + rowIndex " [options]="ruleTypes"
                                     styleClass="form-control" [formControl]="getControl('ruleType',rowIndex)"
                                     (onChange)="onRuleTypeSelected($event)" optionLabel="value"
-                                    resetFilterOnHide="true"
-                                    [disabled]="!disabledStatus[selectedIndex.toString() + rowIndex.toString()]"
-                                    ></p-dropdown>
+                                    resetFilterOnHide="true"></p-dropdown>
                             </td>
 
                             <td class="text-center">
                                 <p-inputSwitch [id]="'enable' + rowIndex" [formControl]="getControl('enable',rowIndex)"
-                                    (onChange)="checkForFormValueChanges()">
+                                    (onChange)="disableOrEnableRule(rowIndex)">
                                 </p-inputSwitch>
                             </td>
                         </tr>

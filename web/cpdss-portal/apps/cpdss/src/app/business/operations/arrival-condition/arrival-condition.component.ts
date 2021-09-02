@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { ITankOptions, IShipCargoTank, IVoyagePortDetails, TANKTYPE, ICargoQuantities } from '../../core/models/common.model';
-import { IShipBallastTank } from '../../voyage-status/models/voyage-status.model';
+import { ITankOptions, IShipCargoTank, IVoyagePortDetails, TANKTYPE, ICargoQuantities, IShipBallastTank } from '../../core/models/common.model';
 import { ArrivalConditionTransformationService } from './arrival-condition-transformation.service';
 import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
+import { ULLAGE_STATUS, ULLAGE_STATUS_TEXT } from '../models/loading-discharging.model';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
  * Component class for arrival condition block
@@ -26,6 +27,9 @@ export class ArrivalConditionComponent implements OnInit {
   }
 
   @Input() cargos: any;
+  @Input() loadingInfoId: number;
+  @Input() vesselId: number;
+  @Input() portRotationId: number;
 
   @Input() get loadingPlanData(): any {
     return this._loadingPlanData;
@@ -55,14 +59,18 @@ export class ArrivalConditionComponent implements OnInit {
   rearBallastTanks: IShipBallastTank[][];
   frontBallastTanks: IShipBallastTank[][];
   centerBallastTanks: IShipBallastTank[][];
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit };
   prevQuantitySelectedUnit: QUANTITY_UNIT;
 
   readonly tankType = TANKTYPE;
   selectedTab = TANKTYPE.CARGO;
 
+  readonly ULLAGE_STATUS = ULLAGE_STATUS;
+  readonly ULLAGE_STATUS_TEXT = ULLAGE_STATUS_TEXT;
+
   constructor(
-    private arrivalConditionTransformationService: ArrivalConditionTransformationService
+    private arrivalConditionTransformationService: ArrivalConditionTransformationService,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService
   ) { }
 
   ngOnInit(): void {
@@ -74,8 +82,10 @@ export class ArrivalConditionComponent implements OnInit {
       "ullageField": "correctedUllage",
       "ullageUnit": AppConfigurationService.settings?.ullageUnit,
       "densityField": "api",
-      "weightField": "actualWeight",
-      "commodityNameField": "abbreviation"
+      "weightField": "plannedWeight",
+      "commodityNameField": "abbreviation",
+      fillingPercentageField: 'percentageFilled',
+      weightUnit: AppConfigurationService.settings.baseUnit
     };
     this.getShipLandingTanks();
   }
@@ -92,7 +102,7 @@ export class ArrivalConditionComponent implements OnInit {
     this.loadingPlanData?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(item => {
       let actualWeight = 0, plannedWeight = 0;
       this.loadingPlanData?.planStowageDetails?.map(stowage => {
-        if (stowage.conditionType === 1 && stowage.cargoNominationId === stowage.cargoNominationId) {
+        if (stowage.conditionType === 1 && item.cargoNominationId === stowage.cargoNominationId) {
           if (stowage.valueType === 1) {
             actualWeight += Number(stowage.quantityMT);
           }
@@ -132,6 +142,7 @@ export class ArrivalConditionComponent implements OnInit {
         this.loadingPlanData?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(el => {
           if (el.cargoNominationId === data.cargoNominationId) {
             data.colorCode = el.colorCode;
+            data.abbreviation = el.cargoAbbreviation;
           }
         });
         this.cargoTankQuantity.push(data);
@@ -140,11 +151,11 @@ export class ArrivalConditionComponent implements OnInit {
     this.arrivalCargoTanks = this.arrivalConditionTransformationService.formatCargoTanks(this.loadingPlanData?.cargoTanks, this.cargoTankQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
   }
 
-   /**
-  * Close ullage update popup
-  *
-  * @memberof ArrivalConditionComponent
-  */
+  /**
+ * Close ullage update popup
+ *
+ * @memberof ArrivalConditionComponent
+ */
   closePopUp(evnet) {
     this.display = false;
   }
@@ -170,8 +181,10 @@ export class ArrivalConditionComponent implements OnInit {
       item.map(tank => {
         let actualQty = 0, planedQty = 0;
         const data: any = {};
+        let colorCode = null;
         this.loadingPlanData?.planBallastDetails?.map(ballast => {
           if (tank.id === ballast.tankId) {
+            colorCode = ballast.colorCode;
             if (ballast.conditionType === 1 && ballast.valueType === 1) {
               actualQty += Number(ballast.quantityMT);
             }
@@ -183,6 +196,7 @@ export class ArrivalConditionComponent implements OnInit {
         data.plannedWeight = planedQty;
         data.actualWeight = actualQty;
         data.tankId = tank.id;
+        data.colorCode = colorCode;
         this.ballastTankQuantity.push(data);
       });
     });
@@ -190,8 +204,10 @@ export class ArrivalConditionComponent implements OnInit {
       item.map(tank => {
         let actualQty = 0, planedQty = 0;
         const data: any = {};
+        let colorCode = null;
         this.loadingPlanData?.planBallastDetails?.map(ballast => {
           if (tank.id === ballast.tankId) {
+            colorCode = ballast.colorCode;
             if (ballast.conditionType === 1 && ballast.valueType === 1) {
               actualQty += Number(ballast.quantityMT);
             }
@@ -203,6 +219,7 @@ export class ArrivalConditionComponent implements OnInit {
         data.plannedWeight = planedQty;
         data.actualWeight = actualQty;
         data.tankId = tank.id;
+        data.colorCode = colorCode;
         this.ballastTankQuantity.push(data);
       });
     });
@@ -210,8 +227,10 @@ export class ArrivalConditionComponent implements OnInit {
       item.map(tank => {
         let actualQty = 0, planedQty = 0;
         const data: any = {};
+        let colorCode = null;
         this.loadingPlanData?.planBallastDetails?.map(ballast => {
           if (tank.id === ballast.tankId) {
+            colorCode = ballast.colorCode;
             if (ballast.conditionType === 1 && ballast.valueType === 1) {
               actualQty += Number(ballast.quantityMT);
             }
@@ -223,6 +242,7 @@ export class ArrivalConditionComponent implements OnInit {
         data.plannedWeight = planedQty;
         data.actualWeight = actualQty;
         data.tankId = tank.id;
+        data.colorCode = colorCode;
         this.ballastTankQuantity.push(data);
       });
     });
@@ -239,6 +259,15 @@ export class ArrivalConditionComponent implements OnInit {
    */
   onTabClick(selectedTab: TANKTYPE) {
     this.selectedTab = selectedTab;
+  }
+
+  /**
+   * Handler for showing error pop up
+   *
+   * @memberof ArrivalConditionComponent
+   */
+  showError() {
+    this.loadingDischargingTransformationService.showUllageError({ value: true, status: 1});
   }
 
 }

@@ -34,6 +34,7 @@ import com.cpdss.loadingplan.domain.algo.LoadicatorAlgoRequest;
 import com.cpdss.loadingplan.domain.algo.LoadicatorAlgoResponse;
 import com.cpdss.loadingplan.domain.algo.LoadicatorResult;
 import com.cpdss.loadingplan.domain.algo.LoadicatorStage;
+import com.cpdss.loadingplan.domain.algo.UllageEditLoadicatorAlgoRequest;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import com.cpdss.loadingplan.entity.LoadingPlanBallastDetails;
@@ -43,18 +44,19 @@ import com.cpdss.loadingplan.entity.LoadingPlanStowageDetails;
 import com.cpdss.loadingplan.entity.LoadingSequence;
 import com.cpdss.loadingplan.entity.LoadingSequenceStabilityParameters;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
-import com.cpdss.loadingplan.repository.LoadingInformationStatusRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanPortWiseDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceStabiltyParametersRepository;
+import com.cpdss.loadingplan.service.LoadingPlanService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,9 +96,8 @@ public class LoadicatorService {
   @Autowired
   LoadingSequenceStabiltyParametersRepository loadingSequenceStabiltyParametersRepository;
 
-  @Autowired LoadingInformationStatusRepository loadingInformationStatusRepository;
-
   @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
+  @Autowired LoadingPlanService loadingPlanService;
 
   @Autowired RestTemplate restTemplate;
 
@@ -122,17 +123,10 @@ public class LoadicatorService {
         loadingInformation.getId());
     Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
         Loadicator.LoadicatorRequest.newBuilder();
+    Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
     List<LoadingSequence> loadingSequences =
         loadingSequenceRepository.findByLoadingInformationAndIsActiveOrderBySequenceNumber(
             loadingInformation, true);
-    Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
-    cargoNominationIds.addAll(
-        loadingSequences.stream()
-            .map(sequence -> sequence.getCargoNominationXId())
-            .collect(Collectors.toList()));
-    Map<Long, CargoNominationDetail> cargoNomDetails =
-        this.getCargoNominationDetails(cargoNominationIds);
-
     List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetails =
         loadingPlanPortWiseDetailsRepository.findByLoadingInformationIdAndToLoadicatorAndIsActive(
             loadingInformation.getId(), true, true);
@@ -143,6 +137,12 @@ public class LoadicatorService {
     List<LoadingPlanStowageDetails> loadingPlanStowageDetails =
         loadingPlanStowageDetailsRepository.findByPortWiseDetailIdsAndIsActive(
             portWiseDetailIds, true);
+    cargoNominationIds.addAll(
+        loadingPlanStowageDetails.stream()
+            .map(LoadingPlanStowageDetails::getCargoNominationId)
+            .collect(Collectors.toList()));
+    Map<Long, CargoNominationDetail> cargoNomDetails =
+        this.getCargoNominationDetails(cargoNominationIds);
     List<LoadingPlanBallastDetails> loadingPlanBallastDetails =
         loadingPlanBallastDetailsRepository.findByLoadingPlanPortWiseDetailIdsAndIsActive(
             portWiseDetailIds, true);
@@ -151,7 +151,7 @@ public class LoadicatorService {
     Set<Integer> loadingTimes = new LinkedHashSet<Integer>();
     loadingTimes.addAll(
         loadingPlanPortWiseDetails.stream()
-            .map(portWiseDetails -> portWiseDetails.getTime())
+            .map(LoadingPlanPortWiseDetails::getTime)
             .sorted()
             .collect(Collectors.toList()));
     Map<Integer, List<LoadingPlanStowageDetails>> stowageMap =
@@ -162,20 +162,48 @@ public class LoadicatorService {
         new HashMap<Integer, List<LoadingPlanRobDetails>>();
     loadingTimes.forEach(
         time -> {
+          Boolean isGradeSwitchWithoutDelay =
+              isGradeSwitchTimeWithoutDelay(loadingPlanPortWiseDetails, time);
+          Long portWiseDetailsId =
+              getPortWiseDetailsIdForGradeSwitchWithoutDelay(
+                  loadingSequences, loadingPlanPortWiseDetails, time);
           stowageMap.put(
               time,
               loadingPlanStowageDetails.stream()
                   .filter(stowage -> stowage.getLoadingPlanPortWiseDetails().getTime().equals(time))
+                  .filter(
+                      stowage ->
+                          isGradeSwitchWithoutDelay
+                              ? stowage
+                                  .getLoadingPlanPortWiseDetails()
+                                  .getId()
+                                  .equals(portWiseDetailsId)
+                              : true)
                   .collect(Collectors.toList()));
           ballastMap.put(
               time,
               loadingPlanBallastDetails.stream()
                   .filter(ballast -> ballast.getLoadingPlanPortWiseDetails().getTime().equals(time))
+                  .filter(
+                      ballast ->
+                          isGradeSwitchWithoutDelay
+                              ? ballast
+                                  .getLoadingPlanPortWiseDetails()
+                                  .getId()
+                                  .equals(portWiseDetailsId)
+                              : true)
                   .collect(Collectors.toList()));
           robMap.put(
               time,
               loadingPlanRobDetails.stream()
                   .filter(rob -> rob.getLoadingPlanPortWiseDetails().getTime().equals(time))
+                  .filter(
+                      rob ->
+                          isGradeSwitchWithoutDelay
+                              ? rob.getLoadingPlanPortWiseDetails()
+                                  .getId()
+                                  .equals(portWiseDetailsId)
+                              : true)
                   .collect(Collectors.toList()));
         });
 
@@ -184,6 +212,7 @@ public class LoadicatorService {
     PortInfo.PortReply portReply = getPortInfoForLoadicator(loadingInformation);
 
     loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
+    loadicatorRequestBuilder.setIsUllageUpdate(false);
     loadingTimes.forEach(
         time -> {
           StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
@@ -222,6 +251,50 @@ public class LoadicatorService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  /**
+   * @param loadingSequences
+   * @param loadingPlanPortWiseDetails
+   * @param time
+   * @return
+   */
+  private Long getPortWiseDetailsIdForGradeSwitchWithoutDelay(
+      List<LoadingSequence> loadingSequences,
+      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetails,
+      Integer time) {
+    List<LoadingPlanPortWiseDetails> filteredPortDetails =
+        loadingPlanPortWiseDetails.stream()
+            .filter(portWiseDetails -> portWiseDetails.getTime().equals(time))
+            .collect(Collectors.toList());
+    if (filteredPortDetails.size() > 1) {
+      log.info("Found grade switch without delay stage at time {}", time);
+      return filteredPortDetails.get(0).getLoadingSequence().getSequenceNumber()
+              > filteredPortDetails.get(1).getLoadingSequence().getSequenceNumber()
+          ? filteredPortDetails.get(0).getId()
+          : filteredPortDetails.get(1).getId();
+    }
+    return null;
+  }
+
+  /**
+   * Returns whether there is a grade switch without delay at the given time. If there are multiple
+   * portWiseDetails for the same time, then it is actually due to a grade switch without any delay
+   *
+   * @param loadingPlanPortWiseDetails
+   * @param time
+   * @return
+   */
+  private Boolean isGradeSwitchTimeWithoutDelay(
+      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetails, Integer time) {
+    if (loadingPlanPortWiseDetails.stream()
+            .filter(portWiseDetails -> portWiseDetails.getTime().equals(time))
+            .collect(Collectors.toList())
+            .size()
+        > 1) {
+      return true;
+    }
+    return false;
   }
 
   public Loadicator.LoadicatorReply saveLoadicatorInfo(
@@ -297,11 +370,17 @@ public class LoadicatorService {
               Optional.ofNullable(
                       String.valueOf(cargoNomDetails.get(cargoNominationId).getAbbreviation()))
                   .ifPresent(cargoBuilder::setCargoAbbrev);
-              Optional.ofNullable(String.valueOf(cargoNomDetails.get(cargoNominationId).getApi()))
-                  .ifPresent(cargoBuilder::setApi);
-              Optional.ofNullable(
-                      String.valueOf(cargoNomDetails.get(cargoNominationId).getTemperature()))
-                  .ifPresent(cargoBuilder::setStandardTemp);
+              Optional<LoadingPlanStowageDetails> stowageOpt =
+                  stowageDetails.stream()
+                      .filter(stwg -> stwg.getCargoNominationId().equals(cargoNominationId))
+                      .findAny();
+              stowageOpt.ifPresent(
+                  stwg -> {
+                    Optional.ofNullable(String.valueOf(stwg.getApi()))
+                        .ifPresent(cargoBuilder::setApi);
+                    Optional.ofNullable(String.valueOf(stwg.getTemperature()))
+                        .ifPresent(cargoBuilder::setStandardTemp);
+                  });
               Optional.ofNullable(cargoNomDetails.get(cargoNominationId).getCargoId())
                   .ifPresent(cargoBuilder::setCargoId);
               Optional.ofNullable(loadingInformation.getPortXId())
@@ -312,7 +391,7 @@ public class LoadicatorService {
             });
   }
 
-  private Map<Long, CargoNominationDetail> getCargoNominationDetails(Set<Long> cargoNominationIds)
+  public Map<Long, CargoNominationDetail> getCargoNominationDetails(Set<Long> cargoNominationIds)
       throws GenericServiceException {
     Map<Long, CargoNominationDetail> details = new HashMap<Long, CargoNominationDetail>();
     cargoNominationIds.forEach(
@@ -368,7 +447,7 @@ public class LoadicatorService {
         });
   }
 
-  private void buildStowagePlan(
+  public void buildStowagePlan(
       LoadingInformation loadingInformation,
       Integer time,
       String processId,
@@ -409,7 +488,7 @@ public class LoadicatorService {
    * @return
    * @throws GenericServiceException
    */
-  private PortInfo.PortReply getPortInfoForLoadicator(LoadingInformation loadingInformation)
+  public PortInfo.PortReply getPortInfoForLoadicator(LoadingInformation loadingInformation)
       throws GenericServiceException {
     PortInfo.PortRequest portRequest =
         PortInfo.PortRequest.newBuilder()
@@ -437,8 +516,8 @@ public class LoadicatorService {
    * @return
    * @throws GenericServiceException
    */
-  private VesselInfo.VesselReply getVesselDetailsForLoadicator(
-      LoadingInformation loadingInformation) throws GenericServiceException {
+  public VesselInfo.VesselReply getVesselDetailsForLoadicator(LoadingInformation loadingInformation)
+      throws GenericServiceException {
     VesselInfo.VesselRequest replyBuilder =
         VesselInfo.VesselRequest.newBuilder()
             .setVesselId(loadingInformation.getVesselXId())
@@ -465,7 +544,7 @@ public class LoadicatorService {
    * @return
    * @throws GenericServiceException
    */
-  private CargoInfo.CargoReply getCargoInfoForLoadicator(LoadingInformation loadingInformation)
+  public CargoInfo.CargoReply getCargoInfoForLoadicator(LoadingInformation loadingInformation)
       throws GenericServiceException {
     CargoInfo.CargoRequest cargoRequest =
         CargoInfo.CargoRequest.newBuilder()
@@ -492,10 +571,7 @@ public class LoadicatorService {
       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataReply
               .Builder
           reply)
-      throws GenericServiceException {
-    log.info(
-        "Recieved stability parameters of Loading Information {} from Loadicator",
-        request.getLoadingInformationId());
+      throws GenericServiceException, IllegalAccessException, InvocationTargetException {
     Optional<LoadingInformation> loadingInfoOpt =
         loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingInformationId());
     if (loadingInfoOpt.isEmpty()) {
@@ -505,28 +581,131 @@ public class LoadicatorService {
           HttpStatusCode.BAD_REQUEST);
     }
 
-    LoadicatorAlgoRequest algoRequest = new LoadicatorAlgoRequest();
-    buildLoadicatorAlgoRequest(loadingInfoOpt.get(), request, algoRequest);
-    saveLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
+    if (!request.getIsUllageUpdate()) {
+      log.info(
+          "Recieved stability parameters of Loading Information {} from Loadicator",
+          request.getLoadingInformationId());
+      LoadicatorAlgoRequest algoRequest = new LoadicatorAlgoRequest();
+      buildLoadicatorAlgoRequest(loadingInfoOpt.get(), request, algoRequest);
+      saveLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
 
-    LoadicatorAlgoResponse algoResponse =
-        restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
-    saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
+      LoadicatorAlgoResponse algoResponse =
+          restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+      saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
 
-    saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
+      saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
 
-    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-        loadingInformationStatusRepository.findByIdAndIsActive(
-            LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID, true);
-    if (loadingInfoStatusOpt.isEmpty()) {
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          loadingPlanAlgoService.getLoadingInformationStatus(
+              LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID);
+      loadingInformationRepository.updateLoadingInformationStatuses(
+          loadingInfoStatusOpt.get(),
+          loadingInfoStatusOpt.get(),
+          loadingInfoStatusOpt.get(),
+          loadingInfoOpt.get().getId());
+      loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+          loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+      loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
+          loadingInfoOpt.get().getId(), true);
+      loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
+          loadingInfoOpt.get().getId(), true);
+    } else {
+      log.info(
+          "Recieved stability parameters of Loading Plam of Loading Information {} from Loadicator",
+          request.getLoadingInformationId());
+      UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
+      buildUllageEditLoadicatorAlgoRequest(loadingInfoOpt.get(), request, algoRequest);
+      saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
+
+      //    	    LoadicatorAlgoResponse algoResponse =
+      //    	        restTemplate.postForObject(loadicatorUrl, algoRequest,
+      // LoadicatorAlgoResponse.class);
+      //    	    saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
+      //
+      //    	    saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
+
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          loadingPlanAlgoService.getLoadingInformationStatus(
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+      if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE.equals(
+          request.getConditionType())) {
+        loadingInformationRepository.updateLoadingInformationArrivalStatus(
+            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
+      } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE.equals(
+          request.getConditionType())) {
+        loadingInformationRepository.updateLoadingInformationDepartureStatus(
+            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
+      }
+      loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+          loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+      loadingPlanService.saveUpdatedLoadingPlanDetails(
+          loadingInfoOpt.get(), request.getConditionType());
+    }
+  }
+
+  /**
+   * @param algoRequest
+   * @param id
+   * @throws GenericServiceException
+   */
+  private void saveUllageEditLoadicatorRequestJson(
+      UllageEditLoadicatorAlgoRequest algoRequest, Long loadingInfoId)
+      throws GenericServiceException {
+    log.info("Saving Loadicator request to Loadable study DB");
+    JsonRequest.Builder jsonBuilder = JsonRequest.newBuilder();
+    jsonBuilder.setReferenceId(loadingInfoId);
+    jsonBuilder.setJsonTypeId(LoadingPlanConstants.UPDATE_ULLAGE_LOADICATOR_REQUEST_JSON_TYPE_ID);
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      mapper.writeValue(
+          new File(
+              this.rootFolder
+                  + "/json/loadingPlanEditLoadicatorRequest_"
+                  + loadingInfoId
+                  + ".json"),
+          algoRequest);
+      jsonBuilder.setJson(mapper.writeValueAsString(algoRequest));
+      saveJson(jsonBuilder);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
       throw new GenericServiceException(
-          "Could not find loading information status with id "
-              + LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID,
+          "Could not save request JSON to DB",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } catch (IOException e) {
+      throw new GenericServiceException(
+          "Could not save request JSON to Filesystem",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
-        loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+  }
+
+  /**
+   * @param loadingInformation
+   * @param request
+   * @param algoRequest
+   */
+  private void buildUllageEditLoadicatorAlgoRequest(
+      LoadingInformation loadingInformation,
+      LoadingInfoLoadicatorDataRequest request,
+      UllageEditLoadicatorAlgoRequest algoRequest) {
+    algoRequest.setLoadingInformationId(loadingInformation.getId());
+    algoRequest.setProcessId(request.getProcessId());
+    algoRequest.setVesselId(loadingInformation.getVesselXId());
+    algoRequest.setPortId(loadingInformation.getPortXId());
+    List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
+    request
+        .getLoadingInfoLoadicatorDetailsList()
+        .forEach(
+            loadicatorDetails -> {
+              LoadicatorStage loadicatorStage = new LoadicatorStage();
+              loadicatorStage.setTime(loadicatorDetails.getTime());
+              buildLdTrim(loadicatorDetails.getLDtrim(), loadicatorStage);
+              buildLdIntactStability(loadicatorDetails.getLDIntactStability(), loadicatorStage);
+              buildLdStrength(loadicatorDetails.getLDStrength(), loadicatorStage);
+              stages.add(loadicatorStage);
+            });
+    algoRequest.setStages(stages);
   }
 
   /**
@@ -607,7 +786,7 @@ public class LoadicatorService {
     }
   }
 
-  private void saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest.Builder jsonBuilder) {
+  public void saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest.Builder jsonBuilder) {
     this.loadableStudyGrpcService.saveJson(jsonBuilder.build());
   }
 

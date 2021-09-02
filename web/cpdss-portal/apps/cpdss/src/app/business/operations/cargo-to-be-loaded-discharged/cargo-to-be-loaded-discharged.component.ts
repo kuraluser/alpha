@@ -2,7 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { QUANTITY_UNIT } from '../../../shared/models/common.model';
+import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ICargo, OPERATIONS } from '../../core/models/common.model';
@@ -24,6 +24,16 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
 })
 export class CargoToBeLoadedDischargedComponent implements OnInit {
 
+  @Input()
+  get operation(): OPERATIONS {
+    return this._operation;
+  }
+
+  set operation(value: OPERATIONS) {
+    this._operation = value;
+    this.editMode = value === OPERATIONS.DISCHARGING ? DATATABLE_EDITMODE.CELL : null;
+  }
+  
   @Input() cargos: ICargo[];
   @Input() prevQuantitySelectedUnit: QUANTITY_UNIT;
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
@@ -44,16 +54,6 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
     if (cargoVesselTankDetails?.loadableQuantityCargoDetails) {
       this.updateCargoTobeLoadedDischargedData();
     }
-  }
-
-  @Input()
-  get operation(): OPERATIONS {
-    return this._operation;
-  }
-
-  set operation(value: OPERATIONS) {
-    this._operation = value;
-    this.editMode = value === OPERATIONS.DISCHARGING ? DATATABLE_EDITMODE.CELL : null;
   }
 
   @Input() form: FormGroup;
@@ -113,8 +113,9 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
         cargo.grade = this.findCargo(cargo);
         const orderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);   
         cargo.orderedQuantity = this.quantityDecimalFormatPipe.transform(orderedQuantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,'');
-        const loadableMT = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
-        cargo.loadableMT = loadableMT?.toString();
+        
+        const actualQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT , this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
+        cargo.actualQuantity = actualQuantity?.toString();
         
         const slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(cargo?.slopQuantity.toString(), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
         cargo.slopQuantity = Number(this.quantityDecimalFormatPipe.transform(slopQuantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,''));
@@ -145,8 +146,9 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
         const shipFigure = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.shipFigure), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
         cargo.shipFigure = shipFigure?.toString();
 
-        const slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.slopQuantity.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
-        cargo.slopQuantity = slopQuantity;
+        const slopQuantityObj = (<ValueObject<number>>cargo?.slopQuantity);
+        const slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(slopQuantityObj?.value?.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
+        slopQuantityObj.value = slopQuantity;
 
         cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
       }

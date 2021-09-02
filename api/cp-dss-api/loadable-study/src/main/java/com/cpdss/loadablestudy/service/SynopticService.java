@@ -141,7 +141,7 @@ public class SynopticService {
             .findByLoadablePatternIdAndPortRotationIdAndIsActive(
                 request.getPatternId(), request.getId(), true);
     if (!ballastDetails.isEmpty()) {
-      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      builder.setResponseStatus(repBuilder.setStatus(SUCCESS).build());
     }
     ballastDetails.forEach(
         ballast -> {

@@ -8,11 +8,17 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailStatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest.Builder;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailStatusReply;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -30,15 +36,19 @@ import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.utility.AdminRuleTemplate;
 import com.cpdss.gateway.utility.AdminRuleValueExtract;
+import com.google.protobuf.ByteString;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Loading Information Tab Grid Data Populate here
@@ -62,6 +72,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Autowired LoadingInformationBuilderService loadingInfoBuilderService;
 
   @Autowired LoadableStudyService loadableStudyService;
+
+  @GrpcClient("loadingInformationService")
+  private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
+      loadingInfoServiceBlockingStub;
 
   /**
    * Sunset/Sunrise Only Collect from Synoptic Table in LS
@@ -127,13 +141,19 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
       // For Sunrise and Sunset, 1st  call to LS
       LoadableStudy.LoadingSynopticResponse response =
-          this.loadingPlanGrpcService.fetchSynopticRecordForPortRotationArrivalCondition(portRId);
-      var.setTimeOfSunrise(
-          response.getTimeOfSunrise().isEmpty() ? null : response.getTimeOfSunrise());
-      var.setTimeOfSunset(response.getTimeOfSunset().isEmpty() ? null : response.getTimeOfSunset());
+          this.loadingPlanGrpcService.fetchSynopticRecordForPortRotation(
+              portRId, GatewayConstants.OPERATION_TYPE_ARR);
+      if (var1.getTimeOfSunrise().isEmpty()) {
+        var.setTimeOfSunrise(
+            response.getTimeOfSunrise().isEmpty() ? null : response.getTimeOfSunrise());
+      }
+      if (var1.getTimeOfSunset().isEmpty()) {
+        var.setTimeOfSunset(
+            response.getTimeOfSunset().isEmpty() ? null : response.getTimeOfSunset());
+      }
 
       // If not found in LS, Synoptic Go to Port Master
-      if (var.getTimeOfSunrise() == null || var.getTimeOfSunset() == null) {
+      if (var.getTimeOfSunrise() == null && var.getTimeOfSunset() == null) {
         PortInfo.PortDetail response2 = this.loadingPlanGrpcService.fetchPortDetailByPortId(portId);
         var.setTimeOfSunrise(response2.getSunriseTime());
         var.setTimeOfSunset(response2.getSunsetTime());
@@ -658,6 +678,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           loadingInfoBuilderService.saveDataAsync(request);
       if (request.getLoadingDetails() != null) {
         // Updating synoptic table (time)
+        log.info(
+            "Saving Loading info Times details at Synoptic Table - id {}",
+            request.getSynopticalTableId());
         this.updateSynopticalTable(request.getLoadingDetails(), request.getSynopticalTableId());
       }
       if (response == null) {
@@ -818,11 +841,13 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
   @Override
   public LoadingInfoAlgoStatus getLoadingInfoAlgoStatus(
-      Long vesselId, Long voyageId, Long infoId, String processId) throws GenericServiceException {
+      Long vesselId, Long voyageId, Long infoId, String processId, Integer conditionType)
+      throws GenericServiceException {
     log.info("Fetching ALGO status of Loading Information {} from Loading-Info MS", infoId);
     LoadingInfoStatusRequest.Builder requestBuilder = LoadingInfoStatusRequest.newBuilder();
     requestBuilder.setLoadingInfoId(infoId);
     requestBuilder.setProcessId(processId);
+    Optional.ofNullable(conditionType).ifPresent(requestBuilder::setConditionType);
     LoadingInfoStatusReply reply =
         this.loadingPlanGrpcService.getLoadingInfoAlgoStatus(requestBuilder.build());
     LoadingInfoAlgoStatus algoStatus = new LoadingInfoAlgoStatus();
@@ -839,11 +864,13 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
-  public AlgoErrorResponse getLoadingInfoAlgoErrors(Long vesselId, Long voyageId, Long infoId)
+  public AlgoErrorResponse getLoadingInfoAlgoErrors(
+      Long vesselId, Long voyageId, Long infoId, Integer conditionType)
       throws GenericServiceException {
     log.info("Fetching ALGO errors of Loading Information {} from Loading-Info MS", infoId);
     AlgoErrorRequest.Builder requestBuilder = AlgoErrorRequest.newBuilder();
     requestBuilder.setLoadingInformationId(infoId);
+    Optional.ofNullable(conditionType).ifPresent(requestBuilder::setConditionType);
     AlgoErrorResponse algoResponse = new AlgoErrorResponse();
     AlgoErrorReply reply =
         this.loadingPlanGrpcService.getLoadingInfoAlgoErrors(requestBuilder.build());
@@ -876,5 +903,50 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             });
     algoResponse.setAlgoErrors(algoErrors);
     algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
+  }
+
+  /** Upload Tide data from excel to db */
+  @Override
+  public UploadTideDetailResponse uploadLoadingTideDetails(
+      Long loadingId, MultipartFile file, String correlationId)
+      throws IOException, GenericServiceException {
+    String originalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
+    if (!(originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())
+        .equals("xlsx")) {
+      throw new GenericServiceException(
+          "unsupported file type", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+    }
+    Builder builder = UploadTideDetailRequest.newBuilder();
+    builder.setTideDetaildata(ByteString.copyFrom(file.getBytes()));
+    builder.setLoadingId(loadingId);
+    UploadTideDetailStatusReply statusReply =
+        loadingInfoServiceBlockingStub.uploadPortTideDetails(builder.build());
+    if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          statusReply.getResponseStatus().getMessage(),
+          statusReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(statusReply.getResponseStatus().getHttpStatusCode()));
+    }
+    UploadTideDetailResponse response = new UploadTideDetailResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  @Override
+  public byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException {
+
+    com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest.Builder
+        builder = DownloadTideDetailRequest.newBuilder();
+    builder.setLoadingId(loadingId);
+    DownloadTideDetailStatusReply statusReply =
+        loadingInfoServiceBlockingStub.downloadPortTideDetails(builder.build()).next();
+    if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          statusReply.getResponseStatus().getMessage(),
+          statusReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(statusReply.getResponseStatus().getHttpStatusCode()));
+    }
+    return statusReply.getData().toByteArray();
   }
 }

@@ -8,8 +8,8 @@
             </div>
         </div>
         <div class="col main-content-loading-and-discharging">
-            <cpdss-portal-arrival-condition [cargos]="cargos" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [loadingPlanData]="loadingPlanDetails"></cpdss-portal-arrival-condition>
-            <cpdss-portal-departure-condition [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [loadingPlanData]="loadingPlanDetails" [cargos]="cargos"></cpdss-portal-departure-condition>
+            <cpdss-portal-arrival-condition [vesselId]="vesselId" [portRotationId]="portRotationId" [loadingInfoId]="loadingInfoId" [cargos]="cargos" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [loadingPlanData]="loadingPlanDetails"></cpdss-portal-arrival-condition>
+            <cpdss-portal-departure-condition [vesselId]="vesselId" [portRotationId]="portRotationId" [loadingInfoId]="loadingInfoId" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [loadingPlanData]="loadingPlanDetails" [cargos]="cargos"></cpdss-portal-departure-condition>
 
             <div class="row">
                 <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
@@ -29,7 +29,7 @@
             <div class="row">
                 <div class="col pt-5 ml-30">
                     <div class="row">
-                        <cpdss-portal-topping-off-tank-table [cargos]="cargos" [loadingPlanData]="loadingPlanDetails" [toppingOffSequence]="toppingOffSequence"
+                        <cpdss-portal-topping-off-tank-table [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [loadingDischargingPLanData]="loadingPlanDetails" [cargos]="cargos" [loadingPlanData]="loadingPlanDetails" [toppingOffSequence]="toppingOffSequence"
                             [cargoTanks]="cargoTanks">
                         </cpdss-portal-topping-off-tank-table>
                     </div>
@@ -38,3 +38,5 @@
         </div>
     </div>
 </div>
+<cpdss-portal-error-log-popup [(visible)]="errorPopUp" (visibleChange)="viewError($event)"
+  [header]="'GENERATED_PLAN_ERROR_MESSAGE_HEADING'" [errorMessage]="errorMessage"></cpdss-portal-error-log-popup>

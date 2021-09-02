@@ -1,6 +1,6 @@
 <div class="row pt-10" *ngIf="form">
   <div class="col table-column-flexible-wrapper auto-layout" [formGroup]="form">
-    <cpdss-portal-datatable *ngIf="cargoTobeLoadedDischargedColumns" [tableId]="'cargo_to_be_loaded_or_discharged'" [form]="cargoTobeLoadedDischargedForm" [columns]="cargoTobeLoadedDischargedColumns" [value]="cargoTobeLoadedDischarged" [scrollable]="false" [editMode]="editMode" [listData]="listData" (editComplete)="onEditComplete($event)">
+    <cpdss-portal-datatable *ngIf="cargoTobeLoadedDischargedColumns && cargoTobeLoadedDischargedForm" [tableId]="'cargo_to_be_loaded_or_discharged'" [form]="cargoTobeLoadedDischargedForm" [columns]="cargoTobeLoadedDischargedColumns" [value]="cargoTobeLoadedDischarged" [scrollable]="false" [editMode]="editMode" [listData]="listData" (editComplete)="onEditComplete($event)">
     </cpdss-portal-datatable>
   </div>
 </div>

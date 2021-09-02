@@ -70,6 +70,8 @@ public class PortRotation {
 
   private Long percentage;
 
+  private BigDecimal dischargeRate;
+
   private List<Long> tanks = new ArrayList<>();
 
   private List<Long> instructionId = new ArrayList<>();

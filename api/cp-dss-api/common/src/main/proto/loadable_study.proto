@@ -211,7 +211,7 @@ service DischargeStudyOperationService {
   rpc getDischargeStudyPortWiseCargos(DischargeStudyRequest) returns (DishargeStudyCargoReply) {}
   rpc SaveDischargeStudyBackLoading (DishargeStudyBackLoadingSaveRequest) returns (DischargeStudyReply){}
   rpc GenerateDischargePatterns (AlgoRequest) returns (AlgoReply) {}
-  rpc GetDischargePlanDetails(LoadablePlanDetailsRequest) returns (PortRotationReply) {}
+  rpc GetDischargePlanDetails(LoadablePlanDetailsRequest) returns (CargoNominationReply) {}
   rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {}
 }
 
@@ -401,6 +401,7 @@ message AlgoErrorRequest {
 	int64 loadableStudyId = 1;
 	int64 loadablePatternId = 2;
 	int64 loadingInformationId = 3;
+	int32 conditionType = 4;
 }
 
 message AlgoErrorReply {
@@ -848,6 +849,8 @@ message CargoNominationDetail {
 	string temperature = 18;
 	int64 mode = 19;
 	string maxQuantity = 20;
+	string dischargingRate = 21;
+	string dischargingTime = 22;
 }
 
 message CargoNominationRequest {
