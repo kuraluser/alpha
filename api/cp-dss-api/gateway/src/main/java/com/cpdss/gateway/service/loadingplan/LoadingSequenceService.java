@@ -106,7 +106,7 @@ public class LoadingSequenceService {
     Set<TankCategory> ballastTankCategories = new LinkedHashSet<TankCategory>();
     inititalizeStabilityParams(stabilityParams);
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd'T'HH:mm");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
     try {
       response.setMinXAxisValue(
           StringUtils.isEmpty(reply.getStartDate()) ? new Date() : sdf.parse(reply.getStartDate()));
