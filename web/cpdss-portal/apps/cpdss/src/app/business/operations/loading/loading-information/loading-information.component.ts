@@ -255,6 +255,14 @@ export class LoadingInformationComponent implements OnInit {
   * @memberof LoadingInformationComponent
   */
   saveDetails() {
+    this.manageSequence.loadingDischargingSequenceForm.markAsDirty();
+    this.manageSequence.loadingDischargingSequenceForm.markAllAsTouched();
+
+    this.dischargeDetails.loadingDischargingDetailsForm.markAsDirty();
+    this.dischargeDetails.loadingDischargingDetailsForm.markAllAsTouched();
+
+    this.dischargeBerth.berthDetailsForm.markAsDirty();
+    this.dischargeBerth.berthDetailsForm.updateValueAndValidity();
     setTimeout(() => {
       this.saveLoadingInformationData();
     })
@@ -280,14 +288,7 @@ export class LoadingInformationComponent implements OnInit {
     
     if(this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid ||
       this.dischargeDetails.loadingDischargingDetailsForm.invalid) {
-      this.manageSequence.loadingDischargingSequenceForm.markAsDirty();
-      this.manageSequence.loadingDischargingSequenceForm.markAllAsTouched();
-
-      this.dischargeDetails.loadingDischargingDetailsForm.markAsDirty();
-      this.dischargeDetails.loadingDischargingDetailsForm.markAllAsTouched();
-
-      this.dischargeBerth.berthDetailsForm.markAsDirty();
-      this.dischargeBerth.berthDetailsForm.updateValueAndValidity();
+   
 
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_INVALID_DATA'] });
       if(document.querySelector('.error-icon') && !this.dischargeDetails.loadingDischargingDetailsForm.invalid) {
