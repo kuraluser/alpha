@@ -133,14 +133,14 @@ export class InstructionCheckListComponent implements OnInit {
       list.push({
         label: item.subHeaderName,
         expanded: true,
-        data: item,
+        data: {...item},
         children: [],
       });
       if (item?.loadingInstructionsList?.length) {
         item.loadingInstructionsList.map(subList => {
           list[list.length - 1].children.push({
             label: subList.instruction,
-            data: subList,
+            data: {...subList},
           });
         });
       }

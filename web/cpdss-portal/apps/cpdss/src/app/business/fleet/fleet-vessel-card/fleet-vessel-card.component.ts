@@ -21,8 +21,8 @@ export class FleetVesselCardComponent implements OnInit {
   set vesselValues(vessels: IFleetVessel[]) {
     const formatOptions: IDateTimeFormatOptions = { stringToDate: true };
     vessels.map(vessel => {
-      vessel.voyageStart = vessel.voyageName && vessel.voyageName.split('-')[0].trim();
-      vessel.voyageEnd = vessel.voyageName && vessel.voyageName.split('-')[1].trim();
+      vessel.voyageStart = vessel.voyagePorts.find((port, portIndex) => (portIndex === 0 && Number(port.portOrder) === 1));
+      vessel.voyageEnd = vessel.voyagePorts.find((port, portIndex) => (portIndex === vessel.voyagePorts.length -1 && Number(port.portOrder) === vessel.voyagePorts.length));
       if (vessel.ata) { vessel.ata = this.timeZoneTransformationService.formatDateTime(vessel?.ata, formatOptions); }
       if (vessel.atd) { vessel.atd = this.timeZoneTransformationService.formatDateTime(vessel?.atd, formatOptions); }
       if (vessel.eta) { vessel.eta = this.timeZoneTransformationService.formatDateTime(vessel?.eta, formatOptions); }

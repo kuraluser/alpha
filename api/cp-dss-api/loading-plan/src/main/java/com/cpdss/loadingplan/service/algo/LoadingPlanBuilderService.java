@@ -245,7 +245,7 @@ public class LoadingPlanBuilderService {
       LoadingPlanTankDetails rob) {
     robDetails.setConditionType(rob.getConditionType());
     robDetails.setIsActive(true);
-    robDetails.setLoadingInformation(loadingInformation);
+    robDetails.setLoadingInformation(loadingInformation.getId());
     robDetails.setPortRotationXId(loadingInformation.getPortRotationXId());
     robDetails.setPortXId(loadingInformation.getPortXId());
     robDetails.setQuantity(

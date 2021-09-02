@@ -60,4 +60,29 @@ public interface PortLoadingPlanStowageTempDetailsRepository
       "Update PortLoadingPlanStowageTempDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and isActive = true")
   public void deleteExistingByLoadingInfoAndConditionType(
       Long loadingInfoId, Integer conditionType);
+
+  @Modifying
+  @Query(
+      value =
+          "insert into PortLoadingPlanStowageTempDetails (loading_information_xid, tank_xid, "
+              + "temperature, corrected_ullage,  quantity_mt, filling_percentage, api, cargo_nomination_xid, port_xid,"
+              + "port_rotation_xid, actual_planned, arrival_departutre, correction_factor) values"
+              + " (:loading_information_xid, :tank_xid,  "
+              + "  :temperature, :corrected_ullage,  :quantity_mt, :filling_percentage, :api, :cargo_nomination_xid, :port_xid,"
+              + "  :port_rotation_xid, :actual_planned, :arrival_departutre, :correction_factor)",
+      nativeQuery = true)
+  void insertPortLoadingPlanStowageTempDetails(
+      @Param("loading_information_xid") Long loadingInfoId,
+      @Param("tank_xid") Long tankXid,
+      @Param("temperature") Long temperature,
+      @Param("corrected_ullage") Long corrected_ullage,
+      @Param("quantity_mt") Long quantity_mt,
+      @Param("filling_percentage") Long filling_percentage,
+      @Param("api") Long api,
+      @Param("cargo_nomination_xid") Long cargo_nomination_xid,
+      @Param("port_xid") Long port_xid,
+      @Param("port_rotation_xid") Long port_rotation_xid,
+      @Param("actual_planned") Long actual_planned,
+      @Param("arrival_departutre") Long arrival_departutre,
+      @Param("correction_factor") Long correction_factor);
 }

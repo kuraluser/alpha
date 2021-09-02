@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,6 +65,7 @@ public class LoadingPlanService {
   @Autowired PortLoadingPlanStowageDetailsRepository loadingPlanStowageDetailsRepository;
   @Autowired PortLoadingPlanBallastDetailsRepository loadingPlanBallastDetailsRepository;
   @Autowired PortLoadingPlanRobDetailsRepository loadingPlanRobDetailsRepository;
+  @Autowired PortLoadingPlanRobDetailsRepositoryTemp loadingPlanRobDetailsTempRepository;
 
   @Autowired StageOffsetRepository stageOffsetRepository;
   @Autowired StageDurationRepository stageDurationRepository;
@@ -205,7 +205,7 @@ public class LoadingPlanService {
       List<PortLoadingPlanStowageDetails> plpStowageList =
           plpStowageDetailsRepository.findByLoadingInformationAndIsActive(var1.get(), true);
       List<PortLoadingPlanRobDetails> plpRobList =
-          plpRobDetailsRepository.findByLoadingInformationAndIsActive(var1.get(), true);
+          plpRobDetailsRepository.findByLoadingInformationAndIsActive(var1.get().getId(), true);
       List<PortLoadingPlanStabilityParameters> plpStabilityList =
           plpStabilityParametersRepository.findByLoadingInformationAndIsActive(var1.get(), true);
 
@@ -486,11 +486,7 @@ public class LoadingPlanService {
                   } else {
                     PortLoadingPlanBallastTempDetails details =
                         new PortLoadingPlanBallastTempDetails();
-                    details.setLoadingInformation(new LoadingInformation());
-                    LoadingInformation info = new LoadingInformation();
-                    info.setPortXId(ullageInsert.getPortXid());
-                    info.setLoadablePatternXId(ullageInsert.getLoadingInformationId());
-                    details.setLoadingInformation(info);
+                    details.setLoadingInformation(ullageInsert.getLoadingInformationId());
                     details.setPortRotationXId(ullageInsert.getPortRotationXid());
                     details.setPortXId(ullageInsert.getPortXid());
                     details.setTankXId(ullageInsert.getTankId());
@@ -529,10 +525,7 @@ public class LoadingPlanService {
                   } else {
                     PortLoadingPlanStowageTempDetails tempData =
                         new PortLoadingPlanStowageTempDetails();
-                    LoadingInformation info = new LoadingInformation();
-                    info.setPortXId(ullageInsert.getPortXid());
-                    info.setLoadablePatternXId(ullageInsert.getLoadingInformationId());
-                    tempData.setLoadingInformation(info);
+                    tempData.setLoadingInformation(ullageInsert.getLoadingInformationId());
                     tempData.setTankXId(ullageInsert.getTankId());
                     tempData.setTemperature(BigDecimal.valueOf(ullageInsert.getTemperature()));
                     tempData.setCorrectedUllage(
@@ -564,10 +557,8 @@ public class LoadingPlanService {
                         Long.valueOf(ullageInsert.getTankId()));
                   } else {
                     PortLoadingPlanRobDetails robDet = new PortLoadingPlanRobDetails();
-                    LoadingInformation info = new LoadingInformation();
-                    info.setPortXId(ullageInsert.getPortXid());
-                    info.setLoadablePatternXId(ullageInsert.getLoadingInformationId());
-                    robDet.setLoadingInformation(info);
+                    robDet.setLoadingInformation(ullageInsert.getLoadingInformationId());
+                    robDet.setTankXId(Long.valueOf(ullageInsert.getTankId()));
                     robDet.setQuantity(BigDecimal.valueOf(ullageInsert.getQuantity()));
                     robDet.setPortXId(Long.valueOf(ullageInsert.getPortXid()));
                     robDet.setPortRotationXId(Long.valueOf(ullageInsert.getPortRotationXid()));
@@ -700,7 +691,7 @@ public class LoadingPlanService {
       List<PortLoadingPlanStowageDetails> stowageEntityList = new ArrayList<>();
       for (PortLoadingPlanStowageTempDetails tempStowageEntity : tempStowageList) {
         PortLoadingPlanStowageDetails stowageEntity = new PortLoadingPlanStowageDetails();
-        BeanUtils.copyProperties(stowageEntity, tempStowageEntity);
+        // BeanUtils.copyProperties(stowageEntity, tempStowageEntity);
         stowageEntity.setId(null);
         stowageEntity.setCreatedBy(null);
         stowageEntity.setCreatedDate(null);
@@ -726,7 +717,7 @@ public class LoadingPlanService {
       List<PortLoadingPlanBallastDetails> ballastEntityList = new ArrayList<>();
       for (PortLoadingPlanBallastTempDetails tempBallastEntity : tempBallastList) {
         PortLoadingPlanBallastDetails ballastEntity = new PortLoadingPlanBallastDetails();
-        BeanUtils.copyProperties(ballastEntity, tempBallastEntity);
+        // BeanUtils.copyProperties(ballastEntity, tempBallastEntity);
         ballastEntity.setId(null);
         ballastEntity.setCreatedBy(null);
         ballastEntity.setCreatedDate(null);

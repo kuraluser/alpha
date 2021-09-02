@@ -143,12 +143,17 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       LoadableStudy.LoadingSynopticResponse response =
           this.loadingPlanGrpcService.fetchSynopticRecordForPortRotation(
               portRId, GatewayConstants.OPERATION_TYPE_ARR);
-      var.setTimeOfSunrise(
-          response.getTimeOfSunrise().isEmpty() ? null : response.getTimeOfSunrise());
-      var.setTimeOfSunset(response.getTimeOfSunset().isEmpty() ? null : response.getTimeOfSunset());
+      if (var1.getTimeOfSunrise().isEmpty()) {
+        var.setTimeOfSunrise(
+            response.getTimeOfSunrise().isEmpty() ? null : response.getTimeOfSunrise());
+      }
+      if (var1.getTimeOfSunset().isEmpty()) {
+        var.setTimeOfSunset(
+            response.getTimeOfSunset().isEmpty() ? null : response.getTimeOfSunset());
+      }
 
       // If not found in LS, Synoptic Go to Port Master
-      if (var.getTimeOfSunrise() == null || var.getTimeOfSunset() == null) {
+      if (var.getTimeOfSunrise() == null && var.getTimeOfSunset() == null) {
         PortInfo.PortDetail response2 = this.loadingPlanGrpcService.fetchPortDetailByPortId(portId);
         var.setTimeOfSunrise(response2.getSunriseTime());
         var.setTimeOfSunset(response2.getSunsetTime());
@@ -673,6 +678,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           loadingInfoBuilderService.saveDataAsync(request);
       if (request.getLoadingDetails() != null) {
         // Updating synoptic table (time)
+        log.info(
+            "Saving Loading info Times details at Synoptic Table - id {}",
+            request.getSynopticalTableId());
         this.updateSynopticalTable(request.getLoadingDetails(), request.getSynopticalTableId());
       }
       if (response == null) {

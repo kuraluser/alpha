@@ -127,7 +127,7 @@ public class UllageUpdateLoadicatorService {
             loadingInfoOpt.get(), true);
     List<PortLoadingPlanRobDetails> robDetails =
         portLoadingPlanRobDetailsRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get(), true);
+            loadingInfoOpt.get().getId(), true);
     Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
 
     cargoNominationIds.addAll(

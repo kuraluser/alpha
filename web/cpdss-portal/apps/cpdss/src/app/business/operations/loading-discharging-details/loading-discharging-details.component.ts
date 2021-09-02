@@ -155,7 +155,6 @@ export class LoadingDischargingDetailsComponent implements OnInit {
 * @memberof LoadingDischargingDetailsComponent
 */
   onTimeChange(fieldReferenceName, field) {
-    fieldReferenceName.hideOverlay();
     this.selectedTime = null;
     if (this.loadingDischargingDetailsForm.value[field]) {
       this.selectedTime = new Date(this.loadingDischargingDetailsForm.value[field]);
@@ -171,6 +170,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
     if (!this.fieldError(field)) {
       this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
     }
+    fieldReferenceName.hideOverlay();
     this.loadingDischargingDetailsForm.controls.timeOfSunrise.updateValueAndValidity();
     this.loadingDischargingDetailsForm.controls.timeOfSunset.updateValueAndValidity();
   }
@@ -178,12 +178,16 @@ export class LoadingDischargingDetailsComponent implements OnInit {
   /**
    * Method to clear time input.
    *
-   * @param {*} field
+   * @param {string} field
+   * @param {*} fieldReferenceName
    * @memberof LoadingDischargingDetailsComponent
    */
-  clearTimeInput(fieldReferenceName, field) {
+  clearTimeInput(fieldReferenceName: any, field: string) {
+    fieldReferenceName.value = null;
     fieldReferenceName.hideOverlay();
     this.loadingDischargingDetailsForm.controls[field].setValue(null);
+    this.loadingDischargingDetailsForm.controls.timeOfSunrise.updateValueAndValidity();
+    this.loadingDischargingDetailsForm.controls.timeOfSunset.updateValueAndValidity();
   }
 
 /**
@@ -274,6 +278,21 @@ export class LoadingDischargingDetailsComponent implements OnInit {
     this.fileUploadVariable.nativeElement.disabled = false;
     this.fileUploadVariable.nativeElement.value = "";
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+  * Method to close time picker
+  * @param {string} field
+  * @param {*} fieldReferenceName
+  * @memberof LoadingDischargingDetailsComponent
+  */
+  onBlur(fieldReferenceName: any, field: string) {
+    this.loadingDischargingDetailsForm.controls.timeOfSunrise.updateValueAndValidity();
+    this.loadingDischargingDetailsForm.controls.timeOfSunset.updateValueAndValidity();
+    fieldReferenceName.hideOverlay();
+    if (!this.fieldError(field)) {
+      this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
+    }
   }
 
 }
