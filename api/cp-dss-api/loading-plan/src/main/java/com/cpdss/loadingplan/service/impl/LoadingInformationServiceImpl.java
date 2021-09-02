@@ -27,6 +27,7 @@ import com.cpdss.loadingplan.service.LoadingDelayService;
 import com.cpdss.loadingplan.service.LoadingInformationBuilderService;
 import com.cpdss.loadingplan.service.LoadingInformationService;
 import com.cpdss.loadingplan.service.LoadingMachineryInUseService;
+import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.google.protobuf.ByteString;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -92,6 +93,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Autowired CargoToppingOffSequenceService toppingOffSequenceService;
   @Autowired PortTideDetailsRepository portTideDetailsRepository;
   @Autowired LoadingInstructionRepository loadingInstructionRepository;
+  @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoServiceBlockingStub;
@@ -126,6 +128,19 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     }
     loadingInformation.setIsLoadingInfoComplete(false);
     loadingInformation.setIsActive(true);
+    Optional<LoadingInformationStatus> pendingStatusOpt;
+    try {
+      pendingStatusOpt =
+          loadingPlanAlgoService.getLoadingInformationStatus(LOADING_INFORMATION_PENDING_ID);
+      pendingStatusOpt.ifPresent(
+          status -> {
+            loadingInformation.setLoadingInformationStatus(status);
+            loadingInformation.setArrivalStatus(status);
+            loadingInformation.setDepartureStatus(status);
+          });
+    } catch (GenericServiceException e) {
+      log.info("Failed to fetch status with id {}", LOADING_INFORMATION_PENDING_ID);
+    }
     return loadingInformationRepository.save(loadingInformation);
   }
 
@@ -234,6 +249,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             builder.setIsLoadingPlanGenerated(v.getIsLoadingPlanGenerated());
           }
         });
+    Optional.ofNullable(var1.get().getLoadingInformationStatus())
+        .ifPresent(status -> builder.setLoadingInfoStatusId(status.getId()));
     // Loading Details
     LoadingPlanModels.LoadingDetails details =
         this.informationBuilderService.buildLoadingDetailsMessage(var1.orElse(null));
