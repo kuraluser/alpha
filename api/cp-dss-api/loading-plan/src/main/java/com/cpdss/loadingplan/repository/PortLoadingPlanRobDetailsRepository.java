@@ -19,7 +19,7 @@ public interface PortLoadingPlanRobDetailsRepository
       Long fkId, Boolean isActive);
 
   @Query(
-      "FROM PortLoadingPlanRobDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
+      "FROM PortLoadingPlanRobDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
   public List<PortLoadingPlanRobDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
 
@@ -30,7 +30,7 @@ public interface PortLoadingPlanRobDetailsRepository
 
   @Modifying
   @Transactional
-  @Query("UPDATE PortLoadingPlanRobDetails SET isActive = false WHERE loadingInformation.id = ?1")
+  @Query("UPDATE PortLoadingPlanRobDetails SET isActive = false WHERE loadingInformation = ?1")
   public void deleteByLoadingInformationId(Long loadingInfoId);
 
   @Transactional
