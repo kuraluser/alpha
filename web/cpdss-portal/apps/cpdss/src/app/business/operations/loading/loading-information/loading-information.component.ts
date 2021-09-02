@@ -115,6 +115,16 @@ export class LoadingInformationComponent implements OnInit {
       
       this.loadingDischargingTransformationService.isLoadingSequenceGenerated.next(this.loadingInformationData?.isLoadingSequenceGenerated)
       this.loadingDischargingTransformationService.isLoadingPlanGenerated.next(this.loadingInformationData?.isLoadingPlanGenerated);
+    
+
+      if (this.loadingInformationData.loadingInfoStatusId == 5 || this.loadingInformationData.loadingInfoStatusId == 6 || this.loadingInformationData.loadingInfoStatusId == 7) {
+        this.loadingDischargingTransformationService.disableSaveButton.next(false); 
+        this.loadingDischargingTransformationService.inProcessing.next(false);       
+      }
+      else {
+        this.loadingDischargingTransformationService.disableSaveButton.next(true);
+        this.loadingDischargingTransformationService.inProcessing.next(true);    
+      }
       this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
     }

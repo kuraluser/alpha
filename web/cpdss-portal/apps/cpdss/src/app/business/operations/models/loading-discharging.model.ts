@@ -24,6 +24,7 @@ export interface ILoadingInformationResponse {
   isLoadingInstructionsComplete: boolean;
   isLoadingPlanGenerated: boolean;
   isLoadingSequenceGenerated: boolean;
+  loadingInfoStatusId: number
 }
 
 /**
