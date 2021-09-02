@@ -6,7 +6,7 @@
 
 <div class="row">
     <div class="col-md-8">
-        <div class="col col-11 loading-discharging-tank-layout m-auto">
+        <div class="col col-11  m-auto">
             <div class="row ">
                 <div class="col-md-12 text-center">
                     <div class="pt-15">
@@ -22,9 +22,15 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col pt-20">
+                <div class="col loading-discharging-tank-layout  pt-20">
                     <cpdss-portal-cargo-tank-layout *ngIf="selectedTab === tankType.CARGO" [tanks]="arrivalCargoTanks" [options]="cargoTankOptions">
                     </cpdss-portal-cargo-tank-layout>
+                   
+                </div>
+            </div>
+            <div class="row">
+                <div class="col loading-discharging-tank-layout  loadable-plan-ballast pt-20">
+                    
                     <cpdss-portal-ballast-layout *ngIf="selectedTab === tankType.BALLAST" [tanks]="centerBallastTanks" [rearTanks]="rearBallastTanks"
                                             [frontTanks]="frontBallastTanks" [options]="ballastTankOptions">
                                         </cpdss-portal-ballast-layout>
@@ -41,12 +47,12 @@
         </div>
         <div class="row pt-10">
             <div class="col text-center">
-            <button (click)="display = true" class="btn btn-main" id="cargo_status">{{ULLAGE_STATUS_TEXT[loadingPlanData?.loadingInformation?.loadingPlanArrStatusId]}}</button>
-            <button (click)="display = true" class="btn btn-main" id="cargo_update">{{'LOADABLE_PLAN_ARRIVAL_CONDITION_CARGO_UPDATE_ULLAGE'| translate}}</button>
-            <button (click)="showError()" class="btn btn-main" id="cargo_error">{{'ULLAGE_UPDATE_SHOW_ERROR_LABEL'| translate}}</button>
+            <button (click)="display = true" class="btn btn-main mr-5 mt-5" id="cargo_status">{{ULLAGE_STATUS_TEXT[loadingPlanData?.loadingInformation?.loadingPlanArrStatusId]}}</button>
+            <button (click)="display = true" class="btn btn-main mr-5 mt-5" id="cargo_update">{{'LOADABLE_PLAN_ARRIVAL_CONDITION_CARGO_UPDATE_ULLAGE'| translate}}</button>
+            <button (click)="showError()" class="btn btn-main mr-5 mt-5" id="cargo_error">{{'ULLAGE_UPDATE_SHOW_ERROR_LABEL'| translate}}</button>
             </div>
         </div>
     </div>
 </div>
 
-<cpdss-portal-ullage-update-popup [vesselId]="vesselId" [patternId]="loadingPlanData?.loadingInformation?.loadablePatternId" [portRotationId]="portRotationId" [status]="ULLAGE_STATUS.ARRIVAL" [loadingInfoId]="loadingInfoId" (closePopup)="closePopUp($event)" *ngIf="display"></cpdss-portal-ullage-update-popup>
+<cpdss-portal-ullage-update-popup [vesselId]="vesselId"  [patternId]="loadingPlanData?.loadingInformation?.loadablePatternId" [portRotationId]="portRotationId" [status]="ULLAGE_STATUS.ARRIVAL" [loadingInfoId]="loadingInfoId" (closePopup)="closePopUp($event)" *ngIf="display"></cpdss-portal-ullage-update-popup>

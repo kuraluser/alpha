@@ -1483,6 +1483,14 @@ td.sl div{
       }
 }
 
+.loading-discharging-tank-layout{
+  .tank-outer-pattern{
+    min-height: 200px;
+    height: 21vh;
+    max-height: 500px;
+  }
+}
+
 .ship-front-pattern{
   position: absolute;
   width: 10%;
@@ -3019,4 +3027,13 @@ textarea{
   .highcharts-axis-title{
     text-transform: uppercase;
   }
+}
+
+.arrival-condition-pop-up, .departure-condition-pop-up{
+  width: 1290px;
+}
+
+.tank-tabs{
+  width: 57px;
+  height: 35px;
 }
