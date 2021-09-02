@@ -304,6 +304,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     var1.setIsLoadingInstructionsComplete(loadingInfo.getIsLoadingInstructionsComplete());
     var1.setIsLoadingSequenceGenerated(loadingInfo.getIsLoadingSequenceGenerated());
     var1.setIsLoadingPlanGenerated(loadingInfo.getIsLoadingPlanGenerated());
+    var1.setLoadingInfoStatusId(loadingInfo.getLoadingInfoStatusId());
     var1.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return var1;
   }

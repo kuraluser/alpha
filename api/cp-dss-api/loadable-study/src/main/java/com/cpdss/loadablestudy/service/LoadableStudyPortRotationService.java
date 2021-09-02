@@ -972,7 +972,7 @@ public class LoadableStudyPortRotationService {
     Optional.of(portRotation.getEta())
         .ifPresent(eta -> portDetailBuilder.setEta(portRotation.getEta().toString()));
     Optional.of(portRotation.getEtd())
-        .ifPresent(etd -> portDetailBuilder.setEta(portRotation.getEtd().toString()));
+        .ifPresent(etd -> portDetailBuilder.setEtd(portRotation.getEtd().toString()));
     builder.setPortRotationDetail(portDetailBuilder.build());
   }
 }
