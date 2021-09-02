@@ -326,6 +326,105 @@ public final class Common {
     // @@protoc_insertion_point(enum_scope:COW_TYPE)
   }
 
+  /** Protobuf enum {@code COW_OPTION_TYPE} */
+  public enum COW_OPTION_TYPE implements com.google.protobuf.ProtocolMessageEnum {
+    /** <code>EMPTY_COW_OPTION_TYPE = 0;</code> */
+    EMPTY_COW_OPTION_TYPE(0),
+    /** <code>AUTO = 1;</code> */
+    AUTO(1),
+    /** <code>MANUAL = 2;</code> */
+    MANUAL(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    /** <code>EMPTY_COW_OPTION_TYPE = 0;</code> */
+    public static final int EMPTY_COW_OPTION_TYPE_VALUE = 0;
+    /** <code>AUTO = 1;</code> */
+    public static final int AUTO_VALUE = 1;
+    /** <code>MANUAL = 2;</code> */
+    public static final int MANUAL_VALUE = 2;
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static COW_OPTION_TYPE valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static COW_OPTION_TYPE forNumber(int value) {
+      switch (value) {
+        case 0:
+          return EMPTY_COW_OPTION_TYPE;
+        case 1:
+          return AUTO;
+        case 2:
+          return MANUAL;
+        default:
+          return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<COW_OPTION_TYPE> internalGetValueMap() {
+      return internalValueMap;
+    }
+
+    private static final com.google.protobuf.Internal.EnumLiteMap<COW_OPTION_TYPE>
+        internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<COW_OPTION_TYPE>() {
+              public COW_OPTION_TYPE findValueByNumber(int number) {
+                return COW_OPTION_TYPE.forNumber(number);
+              }
+            };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor getValueDescriptor() {
+      return getDescriptor().getValues().get(ordinal());
+    }
+
+    public final com.google.protobuf.Descriptors.EnumDescriptor getDescriptorForType() {
+      return getDescriptor();
+    }
+
+    public static final com.google.protobuf.Descriptors.EnumDescriptor getDescriptor() {
+      return com.cpdss.common.generated.Common.getDescriptor().getEnumTypes().get(3);
+    }
+
+    private static final COW_OPTION_TYPE[] VALUES = values();
+
+    public static COW_OPTION_TYPE valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException("EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private COW_OPTION_TYPE(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:COW_OPTION_TYPE)
+  }
+
   public interface ResponseStatusOrBuilder
       extends
       // @@protoc_insertion_point(interface_extends:ResponseStatus)
@@ -9043,8 +9142,10 @@ public final class Common {
           + "MachineType\022\t\n\005EMPTY\020\000\022\017\n\013VESSEL_PUMP\020\001\022"
           + "\014\n\010MANIFOLD\020\002\022\017\n\013BOTTOM_LINE\020\003*S\n\010COW_TY"
           + "PE\022\022\n\016EMPTY_COW_TYPE\020\000\022\013\n\007TOP_COW\020\001\022\016\n\nB"
-          + "OTTOM_COW\020\002\022\013\n\007ALL_COW\020\003\022\t\n\005CARGO\020\004B\036\n\032c"
-          + "om.cpdss.common.generatedP\000b\006proto3"
+          + "OTTOM_COW\020\002\022\013\n\007ALL_COW\020\003\022\t\n\005CARGO\020\004*B\n\017C"
+          + "OW_OPTION_TYPE\022\031\n\025EMPTY_COW_OPTION_TYPE\020"
+          + "\000\022\010\n\004AUTO\020\001\022\n\n\006MANUAL\020\002B\036\n\032com.cpdss.com"
+          + "mon.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

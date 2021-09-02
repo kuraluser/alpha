@@ -12,7 +12,9 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
     super(builder);
   }
 
-  private CargoForCow() {}
+  private CargoForCow() {
+    tankIds_ = emptyLongList();
+  }
 
   @java.lang.Override
   @SuppressWarnings({"unused"})
@@ -33,6 +35,7 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
     if (extensionRegistry == null) {
       throw new java.lang.NullPointerException();
     }
+    int mutable_bitField0_ = 0;
     com.google.protobuf.UnknownFieldSet.Builder unknownFields =
         com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
@@ -53,6 +56,39 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
               cargoNominationId_ = input.readInt64();
               break;
             }
+          case 24:
+            {
+              washingCargoId_ = input.readInt64();
+              break;
+            }
+          case 32:
+            {
+              washingCargoNominationId_ = input.readInt64();
+              break;
+            }
+          case 40:
+            {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                tankIds_ = newLongList();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              tankIds_.addLong(input.readInt64());
+              break;
+            }
+          case 42:
+            {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000001) != 0) && input.getBytesUntilLimit() > 0) {
+                tankIds_ = newLongList();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                tankIds_.addLong(input.readInt64());
+              }
+              input.popLimit(limit);
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -67,6 +103,9 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
     } catch (java.io.IOException e) {
       throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
     } finally {
+      if (((mutable_bitField0_ & 0x00000001) != 0)) {
+        tankIds_.makeImmutable(); // C
+      }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
@@ -109,6 +148,58 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
     return cargoNominationId_;
   }
 
+  public static final int WASHINGCARGOID_FIELD_NUMBER = 3;
+  private long washingCargoId_;
+  /**
+   * <code>int64 washingCargoId = 3;</code>
+   *
+   * @return The washingCargoId.
+   */
+  public long getWashingCargoId() {
+    return washingCargoId_;
+  }
+
+  public static final int WASHINGCARGONOMINATIONID_FIELD_NUMBER = 4;
+  private long washingCargoNominationId_;
+  /**
+   * <code>int64 washingCargoNominationId = 4;</code>
+   *
+   * @return The washingCargoNominationId.
+   */
+  public long getWashingCargoNominationId() {
+    return washingCargoNominationId_;
+  }
+
+  public static final int TANKIDS_FIELD_NUMBER = 5;
+  private com.google.protobuf.Internal.LongList tankIds_;
+  /**
+   * <code>repeated int64 tankIds = 5;</code>
+   *
+   * @return A list containing the tankIds.
+   */
+  public java.util.List<java.lang.Long> getTankIdsList() {
+    return tankIds_;
+  }
+  /**
+   * <code>repeated int64 tankIds = 5;</code>
+   *
+   * @return The count of tankIds.
+   */
+  public int getTankIdsCount() {
+    return tankIds_.size();
+  }
+  /**
+   * <code>repeated int64 tankIds = 5;</code>
+   *
+   * @param index The index of the element to return.
+   * @return The tankIds at the given index.
+   */
+  public long getTankIds(int index) {
+    return tankIds_.getLong(index);
+  }
+
+  private int tankIdsMemoizedSerializedSize = -1;
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -123,11 +214,25 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
 
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+    getSerializedSize();
     if (cargoId_ != 0L) {
       output.writeInt64(1, cargoId_);
     }
     if (cargoNominationId_ != 0L) {
       output.writeInt64(2, cargoNominationId_);
+    }
+    if (washingCargoId_ != 0L) {
+      output.writeInt64(3, washingCargoId_);
+    }
+    if (washingCargoNominationId_ != 0L) {
+      output.writeInt64(4, washingCargoNominationId_);
+    }
+    if (getTankIdsList().size() > 0) {
+      output.writeUInt32NoTag(42);
+      output.writeUInt32NoTag(tankIdsMemoizedSerializedSize);
+    }
+    for (int i = 0; i < tankIds_.size(); i++) {
+      output.writeInt64NoTag(tankIds_.getLong(i));
     }
     unknownFields.writeTo(output);
   }
@@ -143,6 +248,25 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
     }
     if (cargoNominationId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, cargoNominationId_);
+    }
+    if (washingCargoId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, washingCargoId_);
+    }
+    if (washingCargoNominationId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, washingCargoNominationId_);
+    }
+    {
+      int dataSize = 0;
+      for (int i = 0; i < tankIds_.size(); i++) {
+        dataSize +=
+            com.google.protobuf.CodedOutputStream.computeInt64SizeNoTag(tankIds_.getLong(i));
+      }
+      size += dataSize;
+      if (!getTankIdsList().isEmpty()) {
+        size += 1;
+        size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+      }
+      tankIdsMemoizedSerializedSize = dataSize;
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -162,6 +286,9 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
 
     if (getCargoId() != other.getCargoId()) return false;
     if (getCargoNominationId() != other.getCargoNominationId()) return false;
+    if (getWashingCargoId() != other.getWashingCargoId()) return false;
+    if (getWashingCargoNominationId() != other.getWashingCargoNominationId()) return false;
+    if (!getTankIdsList().equals(other.getTankIdsList())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -177,6 +304,14 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoId());
     hash = (37 * hash) + CARGONOMINATIONID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoNominationId());
+    hash = (37 * hash) + WASHINGCARGOID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getWashingCargoId());
+    hash = (37 * hash) + WASHINGCARGONOMINATIONID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getWashingCargoNominationId());
+    if (getTankIdsCount() > 0) {
+      hash = (37 * hash) + TANKIDS_FIELD_NUMBER;
+      hash = (53 * hash) + getTankIdsList().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -319,6 +454,12 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
 
       cargoNominationId_ = 0L;
 
+      washingCargoId_ = 0L;
+
+      washingCargoNominationId_ = 0L;
+
+      tankIds_ = emptyLongList();
+      bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
 
@@ -346,8 +487,16 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
     public com.cpdss.common.generated.discharge_plan.CargoForCow buildPartial() {
       com.cpdss.common.generated.discharge_plan.CargoForCow result =
           new com.cpdss.common.generated.discharge_plan.CargoForCow(this);
+      int from_bitField0_ = bitField0_;
       result.cargoId_ = cargoId_;
       result.cargoNominationId_ = cargoNominationId_;
+      result.washingCargoId_ = washingCargoId_;
+      result.washingCargoNominationId_ = washingCargoNominationId_;
+      if (((bitField0_ & 0x00000001) != 0)) {
+        tankIds_.makeImmutable();
+        bitField0_ = (bitField0_ & ~0x00000001);
+      }
+      result.tankIds_ = tankIds_;
       onBuilt();
       return result;
     }
@@ -404,6 +553,22 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
       if (other.getCargoNominationId() != 0L) {
         setCargoNominationId(other.getCargoNominationId());
       }
+      if (other.getWashingCargoId() != 0L) {
+        setWashingCargoId(other.getWashingCargoId());
+      }
+      if (other.getWashingCargoNominationId() != 0L) {
+        setWashingCargoNominationId(other.getWashingCargoNominationId());
+      }
+      if (!other.tankIds_.isEmpty()) {
+        if (tankIds_.isEmpty()) {
+          tankIds_ = other.tankIds_;
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          ensureTankIdsIsMutable();
+          tankIds_.addAll(other.tankIds_);
+        }
+        onChanged();
+      }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
@@ -433,6 +598,8 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
       }
       return this;
     }
+
+    private int bitField0_;
 
     private long cargoId_;
     /**
@@ -496,6 +663,156 @@ public final class CargoForCow extends com.google.protobuf.GeneratedMessageV3
     public Builder clearCargoNominationId() {
 
       cargoNominationId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private long washingCargoId_;
+    /**
+     * <code>int64 washingCargoId = 3;</code>
+     *
+     * @return The washingCargoId.
+     */
+    public long getWashingCargoId() {
+      return washingCargoId_;
+    }
+    /**
+     * <code>int64 washingCargoId = 3;</code>
+     *
+     * @param value The washingCargoId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setWashingCargoId(long value) {
+
+      washingCargoId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 washingCargoId = 3;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearWashingCargoId() {
+
+      washingCargoId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private long washingCargoNominationId_;
+    /**
+     * <code>int64 washingCargoNominationId = 4;</code>
+     *
+     * @return The washingCargoNominationId.
+     */
+    public long getWashingCargoNominationId() {
+      return washingCargoNominationId_;
+    }
+    /**
+     * <code>int64 washingCargoNominationId = 4;</code>
+     *
+     * @param value The washingCargoNominationId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setWashingCargoNominationId(long value) {
+
+      washingCargoNominationId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 washingCargoNominationId = 4;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearWashingCargoNominationId() {
+
+      washingCargoNominationId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private com.google.protobuf.Internal.LongList tankIds_ = emptyLongList();
+
+    private void ensureTankIdsIsMutable() {
+      if (!((bitField0_ & 0x00000001) != 0)) {
+        tankIds_ = mutableCopy(tankIds_);
+        bitField0_ |= 0x00000001;
+      }
+    }
+    /**
+     * <code>repeated int64 tankIds = 5;</code>
+     *
+     * @return A list containing the tankIds.
+     */
+    public java.util.List<java.lang.Long> getTankIdsList() {
+      return ((bitField0_ & 0x00000001) != 0)
+          ? java.util.Collections.unmodifiableList(tankIds_)
+          : tankIds_;
+    }
+    /**
+     * <code>repeated int64 tankIds = 5;</code>
+     *
+     * @return The count of tankIds.
+     */
+    public int getTankIdsCount() {
+      return tankIds_.size();
+    }
+    /**
+     * <code>repeated int64 tankIds = 5;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The tankIds at the given index.
+     */
+    public long getTankIds(int index) {
+      return tankIds_.getLong(index);
+    }
+    /**
+     * <code>repeated int64 tankIds = 5;</code>
+     *
+     * @param index The index to set the value at.
+     * @param value The tankIds to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTankIds(int index, long value) {
+      ensureTankIdsIsMutable();
+      tankIds_.setLong(index, value);
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated int64 tankIds = 5;</code>
+     *
+     * @param value The tankIds to add.
+     * @return This builder for chaining.
+     */
+    public Builder addTankIds(long value) {
+      ensureTankIdsIsMutable();
+      tankIds_.addLong(value);
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated int64 tankIds = 5;</code>
+     *
+     * @param values The tankIds to add.
+     * @return This builder for chaining.
+     */
+    public Builder addAllTankIds(java.lang.Iterable<? extends java.lang.Long> values) {
+      ensureTankIdsIsMutable();
+      com.google.protobuf.AbstractMessageLite.Builder.addAll(values, tankIds_);
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>repeated int64 tankIds = 5;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearTankIds() {
+      tankIds_ = emptyLongList();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
