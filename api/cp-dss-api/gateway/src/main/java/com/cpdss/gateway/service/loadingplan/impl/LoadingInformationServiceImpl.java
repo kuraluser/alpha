@@ -143,9 +143,14 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       LoadableStudy.LoadingSynopticResponse response =
           this.loadingPlanGrpcService.fetchSynopticRecordForPortRotation(
               portRId, GatewayConstants.OPERATION_TYPE_ARR);
-      var.setTimeOfSunrise(
-          response.getTimeOfSunrise().isEmpty() ? null : response.getTimeOfSunrise());
-      var.setTimeOfSunset(response.getTimeOfSunset().isEmpty() ? null : response.getTimeOfSunset());
+      if (var1.getTimeOfSunrise().isEmpty()) {
+        var.setTimeOfSunrise(
+            response.getTimeOfSunrise().isEmpty() ? null : response.getTimeOfSunrise());
+      }
+      if (var1.getTimeOfSunset().isEmpty()) {
+        var.setTimeOfSunset(
+            response.getTimeOfSunset().isEmpty() ? null : response.getTimeOfSunset());
+      }
 
       // If not found in LS, Synoptic Go to Port Master
       if (var.getTimeOfSunrise() == null || var.getTimeOfSunset() == null) {
