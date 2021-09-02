@@ -30,6 +30,9 @@ Highcharts.setOptions({
     style: {
       fontFamily: 'Play'
     }
+  },
+  lang: {
+    thousandsSep: ","
   }
 });
 /**
@@ -289,7 +292,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 280, // Keep all charts left aligned
+        marginLeft: 255, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
           render: this.sequnceChartRender
@@ -346,18 +349,22 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             setExtremes: this.syncExtremes
           },
           labels: {
+            rotation: -45,
             align: 'center',
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toString();
+              return number.toFixed(1);
             }
           },
           grid: {
             enabled: false
           },
           // tickInterval: 1000 * 60 * 60,
-          tickPositions: this.tickPositions,
+          // tickPositions: this.tickPositions,
+          tickPositions: this.stageTickPositions,
+          minorTickInterval: 1000 * 60 * 60,
+          minorGridLineColor: '#bebebe',
           tickLength: 0,
           gridLineWidth: 1,
           gridLineColor: '#bebebe',
@@ -687,7 +694,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 280, // Keep all charts left aligned
+        marginLeft: 255, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
         }
@@ -730,18 +737,22 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             setExtremes: this.syncExtremes
           },
           labels: {
+            rotation: -45,
             align: 'center',
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toString();
+              return number.toFixed(1);
             }
           },
           grid: {
             enabled: false
           },
           // tickInterval: 1000 * 60 * 60,
-          tickPositions: this.tickPositions,
+          // tickPositions: this.tickPositions,
+          tickPositions: this.stageTickPositions,
+          minorTickInterval: 1000 * 60 * 60,
+          minorGridLineColor: '#bebebe',
           tickLength: 0,
           gridLineWidth: 1,
           gridLineColor: '#bebebe',
@@ -904,7 +915,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 280, // Keep all charts left aligned
+        marginLeft: 255, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
         }
@@ -959,18 +970,22 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             setExtremes: this.syncExtremes
           },
           labels: {
+            rotation: -45,
             align: 'center',
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toString();
+              return number.toFixed(1);
             }
           },
           grid: {
             enabled: false
           },
           // tickInterval: 1000 * 60 * 60,
-          tickPositions: this.tickPositions,
+          // tickPositions: this.tickPositions,
+          tickPositions: this.stageTickPositions,
+          minorTickInterval: 1000 * 60 * 60,
+          minorGridLineColor: '#bebebe',
           tickLength: 0,
           gridLineWidth: 1,
           gridLineColor: '#bebebe',
@@ -1167,7 +1182,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 280, // Keep all charts left aligned
+        marginLeft: 255, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
         }
@@ -1221,18 +1236,22 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             setExtremes: this.syncExtremes
           },
           labels: {
+            rotation: -45,
             align: 'center',
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toString();
+              return number.toFixed(1);
             }
           },
           grid: {
             enabled: false
           },
           // tickInterval: 1000 * 60 * 60,
-          tickPositions: this.tickPositions,
+          // tickPositions: this.tickPositions,
+          tickPositions: this.stageTickPositions,
+          minorTickInterval: 1000 * 60 * 60,
+          minorGridLineColor: '#bebebe',
           tickLength: 0,
           gridLineWidth: 1,
           gridLineColor: '#bebebe',
@@ -1397,7 +1416,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 280, // Keep all charts left aligned
+        marginLeft: 255, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
         }
@@ -1449,15 +1468,19 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             setExtremes: this.syncExtremes
           },
           labels: {
+            rotation: -45,
             align: 'center',
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toString();
+              return number.toFixed(1);
             }
           },
           // tickInterval: 1000 * 60 * 60,
-          tickPositions: this.tickPositions,
+          // tickPositions: this.tickPositions,
+          tickPositions: this.stageTickPositions,
+          minorTickInterval: 1000 * 60 * 60,
+          minorGridLineColor: '#bebebe',
           tickLength: 0,
           // tickColor: '#bebebe',
           gridLineColor: '#bebebe',
@@ -1585,7 +1608,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 280, // Keep all charts left aligned
+        marginLeft: 255, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
           render: this.drawTable
@@ -1614,7 +1637,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             enabled: false,
           },
           // tickInterval: 1000 * 60 * 60,
-          tickPositions: this.tickPositions,
+          // tickPositions: this.tickPositions,
+          tickPositions: this.stageTickPositions,
           tickLength: 0,
           tickColor: '#bebebe',
           gridLineWidth: 0,
@@ -1627,7 +1651,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             align: 'low',
             offset: 0,
             rotation: 0,
-            x: -268,
+            x: -255,
             y: 15,
             text: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_DRAFT'],
           },
@@ -1636,6 +1660,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           type: 'datetime',
           lineWidth: 0,
           labels: {
+            rotation: -45,
             align: 'center',
             y: 15,
             formatter: function (y) {
@@ -1656,7 +1681,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           lineWidth: 0,
           // startOnTick: true,
           opposite: true,
-          top: 39,
+          top: 45,
           tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
           tickPosition: 'inside',
