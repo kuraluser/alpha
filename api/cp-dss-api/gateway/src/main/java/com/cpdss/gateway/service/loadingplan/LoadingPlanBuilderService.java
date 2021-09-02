@@ -32,6 +32,7 @@ public class LoadingPlanBuilderService {
       var2.setQuantityMT(var1.getQuantity());
       var2.setConditionType(var1.getConditionType());
       var2.setValueType(var1.getValueType());
+      var2.setUllage(var1.getUllage());
       response.add(var2);
     }
     return response;
