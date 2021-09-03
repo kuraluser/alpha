@@ -636,8 +636,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       portTideDetailsRepository.updatePortDetailActiveState(request.getLoadingId());
       portTideDetailsRepository.saveAll(tideDetails);
     } catch (IllegalStateException e) {
-      throw new GenericServiceException(    		  
-          e.getMessage(), e.getMessage(), HttpStatusCode.BAD_REQUEST);
+      throw new GenericServiceException(e.getMessage(), e.getMessage(), HttpStatusCode.BAD_REQUEST);
     } catch (Exception e) {
       throw new GenericServiceException(
           e.getMessage(),
