@@ -1453,8 +1453,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getCargoNominationId() == null
                               ? 0
                               : ullageList.getCargoNominationId().longValue())
-                      // .setUllage(ullageList.getUllage() == null ? 0 :
-                      // ullageList.getUllage().longValue())
+                      .setUllage(
+                          ullageList.getUllage() == null ? 0 : ullageList.getUllage().longValue())
                       .setPortXid(
                           ullageList.getPort_xid() == null
                               ? 0
