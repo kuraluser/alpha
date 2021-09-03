@@ -3279,17 +3279,19 @@ public class LoadableStudyService {
    * @param first
    * @return CommonResponse
    */
-  public CommonResponse confirmPlan(Long loadablePatternId, String correlationId)
+  public CommonResponse confirmPlan(Long voyageId, Long loadablePatternId, String correlationId)
       throws GenericServiceException {
     log.info("Inside confirmPlan gateway service with correlationId : " + correlationId);
+
     CommonResponse response = new CommonResponse();
     ConfirmPlanRequest.Builder request = ConfirmPlanRequest.newBuilder();
     request.setLoadablePatternId(loadablePatternId);
+    request.setVoyageId(voyageId);
     ConfirmPlanReply grpcReply = this.confirmPlan(request);
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "Failed to confirm plan",
-          grpcReply.getResponseStatus().getCode(),
+          grpcReply.getResponseStatus().getStatus(),
           HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
     }
     response.setResponseStatus(
