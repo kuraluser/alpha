@@ -20,7 +20,7 @@ public interface PortLoadingPlanStowageTempDetailsRepository
       LoadingInformation loadingInformation, Boolean isActive);
 
   @Query(
-      "FROM PortLoadingPlanStowageTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
+      "FROM PortLoadingPlanStowageTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
   public List<PortLoadingPlanStowageTempDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
 
