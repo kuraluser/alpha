@@ -117,7 +117,7 @@ export class LoadingInformationComponent implements OnInit {
       this.loadingDischargingTransformationService.isLoadingPlanGenerated.next(this.loadingInformationData?.isLoadingPlanGenerated);
     
 
-      if (this.loadingInformationData.loadingInfoStatusId == 5 || this.loadingInformationData.loadingInfoStatusId == 6 || this.loadingInformationData.loadingInfoStatusId == 7) {
+      if (this.loadingInformationData.loadingInfoStatusId == 5 || this.loadingInformationData.loadingInfoStatusId == 6 || this.loadingInformationData.loadingInfoStatusId == 7 ||this.loadingInformationData.loadingInfoStatusId == 1 || this.loadingInformationData.loadingInfoStatusId == 2 || this.loadingInformationData.loadingInfoStatusId == 0) {
         this.loadingDischargingTransformationService.disableSaveButton.next(false); 
         this.loadingDischargingTransformationService.inProcessing.next(false);       
       }
