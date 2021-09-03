@@ -140,6 +140,7 @@ export class UllageUpdatePopupTransformationService {
         filter: false,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         editable: true,
+        fieldColumnClass: 'pr-25',
         errorMessages: {
           'maxLimit': 'ULLAGE_UPDATE_FILLING_ERROR',
         }
@@ -150,6 +151,7 @@ export class UllageUpdatePopupTransformationService {
         filter: false,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         editable: true,
+        fieldColumnClass: 'pr-25',
         errorMessages: {
           'maxLimit': 'ULLAGE_UPDATE_FILLING_ERROR',
         }
@@ -158,6 +160,7 @@ export class UllageUpdatePopupTransformationService {
         field: 'api',
         header: 'LOADABLE_PLAN_ULLAGE_UPDATE_API',
         filter: false,
+        fieldColumnClass: 'pr-25',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         editable: true,
         errorMessages: {
@@ -194,6 +197,7 @@ export class UllageUpdatePopupTransformationService {
         filter: false,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         editable: true,
+        fieldColumnClass: 'pr-25',
         errorMessages: {
           'maxLimit': 'ULLAGE_UPDATE_FILLING_ERROR',
         }
@@ -233,6 +237,7 @@ export class UllageUpdatePopupTransformationService {
         field: 'quantity',
         header: 'LOADABLE_PLAN_BUNKER_QTY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldColumnClass: 'pr-25',
         editable: true
       }
 
@@ -461,10 +466,10 @@ export class UllageUpdatePopupTransformationService {
     cargoQuantity.api = data.blAvgApi;
     cargoQuantity.cargoNominationId = data.cargoNominationId;
     cargoQuantity.plan = {
-      bbl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.blAvgApi),
-      lt: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, data.blAvgApi),
-      mt: data.plannedQuantityTotal,
-      kl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, data.blAvgApi),
+      bbl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.blAvgApi) ?? 0,
+      lt: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, data.blAvgApi) ?? 0,
+      mt: data.plannedQuantityTotal ?? 0,
+      kl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, data.blAvgApi) ?? 0,
       api: data.blAvgApi,
       temp: data.blAvgTemp
     };

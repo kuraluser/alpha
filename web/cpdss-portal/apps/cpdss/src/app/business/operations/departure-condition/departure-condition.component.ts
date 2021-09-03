@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DepartureConditionTransformationService } from './departure-condition-transformation.service';
-import { ITankOptions, IVoyagePortDetails, TANKTYPE, ICargo, OPERATIONS, ICargoQuantities, IShipCargoTank, IBallastQuantities, IShipBallastTank, IShipBunkerTank} from '../../core/models/common.model';
+import { ITankOptions, IVoyagePortDetails, TANKTYPE, ICargo, OPERATIONS, ICargoQuantities, IShipCargoTank, IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../core/models/common.model';
 import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { DecimalPipe } from '@angular/common';
@@ -42,6 +42,8 @@ export class DepartureConditionComponent implements OnInit {
   set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
     this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
     this._currentQuantitySelectedUnit = value;
+    this.cargoTankOptions.weightUnit = value;
+    this.ballastTankOptions.weightUnit = value;
     this.formatData();
     this.convertQuantityToSelectedUnit();
   }
@@ -51,16 +53,26 @@ export class DepartureConditionComponent implements OnInit {
   display = false;
   departureCargoTanks: IShipCargoTank[][] = [];
   departureCargoTankQuantity: ICargoQuantities[];
-  cargoTankOptions: ITankOptions;
+  cargoTankOptions: ITankOptions = {
+    showFillingPercentage: true,
+    showTooltip: true,
+    isSelectable: false,
+    ullageField: "ullage",
+    ullageUnit: AppConfigurationService.settings?.ullageUnit,
+    densityField: "api",
+    weightField: "plannedWeight",
+    commodityNameField: "abbreviation",
+    fillingPercentageField: 'percentageFilled'
+  };
   departureDetailsColumns: any = [];
   cargoConditions: ICargoConditions[] = [];
   cargoQuantities: ICargoQuantities[] = [];
-  
+
   ballastTankQuantity: any = [];
   rearBallastTanks: IShipBallastTank[][];
   frontBallastTanks: IShipBallastTank[][];
   centerBallastTanks: IShipBallastTank[][];
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'sounding', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit };
   prevQuantitySelectedUnit: QUANTITY_UNIT;
 
 
@@ -78,19 +90,6 @@ export class DepartureConditionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
-    this.cargoTankOptions = {
-      "showFillingPercentage": true,
-      "showTooltip": true,
-      "isSelectable": false,
-      "ullageField": "correctedUllage",
-      "ullageUnit": AppConfigurationService.settings?.ullageUnit,
-      "densityField": "api",
-      "weightField": "plannedWeight",
-      "commodityNameField": "abbreviation",
-      weightUnit: AppConfigurationService.settings.baseUnit
-    };
-        
     this.departureDetailsColumns = this.departureConditionTransformationService.departureDetailsColumns();
     this.getShipLandingTanks();
   }
@@ -123,7 +122,7 @@ export class DepartureConditionComponent implements OnInit {
       this.cargoConditions.push(conditionObj);
     });
     this.departureCargoTankQuantity = [];
-  
+
     this.loadingPlanData?.cargoTanks?.map(item => {
       item.map(tank => {
         let actualQty = 0, planedQty = 0;
@@ -139,13 +138,14 @@ export class DepartureConditionComponent implements OnInit {
             data.cargoNominationId = stowage.cargoNominationId;
             data.api = stowage.api;
             data.temperature = stowage.temperature;
+            data.ullage = stowage.ullage;
           }
         });
         data.plannedWeight = planedQty;
         data.actualWeight = actualQty;
         data.tankId = tank.id;
-        this.loadingPlanData?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(el=>{
-          if(el.cargoNominationId === data.cargoNominationId){
+        this.loadingPlanData?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(el => {
+          if (el.cargoNominationId === data.cargoNominationId) {
             data.colorCode = el.colorCode;
             data.abbreviation = el.cargoAbbreviation;
           }
@@ -203,6 +203,8 @@ export class DepartureConditionComponent implements OnInit {
             if (ballast.conditionType === 2 && ballast.valueType === 2) {
               planedQty += Number(ballast.quantityMT);
             }
+            data.sg = ballast.sg;
+            data.sounding = ballast.sounding;
           }
         });
         data.plannedWeight = planedQty;
@@ -226,6 +228,8 @@ export class DepartureConditionComponent implements OnInit {
             if (ballast.conditionType === 2 && ballast.valueType === 2) {
               planedQty += Number(ballast.quantityMT);
             }
+            data.sg = ballast.sg;
+            data.sounding = ballast.sounding;
           }
         });
         data.plannedWeight = planedQty;
@@ -249,6 +253,8 @@ export class DepartureConditionComponent implements OnInit {
             if (ballast.conditionType === 2 && ballast.valueType === 2) {
               planedQty += Number(ballast.quantityMT);
             }
+            data.sg = ballast.sg;
+            data.sounding = ballast.sounding;
           }
         });
         data.plannedWeight = planedQty;
@@ -287,8 +293,8 @@ export class DepartureConditionComponent implements OnInit {
    *
    * @memberof DepartureConditionComponent
    */
-  showError(){
-    this.loadingDischargingTransformationService.showUllageError({ value: true, status: 2});
+  showError() {
+    this.loadingDischargingTransformationService.showUllageError({ value: true, status: 2 });
   }
 
 }

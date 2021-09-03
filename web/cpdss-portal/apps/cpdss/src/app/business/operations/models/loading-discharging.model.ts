@@ -909,14 +909,14 @@ export interface IUllageUpdList {
   correctedUllage: number;
   quantity: number;
   fillingPercentage: number | string;
-  cargo_nomination_xid: number | string;
+  cargoNominationId: number | string;
   arrival_departutre: number | string;
   actual_planned: number;
   correction_factor: number;
   api: number | string;
   isUpdate: boolean;
   port_xid?: string;
-  port_rotation_xid?: string;
+  port_rotation_xid?: string | number;
   grade?: string;
 
 }
@@ -943,8 +943,8 @@ export interface IBallastUpdateList {
   isUpdate: boolean;
   observedM3?: string;
   fillingRatio?: string;
-  port_xid?: string;
-  port_rotation_xid?: string;
+  portXId?: string;
+  portRotationXId?: string | number;
   isValidate?: string;
 }
 
@@ -964,7 +964,7 @@ export interface IRobUpdateList {
   actual_planned: number | string;
   arrival_departutre: number;
   port_xid?: string;
-  port_rotation_xid?: string;
+  port_rotation_xid?: string | number;
   observedM3?: string;
   temperature?: string;
   correctedUllage?: string;

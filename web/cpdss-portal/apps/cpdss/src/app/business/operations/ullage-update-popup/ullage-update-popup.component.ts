@@ -258,14 +258,14 @@ export class UllageUpdatePopupComponent implements OnInit {
 
       this.cargoQuantityList?.map(cargo => {
         if (cargo.cargoNominationId === bl.cargoNominationId) {
-          cargo.actual.bbl = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo.api);
-          cargo.actual.kl = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargo.api);
-          cargo.actual.lt = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, cargo.api);
+          cargo.actual.bbl = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo.api) ?? 0;
+          cargo.actual.kl = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargo.api) ?? 0;
+          cargo.actual.lt = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, cargo.api) ?? 0;
           cargo.actual.mt = isNaN(actualQuantity) ? 0 : Number(Number(actualQuantity).toFixed(2));
 
-          cargo.blFigure.bbl = this.quantityPipe.transform(bblQuantity, QUANTITY_UNIT.BBLS, QUANTITY_UNIT.BBLS, cargo.api);
-          cargo.blFigure.kl = this.quantityPipe.transform(klQuantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.KL, cargo.api);
-          cargo.blFigure.lt = this.quantityPipe.transform(ltQuantity, QUANTITY_UNIT.LT, QUANTITY_UNIT.LT, cargo.api);;
+          cargo.blFigure.bbl = this.quantityPipe.transform(bblQuantity, QUANTITY_UNIT.BBLS, QUANTITY_UNIT.BBLS, cargo.api) ?? 0;
+          cargo.blFigure.kl = this.quantityPipe.transform(klQuantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.KL, cargo.api) ?? 0;
+          cargo.blFigure.lt = this.quantityPipe.transform(ltQuantity, QUANTITY_UNIT.LT, QUANTITY_UNIT.LT, cargo.api) ?? 0;
           cargo.blFigure.mt = isNaN(mtQuantity) ? 0 : Number(Number(mtQuantity).toFixed(2));
 
           cargo.difference.bbl = this.decimalPipe.transform((cargo.actual.bbl - cargo.blFigure.bbl), AppConfigurationService.settings.quantityNumberFormatBBLS);
@@ -695,12 +695,12 @@ export class UllageUpdatePopupComponent implements OnInit {
   initCargoDetails(cargo: any): FormGroup {
     return this.fb.group({
       blRefNo: this.fb.control(cargo.blRefNo.value, [Validators.required, Validators.minLength(4), Validators.maxLength(12), Validators.pattern(/^[ A-Za-z0-9#&()/":-=+*]*$/)]),
-      bbl: this.fb.control(cargo.bbl.value, [Validators.required]),
-      lt: this.fb.control(cargo.lt.value, [Validators.required]),
-      mt: this.fb.control(cargo.mt.value, [Validators.required]),
-      kl: this.fb.control(cargo.kl.value, [Validators.required]),
-      api: this.fb.control(cargo.api.value, [Validators.required, Validators.min(0), numberValidator(2, 3)]),
-      temp: this.fb.control(cargo.temp.value, [Validators.required, numberValidator(2, 3)]),
+      bbl: this.fb.control(cargo.bbl.value),
+      lt: this.fb.control(cargo.lt.value),
+      mt: this.fb.control(cargo.mt.value),
+      kl: this.fb.control(cargo.kl.value),
+      api: this.fb.control(cargo.api.value, [Validators.min(0), numberValidator(2, 3)]),
+      temp: this.fb.control(cargo.temp.value, [numberValidator(2, 3)]),
       cargoNominationId: this.fb.control(cargo.cargoNominationId),
     });
   }
@@ -747,9 +747,6 @@ export class UllageUpdatePopupComponent implements OnInit {
   onEditComplete(event: any, rowData: any, key: string, rowIndex: number, index: number) {
     rowData[key]['value'] = event.target.value;
     const control = this.getControl(rowIndex, index, key);
-    if (control.valid && rowData['isAdd']) {
-      rowData[key].isEditMode = false;
-    }
     this.calculateTotal();
     this.updateCargoQuantiyData();
     if (this.showAs.id === 2) {
@@ -810,6 +807,10 @@ export class UllageUpdatePopupComponent implements OnInit {
         control.setErrors(null);
     }
 
+    if (control.valid) {
+      rowData[key].isEditMode = false;
+    }
+
   }
 
   /**
@@ -849,7 +850,13 @@ export class UllageUpdatePopupComponent implements OnInit {
       formControls['controls'].fillingPercentage.setValue(result.fillingRatio);
       formControls['controls'].quantity.updateValueAndValidity();
       formControls['controls'].fillingPercentage.updateValueAndValidity();
-      formControls['controls'][event.field].updateValueAndValidity();
+      if (result.fillingRatio < 98) {
+        formControls['controls'].ullage.updateValueAndValidity();
+        formControls['controls'].temperature.updateValueAndValidity();
+        formControls['controls'].api.updateValueAndValidity();
+      } else {
+        formControls['controls'][event.field].updateValueAndValidity();
+      }
 
       this.updateCargoQuantiyData();
       if (this.showAs.id === 2) {
@@ -950,14 +957,14 @@ export class UllageUpdatePopupComponent implements OnInit {
         correctedUllage: item.correctedUllage?.toString(),
         quantity: item.quantity?.toString(),
         fillingPercentage: item.percentageFilled ? Number(item.percentageFilled) : '',
-        cargo_nomination_xid: item.cargoNominationId ? Number(item.cargoNominationId) : '',
-        arrival_departutre: item.arrivalDeparture ? Number(item.arrivalDeparture) : '',
+        cargoNominationId: item.cargoNominationId ? Number(item.cargoNominationId) : '',
+        arrival_departutre: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2,
         actual_planned: 1,
         correction_factor: item.correctionFactor?.toString(),
         api: item.api ? Number(item.api) : '',
         isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
         port_xid: '',
-        port_rotation_xid: '',
+        port_rotation_xid: this.portRotationId,
         grade: '',
 
       })
@@ -992,14 +999,14 @@ export class UllageUpdatePopupComponent implements OnInit {
         correctedUllage: item.correctedUllage?.toString(),
         correctionFactor: item.correctionFactor ? item.correctionFactor?.toString() : '',
         filling_percentage: item.fillingPercentage.value?.toString(),
-        arrival_departutre: item.arrivalDeparture?.toString(),
+        arrival_departutre: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2,
         actual_planned: '1',
         color_code: item.colorCode,
         sg: item.sg ? item.sg?.toString() : '',
         observedM3: '',
         fillingRatio: '',
-        port_xid: '',
-        port_rotation_xid: '',
+        portXId: '',
+        portRotationXId: this.portRotationId,
         isValidate: '',
         isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
       });
@@ -1014,9 +1021,9 @@ export class UllageUpdatePopupComponent implements OnInit {
         density: item.density.value?.toString(),
         colour_code: item.colorCode,
         actual_planned: '1',
-        arrival_departutre: item.arrivalDeparture?.toString(),
+        arrival_departutre: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2,
         port_xid: '',
-        port_rotation_xid: '',
+        port_rotation_xid: this.portRotationId,
         observedM3: '',
         temperature: '',
         correctedUllage: '',
@@ -1027,15 +1034,15 @@ export class UllageUpdatePopupComponent implements OnInit {
     try {
       this.ngxSpinnerService.show();
       const result = await this.ullageUpdateApiService.updateUllage(data).toPromise();
-      const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_SUCCESS_LABEL', 'ULLAGE_UPDATE_SUCCESS_MESSAGE']).toPromise();
-      this.messageService.add({ severity: 'success', summary: translationKeys['ULLAGE_UPDATE_SUCCESS_LABEL'], detail: translationKeys['ULLAGE_UPDATE_SUCCESS_MESSAGE'] });
-      if (validate) {
-        this.loadingDischargingTransformationService.validateUllage({ validate: true, processId: result['processId'], status: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2 });
-      }
-      setTimeout(() => {
+      if (result.responseStatus.status === '200') {
+        const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_SUCCESS_LABEL', 'ULLAGE_UPDATE_SUCCESS_MESSAGE']).toPromise();
+        this.messageService.add({ severity: 'success', summary: translationKeys['ULLAGE_UPDATE_SUCCESS_LABEL'], detail: translationKeys['ULLAGE_UPDATE_SUCCESS_MESSAGE'] });
+        if (validate) {
+          this.loadingDischargingTransformationService.validateUllage({ validate: true, processId: result['processId'], status: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2 });
+        }
         this.ngxSpinnerService.hide();
         this.closePopup.emit(true);
-      }, 500);
+      }
     } catch (e) {
       this.ngxSpinnerService.hide();
     }
