@@ -39,8 +39,8 @@ export class LoadingApiService {
    * @return {*}  {Observable<IAlgoResponse>}
    * @memberof LoadingApiService
    */
-  getAlgoErrorDetails(vesselId: number, voyageId: number, loadingInfoId: number, type = null): Observable<IAlgoResponse> {
-    return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/loading-info/${loadingInfoId}/algo-errors${type ? '/' + type : ''}`);
+  getAlgoErrorDetails(vesselId: number, voyageId: number, loadingInfoId: number, type = 0): Observable<IAlgoResponse> {
+    return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/loading-info/${loadingInfoId}/algo-errors/${type}`);
   }
 }
 

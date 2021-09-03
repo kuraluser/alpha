@@ -131,6 +131,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
     this.loadingDischargingTransformationService.loadingInformationValidity$.subscribe((res) => {  
         this.loadingInformationComplete = res;
+        if(!this.processing){
         if (this.loadingInstructionComplete && this.loadingInformationComplete) {
           this.disableGenerateLoadableButton = false;
           this.loadingDischargingTransformationService.disableSaveButton.next(false)
@@ -140,12 +141,18 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
           this.loadingDischargingTransformationService.disableSaveButton.next(true)
 
         }
+      }
     
     });
+    this.loadingDischargingTransformationService.inProcessing.subscribe((status)=>{
+     this.processing = status;
+    })
     this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((res) => {
     
         this.loadingInstructionComplete = res;
-        if (this.loadingInstructionComplete && this.loadingInformationComplete) {
+        if(!this.processing)
+       { if (this.loadingInstructionComplete && this.loadingInformationComplete) {
+        
           this.disableGenerateLoadableButton = false;
           this.loadingDischargingTransformationService.disableSaveButton.next(false)
 
@@ -155,6 +162,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
           this.loadingDischargingTransformationService.disableSaveButton.next(true)
 
         }
+      }
      
     });    
   this.ngxSpinnerService.hide();

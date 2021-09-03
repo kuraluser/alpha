@@ -1901,7 +1901,7 @@
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_INFO": "Info",
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_DETAILS": "Loadable study communicated to shore",
   "DISCHARGE_STUDY_PLAN_VIEW_ERROR": "View Error",
-  "LOADING_DISCHARGING_FILE_FORMAT_ERROR": "Only the file with following extensions are allowed : xls , xlsx",
+  "LOADING_DISCHARGING_FILE_FORMAT_ERROR": "Only the file with following extensions are allowed : xlsx",
   "LOADING_DISCHARGING_FILE_SIZE_ERROR": "File size too large. Allowed maximum size file is 1MB",
   "DISCHARGE_PLAN_VIEW_NO_PLAN_GENERATED": "Plan is not generated for this Discharge study",
   "DISCHARGE_STUDY_INVALID_ERROR": "Invalid",
@@ -1913,6 +1913,11 @@
   "LOADING_DICHARGING_EXCEL_EXPORT_ERROR": "File uploaded failed",
   "LOADING_DISCHARGING_EXCEL_ERROR": "Error",
   "FILES": "Files",
-  "NEW_DISCHARGE_STUDY_POPUP_BILL_OF_LADDING": "Please add bill of ladding details to create discharge study"
+  "NEW_DISCHARGE_STUDY_POPUP_BILL_OF_LADDING": "Please add bill of ladding details to create discharge study",
+  "LOADING_DICHARGING_EXCEL_PORT_NAME_INVALID": "Please add a valid port in excel", 
+  "LOADING_DICHARGING_EXCEL_DATE_INVALID": "Invalid tide date in excel", 
+  "LOADING_DICHARGING_EXCEL_TIME_INVALID": "Invalid tide time in excel", 
+  "LOADING_DICHARGING_EXCEL_HEIGHT_INVALID": "Invalid tide height in excel", 
+  "LOADING_DICHARGING_EXCEL_INVALID_EXCEL_FILE": "Only the file with following extensions are allowed : xlsx"
 }
   

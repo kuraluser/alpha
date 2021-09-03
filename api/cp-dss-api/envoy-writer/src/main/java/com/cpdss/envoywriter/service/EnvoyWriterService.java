@@ -98,6 +98,7 @@ public class EnvoyWriterService {
               HttpMethod.POST,
               requestEntity,
               String.class);
+      log.debug("Envoy writer file upload response: {}", result);
 
       ObjectMapper mapper = new ObjectMapper();
       WriterResponse writerResponse = mapper.readValue(result.getBody(), WriterResponse.class);

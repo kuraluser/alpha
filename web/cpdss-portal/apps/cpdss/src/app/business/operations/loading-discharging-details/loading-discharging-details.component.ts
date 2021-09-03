@@ -240,7 +240,10 @@ export class LoadingDischargingDetailsComponent implements OnInit {
   */
   async selectFilesToUpload() {
     this.ngxSpinnerService.show();
-    const translationKeys = await this.translateService.get(['LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS_DETAILS','LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS','LOADING_DICHARGING_EXCEL_EXPORT_ERROR','LOADING_DISCHARGING_EXCEL_ERROR','LOADING_DISCHARGING_FILE_FORMAT_ERROR', 'LOADING_DISCHARGING_FILE_SIZE_ERROR']).toPromise();
+    const translationKeys = await this.translateService.get(
+      ['LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS_DETAILS','LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS','LOADING_DICHARGING_EXCEL_EXPORT_ERROR','LOADING_DISCHARGING_EXCEL_ERROR','LOADING_DISCHARGING_FILE_FORMAT_ERROR', 'LOADING_DISCHARGING_FILE_SIZE_ERROR',
+    'LOADING_DICHARGING_EXCEL_PORT_NAME_INVALID', 'LOADING_DICHARGING_EXCEL_DATE_INVALID','LOADING_DICHARGING_EXCEL_TIME_INVALID',
+    'LOADING_DICHARGING_EXCEL_HEIGHT_INVALID', 'LOADING_DICHARGING_EXCEL_INVALID_EXCEL_FILE']).toPromise();
     this.fileUploadVariable.nativeElement.disabled = true;
     let id;
     if(this.operation === OPERATIONS.DISCHARGING) {
@@ -271,7 +274,17 @@ export class LoadingDischargingDetailsComponent implements OnInit {
         }
       }
     } catch(err) {
-      if(err.error.errorCode === "ERR-RICO-400") {
+      if(err.error.errorCode === "ERR-RICO-310") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_PORT_NAME_INVALID'] });
+      } else if(err.error.errorCode === "ERR-RICO-311") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_DATE_INVALID'] });
+      } else if(err.error.errorCode === "ERR-RICO-312") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_TIME_INVALID'] });
+      } else if(err.error.errorCode === "ERR-RICO-313") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_HEIGHT_INVALID'] });
+      } else if(err.error.errorCode === "ERR-RICO-314") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_INVALID_EXCEL_FILE'] });
+      } else if(err.error.errorCode === "ERR-RICO-400") {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_EXPORT_ERROR'] });
       }
     }
