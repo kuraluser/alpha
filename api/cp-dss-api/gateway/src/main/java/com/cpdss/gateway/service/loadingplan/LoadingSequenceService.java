@@ -8,6 +8,10 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
+import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
+import com.cpdss.common.generated.PortInfo.PortDetail;
+import com.cpdss.common.generated.PortInfo.PortReply;
+import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
 import com.cpdss.common.generated.VesselInfo.PumpType;
 import com.cpdss.common.generated.VesselInfo.VesselIdRequest;
 import com.cpdss.common.generated.VesselInfo.VesselPump;
@@ -71,12 +75,15 @@ import org.springframework.util.StringUtils;
 public class LoadingSequenceService {
 
   @GrpcClient("vesselInfoService")
-  VesselInfoServiceBlockingStub vesselInfoGrpcService;
+  private VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   @GrpcClient("loadableStudyService")
-  LoadableStudyServiceBlockingStub loadableStudyGrpcService;
+  private LoadableStudyServiceBlockingStub loadableStudyGrpcService;
 
-  @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
+  @GrpcClient("portInfoService")
+  private PortInfoServiceBlockingStub portInfoGrpcService;
+
+  @Autowired private LoadingPlanGrpcService loadingPlanGrpcService;
 
   public void buildLoadingSequence(
       Long vesselId, LoadingSequenceReply reply, LoadingSequenceResponse response)
@@ -104,18 +111,31 @@ public class LoadingSequenceService {
     List<StabilityParam> stabilityParams = new ArrayList<StabilityParam>();
     Set<TankCategory> cargoTankCategories = new LinkedHashSet<TankCategory>();
     Set<TankCategory> ballastTankCategories = new LinkedHashSet<TankCategory>();
+
     inititalizeStabilityParams(stabilityParams);
 
+    PortDetail portDetail = getPortInfo(reply.getPortId());
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
     try {
       response.setMinXAxisValue(
-          StringUtils.isEmpty(reply.getStartDate()) ? new Date() : sdf.parse(reply.getStartDate()));
+          StringUtils.isEmpty(reply.getStartDate())
+              ? new Date().toInstant().toEpochMilli()
+              : sdf.parse(reply.getStartDate()).toInstant().toEpochMilli());
+      if (!StringUtils.isEmpty(portDetail.getTimezoneOffsetVal())) {
+        response.setMinXAxisValue(
+            response.getMinXAxisValue()
+                + (long)
+                    (Float.valueOf(portDetail.getTimezoneOffsetVal()).floatValue()
+                        * 60
+                        * 60
+                        * 1000));
+      }
     } catch (ParseException e) {
       e.printStackTrace();
-      response.setMinXAxisValue(new Date());
+      response.setMinXAxisValue(new Date().toInstant().toEpochMilli());
     }
 
-    Long portEta = response.getMinXAxisValue().toInstant().toEpochMilli();
+    Long portEta = response.getMinXAxisValue();
     Integer start = 0;
     Integer temp = 0;
 
@@ -596,6 +616,20 @@ public class LoadingSequenceService {
     }
     log.info("Fetched vessel tank details of vessel {}", vesselId);
     return reply.getVesselTanksList();
+  }
+
+  private PortDetail getPortInfo(Long portId) throws GenericServiceException {
+    GetPortInfoByPortIdsRequest.Builder builder = GetPortInfoByPortIdsRequest.newBuilder();
+    builder.addId(portId);
+    PortReply reply = portInfoGrpcService.getPortInfoByPortIds(builder.build());
+    if (!reply.getResponseStatus().getStatus().equals(GatewayConstants.SUCCESS)) {
+      throw new GenericServiceException(
+          "Failed to get vessel tanks",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    log.info("Fetched port details of port {}", portId);
+    return reply.getPorts(0);
   }
 
   private void buildBallastPump(PumpOperation operation, Long portEta, BallastPump ballastPump) {
