@@ -32,10 +32,9 @@ public interface BillOfLandingRepository extends CommonCrudRepository<BillOfLand
   @Transactional
   @Modifying
   @Query(
-      "Update BillOfLanding set is_active = false where cargo_nomination_xid = ?1 and port_xid = ?2 and loading_xid = ?3")
+      "Update BillOfLanding set is_active = false where cargo_nomination_xid = ?1 and loading_xid = ?2")
   public void deleteBillOfLandingRepository(
       @Param("cargo_nomination_xid") Integer cargo_nomination_xid,
-      @Param("port_xid") Integer port_xid,
       @Param("loading_xid") Integer loading_xid);
 
   @Query("FROM BillOfLanding WHERE isActive = ?2")

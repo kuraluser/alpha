@@ -586,32 +586,31 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           // fetch Date value from excel
           if (rowCell == 1) {
             if (cellType.equals(CellType.NUMERIC)) {
-            	double numberValue = cell.getNumericCellValue();
-                if (DateUtil.isCellDateFormatted(cell)) {
-                	tideDetail.setTideDate(DateUtil.getJavaDate(numberValue));
-                } else {
-                	throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
-                }
-            }
-            else if(cellType.equals(CellType.STRING)){
-            	tideDetail.setTideDate(new SimpleDateFormat(DATE_FORMAT).parse(cell.getStringCellValue()));
-            }else {
-            	throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
+              double numberValue = cell.getNumericCellValue();
+              if (DateUtil.isCellDateFormatted(cell)) {
+                tideDetail.setTideDate(DateUtil.getJavaDate(numberValue));
+              } else {
+                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
+              }
+            } else if (cellType.equals(CellType.STRING)) {
+              tideDetail.setTideDate(
+                  new SimpleDateFormat(DATE_FORMAT).parse(cell.getStringCellValue()));
+            } else {
+              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
             }
           }
           // fetch Time value from excel
           if (rowCell == 2) {
             if (cellType.equals(CellType.NUMERIC)) {
-            	if (DateUtil.isCellDateFormatted(cell)) {
-            		tideDetail.setTideTime(cell.getLocalDateTimeCellValue().toLocalTime());
-            	}else {
-                    throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
-            	}
-            }
-            else if(cellType.equals(CellType.STRING)){
-            	tideDetail.setTideTime(LocalTime.parse(cell.getStringCellValue()));
-            }else {
-            	throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+              if (DateUtil.isCellDateFormatted(cell)) {
+                tideDetail.setTideTime(cell.getLocalDateTimeCellValue().toLocalTime());
+              } else {
+                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+              }
+            } else if (cellType.equals(CellType.STRING)) {
+              tideDetail.setTideTime(LocalTime.parse(cell.getStringCellValue()));
+            } else {
+              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
             }
           }
           // fetch Double value from excel
@@ -628,8 +627,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       portTideDetailsRepository.updatePortDetailActiveState(request.getLoadingId());
       portTideDetailsRepository.saveAll(tideDetails);
     } catch (IllegalStateException e) {
-      throw new GenericServiceException(    		  
-          e.getMessage(), e.getMessage(), HttpStatusCode.BAD_REQUEST);
+      throw new GenericServiceException(e.getMessage(), e.getMessage(), HttpStatusCode.BAD_REQUEST);
     } catch (Exception e) {
       throw new GenericServiceException(
           e.getMessage(),
