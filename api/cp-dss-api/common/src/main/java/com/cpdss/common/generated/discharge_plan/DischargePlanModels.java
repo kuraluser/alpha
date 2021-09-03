@@ -68,6 +68,22 @@ public final class DischargePlanModels {
   static final com.google.protobuf.Descriptors.Descriptor internal_static_PortData_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_PortData_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingUploadTideDetailRequest_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingUploadTideDetailRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingUploadTideDetailStatusReply_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingUploadTideDetailStatusReply_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingDownloadTideDetailRequest_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingDownloadTideDetailRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingDownloadTideDetailStatusReply_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingDownloadTideDetailStatusReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -147,9 +163,18 @@ public final class DischargePlanModels {
           + "quest\022\033\n\010portData\030\001 \003(\0132\t.PortData\022\032\n\022di"
           + "schargePatternId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003"
           + "\022\020\n\010vesselId\030\004 \001(\003\";\n\010PortData\022\026\n\016portRo"
-          + "tationId\030\001 \001(\003\022\027\n\017synopticTableId\030\002 \001(\003B"
-          + "-\n)com.cpdss.common.generated.discharge_"
-          + "planP\001b\006proto3"
+          + "tationId\030\001 \001(\003\022\027\n\017synopticTableId\030\002 \001(\003\""
+          + "x\n\"DischargingUploadTideDetailRequest\022\026\n"
+          + "\016tideDetaildata\030\001 \001(\014\022\'\n\016responseStatus\030"
+          + "\002 \001(\0132\017.ResponseStatus\022\021\n\tloadingId\030\003 \001("
+          + "\003\"Q\n&DischargingUploadTideDetailStatusRe"
+          + "ply\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSt"
+          + "atus\"9\n$DischargingDownloadTideDetailReq"
+          + "uest\022\021\n\tloadingId\030\001 \001(\003\"o\n(DischargingDo"
+          + "wnloadTideDetailStatusReply\022\'\n\016responseS"
+          + "tatus\030\001 \001(\0132\017.ResponseStatus\022\014\n\004data\030\002 \001"
+          + "(\014\022\014\n\004size\030\003 \001(\005B-\n)com.cpdss.common.gen"
+          + "erated.discharge_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -319,6 +344,38 @@ public final class DischargePlanModels {
             internal_static_PortData_descriptor,
             new java.lang.String[] {
               "PortRotationId", "SynopticTableId",
+            });
+    internal_static_DischargingUploadTideDetailRequest_descriptor =
+        getDescriptor().getMessageTypes().get(16);
+    internal_static_DischargingUploadTideDetailRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingUploadTideDetailRequest_descriptor,
+            new java.lang.String[] {
+              "TideDetaildata", "ResponseStatus", "LoadingId",
+            });
+    internal_static_DischargingUploadTideDetailStatusReply_descriptor =
+        getDescriptor().getMessageTypes().get(17);
+    internal_static_DischargingUploadTideDetailStatusReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingUploadTideDetailStatusReply_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus",
+            });
+    internal_static_DischargingDownloadTideDetailRequest_descriptor =
+        getDescriptor().getMessageTypes().get(18);
+    internal_static_DischargingDownloadTideDetailRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingDownloadTideDetailRequest_descriptor,
+            new java.lang.String[] {
+              "LoadingId",
+            });
+    internal_static_DischargingDownloadTideDetailStatusReply_descriptor =
+        getDescriptor().getMessageTypes().get(19);
+    internal_static_DischargingDownloadTideDetailStatusReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingDownloadTideDetailStatusReply_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus", "Data", "Size",
             });
     com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor();

@@ -1,13 +1,33 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service;
 
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.DATE_FORMAT;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.PORT;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.PORT_EXCEL_TEMPLATE_TITLES;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.PORT_TITLE_FONT_HEIGHT;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.PORT_TITLE_FONT_STYLE;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.SHEET;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIDE_DATE;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIDE_HEIGHT;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIDE_TIME;
+
+import com.cpdss.common.constants.RedisConfigConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.PortInfo.PortDetail;
+import com.cpdss.common.generated.PortInfo.PortReply;
+import com.cpdss.common.generated.PortInfo.PortRequestWithPaging;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
 import com.cpdss.common.generated.discharge_plan.DischargeRuleRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailStatusReply.Builder;
+import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
@@ -16,17 +36,44 @@ import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargePlanRuleInput;
 import com.cpdss.dischargeplan.entity.DischargePlanRules;
 import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
+import com.cpdss.dischargeplan.entity.PortTideDetail;
 import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
 import com.cpdss.dischargeplan.repository.DischargeRulesInputRepository;
 import com.cpdss.dischargeplan.repository.DischargeRulesRepository;
+import com.cpdss.dischargeplan.repository.PortTideDetailsRepository;
+import com.google.protobuf.ByteString;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -48,8 +95,13 @@ public class DischargeInformationService {
 
   @Autowired DischargeRulesInputRepository dischargeStudyRulesInputRepository;
 
+  @Autowired PortTideDetailsRepository portTideDetailsRepository;
+
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @GrpcClient("portInfoService")
+  private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoServiceBlockingStub;
 
   public DischargeInformation getDischargeInformation(Long primaryKey) {
     return this.dischargeInformationRepository.findByIdAndIsActiveTrue(primaryKey).orElse(null);
@@ -515,5 +567,210 @@ public class DischargeInformationService {
     } else {
       ruleTemplateInput.setDefaultValue(null);
     }
+  }
+
+  /**
+   * upload Port Tide Details to DB.
+   *
+   * @param request - DischargingUploadTideDetailRequest.
+   * @throws GenericServiceException - throws GenericServiceException from the method.
+   */
+  public void uploadPortTideDetails(DischargingUploadTideDetailRequest request)
+      throws GenericServiceException {
+
+    try {
+      ByteString tideDetaildata = request.getTideDetaildata();
+      Map<Long, String> portDetails = getPortDetailsFromPortService();
+      InputStream bin = new ByteArrayInputStream(tideDetaildata.toByteArray());
+      Workbook workbook = WorkbookFactory.create(bin);
+      Sheet sheetAt = workbook.getSheet(DischargePlanConstants.SHEET);
+      Iterator<Row> rowIterator = sheetAt.iterator();
+      if (rowIterator.hasNext()) {
+        rowIterator.next();
+      }
+      List<PortTideDetail> tideDetails = new ArrayList<>();
+      while (rowIterator.hasNext()) {
+        PortTideDetail tideDetail = new PortTideDetail();
+        tideDetail.setDischargingXid(request.getLoadingId());
+        tideDetail.setIsActive(true);
+        Row row = rowIterator.next();
+        Iterator<Cell> cellIterator = row.cellIterator();
+        for (int rowCell = 0; rowCell <= 3; rowCell++) {
+          Cell cell = cellIterator.next();
+          CellType cellType = cell.getCellType();
+          // fetch String value from excel
+          if (rowCell == 0) {
+            if (!cellType.equals(CellType.STRING)) {
+              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_PORT_NAME_INVALID);
+            }
+            Optional<Long> findFirst =
+                portDetails.entrySet().stream()
+                    .filter(e -> cell.getStringCellValue().equalsIgnoreCase(e.getValue()))
+                    .map(Map.Entry::getKey)
+                    .findFirst();
+            if (!findFirst.isPresent()) {
+              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_PORT_NAME_INVALID);
+            }
+            tideDetail.setPortXid(findFirst.get());
+          }
+          // fetch Date value from excel
+          if (rowCell == 1) {
+            if (cellType.equals(CellType.NUMERIC)) {
+              double numberValue = cell.getNumericCellValue();
+              if (DateUtil.isCellDateFormatted(cell)) {
+                tideDetail.setTideDate(DateUtil.getJavaDate(numberValue));
+              } else {
+                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
+              }
+            } else if (cellType.equals(CellType.STRING)) {
+	       		 if (!cell.getStringCellValue().matches("([0-9]{2})-([0-9]{2})-([0-9]{4})")) {
+	       			throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
+	       		 }
+              tideDetail.setTideDate(
+                  new SimpleDateFormat(DATE_FORMAT).parse(cell.getStringCellValue()));
+            } else {
+              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
+            }
+          }
+          // fetch Time value from excel
+          if (rowCell == 2) {
+            if (cellType.equals(CellType.NUMERIC)) {
+              if (DateUtil.isCellDateFormatted(cell)) {
+            	  if(cell.getLocalDateTimeCellValue().toLocalTime().equals(LocalTime.of(0, 0))) {
+            		  throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+            	  }
+                tideDetail.setTideTime(cell.getLocalDateTimeCellValue().toLocalTime());
+              } else {
+                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+              }
+            } else if (cellType.equals(CellType.STRING)) {
+	       		 if (!cell.getStringCellValue().matches("([0-9]{2}):([0-9]{2})")) {
+	       			throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+	       		 }
+              tideDetail.setTideTime(LocalTime.parse(cell.getStringCellValue()));
+            } else {
+              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+            }
+          }
+          // fetch Double value from excel
+          if (rowCell == 3) {
+            if (!cellType.equals(CellType.NUMERIC)) {
+              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_HEIGHT_INVALID);
+            }
+            tideDetail.setTideHeight(
+                new BigDecimal(cell.getNumericCellValue(), MathContext.DECIMAL64));
+          }
+        }
+        tideDetails.add(tideDetail);
+      }
+      portTideDetailsRepository.updatePortDetailActiveState(request.getLoadingId());
+      portTideDetailsRepository.saveAll(tideDetails);
+    } catch (IllegalStateException e) {
+      throw new GenericServiceException(e.getMessage(), e.getMessage(), HttpStatusCode.BAD_REQUEST);
+    } catch (Exception e) {
+      throw new GenericServiceException(
+          e.getMessage(),
+          CommonErrorCodes.E_HTTP_INTERNAL_SERVER_ERROR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  /**
+   * download Port Tide Details template
+   *
+   * @param workbook - XSSFWorkbook
+   * @param request - DownloadTideDetailRequest
+   * @param builder - Builder class
+   * @throws GenericServiceException - throws GenericServiceException from the method.
+   */
+  public void downloadPortTideDetails(
+      XSSFWorkbook workbook, DischargingDownloadTideDetailRequest request, Builder builder)
+      throws GenericServiceException, IOException {
+    try {
+      XSSFSheet spreadsheet = workbook.createSheet(SHEET);
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      int rowNo = 0;
+      XSSFRow titleRow = spreadsheet.createRow(rowNo);
+      XSSFCellStyle cellStyle = workbook.createCellStyle();
+      XSSFFont font = workbook.createFont();
+      font.setFontName(PORT_TITLE_FONT_STYLE);
+      font.setFontHeight(PORT_TITLE_FONT_HEIGHT);
+      font.setBold(true);
+      cellStyle.setFont(font);
+      for (int columnNo = 0; columnNo < PORT_EXCEL_TEMPLATE_TITLES.size(); columnNo++) {
+        spreadsheet.setColumnWidth(columnNo, 17 * 256);
+        XSSFCell titleCell = titleRow.createCell(columnNo);
+        titleCell.setCellStyle(cellStyle);
+        titleCell.setCellValue(PORT_EXCEL_TEMPLATE_TITLES.get(columnNo));
+      }
+      long loadingId = request.getLoadingId();
+      if (loadingId != 0) {
+        List<PortTideDetail> list =
+            portTideDetailsRepository.findByDischargingXidAndIsActive(request.getLoadingId(), true);
+        if (!list.isEmpty()) {
+          Map<Long, String> portsMap = getPortDetailsFromPortService();
+          for (rowNo = 0; rowNo < list.size(); rowNo++) {
+            XSSFRow row = spreadsheet.createRow(rowNo + 1);
+            for (int columnNo = 0; columnNo < PORT_EXCEL_TEMPLATE_TITLES.size(); columnNo++) {
+              XSSFCell cell = row.createCell(columnNo);
+              if (PORT_EXCEL_TEMPLATE_TITLES.get(columnNo).equals(PORT)) {
+                cell.setCellType(CellType.STRING);
+                cell.setCellValue(portsMap.get(list.get(rowNo).getPortXid()));
+              }
+              if (PORT_EXCEL_TEMPLATE_TITLES.get(columnNo).equals(TIDE_DATE)) {
+                cell.setCellType(CellType.NUMERIC);
+                cell.setCellValue(
+                    new SimpleDateFormat(DATE_FORMAT).format(list.get(rowNo).getTideDate()));
+              }
+              if (PORT_EXCEL_TEMPLATE_TITLES.get(columnNo).equals(TIDE_TIME)) {
+                cell.setCellType(CellType.NUMERIC);
+                cell.setCellValue(list.get(rowNo).getTideTime().toString());
+              }
+              if (PORT_EXCEL_TEMPLATE_TITLES.get(columnNo).equals(TIDE_HEIGHT)) {
+                cell.setCellType(CellType.NUMERIC);
+                cell.setCellValue(list.get(rowNo).getTideHeight().doubleValue());
+              }
+            }
+          }
+        }
+      }
+      workbook.write(byteArrayOutputStream);
+      byte[] bytes = byteArrayOutputStream.toByteArray();
+      builder
+          .setData(ByteString.copyFrom(bytes))
+          .setSize(bytes.length)
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setStatus(SUCCESS)
+                  .setCode(HttpStatusCode.OK.getReasonPhrase())
+                  .build())
+          .build();
+      byteArrayOutputStream.close();
+    } catch (Exception e) {
+      throw new GenericServiceException(
+          e.getMessage(),
+          CommonErrorCodes.E_HTTP_INTERNAL_SERVER_ERROR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+  }
+  /**
+   * To fetch port details from port service.
+   *
+   * @return Map of Key value pair
+   */
+  private Map<Long, String> getPortDetailsFromPortService() {
+    PortRequestWithPaging redisRequest =
+        PortRequestWithPaging.newBuilder()
+            .setOffset(RedisConfigConstants.OFFSET_VAL)
+            .setLimit(RedisConfigConstants.PAGE_COUNT)
+            .build();
+    PortReply reply = portInfoServiceBlockingStub.getPortInfoByPaging(redisRequest);
+    List<PortDetail> portsList = reply.getPortsList();
+    Map<Long, String> portsMap = new HashMap<>();
+    if (!portsList.isEmpty()) {
+      portsMap =
+          portsList.stream().collect(Collectors.toMap(map -> map.getId(), map -> map.getName()));
+    }
+    return portsMap;
   }
 }

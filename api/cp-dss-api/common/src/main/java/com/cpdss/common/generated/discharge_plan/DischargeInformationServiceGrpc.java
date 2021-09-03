@@ -120,6 +120,121 @@ public final class DischargeInformationServiceGrpc {
     return getGetOrSaveRulesForDischargingMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest,
+          com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply>
+      getDischargingUploadPortTideDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DischargingUploadPortTideDetails",
+      requestType =
+          com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest.class,
+      responseType =
+          com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest,
+          com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply>
+      getDischargingUploadPortTideDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest,
+            com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply>
+        getDischargingUploadPortTideDetailsMethod;
+    if ((getDischargingUploadPortTideDetailsMethod =
+            DischargeInformationServiceGrpc.getDischargingUploadPortTideDetailsMethod)
+        == null) {
+      synchronized (DischargeInformationServiceGrpc.class) {
+        if ((getDischargingUploadPortTideDetailsMethod =
+                DischargeInformationServiceGrpc.getDischargingUploadPortTideDetailsMethod)
+            == null) {
+          DischargeInformationServiceGrpc.getDischargingUploadPortTideDetailsMethod =
+              getDischargingUploadPortTideDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.discharge_plan
+                              .DischargingUploadTideDetailRequest,
+                          com.cpdss.common.generated.discharge_plan
+                              .DischargingUploadTideDetailStatusReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "DischargingUploadPortTideDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan
+                                  .DischargingUploadTideDetailRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan
+                                  .DischargingUploadTideDetailStatusReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeInformationServiceMethodDescriptorSupplier(
+                              "DischargingUploadPortTideDetails"))
+                      .build();
+        }
+      }
+    }
+    return getDischargingUploadPortTideDetailsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest,
+          com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailStatusReply>
+      getDischargingDownloadPortTideDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DischargingDownloadPortTideDetails",
+      requestType =
+          com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest.class,
+      responseType =
+          com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailStatusReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest,
+          com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailStatusReply>
+      getDischargingDownloadPortTideDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest,
+            com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailStatusReply>
+        getDischargingDownloadPortTideDetailsMethod;
+    if ((getDischargingDownloadPortTideDetailsMethod =
+            DischargeInformationServiceGrpc.getDischargingDownloadPortTideDetailsMethod)
+        == null) {
+      synchronized (DischargeInformationServiceGrpc.class) {
+        if ((getDischargingDownloadPortTideDetailsMethod =
+                DischargeInformationServiceGrpc.getDischargingDownloadPortTideDetailsMethod)
+            == null) {
+          DischargeInformationServiceGrpc.getDischargingDownloadPortTideDetailsMethod =
+              getDischargingDownloadPortTideDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.discharge_plan
+                              .DischargingDownloadTideDetailRequest,
+                          com.cpdss.common.generated.discharge_plan
+                              .DischargingDownloadTideDetailStatusReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "DischargingDownloadPortTideDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan
+                                  .DischargingDownloadTideDetailRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan
+                                  .DischargingDownloadTideDetailStatusReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeInformationServiceMethodDescriptorSupplier(
+                              "DischargingDownloadPortTideDetails"))
+                      .build();
+        }
+      }
+    }
+    return getDischargingDownloadPortTideDetailsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeInformationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceStub> factory =
@@ -183,6 +298,26 @@ public final class DischargeInformationServiceGrpc {
           getGetOrSaveRulesForDischargingMethod(), responseObserver);
     }
 
+    /** */
+    public void dischargingUploadPortTideDetails(
+        com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getDischargingUploadPortTideDetailsMethod(), responseObserver);
+    }
+
+    /** */
+    public void dischargingDownloadPortTideDetails(
+        com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailStatusReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getDischargingDownloadPortTideDetailsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -200,6 +335,23 @@ public final class DischargeInformationServiceGrpc {
                       com.cpdss.common.generated.discharge_plan.DischargeRuleRequest,
                       com.cpdss.common.generated.discharge_plan.DischargeRuleReply>(
                       this, METHODID_GET_OR_SAVE_RULES_FOR_DISCHARGING)))
+          .addMethod(
+              getDischargingUploadPortTideDetailsMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest,
+                      com.cpdss.common.generated.discharge_plan
+                          .DischargingUploadTideDetailStatusReply>(
+                      this, METHODID_DISCHARGING_UPLOAD_PORT_TIDE_DETAILS)))
+          .addMethod(
+              getDischargingDownloadPortTideDetailsMethod(),
+              io.grpc.stub.ServerCalls.asyncServerStreamingCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.discharge_plan
+                          .DischargingDownloadTideDetailRequest,
+                      com.cpdss.common.generated.discharge_plan
+                          .DischargingDownloadTideDetailStatusReply>(
+                      this, METHODID_DISCHARGING_DOWNLOAD_PORT_TIDE_DETAILS)))
           .build();
     }
   }
@@ -239,6 +391,30 @@ public final class DischargeInformationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void dischargingUploadPortTideDetails(
+        com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDischargingUploadPortTideDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void dischargingDownloadPortTideDetails(
+        com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailStatusReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncServerStreamingCall(
+          getChannel().newCall(getDischargingDownloadPortTideDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -268,6 +444,24 @@ public final class DischargeInformationServiceGrpc {
             com.cpdss.common.generated.discharge_plan.DischargeRuleRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetOrSaveRulesForDischargingMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply
+        dischargingUploadPortTideDetails(
+            com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDischargingUploadPortTideDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public java.util.Iterator<
+            com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailStatusReply>
+        dischargingDownloadPortTideDetails(
+            com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest
+                request) {
+      return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
+          getChannel(), getDischargingDownloadPortTideDetailsMethod(), getCallOptions(), request);
     }
   }
 
@@ -302,10 +496,22 @@ public final class DischargeInformationServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetOrSaveRulesForDischargingMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply>
+        dischargingUploadPortTideDetails(
+            com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDischargingUploadPortTideDetailsMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_GET_DISCHARGE_INFORMATION = 0;
   private static final int METHODID_GET_OR_SAVE_RULES_FOR_DISCHARGING = 1;
+  private static final int METHODID_DISCHARGING_UPLOAD_PORT_TIDE_DETAILS = 2;
+  private static final int METHODID_DISCHARGING_DOWNLOAD_PORT_TIDE_DETAILS = 3;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -336,6 +542,24 @@ public final class DischargeInformationServiceGrpc {
               (com.cpdss.common.generated.discharge_plan.DischargeRuleRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.discharge_plan.DischargeRuleReply>)
+                  responseObserver);
+          break;
+        case METHODID_DISCHARGING_UPLOAD_PORT_TIDE_DETAILS:
+          serviceImpl.dischargingUploadPortTideDetails(
+              (com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.discharge_plan
+                          .DischargingUploadTideDetailStatusReply>)
+                  responseObserver);
+          break;
+        case METHODID_DISCHARGING_DOWNLOAD_PORT_TIDE_DETAILS:
+          serviceImpl.dischargingDownloadPortTideDetails(
+              (com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.discharge_plan
+                          .DischargingDownloadTideDetailStatusReply>)
                   responseObserver);
           break;
         default:
@@ -405,6 +629,8 @@ public final class DischargeInformationServiceGrpc {
                       .setSchemaDescriptor(new DischargeInformationServiceFileDescriptorSupplier())
                       .addMethod(getGetDischargeInformationMethod())
                       .addMethod(getGetOrSaveRulesForDischargingMethod())
+                      .addMethod(getDischargingUploadPortTideDetailsMethod())
+                      .addMethod(getDischargingDownloadPortTideDetailsMethod())
                       .build();
         }
       }

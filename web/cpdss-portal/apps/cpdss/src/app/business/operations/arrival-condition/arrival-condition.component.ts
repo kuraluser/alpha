@@ -43,6 +43,8 @@ export class ArrivalConditionComponent implements OnInit {
   set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
     this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
     this._currentQuantitySelectedUnit = value;
+    this.cargoTankOptions.weightUnit = value;
+    this.ballastTankOptions.weightUnit = value;
     this.formatData();
     this.convertQuantityToSelectedUnit();
   }
@@ -51,7 +53,17 @@ export class ArrivalConditionComponent implements OnInit {
   display = false;
   arrivalCargoTanks: IShipCargoTank[][] = [];
   cargoTankQuantity: ICargoQuantities[];
-  cargoTankOptions: ITankOptions;
+  cargoTankOptions: ITankOptions = {
+    showFillingPercentage: true,
+    showTooltip: true,
+    isSelectable: false,
+    ullageField: "ullage",
+    ullageUnit: AppConfigurationService.settings?.ullageUnit,
+    densityField: "api",
+    weightField: "plannedWeight",
+    commodityNameField: "abbreviation",
+    fillingPercentageField: 'percentageFilled'
+  }
   cargoConditions: ICargoConditions[];
   cargoQuantities: ICargoQuantities[];
 
@@ -59,7 +71,7 @@ export class ArrivalConditionComponent implements OnInit {
   rearBallastTanks: IShipBallastTank[][];
   frontBallastTanks: IShipBallastTank[][];
   centerBallastTanks: IShipBallastTank[][];
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'sounding', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit };
   prevQuantitySelectedUnit: QUANTITY_UNIT;
 
   readonly tankType = TANKTYPE;
@@ -75,18 +87,6 @@ export class ArrivalConditionComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.cargoTankOptions = {
-      "showFillingPercentage": true,
-      "showTooltip": true,
-      "isSelectable": false,
-      "ullageField": "correctedUllage",
-      "ullageUnit": AppConfigurationService.settings?.ullageUnit,
-      "densityField": "api",
-      "weightField": "plannedWeight",
-      "commodityNameField": "abbreviation",
-      fillingPercentageField: 'percentageFilled',
-      weightUnit: AppConfigurationService.settings.baseUnit
-    };
     this.getShipLandingTanks();
   }
 
@@ -134,6 +134,7 @@ export class ArrivalConditionComponent implements OnInit {
             data.cargoNominationId = stowage.cargoNominationId;
             data.api = stowage.api;
             data.temperature = stowage.temperature;
+            data.ullage = stowage.ullage;
           }
         });
         data.plannedWeight = planedQty;
@@ -191,6 +192,8 @@ export class ArrivalConditionComponent implements OnInit {
             if (ballast.conditionType === 1 && ballast.valueType === 2) {
               planedQty += Number(ballast.quantityMT);
             }
+            data.sg = ballast.sg;
+            data.sounding = ballast.sounding;
           }
         });
         data.plannedWeight = planedQty;
@@ -214,6 +217,8 @@ export class ArrivalConditionComponent implements OnInit {
             if (ballast.conditionType === 1 && ballast.valueType === 2) {
               planedQty += Number(ballast.quantityMT);
             }
+            data.sg = ballast.sg;
+            data.sounding = ballast.sounding;
           }
         });
         data.plannedWeight = planedQty;
@@ -237,6 +242,8 @@ export class ArrivalConditionComponent implements OnInit {
             if (ballast.conditionType === 1 && ballast.valueType === 2) {
               planedQty += Number(ballast.quantityMT);
             }
+            data.sg = ballast.sg;
+            data.sounding = ballast.sounding;
           }
         });
         data.plannedWeight = planedQty;
