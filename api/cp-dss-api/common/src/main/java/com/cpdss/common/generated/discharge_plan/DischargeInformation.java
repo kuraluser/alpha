@@ -14,6 +14,7 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
 
   private DischargeInformation() {
     berthDetails_ = java.util.Collections.emptyList();
+    machineInUse_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -174,6 +175,39 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
               synopticTableId_ = input.readInt64();
               break;
             }
+          case 82:
+            {
+              if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                machineInUse_ =
+                    new java.util.ArrayList<
+                        com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                            .LoadingMachinesInUse>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              machineInUse_.add(
+                  input.readMessage(
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
+                          .parser(),
+                      extensionRegistry));
+              break;
+            }
+          case 90:
+            {
+              com.cpdss.common.generated.discharge_plan.CowPlan.Builder subBuilder = null;
+              if (cowPlan_ != null) {
+                subBuilder = cowPlan_.toBuilder();
+              }
+              cowPlan_ =
+                  input.readMessage(
+                      com.cpdss.common.generated.discharge_plan.CowPlan.parser(),
+                      extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(cowPlan_);
+                cowPlan_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -190,6 +224,9 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     } finally {
       if (((mutable_bitField0_ & 0x00000001) != 0)) {
         berthDetails_ = java.util.Collections.unmodifiableList(berthDetails_);
+      }
+      if (((mutable_bitField0_ & 0x00000002) != 0)) {
+        machineInUse_ = java.util.Collections.unmodifiableList(machineInUse_);
       }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
@@ -337,6 +374,39 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     return berthDetails_.get(index);
   }
 
+  public static final int MACHINEINUSE_FIELD_NUMBER = 10;
+  private java.util.List<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
+      machineInUse_;
+  /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+  public java.util.List<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
+      getMachineInUseList() {
+    return machineInUse_;
+  }
+  /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+  public java.util.List<
+          ? extends
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                  .LoadingMachinesInUseOrBuilder>
+      getMachineInUseOrBuilderList() {
+    return machineInUse_;
+  }
+  /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+  public int getMachineInUseCount() {
+    return machineInUse_.size();
+  }
+  /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+  public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
+      getMachineInUse(int index) {
+    return machineInUse_.get(index);
+  }
+  /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+  public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUseOrBuilder
+      getMachineInUseOrBuilder(int index) {
+    return machineInUse_.get(index);
+  }
+
   public static final int DISCHARGESTAGE_FIELD_NUMBER = 5;
   private com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages dischargeStage_;
   /**
@@ -411,6 +481,31 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     return getDischargeDelay();
   }
 
+  public static final int COWPLAN_FIELD_NUMBER = 11;
+  private com.cpdss.common.generated.discharge_plan.CowPlan cowPlan_;
+  /**
+   * <code>.CowPlan cowPlan = 11;</code>
+   *
+   * @return Whether the cowPlan field is set.
+   */
+  public boolean hasCowPlan() {
+    return cowPlan_ != null;
+  }
+  /**
+   * <code>.CowPlan cowPlan = 11;</code>
+   *
+   * @return The cowPlan.
+   */
+  public com.cpdss.common.generated.discharge_plan.CowPlan getCowPlan() {
+    return cowPlan_ == null
+        ? com.cpdss.common.generated.discharge_plan.CowPlan.getDefaultInstance()
+        : cowPlan_;
+  }
+  /** <code>.CowPlan cowPlan = 11;</code> */
+  public com.cpdss.common.generated.discharge_plan.CowPlanOrBuilder getCowPlanOrBuilder() {
+    return getCowPlan();
+  }
+
   public static final int POSTDISCHARGESTAGETIME_FIELD_NUMBER = 7;
   private com.cpdss.common.generated.discharge_plan.PostDischargeStageTime postDischargeStageTime_;
   /**
@@ -479,6 +574,12 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     if (synopticTableId_ != 0L) {
       output.writeInt64(9, synopticTableId_);
     }
+    for (int i = 0; i < machineInUse_.size(); i++) {
+      output.writeMessage(10, machineInUse_.get(i));
+    }
+    if (cowPlan_ != null) {
+      output.writeMessage(11, getCowPlan());
+    }
     unknownFields.writeTo(output);
   }
 
@@ -516,6 +617,12 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     if (synopticTableId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(9, synopticTableId_);
     }
+    for (int i = 0; i < machineInUse_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(10, machineInUse_.get(i));
+    }
+    if (cowPlan_ != null) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(11, getCowPlan());
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -547,6 +654,7 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       if (!getDischargeRate().equals(other.getDischargeRate())) return false;
     }
     if (!getBerthDetailsList().equals(other.getBerthDetailsList())) return false;
+    if (!getMachineInUseList().equals(other.getMachineInUseList())) return false;
     if (hasDischargeStage() != other.hasDischargeStage()) return false;
     if (hasDischargeStage()) {
       if (!getDischargeStage().equals(other.getDischargeStage())) return false;
@@ -554,6 +662,10 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     if (hasDischargeDelay() != other.hasDischargeDelay()) return false;
     if (hasDischargeDelay()) {
       if (!getDischargeDelay().equals(other.getDischargeDelay())) return false;
+    }
+    if (hasCowPlan() != other.hasCowPlan()) return false;
+    if (hasCowPlan()) {
+      if (!getCowPlan().equals(other.getCowPlan())) return false;
     }
     if (hasPostDischargeStageTime() != other.hasPostDischargeStageTime()) return false;
     if (hasPostDischargeStageTime()) {
@@ -590,6 +702,10 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       hash = (37 * hash) + BERTHDETAILS_FIELD_NUMBER;
       hash = (53 * hash) + getBerthDetailsList().hashCode();
     }
+    if (getMachineInUseCount() > 0) {
+      hash = (37 * hash) + MACHINEINUSE_FIELD_NUMBER;
+      hash = (53 * hash) + getMachineInUseList().hashCode();
+    }
     if (hasDischargeStage()) {
       hash = (37 * hash) + DISCHARGESTAGE_FIELD_NUMBER;
       hash = (53 * hash) + getDischargeStage().hashCode();
@@ -597,6 +713,10 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     if (hasDischargeDelay()) {
       hash = (37 * hash) + DISCHARGEDELAY_FIELD_NUMBER;
       hash = (53 * hash) + getDischargeDelay().hashCode();
+    }
+    if (hasCowPlan()) {
+      hash = (37 * hash) + COWPLAN_FIELD_NUMBER;
+      hash = (53 * hash) + getCowPlan().hashCode();
     }
     if (hasPostDischargeStageTime()) {
       hash = (37 * hash) + POSTDISCHARGESTAGETIME_FIELD_NUMBER;
@@ -736,6 +856,7 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     private void maybeForceBuilderInitialization() {
       if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
         getBerthDetailsFieldBuilder();
+        getMachineInUseFieldBuilder();
       }
     }
 
@@ -770,6 +891,12 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       } else {
         berthDetailsBuilder_.clear();
       }
+      if (machineInUseBuilder_ == null) {
+        machineInUse_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+      } else {
+        machineInUseBuilder_.clear();
+      }
       if (dischargeStageBuilder_ == null) {
         dischargeStage_ = null;
       } else {
@@ -781,6 +908,12 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       } else {
         dischargeDelay_ = null;
         dischargeDelayBuilder_ = null;
+      }
+      if (cowPlanBuilder_ == null) {
+        cowPlan_ = null;
+      } else {
+        cowPlan_ = null;
+        cowPlanBuilder_ = null;
       }
       if (postDischargeStageTimeBuilder_ == null) {
         postDischargeStageTime_ = null;
@@ -843,6 +976,15 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       } else {
         result.berthDetails_ = berthDetailsBuilder_.build();
       }
+      if (machineInUseBuilder_ == null) {
+        if (((bitField0_ & 0x00000002) != 0)) {
+          machineInUse_ = java.util.Collections.unmodifiableList(machineInUse_);
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.machineInUse_ = machineInUse_;
+      } else {
+        result.machineInUse_ = machineInUseBuilder_.build();
+      }
       if (dischargeStageBuilder_ == null) {
         result.dischargeStage_ = dischargeStage_;
       } else {
@@ -852,6 +994,11 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
         result.dischargeDelay_ = dischargeDelay_;
       } else {
         result.dischargeDelay_ = dischargeDelayBuilder_.build();
+      }
+      if (cowPlanBuilder_ == null) {
+        result.cowPlan_ = cowPlan_;
+      } else {
+        result.cowPlan_ = cowPlanBuilder_.build();
       }
       if (postDischargeStageTimeBuilder_ == null) {
         result.postDischargeStageTime_ = postDischargeStageTime_;
@@ -951,11 +1098,41 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
           }
         }
       }
+      if (machineInUseBuilder_ == null) {
+        if (!other.machineInUse_.isEmpty()) {
+          if (machineInUse_.isEmpty()) {
+            machineInUse_ = other.machineInUse_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureMachineInUseIsMutable();
+            machineInUse_.addAll(other.machineInUse_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.machineInUse_.isEmpty()) {
+          if (machineInUseBuilder_.isEmpty()) {
+            machineInUseBuilder_.dispose();
+            machineInUseBuilder_ = null;
+            machineInUse_ = other.machineInUse_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+            machineInUseBuilder_ =
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                    ? getMachineInUseFieldBuilder()
+                    : null;
+          } else {
+            machineInUseBuilder_.addAllMessages(other.machineInUse_);
+          }
+        }
+      }
       if (other.hasDischargeStage()) {
         mergeDischargeStage(other.getDischargeStage());
       }
       if (other.hasDischargeDelay()) {
         mergeDischargeDelay(other.getDischargeDelay());
+      }
+      if (other.hasCowPlan()) {
+        mergeCowPlan(other.getCowPlan());
       }
       if (other.hasPostDischargeStageTime()) {
         mergePostDischargeStageTime(other.getPostDischargeStageTime());
@@ -1645,6 +1822,247 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       return berthDetailsBuilder_;
     }
 
+    private java.util.List<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
+        machineInUse_ = java.util.Collections.emptyList();
+
+    private void ensureMachineInUseIsMutable() {
+      if (!((bitField0_ & 0x00000002) != 0)) {
+        machineInUse_ =
+            new java.util.ArrayList<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>(
+                machineInUse_);
+        bitField0_ |= 0x00000002;
+      }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUseOrBuilder>
+        machineInUseBuilder_;
+
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public java.util.List<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
+        getMachineInUseList() {
+      if (machineInUseBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(machineInUse_);
+      } else {
+        return machineInUseBuilder_.getMessageList();
+      }
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public int getMachineInUseCount() {
+      if (machineInUseBuilder_ == null) {
+        return machineInUse_.size();
+      } else {
+        return machineInUseBuilder_.getCount();
+      }
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
+        getMachineInUse(int index) {
+      if (machineInUseBuilder_ == null) {
+        return machineInUse_.get(index);
+      } else {
+        return machineInUseBuilder_.getMessage(index);
+      }
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public Builder setMachineInUse(
+        int index,
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse value) {
+      if (machineInUseBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMachineInUseIsMutable();
+        machineInUse_.set(index, value);
+        onChanged();
+      } else {
+        machineInUseBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public Builder setMachineInUse(
+        int index,
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
+            builderForValue) {
+      if (machineInUseBuilder_ == null) {
+        ensureMachineInUseIsMutable();
+        machineInUse_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        machineInUseBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public Builder addMachineInUse(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse value) {
+      if (machineInUseBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMachineInUseIsMutable();
+        machineInUse_.add(value);
+        onChanged();
+      } else {
+        machineInUseBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public Builder addMachineInUse(
+        int index,
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse value) {
+      if (machineInUseBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureMachineInUseIsMutable();
+        machineInUse_.add(index, value);
+        onChanged();
+      } else {
+        machineInUseBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public Builder addMachineInUse(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
+            builderForValue) {
+      if (machineInUseBuilder_ == null) {
+        ensureMachineInUseIsMutable();
+        machineInUse_.add(builderForValue.build());
+        onChanged();
+      } else {
+        machineInUseBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public Builder addMachineInUse(
+        int index,
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
+            builderForValue) {
+      if (machineInUseBuilder_ == null) {
+        ensureMachineInUseIsMutable();
+        machineInUse_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        machineInUseBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public Builder addAllMachineInUse(
+        java.lang.Iterable<
+                ? extends
+                    com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
+            values) {
+      if (machineInUseBuilder_ == null) {
+        ensureMachineInUseIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, machineInUse_);
+        onChanged();
+      } else {
+        machineInUseBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public Builder clearMachineInUse() {
+      if (machineInUseBuilder_ == null) {
+        machineInUse_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+      } else {
+        machineInUseBuilder_.clear();
+      }
+      return this;
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public Builder removeMachineInUse(int index) {
+      if (machineInUseBuilder_ == null) {
+        ensureMachineInUseIsMutable();
+        machineInUse_.remove(index);
+        onChanged();
+      } else {
+        machineInUseBuilder_.remove(index);
+      }
+      return this;
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
+        getMachineInUseBuilder(int index) {
+      return getMachineInUseFieldBuilder().getBuilder(index);
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUseOrBuilder
+        getMachineInUseOrBuilder(int index) {
+      if (machineInUseBuilder_ == null) {
+        return machineInUse_.get(index);
+      } else {
+        return machineInUseBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public java.util.List<
+            ? extends
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingMachinesInUseOrBuilder>
+        getMachineInUseOrBuilderList() {
+      if (machineInUseBuilder_ != null) {
+        return machineInUseBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(machineInUse_);
+      }
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
+        addMachineInUseBuilder() {
+      return getMachineInUseFieldBuilder()
+          .addBuilder(
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
+                  .getDefaultInstance());
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder
+        addMachineInUseBuilder(int index) {
+      return getMachineInUseFieldBuilder()
+          .addBuilder(
+              index,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
+                  .getDefaultInstance());
+    }
+    /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+    public java.util.List<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder>
+        getMachineInUseBuilderList() {
+      return getMachineInUseFieldBuilder().getBuilderList();
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse.Builder,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUseOrBuilder>
+        getMachineInUseFieldBuilder() {
+      if (machineInUseBuilder_ == null) {
+        machineInUseBuilder_ =
+            new com.google.protobuf.RepeatedFieldBuilderV3<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse
+                    .Builder,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingMachinesInUseOrBuilder>(
+                machineInUse_, ((bitField0_ & 0x00000002) != 0), getParentForChildren(), isClean());
+        machineInUse_ = null;
+      }
+      return machineInUseBuilder_;
+    }
+
     private com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages dischargeStage_;
     private com.google.protobuf.SingleFieldBuilderV3<
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages,
@@ -1960,6 +2378,124 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
         dischargeDelay_ = null;
       }
       return dischargeDelayBuilder_;
+    }
+
+    private com.cpdss.common.generated.discharge_plan.CowPlan cowPlan_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.CowPlan,
+            com.cpdss.common.generated.discharge_plan.CowPlan.Builder,
+            com.cpdss.common.generated.discharge_plan.CowPlanOrBuilder>
+        cowPlanBuilder_;
+    /**
+     * <code>.CowPlan cowPlan = 11;</code>
+     *
+     * @return Whether the cowPlan field is set.
+     */
+    public boolean hasCowPlan() {
+      return cowPlanBuilder_ != null || cowPlan_ != null;
+    }
+    /**
+     * <code>.CowPlan cowPlan = 11;</code>
+     *
+     * @return The cowPlan.
+     */
+    public com.cpdss.common.generated.discharge_plan.CowPlan getCowPlan() {
+      if (cowPlanBuilder_ == null) {
+        return cowPlan_ == null
+            ? com.cpdss.common.generated.discharge_plan.CowPlan.getDefaultInstance()
+            : cowPlan_;
+      } else {
+        return cowPlanBuilder_.getMessage();
+      }
+    }
+    /** <code>.CowPlan cowPlan = 11;</code> */
+    public Builder setCowPlan(com.cpdss.common.generated.discharge_plan.CowPlan value) {
+      if (cowPlanBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        cowPlan_ = value;
+        onChanged();
+      } else {
+        cowPlanBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /** <code>.CowPlan cowPlan = 11;</code> */
+    public Builder setCowPlan(
+        com.cpdss.common.generated.discharge_plan.CowPlan.Builder builderForValue) {
+      if (cowPlanBuilder_ == null) {
+        cowPlan_ = builderForValue.build();
+        onChanged();
+      } else {
+        cowPlanBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /** <code>.CowPlan cowPlan = 11;</code> */
+    public Builder mergeCowPlan(com.cpdss.common.generated.discharge_plan.CowPlan value) {
+      if (cowPlanBuilder_ == null) {
+        if (cowPlan_ != null) {
+          cowPlan_ =
+              com.cpdss.common.generated.discharge_plan.CowPlan.newBuilder(cowPlan_)
+                  .mergeFrom(value)
+                  .buildPartial();
+        } else {
+          cowPlan_ = value;
+        }
+        onChanged();
+      } else {
+        cowPlanBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /** <code>.CowPlan cowPlan = 11;</code> */
+    public Builder clearCowPlan() {
+      if (cowPlanBuilder_ == null) {
+        cowPlan_ = null;
+        onChanged();
+      } else {
+        cowPlan_ = null;
+        cowPlanBuilder_ = null;
+      }
+
+      return this;
+    }
+    /** <code>.CowPlan cowPlan = 11;</code> */
+    public com.cpdss.common.generated.discharge_plan.CowPlan.Builder getCowPlanBuilder() {
+
+      onChanged();
+      return getCowPlanFieldBuilder().getBuilder();
+    }
+    /** <code>.CowPlan cowPlan = 11;</code> */
+    public com.cpdss.common.generated.discharge_plan.CowPlanOrBuilder getCowPlanOrBuilder() {
+      if (cowPlanBuilder_ != null) {
+        return cowPlanBuilder_.getMessageOrBuilder();
+      } else {
+        return cowPlan_ == null
+            ? com.cpdss.common.generated.discharge_plan.CowPlan.getDefaultInstance()
+            : cowPlan_;
+      }
+    }
+    /** <code>.CowPlan cowPlan = 11;</code> */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.CowPlan,
+            com.cpdss.common.generated.discharge_plan.CowPlan.Builder,
+            com.cpdss.common.generated.discharge_plan.CowPlanOrBuilder>
+        getCowPlanFieldBuilder() {
+      if (cowPlanBuilder_ == null) {
+        cowPlanBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.cpdss.common.generated.discharge_plan.CowPlan,
+                com.cpdss.common.generated.discharge_plan.CowPlan.Builder,
+                com.cpdss.common.generated.discharge_plan.CowPlanOrBuilder>(
+                getCowPlan(), getParentForChildren(), isClean());
+        cowPlan_ = null;
+      }
+      return cowPlanBuilder_;
     }
 
     private com.cpdss.common.generated.discharge_plan.PostDischargeStageTime

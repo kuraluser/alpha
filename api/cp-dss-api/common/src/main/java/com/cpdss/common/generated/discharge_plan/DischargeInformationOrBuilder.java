@@ -79,6 +79,24 @@ public interface DischargeInformationOrBuilder
   com.cpdss.common.generated.discharge_plan.DischargeBerthsOrBuilder getBerthDetailsOrBuilder(
       int index);
 
+  /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+  java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
+      getMachineInUseList();
+  /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse getMachineInUse(
+      int index);
+  /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+  int getMachineInUseCount();
+  /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+  java.util.List<
+          ? extends
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                  .LoadingMachinesInUseOrBuilder>
+      getMachineInUseOrBuilderList();
+  /** <code>repeated .LoadingMachinesInUse machineInUse = 10;</code> */
+  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUseOrBuilder
+      getMachineInUseOrBuilder(int index);
+
   /**
    *
    *
@@ -129,6 +147,21 @@ public interface DischargeInformationOrBuilder
   com.cpdss.common.generated.discharge_plan.DischargeDelay getDischargeDelay();
   /** <code>.DischargeDelay dischargeDelay = 6;</code> */
   com.cpdss.common.generated.discharge_plan.DischargeDelayOrBuilder getDischargeDelayOrBuilder();
+
+  /**
+   * <code>.CowPlan cowPlan = 11;</code>
+   *
+   * @return Whether the cowPlan field is set.
+   */
+  boolean hasCowPlan();
+  /**
+   * <code>.CowPlan cowPlan = 11;</code>
+   *
+   * @return The cowPlan.
+   */
+  com.cpdss.common.generated.discharge_plan.CowPlan getCowPlan();
+  /** <code>.CowPlan cowPlan = 11;</code> */
+  com.cpdss.common.generated.discharge_plan.CowPlanOrBuilder getCowPlanOrBuilder();
 
   /**
    * <code>.PostDischargeStageTime postDischargeStageTime = 7;</code>

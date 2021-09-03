@@ -13,8 +13,8 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
   }
 
   private CowPlan() {
-    cowPlan_ = "";
-    noOfTanksForCow_ = "";
+    cowOptionType_ = 0;
+    cowTankPercent_ = "";
     cowStartTime_ = "";
     cowEndTime_ = "";
     estCowDuration_ = "";
@@ -53,18 +53,18 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
           case 0:
             done = true;
             break;
-          case 10:
+          case 8:
             {
-              java.lang.String s = input.readStringRequireUtf8();
+              int rawValue = input.readEnum();
 
-              cowPlan_ = s;
+              cowOptionType_ = rawValue;
               break;
             }
           case 18:
             {
               java.lang.String s = input.readStringRequireUtf8();
 
-              noOfTanksForCow_ = s;
+              cowTankPercent_ = s;
               break;
             }
           case 26:
@@ -163,70 +163,57 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
             com.cpdss.common.generated.discharge_plan.CowPlan.Builder.class);
   }
 
-  public static final int COWPLAN_FIELD_NUMBER = 1;
-  private volatile java.lang.Object cowPlan_;
+  public static final int COWOPTIONTYPE_FIELD_NUMBER = 1;
+  private int cowOptionType_;
   /**
-   * <code>string cowPlan = 1;</code>
+   * <code>.COW_OPTION_TYPE cowOptionType = 1;</code>
    *
-   * @return The cowPlan.
+   * @return The enum numeric value on the wire for cowOptionType.
    */
-  public java.lang.String getCowPlan() {
-    java.lang.Object ref = cowPlan_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      cowPlan_ = s;
-      return s;
-    }
+  public int getCowOptionTypeValue() {
+    return cowOptionType_;
   }
   /**
-   * <code>string cowPlan = 1;</code>
+   * <code>.COW_OPTION_TYPE cowOptionType = 1;</code>
    *
-   * @return The bytes for cowPlan.
+   * @return The cowOptionType.
    */
-  public com.google.protobuf.ByteString getCowPlanBytes() {
-    java.lang.Object ref = cowPlan_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b =
-          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      cowPlan_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public com.cpdss.common.generated.Common.COW_OPTION_TYPE getCowOptionType() {
+    @SuppressWarnings("deprecation")
+    com.cpdss.common.generated.Common.COW_OPTION_TYPE result =
+        com.cpdss.common.generated.Common.COW_OPTION_TYPE.valueOf(cowOptionType_);
+    return result == null ? com.cpdss.common.generated.Common.COW_OPTION_TYPE.UNRECOGNIZED : result;
   }
 
-  public static final int NOOFTANKSFORCOW_FIELD_NUMBER = 2;
-  private volatile java.lang.Object noOfTanksForCow_;
+  public static final int COWTANKPERCENT_FIELD_NUMBER = 2;
+  private volatile java.lang.Object cowTankPercent_;
   /**
-   * <code>string noOfTanksForCow = 2;</code>
+   * <code>string cowTankPercent = 2;</code>
    *
-   * @return The noOfTanksForCow.
+   * @return The cowTankPercent.
    */
-  public java.lang.String getNoOfTanksForCow() {
-    java.lang.Object ref = noOfTanksForCow_;
+  public java.lang.String getCowTankPercent() {
+    java.lang.Object ref = cowTankPercent_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      noOfTanksForCow_ = s;
+      cowTankPercent_ = s;
       return s;
     }
   }
   /**
-   * <code>string noOfTanksForCow = 2;</code>
+   * <code>string cowTankPercent = 2;</code>
    *
-   * @return The bytes for noOfTanksForCow.
+   * @return The bytes for cowTankPercent.
    */
-  public com.google.protobuf.ByteString getNoOfTanksForCowBytes() {
-    java.lang.Object ref = noOfTanksForCow_;
+  public com.google.protobuf.ByteString getCowTankPercentBytes() {
+    java.lang.Object ref = cowTankPercent_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      noOfTanksForCow_ = b;
+      cowTankPercent_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -470,11 +457,12 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
 
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-    if (!getCowPlanBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, cowPlan_);
+    if (cowOptionType_
+        != com.cpdss.common.generated.Common.COW_OPTION_TYPE.EMPTY_COW_OPTION_TYPE.getNumber()) {
+      output.writeEnum(1, cowOptionType_);
     }
-    if (!getNoOfTanksForCowBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, noOfTanksForCow_);
+    if (!getCowTankPercentBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, cowTankPercent_);
     }
     if (!getCowStartTimeBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 3, cowStartTime_);
@@ -509,11 +497,12 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     if (size != -1) return size;
 
     size = 0;
-    if (!getCowPlanBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, cowPlan_);
+    if (cowOptionType_
+        != com.cpdss.common.generated.Common.COW_OPTION_TYPE.EMPTY_COW_OPTION_TYPE.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream.computeEnumSize(1, cowOptionType_);
     }
-    if (!getNoOfTanksForCowBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, noOfTanksForCow_);
+    if (!getCowTankPercentBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, cowTankPercent_);
     }
     if (!getCowStartTimeBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, cowStartTime_);
@@ -555,8 +544,8 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     com.cpdss.common.generated.discharge_plan.CowPlan other =
         (com.cpdss.common.generated.discharge_plan.CowPlan) obj;
 
-    if (!getCowPlan().equals(other.getCowPlan())) return false;
-    if (!getNoOfTanksForCow().equals(other.getNoOfTanksForCow())) return false;
+    if (cowOptionType_ != other.cowOptionType_) return false;
+    if (!getCowTankPercent().equals(other.getCowTankPercent())) return false;
     if (!getCowStartTime().equals(other.getCowStartTime())) return false;
     if (!getCowEndTime().equals(other.getCowEndTime())) return false;
     if (!getEstCowDuration().equals(other.getEstCowDuration())) return false;
@@ -576,10 +565,10 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + COWPLAN_FIELD_NUMBER;
-    hash = (53 * hash) + getCowPlan().hashCode();
-    hash = (37 * hash) + NOOFTANKSFORCOW_FIELD_NUMBER;
-    hash = (53 * hash) + getNoOfTanksForCow().hashCode();
+    hash = (37 * hash) + COWOPTIONTYPE_FIELD_NUMBER;
+    hash = (53 * hash) + cowOptionType_;
+    hash = (37 * hash) + COWTANKPERCENT_FIELD_NUMBER;
+    hash = (53 * hash) + getCowTankPercent().hashCode();
     hash = (37 * hash) + COWSTARTTIME_FIELD_NUMBER;
     hash = (53 * hash) + getCowStartTime().hashCode();
     hash = (37 * hash) + COWENDTIME_FIELD_NUMBER;
@@ -737,9 +726,9 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      cowPlan_ = "";
+      cowOptionType_ = 0;
 
-      noOfTanksForCow_ = "";
+      cowTankPercent_ = "";
 
       cowStartTime_ = "";
 
@@ -789,8 +778,8 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
       com.cpdss.common.generated.discharge_plan.CowPlan result =
           new com.cpdss.common.generated.discharge_plan.CowPlan(this);
       int from_bitField0_ = bitField0_;
-      result.cowPlan_ = cowPlan_;
-      result.noOfTanksForCow_ = noOfTanksForCow_;
+      result.cowOptionType_ = cowOptionType_;
+      result.cowTankPercent_ = cowTankPercent_;
       result.cowStartTime_ = cowStartTime_;
       result.cowEndTime_ = cowEndTime_;
       result.estCowDuration_ = estCowDuration_;
@@ -857,12 +846,11 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     public Builder mergeFrom(com.cpdss.common.generated.discharge_plan.CowPlan other) {
       if (other == com.cpdss.common.generated.discharge_plan.CowPlan.getDefaultInstance())
         return this;
-      if (!other.getCowPlan().isEmpty()) {
-        cowPlan_ = other.cowPlan_;
-        onChanged();
+      if (other.cowOptionType_ != 0) {
+        setCowOptionTypeValue(other.getCowOptionTypeValue());
       }
-      if (!other.getNoOfTanksForCow().isEmpty()) {
-        noOfTanksForCow_ = other.noOfTanksForCow_;
+      if (!other.getCowTankPercent().isEmpty()) {
+        cowTankPercent_ = other.cowTankPercent_;
         onChanged();
       }
       if (!other.getCowStartTime().isEmpty()) {
@@ -950,154 +938,138 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
 
     private int bitField0_;
 
-    private java.lang.Object cowPlan_ = "";
+    private int cowOptionType_ = 0;
     /**
-     * <code>string cowPlan = 1;</code>
+     * <code>.COW_OPTION_TYPE cowOptionType = 1;</code>
      *
-     * @return The cowPlan.
+     * @return The enum numeric value on the wire for cowOptionType.
      */
-    public java.lang.String getCowPlan() {
-      java.lang.Object ref = cowPlan_;
+    public int getCowOptionTypeValue() {
+      return cowOptionType_;
+    }
+    /**
+     * <code>.COW_OPTION_TYPE cowOptionType = 1;</code>
+     *
+     * @param value The enum numeric value on the wire for cowOptionType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCowOptionTypeValue(int value) {
+      cowOptionType_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.COW_OPTION_TYPE cowOptionType = 1;</code>
+     *
+     * @return The cowOptionType.
+     */
+    public com.cpdss.common.generated.Common.COW_OPTION_TYPE getCowOptionType() {
+      @SuppressWarnings("deprecation")
+      com.cpdss.common.generated.Common.COW_OPTION_TYPE result =
+          com.cpdss.common.generated.Common.COW_OPTION_TYPE.valueOf(cowOptionType_);
+      return result == null
+          ? com.cpdss.common.generated.Common.COW_OPTION_TYPE.UNRECOGNIZED
+          : result;
+    }
+    /**
+     * <code>.COW_OPTION_TYPE cowOptionType = 1;</code>
+     *
+     * @param value The cowOptionType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCowOptionType(com.cpdss.common.generated.Common.COW_OPTION_TYPE value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      cowOptionType_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.COW_OPTION_TYPE cowOptionType = 1;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearCowOptionType() {
+
+      cowOptionType_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object cowTankPercent_ = "";
+    /**
+     * <code>string cowTankPercent = 2;</code>
+     *
+     * @return The cowTankPercent.
+     */
+    public java.lang.String getCowTankPercent() {
+      java.lang.Object ref = cowTankPercent_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        cowPlan_ = s;
+        cowTankPercent_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string cowPlan = 1;</code>
+     * <code>string cowTankPercent = 2;</code>
      *
-     * @return The bytes for cowPlan.
+     * @return The bytes for cowTankPercent.
      */
-    public com.google.protobuf.ByteString getCowPlanBytes() {
-      java.lang.Object ref = cowPlan_;
+    public com.google.protobuf.ByteString getCowTankPercentBytes() {
+      java.lang.Object ref = cowTankPercent_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        cowPlan_ = b;
+        cowTankPercent_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string cowPlan = 1;</code>
+     * <code>string cowTankPercent = 2;</code>
      *
-     * @param value The cowPlan to set.
+     * @param value The cowTankPercent to set.
      * @return This builder for chaining.
      */
-    public Builder setCowPlan(java.lang.String value) {
+    public Builder setCowTankPercent(java.lang.String value) {
       if (value == null) {
         throw new NullPointerException();
       }
 
-      cowPlan_ = value;
+      cowTankPercent_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string cowPlan = 1;</code>
+     * <code>string cowTankPercent = 2;</code>
      *
      * @return This builder for chaining.
      */
-    public Builder clearCowPlan() {
+    public Builder clearCowTankPercent() {
 
-      cowPlan_ = getDefaultInstance().getCowPlan();
+      cowTankPercent_ = getDefaultInstance().getCowTankPercent();
       onChanged();
       return this;
     }
     /**
-     * <code>string cowPlan = 1;</code>
+     * <code>string cowTankPercent = 2;</code>
      *
-     * @param value The bytes for cowPlan to set.
+     * @param value The bytes for cowTankPercent to set.
      * @return This builder for chaining.
      */
-    public Builder setCowPlanBytes(com.google.protobuf.ByteString value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      checkByteStringIsUtf8(value);
-
-      cowPlan_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object noOfTanksForCow_ = "";
-    /**
-     * <code>string noOfTanksForCow = 2;</code>
-     *
-     * @return The noOfTanksForCow.
-     */
-    public java.lang.String getNoOfTanksForCow() {
-      java.lang.Object ref = noOfTanksForCow_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        noOfTanksForCow_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string noOfTanksForCow = 2;</code>
-     *
-     * @return The bytes for noOfTanksForCow.
-     */
-    public com.google.protobuf.ByteString getNoOfTanksForCowBytes() {
-      java.lang.Object ref = noOfTanksForCow_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        noOfTanksForCow_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string noOfTanksForCow = 2;</code>
-     *
-     * @param value The noOfTanksForCow to set.
-     * @return This builder for chaining.
-     */
-    public Builder setNoOfTanksForCow(java.lang.String value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-
-      noOfTanksForCow_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string noOfTanksForCow = 2;</code>
-     *
-     * @return This builder for chaining.
-     */
-    public Builder clearNoOfTanksForCow() {
-
-      noOfTanksForCow_ = getDefaultInstance().getNoOfTanksForCow();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string noOfTanksForCow = 2;</code>
-     *
-     * @param value The bytes for noOfTanksForCow to set.
-     * @return This builder for chaining.
-     */
-    public Builder setNoOfTanksForCowBytes(com.google.protobuf.ByteString value) {
+    public Builder setCowTankPercentBytes(com.google.protobuf.ByteString value) {
       if (value == null) {
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
 
-      noOfTanksForCow_ = value;
+      cowTankPercent_ = value;
       onChanged();
       return this;
     }

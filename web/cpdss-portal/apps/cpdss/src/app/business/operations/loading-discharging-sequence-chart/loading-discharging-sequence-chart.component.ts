@@ -1027,11 +1027,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 quantity += Number(tank.quantity);
               });
               const categoryLabel =
-                `<div class="row">
-                  <div class="col-md-12 text-center">
-                    <span>${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(quantity, LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit)} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}</span>
-                  </div>
-                </div>`;
+                `<div class="content-ellipsis">${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(quantity, LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit)} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}</div>
+                  `;
 
               return categoryLabel;
             },
