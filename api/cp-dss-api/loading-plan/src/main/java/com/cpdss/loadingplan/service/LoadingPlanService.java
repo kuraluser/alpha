@@ -450,6 +450,7 @@ public class LoadingPlanService {
                   landing.setQuantityMt(BigDecimal.valueOf(billOfLanding.getQuantityMt()));
                   landing.setApi(BigDecimal.valueOf(billOfLanding.getApi()));
                   landing.setTemperature(BigDecimal.valueOf(billOfLanding.getTemperature()));
+                  landing.setIsActive(true);
                   landing.setVersion(billOfLanding.getVersion());
                   billOfLandingRepository.save(landing);
                 }
@@ -478,6 +479,7 @@ public class LoadingPlanService {
                             BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
                             ullageInsert.getColorCode(),
                             BigDecimal.valueOf(ullageInsert.getQuantity()),
+
                             BigDecimal.valueOf(ullageInsert.getSounding()),
                             BigDecimal.valueOf(ullageInsert.getQuantity()),
                             Long.valueOf(ullageInsert.getTankId()),
@@ -501,6 +503,7 @@ public class LoadingPlanService {
                     details.setValueType(Integer.valueOf(ullageInsert.getActualPlanned() + ""));
                     details.setConditionType(
                         Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
+                    details.setIsActive(true);
                     details.setColorCode(ullageInsert.getColorCode());
                     details.setSg(BigDecimal.valueOf(ullageInsert.getSg()));
                     loadingPlanBallastDetailsTempRepository.save(details);
@@ -542,6 +545,7 @@ public class LoadingPlanService {
                         Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
                     tempData.setCorrectionFactor(
                         BigDecimal.valueOf(ullageInsert.getCorrectionFactor()));
+                    tempData.setIsActive(true);
                     loadingPlanStowageDetailsTempRepository.save(tempData);
                   }
                 });
@@ -563,7 +567,8 @@ public class LoadingPlanService {
                     robDet.setPortXId(Long.valueOf(ullageInsert.getPortXid()));
                     robDet.setPortRotationXId(Long.valueOf(ullageInsert.getPortRotationXid()));
                     robDet.setConditionType(
-                        Integer.valueOf(ullageInsert.getCorrectedUllage() + ""));
+                            Integer.valueOf(ullageInsert.getCorrectedUllage() + ""));
+                    robDet.setIsActive(true);
                     loadingPlanRobDetailsRepository.save(robDet);
                   }
                 });
