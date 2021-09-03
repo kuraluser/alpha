@@ -891,7 +891,7 @@ export interface IBillOfLandingList {
   api: number | string;
   temperature: number;
   isUpdate?: boolean;
-  isActive?: string;
+  isActive?: boolean | string;
   version?: string;
 
 }
@@ -918,7 +918,8 @@ export interface IUllageUpdList {
   port_xid?: string;
   port_rotation_xid?: string | number;
   grade?: string;
-
+  isActive?: boolean;
+  ullage? : string | number;
 }
 
 /**
@@ -946,6 +947,8 @@ export interface IBallastUpdateList {
   portXId?: string;
   portRotationXId?: string | number;
   isValidate?: string;
+  isActive?: boolean;
+  ullage? : string | number;
 }
 
 /**
@@ -970,6 +973,8 @@ export interface IRobUpdateList {
   correctedUllage?: string;
   correctionFactor?: string;
   fillingRatio?: string;
+  isActive?: boolean;
+  ullage?: string | number;
 }
 
 /**

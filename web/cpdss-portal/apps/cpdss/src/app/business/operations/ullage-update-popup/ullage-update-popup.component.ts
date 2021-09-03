@@ -838,7 +838,7 @@ export class UllageUpdatePopupComponent implements OnInit {
           item.quantity = result.quantityMt;
           item.correctedUllage = result.correctedUllage;
           item.percentageFilled = result.fillingRatio;
-          item.ullage = result.correctedUllage;
+          item.ullage = event.data.ullage.value;
           item.api = event.data.api.value;
           item.temperature = event.data.temperature.value;
         }
@@ -955,6 +955,7 @@ export class UllageUpdatePopupComponent implements OnInit {
         tankId: item.tankId?.toString(),
         temperature: item.temperature?.toString(),
         correctedUllage: item.correctedUllage?.toString(),
+        ullage: item.ullage?.toString(),
         quantity: item.quantity?.toString(),
         fillingPercentage: item.percentageFilled ? Number(item.percentageFilled) : '',
         cargoNominationId: item.cargoNominationId ? Number(item.cargoNominationId) : '',
@@ -997,6 +998,7 @@ export class UllageUpdatePopupComponent implements OnInit {
         quantity: item.quantity.value?.toString(),
         sounding: item.sounding.value?.toString(),
         correctedUllage: item.correctedUllage?.toString(),
+        ullage: item.ullage?.toString(),
         correctionFactor: item.correctionFactor ? item.correctionFactor?.toString() : '',
         filling_percentage: item.fillingPercentage.value?.toString(),
         arrival_departutre: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2,
@@ -1027,6 +1029,7 @@ export class UllageUpdatePopupComponent implements OnInit {
         observedM3: '',
         temperature: '',
         correctedUllage: '',
+        ullage: '',
         correctionFactor: '',
         fillingRatio: '',
       })
