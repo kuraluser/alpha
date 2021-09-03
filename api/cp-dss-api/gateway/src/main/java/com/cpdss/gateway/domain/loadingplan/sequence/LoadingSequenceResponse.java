@@ -3,7 +3,6 @@ package com.cpdss.gateway.domain.loadingplan.sequence;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import lombok.Data;
@@ -12,7 +11,7 @@ import lombok.Data;
 @JsonInclude(value = Include.NON_EMPTY)
 public class LoadingSequenceResponse {
 
-  private Date minXAxisValue;
+  private Long minXAxisValue;
   private Long maxXAxisValue;
   private Integer interval;
   private List<Cargo> cargos;
