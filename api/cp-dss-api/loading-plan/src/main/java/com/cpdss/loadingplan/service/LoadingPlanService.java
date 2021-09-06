@@ -238,6 +238,7 @@ public class LoadingPlanService {
         .forEach(
             bill -> {
               Common.BillOfLadding.Builder blBuilder = Common.BillOfLadding.newBuilder();
+              blBuilder.setId(bill.getId());
               blBuilder.setBlRefNo(bill.getBlRefNo());
               blBuilder.setApi(bill.getApi() != null ? bill.getApi().toString() : "");
               blBuilder.setTemperature(
