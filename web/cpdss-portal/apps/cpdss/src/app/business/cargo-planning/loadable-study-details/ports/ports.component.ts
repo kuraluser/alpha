@@ -311,6 +311,17 @@ export class PortsComponent implements OnInit, OnDestroy {
         this.portsLists[index].processing = false;
         if (event?.data?.responseStatus?.status === '200') {
           this.portsLists[index].id = event.data.id;
+          this.loadableStudyDetailsTransformationService.updateOhqOnAddEditPorts(true);
+          this.portsLists.forEach(port => {
+            const isContainsOhqPorts = this.loadableStudyDetailsTransformationService.getOHQPortValidity(port.id);
+            if (!isContainsOhqPorts) {
+              this.loadableStudyDetailsTransformationService.updateOhqOnAddEditPorts(false);
+            }
+          });
+          if ((this.portsListSaved.length === this.portsLists.length) && this.portsListSaved[index] && (this.portsLists[index].port.value.id !== this.portsListSaved[index].port['_value'].id)) {
+            this.loadableStudyDetailsTransformationService.updateOhqOnAddEditPorts(false);
+            this.loadableStudyDetailsTransformationService.setOHQPortValidity(this.portsLists[index].id, false);
+          }
           this.portsLists = [...this.portsLists];
           this.portsListSaved = JSON.parse(JSON.stringify(this.portsLists));
         }
@@ -394,7 +405,6 @@ export class PortsComponent implements OnInit, OnDestroy {
         rejectIcon: 'pi',
         rejectButtonStyleClass: 'btn btn-main',
         accept: async () => {
-          this.portsListSaved[index] = JSON.parse(JSON.stringify(this.portsLists[index]))
           this.portsListSaved[index]['isAdd'] = true;
           this.updatePortsDetails(event)
         },

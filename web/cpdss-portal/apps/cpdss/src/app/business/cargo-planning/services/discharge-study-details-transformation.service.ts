@@ -767,6 +767,14 @@ export class DischargeStudyDetailsTransformationService {
   }
 
   /**
+   * function to update ohq tab status 
+   * @param status 
+   */
+  updateOhqOnAddEditPorts(status: boolean): void {
+    this._ohqValiditySource.next(status);
+  }
+
+  /**
   * Add missing ports from the provided array
   *
   * @param {boolean} isValid
