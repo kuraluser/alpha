@@ -12,6 +12,7 @@ service DischargeInformationService {
   rpc getOrSaveRulesForDischarging(DischargeRuleRequest) returns (DischargeRuleReply) {}
   rpc DischargingUploadPortTideDetails(DischargingUploadTideDetailRequest) returns (DischargingUploadTideDetailStatusReply){} 
   rpc DischargingDownloadPortTideDetails(DischargingDownloadTideDetailRequest) returns (stream DischargingDownloadTideDetailStatusReply) {}
+  rpc GetDischargingPlan(DischargeInformationRequest) returns (DischargingPlanReply) {}
 }
 
 service DischargePlanService{

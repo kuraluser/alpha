@@ -15,6 +15,22 @@ public final class DischargePlanModels {
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_DischargeInformationRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingPlanReply_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingPlanReply_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingPlanStabilityParameters_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingPlanStabilityParameters_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingPlanTankDetails_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingPlanTankDetails_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingSequence_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingSequence_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
       internal_static_DischargeInformation_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_DischargeInformation_fieldAccessorTable;
@@ -100,81 +116,116 @@ public final class DischargePlanModels {
           + "d\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017dischargeIn"
           + "foId\030\004 \001(\003\022\032\n\022dischargePatternId\030\005 \001(\003\022\026"
           + "\n\016portRotationId\030\006 \001(\003\022\027\n\017synopticTableI"
-          + "d\030\007 \001(\003\"\300\003\n\024DischargeInformation\022\027\n\017disc"
-          + "hargeInfoId\030\010 \001(\003\022\027\n\017synopticTableId\030\t \001"
-          + "(\003\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSta"
-          + "tus\022+\n\020dischargeDetails\030\002 \001(\0132\021.Discharg"
-          + "eDetails\022&\n\rdischargeRate\030\003 \001(\0132\017.Discha"
-          + "rgeRates\022&\n\014berthDetails\030\004 \003(\0132\020.Dischar"
-          + "geBerths\022+\n\014machineInUse\030\n \003(\0132\025.Loading"
-          + "MachinesInUse\022&\n\016dischargeStage\030\005 \001(\0132\016."
-          + "LoadingStages\022\'\n\016dischargeDelay\030\006 \001(\0132\017."
-          + "DischargeDelay\022\031\n\007cowPlan\030\013 \001(\0132\010.CowPla"
-          + "n\0227\n\026postDischargeStageTime\030\007 \001(\0132\027.Post"
-          + "DischargeStageTime\"\223\001\n\020DischargeDetails\022"
-          + "\n\n\002id\030\001 \001(\003\022\025\n\rtimeOfSunrise\030\002 \001(\t\022\024\n\014ti"
-          + "meOfSunset\030\003 \001(\t\022\021\n\tstartTime\030\004 \001(\t\022!\n\013t"
-          + "rimAllowed\030\005 \001(\0132\014.TrimAllowed\022\020\n\010voyage"
-          + "Id\030\006 \001(\003\"x\n\016DischargeRates\022\034\n\024initialDis"
-          + "chargeRate\030\001 \001(\t\022\030\n\020maxDischargeRate\030\002 \001"
-          + "(\t\022\026\n\016minBallastRate\030\003 \001(\t\022\026\n\016maxBallast"
-          + "Rate\030\004 \001(\t\"\350\002\n\017DischargeBerths\022\n\n\002id\030\001 \001"
-          + "(\003\022\027\n\017dischargeInfoId\030\002 \001(\003\022\017\n\007berthId\030\003"
-          + " \001(\003\022\r\n\005depth\030\004 \001(\t\022\031\n\021maxManifoldHeight"
-          + "\030\005 \001(\t\022\033\n\023maxManifoldPressure\030\006 \001(\t\022\027\n\017h"
-          + "oseConnections\030\007 \001(\t\022\032\n\022seaDraftLimitati"
-          + "on\030\010 \001(\t\022\032\n\022airDraftLimitation\030\t \001(\t\022\020\n\010"
-          + "airPurge\030\n \001(\010\022\030\n\020cargoCirculation\030\013 \001(\010"
-          + "\022\030\n\020lineDisplacement\030\014 \001(\t\022$\n\034specialReg"
-          + "ulationRestriction\030\r \001(\t\022\033\n\023itemsToBeAgr"
-          + "eedWith\030\016 \001(\t\"\226\001\n\026DischargeMachinesInUse"
-          + "\022\n\n\002id\030\001 \001(\003\022\027\n\017dischargeInfoId\030\002 \001(\003\022\021\n"
-          + "\tmachineId\030\003 \001(\003\022\020\n\010capacity\030\004 \001(\t\022\017\n\007is"
-          + "Using\030\005 \001(\010\022!\n\013machineType\030\006 \001(\0162\014.Machi"
-          + "neType\"R\n\016DischargeDelay\022\036\n\007reasons\030\001 \003("
-          + "\0132\r.DelayReasons\022 \n\006delays\030\002 \003(\0132\020.Disch"
-          + "argeDelays\"\241\001\n\017DischargeDelays\022\n\n\002id\030\001 \001"
-          + "(\003\022\027\n\017dischargeInfoId\030\002 \001(\003\022\031\n\021reasonFor"
-          + "DelayIds\030\003 \003(\003\022\020\n\010duration\030\004 \001(\t\022\017\n\007carg"
-          + "oId\030\005 \001(\003\022\020\n\010quantity\030\006 \001(\t\022\031\n\021cargoNomi"
-          + "nationId\030\007 \001(\003\"{\n\026PostDischargeStageTime"
-          + "\022\027\n\017timeForDryCheck\030\001 \001(\t\022\027\n\017slopDischar"
-          + "ging\030\002 \001(\t\022\026\n\016finalStripping\030\003 \001(\t\022\027\n\017fr"
-          + "eshOilWashing\030\004 \001(\t\"\225\002\n\007CowPlan\022\'\n\rcowOp"
-          + "tionType\030\001 \001(\0162\020.COW_OPTION_TYPE\022\026\n\016cowT"
-          + "ankPercent\030\002 \001(\t\022\024\n\014cowStartTime\030\003 \001(\t\022\022"
-          + "\n\ncowEndTime\030\004 \001(\t\022\026\n\016estCowDuration\030\005 \001"
-          + "(\t\022\022\n\ntrimCowMin\030\006 \001(\t\022\022\n\ntrimCowMax\030\007 \001"
-          + "(\t\022\035\n\025needFreshCrudeStorage\030\010 \001(\010\022\027\n\017nee"
-          + "dFlushingOil\030\t \001(\010\022\'\n\016cowTankDetails\030\n \003"
-          + "(\0132\017.CowTankDetails\"`\n\016CowTankDetails\022\032\n"
-          + "\007cowType\030\001 \001(\0162\t.COW_TYPE\022\017\n\007tankIds\030\002 \003"
-          + "(\003\022!\n\013cargoForCow\030\003 \003(\0132\014.CargoForCow\"\204\001"
-          + "\n\013CargoForCow\022\017\n\007cargoId\030\001 \001(\003\022\031\n\021cargoN"
-          + "ominationId\030\002 \001(\003\022\026\n\016washingCargoId\030\003 \001("
-          + "\003\022 \n\030washingCargoNominationId\030\004 \001(\003\022\017\n\007t"
-          + "ankIds\030\005 \003(\003\"\213\001\n\024DischargeRuleRequest\022\020\n"
-          + "\010vesselId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010ru"
-          + "lePlan\030\003 \003(\0132\n.RulePlans\022\027\n\017dischargeInf"
-          + "oId\030\004 \001(\003\022\027\n\017isNoDefaultRule\030\005 \001(\010\"[\n\022Di"
-          + "schargeRuleReply\022\'\n\016responseStatus\030\001 \001(\013"
-          + "2\017.ResponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.Ru"
-          + "lePlans\"\200\001\n!DischargeStudyDataTransferRe"
-          + "quest\022\033\n\010portData\030\001 \003(\0132\t.PortData\022\032\n\022di"
-          + "schargePatternId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003"
-          + "\022\020\n\010vesselId\030\004 \001(\003\";\n\010PortData\022\026\n\016portRo"
-          + "tationId\030\001 \001(\003\022\027\n\017synopticTableId\030\002 \001(\003\""
-          + "x\n\"DischargingUploadTideDetailRequest\022\026\n"
-          + "\016tideDetaildata\030\001 \001(\014\022\'\n\016responseStatus\030"
-          + "\002 \001(\0132\017.ResponseStatus\022\021\n\tloadingId\030\003 \001("
-          + "\003\"Q\n&DischargingUploadTideDetailStatusRe"
-          + "ply\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSt"
-          + "atus\"9\n$DischargingDownloadTideDetailReq"
-          + "uest\022\021\n\tloadingId\030\001 \001(\003\"o\n(DischargingDo"
-          + "wnloadTideDetailStatusReply\022\'\n\016responseS"
-          + "tatus\030\001 \001(\0132\017.ResponseStatus\022\014\n\004data\030\002 \001"
-          + "(\014\022\014\n\004size\030\003 \001(\005B-\n)com.cpdss.common.gen"
-          + "erated.discharge_planP\001b\006proto3"
+          + "d\030\007 \001(\003\"\324\003\n\024DischargingPlanReply\022\'\n\016resp"
+          + "onseStatus\030\007 \001(\0132\017.ResponseStatus\022\025\n\rloa"
+          + "dingInfoId\030\001 \001(\003\0223\n\026dischargingInformati"
+          + "on\030\010 \001(\0132\023.LoadingInformation\022.\n\024dischar"
+          + "gingSequences\030\002 \003(\0132\020.LoadingSequence\022B\n"
+          + "!portDischargingPlanStowageDetails\030\003 \003(\013"
+          + "2\027.LoadingPlanTankDetails\022B\n!portDischar"
+          + "gingPlanBallastDetails\030\004 \003(\0132\027.LoadingPl"
+          + "anTankDetails\022>\n\035portDischargingPlanRobD"
+          + "etails\030\005 \003(\0132\027.LoadingPlanTankDetails\022O\n"
+          + "&portDischargingPlanStabilityParameters\030"
+          + "\006 \003(\0132\037.LoadingPlanStabilityParameters\"\327"
+          + "\001\n\"DischargingPlanStabilityParameters\022\r\n"
+          + "\005draft\030\001 \001(\t\022\014\n\004trim\030\002 \001(\t\022\n\n\002bm\030\003 \001(\t\022\n"
+          + "\n\002sf\030\004 \001(\t\022\025\n\rconditionType\030\005 \001(\005\022\021\n\tval"
+          + "ueType\030\006 \001(\005\022\021\n\tforeDraft\030\007 \001(\t\022\020\n\010aftDr"
+          + "aft\030\010 \001(\t\022\014\n\004time\030\t \001(\005\022\021\n\tmeanDraft\030\n \001"
+          + "(\t\022\014\n\004list\030\013 \001(\t\"\347\001\n\032DischargingPlanTank"
+          + "Details\022\013\n\003api\030\001 \001(\t\022\031\n\021cargoNominationI"
+          + "d\030\002 \001(\003\022\020\n\010quantity\030\003 \001(\t\022\016\n\006tankId\030\004 \001("
+          + "\003\022\023\n\013temperature\030\005 \001(\t\022\016\n\006ullage\030\006 \001(\t\022\022"
+          + "\n\nquantityM3\030\007 \001(\t\022\020\n\010sounding\030\010 \001(\t\022\025\n\r"
+          + "conditionType\030\t \001(\005\022\021\n\tvalueType\030\n \001(\005\022\n"
+          + "\n\002id\030\013 \001(\003\"\325\003\n\023DischargingSequence\022\031\n\021ca"
+          + "rgoNominationId\030\001 \001(\003\022\021\n\tstartTime\030\002 \001(\005"
+          + "\022\017\n\007endTime\030\003 \001(\005\022\016\n\006portId\030\004 \001(\003\022\026\n\016seq"
+          + "uenceNumber\030\005 \001(\005\022\021\n\tstageName\030\006 \001(\t\022\024\n\014"
+          + "toLoadicator\030\007 \001(\010\022\033\n\013cargoValves\030\010 \003(\0132"
+          + "\006.Valve\022\035\n\rballastValves\030\t \003(\0132\006.Valve\022\""
+          + "\n\014loadingRates\030\n \003(\0132\014.LoadingRate\022,\n\021de"
+          + "BallastingRates\030\013 \003(\0132\021.DeBallastingRate"
+          + "\022?\n\032loadingPlanPortWiseDetails\030\014 \003(\0132\033.L"
+          + "oadingPlanPortWiseDetails\022\031\n\021cargoLoadin"
+          + "gRate1\030\r \001(\t\022\031\n\021cargoLoadingRate2\030\016 \001(\t\022"
+          + ")\n\021ballastOperations\030\017 \003(\0132\016.PumpOperati"
+          + "on\"\300\003\n\024DischargeInformation\022\027\n\017discharge"
+          + "InfoId\030\010 \001(\003\022\027\n\017synopticTableId\030\t \001(\003\022\'\n"
+          + "\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022+"
+          + "\n\020dischargeDetails\030\002 \001(\0132\021.DischargeDeta"
+          + "ils\022&\n\rdischargeRate\030\003 \001(\0132\017.DischargeRa"
+          + "tes\022&\n\014berthDetails\030\004 \003(\0132\020.DischargeBer"
+          + "ths\022+\n\014machineInUse\030\n \003(\0132\025.LoadingMachi"
+          + "nesInUse\022&\n\016dischargeStage\030\005 \001(\0132\016.Loadi"
+          + "ngStages\022\'\n\016dischargeDelay\030\006 \001(\0132\017.Disch"
+          + "argeDelay\022\031\n\007cowPlan\030\013 \001(\0132\010.CowPlan\0227\n\026"
+          + "postDischargeStageTime\030\007 \001(\0132\027.PostDisch"
+          + "argeStageTime\"\223\001\n\020DischargeDetails\022\n\n\002id"
+          + "\030\001 \001(\003\022\025\n\rtimeOfSunrise\030\002 \001(\t\022\024\n\014timeOfS"
+          + "unset\030\003 \001(\t\022\021\n\tstartTime\030\004 \001(\t\022!\n\013trimAl"
+          + "lowed\030\005 \001(\0132\014.TrimAllowed\022\020\n\010voyageId\030\006 "
+          + "\001(\003\"x\n\016DischargeRates\022\034\n\024initialDischarg"
+          + "eRate\030\001 \001(\t\022\030\n\020maxDischargeRate\030\002 \001(\t\022\026\n"
+          + "\016minBallastRate\030\003 \001(\t\022\026\n\016maxBallastRate\030"
+          + "\004 \001(\t\"\350\002\n\017DischargeBerths\022\n\n\002id\030\001 \001(\003\022\027\n"
+          + "\017dischargeInfoId\030\002 \001(\003\022\017\n\007berthId\030\003 \001(\003\022"
+          + "\r\n\005depth\030\004 \001(\t\022\031\n\021maxManifoldHeight\030\005 \001("
+          + "\t\022\033\n\023maxManifoldPressure\030\006 \001(\t\022\027\n\017hoseCo"
+          + "nnections\030\007 \001(\t\022\032\n\022seaDraftLimitation\030\010 "
+          + "\001(\t\022\032\n\022airDraftLimitation\030\t \001(\t\022\020\n\010airPu"
+          + "rge\030\n \001(\010\022\030\n\020cargoCirculation\030\013 \001(\010\022\030\n\020l"
+          + "ineDisplacement\030\014 \001(\t\022$\n\034specialRegulati"
+          + "onRestriction\030\r \001(\t\022\033\n\023itemsToBeAgreedWi"
+          + "th\030\016 \001(\t\"\226\001\n\026DischargeMachinesInUse\022\n\n\002i"
+          + "d\030\001 \001(\003\022\027\n\017dischargeInfoId\030\002 \001(\003\022\021\n\tmach"
+          + "ineId\030\003 \001(\003\022\020\n\010capacity\030\004 \001(\t\022\017\n\007isUsing"
+          + "\030\005 \001(\010\022!\n\013machineType\030\006 \001(\0162\014.MachineTyp"
+          + "e\"R\n\016DischargeDelay\022\036\n\007reasons\030\001 \003(\0132\r.D"
+          + "elayReasons\022 \n\006delays\030\002 \003(\0132\020.DischargeD"
+          + "elays\"\241\001\n\017DischargeDelays\022\n\n\002id\030\001 \001(\003\022\027\n"
+          + "\017dischargeInfoId\030\002 \001(\003\022\031\n\021reasonForDelay"
+          + "Ids\030\003 \003(\003\022\020\n\010duration\030\004 \001(\t\022\017\n\007cargoId\030\005"
+          + " \001(\003\022\020\n\010quantity\030\006 \001(\t\022\031\n\021cargoNominatio"
+          + "nId\030\007 \001(\003\"{\n\026PostDischargeStageTime\022\027\n\017t"
+          + "imeForDryCheck\030\001 \001(\t\022\027\n\017slopDischarging\030"
+          + "\002 \001(\t\022\026\n\016finalStripping\030\003 \001(\t\022\027\n\017freshOi"
+          + "lWashing\030\004 \001(\t\"\225\002\n\007CowPlan\022\'\n\rcowOptionT"
+          + "ype\030\001 \001(\0162\020.COW_OPTION_TYPE\022\026\n\016cowTankPe"
+          + "rcent\030\002 \001(\t\022\024\n\014cowStartTime\030\003 \001(\t\022\022\n\ncow"
+          + "EndTime\030\004 \001(\t\022\026\n\016estCowDuration\030\005 \001(\t\022\022\n"
+          + "\ntrimCowMin\030\006 \001(\t\022\022\n\ntrimCowMax\030\007 \001(\t\022\035\n"
+          + "\025needFreshCrudeStorage\030\010 \001(\010\022\027\n\017needFlus"
+          + "hingOil\030\t \001(\010\022\'\n\016cowTankDetails\030\n \003(\0132\017."
+          + "CowTankDetails\"`\n\016CowTankDetails\022\032\n\007cowT"
+          + "ype\030\001 \001(\0162\t.COW_TYPE\022\017\n\007tankIds\030\002 \003(\003\022!\n"
+          + "\013cargoForCow\030\003 \003(\0132\014.CargoForCow\"\204\001\n\013Car"
+          + "goForCow\022\017\n\007cargoId\030\001 \001(\003\022\031\n\021cargoNomina"
+          + "tionId\030\002 \001(\003\022\026\n\016washingCargoId\030\003 \001(\003\022 \n\030"
+          + "washingCargoNominationId\030\004 \001(\003\022\017\n\007tankId"
+          + "s\030\005 \003(\003\"\213\001\n\024DischargeRuleRequest\022\020\n\010vess"
+          + "elId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePla"
+          + "n\030\003 \003(\0132\n.RulePlans\022\027\n\017dischargeInfoId\030\004"
+          + " \001(\003\022\027\n\017isNoDefaultRule\030\005 \001(\010\"[\n\022Dischar"
+          + "geRuleReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Re"
+          + "sponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.RulePla"
+          + "ns\"\200\001\n!DischargeStudyDataTransferRequest"
+          + "\022\033\n\010portData\030\001 \003(\0132\t.PortData\022\032\n\022dischar"
+          + "gePatternId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\020\n\010v"
+          + "esselId\030\004 \001(\003\";\n\010PortData\022\026\n\016portRotatio"
+          + "nId\030\001 \001(\003\022\027\n\017synopticTableId\030\002 \001(\003\"x\n\"Di"
+          + "schargingUploadTideDetailRequest\022\026\n\016tide"
+          + "Detaildata\030\001 \001(\014\022\'\n\016responseStatus\030\002 \001(\013"
+          + "2\017.ResponseStatus\022\021\n\tloadingId\030\003 \001(\003\"Q\n&"
+          + "DischargingUploadTideDetailStatusReply\022\'"
+          + "\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus\""
+          + "9\n$DischargingDownloadTideDetailRequest\022"
+          + "\021\n\tloadingId\030\001 \001(\003\"o\n(DischargingDownloa"
+          + "dTideDetailStatusReply\022\'\n\016responseStatus"
+          + "\030\001 \001(\0132\017.ResponseStatus\022\014\n\004data\030\002 \001(\014\022\014\n"
+          + "\004size\030\003 \001(\005B-\n)com.cpdss.common.generate"
+          + "d.discharge_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -197,7 +248,78 @@ public final class DischargePlanModels {
               "PortRotationId",
               "SynopticTableId",
             });
-    internal_static_DischargeInformation_descriptor = getDescriptor().getMessageTypes().get(1);
+    internal_static_DischargingPlanReply_descriptor = getDescriptor().getMessageTypes().get(1);
+    internal_static_DischargingPlanReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingPlanReply_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus",
+              "LoadingInfoId",
+              "DischargingInformation",
+              "DischargingSequences",
+              "PortDischargingPlanStowageDetails",
+              "PortDischargingPlanBallastDetails",
+              "PortDischargingPlanRobDetails",
+              "PortDischargingPlanStabilityParameters",
+            });
+    internal_static_DischargingPlanStabilityParameters_descriptor =
+        getDescriptor().getMessageTypes().get(2);
+    internal_static_DischargingPlanStabilityParameters_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingPlanStabilityParameters_descriptor,
+            new java.lang.String[] {
+              "Draft",
+              "Trim",
+              "Bm",
+              "Sf",
+              "ConditionType",
+              "ValueType",
+              "ForeDraft",
+              "AftDraft",
+              "Time",
+              "MeanDraft",
+              "List",
+            });
+    internal_static_DischargingPlanTankDetails_descriptor =
+        getDescriptor().getMessageTypes().get(3);
+    internal_static_DischargingPlanTankDetails_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingPlanTankDetails_descriptor,
+            new java.lang.String[] {
+              "Api",
+              "CargoNominationId",
+              "Quantity",
+              "TankId",
+              "Temperature",
+              "Ullage",
+              "QuantityM3",
+              "Sounding",
+              "ConditionType",
+              "ValueType",
+              "Id",
+            });
+    internal_static_DischargingSequence_descriptor = getDescriptor().getMessageTypes().get(4);
+    internal_static_DischargingSequence_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingSequence_descriptor,
+            new java.lang.String[] {
+              "CargoNominationId",
+              "StartTime",
+              "EndTime",
+              "PortId",
+              "SequenceNumber",
+              "StageName",
+              "ToLoadicator",
+              "CargoValves",
+              "BallastValves",
+              "LoadingRates",
+              "DeBallastingRates",
+              "LoadingPlanPortWiseDetails",
+              "CargoLoadingRate1",
+              "CargoLoadingRate2",
+              "BallastOperations",
+            });
+    internal_static_DischargeInformation_descriptor = getDescriptor().getMessageTypes().get(5);
     internal_static_DischargeInformation_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargeInformation_descriptor,
@@ -214,21 +336,21 @@ public final class DischargePlanModels {
               "CowPlan",
               "PostDischargeStageTime",
             });
-    internal_static_DischargeDetails_descriptor = getDescriptor().getMessageTypes().get(2);
+    internal_static_DischargeDetails_descriptor = getDescriptor().getMessageTypes().get(6);
     internal_static_DischargeDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargeDetails_descriptor,
             new java.lang.String[] {
               "Id", "TimeOfSunrise", "TimeOfSunset", "StartTime", "TrimAllowed", "VoyageId",
             });
-    internal_static_DischargeRates_descriptor = getDescriptor().getMessageTypes().get(3);
+    internal_static_DischargeRates_descriptor = getDescriptor().getMessageTypes().get(7);
     internal_static_DischargeRates_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargeRates_descriptor,
             new java.lang.String[] {
               "InitialDischargeRate", "MaxDischargeRate", "MinBallastRate", "MaxBallastRate",
             });
-    internal_static_DischargeBerths_descriptor = getDescriptor().getMessageTypes().get(4);
+    internal_static_DischargeBerths_descriptor = getDescriptor().getMessageTypes().get(8);
     internal_static_DischargeBerths_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargeBerths_descriptor,
@@ -248,21 +370,21 @@ public final class DischargePlanModels {
               "SpecialRegulationRestriction",
               "ItemsToBeAgreedWith",
             });
-    internal_static_DischargeMachinesInUse_descriptor = getDescriptor().getMessageTypes().get(5);
+    internal_static_DischargeMachinesInUse_descriptor = getDescriptor().getMessageTypes().get(9);
     internal_static_DischargeMachinesInUse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargeMachinesInUse_descriptor,
             new java.lang.String[] {
               "Id", "DischargeInfoId", "MachineId", "Capacity", "IsUsing", "MachineType",
             });
-    internal_static_DischargeDelay_descriptor = getDescriptor().getMessageTypes().get(6);
+    internal_static_DischargeDelay_descriptor = getDescriptor().getMessageTypes().get(10);
     internal_static_DischargeDelay_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargeDelay_descriptor,
             new java.lang.String[] {
               "Reasons", "Delays",
             });
-    internal_static_DischargeDelays_descriptor = getDescriptor().getMessageTypes().get(7);
+    internal_static_DischargeDelays_descriptor = getDescriptor().getMessageTypes().get(11);
     internal_static_DischargeDelays_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargeDelays_descriptor,
@@ -275,14 +397,14 @@ public final class DischargePlanModels {
               "Quantity",
               "CargoNominationId",
             });
-    internal_static_PostDischargeStageTime_descriptor = getDescriptor().getMessageTypes().get(8);
+    internal_static_PostDischargeStageTime_descriptor = getDescriptor().getMessageTypes().get(12);
     internal_static_PostDischargeStageTime_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PostDischargeStageTime_descriptor,
             new java.lang.String[] {
               "TimeForDryCheck", "SlopDischarging", "FinalStripping", "FreshOilWashing",
             });
-    internal_static_CowPlan_descriptor = getDescriptor().getMessageTypes().get(9);
+    internal_static_CowPlan_descriptor = getDescriptor().getMessageTypes().get(13);
     internal_static_CowPlan_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CowPlan_descriptor,
@@ -298,14 +420,14 @@ public final class DischargePlanModels {
               "NeedFlushingOil",
               "CowTankDetails",
             });
-    internal_static_CowTankDetails_descriptor = getDescriptor().getMessageTypes().get(10);
+    internal_static_CowTankDetails_descriptor = getDescriptor().getMessageTypes().get(14);
     internal_static_CowTankDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CowTankDetails_descriptor,
             new java.lang.String[] {
               "CowType", "TankIds", "CargoForCow",
             });
-    internal_static_CargoForCow_descriptor = getDescriptor().getMessageTypes().get(11);
+    internal_static_CargoForCow_descriptor = getDescriptor().getMessageTypes().get(15);
     internal_static_CargoForCow_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoForCow_descriptor,
@@ -316,14 +438,14 @@ public final class DischargePlanModels {
               "WashingCargoNominationId",
               "TankIds",
             });
-    internal_static_DischargeRuleRequest_descriptor = getDescriptor().getMessageTypes().get(12);
+    internal_static_DischargeRuleRequest_descriptor = getDescriptor().getMessageTypes().get(16);
     internal_static_DischargeRuleRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargeRuleRequest_descriptor,
             new java.lang.String[] {
               "VesselId", "SectionId", "RulePlan", "DischargeInfoId", "IsNoDefaultRule",
             });
-    internal_static_DischargeRuleReply_descriptor = getDescriptor().getMessageTypes().get(13);
+    internal_static_DischargeRuleReply_descriptor = getDescriptor().getMessageTypes().get(17);
     internal_static_DischargeRuleReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargeRuleReply_descriptor,
@@ -331,14 +453,14 @@ public final class DischargePlanModels {
               "ResponseStatus", "RulePlan",
             });
     internal_static_DischargeStudyDataTransferRequest_descriptor =
-        getDescriptor().getMessageTypes().get(14);
+        getDescriptor().getMessageTypes().get(18);
     internal_static_DischargeStudyDataTransferRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargeStudyDataTransferRequest_descriptor,
             new java.lang.String[] {
               "PortData", "DischargePatternId", "VoyageId", "VesselId",
             });
-    internal_static_PortData_descriptor = getDescriptor().getMessageTypes().get(15);
+    internal_static_PortData_descriptor = getDescriptor().getMessageTypes().get(19);
     internal_static_PortData_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortData_descriptor,
@@ -346,7 +468,7 @@ public final class DischargePlanModels {
               "PortRotationId", "SynopticTableId",
             });
     internal_static_DischargingUploadTideDetailRequest_descriptor =
-        getDescriptor().getMessageTypes().get(16);
+        getDescriptor().getMessageTypes().get(20);
     internal_static_DischargingUploadTideDetailRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingUploadTideDetailRequest_descriptor,
@@ -354,7 +476,7 @@ public final class DischargePlanModels {
               "TideDetaildata", "ResponseStatus", "LoadingId",
             });
     internal_static_DischargingUploadTideDetailStatusReply_descriptor =
-        getDescriptor().getMessageTypes().get(17);
+        getDescriptor().getMessageTypes().get(21);
     internal_static_DischargingUploadTideDetailStatusReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingUploadTideDetailStatusReply_descriptor,
@@ -362,7 +484,7 @@ public final class DischargePlanModels {
               "ResponseStatus",
             });
     internal_static_DischargingDownloadTideDetailRequest_descriptor =
-        getDescriptor().getMessageTypes().get(18);
+        getDescriptor().getMessageTypes().get(22);
     internal_static_DischargingDownloadTideDetailRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingDownloadTideDetailRequest_descriptor,
@@ -370,7 +492,7 @@ public final class DischargePlanModels {
               "LoadingId",
             });
     internal_static_DischargingDownloadTideDetailStatusReply_descriptor =
-        getDescriptor().getMessageTypes().get(19);
+        getDescriptor().getMessageTypes().get(23);
     internal_static_DischargingDownloadTideDetailStatusReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingDownloadTideDetailStatusReply_descriptor,
