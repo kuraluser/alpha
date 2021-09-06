@@ -606,7 +606,6 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     LoadingPlanModels.UpdateUllageDetailsRequest.Builder requestBuilder =
         LoadingPlanModels.UpdateUllageDetailsRequest.newBuilder();
     requestBuilder.setPatternId(patternId).setPortRotationId(portRotationId).setVesselId(vesselId);
-    //    try {
     // getting active voyage details
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info("Active Voyage {} For Vessel Id {}", activeVoyage.getVoyageNumber(), vesselId);
@@ -615,7 +614,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         activeVoyage.getPortRotations().stream()
             .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
             .findFirst();
-
+    // Set portId from portRoatation
+    requestBuilder.setPortId(portRotation.get().getPortId());
+    // Set loadable study id
     Long loadableStudyId = activeVoyage.getActiveLs().getId();
 
     // Retrieve cargo Nominations from cargo nomination table

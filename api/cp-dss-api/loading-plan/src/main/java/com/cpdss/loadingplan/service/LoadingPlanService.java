@@ -233,7 +233,7 @@ public class LoadingPlanService {
       LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
 
     List<BillOfLadding> billOfLaddingDetails =
-        this.billOfLaddingRepo.findByLoadablePatternXIdAndIsActive(request.getPatternId(), true);
+        this.billOfLaddingRepo.findByLoadablePatternXIdAndPortIdAndIsActive(request.getPatternId(), request.getPortId(), true);
     billOfLaddingDetails.stream()
         .forEach(
             bill -> {
