@@ -364,7 +364,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
     }
 
     const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_SUMMARY', detail, 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL', 'LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR',
-    , 'VALIDATE_AND_SAVE_ERROR','VALIDATE_AND_SAVE_INPROGESS', 'VALIDATE_AND_SAVE_FAILED', 'VALIDATE_AND_SAVE_PENDING']).toPromise();
+    , 'VALIDATE_AND_SAVE_ERROR','VALIDATE_AND_SAVE_INPROGESS', 'VALIDATE_AND_SAVE_FAILED', 'VALIDATE_AND_SAVE_PENDING','LOADABLE_PATTERN_CONFIRM_VOYAGE_ACTIVE_STATUS_ERROR']).toPromise();
     if(!result.validated) {
       this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail: translationKeys['VALIDATE_AND_SAVE_PENDING'] });
       return;
@@ -398,6 +398,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
         } catch (errorResponse) {
           if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
             this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_STATUS_ERROR'], life: 10000 });
+          } else if(errorResponse?.error?.errorCode === 'ERR-RICO-152') {
+            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_VOYAGE_ACTIVE_STATUS_ERROR'] });
           }
         }
       }
