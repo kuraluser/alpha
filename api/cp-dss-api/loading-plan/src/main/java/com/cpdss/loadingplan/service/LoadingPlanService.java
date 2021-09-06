@@ -233,7 +233,7 @@ public class LoadingPlanService {
       LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
 
     List<BillOfLadding> billOfLaddingDetails =
-        this.billOfLaddingRepo.findByLoadablePatternXIdAndIsActive(request.getPatternId(), true);
+        this.billOfLaddingRepo.findByLoadablePatternXIdAndPortIdAndIsActive(request.getPatternId(), request.getPortId(), true);
     billOfLaddingDetails.stream()
         .forEach(
             bill -> {
@@ -514,7 +514,7 @@ public class LoadingPlanService {
                     loadingPlanStowageDetailsTempRepository
                         .updatePortLoadingPlanStowageDetailsRepository(
                             new BigDecimal(ullageInsert.getQuantity()),
-                            new BigDecimal(ullageInsert.getCorrectedUllage()),
+                            new BigDecimal(ullageInsert.getUllage()),
                             new BigDecimal(ullageInsert.getQuantity()),
                             BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
                             BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
