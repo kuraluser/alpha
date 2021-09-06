@@ -475,15 +475,9 @@ public class LoadingPlanService {
                             BigDecimal.valueOf(ullageInsert.getSg()),
                             BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
                             ullageInsert.getColorCode(),
-<<<<<<< Updated upstream
                             new BigDecimal(ullageInsert.getQuantity()),
                             new BigDecimal(ullageInsert.getSounding()),
                             new BigDecimal(ullageInsert.getQuantity()),
-=======
-                            BigDecimal.valueOf(ullageInsert.getQuantity()),
-                            BigDecimal.valueOf(ullageInsert.getSounding()),
-                            BigDecimal.valueOf(ullageInsert.getQuantity()),
->>>>>>> Stashed changes
                             Long.valueOf(ullageInsert.getTankId()),
                             Long.valueOf(ullageInsert.getLoadingInformationId()),
                             Long.valueOf(ullageInsert.getArrivalDepartutre()));
