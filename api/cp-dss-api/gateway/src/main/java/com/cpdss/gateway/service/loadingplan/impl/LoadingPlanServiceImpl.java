@@ -1351,6 +1351,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             .forEach(
                 billLanding -> {
                   billOfLandingBuilder
+                      .setId(StringUtils.isEmpty(billLanding.getId()) ? 0 : billLanding.getId())
                       .setLoadingId(
                           StringUtils.isEmpty(billLanding.getLoadingId())
                               ? 0
@@ -1386,7 +1387,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setApi(
                           StringUtils.isEmpty(billLanding.getApi())
                               ? 0
-                              : billLanding.getKlAt15c().longValue())
+                              : billLanding.getApi().longValue())
                       .setTemperature(
                           StringUtils.isEmpty(billLanding.getTemperature())
                               ? 0
@@ -1416,7 +1417,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             .forEach(
                 billLanding -> {
                   updateBillRemoveBuilder
-                          .setId(billLanding.getId() == null ? 0 : billLanding.getId())
+                      .setId(billLanding.getId() == null ? 0 : billLanding.getId())
                       .setLoadingId(
                           billLanding.getLoadingId() == null ? 0 : billLanding.getLoadingId())
                       .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
