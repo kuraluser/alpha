@@ -70,6 +70,8 @@ export class PortsComponent implements OnInit, OnDestroy {
 
   @Output() portUpdate = new EventEmitter<boolean>();
 
+  @Output() ohqStatusUpdate = new EventEmitter<boolean>();
+
   // public fields
   editMode: DATATABLE_EDITMODE;
   OPERATIONS: OPERATIONS;
@@ -566,7 +568,7 @@ export class PortsComponent implements OnInit, OnDestroy {
         break;
       }
     }
-    
+
     if (this.portsLists[this.portsLists.length - 1].operation.value?.id !== OPERATIONS.DISCHARGING) {
       orderError = true;
     }
@@ -611,6 +613,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       if (res) {
         this.portsListSaved = JSON.parse(JSON.stringify(this.portsLists));
         this.loadableStudyDetailsTransformationService.portUpdated();
+        this.ohqStatusUpdate.emit(false);
         this.portsLists[valueIndex].isAdd = false;
 
         for (const key in this.portsLists[valueIndex]) {

@@ -774,6 +774,16 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Function to emit status change of ohq tab while adding new ports
+   *
+   * @param {*} event
+   * @memberof LoadableStudyDetailsComponent
+   */
+  async ohqStatusUpdate(event) {
+    this.ohqComplete = event;
+  }
+
+  /**
  * Take the user to particular pattern history
  */
   navigateToPatternHistory(isViewPattern) {
