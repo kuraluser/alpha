@@ -11,6 +11,8 @@ appConfig {
 
 dependencies {
 	implementation project(':common')
+	compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
 	implementation group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE' // for rest calls
 }
 

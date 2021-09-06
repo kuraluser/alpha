@@ -115,6 +115,16 @@ export class LoadingInformationComponent implements OnInit {
       
       this.loadingDischargingTransformationService.isLoadingSequenceGenerated.next(this.loadingInformationData?.isLoadingSequenceGenerated)
       this.loadingDischargingTransformationService.isLoadingPlanGenerated.next(this.loadingInformationData?.isLoadingPlanGenerated);
+    
+
+      if (this.loadingInformationData.loadingInfoStatusId == 5 || this.loadingInformationData.loadingInfoStatusId == 6 || this.loadingInformationData.loadingInfoStatusId == 7 ||this.loadingInformationData.loadingInfoStatusId == 1 || this.loadingInformationData.loadingInfoStatusId == 2 || this.loadingInformationData.loadingInfoStatusId == 0) {
+        this.loadingDischargingTransformationService.disableSaveButton.next(false); 
+        this.loadingDischargingTransformationService.inProcessing.next(false);       
+      }
+      else {
+        this.loadingDischargingTransformationService.disableSaveButton.next(true);
+        this.loadingDischargingTransformationService.inProcessing.next(true);    
+      }
       this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
     }
@@ -255,6 +265,14 @@ export class LoadingInformationComponent implements OnInit {
   * @memberof LoadingInformationComponent
   */
   saveDetails() {
+    this.manageSequence.loadingDischargingSequenceForm.markAsDirty();
+    this.manageSequence.loadingDischargingSequenceForm.markAllAsTouched();
+
+    this.dischargeDetails.loadingDischargingDetailsForm.markAsDirty();
+    this.dischargeDetails.loadingDischargingDetailsForm.markAllAsTouched();
+
+    this.dischargeBerth.berthDetailsForm.markAsDirty();
+    this.dischargeBerth.berthDetailsForm.updateValueAndValidity();
     setTimeout(() => {
       this.saveLoadingInformationData();
     })
@@ -280,14 +298,7 @@ export class LoadingInformationComponent implements OnInit {
     
     if(this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid ||
       this.dischargeDetails.loadingDischargingDetailsForm.invalid) {
-      this.manageSequence.loadingDischargingSequenceForm.markAsDirty();
-      this.manageSequence.loadingDischargingSequenceForm.markAllAsTouched();
-
-      this.dischargeDetails.loadingDischargingDetailsForm.markAsDirty();
-      this.dischargeDetails.loadingDischargingDetailsForm.markAllAsTouched();
-
-      this.dischargeBerth.berthDetailsForm.markAsDirty();
-      this.dischargeBerth.berthDetailsForm.updateValueAndValidity();
+   
 
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_INVALID_DATA'] });
       if(document.querySelector('.error-icon') && !this.dischargeDetails.loadingDischargingDetailsForm.invalid) {

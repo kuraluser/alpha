@@ -2,7 +2,6 @@
 package com.cpdss.loadingplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
-import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,10 +16,10 @@ public interface PortLoadingPlanRobDetailsRepository
     extends CommonCrudRepository<PortLoadingPlanRobDetails, Long> {
 
   public List<PortLoadingPlanRobDetails> findByLoadingInformationAndIsActive(
-      LoadingInformation loadingInformation, Boolean isActive);
+      Long fkId, Boolean isActive);
 
   @Query(
-      "FROM PortLoadingPlanRobDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
+      "FROM PortLoadingPlanRobDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
   public List<PortLoadingPlanRobDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
 
@@ -31,7 +30,7 @@ public interface PortLoadingPlanRobDetailsRepository
 
   @Modifying
   @Transactional
-  @Query("UPDATE PortLoadingPlanRobDetails SET isActive = false WHERE loadingInformation.id = ?1")
+  @Query("UPDATE PortLoadingPlanRobDetails SET isActive = false WHERE loadingInformation = ?1")
   public void deleteByLoadingInformationId(Long loadingInfoId);
 
   @Transactional
@@ -42,4 +41,20 @@ public interface PortLoadingPlanRobDetailsRepository
       @Param("quantity") BigDecimal quantity,
       @Param("quantity_m3") BigDecimal quantityM3,
       @Param("tank_xid") Long tankXId);
+
+  @Modifying
+  @Query(
+      value =
+          "insert into PortLoadingPlanRobDetails (loading_information_xid, tank_xid, quantity_mt, density,"
+              + "colour_code, actual_planned, arrival_departutre) values"
+              + " (:loading_information_xid, :tank_xid, :quantity_mt, :density, :colour_code, :actual_planned, :arrival_departutre)",
+      nativeQuery = true)
+  void insertPortLoadingPlanRobDetails(
+      @Param("loading_information_xid") Long loadingInfoId,
+      @Param("tank_xid") Long tankXid,
+      @Param("quantity_mt") Long quantity_mt,
+      @Param("density") Long density,
+      @Param("colour_code") String colourCode,
+      @Param("actual_planned") Long actual_planned,
+      @Param("arrival_departutre") Long arrival_departutre);
 }

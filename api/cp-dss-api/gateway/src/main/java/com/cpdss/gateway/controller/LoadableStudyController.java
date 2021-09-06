@@ -1267,7 +1267,7 @@ public class LoadableStudyController {
       throws CommonRestException {
     try {
       return this.loadableStudyService.confirmPlan(
-          loadablePatternId, headers.getFirst(CORRELATION_ID_HEADER));
+          voyageId, loadablePatternId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when confirmPlan", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

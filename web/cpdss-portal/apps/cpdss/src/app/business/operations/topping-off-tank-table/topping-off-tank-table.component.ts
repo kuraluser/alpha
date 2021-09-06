@@ -119,7 +119,8 @@ export class ToppingOffTankTableComponent implements OnInit {
     })
     return cargoDetail;
   }
-  /**
+  
+/**
 * Method for init loading sequence array
 *
 * @memberof ToppingOffTankTableComponent
@@ -148,11 +149,23 @@ export class ToppingOffTankTableComponent implements OnInit {
       acc[key].push(obj);
       return acc;
     }, {}));
+    this.sortCargoTypeList();
   }
 
+/**
+* Method for sorting array based on sequence number
+*
+* @memberof ToppingOffTankTableComponent
+*/
+  sortCargoTypeList(){
+    this.cargoTypeList?.map(item=>{
+      item.sort((a, b) => a.displayOrder - b.displayOrder);
+    });
+    this.cargoTypeList?.sort((a,b)=> a[0].displayOrder - b[0].displayOrder);
+  }
 
-
-  /**
+  
+/**
 *Method to find out tank
 *
 * @memberof ToppingOffTankTableComponent

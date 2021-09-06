@@ -20,7 +20,7 @@ public interface PortLoadingPlanBallastTempDetailsRepository
       LoadingInformation loadingInformation, Boolean isActive);
 
   @Query(
-      "FROM PortLoadingPlanBallastTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
+      "FROM PortLoadingPlanBallastTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
   public List<PortLoadingPlanBallastTempDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
 
@@ -58,7 +58,31 @@ public interface PortLoadingPlanBallastTempDetailsRepository
   @Transactional
   @Modifying
   @Query(
-      "Update PortLoadingPlanBallastTempDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and isActive = true")
+      "Update PortLoadingPlanBallastTempDetails set isActive = false WHERE loadingInformation = ?1 and conditionType = ?2 and isActive = true")
   public void deleteExistingByLoadingInfoAndConditionType(
       Long loadingInfoId, Integer conditionType);
+
+  @Modifying
+  @Query(
+      value =
+          "insert into PortLoadingPlanBallastTempDetails (loading_information_xid, port_xid, port_rotation_xid, tank_xid, temperature, "
+              + "corrected_ullage,  quantity_mt, observedM3, filling_percentage, sounding, actual_planned, arrival_departutre, colour_code, sg) values"
+              + "(:loading_information_xid, :port_xid, :port_rotation_xid, :tank_xid, :temperature,"
+              + ":corrected_ullage,  :quantity_mt, :observedM3, :filling_percentage, :sounding, :actual_planned, :arrival_departutre, :colour_code, :sg)",
+      nativeQuery = true)
+  void insertPortLoadingPlanBallastTempDetails(
+      @Param("loading_information_xid") Long loadingInfoId,
+      @Param("port_rotation_xid") Long port_rotation_xid,
+      @Param("port_xid") Long port_xid,
+      @Param("tank_xid") Long tankXid,
+      @Param("temperature") Long temperature,
+      @Param("corrected_ullage") Long corrected_ullage,
+      @Param("quantity_mt") Long quantity_mt,
+      @Param("observedM3") Long observedM3,
+      @Param("filling_percentage") Long filling_percentage,
+      @Param("sounding") Long sounding,
+      @Param("actual_planned") Long actual_planned,
+      @Param("arrival_departutre") Long arrival_departutre,
+      @Param("colour_code") String colour_code,
+      @Param("sg") Long sg);
 }

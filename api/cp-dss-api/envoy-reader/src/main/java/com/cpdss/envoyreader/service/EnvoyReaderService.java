@@ -70,6 +70,7 @@ public class EnvoyReaderService {
                 responseUrl.setHttpStatus(clientHttpResponse.getStatusCode());
                 return responseUrl;
               });
+      log.debug("Envoy reader download response: {}", response);
 
       // read message info from header
       ObjectMapper mapper = new ObjectMapper();

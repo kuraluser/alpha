@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,6 +65,7 @@ public class LoadingPlanService {
   @Autowired PortLoadingPlanStowageDetailsRepository loadingPlanStowageDetailsRepository;
   @Autowired PortLoadingPlanBallastDetailsRepository loadingPlanBallastDetailsRepository;
   @Autowired PortLoadingPlanRobDetailsRepository loadingPlanRobDetailsRepository;
+  @Autowired PortLoadingPlanRobDetailsRepositoryTemp loadingPlanRobDetailsTempRepository;
 
   @Autowired StageOffsetRepository stageOffsetRepository;
   @Autowired StageDurationRepository stageDurationRepository;
@@ -205,7 +205,7 @@ public class LoadingPlanService {
       List<PortLoadingPlanStowageDetails> plpStowageList =
           plpStowageDetailsRepository.findByLoadingInformationAndIsActive(var1.get(), true);
       List<PortLoadingPlanRobDetails> plpRobList =
-          plpRobDetailsRepository.findByLoadingInformationAndIsActive(var1.get(), true);
+          plpRobDetailsRepository.findByLoadingInformationAndIsActive(var1.get().getId(), true);
       List<PortLoadingPlanStabilityParameters> plpStabilityList =
           plpStabilityParametersRepository.findByLoadingInformationAndIsActive(var1.get(), true);
 
@@ -450,6 +450,7 @@ public class LoadingPlanService {
                   landing.setQuantityMt(BigDecimal.valueOf(billOfLanding.getQuantityMt()));
                   landing.setApi(BigDecimal.valueOf(billOfLanding.getApi()));
                   landing.setTemperature(BigDecimal.valueOf(billOfLanding.getTemperature()));
+                  landing.setIsActive(true);
                   landing.setVersion(billOfLanding.getVersion());
                   billOfLandingRepository.save(landing);
                 }
@@ -461,7 +462,6 @@ public class LoadingPlanService {
               billOfLanding -> {
                 billOfLandingRepository.deleteBillOfLandingRepository(
                     Integer.valueOf(billOfLanding.getCargoId() + ""),
-                    Integer.valueOf(billOfLanding.getPortId() + ""),
                     Integer.valueOf(billOfLanding.getLoadingId() + ""));
               });
 
@@ -477,34 +477,31 @@ public class LoadingPlanService {
                             BigDecimal.valueOf(ullageInsert.getSg()),
                             BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
                             ullageInsert.getColorCode(),
-                            BigDecimal.valueOf(ullageInsert.getQuantity()),
-                            BigDecimal.valueOf(ullageInsert.getSounding()),
-                            BigDecimal.valueOf(ullageInsert.getQuantity()),
+                            new BigDecimal(ullageInsert.getQuantity()),
+                            new BigDecimal(ullageInsert.getSounding()),
+                            new BigDecimal(ullageInsert.getQuantity()),
                             Long.valueOf(ullageInsert.getTankId()),
                             Long.valueOf(ullageInsert.getLoadingInformationId()),
                             Long.valueOf(ullageInsert.getArrivalDepartutre()));
                   } else {
                     PortLoadingPlanBallastTempDetails details =
                         new PortLoadingPlanBallastTempDetails();
-                    details.setLoadingInformation(new LoadingInformation());
-                    LoadingInformation info = new LoadingInformation();
-                    info.setPortXId(ullageInsert.getPortXid());
-                    info.setLoadablePatternXId(ullageInsert.getLoadingInformationId());
-                    details.setLoadingInformation(info);
+                    details.setLoadingInformation(ullageInsert.getLoadingInformationId());
                     details.setPortRotationXId(ullageInsert.getPortRotationXid());
                     details.setPortXId(ullageInsert.getPortXid());
                     details.setTankXId(ullageInsert.getTankId());
                     details.setTemperature(BigDecimal.valueOf(ullageInsert.getTemperature()));
                     details.setCorrectedUllage(
                         BigDecimal.valueOf(ullageInsert.getCorrectedUllage()));
-                    details.setQuantity(BigDecimal.valueOf(ullageInsert.getQuantity()));
+                    details.setQuantity(new BigDecimal(ullageInsert.getQuantity()));
                     details.setObservedM3(BigDecimal.valueOf(ullageInsert.getObservedM3()));
                     details.setFillingPercentage(
                         BigDecimal.valueOf(ullageInsert.getFillingRatio()));
-                    details.setSounding(BigDecimal.valueOf(ullageInsert.getSounding()));
+                    details.setSounding(new BigDecimal(ullageInsert.getSounding()));
                     details.setValueType(Integer.valueOf(ullageInsert.getActualPlanned() + ""));
                     details.setConditionType(
                         Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
+                    details.setIsActive(true);
                     details.setColorCode(ullageInsert.getColorCode());
                     details.setSg(BigDecimal.valueOf(ullageInsert.getSg()));
                     loadingPlanBallastDetailsTempRepository.save(details);
@@ -518,9 +515,9 @@ public class LoadingPlanService {
                   if (ullageInsert.getIsUpdate()) {
                     loadingPlanStowageDetailsTempRepository
                         .updatePortLoadingPlanStowageDetailsRepository(
-                            BigDecimal.valueOf(ullageInsert.getQuantity()),
-                            BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
-                            BigDecimal.valueOf(ullageInsert.getQuantity()),
+                            new BigDecimal(ullageInsert.getQuantity()),
+                            new BigDecimal(ullageInsert.getCorrectedUllage()),
+                            new BigDecimal(ullageInsert.getQuantity()),
                             BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
                             BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
                             Long.valueOf(ullageInsert.getTankId()),
@@ -529,15 +526,12 @@ public class LoadingPlanService {
                   } else {
                     PortLoadingPlanStowageTempDetails tempData =
                         new PortLoadingPlanStowageTempDetails();
-                    LoadingInformation info = new LoadingInformation();
-                    info.setPortXId(ullageInsert.getPortXid());
-                    info.setLoadablePatternXId(ullageInsert.getLoadingInformationId());
-                    tempData.setLoadingInformation(info);
+                    tempData.setLoadingInformation(ullageInsert.getLoadingInformationId());
                     tempData.setTankXId(ullageInsert.getTankId());
                     tempData.setTemperature(BigDecimal.valueOf(ullageInsert.getTemperature()));
                     tempData.setCorrectedUllage(
                         BigDecimal.valueOf(ullageInsert.getCorrectedUllage()));
-                    tempData.setQuantity(BigDecimal.valueOf(ullageInsert.getQuantity()));
+                    tempData.setQuantity(new BigDecimal(ullageInsert.getQuantity()));
                     tempData.setFillingPercentage(
                         BigDecimal.valueOf(ullageInsert.getFillingPercentage()));
                     tempData.setApi(BigDecimal.valueOf(ullageInsert.getApi()));
@@ -549,6 +543,8 @@ public class LoadingPlanService {
                         Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
                     tempData.setCorrectionFactor(
                         BigDecimal.valueOf(ullageInsert.getCorrectionFactor()));
+                    tempData.setIsActive(true);
+                    tempData.setUllage(new BigDecimal(ullageInsert.getUllage()));
                     loadingPlanStowageDetailsTempRepository.save(tempData);
                   }
                 });
@@ -559,20 +555,19 @@ public class LoadingPlanService {
                 ullageInsert -> {
                   if (ullageInsert.getIsUpdate()) {
                     loadingPlanRobDetailsRepository.updatePortLoadingPlanRobDetailsRepository(
-                        BigDecimal.valueOf(ullageInsert.getQuantity()),
-                        BigDecimal.valueOf(ullageInsert.getQuantity()),
+                        new BigDecimal(ullageInsert.getQuantity()),
+                        new BigDecimal(ullageInsert.getQuantity()),
                         Long.valueOf(ullageInsert.getTankId()));
                   } else {
                     PortLoadingPlanRobDetails robDet = new PortLoadingPlanRobDetails();
-                    LoadingInformation info = new LoadingInformation();
-                    info.setPortXId(ullageInsert.getPortXid());
-                    info.setLoadablePatternXId(ullageInsert.getLoadingInformationId());
-                    robDet.setLoadingInformation(info);
-                    robDet.setQuantity(BigDecimal.valueOf(ullageInsert.getQuantity()));
+                    robDet.setLoadingInformation(ullageInsert.getLoadingInformationId());
+                    robDet.setTankXId(Long.valueOf(ullageInsert.getTankId()));
+                    robDet.setQuantity(new BigDecimal(ullageInsert.getQuantity()));
                     robDet.setPortXId(Long.valueOf(ullageInsert.getPortXid()));
                     robDet.setPortRotationXId(Long.valueOf(ullageInsert.getPortRotationXid()));
                     robDet.setConditionType(
                         Integer.valueOf(ullageInsert.getCorrectedUllage() + ""));
+                    robDet.setIsActive(true);
                     loadingPlanRobDetailsRepository.save(robDet);
                   }
                 });
@@ -700,7 +695,7 @@ public class LoadingPlanService {
       List<PortLoadingPlanStowageDetails> stowageEntityList = new ArrayList<>();
       for (PortLoadingPlanStowageTempDetails tempStowageEntity : tempStowageList) {
         PortLoadingPlanStowageDetails stowageEntity = new PortLoadingPlanStowageDetails();
-        BeanUtils.copyProperties(stowageEntity, tempStowageEntity);
+        // BeanUtils.copyProperties(stowageEntity, tempStowageEntity);
         stowageEntity.setId(null);
         stowageEntity.setCreatedBy(null);
         stowageEntity.setCreatedDate(null);
@@ -726,7 +721,7 @@ public class LoadingPlanService {
       List<PortLoadingPlanBallastDetails> ballastEntityList = new ArrayList<>();
       for (PortLoadingPlanBallastTempDetails tempBallastEntity : tempBallastList) {
         PortLoadingPlanBallastDetails ballastEntity = new PortLoadingPlanBallastDetails();
-        BeanUtils.copyProperties(ballastEntity, tempBallastEntity);
+        // BeanUtils.copyProperties(ballastEntity, tempBallastEntity);
         ballastEntity.setId(null);
         ballastEntity.setCreatedBy(null);
         ballastEntity.setCreatedDate(null);

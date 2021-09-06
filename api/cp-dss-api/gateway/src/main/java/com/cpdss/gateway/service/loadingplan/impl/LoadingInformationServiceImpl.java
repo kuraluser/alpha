@@ -914,7 +914,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     if (!(originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())
         .equals("xlsx")) {
       throw new GenericServiceException(
-          "unsupported file type", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+          "unsupported file type",
+          CommonErrorCodes.E_CPDSS_INVALID_EXCEL_FILE,
+          HttpStatusCode.BAD_REQUEST);
     }
     Builder builder = UploadTideDetailRequest.newBuilder();
     builder.setTideDetaildata(ByteString.copyFrom(file.getBytes()));

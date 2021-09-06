@@ -1440,8 +1440,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               : ullageList.getCorrectedUllage().longValue())
                       .setQuantity(
                           ullageList.getQuantity() == null
-                              ? 0
-                              : ullageList.getQuantity().longValue())
+                              ? ""
+                              : String.valueOf(ullageList.getQuantity()))
                       .setFillingPercentage(
                           ullageList.getFillingPercentage() == null
                               ? 0
@@ -1453,8 +1453,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getCargoNominationId() == null
                               ? 0
                               : ullageList.getCargoNominationId().longValue())
-                      // .setUllage(ullageList.getUllage() == null ? 0 :
-                      // ullageList.getUllage().longValue())
+                      .setUllage(
+                          ullageList.getUllage() == null
+                              ? ""
+                              : String.valueOf(ullageList.getUllage()))
                       .setPortXid(
                           ullageList.getPort_xid() == null
                               ? 0
@@ -1512,8 +1514,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               : ullageList.getCorrectionFactor().longValue())
                       .setQuantity(
                           ullageList.getQuantity() == null
-                              ? 0
-                              : ullageList.getQuantity().longValue())
+                              ? ""
+                              : String.valueOf(ullageList.getQuantity()))
                       .setObservedM3(
                           ullageList.getObservedM3() == null
                               ? 0
@@ -1524,8 +1526,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               : ullageList.getFillingRatio().longValue())
                       .setSounding(
                           ullageList.getSounding() == null
-                              ? 0
-                              : ullageList.getSounding().longValue())
+                              ? ""
+                              : String.valueOf(ullageList.getSounding()))
                       .setFillingPercentage(
                           ullageList.getFilling_percentage() == null
                               ? 0
@@ -1578,8 +1580,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       // ullageList.getCorrectionFactor().longValue())
                       .setQuantity(
                           ullageList.getQuantity() == null
-                              ? 0
-                              : ullageList.getQuantity().longValue())
+                              ? ""
+                              : String.valueOf(ullageList.getQuantity()))
                       .setIsUpdate(ullageList.getIsUpdate())
                       .setDensity(
                           ullageList.getDensity() == null ? 0 : ullageList.getDensity().longValue())

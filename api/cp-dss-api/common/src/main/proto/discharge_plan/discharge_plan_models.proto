@@ -147,3 +147,23 @@ message PortData{
 	int64 portRotationId = 1;
     int64 synopticTableId = 2;
 }
+
+message DischargingUploadTideDetailRequest {
+	bytes tideDetaildata = 1;
+	ResponseStatus responseStatus = 2;
+	int64 loadingId = 3;
+}
+
+message DischargingUploadTideDetailStatusReply {
+	ResponseStatus responseStatus = 1;
+}
+
+message DischargingDownloadTideDetailRequest {
+	int64 loadingId = 1;
+}
+
+message DischargingDownloadTideDetailStatusReply {
+	ResponseStatus responseStatus = 1;
+	bytes data = 2;
+	int32 size = 3;
+}
