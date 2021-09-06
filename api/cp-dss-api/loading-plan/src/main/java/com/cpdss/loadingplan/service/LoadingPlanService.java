@@ -435,9 +435,7 @@ public class LoadingPlanService {
                       BigDecimal.valueOf(billOfLanding.getKlAt15C()),
                       BigDecimal.valueOf(billOfLanding.getApi()),
                       BigDecimal.valueOf(billOfLanding.getTemperature()),
-                      Integer.valueOf(billOfLanding.getCargoId() + ""),
-                      Integer.valueOf(billOfLanding.getPortId() + ""),
-                      Integer.valueOf(billOfLanding.getLoadingId() + ""));
+                      Long.valueOf(billOfLanding.getId() + ""));
                 } else {
                   BillOfLanding landing = new BillOfLanding();
                   landing.setLoadingId(billOfLanding.getLoadingId());
@@ -461,7 +459,7 @@ public class LoadingPlanService {
           .forEach(
               billOfLanding -> {
                 billOfLandingRepository.deleteBillOfLandingRepository(
-                    Integer.valueOf(billOfLanding.getId() + ""));
+                    Long.valueOf(billOfLanding.getId() + ""));
               });
 
       if (request.getIsValidate() != null && request.getIsValidate().equals("false")) {
