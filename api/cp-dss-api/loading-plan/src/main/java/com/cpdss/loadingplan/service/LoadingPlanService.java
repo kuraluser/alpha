@@ -462,8 +462,7 @@ public class LoadingPlanService {
           .forEach(
               billOfLanding -> {
                 billOfLandingRepository.deleteBillOfLandingRepository(
-                    Integer.valueOf(billOfLanding.getCargoId() + ""),
-                    Integer.valueOf(billOfLanding.getLoadingId() + ""));
+                    Integer.valueOf(billOfLanding.getId() + ""));
               });
 
       if (request.getIsValidate() != null && request.getIsValidate().equals("false")) {

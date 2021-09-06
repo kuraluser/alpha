@@ -1416,6 +1416,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             .forEach(
                 billLanding -> {
                   updateBillRemoveBuilder
+                          .setId(billLanding.getId() == null ? 0 : billLanding.getId())
                       .setLoadingId(
                           billLanding.getLoadingId() == null ? 0 : billLanding.getLoadingId())
                       .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())

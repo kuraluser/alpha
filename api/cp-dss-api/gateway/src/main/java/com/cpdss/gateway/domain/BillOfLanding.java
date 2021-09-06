@@ -8,6 +8,8 @@ import lombok.*;
 @Data
 public class BillOfLanding {
 
+  private Long id;
+
   private Long loadingId;
 
   private Long portId;
