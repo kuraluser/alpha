@@ -373,7 +373,8 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
               "Loadicator check completed for loading information {}",
               request.getStowagePlanDetails(0).getBookingListId());
           LoadingInfoLoadicatorDataRequest loadingInformationRequest =
-              this.buildLoadingInfoLoadicatorData(stowagePlanList, request.getIsUllageUpdate(), request.getConditionType());
+              this.buildLoadingInfoLoadicatorData(
+                  stowagePlanList, request.getIsUllageUpdate(), request.getConditionType());
           this.getLoadingInfoLoadicatorData(loadingInformationRequest);
         }
       }

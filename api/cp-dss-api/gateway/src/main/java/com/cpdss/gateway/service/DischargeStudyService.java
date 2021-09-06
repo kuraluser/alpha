@@ -174,7 +174,11 @@ public class DischargeStudyService {
   }
 
   public PortRotationResponse getDischargeStudyPortDataByVoyage(
-      Long vesselId, Long voyageId, Long dischargeStudyId, String correlationId)
+      Long vesselId,
+      Long voyageId,
+      Long dischargeStudyId,
+      String correlationId,
+      HttpHeaders headers)
       throws GenericServiceException {
     PortRotationResponse response = new PortRotationResponse();
 
@@ -184,7 +188,8 @@ public class DischargeStudyService {
             voyageId,
             dischargeStudyId,
             Common.PLANNING_TYPE.DISCHARGE_STUDY,
-            correlationId);
+            correlationId,
+            headers);
     return response;
   }
 

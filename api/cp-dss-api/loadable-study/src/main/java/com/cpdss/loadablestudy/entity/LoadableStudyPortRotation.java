@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -100,4 +101,6 @@ public class LoadableStudyPortRotation extends EntityDoc {
 
   @Column(name = "is_backloading_enabled")
   private Boolean isbackloadingEnabled;
+
+  @Transient private String portRotationType;
 }

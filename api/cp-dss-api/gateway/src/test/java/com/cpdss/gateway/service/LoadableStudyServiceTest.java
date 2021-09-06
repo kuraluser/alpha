@@ -127,6 +127,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -413,7 +414,12 @@ class LoadableStudyServiceTest {
   void testGetLoadableStudyPortList() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadableStudyPortRotationList(
-                anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
+                anyLong(),
+                anyLong(),
+                anyLong(),
+                Common.PLANNING_TYPE.LOADABLE_STUDY,
+                anyString(),
+                any(HttpHeaders.class)))
         .thenCallRealMethod();
     Mockito.when(
             this.loadableStudyService.getLoadableStudyPortRotationList(
@@ -421,7 +427,12 @@ class LoadableStudyServiceTest {
         .thenReturn(this.generatePortRotationReply(false).build());
     PortRotationResponse response =
         this.loadableStudyService.getLoadableStudyPortRotationList(
-            1L, 1L, 1L, Common.PLANNING_TYPE.LOADABLE_STUDY, CORRELATION_ID_HEADER_VALUE);
+            1L,
+            1L,
+            1L,
+            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            CORRELATION_ID_HEADER_VALUE,
+            any(HttpHeaders.class));
     assertAll(
         () ->
             assertEquals(
@@ -436,7 +447,12 @@ class LoadableStudyServiceTest {
   void testGetLoadableStudyPortListFailureScenario() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadableStudyPortRotationList(
-                anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
+                anyLong(),
+                anyLong(),
+                anyLong(),
+                Common.PLANNING_TYPE.LOADABLE_STUDY,
+                anyString(),
+                any(HttpHeaders.class)))
         .thenCallRealMethod();
     PortRotationReply.Builder reply = this.generatePortRotationReply(false);
     reply.setResponseStatus(
@@ -454,7 +470,12 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.getLoadableStudyPortRotationList(
-                    1L, 1L, 1L, Common.PLANNING_TYPE.DISCHARGE_STUDY, CORRELATION_ID_HEADER_VALUE));
+                    1L,
+                    1L,
+                    1L,
+                    Common.PLANNING_TYPE.DISCHARGE_STUDY,
+                    CORRELATION_ID_HEADER_VALUE,
+                    any(HttpHeaders.class)));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
@@ -464,7 +485,12 @@ class LoadableStudyServiceTest {
   void testGetLoadableStudyPortListWithEmptyData() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadableStudyPortRotationList(
-                anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
+                anyLong(),
+                anyLong(),
+                anyLong(),
+                Common.PLANNING_TYPE.LOADABLE_STUDY,
+                anyString(),
+                any(HttpHeaders.class)))
         .thenCallRealMethod();
     PortRotationReply.Builder reply = this.generatePortRotationReply(true);
     Mockito.when(
@@ -474,7 +500,12 @@ class LoadableStudyServiceTest {
 
     PortRotationResponse response =
         this.loadableStudyService.getLoadableStudyPortRotationList(
-            1L, 1L, 1L, Common.PLANNING_TYPE.LOADABLE_STUDY, CORRELATION_ID_HEADER_VALUE);
+            1L,
+            1L,
+            1L,
+            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            CORRELATION_ID_HEADER_VALUE,
+            any(HttpHeaders.class));
     assertAll(
         () ->
             assertEquals(
@@ -1751,7 +1782,7 @@ class LoadableStudyServiceTest {
   void testGetLoadablePatternDetails() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadablePatternDetails(
-                anyLong(), anyLong(), anyLong(), anyString()))
+                anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
         .thenCallRealMethod();
     Mockito.when(
             this.loadableStudyService.getLoadablePatternDetails(
@@ -1770,12 +1801,14 @@ class LoadableStudyServiceTest {
                 .addLoadablePlanComments(buildLoadablePlanComments())
                 .build());
 
-    Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
+    Mockito.when(
+            this.loadableStudyService.getSynopticalTable(
+                anyLong(), anyLong(), anyLong(), anyLong()))
         .thenReturn(buildLoadablePlanSynopticalResponse());
 
     LoadablePlanDetailsResponse response =
         this.loadableStudyService.getLoadablePatternDetails(
-            1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE);
+            1L, 1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE);
     assertAll(
         () ->
             assertEquals(
@@ -1795,7 +1828,7 @@ class LoadableStudyServiceTest {
   void testGetLoadablePatternDetailsSynopticalFail() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadablePatternDetails(
-                anyLong(), anyLong(), anyLong(), anyString()))
+                anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
         .thenCallRealMethod();
     Mockito.when(
             this.loadableStudyService.getLoadablePatternDetails(
@@ -1813,7 +1846,9 @@ class LoadableStudyServiceTest {
                 .addLoadablePlanBallastDetails(buildLoadablePlanBallastDetails())
                 .build());
 
-    Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
+    Mockito.when(
+            this.loadableStudyService.getSynopticalTable(
+                anyLong(), anyLong(), anyLong(), anyLong()))
         .thenReturn(buildLoadablePlanSynopticalFailResponse());
 
     final GenericServiceException ex =
@@ -1821,7 +1856,7 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.getLoadablePatternDetails(
-                    1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE));
+                    1L, 1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE));
 
     assertAll(
         () ->
@@ -1869,7 +1904,7 @@ class LoadableStudyServiceTest {
   void testGetLoadablePatternDetailsGrpcFailure() throws GenericServiceException {
     Mockito.when(
             this.loadableStudyService.getLoadablePatternDetails(
-                anyLong(), anyLong(), anyLong(), anyString()))
+                anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
         .thenCallRealMethod();
     Mockito.when(
             this.loadableStudyService.getLoadablePatternDetails(
@@ -1889,7 +1924,7 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.getLoadablePatternDetails(
-                    1L, 1L, 1L, CORRELATION_ID_HEADER_VALUE));
+                    1L, 1L, 1L, anyLong(), CORRELATION_ID_HEADER_VALUE));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
@@ -2186,11 +2221,14 @@ class LoadableStudyServiceTest {
 
   @Test
   void testGetSynopticalTable() throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
+    Mockito.when(
+            this.loadableStudyService.getSynopticalTable(
+                anyLong(), anyLong(), anyLong(), anyLong()))
         .thenCallRealMethod();
     Mockito.when(this.loadableStudyService.getSynopticalTable(any(SynopticalTableRequest.class)))
         .thenReturn(this.createSynopticalTableReply());
-    SynopticalTableResponse response = this.loadableStudyService.getSynopticalTable(1L, 1L, 1L);
+    SynopticalTableResponse response =
+        this.loadableStudyService.getSynopticalTable(1L, 1L, 1L, anyLong());
     assertAll(
         () ->
             assertEquals(
@@ -2201,7 +2239,9 @@ class LoadableStudyServiceTest {
 
   @Test
   void testGetSynopticalTableGrpcFailure() throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
+    Mockito.when(
+            this.loadableStudyService.getSynopticalTable(
+                anyLong(), anyLong(), anyLong(), anyLong()))
         .thenCallRealMethod();
 
     Mockito.when(this.loadableStudyService.getSynopticalTable(any(SynopticalTableRequest.class)))
@@ -2216,7 +2256,7 @@ class LoadableStudyServiceTest {
     final GenericServiceException ex =
         assertThrows(
             GenericServiceException.class,
-            () -> this.loadableStudyService.getSynopticalTable(1L, 1L, 1L));
+            () -> this.loadableStudyService.getSynopticalTable(1L, 1L, 1L, anyLong()));
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
