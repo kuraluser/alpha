@@ -513,7 +513,7 @@ public class LoadingPlanService {
                     loadingPlanStowageDetailsTempRepository
                         .updatePortLoadingPlanStowageDetailsRepository(
                             new BigDecimal(ullageInsert.getQuantity()),
-                            new BigDecimal(ullageInsert.getCorrectedUllage()),
+                            new BigDecimal(ullageInsert.getUllage()),
                             new BigDecimal(ullageInsert.getQuantity()),
                             BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
                             BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
