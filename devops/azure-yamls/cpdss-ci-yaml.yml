@@ -1,0 +1,183 @@
+# CPDSS CI Yaml Pipeline
+trigger: none
+pr: none
+
+variables:
+- group: CPDSS-Build-Global-Variables
+name: $(MajorVersion).0.$(rev:r)
+
+jobs:
+- job: Job_1
+  displayName: CPDSS Services Build
+  pool:
+    vmImage: ubuntu-20.04
+  steps:
+  - checkout: self
+    clean: true
+  - task: AWSShellScript@1
+    displayName: Login to ECR
+    inputs:
+      awsCredentials: 'Alpha-Ori-AWS'
+      regionName: ap-southeast-1
+      scriptType: inline
+      inlineScript: >-
+        token=$(aws ecr get-login-password --region ap-southeast-1)
+
+        echo "##vso[task.setvariable variable=DOCKER_PASSWORD]$token"
+  - task: Gradle@2
+    displayName: Run Jib Company-Info
+    inputs:
+      wrapperScript: api/cp-dss-api/company-info/gradlew
+      cwd: api/cp-dss-api/company-info
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Gradle@2
+    displayName: Run Jib Cargo-Info
+    inputs:
+      wrapperScript: api/cp-dss-api/cargo-info/gradlew
+      cwd: api/cp-dss-api/cargo-info
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Gradle@2
+    displayName: Run Jib Port-Info
+    inputs:
+      wrapperScript: api/cp-dss-api/port-info/gradlew
+      cwd: api/cp-dss-api/port-info
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Gradle@2
+    displayName: Run Jib Vessel-Info
+    inputs:
+      wrapperScript: api/cp-dss-api/vessel-info/gradlew
+      cwd: api/cp-dss-api/vessel-info
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Gradle@2
+    displayName: Run Jib Loadicator-Integration
+    inputs:
+      wrapperScript: api/cp-dss-api/loadicator-integration/gradlew
+      cwd: api/cp-dss-api/loadicator-integration
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Gradle@2
+    displayName: Run Jib Loading-Plan
+    inputs:
+      wrapperScript: api/cp-dss-api/loading-plan/gradlew
+      cwd: api/cp-dss-api/loading-plan
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Gradle@2
+    displayName: Run Jib Envoy-Writer
+    inputs:
+      wrapperScript: api/cp-dss-api/envoy-writer/gradlew
+      cwd: api/cp-dss-api/envoy-writer
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Gradle@2
+    displayName: Run Jib Envoy-Reader
+    inputs:
+      wrapperScript: api/cp-dss-api/envoy-reader/gradlew
+      cwd: api/cp-dss-api/envoy-reader
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Gradle@2
+    displayName: Run Jib Task-Manager
+    inputs:
+      wrapperScript: api/cp-dss-api/task-manager/gradlew
+      cwd: api/cp-dss-api/task-manager
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Gradle@2
+    displayName: Run Jib Loadable-Study
+    inputs:
+      wrapperScript: api/cp-dss-api/loadable-study/gradlew
+      cwd: api/cp-dss-api/loadable-study
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Gradle@2
+    displayName: Run Jib Gateway
+    inputs:
+      wrapperScript: api/cp-dss-api/gateway/gradlew
+      cwd: api/cp-dss-api/gateway
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Bash@3
+    displayName: Configure Docker
+    inputs:
+      targetType: inline
+      script: >
+        sudo systemctl status docker
+
+        sudo mkdir -p /etc/systemd/system/docker.service.d
+
+        cd /etc/systemd/system/
+
+        sudo chmod -R 777 docker.service.d
+
+        ls -lrt
+
+        sudo touch /etc/systemd/system/docker.service.d/options.conf
+
+        cd /etc/systemd/system/docker.service.d/
+
+        sudo chmod -R 777 options.conf
+
+        ls -lrt
+
+        sudo echo '[Service]' >> /etc/systemd/system/docker.service.d/options.conf
+
+        sudo echo 'ExecStart=' >> /etc/systemd/system/docker.service.d/options.conf
+
+        sudo echo 'ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375' >> /etc/systemd/system/docker.service.d/options.conf
+
+        cat /etc/systemd/system/docker.service.d/options.conf
+
+        sudo systemctl daemon-reload
+
+        sudo systemctl restart docker
+
+        sudo systemctl status docker
+  - task: Npm@1
+    displayName: npm Clean Install
+    inputs:
+      command: ci
+      workingDir: web/cpdss-portal
+      verbose: false
+  - task: Bash@3
+    displayName: Set Environment Variable for CPDSS
+    inputs:
+      targetType: inline
+      script: >-
+        echo "##vso[task.setvariable variable=HOST_MAPPED_PORT]81"
+
+        echo "##vso[task.setvariable variable=DOCKER_HOST]tcp://127.0.0.1:2375"
+
+
+        echo "hosted mapped port :" $(HOST_MAPPED_PORT)
+  - task: gulp@0
+    displayName: Gulp Build CPDSS
+    inputs:
+      gulpFile: web/cpdss-portal/gulpfile.js
+      targets: build
+      arguments: --cpdss $(GULP_ARG)
+  - task: Bash@3
+    displayName: Set Environment Variable for Login
+    inputs:
+      targetType: inline
+      script: >-
+        echo "##vso[task.setvariable variable=HOST_MAPPED_PORT]80"
+
+
+        echo "hosted mapped port :" $(HOST_MAPPED_PORT)
+  - task: gulp@0
+    displayName: Gulp Build Login
+    inputs:
+      gulpFile: web/cpdss-portal/gulpfile.js
+      targets: build
+      arguments: --login $(GULP_ARG)
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: drop'
+    inputs:
+      PathtoPublish: devops/stack-files
+...
+

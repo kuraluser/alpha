@@ -1,0 +1,15 @@
+version: "3.7"
+services: 
+  cpdss-service:
+    image: "${DOCKER_REGISTRY}/${IMAGE_NAME}:${TAG_NAME}"
+    dns: 8.8.8.8
+    healthcheck:
+      test: "wget --no-verbose --spider http://localhost:80/health || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+networks: 
+  default:
+    external: true
+    name: cpdss-network
