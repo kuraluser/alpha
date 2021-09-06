@@ -39,6 +39,7 @@ export class LoadableStudyDetailsTransformationService {
   private _loadLineChangeSource: BehaviorSubject<any> = new BehaviorSubject(null);
   private _loadableStudyUpdate: Subject<any> = new Subject();
   private _loadablePatternBtnDisable: Subject<any> = new Subject();
+  private _compareLQvaluesWithPoupDB: Subject<any> = new Subject();
 
   // public fields
   addCargoNomination$ = this._addCargoNominationSource.asObservable();
@@ -53,6 +54,7 @@ export class LoadableStudyDetailsTransformationService {
   loadLineChange$ = this._loadLineChangeSource.asObservable();
   loadableStudyUpdate$ = this._loadableStudyUpdate.asObservable();
   loadablePatternBtnDisable$ = this._loadablePatternBtnDisable.asObservable();
+  compareLQvalues$ = this._compareLQvaluesWithPoupDB.asObservable();
   ohqPortsValidity: { id: number; isPortRotationOhqComplete: boolean; }[];
 
   constructor(private timeZoneTransformationService: TimeZoneTransformationService) { }
@@ -1705,5 +1707,12 @@ export class LoadableStudyDetailsTransformationService {
  */
   disableGenerateLoadablePatternBtn(value){
     this._loadablePatternBtnDisable.next(value);
+  }
+
+  /**
+   * subscription function to check the loadable quantity value changed
+   */
+  compareLoadableQunaityValuesInPopupWithDB() {
+    this._compareLQvaluesWithPoupDB.next();
   }
 }
