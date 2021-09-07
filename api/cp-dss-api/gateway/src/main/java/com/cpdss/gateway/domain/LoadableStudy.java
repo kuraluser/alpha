@@ -68,6 +68,8 @@ public class LoadableStudy {
 
   private String loadableStudyStatusLastModifiedTime;
 
+  private String dischargeStudyStatusLastModifiedTime;
+
   private Boolean isCargoNominationComplete;
 
   private Boolean isPortsComplete;
