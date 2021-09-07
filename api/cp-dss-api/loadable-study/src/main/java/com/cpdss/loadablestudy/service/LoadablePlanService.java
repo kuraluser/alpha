@@ -386,9 +386,10 @@ public class LoadablePlanService {
               reqBuilder.addId(port);
             });
     PortInfo.PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(reqBuilder.build());
+
     List<com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails =
         new ArrayList<LoadablePlanPortWiseDetails>();
-      entityList.stream()
+    entityList.stream()
         .filter(portRotation -> !portRotation.getId().equals(lastLoadingRotationId))
         .collect(Collectors.toList())
         .forEach(
@@ -1489,6 +1490,7 @@ public class LoadablePlanService {
             operationsValueCell.setCellValue(portOperationDetails.getDepDisp());
             break;
         }
+
         XSSFCellStyle cellStyle =
             getCellStyle(
                 spreadsheet,
@@ -3029,6 +3031,7 @@ public class LoadablePlanService {
    */
   public boolean validateLoadableStudyForConfimPlan(
       com.cpdss.loadablestudy.entity.LoadableStudy ls) {
+    boolean status = true;
     Map<Long, Boolean> validationStack = new HashMap<>();
     if (ls.getPortRotations() != null && !ls.getPortRotations().isEmpty()) {
       for (LoadableStudyPortRotation pr : ls.getPortRotations()) {

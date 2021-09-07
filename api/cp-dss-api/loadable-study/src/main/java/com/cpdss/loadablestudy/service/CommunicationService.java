@@ -117,11 +117,12 @@ public class CommunicationService {
     try {
       String jsonResult = erReply.getPatternResultJson();
       LoadableStudy loadableStudyEntity =
-          loadableStudyServiceShore.saveOrUpdateLSInShore(jsonResult, erReply.getMessageId());
+          loadableStudyServiceShore.persistShipPayloadInShoreSide(jsonResult, erReply.getMessageId());
       if (loadableStudyEntity != null) {
         voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
         this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
-        // processAlgoFromShip(loadableStudyEntity);
+        log.info("algo process started in shore");
+        processAlgoFromShore(loadableStudyEntity);
       }
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when generating pattern", e);
