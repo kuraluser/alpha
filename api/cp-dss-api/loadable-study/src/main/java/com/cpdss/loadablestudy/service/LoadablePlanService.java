@@ -2074,7 +2074,8 @@ public class LoadablePlanService {
     //    if (stowageDetailsTempRepository
     //        .findByLoadablePatternAndIsActive(loadablePattern, true)
     //        .isEmpty()) replyBuilder.setValidated(true);
-     Optional<LoadablePattern> pattern = loadablePatternRepository.findByIdAndIsActive(loadablePattern.getId(), true);
+    Optional<LoadablePattern> pattern =
+        loadablePatternRepository.findByIdAndIsActive(loadablePattern.getId(), true);
     if (!status.isEmpty()) {
       if (stowageDetailsTempRepository
               .findByLoadablePatternAndIsActive(pattern.get(), true)
@@ -2692,8 +2693,8 @@ public class LoadablePlanService {
         .forEach(
             port -> {
               port.getArrivalCondition().setLoadablePlanBallastDetails(new ArrayList<>());
-                Optional<LoadablePattern> pattern =
-                        loadablePatternRepository.findByIdAndIsActive(patternId, true);
+              Optional<LoadablePattern> pattern =
+                  loadablePatternRepository.findByIdAndIsActive(patternId, true);
               List<LoadablePlanStowageBallastDetails> ballastDetailsList =
                   loadablePlanStowageBallastDetailsRepository.findAllByLoadablePatternIdAndPortXId(
                       patternId, port.getPortId());
@@ -2791,7 +2792,8 @@ public class LoadablePlanService {
       Long patternId,
       ModelMapper modelMapper) {
     loadabalePatternValidateRequest.setLoadablePlanStowageTempDetails(new ArrayList<>());
-      Optional<LoadablePattern> pattern = loadablePatternRepository.findByIdAndIsActive(patternId, true);
+    Optional<LoadablePattern> pattern =
+        loadablePatternRepository.findByIdAndIsActive(patternId, true);
     List<LoadablePlanStowageDetailsTemp> stowageTempList =
         stowageDetailsTempRepository.findByLoadablePatternAndIsActive(pattern.get(), true);
     stowageTempList.stream()

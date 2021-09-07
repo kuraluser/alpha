@@ -87,9 +87,11 @@ public class LoadableStudyServiceShore {
   @Autowired private LoadableStudyPortRotationService loadableStudyPortRotationService;
   @Autowired private LoadableQuantityService loadableQuantityService;
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
-  @Autowired private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
-  @Autowired private LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
 
+  @Autowired
+  private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
+
+  @Autowired private LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
 
   public LoadableStudy setLoadableStudyShore(String jsonResult, String messageId)
       throws GenericServiceException {
@@ -614,18 +616,16 @@ public class LoadableStudyServiceShore {
               .map(
                   cargo -> {
                     CargoNominationPortDetails cargoNominationPortDetails = null;
-                    if(cargo.getId() != null){
-                     Optional<CargoNominationPortDetails> existingCargoNominationPortDetails =
-                             cargoNominationOperationDetailsRepository.findById(cargo.getId());
-                      if(existingCargoNominationPortDetails.isPresent()){
+                    if (cargo.getId() != null) {
+                      Optional<CargoNominationPortDetails> existingCargoNominationPortDetails =
+                          cargoNominationOperationDetailsRepository.findById(cargo.getId());
+                      if (existingCargoNominationPortDetails.isPresent()) {
                         cargoNominationPortDetails = existingCargoNominationPortDetails.get();
-                      }else{
-                        cargoNominationPortDetails =
-                                new CargoNominationPortDetails();
+                      } else {
+                        cargoNominationPortDetails = new CargoNominationPortDetails();
                       }
-                    }else{
-                      cargoNominationPortDetails =
-                              new CargoNominationPortDetails();
+                    } else {
+                      cargoNominationPortDetails = new CargoNominationPortDetails();
                     }
                     cargoNominationPortDetails.setCargoNomination(cargoNomination);
                     cargoNominationPortDetails.setPortId(cargo.getPortId());
@@ -803,7 +803,7 @@ public class LoadableStudyServiceShore {
 
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = GenericServiceException.class)
   public LoadableStudy persistShipPayloadInShoreSide(String jsonResult, String messageId)
-          throws GenericServiceException, IOException {
+      throws GenericServiceException, IOException {
     LoadableStudy loadableStudyEntity = null;
     LoadabalePatternValidateRequest loadabalePatternValidateRequest =
         new Gson()
@@ -811,18 +811,21 @@ public class LoadableStudyServiceShore {
                 jsonResult, com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest.class);
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         loadabalePatternValidateRequest.getLoadableStudy();
-    Voyage voyage = saveOrUpdateVoyageInShoreSide(loadableStudy.getVesselId(), loadableStudy.getVoyage());
-    Optional<LoadableStudy> loadableStudyEntityOpt = loadableStudyRepository.findByIdAndIsActive(loadableStudy.getId(), true);
+    Voyage voyage =
+        saveOrUpdateVoyageInShoreSide(loadableStudy.getVesselId(), loadableStudy.getVoyage());
+    Optional<LoadableStudy> loadableStudyEntityOpt =
+        loadableStudyRepository.findByIdAndIsActive(loadableStudy.getId(), true);
     ModelMapper modelMapper = new ModelMapper();
-    if(loadableStudyEntityOpt.isPresent()){
-      log.debug("Stowage Edit update LS --- id : "+loadableStudy.getId());
-      loadableStudyEntity = saveOrUpdateLoadableStudyInShore(loadableStudy, voyage, loadableStudyEntityOpt.get());
+    if (loadableStudyEntityOpt.isPresent()) {
+      log.debug("Stowage Edit update LS --- id : " + loadableStudy.getId());
+      loadableStudyEntity =
+          saveOrUpdateLoadableStudyInShore(loadableStudy, voyage, loadableStudyEntityOpt.get());
       updateCommunicationStatus(messageId, loadableStudyEntity);
       saveOrUpdateLoadableStudyDataInShore(loadableStudyEntity, loadableStudy, modelMapper);
       saveLoadablePlanStowageTempDetailsInShore(loadabalePatternValidateRequest);
       // savePattern(loadabalePatternValidateRequest, loadableStudyEntity);
-    }else{
-      log.debug("Stowage Edit insert LS --- id : "+loadableStudy.getId());
+    } else {
+      log.debug("Stowage Edit insert LS --- id : " + loadableStudy.getId());
       LoadableStudy entity = new LoadableStudy();
       entity.setId(loadableStudy.getId());
       loadableStudyEntity = saveOrUpdateLoadableStudyInShore(loadableStudy, voyage, entity);
@@ -834,42 +837,51 @@ public class LoadableStudyServiceShore {
   }
 
   private Voyage saveOrUpdateVoyageInShoreSide(Long vesselId, VoyageDto voyageDto) {
-   Voyage voyageEntity = voyageRepository.findByIdAndIsActive(voyageDto.getId(), true);
-   if(Objects.isNull(voyageEntity)){
-     voyageEntity = new Voyage();
-     voyageEntity.setId(voyageDto.getId());
-     log.debug("Stowage Edit insert new voyage --- id : "+voyageDto.getId()+" vesselId : "+vesselId);
-   }else{
-     log.debug("Stowage Edit update existing voyage-- id : "+voyageDto.getId()+ "vesselId : "+vesselId);
-   }
-   voyageEntity.setVoyageNo(voyageDto.getVoyageNo());
-   voyageEntity.setVesselXId(vesselId);
-   voyageEntity.setIsActive(true);
-   voyageEntity.setCompanyXId(1L);
-   voyageEntity.setCaptainXId(voyageDto.getCaptainXId());
-   voyageEntity.setChiefOfficerXId(voyageDto.getChiefOfficerXId());
-   voyageEntity.setStartTimezoneId(voyageDto.getStartTimezoneId());
-   voyageEntity.setEndTimezoneId(voyageDto.getEndTimezoneId());
-   voyageEntity.setVoyageStatus(this.voyageStatusRepository.getOne(OPEN_VOYAGE_STATUS));
-   voyageEntity.setVoyageStartDate(
-              !StringUtils.isEmpty(voyageDto.getVoyageStartDate())
-                      ? LocalDateTime.from(
-                      DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT)
-                              .parse(voyageDto.getVoyageStartDate()))
-                      : null);
-   voyageEntity.setVoyageEndDate(
-              !StringUtils.isEmpty(voyageDto.getVoyageEndDate())
-                      ? LocalDateTime.from(
-                      DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT)
-                              .parse(voyageDto.getVoyageEndDate()))
-                      : null);
+    Voyage voyageEntity = voyageRepository.findByIdAndIsActive(voyageDto.getId(), true);
+    if (Objects.isNull(voyageEntity)) {
+      voyageEntity = new Voyage();
+      voyageEntity.setId(voyageDto.getId());
+      log.debug(
+          "Stowage Edit insert new voyage --- id : "
+              + voyageDto.getId()
+              + " vesselId : "
+              + vesselId);
+    } else {
+      log.debug(
+          "Stowage Edit update existing voyage-- id : "
+              + voyageDto.getId()
+              + "vesselId : "
+              + vesselId);
+    }
+    voyageEntity.setVoyageNo(voyageDto.getVoyageNo());
+    voyageEntity.setVesselXId(vesselId);
+    voyageEntity.setIsActive(true);
+    voyageEntity.setCompanyXId(1L);
+    voyageEntity.setCaptainXId(voyageDto.getCaptainXId());
+    voyageEntity.setChiefOfficerXId(voyageDto.getChiefOfficerXId());
+    voyageEntity.setStartTimezoneId(voyageDto.getStartTimezoneId());
+    voyageEntity.setEndTimezoneId(voyageDto.getEndTimezoneId());
+    voyageEntity.setVoyageStatus(this.voyageStatusRepository.getOne(OPEN_VOYAGE_STATUS));
+    voyageEntity.setVoyageStartDate(
+        !StringUtils.isEmpty(voyageDto.getVoyageStartDate())
+            ? LocalDateTime.from(
+                DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT)
+                    .parse(voyageDto.getVoyageStartDate()))
+            : null);
+    voyageEntity.setVoyageEndDate(
+        !StringUtils.isEmpty(voyageDto.getVoyageEndDate())
+            ? LocalDateTime.from(
+                DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(voyageDto.getVoyageEndDate()))
+            : null);
     voyageEntity = voyageRepository.save(voyageEntity);
     return voyageEntity;
   }
 
   private LoadableStudy saveOrUpdateLoadableStudyInShore(
-          com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy, Voyage voyage, LoadableStudy entity)
-          throws IOException {
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      Voyage voyage,
+      LoadableStudy entity)
+      throws IOException {
     entity.setVesselXId(loadableStudy.getVesselId());
     entity.setVoyage(voyage);
     entity.setName(loadableStudy.getName());
@@ -879,21 +891,21 @@ public class LoadableStudyServiceShore {
     entity.setDraftMark(new BigDecimal(loadableStudy.getDraftMark()));
     entity.setLoadLineXId(loadableStudy.getLoadlineId());
     entity.setDraftRestriction(
-            loadableStudy.getDraftRestriction() != null
-                    ? new BigDecimal(loadableStudy.getDraftRestriction())
-                    : null);
+        loadableStudy.getDraftRestriction() != null
+            ? new BigDecimal(loadableStudy.getDraftRestriction())
+            : null);
     entity.setEstimatedMaxSag(
-            loadableStudy.getEstimatedMaxSG() != null
-                    ? new BigDecimal(loadableStudy.getEstimatedMaxSG())
-                    : null);
+        loadableStudy.getEstimatedMaxSG() != null
+            ? new BigDecimal(loadableStudy.getEstimatedMaxSG())
+            : null);
     entity.setMaxAirTemperature(
-            loadableStudy.getMaxAirTemp() != null
-                    ? new BigDecimal(loadableStudy.getMaxAirTemp())
-                    : null);
+        loadableStudy.getMaxAirTemp() != null
+            ? new BigDecimal(loadableStudy.getMaxAirTemp())
+            : null);
     entity.setMaxWaterTemperature(
-            loadableStudy.getMaxWaterTemp() != null
-                    ? new BigDecimal(loadableStudy.getMaxWaterTemp())
-                    : null);
+        loadableStudy.getMaxWaterTemp() != null
+            ? new BigDecimal(loadableStudy.getMaxWaterTemp())
+            : null);
     entity.setActive(true);
     this.setCaseNo(entity);
     /*entity.setDischargeCargoId(loadableStudy.getD);*/
@@ -907,28 +919,30 @@ public class LoadableStudyServiceShore {
       String folderLocation = constructFolderPath(entity);
       Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
       for (com.cpdss.loadablestudy.domain.LoadableStudyAttachment attachment :
-              loadableStudy.getLoadableStudyAttachment()) {
-//        String fileName =
-//                attachment.getFileName().substring(0, attachment.getFileName().lastIndexOf("."));
-//        String extension =
-//                attachment
-//                        .getFileName()
-//                        .substring(attachment.getFileName().lastIndexOf("."))
-//                        .toLowerCase();
-//        String filePath = folderLocation + fileName + "_" + System.currentTimeMillis() + extension;
-//        Path path = Paths.get(this.rootFolder + filePath);
-//        Files.createFile(path);
-//        Files.write(path, attachment.getContent());
+          loadableStudy.getLoadableStudyAttachment()) {
+        //        String fileName =
+        //                attachment.getFileName().substring(0,
+        // attachment.getFileName().lastIndexOf("."));
+        //        String extension =
+        //                attachment
+        //                        .getFileName()
+        //                        .substring(attachment.getFileName().lastIndexOf("."))
+        //                        .toLowerCase();
+        //        String filePath = folderLocation + fileName + "_" + System.currentTimeMillis() +
+        // extension;
+        //        Path path = Paths.get(this.rootFolder + filePath);
+        //        Files.createFile(path);
+        //        Files.write(path, attachment.getContent());
         Optional<LoadableStudyAttachments> loadableStudyAttachment =
-                loadableStudyAttachmentsRepository.findByIdAndIsActive(attachment.getId(), true);
+            loadableStudyAttachmentsRepository.findByIdAndIsActive(attachment.getId(), true);
         LoadableStudyAttachments attachmentEntity;
-        if(loadableStudyAttachment.isPresent()){
-          log.debug("Stowage Edit Update Attachment File --- id : "+attachment.getId());
+        if (loadableStudyAttachment.isPresent()) {
+          log.debug("Stowage Edit Update Attachment File --- id : " + attachment.getId());
           attachmentEntity = loadableStudyAttachment.get();
-        }else{
-           log.debug("Stowage Edit INSERT Attachment File --- id : "+attachment.getId());
-           attachmentEntity = new LoadableStudyAttachments();
-           attachmentEntity.setId(attachment.getId());
+        } else {
+          log.debug("Stowage Edit INSERT Attachment File --- id : " + attachment.getId());
+          attachmentEntity = new LoadableStudyAttachments();
+          attachmentEntity.setId(attachment.getId());
         }
         attachmentEntity.setUploadedFileName(attachment.getFileName());
         attachmentEntity.setFilePath(attachment.getFilePath());
@@ -942,12 +956,11 @@ public class LoadableStudyServiceShore {
     return entity;
   }
 
-  private void updateCommunicationStatus(
-          String messageId, LoadableStudy loadableStudyEntity) {
+  private void updateCommunicationStatus(String messageId, LoadableStudy loadableStudyEntity) {
     LoadableStudyCommunicationStatus lsCommunicationStatus = new LoadableStudyCommunicationStatus();
     lsCommunicationStatus.setMessageUUID(messageId);
     lsCommunicationStatus.setCommunicationStatus(
-            CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId());
+        CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId());
     lsCommunicationStatus.setReferenceId(loadableStudyEntity.getId());
     lsCommunicationStatus.setMessageType(MessageTypes.VALIDATEPLAN.getMessageType());
     lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
@@ -955,268 +968,298 @@ public class LoadableStudyServiceShore {
   }
 
   private void saveOrUpdateLoadableStudyDataInShore(
-          LoadableStudy loadableStudyEntity,
-          com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
-          ModelMapper modelMapper)
-          throws GenericServiceException {
+      LoadableStudy loadableStudyEntity,
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy,
+      ModelMapper modelMapper)
+      throws GenericServiceException {
 
     List<CommingleCargo> commingleEntities = new ArrayList<>();
     loadableStudy
-            .getCommingleCargos()
-            .forEach(commingleCargo -> {
-                      try {
-                        CommingleCargo commingleCargoEntity = null;
-                        if(commingleCargo.getId() != null){
-                          Optional<CommingleCargo> existingCommingleCargo =
-                                  this.commingleCargoRepository.findByIdAndIsActive(
-                                          commingleCargo.getId(), true);
-                          if (existingCommingleCargo.isPresent()) {
-                            log.debug("Stowage Edit Update CommingleCargo --- id : "+commingleCargo.getId());
-                            commingleCargoEntity = existingCommingleCargo.get();
-                          }else {
-                            log.debug("Stowage Edit INSERT CommingleCargo --- id : "+commingleCargo.getId());
-                            commingleCargoEntity = new CommingleCargo();
-                            commingleCargoEntity.setId(commingleCargo.getId());
-                          }
-                        }else {
-                          log.debug("Stowage Edit INSERT CommingleCargo --- id : ");
-                          commingleCargoEntity = new CommingleCargo();
-                          commingleCargoEntity.setId(commingleCargo.getId());
-                        }
-                        buildCommingleCargoShore(
-                                commingleCargoEntity, commingleCargo, loadableStudyEntity.getId());
-                        commingleEntities.add(commingleCargoEntity);
-                      } catch (Exception e) {
-                        log.error("Exception in creating entities for save commingle cargo", e);
-                        throw new RuntimeException(e);
-                      }
-                    });
-    List<CommingleCargo> updatedCommingleEntities = this.commingleCargoRepository.saveAll(commingleEntities);
-    log.debug("Stowage Edit no of rows updated for commingle : "+updatedCommingleEntities.size());
+        .getCommingleCargos()
+        .forEach(
+            commingleCargo -> {
+              try {
+                CommingleCargo commingleCargoEntity = null;
+                if (commingleCargo.getId() != null) {
+                  Optional<CommingleCargo> existingCommingleCargo =
+                      this.commingleCargoRepository.findByIdAndIsActive(
+                          commingleCargo.getId(), true);
+                  if (existingCommingleCargo.isPresent()) {
+                    log.debug(
+                        "Stowage Edit Update CommingleCargo --- id : " + commingleCargo.getId());
+                    commingleCargoEntity = existingCommingleCargo.get();
+                  } else {
+                    log.debug(
+                        "Stowage Edit INSERT CommingleCargo --- id : " + commingleCargo.getId());
+                    commingleCargoEntity = new CommingleCargo();
+                    commingleCargoEntity.setId(commingleCargo.getId());
+                  }
+                } else {
+                  log.debug("Stowage Edit INSERT CommingleCargo --- id : ");
+                  commingleCargoEntity = new CommingleCargo();
+                  commingleCargoEntity.setId(commingleCargo.getId());
+                }
+                buildCommingleCargoShore(
+                    commingleCargoEntity, commingleCargo, loadableStudyEntity.getId());
+                commingleEntities.add(commingleCargoEntity);
+              } catch (Exception e) {
+                log.error("Exception in creating entities for save commingle cargo", e);
+                throw new RuntimeException(e);
+              }
+            });
+    List<CommingleCargo> updatedCommingleEntities =
+        this.commingleCargoRepository.saveAll(commingleEntities);
+    log.debug("Stowage Edit no of rows updated for commingle : " + updatedCommingleEntities.size());
     List<CargoNomination> cargoNominationEntities = new ArrayList<>();
     loadableStudy.getCargoNomination().stream()
-            .forEach(
-                    cargoNom -> {
-                      Optional<CargoNomination> existingCargoNomination = null;
-                      CargoNomination cargoNomination = null;
-                      if(cargoNom.getId() != null){
-                        existingCargoNomination = cargoNominationRepository.findByIdAndIsActive(cargoNom.getId(), true);
-                        if (existingCargoNomination.isPresent()) {
-                          cargoNomination = existingCargoNomination.get();
-                          log.debug("Stowage Edit Update CargoNomination --- id : "+cargoNom.getId());
-                        } else{
-                          cargoNomination = new CargoNomination();
-                          log.debug("Stowage Edit INSERT CargoNomination --- id : "+cargoNom.getId());
-                        }
-                      }else{
-                        cargoNomination = new CargoNomination();
-                        log.debug("Stowage Edit INSERT CargoNomination --- id : ");
-                      }
-                      buildCargoNomination(
-                              cargoNomination,
-                              cargoNom,
-                              loadableStudy.getCargoNominationOperationDetails());
-                      cargoNomination.setLoadableStudyXId(loadableStudyEntity.getId());
-                      cargoNominationEntities.add(cargoNomination);
-                    });
-    List<CargoNomination> updatedCargoNominationEntities = this.cargoNominationRepository.saveAll(cargoNominationEntities);
-    log.debug("Stowage Edit no of rows updated for CargoNominationEntities : "+updatedCargoNominationEntities.size());
+        .forEach(
+            cargoNom -> {
+              Optional<CargoNomination> existingCargoNomination = null;
+              CargoNomination cargoNomination = null;
+              if (cargoNom.getId() != null) {
+                existingCargoNomination =
+                    cargoNominationRepository.findByIdAndIsActive(cargoNom.getId(), true);
+                if (existingCargoNomination.isPresent()) {
+                  cargoNomination = existingCargoNomination.get();
+                  log.debug("Stowage Edit Update CargoNomination --- id : " + cargoNom.getId());
+                } else {
+                  cargoNomination = new CargoNomination();
+                  log.debug("Stowage Edit INSERT CargoNomination --- id : " + cargoNom.getId());
+                }
+              } else {
+                cargoNomination = new CargoNomination();
+                log.debug("Stowage Edit INSERT CargoNomination --- id : ");
+              }
+              buildCargoNomination(
+                  cargoNomination, cargoNom, loadableStudy.getCargoNominationOperationDetails());
+              cargoNomination.setLoadableStudyXId(loadableStudyEntity.getId());
+              cargoNominationEntities.add(cargoNomination);
+            });
+    List<CargoNomination> updatedCargoNominationEntities =
+        this.cargoNominationRepository.saveAll(cargoNominationEntities);
+    log.debug(
+        "Stowage Edit no of rows updated for CargoNominationEntities : "
+            + updatedCargoNominationEntities.size());
     List<LoadableStudyPortRotation> loadableStudyPortRotations = new ArrayList<>();
     loadableStudy.getLoadableStudyPortRotation().stream()
-            .forEach(
-                    portRotation -> {
-                      LoadableStudyPortRotation loadableStudyPortRotation;
-                      if(portRotation.getId() != null){
-                        LoadableStudyPortRotation existingLoadableStudyPortRotation = loadableStudyPortRotationRepository.findByIdAndIsActive(portRotation.getId(), true);
-                        if(existingLoadableStudyPortRotation != null){
-                          loadableStudyPortRotation = existingLoadableStudyPortRotation;
-                          log.debug("Stowage Edit UPDATE LoadableStudyPortRotation --- id : "+portRotation.getId());
-                        }else{
-                          loadableStudyPortRotation = new LoadableStudyPortRotation();
-                          loadableStudyPortRotation.setId(portRotation.getId());
-                          log.debug("Stowage Edit INSERT LoadableStudyPortRotation --- id : "+portRotation.getId());
-                        }
-                      }else{
-                        loadableStudyPortRotation = new LoadableStudyPortRotation();
-                        log.debug("Stowage Edit INSERT LoadableStudyPortRotation --- id : ");
-                      }
-                      loadableStudyPortRotation.setLoadableStudy(loadableStudyEntity);
-                      loadableStudyPortRotation =
-                              buildLoadableStudyPortRotation(
-                                      loadableStudyPortRotation,
-                                      portRotation,
-                                      loadableStudy.getSynopticalTableDetails());
-                      loadableStudyPortRotations.add(loadableStudyPortRotation);
-                    });
-    List<LoadableStudyPortRotation> updatedLoadableStudyPortRotations = this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
-    log.debug("Stowage Edit no of rows updated for LoadableStudyPortRotation : "+updatedLoadableStudyPortRotations.size());
+        .forEach(
+            portRotation -> {
+              LoadableStudyPortRotation loadableStudyPortRotation;
+              if (portRotation.getId() != null) {
+                LoadableStudyPortRotation existingLoadableStudyPortRotation =
+                    loadableStudyPortRotationRepository.findByIdAndIsActive(
+                        portRotation.getId(), true);
+                if (existingLoadableStudyPortRotation != null) {
+                  loadableStudyPortRotation = existingLoadableStudyPortRotation;
+                  log.debug(
+                      "Stowage Edit UPDATE LoadableStudyPortRotation --- id : "
+                          + portRotation.getId());
+                } else {
+                  loadableStudyPortRotation = new LoadableStudyPortRotation();
+                  loadableStudyPortRotation.setId(portRotation.getId());
+                  log.debug(
+                      "Stowage Edit INSERT LoadableStudyPortRotation --- id : "
+                          + portRotation.getId());
+                }
+              } else {
+                loadableStudyPortRotation = new LoadableStudyPortRotation();
+                log.debug("Stowage Edit INSERT LoadableStudyPortRotation --- id : ");
+              }
+              loadableStudyPortRotation.setLoadableStudy(loadableStudyEntity);
+              loadableStudyPortRotation =
+                  buildLoadableStudyPortRotation(
+                      loadableStudyPortRotation,
+                      portRotation,
+                      loadableStudy.getSynopticalTableDetails());
+              loadableStudyPortRotations.add(loadableStudyPortRotation);
+            });
+    List<LoadableStudyPortRotation> updatedLoadableStudyPortRotations =
+        this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
+    log.debug(
+        "Stowage Edit no of rows updated for LoadableStudyPortRotation : "
+            + updatedLoadableStudyPortRotations.size());
     List<OnHandQuantity> onHandQuantityEntities = new ArrayList<>();
     loadableStudy.getOnHandQuantity().stream()
-            .forEach(
-                    onHandQuantity -> {
-                      OnHandQuantity onHandQuantityEntity;
-                      if(onHandQuantity.getId() != null){
-                        OnHandQuantity existingOnHandQuantity =  onHandQuantityRepository.findByIdAndIsActive(onHandQuantity.getId(), true);
-                        if(existingOnHandQuantity != null ){
-                          log.debug("Stowage Edit UPDATE OnHandQuantity --- id : "+onHandQuantity.getId());
-                          onHandQuantityEntity = existingOnHandQuantity;
-                        }else{
-                          onHandQuantityEntity = new OnHandQuantity();
-                          onHandQuantityEntity.setId(onHandQuantity.getId());
-                          log.debug("Stowage Edit INSERT OnHandQuantity --- id : "+onHandQuantity.getId());
-                        }
-                      }else{
-                        onHandQuantityEntity = new OnHandQuantity();
-                        log.debug("Stowage Edit INSERT OnHandQuantity --- id : ");
-                      }
-                      onHandQuantityEntity.setLoadableStudy(loadableStudyEntity);
-                      buildOnHandQuantity(onHandQuantityEntity, onHandQuantity);
-                      onHandQuantityEntities.add(onHandQuantityEntity);
-                    });
-    List<OnHandQuantity> updatedOnHandQuantityEntities = this.onHandQuantityRepository.saveAll(onHandQuantityEntities);
-    log.debug("Stowage Edit no of rows updated for OnHandQuantity : "+updatedOnHandQuantityEntities.size());
+        .forEach(
+            onHandQuantity -> {
+              OnHandQuantity onHandQuantityEntity;
+              if (onHandQuantity.getId() != null) {
+                OnHandQuantity existingOnHandQuantity =
+                    onHandQuantityRepository.findByIdAndIsActive(onHandQuantity.getId(), true);
+                if (existingOnHandQuantity != null) {
+                  log.debug(
+                      "Stowage Edit UPDATE OnHandQuantity --- id : " + onHandQuantity.getId());
+                  onHandQuantityEntity = existingOnHandQuantity;
+                } else {
+                  onHandQuantityEntity = new OnHandQuantity();
+                  onHandQuantityEntity.setId(onHandQuantity.getId());
+                  log.debug(
+                      "Stowage Edit INSERT OnHandQuantity --- id : " + onHandQuantity.getId());
+                }
+              } else {
+                onHandQuantityEntity = new OnHandQuantity();
+                log.debug("Stowage Edit INSERT OnHandQuantity --- id : ");
+              }
+              onHandQuantityEntity.setLoadableStudy(loadableStudyEntity);
+              buildOnHandQuantity(onHandQuantityEntity, onHandQuantity);
+              onHandQuantityEntities.add(onHandQuantityEntity);
+            });
+    List<OnHandQuantity> updatedOnHandQuantityEntities =
+        this.onHandQuantityRepository.saveAll(onHandQuantityEntities);
+    log.debug(
+        "Stowage Edit no of rows updated for OnHandQuantity : "
+            + updatedOnHandQuantityEntities.size());
     List<OnBoardQuantity> onBoardQuantityEntities = new ArrayList<>();
     loadableStudy.getOnBoardQuantity().stream()
-            .forEach(
-                    onBoardQuantity -> {
-                      OnBoardQuantity onBoardQuantityEntity;
-                      if(onBoardQuantity.getId() != null){
-                        OnBoardQuantity existingOnBoardQuantityEntity = onBoardQuantityRepository.findByIdAndIsActive(onBoardQuantity.getId(), true);
-                        if(existingOnBoardQuantityEntity != null){
-                          onBoardQuantityEntity = existingOnBoardQuantityEntity;
-                          log.debug("Stowage Edit UPDATE OnBoardQuantity --- id : "+onBoardQuantity.getId());
-                        }else{
-                          onBoardQuantityEntity = new OnBoardQuantity();
-                          onBoardQuantityEntity.setId(onBoardQuantity.getId());
-                          log.debug("Stowage Edit INSERT OnBoardQuantity --- id : "+onBoardQuantity.getId());
-                        }
-                      }else{
-                        onBoardQuantityEntity = new OnBoardQuantity();
-                        log.debug("Stowage Edit INSERT OnBoardQuantity --- id : ");
-                      }
-                      onBoardQuantityEntity.setLoadableStudy(loadableStudyEntity);
-                      buildOnBoardQuantityEntity(onBoardQuantityEntity, onBoardQuantity);
-                      onBoardQuantityEntities.add(onBoardQuantityEntity);
-                    });
-    List<OnBoardQuantity> updatedOnBoardQuantityEntities = this.onBoardQuantityRepository.saveAll(onBoardQuantityEntities);
-    log.debug("Stowage Edit no of rows updated for OnBoardQuantity : "+updatedOnBoardQuantityEntities.size());
+        .forEach(
+            onBoardQuantity -> {
+              OnBoardQuantity onBoardQuantityEntity;
+              if (onBoardQuantity.getId() != null) {
+                OnBoardQuantity existingOnBoardQuantityEntity =
+                    onBoardQuantityRepository.findByIdAndIsActive(onBoardQuantity.getId(), true);
+                if (existingOnBoardQuantityEntity != null) {
+                  onBoardQuantityEntity = existingOnBoardQuantityEntity;
+                  log.debug(
+                      "Stowage Edit UPDATE OnBoardQuantity --- id : " + onBoardQuantity.getId());
+                } else {
+                  onBoardQuantityEntity = new OnBoardQuantity();
+                  onBoardQuantityEntity.setId(onBoardQuantity.getId());
+                  log.debug(
+                      "Stowage Edit INSERT OnBoardQuantity --- id : " + onBoardQuantity.getId());
+                }
+              } else {
+                onBoardQuantityEntity = new OnBoardQuantity();
+                log.debug("Stowage Edit INSERT OnBoardQuantity --- id : ");
+              }
+              onBoardQuantityEntity.setLoadableStudy(loadableStudyEntity);
+              buildOnBoardQuantityEntity(onBoardQuantityEntity, onBoardQuantity);
+              onBoardQuantityEntities.add(onBoardQuantityEntity);
+            });
+    List<OnBoardQuantity> updatedOnBoardQuantityEntities =
+        this.onBoardQuantityRepository.saveAll(onBoardQuantityEntities);
+    log.debug(
+        "Stowage Edit no of rows updated for OnBoardQuantity : "
+            + updatedOnBoardQuantityEntities.size());
     com.cpdss.loadablestudy.domain.LoadableQuantity loadableQuantityDomain =
-            loadableStudy.getLoadableQuantity();
+        loadableStudy.getLoadableQuantity();
     if (null != loadableQuantityDomain) {
       LoadableQuantity loadableQuantity;
-      if(loadableQuantityDomain.getId() != null){
-        LoadableQuantity  existingLoadableQuantity = loadableQuantityRepository.findByIdAndIsActive(loadableQuantityDomain.getId(), true);
-        if(existingLoadableQuantity != null){
+      if (loadableQuantityDomain.getId() != null) {
+        LoadableQuantity existingLoadableQuantity =
+            loadableQuantityRepository.findByIdAndIsActive(loadableQuantityDomain.getId(), true);
+        if (existingLoadableQuantity != null) {
           loadableQuantity = existingLoadableQuantity;
-          log.debug("Stowage Edit UPDATE LoadableQuantity --- id : "+loadableQuantityDomain.getId());
-        }else{
+          log.debug(
+              "Stowage Edit UPDATE LoadableQuantity --- id : " + loadableQuantityDomain.getId());
+        } else {
           loadableQuantity = new LoadableQuantity();
           loadableQuantity.setId(loadableQuantityDomain.getId());
-          log.debug("Stowage Edit INSERT LoadableQuantity --- id : "+loadableQuantityDomain.getId());
+          log.debug(
+              "Stowage Edit INSERT LoadableQuantity --- id : " + loadableQuantityDomain.getId());
         }
-      }else{
+      } else {
         loadableQuantity = new LoadableQuantity();
         log.debug("Stowage Edit INSERT LoadableQuantity --- id : ");
       }
       loadableQuantity.setLoadableStudyXId(loadableStudyEntity);
       loadableQuantity.setConstant(
-              StringUtils.isEmpty(loadableQuantityDomain.getConstant())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getConstant()));
+          StringUtils.isEmpty(loadableQuantityDomain.getConstant())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getConstant()));
       loadableQuantity.setDeadWeight(
-              StringUtils.isEmpty(loadableQuantityDomain.getDeadWeight())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getDeadWeight()));
+          StringUtils.isEmpty(loadableQuantityDomain.getDeadWeight())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getDeadWeight()));
 
       loadableQuantity.setDistanceFromLastPort(
-              StringUtils.isEmpty(loadableQuantityDomain.getDistanceFromLastPort())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getDistanceFromLastPort()));
+          StringUtils.isEmpty(loadableQuantityDomain.getDistanceFromLastPort())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getDistanceFromLastPort()));
 
       loadableQuantity.setEstimatedDOOnBoard(
-              StringUtils.isEmpty(loadableQuantityDomain.getEstDOOnBoard())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getEstDOOnBoard()));
+          StringUtils.isEmpty(loadableQuantityDomain.getEstDOOnBoard())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getEstDOOnBoard()));
 
       loadableQuantity.setEstimatedFOOnBoard(
-              StringUtils.isEmpty(loadableQuantityDomain.getEstFOOnBoard())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getEstFOOnBoard()));
+          StringUtils.isEmpty(loadableQuantityDomain.getEstFOOnBoard())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getEstFOOnBoard()));
       loadableQuantity.setEstimatedFWOnBoard(
-              StringUtils.isEmpty(loadableQuantityDomain.getEstFreshWaterOnBoard())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getEstFreshWaterOnBoard()));
+          StringUtils.isEmpty(loadableQuantityDomain.getEstFreshWaterOnBoard())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getEstFreshWaterOnBoard()));
       loadableQuantity.setEstimatedSagging(
-              StringUtils.isEmpty(loadableQuantityDomain.getEstSagging())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getEstSagging()));
+          StringUtils.isEmpty(loadableQuantityDomain.getEstSagging())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getEstSagging()));
 
       loadableQuantity.setOtherIfAny(
-              StringUtils.isEmpty(loadableQuantityDomain.getOtherIfAny())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getOtherIfAny()));
+          StringUtils.isEmpty(loadableQuantityDomain.getOtherIfAny())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getOtherIfAny()));
       loadableQuantity.setSaggingDeduction(
-              StringUtils.isEmpty(loadableQuantityDomain.getSaggingDeduction())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getSaggingDeduction()));
+          StringUtils.isEmpty(loadableQuantityDomain.getSaggingDeduction())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getSaggingDeduction()));
 
       loadableQuantity.setSgCorrection(
-              StringUtils.isEmpty(loadableQuantityDomain.getSgCorrection())
-                      ? new BigDecimal("0.0000")
-                      : new BigDecimal(loadableQuantityDomain.getSgCorrection()));
+          StringUtils.isEmpty(loadableQuantityDomain.getSgCorrection())
+              ? new BigDecimal("0.0000")
+              : new BigDecimal(loadableQuantityDomain.getSgCorrection()));
 
       loadableQuantity.setTotalQuantity(
-              StringUtils.isEmpty(loadableQuantityDomain.getTotalQuantity())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getTotalQuantity()));
+          StringUtils.isEmpty(loadableQuantityDomain.getTotalQuantity())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getTotalQuantity()));
       loadableQuantity.setTpcatDraft(
-              StringUtils.isEmpty(loadableQuantityDomain.getTpc())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getTpc()));
+          StringUtils.isEmpty(loadableQuantityDomain.getTpc())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getTpc()));
 
       loadableQuantity.setVesselAverageSpeed(
-              StringUtils.isEmpty(loadableQuantityDomain.getVesselAverageSpeed())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getVesselAverageSpeed()));
+          StringUtils.isEmpty(loadableQuantityDomain.getVesselAverageSpeed())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getVesselAverageSpeed()));
 
       loadableQuantity.setPortId(
-              StringUtils.isEmpty(loadableQuantityDomain.getPortId())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getPortId()));
+          StringUtils.isEmpty(loadableQuantityDomain.getPortId())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getPortId()));
       loadableQuantity.setBoilerWaterOnBoard(
-              StringUtils.isEmpty(loadableQuantityDomain.getBoilerWaterOnBoard())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getBoilerWaterOnBoard()));
+          StringUtils.isEmpty(loadableQuantityDomain.getBoilerWaterOnBoard())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getBoilerWaterOnBoard()));
       loadableQuantity.setBallast(
-              StringUtils.isEmpty(loadableQuantityDomain.getBallast())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getBallast()));
+          StringUtils.isEmpty(loadableQuantityDomain.getBallast())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getBallast()));
       loadableQuantity.setRunningHours(
-              StringUtils.isEmpty(loadableQuantityDomain.getRunningHours())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getRunningHours()));
+          StringUtils.isEmpty(loadableQuantityDomain.getRunningHours())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getRunningHours()));
       loadableQuantity.setRunningDays(
-              StringUtils.isEmpty(loadableQuantityDomain.getRunningDays())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getRunningDays()));
+          StringUtils.isEmpty(loadableQuantityDomain.getRunningDays())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getRunningDays()));
       loadableQuantity.setFoConsumptionInSZ(
-              StringUtils.isEmpty(loadableQuantityDomain.getFoConInSZ())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getFoConInSZ()));
+          StringUtils.isEmpty(loadableQuantityDomain.getFoConInSZ())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getFoConInSZ()));
       loadableQuantity.setDraftRestriction(
-              StringUtils.isEmpty(loadableQuantityDomain.getDraftRestriction())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getDraftRestriction()));
+          StringUtils.isEmpty(loadableQuantityDomain.getDraftRestriction())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getDraftRestriction()));
 
       loadableQuantity.setFoConsumptionPerDay(
-              StringUtils.isEmpty(loadableQuantityDomain.getFoConsumptionPerDay())
-                      ? null
-                      : new BigDecimal(loadableQuantityDomain.getFoConsumptionPerDay()));
+          StringUtils.isEmpty(loadableQuantityDomain.getFoConsumptionPerDay())
+              ? null
+              : new BigDecimal(loadableQuantityDomain.getFoConsumptionPerDay()));
       loadableQuantity.setIsActive(true);
       if (loadableQuantityDomain.getPortId() != null) {
         LoadableStudyPortRotation lsPortRot =
-                loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
-                        loadableStudyEntity, loadableQuantityDomain.getPortId(), true);
+            loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                loadableStudyEntity, loadableQuantityDomain.getPortId(), true);
         loadableQuantity.setLoadableStudyPortRotation(lsPortRot);
       }
       this.loadableQuantityRepository.save(loadableQuantity);
@@ -1245,15 +1288,16 @@ public class LoadableStudyServiceShore {
                     .forEach(
                         rule -> {
                           LoadableStudyRules loadableStudyRules;
-                          if(rule.getId() != null){
-                          Optional<LoadableStudyRules> existingLoadableStudyRules = loadableStudyRuleRepository.findById(Long.parseLong(rule.getId()));
-                            if(existingLoadableStudyRules.isPresent()){
+                          if (rule.getId() != null) {
+                            Optional<LoadableStudyRules> existingLoadableStudyRules =
+                                loadableStudyRuleRepository.findById(Long.parseLong(rule.getId()));
+                            if (existingLoadableStudyRules.isPresent()) {
                               loadableStudyRules = existingLoadableStudyRules.get();
-                            }else{
+                            } else {
                               loadableStudyRules = new LoadableStudyRules();
                               loadableStudyRules.setId(Long.parseLong(rule.getId()));
                             }
-                          }else{
+                          } else {
                             loadableStudyRules = new LoadableStudyRules();
                           }
                           loadableStudyRules.setLoadableStudy(loadableStudyEntity);
@@ -1312,16 +1356,17 @@ public class LoadableStudyServiceShore {
                               new ArrayList<>();
                           for (RulesInputs input : rule.getInputs()) {
                             LoadableStudyRuleInput ruleTemplateInput;
-                            if(input.getId() != null){
+                            if (input.getId() != null) {
                               Optional<LoadableStudyRuleInput> loadableStudyRuleInput =
-                                      loadableStudyRuleInputRepository.findById(Long.valueOf(input.getId()));
-                              if(loadableStudyRuleInput.isPresent()){
+                                  loadableStudyRuleInputRepository.findById(
+                                      Long.valueOf(input.getId()));
+                              if (loadableStudyRuleInput.isPresent()) {
                                 ruleTemplateInput = loadableStudyRuleInput.get();
-                              }else{
+                              } else {
                                 ruleTemplateInput = new LoadableStudyRuleInput();
                                 ruleTemplateInput.setId(Long.valueOf(input.getId()));
                               }
-                            }else{
+                            } else {
                               ruleTemplateInput = new LoadableStudyRuleInput();
                             }
                             Optional.ofNullable(input.getDefaultValue())
@@ -1349,64 +1394,73 @@ public class LoadableStudyServiceShore {
                           loadableStudyRulesList.add(loadableStudyRules);
                         });
               });
-      List<LoadableStudyRules> updatedLoadableStudyRulesList = this.loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
-      log.debug("Stowage Edit no of rows updated for LoadableStudyRules  : "+updatedLoadableStudyRulesList.size());
+      List<LoadableStudyRules> updatedLoadableStudyRulesList =
+          this.loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
+      log.debug(
+          "Stowage Edit no of rows updated for LoadableStudyRules  : "
+              + updatedLoadableStudyRulesList.size());
     }
   }
 
-   private void saveLoadablePlanStowageTempDetailsInShore(LoadabalePatternValidateRequest
-   loadabalePatternValidateRequest) {
-      if(!loadabalePatternValidateRequest.getLoadablePlanStowageTempDetails().isEmpty()){
-        loadabalePatternValidateRequest.getLoadablePlanStowageTempDetails().forEach(stowageTemp->{
-          LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp = new LoadablePlanStowageDetailsTemp();
-          Optional<Long> isBallastExist = Optional.ofNullable(stowageTemp.getBallastDetailsId());
-          if(isBallastExist.isPresent()){
-            LoadablePlanBallastDetails ballastDetails =
-                    this.loadablePlanBallastDetailsRepository.getOne(stowageTemp.getBallastDetailsId());
-            loadablePlanStowageDetailsTemp.setLoadablePlanBallastDetails(ballastDetails);
-          }
-          Optional<Boolean> isCommingleExist = Optional.ofNullable(stowageTemp.getIsCommingle());
-          if(isCommingleExist.isPresent()){
-            LoadablePlanCommingleDetails commingleDetails =
-                    this.loadablePlanCommingleDetailsRepository.getOne(stowageTemp.getCommingleDetailId());
-            loadablePlanStowageDetailsTemp.setLoadablePlanCommingleDetails(commingleDetails);
-          }
-          Optional<Long> isStowageExist = Optional.ofNullable(stowageTemp.getStowageDetailsId());
-          if(isStowageExist.isPresent()){
-            LoadablePlanStowageDetails stowageDetails = this.loadablePlanStowageDetailsRespository.getOne(stowageTemp.getStowageDetailsId());
-                    loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(stowageDetails);
-          }
-          Optional<LoadablePattern> loadablePatternOpt = this.loadablePatternRepository.findByIdAndIsActive(stowageTemp.getLoadablePatternId(), true);
-          if(loadablePatternOpt.isPresent()){
-                    loadablePlanStowageDetailsTemp.setLoadablePattern(loadablePatternOpt.get());
-           }
-          loadablePlanStowageDetailsTemp.setIsActive(true);
-          loadablePlanStowageDetailsTemp.setCorrectedUllage(
-                  isEmpty(stowageTemp.getCorrectedUllage())
-                          ? null
-                          : stowageTemp.getCorrectedUllage());
-          loadablePlanStowageDetailsTemp.setCorrectionFactor(
-                  isEmpty(stowageTemp.getCorrectionFactor())
-                          ? null
-                          : stowageTemp.getCorrectionFactor());
+  private void saveLoadablePlanStowageTempDetailsInShore(
+      LoadabalePatternValidateRequest loadabalePatternValidateRequest) {
+    if (!loadabalePatternValidateRequest.getLoadablePlanStowageTempDetails().isEmpty()) {
+      loadabalePatternValidateRequest
+          .getLoadablePlanStowageTempDetails()
+          .forEach(
+              stowageTemp -> {
+                LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp =
+                    new LoadablePlanStowageDetailsTemp();
+                Optional<Long> isBallastExist =
+                    Optional.ofNullable(stowageTemp.getBallastDetailsId());
+                if (isBallastExist.isPresent()) {
+                  LoadablePlanBallastDetails ballastDetails =
+                      this.loadablePlanBallastDetailsRepository.getOne(
+                          stowageTemp.getBallastDetailsId());
+                  loadablePlanStowageDetailsTemp.setLoadablePlanBallastDetails(ballastDetails);
+                }
+                Optional<Boolean> isCommingleExist =
+                    Optional.ofNullable(stowageTemp.getIsCommingle());
+                if (isCommingleExist.isPresent()) {
+                  LoadablePlanCommingleDetails commingleDetails =
+                      this.loadablePlanCommingleDetailsRepository.getOne(
+                          stowageTemp.getCommingleDetailId());
+                  loadablePlanStowageDetailsTemp.setLoadablePlanCommingleDetails(commingleDetails);
+                }
+                Optional<Long> isStowageExist =
+                    Optional.ofNullable(stowageTemp.getStowageDetailsId());
+                if (isStowageExist.isPresent()) {
+                  LoadablePlanStowageDetails stowageDetails =
+                      this.loadablePlanStowageDetailsRespository.getOne(
+                          stowageTemp.getStowageDetailsId());
+                  loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(stowageDetails);
+                }
+                Optional<LoadablePattern> loadablePatternOpt =
+                    this.loadablePatternRepository.findByIdAndIsActive(
+                        stowageTemp.getLoadablePatternId(), true);
+                if (loadablePatternOpt.isPresent()) {
+                  loadablePlanStowageDetailsTemp.setLoadablePattern(loadablePatternOpt.get());
+                }
+                loadablePlanStowageDetailsTemp.setIsActive(true);
+                loadablePlanStowageDetailsTemp.setCorrectedUllage(
+                    isEmpty(stowageTemp.getCorrectedUllage())
+                        ? null
+                        : stowageTemp.getCorrectedUllage());
+                loadablePlanStowageDetailsTemp.setCorrectionFactor(
+                    isEmpty(stowageTemp.getCorrectionFactor())
+                        ? null
+                        : stowageTemp.getCorrectionFactor());
 
-          loadablePlanStowageDetailsTemp.setQuantity(
-                  isEmpty(stowageTemp.getQuantity())
-                          ? null
-                          : stowageTemp.getQuantity());
-          loadablePlanStowageDetailsTemp.setRdgUllage(
-                  isEmpty(stowageTemp.getRdgUllage())
-                          ? null
-                          : stowageTemp.getRdgUllage());
-          loadablePlanStowageDetailsTemp.setIsBallast(stowageTemp.getIsBallast());
-          loadablePlanStowageDetailsTemp.setIsCommingle(stowageTemp.getIsCommingle());
-          loadablePlanStowageDetailsTemp.setFillingRatio(
-                  isEmpty(stowageTemp.getFillingRatio())
-                          ? null
-                          : stowageTemp.getFillingRatio());
-          stowageDetailsTempRepository.save(loadablePlanStowageDetailsTemp);
-        }
-        );
-      }
+                loadablePlanStowageDetailsTemp.setQuantity(
+                    isEmpty(stowageTemp.getQuantity()) ? null : stowageTemp.getQuantity());
+                loadablePlanStowageDetailsTemp.setRdgUllage(
+                    isEmpty(stowageTemp.getRdgUllage()) ? null : stowageTemp.getRdgUllage());
+                loadablePlanStowageDetailsTemp.setIsBallast(stowageTemp.getIsBallast());
+                loadablePlanStowageDetailsTemp.setIsCommingle(stowageTemp.getIsCommingle());
+                loadablePlanStowageDetailsTemp.setFillingRatio(
+                    isEmpty(stowageTemp.getFillingRatio()) ? null : stowageTemp.getFillingRatio());
+                stowageDetailsTempRepository.save(loadablePlanStowageDetailsTemp);
+              });
     }
+  }
 }

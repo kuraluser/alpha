@@ -48,7 +48,7 @@ public interface LoadablePlanStowageBallastDetailsRepository
           Long loadablePatternId, Long portId, boolean isActive);
 
   @Query(
-          "FROM LoadablePlanStowageBallastDetails lp WHERE lp.loadablePatternId = ?1 AND lp.portXId = ?2 and lp.isActive = true")
+      "FROM LoadablePlanStowageBallastDetails lp WHERE lp.loadablePatternId = ?1 AND lp.portXId = ?2 and lp.isActive = true")
   List<LoadablePlanStowageBallastDetails> findAllByLoadablePatternIdAndPortXId(
-          Long patternId, Long portXId);
+      Long patternId, Long portXId);
 }

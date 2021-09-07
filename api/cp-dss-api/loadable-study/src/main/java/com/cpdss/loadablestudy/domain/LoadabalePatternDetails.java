@@ -1,10 +1,9 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.domain;
 
-import java.util.List;
-
 import com.cpdss.common.generated.LoadableStudy;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import lombok.Data;
 
 /** @Author jerin.g */
