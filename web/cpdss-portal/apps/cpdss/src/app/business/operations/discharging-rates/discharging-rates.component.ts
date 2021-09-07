@@ -26,6 +26,7 @@ export class DischargingRatesComponent implements OnInit {
 
   set dischargingRates(dischargingRates: IDischargingRates) {
     this._dischargingRates = dischargingRates;
+    this.initDischargingRatesForm();
     if (this.selectedConversion.id === 2) {
       this.onConversionChange();
     }
@@ -45,8 +46,8 @@ export class DischargingRatesComponent implements OnInit {
 
   dischargingRatesFormGroup: FormGroup;
   selectedConversion = {
-    id: 1,
-    value: "M3/Hr"
+    id: 2,
+    value: "BBLS/Hr"
   }
   conversionDropdown = [
     {
@@ -68,16 +69,23 @@ export class DischargingRatesComponent implements OnInit {
     private loadingDischargingTransformationService: LoadingDischargingTransformationService
   ) { }
 
-  ngOnInit(): void {
-    this.errorMesages = this.loadingDischargingTransformationService.setValidationMessageForLoadingRate();
+  ngOnInit(): void {  }
+
+  /**
+   *
+   * Method for initialise discharging rate array
+   * @return {*}
+   * @memberof DischargingRatesComponent
+   */
+  initDischargingRatesForm() {
+    this.errorMesages = this.loadingDischargingTransformationService.setValidationMessageForDischargingRate(this.selectedConversion.id === 1 ? 'M3' : 'BBLS');
     this.dischargingRatesFormGroup = this.fb.group({
       id: this.dischargingRates?.id ? this.dischargingRates?.id : 0,
-      maxDischargingRate: this.fb.control(this.dischargingRates.maxDischargingRate, [compareNumberValidator('initialDischargingRate', '<'), Validators.min(4000), Validators.max(21000)]),
-      initialDischargingRate: this.fb.control(this.dischargingRates.initialDischargingRate, [compareNumberValidator('maxLoadingrate', '>'), Validators.min(1000), Validators.max(3000)]),
-      minDeBallastingRate: this.fb.control(this.dischargingRates.minBallastingRate, [numberValidator(0, 4), Validators.min(2500), Validators.max(4000)]),
-      maxDeBallastingRate: this.fb.control(this.dischargingRates.maxBallastingRate, [numberValidator(0, 4), Validators.min(6000), Validators.max(7500)]),
-    })
-
+      maxDischargingRate: this.fb.control(this.dischargingRates.maxDischargingRate, [Validators.required, compareNumberValidator('initialDischargingRate', '<'), Validators.min(5000), Validators.max(16500), numberValidator(0, 7)]),
+      initialDischargingRate: this.fb.control(this.dischargingRates.initialDischargingRate, [Validators.required, compareNumberValidator('maxDischargingRate', '>'), Validators.min(500), Validators.max(3000), numberValidator(0, 7)]),
+      minBallastingRate: this.fb.control(this.dischargingRates.minBallastingRate, [Validators.required, numberValidator(0, 4), Validators.min(500), Validators.max(10000)]),
+      maxBallastingRate: this.fb.control(this.dischargingRates.maxBallastingRate, [numberValidator(0, 4), Validators.min(500), Validators.max(10000)]),
+    });
   }
 
   /**
@@ -127,10 +135,10 @@ export class DischargingRatesComponent implements OnInit {
       if (this.selectedConversion?.id === 2) {
         const convertionFactor = 6.28981;
         const dischargingRates = this.dischargingRatesFormGroup?.value;
-        dischargingRates.maxDischargingRate = Math.ceil(Number(dischargingRates?.maxDischargingRate) / convertionFactor);
-        dischargingRates.initialDischargingRate = Math.ceil(Number(dischargingRates?.initialDischargingRate) / convertionFactor);
-        dischargingRates.minDeBallastingRate = Math.ceil(Number(dischargingRates?.minDeBallastingRate) / convertionFactor);
-        dischargingRates.maxDeBallastingRate = Math.ceil(Number(dischargingRates?.maxDeBallastingRate) / convertionFactor);
+        dischargingRates.maxDischargingRate = Math.round(Number(dischargingRates?.maxDischargingRate) / convertionFactor);
+        dischargingRates.initialDischargingRate = Math.round(Number(dischargingRates?.initialDischargingRate) / convertionFactor);
+        dischargingRates.minBallastingRate = Math.round(Number(dischargingRates?.minBallastingRate) / convertionFactor);
+        dischargingRates.maxBallastingRate = Math.round(Number(dischargingRates?.maxBallastingRate) / convertionFactor);
         this.dischargingRateChange.emit(dischargingRates)
       } else {
         this.dischargingRateChange.emit(this.dischargingRatesFormGroup?.value)
@@ -149,31 +157,35 @@ export class DischargingRatesComponent implements OnInit {
     const convertionFactor = 6.28981;
     this.dischargingRatesFormGroup?.controls['maxDischargingRate'].clearValidators();
     this.dischargingRatesFormGroup?.controls['initialDischargingRate'].clearValidators();
-    this.dischargingRatesFormGroup?.controls['minDeBallastingRate'].clearValidators();
-    this.dischargingRatesFormGroup?.controls['maxDeBallastingRate'].clearValidators();
+    this.dischargingRatesFormGroup?.controls['minBallastingRate'].clearValidators();
+    this.dischargingRatesFormGroup?.controls['maxBallastingRate'].clearValidators();
     if (this.selectedConversion?.id === 2) {
       this.dischargingRatesFormGroup?.patchValue({
-        maxDischargingRate: Math.ceil(Number(this.dischargingRatesFormGroup?.value.maxDischargingRate) * convertionFactor),
-        initialDischargingRate: Math.ceil(Number(this.dischargingRatesFormGroup?.value.initialDischargingRate) * convertionFactor),
-        minDeBallastingRate: Math.ceil(Number(this.dischargingRatesFormGroup?.value.minDeBallastingRate) * convertionFactor),
-        maxDeBallastingRate: Math.ceil(Number(this.dischargingRatesFormGroup?.value.maxDeBallastingRate) * convertionFactor)
+        maxDischargingRate: Math.round(Number(this.dischargingRatesFormGroup?.value.maxDischargingRate) * convertionFactor),
+        initialDischargingRate: Math.round(Number(this.dischargingRatesFormGroup?.value.initialDischargingRate) * convertionFactor),
+        minBallastingRate: Math.round(Number(this.dischargingRatesFormGroup?.value.minBallastingRate) * convertionFactor),
+        maxBallastingRate: Math.round(Number(this.dischargingRatesFormGroup?.value.maxBallastingRate) * convertionFactor)
       })
-      this.dischargingRatesFormGroup?.controls['maxDischargingRate'].setValidators([compareNumberValidator('initialDischargingRate', '<'), Validators.min(4000 * convertionFactor), Validators.max(21000 * convertionFactor)]);
-      this.dischargingRatesFormGroup?.controls['initialDischargingRate'].setValidators([compareNumberValidator('maxLoadingrate', '>'), Validators.min(1000 * convertionFactor), Validators.max(3000 * convertionFactor)]);
-      this.dischargingRatesFormGroup?.controls['minDeBallastingRate'].setValidators([numberValidator(0, 4), Validators.min(2500 * convertionFactor), Validators.max(4000 * convertionFactor)]);
-      this.dischargingRatesFormGroup?.controls['maxDeBallastingRate'].setValidators([numberValidator(0, 4), Validators.min(6000 * convertionFactor), Validators.max(7500 * convertionFactor)]);
+      this.dischargingRatesFormGroup?.controls['maxDischargingRate'].setValidators([Validators.required, compareNumberValidator('initialDischargingRate', '<'), Validators.min(5000 * convertionFactor), Validators.max(16500 * convertionFactor), numberValidator(0, 7)]);
+      this.dischargingRatesFormGroup?.controls['initialDischargingRate'].setValidators([Validators.required, compareNumberValidator('maxLoadingrate', '>'), Validators.min(500 * convertionFactor), Validators.max(3000 * convertionFactor), numberValidator(0, 7)]);
+      this.dischargingRatesFormGroup?.controls['minBallastingRate'].setValidators([numberValidator(0, 4), Validators.min(500 * convertionFactor), Validators.max(10000 * convertionFactor)]);
+      this.dischargingRatesFormGroup?.controls['maxBallastingRate'].setValidators([numberValidator(0, 4), Validators.min(500 * convertionFactor), Validators.max(10000 * convertionFactor)]);
     } else {
       this.dischargingRatesFormGroup?.patchValue({
-        maxDischargingRate: Math.ceil(Number(this.dischargingRatesFormGroup?.value.maxDischargingRate) / convertionFactor),
-        initialDischargingRate: Math.ceil(Number(this.dischargingRatesFormGroup?.value.initialDischargingRate) / convertionFactor),
-        minDeBallastingRate: Math.ceil(Number(this.dischargingRatesFormGroup?.value.minDeBallastingRate) / convertionFactor),
-        maxDeBallastingRate: Math.ceil(Number(this.dischargingRatesFormGroup?.value.maxDeBallastingRate) / convertionFactor)
+        maxDischargingRate: Math.round(Number(this.dischargingRatesFormGroup?.value.maxDischargingRate) / convertionFactor),
+        initialDischargingRate: Math.round(Number(this.dischargingRatesFormGroup?.value.initialDischargingRate) / convertionFactor),
+        minBallastingRate: Math.round(Number(this.dischargingRatesFormGroup?.value.minBallastingRate) / convertionFactor),
+        maxBallastingRate: Math.round(Number(this.dischargingRatesFormGroup?.value.maxBallastingRate) / convertionFactor)
       });
-      this.dischargingRatesFormGroup?.controls['maxDischargingRate'].setValidators([numberValidator(0, 5), compareNumberValidator('initialDischargingRate', '<'), Validators.min(4000), Validators.max(21000)]);
-      this.dischargingRatesFormGroup?.controls['initialDischargingRate'].setValidators([numberValidator(0, 4), compareNumberValidator('maxLoadingrate', '>'), Validators.min(1000), Validators.max(3000)]);
-      this.dischargingRatesFormGroup?.controls['minDeBallastingRate'].setValidators([numberValidator(0, 4), Validators.min(2500), Validators.max(4000)]);
-      this.dischargingRatesFormGroup?.controls['maxDeBallastingRate'].setValidators([numberValidator(0, 4), Validators.min(6000), Validators.max(7500)]);
+      this.dischargingRatesFormGroup?.controls['maxDischargingRate'].setValidators([Validators.required, compareNumberValidator('initialDischargingRate', '<'), Validators.min(5000), Validators.max(16500), numberValidator(0, 7)]);
+      this.dischargingRatesFormGroup?.controls['initialDischargingRate'].setValidators([Validators.required, numberValidator(0, 4), compareNumberValidator('maxLoadingrate', '>'), Validators.min(500), Validators.max(3000), numberValidator(0, 7)]);
+      this.dischargingRatesFormGroup?.controls['minBallastingRate'].setValidators([numberValidator(0, 4), Validators.min(500), Validators.max(10000)]);
+      this.dischargingRatesFormGroup?.controls['maxBallastingRate'].setValidators([numberValidator(0, 4), Validators.min(500), Validators.max(10000)]);
     }
+
+    this.errorMesages = this.loadingDischargingTransformationService.setValidationMessageForDischargingRate(this.selectedConversion.id === 1 ? 'M3' : 'BBLS');
+    this.dischargingRatesFormGroup.markAllAsTouched();
+    this.dischargingRatesFormGroup.markAsTouched();
   }
 
 }

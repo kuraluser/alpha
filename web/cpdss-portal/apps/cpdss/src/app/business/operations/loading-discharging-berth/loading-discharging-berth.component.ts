@@ -74,13 +74,13 @@ export class LoadingDischargingBerthComponent implements OnInit {
     this.berthDetailsForm = this.fb.group({
       berthId: 0,
       berthName: '',
-      maxShipDepth: this.fb.control('', [numberValidator(4, 2)]),
+      maxShipDepth: this.fb.control('', [Validators.required, Validators.min(1), Validators.max(99.99), numberValidator(4, 2)]),
       hoseConnections: this.fb.control('', [Validators.maxLength(100),alphaNumericSpecialCharacterValidator]),
-      seaDraftLimitation: this.fb.control(null, [numberValidator(4, 2)]),
-      airDraftLimitation: this.fb.control('', [numberValidator(4, 2)]),
-      maxManifoldHeight: this.fb.control('', [numberValidator(4, 2)]),
-      regulationAndRestriction: this.fb.control('', [Validators.maxLength(500)]),
-      itemsToBeAgreedWith: this.fb.control('', [Validators.maxLength(500)]),
+      seaDraftLimitation: this.fb.control(null, [Validators.required, Validators.min(1), Validators.max(99.99), numberValidator(4, 2)]),
+      airDraftLimitation: this.fb.control('', [Validators.required, Validators.min(1), Validators.max(99.99), numberValidator(4, 2)]),
+      maxManifoldHeight: this.fb.control('', [Validators.required, Validators.min(1), Validators.max(99.99), numberValidator(4, 2)]),
+      regulationAndRestriction: this.fb.control('', [Validators.maxLength(500), Validators.pattern(/[a-zA-Z0-9]/)]),
+      itemsToBeAgreedWith: this.fb.control('', [Validators.maxLength(500), Validators.pattern(/[a-zA-Z0-9]/)]),
       loadingInfoId: '',
       dischargingInfoId: '',
       maxShpChannel: '',
@@ -91,7 +91,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
     });
 
     if(this.operation === OPERATIONS.DISCHARGING) {
-      this.berthDetailsForm.addControl('maxManifoldPressure', this.fb.control('', [Validators.required, Validators.min(0.1), numberValidator(2, 2)]))
+      this.berthDetailsForm.addControl('maxManifoldPressure', this.fb.control('', [Validators.required, Validators.min(0.1), Validators.max(99.99), numberValidator(2, 2)]))
       this.berthDetailsForm.addControl('cargoCirculation', this.fb.control(false));
       this.berthDetailsForm.addControl('airPurge', this.fb.control(false));
     }

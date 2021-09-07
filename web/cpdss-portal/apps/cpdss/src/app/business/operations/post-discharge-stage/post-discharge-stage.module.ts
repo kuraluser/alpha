@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { InputMaskModule } from 'primeng/inputmask';
+import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
 
 
 /**
@@ -21,7 +22,8 @@ import { InputMaskModule } from 'primeng/inputmask';
     ReactiveFormsModule,
     TranslateModule,
     TableModule,
-    InputMaskModule
+    InputMaskModule,
+    ValidationErrorModule
   ],
   exports: [PostDischargeStageComponent],
 })
