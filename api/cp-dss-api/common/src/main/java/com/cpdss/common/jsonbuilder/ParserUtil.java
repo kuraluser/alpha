@@ -41,7 +41,7 @@ public class ParserUtil {
     log.info("error total {}", errorData.size());
     long fileName = System.currentTimeMillis();
     writeToFile(mapData, "build/" + fileName + "suc.json");
-    writeToFile(errorData, "build/" + fileName + "fai.json");
+    // writeToFile(errorData, "build/" + fileName + "fai.json");
   }
 
   private static boolean validateClassRegister(String vl) {
@@ -64,6 +64,7 @@ public class ParserUtil {
     Object classObject = null;
     for (Constructor cst : constructors) {
       Type consPrams[] = cst.getGenericParameterTypes();
+      log.info("Const Class {}, Size - {}", tClass.getName(), consPrams.length);
       if (consPrams.length == 0) {
         if (classObject == null) {
           classObject = cst.newInstance();
@@ -72,7 +73,7 @@ public class ParserUtil {
       if (consPrams.length == 1) {
         if (classObject == null) {
           Class<?> pType = (Class<?>) consPrams[0];
-          Object val = ParserUtil.getDummyValueForClass(pType, null, null);
+          Object val = getDummyValueForClass(pType, new String[] {"string-number"}, null);
           classObject = cst.newInstance(val);
         }
       }
@@ -108,8 +109,14 @@ public class ParserUtil {
 
   private static Object getDummyValueForClass(Class aClass, String[] args, Field field)
       throws IllegalAccessException, InvocationTargetException, InstantiationException {
+
     if (aClass.getName().equalsIgnoreCase(String.class.getName())) {
-      if (field.getName().toLowerCase().contains("time")) {
+      if (args != null && args.length > 0) {
+        if (args[0] == "string-number") {
+          return "22";
+        }
+      }
+      if (field != null && field.getName().toLowerCase().contains("time")) {
         return "12-01-2021 12:12";
       }
       return "lorem ipsum dolor";
@@ -165,13 +172,12 @@ public class ParserUtil {
     return null;
   }
 
-  private static void writeToFile(Object o, String fileName) {
+  public static void writeToFile(Object o, String fileName) {
     try (FileWriter fileWriter = new FileWriter(fileName)) {
       ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
       String json = ow.writeValueAsString(o);
       fileWriter.write(json);
       fileWriter.flush();
-      fileWriter.close();
     } catch (Exception e) {
       e.printStackTrace();
     }
