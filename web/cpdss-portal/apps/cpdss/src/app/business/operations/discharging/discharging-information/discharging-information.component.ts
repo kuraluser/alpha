@@ -1,15 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { QUANTITY_UNIT, ValueObject } from '../../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { ICargo, OPERATIONS } from '../../../core/models/common.model';
-import { IStageOffset, IStageDuration, ICargoVesselTankDetails, IDischargingInformation, IDischargeOperationListData } from '../../models/loading-discharging.model';
+import { IStageOffset, IStageDuration, IDischargingInformation, IDischargeOperationListData } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 import { RulesService } from '../../services/rules/rules.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { LoadingDischargingManageSequenceComponent } from '../../loading-discharging-manage-sequence/loading-discharging-manage-sequence.component';
+import { durationValidator } from '../../validators/duration-validator.directive';
 
 /**
  * Component class for discharge information component
@@ -23,7 +27,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   templateUrl: './discharging-information.component.html',
   styleUrls: ['./discharging-information.component.scss']
 })
-export class DischargingInformationComponent implements OnInit {
+export class DischargingInformationComponent implements OnInit, OnDestroy {
+  @ViewChild(LoadingDischargingManageSequenceComponent) manageSequenceComponent: LoadingDischargingManageSequenceComponent;
 
   @Input() voyageId: number;
   @Input() vesselId: number;
@@ -68,6 +73,7 @@ export class DischargingInformationComponent implements OnInit {
 
   private _portRotationId: number;
   private _cargos: ICargo[];
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(private loadingDischargingInformationApiService: LoadingDischargingInformationApiService,
     private translateService: TranslateService,
@@ -78,8 +84,13 @@ export class DischargingInformationComponent implements OnInit {
     private fb: FormBuilder) { }
 
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit() {
     this.initSubscriptions();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -89,7 +100,7 @@ export class DischargingInformationComponent implements OnInit {
   * @memberof DischargingInformationComponent
   */
   private async initSubscriptions() {
-    this.loadingDischargingTransformationService.unitChange$.subscribe((res) => {
+    this.loadingDischargingTransformationService.unitChange$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
     })
@@ -125,20 +136,6 @@ export class DischargingInformationComponent implements OnInit {
    * @memberof DischargingInformationComponent
    */
   initFormArray(dischargingInformationData: IDischargingInformation) {
-    const cargoToBeDischarged = dischargingInformationData?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(cargo => {
-      return this.fb.group({
-        protested: this.fb.control(cargo.protested.value),
-        isCommingled: this.fb.control(cargo?.isCommingled.value),
-        slopQuantity: this.fb.control((<ValueObject<number>>cargo?.slopQuantity)?.value),
-      })
-    });
-    const tanksWashingWithDifferentCargo = dischargingInformationData?.cowDetails?.tanksWashingWithDifferentCargo?.map(item => {
-      return this.fb.group({
-        cargo: this.fb.control(item?.cargo),
-        washingCargo: this.fb.control(item?.washingCargo),
-        tanks: this.fb.control(item?.tanks)
-      })
-    });
     this.dischargingInformationForm = this.fb.group({
       stageDetails: this.fb.group({
         trackStartEndStage: this.fb.control(dischargingInformationData?.dischargingStages?.trackStartEndStage),
@@ -149,29 +146,14 @@ export class DischargingInformationComponent implements OnInit {
       dischargeSlopTanksFirst: this.fb.control(dischargingInformationData?.dischargeSlopTanksFirst),
       dischargeCommingledCargoSeperately: this.fb.control(dischargingInformationData?.dischargeCommingledCargoSeperately),
       cargoTobeLoadedDischarged: this.fb.group({
-        dataTable: this.fb.array([...cargoToBeDischarged])
+        dataTable: this.fb.array([])
       }),
-      cowDetails: this.fb.group({
-        washTanksWithDifferentCargo: this.fb.control(dischargingInformationData?.cowDetails?.washTanksWithDifferentCargo),
-        cowOption: this.fb.control(dischargingInformationData?.cowDetails?.cowOption),
-        cowPercentage: this.fb.control(dischargingInformationData?.cowDetails?.cowPercentage),
-        topCOWTanks: this.fb.control(dischargingInformationData?.cowDetails?.topCOWTanks),
-        bottomCOWTanks: this.fb.control(dischargingInformationData?.cowDetails?.bottomCOWTanks),
-        allCOWTanks: this.fb.control(dischargingInformationData?.cowDetails?.allCOWTanks),
-        tanksWashingWithDifferentCargo: this.fb.array([...tanksWashingWithDifferentCargo]),
-        cowStart: this.fb.control(dischargingInformationData?.cowDetails?.cowStart),
-        cowEnd: this.fb.control(dischargingInformationData?.cowDetails?.cowEnd),
-        cowDuration: this.fb.control(dischargingInformationData?.cowDetails?.cowDuration),
-        cowTrimMin: this.fb.control(dischargingInformationData?.cowDetails?.cowTrimMin),
-        cowTrimMax: this.fb.control(dischargingInformationData?.cowDetails?.cowTrimMax),
-        needFreshCrudeStorage: this.fb.control(dischargingInformationData?.cowDetails?.needFreshCrudeStorage),
-        needFlushingOil: this.fb.control(dischargingInformationData?.cowDetails?.needFlushingOil),
-      }),
+      cowDetails: this.fb.group({}),
       postDischargeStageTime: this.fb.group({
-        dryCheckTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime),
-        slopDischargingTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime),
-        finalStrippingTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime),
-        freshOilWashingTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime),
+        dryCheckTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
+        slopDischargingTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
+        finalStrippingTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
+        freshOilWashingTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
       })
     })
   }
@@ -287,11 +269,40 @@ export class DischargingInformationComponent implements OnInit {
   }
 
   /**
+   * Handler for on change of slop tank first checkbox
+   *
+   * @param {*} event
+   * @memberof DischargingInformationComponent
+   */
+  onSlopTanksFirstCheckboxChange(event) {
+    this.dischargingInformationPostData.dischargeSlopTanksFirst = event.target.checked;
+    this.hasUnSavedData = true;
+  }
+
+  /**
+   * Handler for on change of dischrage commingled cargo seperately checkbox
+   *
+   * @param {*} event
+   * @memberof DischargingInformationComponent
+   */
+  onCommingledSeperatelyCheckboxChange(event) {
+    this.dischargingInformationPostData.dischargeCommingledCargoSeperately = event.target.checked;
+    this.hasUnSavedData = true;
+  }
+
+  /**
   * Method for event to save discharging information data
   *
   * @memberof DischargingInformationComponent
   */
   async saveDischargingInformationData() {
+    if (this.checkIfValid()) {
+
+    }
+    const validSequence = await this.manageSequenceComponent.checkCargoCount();
+    if (!validSequence) {
+      return false;
+    }
     //TODO:Need to integrate with discharge info save
     /* const translationKeys = await this.translateService.get(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY']).toPromise();
     if (this.hasUnSavedData) {
@@ -307,6 +318,33 @@ export class DischargingInformationComponent implements OnInit {
     } else {
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_SAVE_NO_DATA_ERROR'] });
     } */
+  }
+
+  /**
+   * Method to check if commingle discharge selection is valid
+   *
+   * @return {*}  {boolean}
+   * @memberof DischargingInformationComponent
+   */
+  checkIfValid(): boolean {
+    const translationKeys = this.translateService.instant(['DISCHARGING_INFO_MIN_CARGO_SELECTED_ERROR', 'DISCHARGING_INFO_MIN_CARGO_SELECTED', 'DISCHARGING_COW_TANK_NOT_SELECTED', 'DISCHARGING_STAGE_DURATION_ERROR']);
+    const commingledCargos = this.dischargingInformationForm?.value?.cargoTobeLoadedDischarged?.dataTable?.filter(cargo => cargo?.isCommingledDischarge === true);
+    if (commingledCargos?.length && commingledCargos?.length < 2) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_MIN_CARGO_SELECTED_ERROR'], detail: translationKeys['DISCHARGING_INFO_MIN_CARGO_SELECTED'] });
+      return false;
+    }
+
+    if (this.dischargingInformationForm?.value?.cowDetails?.cowOption?.id === 2 && !this.dischargingInformationForm?.value?.cowDetails?.topCOWTanks?.length && !this.dischargingInformationForm?.value?.cowDetails?.bottomCOWTanks?.length && !this.dischargingInformationForm?.value?.cowDetails?.allCOWTanks?.length) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_MIN_CARGO_SELECTED_ERROR'], detail: translationKeys['DISCHARGING_COW_TANK_NOT_SELECTED'] });
+      return false
+    }
+
+    if (this.dischargingInformationForm?.value?.stageDetails?.stageDuration?.duration * 60 > this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.dischargingInformationData?.cowDetails?.totalDuration)) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_MIN_CARGO_SELECTED_ERROR'], detail: translationKeys['DISCHARGING_STAGE_DURATION_ERROR'] });
+      return false
+    }
+
+    return true;
   }
 
 }

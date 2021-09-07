@@ -34,7 +34,7 @@
           <label for="max_discharging_rate" class="col-5 no-left-padding">{{'DISCHARGING_RATE_MAX_DISCHARGING_RATE' |
             translate}}</label>
           <div class="col error-icon-wrapper">
-            <input type="number" class="form-control" *ngIf="editMode;else maxDischargingRef" id="max_discharging_rate"
+            <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else maxDischargingRef" id="max_discharging_rate"
               formControlName="maxDischargingRate"
               placeholder="{{'DISCHARGING_RATE_MAX_DISCHARGING_PLACEHOLDER' | translate}}"
               (change)="onChange('maxDischargingRate')" [readonly]="false">
@@ -53,13 +53,13 @@
           <div class="col error-icon-wrapper">
             <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
               *ngIf="editMode;else minDeballstRef" id="min_debellast_discharging_rate"
-              formControlName="minDeBallastingRate"
+              formControlName="minBallastingRate"
               placeholder="{{'DISCHARGING_RATE_MIN_BALLAST_RATE_PLACEHOLDER'| translate}}"
-              (change)="onChange('minDeBallastingRate')" [readonly]="false">
-            <ng-template #minDeballstRef><span>{{dischargingRatesFormGroupControl?.minDeBallastingRate?.value}}</span>
+              (change)="onChange('minBallastingRate')" [readonly]="false">
+            <ng-template #minDeballstRef><span>{{dischargingRatesFormGroupControl?.minBallastingRate?.value}}</span>
             </ng-template>
-            <cpdss-portal-validation-error [errors]="fieldError('minDeBallastingRate')"
-              [errorMessages]="errorMesages.minDeBallastingRate"></cpdss-portal-validation-error>
+            <cpdss-portal-validation-error [errors]="fieldError('minBallastingRate')"
+              [errorMessages]="errorMesages.minBallastingRate"></cpdss-portal-validation-error>
           </div>
         </div>
         <div class="row form-group">
@@ -69,13 +69,13 @@
           <div class="col error-icon-wrapper">
             <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
               *ngIf="editMode;else maxDeballstRef" id="max_de_ballast_discharging_rate"
-              formControlName="maxDeBallastingRate"
+              formControlName="maxBallastingRate"
               placeholder="{{'DISCHARGING_RATE_MAX_BALLAST_RATE_PLACEHOLDER'| translate}}"
-              (change)="onChange('maxDeBallastingRate')" [readonly]="false">
-            <ng-template #maxDeballstRef><span>{{dischargingRatesFormGroupControl?.maxDeBallastingRate?.value}}</span>
+              (change)="onChange('maxBallastingRate')" [readonly]="false">
+            <ng-template #maxDeballstRef><span>{{dischargingRatesFormGroupControl?.maxBallastingRate?.value}}</span>
             </ng-template>
-            <cpdss-portal-validation-error [errors]="fieldError('maxDeBallastingRate')"
-              [errorMessages]="errorMesages.maxDeBallastingRate"></cpdss-portal-validation-error>
+            <cpdss-portal-validation-error [errors]="fieldError('maxBallastingRate')"
+              [errorMessages]="errorMesages.maxBallastingRate"></cpdss-portal-validation-error>
           </div>
         </div>
       </div>
