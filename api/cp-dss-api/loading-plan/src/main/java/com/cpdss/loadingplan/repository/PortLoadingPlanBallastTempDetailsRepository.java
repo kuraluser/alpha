@@ -2,7 +2,6 @@
 package com.cpdss.loadingplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
-import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.PortLoadingPlanBallastTempDetails;
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,7 +16,7 @@ public interface PortLoadingPlanBallastTempDetailsRepository
     extends CommonCrudRepository<PortLoadingPlanBallastTempDetails, Long> {
 
   public List<PortLoadingPlanBallastTempDetails> findByLoadingInformationAndIsActive(
-      LoadingInformation loadingInformation, Boolean isActive);
+      Long loadingInfoId, Boolean isActive);
 
   @Query(
       "FROM PortLoadingPlanBallastTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
@@ -32,7 +31,7 @@ public interface PortLoadingPlanBallastTempDetailsRepository
   @Modifying
   @Transactional
   @Query(
-      "UPDATE PortLoadingPlanBallastTempDetails SET isActive = false WHERE loadingInformation.id = ?1")
+      "UPDATE PortLoadingPlanBallastTempDetails SET isActive = false WHERE loadingInformation = ?1")
   public void deleteByLoadingInformationId(Long loadingInfoId);
 
   @Transactional
@@ -53,7 +52,7 @@ public interface PortLoadingPlanBallastTempDetailsRepository
 
   public List<PortLoadingPlanBallastTempDetails>
       findByLoadingInformationAndConditionTypeAndIsActive(
-          LoadingInformation loadingInformation, Integer conditionType, boolean b);
+          Long loadingInfoId, Integer conditionType, boolean b);
 
   @Transactional
   @Modifying

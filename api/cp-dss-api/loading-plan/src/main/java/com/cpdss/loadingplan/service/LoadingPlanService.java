@@ -233,7 +233,8 @@ public class LoadingPlanService {
       LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
 
     List<BillOfLadding> billOfLaddingDetails =
-        this.billOfLaddingRepo.findByLoadablePatternXIdAndPortIdAndIsActive(request.getPatternId(), request.getPortId(), true);
+        this.billOfLaddingRepo.findByLoadablePatternXIdAndPortIdAndIsActive(
+            request.getPatternId(), request.getPortId(), true);
     billOfLaddingDetails.stream()
         .forEach(
             bill -> {
@@ -688,7 +689,7 @@ public class LoadingPlanService {
     List<PortLoadingPlanStowageTempDetails> tempStowageList =
         portLoadingPlanStowageTempDetailsRepository
             .findByLoadingInformationAndConditionTypeAndIsActive(
-                loadingInformation, conditionType, true);
+                loadingInformation.getId(), conditionType, true);
     if (!tempStowageList.isEmpty()) {
       List<PortLoadingPlanStowageDetails> stowageEntityList = new ArrayList<>();
       for (PortLoadingPlanStowageTempDetails tempStowageEntity : tempStowageList) {
@@ -714,7 +715,7 @@ public class LoadingPlanService {
     List<PortLoadingPlanBallastTempDetails> tempBallastList =
         portLoadingPlanBallastTempDetailsRepository
             .findByLoadingInformationAndConditionTypeAndIsActive(
-                loadingInformation, conditionType, true);
+                loadingInformation.getId(), conditionType, true);
     if (!tempBallastList.isEmpty()) {
       List<PortLoadingPlanBallastDetails> ballastEntityList = new ArrayList<>();
       for (PortLoadingPlanBallastTempDetails tempBallastEntity : tempBallastList) {
