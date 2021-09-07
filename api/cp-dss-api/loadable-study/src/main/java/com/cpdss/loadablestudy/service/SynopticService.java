@@ -724,8 +724,13 @@ public class SynopticService {
         .ifPresent(lwTideTo -> builder.setLwTideTo(String.valueOf(lwTideTo)));
     ofNullable(synopticalEntity.getLwTideTimeTo())
         .ifPresent(lwTideTimeTo -> builder.setLwTideTimeTo(timeFormatter.format(lwTideTimeTo)));
-    Optional.ofNullable(synopticalEntity.getLoadableStudyPortRotation())
+    ofNullable(synopticalEntity.getLoadableStudyPortRotation())
         .ifPresent(portRotation -> builder.setPortRotationId(portRotation.getId()));
+    ofNullable(synopticalEntity.getLoadableStudyPortRotation())
+        .ifPresent(
+            portRotation ->
+                ofNullable(portRotation.getPortRotationType())
+                    .ifPresent(i -> builder.setPortRotationType(i)));
     if (null != synopticalEntity.getEtaActual()) {
       builder.setEtaEtdActual(formatter.format(synopticalEntity.getEtaActual()));
     } else if (null != synopticalEntity.getEtdActual()) {

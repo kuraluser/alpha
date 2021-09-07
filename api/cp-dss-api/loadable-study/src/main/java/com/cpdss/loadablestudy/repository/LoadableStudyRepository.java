@@ -44,7 +44,7 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
   public void updateLoadableStudyStatus(Long loadableStudyStatusId, Long id);
 
   @Query(
-      "FROM LoadableStudy LS WHERE LS.voyage= ?1 AND  LS.loadableStudyStatus.id = ?2 AND LS.isActive = ?3")
+      "FROM LoadableStudy LS WHERE LS.voyage= ?1 AND  LS.loadableStudyStatus.id = ?2 AND LS.isActive = ?3 AND LS.planningTypeXId =?4")
   public Optional<LoadableStudy> findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
       Voyage voyage, Long status, Boolean isActive, Integer planningId);
 

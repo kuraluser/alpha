@@ -2999,6 +2999,7 @@ public class LoadableStudyService {
     synopticalRecord.setId(synopticalProtoRecord.getId());
     synopticalRecord.setPortId(synopticalProtoRecord.getPortId());
     synopticalRecord.setPortRotationId(synopticalProtoRecord.getPortRotationId());
+    synopticalRecord.setPortRotationType(synopticalProtoRecord.getPortRotationType());
     synopticalRecord.setPortName(synopticalProtoRecord.getPortName());
     synopticalRecord.setPortOrder(synopticalProtoRecord.getPortOrder());
     synopticalRecord.setSpecificGravity(
