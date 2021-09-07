@@ -11,7 +11,8 @@ public interface BillOfLaddingRepository extends CommonCrudRepository<BillOfLadd
 
   @Query(
       "FROM BillOfLadding BL INNER JOIN LoadingInformation LI ON BL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND BL.portId = ?2 AND BL.isActive = ?3")
-  public List<BillOfLadding> findByLoadablePatternXIdAndPortIdAndIsActive(Long patternId, Long portId, Boolean isActive);
+  public List<BillOfLadding> findByLoadablePatternXIdAndPortIdAndIsActive(
+      Long patternId, Long portId, Boolean isActive);
 
   public List<BillOfLadding> findByCargoNominationIdAndIsActive(
       Long cargoNominationId, Boolean isActive);
@@ -21,4 +22,9 @@ public interface BillOfLaddingRepository extends CommonCrudRepository<BillOfLadd
 
   public List<BillOfLadding> findByPortIdInAndIsActive(
       List<Long> cargoNominationId, Boolean isActive);
+
+  @Query(
+      "FROM BillOfLadding BL INNER JOIN LoadingInformation LI ON BL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND BL.isActive = ?2")
+  public List<BillOfLadding> findByLoadablePatternXIdAndIsActive(
+      Long loadablePatternId, Boolean isActive);
 }
