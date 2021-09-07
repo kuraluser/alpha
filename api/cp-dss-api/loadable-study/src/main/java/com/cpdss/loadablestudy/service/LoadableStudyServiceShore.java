@@ -87,10 +87,7 @@ public class LoadableStudyServiceShore {
   @Autowired private LoadableStudyPortRotationService loadableStudyPortRotationService;
   @Autowired private LoadableQuantityService loadableQuantityService;
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
-
-  @Autowired
-  private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
-
+  @Autowired private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
   @Autowired private LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
 
   public LoadableStudy setLoadableStudyShore(String jsonResult, String messageId)
