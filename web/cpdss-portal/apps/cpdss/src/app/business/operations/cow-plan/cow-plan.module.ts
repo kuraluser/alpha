@@ -7,6 +7,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
+import { NumberDirectiveModule } from '../../../shared/directives/number-directive/number-directive.module';
 
 /**
  * Module for COW plan section component
@@ -24,7 +26,9 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     DropdownModule,
     MultiSelectModule,
     InputMaskModule,
-    InputSwitchModule
+    InputSwitchModule,
+    ValidationErrorModule,
+    NumberDirectiveModule
   ],
   exports: [CowPlanComponent]
 })

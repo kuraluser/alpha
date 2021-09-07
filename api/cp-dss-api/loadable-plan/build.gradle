@@ -5,6 +5,7 @@ appConfig {
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
+  monitoring = 'y'
   javaMainClass = "com.cpdss.loadableplan.Application"
 }
 

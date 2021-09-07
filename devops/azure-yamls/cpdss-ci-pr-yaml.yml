@@ -1,0 +1,32 @@
+# CPDSS CI Yaml Pipeline
+trigger: none
+pr: none
+
+variables:
+- group: CPDSS-Build-Global-Variables
+name: $(MajorVersion).0.$(rev:r)
+jobs:
+- job: Job_1
+  displayName: CPDSS Services Build
+  pool:
+    vmImage: ubuntu-20.04
+  steps:
+  - checkout: self
+    clean: true
+  - task: AWSShellScript@1
+    displayName: Login to ECR
+    inputs:
+      awsCredentials: 'Alpha-Ori-AWS'
+      regionName: ap-southeast-1
+      scriptType: inline
+      inlineScript: >-
+        token=$(aws ecr get-login-password --region ap-southeast-1)
+
+        echo "##vso[task.setvariable variable=DOCKER_PASSWORD]$token"
+  - task: Gradle@2
+    displayName: Run Jib $(SERVICE_NAME)
+    inputs:
+      wrapperScript: api/cp-dss-api/$(SERVICE_NAME)/gradlew
+      cwd: api/cp-dss-api/$(SERVICE_NAME)
+      options: -PbuildEnv=$(ENV)
+      tasks: jib

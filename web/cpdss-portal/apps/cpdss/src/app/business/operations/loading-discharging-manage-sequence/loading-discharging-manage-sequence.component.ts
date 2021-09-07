@@ -2,9 +2,11 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { ICargo, ILoadableQuantityCargo, OPERATIONS } from '../../core/models/common.model';
-import { ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequences, ILoadingDischargingSequenceValueObject } from '../models/loading-discharging.model';
+import { ICargo, OPERATIONS } from '../../core/models/common.model';
+import { ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequences, ILoadingDischargingSequenceValueObject, ILoadedCargo } from '../models/loading-discharging.model';
 import { durationValidator } from '../validators/duration-validator.directive';
+import { cargoQuantityValidator } from '../validators/cargo-quantity-validator.directive';
+import { sequenceNumberValidator } from '../directives/validator/sequence-number-validator.directive';
 import { ConfirmationService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { loadingCargoDuplicateValidator } from '../validators/loading-cargo-duplicate-validator.directive';
@@ -14,6 +16,7 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
+import { QuantityDecimalService } from '../../../shared/services/quantity-decimal/quantity-decimal.service';
 
 /**
  * Component class for loading discharging manage sequence component
@@ -30,7 +33,7 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 export class LoadingDischargingManageSequenceComponent implements OnInit {
   @Input() cargos: ICargo[];
 
-  @Input() loadableQuantityCargo: ILoadableQuantityCargo[];
+  @Input() loadableQuantityCargo: ILoadedCargo[];
   @Input() operation: OPERATIONS;
   @Input() loadingInfoId: number;
   @Input() dischargingInfoId: number;
@@ -95,7 +98,8 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     private quantityPipe: QuantityPipe,
     private messageService: MessageService,
     private quantityDecimalFormatPipe: QuantityDecimalFormatPipe,
-    private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService,
+    private quantityDecimalService: QuantityDecimalService) { }
 
   async ngOnInit(): Promise<void> {
     this.columns = this.loadingDischargingTransformationService.getLoadingDischargingDelayDatatableColumns(this.operation);
@@ -115,7 +119,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     this.addInitialDelay = false;
     this.listData.reasonForDelays = this.loadingDischargingSequences.reasonForDelays;
     const initialDelay = this.loadingDischargingSequences.loadingDischargingDelays?.find(loadingDischargingDelay => !loadingDischargingDelay.cargoId && !loadingDischargingDelay.quantity);
-    
+
     if (initialDelay) {
       initialDelay.isInitialDelay = true;
       this.loadingDischargingSequences.loadingDischargingDelays = this.loadingDischargingSequences.loadingDischargingDelays?.filter(loadingDischargingDelay => loadingDischargingDelay?.cargoId && loadingDischargingDelay?.quantity);
@@ -228,17 +232,19 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   * @memberof LoadingDischargingManageSequenceComponent
   */
   initLoadingDischargingSequenceFormGroup(loadingDischargingDelay: ILoadingDischargingSequenceValueObject, index: number, initialDelay: boolean) {
+    const quantityDecimal = this.quantityDecimalService.quantityDecimal();
+    const min = quantityDecimal ? (1 / Math.pow(10, quantityDecimal)) : 1;
     const formGroup =  this.fb.group({
       id: loadingDischargingDelay.id,
       reasonForDelay: this.fb.control(loadingDischargingDelay.reasonForDelay.value, initialDelay ? [Validators.required] : []),
       duration: this.fb.control(loadingDischargingDelay.duration.value, [Validators.required, durationValidator(24, 59)]),
       cargo: this.fb.control(loadingDischargingDelay.cargo.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required] : [Validators.required, loadingCargoDuplicateValidator(index)]),
-      quantity: this.fb.control(loadingDischargingDelay.quantity?.value, initialDelay ? [] : [Validators.required]),
+      quantity: this.fb.control(loadingDischargingDelay.quantity?.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required, Validators.min(min), cargoQuantityValidator(), numberValidator(quantityDecimal, 7, false)] : [Validators.required]),
       colorCode: this.fb.control(loadingDischargingDelay.colorCode)
     });
 
     if (this.operation === OPERATIONS.DISCHARGING) {
-      formGroup.addControl('sequenceNo', this.fb.control(loadingDischargingDelay?.sequenceNo?.value, [Validators.required, numberValidator(0, null, false)]));
+      formGroup.addControl('sequenceNo', this.fb.control(loadingDischargingDelay?.sequenceNo?.value, [Validators.required, numberValidator(0, null, false), sequenceNumberValidator]));
     }
 
     return formGroup;
@@ -464,13 +470,19 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   * @memberof LoadingDischargingManageSequenceComponent
   */
   async checkCargoCount() {
+    const translationKeys = await this.translateService.get(['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_ERROR', 'LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_SUMMERY', 'LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_QUANTITY_SUMMERY']).toPromise();
     let cargoCount = this.listData.loadableQuantityCargo.length;
     cargoCount = this.addInitialDelay ? cargoCount + 1: cargoCount;
     const dataTableControl = <FormArray>this.loadingDischargingSequenceForm.get('dataTable');
     if(this.loadingDischargingSequenceForm.valid && dataTableControl.length < cargoCount) {
-      const translationKeys = await this.translateService.get(['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_ERROR', 'LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_SUMMERY']).toPromise();
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_ERROR'], detail: translationKeys['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_SUMMERY'] });
       return false;
+    } else if(this.operation === OPERATIONS.DISCHARGING) {
+      const totalQuantitySequence = dataTableControl?.value?.reduce((total, sequence) => total + Number(sequence.quantity),0);
+      const totalLoadedQuantity = this.loadableQuantityCargo?.reduce((total, cargo) => total + Number(cargo.shipFigure) ,0);
+      if(totalLoadedQuantity !== totalQuantitySequence) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_ERROR'], detail: translationKeys['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_QUANTITY_SUMMERY'] });
+      }
     } else {
       return true;
     }
@@ -478,3 +490,4 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
 
 
 }
+

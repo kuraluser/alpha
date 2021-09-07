@@ -18,6 +18,7 @@ appConfig {
   persistence = 'springData'
   dataBase = 'postgres'
   devTools = 'y'
+  monitoring = 'y'
 docker {
     imageName = 'cpdss-envoy-writer'
     containerName = 'envoy-writer-container'
@@ -34,8 +35,8 @@ docker {
 
 dependencies {
     implementation project(':common')
-    compile group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE'
+    // compile group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE'
     // https://mvnrepository.com/artifact/commons-io/commons-io
 	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
-   compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
+  //  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
 }

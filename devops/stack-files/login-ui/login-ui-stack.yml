@@ -1,0 +1,23 @@
+version: "3.7"
+services: 
+  login-service:
+    image: "${DOCKER_REGISTRY}/${IMAGE_NAME}:${TAG_NAME}"
+    ports: 
+    - 80:80
+    networks:
+      - cpdss-network
+      - portainer_agent_network
+    dns: 8.8.8.8
+    healthcheck:
+      test: "wget --no-verbose --spider http://localhost:80/health || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+networks: 
+  cpdss-network:
+    external: true
+  swarmpit_net:
+    external: true
+  portainer_agent_network:
+    external: true

@@ -1,9 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { ICargo, ITank } from '../../core/models/common.model';
 import { ICOWDetails, IDischargeOperationListData } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { tankPreferenceDuplicationValidator } from '../directives/validator/tank-preference-duplication-validator.directive';
+import { IMode } from '../../../shared/models/common.model';
+import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
+import { durationValidator } from '../validators/duration-validator.directive';
+import { numberValidator } from '../../core/directives/number-validator.directive';
 
 /**
  * Component class for COW plan setion
@@ -30,18 +35,58 @@ export class CowPlanComponent implements OnInit {
 
   set cowDetails(value: ICOWDetails) {
     this._cowDetails = value;
-    this.enableDisableFieldsOnCowOption(value?.cowOption?.id);
+    this.initFormGroup();
+    this.enableDisableFieldsOnCowOption(value?.cowOption);
   }
 
   get cowDetailsForm() {
     return <FormGroup>this.form.get('cowDetails');
   }
 
+  errorMesages: IValidationErrorMessagesSet;
+  maxDuration: string[];
+
   private _cowDetails: ICOWDetails;
 
-  constructor(private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
+  constructor(
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService,
+    private fb: FormBuilder) { }
 
   ngOnInit(): void {
+    this.errorMesages = this.loadingDischargingTransformationService.setCOWValidationErrorMessage();
+  }
+
+  /**
+   * Method to initialise cow form
+   *
+   * @memberof CowPlanComponent
+   */
+  initFormGroup() {
+    const tanksWashingWithDifferentCargo = this.cowDetails?.tanksWashingWithDifferentCargo?.map(item => {
+      return this.fb.group({
+        cargo: this.fb.control(item?.cargo),
+        washingCargo: this.fb.control(item?.washingCargo),
+        tanks: this.fb.control(item?.tanks)
+      })
+    });
+    this.maxDuration = this.cowDetails?.totalDuration.split(':');
+
+    this.form.setControl('cowDetails', this.fb.group({
+      washTanksWithDifferentCargo: this.fb.control(this.cowDetails?.washTanksWithDifferentCargo),
+      cowOption: this.fb.control(this.cowDetails?.cowOption),
+      cowPercentage: this.fb.control(this.cowDetails?.cowPercentage),
+      topCOWTanks: this.fb.control(this.cowDetails?.topCOWTanks, [tankPreferenceDuplicationValidator('top')]),
+      bottomCOWTanks: this.fb.control(this.cowDetails?.bottomCOWTanks),
+      allCOWTanks: this.fb.control(this.cowDetails?.allCOWTanks),
+      tanksWashingWithDifferentCargo: this.fb.array([...tanksWashingWithDifferentCargo]),
+      cowStart: this.fb.control(this.cowDetails?.cowStart, [durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]),
+      cowEnd: this.fb.control(this.cowDetails?.cowEnd, [durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]),
+      cowDuration: this.fb.control(this.cowDetails?.cowDuration),
+      cowTrimMin: this.fb.control(this.cowDetails?.cowTrimMin, [Validators.required, numberValidator(2, 1)]),
+      cowTrimMax: this.fb.control(this.cowDetails?.cowTrimMax, [Validators.required, numberValidator(2, 1)]),
+      needFreshCrudeStorage: this.fb.control(this.cowDetails?.needFreshCrudeStorage),
+      needFlushingOil: this.fb.control(this.cowDetails?.needFlushingOil),
+    }));
   }
 
   /**
@@ -51,7 +96,7 @@ export class CowPlanComponent implements OnInit {
    * @memberof CowPlanComponent
    */
   onCowOptionChange(event) {
-    this.enableDisableFieldsOnCowOption(event?.value?.id);
+    this.enableDisableFieldsOnCowOption(event?.value);
   }
 
   /**
@@ -60,8 +105,8 @@ export class CowPlanComponent implements OnInit {
    * @param {number} mode
    * @memberof CowPlanComponent
    */
-  enableDisableFieldsOnCowOption(mode: number) {
-    if (mode === 1) {
+  enableDisableFieldsOnCowOption(mode: IMode) {
+    if (mode?.id === 1) {
       this.cowDetailsForm.controls.cowPercentage.enable();
       this.cowDetailsForm.controls.allCOWTanks.disable();
       this.cowDetailsForm.controls.bottomCOWTanks.disable();
@@ -89,7 +134,7 @@ export class CowPlanComponent implements OnInit {
   }
 
   /**
-   * Enable disable tanks washing with different cargo 
+   * Enable disable tanks washing with different cargo
    *
    * @param {boolean} enable
    * @memberof CowPlanComponent
@@ -113,6 +158,42 @@ export class CowPlanComponent implements OnInit {
     const endTimeInMinutes = this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.cowDetailsForm.controls?.cowEnd.value);
     const duration = totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes;
     this.cowDetailsForm.controls.cowDuration.setValue(moment.utc(duration * 60 * 1000).format("HH:mm"));
+    if (this.cowDetailsForm.controls?.cowStart.value) {
+      this.cowDetailsForm.controls?.cowEnd.setValidators([Validators.required, durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]);
+    } else{
+      this.cowDetailsForm.controls?.cowEnd.setValidators([durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]);
+    }
+    if (this.cowDetailsForm.controls?.cowEnd.value) {
+      this.cowDetailsForm.controls?.cowStart.setValidators([Validators.required, durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]);
+    } else {
+      this.cowDetailsForm.controls?.cowStart.setValidators([durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]);
+    }
+    this.cowDetailsForm.controls?.cowStart.updateValueAndValidity();
+    this.cowDetailsForm.controls?.cowEnd.updateValueAndValidity();
+  }
+
+  /**
+   * Method to check for field errors
+   *
+   * @param {string} formControlName
+   * @param {number} indexOfFormgroup
+   * @return {ValidationErrors}
+   * @memberof CowPlanComponent
+   */
+  fieldError(formControlName: string): ValidationErrors {
+    const formControl = this.field(formControlName);
+    return formControl?.invalid && (formControl?.dirty || formControl?.touched) ? formControl?.errors : null;
+  }
+
+  /**
+   * Method to get formControl
+   * @param {string} formControlName
+   * @return {FormControl}
+   * @memberof CowPlanComponent
+  */
+  field(formControlName: string): FormControl {
+    const formControl = <FormControl>this.cowDetailsForm?.get(formControlName);
+    return formControl;
   }
 
 }

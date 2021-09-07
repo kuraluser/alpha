@@ -16,6 +16,7 @@ appConfig {
   logging = 'y'
   devTools = 'y'
   unitTest = 'y'
+  monitoring = 'y'
   docker {
     imageName = 'cpdss-vessel-info'
     containerName = 'vessel-info-container'

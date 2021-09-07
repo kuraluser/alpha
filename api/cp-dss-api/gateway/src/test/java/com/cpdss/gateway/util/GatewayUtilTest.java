@@ -10,8 +10,6 @@ public class GatewayUtilTest {
 
   @Test
   public void index() {
-
-    ParserUtil.parserMain("com.cpdss.gateway.domain.loadingplan");
-    log.info("test");
+    ParserUtil.parserMain("com.cpdss.gateway.domain.dischargeplan");
   }
 }
