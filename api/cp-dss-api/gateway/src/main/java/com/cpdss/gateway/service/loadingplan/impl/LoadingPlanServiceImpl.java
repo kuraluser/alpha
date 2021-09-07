@@ -751,12 +751,13 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   }
 
   private LoadingUpdateUllageResponse buildUpdateUllageDetails(
-          LoadingPlanModels.UpdateUllageDetailsResponse response,
-          LoadingUpdateUllageResponse outResponse,
-          List<Long> cargoNominationIds,
-          LoadableStudy.CargoNominationReply cargoNominationReply,
-          List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails,
-          CargoInfo.CargoReply cargoReply, String arrivalDeparture) {
+      LoadingPlanModels.UpdateUllageDetailsResponse response,
+      LoadingUpdateUllageResponse outResponse,
+      List<Long> cargoNominationIds,
+      LoadableStudy.CargoNominationReply cargoNominationReply,
+      List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails,
+      CargoInfo.CargoReply cargoReply,
+      String arrivalDeparture) {
     // Setting actual or planned
     boolean isPlanned = true;
     if (portLoadablePlanStowageDetails.size() > 0
@@ -842,8 +843,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                   stowage ->
                       stowage.getCargoNominationId().doubleValue() == cargoNominationId
                           && stowage.getActualPlanned().equalsIgnoreCase(ACTUAL)
-                          && stowage.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
-              )
+                          && stowage.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
               .reduce(0, (subtotal, element) -> subtotal + element);
       cargoQuantityDetail.setActualQuantityTotal(actualQuantityTotal);
@@ -853,8 +853,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                   stowage ->
                       stowage.getCargoNominationId().doubleValue() == cargoNominationId
                           && stowage.getActualPlanned().equalsIgnoreCase(PLANNED)
-                          && stowage.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
-              )
+                          && stowage.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
               .reduce(0, (subtotal, element) -> subtotal + element);
       cargoQuantityDetail.setPlannedQuantityTotal(plannedQuantityTotal);
@@ -1037,7 +1036,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                     portLoadablePlanBallastDetail
                             .getArrivalDeparture()
                             .equalsIgnoreCase(arrivalDeparture)
-                        && portLoadablePlanBallastDetail.getActualPlanned().equalsIgnoreCase(ACTUAL))
+                        && portLoadablePlanBallastDetail
+                            .getActualPlanned()
+                            .equalsIgnoreCase(ACTUAL))
             .collect(Collectors.toList());
 
     if (portLoadablePlanBallastDetails.size() == 0) {
@@ -1048,7 +1049,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       portLoadablePlanBallastDetail
                               .getArrivalDeparture()
                               .equalsIgnoreCase(arrivalDeparture)
-                          && portLoadablePlanBallastDetail.getActualPlanned().equalsIgnoreCase(ACTUAL))
+                          && portLoadablePlanBallastDetail
+                              .getActualPlanned()
+                              .equalsIgnoreCase(ACTUAL))
               .collect(Collectors.toList());
     }
     if (portLoadablePlanBallastDetails.size() == 0) {
@@ -1059,7 +1062,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       portLoadablePlanBallastDetail
                               .getArrivalDeparture()
                               .equalsIgnoreCase(arrivalDeparture)
-                          && portLoadablePlanBallastDetail.getActualPlanned().equalsIgnoreCase(PLANNED))
+                          && portLoadablePlanBallastDetail
+                              .getActualPlanned()
+                              .equalsIgnoreCase(PLANNED))
               .collect(Collectors.toList());
     }
     if (portLoadablePlanBallastDetails.size() > 0) {

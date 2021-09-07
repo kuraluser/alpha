@@ -116,7 +116,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       buildLoadablePatternPortWiseDetails(algoRequest, loadingInfoOpt.get());
 
       // Build hourly based tide details which upload from loading info page
-      //buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
+      // buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
 
       // Build Loading Rule, service is in loading-plan (self)
       buildLoadingRules(algoRequest, loadingInfoOpt.get());

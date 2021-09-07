@@ -81,4 +81,6 @@ service LoadingPlanService {
   
   rpc validateStowageAndBillOfLadding(StowageAndBillOfLaddingValidationRequest) returns (ResponseStatus){}
   
+  rpc GetLoadingPlanCommingleDetails(LoadingInformationSynopticalRequest) returns (LoadablePlanCommingleCargoDetailsReply){}
+  
 }

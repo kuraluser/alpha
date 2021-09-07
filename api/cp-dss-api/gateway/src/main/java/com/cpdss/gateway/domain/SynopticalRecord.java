@@ -79,4 +79,5 @@ public class SynopticalRecord {
   private BigDecimal bm;
   private BigDecimal sf;
   private Boolean hasLoadicator;
+  private String portRotationType;
 }
