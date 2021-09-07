@@ -75,7 +75,7 @@ public class LoadableStudyServiceShore {
   @Autowired
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
-  public LoadableStudy setLoadablestudyShore(String jsonResult, String messageId)
+  public LoadableStudy setLoadableStudyShore(String jsonResult, String messageId)
       throws GenericServiceException {
     log.info("inside setLoadablestudyShore ");
     LoadableStudy loadableStudyEntity = null;
@@ -84,7 +84,7 @@ public class LoadableStudyServiceShore {
 
     Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyage());
     ModelMapper modelMapper = new ModelMapper();
-    if (!checkIfLoadableStudyExist(loadableStudy.getName(), voyage)) {
+    if (!checkIfLoadableStudyExist(loadableStudy.getId(), voyage)) {
 
       try {
 
@@ -97,7 +97,12 @@ public class LoadableStudyServiceShore {
               loadableStudyEntity.getId());
         }
       } catch (IOException e) {
-        e.printStackTrace();
+        log.error("Saving loadable study attachment failed: {}", loadableStudy, e);
+        throw new GenericServiceException(
+            "Saving loadable study attachment failed: " + loadableStudy,
+            CommonErrorCodes.E_CPDSS_FILE_WRITE_ERROR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR,
+            e);
       }
     } else {
       loadableStudyEntity =
@@ -645,11 +650,9 @@ public class LoadableStudyServiceShore {
     return commingleCargoEntity;
   }
 
-  private boolean checkIfLoadableStudyExist(String name, Voyage voyage) {
-    boolean duplicate =
-        this.loadableStudyRepository.existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
-            name, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE, voyage, true);
-    return duplicate;
+  private boolean checkIfLoadableStudyExist(long loadableStudyId, Voyage voyage) {
+    return this.loadableStudyRepository.existsByIdAndPlanningTypeXIdAndVoyageAndIsActive(
+        loadableStudyId, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE, voyage, true);
   }
 
   private Voyage saveVoyageShore(Long vesselId, VoyageDto voyageDto) {
@@ -781,35 +784,28 @@ public class LoadableStudyServiceShore {
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         loadabalePatternValidateRequest.getLoadableStudy();
     Voyage voyage = saveVoyageShore(loadableStudy.getVesselId(), loadableStudy.getVoyage());
-    if (!checkIfLoadableStudyExist(loadableStudy.getName(), voyage)) {
+    if (!checkIfLoadableStudyExist(loadableStudy.getId(), voyage)) {
       try {
-        LoadableStudy entity = new LoadableStudy();
         loadableStudyEntity = saveLoadableStudyShore(loadableStudy, voyage);
-        // saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity,
-        // MessageTypes.VALIDATEPLAN);
         saveLoadableStudyCommunicaionStatus(messageId, loadableStudyEntity);
         ModelMapper modelMapper = new ModelMapper();
         saveLoadableStudyDataShore(loadableStudyEntity, loadableStudy, modelMapper);
-        // saveLoadablePlanStowageTempDetails(loadabalePatternValidateRequest);
-        // savePattern(loadabalePatternValidateRequest, loadableStudyEntity);
+        return loadableStudyEntity;
       } catch (IOException e) {
-        e.printStackTrace();
+        log.error("Saving loadable study attachment failed: {}", loadableStudy, e);
+        throw new GenericServiceException(
+            "Saving loadable study attachment failed: " + loadableStudy,
+            CommonErrorCodes.E_CPDSS_FILE_WRITE_ERROR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR,
+            e);
       }
     } else {
-      // try {
-      //        Optional<LoadableStudy> lsEntity =
-      // loadableStudyRepository.findByNameAndVoyageAndPlanningTypeXIdAndIsActive(loadableStudy.getName(), voyage,
-      //                Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE, true);
-      //        if(lsEntity.isPresent()){
-      //          loadableStudyEntity = saveOrUpdateLoadableStudyShore(loadableStudy, voyage,
-      // lsEntity.get());
-      //        }
-
-      //      } catch (IOException e) {
-      //        e.printStackTrace();
-      //     }
+      log.error("Loadable study does not exist: {}", loadableStudy);
+      throw new GenericServiceException(
+          "Loadable study does not exist: " + loadableStudy,
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    return loadableStudyEntity;
   }
 
   // private void saveLoadablePlanStowageTempDetails(LoadabalePatternValidateRequest
