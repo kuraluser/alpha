@@ -2823,7 +2823,7 @@ textarea{
 .vessel-card-container {
   &.collapsed{
     .vessel-card-fleet-container{
-      height: 100px;
+      height: 109px;
       overflow: hidden;
     }
   }
@@ -3026,6 +3026,41 @@ textarea{
 .sequence-chart.stabilityparams-chart{
   .highcharts-axis-title{
     text-transform: uppercase;
+  }
+}
+
+.arrival-condition-pop-up, .departure-condition-pop-up{
+  width: 1290px;
+}
+
+.tank-tabs{
+  width: 57px;
+  height: 35px;
+}
+
+
+.table-grade{
+  th, td{
+    text-align: right!important;
+    &:first-child{
+      text-align: left!important;
+    }
+  }
+}
+
+.table-pattern{
+  th, td{
+    &:last-child, &:nth-last-child(2){
+      text-align: right!important;
+    } 
+  }
+}
+
+.table-pattern-view-more{
+  th, td{
+    &:last-child{
+      text-align: right!important;
+    } 
   }
 }
 

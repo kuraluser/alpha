@@ -36,6 +36,7 @@ public interface CommonErrorCodes {
   String E_CPDSS_REJECTION_COUNT_EXCEEDED = "113";
   String E_CPDSS_TASK_SCHEDULE_CREATE_ERROR = "125";
   String E_CPDSS_LS_INVALID_COMMINGLE_QUANTITY = "114";
+  String E_CPDSS_FILE_WRITE_ERROR = "115";
 
   String E_CPDSS_PASSWORD_POLICIES_VIOLATION_1 =
       "120"; // Password cannot contain first name or last name
@@ -51,4 +52,12 @@ public interface CommonErrorCodes {
   String E_CPDSS_NO_ACTIVE_VOYAGE_FOUND = "522";
   String E_CPDSS_NO_DISCHARGE_STUDY_FOUND = "150";
   String E_CPDSS_NO_ACUTALS_OR_BL_VALUES_FOUND = "151";
+  String E_CPDSS_CONFIRM_PLAN_NOT_ALLOWED = "152";
+
+  // Tide excel upload and download error codes
+  String E_CPDSS_PORT_NAME_INVALID = "310";
+  String E_CPDSS_TIDE_DATE_INVALID = "311";
+  String E_CPDSS_TIDE_TIME_INVALID = "312";
+  String E_CPDSS_TIDE_HEIGHT_INVALID = "313";
+  String E_CPDSS_INVALID_EXCEL_FILE = "314";
 }

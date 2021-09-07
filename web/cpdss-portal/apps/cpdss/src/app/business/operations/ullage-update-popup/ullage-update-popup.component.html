@@ -119,12 +119,13 @@
                
             </div>
         </div>
-        <div *ngIf="selectedTab === tankType.CARGO" class="row">
-            <div class="col-md-4">
+        <div *ngIf="selectedTab === tankType.CARGO" class="row pt-25">
+            <div class="col-md-4 pb-10">
                 <label>{{'LOADABLE_PLAN_BL_FIGURE_HEADING'| translate}}</label>
             </div>
         </div>
         <div *ngIf="selectedTab === tankType.CARGO" class="row">
+            <div class="col">
             <form>
                 <ng-container>
                     <p-table [value]="blFigure.items" [columns]="blFigureColumns" dataKey="cargoName">
@@ -230,6 +231,7 @@
                 </ng-container>
             </form>
         </div>
+    </div>
         <div *ngIf="selectedTab === tankType.CARGO" class="row">
             <div class="col-md-4 pt-20">
                 {{'LOADABLE_PLAN_CARGO_QUANTITY_TABLE' | translate}}

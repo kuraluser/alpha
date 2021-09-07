@@ -163,7 +163,7 @@ public class CommunicationService {
 
       String jsonResult = erReply.getPatternResultJson();
       LoadableStudy loadableStudyEntity =
-          loadableStudyServiceShore.setLoadablestudyShore(jsonResult, erReply.getMessageId());
+          loadableStudyServiceShore.setLoadableStudyShore(jsonResult, erReply.getMessageId());
       if (loadableStudyEntity != null) {
         voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
         this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);

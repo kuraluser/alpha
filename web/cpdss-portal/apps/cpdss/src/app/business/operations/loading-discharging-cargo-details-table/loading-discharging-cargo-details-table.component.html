@@ -1,4 +1,4 @@
-<p-table *ngIf="newCargoList" [columns]="columns" [value]="newCargoList" >
+<p-table *ngIf="newCargoList" [columns]="columns" [value]="newCargoList" styleClass="table-grade">
     <ng-template pTemplate="header" let-columns>
         <tr>
             <th *ngFor="let col of columns">

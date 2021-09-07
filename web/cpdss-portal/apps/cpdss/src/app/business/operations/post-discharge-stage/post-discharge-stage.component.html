@@ -14,21 +14,33 @@
         </ng-template>
         <ng-template pTemplate="body">
           <tr [formGroup]="postDischargeStageTimeForm">
-            <td>
+            <td class="error-icon-wrapper">
               <p-inputMask type="text" styleClass="form-control" formControlName="dryCheckTime" mask="99:99">
               </p-inputMask>
+              <cpdss-portal-validation-error [errors]="fieldError('dryCheckTime')"
+                [errorMessages]="errorMesages?.dryCheckTime">
+              </cpdss-portal-validation-error>
             </td>
-            <td>
+            <td class="error-icon-wrapper">
               <p-inputMask type="text" styleClass="form-control" formControlName="slopDischargingTime" mask="99:99">
               </p-inputMask>
+              <cpdss-portal-validation-error [errors]="fieldError('slopDischargingTime')"
+                [errorMessages]="errorMesages?.slopDischargingTime">
+              </cpdss-portal-validation-error>
             </td>
-            <td>
+            <td class="error-icon-wrapper">
               <p-inputMask type="text" styleClass="form-control" formControlName="finalStrippingTime" mask="99:99">
               </p-inputMask>
+              <cpdss-portal-validation-error [errors]="fieldError('finalStrippingTime')"
+                [errorMessages]="errorMesages?.finalStrippingTime">
+              </cpdss-portal-validation-error>
             </td>
-            <td>
+            <td class="error-icon-wrapper">
               <p-inputMask type="text" styleClass="form-control" formControlName="freshOilWashingTime" mask="99:99">
               </p-inputMask>
+              <cpdss-portal-validation-error [errors]="fieldError('freshOilWashingTime')"
+                [errorMessages]="errorMesages?.freshOilWashingTime">
+              </cpdss-portal-validation-error>
             </td>
           </tr>
         </ng-template>

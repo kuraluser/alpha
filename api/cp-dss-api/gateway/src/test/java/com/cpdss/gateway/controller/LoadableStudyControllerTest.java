@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
@@ -427,7 +428,12 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadableStudyPortList(String url) throws Exception {
     when(this.loadableStudyService.getLoadableStudyPortRotationList(
-            anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
+            anyLong(),
+            anyLong(),
+            anyLong(),
+            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            anyString(),
+            any(HttpHeaders.class)))
         .thenReturn(new PortRotationResponse());
     this.mockMvc
         .perform(
@@ -447,7 +453,12 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadableStudyPortListServiceException(String url) throws Exception {
     when(this.loadableStudyService.getLoadableStudyPortRotationList(
-            anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
+            anyLong(),
+            anyLong(),
+            anyLong(),
+            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            anyString(),
+            any(HttpHeaders.class)))
         .thenThrow(
             new GenericServiceException(
                 "test", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST));
@@ -469,7 +480,12 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadableStudyPortListRuntimeException(String url) throws Exception {
     when(this.loadableStudyService.getLoadableStudyPortRotationList(
-            anyLong(), anyLong(), anyLong(), Common.PLANNING_TYPE.LOADABLE_STUDY, anyString()))
+            anyLong(),
+            anyLong(),
+            anyLong(),
+            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            anyString(),
+            any(HttpHeaders.class)))
         .thenThrow(RuntimeException.class);
     this.mockMvc
         .perform(
@@ -1322,7 +1338,7 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {GET_CONFIRM_PLAN_CLOUD_API_URL, GET_CONFIRM_PLAN_SHIP_API_URL})
   @ParameterizedTest
   void testConfirmPlan(String url) throws Exception {
-    when(this.loadableStudyService.confirmPlan(anyLong(), anyString()))
+    when(this.loadableStudyService.confirmPlan(anyLong(), anyLong(), anyString()))
         .thenReturn(new CommonResponse());
     this.mockMvc
         .perform(
@@ -1348,7 +1364,7 @@ class LoadableStudyControllerTest {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    when(this.loadableStudyService.confirmPlan(anyLong(), anyString())).thenThrow(ex);
+    when(this.loadableStudyService.confirmPlan(anyLong(), anyLong(), anyString())).thenThrow(ex);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.post(
@@ -1441,7 +1457,7 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testLoadablePatternDetails(String url) throws Exception {
     when(this.loadableStudyService.getLoadablePatternDetails(
-            anyLong(), anyLong(), anyLong(), anyString()))
+            anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
         .thenReturn(new LoadablePlanDetailsResponse());
     this.mockMvc
         .perform(
@@ -1469,7 +1485,7 @@ class LoadableStudyControllerTest {
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     when(this.loadableStudyService.getLoadablePatternDetails(
-            anyLong(), anyLong(), anyLong(), anyString()))
+            anyLong(), anyLong(), anyLong(), anyLong(), anyString()))
         .thenThrow(ex);
     this.mockMvc
         .perform(
@@ -1655,7 +1671,7 @@ class LoadableStudyControllerTest {
   @ValueSource(strings = {GET_SYNOPTICAL_TABLE_CLOUD_API_URL, GET_SYNOPTICAL_TABLE_SHIP_API_URL})
   @ParameterizedTest
   void testGetSynopticalTable(String url) throws Exception {
-    when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
+    when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong(), anyLong()))
         .thenReturn(new SynopticalTableResponse());
     this.mockMvc
         .perform(
@@ -1676,7 +1692,7 @@ class LoadableStudyControllerTest {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong()))
+    when(this.loadableStudyService.getSynopticalTable(anyLong(), anyLong(), anyLong(), anyLong()))
         .thenThrow(ex);
     this.mockMvc
         .perform(

@@ -10,6 +10,7 @@ import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage } from '../l
 import { ICOWDetails, IDischargeOperationListData, IDischargingInformation, IDischargingInformationResponse, ILoadedCargo, ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequenceValueObject, IReasonForDelays } from '../models/loading-discharging.model';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { OPERATION_TAB } from '../models/operations.model';
+import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
 
 /**
  * Transformation Service for Loading  and Discharging
@@ -44,7 +45,7 @@ export class LoadingDischargingTransformationService {
   tabChange$ = this._tabChangeSource.asObservable();
   validateUllageData$ = this._validateUllageData.asObservable();
   setUllageBtnStatus$ = this._setUllageBtnStatus.asObservable();
-  showUllageErrorPopup$ = this._showUllageErrorPopup.asObservable(); 
+  showUllageErrorPopup$ = this._showUllageErrorPopup.asObservable();
 
   constructor(
     private quantityPipe: QuantityPipe,
@@ -106,15 +107,42 @@ export class LoadingDischargingTransformationService {
         'berthRequired': 'LOADING_INFORMATION_BERTH_REQUIRED',
         'invalidData': 'LOADING_INFO_INVALID_DATA'
       },
+      maxShipDepth: {
+        'required': 'LOADING_DISCHARGING_BERTH_REQUIRED',
+        'min': 'LOADING_DISCHARGING_BERTH_DEPTH_MIN_ERROR',
+        'max': 'LOADING_DISCHARGING_BERTH_DEPTH_MAX_ERROR',
+      },
+      maxManifoldHeight: {
+        'required': 'LOADING_DISCHARGING_BERTH_REQUIRED',
+        'min': 'LOADING_DISCHARGING_BERTH_MANIFOLD_HEIGHT_MIN_ERROR',
+        'max': 'LOADING_DISCHARGING_BERTH_MANIFOLD_HEIGHT_MAX_ERROR'
+      },
+      maxManifoldPressure: {
+        'required': 'LOADING_DISCHARGING_BERTH_REQUIRED',
+        'min': 'LOADING_DISCHARGING_BERTH_MANIFOLD_HEIGHT_MIN_ERROR',
+        'max': 'LOADING_DISCHARGING_BERTH_MANIFOLD_HEIGHT_AX_ERROR'
+      },
+      seaDraftLimitation: {
+        'required': 'LOADING_DISCHARGING_BERTH_REQUIRED',
+        'min': 'LOADING_DISCHARGING_BERTH_SEA_DRAFT_MIN_ERROR',
+        'max': 'LOADING_DISCHARGING_BERTH_SEA_DRAFT_MAX_ERROR',
+      },
+      airDraftLimitation: {
+        'required': 'LOADING_DISCHARGING_BERTH_REQUIRED',
+        'min': 'LOADING_DISCHARGING_BERTH_AIR_DRAFT_MIN_ERROR',
+        'max': 'LOADING_DISCHARGING_BERTH_AIR_DRAFT_MAX_ERROR',
+      },
       hoseConnections: {
         'maxlength': 'LOADING_DISCHARGING_BERTH_HOSECONNECTION_CHARACTER_LIMIT',
         'textError': "LOADING_BETH_HOSE_CONNECTION_ERROR"
       },
       regulationAndRestriction: {
-        'maxlength': 'LOADING_DISCHARGING_BERTH_REGULATION_RESTRICTION_CHARACTER_LIMIT'
+        'maxlength': 'LOADING_DISCHARGING_BERTH_REGULATION_RESTRICTION_CHARACTER_LIMIT',
+        'pattern': 'LOADING_DISCHARGING_BERTH_REGULATION_RESTRICTION_CHARACTER_INVALID'
       },
       itemsToBeAgreedWith: {
-        'maxlength': 'LOADING_DISCHARGING_BERTH_ITEMS_TO_BE_AGREED_WITH_CHARACTER_LIMIT'
+        'maxlength': 'LOADING_DISCHARGING_BERTH_ITEMS_TO_BE_AGREED_WITH_CHARACTER_LIMIT',
+        'pattern': 'LOADING_DISCHARGING_BERTH_ITEMS_TO_BE_AGREED_WITH_CHARACTER_INVALID',
       },
       lineDisplacement: {
         'required': 'LOADING_DISCHARGING_BERTH_LINE_DIPLACEMENT_MIN',
@@ -174,6 +202,44 @@ export class LoadingDischargingTransformationService {
   }
 
   /**
+   * Method to set validation messages for discharging rate fields
+   *
+   * @param {string} [unit='']
+   * @return {*}
+   * @memberof LoadingDischargingTransformationService
+   */
+  setValidationMessageForDischargingRate(unit: string = '') {
+    return {
+      maxDischargingRate: {
+        'required': 'DISCHARGING_RATE_REQUIRED',
+        'invalidNumber': 'DISCHARGING_RATE_INVALID',
+        'failedCompare': 'MAX_DISCHARGING_RATE_COMPARE',
+        'min': `MAX_DISCHARGING_RATE_MIN_VAL_${unit}`,
+        'max': `MAX_DISCHARGING_RATE_MAX_VAL_${unit}`
+      },
+      initialDischargingRate: {
+        'required': 'DISCHARGING_RATE_REQUIRED',
+        'invalidNumber': 'DISCHARGING_RATE_INVALID',
+        'failedCompare': 'INITIAL_DISCHARGING_RATE_COMPARE',
+        'min': `INITIAL_DISCHARGING_RATE_MIN_${unit}`,
+        'max': `INITIAL_DISCHARGING_RATE_MAX_${unit}`
+      },
+      minBallastingRate: {
+        'required': 'DISCHARGING_RATE_REQUIRED',
+        'invalidNumber': 'DISCHARGING_RATE_INVALID',
+        'min': `MIN_BALLAST_MINIMUM_${unit}`,
+        'max': `MIN_BALLAST_MAXIMUM_${unit}`
+      },
+      maxBallastingRate: {
+        'required': 'DISCHARGING_RATE_REQUIRED',
+        'invalidNumber': 'DISCHARGING_RATE_INVALID',
+        'min': `MAX_DEBALLAST_MINIMUM_${unit}`,
+        'max': `MAX_DEBALLAST_MAXIMUM_${unit}`
+      }
+    }
+  }
+
+  /**
 * Method for setting loading manage grid columns
 *
 * @returns {IDataTableColumn[]}
@@ -215,6 +281,13 @@ export class LoadingDischargingTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'LOADING_MANAGE_SEQUENCE_ENTER_QUANTITY',
         numberType: 'quantity',
+        errorMessages: {
+          'required': 'LOADING_MANAGE_SEQUENCE_REQUIRED',
+          'quantityExceeds': 'LOADING_MANAGE_SEQUENCE_QUANTITY_EXCEEDS',
+          'min': 'LOADING_MANAGE_SEQUENCE_QUANTITY_MIN',
+          'max': 'LOADING_MANAGE_SEQUENCE_QUANTITY_MAX',
+          'invalidNumber': 'LOADING_MANAGE_SEQUENCE_INVALID'
+        }
       },
       {
         field: 'reasonForDelay',
@@ -258,7 +331,8 @@ export class LoadingDischargingTransformationService {
         numberFormat: '1.0-0',
         errorMessages: {
           'required': 'DISCHARGING_MANAGE_SEQUENCE_REQUIRED',
-          'invalidNumber': 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID'
+          'invalidNumber': 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID',
+          'invalidSequenceNumber': 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID_VALUE'
         }
 
       };
@@ -297,7 +371,7 @@ export class LoadingDischargingTransformationService {
       _loadingDischargingDelay.quantity = new ValueObject<number>(loadingDischargingDelay?.quantity, true, operation === OPERATIONS.DISCHARGING && isNewValue && !loadingDischargingDelay?.isInitialDelay, false, operation === OPERATIONS.DISCHARGING && !loadingDischargingDelay?.isInitialDelay);
     }
     _loadingDischargingDelay.colorCode = cargoObj?.colorCode;
-    _loadingDischargingDelay.cargo = new ValueObject<ILoadableQuantityCargo>(cargoObj, true, isEditable ? isNewValue : false, false, isEditable);
+    _loadingDischargingDelay.cargo = new ValueObject<ILoadableQuantityCargo>(cargoObj, true, isEditable && !loadingDischargingDelay?.isInitialDelay && isNewValue, false, isEditable && !loadingDischargingDelay?.isInitialDelay);
     _loadingDischargingDelay.reasonForDelay = new ValueObject<IReasonForDelays[]>(reasonDelayObj, true, isNewValue, false, true);
     _loadingDischargingDelay.isAdd = isNewValue;
 
@@ -485,7 +559,7 @@ export class LoadingDischargingTransformationService {
         numberFormat: '1.2-2'
       },
       {
-        field: 'loadingPortsLabel',
+        field: 'loadingPortsLabels',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_LOADING_PORT'
       },
       {
@@ -518,13 +592,17 @@ export class LoadingDischargingTransformationService {
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberType: 'quantity',
-        numberFormat: quantityNumberFormat
+        numberFormat: quantityNumberFormat,
+        errorMessages: {
+          'required': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_REQUIRED',
+          'invalidNumber': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_INVALID'
+        }
       },
       {
-        field: 'isCommingled',
+        field: 'isCommingledDischarge',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_COMMINGLED',
         fieldType: DATATABLE_FIELD_TYPE.CHECKBOX,
-        filterField: 'isCommingled.value'
+        filterField: 'isCommingledDischarge.value'
       },
     ]
   }
@@ -874,14 +952,16 @@ export class LoadingDischargingTransformationService {
           if (key === 'protested') {
             const _protested = cargo.protested ? listData?.protestedOptions[0] : listData?.protestedOptions[1];
             _cargo.protested = new ValueObject<IProtested>(_protested, true, true, false);
-          } else if (key === 'isCommingled') {
-            const _isCommingled = cargo.isCommingled ?? false;
-            _cargo.isCommingled = new ValueObject<boolean>(_isCommingled, true, true, false);
+          } else if (key === 'isCommingledDischarge') {
+            const _isCommingled = cargo.isCommingledDischarge ?? false;
+            _cargo.isCommingledDischarge = new ValueObject<boolean>(_isCommingled, true, true, false);
           } else if (key === 'slopQuantity') {
             const _slopQuantity = Number(cargo.slopQuantity) ?? 0;
             _cargo.slopQuantity = new ValueObject<number>(_slopQuantity, true, true, false);
           } else if(key === 'shipFigure') {
             _cargo.loadableMT = cargo.shipFigure;
+          } else if (key === 'loadingPorts') {
+            _cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
           } else {
             _cargo[key] = cargo[key];
           }
@@ -920,6 +1000,67 @@ export class LoadingDischargingTransformationService {
     };
 
     return dischargingInformation;
+  }
+
+  /**
+   * Cow validation messages
+   *
+   * @return {*}
+   * @memberof LoadingDischargingTransformationService
+   */
+  setCOWValidationErrorMessage(): IValidationErrorMessagesSet {
+    return {
+      topCOWTanks: {
+        'duplicateTanks': 'DISCHARGING_COW_TANK_PREFERENCE_DUPLICATION'
+      },
+      bottomCOWTanks: {
+        'duplicateTanks': 'DISCHARGING_COW_TANK_PREFERENCE_DUPLICATION'
+      },
+      allCOWTanks: {
+        'duplicateTanks': 'DISCHARGING_COW_TANK_PREFERENCE_DUPLICATION'
+      },
+      cowTrimMin: {
+        'required': 'DISCHARGING_COW_REQUIRED',
+        'min': 'Min',
+        'max': 'Max'
+      },
+      cowTrimMax: {
+        'required': 'DISCHARGING_COW_REQUIRED',
+        'max': 'Max',
+        'min': 'Min'
+      },
+      cowStart: {
+        'required': 'DISCHARGING_COW_REQUIRED',
+        'invalidDuration': 'DISCHARGING_COW_DURATION_MAX_ERROR'
+      },
+      cowEnd: {
+        'required': 'DISCHARGING_COW_REQUIRED',
+        'invalidDuration': 'DISCHARGING_COW_DURATION_MAX_ERROR'
+      }
+    }
+  }
+
+  /**
+   * Set validationmessage for post discharge section
+   *
+   * @return {*}  {IValidationErrorMessagesSet}
+   * @memberof LoadingDischargingTransformationService
+   */
+  setPostDischargeValidationErrorMessage(): IValidationErrorMessagesSet {
+    return {
+      dryCheckTime: {
+        'invalidDuration': 'DISCHARGING_POST_DURATION_MAX'
+      },
+      slopDischargingTime: {
+        'invalidDuration': 'DISCHARGING_POST_DURATION_MAX'
+      },
+      finalStrippingTime: {
+        'invalidDuration': 'DISCHARGING_POST_DURATION_MAX'
+      },
+      freshOilWashingTime: {
+        'invalidDuration': 'DISCHARGING_POST_DURATION_MAX'
+      }
+    }
   }
 
   /**

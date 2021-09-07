@@ -11,11 +11,15 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.UploadTideDetailResponse;
 import com.cpdss.gateway.utility.RuleUtility;
+import com.google.protobuf.ByteString;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -77,5 +81,50 @@ public class DischargeInformationGrpcService {
     ruleResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return ruleResponse;
+  }
+
+  public UploadTideDetailResponse dischargeUploadLoadingTideDetails(
+      Long loadingId, MultipartFile file, String correlationId)
+      throws IOException, GenericServiceException {
+    String originalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
+    if (!(originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())
+        .equals("xlsx")) {
+      throw new GenericServiceException(
+          "unsupported file type",
+          CommonErrorCodes.E_CPDSS_INVALID_EXCEL_FILE,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest.Builder builder =
+        DischargingUploadTideDetailRequest.newBuilder();
+    builder.setTideDetaildata(ByteString.copyFrom(file.getBytes()));
+    builder.setLoadingId(loadingId);
+    DischargingUploadTideDetailStatusReply statusReply =
+        dischargeInfoServiceStub.dischargingUploadPortTideDetails(builder.build());
+    if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          statusReply.getResponseStatus().getMessage(),
+          statusReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(statusReply.getResponseStatus().getHttpStatusCode()));
+    }
+    UploadTideDetailResponse response = new UploadTideDetailResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  public byte[] downloadLoadingPortTideDetails(Long dischargingId) throws GenericServiceException {
+
+    com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest.Builder builder =
+        DischargingDownloadTideDetailRequest.newBuilder();
+    builder.setLoadingId(dischargingId);
+    DischargingDownloadTideDetailStatusReply statusReply =
+        dischargeInfoServiceStub.dischargingDownloadPortTideDetails(builder.build()).next();
+    if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          statusReply.getResponseStatus().getMessage(),
+          statusReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(statusReply.getResponseStatus().getHttpStatusCode()));
+    }
+    return statusReply.getData().toByteArray();
   }
 }

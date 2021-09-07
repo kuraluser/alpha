@@ -17,12 +17,13 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
 
   public Optional<SynopticalTable> findByIdAndIsActive(Long id, Boolean isActive);
 
-  /*@Query(
-  "select s from SynopticalTable s "
-      + "left outer join LoadableStudyPortRotationService lp "
-      + "on s.loadableStudyXId=lp.loadableStudy.id and s.portXid=lp.portXId "
-      + "where s.loadableStudyXId=?1 and s.isActive=true and lp.isActive=true "
-      + "order by lp.portOrder, s.operationType")*/
+  /*
+   * @Query( "select s from SynopticalTable s " +
+   * "left outer join LoadableStudyPortRotationService lp " +
+   * "on s.loadableStudyXId=lp.loadableStudy.id and s.portXid=lp.portXId " +
+   * "where s.loadableStudyXId=?1 and s.isActive=true and lp.isActive=true " +
+   * "order by lp.portOrder, s.operationType")
+   */
   public List<SynopticalTable> findByLoadableStudyXIdAndIsActive(
       Long loadableStudyXId, boolean isActive);
 
@@ -72,4 +73,9 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
   @Query("FROM SynopticalTable ST WHERE ST.loadableStudyPortRotation in ?1 AND ST.isActive = ?2")
   public List<SynopticalTable> findByLoadableStudyPortRotationAndIsActive(
       List<LoadableStudyPortRotation> loadableStudyPortRotations, Boolean isActive);
+
+  @Query(
+      "SELECT ST FROM SynopticalTable ST WHERE ST.loadableStudyXId in ?1 AND ST.isActive = ?2 ORDER BY ST.loadableStudyPortRotation.portOrder, ST.operationType")
+  public List<SynopticalTable> findByLoadableStudyXIdInAndIsActiveOrderByPortOrder(
+      List<Long> idList, Boolean isActive);
 }

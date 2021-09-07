@@ -15,6 +15,7 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
   private CowTankDetails() {
     cowType_ = 0;
     tankIds_ = emptyLongList();
+    cargoForCow_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -54,24 +55,7 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
               cowType_ = rawValue;
               break;
             }
-          case 18:
-            {
-              com.cpdss.common.generated.discharge_plan.CargoForCow.Builder subBuilder = null;
-              if (cargoForCow_ != null) {
-                subBuilder = cargoForCow_.toBuilder();
-              }
-              cargoForCow_ =
-                  input.readMessage(
-                      com.cpdss.common.generated.discharge_plan.CargoForCow.parser(),
-                      extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(cargoForCow_);
-                cargoForCow_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          case 24:
+          case 16:
             {
               if (!((mutable_bitField0_ & 0x00000001) != 0)) {
                 tankIds_ = newLongList();
@@ -80,7 +64,7 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
               tankIds_.addLong(input.readInt64());
               break;
             }
-          case 26:
+          case 18:
             {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
@@ -92,6 +76,20 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
                 tankIds_.addLong(input.readInt64());
               }
               input.popLimit(limit);
+              break;
+            }
+          case 26:
+            {
+              if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                cargoForCow_ =
+                    new java.util.ArrayList<
+                        com.cpdss.common.generated.discharge_plan.CargoForCow>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              cargoForCow_.add(
+                  input.readMessage(
+                      com.cpdss.common.generated.discharge_plan.CargoForCow.parser(),
+                      extensionRegistry));
               break;
             }
           default:
@@ -110,6 +108,9 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
     } finally {
       if (((mutable_bitField0_ & 0x00000001) != 0)) {
         tankIds_.makeImmutable(); // C
+      }
+      if (((mutable_bitField0_ & 0x00000002) != 0)) {
+        cargoForCow_ = java.util.Collections.unmodifiableList(cargoForCow_);
       }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
@@ -153,35 +154,10 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
     return result == null ? com.cpdss.common.generated.Common.COW_TYPE.UNRECOGNIZED : result;
   }
 
-  public static final int CARGOFORCOW_FIELD_NUMBER = 2;
-  private com.cpdss.common.generated.discharge_plan.CargoForCow cargoForCow_;
-  /**
-   * <code>.CargoForCow cargoForCow = 2;</code>
-   *
-   * @return Whether the cargoForCow field is set.
-   */
-  public boolean hasCargoForCow() {
-    return cargoForCow_ != null;
-  }
-  /**
-   * <code>.CargoForCow cargoForCow = 2;</code>
-   *
-   * @return The cargoForCow.
-   */
-  public com.cpdss.common.generated.discharge_plan.CargoForCow getCargoForCow() {
-    return cargoForCow_ == null
-        ? com.cpdss.common.generated.discharge_plan.CargoForCow.getDefaultInstance()
-        : cargoForCow_;
-  }
-  /** <code>.CargoForCow cargoForCow = 2;</code> */
-  public com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder getCargoForCowOrBuilder() {
-    return getCargoForCow();
-  }
-
-  public static final int TANKIDS_FIELD_NUMBER = 3;
+  public static final int TANKIDS_FIELD_NUMBER = 2;
   private com.google.protobuf.Internal.LongList tankIds_;
   /**
-   * <code>repeated int64 tankIds = 3;</code>
+   * <code>repeated int64 tankIds = 2;</code>
    *
    * @return A list containing the tankIds.
    */
@@ -189,7 +165,7 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
     return tankIds_;
   }
   /**
-   * <code>repeated int64 tankIds = 3;</code>
+   * <code>repeated int64 tankIds = 2;</code>
    *
    * @return The count of tankIds.
    */
@@ -197,7 +173,7 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
     return tankIds_.size();
   }
   /**
-   * <code>repeated int64 tankIds = 3;</code>
+   * <code>repeated int64 tankIds = 2;</code>
    *
    * @param index The index of the element to return.
    * @return The tankIds at the given index.
@@ -207,6 +183,32 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
   }
 
   private int tankIdsMemoizedSerializedSize = -1;
+
+  public static final int CARGOFORCOW_FIELD_NUMBER = 3;
+  private java.util.List<com.cpdss.common.generated.discharge_plan.CargoForCow> cargoForCow_;
+  /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+  public java.util.List<com.cpdss.common.generated.discharge_plan.CargoForCow>
+      getCargoForCowList() {
+    return cargoForCow_;
+  }
+  /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+  public java.util.List<? extends com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder>
+      getCargoForCowOrBuilderList() {
+    return cargoForCow_;
+  }
+  /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+  public int getCargoForCowCount() {
+    return cargoForCow_.size();
+  }
+  /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+  public com.cpdss.common.generated.discharge_plan.CargoForCow getCargoForCow(int index) {
+    return cargoForCow_.get(index);
+  }
+  /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+  public com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder getCargoForCowOrBuilder(
+      int index) {
+    return cargoForCow_.get(index);
+  }
 
   private byte memoizedIsInitialized = -1;
 
@@ -226,15 +228,15 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
     if (cowType_ != com.cpdss.common.generated.Common.COW_TYPE.EMPTY_COW_TYPE.getNumber()) {
       output.writeEnum(1, cowType_);
     }
-    if (cargoForCow_ != null) {
-      output.writeMessage(2, getCargoForCow());
-    }
     if (getTankIdsList().size() > 0) {
-      output.writeUInt32NoTag(26);
+      output.writeUInt32NoTag(18);
       output.writeUInt32NoTag(tankIdsMemoizedSerializedSize);
     }
     for (int i = 0; i < tankIds_.size(); i++) {
       output.writeInt64NoTag(tankIds_.getLong(i));
+    }
+    for (int i = 0; i < cargoForCow_.size(); i++) {
+      output.writeMessage(3, cargoForCow_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -248,9 +250,6 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
     if (cowType_ != com.cpdss.common.generated.Common.COW_TYPE.EMPTY_COW_TYPE.getNumber()) {
       size += com.google.protobuf.CodedOutputStream.computeEnumSize(1, cowType_);
     }
-    if (cargoForCow_ != null) {
-      size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getCargoForCow());
-    }
     {
       int dataSize = 0;
       for (int i = 0; i < tankIds_.size(); i++) {
@@ -263,6 +262,9 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
         size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
       }
       tankIdsMemoizedSerializedSize = dataSize;
+    }
+    for (int i = 0; i < cargoForCow_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(3, cargoForCow_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -281,11 +283,8 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
         (com.cpdss.common.generated.discharge_plan.CowTankDetails) obj;
 
     if (cowType_ != other.cowType_) return false;
-    if (hasCargoForCow() != other.hasCargoForCow()) return false;
-    if (hasCargoForCow()) {
-      if (!getCargoForCow().equals(other.getCargoForCow())) return false;
-    }
     if (!getTankIdsList().equals(other.getTankIdsList())) return false;
+    if (!getCargoForCowList().equals(other.getCargoForCowList())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -299,13 +298,13 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + COWTYPE_FIELD_NUMBER;
     hash = (53 * hash) + cowType_;
-    if (hasCargoForCow()) {
-      hash = (37 * hash) + CARGOFORCOW_FIELD_NUMBER;
-      hash = (53 * hash) + getCargoForCow().hashCode();
-    }
     if (getTankIdsCount() > 0) {
       hash = (37 * hash) + TANKIDS_FIELD_NUMBER;
       hash = (53 * hash) + getTankIdsList().hashCode();
+    }
+    if (getCargoForCowCount() > 0) {
+      hash = (37 * hash) + CARGOFORCOW_FIELD_NUMBER;
+      hash = (53 * hash) + getCargoForCowList().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -439,7 +438,9 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
     }
 
     private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+        getCargoForCowFieldBuilder();
+      }
     }
 
     @java.lang.Override
@@ -447,14 +448,14 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
       super.clear();
       cowType_ = 0;
 
-      if (cargoForCowBuilder_ == null) {
-        cargoForCow_ = null;
-      } else {
-        cargoForCow_ = null;
-        cargoForCowBuilder_ = null;
-      }
       tankIds_ = emptyLongList();
       bitField0_ = (bitField0_ & ~0x00000001);
+      if (cargoForCowBuilder_ == null) {
+        cargoForCow_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+      } else {
+        cargoForCowBuilder_.clear();
+      }
       return this;
     }
 
@@ -484,16 +485,20 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
           new com.cpdss.common.generated.discharge_plan.CowTankDetails(this);
       int from_bitField0_ = bitField0_;
       result.cowType_ = cowType_;
-      if (cargoForCowBuilder_ == null) {
-        result.cargoForCow_ = cargoForCow_;
-      } else {
-        result.cargoForCow_ = cargoForCowBuilder_.build();
-      }
       if (((bitField0_ & 0x00000001) != 0)) {
         tankIds_.makeImmutable();
         bitField0_ = (bitField0_ & ~0x00000001);
       }
       result.tankIds_ = tankIds_;
+      if (cargoForCowBuilder_ == null) {
+        if (((bitField0_ & 0x00000002) != 0)) {
+          cargoForCow_ = java.util.Collections.unmodifiableList(cargoForCow_);
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.cargoForCow_ = cargoForCow_;
+      } else {
+        result.cargoForCow_ = cargoForCowBuilder_.build();
+      }
       onBuilt();
       return result;
     }
@@ -547,9 +552,6 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
       if (other.cowType_ != 0) {
         setCowTypeValue(other.getCowTypeValue());
       }
-      if (other.hasCargoForCow()) {
-        mergeCargoForCow(other.getCargoForCow());
-      }
       if (!other.tankIds_.isEmpty()) {
         if (tankIds_.isEmpty()) {
           tankIds_ = other.tankIds_;
@@ -559,6 +561,33 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
           tankIds_.addAll(other.tankIds_);
         }
         onChanged();
+      }
+      if (cargoForCowBuilder_ == null) {
+        if (!other.cargoForCow_.isEmpty()) {
+          if (cargoForCow_.isEmpty()) {
+            cargoForCow_ = other.cargoForCow_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureCargoForCowIsMutable();
+            cargoForCow_.addAll(other.cargoForCow_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.cargoForCow_.isEmpty()) {
+          if (cargoForCowBuilder_.isEmpty()) {
+            cargoForCowBuilder_.dispose();
+            cargoForCowBuilder_ = null;
+            cargoForCow_ = other.cargoForCow_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+            cargoForCowBuilder_ =
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                    ? getCargoForCowFieldBuilder()
+                    : null;
+          } else {
+            cargoForCowBuilder_.addAllMessages(other.cargoForCow_);
+          }
+        }
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -650,125 +679,6 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
       return this;
     }
 
-    private com.cpdss.common.generated.discharge_plan.CargoForCow cargoForCow_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-            com.cpdss.common.generated.discharge_plan.CargoForCow,
-            com.cpdss.common.generated.discharge_plan.CargoForCow.Builder,
-            com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder>
-        cargoForCowBuilder_;
-    /**
-     * <code>.CargoForCow cargoForCow = 2;</code>
-     *
-     * @return Whether the cargoForCow field is set.
-     */
-    public boolean hasCargoForCow() {
-      return cargoForCowBuilder_ != null || cargoForCow_ != null;
-    }
-    /**
-     * <code>.CargoForCow cargoForCow = 2;</code>
-     *
-     * @return The cargoForCow.
-     */
-    public com.cpdss.common.generated.discharge_plan.CargoForCow getCargoForCow() {
-      if (cargoForCowBuilder_ == null) {
-        return cargoForCow_ == null
-            ? com.cpdss.common.generated.discharge_plan.CargoForCow.getDefaultInstance()
-            : cargoForCow_;
-      } else {
-        return cargoForCowBuilder_.getMessage();
-      }
-    }
-    /** <code>.CargoForCow cargoForCow = 2;</code> */
-    public Builder setCargoForCow(com.cpdss.common.generated.discharge_plan.CargoForCow value) {
-      if (cargoForCowBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        cargoForCow_ = value;
-        onChanged();
-      } else {
-        cargoForCowBuilder_.setMessage(value);
-      }
-
-      return this;
-    }
-    /** <code>.CargoForCow cargoForCow = 2;</code> */
-    public Builder setCargoForCow(
-        com.cpdss.common.generated.discharge_plan.CargoForCow.Builder builderForValue) {
-      if (cargoForCowBuilder_ == null) {
-        cargoForCow_ = builderForValue.build();
-        onChanged();
-      } else {
-        cargoForCowBuilder_.setMessage(builderForValue.build());
-      }
-
-      return this;
-    }
-    /** <code>.CargoForCow cargoForCow = 2;</code> */
-    public Builder mergeCargoForCow(com.cpdss.common.generated.discharge_plan.CargoForCow value) {
-      if (cargoForCowBuilder_ == null) {
-        if (cargoForCow_ != null) {
-          cargoForCow_ =
-              com.cpdss.common.generated.discharge_plan.CargoForCow.newBuilder(cargoForCow_)
-                  .mergeFrom(value)
-                  .buildPartial();
-        } else {
-          cargoForCow_ = value;
-        }
-        onChanged();
-      } else {
-        cargoForCowBuilder_.mergeFrom(value);
-      }
-
-      return this;
-    }
-    /** <code>.CargoForCow cargoForCow = 2;</code> */
-    public Builder clearCargoForCow() {
-      if (cargoForCowBuilder_ == null) {
-        cargoForCow_ = null;
-        onChanged();
-      } else {
-        cargoForCow_ = null;
-        cargoForCowBuilder_ = null;
-      }
-
-      return this;
-    }
-    /** <code>.CargoForCow cargoForCow = 2;</code> */
-    public com.cpdss.common.generated.discharge_plan.CargoForCow.Builder getCargoForCowBuilder() {
-
-      onChanged();
-      return getCargoForCowFieldBuilder().getBuilder();
-    }
-    /** <code>.CargoForCow cargoForCow = 2;</code> */
-    public com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder
-        getCargoForCowOrBuilder() {
-      if (cargoForCowBuilder_ != null) {
-        return cargoForCowBuilder_.getMessageOrBuilder();
-      } else {
-        return cargoForCow_ == null
-            ? com.cpdss.common.generated.discharge_plan.CargoForCow.getDefaultInstance()
-            : cargoForCow_;
-      }
-    }
-    /** <code>.CargoForCow cargoForCow = 2;</code> */
-    private com.google.protobuf.SingleFieldBuilderV3<
-            com.cpdss.common.generated.discharge_plan.CargoForCow,
-            com.cpdss.common.generated.discharge_plan.CargoForCow.Builder,
-            com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder>
-        getCargoForCowFieldBuilder() {
-      if (cargoForCowBuilder_ == null) {
-        cargoForCowBuilder_ =
-            new com.google.protobuf.SingleFieldBuilderV3<
-                com.cpdss.common.generated.discharge_plan.CargoForCow,
-                com.cpdss.common.generated.discharge_plan.CargoForCow.Builder,
-                com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder>(
-                getCargoForCow(), getParentForChildren(), isClean());
-        cargoForCow_ = null;
-      }
-      return cargoForCowBuilder_;
-    }
-
     private com.google.protobuf.Internal.LongList tankIds_ = emptyLongList();
 
     private void ensureTankIdsIsMutable() {
@@ -778,7 +688,7 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
       }
     }
     /**
-     * <code>repeated int64 tankIds = 3;</code>
+     * <code>repeated int64 tankIds = 2;</code>
      *
      * @return A list containing the tankIds.
      */
@@ -788,7 +698,7 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
           : tankIds_;
     }
     /**
-     * <code>repeated int64 tankIds = 3;</code>
+     * <code>repeated int64 tankIds = 2;</code>
      *
      * @return The count of tankIds.
      */
@@ -796,7 +706,7 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
       return tankIds_.size();
     }
     /**
-     * <code>repeated int64 tankIds = 3;</code>
+     * <code>repeated int64 tankIds = 2;</code>
      *
      * @param index The index of the element to return.
      * @return The tankIds at the given index.
@@ -805,7 +715,7 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
       return tankIds_.getLong(index);
     }
     /**
-     * <code>repeated int64 tankIds = 3;</code>
+     * <code>repeated int64 tankIds = 2;</code>
      *
      * @param index The index to set the value at.
      * @param value The tankIds to set.
@@ -818,7 +728,7 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
       return this;
     }
     /**
-     * <code>repeated int64 tankIds = 3;</code>
+     * <code>repeated int64 tankIds = 2;</code>
      *
      * @param value The tankIds to add.
      * @return This builder for chaining.
@@ -830,7 +740,7 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
       return this;
     }
     /**
-     * <code>repeated int64 tankIds = 3;</code>
+     * <code>repeated int64 tankIds = 2;</code>
      *
      * @param values The tankIds to add.
      * @return This builder for chaining.
@@ -842,7 +752,7 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
       return this;
     }
     /**
-     * <code>repeated int64 tankIds = 3;</code>
+     * <code>repeated int64 tankIds = 2;</code>
      *
      * @return This builder for chaining.
      */
@@ -851,6 +761,222 @@ public final class CowTankDetails extends com.google.protobuf.GeneratedMessageV3
       bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
+    }
+
+    private java.util.List<com.cpdss.common.generated.discharge_plan.CargoForCow> cargoForCow_ =
+        java.util.Collections.emptyList();
+
+    private void ensureCargoForCowIsMutable() {
+      if (!((bitField0_ & 0x00000002) != 0)) {
+        cargoForCow_ =
+            new java.util.ArrayList<com.cpdss.common.generated.discharge_plan.CargoForCow>(
+                cargoForCow_);
+        bitField0_ |= 0x00000002;
+      }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.CargoForCow,
+            com.cpdss.common.generated.discharge_plan.CargoForCow.Builder,
+            com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder>
+        cargoForCowBuilder_;
+
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public java.util.List<com.cpdss.common.generated.discharge_plan.CargoForCow>
+        getCargoForCowList() {
+      if (cargoForCowBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(cargoForCow_);
+      } else {
+        return cargoForCowBuilder_.getMessageList();
+      }
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public int getCargoForCowCount() {
+      if (cargoForCowBuilder_ == null) {
+        return cargoForCow_.size();
+      } else {
+        return cargoForCowBuilder_.getCount();
+      }
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public com.cpdss.common.generated.discharge_plan.CargoForCow getCargoForCow(int index) {
+      if (cargoForCowBuilder_ == null) {
+        return cargoForCow_.get(index);
+      } else {
+        return cargoForCowBuilder_.getMessage(index);
+      }
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public Builder setCargoForCow(
+        int index, com.cpdss.common.generated.discharge_plan.CargoForCow value) {
+      if (cargoForCowBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureCargoForCowIsMutable();
+        cargoForCow_.set(index, value);
+        onChanged();
+      } else {
+        cargoForCowBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public Builder setCargoForCow(
+        int index, com.cpdss.common.generated.discharge_plan.CargoForCow.Builder builderForValue) {
+      if (cargoForCowBuilder_ == null) {
+        ensureCargoForCowIsMutable();
+        cargoForCow_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        cargoForCowBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public Builder addCargoForCow(com.cpdss.common.generated.discharge_plan.CargoForCow value) {
+      if (cargoForCowBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureCargoForCowIsMutable();
+        cargoForCow_.add(value);
+        onChanged();
+      } else {
+        cargoForCowBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public Builder addCargoForCow(
+        int index, com.cpdss.common.generated.discharge_plan.CargoForCow value) {
+      if (cargoForCowBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureCargoForCowIsMutable();
+        cargoForCow_.add(index, value);
+        onChanged();
+      } else {
+        cargoForCowBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public Builder addCargoForCow(
+        com.cpdss.common.generated.discharge_plan.CargoForCow.Builder builderForValue) {
+      if (cargoForCowBuilder_ == null) {
+        ensureCargoForCowIsMutable();
+        cargoForCow_.add(builderForValue.build());
+        onChanged();
+      } else {
+        cargoForCowBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public Builder addCargoForCow(
+        int index, com.cpdss.common.generated.discharge_plan.CargoForCow.Builder builderForValue) {
+      if (cargoForCowBuilder_ == null) {
+        ensureCargoForCowIsMutable();
+        cargoForCow_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        cargoForCowBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public Builder addAllCargoForCow(
+        java.lang.Iterable<? extends com.cpdss.common.generated.discharge_plan.CargoForCow>
+            values) {
+      if (cargoForCowBuilder_ == null) {
+        ensureCargoForCowIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, cargoForCow_);
+        onChanged();
+      } else {
+        cargoForCowBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public Builder clearCargoForCow() {
+      if (cargoForCowBuilder_ == null) {
+        cargoForCow_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+      } else {
+        cargoForCowBuilder_.clear();
+      }
+      return this;
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public Builder removeCargoForCow(int index) {
+      if (cargoForCowBuilder_ == null) {
+        ensureCargoForCowIsMutable();
+        cargoForCow_.remove(index);
+        onChanged();
+      } else {
+        cargoForCowBuilder_.remove(index);
+      }
+      return this;
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public com.cpdss.common.generated.discharge_plan.CargoForCow.Builder getCargoForCowBuilder(
+        int index) {
+      return getCargoForCowFieldBuilder().getBuilder(index);
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder getCargoForCowOrBuilder(
+        int index) {
+      if (cargoForCowBuilder_ == null) {
+        return cargoForCow_.get(index);
+      } else {
+        return cargoForCowBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder>
+        getCargoForCowOrBuilderList() {
+      if (cargoForCowBuilder_ != null) {
+        return cargoForCowBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(cargoForCow_);
+      }
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public com.cpdss.common.generated.discharge_plan.CargoForCow.Builder addCargoForCowBuilder() {
+      return getCargoForCowFieldBuilder()
+          .addBuilder(com.cpdss.common.generated.discharge_plan.CargoForCow.getDefaultInstance());
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public com.cpdss.common.generated.discharge_plan.CargoForCow.Builder addCargoForCowBuilder(
+        int index) {
+      return getCargoForCowFieldBuilder()
+          .addBuilder(
+              index, com.cpdss.common.generated.discharge_plan.CargoForCow.getDefaultInstance());
+    }
+    /** <code>repeated .CargoForCow cargoForCow = 3;</code> */
+    public java.util.List<com.cpdss.common.generated.discharge_plan.CargoForCow.Builder>
+        getCargoForCowBuilderList() {
+      return getCargoForCowFieldBuilder().getBuilderList();
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.CargoForCow,
+            com.cpdss.common.generated.discharge_plan.CargoForCow.Builder,
+            com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder>
+        getCargoForCowFieldBuilder() {
+      if (cargoForCowBuilder_ == null) {
+        cargoForCowBuilder_ =
+            new com.google.protobuf.RepeatedFieldBuilderV3<
+                com.cpdss.common.generated.discharge_plan.CargoForCow,
+                com.cpdss.common.generated.discharge_plan.CargoForCow.Builder,
+                com.cpdss.common.generated.discharge_plan.CargoForCowOrBuilder>(
+                cargoForCow_, ((bitField0_ & 0x00000002) != 0), getParentForChildren(), isClean());
+        cargoForCow_ = null;
+      }
+      return cargoForCowBuilder_;
     }
 
     @java.lang.Override

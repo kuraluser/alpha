@@ -10,6 +10,8 @@ import "discharge_plan/discharge_plan_models.proto";
 service DischargeInformationService {
   rpc getDischargeInformation(DischargeInformationRequest) returns (DischargeInformation) {}
   rpc getOrSaveRulesForDischarging(DischargeRuleRequest) returns (DischargeRuleReply) {}
+  rpc DischargingUploadPortTideDetails(DischargingUploadTideDetailRequest) returns (DischargingUploadTideDetailStatusReply){} 
+  rpc DischargingDownloadPortTideDetails(DischargingDownloadTideDetailRequest) returns (stream DischargingDownloadTideDetailStatusReply) {}
 }
 
 service DischargePlanService{

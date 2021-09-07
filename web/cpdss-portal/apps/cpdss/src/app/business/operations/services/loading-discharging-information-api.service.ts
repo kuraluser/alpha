@@ -917,11 +917,11 @@ export class LoadingDischargingInformationApiService {
             "colorCode": "#f6ef0e",
             "cargoNominationId": 17375,
             "shipFigure": "127108.7",
-            "timeRequiredForDischarging": "8.7",
+            "timeRequiredForDischarging": "1.00",
             "blFigure": "118729.5000",
             "maxDischargingRate": "20500.0000",
             "protested": true,
-            "isCommingled": true,
+            "isCommingledDischarge": true,
             "slopQuantity": 3301
           },
           {
@@ -939,7 +939,8 @@ export class LoadingDischargingInformationApiService {
             "blFigure": "88692.9000",
             "maxDischargingRate": "20500.0000",
             "protested": true,
-            "isCommingled": false
+            "isCommingledDischarge": false,
+            "isCommingledCargo": true
           }
         ],
         "cargoConditions": [
@@ -1494,7 +1495,7 @@ export class LoadingDischargingInformationApiService {
         "cowStart": "01:00",
         "cowEnd": "01:00",
         "cowDuration": "12:00",
-        "totalDuration": "14:00",
+        "totalDuration": "8:00",
         "cowTrimMin": 1,
         "cowTrimMax": 1,
         "needFreshCrudeStorage": true,

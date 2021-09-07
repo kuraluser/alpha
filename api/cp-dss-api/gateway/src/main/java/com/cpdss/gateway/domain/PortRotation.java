@@ -77,4 +77,6 @@ public class PortRotation {
   private List<Long> instructionId = new ArrayList<>();
 
   private List<CargoNomination> cargoNominationList;
+
+  private String portType;
 }

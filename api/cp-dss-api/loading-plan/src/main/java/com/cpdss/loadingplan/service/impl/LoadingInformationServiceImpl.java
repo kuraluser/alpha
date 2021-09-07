@@ -48,6 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -567,9 +568,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         for (int rowCell = 0; rowCell <= 3; rowCell++) {
           Cell cell = cellIterator.next();
           CellType cellType = cell.getCellType();
+          // fetch String value from excel
           if (rowCell == 0) {
             if (!cellType.equals(CellType.STRING)) {
-              throw new IllegalStateException("port name field is invalid");
+              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_PORT_NAME_INVALID);
             }
             Optional<Long> findFirst =
                 portDetails.entrySet().stream()
@@ -577,25 +579,53 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                     .map(Map.Entry::getKey)
                     .findFirst();
             if (!findFirst.isPresent()) {
-              throw new IllegalStateException("port name is invalid");
+              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_PORT_NAME_INVALID);
             }
             tideDetail.setPortXid(findFirst.get());
           }
+          // fetch Date value from excel
           if (rowCell == 1) {
-            if (!cellType.equals(CellType.NUMERIC)) {
-              throw new IllegalStateException("tide date value is invalid type");
+            if (cellType.equals(CellType.NUMERIC)) {
+              double numberValue = cell.getNumericCellValue();
+              if (DateUtil.isCellDateFormatted(cell)) {
+                tideDetail.setTideDate(DateUtil.getJavaDate(numberValue));
+              } else {
+                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
+              }
+            } else if (cellType.equals(CellType.STRING)) {
+              if (!cell.getStringCellValue().matches("([0-9]{2})-([0-9]{2})-([0-9]{4})")) {
+                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
+              }
+              tideDetail.setTideDate(
+                  new SimpleDateFormat(DATE_FORMAT).parse(cell.getStringCellValue()));
+            } else {
+              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
             }
-            tideDetail.setTideDate(cell.getDateCellValue());
           }
+          // fetch Time value from excel
           if (rowCell == 2) {
-            if (!cellType.equals(CellType.NUMERIC)) {
-              throw new IllegalStateException("tide time value is invalid type");
+            if (cellType.equals(CellType.NUMERIC)) {
+              if (DateUtil.isCellDateFormatted(cell)) {
+                if (cell.getLocalDateTimeCellValue().toLocalTime().equals(LocalTime.of(0, 0))) {
+                  throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+                }
+                tideDetail.setTideTime(cell.getLocalDateTimeCellValue().toLocalTime());
+              } else {
+                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+              }
+            } else if (cellType.equals(CellType.STRING)) {
+              if (!cell.getStringCellValue().matches("([0-9]{2}):([0-9]{2})")) {
+                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+              }
+              tideDetail.setTideTime(LocalTime.parse(cell.getStringCellValue()));
+            } else {
+              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
             }
-            tideDetail.setTideTime(cell.getLocalDateTimeCellValue().toLocalTime());
           }
+          // fetch Double value from excel
           if (rowCell == 3) {
             if (!cellType.equals(CellType.NUMERIC)) {
-              throw new IllegalStateException("tide height value is invalid type");
+              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_HEIGHT_INVALID);
             }
             tideDetail.setTideHeight(
                 new BigDecimal(cell.getNumericCellValue(), MathContext.DECIMAL64));
@@ -606,8 +636,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       portTideDetailsRepository.updatePortDetailActiveState(request.getLoadingId());
       portTideDetailsRepository.saveAll(tideDetails);
     } catch (IllegalStateException e) {
-      throw new GenericServiceException(
-          e.getMessage(), CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+      throw new GenericServiceException(e.getMessage(), e.getMessage(), HttpStatusCode.BAD_REQUEST);
     } catch (Exception e) {
       throw new GenericServiceException(
           e.getMessage(),

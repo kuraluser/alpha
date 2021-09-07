@@ -11,3 +11,13 @@ export interface IValidationErrors {
 export interface IValidationErrorMessages {
     [key: string]: string;
 };
+
+/**
+ * Interface for all field error messages
+ *
+ * @export
+ * @interface IValidationErrorMessagesSet
+ */
+export interface IValidationErrorMessagesSet {
+  [key: string]: IValidationErrorMessages;
+};

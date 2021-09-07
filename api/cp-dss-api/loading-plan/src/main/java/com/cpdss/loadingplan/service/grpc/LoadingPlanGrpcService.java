@@ -6,9 +6,12 @@ import com.cpdss.common.generated.Common.BillOfLadding;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleCargoDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleCargoDetailsReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails;
@@ -24,8 +27,10 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPla
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
+import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanCommingleDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.service.LoadingPlanService;
 import com.cpdss.loadingplan.service.LoadingSequenceService;
@@ -57,6 +62,11 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   @Autowired PortLoadingPlanStowageDetailsRepository portLoadingPlanStowageDetailsRepository;
 
   @Autowired BillOfLaddingRepository billOfLaddingRepository;
+
+  @Autowired PortLoadingPlanCommingleDetailsRepository portLoadingPlanCommingleDetailsRepository;
+
+  public static final String SUCCESS = "SUCCESS";
+  public static final String FAILED = "FAILED";
 
   @Override
   public void loadingPlanSynchronization(
@@ -190,16 +200,16 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       loadingPlanService.getPortWiseStowageTempDetails(request, builder);
       loadingPlanService.getPortWiseBallastTempDetails(request, builder);
       loadingPlanService.getPortWiseCommingleDetails(request, builder);
-      //      builder.setResponseStatus(
-      //              ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
+      // builder.setResponseStatus(
+      // ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
     } catch (Exception e) {
       log.error("Exception when saveLoadingPlan microservice is called", e);
-      //      builder.setResponseStatus(
-      //              ResponseStatus.newBuilder()
-      //                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-      //                      .setMessage(e.getMessage())
-      //                      .setStatus(LoadingPlanConstants.FAILED)
-      //                      .build());
+      // builder.setResponseStatus(
+      // ResponseStatus.newBuilder()
+      // .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+      // .setMessage(e.getMessage())
+      // .setStatus(LoadingPlanConstants.FAILED)
+      // .build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
@@ -417,5 +427,60 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  @Override
+  public void getLoadingPlanCommingleDetails(
+      LoadingInformationSynopticalRequest request,
+      StreamObserver<LoadablePlanCommingleCargoDetailsReply> responseObserver) {
+    LoadablePlanCommingleCargoDetailsReply.Builder reply =
+        LoadablePlanCommingleCargoDetailsReply.newBuilder();
+    List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleEntityList =
+        portLoadingPlanCommingleDetailsRepository.findByLoadablePatternIdAndIsActiveTrue(
+            request.getLoadablePatternId());
+    portLoadingPlanCommingleEntityList.forEach(
+        item -> {
+          LoadablePlanCommingleCargoDetails.Builder builder =
+              LoadablePlanCommingleCargoDetails.newBuilder();
+          builder.setId(item.getId());
+          builder.setGrade(item.getGrade());
+          builder.setTankName(item.getTankName());
+          builder.setQuantity(item.getQuantity());
+          builder.setApi(item.getApi());
+          builder.setTemp(item.getTemperature());
+          builder.setCargo1Abbreviation(item.getCargo1Abbreviation());
+          builder.setCargo2Abbreviation(item.getCargo2Abbreviation());
+          builder.setCargo1Percentage(item.getCargo1Percentage());
+          builder.setCargo2Percentage(item.getCargo2Percentage());
+          builder.setCargo1Bblsdbs(item.getCargo1BblsDbs());
+          builder.setCargo2Bblsdbs(item.getCargo2BblsDbs());
+          builder.setCargo1Bbls60F(item.getCargo1Bbls60f());
+          builder.setCargo2Bbls60F(item.getCargo2Bbls60f());
+          builder.setCargo1LT(item.getCargo1Lt());
+          builder.setCargo2LT(item.getCargo2Lt());
+          builder.setCargo1MT(item.getCargo1Mt());
+          builder.setCargo2MT(item.getCargo2Mt());
+          builder.setCargo1KL(item.getCargo1Kl());
+          builder.setCargo1KL(item.getCargo2Kl());
+          builder.setOrderedMT(item.getOrderQuantity());
+          builder.setPriority(item.getPriority());
+          builder.setLoadingOrder(item.getLoadingOrder());
+          builder.setTankId(item.getTankId());
+          builder.setFillingRatio(item.getFillingRatio());
+          Optional.ofNullable(item.getCorrectedUllage())
+              .ifPresent(i -> builder.setCorrectedUllage(i.toString()));
+          Optional.ofNullable(item.getRdgUllage())
+              .ifPresent(i -> builder.setRdgUllage(i.toString()));
+          builder.setCorrectionFactor(item.getCorrectionFactor());
+          builder.setSlopQuantity(item.getSlopQuantity());
+          builder.setTimeRequiredForLoading(item.getTimeRequiredForLoading());
+          builder.setTimeRequiredForLoading(item.getTimeRequiredForLoading());
+          builder.setTankShortName(item.getShortName());
+
+          reply.addLoadablePlanCommingleCargoList(builder.build());
+        });
+    reply.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    responseObserver.onNext(reply.build());
+    responseObserver.onCompleted();
   }
 }

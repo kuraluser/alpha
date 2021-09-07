@@ -148,6 +148,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -438,6 +439,20 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                   builder.addOhqPorts(ohqPortsBuilder.build());
                 }
               });
+        }
+        // Fetching ETD of last loading port if requested for DS
+        if (request.getPlanningType().equals(Common.PLANNING_TYPE.forNumber(2))) {
+          Optional<LoadableStudy> loadableStudyOpt =
+              this.loadableStudyRepository.findById(entity.getConfirmedLoadableStudyId());
+          if (!loadableStudyOpt.isPresent()) {
+            Optional<LoadableStudyPortRotation> portRotationOpt =
+                loadableStudyOpt.get().getPortRotations().stream()
+                    .filter(item -> item.getOperation().getId() == 1L)
+                    .max(Comparator.comparing(LoadableStudyPortRotation::getPortOrder));
+            if (portRotationOpt.isPresent()) {
+              builder.setLastLoadingPortETD(String.valueOf(portRotationOpt.get().getEtd()));
+            }
+          }
         }
         replyBuilder.addLoadableStudies(builder.build());
       }
@@ -1895,7 +1910,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     log.info("inside confirmPlan loadable study service");
     ConfirmPlanReply.Builder replyBuilder = ConfirmPlanReply.newBuilder();
     try {
+      voyageService.checkIfVoyageActive(request.getVoyageId());
       loadablePatternService.confirmPlan(request, replyBuilder);
+    } catch (GenericServiceException e) {
+      log.error("confrim plan not allowed for active voyage", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(CommonErrorCodes.E_CPDSS_CONFIRM_PLAN_NOT_ALLOWED)
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .build());
     } catch (Exception e) {
       log.error("Exception when confirmPlan ", e);
       replyBuilder.setResponseStatus(

@@ -20,7 +20,7 @@ public interface PortLoadingPlanBallastTempDetailsRepository
       LoadingInformation loadingInformation, Boolean isActive);
 
   @Query(
-      "FROM PortLoadingPlanBallastTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
+      "FROM PortLoadingPlanBallastTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
   public List<PortLoadingPlanBallastTempDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
 
@@ -58,7 +58,7 @@ public interface PortLoadingPlanBallastTempDetailsRepository
   @Transactional
   @Modifying
   @Query(
-      "Update PortLoadingPlanBallastTempDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and isActive = true")
+      "Update PortLoadingPlanBallastTempDetails set isActive = false WHERE loadingInformation = ?1 and conditionType = ?2 and isActive = true")
   public void deleteExistingByLoadingInfoAndConditionType(
       Long loadingInfoId, Integer conditionType);
 

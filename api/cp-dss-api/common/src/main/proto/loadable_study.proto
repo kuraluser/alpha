@@ -195,6 +195,7 @@ service LoadableStudyService {
 	rpc getLoadablePatternByVoyageAndStatus(LoadableStudyRequest) returns (LoadablePatternConfirmedReply) {}
 
 	rpc getCargoNominationByCargoNominationId(CargoNominationRequest) returns (CargoNominationDetailReply){}
+	
 	rpc getLoadableCommingleByPatternId(LoadablePlanDetailsRequest) returns (LoadableCommingleDetailsReply){}
 
 	rpc GetLoadableStudyShore(LoadableStudyShoreRequest) returns (LoadableStudyShoreResponse){}
@@ -704,12 +705,14 @@ message VoyageDetail{
 	string actualEndDate = 12;
 	int64 statusId = 13;
 	int64 noOfDays = 14;
+	bool isDischargeStarted = 15;
+	int64 confirmedDischargeStudyId = 16;
 }
 
 message VoyageListReply{
 	StatusReply responseStatus = 1;
 	repeated VoyageDetail voyages = 2;
-		int64 totalElements=3;	
+	int64 totalElements=3;	
 }
 
 message StatusReply {
@@ -806,6 +809,7 @@ message LoadableStudyDetail{
 	bool isDischargingPortComplete=28;
 	repeated OhqPorts ohqPorts=29;
 	string lastEdited = 30;
+	string lastLoadingPortETD = 31;
 }
 
 message LoadableStudyReply{
@@ -875,6 +879,7 @@ message PortRotationRequest{
 	repeated PortRotationDetail portRotationDetails = 6;
 	int64 cargoNominationId=7;
     bool isDischargingPortsComplete=8;
+    bool isLandingPage=9;
 
 }
 
@@ -906,6 +911,7 @@ message PortRotationDetail{
 	int64 cowId = 25;
 	int64 percentage = 26;
 	repeated int64 tanks = 27;
+	string portRotationType=28;
 	
 }
 
@@ -1190,6 +1196,7 @@ message SynopticalRecord{
 	int64 portRotationId = 39;
 	int64 portTimezoneId = 40;
 	bool hasLoadicator = 41;
+	string portRotationType = 42;
 }
 
 message SynopticalCargoRecord{

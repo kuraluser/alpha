@@ -553,7 +553,7 @@ export interface ILoadingDischargingSequenceValueObject {
   id: number;
   reasonForDelay: ValueObject<IReasonForDelays[]>;
   duration: ValueObject<string>;
-  cargo: ValueObject<ILoadableQuantityCargo>;
+  cargo: ValueObject<ILoadedCargo>;
   quantity: ValueObject<number>;
   isAdd: boolean;
   colorCode: string;
@@ -668,8 +668,9 @@ export interface IDischargeOperationListData {
 export interface ILoadedCargoResponse extends ILoadableQuantityCargo {
   shipFigure?: string;
   protested?: boolean;
-  isCommingled?: boolean;
+  isCommingledDischarge?: boolean;
   slopQuantity?: number;
+  isCommingledCargo?: boolean;
 }
 
 /**
@@ -683,7 +684,8 @@ export interface ILoadedCargo extends ILoadableQuantityCargo {
   shipFigure?: string;
   actualQuantity?: string;
   protested?: ValueObject<IProtested>;
-  isCommingled?: ValueObject<boolean>;
+  isCommingledDischarge?: ValueObject<boolean>;
+  isCommingledCargo?: boolean;
   isAdd?: boolean;
 }
 
@@ -891,7 +893,7 @@ export interface IBillOfLandingList {
   api: number | string;
   temperature: number;
   isUpdate?: boolean;
-  isActive?: string;
+  isActive?: boolean | string;
   version?: string;
 
 }
@@ -909,16 +911,17 @@ export interface IUllageUpdList {
   correctedUllage: number;
   quantity: number;
   fillingPercentage: number | string;
-  cargo_nomination_xid: number | string;
+  cargoNominationId: number | string;
   arrival_departutre: number | string;
   actual_planned: number;
   correction_factor: number;
   api: number | string;
   isUpdate: boolean;
   port_xid?: string;
-  port_rotation_xid?: string;
+  port_rotation_xid?: string | number;
   grade?: string;
-
+  isActive?: boolean;
+  ullage? : string | number;
 }
 
 /**
@@ -943,9 +946,11 @@ export interface IBallastUpdateList {
   isUpdate: boolean;
   observedM3?: string;
   fillingRatio?: string;
-  port_xid?: string;
-  port_rotation_xid?: string;
+  portXId?: string;
+  portRotationXId?: string | number;
   isValidate?: string;
+  isActive?: boolean;
+  ullage? : string | number;
 }
 
 /**
@@ -964,12 +969,14 @@ export interface IRobUpdateList {
   actual_planned: number | string;
   arrival_departutre: number;
   port_xid?: string;
-  port_rotation_xid?: string;
+  port_rotation_xid?: string | number;
   observedM3?: string;
   temperature?: string;
   correctedUllage?: string;
   correctionFactor?: string;
   fillingRatio?: string;
+  isActive?: boolean;
+  ullage?: string | number;
 }
 
 /**

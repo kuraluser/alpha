@@ -7,30 +7,30 @@ public interface CowPlanOrBuilder
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string cowPlan = 1;</code>
+   * <code>.COW_OPTION_TYPE cowOptionType = 1;</code>
    *
-   * @return The cowPlan.
+   * @return The enum numeric value on the wire for cowOptionType.
    */
-  java.lang.String getCowPlan();
+  int getCowOptionTypeValue();
   /**
-   * <code>string cowPlan = 1;</code>
+   * <code>.COW_OPTION_TYPE cowOptionType = 1;</code>
    *
-   * @return The bytes for cowPlan.
+   * @return The cowOptionType.
    */
-  com.google.protobuf.ByteString getCowPlanBytes();
+  com.cpdss.common.generated.Common.COW_OPTION_TYPE getCowOptionType();
 
   /**
-   * <code>string noOfTanksForCow = 2;</code>
+   * <code>string cowTankPercent = 2;</code>
    *
-   * @return The noOfTanksForCow.
+   * @return The cowTankPercent.
    */
-  java.lang.String getNoOfTanksForCow();
+  java.lang.String getCowTankPercent();
   /**
-   * <code>string noOfTanksForCow = 2;</code>
+   * <code>string cowTankPercent = 2;</code>
    *
-   * @return The bytes for noOfTanksForCow.
+   * @return The bytes for cowTankPercent.
    */
-  com.google.protobuf.ByteString getNoOfTanksForCowBytes();
+  com.google.protobuf.ByteString getCowTankPercentBytes();
 
   /**
    * <code>string cowStartTime = 3;</code>

@@ -126,6 +126,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
           CARGO_SLOP_TANK_CATEGORY_ID,
           CARGO_VOID_TANK_CATEGORY_ID);
 
+  public final String ACTUAL = "1";
+  public final String PLANNED = "2";
+  public final String ARRIVAL = "1";
+  public final String DEPARTURE = "2";
+
   @Autowired VesselInfoService vesselInfoService;
 
   @Autowired LoadingSequenceService loadingSequenceService;
@@ -601,7 +606,6 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     LoadingPlanModels.UpdateUllageDetailsRequest.Builder requestBuilder =
         LoadingPlanModels.UpdateUllageDetailsRequest.newBuilder();
     requestBuilder.setPatternId(patternId).setPortRotationId(portRotationId).setVesselId(vesselId);
-    //    try {
     // getting active voyage details
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info("Active Voyage {} For Vessel Id {}", activeVoyage.getVoyageNumber(), vesselId);
@@ -610,7 +614,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         activeVoyage.getPortRotations().stream()
             .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
             .findFirst();
-
+    // Set portId from portRoatation
+    requestBuilder.setPortId(portRotation.get().getPortId());
+    // Set loadable study id
     Long loadableStudyId = activeVoyage.getActiveLs().getId();
 
     // Retrieve cargo Nominations from cargo nomination table
@@ -726,7 +732,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         cargoNominationIds,
         cargoNominationReply,
         portLoadablePlanStowageDetails,
-        cargoReply);
+        cargoReply,
+        arrivalDeparture);
 
     outResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
@@ -749,11 +756,12 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       List<Long> cargoNominationIds,
       LoadableStudy.CargoNominationReply cargoNominationReply,
       List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails,
-      CargoInfo.CargoReply cargoReply) {
+      CargoInfo.CargoReply cargoReply,
+      String arrivalDeparture) {
     // Setting actual or planned
     boolean isPlanned = true;
     if (portLoadablePlanStowageDetails.size() > 0
-        && portLoadablePlanStowageDetails.get(0).getActualPlanned().equalsIgnoreCase("1")) {
+        && portLoadablePlanStowageDetails.get(0).getActualPlanned().equalsIgnoreCase(ACTUAL)) {
       isPlanned = false;
     }
     outResponse.setIsPlannedValues(isPlanned);
@@ -834,7 +842,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .filter(
                   stowage ->
                       stowage.getCargoNominationId().doubleValue() == cargoNominationId
-                          && stowage.getActualPlanned().equalsIgnoreCase("1"))
+                          && stowage.getActualPlanned().equalsIgnoreCase(ACTUAL)
+                          && stowage.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
               .reduce(0, (subtotal, element) -> subtotal + element);
       cargoQuantityDetail.setActualQuantityTotal(actualQuantityTotal);
@@ -843,7 +852,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .filter(
                   stowage ->
                       stowage.getCargoNominationId().doubleValue() == cargoNominationId
-                          && stowage.getActualPlanned().equalsIgnoreCase("2"))
+                          && stowage.getActualPlanned().equalsIgnoreCase(PLANNED)
+                          && stowage.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
               .reduce(0, (subtotal, element) -> subtotal + element);
       cargoQuantityDetail.setPlannedQuantityTotal(plannedQuantityTotal);
@@ -886,7 +896,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .filter(
                   stowage ->
                       stowage.getCargoNominationId().doubleValue() == cargoNominationId
-                          && stowage.getActualPlanned().equalsIgnoreCase("1"))
+                          && stowage.getActualPlanned().equalsIgnoreCase(ACTUAL))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getApi()))
               .average()
               .orElse(Double.valueOf(0));
@@ -896,7 +906,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .filter(
                   stowage ->
                       stowage.getCargoNominationId().doubleValue() == cargoNominationId
-                          && stowage.getActualPlanned().equalsIgnoreCase("1"))
+                          && stowage.getActualPlanned().equalsIgnoreCase(ACTUAL))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getTemperature()))
               .average()
               .orElse(Double.valueOf(0));
@@ -942,7 +952,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                     portWiseStowageTempDetail
                             .getArrivalDeparture()
                             .equalsIgnoreCase(arrivalDeparture)
-                        && portWiseStowageTempDetail.getActualPlanned().equalsIgnoreCase("1"))
+                        && portWiseStowageTempDetail.getActualPlanned().equalsIgnoreCase(ACTUAL))
             .collect(Collectors.toList());
     // if no value in temp take actual
     if (portLoadablePlanStowageDetails.size() == 0) {
@@ -951,7 +961,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .filter(
                   portWiseStowageDetail ->
                       portWiseStowageDetail.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
-                          && portWiseStowageDetail.getActualPlanned().equalsIgnoreCase("1"))
+                          && portWiseStowageDetail.getActualPlanned().equalsIgnoreCase(ACTUAL))
               .collect(Collectors.toList());
     }
     // if no values take planned
@@ -961,7 +971,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .filter(
                   portWiseStowageDetail ->
                       portWiseStowageDetail.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
-                          && portWiseStowageDetail.getActualPlanned().equalsIgnoreCase("2"))
+                          && portWiseStowageDetail.getActualPlanned().equalsIgnoreCase(PLANNED))
               .collect(Collectors.toList());
     }
     // if no values take departure
@@ -970,8 +980,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
           response.getPortLoadablePlanStowageDetailsList().stream()
               .filter(
                   portWiseStowageDetail ->
-                      portWiseStowageDetail.getArrivalDeparture().equalsIgnoreCase("2")
-                          && portWiseStowageDetail.getActualPlanned().equalsIgnoreCase("2"))
+                      portWiseStowageDetail.getArrivalDeparture().equalsIgnoreCase(DEPARTURE)
+                          && portWiseStowageDetail.getActualPlanned().equalsIgnoreCase(PLANNED))
               .collect(Collectors.toList());
     }
     if (portLoadablePlanStowageDetails.size() > 0) {
@@ -1026,7 +1036,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                     portLoadablePlanBallastDetail
                             .getArrivalDeparture()
                             .equalsIgnoreCase(arrivalDeparture)
-                        && portLoadablePlanBallastDetail.getActualPlanned().equalsIgnoreCase("1"))
+                        && portLoadablePlanBallastDetail
+                            .getActualPlanned()
+                            .equalsIgnoreCase(ACTUAL))
             .collect(Collectors.toList());
 
     if (portLoadablePlanBallastDetails.size() == 0) {
@@ -1037,7 +1049,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       portLoadablePlanBallastDetail
                               .getArrivalDeparture()
                               .equalsIgnoreCase(arrivalDeparture)
-                          && portLoadablePlanBallastDetail.getActualPlanned().equalsIgnoreCase("1"))
+                          && portLoadablePlanBallastDetail
+                              .getActualPlanned()
+                              .equalsIgnoreCase(ACTUAL))
               .collect(Collectors.toList());
     }
     if (portLoadablePlanBallastDetails.size() == 0) {
@@ -1048,7 +1062,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       portLoadablePlanBallastDetail
                               .getArrivalDeparture()
                               .equalsIgnoreCase(arrivalDeparture)
-                          && portLoadablePlanBallastDetail.getActualPlanned().equalsIgnoreCase("2"))
+                          && portLoadablePlanBallastDetail
+                              .getActualPlanned()
+                              .equalsIgnoreCase(PLANNED))
               .collect(Collectors.toList());
     }
     if (portLoadablePlanBallastDetails.size() > 0) {
@@ -1110,7 +1126,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             .filter(
                 item ->
                     item.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
-                        && item.getActualPlanned().equalsIgnoreCase("1"))
+                        && item.getActualPlanned().equalsIgnoreCase(ACTUAL))
             .collect(Collectors.toList());
     if (portLoadablePlanRobDetails.size() == 0) {
       portLoadablePlanRobDetails =
@@ -1118,7 +1134,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .filter(
                   item ->
                       item.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
-                          && item.getActualPlanned().equalsIgnoreCase("2"))
+                          && item.getActualPlanned().equalsIgnoreCase(PLANNED))
               .collect(Collectors.toList());
     }
     if (portLoadablePlanRobDetails.size() > 0) {
@@ -1341,6 +1357,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             .forEach(
                 billLanding -> {
                   billOfLandingBuilder
+                      .setId(StringUtils.isEmpty(billLanding.getId()) ? 0 : billLanding.getId())
                       .setLoadingId(
                           StringUtils.isEmpty(billLanding.getLoadingId())
                               ? 0
@@ -1376,7 +1393,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setApi(
                           StringUtils.isEmpty(billLanding.getApi())
                               ? 0
-                              : billLanding.getKlAt15c().longValue())
+                              : billLanding.getApi().longValue())
                       .setTemperature(
                           StringUtils.isEmpty(billLanding.getTemperature())
                               ? 0
@@ -1406,6 +1423,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             .forEach(
                 billLanding -> {
                   updateBillRemoveBuilder
+                      .setId(billLanding.getId() == null ? 0 : billLanding.getId())
                       .setLoadingId(
                           billLanding.getLoadingId() == null ? 0 : billLanding.getLoadingId())
                       .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
@@ -1440,8 +1458,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               : ullageList.getCorrectedUllage().longValue())
                       .setQuantity(
                           ullageList.getQuantity() == null
-                              ? 0
-                              : ullageList.getQuantity().longValue())
+                              ? ""
+                              : String.valueOf(ullageList.getQuantity()))
                       .setFillingPercentage(
                           ullageList.getFillingPercentage() == null
                               ? 0
@@ -1453,8 +1471,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getCargoNominationId() == null
                               ? 0
                               : ullageList.getCargoNominationId().longValue())
-                      // .setUllage(ullageList.getUllage() == null ? 0 :
-                      // ullageList.getUllage().longValue())
+                      .setUllage(
+                          ullageList.getUllage() == null
+                              ? ""
+                              : String.valueOf(ullageList.getUllage()))
                       .setPortXid(
                           ullageList.getPort_xid() == null
                               ? 0
@@ -1512,8 +1532,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               : ullageList.getCorrectionFactor().longValue())
                       .setQuantity(
                           ullageList.getQuantity() == null
-                              ? 0
-                              : ullageList.getQuantity().longValue())
+                              ? ""
+                              : String.valueOf(ullageList.getQuantity()))
                       .setObservedM3(
                           ullageList.getObservedM3() == null
                               ? 0
@@ -1524,8 +1544,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               : ullageList.getFillingRatio().longValue())
                       .setSounding(
                           ullageList.getSounding() == null
-                              ? 0
-                              : ullageList.getSounding().longValue())
+                              ? ""
+                              : String.valueOf(ullageList.getSounding()))
                       .setFillingPercentage(
                           ullageList.getFilling_percentage() == null
                               ? 0
@@ -1578,8 +1598,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       // ullageList.getCorrectionFactor().longValue())
                       .setQuantity(
                           ullageList.getQuantity() == null
-                              ? 0
-                              : ullageList.getQuantity().longValue())
+                              ? ""
+                              : String.valueOf(ullageList.getQuantity()))
                       .setIsUpdate(ullageList.getIsUpdate())
                       .setDensity(
                           ullageList.getDensity() == null ? 0 : ullageList.getDensity().longValue())

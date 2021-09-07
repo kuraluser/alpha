@@ -1,0 +1,5 @@
+version: "3.7"
+services: 
+  cargo-info-service:
+    ports: 
+    - ${PORTS}

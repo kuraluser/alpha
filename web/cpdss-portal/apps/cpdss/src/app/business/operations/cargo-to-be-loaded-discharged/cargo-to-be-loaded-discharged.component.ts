@@ -1,6 +1,6 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
@@ -9,6 +9,10 @@ import { ICargo, OPERATIONS } from '../../core/models/common.model';
 import { ICargoVesselTankDetails, ILoadedCargo } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { QuantityDecimalService } from '../../../shared/services/quantity-decimal/quantity-decimal.service';
+import { numberValidator } from '../../core/directives/number-validator.directive';
 
 /**
  * Componenet class for cargo to be loaded or discharge section
@@ -22,7 +26,7 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
   templateUrl: './cargo-to-be-loaded-discharged.component.html',
   styleUrls: ['./cargo-to-be-loaded-discharged.component.scss']
 })
-export class CargoToBeLoadedDischargedComponent implements OnInit {
+export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
 
   @Input()
   get operation(): OPERATIONS {
@@ -33,7 +37,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
     this._operation = value;
     this.editMode = value === OPERATIONS.DISCHARGING ? DATATABLE_EDITMODE.CELL : null;
   }
-  
+
   @Input() cargos: ICargo[];
   @Input() prevQuantitySelectedUnit: QUANTITY_UNIT;
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
@@ -70,19 +74,26 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _operation: OPERATIONS;
   private _cargoVesselTankDetails: ICargoVesselTankDetails;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(
     private _decimalPipe: DecimalPipe,
     private quantityPipe: QuantityPipe,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private fb: FormBuilder,
-    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe
+    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe,
+    private quantityDecimalService: QuantityDecimalService
   ) { }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit() {
     this.cargoTobeLoadedDischargedColumns = this.operation === OPERATIONS.LOADING ? this.loadingDischargingTransformationService.getCargoToBeLoadedDatatableColumns(this.currentQuantitySelectedUnit) : this.loadingDischargingTransformationService.getCargoToBeDischargedDatatableColumns(this.currentQuantitySelectedUnit);
     this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
     this.updateCargoTobeLoadedDischargedData();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -111,12 +122,12 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
         cargo.minMaxTolerance = maxTolerence + (minTolerence ? "/" + minTolerence : '');
         cargo.differencePercentage = cargo.differencePercentage ? (cargo.differencePercentage.includes('%') ? cargo.differencePercentage : cargo.differencePercentage + '%') : '';
         cargo.grade = this.findCargo(cargo);
-        const orderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);   
+        const orderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
         cargo.orderedQuantity = this.quantityDecimalFormatPipe.transform(orderedQuantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,'');
-        
+
         const actualQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT , this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
         cargo.actualQuantity = actualQuantity?.toString();
-        
+
         const slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(cargo?.slopQuantity.toString(), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
         cargo.slopQuantity = Number(this.quantityDecimalFormatPipe.transform(slopQuantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,''));
         cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
@@ -141,10 +152,10 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
       if (cargo) {
         cargo.grade = this.findCargo(cargo);
         const blFigure = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.blFigure), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
-        cargo.blFigure = blFigure?.toString();
+        cargo.blFigure = this.quantityDecimalFormatPipe.transform(blFigure, this.currentQuantitySelectedUnit)?.toString().replace(/,/g, '');
 
-        const shipFigure = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.shipFigure), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
-        cargo.shipFigure = shipFigure?.toString();
+        const shipFigure = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
+        cargo.shipFigure = this.quantityDecimalFormatPipe.transform(shipFigure, this.currentQuantitySelectedUnit)?.toString().replace(/,/g, '');
 
         const slopQuantityObj = (<ValueObject<number>>cargo?.slopQuantity);
         const slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(slopQuantityObj?.value?.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
@@ -153,6 +164,37 @@ export class CargoToBeLoadedDischargedComponent implements OnInit {
         cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
       }
       return cargo;
+    });
+
+    const quantityDecimal = this.quantityDecimalService.quantityDecimal();
+    const min = quantityDecimal ? (1 / Math.pow(10, quantityDecimal)) : 1;
+    const cargoToBeDischarged = this.cargoTobeLoadedDischarged?.map(cargo => {
+      return this.fb.group({
+        isCommingledCargo: cargo?.isCommingledCargo ?? false,
+        protested: this.fb.control(cargo.protested.value),
+        isCommingledDischarge: this.fb.control(cargo?.isCommingledDischarge.value),
+        slopQuantity: this.fb.control((<ValueObject<number>>cargo?.slopQuantity)?.value, [Validators.required, Validators.min(min), numberValidator(quantityDecimal, 7, false)]),
+      })
+    });
+    this.form = this.fb.group({
+      cargoTobeLoadedDischarged: this.fb.group({
+        dataTable: this.fb.array([...cargoToBeDischarged])
+      })
+    });
+
+    this.form?.controls?.dischargeCommingledCargoSeperately?.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
+      const dataTableForm = <FormArray>this.cargoTobeLoadedDischargedForm?.get('dataTable');
+      dataTableForm?.controls?.forEach((formGroup) => {
+        if (formGroup.value?.isCommingledCargo) {
+          const isCommingledDischargeFormControl = <FormControl>formGroup.get('isCommingledDischarge');
+          isCommingledDischargeFormControl.setValue(false);
+          if (value) {
+            isCommingledDischargeFormControl.disable();
+          } else {
+            isCommingledDischargeFormControl.enable();
+          }
+        }
+      });
     });
   }
 
