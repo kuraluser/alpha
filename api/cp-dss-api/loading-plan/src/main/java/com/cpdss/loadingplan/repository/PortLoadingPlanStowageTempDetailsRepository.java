@@ -2,7 +2,6 @@
 package com.cpdss.loadingplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
-import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageTempDetails;
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,7 +16,7 @@ public interface PortLoadingPlanStowageTempDetailsRepository
     extends CommonCrudRepository<PortLoadingPlanStowageTempDetails, Long> {
 
   public List<PortLoadingPlanStowageTempDetails> findByLoadingInformationAndIsActive(
-      LoadingInformation loadingInformation, Boolean isActive);
+      Long loadingInfoId, Boolean isActive);
 
   @Query(
       "FROM PortLoadingPlanStowageTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
@@ -32,7 +31,7 @@ public interface PortLoadingPlanStowageTempDetailsRepository
   @Modifying
   @Transactional
   @Query(
-      "UPDATE PortLoadingPlanStowageTempDetails SET isActive = false WHERE loadingInformation.id = ?1")
+      "UPDATE PortLoadingPlanStowageTempDetails SET isActive = false WHERE loadingInformation = ?1")
   public void deleteByLoadingInformationId(Long loadingInfoId);
 
   @Transactional
@@ -52,12 +51,12 @@ public interface PortLoadingPlanStowageTempDetailsRepository
 
   public List<PortLoadingPlanStowageTempDetails>
       findByLoadingInformationAndConditionTypeAndIsActive(
-          LoadingInformation loadingInformation, Integer conditionType, boolean b);
+          Long loadingInfoId, Integer conditionType, boolean b);
 
   @Transactional
   @Modifying
   @Query(
-      "Update PortLoadingPlanStowageTempDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and isActive = true")
+      "Update PortLoadingPlanStowageTempDetails set isActive = false WHERE loadingInformation = ?1 and conditionType = ?2 and isActive = true")
   public void deleteExistingByLoadingInfoAndConditionType(
       Long loadingInfoId, Integer conditionType);
 
