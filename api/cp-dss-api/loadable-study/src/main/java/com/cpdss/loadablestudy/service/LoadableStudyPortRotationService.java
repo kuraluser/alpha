@@ -180,7 +180,7 @@ public class LoadableStudyPortRotationService {
           synopticService.checkDischargeStarted(request.getVesselId(), request.getVoyageId());
       if (dischargeStudyEntries.isPresent()
           && studyOpt.get().getConfirmedLoadableStudyId() != null
-          && studyOpt.get().getLoadableStudyStatus().getName().equals(STATUS_CONFIRMED)) {
+          && studyOpt.get().getLoadableStudyStatus().getName().equalsIgnoreCase(STATUS_CONFIRMED)) {
         // Fetching respective LS of DS
         Optional<LoadableStudy> loadableStudyOpt =
             this.loadableStudyRepository.findById(studyOpt.get().getConfirmedLoadableStudyId());

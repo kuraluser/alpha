@@ -1,0 +1,5 @@
+version: "3.7"
+services: 
+  company-info-service:
+    ports: 
+    - ${PORTS}

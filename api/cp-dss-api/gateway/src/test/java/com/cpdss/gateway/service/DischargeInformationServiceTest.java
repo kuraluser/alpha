@@ -1,0 +1,57 @@
+/* Licensed at AlphaOri Technologies */
+package com.cpdss.gateway.service;
+
+import static org.mockito.ArgumentMatchers.anyLong;
+
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
+import com.cpdss.gateway.service.dischargeplan.DischargeInformationBuilderService;
+import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
+import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
+import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
+import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+
+@Slf4j
+@SpringJUnitConfig(classes = DischargeInformationService.class)
+public class DischargeInformationServiceTest {
+
+  private static final Long TEST_VESSEL_ID = 1L;
+  private static final Long TEST_DISCHARGE_INFO_ID = 1L;
+  private static final Long TEST_PORT_ROTATION_ID = 1L;
+  private static final Long TEST_VOYAGE_ID = 1L;
+
+  DischargeInformationService dischargeInformationService;
+
+  @MockBean DischargeInformationGrpcService dischargeInformationGrpcService;
+
+  @MockBean DischargeInformationBuilderService infoBuilderService;
+
+  @MockBean LoadingPlanGrpcService loadingPlanGrpcService;
+
+  @MockBean LoadingInformationService loadingInformationService;
+
+  @BeforeEach
+  public void init() {
+    this.dischargeInformationService = Mockito.mock(DischargeInformationService.class);
+  }
+
+  @Test
+  public void getDischargeInformationTestCase1() throws GenericServiceException {
+    Mockito.when(
+            this.dischargeInformationService.getDischargeInformation(
+                anyLong(), anyLong(), anyLong()))
+        .thenReturn(getDummyDischargeInfoData());
+  }
+
+  private DischargeInformation getDummyDischargeInfoData() {
+    DischargeInformation dischargeInformation = new DischargeInformation();
+
+    return dischargeInformation;
+  }
+}

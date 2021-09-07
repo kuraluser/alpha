@@ -69,18 +69,18 @@
               <label class="checkbox-custom pr-20">{{'DISCHARGING_DISCHARGE_SLOP_TANKS_FIRST'
                 | translate}}
                 <input type="checkbox" formControlName="dischargeSlopTanksFirst"
-                  (change)="onSlopTanksFirstCheckboxChange()">
+                  (change)="onSlopTanksFirstCheckboxChange($event)">
                 <span class="checkmark"></span>
               </label>
               <label class="checkbox-custom pr-20">{{'DISCHARGING_DISCHARGE_COMMINGLED_SEPARATELY'
                 | translate}}
                 <input type="checkbox" formControlName="dischargeCommingledCargoSeperately"
-                  (change)="onCommingledSeperatelyCheckboxChange()">
+                  (change)="onCommingledSeperatelyCheckboxChange($event)">
                 <span class="checkmark"></span>
               </label>
             </div>
           </div>
-          <cpdss-portal-cargo-to-be-loaded-discharged *ngIf="dischargingInformationData?.cargoVesselTankDetails"
+          <cpdss-portal-cargo-to-be-loaded-discharged *ngIf="dischargingInformationData?.cargoVesselTankDetails && cargos && listData"
             [operation]="OPERATIONS.DISCHARGING" [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
             [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
             [cargoVesselTankDetails]="dischargingInformationData?.cargoVesselTankDetails" [listData]="listData"

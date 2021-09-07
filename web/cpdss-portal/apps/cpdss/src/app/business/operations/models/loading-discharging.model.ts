@@ -553,7 +553,7 @@ export interface ILoadingDischargingSequenceValueObject {
   id: number;
   reasonForDelay: ValueObject<IReasonForDelays[]>;
   duration: ValueObject<string>;
-  cargo: ValueObject<ILoadableQuantityCargo>;
+  cargo: ValueObject<ILoadedCargo>;
   quantity: ValueObject<number>;
   isAdd: boolean;
   colorCode: string;
@@ -668,8 +668,9 @@ export interface IDischargeOperationListData {
 export interface ILoadedCargoResponse extends ILoadableQuantityCargo {
   shipFigure?: string;
   protested?: boolean;
-  isCommingled?: boolean;
+  isCommingledDischarge?: boolean;
   slopQuantity?: number;
+  isCommingledCargo?: boolean;
 }
 
 /**
@@ -683,7 +684,8 @@ export interface ILoadedCargo extends ILoadableQuantityCargo {
   shipFigure?: string;
   actualQuantity?: string;
   protested?: ValueObject<IProtested>;
-  isCommingled?: ValueObject<boolean>;
+  isCommingledDischarge?: ValueObject<boolean>;
+  isCommingledCargo?: boolean;
   isAdd?: boolean;
 }
 

@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
 import { IPostDischargeStageTime } from '../models/loading-discharging.model';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
  * Component class for post discharge details component
@@ -16,17 +18,44 @@ import { IPostDischargeStageTime } from '../models/loading-discharging.model';
 })
 export class PostDischargeStageComponent implements OnInit {
   @Input() form: FormGroup;
-  @Input() postDischargeStageTime: IPostDischargeStageTime;
+  @Input() set postDischargeStageTime(postDischargeStageTime: IPostDischargeStageTime) {
+    this.postDischargeStageTimeData.push(postDischargeStageTime);
+  }
   postDischargeStageTimeData: IPostDischargeStageTime[] = [];
 
   get postDischargeStageTimeForm() {
     return <FormGroup>this.form.get('postDischargeStageTime');
   }
 
-  constructor() { }
+  errorMesages: IValidationErrorMessagesSet;
+
+  constructor(private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
 
   ngOnInit(): void {
-    this.postDischargeStageTimeData.push(this.postDischargeStageTime);
+    this.errorMesages = this.loadingDischargingTransformationService.setPostDischargeValidationErrorMessage();
   }
 
+  /**
+   * Method to check for field errors
+   *
+   * @param {string} formControlName
+   * @param {number} indexOfFormgroup
+   * @return {ValidationErrors}
+   * @memberof PostDischargeStageComponent
+   */
+  fieldError(formControlName: string): ValidationErrors {
+    const formControl = this.field(formControlName);
+    return formControl?.invalid && (formControl?.dirty || formControl?.touched) ? formControl?.errors : null;
+  }
+
+  /**
+   * Method to get formControl
+   * @param {string} formControlName
+   * @return {FormControl}
+   * @memberof PostDischargeStageComponent
+  */
+  field(formControlName: string): FormControl {
+    const formControl = <FormControl>this.postDischargeStageTimeForm?.get(formControlName);
+    return formControl;
+  }
 }

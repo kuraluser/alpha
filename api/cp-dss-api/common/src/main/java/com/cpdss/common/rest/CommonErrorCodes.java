@@ -36,6 +36,7 @@ public interface CommonErrorCodes {
   String E_CPDSS_REJECTION_COUNT_EXCEEDED = "113";
   String E_CPDSS_TASK_SCHEDULE_CREATE_ERROR = "125";
   String E_CPDSS_LS_INVALID_COMMINGLE_QUANTITY = "114";
+  String E_CPDSS_FILE_WRITE_ERROR = "115";
 
   String E_CPDSS_PASSWORD_POLICIES_VIOLATION_1 =
       "120"; // Password cannot contain first name or last name

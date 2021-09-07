@@ -15,6 +15,7 @@ appConfig {
   logging = 'y'
   devTools = 'y'
   unitTest = 'y'
+  monitoring = 'y'
   docker {
     imageName = 'cpdss-cargo-info'
     containerName = 'cargo-info-container'

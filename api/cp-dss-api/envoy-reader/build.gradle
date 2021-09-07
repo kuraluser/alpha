@@ -11,6 +11,7 @@ appConfig {
   logging = 'y'
   javaMainClass = "com.cpdss.envoyreader.Application"
   appName = 'envoy-reader'
+  monitoring = 'y'
   //persistence = 'springData'
   //dataBase = 'postgres'
   devTools = 'y'
@@ -30,7 +31,7 @@ docker {
 
 dependencies {
     implementation project(':common')
-    compile group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE'
-        compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
-	  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
+    // compile group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE'
+    //     compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
+	  // compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
 }
