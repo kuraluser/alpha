@@ -42,7 +42,6 @@ import com.cpdss.gateway.utility.RuleUtility;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
@@ -98,32 +97,45 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     }
     VoyageResponse voyageResponse = new VoyageResponse();
     BeanUtils.copyProperties(activeVoyage, voyageResponse);
-    List<PortRotation> rotationDomain = new ArrayList<>();
-    if (activeVoyage.getPortRotationCount() > 0) {
-      for (LoadableStudy.PortRotationDetail pr : activeVoyage.getPortRotationList()) {
-        PortRotation prObj = new PortRotation();
-        BeanUtils.copyProperties(pr, prObj);
-        rotationDomain.add(prObj);
-      }
-    }
-    voyageResponse.setPortRotations(rotationDomain);
     if (activeVoyage.getConfirmedLoadableStudy() != null
         && activeVoyage.getConfirmedLoadableStudy().getId() > 0) {
       com.cpdss.gateway.domain.LoadableStudy loadableStudy =
           new com.cpdss.gateway.domain.LoadableStudy();
       BeanUtils.copyProperties(activeVoyage.getConfirmedLoadableStudy(), loadableStudy);
       voyageResponse.setActiveLs(loadableStudy);
+
+      List<PortRotation> rotationDomain = new ArrayList<>();
+      if (activeVoyage.getPortRotationCount() > 0) {
+        for (LoadableStudy.PortRotationDetail pr : activeVoyage.getPortRotationList()) {
+          PortRotation prObj = new PortRotation();
+          BeanUtils.copyProperties(pr, prObj);
+          rotationDomain.add(prObj);
+        }
+      }
+      voyageResponse.setPortRotations(rotationDomain);
     }
-    if (activeVoyage.getConfirmedLoadableStudy() != null) {
+    if (activeVoyage.getConfirmedDischargeStudy() != null
+        && activeVoyage.getConfirmedDischargeStudy().getId() > 0) {
       com.cpdss.gateway.domain.LoadableStudy loadableStudy =
           new com.cpdss.gateway.domain.LoadableStudy();
-      Optional.ofNullable(activeVoyage.getConfirmedLoadableStudy().getId())
-          .ifPresent(loadableStudy::setId);
-      Optional.ofNullable(activeVoyage.getConfirmedLoadableStudy().getName())
-          .ifPresent(loadableStudy::setName);
-      voyageResponse.setLoadableStudy(loadableStudy);
-    }
+      BeanUtils.copyProperties(activeVoyage.getConfirmedLoadableStudy(), loadableStudy);
+      voyageResponse.setActiveDs(loadableStudy);
 
+      List<PortRotation> rotationDomain = new ArrayList<>();
+      if (!activeVoyage.getDischargePortRotationList().isEmpty()) {
+        for (LoadableStudy.PortRotationDetail pr : activeVoyage.getDischargePortRotationList()) {
+          PortRotation prObj = new PortRotation();
+          BeanUtils.copyProperties(pr, prObj);
+          rotationDomain.add(prObj);
+        }
+      }
+      voyageResponse.setDischargePortRotations(rotationDomain);
+    }
+    log.info(
+        "Active Voyage found Id {}, LS Id {}, DS Id {}",
+        voyageResponse.getId(),
+        voyageResponse.getActiveLs(),
+        voyageResponse.getActiveDs());
     return voyageResponse;
   }
 

@@ -140,7 +140,18 @@ public class VoyageService {
                     ls ->
                         (ls.getLoadableStudyStatus() != null
                             && STATUS_CONFIRMED.equalsIgnoreCase(
-                                ls.getLoadableStudyStatus().getName())))
+                                ls.getLoadableStudyStatus().getName())
+                            && ls.getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)))
+                .findFirst();
+
+        Optional<com.cpdss.loadablestudy.entity.LoadableStudy> confirmedDs =
+            voyage.getLoadableStudies().stream()
+                .filter(
+                    ds ->
+                        (ds.getLoadableStudyStatus() != null
+                            && STATUS_CONFIRMED.equalsIgnoreCase(
+                                ds.getLoadableStudyStatus().getName())
+                            && ds.getPlanningTypeXId().equals(PLANNING_TYPE_DISCHARGE)))
                 .findFirst();
 
         if (confirmedLs.isPresent()) {
@@ -161,16 +172,57 @@ public class VoyageService {
               List<LoadablePattern> patterns =
                   loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
                       confirmedLs.get().getId(), LS_STATUS_CONFIRMED);
-              Long id = patterns.stream().findFirst().get().getId();
-              builder.setPatternId(patterns.stream().findFirst().get().getId());
-              builder.setPatternCaseNo(patterns.stream().findFirst().get().getCaseNumber());
-              builder.setPatternStatus(
-                  patterns.stream().findFirst().get().getLoadableStudyStatus());
+              if (!patterns.isEmpty()) {
+                Long id = patterns.stream().findFirst().get().getId();
+                builder.setPatternId(patterns.stream().findFirst().get().getId());
+                builder.setPatternCaseNo(patterns.stream().findFirst().get().getCaseNumber());
+                builder.setPatternStatus(
+                    patterns.stream().findFirst().get().getLoadableStudyStatus());
+                log.info(
+                    "Get Active voyage, Confirmed Pattern Id {}, Case No {}, Status",
+                    patterns.stream().findFirst().get().getId(),
+                    patterns.stream().findFirst().get().getCaseNumber(),
+                    patterns.stream().findFirst().get().getLoadableStudyStatus());
+              } else {
+                log.info("Confirmed pattern not found for LS Id - {}", confirmedLs.get().getId());
+              }
+            }
+          }
+        }
+
+        if (confirmedDs.isPresent()) {
+          LoadableStudy.LoadableStudyDetail.Builder dsBuilder =
+              LoadableStudy.LoadableStudyDetail.newBuilder();
+          this.buildLoadableStudyForVoyage(dsBuilder, confirmedDs.get());
+          builder.setConfirmedDischargeStudy(dsBuilder);
+          if (!confirmedDs.get().getPortRotations().isEmpty()) {
+            for (LoadableStudyPortRotation dsPr : confirmedDs.get().getPortRotations()) {
+              LoadableStudy.PortRotationDetail.Builder grpcPRBuilder =
+                  LoadableStudy.PortRotationDetail.newBuilder();
+              this.buildPortRotationForLs(grpcPRBuilder, dsPr);
+              builder.addDischargePortRotation(grpcPRBuilder.build());
               log.info(
-                  "Get Active voyage, Confirmed Pattern Id {}, Case No {}, Status",
-                  patterns.stream().findFirst().get().getId(),
-                  patterns.stream().findFirst().get().getCaseNumber(),
-                  patterns.stream().findFirst().get().getLoadableStudyStatus());
+                  "Get Active voyage, Discharge Study Name {}, Id {}",
+                  confirmedLs.get().getName(),
+                  confirmedLs.get().getId());
+              List<LoadablePattern> patterns =
+                  loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
+                      confirmedDs.get().getId(), LS_STATUS_CONFIRMED);
+              if (!patterns.isEmpty()) {
+                Long id = patterns.stream().findFirst().get().getId();
+                builder.setDischargePatternId(patterns.stream().findFirst().get().getId());
+                builder.setDischargePatternCaseNo(
+                    patterns.stream().findFirst().get().getCaseNumber());
+                builder.setDischargePatternStatus(
+                    patterns.stream().findFirst().get().getLoadableStudyStatus());
+                log.info(
+                    "Get Active voyage, Confirmed Pattern Id {}, Case No {}, Status",
+                    patterns.stream().findFirst().get().getId(),
+                    patterns.stream().findFirst().get().getCaseNumber(),
+                    patterns.stream().findFirst().get().getLoadableStudyStatus());
+              } else {
+                log.info("Confirmed pattern not found for DS Id - {}", confirmedDs.get().getId());
+              }
             }
           }
         }

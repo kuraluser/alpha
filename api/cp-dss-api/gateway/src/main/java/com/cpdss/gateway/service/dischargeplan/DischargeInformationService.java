@@ -29,6 +29,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class DischargeInformationService {
 
+  private final String OPERATION_TYPE_ARR = "ARR";
+
   @Autowired DischargeInformationGrpcService dischargeInformationGrpcService;
 
   @Autowired DischargeInformationBuilderService infoBuilderService;
@@ -57,7 +59,7 @@ public class DischargeInformationService {
         activeVoyage.getVoyageNumber(),
         activeVoyage.getId());
     Optional<PortRotation> portRotation =
-        activeVoyage.getPortRotations().stream()
+        activeVoyage.getDischargePortRotations().stream()
             .filter(v -> v.getId().equals(portRoId))
             .findFirst();
 
@@ -73,7 +75,12 @@ public class DischargeInformationService {
         this.dischargeInformationGrpcService.getDischargeInfoRpc(vesselId, voyageId, portRoId);
 
     DischargeInformation dischargeInformation = new DischargeInformation();
-    log.info("data - {}", disRpcReplay);
+    if (activeVoyage.getActiveDs() != null) {
+      dischargeInformation.setDischargeInfoId(disRpcReplay.getDischargeInfoId());
+      dischargeInformation.setSynopticTableId(disRpcReplay.getSynopticTableId());
+      dischargeInformation.setDischargeStudyId(activeVoyage.getActiveDs().getId());
+      dischargeInformation.setDischargeStudyName(activeVoyage.getActiveDs().getName());
+    }
 
     // discharge details
     LoadingDetails dischargeDetails =
@@ -111,6 +118,28 @@ public class DischargeInformationService {
 
     // cow plan
     CowPlan cowPlan = this.infoBuilderService.buildDischargeCowPlan(disRpcReplay.getCowPlan());
+
+    // Call 1 to DS for cargo details
+    CargoVesselTankDetails vesselTankDetails =
+        this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
+            vesselId,
+            activeVoyage.getId(),
+            activeVoyage.getActiveDs().getId(),
+            portRotation.get().getPortId(),
+            portRotation.get().getPortOrder(),
+            portRotation.get().getId(),
+            OPERATION_TYPE_ARR); // Discharge Info needed Arrival Conditions
+
+    // Call No. 2 To synoptic data for loading (same as port rotation in above code)
+    vesselTankDetails.setLoadableQuantityCargoDetails(
+        this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
+            vesselId,
+            activeVoyage.getPatternId(),
+            OPERATION_TYPE_ARR, // Discharge Info needed Arrival Conditions
+            portRotation.get().getId(),
+            portRotation.get().getPortId()));
+
+    dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
 
     dischargeInformation.setDischargeDetails(dischargeDetails);
     dischargeInformation.setDischargeRates(dischargeRates);

@@ -1424,6 +1424,12 @@ message ActiveVoyage{
 	int64 patternId = 14;
 	int64 patternCaseNo = 15;
 	int64 patternStatus = 16;
+
+	LoadableStudyDetail confirmedDischargeStudy = 17;
+	repeated PortRotationDetail dischargePortRotation = 21;
+	int64 dischargePatternId = 18;
+	int64 dischargePatternCaseNo = 19;
+	int64 dischargePatternStatus = 20;
 }
 
 // Generic Request message
