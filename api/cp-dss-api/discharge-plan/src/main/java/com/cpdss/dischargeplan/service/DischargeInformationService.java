@@ -623,9 +623,9 @@ public class DischargeInformationService {
                 throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
               }
             } else if (cellType.equals(CellType.STRING)) {
-	       		 if (!cell.getStringCellValue().matches("([0-9]{2})-([0-9]{2})-([0-9]{4})")) {
-	       			throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
-	       		 }
+              if (!cell.getStringCellValue().matches("([0-9]{2})-([0-9]{2})-([0-9]{4})")) {
+                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
+              }
               tideDetail.setTideDate(
                   new SimpleDateFormat(DATE_FORMAT).parse(cell.getStringCellValue()));
             } else {
@@ -636,17 +636,17 @@ public class DischargeInformationService {
           if (rowCell == 2) {
             if (cellType.equals(CellType.NUMERIC)) {
               if (DateUtil.isCellDateFormatted(cell)) {
-            	  if(cell.getLocalDateTimeCellValue().toLocalTime().equals(LocalTime.of(0, 0))) {
-            		  throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
-            	  }
+                if (cell.getLocalDateTimeCellValue().toLocalTime().equals(LocalTime.of(0, 0))) {
+                  throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+                }
                 tideDetail.setTideTime(cell.getLocalDateTimeCellValue().toLocalTime());
               } else {
                 throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
               }
             } else if (cellType.equals(CellType.STRING)) {
-	       		 if (!cell.getStringCellValue().matches("([0-9]{2}):([0-9]{2})")) {
-	       			throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
-	       		 }
+              if (!cell.getStringCellValue().matches("([0-9]{2}):([0-9]{2})")) {
+                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+              }
               tideDetail.setTideTime(LocalTime.parse(cell.getStringCellValue()));
             } else {
               throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
