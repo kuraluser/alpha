@@ -262,13 +262,13 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.setButtonStatus(true);
        
         await this.getAlgoErrorMessage(true);
-        this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PLAN_ERROR_OCCURED'], detail: translationKeys["GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE"] });
+        this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN'], detail: translationKeys["GENERATE_LODABLE_PLAN_ERROR_OCCURED"] });
       }
       else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE) {
         this.setButtonStatus(true);
         this.messageService.clear();
         await this.getAlgoErrorMessage(true);
-        this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PLAN_ERROR_OCCURED'], detail: translationKeys["GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE"] });
+        this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PATTERN_NO_PLAN'], detail: translationKeys["GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE"] });
       }
       else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED) {
         this.setButtonStatus();
@@ -303,10 +303,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
             this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED"] });
             this.setButtonStatusInProcessing();
             break;
-          case OPERATIONS_PLAN_STATUS.ERROR_OCCURED:
-            this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ERROR_OCCURED"] });
-            this.setButtonStatusInProcessing();
-            break;
+      
           case OPERATIONS_PLAN_STATUS.LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED:
             this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED"] });
             this.setButtonStatusInProcessing();
@@ -377,16 +374,17 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false)
       this.processing = false;
       this.loadingDischargingTransformationService.disableSaveButton.next(false);
+      if(error){
+        this.loadingDischargingTransformationService.disableViewErrorButton.next(false)
+      }
+      else{
+        this.loadingDischargingTransformationService.disableViewErrorButton.next(true)
+  
+      }
       this.ngxSpinnerService.hide();
 
     }
-    if(error){
-      this.loadingDischargingTransformationService.disableViewErrorButton.next(false)
-    }
-    else{
-      this.loadingDischargingTransformationService.disableViewErrorButton.next(true)
-
-    }
+ 
 
   }
 
@@ -410,6 +408,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @memberof LoadingComponent
    */
   async onGenerateLoadingPlan() {
+    const value = await this.unsavedChangesGuard.canDeactivate(this);
+    if (!value) { return };
     this.ngxSpinnerService.show();
     this.loadingDischargingTransformationService.inProcessing.next(true)
     this.loadingDischargingTransformationService.disableSaveButton.next(true)
@@ -439,9 +439,12 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @memberof LoadingComponent
    */
   async getAlgoErrorMessage(status) {
-    if (this.loadinfoTemp == this.loadingInfoId) {
+    this.ngxSpinnerService.show();
+    if ((this.loadinfoTemp == this.loadingInfoId) || (!this.loadinfoTemp)) {
       const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
       if (algoError.responseStatus.status === 'SUCCESS') {
+            this.ngxSpinnerService.hide();
+
         this.errorMessage = algoError.algoErrors;
         this.errorPopUp = status;
       }
@@ -454,7 +457,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    *
    * @memberof LoadingComponent
    */
-  viewError(status) {
+ async viewError(status) {
+    await this.getAlgoErrorMessage(true);
     this.errorPopUp = status;
   }
 

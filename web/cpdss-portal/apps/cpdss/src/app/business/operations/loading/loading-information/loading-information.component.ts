@@ -131,7 +131,8 @@ export class LoadingInformationComponent implements OnInit {
       else {
         this.loadingDischargingTransformationService.inProcessing.next(true);    
         this.loadingDischargingTransformationService.disableSaveButton.next(true);   
-        this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true)         
+        this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true) 
+        this.loadingDischargingTransformationService.disableViewErrorButton.next(true);        
       }
       this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
