@@ -1,8 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.dischargeplan;
 
-import java.util.List;
-
 import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
@@ -13,14 +11,10 @@ import com.cpdss.gateway.domain.loadingplan.LoadingRates;
 import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
 import com.cpdss.gateway.domain.loadingplan.LoadingStages;
 import com.cpdss.gateway.domain.loadingplan.ToppingOffSequence;
-
+import java.util.List;
 import lombok.Data;
 
-/**
- * 
- * @author arun.j
- *
- */
+/** @author arun.j */
 @Data
 @CPDSSJsonParser
 public class DischargingInformation {

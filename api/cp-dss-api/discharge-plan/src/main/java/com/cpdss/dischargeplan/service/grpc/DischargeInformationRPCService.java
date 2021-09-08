@@ -200,7 +200,8 @@ public class DischargeInformationRPCService
         // Loading Delay
         List<DischargingDelayReason> list5 = this.dischargingDelayReasonRepository.findAll();
         List<DischargingDelay> list6 =
-            this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActive(var1.getId(),true);
+            this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActive(
+                var1.getId(), true);
         LoadingPlanModels.LoadingDelay loadingDelay =
             this.informationBuilderService.buildLoadingDelayMessage(list5, list6);
         loadingInformation.setLoadingDelays(loadingDelay);

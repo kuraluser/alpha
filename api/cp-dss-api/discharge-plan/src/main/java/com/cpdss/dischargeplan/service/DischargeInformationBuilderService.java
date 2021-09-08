@@ -233,7 +233,10 @@ public class DischargeInformationBuilderService {
       builder.addReasons(builder1);
     }
     for (DischargingDelay var : list6) {
-      List<DischargingDelayReason> activeReasons =var.getDischargingDelayReasons().stream().filter(delay->delay.getIsActive()).collect(Collectors.toList());
+      List<DischargingDelayReason> activeReasons =
+          var.getDischargingDelayReasons().stream()
+              .filter(delay -> delay.getIsActive())
+              .collect(Collectors.toList());
       var.setDischargingDelayReasons(
           new ArrayList<>()); // always set empty array, as the Lazy fetch not works :(
       if (!activeReasons.isEmpty()) {
@@ -595,7 +598,8 @@ public class DischargeInformationBuilderService {
 
     try {
       List<DischargingDelay> delays =
-          this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActive(disEntity.getId(),true);
+          this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActive(
+              disEntity.getId(), true);
       for (DischargingDelay source : delays) {
         DischargeDelays.Builder builder2 = DischargeDelays.newBuilder();
         builder2.setId(source.getId());

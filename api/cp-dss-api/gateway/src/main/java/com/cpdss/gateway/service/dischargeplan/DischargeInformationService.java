@@ -40,7 +40,8 @@ public class DischargeInformationService {
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
 
   @GrpcClient("dischargeInformationService")
-  private  DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub dischargeInfoServiceStub;
+  private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
+      dischargeInfoServiceStub;
 
   /**
    * Get Discharge Information from discharge-plan and master tables
