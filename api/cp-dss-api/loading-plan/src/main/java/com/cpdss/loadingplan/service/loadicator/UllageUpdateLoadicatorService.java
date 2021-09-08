@@ -98,15 +98,16 @@ public class UllageUpdateLoadicatorService {
     VesselInfo.VesselReply vesselReply =
         loadicatorService.getVesselDetailsForLoadicator(loadingInfoOpt.get());
     if (!vesselReply.getVesselsList().get(0).getHasLoadicator()) {
+      log.info("Vessel has no loadicator");
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
-      if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE.equals(
-          request.getUpdateUllage(0).getArrivalDepartutre())) {
+      if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE
+          == request.getUpdateUllage(0).getArrivalDepartutre()) {
         loadingInformationRepository.updateLoadingInformationArrivalStatus(
             loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
-      } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE.equals(
-          request.getUpdateUllage(0).getArrivalDepartutre())) {
+      } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE
+          == request.getUpdateUllage(0).getArrivalDepartutre()) {
         loadingInformationRepository.updateLoadingInformationDepartureStatus(
             loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
       }
@@ -117,6 +118,9 @@ public class UllageUpdateLoadicatorService {
           Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()));
       loadingPlanService.saveUpdatedLoadingPlanDetails(
           loadingInfoOpt.get(), Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()));
+      log.info(
+          "Saved updated loading plan details of loading information {}",
+          loadingInfoOpt.get().getId());
       return processId;
     }
     List<PortLoadingPlanStowageTempDetails> tempStowageDetails =
@@ -171,12 +175,12 @@ public class UllageUpdateLoadicatorService {
     Optional<LoadingInformationStatus> loadingInfoStatusOpt =
         loadingPlanAlgoService.getLoadingInformationStatus(
             LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
-    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE.equals(
-        request.getUpdateUllage(0).getArrivalDepartutre())) {
+    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE
+        == request.getUpdateUllage(0).getArrivalDepartutre()) {
       loadingInformationRepository.updateLoadingInformationArrivalStatus(
           loadingInfoStatusOpt.get(), loadingInfoId);
-    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE.equals(
-        request.getUpdateUllage(0).getArrivalDepartutre())) {
+    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE
+        == request.getUpdateUllage(0).getArrivalDepartutre()) {
       loadingInformationRepository.updateLoadingInformationDepartureStatus(
           loadingInfoStatusOpt.get(), loadingInfoId);
     }

@@ -75,7 +75,7 @@ public class LoadingSequenceService {
       throws Exception {
     log.info("Fetching loading sequences of loading information {}", request.getLoadingInfoId());
     Optional<LoadingInformation> loadingInfoOpt =
-        loadingInformationRepository.findById(request.getLoadingInfoId());
+        loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingInfoId());
     if (loadingInfoOpt.isEmpty()) {
       log.info("Cannot find loading information with id {}", request.getLoadingInfoId());
       throw new GenericServiceException(

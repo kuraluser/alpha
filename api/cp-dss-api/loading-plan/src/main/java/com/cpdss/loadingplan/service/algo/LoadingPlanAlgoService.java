@@ -217,6 +217,10 @@ public class LoadingPlanAlgoService {
       String processId,
       LoadingInformationStatus status,
       Integer conditionType) {
+    log.info(
+        "Creating ALGO status for Loading Information {}, condition Type {}",
+        loadingInformation.getId(),
+        conditionType);
     LoadingInformationAlgoStatus algoStatus = new LoadingInformationAlgoStatus();
     algoStatus.setIsActive(true);
     algoStatus.setLoadingInformation(loadingInformation);
