@@ -35,6 +35,8 @@ export class LoadingDischargingTransformationService {
   public isLoadingPlanGenerated: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public isLoadingSequenceGenerated: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public inProcessing: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public generateLoadingPlanButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public disableViewErrorButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
   
 
   loadingInformationValidity$ = this._loadingInformationSource.asObservable();

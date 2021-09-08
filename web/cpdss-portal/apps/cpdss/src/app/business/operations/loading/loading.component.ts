@@ -111,16 +111,20 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   private async initSubsciptions() {
   
     this.ngxSpinnerService.show();
+    this.loadingDischargingTransformationService.generateLoadingPlanButton.subscribe((status)=>{
+      this.disableGenerateLoadableButton = status;
+    })
     this.loadingDischargingTransformationService.isLoadingPlanGenerated.subscribe((status) => {     
         this.loadingPlanComplete = status;  
         this.processing = !status; 
-        this.disableGenerateLoadableButton = !status;
-        this.loadingDischargingTransformationService.disableSaveButton.next(!status)
+        if (!this.processing) 
+        this.loadingDischargingTransformationService.disableSaveButton.next(false)
     })
     this.loadingDischargingTransformationService.isLoadingSequenceGenerated.subscribe((status) => {     
         this.loadingSequenceComplete = status; 
         this.processing = !status;   
-        this.loadingDischargingTransformationService.disableSaveButton.next(!status)
+        if (!this.processing) 
+        this.loadingDischargingTransformationService.disableSaveButton.next(false)
     })  
 
     this.loadingDischargingTransformationService.validateUllageData$.subscribe((res) => {
@@ -131,15 +135,14 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
     this.loadingDischargingTransformationService.loadingInformationValidity$.subscribe((res) => {  
         this.loadingInformationComplete = res;
-        if(!this.processing){
+      if (!this.processing) {
+        this.loadingDischargingTransformationService.disableSaveButton.next(false)
+
         if (this.loadingInstructionComplete && this.loadingInformationComplete) {
-          this.disableGenerateLoadableButton = false;
-          this.loadingDischargingTransformationService.disableSaveButton.next(false)
+          this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false);
         }
         else {
-          this.disableGenerateLoadableButton = true;
-          this.loadingDischargingTransformationService.disableSaveButton.next(true)
-
+          this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true);
         }
       }
     
@@ -147,24 +150,22 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.loadingDischargingTransformationService.inProcessing.subscribe((status)=>{
      this.processing = status;
     })
-    this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((res) => {
-    
+    this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((res) => {    
         this.loadingInstructionComplete = res;
-        if(!this.processing)
-       { if (this.loadingInstructionComplete && this.loadingInformationComplete) {
-        
-          this.disableGenerateLoadableButton = false;
-          this.loadingDischargingTransformationService.disableSaveButton.next(false)
-
+      if (!this.processing) {
+        this.loadingDischargingTransformationService.disableSaveButton.next(false)
+        if (this.loadingInstructionComplete && this.loadingInformationComplete) {
+          this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false);
         }
         else {
-          this.disableGenerateLoadableButton = true;
-          this.loadingDischargingTransformationService.disableSaveButton.next(true)
-
+          this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true);
         }
       }
      
     });    
+    this.loadingDischargingTransformationService.disableViewErrorButton.subscribe((status)=>{
+      this.disableViewErrorButton = status;
+     })
   this.ngxSpinnerService.hide();
  
   }
@@ -256,14 +257,15 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.loadingDischargingTransformationService.isLoadingPlanGenerated.next( event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED);
       }
       this.ngxSpinnerService.hide();
+      
       if (event?.data.statusId === OPERATIONS_PLAN_STATUS.ERROR_OCCURED) {
-        this.setButtonStatus();
-        this.disableViewErrorButton = false;
+        this.setButtonStatus(true);
+       
         await this.getAlgoErrorMessage(true);
         this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PLAN_ERROR_OCCURED'], detail: translationKeys["GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE"] });
       }
       else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE) {
-        this.setButtonStatus();
+        this.setButtonStatus(true);
         this.messageService.clear();
         await this.getAlgoErrorMessage(true);
         this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_LOADABLE_PLAN_ERROR_OCCURED'], detail: translationKeys["GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE"] });
@@ -370,13 +372,19 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    *
    * @memberof LoadingComponent
    */
-  setButtonStatus() {
+  setButtonStatus(error?) {
     if (this.loadinfoTemp == this.loadingInfoId) {
-
-      this.disableGenerateLoadableButton = false;
+      this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false)
       this.processing = false;
       this.loadingDischargingTransformationService.disableSaveButton.next(false);
       this.ngxSpinnerService.hide();
+
+    }
+    if(error){
+      this.loadingDischargingTransformationService.disableViewErrorButton.next(false)
+    }
+    else{
+      this.loadingDischargingTransformationService.disableViewErrorButton.next(true)
 
     }
 
@@ -390,7 +398,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    */
   setButtonStatusInProcessing() {
     if (this.loadingInfoId == this.loadinfoTemp) {
-      this.disableGenerateLoadableButton = true;
+      this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true)
       this.processing = true;
     }
     this.ngxSpinnerService.hide();
@@ -403,8 +411,10 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    */
   async onGenerateLoadingPlan() {
     this.ngxSpinnerService.show();
-    this.disableViewErrorButton = true;
+    this.loadingDischargingTransformationService.inProcessing.next(true)
     this.loadingDischargingTransformationService.disableSaveButton.next(true)
+    this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true)
+    this.loadingDischargingTransformationService.disableViewErrorButton.next(true);
     let result = await this.loadingApiService.generateLoadingPlan(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
     const data = {
       processId: result.processId,

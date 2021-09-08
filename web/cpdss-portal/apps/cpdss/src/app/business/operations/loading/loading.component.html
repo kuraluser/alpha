@@ -49,7 +49,7 @@
         {{'GENERATE_LOADING_PLAN' | translate}}
       </button>
       <a (click)="switchTab(OPERATION_TAB.SEQUENCE)"
-        [ngClass]="{'active' : currentTab === OPERATION_TAB.SEQUENCE,'disabled':processing}" class="tab-btn">
+        [ngClass]="{'active' : currentTab === OPERATION_TAB.SEQUENCE,'disabled':!loadingSequenceComplete}" class="tab-btn">
         {{'LOADING_SEQUENCE' | translate}}
         <div *ngIf="loadingSequenceComplete else notGenerated" class="pt-5">
           <div class="tab-status-icon pi pi-check completed"></div> {{'GENERATED'|translate}}
@@ -61,7 +61,7 @@
         </ng-template>
       </a>
       <a (click)="switchTab(OPERATION_TAB.PLAN)"
-         [ngClass]="{'active' : currentTab === OPERATION_TAB.PLAN ,'disabled':processing}" class="tab-btn">
+         [ngClass]="{'active' : currentTab === OPERATION_TAB.PLAN ,'disabled':!loadingPlanComplete}" class="tab-btn">
         {{'LOADING_PLAN' | translate}}
         <div *ngIf="loadingPlanComplete else incompletePlan" class="pt-5">
           <div class="tab-status-icon pi pi-check completed"></div> {{'GENERATED'|translate}}

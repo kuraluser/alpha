@@ -242,6 +242,11 @@ export class InstructionCheckListComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INSTRUCTION_ERROR'], detail: translationKeys['LOADING_INSTRUCTION_ERROR_MESSAGE'] });
       }
     }
+    this.loadingDischargingTransformationService.isLoadingInfoComplete.subscribe((status)=>{
+      if(status){
+        this.loadingDischargingTransformationService.inProcessing.next(false);
+      }
+    })
   }
 
   /**
@@ -432,7 +437,7 @@ export class InstructionCheckListComponent implements OnInit {
   /**
    * select/partial select parent based on child selection
    *
-   * @param {children} 
+   * @param {children}
    * @memberof InstructionCheckListComponent
    */
   checkParentSelection(children) {
@@ -481,6 +486,8 @@ export class InstructionCheckListComponent implements OnInit {
           this.instructionListData.splice(index, 1);
         }
       }
+      this.instructionForm.controls.name.setValue('');
+      this.instructionForm.reset();
       this.instructionListData = [...this.instructionListData];
     }
     this.instructionForm.reset();
@@ -531,6 +538,11 @@ export class InstructionCheckListComponent implements OnInit {
     } else {
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INSTRUCTION_ERROR'], detail: translationKeys['LOADING_INSTRUCTION_ERROR_MESSAGE'] });
     }
+    this.loadingDischargingTransformationService.isLoadingInfoComplete.subscribe((status)=>{
+      if(status){
+        this.loadingDischargingTransformationService.inProcessing.next(false);
+      }
+    })
   }
 
     /**
