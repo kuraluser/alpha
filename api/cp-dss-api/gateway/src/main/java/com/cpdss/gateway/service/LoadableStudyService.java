@@ -402,8 +402,13 @@ public class LoadableStudyService {
       dto.setDischargingPortIds(grpcReply.getDischargingPortIdsList());
       dto.setStatus(grpcReply.getStatus());
       dto.setStatusId(grpcReply.getStatusId());
-      dto.setLoadableStudyStatusLastModifiedTime(
-          grpcReply.getLoadableStudyStatusLastModifiedTime());
+      if (planningType == 2) {
+        dto.setDischargeStudyStatusLastModifiedTime(
+            grpcReply.getLoadableStudyStatusLastModifiedTime());
+      } else {
+        dto.setLoadableStudyStatusLastModifiedTime(
+            grpcReply.getLoadableStudyStatusLastModifiedTime());
+      }
 
       List<LoadableStudyAttachmentData> attachmentList = new ArrayList();
 
