@@ -444,7 +444,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         if (request.getPlanningType().equals(Common.PLANNING_TYPE.forNumber(2))) {
           Optional<LoadableStudy> loadableStudyOpt =
               this.loadableStudyRepository.findById(entity.getConfirmedLoadableStudyId());
-          if (!loadableStudyOpt.isPresent()) {
+          if (loadableStudyOpt.isPresent()) {
             Optional<LoadableStudyPortRotation> portRotationOpt =
                 loadableStudyOpt.get().getPortRotations().stream()
                     .filter(item -> item.getOperation().getId() == 1L)

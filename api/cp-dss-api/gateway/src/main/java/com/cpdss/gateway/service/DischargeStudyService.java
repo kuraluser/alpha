@@ -23,8 +23,11 @@ import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStud
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleCargoDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleCargoDetailsReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -71,6 +74,9 @@ public class DischargeStudyService {
   @GrpcClient("loadingInformationService")
   private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
       loadingInfoServiceBlockingStub;
+
+  @GrpcClient("loadingInformationService")
+  private LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
@@ -122,9 +128,13 @@ public class DischargeStudyService {
       LoadableStudy.LoadablePlanDetailsRequest.Builder loadablePlanRequest =
           LoadableStudy.LoadablePlanDetailsRequest.newBuilder();
       loadablePlanRequest.setLoadablePatternId(patternReply.getPattern().getLoadablePatternId());
-      LoadableStudy.LoadableCommingleDetailsReply loadableCommingleDetailsReply =
-          loadableStudyServiceBlockingStub.getLoadableCommingleByPatternId(
-              loadablePlanRequest.build());
+      // Changing commingle details flow - need to fetch actual commingle data from loading plan
+      //      LoadableStudy.LoadableCommingleDetailsReply loadableCommingleDetailsReply =
+      //          loadableStudyServiceBlockingStub.getLoadableCommingleByPatternId(
+      //              loadablePlanRequest.build());
+
+      LoadablePlanCommingleCargoDetailsReply loadableCommingleDetailsReply =
+          loadingPlanServiceBlockingStub.getLoadingPlanCommingleDetails(requestBuilder.build());
 
       DischargeStudyResponse dischargeStudyResponse = new DischargeStudyResponse();
       if (!SUCCESS.equals(loadableCommingleDetailsReply.getResponseStatus().getStatus())) {
@@ -137,11 +147,11 @@ public class DischargeStudyService {
       dischargeStudyResponse.setLoadableQuantityCommingleCargoDetails(
           new ArrayList<LoadableQuantityCommingleCargoDetails>());
       loadableCommingleDetailsReply
-          .getLoadableQuantityCommingleCargoDetailsList()
+          .getLoadablePlanCommingleCargoListList()
           .forEach(
               lqcd -> {
                 LoadableQuantityCommingleCargoDetails details =
-                    loadableStudyService.getLoadableQuantityCommingleCargoDetails(lqcd);
+                    this.buildCommingleCargoDetails(lqcd);
                 dischargeStudyResponse.getLoadableQuantityCommingleCargoDetails().add(details);
               });
       dischargeStudyResponse.setResponseStatus(
@@ -154,6 +164,33 @@ public class DischargeStudyService {
           patternReply.getResponseStatus().getCode(),
           HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  private LoadableQuantityCommingleCargoDetails buildCommingleCargoDetails(
+      LoadablePlanCommingleCargoDetails lqccd) {
+    LoadableQuantityCommingleCargoDetails details = new LoadableQuantityCommingleCargoDetails();
+    details.setId(lqccd.getId());
+    details.setApi(lqccd.getApi());
+    details.setCargo1Abbreviation(lqccd.getCargo1Abbreviation());
+    details.setCargo1Bbls60f(lqccd.getCargo1Bbls60F());
+    details.setCargo1Bblsdbs(lqccd.getCargo1Bblsdbs());
+    details.setCargo1KL(lqccd.getCargo1KL());
+    details.setCargo1LT(lqccd.getCargo1LT());
+    details.setCargo1MT(lqccd.getCargo1MT());
+    details.setCargo1Percentage(lqccd.getCargo1Percentage());
+    details.setCargo2Abbreviation(lqccd.getCargo2Abbreviation());
+    details.setCargo2Bbls60f(lqccd.getCargo2Bbls60F());
+    details.setCargo2Bblsdbs(lqccd.getCargo2Bblsdbs());
+    details.setCargo2KL(lqccd.getCargo2KL());
+    details.setCargo2LT(lqccd.getCargo2LT());
+    details.setCargo2MT(lqccd.getCargo2MT());
+    details.setCargo2Percentage(lqccd.getCargo2Percentage());
+    details.setGrade(lqccd.getGrade());
+    details.setQuantity(lqccd.getQuantity());
+    details.setTankName(lqccd.getTankName());
+    details.setTemp(lqccd.getTemp());
+    details.setTankShortName(lqccd.getTankShortName());
+    return details;
   }
 
   private DischargeStudyResponse buildDischargeStudyResponse(

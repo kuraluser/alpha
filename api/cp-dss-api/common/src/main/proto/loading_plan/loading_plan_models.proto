@@ -913,3 +913,46 @@ message PortWiseCargo {
 	int64 portId = 2;
 	repeated int64 cargoIds = 3;
 }
+
+message LoadablePlanCommingleCargoDetailsReply{
+ repeated LoadablePlanCommingleCargoDetails LoadablePlanCommingleCargoList = 1;
+ ResponseStatus responseStatus = 2;
+}
+
+message LoadablePlanCommingleCargoDetails {
+	 int64 id = 1;
+	 string grade = 2;
+	 string tankName = 3;
+	 string quantity = 4;
+	 string api = 5;
+	 string temp = 6;
+	 string cargo1Abbreviation = 7;
+	 string cargo2Abbreviation = 8;
+	 string cargo1Percentage = 9;
+	 string cargo2Percentage = 10;
+	 string cargo1Bblsdbs = 11;
+	 string cargo2Bblsdbs = 12;
+	 string cargo1Bbls60f = 13;
+	 string cargo2Bbls60f = 14;
+	 string cargo1LT = 15;
+	 string cargo2LT = 16;
+	 string cargo1MT = 17;
+	 string cargo2MT = 18;
+	 string cargo1KL = 19;
+	 string cargo2KL = 20;
+	 string orderedMT = 21;
+	 int32 priority = 22;
+	 int32 loadingOrder = 23;
+	 int64 tankId = 24;
+	 string fillingRatio = 25;
+	 string correctedUllage = 26;
+ 	 string rdgUllage = 27;
+     string correctionFactor = 28;
+     string slopQuantity = 29;
+     string actualQuantity=30;
+     string timeRequiredForLoading = 31;
+	 repeated CargoToppingOffSequenceDetails toppingOffSequences = 32;
+	 int64 cargo1NominationId = 33;
+	 int64 cargo2NominationId = 34;
+	 string tankShortName = 35;
+}

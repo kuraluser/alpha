@@ -195,6 +195,7 @@ service LoadableStudyService {
 	rpc getLoadablePatternByVoyageAndStatus(LoadableStudyRequest) returns (LoadablePatternConfirmedReply) {}
 
 	rpc getCargoNominationByCargoNominationId(CargoNominationRequest) returns (CargoNominationDetailReply){}
+	
 	rpc getLoadableCommingleByPatternId(LoadablePlanDetailsRequest) returns (LoadableCommingleDetailsReply){}
 
 	rpc GetLoadableStudyShore(LoadableStudyShoreRequest) returns (LoadableStudyShoreResponse){}
@@ -1195,6 +1196,7 @@ message SynopticalRecord{
 	int64 portRotationId = 39;
 	int64 portTimezoneId = 40;
 	bool hasLoadicator = 41;
+	string portRotationType = 42;
 }
 
 message SynopticalCargoRecord{
