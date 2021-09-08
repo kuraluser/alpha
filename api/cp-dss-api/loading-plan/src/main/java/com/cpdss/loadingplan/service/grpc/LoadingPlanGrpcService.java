@@ -340,7 +340,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
     LoadingPlanModels.UllageBillReply.Builder builder =
         LoadingPlanModels.UllageBillReply.newBuilder();
     try {
-      loadingPlanService.getLoadableStudyShoreTwo(request, responseObserver);
+      loadingPlanService.getLoadableStudyShoreTwo(request, builder);
     } catch (Exception e) {
       e.printStackTrace();
       builder.setResponseStatus(
