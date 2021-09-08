@@ -2,15 +2,13 @@
 package com.cpdss.loadablestudy.domain;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 /** @Author gokul.p */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoadableStudyAlgoJson {
-  private String processId;
   private List<LoadablePlanDetailsAlgoJson> loadablePlanDetails;
-  private String errors;
-  private boolean hasLodicator;
-  private Object validated;
-  private Object loadablePatternId;
 }

@@ -14,4 +14,6 @@ public class LoadablePlanBallastDetailsJson {
   private Long tankId;
   private String tankName;
   private String tankShortName;
+  private Double volume;
+  private Double maxTankVolume;
 }
