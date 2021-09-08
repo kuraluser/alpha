@@ -558,7 +558,9 @@ public class LoadingPlanService {
                   robDet.setQuantity(new BigDecimal(ullageInsert.getQuantity()));
                   robDet.setPortXId(Long.valueOf(ullageInsert.getPortXid()));
                   robDet.setPortRotationXId(Long.valueOf(ullageInsert.getPortRotationXid()));
-                  robDet.setConditionType(Integer.valueOf(ullageInsert.getCorrectedUllage() + ""));
+                  robDet.setConditionType(
+                      Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
+                  robDet.setValueType(Integer.valueOf(ullageInsert.getActualPlanned() + ""));
                   robDet.setIsActive(true);
                   loadingPlanRobDetailsRepository.save(robDet);
                 }
@@ -608,8 +610,11 @@ public class LoadingPlanService {
         stowageEntityList.add(stowageEntity);
       }
       // Deleting existing entry from actual table before pushing new records
-      portLoadingPlanStowageDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
-          loadingInformation.getId(), conditionType);
+      portLoadingPlanStowageDetailsRepository
+          .deleteExistingByLoadingInfoAndConditionTypeAndValueType(
+              loadingInformation.getId(),
+              conditionType,
+              LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
       portLoadingPlanStowageDetailsRepository.saveAll(stowageEntityList);
     }
 
@@ -636,8 +641,11 @@ public class LoadingPlanService {
       }
 
       // Deleting existing entry from actual table before pushing new records
-      portLoadingPlanBallastDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
-          loadingInformation.getId(), conditionType);
+      portLoadingPlanBallastDetailsRepository
+          .deleteExistingByLoadingInfoAndConditionTypeAndValueType(
+              loadingInformation.getId(),
+              conditionType,
+              LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
       portLoadingPlanBallastDetailsRepository.saveAll(ballastEntityList);
     }
 
