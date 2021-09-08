@@ -551,7 +551,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
         this.selectedDischargeStudy.statusId = 4;
         data.processId = res.processId;
         if (res.processId) {
-          navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
+          navigator.serviceWorker.controller.postMessage({ type: 'discharge-study-pattern-status', data });
           this.selectedDischargeStudy = { ...this.selectedDischargeStudy };
         }
       }

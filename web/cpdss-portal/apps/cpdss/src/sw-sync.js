@@ -773,37 +773,37 @@
       if (syncView?.responseStatus?.status === '200') {
         sync.status = syncView?.responseStatus?.status;
         currentStatus = syncView?.dischargeStudyId;
-        if (syncView?.loadableStudyStatusId === 21) {
+        if (syncView?.dischargeStudyStatusId === 21) {
           sync.type = 'loadable-study-communicated-to-shore';
-          sync.statusId = syncView?.loadableStudyStatusId;
+          sync.statusId = syncView?.dischargeStudyStatusId;
           notifyClients(sync);
         }
-        if (syncView?.dischargeStudyId === 4 || syncView?.dischargeStudyId === 5) {
+        if (syncView?.dischargeStudyStatusId === 4 || syncView?.dischargeStudyStatusId === 5) {
           sync.type = 'discharge-pattern-processing';
-          sync.statusId = syncView?.dischargeStudyId;
+          sync.statusId = syncView?.dischargeStudyStatusId;
           notifyClients(sync);
         }
-        if (syncView?.dischargeStudyId === 7) {
+        if (syncView?.dischargeStudyStatusId === 7) {
           sync.type = 'discharge-pattern-loadicator-checking';
-          sync.statusId = syncView?.dischargeStudyId;
+          sync.statusId = syncView?.dischargeStudyStatusId;
           notifyClients(sync);
         }
-        if (syncView?.dischargeStudyId === 3) {
+        if (syncView?.dischargeStudyStatusId === 3) {
           clearInterval(timer);
           sync.type = 'discharge-pattern-completed';
-          sync.statusId = syncView?.dischargeStudyId;
+          sync.statusId = syncView?.dischargeStudyStatusId;
           notifyClients(sync);
         }
-        if (syncView?.dischargeStudyId === 6) {
+        if (syncView?.dischargeStudyStatusId === 6) {
           clearInterval(timer);
           sync.type = 'discharge-pattern-no-solution';
-          sync.statusId = syncView?.dischargeStudyId;
+          sync.statusId = syncView?.dischargeStudyStatusId;
           notifyClients(sync);
         }
-        if (syncView?.loadableStudyStatusId === 11) {
+        if (syncView?.dischargeStudyStatusId === 11) {
           clearInterval(timer);
           sync.type = 'discharge-pattern-error-occured';
-          sync.statusId = syncView?.dischargeStudyId;
+          sync.statusId = syncView?.dischargeStudyStatusId;
           notifyClients(sync);
         }
       } else if (syncView?.status === '401' || syncView?.status === '400') {
