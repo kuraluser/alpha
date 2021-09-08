@@ -866,7 +866,8 @@ public class LoadableStudyService {
     PortRotationResponse response = new PortRotationResponse();
     Boolean isLandingPage = false;
     if (headers.get("Referer") != null
-        && (headers.get("Referer").get(0).contains(VOYAGE_STATUS_URI))) {
+        && ((headers.get("Referer").get(0).contains(VOYAGE_STATUS_URI))
+            || (headers.get("Referer").get(0).contains(OPERATIONS_URI)))) {
       isLandingPage = true;
     }
     PortRotationReply grpcReply =
