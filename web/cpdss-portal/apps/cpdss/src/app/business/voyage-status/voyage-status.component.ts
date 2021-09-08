@@ -196,9 +196,10 @@ export class VoyageStatusComponent implements OnInit {
   /**
    * Get voyage status details
    */
-  async getVoyageStatus(vesselId: number, voyageId: number, loadableStudyId: number) {
+  async getVoyageStatus(vesselId: number, voyageId: number,portData: IVoyagePortDetails) {
     this.ngxSpinnerService.show();
-    this.voyageStatusResponse = await this.voyageApiService.getVoyageDetails(vesselId, voyageId, loadableStudyId, this.selectedPortDetails).toPromise();
+    const id = this.selectedVoyage?.confirmedDischargeStudyId && portData.portType === 'DISCHARGE'? this.selectedVoyage?.confirmedDischargeStudyId : this.selectedVoyage?.confirmedLoadableStudyId;
+    this.voyageStatusResponse = await this.voyageApiService.getVoyageDetails(vesselId, voyageId, id, this.selectedPortDetails).toPromise();
     if (this.voyageStatusResponse?.responseStatus?.status === '200') {
       this.bunkerConditions = this.voyageStatusResponse?.bunkerConditions;
       this.cargoConditions = this.voyageStatusResponse?.cargoConditions?.length > 0 ? this.voyageStatusResponse?.cargoConditions : [];
@@ -213,7 +214,7 @@ export class VoyageStatusComponent implements OnInit {
    */
   getPortDetails(portData: IVoyagePortDetails) {
     this.selectedPortDetails = portData;
-    this.getVoyageStatus(this.vesselInfo?.id, this.selectedVoyage?.id, this.selectedVoyage?.confirmedLoadableStudyId);
+    this.getVoyageStatus(this.vesselInfo?.id, this.selectedVoyage?.id, portData);
   }
 
   /**

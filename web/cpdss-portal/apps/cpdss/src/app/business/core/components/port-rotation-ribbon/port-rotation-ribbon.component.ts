@@ -41,6 +41,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     this._voyageDetails = value;
     this.voyageId = value.id;
     this.loadableStudyId = value.confirmedLoadableStudyId;
+    this.dischargeStudyId = value.confirmedDischargeStudyId;
     this.getPortRotationRibbonData();
   }
   @Input() isDeletable = false;
@@ -53,6 +54,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
 
   voyageId: number;
   loadableStudyId: number;
+  dischargeStudyId: number;
   portList: IEditPortRotation[] = [];
   portRotationForm: FormGroup;
   maxDate = new Date();
@@ -165,7 +167,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       "portId": port.portId,
       "portRotationId": port.id,
       "operationId": port?.operationId,
-      'name': port?.name
+      'name': port?.name,
+      'portType': port.portType
     }
     const index = this.portList.indexOf(port);
     this.resetPreviousPort(index);
@@ -193,7 +196,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @param field
    */
   editPort(event, port: IEditPortRotation, field: string) {
-    if (![VOYAGE_STATUS.CLOSE].includes(this.voyageDetails?.statusId)) {
+    if (![VOYAGE_STATUS.CLOSE].includes(this.voyageDetails?.statusId) && this.isDischargeStarted(port)) {
       const form = this.row(this.portList.indexOf(port));
       this.setInvalid(port, form)
       if (port.isFutureDate === true) {
@@ -282,6 +285,16 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       time: this.fb.control(dateActual ? dateActual : date, [Validators.required, portTimeValidator(index)]),
       distance: this.fb.control(newPortList?.distanceBetweenPorts ? newPortList?.distanceBetweenPorts : 0, [Validators.required])
     });
+  }
+
+  /**
+   * Method to check discharge study started 
+   *
+   * @memberof PortRotationRibbonComponent
+   */
+  isDischargeStarted(port: IEditPortRotation) {
+    const status = this.voyageDetails.isDischargeStarted && port.portType === 'LOADING' ? false : true;
+    return status;
   }
 
   /**
@@ -401,7 +414,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   async getPortRotationRibbonData() {
     this.ngxSpinnerService.show();
     const result = await this.editPortRotationApiService.getPorts().toPromise();
-    const portsFormData: IPortsDetailsResponse = await this.editPortRotationApiService.getPortsDetails(this.vesselDetails.id, this.voyageId, this.loadableStudyId).toPromise();
+    const id = this.dischargeStudyId ? this.dischargeStudyId : this.loadableStudyId;
+    const portsFormData: IPortsDetailsResponse = await this.editPortRotationApiService.getPortsDetails(this.vesselDetails.id, this.voyageId, id).toPromise();
     this.portCarousel = [];
     let voyageDistance = 0;
     for (let i = 0; i < portsFormData?.portList?.length; i++) {
@@ -444,6 +458,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     }
     this.setPOrtData();
     this.initPortRotationArray();
+
     this.currentPosition();
     this.errorMesages = this.setValidationErrorMessageForPortRotationRibbon();
     this.setCarouselNumVisble(window.innerWidth);
@@ -506,7 +521,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       "portId": this.portList[0].portId,
       "portRotationId": this.portList[0].id,
       "operationId": this.portList[0].operationId,
-      'name': this.portList[0].name
+      'name': this.portList[0].name,
+      'portType': this.portList[0].portType
     }
     this.portList[0].isFocused = true;
     this.portList[0].isSelected = true;

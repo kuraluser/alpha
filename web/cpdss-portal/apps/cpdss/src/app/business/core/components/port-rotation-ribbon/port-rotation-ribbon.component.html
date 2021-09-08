@@ -133,7 +133,8 @@
                             </div>
                             <div class="row mt-5 carousel-card-footer">
                                 <a class="text-secondary btn btn-main btn-xs m-auto"
-                                    *ngIf="voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE && port?.isFutureDate && port?.isFocused"
+                                    *ngIf="voyageDetails?.statusId !== VOYAGE_STATUS.CLOSE && port?.isFutureDate && port?.isFocused
+                                    && isDischargeStarted(port)"
                                     id="port_rotation_ribbon_save__{{portList.indexOf(port)}}"
                                     (click)="save(port)">{{ 'PORT_ROTATION_RIBBON_SAVE' | translate }}</a>
                             </div>
