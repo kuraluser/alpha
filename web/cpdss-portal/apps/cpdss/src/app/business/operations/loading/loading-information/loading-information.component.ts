@@ -116,14 +116,22 @@ export class LoadingInformationComponent implements OnInit {
       this.loadingDischargingTransformationService.isLoadingSequenceGenerated.next(this.loadingInformationData?.isLoadingSequenceGenerated)
       this.loadingDischargingTransformationService.isLoadingPlanGenerated.next(this.loadingInformationData?.isLoadingPlanGenerated);
     
-
-      if (this.loadingInformationData.loadingInfoStatusId == 5 || this.loadingInformationData.loadingInfoStatusId == 6 || this.loadingInformationData.loadingInfoStatusId == 7 ||this.loadingInformationData.loadingInfoStatusId == 1 || this.loadingInformationData.loadingInfoStatusId == 2 || this.loadingInformationData.loadingInfoStatusId == 0) {
+      
+      if (this.loadingInformationData.loadingInfoStatusId == 5 || this.loadingInformationData.loadingInfoStatusId == 6 || this.loadingInformationData.loadingInfoStatusId == 7 || this.loadingInformationData.loadingInfoStatusId == 2 || this.loadingInformationData.loadingInfoStatusId == 0 || this.loadingInformationData.loadingInfoStatusId == 1) {
         this.loadingDischargingTransformationService.disableSaveButton.next(false); 
-        this.loadingDischargingTransformationService.inProcessing.next(false);       
+        this.loadingDischargingTransformationService.inProcessing.next(false);
+        this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false)
+        if(this.loadingInformationData.loadingInfoStatusId == 6 || this.loadingInformationData.loadingInfoStatusId == 7){
+          this.loadingDischargingTransformationService.disableViewErrorButton.next(false);
+        } 
+        else{
+          this.loadingDischargingTransformationService.disableViewErrorButton.next(true);
+        }     
       }
       else {
-        this.loadingDischargingTransformationService.disableSaveButton.next(true);
         this.loadingDischargingTransformationService.inProcessing.next(true);    
+        this.loadingDischargingTransformationService.disableSaveButton.next(true);   
+        this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true)         
       }
       this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
@@ -275,6 +283,11 @@ export class LoadingInformationComponent implements OnInit {
     this.dischargeBerth.berthDetailsForm.updateValueAndValidity();
     setTimeout(() => {
       this.saveLoadingInformationData();
+      this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((status)=>{
+        if(status){
+          this.loadingDischargingTransformationService.inProcessing.next(false);
+        }
+      })
     })
   }
 

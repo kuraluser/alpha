@@ -105,6 +105,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyStatusResponse;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
 import com.cpdss.gateway.domain.simulator.DepartureConditionJson;
 import com.cpdss.gateway.entity.Users;
@@ -402,8 +403,13 @@ public class LoadableStudyService {
       dto.setDischargingPortIds(grpcReply.getDischargingPortIdsList());
       dto.setStatus(grpcReply.getStatus());
       dto.setStatusId(grpcReply.getStatusId());
-      dto.setLoadableStudyStatusLastModifiedTime(
-          grpcReply.getLoadableStudyStatusLastModifiedTime());
+      if (planningType == 2) {
+        dto.setDischargeStudyStatusLastModifiedTime(
+            grpcReply.getLoadableStudyStatusLastModifiedTime());
+      } else {
+        dto.setLoadableStudyStatusLastModifiedTime(
+            grpcReply.getLoadableStudyStatusLastModifiedTime());
+      }
 
       List<LoadableStudyAttachmentData> attachmentList = new ArrayList();
 
@@ -861,7 +867,8 @@ public class LoadableStudyService {
     PortRotationResponse response = new PortRotationResponse();
     Boolean isLandingPage = false;
     if (headers.get("Referer") != null
-        && (headers.get("Referer").get(0).contains(VOYAGE_STATUS_URI))) {
+        && ((headers.get("Referer").get(0).contains(VOYAGE_STATUS_URI))
+            || (headers.get("Referer").get(0).contains(OPERATIONS_URI)))) {
       isLandingPage = true;
     }
     PortRotationReply grpcReply =
@@ -4388,6 +4395,35 @@ public class LoadableStudyService {
     }
     response.setLoadableStudyStatusId(grpcReply.getLoadableStudystatusId());
     response.setLoadableStudyStatusLastModifiedTime(
+        grpcReply.getLoadableStudyStatusLastModifiedTime());
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * @param loadableStudyId
+   * @param loadablePlanRequest
+   * @param first
+   * @return LoadableStudyStatusResponse
+   */
+  public DischargeStudyStatusResponse getDischargeStudyStatus(
+      Long loadableStudyId, LoadablePlanRequest loadablePlanRequest, String correlationId)
+      throws GenericServiceException {
+    log.info("Inside getLoadableStudyStatus gateway service with correlationId : " + correlationId);
+    DischargeStudyStatusResponse response = new DischargeStudyStatusResponse();
+    LoadableStudyStatusReply grpcReply =
+        this.getLoadableStudyStatus(
+            this.buildLoadableStudyStatusRequest(
+                loadableStudyId, loadablePlanRequest, correlationId));
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to get Loadable Study Status",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    response.setDischargeStudyStatusId(grpcReply.getLoadableStudystatusId());
+    response.setDischargeStudyStatusLastModifiedTime(
         grpcReply.getLoadableStudyStatusLastModifiedTime());
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));

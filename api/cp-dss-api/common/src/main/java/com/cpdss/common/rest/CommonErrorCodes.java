@@ -60,4 +60,5 @@ public interface CommonErrorCodes {
   String E_CPDSS_TIDE_TIME_INVALID = "312";
   String E_CPDSS_TIDE_HEIGHT_INVALID = "313";
   String E_CPDSS_INVALID_EXCEL_FILE = "314";
+  String E_CPDSS_EMPTY_EXCEL_FILE = "315";
 }

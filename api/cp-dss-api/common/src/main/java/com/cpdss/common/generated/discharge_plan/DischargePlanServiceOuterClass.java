@@ -20,7 +20,7 @@ public final class DischargePlanServiceOuterClass {
     java.lang.String[] descriptorData = {
       "\n+discharge_plan/discharge_plan_service."
           + "proto\032\014common.proto\032*discharge_plan/disc"
-          + "harge_plan_models.proto2\255\003\n\033DischargeInf"
+          + "harge_plan_models.proto2\372\003\n\033DischargeInf"
           + "ormationService\022P\n\027getDischargeInformati"
           + "on\022\034.DischargeInformationRequest\032\025.Disch"
           + "argeInformation\"\000\022L\n\034getOrSaveRulesForDi"
@@ -31,11 +31,13 @@ public final class DischargePlanServiceOuterClass {
           + "atusReply\"\000\022z\n\"DischargingDownloadPortTi"
           + "deDetails\022%.DischargingDownloadTideDetai"
           + "lRequest\032).DischargingDownloadTideDetail"
-          + "StatusReply\"\0000\0012m\n\024DischargePlanService\022"
-          + "U\n\034DischargePlanSynchronization\022\".Discha"
-          + "rgeStudyDataTransferRequest\032\017.ResponseSt"
-          + "atus\"\000B-\n)com.cpdss.common.generated.dis"
-          + "charge_planP\001b\006proto3"
+          + "StatusReply\"\0000\001\022K\n\022GetDischargingPlan\022\034."
+          + "DischargeInformationRequest\032\025.Dischargin"
+          + "gPlanReply\"\0002m\n\024DischargePlanService\022U\n\034"
+          + "DischargePlanSynchronization\022\".Discharge"
+          + "StudyDataTransferRequest\032\017.ResponseStatu"
+          + "s\"\000B-\n)com.cpdss.common.generated.discha"
+          + "rge_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

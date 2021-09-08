@@ -13,6 +13,8 @@ public class LoadablePlanStowageDetailsJson {
   private Double correctedUllage;
   private Double correctionFactor;
   private Double fillingRatio;
+  private Double maxTankVolume;
+  private Double onboard;
   private Double quantityMT;
   private Double rdgUllage;
   private Long tankId;

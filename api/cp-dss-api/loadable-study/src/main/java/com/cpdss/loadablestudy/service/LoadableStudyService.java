@@ -450,7 +450,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     .filter(item -> item.getOperation().getId() == 1L)
                     .max(Comparator.comparing(LoadableStudyPortRotation::getPortOrder));
             if (portRotationOpt.isPresent()) {
-              builder.setLastLoadingPortETD(String.valueOf(portRotationOpt.get().getEtd()));
+              builder.setLastLoadingPortETD(
+                  dateTimeFormatter.format(portRotationOpt.get().getEtd()));
             }
           }
         }

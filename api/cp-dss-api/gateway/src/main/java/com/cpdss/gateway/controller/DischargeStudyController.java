@@ -8,6 +8,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyStatusResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.LoadableStudyService;
 import javax.servlet.http.HttpServletRequest;
@@ -85,7 +86,7 @@ public class DischargeStudyController {
   @PostMapping(
       value =
           "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/discharge-pattern-status")
-  public LoadableStudyStatusResponse getDischargeStudyStatus(
+  public DischargeStudyStatusResponse getDischargeStudyStatus(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
@@ -95,7 +96,7 @@ public class DischargeStudyController {
       throws CommonRestException {
     try {
       log.info("getDischargeStudyStatus with process id ", loadablePlanRequest.getProcessId());
-      return this.loadableStudyService.getLoadableStudyStatus(
+      return this.loadableStudyService.getDischargeStudyStatus(
           dischargeStudyId, loadablePlanRequest, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when get Discharge Study status", e);

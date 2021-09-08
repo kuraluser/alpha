@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class StabilityParametersJson {
   private Double afterDraft;
+  private Double airDraft;
   private Double bendinMoment;
   private Double forwardDraft;
   private Double heel;

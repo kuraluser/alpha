@@ -52,6 +52,8 @@ export class Voyage {
     statusId?: VOYAGE_STATUS;
     actualStartDate?: string;
     actualEndDate?: string;
+    isDischargeStarted?: boolean;
+    confirmedDischargeStudyId?: number;
 }
 
 /**
@@ -514,6 +516,7 @@ export interface IEditPortRotation {
     portDate?: string;
     portTime?: string;
     operation?: string;
+    portType?: string;
 }
 
 /**
@@ -526,6 +529,7 @@ export class IVoyagePortDetails {
     portRotationId?: number;
     operationId?: number;
     name?: string;
+    portType?: string;
 }
 
 /**
