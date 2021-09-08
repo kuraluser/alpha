@@ -771,7 +771,7 @@ public class DischargePlanController {
       throws CommonRestException {
     try {
       log.info(
-          "Get Loading Plan API for vessel {}, voyage {}, loading information {}",
+          "Get Discharging Plan API for vessel {}, voyage {}, loading information {}",
           vesselId,
           voyageId,
           infoId);
@@ -782,7 +782,7 @@ public class DischargePlanController {
       e.printStackTrace();
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
-      log.error("Error in Get Loading Plan API");
+      log.error("Error in Get Discharging Plan API");
       e.printStackTrace();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,

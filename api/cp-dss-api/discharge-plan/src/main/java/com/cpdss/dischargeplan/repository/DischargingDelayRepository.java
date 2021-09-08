@@ -8,6 +8,5 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface DischargingDelayRepository extends CommonCrudRepository<DischargingDelay, Long> {
 
-  @Query("FROM DischargingDelay dd WHERE dd.dischargingInformation.id = :var1 AND isActive = true")
-  List<DischargingDelay> findAllByDischargeInfoId(Long var1);
+  List<DischargingDelay> findAllByDischargingInformation_IdAndIsActive(Long var1,boolean isActive);
 }

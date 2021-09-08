@@ -200,7 +200,7 @@ public class DischargeInformationRPCService
         // Loading Delay
         List<DischargingDelayReason> list5 = this.dischargingDelayReasonRepository.findAll();
         List<DischargingDelay> list6 =
-            this.dischargingDelayRepository.findAllByDischargeInfoId(var1.getId());
+            this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActive(var1.getId(),true);
         LoadingPlanModels.LoadingDelay loadingDelay =
             this.informationBuilderService.buildLoadingDelayMessage(list5, list6);
         loadingInformation.setLoadingDelays(loadingDelay);
@@ -222,14 +222,15 @@ public class DischargeInformationRPCService
         List<PortDischargingPlanStabilityParameters> pdpStabilityList =
             pdpStabilityParametersRepository.findByDischargingInformationAndIsActive(var1, true);
 
-        builder.addAllPortLoadingPlanBallastDetails(
-            this.informationBuilderService.buildLoadingPlanTankBallastMessage(pdpBallastList));
-        builder.addAllPortLoadingPlanStowageDetails(
-            this.informationBuilderService.buildLoadingPlanTankStowageMessage(pdpStowageList));
-        builder.addAllPortLoadingPlanRobDetails(
-            this.informationBuilderService.buildLoadingPlanTankRobMessage(pdpRobList));
-        builder.addAllPortLoadingPlanStabilityParameters(
-            this.informationBuilderService.buildLoadingPlanTankStabilityMessage(pdpStabilityList));
+        builder.addAllPortDischargingPlanBallastDetails(
+            this.informationBuilderService.buildDischargingPlanTankBallastMessage(pdpBallastList));
+        builder.addAllPortDischargingPlanStowageDetails(
+            this.informationBuilderService.buildDischargingPlanTankStowageMessage(pdpStowageList));
+        builder.addAllPortDischargingPlanRobDetails(
+            this.informationBuilderService.buildDischargingPlanTankRobMessage(pdpRobList));
+        builder.addAllPortDischargingPlanStabilityParameters(
+            this.informationBuilderService.buildDischargingPlanTankStabilityMessage(
+                pdpStabilityList));
         // <---Loading Information End-->
       } else {
         log.error("Failed to fetch Loading Plan, Loading info Id is 0");

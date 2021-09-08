@@ -12,6 +12,7 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInformation;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
@@ -39,8 +40,7 @@ public class DischargeInformationService {
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
 
   @GrpcClient("dischargeInformationService")
-  @Autowired
-  DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub dischargeInfoServiceStub;
+  private  DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub dischargeInfoServiceStub;
 
   /**
    * Get Discharge Information from discharge-plan and master tables
@@ -131,7 +131,7 @@ public class DischargeInformationService {
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(
-        "Get Loading Plan, Active Voyage Number and Id {} ",
+        "Get dischargin Plan, Active Voyage Number and Id {} ",
         activeVoyage.getVoyageNumber(),
         activeVoyage.getId());
     Optional<PortRotation> portRotation =
@@ -148,7 +148,7 @@ public class DischargeInformationService {
     DischargingPlanReply planReply =
         this.dischargeInfoServiceStub.getDischargingPlan(builder.build());
 
-    LoadingInformation loadingInformation = new LoadingInformation();
+    DischargingInformation dischargingInformation = new DischargingInformation();
     // from loading info table, loading plan service
     LoadingRates loadingRates =
         this.loadingInformationService.getLoadingRateForVessel(
@@ -159,8 +159,8 @@ public class DischargeInformationService {
         this.loadingInformationService.getToppingOffSequence(
             planReply.getDischargingInformation().getToppingOffSequenceList());
     // buildTankLayout(vesselId, loadingPlanResponse);
-    loadingInformation.setLoadingRates(loadingRates);
-    loadingInformation.setToppingOffSequence(toppingSequence);
+    dischargingInformation.setDischargingRates(loadingRates);
+    dischargingInformation.setToppingOffSequence(toppingSequence);
 
     LoadingDetails loadingDetails =
         this.loadingInformationService.getLoadingDetailsByPortRotationId(
@@ -169,7 +169,7 @@ public class DischargeInformationService {
             activeVoyage.getId(),
             portRotationId,
             portRotation.get().getPortId());
-    loadingInformation.setLoadingDetails(loadingDetails);
+    dischargingInformation.setDischargingDetails(loadingDetails);
 
     // Berth data from master, call to port Info service
     List<BerthDetails> masterBerthDetails =
@@ -182,25 +182,25 @@ public class DischargeInformationService {
     LoadingBerthDetails berthDetails = new LoadingBerthDetails();
     berthDetails.setAvailableBerths(masterBerthDetails);
     berthDetails.setSelectedBerths(loadingBerthDetails);
-    loadingInformation.setBerthDetails(berthDetails);
+    dischargingInformation.setBerthDetails(berthDetails);
 
     CargoMachineryInUse machineryInUse =
         this.loadingInformationService.getCargoMachinesInUserFromVessel(
             planReply.getDischargingInformation().getLoadingMachinesList(), vesselId);
-    loadingInformation.setMachineryInUses(machineryInUse);
+    dischargingInformation.setMachineryInUses(machineryInUse);
 
     LoadingStages loadingStages =
         this.loadingInformationService.getLoadingStagesAndMasters(
             planReply.getDischargingInformation().getLoadingStage());
-    loadingInformation.setLoadingStages(loadingStages);
+    dischargingInformation.setDischargingStages(loadingStages);
 
-    loadingInformation.setLoadingInfoStatusId(
+    dischargingInformation.setDischargingInfoStatusId(
         planReply.getDischargingInformation().getLoadingInfoStatusId());
-    loadingInformation.setLoadingPlanArrStatusId(
+    dischargingInformation.setDischargingPlanArrStatusId(
         planReply.getDischargingInformation().getLoadingPlanArrStatusId());
-    loadingInformation.setLoadingPlanDepStatusId(
+    dischargingInformation.setDischargingPlanDepStatusId(
         planReply.getDischargingInformation().getLoadingPlanDepStatusId());
-    loadingInformation.setLoadablePatternId(
+    dischargingInformation.setLoadablePatternId(
         planReply.getDischargingInformation().getLoadablePatternId());
 
     CargoVesselTankDetails vesselTankDetails =
@@ -220,14 +220,14 @@ public class DischargeInformationService {
             OPERATION_TYPE,
             portRotation.get().getId(),
             portRotation.get().getPortId()));
-    loadingInformation.setCargoVesselTankDetails(vesselTankDetails);
+    dischargingInformation.setCargoVesselTankDetails(vesselTankDetails);
 
     LoadingSequences loadingSequences =
         this.loadingInformationService.getLoadingSequence(
             planReply.getDischargingInformation().getLoadingDelays());
-    loadingInformation.setLoadingSequences(loadingSequences);
+    dischargingInformation.setDischargingSequences(loadingSequences);
 
-    loadingPlanResponse.setDischargingInformation(loadingInformation);
+    loadingPlanResponse.setDischargingInformation(dischargingInformation);
 
     List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
         loadingPlanGrpcService.fetchLoadablePlanBallastDetails(
