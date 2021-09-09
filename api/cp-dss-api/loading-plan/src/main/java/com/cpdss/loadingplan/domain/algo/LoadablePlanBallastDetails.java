@@ -15,4 +15,5 @@ public class LoadablePlanBallastDetails {
   private String sg;
   private String tankName;
   private String fillingRatio;
+  private String colorCode;
 }

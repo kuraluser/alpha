@@ -581,6 +581,10 @@ public class LoadablePlanService {
                 details.setCargoNominationId((Long) obA[1]);
                 details.setTankId((Long) obA[2]);
                 details.setQuantityMT(String.valueOf(obA[3]));
+                Optional.ofNullable(obA[4])
+                    .ifPresent(colorCode -> details.setColorCode(String.valueOf(colorCode)));
+                Optional.ofNullable(obA[5])
+                    .ifPresent(abbr -> details.setAbbreviation(String.valueOf(abbr)));
                 stowageDetails.add(details);
               });
     } else {
@@ -593,6 +597,8 @@ public class LoadablePlanService {
             details.setCargoNominationId(lpsd.getCargoNominationId());
             details.setTankId(lpsd.getTankId());
             details.setQuantityMT(String.valueOf(lpsd.getPlannedQuantity()));
+            details.setColorCode(lpsd.getColorCode());
+            details.setAbbreviation(lpsd.getAbbreviation());
             stowageDetails.add(details);
           });
     }
@@ -623,6 +629,9 @@ public class LoadablePlanService {
                 details.setId((Long) obA[0]);
                 details.setTankId((Long) obA[1]);
                 details.setQuantityMT(String.valueOf(obA[2]));
+                Optional.ofNullable(obA[3])
+                    .ifPresent(colorCode -> details.setColorCode(String.valueOf(colorCode)));
+                Optional.ofNullable(obA[4]).ifPresent(sg -> details.setSg(String.valueOf(sg)));
                 ballastDetails.add(details);
               });
     } else {
@@ -634,6 +643,8 @@ public class LoadablePlanService {
             details.setId(lpsd.getId());
             details.setQuantityMT(String.valueOf(lpsd.getQuantity()));
             details.setTankId(lpsd.getTankXId());
+            details.setColorCode(lpsd.getColorCode());
+            details.setSg(lpsd.getSg());
             ballastDetails.add(details);
           });
     }

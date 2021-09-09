@@ -236,7 +236,6 @@ public class LoadingSequenceService {
     this.buildStabilityParamSequence(reply, portEta, stabilityParams);
     this.buildFlowRates(loadingRates, vesselTanks, portEta, response);
     this.buildBallastPumpCategories(vesselId, response);
-    //    this.buildCargoStages(reply, cargoNomDetails, portEta, response);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);
