@@ -162,6 +162,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
    */
   async onPortSelection(port: IVoyagePortDetails) {
     await localStorage.setItem('selectedPortName', port?.name);
+    localStorage.setItem('selectedPortId', port?.portId?.toString());
     this.operationId = port?.operationId;
       if (port?.operationId === 1) {
         this.router.navigate(['loading', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute });

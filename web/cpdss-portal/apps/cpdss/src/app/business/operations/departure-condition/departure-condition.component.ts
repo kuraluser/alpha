@@ -5,7 +5,7 @@ import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.m
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { DecimalPipe } from '@angular/common';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { ULLAGE_STATUS, ULLAGE_STATUS_TEXT } from '../models/loading-discharging.model';
+import { ULLAGE_STATUS, ULLAGE_STATUS_TEXT, ULLAGE_STATUS_VALUE } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
@@ -62,7 +62,8 @@ export class DepartureConditionComponent implements OnInit {
     densityField: "api",
     weightField: "plannedWeight",
     commodityNameField: "abbreviation",
-    fillingPercentageField: 'percentageFilled'
+    fillingPercentageField: 'percentageFilled',
+    showWeight: true
   };
   departureDetailsColumns: any = [];
   cargoConditions: ICargoConditions[] = [];
@@ -72,7 +73,7 @@ export class DepartureConditionComponent implements OnInit {
   rearBallastTanks: IShipBallastTank[][];
   frontBallastTanks: IShipBallastTank[][];
   centerBallastTanks: IShipBallastTank[][];
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'sounding', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'sounding', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit, showWeight: true };
   prevQuantitySelectedUnit: QUANTITY_UNIT;
 
 
@@ -81,6 +82,7 @@ export class DepartureConditionComponent implements OnInit {
   readonly OPERATIONS = OPERATIONS;
   readonly ULLAGE_STATUS = ULLAGE_STATUS;
   readonly ULLAGE_STATUS_TEXT = ULLAGE_STATUS_TEXT;
+  readonly ULLAGE_STATUS_VALUE = ULLAGE_STATUS_VALUE;
 
   constructor(
     private departureConditionTransformationService: DepartureConditionTransformationService,
@@ -90,8 +92,17 @@ export class DepartureConditionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.initSubscriptions();
     this.departureDetailsColumns = this.departureConditionTransformationService.departureDetailsColumns();
     this.getShipLandingTanks();
+  }
+
+  initSubscriptions(){
+    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value)=>{
+      if(value){
+        this.loadingPlanData.loadingInformation.loadingPlanDepStatusId = value;
+      }
+    });
   }
 
   /**

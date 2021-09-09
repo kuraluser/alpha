@@ -539,7 +539,7 @@
 
       event.waitUntil(checkLoadingPlanStatus(syncStore[event.tag].data));
     } else if(syncStore[event.tag].type === 'ullage-update-status'){
-      event.waitUntil(checkLoadingPlanStatus(syncStore[event.tag].data));
+      event.waitUntil(checkUllageUpdateStatus(syncStore[event.tag].data));
     }
   });
 
@@ -604,6 +604,64 @@
 
           case 11:
             sync.type = "loadicator-verification-with-algo-completed"
+            break;
+        }
+        notifyClients(sync)
+
+      }
+
+    }, 3500);
+    setTimeout(() => {
+      if (currentStatus === 3) {
+        sync.type = 'loading-plan-no-response';
+        // sending default status
+        sync.statusId = 1;
+        notifyClients(sync);
+        clearInterval(timer);
+      }
+    }, 7200000);
+  }
+
+  /**
+   * Method to set ullage update status
+   * @param {*} data 
+   */
+
+   async function checkUllageUpdateStatus(data) {
+    const timer = setInterval(async () => {
+      var headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + await getToken()
+      }
+      const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/loading-info/${data?.loadingInfoId}/algo-status`, {
+        method: 'POST',
+        body: JSON.stringify({ processId: data?.processId, conditionType : data?.status ? data?.status : null }),
+        headers: headers
+      });
+      const syncView = await syncResponse.json();
+      const refreshedToken = syncResponse.headers.get('token');
+      const sync = {};
+      sync.refreshedToken = refreshedToken;
+      sync.pattern = data;
+      if (syncView?.responseStatus?.status === "SUCCESS") {
+        sync.status = syncView?.responseStatus?.status;
+        sync.statusId = syncView?.loadingInfoStatusId;
+        switch (syncView?.loadingInfoStatusId) {
+          case 5:
+            sync.type = "plan-generated";
+            clearInterval(timer);
+            break;
+          case 12:
+            sync.type = "algo-processing-started";
+            break;
+          case 13:
+            sync.type = "success";
+            clearInterval(timer);
+            break;
+          case 14:
+            sync.type = "error-occurred";
+            clearInterval(timer);
             break;
         }
         notifyClients(sync)

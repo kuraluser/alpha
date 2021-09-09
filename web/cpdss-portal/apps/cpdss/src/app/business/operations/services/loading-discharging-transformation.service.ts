@@ -28,7 +28,8 @@ export class LoadingDischargingTransformationService {
   private _rateUnitChangeSource: Subject<boolean> = new Subject();
   private _tabChangeSource: Subject<OPERATION_TAB> = new Subject();
   private _validateUllageData: Subject<any> = new Subject();
-  private _setUllageBtnStatus: Subject<any> = new Subject();
+  private _setUllageArrivalBtnStatus: Subject<any> = new Subject();
+  private _setUllageDepartureBtnStatus: Subject<any> = new Subject();
   private _showUllageErrorPopup: Subject<boolean> = new Subject();
   public isLoadingInfoComplete: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public isLoadingInstructionsComplete: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -46,7 +47,8 @@ export class LoadingDischargingTransformationService {
   rateUnitChange$ = this._rateUnitChangeSource.asObservable();
   tabChange$ = this._tabChangeSource.asObservable();
   validateUllageData$ = this._validateUllageData.asObservable();
-  setUllageBtnStatus$ = this._setUllageBtnStatus.asObservable();
+  setUllageArrivalBtnStatus$ = this._setUllageArrivalBtnStatus.asObservable();
+  setUllageDepartureBtnStatus$ = this._setUllageDepartureBtnStatus.asObservable();
   showUllageErrorPopup$ = this._showUllageErrorPopup.asObservable();
 
   constructor(
@@ -1091,8 +1093,17 @@ export class LoadingDischargingTransformationService {
    *
    * @memberof LoadingDischargingTransformationService
    */
-  setUllageBtnStatus(value){
-    this._setUllageBtnStatus.next(value);
+  setUllageArrivalBtnStatus(value){
+    this._setUllageArrivalBtnStatus.next(value);
+  }
+
+  /**
+   * Method for updating button status
+   *
+   * @memberof LoadingDischargingTransformationService
+   */
+   setUllageDepartureBtnStatus(value){
+    this._setUllageDepartureBtnStatus.next(value);
   }
 
   /**

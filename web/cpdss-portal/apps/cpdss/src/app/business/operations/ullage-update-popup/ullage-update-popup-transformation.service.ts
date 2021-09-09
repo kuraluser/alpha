@@ -88,13 +88,13 @@ export class UllageUpdatePopupTransformationService {
       for (let tankIndex = 0; tankIndex < cargoTank[groupIndex].length; tankIndex++) {
         for (let index = 0; index < cargoTankQuantities?.length; index++) {
           if (cargoTankQuantities[index]?.tankId === cargoTank[groupIndex][tankIndex]?.id) {
-            cargoTank[groupIndex][tankIndex].commodity = cargoTankQuantities[index];
+            cargoTank[groupIndex][tankIndex].commodity = JSON.parse(JSON.stringify(cargoTankQuantities[index]));
             const plannedWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
             cargoTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight.toFixed(2)) : 0;
             const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
             cargoTank[groupIndex][tankIndex].commodity.actualWeight = cargoTankQuantities[index].quantity;
             cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, AppConfigurationService.settings.volumeBaseUnit, cargoTank[groupIndex][tankIndex].commodity?.api);
-            cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex])
+            cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex]);
             break;
           }
         }
@@ -351,7 +351,7 @@ export class UllageUpdatePopupTransformationService {
 * @returns {ICargoDetailValueObject}
 * @memberof UllageUpdatePopupTransformationService
 */
-  getFormatedCargoDetails(cargoTankDetail: ICargoDetail, cargoRow: any, isEditMode = true, isAdd = true) {
+  getFormatedCargoDetails(cargoTankDetail: ICargoDetail, cargoRow: any, isEditMode = true, isAdd : boolean) {
     const _cargoDetail = <ICargoDetailValueObject>{};
     _cargoDetail.blRefNo = new ValueObject<string>(cargoTankDetail?.blRefNo, true, isEditMode);
     _cargoDetail.bbl = new ValueObject<number>(cargoTankDetail?.quantityBbls, true, isEditMode);
@@ -361,11 +361,12 @@ export class UllageUpdatePopupTransformationService {
     _cargoDetail.api = new ValueObject<number>(cargoTankDetail?.api, true, isEditMode);
     _cargoDetail.temp = new ValueObject<number>(cargoTankDetail?.temperature, true, isEditMode);
     _cargoDetail.cargoName = cargoRow?.cargoAbbrevation;
-    _cargoDetail.isAdd = isAdd;
+    _cargoDetail.isNewRow = isAdd;
     _cargoDetail.cargoNominationId = cargoRow?.cargoNominationId;
     _cargoDetail.portId = cargoTankDetail?.portId;
     _cargoDetail.cargoId = cargoRow?.cargoId
     _cargoDetail.isAdd = true;
+    _cargoDetail.id = cargoTankDetail?.id;
     return _cargoDetail;
   }
 
@@ -381,9 +382,9 @@ export class UllageUpdatePopupTransformationService {
   getFormatedTankDetailsCargo(cargoTank: any, isEditMode = true, isPlanned: boolean, isAdd = true) {
     const _tankDetails = <ITankDetailsValueObject>{};
     _tankDetails.tankName = new ValueObject<string>(cargoTank?.tankShortName ? cargoTank?.tankShortName : 0, true, false, false, true);
-    _tankDetails.ullage = new ValueObject<number>(cargoTank?.ullage && !isPlanned ? cargoTank?.ullage : 0, true, isEditMode, false, true);
-    _tankDetails.temperature = new ValueObject<number>(cargoTank?.temperature && !isPlanned ? cargoTank?.temperature : 0, true, isEditMode, false, true);
-    _tankDetails.api = new ValueObject<number>(cargoTank?.api && !isPlanned ? cargoTank?.api : 0, true, isEditMode, false, true);
+    _tankDetails.ullage = new ValueObject<number>(cargoTank?.ullage && !isPlanned ? Number(cargoTank?.ullage) : 0, true, isEditMode, false, true);
+    _tankDetails.temperature = new ValueObject<number>(cargoTank?.temperature && !isPlanned ? Number(cargoTank?.temperature) : 0, true, isEditMode, false, true);
+    _tankDetails.api = new ValueObject<number>(cargoTank?.api && !isPlanned ? Number(cargoTank?.api) : 0, true, isEditMode, false, true);
     _tankDetails.quantity = new ValueObject<number>(cargoTank?.quantity && !isPlanned ? cargoTank?.quantity : 0, true, false, false, true);
     _tankDetails.id = cargoTank.id;
     _tankDetails.tankId = cargoTank.tankId;
@@ -409,8 +410,8 @@ export class UllageUpdatePopupTransformationService {
   getFormatedTankDetailsBallast(ballastTank: any, isEditMode = true, isPlanned: boolean, isAdd = true) {
     const _tankDetails = <ITankDetailsValueObject>{};
     _tankDetails.tankName = new ValueObject<string>(ballastTank?.tankShortName ? ballastTank?.tankShortName : 0, true, false, false, true);
-    _tankDetails.quantity = new ValueObject<number | string>(ballastTank?.quantity && !isPlanned ? ballastTank?.quantity : 0, true, false, false, true);
-    _tankDetails.sounding = new ValueObject<number | string>(ballastTank.sounding && !isPlanned ? ballastTank.sounding : 0, true, isEditMode, false, true);
+    _tankDetails.quantity = new ValueObject<number | string>(ballastTank?.quantity && !isPlanned ? Number(ballastTank?.quantity) : 0, true, false, false, true);
+    _tankDetails.sounding = new ValueObject<number | string>(ballastTank.sounding && !isPlanned ? Number(ballastTank.sounding) : 0, true, isEditMode, false, true);
     _tankDetails.tankId = ballastTank.tankId;
     _tankDetails.loadablePatternId = ballastTank.loadablePatternId;
     _tankDetails.temperature = new ValueObject<number>(ballastTank.temperature ? ballastTank.temperature : '', true, false, false, true);
@@ -438,7 +439,7 @@ export class UllageUpdatePopupTransformationService {
 
     const _tankDetails = <ITankDetailsValueObject>{};
     _tankDetails.tankName = new ValueObject<string>(bunkerTank?.tankShortName ? bunkerTank?.tankShortName : '', true, false, false, true);
-    _tankDetails.quantity = new ValueObject<number>(bunkerTank?.quantity && !isPlanned? bunkerTank?.quantity : 0, true, isEditMode, false, true);
+    _tankDetails.quantity = new ValueObject<number>(bunkerTank?.quantity && !isPlanned? Number(bunkerTank?.quantity) : 0, true, isEditMode, false, true);
     _tankDetails.tankId = bunkerTank.tankId;
     _tankDetails.density = new ValueObject<number>(bunkerTank.density && !isPlanned ? bunkerTank.density : 0, true, false, false, true);
     _tankDetails.loadablePatternId = bunkerTank.loadablePatternId;
@@ -466,27 +467,27 @@ export class UllageUpdatePopupTransformationService {
     cargoQuantity.api = data.blAvgApi;
     cargoQuantity.cargoNominationId = data.cargoNominationId;
     cargoQuantity.plan = {
-      bbl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.blAvgApi) ?? 0,
-      lt: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, data.blAvgApi) ?? 0,
+      bbl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.nominationApi) ?? 0,
+      lt: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, data.nominationApi) ?? 0,
       mt: data.plannedQuantityTotal ?? 0,
-      kl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, data.blAvgApi) ?? 0,
-      api: data.blAvgApi,
-      temp: data.blAvgTemp
+      kl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, data.nominationApi) ?? 0,
+      api: Number(data.nominationApi),
+      temp: data.nominationTemp
     };
     cargoQuantity.actual = {
-      bbl: this.quantityPipe.transform(data.actualQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.blAvgApi),
-      lt: this.quantityPipe.transform(data.actualQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, data.blAvgApi),
+      bbl: this.quantityPipe.transform(data.actualQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.actualAvgApi),
+      lt: this.quantityPipe.transform(data.actualQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, data.actualAvgApi),
       mt: data.actualQuantityTotal,
-      kl: this.quantityPipe.transform(data.actualQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, data.blAvgApi),
-      api: data.blAvgApi,
-      temp: data.blAvgTemp
+      kl: this.quantityPipe.transform(data.actualQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, data.actualAvgApi),
+      api: Number(data.actualAvgApi),
+      temp: data.actualAvgTemp
     };
     cargoQuantity.blFigure = {
       bbl: this.quantityPipe.transform(data.blQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.blAvgApi),
       lt: this.quantityPipe.transform(data.blQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, data.blAvgApi),
       mt: data.blQuantityTotal,
       kl: this.quantityPipe.transform(data.blQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, data.blAvgApi),
-      api: data.blAvgApi,
+      api: Number(data?.blAvgApi),
       temp: data.blAvgTemp
     };
     cargoQuantity.difference = {
