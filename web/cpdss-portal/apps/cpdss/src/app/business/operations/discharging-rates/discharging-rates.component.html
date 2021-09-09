@@ -17,8 +17,8 @@
           <label for="min_discharging_rate" class="col-5 no-left-padding">{{'DISCHARGING_RATE_INITIAL_DISCHARGING_RATE'
             |
             translate}}</label>
-          <div class="col error-icon-wrapper">
-            <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+          <div class="col error-icon-wrapper text-right">
+            <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control text-right"
               *ngIf="editMode;else initialDischargingRate" id="initial_discharging_rate"
               formControlName="initialDischargingRate"
               placeholder="{{'DISCHARGING_RATE_INITIAL_DISCHARGING_RATE_PLACEHOLDER' | translate}}"
@@ -33,8 +33,8 @@
         <div class="row form-group">
           <label for="max_discharging_rate" class="col-5 no-left-padding">{{'DISCHARGING_RATE_MAX_DISCHARGING_RATE' |
             translate}}</label>
-          <div class="col error-icon-wrapper">
-            <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" *ngIf="editMode;else maxDischargingRef" id="max_discharging_rate"
+          <div class="col error-icon-wrapper text-right">
+            <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control text-right" *ngIf="editMode;else maxDischargingRef" id="max_discharging_rate"
               formControlName="maxDischargingRate"
               placeholder="{{'DISCHARGING_RATE_MAX_DISCHARGING_PLACEHOLDER' | translate}}"
               (change)="onChange('maxDischargingRate')" [readonly]="false">
@@ -50,8 +50,8 @@
             class="col-5 no-left-padding">{{'DISCHARGING_RATE_MIN_BALLAST_RATE'
             |
             translate}}</label>
-          <div class="col error-icon-wrapper">
-            <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+          <div class="col error-icon-wrapper text-right">
+            <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control text-right"
               *ngIf="editMode;else minDeballstRef" id="min_debellast_discharging_rate"
               formControlName="minBallastingRate"
               placeholder="{{'DISCHARGING_RATE_MIN_BALLAST_RATE_PLACEHOLDER'| translate}}"
@@ -66,8 +66,8 @@
           <label for="max_de_ballast_discharging_rate"
             class="col-5 no-left-padding">{{'DISCHARGING_RATE_MAX_BALLAST_RATE'|
             translate}}</label>
-          <div class="col error-icon-wrapper">
-            <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+          <div class="col error-icon-wrapper text-right">
+            <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control text-right"
               *ngIf="editMode;else maxDeballstRef" id="max_de_ballast_discharging_rate"
               formControlName="maxBallastingRate"
               placeholder="{{'DISCHARGING_RATE_MAX_BALLAST_RATE_PLACEHOLDER'| translate}}"

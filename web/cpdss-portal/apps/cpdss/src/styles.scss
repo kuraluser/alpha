@@ -1489,6 +1489,26 @@ td.sl div{
     height: 21vh;
     max-height: 500px;
   }
+  &.loadable-plan-ballast{
+    .tank-outer-pattern{
+      padding: 0 90px 0 80px;
+      .ship-front-pattern{
+        width: 90px;
+      }
+      .ship-rear-pattern{
+        width: 90px;
+        .rear-top-pattern, .rear-bottom-pattern{
+          border-right: 86px solid transparent;
+          &:after{
+            border-right: 86px solid transparent;
+          }
+        }
+      }
+      .rear-tank-ullage-and-percentage{
+        left: 20%!important;
+      }
+    }
+  }
 }
 
 .ship-front-pattern{
@@ -2703,6 +2723,8 @@ textarea{
     left: 14px !important;
     margin-top: 0 !important;
     width: auto !important;
+    right: 2px;
+    text-align: left;
   }
   .tank-item-valign{
     position: absolute;
