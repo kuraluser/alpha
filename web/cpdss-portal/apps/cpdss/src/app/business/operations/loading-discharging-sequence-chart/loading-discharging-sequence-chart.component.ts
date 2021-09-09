@@ -4,7 +4,7 @@ import * as Highcharts from 'highcharts';
 import Theme from 'highcharts/themes/grid-light';
 import GanttChart from 'highcharts/modules/gantt';
 import Annotations from 'highcharts/modules/annotations';
-import { ISequenceData } from './loading-discharging-sequence-chart.model';
+import { ISequenceData, LOADING_SEQUENCE_CHARTS } from './loading-discharging-sequence-chart.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { OPERATIONS } from '../../core/models/common.model';
 import { LoadingDischargingSequenceApiService } from '../services/loading-discharging-sequence-api.service';
@@ -56,6 +56,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
   static _currentQuantitySelectedUnit: QUANTITY_UNIT;
   static _currentRateSelectedUnit: RATE_UNIT;
   static _quantityDecimalFormatPipe;
+  static charts: { [key: string]: number } = {};
 
   // Input fields
   @Input() vesselId: number;
@@ -88,7 +89,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
   }
 
   // Public fileds
-  OPERATIONS = OPERATIONS;
+  readonly OPERATIONS = OPERATIONS;
+  readonly LOADING_SEQUENCE_CHARTS: LOADING_SEQUENCE_CHARTS;
   Highcharts: typeof Highcharts = Highcharts;
   cargoSequenceGanttChart: Highcharts.Options;
   ballastSequenceGanttChart: Highcharts.Options;
@@ -96,12 +98,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
   ballastPumpSequenceGanttChart: Highcharts.Options;
   stabilityGanttChart: Highcharts.Options;
   flowRateAreaChart: Highcharts.Options;
-  cargoSequenceChartSeries: Array<any>;
-  ballastSequenceChartSeries: Array<any>;
-  cargoPumpSequenceChartSeries: Array<any>;
-  ballastPumpSequenceChartSeries: Array<any>;
-  stabilityChartSeries: Array<any>;
-  flowRateChartSeries: Array<any>;
+  cargoSequenceChartSeries: Array<Highcharts.SeriesOptionsType>;
+  ballastSequenceChartSeries: Array<Highcharts.SeriesOptionsType>;
+  cargoPumpSequenceChartSeries: Array<Highcharts.SeriesOptionsType>;
+  ballastPumpSequenceChartSeries: Array<Highcharts.SeriesOptionsType>;
+  stabilityChartSeries: Array<Highcharts.SeriesOptionsType>;
+  flowRateChartSeries: Array<Highcharts.SeriesOptionsType>;
   minXAxisValue: number;
   maxXAxisValue: number;
   stageInterval: number;
@@ -171,30 +173,30 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     if (LoadingDischargingSequenceChartComponent.sequenceData) {
       LoadingDischargingSequenceChartComponent.sequenceData = this.loadingDischargingTransformationService.transformSequenceDataToSelectedUnit(LoadingDischargingSequenceChartComponent.sequenceData, this.currentQuantitySelectedUnit, this.currentRateSelectedUnit);
 
-      this.setCargoTankSequenceChartOptions();
       this.setCargoTankSequenceData();
+      this.setCargoTankSequenceChartOptions();
       this.updateCargoTankChart = true;
 
       if (this.operation === OPERATIONS.DISCHARGING) {
-        this.setCargoPumpSequenceChartOptions();
         this.setCargoPumpSequenceData();
+        this.setCargoPumpSequenceChartOptions();
         this.updateCargoPumpChart = true;
       }
 
-      this.setBallastTankSequenceChartOptions();
       this.setBallastTankSequenceData();
+      this.setBallastTankSequenceChartOptions();
       this.updateBallastTankChart = true;
 
-      this.setBallastPumpSequenceChartOptions();
       this.setBallastPumpSequenceData();
+      this.setBallastPumpSequenceChartOptions();
       this.updateBallastPumpChart = true;
 
-      this.setFlowRateChartOptions();
       this.setFlowRateData();
+      this.setFlowRateChartOptions();
       this.updateFlowRateChart = true;
 
-      this.setStabilityChartOptions();
       this.setStabilityData();
+      this.setStabilityChartOptions();
       this.updateStabilityParamsChart = true;
     }
   }
@@ -273,12 +275,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       });
     });
     this.cargoSequenceChartSeries = [{
+      type: 'gantt',
       name: `${LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING ? LoadingDischargingSequenceChartComponent.translationKeys['LOADING_SEQUENCE_CHART_LABEL'] : LoadingDischargingSequenceChartComponent.translationKeys['DISCHARGING_SEQUENCE_CHART_LABEL']}`,
       custom: LoadingDischargingSequenceChartComponent.sequenceData?.cargoStages,
       showInLegend: false,
       data: cargoSequenceSeriesData
     }];
-    this.cargoSequenceGanttChart.series = this.cargoSequenceChartSeries;
   }
 
   /**
@@ -292,7 +294,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 255, // Keep all charts left aligned
+        marginLeft: 280, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
           render: this.sequnceChartRender
@@ -354,7 +356,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toFixed(1);
+              return number.toFixed(2);
             }
           },
           grid: {
@@ -394,7 +396,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 const stage = LoadingDischargingSequenceChartComponent.sequenceData?.cargoStages.find((data: any) => data.start <= this.value && data.end > this.value);
 
                 stage?.cargos?.forEach(cargo => {
-                  cargosLabel += `<p><span class="badge-custom mx-1" style="background-color: ${cargo?.color}">${cargo?.abbreviation}</span> - ${cargo?.quantity} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}</p>`;
+                  cargosLabel += `<p><span class="badge-custom mx-1" style="background-color: ${cargo?.color}">${cargo?.abbreviation}</span> - ${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(cargo?.quantity, LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit)} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}</p>`;
                 });
 
                 const duration = (stage?.end - stage?.start) / (60 * 60 * 1000);
@@ -429,7 +431,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         {
           opposite: false,
           title: {
-            text: `${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOTAL']}: ${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(LoadingDischargingSequenceChartComponent.sequenceData?.cargoTankCategories.reduce((a, b) => a + b.quantity, 0), LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit)} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}`,
+            text: `${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOTAL']}: ${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(LoadingDischargingSequenceChartComponent.sequenceData?.cargoTankCategories.reduce((a, b) => a + Number(b.quantity), 0), LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit)} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}`,
           },
           lineColor: '#bebebe',
           lineWidth: 1,
@@ -576,7 +578,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             {
               width: 200,
               categories: LoadingDischargingSequenceChartComponent.sequenceData?.cargoTankCategories.map(function (item) {
-                return item.quantity.toString();
+                return LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(item.quantity, LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit);
               }),
               title: {
                 text: `<div class="sequence-chart-quantity-column">${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_QUANTITY']} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}</div>`,
@@ -676,12 +678,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       });
     });
     this.cargoPumpSequenceChartSeries = [{
+      type: 'gantt',
       name: `${LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING ? LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_LOADING_RATE'] : LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_DISCHARGING_RATE']}`,
       custom: LoadingDischargingSequenceChartComponent.sequenceData?.cargoStages,
       showInLegend: false,
       data: cargoPumpSequenceSeriesData
     }];
-    this.cargoPumpSequenceGanttChart.series = this.cargoPumpSequenceChartSeries;
   }
   /**
    * Set cargo pump chart options
@@ -694,7 +696,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 255, // Keep all charts left aligned
+        marginLeft: 280, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
         }
@@ -742,7 +744,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toFixed(1);
+              return number.toFixed(2);
             }
           },
           grid: {
@@ -896,12 +898,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       });
     });
     this.ballastSequenceChartSeries = [{
+      type: 'gantt',
       name: `${LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING ? LoadingDischargingSequenceChartComponent.translationKeys['LOADING_SEQUENCE_CHART_LABEL'] : LoadingDischargingSequenceChartComponent.translationKeys['DISCHARGING_SEQUENCE_CHART_LABEL']}`,
       custom: LoadingDischargingSequenceChartComponent.sequenceData?.cargoStages,
       showInLegend: false,
       data: ballastSequenceSeriesData
     }];
-    this.ballastSequenceGanttChart.series = this.ballastSequenceChartSeries;
   }
 
   /**
@@ -915,7 +917,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 255, // Keep all charts left aligned
+        marginLeft: 280, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
         }
@@ -975,7 +977,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toFixed(1);
+              return number.toFixed(2);
             }
           },
           grid: {
@@ -1027,7 +1029,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 quantity += Number(tank.quantity);
               });
               const categoryLabel =
-                `<div class="content-ellipsis">${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(quantity, LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit)} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}</div>
+                `<div class="content-ellipsis">${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(quantity, QUANTITY_UNIT.MT)} ${QUANTITY_UNIT.MT}</div>
                   `;
 
               return categoryLabel;
@@ -1118,7 +1120,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
                 </tr>
                 <tr>
                   <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_QUANTITY']}</th>
-                  <td>${quantity}</td>
+                  <td>${quantity}${QUANTITY_UNIT.MT}</td>
                 </tr>
                 <tr>
                   <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_SOUNDING']}</th>
@@ -1160,12 +1162,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     });
 
     this.ballastPumpSequenceChartSeries = [{
+      type: 'gantt',
       name: `${LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING ? LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_DEBALLASTING_RATE'] : LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_DISCHARGING_RATE']}`,
       custom: LoadingDischargingSequenceChartComponent.sequenceData?.cargoStages,
       showInLegend: false,
       data: ballastPumpSequenceSeriesData
     }];
-    this.ballastPumpSequenceGanttChart.series = this.ballastPumpSequenceChartSeries;
   }
 
   /**
@@ -1179,7 +1181,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 255, // Keep all charts left aligned
+        marginLeft: 280, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
         }
@@ -1238,7 +1240,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toFixed(1);
+              return number.toFixed(2);
             }
           },
           grid: {
@@ -1391,15 +1393,15 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         // step: 'left'
       },
       ...LoadingDischargingSequenceChartComponent.sequenceData?.flowRates?.map(item => {
-        return {
+        const series: Highcharts.SeriesOptionsType = {
           name: item.tankName,
           type: 'line',
           custom: LoadingDischargingSequenceChartComponent.sequenceData?.cargoStages,
           data: item.data,
           step: 'left'
         }
+        return series;
       })];
-    this.flowRateAreaChart.series = this.flowRateChartSeries;
   }
 
   /**
@@ -1413,7 +1415,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 255, // Keep all charts left aligned
+        marginLeft: 280, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
         }
@@ -1423,13 +1425,16 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         itemMarginBottom: 20
       },
       title: {
-        text: null,
+        text: null
       },
       plotOptions: {
         series: {
           events: {
             hide: this.makeSumSeries,
             show: this.makeSumSeries,
+            legendItemClick: function () {
+              return false;
+            }
           }
         },
         areaspline: {
@@ -1470,7 +1475,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toFixed(1);
+              return number.toFixed(2);
             }
           },
           // tickInterval: 1000 * 60 * 60,
@@ -1533,65 +1538,93 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
    * @memberof LoadingDischargingSequenceChartComponent
    */
   setStabilityData() {
-    this.stabilityChartSeries = [
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_FORE_DRAFT'],
-        custom: {
-          showFinalValue: true
-        },
-        data: LoadingDischargingSequenceChartComponent.sequenceData?.stabilityParams.find(item => item.name === 'fore_draft')?.data,
-      },
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_AFT_DRAFT'],
-        custom: {
-          showFinalValue: true
-        },
-        data: LoadingDischargingSequenceChartComponent.sequenceData?.stabilityParams.find(item => item.name === 'aft_draft')?.data,
-      },
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TRIM'],
-        custom: {
-          showFinalValue: true
-        },
-        data: LoadingDischargingSequenceChartComponent.sequenceData?.stabilityParams.find(item => item.name === 'trim')?.data,
-      },
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_UKC'],
-        custom: {
-          showFinalValue: true
-        },
-        data: LoadingDischargingSequenceChartComponent.sequenceData?.stabilityParams.find(item => item.name === 'ukc')?.data,
-      },
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_GM'],
-        custom: {
-          showFinalValue: true
-        },
-        data: LoadingDischargingSequenceChartComponent.sequenceData?.stabilityParams.find(item => item.name === 'gm')?.data,
-      },
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_SF'],
-        data: LoadingDischargingSequenceChartComponent.sequenceData?.stabilityParams.find(item => item.name === 'sf')?.data,
-      },
-      {
-        yAxis: 0,
-        type: 'areaspline',
-        name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_BM'],
-        data: LoadingDischargingSequenceChartComponent.sequenceData?.stabilityParams.find(item => item.name === 'bm')?.data,
-      }];
-    this.stabilityGanttChart.series = this.stabilityChartSeries;
+    this.stabilityChartSeries = [...LoadingDischargingSequenceChartComponent.sequenceData?.stabilityParams.map(item => {
+      let series;
+      switch (item?.name) {
+        case 'fore_draft':
+          series = {
+            yAxis: 0,
+            type: 'areaspline',
+            name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_FORE_DRAFT'],
+            custom: {
+              showFinalValue: true
+            },
+            data: item?.data,
+          };
+          break;
+
+        case 'aft_draft':
+          series = {
+            yAxis: 0,
+            type: 'areaspline',
+            name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_AFT_DRAFT'],
+            custom: {
+              showFinalValue: true
+            },
+            data: item?.data,
+          };
+          break;
+
+        case 'trim':
+          series = {
+            yAxis: 0,
+            type: 'areaspline',
+            name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TRIM'],
+            custom: {
+              showFinalValue: true
+            },
+            data: item?.data,
+          };
+          break;
+
+        case 'ukc':
+          series = {
+            yAxis: 0,
+            type: 'areaspline',
+            name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_UKC'],
+            custom: {
+              showFinalValue: true
+            },
+            data: item?.data,
+          };
+          break;
+
+        case 'gm':
+          series = {
+            yAxis: 0,
+            type: 'areaspline',
+            name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_GM'],
+            custom: {
+              showFinalValue: true
+            },
+            data: item?.data,
+          };
+          break;
+
+        case 'sf':
+          series = {
+            yAxis: 0,
+            type: 'areaspline',
+            name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_SF'],
+            data: item?.data,
+          };
+          break;
+
+        case 'bm':
+          series = {
+            yAxis: 0,
+            type: 'areaspline',
+            name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_BM'],
+            data: item?.data,
+          };
+          break;
+
+        default:
+          break;
+      }
+
+      return series;
+    })];
   }
 
   /**
@@ -1605,7 +1638,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         enabled: false
       },
       chart: {
-        marginLeft: 255, // Keep all charts left aligned
+        marginLeft: 280, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
           render: this.drawTable
@@ -1648,7 +1681,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             align: 'low',
             offset: 0,
             rotation: 0,
-            x: -255,
+            x: -275,
             y: 15,
             text: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_DRAFT'],
           },
@@ -1663,7 +1696,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
             formatter: function (y) {
               const hours = (1000 * 60 * 60),
                 number = (Number(this.value) - this.axis.min) / (hours);
-              return number.toFixed(1);
+              return number.toFixed(2);
             }
           },
           tickPositions: this.stageTickPositions,
@@ -1678,7 +1711,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           lineWidth: 0,
           // startOnTick: true,
           opposite: true,
-          top: 45,
+          top: 50,
           tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
           tickPosition: 'inside',
@@ -1707,7 +1740,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         borderWidth: 1,
         borderRadius: 20,
         followPointer: true,
-        enabled: false
+        enabled: true,
+        xDateFormat: '%A, %b %e, %Y %H:%M'
       },
       series: this.stabilityChartSeries
     };
@@ -1734,20 +1768,22 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       i;
     for (i = 0; i < Highcharts.charts.length; i++) {
       chart = Highcharts.charts[i];
-      e = chart?.pointer?.normalize(e); // Find coordinates within the chart
       points = [];
-      chart?.xAxis[0].drawCrosshair(e);
-      chart?.series.forEach((p) => {
-        const point = this.searchPoint(e, chart, p);
-        if (point) {
-          points.push(point)
-        }
-      })
+      if (chart) {
+        e = chart?.pointer?.normalize(e); // Find coordinates within the chart
+        chart?.xAxis[0].drawCrosshair(e);
+        chart?.series.forEach((p) => {
+          const point = this.searchPoint(e, chart, p);
+          if (point) {
+            points.push(point)
+          }
+        });
+      }
 
       if (points.length) {
         let number = 0;
         points.forEach((p, index: number) => {
-          if (!p?.series?.visible) {
+          if (!p?.series?.visible && chart.index !== LoadingDischargingSequenceChartComponent.charts[LOADING_SEQUENCE_CHARTS.STABILITY_PARAMS]) {
             points.splice(index - number, 1);
             number++;
           }
@@ -1812,7 +1848,15 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
           color: '#666666'
         })
         .addClass('table-header-text')
-        .add();
+        .add()
+        .on('mouseover', function () {
+          const index = Number(this.getAttribute('id'));
+          const point = chart.series[0].points[index];
+          chart.tooltip.refresh(point);
+        })
+        .on('mouseout', function () {
+          chart.tooltip.hide();
+        });
       // if (serie.options?.custom?.showFinalValue) {
       //   renderer.text(
       //     serie.data[serie.data.length - 1].y, chart.plotLeft - 2 * tablePadding - cellPadding, tableTop + (serie_index + 2) * rowHeight - cellPadding).css({
@@ -1829,7 +1873,11 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
         if (series[i].data[category_index]) {
           cellWidth = series[i].data[category_index].plotX;
           // if (category_index !== 0) {
-          renderer.text(series[i].data[category_index]?.y, chart.plotLeft + series[i].data[category_index].plotX, tableTop + (i + 2) * rowHeight - cellPadding).attr({
+          const seriesName = series[i].name;
+          const text = series[i].data[category_index]?.y;
+          const x = chart.plotLeft + series[i].data[category_index].plotX;
+          const y = tableTop + (i + 2) * rowHeight - cellPadding;
+          renderer.text(`<div class="content-ellipsis">${text}</div>`, x, y, true).attr({
             align: 'center',
           }).css({
             color: '#666666'
@@ -1973,24 +2021,27 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
       x = [];
     let sum, flag, count;
 
-    series[0].update({
-      data: []
-    }, false);
-    series.forEach(function (p, z) {
-      if (p.visible === true) {
-        p.data.forEach(function (serie, i) {
-          flag = true;
-          for (let b = 0; b < x.length; b++) {
-            if (serie.x === x[b]) {
-              flag = false;
+    if (series) {
+      series[0].update({
+        data: []
+      }, false);
+
+      series.forEach(function (p, z) {
+        if (p.visible === true) {
+          p.data.forEach(function (serie, i) {
+            flag = true;
+            for (let b = 0; b < x.length; b++) {
+              if (serie.x === x[b]) {
+                flag = false;
+              }
             }
-          }
-          if (flag) {
-            x.push(serie.x);
-          }
-        });
-      }
-    });
+            if (flag) {
+              x.push(serie.x);
+            }
+          });
+        }
+      });
+    }
     for (let i = 0; i < x.length; i++) {
       sum = 0; count = 0;
       series.forEach(function (p, k) {
@@ -2010,4 +2061,76 @@ export class LoadingDischargingSequenceChartComponent implements OnInit {
     }
     chart.redraw();
   }
+
+  /**
+   * Get instance of charts
+   *
+   * @param {Highcharts.Chart} chart
+   * @param {LOADING_SEQUENCE_CHARTS} type
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  setChartInstance(chart: Highcharts.Chart, type: LOADING_SEQUENCE_CHARTS) {
+    LoadingDischargingSequenceChartComponent.charts[type] = chart.index;
+  }
+
+  /**
+   * Set Cargo tank chart Instance
+   *
+   * @param {Highcharts.Chart} chart
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  setCargoTankChartInstance(chart: Highcharts.Chart) {
+    this.setChartInstance(chart, LOADING_SEQUENCE_CHARTS.CARGO_TANK);
+  }
+
+  /**
+   * Set Cargo pump chart Instance
+   *
+   * @param {Highcharts.Chart} chart
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  setCargoPumpChartInstance(chart: Highcharts.Chart) {
+    this.setChartInstance(chart, LOADING_SEQUENCE_CHARTS.CARGO_PUMP);
+  }
+
+  /**
+   * Set Ballast tank chart Instance
+   *
+   * @param {Highcharts.Chart} chart
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  setBallastTankChartInstance(chart: Highcharts.Chart) {
+    this.setChartInstance(chart, LOADING_SEQUENCE_CHARTS.BALLAST_TANK);
+  }
+
+  /**
+   * Set Ballast Pumpo chart Instance
+   *
+   * @param {Highcharts.Chart} chart
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  setBallastPumpChartInstance(chart: Highcharts.Chart) {
+    this.setChartInstance(chart, LOADING_SEQUENCE_CHARTS.BALLAST_PUMP);
+  }
+
+  /**
+   * Set Flow rate chart Instance
+   *
+   * @param {Highcharts.Chart} chart
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  setFlowRateChartInstance(chart: Highcharts.Chart) {
+    this.setChartInstance(chart, LOADING_SEQUENCE_CHARTS.FLOW_RATE);
+  }
+
+  /**
+   * Set stability params chart Instance
+   *
+   * @param {Highcharts.Chart} chart
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  setStabilityParamsChartInstance(chart: Highcharts.Chart) {
+    this.setChartInstance(chart, LOADING_SEQUENCE_CHARTS.STABILITY_PARAMS);
+  }
+
 }

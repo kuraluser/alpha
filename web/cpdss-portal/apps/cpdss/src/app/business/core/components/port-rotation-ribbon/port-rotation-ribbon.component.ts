@@ -96,7 +96,6 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     this.carouselDateFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat)
     this.resizeSubscription$ = this.resizeObservable$.subscribe((evt) => {
       this.setCarouselNumVisble(evt.target['innerWidth']);
-      this.setPortSelection(this.selectedPort);
     })
     this.portOrderSubscription$ = this.editPortRotationApiService.portOrderChange.subscribe((data) => {
       if (data) {
@@ -152,6 +151,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     }
     setTimeout(() => {
       this.portCarousel = [...this.transformCarouselData(this.portList)];
+      this.setPortSelection(this.selectedPort);
     }, 50)
   }
 
@@ -737,23 +737,11 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    */
   setPortSelection(port: IEditPortRotation) {
     if (this.groupSelection) {
-      const cards = this.elementRef.nativeElement.getElementsByClassName('p-carousel-item selected');
-      for (let i = 0; i < cards.length; i = i++) {
-        cards[i].classList.remove('selected');;
-      }
-
-      const selectedPortsIndexes = [];
       this.portCarousel = this.portCarousel.map((_port, index) => {
         if (_port?.id === port?.id) {
           _port.isSelected = true;
-          selectedPortsIndexes.push(index);
         }
         return _port;
-      });
-
-      selectedPortsIndexes.forEach(index => {
-        const _cards = this.elementRef.nativeElement.getElementsByClassName('p-carousel-item');
-        _cards[index].classList.add('selected');
       });
     }
   }

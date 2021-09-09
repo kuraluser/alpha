@@ -95,6 +95,13 @@ jobs:
       options: -PbuildEnv=$(ENV)
       tasks: jib
   - task: Gradle@2
+    displayName: Run Jib Discharge-Plan
+    inputs:
+      wrapperScript: api/cp-dss-api/discharge-plan/gradlew
+      cwd: api/cp-dss-api/discharge-plan
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Gradle@2
     displayName: Run Jib Gateway
     inputs:
       wrapperScript: api/cp-dss-api/gateway/gradlew

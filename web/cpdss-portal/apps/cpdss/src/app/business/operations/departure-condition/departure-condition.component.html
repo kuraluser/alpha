@@ -47,10 +47,10 @@
         </div>
         <div class="row pt-10">
             <div class="col text-center">
-                <button (click)="display = true" class="btn btn-main mr-5 mt-5" id="cargo_status">{{ULLAGE_STATUS_TEXT[loadingPlanData?.loadingInformation?.loadingPlanDepStatusId] }}</button>
+                <button class="btn btn-main mr-5 mt-5" id="cargo_status">{{ULLAGE_STATUS_TEXT[loadingPlanData?.loadingInformation?.loadingPlanDepStatusId] }}</button>
                 <button (click)="display = true" class="btn btn-main mr-5 mt-5"
                     id="departure_uptate_ullage">{{'LOADABLE_PLAN_DEPARTURE_CONDITION_CARGO_UPDATE_ULLAGE' | translate}}</button>
-                    <button (click)="showError()" class="btn btn-main mr-5 mt-5" id="cargo_error">{{'ULLAGE_UPDATE_SHOW_ERROR_LABEL'| translate}}</button>
+                    <button (click)="showError()" *ngIf="loadingPlanData?.loadingInformation?.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.ERROR" class="btn btn-main mr-5 mt-5" id="cargo_error">{{'ULLAGE_UPDATE_SHOW_ERROR_LABEL'| translate}}</button>
             </div>
         </div>
     </div>
