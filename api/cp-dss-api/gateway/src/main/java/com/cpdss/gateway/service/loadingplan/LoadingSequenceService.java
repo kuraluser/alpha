@@ -236,7 +236,6 @@ public class LoadingSequenceService {
     this.buildStabilityParamSequence(reply, portEta, stabilityParams);
     this.buildFlowRates(loadingRates, vesselTanks, portEta, response);
     this.buildBallastPumpCategories(vesselId, response);
-
     response.setCargos(cargos);
     response.setBallasts(ballasts);
     response.setBallastPumps(ballastPumps);
@@ -244,8 +243,14 @@ public class LoadingSequenceService {
     response.setCargoLoadingRates(cargoLoadingRates);
     response.setStageTickPositions(stageTickPositions);
     response.setStabilityParams(stabilityParams);
-    response.setCargoTankCategories(cargoTankCategories);
-    response.setBallastTankCategories(ballastTankCategories);
+    response.setCargoTankCategories(
+        cargoTankCategories.stream()
+            .sorted(Comparator.comparing(TankCategory::getId))
+            .collect(Collectors.toList()));
+    response.setBallastTankCategories(
+        ballastTankCategories.stream()
+            .sorted(Comparator.comparing(TankCategory::getId))
+            .collect(Collectors.toList()));
     response.setCargoStages(cargoStages);
   }
 
@@ -780,6 +785,9 @@ public class LoadingSequenceService {
               Optional.ofNullable(rob.getQuantityM3()).ifPresent(robBuilder::setQuantityM3);
               Optional.ofNullable(rob.getQuantityMT()).ifPresent(robBuilder::setQuantity);
               Optional.ofNullable(rob.getTankId()).ifPresent(robBuilder::setTankId);
+              Optional.ofNullable(rob.getColorCode()).ifPresent(robBuilder::setColorCode);
+              Optional.ofNullable(rob.getDensity())
+                  .ifPresent(density -> robBuilder.setDensity(density.toString()));
               robBuilder.setConditionType(conditionType);
               builder.addPortLoadingPlanRobDetails(robBuilder.build());
             });
@@ -795,6 +803,8 @@ public class LoadingSequenceService {
               Optional.ofNullable(ballast.getQuantityMT()).ifPresent(ballastBuilder::setQuantity);
               Optional.ofNullable(ballast.getSounding()).ifPresent(ballastBuilder::setSounding);
               Optional.ofNullable(ballast.getTankId()).ifPresent(ballastBuilder::setTankId);
+              Optional.ofNullable(ballast.getColorCode()).ifPresent(ballastBuilder::setColorCode);
+              Optional.ofNullable(ballast.getSg()).ifPresent(ballastBuilder::setSg);
               ballastBuilder.setConditionType(conditionType);
               builder.addPortLoadingPlanBallastDetails(ballastBuilder.build());
             });
@@ -815,6 +825,10 @@ public class LoadingSequenceService {
               Optional.ofNullable(stowage.getTemperature())
                   .ifPresent(stowageBuilder::setTemperature);
               Optional.ofNullable(stowage.getUllage()).ifPresent(stowageBuilder::setUllage);
+              Optional.ofNullable(stowage.getColorCode()).ifPresent(stowageBuilder::setColorCode);
+              Optional.ofNullable(stowage.getAbbreviation())
+                  .ifPresent(stowageBuilder::setAbbreviation);
+              Optional.ofNullable(stowage.getCargoId()).ifPresent(stowageBuilder::setCargoId);
               stowageBuilder.setConditionType(conditionType);
               builder.addPortLoadingPlanStowageDetails(stowageBuilder.build());
             });
@@ -901,6 +915,9 @@ public class LoadingSequenceService {
               Optional.ofNullable(stowage.getTemperature())
                   .ifPresent(stowageBuilder::setTemperature);
               Optional.ofNullable(stowage.getUllage()).ifPresent(stowageBuilder::setUllage);
+              Optional.ofNullable(stowage.getAbbreviation())
+                  .ifPresent(stowageBuilder::setAbbreviation);
+              Optional.ofNullable(stowage.getColorCode()).ifPresent(stowageBuilder::setColorCode);
               builder.addLoadingPlanStowageDetails(stowageBuilder.build());
             });
   }
@@ -933,6 +950,7 @@ public class LoadingSequenceService {
               Optional.ofNullable(rob.getQuantityM3()).ifPresent(robBuilder::setQuantityM3);
               Optional.ofNullable(rob.getQuantityMT()).ifPresent(robBuilder::setQuantity);
               Optional.ofNullable(rob.getTankId()).ifPresent(robBuilder::setTankId);
+              Optional.ofNullable(rob.getColorCode()).ifPresent(robBuilder::setColorCode);
               builder.addLoadingPlanRobDetails(robBuilder.build());
             });
   }
@@ -950,6 +968,8 @@ public class LoadingSequenceService {
               Optional.ofNullable(ballast.getQuantityMT()).ifPresent(ballastBuilder::setQuantity);
               Optional.ofNullable(ballast.getSounding()).ifPresent(ballastBuilder::setSounding);
               Optional.ofNullable(ballast.getTankId()).ifPresent(ballastBuilder::setTankId);
+              Optional.ofNullable(ballast.getColorCode()).ifPresent(ballastBuilder::setColorCode);
+              Optional.ofNullable(ballast.getSg()).ifPresent(ballastBuilder::setSg);
               builder.addLoadingPlanBallastDetails(ballastBuilder.build());
             });
   }

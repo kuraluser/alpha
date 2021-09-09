@@ -44,4 +44,10 @@ public class LoadingPlanBallastDetails extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "color_code")
+  private String colorCode;
+
+  @Column(name = "sg")
+  private BigDecimal sg;
 }

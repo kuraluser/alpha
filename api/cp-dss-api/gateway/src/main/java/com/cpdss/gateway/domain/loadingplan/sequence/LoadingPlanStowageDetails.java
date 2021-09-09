@@ -16,4 +16,7 @@ public class LoadingPlanStowageDetails {
   private String ullage;
   private Integer conditionType;
   private Integer valueType;
+  private String colorCode;
+  private String abbreviation;
+  private Long cargoId;
 }

@@ -476,6 +476,11 @@ message LoadingPlanTankDetails {
   int32 conditionType = 9;
   int32 valueType = 10;
   int64 id = 11;
+  string colorCode = 12;
+  string sg = 13;
+  string abbreviation = 14;
+  int64 cargoId = 15;
+  string density = 16;
 }
 
 message DeBallastingRate {

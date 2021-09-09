@@ -579,6 +579,11 @@ public class LoadablePlanService {
                 Object[] obA = (Object[]) lpsd;
                 details.setId((Long) obA[0]);
                 details.setCargoNominationId((Long) obA[1]);
+                Optional<CargoNomination> cargoNomOpt =
+                    this.cargoNominationRepository.findByIdAndIsActive(
+                        details.getCargoNominationId(), true);
+                cargoNomOpt.ifPresent(
+                    cargoNomination -> details.setCargoId(cargoNomination.getCargoXId()));
                 details.setTankId((Long) obA[2]);
                 details.setQuantityMT(String.valueOf(obA[3]));
                 Optional.ofNullable(obA[4])
@@ -599,6 +604,11 @@ public class LoadablePlanService {
             details.setQuantityMT(String.valueOf(lpsd.getPlannedQuantity()));
             details.setColorCode(lpsd.getColorCode());
             details.setAbbreviation(lpsd.getAbbreviation());
+            Optional<CargoNomination> cargoNomOpt =
+                this.cargoNominationRepository.findByIdAndIsActive(
+                    details.getCargoNominationId(), true);
+            cargoNomOpt.ifPresent(
+                cargoNomination -> details.setCargoId(cargoNomination.getCargoXId()));
             stowageDetails.add(details);
           });
     }
