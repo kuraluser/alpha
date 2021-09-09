@@ -2,7 +2,7 @@
     <div formArrayName="portsData" class="col pl-0 pr-0" *ngIf="portList">
         <p-carousel [value]="portCarousel" [numVisible]="numVisible" [numScroll]="groupSelection ? 2 : 1">
             <ng-template let-port pTemplate="item">
-                <div class="container-fluid " [ngClass]="{'arrival': port?.type==='Arrival', 'departure': port?.type !=='Arrival'}" formGroupName="{{portList.indexOf(port)}}">
+                <div class="container-fluid " [ngClass]="{'arrival': port?.type==='Arrival', 'departure': port?.type !=='Arrival', 'selected': groupSelection}" formGroupName="{{portList.indexOf(port)}}">
                     <div class="row">
                         <div class="col carousel-card mr-15 pt-10 pb-10" (click)="onClickPort(port)"
                             tabIndex="{{portList.indexOf(port)}}" id="{{portList.indexOf(port)}}"

@@ -1824,7 +1824,7 @@ th .p-button.p-button-icon-only.p-button-rounded{
 }
 
 .selected {
-  & > .arrival {
+  &.arrival {
     padding-right: 0px;
 
     & .carousel-card {
@@ -1832,7 +1832,7 @@ th .p-button.p-button-icon-only.p-button-rounded{
     }
   }
 
-  & > .departure {
+  &.departure {
     & .carousel-card {
       border-radius: 0px 5px 5px 0px;
     }
@@ -3015,7 +3015,7 @@ textarea{
   }
 }
 
-.highcharts-axis-labels.highcharts-xaxis-labels.highcharts-grid-axis, .highcharts-axis.highcharts-yaxis.highcharts-grid-axis {
+.highcharts-axis-labels.highcharts-xaxis-labels.highcharts-grid-axis, .highcharts-axis.highcharts-yaxis.highcharts-grid-axis, .table-cell-text {
   z-index: -1 !important;
 }
 
@@ -3027,6 +3027,16 @@ textarea{
   .highcharts-axis-title{
     text-transform: uppercase;
   }
+}
+
+.sequence-chart path.highcharts-axis-line {
+    stroke-width: 0;
+}
+
+.stabilityparams-chart {
+ .highcharts-br + tspan {
+   display: none;
+ }
 }
 
 .arrival-condition-pop-up, .departure-condition-pop-up{
@@ -3052,7 +3062,7 @@ textarea{
   th, td{
     &:last-child, &:nth-last-child(2){
       text-align: right!important;
-    } 
+    }
   }
 }
 
@@ -3060,7 +3070,7 @@ textarea{
   th, td{
     &:last-child{
       text-align: right!important;
-    } 
+    }
   }
 }
 
