@@ -20,7 +20,7 @@ public interface LoadablePlanStowageDetailsTempRepository
       LoadablePlanStowageDetails stowageDetail, boolean isActive);
 
   @Query(
-      "SELECT LPSD.id, LPSD.cargoNominationId, LPSD.tankId, coalesce(CAST(LPSDT.quantity AS string ), LPSD.weight) FROM LoadablePlanStowageDetails LPSD LEFT JOIN LoadablePlanStowageDetailsTemp LPSDT ON LPSD.id = LPSDT.loadablePlanStowageDetails.id AND LPSDT.isActive = ?2 WHERE LPSD.loadablePattern.id = ?1 AND LPSD.isActive = ?2")
+      "SELECT LPSD.id, LPSD.cargoNominationId, LPSD.tankId, coalesce(CAST(LPSDT.quantity AS string ), LPSD.weight), LPSD.colorCode, LPSD.abbreviation FROM LoadablePlanStowageDetails LPSD LEFT JOIN LoadablePlanStowageDetailsTemp LPSDT ON LPSD.id = LPSDT.loadablePlanStowageDetails.id AND LPSDT.isActive = ?2 WHERE LPSD.loadablePattern.id = ?1 AND LPSD.isActive = ?2")
   public List<Object> findByLoadablePlanStowageTempDetailsAndIsActive(
       Long loadablePatternId, Boolean isActive);
 
@@ -30,7 +30,7 @@ public interface LoadablePlanStowageDetailsTempRepository
       Long loadablePatternId, Boolean isActive);
 
   @Query(
-      "SELECT LPSD.id, LPSD.tankId, coalesce(CAST(LPSDT.quantity AS string ), LPSD.metricTon) FROM LoadablePlanBallastDetails LPSD LEFT JOIN LoadablePlanStowageDetailsTemp LPSDT ON LPSD.id = LPSDT.loadablePlanBallastDetails.id AND LPSDT.isActive = ?2 WHERE LPSD.loadablePattern.id = ?1 AND LPSD.isActive = ?2")
+      "SELECT LPSD.id, LPSD.tankId, coalesce(CAST(LPSDT.quantity AS string ), LPSD.metricTon), LPSD.colorCode, LPSD.sg FROM LoadablePlanBallastDetails LPSD LEFT JOIN LoadablePlanStowageDetailsTemp LPSDT ON LPSD.id = LPSDT.loadablePlanBallastDetails.id AND LPSDT.isActive = ?2 WHERE LPSD.loadablePattern.id = ?1 AND LPSD.isActive = ?2")
   public List<Object> findByLoadablePlanBallastTempDetailsAndIsActive(
       Long loadablePatternId, Boolean isActive);
 

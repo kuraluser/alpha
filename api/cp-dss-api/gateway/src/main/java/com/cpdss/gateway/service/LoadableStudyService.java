@@ -6154,8 +6154,8 @@ public class LoadableStudyService {
     LoadingInfoSynopticalUpdateRequest.Builder builder =
         LoadingInfoSynopticalUpdateRequest.newBuilder();
     builder.setSynopticalTableId(synopticalTableId);
-    builder.setTimeOfSunrise(sunriseTime);
-    builder.setTimeOfSunset(sunsetTime);
+    Optional.ofNullable(sunriseTime).ifPresent(builder::setTimeOfSunrise);
+    Optional.ofNullable(sunsetTime).ifPresent(builder::setTimeOfSunset);
     ResponseStatus response =
         this.loadableStudyServiceBlockingStub.saveLoadingInfoToSynopticData(builder.build());
     if (response.getStatus().equalsIgnoreCase("FAILED")) {
