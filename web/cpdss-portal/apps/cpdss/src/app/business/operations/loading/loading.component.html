@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid pt-5">
   <div class="row">
     <div class="col text-uppercase pt-5">
       {{selectedPortName}}
@@ -19,7 +19,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col text-center loading-and-discharging-tab">
+    <div class="col text-center loading-and-discharging-tab pt-10">
       <a (click)="switchTab(OPERATION_TAB.INFORMATION)"
         [ngClass]="{'active' : currentTab === OPERATION_TAB.INFORMATION}" class="tab-btn">
         {{'LOADING_INFORMATION' | translate}}
