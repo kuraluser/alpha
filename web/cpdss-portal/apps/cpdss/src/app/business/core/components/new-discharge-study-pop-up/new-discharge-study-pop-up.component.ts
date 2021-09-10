@@ -173,7 +173,8 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
         detail: this.dischargeStudyForm.value.enquiryDetails ? this.dischargeStudyForm.value.enquiryDetails : ''
       }
 
-      const translationKeys = await this.translateService.get(['NEW_DISCHARGE_STUDY_POPUP__NAME_EXIST', 'DISCHARGE_STUDY_CREATE_SUCCESS', 'DISCHARGE_STUDY_CREATE_SUCCESS','DISCHARGE_STUDY_CREATED_SUCCESSFULLY', 'DISCHARGE_STUDY_CREATE_ERROR', 'DISCHARGE_STUDY_ALREADY_EXIST', 'DISCHARGE_STUDY_UPDATE_SUCCESS', 'DISCHARGE_STUDY_UPDATED_SUCCESSFULLY']).toPromise();
+      const translationKeys = await this.translateService.get(['NEW_DISCHARGE_STUDY_POPUP__NAME_EXIST', 'DISCHARGE_STUDY_CREATE_SUCCESS', 'DISCHARGE_STUDY_CREATE_SUCCESS','DISCHARGE_STUDY_CREATED_SUCCESSFULLY', 'DISCHARGE_STUDY_CREATE_ERROR', 'DISCHARGE_STUDY_ALREADY_EXIST', 'DISCHARGE_STUDY_UPDATE_SUCCESS', 'DISCHARGE_STUDY_UPDATED_SUCCESSFULLY',
+      'NEW_DISCHARGE_STUDY_POPUP_BILL_OF_LADDING']).toPromise();
       try {
         if (!this.selectedDischargeStudy) {
           result = await this.dischargeStudyApiService.saveOrUpdateDischargeStudy(this.vesselInfoList.id, this.selectedVoyage.id, newModel).toPromise();
