@@ -5,6 +5,8 @@ import { IToppingOffSequence } from '../models/loading-discharging.model';
 import { ToppingOffTankTableTransformationService } from './topping-off-tank-table-transformation.service';
 import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
+
 /**
  * Component class for loading topping off tank component
  *
@@ -62,6 +64,7 @@ export class ToppingOffTankTableComponent implements OnInit {
 
 
   constructor(
+    private quantityPipe: QuantityPipe,
     private toppingOffTankTableTransformationService: ToppingOffTankTableTransformationService) { }
 
   ngOnInit(): void {
@@ -141,6 +144,7 @@ export class ToppingOffTankTableComponent implements OnInit {
           }
         });
       });
+      obj.quantity = this.quantityPipe.transform(obj.quantity,this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, obj.api, obj.temperature,-1);
       const key = obj['cargoId'];
       if (!acc[key]) {
         acc[key] = [];
