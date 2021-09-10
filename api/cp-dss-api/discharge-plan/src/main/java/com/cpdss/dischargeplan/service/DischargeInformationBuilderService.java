@@ -28,7 +28,8 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.TrimAllowed;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.dischargeplan.domain.RuleType;
+import com.cpdss.dischargeplan.domain.rules.RuleMasterData;
+import com.cpdss.dischargeplan.domain.rules.RuleType;
 import com.cpdss.dischargeplan.entity.CowPlanDetail;
 import com.cpdss.dischargeplan.entity.CowTankDetail;
 import com.cpdss.dischargeplan.entity.CowWithDifferentCargo;
@@ -55,11 +56,7 @@ import com.cpdss.dischargeplan.repository.DischargingDelayRepository;
 import com.cpdss.dischargeplan.repository.DischargingMachineryInUseRepository;
 import com.cpdss.dischargeplan.repository.ReasonForDelayRepository;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -649,7 +646,7 @@ public class DischargeInformationBuilderService {
       DischargeInformation disEntity,
       com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder) {
     try {
-      List<DischargingMachineryInUse> list = disEntity.getDischargingMachineryInUses();
+      Set<DischargingMachineryInUse> list = disEntity.getDischargingMachineryInUses();
       for (DischargingMachineryInUse var1 : list) {
         LoadingPlanModels.LoadingMachinesInUse.Builder builder1 =
             LoadingPlanModels.LoadingMachinesInUse.newBuilder();
@@ -730,7 +727,7 @@ public class DischargeInformationBuilderService {
   }
 
   private void buildCowTankDetails(
-      final Common.COW_TYPE cow_type, CowPlan.Builder builder, List list) {
+      final Common.COW_TYPE cow_type, CowPlan.Builder builder, Collection list) {
     CowTankDetails.Builder tankDetails = CowTankDetails.newBuilder();
     tankDetails.setCowType(cow_type);
     switch (cow_type) {
@@ -893,18 +890,14 @@ public class DischargeInformationBuilderService {
                           item ->
                               item.trim().length() != 0
                                   && item.trim()
-                                      .equalsIgnoreCase(
-                                          com.cpdss.dischargeplan.domain.RuleMasterData.CargoTank
-                                              .getPrefix()));
+                                      .equalsIgnoreCase(RuleMasterData.CargoTank.getPrefix()));
               Optional<String> isSuffixExist =
                   Optional.ofNullable(input.getSuffix())
                       .filter(
                           item ->
                               item.trim().length() != 0
                                   && item.trim()
-                                      .equalsIgnoreCase(
-                                          com.cpdss.dischargeplan.domain.RuleMasterData.CargoTank
-                                              .getSuffix()));
+                                      .equalsIgnoreCase(RuleMasterData.CargoTank.getSuffix()));
               Common.RuleDropDownMaster.Builder ruleDropDownMaster =
                   Common.RuleDropDownMaster.newBuilder();
               if (isSuffixExist.isPresent() && isPrefixExist.isPresent()) {

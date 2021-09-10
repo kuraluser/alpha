@@ -1,20 +1,20 @@
 /* Licensed at AlphaOri Technologies */
-package com.cpdss.dischargeplan.domain;
+package com.cpdss.dischargeplan.domain.rules;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Enum class fro rule master section
+ * Enum value for RuleType
  *
  * @author vinothkumar.m
  */
 @AllArgsConstructor
 @Getter
-public enum RuleMasterSection {
-  Plan(1L),
-  Loading(2L),
-  Discharging(3L);
+public enum RuleType {
+  PREFERABLE(2L, "Preferable"),
+  ABSOLUTE(1L, "Absolute");
 
   private Long id;
+  private String ruleType;
 }

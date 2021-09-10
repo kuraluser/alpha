@@ -134,7 +134,7 @@ public class DischargeInformationService {
     vesselTankDetails.setLoadableQuantityCargoDetails(
         this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
             vesselId,
-            activeVoyage.getPatternId(),
+            activeVoyage.getDischargePatternId(),
             OPERATION_TYPE_ARR, // Discharge Info needed Arrival Conditions
             portRotation.get().getId(),
             portRotation.get().getPortId()));

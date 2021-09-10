@@ -3,7 +3,7 @@ package com.cpdss.dischargeplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,12 +48,12 @@ public class CowPlanDetail extends EntityDoc {
   private Boolean needFreshCrudeStorage;
 
   // bi-directional many-to-one association to CowTankDetail
-  @OneToMany(mappedBy = "cowPlanDetail")
-  private List<CowTankDetail> cowTankDetails;
+  @OneToMany(mappedBy = "cowPlanDetail", fetch = FetchType.EAGER)
+  private Set<CowTankDetail> cowTankDetails;
 
   // bi-directional many-to-one association to CowWithDifferentCargo
-  @OneToMany(mappedBy = "cowPlanDetail")
-  private List<CowWithDifferentCargo> cowWithDifferentCargos;
+  @OneToMany(mappedBy = "cowPlanDetail", fetch = FetchType.EAGER)
+  private Set<CowWithDifferentCargo> cowWithDifferentCargos;
 
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "discharging_xid", referencedColumnName = "id")

@@ -9,7 +9,7 @@ import lombok.Data;
 public class DischargeDelays {
 
   private Long id;
-  private Long loadingInfoId;
+  private Long dischargeInfoId;
   private List<Long> reasonForDelayIds;
   private BigDecimal duration;
   private Long cargoId;
