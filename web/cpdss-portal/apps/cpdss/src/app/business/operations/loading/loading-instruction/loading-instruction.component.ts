@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { LoadingInstructionApiService } from './../../services/loading-instruction-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
+import {  OPERATIONS  } from '../../../core/models/common.model';
 import { UnsavedChangesGuard, ComponentCanDeactivate } from './../../../../shared/services/guards/unsaved-data-guard';
 import { ILoadingInstructionGroup, ILoadingInstructionSubHeaderData } from './../../models/loading-instruction.model';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
@@ -32,6 +33,7 @@ export class LoadingInstructionComponent implements OnInit, ComponentCanDeactiva
   instructionList: ILoadingInstructionSubHeaderData[] = [];
   instructionData: ILoadingInstructionSubHeaderData[] = [];
   groupId: number;
+  readonly OPERATIONS = OPERATIONS;
 
   constructor(
     private loadingInstructionApiService: LoadingInstructionApiService,

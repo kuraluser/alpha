@@ -384,7 +384,8 @@ export class DischargeStudyDetailsTransformationService {
             'required': 'PORT_ETA_REQUIRED_ERROR',
             'notInRange': 'PORT_ETA_NOT_IN_DATE_RANGE',
             'failedCompare': 'PORT_ETA_COMPARE_ERROR',
-            'etaFailed': 'PORT_ETA_COMAPRE_WITH_ETD_ERROR'
+            'etaFailed': 'PORT_ETA_COMAPRE_WITH_ETD_ERROR',
+            'dateGreaterThanActual': 'PORT_ETA_COMAPRE_LAST_LOADING_PORT'
           }
         },
         {

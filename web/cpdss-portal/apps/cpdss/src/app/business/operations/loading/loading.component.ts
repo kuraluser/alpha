@@ -56,6 +56,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   errorPopUp: boolean = false;
   disableViewErrorButton: boolean = true;
   processing: boolean = true;
+  isDischargeStarted: boolean;
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
@@ -166,6 +167,9 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     });
     this.loadingDischargingTransformationService.disableViewErrorButton.subscribe((status) => {
       this.disableViewErrorButton = status;
+    })
+    this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
+      this.isDischargeStarted = value;
     })
     this.ngxSpinnerService.hide();
 

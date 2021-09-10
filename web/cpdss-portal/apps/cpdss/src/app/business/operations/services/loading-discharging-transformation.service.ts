@@ -22,6 +22,7 @@ import { IValidationErrorMessagesSet } from '../../../shared/components/validati
 export class LoadingDischargingTransformationService {
   public _loadingInformationSource: Subject<boolean> = new Subject();
   private _dischargingInformationSource: Subject<boolean> = new Subject();
+  private _isDischargeStarted: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _unitChangeSource: Subject<boolean> = new Subject();
   public _loadingInstructionSource: Subject<boolean> = new Subject();
   public disableSaveButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -50,6 +51,7 @@ export class LoadingDischargingTransformationService {
   setUllageArrivalBtnStatus$ = this._setUllageArrivalBtnStatus.asObservable();
   setUllageDepartureBtnStatus$ = this._setUllageDepartureBtnStatus.asObservable();
   showUllageErrorPopup$ = this._showUllageErrorPopup.asObservable();
+  isDischargeStarted$ = this._isDischargeStarted.asObservable();
 
   constructor(
     private quantityPipe: QuantityPipe,
@@ -73,6 +75,16 @@ export class LoadingDischargingTransformationService {
   /** Set unit changed */
   setUnitChanged(unitChanged: boolean) {
     this._unitChangeSource.next(unitChanged);
+  }
+
+  /**
+   * Method to set discharge started status
+   *
+   * @param {boolean} status
+   * @memberof LoadingDischargingTransformationService
+   */
+  isDischargeStarted(status: boolean) {
+    this._isDischargeStarted.next(status);
   }
 
   /**

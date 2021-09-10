@@ -45,7 +45,7 @@
         </ng-template>
       </a>
       <button class="btn btn-main tab-center-btn" id="loadingPlanBtn" (click)="onGenerateLoadingPlan()"
-        [disabled]="disableGenerateLoadableButton ">
+        [disabled]="disableGenerateLoadableButton || isDischargeStarted">
         {{'GENERATE_LOADING_PLAN' | translate}}
       </button>
       <a (click)="switchTab(OPERATION_TAB.SEQUENCE)"
