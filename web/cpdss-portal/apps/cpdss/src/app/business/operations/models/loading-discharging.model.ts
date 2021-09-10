@@ -971,8 +971,8 @@ export interface IRobUpdateList {
   colour_code: string;
   actual_planned: number | string;
   arrival_departutre: number;
-  port_xid?: string | number;
-  port_rotation_xid?: string | number;
+  portXId?: string | number;
+  portRotationXId?: string | number;
   observedM3?: string;
   temperature?: string;
   correctedUllage?: string;
