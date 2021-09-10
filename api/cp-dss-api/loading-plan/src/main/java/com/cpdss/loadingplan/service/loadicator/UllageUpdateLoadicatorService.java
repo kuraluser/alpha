@@ -7,16 +7,24 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.Loadicator;
 import com.cpdss.common.generated.Loadicator.StowagePlan;
 import com.cpdss.common.generated.Loadicator.StowagePlan.Builder;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
+import com.cpdss.loadingplan.domain.algo.LoadicatorBallastDetails;
+import com.cpdss.loadingplan.domain.algo.LoadicatorRobDetails;
+import com.cpdss.loadingplan.domain.algo.LoadicatorStage;
+import com.cpdss.loadingplan.domain.algo.LoadicatorStowageDetails;
+import com.cpdss.loadingplan.domain.algo.LoadingPlanLoadicatorDetails;
+import com.cpdss.loadingplan.domain.algo.UllageEditLoadicatorAlgoRequest;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import com.cpdss.loadingplan.entity.PortLoadingPlanBallastTempDetails;
@@ -30,7 +38,12 @@ import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageTempDetailsRepository;
 import com.cpdss.loadingplan.service.LoadingPlanService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +52,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -352,5 +366,160 @@ public class UllageUpdateLoadicatorService {
           }
           stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
         });
+  }
+
+  /**
+   * @param request
+   * @throws GenericServiceException
+   * @throws InvocationTargetException
+   * @throws IllegalAccessException
+   */
+  public void getLoadicatorData(LoadingInfoLoadicatorDataRequest request)
+      throws GenericServiceException, IllegalAccessException, InvocationTargetException {
+    log.info(
+        "Recieved stability parameters of Loading Plam of Loading Information {} from Loadicator",
+        request.getLoadingInformationId());
+    Optional<LoadingInformation> loadingInfoOpt =
+        loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingInformationId());
+    if (loadingInfoOpt.isEmpty()) {
+      throw new GenericServiceException(
+          "Could not find loading information " + request.getLoadingInformationId(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
+    buildUllageEditLoadicatorAlgoRequest(loadingInfoOpt.get(), request, algoRequest);
+    saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
+
+    //    	    LoadicatorAlgoResponse algoResponse =
+    //    	        restTemplate.postForObject(loadicatorUrl, algoRequest,
+    // LoadicatorAlgoResponse.class);
+    //    	    saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
+    //
+    //    	    saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
+
+    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+        loadingPlanAlgoService.getLoadingInformationStatus(
+            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE.equals(
+        request.getConditionType())) {
+      loadingInformationRepository.updateLoadingInformationArrivalStatus(
+          loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
+    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE.equals(
+        request.getConditionType())) {
+      loadingInformationRepository.updateLoadingInformationDepartureStatus(
+          loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
+    }
+    loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+        loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+    loadingPlanService.saveUpdatedLoadingPlanDetails(
+        loadingInfoOpt.get(), request.getConditionType());
+  }
+
+  /**
+   * @param algoRequest
+   * @param id
+   * @throws GenericServiceException
+   */
+  private void saveUllageEditLoadicatorRequestJson(
+      UllageEditLoadicatorAlgoRequest algoRequest, Long loadingInfoId)
+      throws GenericServiceException {
+    log.info("Saving Loadicator request to Loadable study DB");
+    JsonRequest.Builder jsonBuilder = JsonRequest.newBuilder();
+    jsonBuilder.setReferenceId(loadingInfoId);
+    jsonBuilder.setJsonTypeId(LoadingPlanConstants.UPDATE_ULLAGE_LOADICATOR_REQUEST_JSON_TYPE_ID);
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      mapper.writeValue(
+          new File(
+              this.rootFolder
+                  + "/json/loadingPlanEditLoadicatorRequest_"
+                  + loadingInfoId
+                  + ".json"),
+          algoRequest);
+      jsonBuilder.setJson(mapper.writeValueAsString(algoRequest));
+      loadicatorService.saveJson(jsonBuilder);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "Could not save request JSON to DB",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } catch (IOException e) {
+      throw new GenericServiceException(
+          "Could not save request JSON to Filesystem",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * @param loadingInformation
+   * @param request
+   * @param algoRequest
+   */
+  private void buildUllageEditLoadicatorAlgoRequest(
+      LoadingInformation loadingInformation,
+      LoadingInfoLoadicatorDataRequest request,
+      UllageEditLoadicatorAlgoRequest algoRequest) {
+    algoRequest.setLoadingInformationId(loadingInformation.getId());
+    algoRequest.setProcessId(request.getProcessId());
+    algoRequest.setVesselId(loadingInformation.getVesselXId());
+    algoRequest.setPortId(loadingInformation.getPortXId());
+    List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
+    request
+        .getLoadingInfoLoadicatorDetailsList()
+        .forEach(
+            loadicatorDetails -> {
+              LoadicatorStage loadicatorStage = new LoadicatorStage();
+              loadicatorStage.setTime(loadicatorDetails.getTime());
+              loadicatorService.buildLdTrim(loadicatorDetails.getLDtrim(), loadicatorStage);
+              loadicatorService.buildLdIntactStability(
+                  loadicatorDetails.getLDIntactStability(), loadicatorStage);
+              loadicatorService.buildLdStrength(loadicatorDetails.getLDStrength(), loadicatorStage);
+              stages.add(loadicatorStage);
+            });
+    algoRequest.setStages(stages);
+
+    LoadingPlanLoadicatorDetails loadingPlanLoadicatorDetails = new LoadingPlanLoadicatorDetails();
+
+    List<PortLoadingPlanStowageTempDetails> tempStowageDetails =
+        portLoadingPlanStowageDetailsTempRepository.findByLoadingInformationAndIsActive(
+            loadingInformation.getId(), true);
+    List<PortLoadingPlanBallastTempDetails> tempBallastDetails =
+        portLoadingPlanBallastDetailsTempRepository.findByLoadingInformationAndIsActive(
+            loadingInformation.getId(), true);
+    List<PortLoadingPlanRobDetails> robDetails =
+        portLoadingPlanRobDetailsRepository.findByLoadingInformationAndIsActive(
+            loadingInformation.getId(), true);
+
+    List<LoadicatorStowageDetails> loadicatorStowageDetails =
+        new ArrayList<LoadicatorStowageDetails>();
+    tempStowageDetails.forEach(
+        stowage -> {
+          LoadicatorStowageDetails stowageDetails = new LoadicatorStowageDetails();
+          BeanUtils.copyProperties(stowage, stowageDetails);
+          loadicatorStowageDetails.add(stowageDetails);
+        });
+    loadingPlanLoadicatorDetails.setStowageDetails(loadicatorStowageDetails);
+    List<LoadicatorBallastDetails> loadicatorBallastDetails =
+        new ArrayList<LoadicatorBallastDetails>();
+    tempBallastDetails.forEach(
+        ballast -> {
+          LoadicatorBallastDetails ballastDetails = new LoadicatorBallastDetails();
+          BeanUtils.copyProperties(ballast, ballastDetails);
+          loadicatorBallastDetails.add(ballastDetails);
+        });
+
+    loadingPlanLoadicatorDetails.setBallastDetails(loadicatorBallastDetails);
+    List<LoadicatorRobDetails> loadicatorRobDetails = new ArrayList<LoadicatorRobDetails>();
+    robDetails.forEach(
+        rob -> {
+          LoadicatorRobDetails robDetail = new LoadicatorRobDetails();
+          BeanUtils.copyProperties(rob, robDetail);
+          loadicatorRobDetails.add(robDetail);
+        });
+    loadingPlanLoadicatorDetails.setRobDetails(loadicatorRobDetails);
+    algoRequest.setPlanDetails(loadingPlanLoadicatorDetails);
   }
 }
