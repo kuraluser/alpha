@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-public class LoadingMachinesInUse {
+public class DischargeMachinesInUse {
   private Long id;
   private Long loadingInfoId;
   private Long machineId;

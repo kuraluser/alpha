@@ -33,11 +33,13 @@ public final class DischargePlanServiceOuterClass {
           + "lRequest\032).DischargingDownloadTideDetail"
           + "StatusReply\"\0000\001\022K\n\022GetDischargingPlan\022\034."
           + "DischargeInformationRequest\032\025.Dischargin"
-          + "gPlanReply\"\0002m\n\024DischargePlanService\022U\n\034"
-          + "DischargePlanSynchronization\022\".Discharge"
-          + "StudyDataTransferRequest\032\017.ResponseStatu"
-          + "s\"\000B-\n)com.cpdss.common.generated.discha"
-          + "rge_planP\001b\006proto3"
+          + "gPlanReply\"\0002\275\001\n\024DischargePlanService\022U\n"
+          + "\034DischargePlanSynchronization\022\".Discharg"
+          + "eStudyDataTransferRequest\032\017.ResponseStat"
+          + "us\"\000\022N\n\025generateDischargePlan\022\034.Discharg"
+          + "eInformationRequest\032\025.DischargeInformati"
+          + "on\"\000B-\n)com.cpdss.common.generated.disch"
+          + "arge_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

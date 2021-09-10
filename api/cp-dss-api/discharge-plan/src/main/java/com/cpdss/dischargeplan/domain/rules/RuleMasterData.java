@@ -1,5 +1,5 @@
 /* Licensed at AlphaOri Technologies */
-package com.cpdss.dischargeplan.domain;
+package com.cpdss.dischargeplan.domain.rules;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -9,6 +9,8 @@ public class DischargePlanConstants {
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
 
+  public static final String DISCHARGE_INFORMATION_REQUEST_JSON_MODULE_NAME = "DISCHARGING";
+
   public static final String DATE_FORMAT = "dd-MM-yyyy";
   public static final String SHEET = "Sheet1";
   public static final String PORT = "Port";

@@ -43,6 +43,7 @@ public class LoadableStudiesConstants {
 
   public static final Long LS_STATUS_PENDING = 1l;
   public static final Long LS_STATUS_CONFIRMED = 2l;
+  public static final Long LS_STATUS_PLAN_GENERATED = 3l;
 
   public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
   public static final Long CLOSE_VOYAGE_STATUS = 2L;
