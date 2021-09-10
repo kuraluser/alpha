@@ -4,6 +4,7 @@ package com.cpdss.gateway.service.loadingplan;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.domain.AlgoErrorResponse;
+import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
 import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.UploadTideDetailResponse;
@@ -49,6 +50,9 @@ public interface LoadingInformationService {
   List<ToppingOffSequence> getToppingOffSequence(List<LoadingPlanModels.LoadingToppingOff> var1);
 
   List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
+      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId);
+
+  List<DischargeQuantityCargoDetails> getDischargePlanCargoDetailsByPort(
       Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId);
 
   LoadingSequences getLoadingSequence(LoadingPlanModels.LoadingDelay loadingDelay);

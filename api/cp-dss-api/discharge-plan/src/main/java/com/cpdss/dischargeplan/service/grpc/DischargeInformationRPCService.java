@@ -15,16 +15,11 @@ import com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailSt
 import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
 import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest;
 import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
-import com.cpdss.dischargeplan.entity.DischargingDelay;
-import com.cpdss.dischargeplan.entity.DischargingDelayReason;
-import com.cpdss.dischargeplan.entity.DischargingStagesDuration;
-import com.cpdss.dischargeplan.entity.DischargingStagesMinAmount;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStabilityParameters;
@@ -42,7 +37,6 @@ import com.cpdss.dischargeplan.service.DischargeInformationBuilderService;
 import com.cpdss.dischargeplan.service.DischargeInformationService;
 import io.grpc.stub.StreamObserver;
 import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -158,70 +152,61 @@ public class DischargeInformationRPCService
     DischargingPlanReply.Builder builder = DischargingPlanReply.newBuilder();
     try {
 
-      com.cpdss.dischargeplan.entity.DischargeInformation var1;
+      com.cpdss.dischargeplan.entity.DischargeInformation disEntity;
       if (request.getDischargeInfoId() > 0) {
-        var1 = dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+        disEntity =
+            dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
       } else {
-        var1 =
+        disEntity =
             dischargeInformationService.getDischargeInformation(
                 request.getVesselId(), request.getVoyageId(), request.getPortRotationId());
       }
 
-      if (var1 != null) {
+      if (disEntity != null) {
 
-        // <---Loading Information Start-->
-        LoadingPlanModels.LoadingInformation.Builder loadingInformation =
-            LoadingPlanModels.LoadingInformation.newBuilder();
+        // <---discharging Information Start-->
+        DischargeInformation.Builder dischargingInformation = DischargeInformation.newBuilder();
+        dischargingInformation.setDischargeInfoId(disEntity.getId());
+        dischargingInformation.setSynopticTableId(disEntity.getSynopticTableXid());
+        // Set Discharge Rates
+        this.informationBuilderService.buildDischargeRateMessageFromEntity(
+            disEntity, dischargingInformation);
 
-        // Loading Rate From Loading Info
-        LoadingPlanModels.LoadingRates rates =
-            this.informationBuilderService.buildLoadingRateMessage(var1);
-        loadingInformation.setLoadingRate(rates);
-
-        // Set Saved Berth Data
-        List<DischargingBerthDetail> list1 =
+        // Set Discharge berth
+        List<DischargingBerthDetail> listVarB =
             this.dischargeBerthDetailRepository.findAllByDischargingInformationIdAndIsActiveTrue(
-                var1.getId());
-        List<LoadingPlanModels.LoadingBerths> berths =
-            this.informationBuilderService.buildLoadingBerthsMessage(list1);
-        loadingInformation.addAllLoadingBerths(berths);
+                disEntity.getId());
+        this.informationBuilderService.buildDischargeBerthMessageFromEntity(
+            disEntity, listVarB, dischargingInformation);
 
-        // Loading Sequences
-        // Stage Min Amount Master
-        List<DischargingStagesMinAmount> list3 = this.stageMinAmountRepository.findAll();
-        // Stage Duration Master
-        List<DischargingStagesDuration> list4 = this.dischargeStageDurationRepository.findAll();
+        // Set Stages
+        this.informationBuilderService.buildDischargeStageMessageFromEntity(
+            disEntity, dischargingInformation);
 
-        // Staging User data and Master data
-        LoadingPlanModels.LoadingStages loadingStages =
-            this.informationBuilderService.buildLoadingStageMessage(var1, list3, list4);
-        loadingInformation.setLoadingStage(loadingStages);
+        // Set Delay
+        this.informationBuilderService.buildDischargeDelaysMessageFromEntity(
+            disEntity, dischargingInformation);
 
-        // Loading Delay
-        List<DischargingDelayReason> list5 = this.dischargingDelayReasonRepository.findAll();
-        List<DischargingDelay> list6 =
-            this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActive(
-                var1.getId(), true);
-        LoadingPlanModels.LoadingDelay loadingDelay =
-            this.informationBuilderService.buildLoadingDelayMessage(list5, list6);
-        loadingInformation.setLoadingDelays(loadingDelay);
-        Optional.ofNullable(var1.getDischargingInformationStatus())
-            .ifPresent(status -> loadingInformation.setLoadingInfoStatusId(status.getId()));
-        Optional.ofNullable(var1.getDischargingPatternXid())
-            .ifPresent(loadingInformation::setLoadablePatternId);
-        builder.setDischargingInformation(loadingInformation.build());
+        // Set Post Discharge stage
+        this.informationBuilderService.buildPostDischargeStageMessageFromEntity(
+            disEntity, dischargingInformation);
 
-        // <---Loading Information End-->
+        // Set Cow Details
+        this.informationBuilderService.buildCowPlanMessageFromEntity(
+            disEntity, dischargingInformation);
+        builder.setDischargingInformation(dischargingInformation.build());
 
         // <---Cargo Details Start-->
         List<PortDischargingPlanBallastDetails> pdpBallastList =
-            pdpBallastDetailsRepository.findByDischargingInformationAndIsActive(var1, true);
+            pdpBallastDetailsRepository.findByDischargingInformationAndIsActive(disEntity, true);
         List<PortDischargingPlanStowageDetails> pdpStowageList =
-            pdpStowageDetailsRepository.findByDischargingInformationAndIsActive(var1, true);
+            pdpStowageDetailsRepository.findByDischargingInformationAndIsActive(disEntity, true);
         List<PortDischargingPlanRobDetails> pdpRobList =
-            pdpRobDetailsRepository.findByDischargingInformationAndIsActive(var1.getId(), true);
+            pdpRobDetailsRepository.findByDischargingInformationAndIsActive(
+                disEntity.getId(), true);
         List<PortDischargingPlanStabilityParameters> pdpStabilityList =
-            pdpStabilityParametersRepository.findByDischargingInformationAndIsActive(var1, true);
+            pdpStabilityParametersRepository.findByDischargingInformationAndIsActive(
+                disEntity, true);
 
         builder.addAllPortDischargingPlanBallastDetails(
             this.informationBuilderService.buildDischargingPlanTankBallastMessage(pdpBallastList));
@@ -232,7 +217,6 @@ public class DischargeInformationRPCService
         builder.addAllPortDischargingPlanStabilityParameters(
             this.informationBuilderService.buildDischargingPlanTankStabilityMessage(
                 pdpStabilityList));
-        // <---Loading Information End-->
       } else {
         log.error("Failed to fetch Loading Plan, Loading info Id is 0");
         throw new GenericServiceException(

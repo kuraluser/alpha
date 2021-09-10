@@ -153,15 +153,14 @@ public final class DischargingPlanReply extends com.google.protobuf.GeneratedMes
             }
           case 66:
             {
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.Builder
-                  subBuilder = null;
+              com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder subBuilder =
+                  null;
               if (dischargingInformation_ != null) {
                 subBuilder = dischargingInformation_.toBuilder();
               }
               dischargingInformation_ =
                   input.readMessage(
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
-                          .parser(),
+                      com.cpdss.common.generated.discharge_plan.DischargeInformation.parser(),
                       extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(dischargingInformation_);
@@ -260,10 +259,9 @@ public final class DischargingPlanReply extends com.google.protobuf.GeneratedMes
   }
 
   public static final int DISCHARGINGINFORMATION_FIELD_NUMBER = 8;
-  private com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
-      dischargingInformation_;
+  private com.cpdss.common.generated.discharge_plan.DischargeInformation dischargingInformation_;
   /**
-   * <code>.LoadingInformation dischargingInformation = 8;</code>
+   * <code>.DischargeInformation dischargingInformation = 8;</code>
    *
    * @return Whether the dischargingInformation field is set.
    */
@@ -271,19 +269,18 @@ public final class DischargingPlanReply extends com.google.protobuf.GeneratedMes
     return dischargingInformation_ != null;
   }
   /**
-   * <code>.LoadingInformation dischargingInformation = 8;</code>
+   * <code>.DischargeInformation dischargingInformation = 8;</code>
    *
    * @return The dischargingInformation.
    */
-  public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
+  public com.cpdss.common.generated.discharge_plan.DischargeInformation
       getDischargingInformation() {
     return dischargingInformation_ == null
-        ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
-            .getDefaultInstance()
+        ? com.cpdss.common.generated.discharge_plan.DischargeInformation.getDefaultInstance()
         : dischargingInformation_;
   }
-  /** <code>.LoadingInformation dischargingInformation = 8;</code> */
-  public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationOrBuilder
+  /** <code>.DischargeInformation dischargingInformation = 8;</code> */
+  public com.cpdss.common.generated.discharge_plan.DischargeInformationOrBuilder
       getDischargingInformationOrBuilder() {
     return getDischargingInformation();
   }
@@ -1286,15 +1283,14 @@ public final class DischargingPlanReply extends com.google.protobuf.GeneratedMes
       return this;
     }
 
-    private com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
-        dischargingInformation_;
+    private com.cpdss.common.generated.discharge_plan.DischargeInformation dischargingInformation_;
     private com.google.protobuf.SingleFieldBuilderV3<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.Builder,
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationOrBuilder>
+            com.cpdss.common.generated.discharge_plan.DischargeInformation,
+            com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder,
+            com.cpdss.common.generated.discharge_plan.DischargeInformationOrBuilder>
         dischargingInformationBuilder_;
     /**
-     * <code>.LoadingInformation dischargingInformation = 8;</code>
+     * <code>.DischargeInformation dischargingInformation = 8;</code>
      *
      * @return Whether the dischargingInformation field is set.
      */
@@ -1302,24 +1298,23 @@ public final class DischargingPlanReply extends com.google.protobuf.GeneratedMes
       return dischargingInformationBuilder_ != null || dischargingInformation_ != null;
     }
     /**
-     * <code>.LoadingInformation dischargingInformation = 8;</code>
+     * <code>.DischargeInformation dischargingInformation = 8;</code>
      *
      * @return The dischargingInformation.
      */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
+    public com.cpdss.common.generated.discharge_plan.DischargeInformation
         getDischargingInformation() {
       if (dischargingInformationBuilder_ == null) {
         return dischargingInformation_ == null
-            ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
-                .getDefaultInstance()
+            ? com.cpdss.common.generated.discharge_plan.DischargeInformation.getDefaultInstance()
             : dischargingInformation_;
       } else {
         return dischargingInformationBuilder_.getMessage();
       }
     }
-    /** <code>.LoadingInformation dischargingInformation = 8;</code> */
+    /** <code>.DischargeInformation dischargingInformation = 8;</code> */
     public Builder setDischargingInformation(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation value) {
+        com.cpdss.common.generated.discharge_plan.DischargeInformation value) {
       if (dischargingInformationBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -1332,10 +1327,9 @@ public final class DischargingPlanReply extends com.google.protobuf.GeneratedMes
 
       return this;
     }
-    /** <code>.LoadingInformation dischargingInformation = 8;</code> */
+    /** <code>.DischargeInformation dischargingInformation = 8;</code> */
     public Builder setDischargingInformation(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.Builder
-            builderForValue) {
+        com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builderForValue) {
       if (dischargingInformationBuilder_ == null) {
         dischargingInformation_ = builderForValue.build();
         onChanged();
@@ -1345,14 +1339,14 @@ public final class DischargingPlanReply extends com.google.protobuf.GeneratedMes
 
       return this;
     }
-    /** <code>.LoadingInformation dischargingInformation = 8;</code> */
+    /** <code>.DischargeInformation dischargingInformation = 8;</code> */
     public Builder mergeDischargingInformation(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation value) {
+        com.cpdss.common.generated.discharge_plan.DischargeInformation value) {
       if (dischargingInformationBuilder_ == null) {
         if (dischargingInformation_ != null) {
           dischargingInformation_ =
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
-                  .newBuilder(dischargingInformation_)
+              com.cpdss.common.generated.discharge_plan.DischargeInformation.newBuilder(
+                      dischargingInformation_)
                   .mergeFrom(value)
                   .buildPartial();
         } else {
@@ -1365,7 +1359,7 @@ public final class DischargingPlanReply extends com.google.protobuf.GeneratedMes
 
       return this;
     }
-    /** <code>.LoadingInformation dischargingInformation = 8;</code> */
+    /** <code>.DischargeInformation dischargingInformation = 8;</code> */
     public Builder clearDischargingInformation() {
       if (dischargingInformationBuilder_ == null) {
         dischargingInformation_ = null;
@@ -1377,39 +1371,36 @@ public final class DischargingPlanReply extends com.google.protobuf.GeneratedMes
 
       return this;
     }
-    /** <code>.LoadingInformation dischargingInformation = 8;</code> */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.Builder
+    /** <code>.DischargeInformation dischargingInformation = 8;</code> */
+    public com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder
         getDischargingInformationBuilder() {
 
       onChanged();
       return getDischargingInformationFieldBuilder().getBuilder();
     }
-    /** <code>.LoadingInformation dischargingInformation = 8;</code> */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationOrBuilder
+    /** <code>.DischargeInformation dischargingInformation = 8;</code> */
+    public com.cpdss.common.generated.discharge_plan.DischargeInformationOrBuilder
         getDischargingInformationOrBuilder() {
       if (dischargingInformationBuilder_ != null) {
         return dischargingInformationBuilder_.getMessageOrBuilder();
       } else {
         return dischargingInformation_ == null
-            ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
-                .getDefaultInstance()
+            ? com.cpdss.common.generated.discharge_plan.DischargeInformation.getDefaultInstance()
             : dischargingInformation_;
       }
     }
-    /** <code>.LoadingInformation dischargingInformation = 8;</code> */
+    /** <code>.DischargeInformation dischargingInformation = 8;</code> */
     private com.google.protobuf.SingleFieldBuilderV3<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.Builder,
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationOrBuilder>
+            com.cpdss.common.generated.discharge_plan.DischargeInformation,
+            com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder,
+            com.cpdss.common.generated.discharge_plan.DischargeInformationOrBuilder>
         getDischargingInformationFieldBuilder() {
       if (dischargingInformationBuilder_ == null) {
         dischargingInformationBuilder_ =
             new com.google.protobuf.SingleFieldBuilderV3<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
-                    .Builder,
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                    .LoadingInformationOrBuilder>(
+                com.cpdss.common.generated.discharge_plan.DischargeInformation,
+                com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder,
+                com.cpdss.common.generated.discharge_plan.DischargeInformationOrBuilder>(
                 getDischargingInformation(), getParentForChildren(), isClean());
         dischargingInformation_ = null;
       }

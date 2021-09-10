@@ -776,7 +776,7 @@ public class DischargePlanController {
           voyageId,
           infoId);
       return dischargeInformationService.getDischargingPlan(
-          vesselId, voyageId, infoId, portRotationId);
+          vesselId, voyageId, infoId, portRotationId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in Get Loading Plan API");
       e.printStackTrace();
