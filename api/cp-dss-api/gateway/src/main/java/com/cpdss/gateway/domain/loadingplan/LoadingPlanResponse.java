@@ -30,7 +30,6 @@ public class LoadingPlanResponse {
   private List<List<VesselTank>> ballastCenterTanks;
   private List<List<VesselTank>> ballastRearTanks;
   private List<List<VesselTank>> cargoTanks;
-  private DischargeInformation dischargingInformation;
 
   public LoadingPlanResponse(CommonSuccessResponse responseStatus) {
     this.responseStatus = responseStatus;

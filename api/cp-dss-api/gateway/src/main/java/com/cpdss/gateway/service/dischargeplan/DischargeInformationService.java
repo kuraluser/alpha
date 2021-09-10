@@ -200,20 +200,13 @@ public class DischargeInformationService {
       dischargeInformation.setDischargeStudyId(activeVoyage.getActiveDs().getId());
       dischargeInformation.setDischargeStudyName(activeVoyage.getActiveDs().getName());
     }
-    /** berth details */
+
     // discharge rates
     DischargeRates dischargeRates =
         this.infoBuilderService.buildDischargeRatesFromMessage(
             planReply.getDischargingInformation().getDischargeRate());
     dischargeInformation.setDischargeRates(dischargeRates);
-    //    LoadingDetails loadingDetails =
-    //        this.infoBuilderService.buildDischargeDetailFromMessage(
-    //            planReply.getDischargingInformation().getDischargeDetails(),
-    //            vesselId,
-    //            activeVoyage.getId(),
-    //            portRotationId,
-    //            portRotation.get().getPortId());
-    //    dischargeInformation.setDischargeDetails(loadingDetails);
+    
 
     // discharge berth (master data)
     List<BerthDetails> availableBerths =
