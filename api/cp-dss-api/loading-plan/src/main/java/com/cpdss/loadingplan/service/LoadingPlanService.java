@@ -550,7 +550,10 @@ public class LoadingPlanService {
                   loadingPlanRobDetailsRepository.updatePortLoadingPlanRobDetailsRepository(
                       new BigDecimal(ullageInsert.getQuantity()),
                       new BigDecimal(ullageInsert.getQuantity()),
-                      Long.valueOf(ullageInsert.getTankId()));
+                      Long.valueOf(ullageInsert.getTankId()),
+                      ullageInsert.getLoadingInformationId(),
+                      Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""),
+                      Integer.valueOf(ullageInsert.getActualPlanned() + ""));
                 } else {
                   PortLoadingPlanRobDetails robDet = new PortLoadingPlanRobDetails();
                   robDet.setLoadingInformation(ullageInsert.getLoadingInformationId());
@@ -560,7 +563,7 @@ public class LoadingPlanService {
                   robDet.setPortRotationXId(Long.valueOf(ullageInsert.getPortRotationXid()));
                   robDet.setConditionType(
                       Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
-                  robDet.setValueType(Integer.valueOf(ullageInsert.getActualPlanned() + ""));
+                  robDet.setValueType(LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
                   robDet.setIsActive(true);
                   loadingPlanRobDetailsRepository.save(robDet);
                 }

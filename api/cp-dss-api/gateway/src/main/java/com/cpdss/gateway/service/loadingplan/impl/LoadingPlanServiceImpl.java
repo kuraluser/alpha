@@ -1429,9 +1429,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
                       .setCargoId(billLanding.getCargoId() == null ? 0 : billLanding.getCargoId())
                       .build();
+                  builder.addBillOfLandingRemove(updateBillRemoveBuilder.build());
                 });
-
-        builder.addBillOfLandingRemove(updateBillRemoveBuilder.build());
       } else {
         errorValidationLandingMsg = "Required data for Update is missing";
       }
