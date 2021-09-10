@@ -518,16 +518,16 @@ export class LoadingDischargingTransformationService {
         header: 'LOADING_CARGO_TO_BE_LOADED_MAX_LOADING_RATE'
       },
       {
-        field: 'orderedQuantity',
+        field: 'convertedOrderedQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_NOMINATION',
-
+        numberType: 'quantity'
       },
       {
         field: 'minMaxTolerance',
         header: 'LOADING_CARGO_TO_BE_LOADED_MIN_MAX_TOLERANCE'
       },
       {
-        field: 'actualQuantity',
+        field: 'shipFigure',
         header: 'LOADING_CARGO_TO_BE_LOADED_SHIP_LOADABLE',
         numberType: 'quantity'
 
@@ -541,7 +541,7 @@ export class LoadingDischargingTransformationService {
         header: 'LOADING_CARGO_TO_BE_LOADED_TIME_REQUIRED'
       },
       {
-        field: 'slopQuantity',
+        field: 'convertedSlopQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_SLOP_QTY',
         numberType: 'quantity'
       }
@@ -637,7 +637,7 @@ export class LoadingDischargingTransformationService {
         for (let index = 0; index < cargoTankQuantities?.length; index++) {
           if (cargoTankQuantities[index]?.tankId === cargoTank[groupIndex][tankIndex]?.id) {
             cargoTank[groupIndex][tankIndex].commodity = cargoTankQuantities[index];
-            const plannedWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
+            const plannedWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api, cargoTankQuantities[index]?.temperature, -1);
             cargoTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight) : 0;
             const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
             cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight) : 0;
