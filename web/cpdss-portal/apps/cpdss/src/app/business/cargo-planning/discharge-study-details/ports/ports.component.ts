@@ -26,6 +26,7 @@ import * as moment from 'moment';
 import { seaWaterDensityRangeValidator } from '../../../core/directives/seawater-density-range-validator.directive';
 import { environment } from '../../../../../environments/environment';
 import { SecurityService } from '../../../../shared/services/security/security.service';
+import { dateCompareValidator } from '../../directives/validator/date-compare-validator';
 
 /**
  * Component class of ports screen
@@ -1062,7 +1063,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     const required = isRequired ? [Validators.required] : []
     switch (key) {
       case 'eta':
-        return [...required, portDateCompareValidator('etd', '<'), portEtaEtdValidator('eta', index)];
+        return [...required, dateCompareValidator(this.dischargeStudy.lastLoadingPortETD,index, '>') ,portDateCompareValidator('etd', '<'), portEtaEtdValidator('eta', index)];
       case 'etd':
         return [...required, portDateCompareValidator('eta', '>'), portEtaEtdValidator('etd', index)];
       default:

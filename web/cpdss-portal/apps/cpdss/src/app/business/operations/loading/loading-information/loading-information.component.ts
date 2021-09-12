@@ -1,4 +1,6 @@
-import { Component, Input, OnInit, EventEmitter, Output , ViewChild } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output , ViewChild , OnDestroy} from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { QUANTITY_UNIT, RATE_UNIT } from '../../../../shared/models/common.model';
 import { ICargoVesselTankDetails, ILoadingDischargingStages, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
@@ -23,7 +25,7 @@ import { LoadingDischargingTransformationService } from '../../services/loading-
  * @class LoadingInformationComponent
  * @implements {OnInit}
  */
-export class LoadingInformationComponent implements OnInit {
+export class LoadingInformationComponent implements OnInit , OnDestroy {
   @ViewChild('manageSequence') manageSequence;
   @ViewChild('dischargeBerth') dischargeBerth;
   @ViewChild('machineryRef') machineryRef;
@@ -68,7 +70,9 @@ export class LoadingInformationComponent implements OnInit {
   hasUnSavedData = false;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   currentRateSelectedUnit = <RATE_UNIT>localStorage.getItem('rate_unit');
+  isDischargeStarted: boolean;
   readonly OPERATIONS = OPERATIONS;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(private loadingDischargingInformationApiService: LoadingDischargingInformationApiService,
     private translateService: TranslateService,
@@ -81,6 +85,15 @@ export class LoadingInformationComponent implements OnInit {
   async ngOnInit(): Promise<void> {
    
     this.initSubscriptions();   
+  }
+  
+  /**
+   * unsubscribing loading info observable
+   * @memberof UllageUpdatePopupComponent
+   */
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -96,6 +109,9 @@ export class LoadingInformationComponent implements OnInit {
     })
     this.loadingDischargingTransformationService.disableSaveButton.subscribe((status) => {
       this.disableSaveButton = status;
+    })
+    this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
+      this.isDischargeStarted = value;
     })
   }
 

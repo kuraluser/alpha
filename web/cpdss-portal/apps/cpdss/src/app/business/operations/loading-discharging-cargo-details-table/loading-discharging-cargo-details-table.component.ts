@@ -97,9 +97,9 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
     this.totalDifference = 0;
 
     this.newCargoList?.map(cargoList => {
-      const plannedWeight = this.quantityPipe.transform(cargoList.plannedWeight, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargoList?.api);
+      const plannedWeight = this.quantityPipe.transform(cargoList.plannedWeight, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargoList?.api, cargoList?.temperature , -1);
       cargoList.plannedWeight = plannedWeight ? Number(plannedWeight) : 0;
-      const actualWeight = this.quantityPipe.transform(cargoList.actualWeight, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargoList?.api);
+      const actualWeight = this.quantityPipe.transform(cargoList.actualWeight, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargoList?.api, cargoList?.temperature , -1);
       cargoList.actualWeight = actualWeight ? Number(actualWeight) : 0;
 
       this.totalPlanned = cargoList.plannedWeight + this.totalPlanned;
