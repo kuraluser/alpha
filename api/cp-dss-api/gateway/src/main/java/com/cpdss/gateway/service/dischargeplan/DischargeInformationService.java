@@ -31,6 +31,7 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -212,12 +213,18 @@ public class DischargeInformationService {
     List<BerthDetails> availableBerths =
         this.loadingInformationService.getMasterBerthDetailsByPortId(
             portRotation.get().getPortId());
-
+    availableBerths.stream().forEach(berth->{
+    	berth.setDischargingBerthId(berth.getLoadingBerthId());
+    	berth.setDischargingInfoId(berth.getLoadingInfoId());
+    });
     // discharge berth (selected data)
     List<BerthDetails> selectedBerths =
         this.infoBuilderService.buildDischargeBerthsFromMessage(
             planReply.getDischargingInformation().getBerthDetailsList());
-
+    selectedBerths.stream().forEach(berth->{
+    	berth.setDischargingBerthId(berth.getLoadingBerthId());
+    	berth.setDischargingInfoId(berth.getLoadingInfoId());
+    });
     LoadingBerthDetails berthDetails = new LoadingBerthDetails();
     berthDetails.setAvailableBerths(availableBerths);
     berthDetails.setSelectedBerths(selectedBerths);
@@ -278,7 +285,7 @@ public class DischargeInformationService {
         loadingPlanBuilderService.buildLoadingPlanStabilityParamFromRpc(
             planReply.getPortDischargingPlanStabilityParametersList()));
     dischargingPlanResponse.setResponseStatus(
-        new CommonSuccessResponse(String.valueOf(GatewayConstants.SUCCESS), correlationId));
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return dischargingPlanResponse;
   }
 }
