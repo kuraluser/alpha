@@ -78,13 +78,17 @@ public class VesselPumpService {
 
   private void buildVesselManifolds(
       List<VesselManifold> toList, VesselInfo.VesselPumpsResponse.Builder builder) {
-    for (VesselManifold bl : toList) {
+    for (VesselManifold vm : toList) {
       VesselInfo.VesselComponent.Builder builder1 = VesselInfo.VesselComponent.newBuilder();
-      Optional.ofNullable(bl.getId()).ifPresent(builder1::setId);
-      Optional.ofNullable(bl.getManifoldName()).ifPresent(builder1::setComponentName);
-      Optional.ofNullable(bl.getManifoldCode()).ifPresent(builder1::setComponentCode);
-      Optional.ofNullable(bl.getVesselXid()).ifPresent(builder1::setVesselId);
-      Optional.ofNullable(bl.getTankType().getId()).ifPresent(builder1::setComponentType);
+      Optional.ofNullable(vm.getId()).ifPresent(builder1::setId);
+      Optional.ofNullable(vm.getManifoldName()).ifPresent(builder1::setComponentName);
+      Optional.ofNullable(vm.getManifoldCode()).ifPresent(builder1::setComponentCode);
+      Optional.ofNullable(vm.getVesselXid()).ifPresent(builder1::setVesselId);
+      Optional.ofNullable(vm.getTankType().getId()).ifPresent(builder1::setComponentType);
+      if (vm.getTankType() != null) {
+        Optional.ofNullable(vm.getTankType().getId()).ifPresent(builder1::setTankTypeId);
+        Optional.ofNullable(vm.getTankType().getTypeName()).ifPresent(builder1::setTankTypeName);
+      }
       builder.addVesselManifold(builder1.build());
     }
   }
