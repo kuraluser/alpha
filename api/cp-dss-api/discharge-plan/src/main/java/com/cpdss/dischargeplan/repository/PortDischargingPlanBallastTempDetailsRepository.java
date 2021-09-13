@@ -21,7 +21,7 @@ public interface PortDischargingPlanBallastTempDetailsRepository
       Long dischargingInfoId, Boolean isActive);
 
   @Query(
-      "FROM PortDischargingPlanBallastTempDetails PL INNER JOIN DischargingInformation LI ON PL.dischargingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
+      "FROM PortDischargingPlanBallastTempDetails PL INNER JOIN DischargeInformation LI ON PL.dischargingInformation = LI.id AND LI.dischargingPatternXid = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
   public List<PortDischargingPlanBallastTempDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
 

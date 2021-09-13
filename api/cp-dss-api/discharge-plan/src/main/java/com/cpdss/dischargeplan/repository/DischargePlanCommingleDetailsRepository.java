@@ -18,11 +18,11 @@ public interface DischargePlanCommingleDetailsRepository
 
   @Transactional
   @Modifying
-  @Query("UPDATE DischargePlanCommingleDetails SET isActive = false WHERE dischargingInformation = ?1")
+  @Query("UPDATE DischargePlanCommingleDetails SET isActive = false WHERE dischargeInformation = ?1")
   public void deleteByDischargingInformation(DischargeInformation dischargingInformation);
 
   @Query(
-      "FROM DischargePlanCommingleDetails PL INNER JOIN DischargingInformation LI ON PL.dischargingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND PL.isActive = ?2")
+      "FROM DischargePlanCommingleDetails PL INNER JOIN DischargeInformation LI ON PL.dischargeInformation.id = LI.id AND LI.dischargingPatternXid = ?1 AND PL.isActive = ?2")
   public List<DischargePlanCommingleDetails> findByDischargePatternXIdAndIsActive(
       Long patternId, Boolean isActive);
 }

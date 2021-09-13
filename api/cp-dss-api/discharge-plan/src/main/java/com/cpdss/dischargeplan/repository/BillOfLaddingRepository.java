@@ -12,7 +12,7 @@ import com.cpdss.dischargeplan.entity.BillOfLadding;
 public interface BillOfLaddingRepository extends CommonCrudRepository<BillOfLadding, Long> {
 
   @Query(
-      "FROM BillOfLadding BL INNER JOIN DischargingInformation LI ON BL.dischargingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND BL.portId = ?2 AND BL.isActive = ?3")
+      "FROM BillOfLadding BL INNER JOIN DischargeInformation LI ON BL.dischargeInformation.id = LI.id AND LI.dischargingPatternXid = ?1 AND BL.portId = ?2 AND BL.isActive = ?3")
   public List<BillOfLadding> findByDischargePatternXIdAndPortIdAndIsActive(
       Long patternId, Long portId, Boolean isActive);
 
@@ -26,7 +26,7 @@ public interface BillOfLaddingRepository extends CommonCrudRepository<BillOfLadd
       List<Long> cargoNominationId, Boolean isActive);
 
   @Query(
-      "FROM BillOfLadding BL INNER JOIN DischargingInformation LI ON BL.dischargingInformation.id = LI.id AND LI.loadablePatternXId = ?1 AND BL.isActive = ?2")
+      "FROM BillOfLadding BL INNER JOIN DischargeInformation LI ON BL.dischargeInformation.id = LI.id AND LI.dischargingPatternXid = ?1 AND BL.isActive = ?2")
   public List<BillOfLadding> findByDischargePatternXIdAndIsActive(
       Long loadablePatternId, Boolean isActive);
 }
