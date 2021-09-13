@@ -4,7 +4,7 @@
   </div>
   <div class="col-md-6 text-right" *ngIf="editMode">
     <a id="add_berth_btn"
-      [ngStyle]="{'pointer-events': (disableAddBtn || (berthFormArray.controls?.length === availableBerths?.length)) ? 'none' : null}"
+      [ngStyle]="{'pointer-events': (disableAddBtn || (berthFormArray.controls?.length === availableBerths?.length && availableBerths?.length!=0)) ? 'none' : null}"
       class="plus-icon plus-icon-rounded" (click)="addBerth(null)"> </a>
   </div>
 </div>
