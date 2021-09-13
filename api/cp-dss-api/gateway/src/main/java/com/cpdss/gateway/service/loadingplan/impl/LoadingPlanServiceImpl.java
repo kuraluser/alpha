@@ -601,7 +601,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Override
   public LoadingUpdateUllageResponse getUpdateUllageDetails(
-      Long vesselId, Long patternId, Long portRotationId, String operationType)
+      Long vesselId,
+      Long patternId,
+      Long portRotationId,
+      String operationType,
+      boolean isDischarging)
       throws GenericServiceException {
     LoadingPlanModels.UpdateUllageDetailsRequest.Builder requestBuilder =
         LoadingPlanModels.UpdateUllageDetailsRequest.newBuilder();
@@ -616,22 +620,30 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             .findFirst();
     // Set portId from portRoatation
     requestBuilder.setPortId(portRotation.get().getPortId());
+    Long studyId = null;
     // Set loadable study id
-    Long loadableStudyId = activeVoyage.getActiveLs().getId();
+    if (isDischarging) {
+      studyId = activeVoyage.getActiveDs().getId();
+    } else {
+      studyId = activeVoyage.getActiveLs().getId();
+    }
 
     // Retrieve cargo Nominations from cargo nomination table
     com.cpdss.common.generated.LoadableStudy.CargoNominationRequest cargoNominationRequest =
         com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.newBuilder()
-            .setLoadableStudyId(loadableStudyId)
+            .setLoadableStudyId(studyId)
             .build();
     com.cpdss.common.generated.LoadableStudy.CargoNominationReply cargoNominationReply =
         loadableStudyServiceBlockingStub.getCargoNominationById(cargoNominationRequest);
 
     // Get Update Ullage Data
-    LoadingPlanModels.UpdateUllageDetailsResponse response =
-        this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
+    LoadingPlanModels.UpdateUllageDetailsResponse response = null;
+    if (isDischarging) {
+      response = this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
+    } else {
+      response = this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
+    }
     LoadingUpdateUllageResponse outResponse = new LoadingUpdateUllageResponse();
-
     // group cargo nomination ids
     CargoInfo.CargoListRequest.Builder cargoRequestBuilder =
         CargoInfo.CargoListRequest.newBuilder();

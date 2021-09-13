@@ -10,6 +10,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.common.GatewayConstants;
+import com.cpdss.gateway.domain.LoadingUpdateUllageResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
@@ -26,6 +27,7 @@ import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
+import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +51,8 @@ public class DischargeInformationService {
   @Autowired LoadingInformationService loadingInformationService;
 
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
+
+  @Autowired LoadingPlanService loadingPlanService;
 
   @GrpcClient("dischargeInformationService")
   private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
@@ -290,5 +294,13 @@ public class DischargeInformationService {
     dischargingPlanResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return dischargingPlanResponse;
+  }
+
+  public LoadingUpdateUllageResponse getUpdateUllageDetails(
+      Long vesselId, Long patternId, Long portRotationId, String operationType)
+      throws GenericServiceException {
+
+    return loadingPlanService.getUpdateUllageDetails(
+        vesselId, patternId, portRotationId, operationType, true);
   }
 }

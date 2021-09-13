@@ -9,13 +9,24 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsResponse;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastDetailsRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
 import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
 import com.cpdss.dischargeplan.service.DischargePlanSynchronizeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +39,10 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   @Autowired DischargePlanSynchronizeService dischargePlanSynchronizeService;
 
   @Autowired DischargePlanAlgoService dischargePlanAlgoService;
+  @Autowired PortDischargingPlanBallastDetailsRepository pdpBallastDetailsRepository;
+  @Autowired PortDischargingPlanStowageDetailsRepository pdpStowageDetailsRepository;
+  @Autowired PortDischargingPlanRobDetailsRepository pdpRobDetailsRepository;
+  @Autowired PortDischargingPlanStabilityParametersRepository pdpStabilityParametersRepository;
 
   @Override
   public void dischargePlanSynchronization(
@@ -94,6 +109,187 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getDischargeUpdateUllageDetails(
+      UpdateUllageDetailsRequest request,
+      StreamObserver<UpdateUllageDetailsResponse> responseObserver) {
+    log.info("Inside get Update Ullage details");
+    LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder =
+        LoadingPlanModels.UpdateUllageDetailsResponse.newBuilder();
+    try {
+      getPortWiseStowageDetails(request, builder);
+      getPortWiseBallastDetails(request, builder);
+      getPortWiseRobDetails(request, builder);
+      //	      getPortWiseStowageTempDetails(request, builder);
+      //	      getPortWiseBallastTempDetails(request, builder);
+      //   getPortWiseCommingleDetails(request, builder);
+    } catch (Exception e) {
+      log.error("Exception when saveLoadingPlan microservice is called", e);
+      // builder.setResponseStatus(
+      // ResponseStatus.newBuilder()
+      // .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+      // .setMessage(e.getMessage())
+      // .setStatus(LoadingPlanConstants.FAILED)
+      // .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  public void getPortWiseStowageDetails(
+      LoadingPlanModels.UpdateUllageDetailsRequest request,
+      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+    List<PortDischargingPlanStowageDetails> portWiseStowageDetails =
+        pdpStowageDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
+            request.getPatternId(), request.getPortRotationId(), true);
+    for (PortDischargingPlanStowageDetails portWiseStowageDetail : portWiseStowageDetails) {
+      LoadingPlanModels.PortLoadablePlanStowageDetail.Builder newBuilder =
+          LoadingPlanModels.PortLoadablePlanStowageDetail.newBuilder();
+      newBuilder.setAbbreviation(
+          portWiseStowageDetail.getAbbreviation() != null
+              ? portWiseStowageDetail.getAbbreviation()
+              : "");
+      newBuilder.setApi(
+          portWiseStowageDetail.getApi() != null ? portWiseStowageDetail.getApi().toString() : "");
+      newBuilder.setCargoNominationId(portWiseStowageDetail.getCargoNominationXId());
+      newBuilder.setColorCode(
+          portWiseStowageDetail.getColorCode() != null ? portWiseStowageDetail.getColorCode() : "");
+      newBuilder.setCorrectedUllage(
+          portWiseStowageDetail.getCorrectedUllage() != null
+              ? portWiseStowageDetail.getCorrectedUllage().toString()
+              : "");
+      newBuilder.setCorrectionFactor(
+          portWiseStowageDetail.getCorrectionFactor() != null
+              ? portWiseStowageDetail.getCorrectionFactor().toString()
+              : "");
+      newBuilder.setFillingPercentage(
+          portWiseStowageDetail.getFillingPercentage() != null
+              ? portWiseStowageDetail.getFillingPercentage().toString()
+              : "");
+      newBuilder.setId(portWiseStowageDetail.getId());
+      newBuilder.setLoadablePatternId(request.getPatternId());
+      newBuilder.setRdgUllage(
+          portWiseStowageDetail.getRdgUllage() != null
+              ? portWiseStowageDetail.getRdgUllage().toString()
+              : "");
+      newBuilder.setTankId(portWiseStowageDetail.getTankXId());
+      newBuilder.setTemperature(
+          portWiseStowageDetail.getTemperature() != null
+              ? portWiseStowageDetail.getTemperature().toString()
+              : "");
+      newBuilder.setWeight(
+          portWiseStowageDetail.getWeight() != null
+              ? portWiseStowageDetail.getWeight().toString()
+              : "");
+      newBuilder.setQuantity(
+          portWiseStowageDetail.getQuantity() != null
+              ? portWiseStowageDetail.getQuantity().toString()
+              : "");
+      newBuilder.setActualPlanned(
+          portWiseStowageDetail.getValueType() != null
+              ? portWiseStowageDetail.getValueType().toString()
+              : "");
+      newBuilder.setArrivalDeparture(
+          portWiseStowageDetail.getConditionType() != null
+              ? portWiseStowageDetail.getConditionType().toString()
+              : "");
+      newBuilder.setUllage(
+          portWiseStowageDetail.getUllage() != null
+              ? portWiseStowageDetail.getUllage().toString()
+              : "");
+      builder.addPortLoadablePlanStowageDetails(newBuilder);
+    }
+  }
+
+  public void getPortWiseBallastDetails(
+      LoadingPlanModels.UpdateUllageDetailsRequest request,
+      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+    List<PortDischargingPlanBallastDetails> portWiseStowageDetails =
+        pdpBallastDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
+            request.getPatternId(), request.getPortRotationId(), true);
+    for (PortDischargingPlanBallastDetails portWiseBallastDetail : portWiseStowageDetails) {
+      LoadingPlanModels.PortLoadingPlanBallastDetails.Builder newBuilder =
+          LoadingPlanModels.PortLoadingPlanBallastDetails.newBuilder();
+
+      newBuilder.setColorCode(
+          portWiseBallastDetail.getColorCode() != null
+              ? portWiseBallastDetail.getColorCode().toString()
+              : "");
+      newBuilder.setCorrectedUllage(
+          portWiseBallastDetail.getCorrectedUllage() != null
+              ? portWiseBallastDetail.getCorrectedUllage().toString()
+              : "");
+      newBuilder.setCorrectionFactor(
+          portWiseBallastDetail.getCorrectionFactor() != null
+              ? portWiseBallastDetail.getCorrectionFactor().toString()
+              : "");
+      newBuilder.setFillingPercentage(
+          portWiseBallastDetail.getFillingPercentage() != null
+              ? portWiseBallastDetail.getFillingPercentage().toString()
+              : "");
+      newBuilder.setId(portWiseBallastDetail.getId());
+      newBuilder.setLoadablePatternId(request.getPatternId());
+      newBuilder.setTankId(portWiseBallastDetail.getTankXId());
+      newBuilder.setTemperature(
+          portWiseBallastDetail.getTemperature() != null
+              ? portWiseBallastDetail.getTemperature().toString()
+              : "");
+      newBuilder.setQuantity(
+          portWiseBallastDetail.getQuantity() != null
+              ? portWiseBallastDetail.getQuantity().toString()
+              : "");
+      newBuilder.setActualPlanned(
+          portWiseBallastDetail.getValueType() != null
+              ? portWiseBallastDetail.getValueType().toString()
+              : "");
+      newBuilder.setArrivalDeparture(
+          portWiseBallastDetail.getConditionType() != null
+              ? portWiseBallastDetail.getConditionType().toString()
+              : "");
+      newBuilder.setSounding(
+          portWiseBallastDetail.getSounding() != null
+              ? portWiseBallastDetail.getSounding().toString()
+              : "");
+      newBuilder.setSg(
+          portWiseBallastDetail.getSg() != null ? portWiseBallastDetail.getSg().toString() : "");
+      builder.addPortLoadingPlanBallastDetails(newBuilder);
+    }
+  }
+
+  public void getPortWiseRobDetails(
+      LoadingPlanModels.UpdateUllageDetailsRequest request,
+      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+    List<PortDischargingPlanRobDetails> portWiseRobDetails =
+        pdpRobDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
+            request.getPatternId(), request.getPortRotationId(), true);
+    for (PortDischargingPlanRobDetails portWiseRobDetail : portWiseRobDetails) {
+      LoadingPlanModels.PortLoadingPlanRobDetails.Builder newBuilder =
+          LoadingPlanModels.PortLoadingPlanRobDetails.newBuilder();
+
+      newBuilder.setId(portWiseRobDetail.getId());
+      newBuilder.setLoadablePatternId(request.getPatternId());
+      newBuilder.setTankId(portWiseRobDetail.getTankXId());
+      newBuilder.setQuantity(
+          portWiseRobDetail.getQuantity() != null
+              ? portWiseRobDetail.getQuantity().toString()
+              : "");
+      newBuilder.setActualPlanned(
+          portWiseRobDetail.getValueType() != null
+              ? portWiseRobDetail.getValueType().toString()
+              : "");
+      newBuilder.setArrivalDeparture(
+          portWiseRobDetail.getConditionType() != null
+              ? portWiseRobDetail.getConditionType().toString()
+              : "");
+      newBuilder.setDensity(
+          portWiseRobDetail.getDensity() != null ? portWiseRobDetail.getDensity().toString() : "");
+      newBuilder.setColorCode(
+          portWiseRobDetail.getColorCode() != null ? portWiseRobDetail.getColorCode() : "");
+      builder.addPortLoadingPlanRobDetails(newBuilder);
     }
   }
 }
