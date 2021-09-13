@@ -139,4 +139,7 @@ public class LoadingInformation extends EntityDoc {
 
   @Column(name = "is_loading_plan_generated")
   private Boolean isLoadingPlanGenerated;
+
+  @Column(name = "loadable_study_process_xid")
+  private String loadableStudyProcessId;
 }

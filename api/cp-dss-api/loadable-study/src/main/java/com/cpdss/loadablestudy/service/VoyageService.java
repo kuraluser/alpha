@@ -24,6 +24,7 @@ import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
@@ -35,6 +36,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -78,6 +80,8 @@ public class VoyageService {
   @Autowired private ApiTempHistoryRepository apiTempHistoryRepository;
 
   @Autowired private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
+
+  @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
 
   @Autowired private SynopticService synopticService;
 
@@ -699,6 +703,18 @@ public class VoyageService {
     builder.getLoadingInformationDetailBuilder().setLoadablePatternId(loadablePattern.getId());
     builder.getLoadingInformationDetailBuilder().setPortId(portRotation.getPortXId());
     builder.getLoadingInformationDetailBuilder().setVoyageId(voyageId);
+    List<LoadableStudyAlgoStatus> algoStatuses =
+        loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
+            loadablePattern.getLoadableStudy().getId(), true);
+    Optional<LoadableStudyAlgoStatus> latestStatusOpt =
+        algoStatuses.stream()
+            .sorted(Comparator.comparing(LoadableStudyAlgoStatus::getCreatedDateTime).reversed())
+            .findFirst();
+    latestStatusOpt.ifPresent(
+        status ->
+            builder
+                .getLoadingInformationDetailBuilder()
+                .setLoadableStudyProcessId(status.getProcessId()));
     Optional<SynopticalTable> synopticalTableOpt =
         portRotation.getSynopticalTable().stream()
             .filter(

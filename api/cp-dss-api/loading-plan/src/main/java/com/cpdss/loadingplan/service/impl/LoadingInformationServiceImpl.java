@@ -142,6 +142,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     } catch (GenericServiceException e) {
       log.info("Failed to fetch status with id {}", LOADING_INFORMATION_PENDING_ID);
     }
+    loadingInformation.setLoadableStudyProcessId(
+        loadingInformationDetail.getLoadableStudyProcessId());
     return loadingInformationRepository.save(loadingInformation);
   }
 

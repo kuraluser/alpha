@@ -465,13 +465,13 @@ public class UllageUpdateLoadicatorService {
     algoRequest.setProcessId(request.getProcessId());
     algoRequest.setVesselId(loadingInformation.getVesselXId());
     algoRequest.setPortId(loadingInformation.getPortXId());
+    algoRequest.setLoadableStudyProcessId(loadingInformation.getLoadableStudyProcessId());
     List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
     request
         .getLoadingInfoLoadicatorDetailsList()
         .forEach(
             loadicatorDetails -> {
               LoadicatorStage loadicatorStage = new LoadicatorStage();
-              loadicatorStage.setTime(loadicatorDetails.getTime());
               loadicatorService.buildLdTrim(loadicatorDetails.getLDtrim(), loadicatorStage);
               loadicatorService.buildLdIntactStability(
                   loadicatorDetails.getLDIntactStability(), loadicatorStage);
