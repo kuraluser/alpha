@@ -13,7 +13,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LoadingDischargingManageSequenceComponent } from '../../loading-discharging-manage-sequence/loading-discharging-manage-sequence.component';
-import { durationValidator } from '../../validators/duration-validator.directive';
+import { durationValidator } from '../../directives/validator/duration-validator.directive';
 
 /**
  * Component class for discharge information component

@@ -5,7 +5,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 import { IBerth, IBerthDetails } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
-import { LoadingBerthDuplicateValidator } from '../validators/loading-berth-duplicate-validator.directive';
+import { LoadingBerthDuplicateValidator } from '../directives/validator/loading-berth-duplicate-validator.directive';
 import { alphaNumericSpecialCharacterValidator } from '../../core/directives/alpha-numeric-special-character-validator.directive.ts';
 import { OPERATIONS } from '../../core/models/common.model';
 
