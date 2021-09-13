@@ -235,6 +235,57 @@ public final class DischargeInformationServiceGrpc {
     return getDischargingDownloadPortTideDetailsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
+          com.cpdss.common.generated.discharge_plan.DischargingPlanReply>
+      getGetDischargingPlanMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetDischargingPlan",
+      requestType = com.cpdss.common.generated.discharge_plan.DischargeInformationRequest.class,
+      responseType = com.cpdss.common.generated.discharge_plan.DischargingPlanReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
+          com.cpdss.common.generated.discharge_plan.DischargingPlanReply>
+      getGetDischargingPlanMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
+            com.cpdss.common.generated.discharge_plan.DischargingPlanReply>
+        getGetDischargingPlanMethod;
+    if ((getGetDischargingPlanMethod = DischargeInformationServiceGrpc.getGetDischargingPlanMethod)
+        == null) {
+      synchronized (DischargeInformationServiceGrpc.class) {
+        if ((getGetDischargingPlanMethod =
+                DischargeInformationServiceGrpc.getGetDischargingPlanMethod)
+            == null) {
+          DischargeInformationServiceGrpc.getGetDischargingPlanMethod =
+              getGetDischargingPlanMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
+                          com.cpdss.common.generated.discharge_plan.DischargingPlanReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetDischargingPlan"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargeInformationRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargingPlanReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeInformationServiceMethodDescriptorSupplier(
+                              "GetDischargingPlan"))
+                      .build();
+        }
+      }
+    }
+    return getGetDischargingPlanMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeInformationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceStub> factory =
@@ -318,6 +369,15 @@ public final class DischargeInformationServiceGrpc {
           getDischargingDownloadPortTideDetailsMethod(), responseObserver);
     }
 
+    /** */
+    public void getDischargingPlan(
+        com.cpdss.common.generated.discharge_plan.DischargeInformationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.discharge_plan.DischargingPlanReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetDischargingPlanMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -352,6 +412,13 @@ public final class DischargeInformationServiceGrpc {
                       com.cpdss.common.generated.discharge_plan
                           .DischargingDownloadTideDetailStatusReply>(
                       this, METHODID_DISCHARGING_DOWNLOAD_PORT_TIDE_DETAILS)))
+          .addMethod(
+              getGetDischargingPlanMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.discharge_plan.DischargeInformationRequest,
+                      com.cpdss.common.generated.discharge_plan.DischargingPlanReply>(
+                      this, METHODID_GET_DISCHARGING_PLAN)))
           .build();
     }
   }
@@ -415,6 +482,17 @@ public final class DischargeInformationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getDischargingPlan(
+        com.cpdss.common.generated.discharge_plan.DischargeInformationRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.discharge_plan.DischargingPlanReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetDischargingPlanMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -463,6 +541,13 @@ public final class DischargeInformationServiceGrpc {
       return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
           getChannel(), getDischargingDownloadPortTideDetailsMethod(), getCallOptions(), request);
     }
+
+    /** */
+    public com.cpdss.common.generated.discharge_plan.DischargingPlanReply getDischargingPlan(
+        com.cpdss.common.generated.discharge_plan.DischargeInformationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetDischargingPlanMethod(), getCallOptions(), request);
+    }
   }
 
   /** */
@@ -506,12 +591,22 @@ public final class DischargeInformationServiceGrpc {
           getChannel().newCall(getDischargingUploadPortTideDetailsMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.discharge_plan.DischargingPlanReply>
+        getDischargingPlan(
+            com.cpdss.common.generated.discharge_plan.DischargeInformationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetDischargingPlanMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_DISCHARGE_INFORMATION = 0;
   private static final int METHODID_GET_OR_SAVE_RULES_FOR_DISCHARGING = 1;
   private static final int METHODID_DISCHARGING_UPLOAD_PORT_TIDE_DETAILS = 2;
   private static final int METHODID_DISCHARGING_DOWNLOAD_PORT_TIDE_DETAILS = 3;
+  private static final int METHODID_GET_DISCHARGING_PLAN = 4;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -560,6 +655,13 @@ public final class DischargeInformationServiceGrpc {
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.discharge_plan
                           .DischargingDownloadTideDetailStatusReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_DISCHARGING_PLAN:
+          serviceImpl.getDischargingPlan(
+              (com.cpdss.common.generated.discharge_plan.DischargeInformationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.discharge_plan.DischargingPlanReply>)
                   responseObserver);
           break;
         default:
@@ -631,6 +733,7 @@ public final class DischargeInformationServiceGrpc {
                       .addMethod(getGetOrSaveRulesForDischargingMethod())
                       .addMethod(getDischargingUploadPortTideDetailsMethod())
                       .addMethod(getDischargingDownloadPortTideDetailsMethod())
+                      .addMethod(getGetDischargingPlanMethod())
                       .build();
         }
       }

@@ -5,6 +5,8 @@ import { IToppingOffSequence } from '../models/loading-discharging.model';
 import { ToppingOffTankTableTransformationService } from './topping-off-tank-table-transformation.service';
 import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
+
 /**
  * Component class for loading topping off tank component
  *
@@ -62,6 +64,7 @@ export class ToppingOffTankTableComponent implements OnInit {
 
 
   constructor(
+    private quantityPipe: QuantityPipe,
     private toppingOffTankTableTransformationService: ToppingOffTankTableTransformationService) { }
 
   ngOnInit(): void {
@@ -119,28 +122,35 @@ export class ToppingOffTankTableComponent implements OnInit {
     })
     return cargoDetail;
   }
-  
-/**
-* Method for init loading sequence array
-*
-* @memberof ToppingOffTankTableComponent
-*/
+
+  /**
+  * Method for init loading sequence array
+  *
+  * @memberof ToppingOffTankTableComponent
+  */
   initiToppingSequenceArray() {
     const cargoQuantity = [];
-    this.loadingDischargingPLanData?.planStowageDetails?.map(item=>{
-      if(item.conditionType === 2 && item.valueType === 2){
+    this.loadingDischargingPLanData?.planStowageDetails?.map(item => {
+      if (item.conditionType === 2 && item.valueType === 2) {
         cargoQuantity.push(item);
       }
     });
     const cargoTanks = this.toppingOffTankTableTransformationService.formatCargoTanks(this.cargoTanks, cargoQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.cargoTypeList = Object.values(this.toppingOffSequence?.reduce((acc, obj) => {
-      cargoTanks.map(item=>{
-        item?.map(tank=>{
-          if(tank.id === obj.tankId){
+      cargoTanks?.map(item => {
+        item?.map(tank => {
+          if (tank.id === obj.tankId) {
             obj.fillingRatio = Number(tank.commodity?.percentageFilled);
           }
         });
       });
+      this.loadingDischargingPLanData?.planStowageDetails?.map(item => {
+        if (item.conditionType === 2 && item.valueType === 2 && item.tankId === obj.tankId) {
+          obj.ullage = item?.ullage && !isNaN(Number(item?.ullage)) ? Number(Number(item?.ullage).toFixed(3)) : 0;
+          obj.quantity = Number(item?.quantityMT);
+        }
+      });
+      obj.quantity = this.quantityPipe.transform(obj.quantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, obj.api, obj.temperature, -1);
       const key = obj['cargoId'];
       if (!acc[key]) {
         acc[key] = [];
@@ -152,24 +162,24 @@ export class ToppingOffTankTableComponent implements OnInit {
     this.sortCargoTypeList();
   }
 
-/**
-* Method for sorting array based on sequence number
-*
-* @memberof ToppingOffTankTableComponent
-*/
-  sortCargoTypeList(){
-    this.cargoTypeList?.map(item=>{
+  /**
+  * Method for sorting array based on sequence number
+  *
+  * @memberof ToppingOffTankTableComponent
+  */
+  sortCargoTypeList() {
+    this.cargoTypeList?.map(item => {
       item.sort((a, b) => a.displayOrder - b.displayOrder);
     });
-    this.cargoTypeList?.sort((a,b)=> a[0].displayOrder - b[0].displayOrder);
+    this.cargoTypeList?.sort((a, b) => a[0].displayOrder - b[0].displayOrder);
   }
 
-  
-/**
-*Method to find out tank
-*
-* @memberof ToppingOffTankTableComponent
-*/
+
+  /**
+  *Method to find out tank
+  *
+  * @memberof ToppingOffTankTableComponent
+  */
 
   findTank(tankId) {
     const tankGroup = this.cargoTanks?.find((groupTank) => {

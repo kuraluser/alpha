@@ -3,6 +3,7 @@ package com.cpdss.dischargeplan.domain;
 
 import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 /**
@@ -11,6 +12,7 @@ import lombok.Data;
  */
 @Data
 @CPDSSJsonParser
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DischargeInformation {
 
   private CommonSuccessResponse responseStatus;
@@ -27,4 +29,5 @@ public class DischargeInformation {
   private DischargeStages dischargeStages;
   private DischargeSequences dischargeSequences;
   private CowPlan cowPlan;
+  private PostDischargeRates postDischargeRates;
 }

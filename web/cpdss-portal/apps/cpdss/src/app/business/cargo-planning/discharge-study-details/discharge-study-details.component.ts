@@ -157,7 +157,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       SecurityService.refreshToken(event?.data?.refreshedToken)
     }
     if (event.data.type === 'discharge-pattern-processing' && this.router.url.includes('discharge-study-details')) {
-      if (event.data.pattern?.loadableStudyId === this.dischargeStudyId) {
+      if (event.data.pattern?.dischargeStudyId === this.dischargeStudyId) {
         this.isGenerateClicked = true;
         this.processingMessage();
       } else {
@@ -165,7 +165,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       }
     }
     else if (event.data.type === 'discharge-pattern-loadicator-checking' && this.router.url.includes('discharge-study-details')) {
-      if (event.data.pattern?.loadableStudyId === this.dischargeStudyId) {
+      if (event.data.pattern?.dischargeStudyId === this.dischargeStudyId) {
         this.isGenerateClicked = true;
         this.selectedDischargeStudy.statusId = DISCHARGE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING;
         this.selectedDischargeStudy.status = DISCHARGE_STUDY_STATUS_TEXT.PLAN_LOADICATOR_CHECKING;
@@ -177,7 +177,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       }
     }
     else if (event.data.type === 'discharge-pattern-completed') {
-      if (event.data.pattern?.loadableStudyId === this.dischargeStudyId) {
+      if (event.data.pattern?.dischargeStudyId === this.dischargeStudyId) {
         this.isPlanGenerated = true;
         this.selectedDischargeStudy.statusId = DISCHARGE_STUDY_STATUS.PLAN_GENERATED;
         this.selectedDischargeStudy.status = DISCHARGE_STUDY_STATUS_TEXT.PLAN_GENERATED;
@@ -185,7 +185,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       this.generatedMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedDischargeStudyName);
     }
     else if (event.data.type === 'discharge-pattern-no-solution') {
-      if (event.data.pattern?.loadableStudyId === this.dischargeStudyId) {
+      if (event.data.pattern?.dischargeStudyId === this.dischargeStudyId) {
         this.isPlanOpenOrNo = false;
         this.isPlanGenerated = false;
         this.isGenerateClicked = false;
@@ -196,7 +196,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       this.noPlanMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedDischargeStudyName)
     }
     else if (event.data.type === 'discharge-pattern-error-occured') {
-      if (event.data.pattern?.loadableStudyId === this.dischargeStudyId) {
+      if (event.data.pattern?.dischargeStudyId === this.dischargeStudyId) {
         this.isPlanOpenOrNo = false;
         this.isPlanGenerated = false;
         this.isGenerateClicked = false;
@@ -207,7 +207,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       this.errorOccurdMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedDischargeStudyName)
     }
     else if (event.data.type === 'discharge-pattern-no-response') {
-      if (event.data.pattern?.loadableStudyId === this.dischargeStudyId) {
+      if (event.data.pattern?.dischargeStudyId === this.dischargeStudyId) {
         this.isPlanOpenOrNo = false;
         this.isPlanGenerated = false;
         this.isGenerateClicked = false;
@@ -551,7 +551,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
         this.selectedDischargeStudy.statusId = 4;
         data.processId = res.processId;
         if (res.processId) {
-          navigator.serviceWorker.controller.postMessage({ type: 'loadable-pattern-status', data });
+          navigator.serviceWorker.controller.postMessage({ type: 'discharge-study-pattern-status', data });
           this.selectedDischargeStudy = { ...this.selectedDischargeStudy };
         }
       }

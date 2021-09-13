@@ -31,7 +31,8 @@ import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequ
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
-import com.cpdss.dischargeplan.domain.RuleMasterSection;
+import com.cpdss.dischargeplan.domain.rules.RuleMasterData;
+import com.cpdss.dischargeplan.domain.rules.RuleMasterSection;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargePlanRuleInput;
 import com.cpdss.dischargeplan.entity.DischargePlanRules;
@@ -417,8 +418,7 @@ public class DischargeInformationService {
                                             item.trim().length() != 0
                                                 && item.trim()
                                                     .equalsIgnoreCase(
-                                                        com.cpdss.dischargeplan.domain
-                                                            .RuleMasterData.CargoTank.getPrefix()));
+                                                        RuleMasterData.CargoTank.getPrefix()));
                             Optional<String> isSuffixExist =
                                 Optional.ofNullable(input.getSuffix())
                                     .filter(
@@ -426,8 +426,7 @@ public class DischargeInformationService {
                                             item.trim().length() != 0
                                                 && item.trim()
                                                     .equalsIgnoreCase(
-                                                        com.cpdss.dischargeplan.domain
-                                                            .RuleMasterData.CargoTank.getSuffix()));
+                                                        RuleMasterData.CargoTank.getSuffix()));
                             try {
                               if (isPrefixExist.isPresent() && isSuffixExist.isPresent()) {
                                 this.ruleMasterDropDownValidation(

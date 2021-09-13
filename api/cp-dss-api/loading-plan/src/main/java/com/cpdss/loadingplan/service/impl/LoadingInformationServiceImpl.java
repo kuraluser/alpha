@@ -555,8 +555,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       Workbook workbook = WorkbookFactory.create(bin);
       Sheet sheetAt = workbook.getSheet(SHEET);
       Iterator<Row> rowIterator = sheetAt.iterator();
-      if (rowIterator.hasNext()) {
-        rowIterator.next();
+      rowIterator.next();
+      if (!rowIterator.hasNext()) {
+        throw new IllegalStateException(CommonErrorCodes.E_CPDSS_EMPTY_EXCEL_FILE);
       }
       List<PortTideDetail> tideDetails = new ArrayList<>();
       while (rowIterator.hasNext()) {

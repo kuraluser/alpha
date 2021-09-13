@@ -46,6 +46,7 @@ export class ToppingOffTankTableTransformationService {
       {
         field: 'quantity',
         header: 'LOADABLE_PLAN_TOPPING_OFF_TANK_QUANTITY',
+        numberType: 'quantity'
       },
       {
         field: 'fillingRatio',

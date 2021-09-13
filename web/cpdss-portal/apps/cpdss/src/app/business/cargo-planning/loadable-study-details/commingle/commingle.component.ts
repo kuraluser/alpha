@@ -172,8 +172,8 @@ export class CommingleComponent implements OnInit {
       this.preferredTankList = this.commingleData.vesselTanks;
       this.disableAddNewBtn = (this.cargoNominationsCargo.length <= 2 && this.manualCommingleList && this.manualCommingleList?.length >= 1) ? true : false;
       if (this.manualCommingleList && this.manualCommingleList?.length) {
-        this.commingleForm.controls['preferredTanks'].setValidators([Validators.required, Validators.maxLength(5)]),
-        this.commingleForm.controls['preferredTanks'].updateValueAndValidity()
+        this.commingleForm.controls['preferredTanks'].setValidators([Validators.required, Validators.maxLength(5)]);
+        this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
         this.resetSlNo();
       }
     }
@@ -255,16 +255,17 @@ export class CommingleComponent implements OnInit {
           cargoNomination1Id: this.commingleForm.value.cargo1 ? this.commingleForm.value.cargo1.id : '',
           cargoNomination2Id: this.commingleForm.value.cargo2 ? this.commingleForm.value.cargo2.id : ''
         }]
-      }
+      };
       try {
-
+        if (this.commingleForm.value.cargo1 !== '' && this.commingleForm.value.cargo2 !== '') {
           const result = await this.commingleApiService.saveVolMaxCommingle(this.vesselId, this.voyageId, this.loadableStudyId, data).toPromise();
           if (result.responseStatus.status === '200') {
             this.messageService.add({ severity: 'success', summary: translationKeys['COMMINGLE_VOL_MAX_SAVE_SUCCESS'], detail: translationKeys['COMMINGLE_COMPLETED_SUCCESSFULLY'] });
-            this.close();
           }
-
-
+        } else {
+          this.messageService.add({ severity: 'error', summary: translationKeys['COMMINGLE_SAVE_ERROR'], detail: translationKeys['NO_COMMINGLE_DATA_SAVED'] });
+        }
+        this.close();
       } catch (errorResponse) {
         if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
           this.messageService.add({ severity: 'error', summary: translationKeys['COMMINGLE_SAVE_ERROR'], detail: translationKeys['COMMINGLE_SAVE_STATUS_ERROR'], life: 10000 });
@@ -340,9 +341,9 @@ export class CommingleComponent implements OnInit {
    */
   private initCommingleManualFormGroup(commingle: ICommingleValueObject) {
     const quantityDecimal = this.quantityDecimalService.quantityDecimal();
-    const min = quantityDecimal ? (1/Math.pow(10, quantityDecimal)) : 1;
+    const min = quantityDecimal ? (1 / Math.pow(10, quantityDecimal)) : 1;
     return this.fb.group({
-      sl :0,
+      sl: 0,
       cargo1: this.fb.control(commingle?.cargo1?.value, [Validators.required, CargoDuplicateValidator('cargo1', 'cargo2')]),
       cargo2: this.fb.control(commingle?.cargo2?.value, [Validators.required, CargoDuplicateValidator('cargo2', 'cargo1')]),
       cargo1pct: this.fb.control(commingle?.cargo1IdPct?.value?.id, [Validators.required]),
@@ -435,13 +436,17 @@ export class CommingleComponent implements OnInit {
     });
   }
 
-  cargoFieldsUpdateValue()
-  {
-  (<FormArray>this.commingleManualForm.get('dataTable')).controls.forEach((row: FormGroup) => {
-    row.controls?.cargo1?.updateValueAndValidity();
-    row.controls?.cargo2?.updateValueAndValidity();
-  });
-} 
+  /**
+   * Method to update value and validity of manual table
+   *
+   * @memberof CommingleComponent
+   */
+  cargoFieldsUpdateValue() {
+    (<FormArray>this.commingleManualForm.get('dataTable')).controls.forEach((row: FormGroup) => {
+      row.controls?.cargo1?.updateValueAndValidity();
+      row.controls?.cargo2?.updateValueAndValidity();
+    });
+  }
 
   /**
    * Delete row
@@ -468,7 +473,7 @@ export class CommingleComponent implements OnInit {
           this.manualCommingleList = [...this.manualCommingleList];
           (<FormArray>this.commingleManualForm.get('dataTable')).removeAt(event.index);
           this.resetSlNo();
-          this.cargoFieldsUpdateValue();        
+          this.cargoFieldsUpdateValue();
           if (!this.manualCommingleList?.length) {
             this.commingleForm.controls['preferredTanks'].setValidators([Validators.maxLength(5)]);
             this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
@@ -483,8 +488,8 @@ export class CommingleComponent implements OnInit {
    */
   async saveCommingle() {
     const translationKeys = await this.translateService.get(['COMMINGLE_CARGO_SAVE_LABEL', 'COMMINGLE_CARGO_SAVE_CONFIRM', 'COMMINGLE_CARGO_DELETE_CONFIRM_LABEL', 'COMMINGLE_CARGO_DELETE_REJECT_LABEL']).toPromise();
-    if(this.isVolumeMaximum) {
-      if(this.commingleForm.valid && this.commingleCargo && this.commingleCargo?.cargoGroups[0]?.cargo1Id && this.commingleCargo?.cargoGroups[0]?.cargo2Id && ((this.commingleForm.value.purpose.id !== this.commingleCargo.purposeId) || !(this.commingleForm.value.cargo1 && this.commingleForm.value.cargo2))){
+    if (this.isVolumeMaximum) {
+      if (this.commingleForm.valid && this.commingleCargo && this.commingleCargo?.cargoGroups[0]?.cargo1Id && this.commingleCargo?.cargoGroups[0]?.cargo2Id && ((this.commingleForm.value.purpose.id !== this.commingleCargo.purposeId) || !(this.commingleForm.value.cargo1 && this.commingleForm.value.cargo2))) {
         this.confirmationService.confirm({
           key: 'confirmation-alert',
           header: translationKeys['COMMINGLE_CARGO_SAVE_LABEL'],
@@ -505,7 +510,7 @@ export class CommingleComponent implements OnInit {
         this.saveVolumeMaximisation()
       }
     } else {
-      if(this.commingleForm.controls['preferredTanks'].valid && this.commingleManualForm.valid && this.commingleCargo && this.commingleCargo?.cargoGroups[0]?.cargo1Id && this.commingleCargo?.cargoGroups[0]?.cargo2Id && ((this.commingleForm.value.purpose.id !== this.commingleCargo.purposeId) || !this.manualCommingleList?.length)){
+      if (this.commingleForm.controls['preferredTanks'].valid && this.commingleManualForm.valid && this.commingleCargo && this.commingleCargo?.cargoGroups[0]?.cargo1Id && this.commingleCargo?.cargoGroups[0]?.cargo2Id && ((this.commingleForm.value.purpose.id !== this.commingleCargo.purposeId) || !this.manualCommingleList?.length)) {
         this.confirmationService.confirm({
           key: 'confirmation-alert',
           header: translationKeys['COMMINGLE_CARGO_SAVE_LABEL'],
@@ -558,11 +563,11 @@ export class CommingleComponent implements OnInit {
 
       }
       try {
-          const result = await this.commingleApiService.saveVolMaxCommingle(this.vesselId, this.voyageId, this.loadableStudyId, data).toPromise();
-          if (result.responseStatus.status === '200') {
-            this.messageService.add({ severity: 'success', summary: translationKeys['COMMINGLE_MANUAL_SAVE_SUCCESS'], detail: translationKeys['COMMINGLE_COMPLETED_SUCCESSFULLY'] });
-          }
-          this.close();
+        const result = await this.commingleApiService.saveVolMaxCommingle(this.vesselId, this.voyageId, this.loadableStudyId, data).toPromise();
+        if (result.responseStatus.status === '200') {
+          this.messageService.add({ severity: 'success', summary: translationKeys['COMMINGLE_MANUAL_SAVE_SUCCESS'], detail: translationKeys['COMMINGLE_COMPLETED_SUCCESSFULLY'] });
+        }
+        this.close();
       } catch (errorResponse) {
         if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
           this.messageService.add({ severity: 'error', summary: translationKeys['COMMINGLE_SAVE_ERROR'], detail: translationKeys['COMMINGLE_SAVE_STATUS_ERROR'], life: 10000 });
@@ -595,12 +600,12 @@ export class CommingleComponent implements OnInit {
    */
   updateCommingleFormValue() {
     if (this.isVolumeMaximum) {
-      if (this.commingleCargo?.purposeId === 1) {
+      if (this.commingleCargo?.purposeId === 1 && this.commingleCargo?.cargoGroups[0]?.cargo1Id && this.commingleCargo?.cargoGroups[0]?.cargo2Id) {
         this.commingleForm.controls['preferredTanks'].clearValidators();
         this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
         this.commingleForm.patchValue({
           purpose: this.purposeOfCommingle.find(purpose => purpose.id === 1),
-          slopOnly: this.commingleCargo.slopOnly,
+          slopOnly: this.commingleCargo?.slopOnly,
           cargo1: this.selectedCargo1,
           cargo2: this.selectedCargo2
         });
@@ -612,15 +617,14 @@ export class CommingleComponent implements OnInit {
         this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
         this.commingleForm.patchValue({
           purpose: this.purposeOfCommingle.find(purpose => purpose.id === 1),
-          slopOnly: this.commingleCargo.slopOnly,
+          slopOnly: this.commingleCargo?.slopOnly,
           cargo1: '',
           cargo2: ''
         });
-
       }
     }
     else {
-      this.manualCommingleList && this.manualCommingleList?.length ? 
+      this.manualCommingleList && this.manualCommingleList?.length ?
         this.commingleForm.controls['preferredTanks'].setValidators([Validators.required, Validators.maxLength(5)]) : this.commingleForm.controls['preferredTanks'].setValidators([Validators.maxLength(5)]);
       this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
       this.commingleForm.controls['cargo1'].clearValidators();
@@ -635,9 +639,7 @@ export class CommingleComponent implements OnInit {
       this.commingleForm.patchValue({
         purpose: this.purposeOfCommingle.find(purpose => purpose.id === 2),
         preferredTanks: this.selectedTanks
-      })
-
-
+      });
     }
   }
 
@@ -671,7 +673,6 @@ export class CommingleComponent implements OnInit {
       const formControl = <FormControl>this.commingleForm.get(formControlName);
       return formControl;
     }
-
   }
 
   /**
@@ -750,7 +751,7 @@ export class CommingleComponent implements OnInit {
     row.cargo2.value.loadingPorts.forEach(port => {
       port.quantity = this.loadableStudyDetailsApiService.updateQuantityByUnit(port.quantity, unitFrom, unitTo, netApi)
     });
-    row.quantity.value = this.quantityPipe.transform(row.quantity.value, unitFrom, unitTo, netApi , '' , -1)
+    row.quantity.value = this.quantityPipe.transform(row.quantity.value, unitFrom, unitTo, netApi, '', -1)
     return row;
   }
 

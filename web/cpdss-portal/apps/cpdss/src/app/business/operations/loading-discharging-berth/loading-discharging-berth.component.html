@@ -4,7 +4,7 @@
   </div>
   <div class="col-md-6 text-right" *ngIf="editMode">
     <a id="add_berth_btn"
-      [ngStyle]="{'pointer-events': (disableAddBtn || (berthFormArray.controls?.length === availableBerths?.length)) ? 'none' : null}"
+      [ngStyle]="{'pointer-events': (disableAddBtn || (berthFormArray.controls?.length === availableBerths?.length && availableBerths?.length!=0)) ? 'none' : null}"
       class="plus-icon plus-icon-rounded" (click)="addBerth(null)"> </a>
   </div>
 </div>
@@ -54,7 +54,7 @@
             <div class="row form-group">
               <label for="berth-name" class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_NAME_LABEL' |
                 translate}}</label>
-              <div class="col">
+              <div class="col text-right">
                 <input type="text" *ngIf="editMode;else berthName" [negative]="false" class="form-control"
                   id="berth-name" formControlName="berthName"
                   placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_NAME_PLACE_HOLDER' | translate}}"
@@ -68,7 +68,7 @@
               <label for="berth-depth" class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_DEPTH_LABEL'
                 |
                 translate}}</label>
-              <div class="col error-icon-wrapper">
+              <div class="col error-icon-wrapper text-right">
                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" id="berth-depth"
                   *ngIf="editMode;else maxShipDepth" formControlName="maxShipDepth"
                   placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_DEPTH_PLACE_HOLDER' | translate}}"
@@ -84,8 +84,8 @@
               <label for="berth-slong-hose"
                 class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_ALONG_HOSE_LABEL' |
                 translate}}</label>
-              <div class="col error-icon-wrapper">
-                <textarea type="text" class="form-control" id="berth-slong-hose" *ngIf="editMode;else hoseConnections"
+              <div class="col error-icon-wrapper text-right">
+                <textarea type="text" class="form-control text-right" id="berth-slong-hose" *ngIf="editMode;else hoseConnections"
                   formControlName="hoseConnections"
                   placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_ALONG_HOSE_PLACE_HOLDER' | translate}}"
                   (change)="change('hoseConnections')" [readonly]="false"></textarea>
@@ -100,7 +100,7 @@
               <label for="berth-sea-draft"
                 class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_SEA_DRAFT_LABEL' |
                 translate}}</label>
-              <div class="col error-icon-wrapper">
+              <div class="col error-icon-wrapper text-right">
                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" id="berth-sea-draft"
                   *ngIf="editMode;else seaDraftLimitation" formControlName="seaDraftLimitation"
                   placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_SEA_DRAFT_PLACE_HOLDER' | translate}}"
@@ -116,7 +116,7 @@
               <label for="berth-air-draft"
                 class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_AIR_DRAFT_LABEL' |
                 translate}}</label>
-              <div class="col error-icon-wrapper">
+              <div class="col error-icon-wrapper text-right">
                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" id="berth-air-draft"
                   *ngIf="editMode;else airDraftLimitation" formControlName="airDraftLimitation"
                   placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_AIR_DRAFT_PLACE_HOLDER' | translate}}"
@@ -156,7 +156,7 @@
               <label for="berth-manofold-height" class="col-5 no-left-padding">{{(operation === OPERATIONS.DISCHARGING ?
                 'DISCHARGING_BERTH_SELECTED_MANIFOLD_HEIGHT_LABEL' : 'LOADING_BERTH_SELECTED_MANIFOLD_HEIGHT_LABEL')
                 | translate}}</label>
-              <div class="col error-icon-wrapper">
+              <div class="col error-icon-wrapper text-right">
                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
                   id="berth-manofold-height" *ngIf="editMode;else maxManifoldHeight" formControlName="maxManifoldHeight"
                   placeholder="{{(operation === OPERATIONS.DISCHARGING ? 'DISCHARGING_BERTH_SELECTED_MANIFOLD_HEIGHT_PLACE_HOLDER' : 'LOADING_BERTH_SELECTED_MANIFOLD_HEIGHT_PLACE_HOLDER') | translate}}"
@@ -173,7 +173,7 @@
               <label for="berth-manofold-pressure"
                 class="col-5 no-left-padding">{{'DISCHARGING_BERTH_SELECTED_MANIFOLD_PRESSURE_LABEL'
                 | translate}}</label>
-              <div class="col error-icon-wrapper">
+              <div class="col error-icon-wrapper text-right">
                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
                   id="berth-manofold-height" *ngIf="editMode;else maxManifoldPressure"
                   formControlName="maxManifoldPressure"
@@ -191,7 +191,7 @@
               <label for="berth-manofold-height"
                 class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_LINE_DISPLACEMENT_LABEL'
                 | translate}}</label>
-              <div class="col error-icon-wrapper">
+              <div class="col error-icon-wrapper text-right">
                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control"
                   id="berth-line -displacement" *ngIf="editMode;else lineDisplacement"
                   formControlName="lineDisplacement"
@@ -209,12 +209,12 @@
                 class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_REGULATION_RESTRICTION_LABEL'
                 | translate}}</label>
               <div class="col error-icon-wrapper">
-                <textarea type="text" class="form-control" id="berth-regulation-restriction"
+                <textarea type="text" class="form-control " id="berth-regulation-restriction"
                   *ngIf="editMode;else regulationAndRestriction" formControlName="regulationAndRestriction"
                   placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_REGULATION_RESTRICTION_PLACE_HOLDER' | translate}}"
                   (change)="change('regulationAndRestriction')" [readonly]="false"></textarea>
                 <ng-template #regulationAndRestriction>
-                  <div class="text-right">{{berthDetailsFormControl?.regulationAndRestriction?.value}}</div>
+                  <div class="">{{berthDetailsFormControl?.regulationAndRestriction?.value}}</div>
                 </ng-template>
                 <cpdss-portal-validation-error [errors]="fieldError('regulationAndRestriction')"
                   [errorMessages]="errorMesages.regulationAndRestriction">
@@ -232,7 +232,7 @@
                   placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_ITEMS_TO_BE_AGREED_WITH_PLACE_HOLDER' | translate}}"
                   (change)="change('itemsToBeAgreedWith')" [readonly]="false"></textarea>
                 <ng-template #itemsToBeAgreedWith>
-                  <div class="text-right">{{berthDetailsFormControl?.itemsToBeAgreedWith?.value}}</div>
+                  <div class="">{{berthDetailsFormControl?.itemsToBeAgreedWith?.value}}</div>
                 </ng-template>
                 <cpdss-portal-validation-error [errors]="fieldError('itemsToBeAgreedWith')"
                   [errorMessages]="errorMesages.itemsToBeAgreedWith"></cpdss-portal-validation-error>

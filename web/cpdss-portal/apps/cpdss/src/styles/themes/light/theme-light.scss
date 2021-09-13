@@ -1538,7 +1538,13 @@ header{
   }
 }
 
-.highcharts-label-box.highcharts-tooltip-box {
+.highcharts-label-box {
   fill:rgba($tooltip-bg, 1) !important;
   stroke: $card-distance !important;
+}
+
+.loading-discharging-tank-layout{
+  .ship-rear-pattern .rear-bottom-pattern{
+    border-bottom: 28px solid $tank-ohq-border;
+  }
 }

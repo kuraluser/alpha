@@ -466,6 +466,8 @@ message BendingMomentType1 {
 		string componentName = 3;
 		string componentCode = 4;
 		int64 componentType = 5;
+		int64 tankTypeId = 6; // needed at Algo Request
+		string tankTypeName = 7; // needed at Algo Request
 	}
 
 	message TankType {

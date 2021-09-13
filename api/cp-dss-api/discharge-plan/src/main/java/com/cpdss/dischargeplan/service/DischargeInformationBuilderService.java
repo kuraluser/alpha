@@ -1,19 +1,61 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service;
 
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfo;
-import com.cpdss.common.generated.discharge_plan.*;
+import com.cpdss.common.generated.discharge_plan.CargoForCow;
+import com.cpdss.common.generated.discharge_plan.CowPlan;
+import com.cpdss.common.generated.discharge_plan.CowTankDetails;
+import com.cpdss.common.generated.discharge_plan.DischargeBerths;
+import com.cpdss.common.generated.discharge_plan.DischargeDelay;
+import com.cpdss.common.generated.discharge_plan.DischargeDelays;
 import com.cpdss.common.generated.discharge_plan.DischargeDetails;
 import com.cpdss.common.generated.discharge_plan.DischargeRates;
 import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
+import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
-import com.cpdss.dischargeplan.domain.RuleType;
-import com.cpdss.dischargeplan.entity.*;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingBerths;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelays;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRates;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.TrimAllowed;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.dischargeplan.domain.rules.RuleMasterData;
+import com.cpdss.dischargeplan.domain.rules.RuleType;
+import com.cpdss.dischargeplan.entity.CowPlanDetail;
+import com.cpdss.dischargeplan.entity.CowTankDetail;
+import com.cpdss.dischargeplan.entity.CowWithDifferentCargo;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargePlanRuleInput;
 import com.cpdss.dischargeplan.entity.DischargePlanRules;
-import com.cpdss.dischargeplan.repository.*;
+import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
+import com.cpdss.dischargeplan.entity.DischargingDelay;
+import com.cpdss.dischargeplan.entity.DischargingDelayReason;
+import com.cpdss.dischargeplan.entity.DischargingMachineryInUse;
+import com.cpdss.dischargeplan.entity.DischargingStagesDuration;
+import com.cpdss.dischargeplan.entity.DischargingStagesMinAmount;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanStabilityParameters;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
+import com.cpdss.dischargeplan.entity.ReasonForDelay;
+import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
+import com.cpdss.dischargeplan.repository.CowWithDifferentCargoRepository;
+import com.cpdss.dischargeplan.repository.DischargeStageDurationRepository;
+import com.cpdss.dischargeplan.repository.DischargeStageMinAmountRepository;
+import com.cpdss.dischargeplan.repository.DischargingDelayReasonRepository;
+import com.cpdss.dischargeplan.repository.DischargingDelayRepository;
+import com.cpdss.dischargeplan.repository.DischargingMachineryInUseRepository;
+import com.cpdss.dischargeplan.repository.ReasonForDelayRepository;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +79,341 @@ public class DischargeInformationBuilderService {
   @Autowired DischargingMachineryInUseRepository dischargingMachineryInUseRepository;
 
   @Autowired CowPlanDetailRepository cowPlanDetailRepository;
+
+  public LoadingDetails buildLoadingDetailsMessage(DischargeInformation var1) {
+    LoadingDetails.Builder builder = LoadingDetails.newBuilder();
+    if (var1 != null) {
+      Optional.of(var1.getId()).ifPresent(builder::setId);
+      Optional.ofNullable(var1.getSunriseTime())
+          .ifPresent(v -> builder.setTimeOfSunrise(v.toString()));
+      Optional.ofNullable(var1.getSunsetTime())
+          .ifPresent(v -> builder.setTimeOfSunset(v.toString()));
+      Optional.ofNullable(var1.getStartTime()).ifPresent(v -> builder.setStartTime(v.toString()));
+
+      TrimAllowed.Builder builder1 = TrimAllowed.newBuilder();
+      Optional.ofNullable(var1.getInitialTrim())
+          .ifPresent(v -> builder1.setInitialTrim(v.toString()));
+      Optional.ofNullable(var1.getMaximumTrim())
+          .ifPresent(v -> builder1.setMaximumTrim(v.toString()));
+      Optional.ofNullable(var1.getFinalTrim()).ifPresent(v -> builder1.setFinalTrim(v.toString()));
+
+      builder.setTrimAllowed(builder1.build());
+    }
+    return builder.build();
+  }
+
+  public LoadingRates buildLoadingRateMessage(DischargeInformation var1) {
+    LoadingRates.Builder builder = LoadingRates.newBuilder();
+    if (var1 != null) {
+      Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
+      Optional.ofNullable(var1.getInitialDischargingRate())
+          .ifPresent(v -> builder.setInitialLoadingRate(v.toString()));
+      Optional.ofNullable(var1.getMaxDischargingRate())
+          .ifPresent(v -> builder.setMaxLoadingRate(v.toString()));
+      Optional.ofNullable(var1.getReducedDischargingRate())
+          .ifPresent(v -> builder.setReducedLoadingRate(v.toString()));
+      Optional.ofNullable(var1.getMinBallastRate())
+          .ifPresent(v -> builder.setMinDeBallastingRate(v.toString()));
+      Optional.ofNullable(var1.getMaxBallastRate())
+          .ifPresent(v -> builder.setMaxDeBallastingRate(v.toString()));
+      Optional.ofNullable(var1.getNoticeTimeForRateReduction())
+          .ifPresent(v -> builder.setNoticeTimeRateReduction(v.toString()));
+      Optional.ofNullable(var1.getNoticeTimeForStopDischarging())
+          .ifPresent(v -> builder.setNoticeTimeStopLoading(v.toString()));
+      Optional.ofNullable(var1.getLineContentRemaining())
+          .ifPresent(v -> builder.setLineContentRemaining(v.toString()));
+      Optional.ofNullable(var1.getMinDischargingRate())
+          .ifPresent(v -> builder.setMinLoadingRate(v.toString()));
+    }
+    return builder.build();
+  }
+
+  public List<LoadingBerths> buildLoadingBerthsMessage(List<DischargingBerthDetail> list) {
+    List<LoadingBerths> berths = new ArrayList<>();
+    for (DischargingBerthDetail var1 : list) {
+      LoadingBerths.Builder builder = LoadingBerths.newBuilder();
+      Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
+      Optional.ofNullable(var1.getDischargingInformation().getId())
+          .ifPresent(builder::setLoadingInfoId);
+      Optional.ofNullable(var1.getBerthXid()).ifPresent(builder::setBerthId);
+      Optional.ofNullable(var1.getDepth()).ifPresent(v -> builder.setDepth(v.toString()));
+      Optional.ofNullable(var1.getSeaDraftLimitation())
+          .ifPresent(v -> builder.setSeaDraftLimitation(v.toString()));
+      Optional.ofNullable(var1.getAirDraftLimitation())
+          .ifPresent(v -> builder.setAirDraftLimitation(v.toString()));
+      Optional.ofNullable(var1.getMaxManifoldHeight())
+          .ifPresent(v -> builder.setMaxManifoldHeight(v.toString()));
+      Optional.ofNullable(var1.getSpecialRegulationRestriction())
+          .ifPresent(v -> builder.setSpecialRegulationRestriction(v.toString()));
+      Optional.ofNullable(var1.getItemToBeAgreed())
+          .ifPresent(v -> builder.setItemsToBeAgreedWith(v));
+      Optional.ofNullable(var1.getHoseConnections()).ifPresent(v -> builder.setHoseConnections(v));
+      Optional.ofNullable(var1.getLineContentDisplacement())
+          .ifPresent(v -> builder.setLineDisplacement(v.toString()));
+      berths.add(builder.build());
+    }
+    return berths;
+  }
+
+  public List<LoadingMachinesInUse> buildLoadingMachineryInUseMessage(
+      List<DischargingMachineryInUse> list) {
+    List<LoadingMachinesInUse> machinery = new ArrayList<>();
+    for (DischargingMachineryInUse var1 : list) {
+      LoadingMachinesInUse.Builder builder = LoadingMachinesInUse.newBuilder();
+      Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
+      Optional.ofNullable(var1.getDischargingInformation().getId())
+          .ifPresent(builder::setLoadingInfoId);
+      Optional.ofNullable(var1.getMachineXid()).ifPresent(builder::setMachineId);
+      Optional.ofNullable(var1.getMachineTypeXid())
+          .ifPresent(
+              v -> {
+                builder.setMachineTypeValue(v);
+              });
+      Optional.ofNullable(var1.getCapacity())
+          .ifPresent(value -> builder.setCapacity(value.toString()));
+      Optional.ofNullable(var1.getIsUsing()).ifPresent(builder::setIsUsing);
+      machinery.add(builder.build());
+    }
+    return machinery;
+  }
+
+  public LoadingStages buildLoadingStageMessage(
+      DischargeInformation var1,
+      List<DischargingStagesMinAmount> list3,
+      List<DischargingStagesDuration> list4) {
+    LoadingStages.Builder builder = LoadingStages.newBuilder();
+    if (var1 != null) {
+      Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
+      Optional.ofNullable(var1.getDischargingStagesMinAmount())
+          .ifPresent(value -> builder.setStageOffset(value.getId().intValue()));
+      Optional.ofNullable(var1.getDischargingStagesDuration())
+          .ifPresent(value -> builder.setStageDuration(value.getId().intValue()));
+    }
+
+    // Set Offset Master
+    builder.addAllStageOffsets(this.buildStageOffsetMasterMessage(list3));
+    builder.addAllStageDurations(this.buildStageDurationMasterMessage(list4));
+    return builder.build();
+  }
+
+  public List<LoadingPlanModels.StageDuration> buildStageDurationMasterMessage(
+      List<DischargingStagesDuration> list) {
+    List<LoadingPlanModels.StageDuration> durations = new ArrayList<>();
+    for (DischargingStagesDuration dr : list) {
+      LoadingPlanModels.StageDuration.Builder builder =
+          LoadingPlanModels.StageDuration.newBuilder();
+      builder.setId(dr.getId());
+      builder.setDuration(dr.getDuration());
+      durations.add(builder.build());
+    }
+    return durations;
+  }
+
+  public List<StageOffsets> buildStageOffsetMasterMessage(List<DischargingStagesMinAmount> list) {
+    List<StageOffsets> offsets = new ArrayList<>();
+    for (DischargingStagesMinAmount offset : list) {
+      StageOffsets.Builder builder = StageOffsets.newBuilder();
+      builder.setId(offset.getId());
+      builder.setStageOffsetVal(offset.getMinAmount());
+      offsets.add(builder.build());
+    }
+    return offsets;
+  }
+
+  public LoadingDelay buildLoadingDelayMessage(
+      List<DischargingDelayReason> list, List<DischargingDelay> list6) {
+    LoadingDelay.Builder builder = LoadingDelay.newBuilder();
+    for (DischargingDelayReason var : list) {
+      DelayReasons.Builder builder1 = DelayReasons.newBuilder();
+      builder1.setId(var.getId());
+      builder1.setReason(var.getReasonForDelay().getReason());
+      builder.addReasons(builder1);
+    }
+    for (DischargingDelay var : list6) {
+      List<DischargingDelayReason> activeReasons =
+          var.getDischargingDelayReasons().stream()
+              .filter(delay -> delay.getIsActive())
+              .collect(Collectors.toList());
+      var.setDischargingDelayReasons(
+          new ArrayList<>()); // always set empty array, as the Lazy fetch not works :(
+      if (!activeReasons.isEmpty()) {
+        var.setDischargingDelayReasons(activeReasons);
+      }
+      LoadingDelays.Builder builder1 = LoadingDelays.newBuilder();
+      builder1.setId(var.getId());
+      Optional.ofNullable(var.getDischargingInformation().getId())
+          .ifPresent(builder1::setLoadingInfoId);
+      Optional.ofNullable(var.getDischargingDelayReasons())
+          .ifPresent(
+              v -> v.forEach(s -> builder1.addReasonForDelayIds(s.getReasonForDelay().getId())));
+      Optional.ofNullable(var.getDuration())
+          .ifPresent(value -> builder1.setDuration(value.toString()));
+      Optional.ofNullable(var.getCargoXid()).ifPresent(builder1::setCargoId);
+      Optional.ofNullable(var.getQuantity())
+          .ifPresent(value -> builder1.setQuantity(value.toString()));
+      Optional.ofNullable(var.getCargoNominationXid()).ifPresent(builder1::setCargoNominationId);
+      builder.addDelays(builder1);
+    }
+    // Cargo List for drop down, at gate way
+    return builder.build();
+  }
+
+  public List<LoadingPlanTankDetails> buildDischargingPlanTankBallastMessage(
+      List<PortDischargingPlanBallastDetails> list) throws GenericServiceException {
+    log.info("Discharging Plan, Ballast Builder");
+    List<LoadingPlanTankDetails> response = new ArrayList<>();
+    for (PortDischargingPlanBallastDetails var1 : list) {
+      response.add(
+          this.buildDischargingPlanTankBuilder(
+              var1.getId(),
+              null,
+              null,
+              null,
+              var1.getQuantity(),
+              var1.getTankXId(),
+              null,
+              var1.getQuantityM3(),
+              var1.getSounding(),
+              var1.getConditionType(),
+              var1.getValueType()));
+    }
+    return response;
+  }
+
+  public List<LoadingPlanTankDetails> buildDischargingPlanTankStowageMessage(
+      List<PortDischargingPlanStowageDetails> list) throws GenericServiceException {
+    log.info("Loading Plan, Stowage Builder");
+    List<LoadingPlanTankDetails> response = new ArrayList<>();
+    for (PortDischargingPlanStowageDetails var1 : list) {
+      response.add(
+          this.buildDischargingPlanTankBuilder(
+              var1.getId(),
+              var1.getApi(),
+              var1.getTemperature(),
+              var1.getCargoNominationXId(),
+              var1.getQuantity(),
+              var1.getTankXId(),
+              var1.getUllage(),
+              var1.getQuantityM3(),
+              null,
+              var1.getConditionType(),
+              var1.getValueType()));
+    }
+    return response;
+  }
+
+  public List<LoadingPlanTankDetails> buildDischargingPlanTankRobMessage(
+      List<PortDischargingPlanRobDetails> list) throws GenericServiceException {
+    log.info("Discharging Plan, Rob Builder");
+    List<LoadingPlanTankDetails> response = new ArrayList<>();
+    for (PortDischargingPlanRobDetails var1 : list) {
+      response.add(
+          this.buildDischargingPlanTankBuilder(
+              var1.getId(),
+              null,
+              null,
+              null,
+              var1.getQuantity(),
+              var1.getTankXId(),
+              null,
+              var1.getQuantityM3(),
+              null,
+              var1.getConditionType(),
+              var1.getValueType()));
+    }
+    return response;
+  }
+
+  public List<LoadingPlanModels.LoadingPlanStabilityParameters>
+      buildDischargingPlanTankStabilityMessage(List<PortDischargingPlanStabilityParameters> list)
+          throws GenericServiceException {
+    log.info("Discharging Plan, Rob Builder");
+    List<LoadingPlanModels.LoadingPlanStabilityParameters> response = new ArrayList<>();
+    for (PortDischargingPlanStabilityParameters var1 : list) {
+      response.add(
+          this.buildDischargingPlanStabilityBuilder(
+              var1.getForeDraft(),
+              var1.getMeanDraft(),
+              var1.getAftDraft(),
+              var1.getTrim(),
+              var1.getBendingMoment(),
+              var1.getShearingForce(),
+              var1.getConditionType(),
+              var1.getValueType()));
+    }
+    return response;
+  }
+
+  private LoadingPlanModels.LoadingPlanStabilityParameters buildDischargingPlanStabilityBuilder(
+      BigDecimal foreDraft,
+      BigDecimal meanDraft,
+      BigDecimal aftDraft,
+      BigDecimal trim,
+      BigDecimal bm,
+      BigDecimal sf,
+      Integer conditionType,
+      Integer valueType)
+      throws GenericServiceException {
+    try {
+      LoadingPlanModels.LoadingPlanStabilityParameters builder =
+          LoadingPlanModels.LoadingPlanStabilityParameters.newBuilder()
+              .setForeDraft(foreDraft != null ? foreDraft.toString() : "")
+              .setMeanDraft(meanDraft != null ? meanDraft.toString() : "")
+              .setAftDraft(aftDraft != null ? aftDraft.toString() : "")
+              .setTrim(trim != null ? trim.toString() : "")
+              .setBm(bm != null ? bm.toString() : "")
+              .setSf(sf != null ? sf.toString() : "")
+              .setConditionType(conditionType != null ? conditionType : 0)
+              .setValueType(valueType != null ? valueType : 0)
+              .build();
+      return builder;
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "DischargingPlanStabilityParameters Object Build failed",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  private LoadingPlanTankDetails buildDischargingPlanTankBuilder(
+      Long id,
+      BigDecimal api,
+      BigDecimal temp,
+      Long nominationId,
+      BigDecimal quantity,
+      Long tankId,
+      BigDecimal ullage,
+      BigDecimal quantityM3,
+      BigDecimal sounding,
+      Integer conditionType,
+      Integer valueType)
+      throws GenericServiceException {
+
+    try {
+      LoadingPlanTankDetails builder =
+          LoadingPlanTankDetails.newBuilder()
+              .setId(id != null ? id : 0)
+              .setApi(api != null ? api.toString() : "")
+              .setTemperature(temp != null ? temp.toString() : "")
+              .setCargoNominationId(nominationId != null ? nominationId : 0)
+              .setQuantity(quantity != null ? quantity.toString() : "")
+              .setTankId(tankId != null ? tankId : 0)
+              .setUllage(ullage != null ? ullage.toString() : "")
+              .setQuantityM3(quantityM3 != null ? quantityM3.toString() : "")
+              .setSounding(sounding != null ? sounding.toString() : "")
+              .setConditionType(conditionType != null ? conditionType : 0)
+              .setValueType(valueType != null ? valueType : 0)
+              .build();
+      return builder;
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "LoadingPlanTankDetails Object Build failed",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
 
   public void buildDischargeDetailsMessageFromEntity(
       DischargeInformation disEntity,
@@ -218,7 +595,8 @@ public class DischargeInformationBuilderService {
 
     try {
       List<DischargingDelay> delays =
-          this.dischargingDelayRepository.findAllByDischargeInfoId(disEntity.getId());
+          this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActive(
+              disEntity.getId(), true);
       for (DischargingDelay source : delays) {
         DischargeDelays.Builder builder2 = DischargeDelays.newBuilder();
         builder2.setId(source.getId());
@@ -268,7 +646,7 @@ public class DischargeInformationBuilderService {
       DischargeInformation disEntity,
       com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder) {
     try {
-      List<DischargingMachineryInUse> list = disEntity.getDischargingMachineryInUses();
+      Set<DischargingMachineryInUse> list = disEntity.getDischargingMachineryInUses();
       for (DischargingMachineryInUse var1 : list) {
         LoadingPlanModels.LoadingMachinesInUse.Builder builder1 =
             LoadingPlanModels.LoadingMachinesInUse.newBuilder();
@@ -349,7 +727,7 @@ public class DischargeInformationBuilderService {
   }
 
   private void buildCowTankDetails(
-      final Common.COW_TYPE cow_type, CowPlan.Builder builder, List list) {
+      final Common.COW_TYPE cow_type, CowPlan.Builder builder, Collection list) {
     CowTankDetails.Builder tankDetails = CowTankDetails.newBuilder();
     tankDetails.setCowType(cow_type);
     switch (cow_type) {
@@ -512,18 +890,14 @@ public class DischargeInformationBuilderService {
                           item ->
                               item.trim().length() != 0
                                   && item.trim()
-                                      .equalsIgnoreCase(
-                                          com.cpdss.dischargeplan.domain.RuleMasterData.CargoTank
-                                              .getPrefix()));
+                                      .equalsIgnoreCase(RuleMasterData.CargoTank.getPrefix()));
               Optional<String> isSuffixExist =
                   Optional.ofNullable(input.getSuffix())
                       .filter(
                           item ->
                               item.trim().length() != 0
                                   && item.trim()
-                                      .equalsIgnoreCase(
-                                          com.cpdss.dischargeplan.domain.RuleMasterData.CargoTank
-                                              .getSuffix()));
+                                      .equalsIgnoreCase(RuleMasterData.CargoTank.getSuffix()));
               Common.RuleDropDownMaster.Builder ruleDropDownMaster =
                   Common.RuleDropDownMaster.newBuilder();
               if (isSuffixExist.isPresent() && isPrefixExist.isPresent()) {

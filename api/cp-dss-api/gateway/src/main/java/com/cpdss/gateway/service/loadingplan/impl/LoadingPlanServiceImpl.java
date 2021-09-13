@@ -227,9 +227,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         portRotation.get().getPortId());
 
     // Set LS name and id
-    if (activeVoyage.getLoadableStudy() != null) {
-      var1.setLoadableStudyId(activeVoyage.getLoadableStudy().getId());
-      var1.setLoadableStudyName(activeVoyage.getLoadableStudy().getName());
+    if (activeVoyage.getActiveLs() != null) {
+      var1.setLoadableStudyId(activeVoyage.getActiveLs().getId());
+      var1.setLoadableStudyName(activeVoyage.getActiveLs().getName());
       log.info(
           "Setting Loadable Study Name {} and Id {}",
           var1.getLoadableStudyName(),
@@ -1429,9 +1429,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
                       .setCargoId(billLanding.getCargoId() == null ? 0 : billLanding.getCargoId())
                       .build();
+                  builder.addBillOfLandingRemove(updateBillRemoveBuilder.build());
                 });
-
-        builder.addBillOfLandingRemove(updateBillRemoveBuilder.build());
       } else {
         errorValidationLandingMsg = "Required data for Update is missing";
       }

@@ -123,6 +123,10 @@ public class LoadingPlanBuilderService {
         StringUtils.isEmpty(ballast.getQuantityM3())
             ? null
             : new BigDecimal(ballast.getQuantityM3()));
+    ballastDetails.setColorCode(
+        StringUtils.isEmpty(ballast.getColorCode()) ? null : ballast.getColorCode());
+    ballastDetails.setSg(
+        StringUtils.isEmpty(ballast.getSg()) ? null : new BigDecimal(ballast.getSg()));
   }
 
   public void buildLoadingPlanRobDetails(
@@ -136,6 +140,7 @@ public class LoadingPlanBuilderService {
     robDetails.setTankXId(rob.getTankId());
     robDetails.setQuantityM3(
         StringUtils.isEmpty(rob.getQuantityM3()) ? null : new BigDecimal(rob.getQuantityM3()));
+    robDetails.setColorCode(StringUtils.isEmpty(rob.getColorCode()) ? null : rob.getColorCode());
   }
 
   public void buildLoadingPlanStowageDetails(
@@ -160,6 +165,10 @@ public class LoadingPlanBuilderService {
         StringUtils.isEmpty(stowage.getQuantityM3())
             ? null
             : new BigDecimal(stowage.getQuantityM3()));
+    stowageDetails.setAbbreviation(
+        StringUtils.isEmpty(stowage.getAbbreviation()) ? null : stowage.getAbbreviation());
+    stowageDetails.setColorCode(
+        StringUtils.isEmpty(stowage.getColorCode()) ? null : stowage.getColorCode());
   }
 
   public void buildStabilityParameters(
@@ -237,6 +246,10 @@ public class LoadingPlanBuilderService {
         StringUtils.isEmpty(ballast.getTemperature())
             ? null
             : new BigDecimal(ballast.getTemperature()));
+    ballastDetails.setColorCode(
+        StringUtils.isEmpty(ballast.getColorCode()) ? null : ballast.getColorCode());
+    ballastDetails.setSg(
+        StringUtils.isEmpty(ballast.getSg()) ? null : new BigDecimal(ballast.getSg()));
   }
 
   public void buildPortRob(
@@ -254,6 +267,9 @@ public class LoadingPlanBuilderService {
     robDetails.setValueType(LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
     robDetails.setQuantityM3(
         StringUtils.isEmpty(rob.getQuantityM3()) ? null : new BigDecimal(rob.getQuantityM3()));
+    robDetails.setColorCode(StringUtils.isEmpty(rob.getColorCode()) ? null : rob.getColorCode());
+    robDetails.setDensity(
+        StringUtils.isEmpty(rob.getDensity()) ? null : new BigDecimal(rob.getDensity()));
   }
 
   public void buildPortStabilityParams(
@@ -311,6 +327,11 @@ public class LoadingPlanBuilderService {
             ? null
             : new BigDecimal(stowage.getTemperature()));
     stowageDetails.setValueType(LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+    stowageDetails.setAbbreviation(
+        StringUtils.isEmpty(stowage.getAbbreviation()) ? null : stowage.getAbbreviation());
+    stowageDetails.setColorCode(
+        StringUtils.isEmpty(stowage.getColorCode()) ? null : stowage.getColorCode());
+    stowageDetails.setCargoXId(stowage.getCargoId());
   }
 
   public void buildBallastOperation(

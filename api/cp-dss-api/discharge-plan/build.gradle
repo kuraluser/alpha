@@ -1,3 +1,11 @@
+//Environment variables
+ext{
+    dbHost = System.getenv('DB_HOST') ?: ""
+    dbName = System.getenv('DB_NAME') ?: ""
+    dbUser = System.getenv('DB_USER') ?: ""
+    dbPassword = System.getenv('DB_PASSWORD') ?: ""
+}
+
 appConfig {
 	appName = 'discharge-plan'
 	grpc = 'y'
@@ -7,13 +15,28 @@ appConfig {
 	devTools = 'y'
 	unitTest = 'y'
 	javaMainClass = 'com.cpdss.dischargeplan.DischargePlanApplication'
+	monitoring = 'y'
+	docker {
+		imageName = 'cpdss-discharge-plan'
+		containerName = 'discharge-plan-container'
+		creationTime = 'USE_CURRENT_TIMESTAMP'
+		networkName = 'cpdss-network'
+		swarm {
+			serviceName = 'discharge-plan-service'
+			swarmMode = REPLICATED_MODE
+			replicas = 1
+			rollbackOnUpdateFailure = true
+		}
+		environment = ['DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword]
+		labels = ["Key1":"testLabel"]
+	}
 }
 
 dependencies {
 	implementation project(':common')
 	compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'
     compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
-	implementation group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE' // for rest calls
+	// implementation group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE' // for rest calls
 }
 
 test {

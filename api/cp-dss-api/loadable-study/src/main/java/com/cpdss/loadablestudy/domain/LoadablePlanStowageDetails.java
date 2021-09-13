@@ -38,7 +38,7 @@ public class LoadablePlanStowageDetails {
   private Long cargo2NominationId;
 
   @JsonInclude(Include.NON_NULL)
-  private String cargoAbbreviation;
+  private String abbreviation;
 
   @JsonInclude(Include.NON_NULL)
   private String correctedUllage; // ullage(M)

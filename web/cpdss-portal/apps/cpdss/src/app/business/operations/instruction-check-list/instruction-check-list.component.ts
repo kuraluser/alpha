@@ -1,5 +1,7 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl , ValidationErrors } from '@angular/forms';
+import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter , OnDestroy } from '@angular/core';
+import { FormGroup, FormControl, ValidationErrors } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ConfirmationService, TreeNode } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { InstructionCheckListApiService } from './services/instruction-check-list-api.service';
@@ -8,6 +10,7 @@ import { MessageService } from 'primeng/api';
 import { IInstructionDetails, IDeleteData, ISaveStatusData } from './models/instruction-check-list.model';
 import { whiteSpaceValidator } from '../../core/directives/space-validator.directive';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { OPERATIONS } from '../../core/models/common.model';
 @Component({
   selector: 'cpdss-portal-instruction-check-list',
   templateUrl: './instruction-check-list.component.html',
@@ -21,9 +24,10 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
  * @class InstructionCheckListComponent
  * @implements {OnInit}
  */
-export class InstructionCheckListComponent implements OnInit {
+export class InstructionCheckListComponent implements OnInit , OnDestroy{
 
   @ViewChild('editField') editElement: ElementRef;
+  @Input() operation: OPERATIONS;
   @Input() set instructionList(value: TreeNode[]) {
     this.instructionListData = [];
     this.instructionListData = value && [...this.setInstructionList(value)];
@@ -31,6 +35,7 @@ export class InstructionCheckListComponent implements OnInit {
     this.setSelectedData();
   }
   disableSaveButton: boolean = false;
+  isDischargeStarted: boolean;
 
   get instructionList(): TreeNode[] {
     return this.instructionListData;
@@ -51,9 +56,10 @@ export class InstructionCheckListComponent implements OnInit {
   oldData: any;
   instructionForm: FormGroup;
   errorMessages: any = {
-  'whitespace': 'INSTRUCTION_HEAD_REQUIRED'
+    'whitespace': 'INSTRUCTION_HEAD_REQUIRED'
   };
   hasUnsavedChanges = false;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(
     private translateService: TranslateService,
@@ -61,12 +67,21 @@ export class InstructionCheckListComponent implements OnInit {
     private instructionCheckListApiService: InstructionCheckListApiService,
     private ngxSpinnerService: NgxSpinnerService,
     private messageService: MessageService,
-    private loadingDischargingTransformationService:LoadingDischargingTransformationService
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService
   ) { }
 
   ngOnInit(): void {
     this.formGroupInit();
     this.getSaveButtonStatus();
+  }
+
+  /**
+ * unsubscribing Instruction CheckList  observable
+ * @memberof InstructionCheckListComponent
+ */
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -78,6 +93,9 @@ export class InstructionCheckListComponent implements OnInit {
   getSaveButtonStatus() {
     this.loadingDischargingTransformationService.disableSaveButton.subscribe((status) => {
       this.disableSaveButton = status;
+    })
+    this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
+      this.isDischargeStarted = value;
     })
   }
 
@@ -133,14 +151,14 @@ export class InstructionCheckListComponent implements OnInit {
       list.push({
         label: item.subHeaderName,
         expanded: true,
-        data: {...item},
+        data: { ...item },
         children: [],
       });
       if (item?.loadingInstructionsList?.length) {
         item.loadingInstructionsList.map(subList => {
           list[list.length - 1].children.push({
             label: subList.instruction,
-            data: {...subList},
+            data: { ...subList },
           });
         });
       }
@@ -242,6 +260,11 @@ export class InstructionCheckListComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INSTRUCTION_ERROR'], detail: translationKeys['LOADING_INSTRUCTION_ERROR_MESSAGE'] });
       }
     }
+    this.loadingDischargingTransformationService.isLoadingInfoComplete.subscribe((status) => {
+      if (status) {
+        this.loadingDischargingTransformationService.inProcessing.next(false);
+      }
+    })
   }
 
   /**
@@ -432,7 +455,7 @@ export class InstructionCheckListComponent implements OnInit {
   /**
    * select/partial select parent based on child selection
    *
-   * @param {children} 
+   * @param {children}
    * @memberof InstructionCheckListComponent
    */
   checkParentSelection(children) {
@@ -481,6 +504,8 @@ export class InstructionCheckListComponent implements OnInit {
           this.instructionListData.splice(index, 1);
         }
       }
+      this.instructionForm.controls.name.setValue('');
+      this.instructionForm.reset();
       this.instructionListData = [...this.instructionListData];
     }
     this.instructionForm.reset();
@@ -492,10 +517,10 @@ export class InstructionCheckListComponent implements OnInit {
    * @memberof InstructionCheckListComponent
    */
   async saveAll() {
-    if (this.isEditActive()) { 
+    if (this.isEditActive()) {
       this.instructionForm.markAllAsTouched();
       this.instructionForm.markAsDirty();
-      return; 
+      return;
     }
     const data: ISaveStatusData = {
       instructionList: []
@@ -531,28 +556,33 @@ export class InstructionCheckListComponent implements OnInit {
     } else {
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INSTRUCTION_ERROR'], detail: translationKeys['LOADING_INSTRUCTION_ERROR_MESSAGE'] });
     }
+    this.loadingDischargingTransformationService.isLoadingInfoComplete.subscribe((status) => {
+      if (status) {
+        this.loadingDischargingTransformationService.inProcessing.next(false);
+      }
+    })
   }
 
-    /**
-   * Get field errors
-   * @param {string} formControlName
-   * @returns {ValidationErrors}
-   * @memberof InstructionCheckListComponent
+  /**
+ * Get field errors
+ * @param {string} formControlName
+ * @returns {ValidationErrors}
+ * @memberof InstructionCheckListComponent
+*/
+  fieldError(formControlName: string): ValidationErrors {
+    const formControl = this.field(formControlName);
+    return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
+  }
+
+  /**
+  * Get form control of instructionForm 
+  * @param {string} formControlName
+  * @returns {FormControl}
+  * @memberof InstructionCheckListComponent
   */
-     fieldError(formControlName: string): ValidationErrors {
-      const formControl = this.field(formControlName);
-      return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
-    }
-  
-    /**
-    * Get form control of instructionForm 
-    * @param {string} formControlName
-    * @returns {FormControl}
-    * @memberof InstructionCheckListComponent
-    */
-    field(formControlName: string): FormControl {
-      const formControl = <FormControl>this.instructionForm.get(formControlName);
-      return formControl;
-    }
+  field(formControlName: string): FormControl {
+    const formControl = <FormControl>this.instructionForm.get(formControlName);
+    return formControl;
+  }
 
 }

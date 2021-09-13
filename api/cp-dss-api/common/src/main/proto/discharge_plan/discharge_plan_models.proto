@@ -18,6 +18,62 @@ message DischargeInformationRequest{
   int64 synopticTableId = 7;
 }
 
+message DischargingPlanReply {
+  ResponseStatus responseStatus = 7;
+  int64 loadingInfoId = 1;
+  DischargeInformation dischargingInformation = 8;
+  repeated LoadingSequence dischargingSequences = 2;
+  repeated LoadingPlanTankDetails portDischargingPlanStowageDetails = 3;
+  repeated LoadingPlanTankDetails portDischargingPlanBallastDetails = 4;
+  repeated LoadingPlanTankDetails portDischargingPlanRobDetails = 5;
+  repeated LoadingPlanStabilityParameters portDischargingPlanStabilityParameters = 6;
+}
+
+message DischargingPlanStabilityParameters {
+  string draft = 1;
+  string trim = 2;
+  string bm = 3;
+  string sf = 4;
+  int32 conditionType = 5;
+  int32 valueType = 6;
+  string foreDraft = 7;
+  string aftDraft = 8;
+  int32 time = 9;
+  string meanDraft = 10;
+  string list = 11;
+}
+
+message DischargingPlanTankDetails {
+  string api = 1;
+  int64 cargoNominationId = 2;
+  string quantity = 3;
+  int64 tankId = 4;
+  string temperature = 5;
+  string ullage = 6;
+  string quantityM3 = 7;
+  string sounding = 8;
+  int32 conditionType = 9;
+  int32 valueType = 10;
+  int64 id = 11;
+}
+message DischargingSequence {
+  int64 cargoNominationId = 1;
+  int32 startTime = 2;
+  int32 endTime = 3;
+  int64 portId = 4;
+  int32 sequenceNumber = 5;
+  string stageName = 6;
+  bool toLoadicator = 7;
+  repeated Valve cargoValves = 8;
+  repeated Valve ballastValves = 9;
+  repeated LoadingRate loadingRates = 10;
+  repeated DeBallastingRate deBallastingRates = 11;
+  repeated LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;
+  string cargoLoadingRate1 = 13;
+  string cargoLoadingRate2 = 14;
+  repeated PumpOperation ballastOperations = 15;
+}
+
 message DischargeInformation {
   int64 dischargeInfoId = 8;
   int64 synopticTableId = 9;
@@ -143,9 +199,19 @@ message DischargeStudyDataTransferRequest{
 	int64 voyageId = 3;
 	int64 vesselId = 4;
 }
+
 message PortData{
+  int64 portId = 4;
 	int64 portRotationId = 1;
-    int64 synopticTableId = 2;
+  int64 synopticTableId = 2;
+  DSCowDetails cowDetails = 5;
+}
+
+message DSCowDetails {
+  CowTankDetails cowTankDetails = 1;
+  int64 dischargeStudyId = 2;
+  float percent = 4;
+  COW_OPTION_TYPE cowOptionType = 5;
 }
 
 message DischargingUploadTideDetailRequest {
@@ -166,4 +232,66 @@ message DischargingDownloadTideDetailStatusReply {
 	ResponseStatus responseStatus = 1;
 	bytes data = 2;
 	int32 size = 3;
+}
+
+message DischargingInstructionRequest {
+  int64 dischargingInfoId = 1;
+  int64 vesselId = 2;
+  int64 portRotationId = 3; 
+}
+
+
+message DischargingInstructions {
+  int64 instructionTypeId = 1;
+  int64 instructionHeaderId = 2;
+  int64 instructionId =3;
+  string instruction = 4;
+  bool isChecked =5;
+  bool isEditable =6;
+}
+
+message DischargingInstructionSubHeader {
+  int64 instructionTypeId = 1;
+  int64 instructionHeaderId = 2;
+  int64 subHeaderId = 3;
+  string subHeaderName = 4;
+  bool isChecked =5;
+  repeated DischargingInstructions dischargingInstructionsList =6;
+  bool isEditable =7;
+  bool IsHeaderInstruction = 8;
+  
+}
+
+message DischargingInstructionGroup {
+  int64 groupId =1;
+  string groupName = 2;
+}
+
+message DischargingInstructionDetails {
+  repeated DischargingInstructionSubHeader dischargingInstructionSubHeader =1;
+  repeated DischargingInstructionGroup dischargingInstructionGroupList =2;
+  ResponseStatus responseStatus = 3;
+}
+
+message DischargingInstructionsSave {
+  int64 headerId = 1;
+  int64 instructionTypeId = 2;
+  bool isChecked = 3;
+  bool isSingleHeader = 4;
+  int64 subHeaderId = 5;
+  string instruction = 6;
+  bool isSubHeader = 7;
+  int64 dischargingInfoId = 8;
+  int64 vesselId = 9;
+  int64 portRotationId = 10;
+}
+
+message DischargingInstructionsUpdate{
+  repeated DischargingInstructionStatus instructionList = 1;
+}
+
+message DischargingInstructionStatus{
+  int64 instructionId = 1;
+  bool isChecked = 2;
+  string instruction =3;
 }

@@ -37,6 +37,7 @@ export class IDischargeStudy {
     isDischargingPortComplete?: boolean;
     dischargeStudyStatusLastModifiedTime?: string;
     ohqPorts?: IDischargeOHQStatus[];
+    lastLoadingPortETD?: string;
 }
 
 /**

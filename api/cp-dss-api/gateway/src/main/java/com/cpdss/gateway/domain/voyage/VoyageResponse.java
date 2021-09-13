@@ -3,6 +3,7 @@ package com.cpdss.gateway.domain.voyage;
 
 import com.cpdss.gateway.domain.LoadableStudy;
 import com.cpdss.gateway.domain.PortRotation;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 
@@ -19,12 +20,18 @@ public class VoyageResponse {
   private String actualEndDate;
   private Long statusId;
 
-  List<PortRotation> portRotations;
+  List<PortRotation> portRotations = new ArrayList<>();
   LoadableStudy activeLs;
 
   private Long patternId;
   private Long patternCaseNo;
   private Long patternStatus;
 
-  private LoadableStudy loadableStudy;
+  // For Discharge Study
+  List<PortRotation> dischargePortRotations = new ArrayList<>();
+  LoadableStudy activeDs;
+
+  private Long dischargePatternId;
+  private Long dischargePatternCaseNo;
+  private Long dischargePatternStatus;
 }

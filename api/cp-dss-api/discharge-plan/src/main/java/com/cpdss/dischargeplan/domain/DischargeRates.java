@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class DischargeRates {
-  private BigDecimal initialDischargingRate;
+  private Long initialDischargingRate;
   private BigDecimal maxDischargingRate;
   private BigDecimal minBallastRate;
   private BigDecimal maxBallastRate;

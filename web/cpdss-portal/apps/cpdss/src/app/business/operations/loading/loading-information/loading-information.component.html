@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col text-right">
-        <button class="btn btn-main mr-10" id="save_loading_information" id="loadingInfoSaveBtn" (click)="saveDetails()" [disabled]="disableSaveButton">
+        <button class="btn btn-main mr-10" id="save_loading_information" id="loadingInfoSaveBtn" (click)="saveDetails()" [disabled]="disableSaveButton || isDischargeStarted">
             {{'LOADING_INFORMATION_SAVE_BUTTON_LABEL' |translate}}
         </button>
     </div>
@@ -19,7 +19,7 @@
         <div class="row pt-30">
             <div class="col">
                 <cpdss-portal-loading-rate [editMode]="true" [loadingRates]="loadingInformationData.loadingRates"
-                    (loadingRateChange)="onLoadingRateChange($event)"></cpdss-portal-loading-rate>
+                    (loadingRateChange)="onLoadingRateChange($event)" #loadingRate></cpdss-portal-loading-rate>
             </div>
         </div>
         <div class="row">

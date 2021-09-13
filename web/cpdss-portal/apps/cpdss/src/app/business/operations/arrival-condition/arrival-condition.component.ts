@@ -3,7 +3,7 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { ITankOptions, IShipCargoTank, IVoyagePortDetails, TANKTYPE, ICargoQuantities, IShipBallastTank } from '../../core/models/common.model';
 import { ArrivalConditionTransformationService } from './arrival-condition-transformation.service';
 import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
-import { ULLAGE_STATUS, ULLAGE_STATUS_TEXT } from '../models/loading-discharging.model';
+import { ULLAGE_STATUS, ULLAGE_STATUS_TEXT, ULLAGE_STATUS_VALUE } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 /**
@@ -62,7 +62,8 @@ export class ArrivalConditionComponent implements OnInit {
     densityField: "api",
     weightField: "plannedWeight",
     commodityNameField: "abbreviation",
-    fillingPercentageField: 'percentageFilled'
+    fillingPercentageField: 'percentageFilled',
+    showWeight: true
   }
   cargoConditions: ICargoConditions[];
   cargoQuantities: ICargoQuantities[];
@@ -71,7 +72,7 @@ export class ArrivalConditionComponent implements OnInit {
   rearBallastTanks: IShipBallastTank[][];
   frontBallastTanks: IShipBallastTank[][];
   centerBallastTanks: IShipBallastTank[][];
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'sounding', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'sounding', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit, showWeight: true };
   prevQuantitySelectedUnit: QUANTITY_UNIT;
 
   readonly tankType = TANKTYPE;
@@ -79,6 +80,7 @@ export class ArrivalConditionComponent implements OnInit {
 
   readonly ULLAGE_STATUS = ULLAGE_STATUS;
   readonly ULLAGE_STATUS_TEXT = ULLAGE_STATUS_TEXT;
+  readonly ULLAGE_STATUS_VALUE = ULLAGE_STATUS_VALUE;
 
   constructor(
     private arrivalConditionTransformationService: ArrivalConditionTransformationService,
@@ -86,8 +88,16 @@ export class ArrivalConditionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
+    this.initSubscriptions();
     this.getShipLandingTanks();
+  }
+
+  initSubscriptions(){
+    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.subscribe((value)=>{
+      if(value){
+        this.loadingPlanData.loadingInformation.loadingPlanArrStatusId = value;
+      }
+    });
   }
 
   /**

@@ -12,7 +12,7 @@
   </ng-template>
   <ng-template pTemplate="header" let-columns>
     <tr>
-      <th *ngFor="let col of columns">
+      <th *ngFor="let col of columns" class="text-right">
         {{col.header | translate}}
       </th>
     </tr>
@@ -21,7 +21,7 @@
     <tr>
       <ng-container *ngFor="let col of columns">
         <th class="text-uppercase" *ngIf="col.field === 'header'"> {{rowData[col.field] | translate}}</th>
-        <td *ngIf="col.field !== 'header'">{{rowData[col.field] | number:
+        <td *ngIf="col.field !== 'header'" class="text-right">{{rowData[col.field] | number:
           '1.2-2'}}{{'VOYAGE_STATUS_DRAFT_CONDITION_UNIT' | translate}}</td>
       </ng-container>
     </tr>

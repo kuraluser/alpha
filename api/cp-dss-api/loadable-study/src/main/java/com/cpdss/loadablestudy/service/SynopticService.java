@@ -1734,7 +1734,7 @@ public class SynopticService {
       // Removing first discharge port added from LS
       synopticalTableList.removeIf(
           item ->
-              !(item.getLoadableStudyPortRotation()
+              (item.getLoadableStudyPortRotation()
                   .getOperation()
                   .getId()
                   .equals(DISCHARGING_OPERATION_ID)));

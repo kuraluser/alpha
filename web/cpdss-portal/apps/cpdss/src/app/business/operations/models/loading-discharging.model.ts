@@ -682,7 +682,8 @@ export interface ILoadedCargoResponse extends ILoadableQuantityCargo {
  */
 export interface ILoadedCargo extends ILoadableQuantityCargo {
   shipFigure?: string;
-  actualQuantity?: string;
+  convertedSlopQuantity?: string;
+  convertedOrderedQuantity?: string;
   protested?: ValueObject<IProtested>;
   isCommingledDischarge?: ValueObject<boolean>;
   isCommingledCargo?: boolean;
@@ -801,6 +802,8 @@ export interface ICargoDetailValueObject {
   cargoNominationId: number;
   portId: number;
   cargoId: number;
+  isNewRow: boolean;
+  id: number;
 }
 
 /**
@@ -819,6 +822,7 @@ export interface ICargoDetail {
   temperature: number;
   cargoName: string;
   portId: number;
+  id?: number;
 }
 
 /**
@@ -895,7 +899,7 @@ export interface IBillOfLandingList {
   isUpdate?: boolean;
   isActive?: boolean | string;
   version?: string;
-
+  id?: string | number;
 }
 
 /**
@@ -917,7 +921,7 @@ export interface IUllageUpdList {
   correction_factor: number;
   api: number | string;
   isUpdate: boolean;
-  port_xid?: string;
+  port_xid?: string | number;
   port_rotation_xid?: string | number;
   grade?: string;
   isActive?: boolean;
@@ -946,7 +950,7 @@ export interface IBallastUpdateList {
   isUpdate: boolean;
   observedM3?: string;
   fillingRatio?: string;
-  portXId?: string;
+  portXId?: string | number;
   portRotationXId?: string | number;
   isValidate?: string;
   isActive?: boolean;
@@ -968,8 +972,8 @@ export interface IRobUpdateList {
   colour_code: string;
   actual_planned: number | string;
   arrival_departutre: number;
-  port_xid?: string;
-  port_rotation_xid?: string | number;
+  portXId?: string | number;
+  portRotationXId?: string | number;
   observedM3?: string;
   temperature?: string;
   correctedUllage?: string;
@@ -1160,7 +1164,7 @@ export interface IUllageQuantityResponse {
 }
 
 /**
-* Interface for ullage quantity response
+* Enum for ullage status text
 *
 * @export
 * @enum ULLAGE_STATUS_TEXT
@@ -1170,4 +1174,17 @@ export enum ULLAGE_STATUS_TEXT {
   'Validation In Progress' = 12,
   'Validation Successfull' = 13,
   'Validation Failed' = 14,
+}
+
+/**
+* Enum for ullage status
+*
+* @export
+* @enum ULLAGE_STATUS_TEXT
+*/
+export enum ULLAGE_STATUS_VALUE {
+  'GENERATED'= 5,
+  'IN_PROGRESS' = 12,
+  'SUCCESS' = 13,
+  'ERROR' = 14,
 }

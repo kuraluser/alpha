@@ -4,12 +4,12 @@ import { MessageService } from 'primeng/api';
 import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { ICargo, OPERATIONS } from '../../core/models/common.model';
 import { ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequences, ILoadingDischargingSequenceValueObject, ILoadedCargo } from '../models/loading-discharging.model';
-import { durationValidator } from '../validators/duration-validator.directive';
-import { cargoQuantityValidator } from '../validators/cargo-quantity-validator.directive';
+import { durationValidator } from '../directives/validator/duration-validator.directive';
+import { cargoQuantityValidator } from '../directives/validator/cargo-quantity-validator.directive';
 import { sequenceNumberValidator } from '../directives/validator/sequence-number-validator.directive';
 import { ConfirmationService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { loadingCargoDuplicateValidator } from '../validators/loading-cargo-duplicate-validator.directive';
+import { loadingCargoDuplicateValidator } from '../directives/validator/loading-cargo-duplicate-validator.directive';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
@@ -238,7 +238,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       id: loadingDischargingDelay.id,
       reasonForDelay: this.fb.control(loadingDischargingDelay.reasonForDelay.value, initialDelay ? [Validators.required] : []),
       duration: this.fb.control(loadingDischargingDelay.duration.value, [Validators.required, durationValidator(24, 59)]),
-      cargo: this.fb.control(loadingDischargingDelay.cargo.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required] : [Validators.required, loadingCargoDuplicateValidator(index)]),
+      cargo: this.fb.control(loadingDischargingDelay.cargo.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required] : [Validators.required, loadingCargoDuplicateValidator()]),
       quantity: this.fb.control(loadingDischargingDelay.quantity?.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required, Validators.min(min), cargoQuantityValidator(), numberValidator(quantityDecimal, 7, false)] : [Validators.required]),
       colorCode: this.fb.control(loadingDischargingDelay.colorCode)
     });
@@ -421,6 +421,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     this.loadingDischargingDelays = [...this.loadingDischargingDelays];
     const dataTableControl = <FormArray>this.loadingDischargingSequenceForm.get('dataTable');
     dataTableControl.removeAt(event?.index);
+    this.loadingDischargingSequenceForm.updateValueAndValidity();
     if (event.index === 0) {
       this.addInitialDelay = false;
       if (this.operation === OPERATIONS.DISCHARGING) {
@@ -432,6 +433,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargingInfoId, this.operation,this.listData);
       this.updateLoadingDischargingDelays.emit(loadingDelaysList);
     }
+    this.updateFormValidity();
   }
 
   /**

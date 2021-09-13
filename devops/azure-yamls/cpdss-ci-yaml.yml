@@ -95,6 +95,13 @@ jobs:
       options: -PbuildEnv=$(ENV)
       tasks: jib
   - task: Gradle@2
+    displayName: Run Jib Discharge-Plan
+    inputs:
+      wrapperScript: api/cp-dss-api/discharge-plan/gradlew
+      cwd: api/cp-dss-api/discharge-plan
+      options: -PbuildEnv=$(ENV)
+      tasks: jib
+  - task: Gradle@2
     displayName: Run Jib Gateway
     inputs:
       wrapperScript: api/cp-dss-api/gateway/gradlew
@@ -104,39 +111,8 @@ jobs:
   - task: Bash@3
     displayName: Configure Docker
     inputs:
-      targetType: inline
-      script: >
-        sudo systemctl status docker
-
-        sudo mkdir -p /etc/systemd/system/docker.service.d
-
-        cd /etc/systemd/system/
-
-        sudo chmod -R 777 docker.service.d
-
-        ls -lrt
-
-        sudo touch /etc/systemd/system/docker.service.d/options.conf
-
-        cd /etc/systemd/system/docker.service.d/
-
-        sudo chmod -R 777 options.conf
-
-        ls -lrt
-
-        sudo echo '[Service]' >> /etc/systemd/system/docker.service.d/options.conf
-
-        sudo echo 'ExecStart=' >> /etc/systemd/system/docker.service.d/options.conf
-
-        sudo echo 'ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375' >> /etc/systemd/system/docker.service.d/options.conf
-
-        cat /etc/systemd/system/docker.service.d/options.conf
-
-        sudo systemctl daemon-reload
-
-        sudo systemctl restart docker
-
-        sudo systemctl status docker
+      targetType: filePath
+      filePath: './devops/pipeline-scripts/docker-setup.sh'
   - task: Npm@1
     displayName: npm Clean Install
     inputs:

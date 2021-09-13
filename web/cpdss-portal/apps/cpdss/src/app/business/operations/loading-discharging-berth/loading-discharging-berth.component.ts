@@ -5,7 +5,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 import { IBerth, IBerthDetails } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
-import { LoadingBerthDuplicateValidator } from '../validators/loading-berth-duplicate-validator.directive';
+import { LoadingBerthDuplicateValidator } from '../directives/validator/loading-berth-duplicate-validator.directive';
 import { alphaNumericSpecialCharacterValidator } from '../../core/directives/alpha-numeric-special-character-validator.directive.ts';
 import { OPERATIONS } from '../../core/models/common.model';
 
@@ -191,7 +191,12 @@ export class LoadingDischargingBerthComponent implements OnInit {
    *
    * @memberof LoadingDischargingBerthComponent
    */
-  addBerth(berth: IBerth, index: number) {
+  async addBerth(berth: IBerth, index: number) {
+    if (this.availableBerths.length === 0) {
+      const translationKeys = await this.translateService.get(['LOADING_DISCHARGING_BERTH', 'LOADING_DISCHARGING_BERTH_NO_BERTH_AVAILABLE']).toPromise();
+      this.messageService.add({ severity: 'info', summary: translationKeys['LOADING_DISCHARGING_BERTH'], detail: translationKeys["LOADING_DISCHARGING_BERTH_NO_BERTH_AVAILABLE"] });
+      return;
+    }
     if (this.berthFormArray?.controls?.length >= 4) {
       this.disableAddBtn = false;
     }

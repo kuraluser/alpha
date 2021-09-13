@@ -18,4 +18,5 @@ public class VesselInfo {
   private BigDecimal maxLoadRate;
   private BigDecimal minLoadRate;
   private BigDecimal lightWeight;
+  private Boolean hasLoadicator;
 }

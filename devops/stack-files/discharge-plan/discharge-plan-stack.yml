@@ -1,0 +1,36 @@
+version: "3.7"
+services: 
+  discharge-plan-service:
+    image: "${DOCKER_REGISTRY}/${IMAGE_NAME}:${TAG_NAME}"
+    environment: 
+    - DB_HOST=${DB_HOST}
+    - DB_NAME=${DB_NAME} 
+    - DB_USER=${DB_USER} 
+    - DB_PASSWORD=${DB_PASSWORD} 
+    - REST_PORT=8080
+    - GRPC_PORT=8090
+    dns: 8.8.8.8
+    healthcheck:
+      test: "wget --no-verbose --spider http://localhost:8080/actuator/health || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      update_config:
+        order: start-first
+        failure_action: rollback
+        delay: 5s
+        monitor: 15s
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+networks: 
+  default:
+    external: true
+    name: cpdss-network

@@ -111,6 +111,7 @@ public class LoadingSequenceService {
     List<StabilityParam> stabilityParams = new ArrayList<StabilityParam>();
     Set<TankCategory> cargoTankCategories = new LinkedHashSet<TankCategory>();
     Set<TankCategory> ballastTankCategories = new LinkedHashSet<TankCategory>();
+    List<CargoStage> cargoStages = new ArrayList<CargoStage>();
 
     inititalizeStabilityParams(stabilityParams);
 
@@ -138,12 +139,20 @@ public class LoadingSequenceService {
     Long portEta = response.getMinXAxisValue();
     Integer start = 0;
     Integer temp = 0;
+    Long currentCargoNomId = 0L;
+    AtomicInteger stageNumber = new AtomicInteger();
 
     log.info("Populating Loading Sequences");
     for (LoadingSequence loadingSequence : reply.getLoadingSequencesList()) {
       if (loadingSequence.getStageName().equalsIgnoreCase("initialCondition")) {
         start = loadingSequence.getStartTime();
       }
+
+      if (!currentCargoNomId.equals(loadingSequence.getCargoNominationId())) {
+        stageNumber = new AtomicInteger();
+      }
+
+      currentCargoNomId = loadingSequence.getCargoNominationId();
       for (LoadingPlanPortWiseDetails portWiseDetails :
           loadingSequence.getLoadingPlanPortWiseDetailsList()) {
         List<LoadingPlanTankDetails> filteredStowage =
@@ -178,6 +187,16 @@ public class LoadingSequenceService {
                   ballasts,
                   ballastTankCategories);
         }
+
+        addCargoStage(
+            portWiseDetails,
+            cargoNomDetails,
+            loadingSequence.getCargoNominationId(),
+            stageNumber,
+            portEta,
+            start,
+            temp,
+            cargoStages);
 
         start = temp;
         stageTickPositions.add(portEta + (temp * 60 * 1000));
@@ -217,7 +236,7 @@ public class LoadingSequenceService {
     this.buildStabilityParamSequence(reply, portEta, stabilityParams);
     this.buildFlowRates(loadingRates, vesselTanks, portEta, response);
     this.buildBallastPumpCategories(vesselId, response);
-    this.buildCargoStages(reply, cargoNomDetails, portEta, response);
+    this.removePreviousPortBallasts(ballasts, ballastTankCategories);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);
@@ -226,8 +245,43 @@ public class LoadingSequenceService {
     response.setCargoLoadingRates(cargoLoadingRates);
     response.setStageTickPositions(stageTickPositions);
     response.setStabilityParams(stabilityParams);
-    response.setCargoTankCategories(cargoTankCategories);
-    response.setBallastTankCategories(ballastTankCategories);
+    response.setCargoTankCategories(
+        cargoTankCategories.stream()
+            .sorted(Comparator.comparing(TankCategory::getDisplayOrder))
+            .collect(Collectors.toList()));
+    response.setBallastTankCategories(
+        ballastTankCategories.stream()
+            .sorted(Comparator.comparing(TankCategory::getId))
+            .collect(Collectors.toList()));
+    response.setCargoStages(cargoStages);
+  }
+
+  /**
+   * @param ballasts
+   * @param ballastTankCategories
+   */
+  private void removePreviousPortBallasts(
+      List<Ballast> ballasts, Set<TankCategory> ballastTankCategories) {
+
+    Optional<Long> ballastStartOpt =
+        ballasts.stream().map(ballast -> ballast.getStart()).sorted().findFirst();
+    ballastStartOpt.ifPresent(
+        startTime -> {
+          List<Ballast> initialBallasts =
+              ballasts.stream()
+                  .filter(ballast -> (ballast.getStart().equals(startTime)))
+                  .collect(Collectors.toList());
+          for (Ballast ballast : initialBallasts) {
+            if (ballasts.stream()
+                    .filter(balst -> balst.getTankId().equals(ballast.getTankId()))
+                    .count()
+                <= 1) {
+              ballasts.remove(ballast);
+              ballastTankCategories.removeIf(
+                  category -> category.getId().equals(ballast.getTankId()));
+            }
+          }
+        });
   }
 
   /** @param stabilityParams */
@@ -254,49 +308,6 @@ public class LoadingSequenceService {
     sf.setName("sf");
     sf.setData(new ArrayList<>());
     stabilityParams.addAll(Arrays.asList(foreDraft, aftDraft, trim, ukc, gm, sf, bm));
-  }
-
-  /**
-   * @param reply
-   * @param cargoNomDetails
-   * @param response
-   */
-  private void buildCargoStages(
-      LoadingSequenceReply reply,
-      Map<Long, CargoNominationDetail> cargoNomDetails,
-      Long portEta,
-      LoadingSequenceResponse response) {
-    Integer start = 0;
-    Integer temp = 0;
-    List<CargoStage> cargoStages = new ArrayList<>();
-    Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
-    cargoNominationIds.addAll(
-        reply.getLoadingSequencesList().stream()
-            .map(sequence -> sequence.getCargoNominationId())
-            .collect(Collectors.toList()));
-    for (Long cargoNominationId : cargoNominationIds) {
-      AtomicInteger stageNumber = new AtomicInteger();
-      for (LoadingSequence sequence :
-          reply.getLoadingSequencesList().stream()
-              .filter(sequence -> sequence.getCargoNominationId() == cargoNominationId)
-              .collect(Collectors.toList())) {
-        for (LoadingPlanPortWiseDetails portWiseDetails :
-            sequence.getLoadingPlanPortWiseDetailsList()) {
-          temp = portWiseDetails.getTime();
-          addCargoStage(
-              portWiseDetails,
-              cargoNomDetails,
-              cargoNominationId,
-              stageNumber,
-              portEta,
-              start,
-              temp,
-              cargoStages);
-          start = temp;
-        }
-      }
-    }
-    response.setCargoStages(cargoStages);
   }
 
   private void addCargoStage(
@@ -445,6 +456,7 @@ public class LoadingSequenceService {
         tank -> {
           ballastDto.setTankName(tank.getShortName());
           tankCategory.setTankName(tank.getShortName());
+          tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
         });
     ballastDetailsOpt.ifPresent(details -> ballastDto.setColor(details.getColorCode()));
     ballastTankCategories.add(tankCategory);
@@ -524,7 +536,11 @@ public class LoadingSequenceService {
       Optional<VesselTankDetail> tankDetailOpt,
       Set<TankCategory> cargoTankCategories) {
     TankCategory tankCategory = new TankCategory();
-    tankDetailOpt.ifPresent(tank -> tankCategory.setTankName(tank.getShortName()));
+    tankDetailOpt.ifPresent(
+        tank -> {
+          tankCategory.setTankName(tank.getShortName());
+          tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
+        });
     if (cargoTankCategories.stream().anyMatch(cargo -> cargo.getId().equals(stowage.getTankId()))) {
       cargoTankCategories.removeIf(cargo -> cargo.getId().equals(stowage.getTankId()));
     }
@@ -606,6 +622,7 @@ public class LoadingSequenceService {
     VesselRequest.Builder builder = VesselRequest.newBuilder();
     builder.setVesselId(vesselId);
     builder.addTankCategories(1L);
+    builder.addTankCategories(9L);
     builder.addTankCategories(2L);
     VesselReply reply = vesselInfoGrpcService.getVesselTanks(builder.build());
     if (!reply.getResponseStatus().getStatus().equals(GatewayConstants.SUCCESS)) {
@@ -804,6 +821,9 @@ public class LoadingSequenceService {
               Optional.ofNullable(rob.getQuantityM3()).ifPresent(robBuilder::setQuantityM3);
               Optional.ofNullable(rob.getQuantityMT()).ifPresent(robBuilder::setQuantity);
               Optional.ofNullable(rob.getTankId()).ifPresent(robBuilder::setTankId);
+              Optional.ofNullable(rob.getColorCode()).ifPresent(robBuilder::setColorCode);
+              Optional.ofNullable(rob.getDensity())
+                  .ifPresent(density -> robBuilder.setDensity(density.toString()));
               robBuilder.setConditionType(conditionType);
               builder.addPortLoadingPlanRobDetails(robBuilder.build());
             });
@@ -819,6 +839,8 @@ public class LoadingSequenceService {
               Optional.ofNullable(ballast.getQuantityMT()).ifPresent(ballastBuilder::setQuantity);
               Optional.ofNullable(ballast.getSounding()).ifPresent(ballastBuilder::setSounding);
               Optional.ofNullable(ballast.getTankId()).ifPresent(ballastBuilder::setTankId);
+              Optional.ofNullable(ballast.getColorCode()).ifPresent(ballastBuilder::setColorCode);
+              Optional.ofNullable(ballast.getSg()).ifPresent(ballastBuilder::setSg);
               ballastBuilder.setConditionType(conditionType);
               builder.addPortLoadingPlanBallastDetails(ballastBuilder.build());
             });
@@ -839,6 +861,10 @@ public class LoadingSequenceService {
               Optional.ofNullable(stowage.getTemperature())
                   .ifPresent(stowageBuilder::setTemperature);
               Optional.ofNullable(stowage.getUllage()).ifPresent(stowageBuilder::setUllage);
+              Optional.ofNullable(stowage.getColorCode()).ifPresent(stowageBuilder::setColorCode);
+              Optional.ofNullable(stowage.getAbbreviation())
+                  .ifPresent(stowageBuilder::setAbbreviation);
+              Optional.ofNullable(stowage.getCargoId()).ifPresent(stowageBuilder::setCargoId);
               stowageBuilder.setConditionType(conditionType);
               builder.addPortLoadingPlanStowageDetails(stowageBuilder.build());
             });
@@ -925,6 +951,9 @@ public class LoadingSequenceService {
               Optional.ofNullable(stowage.getTemperature())
                   .ifPresent(stowageBuilder::setTemperature);
               Optional.ofNullable(stowage.getUllage()).ifPresent(stowageBuilder::setUllage);
+              Optional.ofNullable(stowage.getAbbreviation())
+                  .ifPresent(stowageBuilder::setAbbreviation);
+              Optional.ofNullable(stowage.getColorCode()).ifPresent(stowageBuilder::setColorCode);
               builder.addLoadingPlanStowageDetails(stowageBuilder.build());
             });
   }
@@ -957,6 +986,7 @@ public class LoadingSequenceService {
               Optional.ofNullable(rob.getQuantityM3()).ifPresent(robBuilder::setQuantityM3);
               Optional.ofNullable(rob.getQuantityMT()).ifPresent(robBuilder::setQuantity);
               Optional.ofNullable(rob.getTankId()).ifPresent(robBuilder::setTankId);
+              Optional.ofNullable(rob.getColorCode()).ifPresent(robBuilder::setColorCode);
               builder.addLoadingPlanRobDetails(robBuilder.build());
             });
   }
@@ -974,6 +1004,8 @@ public class LoadingSequenceService {
               Optional.ofNullable(ballast.getQuantityMT()).ifPresent(ballastBuilder::setQuantity);
               Optional.ofNullable(ballast.getSounding()).ifPresent(ballastBuilder::setSounding);
               Optional.ofNullable(ballast.getTankId()).ifPresent(ballastBuilder::setTankId);
+              Optional.ofNullable(ballast.getColorCode()).ifPresent(ballastBuilder::setColorCode);
+              Optional.ofNullable(ballast.getSg()).ifPresent(ballastBuilder::setSg);
               builder.addLoadingPlanBallastDetails(ballastBuilder.build());
             });
   }

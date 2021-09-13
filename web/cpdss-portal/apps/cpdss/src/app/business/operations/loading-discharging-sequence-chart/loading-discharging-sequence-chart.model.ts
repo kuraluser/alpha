@@ -237,3 +237,18 @@ export interface IFlowRate {
   data: Array<[number, number]>;
   dataM3PerHr: Array<[number, number]>;
 }
+
+/**
+ * Interface for chart types use in loading
+ *
+ * @export
+ * @enum {number}
+ */
+export enum LOADING_SEQUENCE_CHARTS {
+  CARGO_TANK = "CARGO_TANK",
+  CARGO_PUMP = "CARGO_PUMP",
+  BALLAST_TANK = "BALLAST_TANK",
+  BALLAST_PUMP = "BALLAST_PUMP",
+  FLOW_RATE = "FLOW_RATE",
+  STABILITY_PARAMS = "STABILITY_PARAMS",
+}

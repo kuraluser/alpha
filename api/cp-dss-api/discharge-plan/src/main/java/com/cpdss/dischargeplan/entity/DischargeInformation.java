@@ -5,7 +5,7 @@ import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.Set;
 import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -122,12 +122,12 @@ public class DischargeInformation extends EntityDoc {
   private DischargingStagesDuration dischargingStagesDuration;
 
   // bi-directional many-to-one association to DischargingDelay
-  @OneToMany(mappedBy = "dischargingInformation")
-  private List<DischargingDelay> dischargingDelays;
+  @OneToMany(mappedBy = "dischargingInformation", fetch = FetchType.EAGER)
+  private Set<DischargingDelay> dischargingDelays;
 
   // bi-directional many-to-one association to DischargingMachineryInUse
-  @OneToMany(mappedBy = "dischargingInformation")
-  private List<DischargingMachineryInUse> dischargingMachineryInUses;
+  @OneToMany(mappedBy = "dischargingInformation", fetch = FetchType.EAGER)
+  private Set<DischargingMachineryInUse> dischargingMachineryInUses;
 
   /*   // bi-directional many-to-one association to DischargingBerthDetail
   @OneToMany(mappedBy = "dischargingInformation", cascade = CascadeType.ALL)
