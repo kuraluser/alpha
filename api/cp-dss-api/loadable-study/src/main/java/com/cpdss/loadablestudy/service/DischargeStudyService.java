@@ -350,6 +350,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     dischargeStudy.setActive(true);
     dischargeStudy.setVesselXId(request.getVesselId());
     dischargeStudy.setVoyage(voyage);
+    dischargeStudy.setDraftMark(loadableStudy.getDraftMark());
+    dischargeStudy.setLoadLineXId(loadableStudy.getLoadLineXId());
     dischargeStudy.setPlanningTypeXId(2);
     dischargeStudy.setLoadableStudyStatus(
         loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
