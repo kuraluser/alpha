@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <div class="row pb-20">
+  <div class="row pb-20 pt-5">
 
     <!-- Will use the commented code in future  -->
     <!-- <div class="col vessel-info-wrapper">
@@ -7,18 +7,18 @@
       </cpdss-portal-vessel-info>
     </div> -->
 
-    <div class="pl-15 pt-5">
+    <div class="pl-15 ">
       <h5 class="main-head inline-block">{{'CARGO_HISTORY'|translate}}</h5>
     </div>
-    <div class="col calender-control-multi-date">
-      <span class="ml-20 mr-10">
-        {{ 'CARGO_HISTORY_DATE_RANGE_LABEL' | translate }}</span>
-      <p-calendar selectionMode="range" [readonlyInput]="true" inputId="range" dateFormat="dd-mm-yy" [showButtonBar]="true" todayButtonStyleClass="hide"
-        (onSelect)="onDateRangeSelect()" (onClearClick)="resetDateFilter()" [maxDate]="today" [(ngModel)]="filteredDates"
-        placeholder="{{ 'CARGO_HISTORY_DATE_RANGE_PLACEHOLDER'| translate }}" id="cargo_history_date_range_filter"
-        #cargoHistoryDateRange>
-      </p-calendar>
+    <div class="ml-20 mr-10">
+      
+        {{ 'CARGO_HISTORY_DATE_RANGE_LABEL' | translate }}
     </div>
+    <div class="col calender-control-multi-date"><p-calendar selectionMode="range" [readonlyInput]="true" inputId="range" dateFormat="dd-mm-yy" [showButtonBar]="true" todayButtonStyleClass="hide"
+      (onSelect)="onDateRangeSelect()" (onClearClick)="resetDateFilter()" [maxDate]="today" [(ngModel)]="filteredDates"
+      placeholder="{{ 'CARGO_HISTORY_DATE_RANGE_PLACEHOLDER'| translate }}" id="cargo_history_date_range_filter"
+      #cargoHistoryDateRange>
+    </p-calendar></div>
     <div class="header-info-pop-up ml-auto pr-20"><span class="info-icon mr-5">!</span>
       {{'DATES_UTC_NOTIFICATION' | translate}}
   </div>
