@@ -1,0 +1,42 @@
+version: "3.7"
+services: 
+  envoy-server-service:
+    image: "${DOCKER_REGISTRY}/${IMAGE_NAME}:${TAG_NAME}"
+    volumes:
+    - type: bind
+      source: ${VOL_SOURCE}
+      target: /data
+    ports: 
+    - 81:81
+    environment: 
+    - DB_HOST=${DB_HOST}
+    - DB_NAME=${DB_NAME} 
+    - DB_USER=${DB_USER} 
+    - DB_PASSWORD=${DB_PASSWORD}
+    - CONTAINER_VOLUME_PATH=/mnt
+    - REDIS_PASSWORD=${REDIS_PASSWORD}
+    dns: 8.8.8.8
+    healthcheck:
+      test: "wget --no-verbose --spider http://localhost:80/health || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      update_config:
+        order: start-first
+        failure_action: rollback
+        delay: 5s
+        monitor: 15s
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+networks: 
+  default:
+    external: true
+    name: cpdss-network

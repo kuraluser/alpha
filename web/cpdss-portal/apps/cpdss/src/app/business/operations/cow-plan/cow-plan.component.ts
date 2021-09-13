@@ -7,7 +7,7 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
 import { tankPreferenceDuplicationValidator } from '../directives/validator/tank-preference-duplication-validator.directive';
 import { IMode } from '../../../shared/models/common.model';
 import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
-import { durationValidator } from '../validators/duration-validator.directive';
+import { durationValidator } from '../directives/validator/duration-validator.directive';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 
 /**
