@@ -1,0 +1,52 @@
+# CPDSS CI Yaml Pipeline
+trigger: none
+pr: none
+
+variables:
+- group: CPDSS-Build-Global-Variables
+name: 5.0.$(rev:r)
+jobs:
+- job: Job_1
+  displayName: CPDSS Services Build
+  pool:
+    vmImage: ubuntu-20.04
+  steps:
+  - checkout: self
+    clean: true
+  - task: AWSShellScript@1
+    displayName: Login to ECR
+    inputs:
+      awsCredentials: 'Alpha-Ori-AWS'
+      regionName: ap-southeast-1
+      scriptType: inline
+      inlineScript: >-
+        token=$(aws ecr get-login-password --region ap-southeast-1)
+
+        echo "##vso[task.setvariable variable=DOCKER_PASSWORD]$token"
+  - task: Bash@3
+    displayName: Configure Docker
+    inputs:
+      targetType: filePath
+      filePath: './devops/pipeline-scripts/docker-setup.sh'
+  - task: Bash@3
+    displayName: Install Dependencies
+    inputs:
+      targetType: inline
+      script: >-
+        npm install --global yarn
+
+        cd communication/envoy
+
+        yarn install --frozen-lockfile
+  - task: gulp@0
+    displayName: gulp build server
+    inputs:
+      gulpFile: communication/envoy/gulpfile.js
+      targets: build
+      arguments: --server --test
+  - task: gulp@0
+    displayName: gulp build client
+    inputs:
+      gulpFile: communication/envoy/gulpfile.js
+      targets: build
+      arguments: --client --test
