@@ -185,6 +185,7 @@ message LoadingInformationDetail {
   int64 vesselId = 4;
   int64 voyageId = 5;
   int64 portRotationId = 6;
+  string loadableStudyProcessId = 7;
 }
 
 message LoadablePlanBallastDetail {
