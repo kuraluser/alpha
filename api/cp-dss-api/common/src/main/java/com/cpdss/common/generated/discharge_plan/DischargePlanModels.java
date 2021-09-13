@@ -84,6 +84,9 @@ public final class DischargePlanModels {
   static final com.google.protobuf.Descriptors.Descriptor internal_static_PortData_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_PortData_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor internal_static_DSCowDetails_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DSCowDetails_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
       internal_static_DischargingUploadTideDetailRequest_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -213,19 +216,24 @@ public final class DischargePlanModels {
           + "ns\"\200\001\n!DischargeStudyDataTransferRequest"
           + "\022\033\n\010portData\030\001 \003(\0132\t.PortData\022\032\n\022dischar"
           + "gePatternId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\020\n\010v"
-          + "esselId\030\004 \001(\003\";\n\010PortData\022\026\n\016portRotatio"
-          + "nId\030\001 \001(\003\022\027\n\017synopticTableId\030\002 \001(\003\"x\n\"Di"
-          + "schargingUploadTideDetailRequest\022\026\n\016tide"
-          + "Detaildata\030\001 \001(\014\022\'\n\016responseStatus\030\002 \001(\013"
-          + "2\017.ResponseStatus\022\021\n\tloadingId\030\003 \001(\003\"Q\n&"
-          + "DischargingUploadTideDetailStatusReply\022\'"
-          + "\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus\""
-          + "9\n$DischargingDownloadTideDetailRequest\022"
-          + "\021\n\tloadingId\030\001 \001(\003\"o\n(DischargingDownloa"
-          + "dTideDetailStatusReply\022\'\n\016responseStatus"
-          + "\030\001 \001(\0132\017.ResponseStatus\022\014\n\004data\030\002 \001(\014\022\014\n"
-          + "\004size\030\003 \001(\005B-\n)com.cpdss.common.generate"
-          + "d.discharge_planP\001b\006proto3"
+          + "esselId\030\004 \001(\003\"n\n\010PortData\022\016\n\006portId\030\004 \001("
+          + "\003\022\026\n\016portRotationId\030\001 \001(\003\022\027\n\017synopticTab"
+          + "leId\030\002 \001(\003\022!\n\ncowDetails\030\005 \001(\0132\r.DSCowDe"
+          + "tails\"\213\001\n\014DSCowDetails\022\'\n\016cowTankDetails"
+          + "\030\001 \001(\0132\017.CowTankDetails\022\030\n\020dischargeStud"
+          + "yId\030\002 \001(\003\022\017\n\007percent\030\004 \001(\002\022\'\n\rcowOptionT"
+          + "ype\030\005 \001(\0162\020.COW_OPTION_TYPE\"x\n\"Dischargi"
+          + "ngUploadTideDetailRequest\022\026\n\016tideDetaild"
+          + "ata\030\001 \001(\014\022\'\n\016responseStatus\030\002 \001(\0132\017.Resp"
+          + "onseStatus\022\021\n\tloadingId\030\003 \001(\003\"Q\n&Dischar"
+          + "gingUploadTideDetailStatusReply\022\'\n\016respo"
+          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\"9\n$Disc"
+          + "hargingDownloadTideDetailRequest\022\021\n\tload"
+          + "ingId\030\001 \001(\003\"o\n(DischargingDownloadTideDe"
+          + "tailStatusReply\022\'\n\016responseStatus\030\001 \001(\0132"
+          + "\017.ResponseStatus\022\014\n\004data\030\002 \001(\014\022\014\n\004size\030\003"
+          + " \001(\005B-\n)com.cpdss.common.generated.disch"
+          + "arge_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -465,10 +473,17 @@ public final class DischargePlanModels {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortData_descriptor,
             new java.lang.String[] {
-              "PortRotationId", "SynopticTableId",
+              "PortId", "PortRotationId", "SynopticTableId", "CowDetails",
+            });
+    internal_static_DSCowDetails_descriptor = getDescriptor().getMessageTypes().get(20);
+    internal_static_DSCowDetails_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DSCowDetails_descriptor,
+            new java.lang.String[] {
+              "CowTankDetails", "DischargeStudyId", "Percent", "CowOptionType",
             });
     internal_static_DischargingUploadTideDetailRequest_descriptor =
-        getDescriptor().getMessageTypes().get(20);
+        getDescriptor().getMessageTypes().get(21);
     internal_static_DischargingUploadTideDetailRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingUploadTideDetailRequest_descriptor,
@@ -476,7 +491,7 @@ public final class DischargePlanModels {
               "TideDetaildata", "ResponseStatus", "LoadingId",
             });
     internal_static_DischargingUploadTideDetailStatusReply_descriptor =
-        getDescriptor().getMessageTypes().get(21);
+        getDescriptor().getMessageTypes().get(22);
     internal_static_DischargingUploadTideDetailStatusReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingUploadTideDetailStatusReply_descriptor,
@@ -484,7 +499,7 @@ public final class DischargePlanModels {
               "ResponseStatus",
             });
     internal_static_DischargingDownloadTideDetailRequest_descriptor =
-        getDescriptor().getMessageTypes().get(22);
+        getDescriptor().getMessageTypes().get(23);
     internal_static_DischargingDownloadTideDetailRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingDownloadTideDetailRequest_descriptor,
@@ -492,7 +507,7 @@ public final class DischargePlanModels {
               "LoadingId",
             });
     internal_static_DischargingDownloadTideDetailStatusReply_descriptor =
-        getDescriptor().getMessageTypes().get(23);
+        getDescriptor().getMessageTypes().get(24);
     internal_static_DischargingDownloadTideDetailStatusReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingDownloadTideDetailStatusReply_descriptor,

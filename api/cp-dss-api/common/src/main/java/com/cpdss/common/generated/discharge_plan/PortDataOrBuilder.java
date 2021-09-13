@@ -7,6 +7,13 @@ public interface PortDataOrBuilder
     com.google.protobuf.MessageOrBuilder {
 
   /**
+   * <code>int64 portId = 4;</code>
+   *
+   * @return The portId.
+   */
+  long getPortId();
+
+  /**
    * <code>int64 portRotationId = 1;</code>
    *
    * @return The portRotationId.
@@ -19,4 +26,19 @@ public interface PortDataOrBuilder
    * @return The synopticTableId.
    */
   long getSynopticTableId();
+
+  /**
+   * <code>.DSCowDetails cowDetails = 5;</code>
+   *
+   * @return Whether the cowDetails field is set.
+   */
+  boolean hasCowDetails();
+  /**
+   * <code>.DSCowDetails cowDetails = 5;</code>
+   *
+   * @return The cowDetails.
+   */
+  com.cpdss.common.generated.discharge_plan.DSCowDetails getCowDetails();
+  /** <code>.DSCowDetails cowDetails = 5;</code> */
+  com.cpdss.common.generated.discharge_plan.DSCowDetailsOrBuilder getCowDetailsOrBuilder();
 }

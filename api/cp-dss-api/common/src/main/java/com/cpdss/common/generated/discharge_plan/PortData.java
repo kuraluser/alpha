@@ -53,6 +53,28 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
               synopticTableId_ = input.readInt64();
               break;
             }
+          case 32:
+            {
+              portId_ = input.readInt64();
+              break;
+            }
+          case 42:
+            {
+              com.cpdss.common.generated.discharge_plan.DSCowDetails.Builder subBuilder = null;
+              if (cowDetails_ != null) {
+                subBuilder = cowDetails_.toBuilder();
+              }
+              cowDetails_ =
+                  input.readMessage(
+                      com.cpdss.common.generated.discharge_plan.DSCowDetails.parser(),
+                      extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(cowDetails_);
+                cowDetails_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -87,6 +109,17 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
             com.cpdss.common.generated.discharge_plan.PortData.Builder.class);
   }
 
+  public static final int PORTID_FIELD_NUMBER = 4;
+  private long portId_;
+  /**
+   * <code>int64 portId = 4;</code>
+   *
+   * @return The portId.
+   */
+  public long getPortId() {
+    return portId_;
+  }
+
   public static final int PORTROTATIONID_FIELD_NUMBER = 1;
   private long portRotationId_;
   /**
@@ -109,6 +142,31 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     return synopticTableId_;
   }
 
+  public static final int COWDETAILS_FIELD_NUMBER = 5;
+  private com.cpdss.common.generated.discharge_plan.DSCowDetails cowDetails_;
+  /**
+   * <code>.DSCowDetails cowDetails = 5;</code>
+   *
+   * @return Whether the cowDetails field is set.
+   */
+  public boolean hasCowDetails() {
+    return cowDetails_ != null;
+  }
+  /**
+   * <code>.DSCowDetails cowDetails = 5;</code>
+   *
+   * @return The cowDetails.
+   */
+  public com.cpdss.common.generated.discharge_plan.DSCowDetails getCowDetails() {
+    return cowDetails_ == null
+        ? com.cpdss.common.generated.discharge_plan.DSCowDetails.getDefaultInstance()
+        : cowDetails_;
+  }
+  /** <code>.DSCowDetails cowDetails = 5;</code> */
+  public com.cpdss.common.generated.discharge_plan.DSCowDetailsOrBuilder getCowDetailsOrBuilder() {
+    return getCowDetails();
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -129,6 +187,12 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     if (synopticTableId_ != 0L) {
       output.writeInt64(2, synopticTableId_);
     }
+    if (portId_ != 0L) {
+      output.writeInt64(4, portId_);
+    }
+    if (cowDetails_ != null) {
+      output.writeMessage(5, getCowDetails());
+    }
     unknownFields.writeTo(output);
   }
 
@@ -143,6 +207,12 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     }
     if (synopticTableId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, synopticTableId_);
+    }
+    if (portId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, portId_);
+    }
+    if (cowDetails_ != null) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(5, getCowDetails());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -160,8 +230,13 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     com.cpdss.common.generated.discharge_plan.PortData other =
         (com.cpdss.common.generated.discharge_plan.PortData) obj;
 
+    if (getPortId() != other.getPortId()) return false;
     if (getPortRotationId() != other.getPortRotationId()) return false;
     if (getSynopticTableId() != other.getSynopticTableId()) return false;
+    if (hasCowDetails() != other.hasCowDetails()) return false;
+    if (hasCowDetails()) {
+      if (!getCowDetails().equals(other.getCowDetails())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -173,10 +248,16 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
+    hash = (37 * hash) + PORTID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
     hash = (37 * hash) + PORTROTATIONID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortRotationId());
     hash = (37 * hash) + SYNOPTICTABLEID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getSynopticTableId());
+    if (hasCowDetails()) {
+      hash = (37 * hash) + COWDETAILS_FIELD_NUMBER;
+      hash = (53 * hash) + getCowDetails().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -314,10 +395,18 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      portId_ = 0L;
+
       portRotationId_ = 0L;
 
       synopticTableId_ = 0L;
 
+      if (cowDetailsBuilder_ == null) {
+        cowDetails_ = null;
+      } else {
+        cowDetails_ = null;
+        cowDetailsBuilder_ = null;
+      }
       return this;
     }
 
@@ -345,8 +434,14 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     public com.cpdss.common.generated.discharge_plan.PortData buildPartial() {
       com.cpdss.common.generated.discharge_plan.PortData result =
           new com.cpdss.common.generated.discharge_plan.PortData(this);
+      result.portId_ = portId_;
       result.portRotationId_ = portRotationId_;
       result.synopticTableId_ = synopticTableId_;
+      if (cowDetailsBuilder_ == null) {
+        result.cowDetails_ = cowDetails_;
+      } else {
+        result.cowDetails_ = cowDetailsBuilder_.build();
+      }
       onBuilt();
       return result;
     }
@@ -397,11 +492,17 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     public Builder mergeFrom(com.cpdss.common.generated.discharge_plan.PortData other) {
       if (other == com.cpdss.common.generated.discharge_plan.PortData.getDefaultInstance())
         return this;
+      if (other.getPortId() != 0L) {
+        setPortId(other.getPortId());
+      }
       if (other.getPortRotationId() != 0L) {
         setPortRotationId(other.getPortRotationId());
       }
       if (other.getSynopticTableId() != 0L) {
         setSynopticTableId(other.getSynopticTableId());
+      }
+      if (other.hasCowDetails()) {
+        mergeCowDetails(other.getCowDetails());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -430,6 +531,39 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
           mergeFrom(parsedMessage);
         }
       }
+      return this;
+    }
+
+    private long portId_;
+    /**
+     * <code>int64 portId = 4;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+    /**
+     * <code>int64 portId = 4;</code>
+     *
+     * @param value The portId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPortId(long value) {
+
+      portId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 portId = 4;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearPortId() {
+
+      portId_ = 0L;
+      onChanged();
       return this;
     }
 
@@ -497,6 +631,125 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
       synopticTableId_ = 0L;
       onChanged();
       return this;
+    }
+
+    private com.cpdss.common.generated.discharge_plan.DSCowDetails cowDetails_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.DSCowDetails,
+            com.cpdss.common.generated.discharge_plan.DSCowDetails.Builder,
+            com.cpdss.common.generated.discharge_plan.DSCowDetailsOrBuilder>
+        cowDetailsBuilder_;
+    /**
+     * <code>.DSCowDetails cowDetails = 5;</code>
+     *
+     * @return Whether the cowDetails field is set.
+     */
+    public boolean hasCowDetails() {
+      return cowDetailsBuilder_ != null || cowDetails_ != null;
+    }
+    /**
+     * <code>.DSCowDetails cowDetails = 5;</code>
+     *
+     * @return The cowDetails.
+     */
+    public com.cpdss.common.generated.discharge_plan.DSCowDetails getCowDetails() {
+      if (cowDetailsBuilder_ == null) {
+        return cowDetails_ == null
+            ? com.cpdss.common.generated.discharge_plan.DSCowDetails.getDefaultInstance()
+            : cowDetails_;
+      } else {
+        return cowDetailsBuilder_.getMessage();
+      }
+    }
+    /** <code>.DSCowDetails cowDetails = 5;</code> */
+    public Builder setCowDetails(com.cpdss.common.generated.discharge_plan.DSCowDetails value) {
+      if (cowDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        cowDetails_ = value;
+        onChanged();
+      } else {
+        cowDetailsBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /** <code>.DSCowDetails cowDetails = 5;</code> */
+    public Builder setCowDetails(
+        com.cpdss.common.generated.discharge_plan.DSCowDetails.Builder builderForValue) {
+      if (cowDetailsBuilder_ == null) {
+        cowDetails_ = builderForValue.build();
+        onChanged();
+      } else {
+        cowDetailsBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /** <code>.DSCowDetails cowDetails = 5;</code> */
+    public Builder mergeCowDetails(com.cpdss.common.generated.discharge_plan.DSCowDetails value) {
+      if (cowDetailsBuilder_ == null) {
+        if (cowDetails_ != null) {
+          cowDetails_ =
+              com.cpdss.common.generated.discharge_plan.DSCowDetails.newBuilder(cowDetails_)
+                  .mergeFrom(value)
+                  .buildPartial();
+        } else {
+          cowDetails_ = value;
+        }
+        onChanged();
+      } else {
+        cowDetailsBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /** <code>.DSCowDetails cowDetails = 5;</code> */
+    public Builder clearCowDetails() {
+      if (cowDetailsBuilder_ == null) {
+        cowDetails_ = null;
+        onChanged();
+      } else {
+        cowDetails_ = null;
+        cowDetailsBuilder_ = null;
+      }
+
+      return this;
+    }
+    /** <code>.DSCowDetails cowDetails = 5;</code> */
+    public com.cpdss.common.generated.discharge_plan.DSCowDetails.Builder getCowDetailsBuilder() {
+
+      onChanged();
+      return getCowDetailsFieldBuilder().getBuilder();
+    }
+    /** <code>.DSCowDetails cowDetails = 5;</code> */
+    public com.cpdss.common.generated.discharge_plan.DSCowDetailsOrBuilder
+        getCowDetailsOrBuilder() {
+      if (cowDetailsBuilder_ != null) {
+        return cowDetailsBuilder_.getMessageOrBuilder();
+      } else {
+        return cowDetails_ == null
+            ? com.cpdss.common.generated.discharge_plan.DSCowDetails.getDefaultInstance()
+            : cowDetails_;
+      }
+    }
+    /** <code>.DSCowDetails cowDetails = 5;</code> */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.DSCowDetails,
+            com.cpdss.common.generated.discharge_plan.DSCowDetails.Builder,
+            com.cpdss.common.generated.discharge_plan.DSCowDetailsOrBuilder>
+        getCowDetailsFieldBuilder() {
+      if (cowDetailsBuilder_ == null) {
+        cowDetailsBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.cpdss.common.generated.discharge_plan.DSCowDetails,
+                com.cpdss.common.generated.discharge_plan.DSCowDetails.Builder,
+                com.cpdss.common.generated.discharge_plan.DSCowDetailsOrBuilder>(
+                getCowDetails(), getParentForChildren(), isClean());
+        cowDetails_ = null;
+      }
+      return cowDetailsBuilder_;
     }
 
     @java.lang.Override

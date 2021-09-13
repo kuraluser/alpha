@@ -82,9 +82,9 @@ message RuleDropDownMaster{
 
 enum COW_TYPE {
 	EMPTY_COW_TYPE = 0;
-	TOP_COW = 1;
-	BOTTOM_COW = 2;
-	ALL_COW = 3;
+	ALL_COW = 1; // Full wash
+	BOTTOM_COW = 2; // Bottom wash
+	TOP_COW = 3; // Top wash
 	CARGO = 4;
 }
 

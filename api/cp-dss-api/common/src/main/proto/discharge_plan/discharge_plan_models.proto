@@ -199,9 +199,19 @@ message DischargeStudyDataTransferRequest{
 	int64 voyageId = 3;
 	int64 vesselId = 4;
 }
+
 message PortData{
+  int64 portId = 4;
 	int64 portRotationId = 1;
-    int64 synopticTableId = 2;
+  int64 synopticTableId = 2;
+  DSCowDetails cowDetails = 5;
+}
+
+message DSCowDetails {
+  CowTankDetails cowTankDetails = 1;
+  int64 dischargeStudyId = 2;
+  float percent = 4;
+  COW_OPTION_TYPE cowOptionType = 5;
 }
 
 message DischargingUploadTideDetailRequest {

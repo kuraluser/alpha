@@ -15,6 +15,7 @@ import com.cpdss.common.generated.CargoInfo.CargoDetail;
 import com.cpdss.common.generated.CargoInfo.CargoListRequest;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceImplBase;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
@@ -33,9 +34,7 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.CargoInfos;
 import com.cpdss.common.generated.PortInfo.CargoPortMapping;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
-import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
-import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
-import com.cpdss.common.generated.discharge_plan.PortData;
+import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest;
@@ -61,15 +60,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.repository.CargoOperationRepository;
-import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
-import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
-import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.repository.*;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -116,6 +107,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
   @Autowired private LoadablePlanService loadablePlanService;
   @Autowired private LoadablePatternRepository loadablePatternRepository;
+  @Autowired private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
 
   @GrpcClient("DischargeInformationService")
   private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
@@ -1432,6 +1424,35 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                       .findFirst();
               if (synopticalTableOpt.isPresent()) {
                 portDataBuilder.setSynopticTableId(synopticalTableOpt.get().getId());
+              }
+              if (dischargeStudy.getId() != null) {
+                portDataBuilder.setPortId(port.getPortXId());
+                DischargeStudyCowDetail dsCow =
+                    this.dischargeStudyCowDetailRepository
+                        .findByDischargeStudyStudyIdAndPortIdAndIsActive(
+                            dischargeStudy.getId(), port.getPortXId(), true);
+                if (dsCow != null) { // Cow Details Per Port Ids
+                  DSCowDetails.Builder dsCowDetails = DSCowDetails.newBuilder();
+                  dsCowDetails.setDischargeStudyId(dischargeStudy.getId());
+                  dsCowDetails.setPercent(dsCow.getPercentage());
+                  dsCowDetails.setCowOptionType(
+                      Common.COW_OPTION_TYPE.forNumber(dsCow.getCowType().intValue()));
+                  if (dsCow.getTankIds() != null) {
+                    List<Long> list =
+                        Arrays.asList(dsCow.getTankIds().split(",")).stream()
+                            .map(String::trim)
+                            .mapToLong(Long::parseLong)
+                            .boxed()
+                            .collect(Collectors.toList());
+                    if (!list.isEmpty()) {
+                      CowTankDetails.Builder tankDetails = CowTankDetails.newBuilder();
+                      tankDetails.setCowType(
+                          Common.COW_TYPE.forNumber(dsCow.getCowType().intValue()));
+                      tankDetails.addAllTankIds(list);
+                    }
+                  }
+                  dsCowDetails.build();
+                }
               }
             });
     dischargePlanServiceBlockingStub.dischargePlanSynchronization(request.build());
