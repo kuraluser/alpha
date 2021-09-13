@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan.sequence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.math.BigDecimal;
@@ -14,4 +15,6 @@ public class TankCategory {
   private String tankName;
   private BigDecimal quantity;
   private BigDecimal ullage;
+
+  @JsonIgnore private Integer displayOrder;
 }
