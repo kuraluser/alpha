@@ -170,7 +170,7 @@
                             {{'LOADING_DETAILS_BROWSE_BUTTON_LABEL' | translate}}
                             <input type="file" name="fl_attachMail" #fileUpload
                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                title="No file selected"  focusTrap (change)="selectFilesToUpload()"/>
+                                title="No file selected"  focusTrap (change)="selectFilesToUpload()" [disabled]="isDischargeStarted"/>
                         </div>
                         <a type="button" class="download-icon ml-10 mr-10" (click)="downloadTemplate()"></a>
                     </div>

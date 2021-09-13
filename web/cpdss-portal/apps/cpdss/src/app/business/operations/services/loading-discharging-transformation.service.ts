@@ -22,6 +22,7 @@ import { IValidationErrorMessagesSet } from '../../../shared/components/validati
 export class LoadingDischargingTransformationService {
   public _loadingInformationSource: Subject<boolean> = new Subject();
   private _dischargingInformationSource: Subject<boolean> = new Subject();
+  private _isDischargeStarted: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _unitChangeSource: Subject<boolean> = new Subject();
   public _loadingInstructionSource: Subject<boolean> = new Subject();
   public disableSaveButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -50,6 +51,7 @@ export class LoadingDischargingTransformationService {
   setUllageArrivalBtnStatus$ = this._setUllageArrivalBtnStatus.asObservable();
   setUllageDepartureBtnStatus$ = this._setUllageDepartureBtnStatus.asObservable();
   showUllageErrorPopup$ = this._showUllageErrorPopup.asObservable();
+  isDischargeStarted$ = this._isDischargeStarted.asObservable();
 
   constructor(
     private quantityPipe: QuantityPipe,
@@ -73,6 +75,16 @@ export class LoadingDischargingTransformationService {
   /** Set unit changed */
   setUnitChanged(unitChanged: boolean) {
     this._unitChangeSource.next(unitChanged);
+  }
+
+  /**
+   * Method to set discharge started status
+   *
+   * @param {boolean} status
+   * @memberof LoadingDischargingTransformationService
+   */
+  isDischargeStarted(status: boolean) {
+    this._isDischargeStarted.next(status);
   }
 
   /**
@@ -506,16 +518,16 @@ export class LoadingDischargingTransformationService {
         header: 'LOADING_CARGO_TO_BE_LOADED_MAX_LOADING_RATE'
       },
       {
-        field: 'orderedQuantity',
+        field: 'convertedOrderedQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_NOMINATION',
-
+        numberType: 'quantity'
       },
       {
         field: 'minMaxTolerance',
         header: 'LOADING_CARGO_TO_BE_LOADED_MIN_MAX_TOLERANCE'
       },
       {
-        field: 'actualQuantity',
+        field: 'shipFigure',
         header: 'LOADING_CARGO_TO_BE_LOADED_SHIP_LOADABLE',
         numberType: 'quantity'
 
@@ -529,7 +541,7 @@ export class LoadingDischargingTransformationService {
         header: 'LOADING_CARGO_TO_BE_LOADED_TIME_REQUIRED'
       },
       {
-        field: 'slopQuantity',
+        field: 'convertedSlopQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_SLOP_QTY',
         numberType: 'quantity'
       }
@@ -625,7 +637,7 @@ export class LoadingDischargingTransformationService {
         for (let index = 0; index < cargoTankQuantities?.length; index++) {
           if (cargoTankQuantities[index]?.tankId === cargoTank[groupIndex][tankIndex]?.id) {
             cargoTank[groupIndex][tankIndex].commodity = cargoTankQuantities[index];
-            const plannedWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
+            const plannedWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api, cargoTankQuantities[index]?.temperature, -1);
             cargoTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight) : 0;
             const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
             cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight) : 0;

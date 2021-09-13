@@ -1,5 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output , ViewChild , ElementRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ElementRef , OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { saveAs } from 'file-saver';
@@ -27,7 +29,7 @@ import { LoadingDischargingInformationApiService } from '../services/loading-dis
  * @class LoadingDischargingDetailsComponent
  * @implements {OnInit}
  */
-export class LoadingDischargingDetailsComponent implements OnInit {
+export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
 
   @ViewChild('fileUpload') fileUploadVariable: ElementRef;
 
@@ -57,6 +59,9 @@ export class LoadingDischargingDetailsComponent implements OnInit {
   timeOfSunrisePermission: IPermission;
   timeOfSunsetPermission: IPermission;
   selectedTime:any;
+  isDischargeStarted: boolean;
+  private ngUnsubscribe: Subject<any> = new Subject();
+
   constructor(private fb: FormBuilder,
     private translateService: TranslateService,
     private permissionsService: PermissionsService,
@@ -68,6 +73,29 @@ export class LoadingDischargingDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.getPagePermission();
     this.errorMessages = this.loadingDischargingTransformationService.setValidationMessageForLoadingDetails();
+    this.initSubscriptions();
+  }
+
+  /**
+  * unsubscribing loading info observable
+  * @memberof LoadingDischargingDetailsComponent
+  */
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
+
+  /**
+   * Initialization for all subscriptions
+   *
+   * @private
+   * @memberof LoadingDischargingDetailsComponent
+  */
+  initSubscriptions() {
+    this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
+      this.isDischargeStarted = value;
+    })
   }
 
   /**
@@ -80,7 +108,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
     let timeOfSunsetValidation = [];
     if(this.timeOfSunrisePermission.view || this.timeOfSunrisePermission.view === undefined) {
       timeOfSunriseValidation = [Validators.required];
-    } 
+    }
     if(this.timeOfSunsetPermission.view || this.timeOfSunsetPermission.view === undefined) {
       timeOfSunsetValidation = [Validators.required];
     }
@@ -102,7 +130,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
     } else {
       this.loadingDischargingDetailsForm.addControl('finalTrim', this.fb.control(this.loadingDischargingDetails.trimAllowed?.finalTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)]));
     }
-   }
+  }
 
   /**
 * Method for converting time string to date
@@ -158,7 +186,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
     this.selectedTime = null;
     if (this.loadingDischargingDetailsForm.value[field]) {
       this.selectedTime = new Date(this.loadingDischargingDetailsForm.value[field]);
-     
+
     }
     else {
       this.selectedTime = new Date();
@@ -166,7 +194,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
       this.loadingDischargingDetailsForm.controls[field].setValue(this.selectedTime);
     }
     this.loadingDischargingDetailsResponse[field] = ((this.selectedTime.getHours() < 10 ? ('0' + this.selectedTime.getHours()) : this.selectedTime.getHours())) + ":" + ((this.selectedTime.getMinutes() < 10 ? ('0' + this.selectedTime.getMinutes()) : this.selectedTime.getMinutes()));
-    
+
     if (!this.fieldError(field)) {
       this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
     }
@@ -190,15 +218,15 @@ export class LoadingDischargingDetailsComponent implements OnInit {
     this.loadingDischargingDetailsForm.controls.timeOfSunset.updateValueAndValidity();
   }
 
-/**
-  * Get page permission
-  *
-  * @memberof SynopticalComponent
-  */
- getPagePermission() {
-  this.timeOfSunrisePermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadingInfoSunRise'], false);
-  this.timeOfSunsetPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadingInfoSunSet'], false);
-}
+  /**
+    * Get page permission
+    *
+    * @memberof LoadingDischargingDetailsComponent
+    */
+  getPagePermission() {
+    this.timeOfSunrisePermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadingInfoSunRise'], false);
+    this.timeOfSunsetPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadingInfoSunSet'], false);
+  }
 
 
 
@@ -229,7 +257,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
     this.loadingDischargingInformationApiService.downloadTemplate(id,this.operation).subscribe((data) => {
       const blob = new Blob([data], { type: data.type })
       const fileurl = window.URL.createObjectURL(blob)
-      saveAs(fileurl, 'Loading port tide details.xlsx');
+      saveAs(fileurl, 'Loading_port_tide_details.xlsx');
     });
   }
 
@@ -241,24 +269,24 @@ export class LoadingDischargingDetailsComponent implements OnInit {
   async selectFilesToUpload() {
     this.ngxSpinnerService.show();
     const translationKeys = await this.translateService.get(
-      ['LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS_DETAILS','LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS','LOADING_DICHARGING_EXCEL_EXPORT_ERROR','LOADING_DISCHARGING_EXCEL_ERROR','LOADING_DISCHARGING_FILE_FORMAT_ERROR', 'LOADING_DISCHARGING_FILE_SIZE_ERROR',
-    'LOADING_DICHARGING_EXCEL_PORT_NAME_INVALID', 'LOADING_DICHARGING_EXCEL_DATE_INVALID','LOADING_DICHARGING_EXCEL_TIME_INVALID',
-    'LOADING_DICHARGING_EXCEL_HEIGHT_INVALID', 'LOADING_DICHARGING_EXCEL_INVALID_EXCEL_FILE']).toPromise();
+      ['LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS_DETAILS', 'LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS', 'LOADING_DICHARGING_EXCEL_EXPORT_ERROR', 'LOADING_DISCHARGING_EXCEL_ERROR', 'LOADING_DISCHARGING_FILE_FORMAT_ERROR', 'LOADING_DISCHARGING_FILE_SIZE_ERROR',
+        'LOADING_DICHARGING_EXCEL_PORT_NAME_INVALID', 'LOADING_DICHARGING_EXCEL_DATE_INVALID', 'LOADING_DICHARGING_EXCEL_TIME_INVALID',
+        'LOADING_DICHARGING_EXCEL_HEIGHT_INVALID', 'LOADING_DICHARGING_EXCEL_INVALID_EXCEL_FILE', 'LOADING_DICHARGING_EXCEL_EMPTY_FILE']).toPromise();
     this.fileUploadVariable.nativeElement.disabled = true;
     let id;
-    if(this.operation === OPERATIONS.DISCHARGING) {
+    if (this.operation === OPERATIONS.DISCHARGING) {
       id = this.dischargingInfoId;
     } else {
       id = this.loadingInfoId;
     }
     try {
-    const uploadedFileVar = this.fileUploadVariable.nativeElement.files;
-    const extensions = ["xlsx"];
-    let uploadError;
+      const uploadedFileVar = this.fileUploadVariable.nativeElement.files;
+      const extensions = ["xlsx"];
+      let uploadError;
       for (let i = 0; i < uploadedFileVar.length; i++) {
         const fileExtension = uploadedFileVar[i].name.substr((uploadedFileVar[i].name.lastIndexOf('.') + 1));
         if (extensions.includes(fileExtension.toLowerCase())) {
-          if(uploadedFileVar[i].size / 1024 / 1024 >= 1) {
+          if (uploadedFileVar[i].size / 1024 / 1024 >= 1) {
             uploadError = 'LOADING_DISCHARGING_FILE_SIZE_ERROR';
           }
         } else {
@@ -268,7 +296,7 @@ export class LoadingDischargingDetailsComponent implements OnInit {
       if(uploadError) {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys[uploadError] });
       } else {
-        const result = await this.loadingDischargingInformationApiService.uploadTemplate(id,uploadedFileVar[0],this.operation).toPromise();
+        const result = await this.loadingDischargingInformationApiService.uploadTemplate(id, uploadedFileVar[0], this.operation).toPromise();
         if(result.responseStatus.status === '200') {
           this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS'], detail: translationKeys['LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS_DETAILS'] });
         }
@@ -284,6 +312,8 @@ export class LoadingDischargingDetailsComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_HEIGHT_INVALID'] });
       } else if(err.error.errorCode === "ERR-RICO-314") {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_INVALID_EXCEL_FILE'] });
+      } else if(err.error.errorCode === "ERR-RICO-315") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_EMPTY_FILE'] });
       } else if(err.error.errorCode === "ERR-RICO-400") {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_EXPORT_ERROR'] });
       }

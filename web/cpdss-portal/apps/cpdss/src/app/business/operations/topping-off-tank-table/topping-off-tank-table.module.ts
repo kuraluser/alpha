@@ -5,6 +5,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ToppingOffTankTableComponent } from './topping-off-tank-table.component';
 import { DatatableModule } from '../../../shared/components/datatable/datatable.module';
 import { ToppingOffTankTableTransformationService } from './topping-off-tank-table-transformation.service';
+import { QuantityPipeModule } from '../../../shared/pipes/quantity/quantity-pipe.module';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 
 /**
  * Module for topping off table
@@ -17,9 +19,10 @@ import { ToppingOffTankTableTransformationService } from './topping-off-tank-tab
   imports: [
     CommonModule,
     TranslateModule,
-    DatatableModule
+    DatatableModule,
+    QuantityPipeModule
   ],
   exports: [ToppingOffTankTableComponent],
-  providers: [ ToppingOffTankTableTransformationService]
+  providers: [ ToppingOffTankTableTransformationService , QuantityPipe ]
 })
 export class ToppingOffTankTableModule { }

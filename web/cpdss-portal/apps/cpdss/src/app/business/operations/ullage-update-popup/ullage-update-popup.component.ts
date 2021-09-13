@@ -1,5 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter , OnDestroy } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators, FormBuilder } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE } from '../../../shared/components/datatable/datatable.model';
 import { ICargoQuantities, IShipCargoTank, ITankOptions, IVoyagePortDetails, TANKTYPE, IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../core/models/common.model';
 import { UllageUpdatePopupTransformationService } from './ullage-update-popup-transformation.service';
@@ -29,13 +31,14 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
   templateUrl: './ullage-update-popup.component.html',
   styleUrls: ['./ullage-update-popup.component.scss']
 })
-export class UllageUpdatePopupComponent implements OnInit {
+export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
 
   @Input() loadingInfoId: number;
   @Input() status: ULLAGE_STATUS;
   @Input() vesselId: number;
   @Input() patternId: number;
   @Input() portRotationId: number;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   portId: number;
 
@@ -136,6 +139,7 @@ export class UllageUpdatePopupComponent implements OnInit {
   bunkerTankForm: FormGroup;
   public editMode: DATATABLE_EDITMODE = DATATABLE_EDITMODE.CELL;
   public blFigureTotal: IBlFigureTotal;
+  isDischargeStarted: boolean;
 
   statu: boolean;
 
@@ -215,6 +219,19 @@ export class UllageUpdatePopupComponent implements OnInit {
     this.getBunkerTankFormGroup();
     this.updateCargoQuantiyData();
     this.validateBlFigTable();
+    this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
+      this.isDischargeStarted = value;
+    })
+  }
+
+   
+ /**
+ * unsubscribing loading plan observable
+ * @memberof UllageUpdatePopupComponent
+ */
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -1142,8 +1159,8 @@ export class UllageUpdatePopupComponent implements OnInit {
         colour_code: item.colorCode,
         actual_planned: '1',
         arrival_departutre: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2,
-        port_xid: this.portId,
-        port_rotation_xid: this.portRotationId,
+        portXId: this.portId,
+        portRotationXId: this.portRotationId,
         observedM3: '',
         temperature: '',
         correctedUllage: '',

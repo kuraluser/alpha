@@ -56,6 +56,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   errorPopUp: boolean = false;
   disableViewErrorButton: boolean = true;
   processing: boolean = true;
+  isDischargeStarted: boolean;
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
@@ -167,6 +168,9 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.loadingDischargingTransformationService.disableViewErrorButton.subscribe((status) => {
       this.disableViewErrorButton = status;
     })
+    this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
+      this.isDischargeStarted = value;
+    })
     this.ngxSpinnerService.hide();
 
   }
@@ -247,7 +251,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   private swMessageHandler = async event => {
     const translationKeys = await this.translateService.get(["GENERATE_LODABLE_PLAN_PENDING", "GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE", "GENERATE_LODABLE_PLAN_CONFIRMED", "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED", "GENERATE_LODABLE_PLAN_PLAN_GENERATED", "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED", "GENERATE_LODABLE_PLAN_ERROR_OCCURED", "GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER", "GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED",
-      "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION", "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED"]).toPromise();
+      "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION", "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED", "GENERATE_LODABLE_PLAN_INFO","GENERATE_LOADABLE_PATTERN_NO_PLAN","GENERATE_LOADABLE_PLAN_COMPLETE_DONE"]).toPromise();
     if (event?.data?.errorCode === '210') {
       this.globalErrorHandler.sessionOutMessage();
     }

@@ -122,14 +122,15 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         cargo.minMaxTolerance = maxTolerence + (minTolerence ? "/" + minTolerence : '');
         cargo.differencePercentage = cargo.differencePercentage ? (cargo.differencePercentage.includes('%') ? cargo.differencePercentage : cargo.differencePercentage + '%') : '';
         cargo.grade = this.findCargo(cargo);
-        const orderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
-        cargo.orderedQuantity = this.quantityDecimalFormatPipe.transform(orderedQuantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,'');
+  
+        const convertedOrderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), QUANTITY_UNIT.MT , this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
+        cargo.convertedOrderedQuantity = convertedOrderedQuantity.toString();
 
-        const actualQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT , this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
-        cargo.actualQuantity = actualQuantity?.toString();
+        const shipFigure = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT , this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
+        cargo.shipFigure = shipFigure?.toString();
 
-        const slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(cargo?.slopQuantity.toString(), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
-        cargo.slopQuantity = Number(this.quantityDecimalFormatPipe.transform(slopQuantity,this.currentQuantitySelectedUnit).toString().replace(/,/g,''));
+        const convertedSlopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(cargo?.slopQuantity.toString(), QUANTITY_UNIT.MT, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
+        cargo.convertedSlopQuantity = convertedSlopQuantity?.toString();
         cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
       }
       return cargo;
