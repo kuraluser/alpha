@@ -236,7 +236,7 @@ public class LoadingSequenceService {
     this.buildStabilityParamSequence(reply, portEta, stabilityParams);
     this.buildFlowRates(loadingRates, vesselTanks, portEta, response);
     this.buildBallastPumpCategories(vesselId, response);
-    this.removePreviousPortBallasts(ballasts);
+    this.removePreviousPortBallasts(ballasts, ballastTankCategories);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);
@@ -256,8 +256,12 @@ public class LoadingSequenceService {
     response.setCargoStages(cargoStages);
   }
 
-  /** @param ballasts */
-  private void removePreviousPortBallasts(List<Ballast> ballasts) {
+  /**
+   * @param ballasts
+   * @param ballastTankCategories
+   */
+  private void removePreviousPortBallasts(
+      List<Ballast> ballasts, Set<TankCategory> ballastTankCategories) {
 
     Optional<Long> ballastStartOpt =
         ballasts.stream().map(ballast -> ballast.getStart()).sorted().findFirst();
@@ -273,6 +277,8 @@ public class LoadingSequenceService {
                     .count()
                 <= 1) {
               ballasts.remove(ballast);
+              ballastTankCategories.removeIf(
+                  category -> category.getId().equals(ballast.getTankId()));
             }
           }
         });
