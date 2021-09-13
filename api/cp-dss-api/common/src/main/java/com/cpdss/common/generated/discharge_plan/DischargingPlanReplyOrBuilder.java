@@ -29,20 +29,19 @@ public interface DischargingPlanReplyOrBuilder
   long getLoadingInfoId();
 
   /**
-   * <code>.LoadingInformation dischargingInformation = 8;</code>
+   * <code>.DischargeInformation dischargingInformation = 8;</code>
    *
    * @return Whether the dischargingInformation field is set.
    */
   boolean hasDischargingInformation();
   /**
-   * <code>.LoadingInformation dischargingInformation = 8;</code>
+   * <code>.DischargeInformation dischargingInformation = 8;</code>
    *
    * @return The dischargingInformation.
    */
-  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
-      getDischargingInformation();
-  /** <code>.LoadingInformation dischargingInformation = 8;</code> */
-  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationOrBuilder
+  com.cpdss.common.generated.discharge_plan.DischargeInformation getDischargingInformation();
+  /** <code>.DischargeInformation dischargingInformation = 8;</code> */
+  com.cpdss.common.generated.discharge_plan.DischargeInformationOrBuilder
       getDischargingInformationOrBuilder();
 
   /** <code>repeated .LoadingSequence dischargingSequences = 2;</code> */

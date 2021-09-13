@@ -7,13 +7,21 @@ import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
-import com.cpdss.gateway.domain.dischargeplan.DischargingInformation;
-import com.cpdss.gateway.domain.loadingplan.*;
+import com.cpdss.gateway.domain.dischargeplan.DischargingPlanResponse;
+import com.cpdss.gateway.domain.loadingplan.BerthDetails;
+import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
+import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingBerthDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
+import com.cpdss.gateway.domain.loadingplan.LoadingStages;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
@@ -23,6 +31,7 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -152,12 +161,10 @@ public class DischargeInformationService {
     return dischargeInformation;
   }
 
-  public LoadingPlanResponse getDischargingPlan(
-      Long vesselId, Long voyageId, Long infoId, Long portRotationId)
+  public DischargingPlanResponse getDischargingPlan(
+      Long vesselId, Long voyageId, Long infoId, Long portRotationId, String correlationId)
       throws GenericServiceException {
-
-    final String OPERATION_TYPE = "DEP";
-    LoadingPlanResponse loadingPlanResponse = new LoadingPlanResponse();
+    DischargingPlanResponse dischargingPlanResponse = new DischargingPlanResponse();
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(
@@ -177,104 +184,111 @@ public class DischargeInformationService {
     builder.setVesselId(vesselId);
     DischargingPlanReply planReply =
         this.dischargeInfoServiceStub.getDischargingPlan(builder.build());
+    if (!GatewayConstants.SUCCESS.equals(planReply.getResponseStatus().getStatus())) {
+      log.error("Port Rotation Id cannot be empty");
+      throw new GenericServiceException(
+          "Port Rotation Id Cannot be empty",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
 
-    DischargingInformation dischargingInformation = new DischargingInformation();
-    // from loading info table, loading plan service
-    LoadingRates loadingRates =
-        this.loadingInformationService.getLoadingRateForVessel(
-            planReply.getDischargingInformation().getLoadingRate(), vesselId);
+    DischargeInformation dischargeInformation = new DischargeInformation();
+    if (activeVoyage.getActiveDs() != null) {
+      dischargeInformation.setDischargeInfoId(
+          planReply.getDischargingInformation().getDischargeInfoId());
+      dischargeInformation.setSynopticTableId(
+          planReply.getDischargingInformation().getSynopticTableId());
+      dischargeInformation.setDischargeStudyId(activeVoyage.getActiveDs().getId());
+      dischargeInformation.setDischargeStudyName(activeVoyage.getActiveDs().getName());
+    }
 
-    // Topping Off Sequence
-    List<ToppingOffSequence> toppingSequence =
-        this.loadingInformationService.getToppingOffSequence(
-            planReply.getDischargingInformation().getToppingOffSequenceList());
-    // buildTankLayout(vesselId, loadingPlanResponse);
-    dischargingInformation.setDischargingRates(loadingRates);
-    dischargingInformation.setToppingOffSequence(toppingSequence);
+    // discharge rates
+    DischargeRates dischargeRates =
+        this.infoBuilderService.buildDischargeRatesFromMessage(
+            planReply.getDischargingInformation().getDischargeRate());
+    dischargeInformation.setDischargeRates(dischargeRates);
 
-    LoadingDetails loadingDetails =
-        this.loadingInformationService.getLoadingDetailsByPortRotationId(
-            planReply.getDischargingInformation().getLoadingDetail(),
-            vesselId,
-            activeVoyage.getId(),
-            portRotationId,
-            portRotation.get().getPortId());
-    dischargingInformation.setDischargingDetails(loadingDetails);
-
-    // Berth data from master, call to port Info service
-    List<BerthDetails> masterBerthDetails =
+    // discharge berth (master data)
+    List<BerthDetails> availableBerths =
         this.loadingInformationService.getMasterBerthDetailsByPortId(
             portRotation.get().getPortId());
-    List<BerthDetails> loadingBerthDetails =
-        this.loadingInformationService.buildLoadingPlanBerthDetails(
-            planReply.getDischargingInformation().getLoadingBerthsList());
-
+    availableBerths.stream()
+        .forEach(
+            berth -> {
+              berth.setDischargingBerthId(berth.getLoadingBerthId());
+              berth.setDischargingInfoId(berth.getLoadingInfoId());
+            });
+    // discharge berth (selected data)
+    List<BerthDetails> selectedBerths =
+        this.infoBuilderService.buildDischargeBerthsFromMessage(
+            planReply.getDischargingInformation().getBerthDetailsList());
+    selectedBerths.stream()
+        .forEach(
+            berth -> {
+              berth.setDischargingBerthId(berth.getLoadingBerthId());
+              berth.setDischargingInfoId(berth.getLoadingInfoId());
+            });
     LoadingBerthDetails berthDetails = new LoadingBerthDetails();
-    berthDetails.setAvailableBerths(masterBerthDetails);
-    berthDetails.setSelectedBerths(loadingBerthDetails);
-    dischargingInformation.setBerthDetails(berthDetails);
+    berthDetails.setAvailableBerths(availableBerths);
+    berthDetails.setSelectedBerths(selectedBerths);
+    dischargeInformation.setBerthDetails(berthDetails);
 
+    // discharge machines (manifold, bottom line, pumps)
     CargoMachineryInUse machineryInUse =
-        this.loadingInformationService.getCargoMachinesInUserFromVessel(
-            planReply.getDischargingInformation().getLoadingMachinesList(), vesselId);
-    dischargingInformation.setMachineryInUses(machineryInUse);
+        this.infoBuilderService.buildDischargeMachinesFromMessage(
+            planReply.getDischargingInformation().getMachineInUseList(), vesselId);
+    dischargeInformation.setMachineryInUses(machineryInUse);
 
-    LoadingStages loadingStages =
+    // discharge stages ()
+    LoadingStages dischargeStages =
         this.loadingInformationService.getLoadingStagesAndMasters(
-            planReply.getDischargingInformation().getLoadingStage());
-    dischargingInformation.setDischargingStages(loadingStages);
-
-    dischargingInformation.setDischargingInfoStatusId(
-        planReply.getDischargingInformation().getLoadingInfoStatusId());
-    dischargingInformation.setDischargingPlanArrStatusId(
-        planReply.getDischargingInformation().getLoadingPlanArrStatusId());
-    dischargingInformation.setDischargingPlanDepStatusId(
-        planReply.getDischargingInformation().getLoadingPlanDepStatusId());
-    dischargingInformation.setLoadablePatternId(
-        planReply.getDischargingInformation().getLoadablePatternId());
+            planReply.getDischargingInformation().getDischargeStage());
+    dischargeInformation.setDischargeStages(dischargeStages);
 
     CargoVesselTankDetails vesselTankDetails =
         this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
             vesselId,
             activeVoyage.getId(),
-            activeVoyage.getActiveLs().getId(),
+            activeVoyage.getActiveDs().getId(),
             portRotation.get().getPortId(),
             portRotation.get().getPortOrder(),
             portRotation.get().getId(),
-            OPERATION_TYPE);
+            OPERATION_TYPE_ARR);
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
-    vesselTankDetails.setLoadableQuantityCargoDetails(
-        this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
+    vesselTankDetails.setDischargeQuantityCargoDetails(
+        this.loadingInformationService.getDischargePlanCargoDetailsByPort(
             vesselId,
             activeVoyage.getPatternId(),
-            OPERATION_TYPE,
+            OPERATION_TYPE_ARR,
             portRotation.get().getId(),
             portRotation.get().getPortId()));
-    dischargingInformation.setCargoVesselTankDetails(vesselTankDetails);
+    dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
 
-    LoadingSequences loadingSequences =
-        this.loadingInformationService.getLoadingSequence(
-            planReply.getDischargingInformation().getLoadingDelays());
-    dischargingInformation.setDischargingSequences(loadingSequences);
+    // discharge sequence (reason/delay)
+    LoadingSequences dischargeSequences =
+        this.infoBuilderService.buildDischargeSequencesAndDelayFromMessage(
+            planReply.getDischargingInformation().getDischargeDelay());
+    dischargeInformation.setDischargeSequences(dischargeSequences);
 
-    loadingPlanResponse.setDischargingInformation(dischargingInformation);
+    dischargingPlanResponse.setDischargingInformation(dischargeInformation);
 
     List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
         loadingPlanGrpcService.fetchLoadablePlanBallastDetails(
             activeVoyage.getPatternId(), portRotation.get().getId());
-    loadingPlanResponse.setPlanBallastDetails(
+    dischargingPlanResponse.setPlanBallastDetails(
         loadingPlanBuilderService.buildLoadingPlanBallastFromRpc(
             planReply.getPortDischargingPlanBallastDetailsList(), loadablePlanBallastDetails));
-    loadingPlanResponse.setPlanStowageDetails(
+    dischargingPlanResponse.setPlanStowageDetails(
         loadingPlanBuilderService.buildLoadingPlanStowageFromRpc(
             planReply.getPortDischargingPlanStowageDetailsList()));
-    loadingPlanResponse.setPlanRobDetails(
+    dischargingPlanResponse.setPlanRobDetails(
         loadingPlanBuilderService.buildLoadingPlanRobFromRpc(
             planReply.getPortDischargingPlanRobDetailsList()));
-    loadingPlanResponse.setPlanStabilityParams(
+    dischargingPlanResponse.setPlanStabilityParams(
         loadingPlanBuilderService.buildLoadingPlanStabilityParamFromRpc(
             planReply.getPortDischargingPlanStabilityParametersList()));
-
-    return loadingPlanResponse;
+    dischargingPlanResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return dischargingPlanResponse;
   }
 }

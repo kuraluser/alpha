@@ -5,23 +5,31 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
+import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.OnHandQuantity;
+import com.cpdss.gateway.domain.OnHandQuantityResponse;
+import com.cpdss.gateway.domain.PortRotation;
+import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.PortWiseCargoResponse;
+import com.cpdss.gateway.domain.RuleRequest;
+import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.UploadTideDetailResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsStatus;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsUpdateRequest;
+import com.cpdss.gateway.domain.dischargeplan.DischargingPlanResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
 import com.cpdss.gateway.service.dischargeplan.DischargingInstructionService;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -64,7 +72,7 @@ public class DischargePlanController {
   @Autowired private DischargeInformationGrpcService dischargeInformationGrpcService;
 
   @Autowired private DischargeInformationService dischargeInformationService;
-  
+
   @Autowired private DischargingInstructionService dischargingInstructionService;
 
   /**
@@ -770,7 +778,7 @@ public class DischargePlanController {
    */
   @GetMapping(
       "/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-plan/{portRotationId}")
-  public LoadingPlanResponse getLoadingPlan(
+  public DischargingPlanResponse getLoadingPlan(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
@@ -785,7 +793,7 @@ public class DischargePlanController {
           voyageId,
           infoId);
       return dischargeInformationService.getDischargingPlan(
-          vesselId, voyageId, infoId, portRotationId);
+          vesselId, voyageId, infoId, portRotationId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in Get Loading Plan API");
       e.printStackTrace();
@@ -801,7 +809,7 @@ public class DischargePlanController {
           e);
     }
   }
-  
+
   /**
    * Save new Discharging Instruction
    *
@@ -843,7 +851,7 @@ public class DischargePlanController {
           e);
     }
   }
-  
+
   /**
    * Update Discharging Instruction status
    *
@@ -885,7 +893,7 @@ public class DischargePlanController {
           e);
     }
   }
-  
+
   /**
    * Edit Discharging Instruction
    *
@@ -927,7 +935,7 @@ public class DischargePlanController {
           e);
     }
   }
-  
+
   /**
    * Retrieve all discharging Instructions
    *
@@ -944,8 +952,11 @@ public class DischargePlanController {
       throws CommonRestException {
     try {
       log.info(
-          "Getting all Discharging instructions of vesselID: {} on port: {}", vesselId, portRotationId);
-      return dischargingInstructionService.getDischargingInstructions(vesselId, infoId, portRotationId);
+          "Getting all Discharging instructions of vesselID: {} on port: {}",
+          vesselId,
+          portRotationId);
+      return dischargingInstructionService.getDischargingInstructions(
+          vesselId, infoId, portRotationId);
 
     } catch (GenericServiceException e) {
       log.error("Getting all Discharging instructions Failed error");
@@ -967,7 +978,7 @@ public class DischargePlanController {
           e);
     }
   }
-  
+
   /**
    * Delete Discharging Instruction
    *
@@ -1009,6 +1020,4 @@ public class DischargePlanController {
           e);
     }
   }
-
-
 }

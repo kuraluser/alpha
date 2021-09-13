@@ -7,11 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-/**
- * 
- * @author sajith.m
- *
- */
+/** @author sajith.m */
 @Data
 @AllArgsConstructor
 @JsonInclude(Include.NON_NULL)

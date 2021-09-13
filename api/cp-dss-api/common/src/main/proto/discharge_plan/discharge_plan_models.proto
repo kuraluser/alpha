@@ -21,7 +21,7 @@ message DischargeInformationRequest{
 message DischargingPlanReply {
   ResponseStatus responseStatus = 7;
   int64 loadingInfoId = 1;
-  LoadingInformation dischargingInformation = 8;
+  DischargeInformation dischargingInformation = 8;
   repeated LoadingSequence dischargingSequences = 2;
   repeated LoadingPlanTankDetails portDischargingPlanStowageDetails = 3;
   repeated LoadingPlanTankDetails portDischargingPlanBallastDetails = 4;

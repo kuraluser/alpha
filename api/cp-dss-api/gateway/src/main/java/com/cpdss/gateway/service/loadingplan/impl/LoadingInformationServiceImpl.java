@@ -201,6 +201,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         } else {
           loadingRates.setMinLoadingRate(new BigDecimal(rateFromLoading.getMinLoadingRate()));
         }
+        loadingRates.setMinDischargingRate(loadingRates.getMinLoadingRate());
 
         // Max Loading Rate
         if (rateFromLoading.getMaxLoadingRate().isEmpty()) {
@@ -214,6 +215,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                   ? BigDecimal.ZERO
                   : new BigDecimal(rateFromLoading.getMaxLoadingRate()));
         }
+        loadingRates.setMaxLoadingRate(loadingRates.getMaxLoadingRate());
 
         // Reduced loading rate
         // Default value shows as - 1500 (min value for this)
@@ -226,6 +228,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                   : new BigDecimal(rateFromLoading.getReducedLoadingRate()));
         }
       }
+      loadingRates.setReducedDischaringRate(loadingRates.getReducedLoadingRate());
 
       AdminRuleValueExtract extract =
           AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
@@ -273,6 +276,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                 ? null
                 : new BigDecimal(rateFromLoading.getNoticeTimeStopLoading()));
       }
+      loadingRates.setNoticeTimeStopDischarging(loadingRates.getNoticeTimeStopLoading());
 
       // Line Content Remaining
       if (rateFromLoading.getLineContentRemaining().isEmpty()) {
@@ -291,7 +295,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           rateFromLoading.getShoreLoadingRate().isEmpty()
               ? BigDecimal.ZERO
               : new BigDecimal(rateFromLoading.getShoreLoadingRate()));
-
+      loadingRates.setShoreDischargingRate(loadingRates.getShoreLoadingRate());
       // Set Loading Info Id
       loadingRates.setId(rateFromLoading.getId());
       log.info("Loading Rates added from Loading plan Service");
@@ -571,6 +575,15 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
+  public List<DischargeQuantityCargoDetails> getDischargePlanCargoDetailsByPort(
+      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
+    List<LoadableStudy.LoadableQuantityCargoDetails> list =
+        this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
+            patternId, operationType, portRotationId, portId);
+    return this.buildDischargePlanQuantity(list, vesselId);
+  }
+
+  @Override
   public LoadingSequences getLoadingSequence(LoadingPlanModels.LoadingDelay loadingDelay) {
     LoadingSequences loadingSequences = new LoadingSequences();
     List<ReasonForDelay> reasonForDelays = new ArrayList<>();
@@ -641,6 +654,50 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
       cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
       cargoDetails.setMaxLoadingRate(this.getLoadingRateFromVesselService(vesselId));
+
+      response.add(cargoDetails);
+    }
+    return response;
+  }
+
+  private List<DischargeQuantityCargoDetails> buildDischargePlanQuantity(
+      List<LoadableStudy.LoadableQuantityCargoDetails> list, Long vesselId) {
+    List<DischargeQuantityCargoDetails> response = new ArrayList<>();
+    log.info("Cargo to be loaded data from LS, Size {}", list.size());
+    for (LoadableStudy.LoadableQuantityCargoDetails lqcd : list) {
+      com.cpdss.gateway.domain.DischargeQuantityCargoDetails cargoDetails =
+          new com.cpdss.gateway.domain.DischargeQuantityCargoDetails();
+      cargoDetails.setDifferenceColor(lqcd.getDifferenceColor());
+      cargoDetails.setDifferencePercentage(lqcd.getDifferencePercentage());
+      cargoDetails.setEstimatedAPI(lqcd.getEstimatedAPI());
+      cargoDetails.setEstimatedTemp(lqcd.getEstimatedTemp());
+      cargoDetails.setGrade(lqcd.getGrade());
+      cargoDetails.setId(lqcd.getId());
+      cargoDetails.setDischargeBbls60f(lqcd.getLoadableBbls60F());
+      cargoDetails.setDischargeBblsdbs(lqcd.getLoadableBblsdbs());
+      cargoDetails.setDischargeKL(lqcd.getLoadableKL());
+      cargoDetails.setDischargeLT(lqcd.getLoadableLT());
+      cargoDetails.setDischargeMT(lqcd.getLoadableMT());
+      cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
+      cargoDetails.setMinTolerence(lqcd.getMinTolerence());
+      cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());
+      cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
+      cargoDetails.setOrderedQuantity(lqcd.getOrderQuantity());
+
+      cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
+      cargoDetails.setTimeRequiredForDischarging(lqcd.getTimeRequiredForLoading());
+
+      cargoDetails.setCargoNominationTemperature(lqcd.getCargoNominationTemperature());
+      cargoDetails.setCargoId(lqcd.getCargoId());
+      cargoDetails.setCargoAbbreviation(lqcd.getCargoAbbreviation());
+      cargoDetails.setColorCode(lqcd.getColorCode());
+      cargoDetails.setPriority(lqcd.getPriority());
+      cargoDetails.setDischargingOrder(lqcd.getLoadingOrder());
+
+      cargoDetails.setOrderQuantity(lqcd.getOrderQuantity());
+      cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
+      cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
+      cargoDetails.setMaxDischargingRate(this.getLoadingRateFromVesselService(vesselId));
 
       response.add(cargoDetails);
     }
