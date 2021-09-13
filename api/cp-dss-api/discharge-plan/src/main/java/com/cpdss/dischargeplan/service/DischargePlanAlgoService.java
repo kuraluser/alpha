@@ -47,6 +47,9 @@ public class DischargePlanAlgoService {
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoService;
 
+  @GrpcClient("portInfoService")
+  private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoServiceBlockingStub;
+
   public void buildDischargeInformation(
       DischargeInformationRequest request,
       com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest algoRequest)
@@ -102,6 +105,11 @@ public class DischargePlanAlgoService {
       // discharge cow
       disDto.setCowPlan(this.buildDischargeCowDetails(entity));
 
+      // post discharge rate
+      PostDischargeRates postDischargeRates = new PostDischargeRates();
+      BeanUtils.copyProperties(entity, postDischargeRates);
+      disDto.setPostDischargeRates(postDischargeRates);
+
       // discharge cargo details, LoadablePlanPortWiseDetails (OHQ, OBQ)
       this.buildDischargePlanPortWiseDetails(algoRequest, entity);
 
@@ -141,6 +149,7 @@ public class DischargePlanAlgoService {
     if (!synopticData.getTimeOfSunset().isEmpty()) {
       dischargeDetails.setTimeOfSunset(synopticData.getTimeOfSunset());
     }
+    log.info("Setting sunrise/sunset from Synoptic table - Port R Id {}", portRotationXid);
   }
 
   private CowPlan buildDischargeCowDetails(
@@ -278,22 +287,23 @@ public class DischargePlanAlgoService {
       }
     }
     if (typeId == Common.MachineType.MANIFOLD_VALUE) {
-      Optional<VesselInfo.VesselComponent> vesselPump =
+      Optional<VesselInfo.VesselComponent> manifold =
           grpcReply.getVesselManifoldList().stream()
               .filter(v -> v.getId() == machineId)
               .findFirst();
-      if (vesselPump.isPresent()) {
-        loadingMachine.setMachineName(vesselPump.get().getComponentName());
+      if (manifold.isPresent()) {
+        loadingMachine.setMachineName(manifold.get().getComponentName());
         loadingMachine.setMachineTypeName(Common.MachineType.MANIFOLD.name());
+        loadingMachine.setTankTypeName(manifold.get().getTankTypeName());
       }
     }
     if (typeId == Common.MachineType.BOTTOM_LINE_VALUE) {
-      Optional<VesselInfo.VesselComponent> vesselPump =
+      Optional<VesselInfo.VesselComponent> bottomLine =
           grpcReply.getVesselBottomLineList().stream()
               .filter(v -> v.getId() == machineId)
               .findFirst();
-      if (vesselPump.isPresent()) {
-        loadingMachine.setMachineName(vesselPump.get().getComponentName());
+      if (bottomLine.isPresent()) {
+        loadingMachine.setMachineName(bottomLine.get().getComponentName());
         loadingMachine.setMachineTypeName(Common.MachineType.BOTTOM_LINE.name());
       }
     }
@@ -343,12 +353,55 @@ public class DischargePlanAlgoService {
               .map(
                   var -> {
                     BerthDetails dto = new BerthDetails();
-                    BeanUtils.copyProperties(var, dto);
+                    Optional.ofNullable(
+                            this.getBerthNameByPortIdAndBerthId(
+                                var.getDischargingInformation().getPortXid(), var.getBerthXid()))
+                        .ifPresent(dto::setBerthName);
+                    Optional.ofNullable(var.getId()).ifPresent(dto::setDischargeBerthId);
+                    Optional.ofNullable(var.getDischargingInformation().getId())
+                        .ifPresent(dto::setDischargeInfoId);
+                    Optional.ofNullable(var.getBerthXid()).ifPresent(dto::setBerthId);
+                    Optional.ofNullable(var.getDepth()).ifPresent(dto::setMaxShipDepth);
+                    Optional.ofNullable(var.getMaxManifoldHeight())
+                        .ifPresent(dto::setMaxManifoldHeight);
+                    Optional.ofNullable(var.getMaxManifoldPressure())
+                        .ifPresent(dto::setMaxManifoldPressure);
+                    Optional.ofNullable(var.getSeaDraftLimitation())
+                        .ifPresent(dto::setSeaDraftLimitation);
+                    Optional.ofNullable(var.getAirDraftLimitation())
+                        .ifPresent(dto::setAirDraftLimitation);
+                    Optional.ofNullable(var.getIsCargoCirculation())
+                        .ifPresent(dto::setCargoCirculation);
+                    Optional.ofNullable(var.getIsAirPurge()).ifPresent(dto::setAirPurge);
+                    Optional.ofNullable(var.getLineContentDisplacement())
+                        .ifPresent(dto::setLineDisplacement);
                     return dto;
                   })
               .collect(Collectors.toList()));
     }
     return berthDetails;
+  }
+
+  private String getBerthNameByPortIdAndBerthId(Long portXid, Long berthXid) {
+    try {
+      PortInfo.PortIdRequest.Builder idRequest = PortInfo.PortIdRequest.newBuilder();
+      PortInfo.BerthInfoResponse response =
+          portInfoServiceBlockingStub.getBerthDetailsByPortId(idRequest.setPortId(portXid).build());
+      log.info(
+          "Get berth Name ({}) from port service - status {}",
+          berthXid,
+          response.getResponseStatus().getStatus());
+      if (response.getResponseStatus().getStatus().equals(DischargePlanConstants.SUCCESS)) {
+        return response.getBerthsList().stream()
+            .filter(v -> v.getId() == berthXid)
+            .map(PortInfo.BerthDetail::getBerthName)
+            .findFirst()
+            .get();
+      }
+    } catch (Exception e) {
+
+    }
+    return null;
   }
 
   private void buildOnBoardQuantities(

@@ -207,24 +207,27 @@ public class DischargeInformationService {
         this.infoBuilderService.buildDischargeRatesFromMessage(
             planReply.getDischargingInformation().getDischargeRate());
     dischargeInformation.setDischargeRates(dischargeRates);
-    
 
     // discharge berth (master data)
     List<BerthDetails> availableBerths =
         this.loadingInformationService.getMasterBerthDetailsByPortId(
             portRotation.get().getPortId());
-    availableBerths.stream().forEach(berth->{
-    	berth.setDischargingBerthId(berth.getLoadingBerthId());
-    	berth.setDischargingInfoId(berth.getLoadingInfoId());
-    });
+    availableBerths.stream()
+        .forEach(
+            berth -> {
+              berth.setDischargingBerthId(berth.getLoadingBerthId());
+              berth.setDischargingInfoId(berth.getLoadingInfoId());
+            });
     // discharge berth (selected data)
     List<BerthDetails> selectedBerths =
         this.infoBuilderService.buildDischargeBerthsFromMessage(
             planReply.getDischargingInformation().getBerthDetailsList());
-    selectedBerths.stream().forEach(berth->{
-    	berth.setDischargingBerthId(berth.getLoadingBerthId());
-    	berth.setDischargingInfoId(berth.getLoadingInfoId());
-    });
+    selectedBerths.stream()
+        .forEach(
+            berth -> {
+              berth.setDischargingBerthId(berth.getLoadingBerthId());
+              berth.setDischargingInfoId(berth.getLoadingInfoId());
+            });
     LoadingBerthDetails berthDetails = new LoadingBerthDetails();
     berthDetails.setAvailableBerths(availableBerths);
     berthDetails.setSelectedBerths(selectedBerths);

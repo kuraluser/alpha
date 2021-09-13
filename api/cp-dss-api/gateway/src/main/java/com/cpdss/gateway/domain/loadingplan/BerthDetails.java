@@ -14,7 +14,7 @@ public class BerthDetails {
   private BigDecimal maxShpChannel;
   private String berthName;
   private Long loadingBerthId; // Primary key for loading berth, in Loading Plan DB
-  private Long dischargingBerthId; 
+  private Long dischargingBerthId;
   private BigDecimal maxShipDepth;
   private String hoseConnections;
   private BigDecimal seaDraftLimitation;

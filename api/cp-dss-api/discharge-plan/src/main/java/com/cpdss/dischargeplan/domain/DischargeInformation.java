@@ -29,4 +29,5 @@ public class DischargeInformation {
   private DischargeStages dischargeStages;
   private DischargeSequences dischargeSequences;
   private CowPlan cowPlan;
+  private PostDischargeRates postDischargeRates;
 }

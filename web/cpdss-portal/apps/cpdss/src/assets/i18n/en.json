@@ -1968,6 +1968,8 @@
   "LOADING_DICHARGING_EXCEL_TIME_INVALID": "Invalid tide time in excel",
   "LOADING_DICHARGING_EXCEL_HEIGHT_INVALID": "Invalid tide height in excel",
   "LOADING_DICHARGING_EXCEL_INVALID_EXCEL_FILE": "Only the file with following extensions are allowed : xlsx",
+  "LOADING_DISCHARGING_BERTH":"Info",
+  "LOADING_DISCHARGING_BERTH_NO_BERTH_AVAILABLE":"There are no berth available",
   "LOADING_DICHARGING_EXCEL_EMPTY_FILE": "Empty file uploaded"
 }
 

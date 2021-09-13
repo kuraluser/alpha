@@ -247,7 +247,7 @@ public class LoadingSequenceService {
     response.setStabilityParams(stabilityParams);
     response.setCargoTankCategories(
         cargoTankCategories.stream()
-            .sorted(Comparator.comparing(TankCategory::getId))
+            .sorted(Comparator.comparing(TankCategory::getDisplayOrder))
             .collect(Collectors.toList()));
     response.setBallastTankCategories(
         ballastTankCategories.stream()
@@ -450,6 +450,7 @@ public class LoadingSequenceService {
         tank -> {
           ballastDto.setTankName(tank.getShortName());
           tankCategory.setTankName(tank.getShortName());
+          tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
         });
     ballastDetailsOpt.ifPresent(details -> ballastDto.setColor(details.getColorCode()));
     ballastTankCategories.add(tankCategory);
@@ -529,7 +530,11 @@ public class LoadingSequenceService {
       Optional<VesselTankDetail> tankDetailOpt,
       Set<TankCategory> cargoTankCategories) {
     TankCategory tankCategory = new TankCategory();
-    tankDetailOpt.ifPresent(tank -> tankCategory.setTankName(tank.getShortName()));
+    tankDetailOpt.ifPresent(
+        tank -> {
+          tankCategory.setTankName(tank.getShortName());
+          tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
+        });
     if (cargoTankCategories.stream().anyMatch(cargo -> cargo.getId().equals(stowage.getTankId()))) {
       cargoTankCategories.removeIf(cargo -> cargo.getId().equals(stowage.getTankId()));
     }
@@ -611,6 +616,7 @@ public class LoadingSequenceService {
     VesselRequest.Builder builder = VesselRequest.newBuilder();
     builder.setVesselId(vesselId);
     builder.addTankCategories(1L);
+    builder.addTankCategories(9L);
     builder.addTankCategories(2L);
     VesselReply reply = vesselInfoGrpcService.getVesselTanks(builder.build());
     if (!reply.getResponseStatus().getStatus().equals(GatewayConstants.SUCCESS)) {

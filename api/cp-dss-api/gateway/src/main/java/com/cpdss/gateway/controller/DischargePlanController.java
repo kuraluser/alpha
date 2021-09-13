@@ -12,7 +12,6 @@ import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;

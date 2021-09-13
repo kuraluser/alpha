@@ -121,6 +121,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
 
       this.initForm();
       this.selectedIndex = 0;
+      this.error=[];
 
       this.rulesJson[this.data] = changes?.rulesJson?.currentValue?.plan;
       if (this.rulesJson[this.data]?.length > 0) {

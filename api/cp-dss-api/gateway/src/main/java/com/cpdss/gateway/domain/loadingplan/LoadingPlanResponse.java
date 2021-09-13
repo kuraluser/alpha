@@ -3,7 +3,6 @@ package com.cpdss.gateway.domain.loadingplan;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.gateway.domain.VesselTank;
-import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanRobDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;

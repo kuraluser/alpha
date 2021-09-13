@@ -27,7 +27,7 @@ public class CowPlanDetail extends EntityDoc {
   private BigDecimal cowMinTrim;
 
   @Column(name = "cow_operation_type")
-  private Integer cowOperationType;
+  private Integer cowOperationType; // manual/auto
 
   @Column(name = "cow_percentage")
   private BigDecimal cowPercentage;
