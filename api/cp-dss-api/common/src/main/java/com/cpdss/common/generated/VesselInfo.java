@@ -62225,6 +62225,44 @@ public final class VesselInfo {
      * @return The componentType.
      */
     long getComponentType();
+
+    /**
+     *
+     *
+     * <pre>
+     * needed at Algo Request
+     * </pre>
+     *
+     * <code>int64 tankTypeId = 6;</code>
+     *
+     * @return The tankTypeId.
+     */
+    long getTankTypeId();
+
+    /**
+     *
+     *
+     * <pre>
+     * needed at Algo Request
+     * </pre>
+     *
+     * <code>string tankTypeName = 7;</code>
+     *
+     * @return The tankTypeName.
+     */
+    java.lang.String getTankTypeName();
+    /**
+     *
+     *
+     * <pre>
+     * needed at Algo Request
+     * </pre>
+     *
+     * <code>string tankTypeName = 7;</code>
+     *
+     * @return The bytes for tankTypeName.
+     */
+    com.google.protobuf.ByteString getTankTypeNameBytes();
   }
   /** Protobuf type {@code VesselComponent} */
   public static final class VesselComponent extends com.google.protobuf.GeneratedMessageV3
@@ -62240,6 +62278,7 @@ public final class VesselInfo {
     private VesselComponent() {
       componentName_ = "";
       componentCode_ = "";
+      tankTypeName_ = "";
     }
 
     @java.lang.Override
@@ -62298,6 +62337,18 @@ public final class VesselInfo {
             case 40:
               {
                 componentType_ = input.readInt64();
+                break;
+              }
+            case 48:
+              {
+                tankTypeId_ = input.readInt64();
+                break;
+              }
+            case 58:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                tankTypeName_ = s;
                 break;
               }
             default:
@@ -62436,6 +62487,70 @@ public final class VesselInfo {
       return componentType_;
     }
 
+    public static final int TANKTYPEID_FIELD_NUMBER = 6;
+    private long tankTypeId_;
+    /**
+     *
+     *
+     * <pre>
+     * needed at Algo Request
+     * </pre>
+     *
+     * <code>int64 tankTypeId = 6;</code>
+     *
+     * @return The tankTypeId.
+     */
+    public long getTankTypeId() {
+      return tankTypeId_;
+    }
+
+    public static final int TANKTYPENAME_FIELD_NUMBER = 7;
+    private volatile java.lang.Object tankTypeName_;
+    /**
+     *
+     *
+     * <pre>
+     * needed at Algo Request
+     * </pre>
+     *
+     * <code>string tankTypeName = 7;</code>
+     *
+     * @return The tankTypeName.
+     */
+    public java.lang.String getTankTypeName() {
+      java.lang.Object ref = tankTypeName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        tankTypeName_ = s;
+        return s;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * needed at Algo Request
+     * </pre>
+     *
+     * <code>string tankTypeName = 7;</code>
+     *
+     * @return The bytes for tankTypeName.
+     */
+    public com.google.protobuf.ByteString getTankTypeNameBytes() {
+      java.lang.Object ref = tankTypeName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        tankTypeName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -62465,6 +62580,12 @@ public final class VesselInfo {
       if (componentType_ != 0L) {
         output.writeInt64(5, componentType_);
       }
+      if (tankTypeId_ != 0L) {
+        output.writeInt64(6, tankTypeId_);
+      }
+      if (!getTankTypeNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, tankTypeName_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -62489,6 +62610,12 @@ public final class VesselInfo {
       if (componentType_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, componentType_);
       }
+      if (tankTypeId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(6, tankTypeId_);
+      }
+      if (!getTankTypeNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, tankTypeName_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -62510,6 +62637,8 @@ public final class VesselInfo {
       if (!getComponentName().equals(other.getComponentName())) return false;
       if (!getComponentCode().equals(other.getComponentCode())) return false;
       if (getComponentType() != other.getComponentType()) return false;
+      if (getTankTypeId() != other.getTankTypeId()) return false;
+      if (!getTankTypeName().equals(other.getTankTypeName())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -62531,6 +62660,10 @@ public final class VesselInfo {
       hash = (53 * hash) + getComponentCode().hashCode();
       hash = (37 * hash) + COMPONENTTYPE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getComponentType());
+      hash = (37 * hash) + TANKTYPEID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getTankTypeId());
+      hash = (37 * hash) + TANKTYPENAME_FIELD_NUMBER;
+      hash = (53 * hash) + getTankTypeName().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -62680,6 +62813,10 @@ public final class VesselInfo {
 
         componentType_ = 0L;
 
+        tankTypeId_ = 0L;
+
+        tankTypeName_ = "";
+
         return this;
       }
 
@@ -62711,6 +62848,8 @@ public final class VesselInfo {
         result.componentName_ = componentName_;
         result.componentCode_ = componentCode_;
         result.componentType_ = componentType_;
+        result.tankTypeId_ = tankTypeId_;
+        result.tankTypeName_ = tankTypeName_;
         onBuilt();
         return result;
       }
@@ -62779,6 +62918,13 @@ public final class VesselInfo {
         }
         if (other.getComponentType() != 0L) {
           setComponentType(other.getComponentType());
+        }
+        if (other.getTankTypeId() != 0L) {
+          setTankTypeId(other.getTankTypeId());
+        }
+        if (!other.getTankTypeName().isEmpty()) {
+          tankTypeName_ = other.tankTypeName_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -63057,6 +63203,163 @@ public final class VesselInfo {
       public Builder clearComponentType() {
 
         componentType_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long tankTypeId_;
+      /**
+       *
+       *
+       * <pre>
+       * needed at Algo Request
+       * </pre>
+       *
+       * <code>int64 tankTypeId = 6;</code>
+       *
+       * @return The tankTypeId.
+       */
+      public long getTankTypeId() {
+        return tankTypeId_;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * needed at Algo Request
+       * </pre>
+       *
+       * <code>int64 tankTypeId = 6;</code>
+       *
+       * @param value The tankTypeId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankTypeId(long value) {
+
+        tankTypeId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * needed at Algo Request
+       * </pre>
+       *
+       * <code>int64 tankTypeId = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTankTypeId() {
+
+        tankTypeId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object tankTypeName_ = "";
+      /**
+       *
+       *
+       * <pre>
+       * needed at Algo Request
+       * </pre>
+       *
+       * <code>string tankTypeName = 7;</code>
+       *
+       * @return The tankTypeName.
+       */
+      public java.lang.String getTankTypeName() {
+        java.lang.Object ref = tankTypeName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          tankTypeName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * needed at Algo Request
+       * </pre>
+       *
+       * <code>string tankTypeName = 7;</code>
+       *
+       * @return The bytes for tankTypeName.
+       */
+      public com.google.protobuf.ByteString getTankTypeNameBytes() {
+        java.lang.Object ref = tankTypeName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          tankTypeName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * needed at Algo Request
+       * </pre>
+       *
+       * <code>string tankTypeName = 7;</code>
+       *
+       * @param value The tankTypeName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankTypeName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        tankTypeName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * needed at Algo Request
+       * </pre>
+       *
+       * <code>string tankTypeName = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTankTypeName() {
+
+        tankTypeName_ = getDefaultInstance().getTankTypeName();
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * needed at Algo Request
+       * </pre>
+       *
+       * <code>string tankTypeName = 7;</code>
+       *
+       * @param value The bytes for tankTypeName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTankTypeNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        tankTypeName_ = value;
         onChanged();
         return this;
       }
@@ -78818,89 +79121,90 @@ public final class VesselInfo {
           + "nkType\022$\n\rvesselDetails\030\004 \001(\0132\r.VesselDe"
           + "tail\022(\n\016vesselManifold\030\006 \003(\0132\020.VesselCom"
           + "ponent\022*\n\020vesselBottomLine\030\007 \003(\0132\020.Vesse"
-          + "lComponent\"t\n\017VesselComponent\022\n\n\002id\030\001 \001("
-          + "\003\022\020\n\010vesselId\030\002 \001(\003\022\025\n\rcomponentName\030\003 \001"
-          + "(\t\022\025\n\rcomponentCode\030\004 \001(\t\022\025\n\rcomponentTy"
-          + "pe\030\005 \001(\003\"(\n\010TankType\022\n\n\002id\030\001 \001(\003\022\020\n\010type"
-          + "Name\030\002 \001(\t\"$\n\010PumpType\022\n\n\002id\030\001 \001(\003\022\014\n\004na"
-          + "me\030\002 \001(\t\"x\n\nVesselPump\022\n\n\002id\030\001 \001(\003\022\020\n\010ve"
-          + "sselId\030\002 \001(\003\022\022\n\npumpTypeId\030\003 \001(\003\022\020\n\010pump"
-          + "Name\030\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t\022\024\n\014pumpCapa"
-          + "city\030\006 \001(\t\"\214\001\n\021VesselRuleRequest\022\020\n\010vess"
-          + "elId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rulePla"
-          + "n\030\003 \003(\0132\n.RulePlans\022\027\n\017isNoDefaultRule\030\004"
-          + " \001(\010\022\033\n\023isFetchEnabledRules\030\005 \001(\010\"\347\001\n\017Ve"
-          + "sselRuleReply\022\'\n\016responseStatus\030\001 \001(\0132\017."
-          + "ResponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.RuleP"
-          + "lans\022)\n\017cargoTankMaster\030\003 \003(\0132\020.CargoTan"
-          + "kMaster\0229\n\027ruleDropDownValueMaster\030\004 \003(\013"
-          + "2\030.RuleDropDownValueMaster\022\'\n\016ruleTypeMa"
-          + "ster\030\005 \003(\0132\017.RuleTypeMaster\"\260\001\n\030VesselVa"
-          + "lveSequenceReply\022\'\n\016responseStatus\030\001 \001(\013"
-          + "2\017.ResponseStatus\0220\n\022vvSequenceEntities\030"
-          + "\002 \003(\0132\024.VesselValveSequence\0229\n\023vvEducati"
-          + "onEntities\030\003 \003(\0132\034.VesselValveEducationP"
-          + "rocess\"\373\004\n\023VesselValveSequence\022\n\n\002id\030\001 \001"
-          + "(\003\022\025\n\risCommonValve\030\002 \001(\010\022\016\n\006isShut\030\030 \001("
-          + "\010\022\022\n\npipelineId\030\003 \001(\005\022\025\n\rpipelineColor\030\004"
-          + " \001(\t\022\024\n\014pipelineName\030\005 \001(\t\022\024\n\014pipelineTy"
-          + "pe\030\006 \001(\t\022\020\n\010pumpCode\030\031 \001(\t\022\020\n\010pumpName\030\032"
-          + " \001(\t\022\020\n\010pumpType\030\033 \001(\t\022\026\n\016sequenceNumber"
-          + "\030\007 \001(\t\022\033\n\023sequenceOperationId\030\010 \001(\005\022\035\n\025s"
-          + "equenceOperationName\030\t \001(\t\022\026\n\016sequenceTy"
-          + "peId\030\n \001(\005\022\030\n\020sequenceTypeName\030\013 \001(\t\022\037\n\027"
-          + "sequenceVesselMappingId\030\014 \001(\005\022\025\n\rtankSho"
-          + "rtName\030\r \001(\t\022\023\n\013stageNumber\030\034 \001(\t\022\025\n\rval"
-          + "veCategory\030\016 \001(\t\022\027\n\017valveCategoryId\030\017 \001("
-          + "\005\022\017\n\007valveId\030\035 \001(\005\022\023\n\013valveNumber\030\020 \001(\t\022"
-          + "\021\n\tvalveSide\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001(\005\022"
-          + "\025\n\rvalveTypeName\030\023 \001(\t\022\022\n\nvesselName\030\024 \001"
-          + "(\t\022\025\n\rvesselTankXid\030\025 \001(\005\022\021\n\tvesselXid\030\027"
-          + " \001(\003\"\352\001\n\033VesselValveEducationProcess\022\n\n\002"
-          + "id\030\001 \001(\003\022\023\n\013eductorName\030\002 \001(\t\022\026\n\016sequenc"
-          + "eNumber\030\003 \001(\005\022\020\n\010stepName\030\004 \001(\t\022\023\n\013valve"
-          + "Number\030\005 \001(\t\022\021\n\teductorId\030\006 \001(\005\022\037\n\027educt"
-          + "ionProcessMasterId\030\007 \001(\005\022\023\n\013stageNumber\030"
-          + "\010 \001(\005\022\017\n\007valveId\030\t \001(\005\022\021\n\tstageName\030\n \001("
-          + "\t\"+\n\027LoadingInfoRulesRequest\022\020\n\010vesselId"
-          + "\030\001 \001(\003\"W\n\025LoadingInfoRulesReply\022\025\n\005rules"
-          + "\030\001 \003(\0132\006.Rules\022\'\n\016responseStatus\030\002 \001(\0132\017"
-          + ".ResponseStatus\"0\n\017CargoTankMaster\022\n\n\002id"
-          + "\030\001 \001(\003\022\021\n\tshortName\030\002 \001(\t\"L\n\027RuleDropDow"
-          + "nValueMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\022"
-          + "\026\n\016ruleTemplateId\030\003 \001(\003\".\n\016RuleTypeMaste"
-          + "r\022\n\n\002id\030\001 \001(\003\022\020\n\010ruleType\030\002 \001(\t*\277\001\n\017Vess"
-          + "elPumpTypes\022\016\n\nEMPTY_PUMP\020\000\022\016\n\nCARGO_PUM"
-          + "P\020\001\022\020\n\014BALLAST_PUMP\020\002\022\013\n\007GS_PUMP\020\003\022\013\n\007IG"
-          + "_PUMP\020\004\022\022\n\016STRIPPING_PUMP\020\005\022\021\n\rSTRIP_EDU"
-          + "CTOR\020\006\022\014\n\010COW_PUMP\020\007\022\023\n\017BALLAST_EDUCTOR\020"
-          + "\010\022\026\n\022TANK_CLEANING_PUMP\020\t2\344\007\n\021VesselInfo"
-          + "Service\0228\n\026GetAllVesselsByCompany\022\016.Vess"
-          + "elRequest\032\014.VesselReply\"\000\0226\n\024GetVesselDe"
-          + "tailsById\022\016.VesselRequest\032\014.VesselReply\""
-          + "\000\0220\n\016GetVesselTanks\022\016.VesselRequest\032\014.Ve"
-          + "sselReply\"\000\0225\n\023GetVesselCargoTanks\022\016.Ves"
-          + "selRequest\032\014.VesselReply\"\000\022A\n\027GetVesselD"
-          + "etailsForAlgo\022\022.VesselAlgoRequest\032\020.Vess"
-          + "elAlgoReply\"\000\022C\n!GetVesselDetailForSynop"
-          + "ticalTable\022\016.VesselRequest\032\014.VesselReply"
-          + "\"\000\022;\n\031GetVesselDetailByVesselId\022\016.Vessel"
-          + "Request\032\014.VesselReply\"\000\022A\n\025GetVesselInfo"
-          + "ByPaging\022\030.VesselRequestWithPaging\032\014.Ves"
-          + "selReply\"\000\022C\n\026GetVesselInfoBytankIds\022\022.V"
-          + "esselTankRequest\032\023.VesselTankResponse\"\000\022"
-          + "C\n\032GetDWTFromVesselByVesselId\022\021.VesselDW"
-          + "TRequest\032\022.VesselDWTResponse\022@\n\027GetVesse"
-          + "lInfoByVesselId\022\020.VesselIdRequest\032\021.Vess"
-          + "elIdResponse\"\000\022D\n\030GetVesselPumpsByVessel"
-          + "Id\022\020.VesselIdRequest\032\024.VesselPumpsRespon"
-          + "se\"\000\022H\n\036GetRulesByVesselIdAndSectionId\022\022"
-          + ".VesselRuleRequest\032\020.VesselRuleReply\"\000\022E"
-          + "\n\026GetVesselValveSequence\022\016.VesselRequest"
-          + "\032\031.VesselValveSequenceReply\"\000\022I\n\023GetLoad"
-          + "ingInfoRules\022\030.LoadingInfoRulesRequest\032\026"
-          + ".LoadingInfoRulesReply\"\000B\036\n\032com.cpdss.co"
-          + "mmon.generatedP\000b\006proto3"
+          + "lComponent\"\236\001\n\017VesselComponent\022\n\n\002id\030\001 \001"
+          + "(\003\022\020\n\010vesselId\030\002 \001(\003\022\025\n\rcomponentName\030\003 "
+          + "\001(\t\022\025\n\rcomponentCode\030\004 \001(\t\022\025\n\rcomponentT"
+          + "ype\030\005 \001(\003\022\022\n\ntankTypeId\030\006 \001(\003\022\024\n\014tankTyp"
+          + "eName\030\007 \001(\t\"(\n\010TankType\022\n\n\002id\030\001 \001(\003\022\020\n\010t"
+          + "ypeName\030\002 \001(\t\"$\n\010PumpType\022\n\n\002id\030\001 \001(\003\022\014\n"
+          + "\004name\030\002 \001(\t\"x\n\nVesselPump\022\n\n\002id\030\001 \001(\003\022\020\n"
+          + "\010vesselId\030\002 \001(\003\022\022\n\npumpTypeId\030\003 \001(\003\022\020\n\010p"
+          + "umpName\030\004 \001(\t\022\020\n\010pumpCode\030\005 \001(\t\022\024\n\014pumpC"
+          + "apacity\030\006 \001(\t\"\214\001\n\021VesselRuleRequest\022\020\n\010v"
+          + "esselId\030\001 \001(\003\022\021\n\tsectionId\030\002 \001(\003\022\034\n\010rule"
+          + "Plan\030\003 \003(\0132\n.RulePlans\022\027\n\017isNoDefaultRul"
+          + "e\030\004 \001(\010\022\033\n\023isFetchEnabledRules\030\005 \001(\010\"\347\001\n"
+          + "\017VesselRuleReply\022\'\n\016responseStatus\030\001 \001(\013"
+          + "2\017.ResponseStatus\022\034\n\010rulePlan\030\002 \003(\0132\n.Ru"
+          + "lePlans\022)\n\017cargoTankMaster\030\003 \003(\0132\020.Cargo"
+          + "TankMaster\0229\n\027ruleDropDownValueMaster\030\004 "
+          + "\003(\0132\030.RuleDropDownValueMaster\022\'\n\016ruleTyp"
+          + "eMaster\030\005 \003(\0132\017.RuleTypeMaster\"\260\001\n\030Vesse"
+          + "lValveSequenceReply\022\'\n\016responseStatus\030\001 "
+          + "\001(\0132\017.ResponseStatus\0220\n\022vvSequenceEntiti"
+          + "es\030\002 \003(\0132\024.VesselValveSequence\0229\n\023vvEduc"
+          + "ationEntities\030\003 \003(\0132\034.VesselValveEducati"
+          + "onProcess\"\373\004\n\023VesselValveSequence\022\n\n\002id\030"
+          + "\001 \001(\003\022\025\n\risCommonValve\030\002 \001(\010\022\016\n\006isShut\030\030"
+          + " \001(\010\022\022\n\npipelineId\030\003 \001(\005\022\025\n\rpipelineColo"
+          + "r\030\004 \001(\t\022\024\n\014pipelineName\030\005 \001(\t\022\024\n\014pipelin"
+          + "eType\030\006 \001(\t\022\020\n\010pumpCode\030\031 \001(\t\022\020\n\010pumpNam"
+          + "e\030\032 \001(\t\022\020\n\010pumpType\030\033 \001(\t\022\026\n\016sequenceNum"
+          + "ber\030\007 \001(\t\022\033\n\023sequenceOperationId\030\010 \001(\005\022\035"
+          + "\n\025sequenceOperationName\030\t \001(\t\022\026\n\016sequenc"
+          + "eTypeId\030\n \001(\005\022\030\n\020sequenceTypeName\030\013 \001(\t\022"
+          + "\037\n\027sequenceVesselMappingId\030\014 \001(\005\022\025\n\rtank"
+          + "ShortName\030\r \001(\t\022\023\n\013stageNumber\030\034 \001(\t\022\025\n\r"
+          + "valveCategory\030\016 \001(\t\022\027\n\017valveCategoryId\030\017"
+          + " \001(\005\022\017\n\007valveId\030\035 \001(\005\022\023\n\013valveNumber\030\020 \001"
+          + "(\t\022\021\n\tvalveSide\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001"
+          + "(\005\022\025\n\rvalveTypeName\030\023 \001(\t\022\022\n\nvesselName\030"
+          + "\024 \001(\t\022\025\n\rvesselTankXid\030\025 \001(\005\022\021\n\tvesselXi"
+          + "d\030\027 \001(\003\"\352\001\n\033VesselValveEducationProcess\022"
+          + "\n\n\002id\030\001 \001(\003\022\023\n\013eductorName\030\002 \001(\t\022\026\n\016sequ"
+          + "enceNumber\030\003 \001(\005\022\020\n\010stepName\030\004 \001(\t\022\023\n\013va"
+          + "lveNumber\030\005 \001(\t\022\021\n\teductorId\030\006 \001(\005\022\037\n\027ed"
+          + "uctionProcessMasterId\030\007 \001(\005\022\023\n\013stageNumb"
+          + "er\030\010 \001(\005\022\017\n\007valveId\030\t \001(\005\022\021\n\tstageName\030\n"
+          + " \001(\t\"+\n\027LoadingInfoRulesRequest\022\020\n\010vesse"
+          + "lId\030\001 \001(\003\"W\n\025LoadingInfoRulesReply\022\025\n\005ru"
+          + "les\030\001 \003(\0132\006.Rules\022\'\n\016responseStatus\030\002 \001("
+          + "\0132\017.ResponseStatus\"0\n\017CargoTankMaster\022\n\n"
+          + "\002id\030\001 \001(\003\022\021\n\tshortName\030\002 \001(\t\"L\n\027RuleDrop"
+          + "DownValueMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001"
+          + "(\t\022\026\n\016ruleTemplateId\030\003 \001(\003\".\n\016RuleTypeMa"
+          + "ster\022\n\n\002id\030\001 \001(\003\022\020\n\010ruleType\030\002 \001(\t*\277\001\n\017V"
+          + "esselPumpTypes\022\016\n\nEMPTY_PUMP\020\000\022\016\n\nCARGO_"
+          + "PUMP\020\001\022\020\n\014BALLAST_PUMP\020\002\022\013\n\007GS_PUMP\020\003\022\013\n"
+          + "\007IG_PUMP\020\004\022\022\n\016STRIPPING_PUMP\020\005\022\021\n\rSTRIP_"
+          + "EDUCTOR\020\006\022\014\n\010COW_PUMP\020\007\022\023\n\017BALLAST_EDUCT"
+          + "OR\020\010\022\026\n\022TANK_CLEANING_PUMP\020\t2\344\007\n\021VesselI"
+          + "nfoService\0228\n\026GetAllVesselsByCompany\022\016.V"
+          + "esselRequest\032\014.VesselReply\"\000\0226\n\024GetVesse"
+          + "lDetailsById\022\016.VesselRequest\032\014.VesselRep"
+          + "ly\"\000\0220\n\016GetVesselTanks\022\016.VesselRequest\032\014"
+          + ".VesselReply\"\000\0225\n\023GetVesselCargoTanks\022\016."
+          + "VesselRequest\032\014.VesselReply\"\000\022A\n\027GetVess"
+          + "elDetailsForAlgo\022\022.VesselAlgoRequest\032\020.V"
+          + "esselAlgoReply\"\000\022C\n!GetVesselDetailForSy"
+          + "nopticalTable\022\016.VesselRequest\032\014.VesselRe"
+          + "ply\"\000\022;\n\031GetVesselDetailByVesselId\022\016.Ves"
+          + "selRequest\032\014.VesselReply\"\000\022A\n\025GetVesselI"
+          + "nfoByPaging\022\030.VesselRequestWithPaging\032\014."
+          + "VesselReply\"\000\022C\n\026GetVesselInfoBytankIds\022"
+          + "\022.VesselTankRequest\032\023.VesselTankResponse"
+          + "\"\000\022C\n\032GetDWTFromVesselByVesselId\022\021.Vesse"
+          + "lDWTRequest\032\022.VesselDWTResponse\022@\n\027GetVe"
+          + "sselInfoByVesselId\022\020.VesselIdRequest\032\021.V"
+          + "esselIdResponse\"\000\022D\n\030GetVesselPumpsByVes"
+          + "selId\022\020.VesselIdRequest\032\024.VesselPumpsRes"
+          + "ponse\"\000\022H\n\036GetRulesByVesselIdAndSectionI"
+          + "d\022\022.VesselRuleRequest\032\020.VesselRuleReply\""
+          + "\000\022E\n\026GetVesselValveSequence\022\016.VesselRequ"
+          + "est\032\031.VesselValveSequenceReply\"\000\022I\n\023GetL"
+          + "oadingInfoRules\022\030.LoadingInfoRulesReques"
+          + "t\032\026.LoadingInfoRulesReply\"\000B\036\n\032com.cpdss"
+          + ".common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -79363,7 +79667,13 @@ public final class VesselInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_VesselComponent_descriptor,
             new java.lang.String[] {
-              "Id", "VesselId", "ComponentName", "ComponentCode", "ComponentType",
+              "Id",
+              "VesselId",
+              "ComponentName",
+              "ComponentCode",
+              "ComponentType",
+              "TankTypeId",
+              "TankTypeName",
             });
     internal_static_TankType_descriptor = getDescriptor().getMessageTypes().get(38);
     internal_static_TankType_fieldAccessorTable =

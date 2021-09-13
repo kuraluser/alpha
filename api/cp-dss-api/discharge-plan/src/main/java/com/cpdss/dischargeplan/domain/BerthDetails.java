@@ -1,15 +1,17 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BerthDetails {
 
   private Long berthId; // Primary key for Berth Info Master table
   private Long portId;
-  private Long loadingInfoId;
+  private Long dischargeInfoId;
   private BigDecimal maxShpChannel;
   private String berthName;
   private Long dischargeBerthId; // Primary key for loading berth, in Loading Plan DB
@@ -22,9 +24,9 @@ public class BerthDetails {
   private BigDecimal maxLoa;
   private BigDecimal maxDraft;
   private String itemsToBeAgreedWith;
-  private String lineDisplacement;
+  private BigDecimal lineDisplacement;
 
-  private String maxManifoldPressure;
+  private BigDecimal maxManifoldPressure;
   private Boolean airPurge;
   private Boolean cargoCirculation;
 }

@@ -2311,6 +2311,8 @@ tr:hover{
 }
 
 .calender-control-multi-date{
+  display: flex;
+    max-width: 220px;
   .p-calendar .p-inputtext{
     width: 185px;
   }

@@ -221,12 +221,36 @@ public final class Common {
   public enum COW_TYPE implements com.google.protobuf.ProtocolMessageEnum {
     /** <code>EMPTY_COW_TYPE = 0;</code> */
     EMPTY_COW_TYPE(0),
-    /** <code>TOP_COW = 1;</code> */
-    TOP_COW(1),
-    /** <code>BOTTOM_COW = 2;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * Full wash
+     * </pre>
+     *
+     * <code>ALL_COW = 1;</code>
+     */
+    ALL_COW(1),
+    /**
+     *
+     *
+     * <pre>
+     * Bottom wash
+     * </pre>
+     *
+     * <code>BOTTOM_COW = 2;</code>
+     */
     BOTTOM_COW(2),
-    /** <code>ALL_COW = 3;</code> */
-    ALL_COW(3),
+    /**
+     *
+     *
+     * <pre>
+     * Top wash
+     * </pre>
+     *
+     * <code>TOP_COW = 3;</code>
+     */
+    TOP_COW(3),
     /** <code>CARGO = 4;</code> */
     CARGO(4),
     UNRECOGNIZED(-1),
@@ -234,12 +258,36 @@ public final class Common {
 
     /** <code>EMPTY_COW_TYPE = 0;</code> */
     public static final int EMPTY_COW_TYPE_VALUE = 0;
-    /** <code>TOP_COW = 1;</code> */
-    public static final int TOP_COW_VALUE = 1;
-    /** <code>BOTTOM_COW = 2;</code> */
+    /**
+     *
+     *
+     * <pre>
+     * Full wash
+     * </pre>
+     *
+     * <code>ALL_COW = 1;</code>
+     */
+    public static final int ALL_COW_VALUE = 1;
+    /**
+     *
+     *
+     * <pre>
+     * Bottom wash
+     * </pre>
+     *
+     * <code>BOTTOM_COW = 2;</code>
+     */
     public static final int BOTTOM_COW_VALUE = 2;
-    /** <code>ALL_COW = 3;</code> */
-    public static final int ALL_COW_VALUE = 3;
+    /**
+     *
+     *
+     * <pre>
+     * Top wash
+     * </pre>
+     *
+     * <code>TOP_COW = 3;</code>
+     */
+    public static final int TOP_COW_VALUE = 3;
     /** <code>CARGO = 4;</code> */
     public static final int CARGO_VALUE = 4;
 
@@ -270,11 +318,11 @@ public final class Common {
         case 0:
           return EMPTY_COW_TYPE;
         case 1:
-          return TOP_COW;
+          return ALL_COW;
         case 2:
           return BOTTOM_COW;
         case 3:
-          return ALL_COW;
+          return TOP_COW;
         case 4:
           return CARGO;
         default:
@@ -9141,8 +9189,8 @@ public final class Common {
           + "OADABLE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002*H\n\013"
           + "MachineType\022\t\n\005EMPTY\020\000\022\017\n\013VESSEL_PUMP\020\001\022"
           + "\014\n\010MANIFOLD\020\002\022\017\n\013BOTTOM_LINE\020\003*S\n\010COW_TY"
-          + "PE\022\022\n\016EMPTY_COW_TYPE\020\000\022\013\n\007TOP_COW\020\001\022\016\n\nB"
-          + "OTTOM_COW\020\002\022\013\n\007ALL_COW\020\003\022\t\n\005CARGO\020\004*B\n\017C"
+          + "PE\022\022\n\016EMPTY_COW_TYPE\020\000\022\013\n\007ALL_COW\020\001\022\016\n\nB"
+          + "OTTOM_COW\020\002\022\013\n\007TOP_COW\020\003\022\t\n\005CARGO\020\004*B\n\017C"
           + "OW_OPTION_TYPE\022\031\n\025EMPTY_COW_OPTION_TYPE\020"
           + "\000\022\010\n\004AUTO\020\001\022\n\n\006MANUAL\020\002B\036\n\032com.cpdss.com"
           + "mon.generatedP\000b\006proto3"

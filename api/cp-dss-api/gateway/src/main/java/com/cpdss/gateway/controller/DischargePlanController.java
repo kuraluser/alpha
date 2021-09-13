@@ -12,9 +12,16 @@ import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveRequest;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsStatus;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsUpdateRequest;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
+import com.cpdss.gateway.service.dischargeplan.DischargingInstructionService;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -57,6 +64,8 @@ public class DischargePlanController {
   @Autowired private DischargeInformationGrpcService dischargeInformationGrpcService;
 
   @Autowired private DischargeInformationService dischargeInformationService;
+  
+  @Autowired private DischargingInstructionService dischargingInstructionService;
 
   /**
    * Delete port rotation by id
@@ -792,4 +801,214 @@ public class DischargePlanController {
           e);
     }
   }
+  
+  /**
+   * Save new Discharging Instruction
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      "/new-instruction/vessels/{vesselId}/discharging-info/{infoId}/port-rotation/{portRotationId}")
+  public DischargingInstructionsSaveResponse addDischargingInstructions(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @RequestBody DischargingInstructionsSaveRequest request)
+      throws CommonRestException {
+    try {
+      log.info("Adding new Discharging instruction");
+      return dischargingInstructionService.addDischargingInstruction(
+          vesselId, infoId, portRotationId, request);
+
+    } catch (GenericServiceException e) {
+      log.error("Adding new Discharging Instruction failed");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Adding new Discharging instruction");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+  
+  /**
+   * Update Discharging Instruction status
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      "/update-instruction/vessels/{vesselId}/discharging-info/{infoId}/port-rotation/{portRotationId}")
+  public DischargingInstructionsSaveResponse updateDischargingInstructions(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @RequestBody DischargingInstructionsUpdateRequest request)
+      throws CommonRestException {
+    try {
+      log.info("Updating Discharging instruction status for {}", vesselId);
+      return dischargingInstructionService.updateDischargingInstructions(
+          vesselId, infoId, portRotationId, request);
+
+    } catch (GenericServiceException e) {
+      log.error("Updating Discharging instruction status for {} failed", vesselId);
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Updating Discharging instruction status for {} ", vesselId);
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+  
+  /**
+   * Edit Discharging Instruction
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      "/edit-instruction/vessels/{vesselId}/discharging-info/{infoId}/port-rotation/{portRotationId}")
+  public DischargingInstructionsSaveResponse editDischargingInstructions(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @RequestBody DischargingInstructionsStatus request)
+      throws CommonRestException {
+    try {
+      log.info("Editing Discharging instruction , id{}", request.getInstructionId());
+      return dischargingInstructionService.editDischargingInstructions(
+          vesselId, infoId, portRotationId, request);
+
+    } catch (GenericServiceException e) {
+      log.error("Editing Discharging instruction failed");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Editing Discharging instruction");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+  
+  /**
+   * Retrieve all discharging Instructions
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping("/vessels/{vesselId}/discharging-info/{infoId}/port-rotation/{portRotationId}")
+  public DischargingInstructionResponse getAllDischargingInstructions(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Getting all Discharging instructions of vesselID: {} on port: {}", vesselId, portRotationId);
+      return dischargingInstructionService.getDischargingInstructions(vesselId, infoId, portRotationId);
+
+    } catch (GenericServiceException e) {
+      log.error("Getting all Discharging instructions Failed error");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Getting all Discharging instructions");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+  
+  /**
+   * Delete Discharging Instruction
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      "/delete-instruction/vessels/{vesselId}/discharging-info/{infoId}/port-rotation/{portRotationId}")
+  public DischargingInstructionsSaveResponse deleteDischargingInstructions(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @RequestBody DischargingInstructionsStatus request)
+      throws CommonRestException {
+    try {
+      log.info("Deleting Discharging instruction , id{}", request.getInstructionId());
+      return dischargingInstructionService.deleteDischargingInstructions(
+          vesselId, infoId, portRotationId, request);
+
+    } catch (GenericServiceException e) {
+      log.error("Deleting Discharging instruction failed");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Deleting Discharging instruction");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+
 }

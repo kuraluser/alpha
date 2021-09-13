@@ -19,3 +19,12 @@ service DischargePlanService{
   rpc DischargePlanSynchronization(DischargeStudyDataTransferRequest) returns (ResponseStatus) {}
   rpc generateDischargePlan(DischargeInformationRequest) returns (DischargeInformation) {}
 }
+
+service DischargingInstructionService {
+
+	rpc GetDischargingInstructions(DischargingInstructionRequest) returns (DischargingInstructionDetails) {}
+	rpc AddDischargingInstruction(DischargingInstructionsSave) returns (ResponseStatus) {}
+	rpc UpdateDischargingInstructions(DischargingInstructionsUpdate) returns (ResponseStatus) {}
+	rpc DeleteDischargingInstructions(DischargingInstructionStatus) returns (ResponseStatus) {}
+	rpc EditInstructions(DischargingInstructionStatus) returns (ResponseStatus) {}
+}

@@ -6255,7 +6255,7 @@ public class LoadableStudyService {
 
   public SimulatorJsonResponse getSimulatorJsonDataForLoadableStudy(
       Long vesselId, Long loadableStudyId, Long caseNumber, String correlationId)
-      throws GenericServiceException {
+          throws GenericServiceException, JsonProcessingException {
     com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest.Builder requestBuilder =
         com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest.newBuilder();
     requestBuilder.setVesselId(vesselId);
@@ -6265,19 +6265,11 @@ public class LoadableStudyService {
         loadableStudyServiceBlockingStub.getLoadableStudySimulatorJsonData(requestBuilder.build());
     DepartureConditionJson departureConditionJson = null;
     SimulatorJsonResponse jsonResponse = new SimulatorJsonResponse();
-    try {
       departureConditionJson =
           new ObjectMapper().readValue(reply.getDepartureCondition(), DepartureConditionJson.class);
       jsonResponse.setDepartureCondition(departureConditionJson);
       jsonResponse.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-      jsonResponse.setResponseStatus(
-          new CommonSuccessResponse(
-              String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()), correlationId));
-    }
-
     return jsonResponse;
   }
 

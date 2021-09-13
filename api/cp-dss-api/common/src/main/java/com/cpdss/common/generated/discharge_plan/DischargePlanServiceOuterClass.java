@@ -38,8 +38,19 @@ public final class DischargePlanServiceOuterClass {
           + "eStudyDataTransferRequest\032\017.ResponseStat"
           + "us\"\000\022N\n\025generateDischargePlan\022\034.Discharg"
           + "eInformationRequest\032\025.DischargeInformati"
-          + "on\"\000B-\n)com.cpdss.common.generated.disch"
-          + "arge_planP\001b\006proto3"
+          + "on\"\0002\272\003\n\035DischargingInstructionService\022^"
+          + "\n\032GetDischargingInstructions\022\036.Dischargi"
+          + "ngInstructionRequest\032\036.DischargingInstru"
+          + "ctionDetails\"\000\022L\n\031AddDischargingInstruct"
+          + "ion\022\034.DischargingInstructionsSave\032\017.Resp"
+          + "onseStatus\"\000\022R\n\035UpdateDischargingInstruc"
+          + "tions\022\036.DischargingInstructionsUpdate\032\017."
+          + "ResponseStatus\"\000\022Q\n\035DeleteDischargingIns"
+          + "tructions\022\035.DischargingInstructionStatus"
+          + "\032\017.ResponseStatus\"\000\022D\n\020EditInstructions\022"
+          + "\035.DischargingInstructionStatus\032\017.Respons"
+          + "eStatus\"\000B-\n)com.cpdss.common.generated."
+          + "discharge_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

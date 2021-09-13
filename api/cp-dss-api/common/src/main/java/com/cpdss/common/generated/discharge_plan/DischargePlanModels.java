@@ -84,6 +84,9 @@ public final class DischargePlanModels {
   static final com.google.protobuf.Descriptors.Descriptor internal_static_PortData_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_PortData_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor internal_static_DSCowDetails_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DSCowDetails_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
       internal_static_DischargingUploadTideDetailRequest_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -100,6 +103,38 @@ public final class DischargePlanModels {
       internal_static_DischargingDownloadTideDetailStatusReply_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_DischargingDownloadTideDetailStatusReply_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingInstructionRequest_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingInstructionRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingInstructions_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingInstructions_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingInstructionSubHeader_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingInstructionSubHeader_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingInstructionGroup_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingInstructionGroup_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingInstructionDetails_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingInstructionDetails_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingInstructionsSave_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingInstructionsSave_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingInstructionsUpdate_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingInstructionsUpdate_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargingInstructionStatus_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargingInstructionStatus_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -213,19 +248,55 @@ public final class DischargePlanModels {
           + "ns\"\200\001\n!DischargeStudyDataTransferRequest"
           + "\022\033\n\010portData\030\001 \003(\0132\t.PortData\022\032\n\022dischar"
           + "gePatternId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\020\n\010v"
-          + "esselId\030\004 \001(\003\";\n\010PortData\022\026\n\016portRotatio"
-          + "nId\030\001 \001(\003\022\027\n\017synopticTableId\030\002 \001(\003\"x\n\"Di"
-          + "schargingUploadTideDetailRequest\022\026\n\016tide"
-          + "Detaildata\030\001 \001(\014\022\'\n\016responseStatus\030\002 \001(\013"
-          + "2\017.ResponseStatus\022\021\n\tloadingId\030\003 \001(\003\"Q\n&"
-          + "DischargingUploadTideDetailStatusReply\022\'"
-          + "\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus\""
-          + "9\n$DischargingDownloadTideDetailRequest\022"
-          + "\021\n\tloadingId\030\001 \001(\003\"o\n(DischargingDownloa"
-          + "dTideDetailStatusReply\022\'\n\016responseStatus"
-          + "\030\001 \001(\0132\017.ResponseStatus\022\014\n\004data\030\002 \001(\014\022\014\n"
-          + "\004size\030\003 \001(\005B-\n)com.cpdss.common.generate"
-          + "d.discharge_planP\001b\006proto3"
+          + "esselId\030\004 \001(\003\"n\n\010PortData\022\016\n\006portId\030\004 \001("
+          + "\003\022\026\n\016portRotationId\030\001 \001(\003\022\027\n\017synopticTab"
+          + "leId\030\002 \001(\003\022!\n\ncowDetails\030\005 \001(\0132\r.DSCowDe"
+          + "tails\"\213\001\n\014DSCowDetails\022\'\n\016cowTankDetails"
+          + "\030\001 \001(\0132\017.CowTankDetails\022\030\n\020dischargeStud"
+          + "yId\030\002 \001(\003\022\017\n\007percent\030\004 \001(\002\022\'\n\rcowOptionT"
+          + "ype\030\005 \001(\0162\020.COW_OPTION_TYPE\"x\n\"Dischargi"
+          + "ngUploadTideDetailRequest\022\026\n\016tideDetaild"
+          + "ata\030\001 \001(\014\022\'\n\016responseStatus\030\002 \001(\0132\017.Resp"
+          + "onseStatus\022\021\n\tloadingId\030\003 \001(\003\"Q\n&Dischar"
+          + "gingUploadTideDetailStatusReply\022\'\n\016respo"
+          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\"9\n$Disc"
+          + "hargingDownloadTideDetailRequest\022\021\n\tload"
+          + "ingId\030\001 \001(\003\"o\n(DischargingDownloadTideDe"
+          + "tailStatusReply\022\'\n\016responseStatus\030\001 \001(\0132"
+          + "\017.ResponseStatus\022\014\n\004data\030\002 \001(\014\022\014\n\004size\030\003"
+          + " \001(\005\"d\n\035DischargingInstructionRequest\022\031\n"
+          + "\021dischargingInfoId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001"
+          + "(\003\022\026\n\016portRotationId\030\003 \001(\003\"\244\001\n\027Dischargi"
+          + "ngInstructions\022\031\n\021instructionTypeId\030\001 \001("
+          + "\003\022\033\n\023instructionHeaderId\030\002 \001(\003\022\025\n\rinstru"
+          + "ctionId\030\003 \001(\003\022\023\n\013instruction\030\004 \001(\t\022\021\n\tis"
+          + "Checked\030\005 \001(\010\022\022\n\nisEditable\030\006 \001(\010\"\210\002\n\037Di"
+          + "schargingInstructionSubHeader\022\031\n\021instruc"
+          + "tionTypeId\030\001 \001(\003\022\033\n\023instructionHeaderId\030"
+          + "\002 \001(\003\022\023\n\013subHeaderId\030\003 \001(\003\022\025\n\rsubHeaderN"
+          + "ame\030\004 \001(\t\022\021\n\tisChecked\030\005 \001(\010\022=\n\033discharg"
+          + "ingInstructionsList\030\006 \003(\0132\030.DischargingI"
+          + "nstructions\022\022\n\nisEditable\030\007 \001(\010\022\033\n\023IsHea"
+          + "derInstruction\030\010 \001(\010\"A\n\033DischargingInstr"
+          + "uctionGroup\022\017\n\007groupId\030\001 \001(\003\022\021\n\tgroupNam"
+          + "e\030\002 \001(\t\"\332\001\n\035DischargingInstructionDetail"
+          + "s\022I\n\037dischargingInstructionSubHeader\030\001 \003"
+          + "(\0132 .DischargingInstructionSubHeader\022E\n\037"
+          + "dischargingInstructionGroupList\030\002 \003(\0132\034."
+          + "DischargingInstructionGroup\022\'\n\016responseS"
+          + "tatus\030\003 \001(\0132\017.ResponseStatus\"\371\001\n\033Dischar"
+          + "gingInstructionsSave\022\020\n\010headerId\030\001 \001(\003\022\031"
+          + "\n\021instructionTypeId\030\002 \001(\003\022\021\n\tisChecked\030\003"
+          + " \001(\010\022\026\n\016isSingleHeader\030\004 \001(\010\022\023\n\013subHeade"
+          + "rId\030\005 \001(\003\022\023\n\013instruction\030\006 \001(\t\022\023\n\013isSubH"
+          + "eader\030\007 \001(\010\022\031\n\021dischargingInfoId\030\010 \001(\003\022\020"
+          + "\n\010vesselId\030\t \001(\003\022\026\n\016portRotationId\030\n \001(\003"
+          + "\"W\n\035DischargingInstructionsUpdate\0226\n\017ins"
+          + "tructionList\030\001 \003(\0132\035.DischargingInstruct"
+          + "ionStatus\"]\n\034DischargingInstructionStatu"
+          + "s\022\025\n\rinstructionId\030\001 \001(\003\022\021\n\tisChecked\030\002 "
+          + "\001(\010\022\023\n\013instruction\030\003 \001(\tB-\n)com.cpdss.co"
+          + "mmon.generated.discharge_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -465,10 +536,17 @@ public final class DischargePlanModels {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortData_descriptor,
             new java.lang.String[] {
-              "PortRotationId", "SynopticTableId",
+              "PortId", "PortRotationId", "SynopticTableId", "CowDetails",
+            });
+    internal_static_DSCowDetails_descriptor = getDescriptor().getMessageTypes().get(20);
+    internal_static_DSCowDetails_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DSCowDetails_descriptor,
+            new java.lang.String[] {
+              "CowTankDetails", "DischargeStudyId", "Percent", "CowOptionType",
             });
     internal_static_DischargingUploadTideDetailRequest_descriptor =
-        getDescriptor().getMessageTypes().get(20);
+        getDescriptor().getMessageTypes().get(21);
     internal_static_DischargingUploadTideDetailRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingUploadTideDetailRequest_descriptor,
@@ -476,7 +554,7 @@ public final class DischargePlanModels {
               "TideDetaildata", "ResponseStatus", "LoadingId",
             });
     internal_static_DischargingUploadTideDetailStatusReply_descriptor =
-        getDescriptor().getMessageTypes().get(21);
+        getDescriptor().getMessageTypes().get(22);
     internal_static_DischargingUploadTideDetailStatusReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingUploadTideDetailStatusReply_descriptor,
@@ -484,7 +562,7 @@ public final class DischargePlanModels {
               "ResponseStatus",
             });
     internal_static_DischargingDownloadTideDetailRequest_descriptor =
-        getDescriptor().getMessageTypes().get(22);
+        getDescriptor().getMessageTypes().get(23);
     internal_static_DischargingDownloadTideDetailRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingDownloadTideDetailRequest_descriptor,
@@ -492,12 +570,98 @@ public final class DischargePlanModels {
               "LoadingId",
             });
     internal_static_DischargingDownloadTideDetailStatusReply_descriptor =
-        getDescriptor().getMessageTypes().get(23);
+        getDescriptor().getMessageTypes().get(24);
     internal_static_DischargingDownloadTideDetailStatusReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingDownloadTideDetailStatusReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "Data", "Size",
+            });
+    internal_static_DischargingInstructionRequest_descriptor =
+        getDescriptor().getMessageTypes().get(25);
+    internal_static_DischargingInstructionRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingInstructionRequest_descriptor,
+            new java.lang.String[] {
+              "DischargingInfoId", "VesselId", "PortRotationId",
+            });
+    internal_static_DischargingInstructions_descriptor = getDescriptor().getMessageTypes().get(26);
+    internal_static_DischargingInstructions_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingInstructions_descriptor,
+            new java.lang.String[] {
+              "InstructionTypeId",
+              "InstructionHeaderId",
+              "InstructionId",
+              "Instruction",
+              "IsChecked",
+              "IsEditable",
+            });
+    internal_static_DischargingInstructionSubHeader_descriptor =
+        getDescriptor().getMessageTypes().get(27);
+    internal_static_DischargingInstructionSubHeader_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingInstructionSubHeader_descriptor,
+            new java.lang.String[] {
+              "InstructionTypeId",
+              "InstructionHeaderId",
+              "SubHeaderId",
+              "SubHeaderName",
+              "IsChecked",
+              "DischargingInstructionsList",
+              "IsEditable",
+              "IsHeaderInstruction",
+            });
+    internal_static_DischargingInstructionGroup_descriptor =
+        getDescriptor().getMessageTypes().get(28);
+    internal_static_DischargingInstructionGroup_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingInstructionGroup_descriptor,
+            new java.lang.String[] {
+              "GroupId", "GroupName",
+            });
+    internal_static_DischargingInstructionDetails_descriptor =
+        getDescriptor().getMessageTypes().get(29);
+    internal_static_DischargingInstructionDetails_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingInstructionDetails_descriptor,
+            new java.lang.String[] {
+              "DischargingInstructionSubHeader",
+              "DischargingInstructionGroupList",
+              "ResponseStatus",
+            });
+    internal_static_DischargingInstructionsSave_descriptor =
+        getDescriptor().getMessageTypes().get(30);
+    internal_static_DischargingInstructionsSave_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingInstructionsSave_descriptor,
+            new java.lang.String[] {
+              "HeaderId",
+              "InstructionTypeId",
+              "IsChecked",
+              "IsSingleHeader",
+              "SubHeaderId",
+              "Instruction",
+              "IsSubHeader",
+              "DischargingInfoId",
+              "VesselId",
+              "PortRotationId",
+            });
+    internal_static_DischargingInstructionsUpdate_descriptor =
+        getDescriptor().getMessageTypes().get(31);
+    internal_static_DischargingInstructionsUpdate_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingInstructionsUpdate_descriptor,
+            new java.lang.String[] {
+              "InstructionList",
+            });
+    internal_static_DischargingInstructionStatus_descriptor =
+        getDescriptor().getMessageTypes().get(32);
+    internal_static_DischargingInstructionStatus_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargingInstructionStatus_descriptor,
+            new java.lang.String[] {
+              "InstructionId", "IsChecked", "Instruction",
             });
     com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor();

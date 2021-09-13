@@ -285,32 +285,32 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
         switch (event?.data?.statusId) {
           case OPERATIONS_PLAN_STATUS.PENDING:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_PENDING"] });
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_PENDING"], closable: false});
             this.setButtonStatusInProcessing();
             break;
           case OPERATIONS_PLAN_STATUS.CONFIRMED:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_CONFIRMED"] });
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_CONFIRMED"] ,closable: false });
             this.setButtonStatusInProcessing();
             break;
           case OPERATIONS_PLAN_STATUS.PLAN_ALGO_PROCESSING_STARTED:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED"] });
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED"],closable: false });
             this.setButtonStatusInProcessing();
             break;
           case OPERATIONS_PLAN_STATUS.VERIFICATION_WITH_LOADICATOR:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER"] });
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER"] ,closable: false});
             this.setButtonStatusInProcessing();
             break;
           case OPERATIONS_PLAN_STATUS.VERFICATION_WITH_LOADICATOT_COMPLETED:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED"] });
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED"] ,closable: false});
             this.setButtonStatusInProcessing();
             break;
           case OPERATIONS_PLAN_STATUS.ALGO_PROCESSING_COMPLETED:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED"] });
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED"],closable: false });
             this.setButtonStatusInProcessing();
             break;
       
           case OPERATIONS_PLAN_STATUS.LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED"] });
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED"],closable: false });
             this.setButtonStatusInProcessing();
             break;
         }
@@ -367,13 +367,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       this.ngxSpinnerService.hide();
 
     }
-    if (error) {
-      this.loadingDischargingTransformationService.disableViewErrorButton.next(false)
-    }
-    else {
-      this.loadingDischargingTransformationService.disableViewErrorButton.next(true)
-
-    }
+ 
 
   }
 
