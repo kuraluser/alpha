@@ -4,11 +4,7 @@ package com.cpdss.gateway.domain.dischargeplan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-/**
- * 
- * @author sajith.m
- *
- */
+/** @author sajith.m */
 @Data
 @AllArgsConstructor
 public class DischargingInstructions {

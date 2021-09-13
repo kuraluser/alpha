@@ -1,8 +1,9 @@
 /* Licensed at AlphaOri Technologies */
-package com.cpdss.gateway.domain.loadingplan;
+package com.cpdss.gateway.domain.dischargeplan;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.gateway.domain.VesselTank;
+import com.cpdss.gateway.domain.loadingplan.LoadingPlanStabilityParam;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanRobDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoadingPlanResponse {
+public class DischargingPlanResponse {
 
   private CommonSuccessResponse responseStatus;
 
@@ -22,15 +23,11 @@ public class LoadingPlanResponse {
   private List<LoadingPlanBallastDetails> planBallastDetails;
   private List<LoadingPlanRobDetails> planRobDetails;
   private List<LoadingPlanStabilityParam> planStabilityParams;
-  private LoadingInformation loadingInformation;
-  private List<List<VesselTank>> bunkerRearTanks;
-  private List<List<VesselTank>> bunkerTanks;
-  private List<List<VesselTank>> ballastFrontTanks;
-  private List<List<VesselTank>> ballastCenterTanks;
-  private List<List<VesselTank>> ballastRearTanks;
-  private List<List<VesselTank>> cargoTanks;
 
-  public LoadingPlanResponse(CommonSuccessResponse responseStatus) {
+  private List<List<VesselTank>> cargoTanks;
+  private DischargeInformation dischargingInformation;
+
+  public DischargingPlanResponse(CommonSuccessResponse responseStatus) {
     this.responseStatus = responseStatus;
   }
 }

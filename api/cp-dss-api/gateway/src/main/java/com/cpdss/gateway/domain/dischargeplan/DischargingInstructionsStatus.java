@@ -3,11 +3,7 @@ package com.cpdss.gateway.domain.dischargeplan;
 
 import lombok.Data;
 
-/**
- * 
- * @author sajith.m
- *
- */
+/** @author sajith.m */
 @Data
 public class DischargingInstructionsStatus {
   private Long instructionId;
