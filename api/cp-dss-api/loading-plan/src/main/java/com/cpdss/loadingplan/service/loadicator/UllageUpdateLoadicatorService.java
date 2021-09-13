@@ -401,12 +401,11 @@ public class UllageUpdateLoadicatorService {
     Optional<LoadingInformationStatus> loadingInfoStatusOpt =
         loadingPlanAlgoService.getLoadingInformationStatus(
             LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
-    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE.equals(
-        request.getConditionType())) {
+    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE == request.getConditionType()) {
       loadingInformationRepository.updateLoadingInformationArrivalStatus(
           loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
-    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE.equals(
-        request.getConditionType())) {
+    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE
+        == request.getConditionType()) {
       loadingInformationRepository.updateLoadingInformationDepartureStatus(
           loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
     }

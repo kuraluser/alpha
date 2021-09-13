@@ -42,6 +42,7 @@ import com.cpdss.loadingplan.entity.LoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanStowageDetails;
 import com.cpdss.loadingplan.entity.LoadingSequence;
 import com.cpdss.loadingplan.entity.LoadingSequenceStabilityParameters;
+import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanPortWiseDetailsRepository;
@@ -49,6 +50,7 @@ import com.cpdss.loadingplan.repository.LoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceStabiltyParametersRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersRepository;
 import com.cpdss.loadingplan.service.LoadingPlanService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -94,6 +96,9 @@ public class LoadicatorService {
 
   @Autowired
   LoadingSequenceStabiltyParametersRepository loadingSequenceStabiltyParametersRepository;
+
+  @Autowired
+  PortLoadingPlanStabilityParametersRepository portLoadingPlanStabilityParametersRepository;
 
   @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
   @Autowired LoadingPlanService loadingPlanService;
@@ -828,6 +833,73 @@ public class LoadicatorService {
               loadingSequenceStabilityParameters.add(stabilityParameters);
             });
     loadingSequenceStabiltyParametersRepository.saveAll(loadingSequenceStabilityParameters);
+    savePortStabilityParams(loadingInformation, algoResponse);
+  }
+
+  /**
+   * Saves Loadicator generated Stability Parameters of the Loading Plan of a Port.
+   *
+   * @param loadingInformation
+   * @param algoResponse
+   */
+  private void savePortStabilityParams(
+      LoadingInformation loadingInformation, LoadicatorAlgoResponse algoResponse) {
+    portLoadingPlanStabilityParametersRepository.deleteByLoadingInformationId(
+        loadingInformation.getId());
+    LoadicatorResult arrivalStabilityParameters = algoResponse.getLoadicatorResults().get(0);
+    LoadicatorResult departureStabilityParameters =
+        algoResponse.getLoadicatorResults().get(algoResponse.getLoadicatorResults().size() - 1);
+    PortLoadingPlanStabilityParameters portArrStability = new PortLoadingPlanStabilityParameters();
+    buildPortStabilityParams(loadingInformation, arrivalStabilityParameters, portArrStability, 1);
+    portLoadingPlanStabilityParametersRepository.save(portArrStability);
+    PortLoadingPlanStabilityParameters portDepStability = new PortLoadingPlanStabilityParameters();
+    buildPortStabilityParams(loadingInformation, departureStabilityParameters, portDepStability, 2);
+    portLoadingPlanStabilityParametersRepository.save(portDepStability);
+  }
+
+  /**
+   * @param loadingInformation
+   * @param loadicatorResult
+   * @param portStabilityParameters
+   * @param conditionType
+   */
+  private void buildPortStabilityParams(
+      LoadingInformation loadingInformation,
+      LoadicatorResult result,
+      PortLoadingPlanStabilityParameters portStabilityParameters,
+      Integer conditionType) {
+    portStabilityParameters.setAftDraft(
+        StringUtils.isEmpty(result.getCalculatedDraftAftPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftAftPlanned()));
+    portStabilityParameters.setBendingMoment(
+        StringUtils.isEmpty(result.getBendingMoment())
+            ? null
+            : new BigDecimal(result.getBendingMoment()));
+    portStabilityParameters.setForeDraft(
+        StringUtils.isEmpty(result.getCalculatedDraftFwdPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftFwdPlanned()));
+    portStabilityParameters.setIsActive(true);
+    portStabilityParameters.setList(
+        StringUtils.isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
+    portStabilityParameters.setLoadingInformation(loadingInformation);
+    portStabilityParameters.setMeanDraft(
+        StringUtils.isEmpty(result.getCalculatedDraftMidPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftMidPlanned()));
+    portStabilityParameters.setPortXId(loadingInformation.getPortXId());
+    portStabilityParameters.setShearingForce(
+        StringUtils.isEmpty(result.getShearingForce())
+            ? null
+            : new BigDecimal(result.getShearingForce()));
+    portStabilityParameters.setTrim(
+        StringUtils.isEmpty(result.getCalculatedTrimPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedTrimPlanned()));
+    portStabilityParameters.setConditionType(conditionType);
+    portStabilityParameters.setPortRotationXId(loadingInformation.getPortRotationXId());
+    portStabilityParameters.setValueType(LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
   }
 
   private void deleteLoadingSequenceStabilityParameters(LoadingInformation loadingInformation) {
