@@ -8,6 +8,8 @@ import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
 import { ISubTotal } from '../../../shared/models/common.model';
+import { DischargeStudyListApiService } from '../../cargo-planning/services/discharge-study-list-api.service';
+import { IDischargeStudy } from '../../cargo-planning/models/discharge-study-list.model';
 
 /*
  * Service class for synoptical table
@@ -22,8 +24,10 @@ export class SynopticalService {
   voyages: Voyage[];
   selectedVoyage: Voyage;
   loadableStudyList: LoadableStudy[];
+  dischargeStudyList: IDischargeStudy[];
   selectedLoadableStudy: LoadableStudy;
-  loadableStudyId: number;
+  selectedDischargeStudy: IDischargeStudy;
+  loadableOrDischargeStudyId: number;
   loadablePatternsList: LoadablePattern[];
   selectedLoadablePattern: LoadablePattern;
   vesselId: number;
@@ -38,9 +42,11 @@ export class SynopticalService {
   editMode = false;
   showActions = false;
   synopticalRecords: any;
+  hasDischargeStarted = false;
 
   constructor(
     private loadableStudyListApiService: LoadableStudyListApiService,
+    private dischargeStudyListApiService: DischargeStudyListApiService,
     private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
     private route: ActivatedRoute,
@@ -71,15 +77,48 @@ export class SynopticalService {
     if (this.voyages && voyageId && this.voyageId !== voyageId) {
       this.voyageId = voyageId;
       this.selectedVoyage = this.voyages.find(voyage => voyage.id === this.voyageId);
-      await this.getLoadableStudyInfo(this.vesselInfo.id, this.selectedVoyage.id)
+      this.hasDischargeStarted = this.selectedVoyage.isDischargeStarted ?? false;
+      if (this.hasDischargeStarted) {
+        await this.getDischargeStudyInfo(this.vesselInfo.id, this.selectedVoyage.id)
+      } else {
+        await this.getLoadableStudyInfo(this.vesselInfo.id, this.selectedVoyage.id)
+      }
     }
   }
 
   // Method to set selected loadable study
   setSelectedLoadableStudy() {
     if (this.selectedVoyage.statusId !== VOYAGE_STATUS.ACTIVE && this.selectedVoyage.statusId !== VOYAGE_STATUS.CLOSE) {
-      this.selectedLoadableStudy = this.loadableStudyList.find(loadableStudy => loadableStudy.id === this.loadableStudyId);
+      this.selectedLoadableStudy = this.loadableStudyList.find(loadableStudy => loadableStudy.id === this.loadableOrDischargeStudyId);
       this.getLoadablePatterns();
+    }
+  }
+
+  // Method to set selected discharge study
+  setSelectedDischargeStudy() {
+    this.selectedDischargeStudy = this.dischargeStudyList.find(dischargeStudy => dischargeStudy.id === this.loadableOrDischargeStudyId);
+    this.router.navigateByUrl('/business/synoptical/' + this.vesselInfo.id + '/' + this.selectedVoyage.id + '/' + this.selectedDischargeStudy.id);
+  }
+
+  /**
+* Get discharge study list for selected voyage
+*/
+  async getDischargeStudyInfo(vesselId: number, voyageId: number) {
+    if (this.selectedVoyage?.id !== 0) {
+      const result = await this.dischargeStudyListApiService.getDischargeStudies(vesselId, voyageId).toPromise();
+      const dischargeStudy = result.dischargeStudies.find(ds => ds.status === "Confirmed")
+      if (dischargeStudy?.id) {
+        this.dischargeStudyList = [dischargeStudy];
+        this.loadableOrDischargeStudyId = dischargeStudy.id;
+      } else {
+        this.dischargeStudyList = result.dischargeStudies;
+        if (this.route.snapshot.params?.loadableStudyId) {
+          this.loadableOrDischargeStudyId = Number(this.route.snapshot.params.loadableStudyId);
+        } else {
+          this.loadableOrDischargeStudyId = this.dischargeStudyList[0].id;
+        }
+      }
+      this.setSelectedDischargeStudy();
     }
   }
 
@@ -89,16 +128,16 @@ export class SynopticalService {
   async getLoadableStudyInfo(vesselId: number, voyageId: number) {
     if (this.selectedVoyage?.id !== 0) {
       const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
-      if (this.selectedVoyage.statusId === VOYAGE_STATUS.ACTIVE || this.selectedVoyage.statusId === VOYAGE_STATUS.CLOSE ) {
+      if (this.selectedVoyage.statusId === VOYAGE_STATUS.ACTIVE || this.selectedVoyage.statusId === VOYAGE_STATUS.CLOSE) {
         this.selectedLoadableStudy = result.loadableStudies.find(ls => ls.status === "Confirmed")
         this.loadableStudyList = [this.selectedLoadableStudy]
         this.getLoadablePatterns()
       } else {
         this.loadableStudyList = result.loadableStudies;
-        this.loadableStudyId = this.route.snapshot.params?.loadableStudyId ? Number(this.route.snapshot.params?.loadableStudyId) : this.loadableStudyList[0]?.id;
+        this.loadableOrDischargeStudyId = this.route.snapshot.params?.loadableStudyId ? Number(this.route.snapshot.params?.loadableStudyId) : this.loadableStudyList[0]?.id;
         if (this.selectedLoadableStudy) {
-          this.loadableStudyId = this.selectedLoadableStudy?.id;
-        } else if (this.loadableStudyId) {
+          this.loadableOrDischargeStudyId = this.selectedLoadableStudy?.id;
+        } else if (this.loadableOrDischargeStudyId) {
           this.setSelectedLoadableStudy();
         }
       }
@@ -109,12 +148,12 @@ export class SynopticalService {
   * Get loadable pattern list for selected loadable study
   */
   async getLoadablePatterns() {
-    if(this.selectedLoadableStudy){
+    if (this.selectedLoadableStudy) {
       const result = await this.loadableStudyListApiService.getLoadablePatterns(this.vesselId, this.voyageId, this.selectedLoadableStudy.id).toPromise();
       if (this.selectedLoadableStudy.status === "Confirmed") {
         this.selectedLoadablePattern = result.loadablePatterns.find(pattern => pattern.loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_CONFIRMED)
         this.loadablePatternsList = [this.selectedLoadablePattern]
-  
+
       } else {
         this.loadablePatternsList = result.loadablePatterns;
         if (this.selectedLoadablePattern) {
@@ -125,10 +164,10 @@ export class SynopticalService {
           this.selectedLoadablePattern = this.loadablePatternsList[0]
         }
       }
-  
+
       if (this.selectedLoadablePattern) {
         this.router.navigateByUrl('/business/synoptical/' + this.vesselInfo.id + '/' + this.selectedVoyage.id + '/' + this.selectedLoadableStudy.id + '/' + this.selectedLoadablePattern.loadablePatternId);
-      }else if(this.selectedLoadableStudy?.id){
+      } else if (this.selectedLoadableStudy?.id) {
         this.router.navigateByUrl('/business/synoptical/' + this.vesselInfo.id + '/' + this.selectedVoyage.id + '/' + this.selectedLoadableStudy.id);
       }
     }
@@ -171,5 +210,16 @@ export class SynopticalService {
       - Number(data.doOnboard) - Number(data.freshWaterOnboard) - Number(data.boilerWaterOnboard) - Number(data.ballast)
       - Number(data.constant) - Number(data.others);
     return Number(subTotal);
+  }
+
+  /**
+  * Method to get the Loadable Study id
+  */
+  getLoadableStudyId(){
+    if(this.hasDischargeStarted){
+      return this.selectedVoyage.confirmedLoadableStudyId;
+    } else {
+      return this.loadableOrDischargeStudyId;
+    }
   }
 }

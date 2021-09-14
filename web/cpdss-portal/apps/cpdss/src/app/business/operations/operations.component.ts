@@ -40,6 +40,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
     localStorage.setItem("voyageId", voyage?.id.toString())
     localStorage.removeItem("loadableStudyId")
     localStorage.removeItem("loadablePatternId")
+    localStorage.removeItem("dischargeStudyId")
   }
 
   voyageDistance: number;

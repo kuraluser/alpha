@@ -139,6 +139,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         localStorage.setItem("voyageId", this.voyageId.toString())
         localStorage.setItem("loadableStudyId", this.loadableStudyId.toString())
         localStorage.removeItem("loadablePatternId")
+        localStorage.removeItem("dischargeStudyId")
         this.loadableStudies = null;
         this.loadableQuantityNew = '0';
         this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);

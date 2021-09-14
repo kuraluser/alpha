@@ -12,6 +12,7 @@ export interface IMenuItem {
     addVoyageId?: boolean;
     addLoadableStudyId?: boolean;
     addLoadablePatternId?: boolean;
+    addDischargeStudyId?: boolean;
     routerLinkActive: string;
     isActive?: boolean;
     isShoreActive: boolean;

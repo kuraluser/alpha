@@ -151,6 +151,7 @@ export class LoadablePlanComponent implements OnInit {
       localStorage.setItem("voyageId", this.voyageId.toString())
       localStorage.setItem("loadableStudyId", this.loadableStudyId.toString())
       localStorage.setItem("loadablePatternId", this.loadablePatternId.toString())
+      localStorage.removeItem("dischargeStudyId")
       this.getCargos()
       this.getVesselInfo();
       this.initSubsciptions();

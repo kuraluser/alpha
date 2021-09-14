@@ -46,6 +46,7 @@ export class Voyage {
     public id: number;
     public status?: VOYAGE_STATUS_LABEL;
     public confirmedLoadableStudyId?: number;
+    public isDischargeStarted: boolean;
     public startDate?: string;
     public endDate?: string;
     public noOfDays?: number;
