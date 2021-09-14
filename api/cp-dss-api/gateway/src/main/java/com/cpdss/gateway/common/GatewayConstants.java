@@ -29,6 +29,11 @@ public class GatewayConstants {
           (long) VesselInfo.VesselPumpTypes.GS_PUMP_VALUE,
           (long) VesselInfo.VesselPumpTypes.IG_PUMP_VALUE);
 
+  public static final List<Long> OPERATIONS_TANK_TYPE =
+      Arrays.asList(
+          (long) VesselInfo.TankTypeForOperations.PORT_VALUE,
+          (long) VesselInfo.TankTypeForOperations.STBD_VALUE);
+
   public static final String STATUS_ACTIVE = "ACTIVE";
   public static final String STATUS_CONFIRMED = "CONFIRMED";
   public static final String STATUS_CLOSE = "CLOSED";

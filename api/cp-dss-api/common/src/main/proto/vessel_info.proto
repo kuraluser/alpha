@@ -60,6 +60,16 @@ enum VesselPumpTypes {
 		TANK_CLEANING_PUMP = 9;
 }
 
+// To Show in machines in use Drop Down
+enum TankTypeForOperations {
+	EMPTY_TANK_TYPE = 0;
+	PORT = 1;
+	CENTER = 2;
+	STBD = 3;
+	WP = 4;
+	WS = 5;
+}
+
 message VesselRequestWithPaging{
 	int64 offset = 1;
 	int64 limit = 2;

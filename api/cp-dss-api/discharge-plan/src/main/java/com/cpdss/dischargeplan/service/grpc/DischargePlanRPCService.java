@@ -62,10 +62,10 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   @Override
   public void generateDischargePlan(
       DischargeInformationRequest request,
-      StreamObserver<com.cpdss.common.generated.discharge_plan.DischargeInformation>
+      StreamObserver<com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest>
           responseObserver) {
-    com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder =
-        com.cpdss.common.generated.discharge_plan.DischargeInformation.newBuilder();
+    com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.Builder builder =
+        com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.newBuilder();
     com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest algoRequest =
         new com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest();
     try {
@@ -77,6 +77,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
       // Save Above JSON In LS json data Table
       ObjectMapper objectMapper = new ObjectMapper();
       String ss = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(algoRequest);
+      builder.setRequestAsJsonString(ss);
       log.info("algo request payload - {}", ss);
 
       // Call To Algo End Point for Loading
