@@ -6,7 +6,6 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest.Builder;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanStabilityParam;
 import com.cpdss.gateway.domain.loadingplan.sequence.*;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +82,8 @@ public class LoadingPlanBuilderService {
       var2.setConditionType(var1.getConditionType());
       var2.setValueType(var1.getValueType());
       var2.setColorCode(var1.getColorCode());
-      var2.setDensity(new BigDecimal(var1.getDensity()));
+      var2.setDensity(
+          StringUtils.isEmpty(var1.getDensity()) ? null : new BigDecimal(var1.getDensity()));
       response.add(var2);
     }
     return response;
