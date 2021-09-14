@@ -475,11 +475,19 @@ public class LoadingPlanService {
                 billOfLandingRepository.deleteBillOfLandingRepository(
                     Long.valueOf(billOfLanding.getId() + ""));
               });
+
+      Integer tempBallastCount =
+          portLoadingPlanBallastTempDetailsRepository
+              .findByLoadingInformationAndConditionTypeAndIsActive(
+                  request.getBallastUpdate(0).getLoadingInformationId(),
+                  Integer.valueOf(request.getBallastUpdate(0).getArrivalDepartutre() + ""),
+                  true)
+              .size();
       request
           .getBallastUpdateList()
           .forEach(
               ullageInsert -> {
-                if (ullageInsert.getIsUpdate()) {
+                if (ullageInsert.getIsUpdate() && tempBallastCount > 0) {
                   loadingPlanBallastDetailsTempRepository.updateLoadingPlanBallastDetailsRepository(
                       BigDecimal.valueOf(ullageInsert.getSg()),
                       BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
@@ -513,11 +521,19 @@ public class LoadingPlanService {
                 }
               });
 
+      Integer tempStowageCount =
+          portLoadingPlanStowageTempDetailsRepository
+              .findByLoadingInformationAndConditionTypeAndIsActive(
+                  request.getUpdateUllage(0).getLoadingInformationId(),
+                  Integer.valueOf(request.getUpdateUllage(0).getArrivalDepartutre() + ""),
+                  true)
+              .size();
+
       request
           .getUpdateUllageList()
           .forEach(
               ullageInsert -> {
-                if (ullageInsert.getIsUpdate()) {
+                if (ullageInsert.getIsUpdate() && tempStowageCount > 0) {
                   loadingPlanStowageDetailsTempRepository
                       .updatePortLoadingPlanStowageDetailsRepository(
                           new BigDecimal(ullageInsert.getQuantity()),

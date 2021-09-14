@@ -6,6 +6,8 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest.Builder;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanStabilityParam;
 import com.cpdss.gateway.domain.loadingplan.sequence.*;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +35,9 @@ public class LoadingPlanBuilderService {
       var2.setConditionType(var1.getConditionType());
       var2.setValueType(var1.getValueType());
       var2.setUllage(var1.getUllage());
+      var2.setAbbreviation(var1.getAbbreviation());
+      var2.setCargoId(var1.getCargoId());
+      var2.setColorCode(var1.getColorCode());
       response.add(var2);
     }
     return response;
@@ -51,6 +56,8 @@ public class LoadingPlanBuilderService {
       var2.setSounding(var1.getSounding());
       var2.setConditionType(var1.getConditionType());
       var2.setValueType(var1.getValueType());
+      var2.setColorCode(var1.getColorCode());
+      var2.setSg(var1.getSg());
       Optional<LoadablePlanBallastDetails> ballastOpt =
           loadablePlanBallastDetails.stream()
               .filter(
@@ -75,6 +82,8 @@ public class LoadingPlanBuilderService {
       var2.setQuantityM3(var1.getQuantityM3());
       var2.setConditionType(var1.getConditionType());
       var2.setValueType(var1.getValueType());
+      var2.setColorCode(var1.getColorCode());
+      var2.setDensity(new BigDecimal(var1.getDensity()));
       response.add(var2);
     }
     return response;
