@@ -54,6 +54,7 @@ export class LoadableStudyListComponent implements OnInit {
     localStorage.setItem("voyageId", voyage?.id.toString())
     localStorage.removeItem("loadableStudyId")
     localStorage.removeItem("loadablePatternId")
+    localStorage.removeItem("dischargeStudyId")
   }
 
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,

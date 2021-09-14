@@ -111,6 +111,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
         localStorage.setItem("voyageId", this.voyageId.toString())
         localStorage.setItem("loadableStudyId", this.loadableStudyId.toString())
         localStorage.removeItem("loadablePatternId")
+        localStorage.removeItem("dischargeStudyId")
         if (this.isViewPattern) {
           this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
         }

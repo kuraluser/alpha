@@ -295,3 +295,8 @@ message DischargingInstructionStatus{
   bool isChecked = 2;
   string instruction =3;
 }
+
+message DischargePlanAlgoRequest {
+  ResponseStatus responseStatus = 1;
+  string requestAsJsonString = 2;
+}

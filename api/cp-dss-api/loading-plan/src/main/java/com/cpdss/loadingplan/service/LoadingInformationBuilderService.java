@@ -278,7 +278,12 @@ public class LoadingInformationBuilderService {
               var1.getQuantityM3(),
               var1.getSounding(),
               var1.getConditionType(),
-              var1.getValueType()));
+              var1.getValueType(),
+              var1.getColorCode(),
+              var1.getSg(),
+              null,
+              null,
+              null));
     }
     return response;
   }
@@ -300,7 +305,12 @@ public class LoadingInformationBuilderService {
               var1.getQuantityM3(),
               null,
               var1.getConditionType(),
-              var1.getValueType()));
+              var1.getValueType(),
+              var1.getColorCode(),
+              null,
+              var1.getAbbreviation(),
+              null,
+              var1.getCargoXId()));
     }
     return response;
   }
@@ -322,7 +332,12 @@ public class LoadingInformationBuilderService {
               var1.getQuantityM3(),
               null,
               var1.getConditionType(),
-              var1.getValueType()));
+              var1.getValueType(),
+              var1.getColorCode(),
+              null,
+              null,
+              var1.getDensity(),
+              null));
     }
     return response;
   }
@@ -390,7 +405,12 @@ public class LoadingInformationBuilderService {
       BigDecimal quantityM3,
       BigDecimal sounding,
       Integer conditionType,
-      Integer valueType)
+      Integer valueType,
+      String colorCode,
+      BigDecimal sg,
+      String abbreviation,
+      BigDecimal density,
+      Long cargoId)
       throws GenericServiceException {
 
     try {
@@ -407,6 +427,11 @@ public class LoadingInformationBuilderService {
               .setSounding(sounding != null ? sounding.toString() : "")
               .setConditionType(conditionType != null ? conditionType : 0)
               .setValueType(valueType != null ? valueType : 0)
+              .setColorCode(colorCode != null ? colorCode : "")
+              .setSg(sg != null ? sg.toString() : "")
+              .setAbbreviation(abbreviation != null ? abbreviation : "")
+              .setDensity(density != null ? density.toString() : "")
+              .setCargoId(cargoId != null ? cargoId : 0)
               .build();
       return builder;
     } catch (Exception e) {

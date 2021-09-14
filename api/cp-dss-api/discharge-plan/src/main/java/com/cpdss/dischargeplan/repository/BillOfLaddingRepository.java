@@ -1,12 +1,10 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.repository;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.Query;
-
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.dischargeplan.entity.BillOfLadding;
+import java.util.List;
+import org.springframework.data.jpa.repository.Query;
 
 /** @Author jerin.g */
 public interface BillOfLaddingRepository extends CommonCrudRepository<BillOfLadding, Long> {
