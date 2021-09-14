@@ -9,7 +9,7 @@ import { numberValidator } from '../../../core/directives/number-validator.direc
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { IPort, ITankOptions, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { IPort, ITankOptions, DISCHARGE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { Observable, of } from 'rxjs';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { IDischargeStudy } from '../../models/discharge-study-list.model';
@@ -59,7 +59,8 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   }
   set dischargeStudy(value: IDischargeStudy) {
     this._dischargeStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit)  && [VOYAGE_STATUS.ACTIVE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit)  && [VOYAGE_STATUS.ACTIVE].includes(this.voyage?.statusId) 
+      &&  [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(this._dischargeStudy?.statusId)? DATATABLE_EDITMODE.CELL : null;
   }
 
   get selectedPortOHQTankDetails() {
