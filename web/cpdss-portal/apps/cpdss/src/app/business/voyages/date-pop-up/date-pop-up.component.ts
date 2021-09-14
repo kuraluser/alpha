@@ -45,7 +45,7 @@ export class DatePopUpComponent implements OnInit {
 
   set defaultDate(value: Date) {
     this.today = new Date();
-    if(this.isStart) {
+    if (this.isStart) {
       this._defaultDate = value > this.today ? this.today : value;
     } else {
       this._defaultDate = value;
@@ -103,6 +103,7 @@ export class DatePopUpComponent implements OnInit {
           localStorage.setItem("vesselId", this.vesselId.toString());
           localStorage.setItem("voyageId", this.voyageId.toString());
           localStorage.setItem("loadableStudyId", this.loadablePlanId.toString());
+          localStorage.removeItem("dischargeStudyId")
           this.messageService.add({ severity: 'success', summary: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS'], detail: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_START'] });
         }
       }

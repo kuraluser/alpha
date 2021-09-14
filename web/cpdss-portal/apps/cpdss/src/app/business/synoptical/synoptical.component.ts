@@ -61,7 +61,7 @@ export class SynopticalComponent implements OnInit {
   */
   onVoyageSelected() {
     this.synopticalService.selectedLoadableStudy = null;
-    this.synopticalService.loadableStudyId = null;
+    this.synopticalService.loadableOrDischargeStudyId = null;
     this.synopticalService.loadableStudyList = [];
     this.synopticalService.selectedLoadablePattern = null;
     this.synopticalService.loadablePatternId = null; 
@@ -84,6 +84,20 @@ export class SynopticalComponent implements OnInit {
     this.synopticalService.loadablePatternsList = [];
     this.synopticalService.getLoadablePatterns();
     this.router.navigateByUrl('/business/synoptical/' + this.synopticalService.vesselInfo.id + '/' + this.synopticalService.selectedVoyage.id + '/' + this.synopticalService.selectedLoadableStudy.id)
+  }
+
+   /**
+   * On selecting the discharge study study
+   *
+   * @param event
+   * @memberof SynopticalComponent
+   */
+
+  onSelectDischargeStudy() {
+    this.synopticalService.selectedLoadablePattern = null;
+    this.synopticalService.loadablePatternId = null;
+    this.synopticalService.loadablePatternsList = [];
+    this.router.navigateByUrl('/business/synoptical/' + this.synopticalService.vesselInfo.id + '/' + this.synopticalService.selectedVoyage.id + '/' + this.synopticalService.selectedDischargeStudy.id)
   }
 
   /**
@@ -111,7 +125,11 @@ export class SynopticalComponent implements OnInit {
    *
    * @memberof SynopticalTableComponent
    */
-  navigateToLoadableStudy(){
-    this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.synopticalService.vesselInfo.id}/${this.synopticalService.selectedVoyage.id}/${this.synopticalService.selectedLoadableStudy?.id}`]);
+  navigateToLoadableOrDischargeStudy(){
+    if(this.synopticalService.hasDischargeStarted){
+      this.router.navigate([`/business/cargo-planning/discharge-study-details/${this.synopticalService.vesselInfo.id}/${this.synopticalService.selectedVoyage.id}/${this.synopticalService.selectedDischargeStudy?.id}`]);
+    } else {
+      this.router.navigate([`/business/cargo-planning/loadable-study-details/${this.synopticalService.vesselInfo.id}/${this.synopticalService.selectedVoyage.id}/${this.synopticalService.selectedLoadableStudy?.id}`]);
+    }
   }
 }

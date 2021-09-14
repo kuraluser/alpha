@@ -1,66 +1,80 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col vessel-info-wrapper">
+            <cpdss-portal-vessel-info *ngIf="synopticalService.vesselInfo"
+                [vesselDetails]="synopticalService.vesselInfo"></cpdss-portal-vessel-info>
+        </div>
+        <div class="col">
+            <h5 class="main-head inline-block">{{'SYNOPTICAL_TABLE' | translate }}
+            </h5>
+            <span class="ml-20 mr-10">
+                {{'SYNOPTICAL_VOYAGE_LABEL' | translate }}</span>
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col vessel-info-wrapper">
-                <cpdss-portal-vessel-info *ngIf="synopticalService.vesselInfo"
-                    [vesselDetails]="synopticalService.vesselInfo"></cpdss-portal-vessel-info>
-            </div>
-            <div class="col">
-                <h5 class="main-head inline-block">{{'SYNOPTICAL_TABLE' | translate }}
-                </h5>
-                <span class="ml-20 mr-10">
-                    {{'SYNOPTICAL_VOYAGE_LABEL' | translate }}</span>
-
-                <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.voyages"
-                    [(ngModel)]="synopticalService.selectedVoyage" optionLabel="voyageNo" [filter]="true"
-                    placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}"
-                    (onChange)="onVoyageSelected()"
-                    resetFilterOnHide="true">
-                </p-dropdown>
-
+            <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.voyages"
+                [(ngModel)]="synopticalService.selectedVoyage" optionLabel="voyageNo" [filter]="true"
+                placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' | translate }}"
+                (onChange)="onVoyageSelected()" resetFilterOnHide="true">
+            </p-dropdown>
+            <ng-container *ngIf="!synopticalService.hasDischargeStarted">
                 <span class="ml-20 mr-10">
                     {{'SYNOPTICAL_LOADABLE_STUDY_LABEL' | translate }}</span>
                 <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.loadableStudyList"
                     [(ngModel)]="synopticalService.selectedLoadableStudy" optionLabel="name" [filter]="true"
                     placeholder="{{'SYNOPTICAL_LOADABLESTUDY_PLACEHOLDER' | translate }}"
-                    (onChange)="onSelectLoadableStudy()"
-                    resetFilterOnHide="true">
+                    (onChange)="onSelectLoadableStudy()" resetFilterOnHide="true">
                 </p-dropdown>
 
                 <ng-container *ngIf="synopticalService.loadablePatternsList?.length">
 
                     <span class="ml-20 mr-10">
                         {{'SYNOPTICAL_LOADABLE_PATTERN_LABEL' | translate }}</span>
-                        <p-dropdown  [options]="synopticalService.loadablePatternsList"
+                    <p-dropdown [options]="synopticalService.loadablePatternsList"
                         [(ngModel)]="synopticalService.selectedLoadablePattern" optionLabel="caseNumber" [filter]="true"
                         placeholder="{{'SYNOPTICAL_LOADABLEPATTERN_PLACEHOLDER' | translate }}"
-                        (onChange)="onSelectLoadablePattern()"
-                        resetFilterOnHide="true">
+                        (onChange)="onSelectLoadablePattern()" resetFilterOnHide="true">
                     </p-dropdown>
                 </ng-container>
-            </div>
-            <div>
-                <ng-container *ngIf="synopticalService.selectedLoadableStudy">
-                    <button class="btn btn-main mr-10"  (click)="navigateToLoadableStudy()">{{'SYNOPTICAL_LOADABLE_PATTERN_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' | translate}}</button>
-                </ng-container>
-            </div>
-            <div class="ml-auto pr-15" *ngIf="synopticalService.showActions && synopticalService.synopticalRecords?.length">
-                <ng-container *ngIf="isEditable()">
-                    <button class="btn btn-main no-min-width mr-10" (click)="synopticalService.onEditOrCancel()" *cpdssPortalPermission="editRoleBtnPermissionContext">{{synopticalService.editMode? 'Cancel':'Edit'}}</button>
-                </ng-container>
-                <ng-container *ngIf="synopticalService.editMode">
-                    <button class="btn btn-main no-min-width mr-10" *cpdssPortalPermission="saveRoleBtnPermissionContext"  (click)="synopticalService.saveChanges()">Save</button>
-                </ng-container>     
-                <!-- <ng-container *ngIf="!synopticalService.editMode">
+            </ng-container>
+            <ng-container *ngIf="synopticalService.hasDischargeStarted">
+                <span class="ml-20 mr-10">
+                    {{'SYNOPTICAL_DISCHARGE_STUDY_LABEL' | translate }}</span>
+                <p-dropdown styleClass="dropdown-w-100" [options]="synopticalService.dischargeStudyList"
+                    [(ngModel)]="synopticalService.selectedDischargeStudy" optionLabel="name" [filter]="true"
+                    placeholder="{{'SYNOPTICAL_LOADABLESTUDY_PLACEHOLDER' | translate }}"
+                    (onChange)="onSelectDischargeStudy()" resetFilterOnHide="true">
+                </p-dropdown>
+            </ng-container>
+        </div>
+        <div>
+            <ng-container *ngIf="synopticalService.selectedLoadableStudy || synopticalService.selectedDischargeStudy">
+                <button class="btn btn-main mr-10" (click)="navigateToLoadableOrDischargeStudy()">
+                    {{
+                       ( synopticalService.hasDischargeStarted ?
+                    'SYNOPTICAL_LOADABLE_PATTERN_BACK_TO_DSICHARGE_STUDY_BUTTON_LABEL' :
+                    'SYNOPTICAL_LOADABLE_PATTERN_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL') | translate }}
+                </button>
+            </ng-container>
+        </div>
+        <div class="ml-auto pr-15" *ngIf="synopticalService.showActions && synopticalService.synopticalRecords?.length">
+            <ng-container *ngIf="isEditable()">
+                <button class="btn btn-main no-min-width mr-10" (click)="synopticalService.onEditOrCancel()"
+                    *cpdssPortalPermission="editRoleBtnPermissionContext">{{synopticalService.editMode?
+                    'Cancel':'Edit'}}</button>
+            </ng-container>
+            <ng-container *ngIf="synopticalService.editMode">
+                <button class="btn btn-main no-min-width mr-10" *cpdssPortalPermission="saveRoleBtnPermissionContext"
+                    (click)="synopticalService.saveChanges()">Save</button>
+            </ng-container>
+            <!-- <ng-container *ngIf="!synopticalService.editMode">
                     <button class="btn btn-main mr-10" *cpdssPortalPermission="editRoleBtnPermissionContext"
                         (click)="synopticalService.exportExcelFromTable()">Export</button>          //It may be needed later.
                 </ng-container> -->
-            </div>
         </div>
-        <div class="row">
-            <div class="col synoptical-table-wrapper">
-                <router-outlet></router-outlet>
-            </div>
-        </div>
-
     </div>
+    <div class="row">
+        <div class="col synoptical-table-wrapper">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+
+</div>

@@ -251,6 +251,7 @@ export class VoyageStatusComponent implements OnInit {
     localStorage.setItem("voyageId", this.selectedVoyage?.id.toString())
     localStorage.removeItem("loadableStudyId")
     localStorage.removeItem("loadablePatternId")
+    localStorage.removeItem("dischargeStudyId")
   }
 
 }

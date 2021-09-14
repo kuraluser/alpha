@@ -17,7 +17,7 @@ service DischargeInformationService {
 
 service DischargePlanService{
   rpc DischargePlanSynchronization(DischargeStudyDataTransferRequest) returns (ResponseStatus) {}
-  rpc generateDischargePlan(DischargeInformationRequest) returns (DischargeInformation) {}
+  rpc generateDischargePlan(DischargeInformationRequest) returns (DischargePlanAlgoRequest) {}
 }
 
 service DischargingInstructionService {

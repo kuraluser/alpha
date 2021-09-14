@@ -11,7 +11,7 @@ public class CowPlan {
   private String cowOptionType;
   private Integer cowOptionTypeValue;
 
-  private BigDecimal cowTankPercent;
+  private BigDecimal cowPercentage;
   private BigDecimal cowStartTime;
   private BigDecimal cowEndTime;
   private BigDecimal estimatedCowDuration;

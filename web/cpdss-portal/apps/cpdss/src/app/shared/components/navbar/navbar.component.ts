@@ -120,6 +120,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         'addVoyageId': true,
         'addLoadableStudyId': true,
         'addLoadablePatternId': true,
+        'addDischargeStudyId': true,
         'isShoreActive': false
       },
       {
@@ -213,6 +214,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
           addVoyageId: menuItem.addVoyageId,
           addLoadableStudyId: menuItem.addLoadableStudyId,
           addLoadablePatternId: menuItem.addLoadablePatternId,
+          addDischargeStudyId: menuItem.addDischargeStudyId,
           routerLinkActive: menuItem.routerLinkActive,
           isActive: false
         });
@@ -274,6 +276,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
         const loadablePatternId = localStorage.getItem("loadablePatternId")
         if (loadablePatternId) {
           link += '/' + loadablePatternId
+        }
+      }
+      if (list.addDischargeStudyId) {
+        const dischargeStudyId = localStorage.getItem("dischargeStudyId")
+        if (dischargeStudyId) {
+          link += '/' + dischargeStudyId
         }
       }
       this.router.navigateByUrl(link)

@@ -11,7 +11,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.domain.*;
 import com.cpdss.dischargeplan.domain.ReasonForDelay;
-import com.cpdss.dischargeplan.domain.cargo.DischargePlanPortWiseDetails;
+import com.cpdss.dischargeplan.domain.cargo.LoadablePlanPortWiseDetails;
 import com.cpdss.dischargeplan.domain.cargo.OnBoardQuantity;
 import com.cpdss.dischargeplan.domain.cargo.OnHandQuantity;
 import com.cpdss.dischargeplan.entity.*;
@@ -157,6 +157,9 @@ public class DischargePlanAlgoService {
     CowPlan cowPlan = new CowPlan();
     CowPlanDetail cpd = this.cowPlanDetailRepository.findByDischargingId(entity.getId()).get();
     BeanUtils.copyProperties(cpd, cowPlan);
+    cowPlan.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(cpd.getCowOperationType()).name());
+    cowPlan.setCowOptionTypeValue(
+        Common.COW_OPTION_TYPE.forNumber(cpd.getCowOperationType()).getNumber());
 
     if (!cpd.getCowTankDetails().isEmpty()) {
       cowPlan.setTopCowTankIds(
@@ -327,10 +330,42 @@ public class DischargePlanAlgoService {
 
     ObjectMapper mapper = new ObjectMapper();
     try {
-      algoRequest.setPlanPortWiseDetails(
+      List<LoadablePlanPortWiseDetails> planPortWiseDetails =
           Arrays.asList(
               mapper.readValue(
-                  response.getLoadablePatternDetails(), DischargePlanPortWiseDetails[].class)));
+                  response.getLoadablePatternDetails(), LoadablePlanPortWiseDetails[].class));
+
+      if (!planPortWiseDetails.isEmpty()) {
+        List<DischargePlanPortWiseDetails> planPortWiseDetailsNew = new ArrayList<>();
+        // We need to change the variable name as per discharge (loadablePlanStowageDetails,
+        // loadablePlanBallastDetails, loadablePlanCommingleDetails)
+        for (LoadablePlanPortWiseDetails source : planPortWiseDetails) {
+          DischargePlanPortWiseDetails dsPDetails = new DischargePlanPortWiseDetails();
+          dsPDetails.setPortCode(source.getPortCode());
+          dsPDetails.setPortId(source.getPortId());
+          dsPDetails.setPortRotationId(source.getPortRotationId());
+
+          DischargePatternDetails arrival = new DischargePatternDetails();
+          arrival.setDischargePlanStowageDetails(
+              source.getArrivalCondition().getLoadablePlanStowageDetails());
+          arrival.setDischargePlanBallastDetails(
+              source.getArrivalCondition().getLoadablePlanBallastDetails());
+          arrival.setDischargePlanCommingleDetails(
+              source.getArrivalCondition().getLoadablePlanCommingleDetails());
+          dsPDetails.setArrivalCondition(arrival);
+
+          DischargePatternDetails departure = new DischargePatternDetails();
+          departure.setDischargePlanStowageDetails(
+              source.getDepartureCondition().getLoadablePlanStowageDetails());
+          departure.setDischargePlanBallastDetails(
+              source.getDepartureCondition().getLoadablePlanBallastDetails());
+          departure.setDischargePlanCommingleDetails(
+              source.getDepartureCondition().getLoadablePlanCommingleDetails());
+          dsPDetails.setDepartureCondition(departure);
+          planPortWiseDetailsNew.add(dsPDetails);
+        }
+        algoRequest.setPlanPortWiseDetails(planPortWiseDetailsNew);
+      }
     } catch (JsonProcessingException e) {
       e.printStackTrace();
       throw new GenericServiceException(

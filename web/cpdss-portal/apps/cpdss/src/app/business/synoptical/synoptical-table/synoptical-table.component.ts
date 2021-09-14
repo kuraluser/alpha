@@ -14,7 +14,7 @@ import * as XLSX from 'xlsx';
 import { DatePipe } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
-import { VOYAGE_STATUS, LOADABLE_STUDY_STATUS, } from '../../core/models/common.model';
+import { VOYAGE_STATUS, LOADABLE_STUDY_STATUS, DISCHARGE_STUDY_STATUS, } from '../../core/models/common.model';
 import { ISubTotal } from '../../../shared/models/common.model';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { IDateTimeFormatOptions, ITimeZone } from '../../../shared/models/common.model';
@@ -111,17 +111,23 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(async route => {
               if (Number(route.loadableStudyId) !== 0) {
-                this.synopticalService.loadableStudyId = Number(route.loadableStudyId);
-              }
-              if (route.loadablePatternId) {
-                this.synopticalService.loadablePatternId = Number(route.loadablePatternId);
-              }
-              if (this.synopticalService?.selectedLoadableStudy?.status === "Confirmed" && !this.synopticalService?.loadablePatternId) {
-                await this.synopticalService.setSelectedLoadableStudy();
-              }
-              else {
-                await this.synopticalService.setSelectedLoadableStudy();
+                this.synopticalService.loadableOrDischargeStudyId = Number(route.loadableStudyId);
+              } 
+              if(this.synopticalService.hasDischargeStarted){
+                this.synopticalService.loadablePatternId = null;
+                await this.synopticalService.setSelectedDischargeStudy();
                 await this.initData();
+              } else {
+                if (route.loadablePatternId) {
+                  this.synopticalService.loadablePatternId = Number(route.loadablePatternId);
+                }
+                if (this.synopticalService?.selectedLoadableStudy?.status === "Confirmed" && !this.synopticalService?.loadablePatternId) {
+                  await this.synopticalService.setSelectedLoadableStudy();
+                }
+                else {
+                  await this.synopticalService.setSelectedLoadableStudy();
+                  await this.initData();
+                }
               }
 
             })
@@ -199,7 +205,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     this.initDynamicColumns();
     this.setColumnHeader();
     this.setLoadableQuantity();
-    const result = await this.synoticalApiService.getSynopticalTable(this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId, this.synopticalService.loadablePatternId)
+    const result = await this.synoticalApiService.getSynopticalTable(this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableOrDischargeStudyId, this.synopticalService.loadablePatternId)
       .toPromise();
     if (result.responseStatus.status === "200") {
       this.synopticalService.synopticalRecords = await this.convertIntoZoneTimeZone(result.synopticalRecords);
@@ -1156,7 +1162,10 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               validators.push(this.getValidators(validator))
             })
             const fc = fg.get(field.key);
-            fc.setValidators(validators)
+            fc.setValidators(validators);
+            if(!this.checkEditableCondition(field.key,colIndex,column)){
+              fc.disable();
+            }
           })
         }
       })
@@ -1696,7 +1705,11 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     if (this.synopticalService.selectedLoadablePattern) {
       return this.synopticalService.selectedLoadablePattern.loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_CONFIRMED ?? false
     }
-    return this.synopticalService.selectedLoadableStudy?.status === "Confirmed" ?? false
+    if(this.synopticalService.hasDischargeStarted){
+      return this.synopticalService.selectedDischargeStudy?.status === "Confirmed" ?? false
+    } else {
+      return this.synopticalService.selectedLoadableStudy?.status === "Confirmed" ?? false
+    }
   }
 
   /**
@@ -1706,7 +1719,14 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
    * @memberof SynopticalTableComponent
    */
   checkIfEnableEditMode(): boolean {
-    return [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.synopticalService?.selectedLoadableStudy?.statusId) && this.synopticalService?.selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE;
+    if(this.synopticalService?.selectedVoyage?.statusId === VOYAGE_STATUS.CLOSE){
+      return false;
+    }
+    if(this.synopticalService.hasDischargeStarted){
+      return [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(this.synopticalService?.selectedDischargeStudy?.statusId) ;
+    } else{
+      return [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.synopticalService?.selectedLoadableStudy?.statusId) ;
+    }
   }
 
   /**
@@ -1804,7 +1824,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         this.synopticalService.synopticalRecords = await this.convertIntoZoneTimeZone(this.synopticalService.synopticalRecords);
 
         try {
-          const res = await this.synoticalApiService.saveSynopticalTable(postData, this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId, this.synopticalService.loadablePatternId).toPromise();
+          const res = await this.synoticalApiService.saveSynopticalTable(postData, this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableOrDischargeStudyId, this.synopticalService.loadablePatternId).toPromise();
           if (res?.responseStatus?.status === '200') {
 
             msgkeys = ['SYNOPTICAL_UPDATE_SUCCESS', 'SYNOPTICAL_UPDATE_SUCCESSFULLY']
@@ -2003,10 +2023,14 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @returns {boolean}
   * @memberof SynopticalTableComponent
   */
-  checkEditableCondition(key: string, index: number) {
-    let editable = false;
-    if (key.startsWith('cargos') && index === 0) {
-      editable = true
+  checkEditableCondition(key: string, index: number, rowData:SynopticalColumn) {
+    let editable = true;
+    if (key.startsWith('cargos') && index > 0) {
+      editable = false;
+    }
+    if(this.synopticalService.hasDischargeStarted && this.synopticalService.synopticalRecords[index].portRotationType === "LOADING" && 
+    (!rowData.betweenPorts || this.synopticalService.synopticalRecords[index + 1]?.portRotationType !== "DISCHARGE")){
+      editable = false;
     }
     return editable;
   }
@@ -2032,7 +2056,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @memberof SynopticalTableComponent
   */
   async setLoadableQuantity() {
-    const loadableQuantityResult = await this.synoticalApiService.getLoadableQuantity(this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableStudyId).toPromise();
+    const loadableQuantityResult = await this.synoticalApiService.getLoadableQuantity(this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.getLoadableStudyId()).toPromise();
     if (loadableQuantityResult.responseStatus.status === "200") {
       loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : this.loadableQuantityValue = Number(loadableQuantityResult.loadableQuantity.totalQuantity);
       this.vesselLightWeight = Number(loadableQuantityResult?.loadableQuantity?.vesselLightWeight);
