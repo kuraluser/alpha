@@ -53,7 +53,6 @@ export class Voyage {
     statusId?: VOYAGE_STATUS;
     actualStartDate?: string;
     actualEndDate?: string;
-    isDischargeStarted?: boolean;
     confirmedDischargeStudyId?: number;
 }
 
