@@ -138,11 +138,17 @@ public class UllageUpdateLoadicatorService {
       return processId;
     }
     List<PortLoadingPlanStowageTempDetails> tempStowageDetails =
-        portLoadingPlanStowageDetailsTempRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get().getId(), true);
+        portLoadingPlanStowageDetailsTempRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInfoOpt.get().getId(),
+                Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()),
+                true);
     List<PortLoadingPlanBallastTempDetails> tempBallastDetails =
-        portLoadingPlanBallastDetailsTempRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get().getId(), true);
+        portLoadingPlanBallastDetailsTempRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInfoOpt.get().getId(),
+                Math.toIntExact(request.getBallastUpdate(0).getArrivalDepartutre()),
+                true);
     List<PortLoadingPlanRobDetails> robDetails =
         portLoadingPlanRobDetailsRepository.findByLoadingInformationAndIsActive(
             loadingInfoOpt.get().getId(), true);
