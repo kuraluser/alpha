@@ -41,7 +41,7 @@ public interface LoadingPlanService {
       throws GenericServiceException;
 
   public LoadingUpdateUllageResponse getUpdateUllageDetails(
-      Long vesselId, Long patternId, Long portId, String operationType)
+      Long vesselId, Long patternId, Long portId, String operationType, boolean isDischarging)
       throws GenericServiceException;
 
   UllageBillReply getLoadableStudyShoreTwo(String first, UllageBillRequest inputData)
@@ -52,4 +52,6 @@ public interface LoadingPlanService {
       throws IOException, GenericServiceException;
 
   byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException;
+
+  public void buildTankLayout(Long vesselId, LoadingPlanResponse loadingPlanResponse);
 }

@@ -11,6 +11,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.dischargeplan.CargoForCowDetails;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
+import com.cpdss.gateway.domain.dischargeplan.DischargingDelays;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.vessel.PumpType;
 import com.cpdss.gateway.domain.vessel.VesselPump;
@@ -281,14 +282,30 @@ public class DischargeInformationBuilderService {
                 if (!v.isEmpty()) val1.setQuantity(new BigDecimal(v));
               });
       BeanUtils.copyProperties(var2, val1);
+      val1.setLoadingInfoId(var2.getDischargeInfoId());
       val1.setReasonForDelayIds(var2.getReasonForDelayIdsList());
       loadingDelays.add(val1);
     }
     loadingSequences.setReasonForDelays(reasonForDelays);
     loadingSequences.setLoadingDelays(loadingDelays);
+    loadingSequences.setDischargingDelays(copy(loadingDelays));
     log.info(
         "manage sequence data added from  loading plan, Size {}", dischargeDelay.getDelaysCount());
     return loadingSequences;
+  }
+
+  private List<DischargingDelays> copy(List<LoadingDelays> loadingDelays) {
+    List<DischargingDelays> delays = new ArrayList<>();
+    DischargingDelays dischargeDelay = new DischargingDelays();
+    loadingDelays.stream()
+        .forEach(
+            delay -> {
+              BeanUtils.copyProperties(delay, dischargeDelay);
+              dischargeDelay.setDischargingInfoId(delay.getLoadingInfoId());
+              delays.add(dischargeDelay);
+            });
+
+    return delays;
   }
 
   public com.cpdss.gateway.domain.dischargeplan.CowPlan buildDischargeCowPlan(CowPlan cowPlan) {
