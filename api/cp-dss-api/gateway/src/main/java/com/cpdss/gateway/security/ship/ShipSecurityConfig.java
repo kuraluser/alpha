@@ -47,7 +47,9 @@ public class ShipSecurityConfig extends WebSecurityConfigurerAdapter {
           "/api/ship/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns",
           "/api/ship/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns/{loadablePatternId}/pattern-validate-result",
           "/api/ship/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/loading-plan",
-          "/api/ship/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/loading-info-status");
+          "/api/ship/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/loading-info-status",
+          "/api/ship/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/discharge-patterns",
+          "/api/ship/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/discharge-study-status");
 
   public static final String AUTHORIZATION_HEADER = "authorization";
 
