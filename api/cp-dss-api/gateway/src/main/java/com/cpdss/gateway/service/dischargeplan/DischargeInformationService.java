@@ -21,6 +21,7 @@ import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingBerthDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
 import com.cpdss.gateway.domain.loadingplan.LoadingStages;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -212,6 +214,10 @@ public class DischargeInformationService {
             planReply.getDischargingInformation().getDischargeRate());
     dischargeInformation.setDischargeRates(dischargeRates);
 
+    // re using the already written call for loading. and copying the tank details to discharging
+    LoadingPlanResponse lp = new LoadingPlanResponse();
+    loadingPlanService.buildTankLayout(vesselId, lp);
+    BeanUtils.copyProperties(lp, dischargingPlanResponse);
     // discharge berth (master data)
     List<BerthDetails> availableBerths =
         this.loadingInformationService.getMasterBerthDetailsByPortId(

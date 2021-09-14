@@ -52,4 +52,6 @@ public interface LoadingPlanService {
       throws IOException, GenericServiceException;
 
   byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException;
+
+  public void buildTankLayout(Long vesselId, LoadingPlanResponse loadingPlanResponse);
 }

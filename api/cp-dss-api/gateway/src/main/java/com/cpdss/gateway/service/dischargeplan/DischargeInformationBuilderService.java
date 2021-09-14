@@ -291,18 +291,20 @@ public class DischargeInformationBuilderService {
   }
 
   private List<DischargingDelays> copy(List<LoadingDelays> loadingDelays) {
-	  List<DischargingDelays> delays = new ArrayList<>();
-		  DischargingDelays dischargeDelay = new DischargingDelays();
-		  loadingDelays.stream().forEach(delay->{
-		  BeanUtils.copyProperties(delay, dischargeDelay);
-		  dischargeDelay.setDischargingInfoId(delay.getLoadingInfoId());
-		  delays.add(dischargeDelay);
-	  });
+    List<DischargingDelays> delays = new ArrayList<>();
+    DischargingDelays dischargeDelay = new DischargingDelays();
+    loadingDelays.stream()
+        .forEach(
+            delay -> {
+              BeanUtils.copyProperties(delay, dischargeDelay);
+              dischargeDelay.setDischargingInfoId(delay.getLoadingInfoId());
+              delays.add(dischargeDelay);
+            });
 
-	  return delays;
-}
+    return delays;
+  }
 
-public com.cpdss.gateway.domain.dischargeplan.CowPlan buildDischargeCowPlan(CowPlan cowPlan) {
+  public com.cpdss.gateway.domain.dischargeplan.CowPlan buildDischargeCowPlan(CowPlan cowPlan) {
     com.cpdss.gateway.domain.dischargeplan.CowPlan var1 =
         new com.cpdss.gateway.domain.dischargeplan.CowPlan();
     try {

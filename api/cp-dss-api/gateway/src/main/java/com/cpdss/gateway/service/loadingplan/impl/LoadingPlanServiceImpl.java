@@ -533,7 +533,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
    * @param vesselId
    * @param loadingPlanResponse
    */
-  private void buildTankLayout(Long vesselId, LoadingPlanResponse loadingPlanResponse) {
+  @Override
+  public void buildTankLayout(Long vesselId, LoadingPlanResponse loadingPlanResponse) {
     // Getting ballast tanks
     VesselInfo.VesselRequest.Builder vesselGrpcRequest = VesselInfo.VesselRequest.newBuilder();
     vesselGrpcRequest.setVesselId(vesselId);

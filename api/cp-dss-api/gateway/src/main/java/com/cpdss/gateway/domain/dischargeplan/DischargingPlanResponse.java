@@ -23,9 +23,13 @@ public class DischargingPlanResponse {
   private List<LoadingPlanBallastDetails> planBallastDetails;
   private List<LoadingPlanRobDetails> planRobDetails;
   private List<LoadingPlanStabilityParam> planStabilityParams;
-
-  private List<List<VesselTank>> cargoTanks;
   private DischargeInformation dischargingInformation;
+  private List<List<VesselTank>> bunkerRearTanks;
+  private List<List<VesselTank>> bunkerTanks;
+  private List<List<VesselTank>> ballastFrontTanks;
+  private List<List<VesselTank>> ballastCenterTanks;
+  private List<List<VesselTank>> ballastRearTanks;
+  private List<List<VesselTank>> cargoTanks;
 
   public DischargingPlanResponse(CommonSuccessResponse responseStatus) {
     this.responseStatus = responseStatus;
