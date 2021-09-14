@@ -447,7 +447,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           if (loadableStudyOpt.isPresent()) {
             Optional<LoadableStudyPortRotation> portRotationOpt =
                 loadableStudyOpt.get().getPortRotations().stream()
-                    .filter(item -> item.getOperation().getId() == 1L)
+                    .filter(item -> item.getOperation().getId() == 1L&&item.isActive())
                     .max(Comparator.comparing(LoadableStudyPortRotation::getPortOrder));
             if (portRotationOpt.isPresent()) {
               builder.setLastLoadingPortETD(
