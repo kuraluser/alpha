@@ -56,6 +56,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +89,7 @@ public class LoadingSequenceService {
   public void buildLoadingSequence(
       Long vesselId, LoadingSequenceReply reply, LoadingSequenceResponse response)
       throws GenericServiceException {
-    List<VesselTankDetail> vesselTanks = this.getVesselTanks(vesselId);
+    Map<Long, VesselTankDetail> vesselTankMap = this.getVesselTanks(vesselId);
     Set<Long> cargoNominationIds =
         reply.getLoadingSequencesList().stream()
             .map(sequence -> sequence.getCargoNominationId())
@@ -166,7 +167,7 @@ public class LoadingSequenceService {
           temp =
               this.buildCargoSequence(
                   stowage,
-                  vesselTanks,
+                  vesselTankMap,
                   cargoNomDetails,
                   portEta,
                   start,
@@ -179,7 +180,7 @@ public class LoadingSequenceService {
           temp =
               this.buildBallastSequence(
                   ballast,
-                  vesselTanks,
+                  vesselTankMap,
                   portEta,
                   start,
                   portWiseDetails,
@@ -234,7 +235,7 @@ public class LoadingSequenceService {
 
     this.updateCargoLoadingRateIntervals(cargoLoadingRates, stageTickPositions);
     this.buildStabilityParamSequence(reply, portEta, stabilityParams);
-    this.buildFlowRates(loadingRates, vesselTanks, portEta, response);
+    this.buildFlowRates(loadingRates, vesselTankMap, portEta, response);
     this.buildBallastPumpCategories(vesselId, response);
     this.removePreviousPortBallasts(ballasts, ballastTankCategories);
 
@@ -249,9 +250,12 @@ public class LoadingSequenceService {
         cargoTankCategories.stream()
             .sorted(Comparator.comparing(TankCategory::getDisplayOrder))
             .collect(Collectors.toList()));
+    List<VesselTankDetail> vesselTankDetails = new ArrayList<>(vesselTankMap.values());
     response.setBallastTankCategories(
         ballastTankCategories.stream()
-            .sorted(Comparator.comparing(TankCategory::getId))
+            .sorted(
+                Comparator.comparing(
+                    ballast -> vesselTankDetails.indexOf(vesselTankMap.get(ballast.getId()))))
             .collect(Collectors.toList()));
     response.setCargoStages(cargoStages);
   }
@@ -432,7 +436,7 @@ public class LoadingSequenceService {
 
   private Integer buildBallastSequence(
       LoadingPlanTankDetails ballast,
-      List<VesselTankDetail> vesselTanks,
+      Map<Long, VesselTankDetail> vesselTankMap,
       Long portEta,
       Integer start,
       LoadingPlanPortWiseDetails portWiseDetails,
@@ -441,7 +445,7 @@ public class LoadingSequenceService {
       Set<TankCategory> ballastTankCategories) {
     Ballast ballastDto = new Ballast();
     Optional<VesselTankDetail> tankDetailOpt =
-        vesselTanks.stream().filter(tank -> tank.getTankId() == ballast.getTankId()).findAny();
+        Optional.ofNullable(vesselTankMap.get(ballast.getTankId()));
     Optional<LoadablePlanBallastDetails> ballastDetailsOpt =
         ballastDetails.stream()
             .filter(
@@ -466,7 +470,7 @@ public class LoadingSequenceService {
 
   private Integer buildCargoSequence(
       LoadingPlanTankDetails stowage,
-      List<VesselTankDetail> vesselTanks,
+      Map<Long, VesselTankDetail> vesselTankMap,
       Map<Long, CargoNominationDetail> cargoNomDetails,
       Long portEta,
       Integer start,
@@ -475,7 +479,7 @@ public class LoadingSequenceService {
       Set<TankCategory> cargoTankCategories) {
     Cargo cargo = new Cargo();
     Optional<VesselTankDetail> tankDetailOpt =
-        vesselTanks.stream().filter(tank -> tank.getTankId() == stowage.getTankId()).findAny();
+        Optional.ofNullable(vesselTankMap.get(stowage.getTankId()));
     CargoNominationDetail cargoNomination = cargoNomDetails.get(stowage.getCargoNominationId());
     Integer end =
         buildCargo(stowage, cargo, cargoNomination, portEta, start, portWiseDetails.getTime());
@@ -554,7 +558,7 @@ public class LoadingSequenceService {
 
   private void buildFlowRates(
       List<LoadingRate> loadingRates,
-      List<VesselTankDetail> vesselTanks,
+      Map<Long, VesselTankDetail> vesselTankMap,
       Long portEta,
       LoadingSequenceResponse response) {
     log.info("Populating flow rates");
@@ -564,8 +568,7 @@ public class LoadingSequenceService {
     tankIdList.forEach(
         tankId -> {
           FlowRate flowRate = new FlowRate();
-          Optional<VesselTankDetail> tankDetailOpt =
-              vesselTanks.stream().filter(tank -> tank.getTankId() == tankId).findAny();
+          Optional<VesselTankDetail> tankDetailOpt = Optional.ofNullable(vesselTankMap.get(tankId));
           tankDetailOpt.ifPresent(tank -> flowRate.setTankName(tank.getShortName()));
           flowRate.setData(
               loadingRates.stream()
@@ -618,7 +621,8 @@ public class LoadingSequenceService {
     return details;
   }
 
-  private List<VesselTankDetail> getVesselTanks(Long vesselId) throws GenericServiceException {
+  private Map<Long, VesselTankDetail> getVesselTanks(Long vesselId) throws GenericServiceException {
+    Map<Long, VesselTankDetail> vesselTankMap = new LinkedHashMap<Long, VesselTankDetail>();
     VesselRequest.Builder builder = VesselRequest.newBuilder();
     builder.setVesselId(vesselId);
     builder.addTankCategories(1L);
@@ -632,7 +636,10 @@ public class LoadingSequenceService {
           HttpStatusCode.BAD_REQUEST);
     }
     log.info("Fetched vessel tank details of vessel {}", vesselId);
-    return reply.getVesselTanksList();
+    reply
+        .getVesselTanksList()
+        .forEach(vesselTank -> vesselTankMap.put(vesselTank.getTankId(), vesselTank));
+    return vesselTankMap;
   }
 
   private PortDetail getPortInfo(Long portId) throws GenericServiceException {

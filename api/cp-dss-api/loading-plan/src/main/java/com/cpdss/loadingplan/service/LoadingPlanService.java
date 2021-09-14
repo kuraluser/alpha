@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javax.persistence.EntityManager;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,9 +72,9 @@ public class LoadingPlanService {
   @Autowired StageDurationRepository stageDurationRepository;
   @Autowired ReasonForDelayRepository reasonForDelayRepository;
   @Autowired LoadingDelayRepository loadingDelayRepository;
+  @Autowired LoadingSequenceRepository loadingSequenceRepository;
 
   @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
-  @Autowired private EntityManager entityManager;
 
   /**
    * @param request
@@ -167,9 +167,6 @@ public class LoadingPlanService {
       List<CargoToppingOffSequence> list2 =
           this.cargoToppingOffSequenceRepository.findAllByLoadingInformationAndIsActiveTrue(
               var1.orElse(null));
-      List<LoadingPlanModels.LoadingToppingOff> toppingOff =
-          this.informationBuilderService.buildToppingOffMessage(list2);
-      loadingInformation.addAllToppingOffSequence(toppingOff);
 
       // Loading Sequences
       // Stage Min Amount Master
@@ -197,7 +194,6 @@ public class LoadingPlanService {
           .ifPresent(status -> loadingInformation.setLoadingPlanDepStatusId(status.getId()));
       Optional.ofNullable(var1.get().getLoadablePatternXId())
           .ifPresent(loadingInformation::setLoadablePatternId);
-      masterBuilder.setLoadingInformation(loadingInformation.build());
 
       // <---Loading Information End-->
 
@@ -211,6 +207,22 @@ public class LoadingPlanService {
       List<PortLoadingPlanStabilityParameters> plpStabilityList =
           plpStabilityParametersRepository.findByLoadingInformationAndIsActive(var1.get(), true);
 
+      // Removing tanks that were loaded from previous port.
+      List<Long> toBeLoadedCargoNominationIds =
+          loadingSequenceRepository.findToBeLoadedCargoNominationIdByLoadingInformationAndIsActive(
+              var1.get(), true);
+      List<Long> toBeLoadedTanks =
+          plpStowageList.stream()
+              .filter(
+                  stowage -> toBeLoadedCargoNominationIds.contains(stowage.getCargoNominationXId()))
+              .map(stowage -> stowage.getTankXId())
+              .collect(Collectors.toList());
+      list2.removeIf(toppingOff -> !toBeLoadedTanks.contains(toppingOff.getTankXId()));
+      List<LoadingPlanModels.LoadingToppingOff> toppingOff =
+          this.informationBuilderService.buildToppingOffMessage(list2);
+      loadingInformation.addAllToppingOffSequence(toppingOff);
+
+      masterBuilder.setLoadingInformation(loadingInformation.build());
       masterBuilder.addAllPortLoadingPlanBallastDetails(
           this.informationBuilderService.buildLoadingPlanTankBallastMessage(plpBallastList));
       masterBuilder.addAllPortLoadingPlanStowageDetails(
