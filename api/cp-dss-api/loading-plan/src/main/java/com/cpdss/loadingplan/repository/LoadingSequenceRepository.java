@@ -28,4 +28,9 @@ public interface LoadingSequenceRepository extends CommonCrudRepository<LoadingS
   @Transactional
   @Query("UPDATE LoadingSequence SET isActive = false WHERE loadingInformation.id = ?1")
   public void deleteByLoadingInformationId(Long loadingInfoId);
+
+  @Query(
+      "SELECT DISTINCT cargoNominationXId FROM LoadingSequence WHERE loadingInformation = ?1 AND isActive = ?2")
+  public List<Long> findToBeLoadedCargoNominationIdByLoadingInformationAndIsActive(
+      LoadingInformation loadingInformation, Boolean isActive);
 }
