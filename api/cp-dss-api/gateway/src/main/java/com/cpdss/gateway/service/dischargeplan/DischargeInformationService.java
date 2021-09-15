@@ -273,7 +273,7 @@ public class DischargeInformationService {
     PostDischargeStage postDischargeStage =
         this.loadingInformationService.getPostDischargeStage(
             planReply.getDischargingInformation().getPostDischargeStageTime());
-    dischargeInformation.setPostDischargeStage(postDischargeStage);
+    dischargeInformation.setPostDischargeStageTime(postDischargeStage);
     CargoVesselTankDetails vesselTankDetails =
         this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
             vesselId,

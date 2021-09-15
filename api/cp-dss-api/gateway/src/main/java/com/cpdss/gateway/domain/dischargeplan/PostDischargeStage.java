@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class PostDischargeStage {
-  private BigDecimal timeForDryCheck;
-  private BigDecimal slopDischarging;
-  private BigDecimal finalStripping;
-  private BigDecimal freshOilWashing;
+  private BigDecimal dryCheckTime;
+  private BigDecimal slopDischargingTime;
+  private BigDecimal finalStrippingTime;
+  private BigDecimal freshOilWashingTime;
 }

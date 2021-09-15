@@ -1047,22 +1047,22 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     Optional.ofNullable(postDischargeStageTime.getFinalStripping())
         .ifPresent(
             value -> {
-              pdStage.setFinalStripping(new BigDecimal(value));
+              pdStage.setFinalStrippingTime(new BigDecimal(value));
             });
     Optional.ofNullable(postDischargeStageTime.getFreshOilWashing())
         .ifPresent(
             value -> {
-              pdStage.setFreshOilWashing(new BigDecimal(value));
+              pdStage.setFreshOilWashingTime(new BigDecimal(value));
             });
     Optional.ofNullable(postDischargeStageTime.getSlopDischarging())
         .ifPresent(
             value -> {
-              pdStage.setSlopDischarging(new BigDecimal(value));
+              pdStage.setSlopDischargingTime(new BigDecimal(value));
             });
     Optional.ofNullable(postDischargeStageTime.getTimeForDryCheck())
         .ifPresent(
             value -> {
-              pdStage.setTimeForDryCheck(new BigDecimal(value));
+              pdStage.setDryCheckTime(new BigDecimal(value));
             });
 
     return pdStage;

@@ -124,7 +124,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private LoadablePatternRepository loadablePatternRepository;
   @Autowired private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
 
-  @GrpcClient("DischargeInformationService")
+  @GrpcClient("dischargeInformationService")
   private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
       dischargePlanServiceBlockingStub;
 
@@ -1386,6 +1386,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     }
   }
 
+  @Override
   public void confirmPlan(
       ConfirmPlanRequest request, StreamObserver<ConfirmPlanReply> responseObserver) {
     log.info("inside confirmPlan loadable study service");
@@ -1477,6 +1478,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                   dsCowDetails.build();
                 }
               }
+              request.addPortData(portDataBuilder);
             });
     dischargePlanServiceBlockingStub.dischargePlanSynchronization(request.build());
   }

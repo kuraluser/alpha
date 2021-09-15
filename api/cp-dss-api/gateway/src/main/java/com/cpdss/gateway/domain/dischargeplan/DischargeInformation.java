@@ -31,7 +31,7 @@ public class DischargeInformation {
   private LoadingStages dischargeStages;
   private LoadingSequences dischargeSequences;
   private CowPlan cowPlan;
-  private PostDischargeStage postDischargeStage;
+  private PostDischargeStage postDischargeStageTime;
   // For layout and Grid
   private CargoVesselTankDetails cargoVesselTankDetails;
 }
