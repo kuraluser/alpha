@@ -50,7 +50,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   OPERATIONS = OPERATIONS;
   errorMessage: IAlgoError[];
   disableGenerateLoadableButton: boolean = true;
-  loadinfoTemp: number;
+  loadinfoTemp:number;
 
   private ngUnsubscribe: Subject<any> = new Subject();
   errorPopUp: boolean = false;
@@ -84,7 +84,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.ngxSpinnerService.show();
     this.initSubsciptions();
     this.getCargos();
-    this.listenEvents();
+    this.listenEvents();    
     this.activatedRoute.paramMap
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(params => {
@@ -95,6 +95,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         localStorage.setItem("voyageId", this.voyageId.toString());
         this.selectedPortName = localStorage.getItem('selectedPortName');
         this.currentTab = OPERATION_TAB.INFORMATION;
+        this.loadingDischargingTransformationService.setTabChange(OPERATION_TAB.INFORMATION);
         localStorage.setItem('rate_unit', RATE_UNIT.BBLS_PER_HR);
       });
   }
@@ -113,7 +114,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   private async initSubsciptions() {
 
     this.ngxSpinnerService.show();
-    this.loadingDischargingTransformationService.generateLoadingPlanButton.subscribe((status) => {
+    this.loadingDischargingTransformationService.generateLoadingPlanButton.subscribe((status)=>{
       this.disableGenerateLoadableButton = status;
     })
     this.loadingDischargingTransformationService.isLoadingPlanGenerated.subscribe((status) => {
@@ -136,7 +137,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     });
 
     this.loadingDischargingTransformationService.loadingInformationValidity$.subscribe((res) => {
-      this.loadingInformationComplete = res;
+        this.loadingInformationComplete = res;
       if (!this.processing) {
         this.loadingDischargingTransformationService.disableSaveButton.next(false)
 
@@ -149,11 +150,11 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
 
     });
-    this.loadingDischargingTransformationService.inProcessing.subscribe((status) => {
-      this.processing = status;
+    this.loadingDischargingTransformationService.inProcessing.subscribe((status)=>{
+     this.processing = status;
     })
     this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((res) => {
-      this.loadingInstructionComplete = res;
+        this.loadingInstructionComplete = res;
       if (!this.processing) {
         this.loadingDischargingTransformationService.disableSaveButton.next(false)
         if (this.loadingInstructionComplete && this.loadingInformationComplete) {
@@ -165,13 +166,13 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
 
     });
-    this.loadingDischargingTransformationService.disableViewErrorButton.subscribe((status) => {
+    this.loadingDischargingTransformationService.disableViewErrorButton.subscribe((status)=>{
       this.disableViewErrorButton = status;
-    })
+     })
     this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       this.isDischargeStarted = value;
     })
-    this.ngxSpinnerService.hide();
+  this.ngxSpinnerService.hide();
 
   }
 
@@ -257,9 +258,9 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     }
     if (event?.data?.pattern?.type === 'loading-plan-status') {
       this.loadinfoTemp = event?.data?.pattern?.loadingInfoId
-      if (this.loadingInfoId === this.loadinfoTemp) {
-        this.loadingDischargingTransformationService.isLoadingSequenceGenerated.next(event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED);
-        this.loadingDischargingTransformationService.isLoadingPlanGenerated.next(event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED);
+      if(this.loadingInfoId === this.loadinfoTemp){
+        this.loadingDischargingTransformationService.isLoadingSequenceGenerated.next(  event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED);
+        this.loadingDischargingTransformationService.isLoadingPlanGenerated.next( event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED);
       }
       this.ngxSpinnerService.hide();
 
@@ -277,7 +278,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
       else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED) {
         this.setButtonStatus();
-        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: translationKeys["GENERATE_LODABLE_PLAN_PLAN_GENERATED"], sticky: true, closable: true });
+        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: translationKeys["GENERATE_LODABLE_PLAN_PLAN_GENERATED"] ,sticky: true, closable: true });
 
       }
 
@@ -308,7 +309,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
             this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED"],closable: false });
             this.setButtonStatusInProcessing();
             break;
-      
+
           case OPERATIONS_PLAN_STATUS.LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED:
             this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED"],closable: false });
             this.setButtonStatusInProcessing();
@@ -339,7 +340,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
       if (event?.data?.pattern?.status === 1) {
         this.loadingDischargingTransformationService.setUllageArrivalBtnStatus(event?.data.statusId);
-      }
+    }
       if (event?.data?.pattern?.status === 2) {
         this.loadingDischargingTransformationService.setUllageDepartureBtnStatus(event?.data.statusId);
       }
@@ -362,12 +363,12 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
       else{
         this.loadingDischargingTransformationService.disableViewErrorButton.next(true)
-  
+
       }
       this.ngxSpinnerService.hide();
 
     }
- 
+
 
   }
 
@@ -417,7 +418,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
 
   /**
-   * Method to get algo error 
+   * Method to get algo error
    *
    * @memberof LoadingComponent
    */
