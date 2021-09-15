@@ -132,28 +132,33 @@ export class UllageUpdatePopupTransformationService {
         field: 'tankName',
         header: 'LOADABLE_PLAN_ULLAGE_UPDATE_TANK_NAME',
         fieldType: DATATABLE_FIELD_TYPE.TEXT,
-        editable: false
+        editable: false,
+        fieldPlaceholder: ''
       },
       {
         field: 'ullage',
-        header: 'LOADABLE_PLAN_ULLAGE_UPDATE_RDG_ULLAGE',
+        header: 'ULLAGE_UPDATE_ULLAGE_LABEL',
         filter: false,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         editable: true,
         fieldColumnClass: 'pr-25',
+        fieldPlaceholder: '',
         errorMessages: {
           'maxLimit': 'ULLAGE_UPDATE_FILLING_ERROR',
+          'required': 'ULLAGE_UPDATE_ULLAGE_REQUIRED'
         }
       },
       {
         field: 'temperature',
-        header: 'LOADABLE_PLAN_ULLAGE_UPDATE_TEMP',
+        header: 'ULLAGE_UPDATE_TEMPERATURE',
         filter: false,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         editable: true,
         fieldColumnClass: 'pr-25',
+        fieldPlaceholder: '',
         errorMessages: {
           'maxLimit': 'ULLAGE_UPDATE_FILLING_ERROR',
+          'required': 'ULLAGE_UPDATE_TEMPERATURTE_REQUIRED'
         }
       },
       {
@@ -163,15 +168,18 @@ export class UllageUpdatePopupTransformationService {
         fieldColumnClass: 'pr-25',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         editable: true,
+        fieldPlaceholder: '',
         errorMessages: {
           'maxLimit': 'ULLAGE_UPDATE_FILLING_ERROR',
+          'required': 'ULLAGE_UPDATE_API_REQUIRED'
         }
       },
       {
         field: 'quantity',
         header: 'ULLAGE_UPDATE_CARGO_TABLE_QUANTITY_LABEL',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        editable: false
+        editable: false,
+        fieldPlaceholder: ''
       },
 
     ];
@@ -196,17 +204,20 @@ export class UllageUpdatePopupTransformationService {
         header: 'ULLAGE_UPDATE_SOUNDING_LABEL',
         filter: false,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: '',
         editable: true,
         fieldColumnClass: 'pr-25',
         errorMessages: {
           'maxLimit': 'ULLAGE_UPDATE_FILLING_ERROR',
+          'required': 'ULLAGE_UPDATE_SOUNDING_REQUIRED'
         }
       },
 
       {
         field: 'quantity',
-        header: 'LOADABLE_PLAN_BALLAST_QTY',
+        header: 'ULLAGE_UPDATE_CARGO_TABLE_QUANTITY_LABEL',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: '',
         editable: false
       }
 
@@ -225,20 +236,26 @@ export class UllageUpdatePopupTransformationService {
         field: 'tankName',
         header: 'LOADABLE_PLAN_BUNKER_TANK_NAME',
         fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldPlaceholder: '',
         editable: false
       },
       {
         field: 'density',
         header: 'ULLAGE_UPDATE_BUNKER_DENSITY_LABEL',
         fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldPlaceholder: '',
         editable: false
       },
       {
         field: 'quantity',
-        header: 'LOADABLE_PLAN_BUNKER_QTY',
+        header: 'ULLAGE_UPDATE_CARGO_TABLE_QUANTITY_LABEL',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldColumnClass: 'pr-25',
-        editable: true
+        fieldPlaceholder: '',
+        editable: true,
+        errorMessages: {
+          'required': 'ULLAGE_UPDATE_QUANTITY_REQUIRED'
+        }
       }
 
     ];

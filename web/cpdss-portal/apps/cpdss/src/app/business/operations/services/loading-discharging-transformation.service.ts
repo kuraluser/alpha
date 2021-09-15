@@ -506,44 +506,62 @@ export class LoadingDischargingTransformationService {
       {
         field: 'estimatedAPI',
         header: 'LOADING_CARGO_TO_BE_LOADED_API',
-        numberFormat: '1.2-2'
+        numberFormat: '1.2-2',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'estimatedTemp',
         header: 'LOADING_CARGO_TO_BE_LOADED_TEMP',
-        numberFormat: '1.2-2'
+        numberFormat: '1.2-2',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'maxLoadingRate',
-        header: 'LOADING_CARGO_TO_BE_LOADED_MAX_LOADING_RATE'
+        header: 'LOADING_CARGO_TO_BE_LOADED_MAX_LOADING_RATE',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'convertedOrderedQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_NOMINATION',
-        numberType: 'quantity'
+        numberType: 'quantity',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'minMaxTolerance',
-        header: 'LOADING_CARGO_TO_BE_LOADED_MIN_MAX_TOLERANCE'
+        header: 'LOADING_CARGO_TO_BE_LOADED_MIN_MAX_TOLERANCE',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'shipFigure',
         header: 'LOADING_CARGO_TO_BE_LOADED_SHIP_LOADABLE',
-        numberType: 'quantity'
+        numberType: 'quantity',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
 
       },
       {
         field: 'differencePercentage',
-        header: 'LOADING_CARGO_TO_BE_LOADED_DIFFERENCE'
+        header: 'LOADING_CARGO_TO_BE_LOADED_DIFFERENCE',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'timeRequiredForLoading',
-        header: 'LOADING_CARGO_TO_BE_LOADED_TIME_REQUIRED'
+        header: 'LOADING_CARGO_TO_BE_LOADED_TIME_REQUIRED',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'convertedSlopQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_SLOP_QTY',
-        numberType: 'quantity'
+        numberType: 'quantity',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       }
     ]
   }

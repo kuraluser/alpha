@@ -461,7 +461,7 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
   bunkerTankFormGroup(tank) {
     return this.fb.group({
       tankName: this.fb.control(tank.tankName.value),
-      quantity: this.fb.control(tank.quantity.value),
+      quantity: this.fb.control(tank.quantity.value, [Validators.required]),
     });
   }
   /**
@@ -473,7 +473,7 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
     return this.fb.group({
       tankName: this.fb.control(tank.tankName.value),
       quantity: this.fb.control(tank.quantity.value),
-      sounding: this.fb.control(tank.sounding.value, [tankCapacityValidator(null, null, 'sounding', 'fillingPercentage', 100)]),
+      sounding: this.fb.control(tank.sounding.value, [Validators.required, tankCapacityValidator(null, null, 'sounding', 'fillingPercentage', 100)]),
     });
   }
 
@@ -485,9 +485,9 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
   cargoTankFormGroup(tank) {
     return this.fb.group({
       tankName: this.fb.control(tank.tankName.value),
-      ullage: this.fb.control(tank.ullage.value, [tankCapacityValidator(null, null, 'ullage', 'fillingPercentage')]),
-      temperature: this.fb.control(tank.temperature.value, [tankCapacityValidator(null, null, 'temperature', 'fillingPercentage')]),
-      api: this.fb.control(tank.api.value, [tankCapacityValidator(null, null, 'api', 'fillingPercentage')]),
+      ullage: this.fb.control(tank.ullage.value, [Validators.required, tankCapacityValidator(null, null, 'ullage', 'fillingPercentage')]),
+      temperature: this.fb.control(tank.temperature.value, [Validators.required, tankCapacityValidator(null, null, 'temperature', 'fillingPercentage')]),
+      api: this.fb.control(tank.api.value, [Validators.required, tankCapacityValidator(null, null, 'api', 'fillingPercentage')]),
       quantity: this.fb.control(tank.quantity.value),
       fillingPercentage: this.fb.control(tank.fillingPercentage.value)
     });

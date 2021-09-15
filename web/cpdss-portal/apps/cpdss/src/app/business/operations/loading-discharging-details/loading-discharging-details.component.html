@@ -27,7 +27,7 @@
                                 <p-calendar formControlName="timeOfSunrise" [timeOnly]="true" appendTo="body" inputId="timeOfSunrise"
                                     placeholder="{{'LOADING_DETAILS_SUNRISE_LABEL' | translate}}" hourFormat="24" [readonlyInput]="true"
                                     [showButtonBar]="false" todayButtonStyleClass="hide" #timeOfSunRiseCalender 
-                                    (onClose)="onBlur(timeOfSunRiseCalender,'timeOfSunrise')">
+                                    (onClose)="onTimeChange(timeOfSunRiseCalender,'timeOfSunrise');onBlur(timeOfSunRiseCalender,'timeOfSunrise')">
                                     <p-footer>
                                         <div class="row">
                                             <div class="col">
@@ -67,7 +67,7 @@
                         <p-calendar formControlName="timeOfSunset" [timeOnly]="true" appendTo="body" readonly="true"
                             *ngIf="timeOfSunsetPermission?.edit" inputId="timeOfSunset"
                             placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}" hourFormat="24" [readonlyInput]="true" #timeOfSunSetCalender 
-                            (onClose)="onBlur(timeOfSunSetCalender,'timeOfSunset')">
+                            (onClose)="onTimeChange(timeOfSunSetCalender,'timeOfSunset');onBlur(timeOfSunSetCalender,'timeOfSunset')">
                             <p-footer>
                                 <div class="row">
                                     <div class="col">
@@ -101,7 +101,7 @@
                         <p-calendar  formControlName="startTime" styleClass="full-width-field" [timeOnly]="true" appendTo="body"
                             inputId="startTime"
                             placeholder="{{'LOADING_DETAILS_START_TIME_CALENDER_LABEL' | translate}}" showTime="true" [readonlyInput]="true"
-                            hourFormat="24"  #startTimeCalender>
+                            hourFormat="24" (onClose)="onTimeChange(startTimeCalender,'startTime')" #startTimeCalender>
                             <p-footer>
                                 <div class="row">
                                     <div class="col">
