@@ -138,11 +138,17 @@ public class UllageUpdateLoadicatorService {
       return processId;
     }
     List<PortLoadingPlanStowageTempDetails> tempStowageDetails =
-        portLoadingPlanStowageDetailsTempRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get().getId(), true);
+        portLoadingPlanStowageDetailsTempRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInfoOpt.get().getId(),
+                Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()),
+                true);
     List<PortLoadingPlanBallastTempDetails> tempBallastDetails =
-        portLoadingPlanBallastDetailsTempRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get().getId(), true);
+        portLoadingPlanBallastDetailsTempRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInfoOpt.get().getId(),
+                Math.toIntExact(request.getBallastUpdate(0).getArrivalDepartutre()),
+                true);
     List<PortLoadingPlanRobDetails> robDetails =
         portLoadingPlanRobDetailsRepository.findByLoadingInformationAndIsActive(
             loadingInfoOpt.get().getId(), true);
@@ -465,13 +471,13 @@ public class UllageUpdateLoadicatorService {
     algoRequest.setProcessId(request.getProcessId());
     algoRequest.setVesselId(loadingInformation.getVesselXId());
     algoRequest.setPortId(loadingInformation.getPortXId());
+    algoRequest.setLoadableStudyProcessId(loadingInformation.getLoadableStudyProcessId());
     List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
     request
         .getLoadingInfoLoadicatorDetailsList()
         .forEach(
             loadicatorDetails -> {
               LoadicatorStage loadicatorStage = new LoadicatorStage();
-              loadicatorStage.setTime(loadicatorDetails.getTime());
               loadicatorService.buildLdTrim(loadicatorDetails.getLDtrim(), loadicatorStage);
               loadicatorService.buildLdIntactStability(
                   loadicatorDetails.getLDIntactStability(), loadicatorStage);

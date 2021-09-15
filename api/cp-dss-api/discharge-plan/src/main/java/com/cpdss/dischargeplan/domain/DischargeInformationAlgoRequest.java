@@ -2,7 +2,6 @@
 package com.cpdss.dischargeplan.domain;
 
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
-import com.cpdss.dischargeplan.domain.cargo.DischargePlanPortWiseDetails;
 import com.cpdss.dischargeplan.domain.cargo.OnBoardQuantity;
 import com.cpdss.dischargeplan.domain.cargo.OnHandQuantity;
 import com.cpdss.dischargeplan.domain.rules.RuleResponse;

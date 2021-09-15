@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface DischargePatternQuantityCargoPortwiseRepository
     extends CommonCrudRepository<DischargePatternQuantityCargoPortwiseDetails, Long> {
-  public List<DischargePatternQuantityCargoPortwiseDetails> findByCargoNominationIdIn(
-      List<Long> cargoIds);
+  public List<DischargePatternQuantityCargoPortwiseDetails>
+      findByCargoNominationIdInAndOperationType(List<Long> cargoIds, String operationType);
 }

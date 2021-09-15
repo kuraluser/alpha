@@ -66,6 +66,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
         this.portRotationId = Number(params.get('portRotationId'));
         localStorage.setItem("vesselId", this.vesselId.toString());
         localStorage.setItem("voyageId", this.voyageId.toString());
+        localStorage.removeItem("loadableStudyId")
         this.selectedPortName = localStorage.getItem('selectedPortName');
       });
   }

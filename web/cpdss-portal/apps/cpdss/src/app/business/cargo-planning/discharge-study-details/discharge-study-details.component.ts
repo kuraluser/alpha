@@ -147,13 +147,12 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
  * @memberof DischargeStudyComponent
  */
   private swMessageHandler = async event => {
-    let isValidStatus = false;
-    if (event.data?.syncType === 'discharge-study-plan-status') {
-      isValidStatus = true;
+    if (event.data?.syncType !== 'discharge-study-plan-status') {
+      return;
     }
-    if (event?.data?.status === '401' && event?.data?.errorCode === '210' && isValidStatus) {
+    if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
       this.globalErrorHandler.sessionOutMessage();
-    } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200') && isValidStatus) {
+    } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200')) {
       SecurityService.refreshToken(event?.data?.refreshedToken)
     }
     if (event.data.type === 'discharge-pattern-processing' && this.router.url.includes('discharge-study-details')) {
@@ -214,6 +213,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       }
       this.noResponseMessage(event.data.pattern.selectedVoyageNo, event.data.pattern.selectedDischargeStudyName);
     }
+    this.selectedDischargeStudy = {...this.selectedDischargeStudy};
   }
 
   /**

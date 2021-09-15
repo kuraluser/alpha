@@ -104,33 +104,33 @@ export class LoadablePlanTransformationService {
       { field: 'grade', header: 'LOADABLE_PLAN_GRADE', rowspan: 2 },
       {
         header: 'LOADABLE_PLAN_ESTIMATED', colspan: 2, fieldColumnClass: "th-border", subColumns: [
-          { field: 'estimatedAPI', header: 'LOADABLE_PLAN_ESTIMATED_API' },
-          { field: 'estimatedTemp', header: 'LOADABLE_PLAN_ESTIMATED_TEMP' }
+          { field: 'estimatedAPI', header: 'LOADABLE_PLAN_ESTIMATED_API', fieldClass: 'text-right' },
+          { field: 'estimatedTemp', header: 'LOADABLE_PLAN_ESTIMATED_TEMP', fieldClass: 'text-right' }
         ]
       },
       {
         header: 'LOADABLE_PLAN_ORDER', colspan: 2, fieldColumnClass: "th-border", subColumns: [
-          { field: 'orderedQuantity', header: 'LOADABLE_PLAN_ORDER_BBLS@MT' , unit: QUANTITY_UNIT.MT , numberFormat: 'quantity'},
-          { field: 'orderBbls60f', header: 'LOADABLE_PLAN_ORDER_BBLS@60F' , unit: QUANTITY_UNIT.BBLS, numberFormat: 'quantity'}
+          { field: 'orderedQuantity', header: 'LOADABLE_PLAN_ORDER_BBLS@MT' , unit: QUANTITY_UNIT.MT , numberFormat: 'quantity', fieldClass: 'text-right'},
+          { field: 'orderBbls60f', header: 'LOADABLE_PLAN_ORDER_BBLS@60F' , unit: QUANTITY_UNIT.BBLS, numberFormat: 'quantity', fieldClass: 'text-right'}
         ]
       },
       {
         header: 'LOADABLE_PLAN_TLRNC', colspan: 2, fieldColumnClass: "th-border", subColumns: [
-          { field: 'minTolerence', header: 'LOADABLE_PLAN_TLRNC_MIN' },
-          { field: 'maxTolerence', header: 'LOADABLE_PLAN_TLRNC_MAX' }
+          { field: 'minTolerence', header: 'LOADABLE_PLAN_TLRNC_MIN', fieldClass: 'text-right' },
+          { field: 'maxTolerence', header: 'LOADABLE_PLAN_TLRNC_MAX', fieldClass: 'text-right' }
         ]
       },
       {
         header: 'LOADABLE_PLAN_LOADABLE', colspan: 5, fieldColumnClass: "th-border", subColumns: [
-          { field: 'loadableBblsdbs', header: 'LOADABLE_PLAN_LOADABLE_BBLS@DBS_TEMP' , unit: QUANTITY_UNIT.OBSBBLS , numberFormat: 'quantity'},
-          { field: 'loadableBbls60f', header: 'LOADABLE_PLAN_LOADABLE_BBLS@60F' , unit: QUANTITY_UNIT.BBLS , numberFormat: 'quantity'},
-          { field: 'loadableLT', header: 'LOADABLE_PLAN_LOADABLE_LT' , unit: QUANTITY_UNIT.LT , numberFormat: 'quantity'},
-          { field: 'loadableMT', header: 'LOADABLE_PLAN_LOADABLE_MT', unit: QUANTITY_UNIT.MT , numberFormat: 'quantity' },
-          { field: 'loadableKL', header: 'LOADABLE_PLAN_LOADABLE_KL', unit: QUANTITY_UNIT.KL , numberFormat: 'quantity' }
+          { field: 'loadableBblsdbs', header: 'LOADABLE_PLAN_LOADABLE_BBLS@DBS_TEMP' , unit: QUANTITY_UNIT.OBSBBLS , numberFormat: 'quantity', fieldClass: 'text-right'},
+          { field: 'loadableBbls60f', header: 'LOADABLE_PLAN_LOADABLE_BBLS@60F' , unit: QUANTITY_UNIT.BBLS , numberFormat: 'quantity', fieldClass: 'text-right'},
+          { field: 'loadableLT', header: 'LOADABLE_PLAN_LOADABLE_LT' , unit: QUANTITY_UNIT.LT , numberFormat: 'quantity', fieldClass: 'text-right'},
+          { field: 'loadableMT', header: 'LOADABLE_PLAN_LOADABLE_MT', unit: QUANTITY_UNIT.MT , numberFormat: 'quantity', fieldClass: 'text-right' },
+          { field: 'loadableKL', header: 'LOADABLE_PLAN_LOADABLE_KL', unit: QUANTITY_UNIT.KL , numberFormat: 'quantity', fieldClass: 'text-right' }
         ]
       },
       {
-        field: 'differencePercentage', header: 'LOADABLE_PLAN_LOADABLE_DIFF', rowspan: 2
+        field: 'differencePercentage', header: 'LOADABLE_PLAN_LOADABLE_DIFF', rowspan: 2, fieldClass: 'text-right'
       }
     ]
   }

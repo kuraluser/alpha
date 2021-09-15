@@ -135,6 +135,10 @@ public final class DischargePlanModels {
       internal_static_DischargingInstructionStatus_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_DischargingInstructionStatus_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargePlanAlgoRequest_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargePlanAlgoRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -295,9 +299,11 @@ public final class DischargePlanModels {
           + "nstructionList\030\001 \003(\0132\035.DischargingInstru"
           + "ctionStatus\"]\n\034DischargingInstructionSta"
           + "tus\022\025\n\rinstructionId\030\001 \001(\003\022\021\n\tisChecked\030"
-          + "\002 \001(\010\022\023\n\013instruction\030\003 \001(\tB-\n)com.cpdss."
-          + "common.generated.discharge_planP\001b\006proto"
-          + "3"
+          + "\002 \001(\010\022\023\n\013instruction\030\003 \001(\t\"`\n\030DischargeP"
+          + "lanAlgoRequest\022\'\n\016responseStatus\030\001 \001(\0132\017"
+          + ".ResponseStatus\022\033\n\023requestAsJsonString\030\002"
+          + " \001(\tB-\n)com.cpdss.common.generated.disch"
+          + "arge_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -663,6 +669,13 @@ public final class DischargePlanModels {
             internal_static_DischargingInstructionStatus_descriptor,
             new java.lang.String[] {
               "InstructionId", "IsChecked", "Instruction",
+            });
+    internal_static_DischargePlanAlgoRequest_descriptor = getDescriptor().getMessageTypes().get(33);
+    internal_static_DischargePlanAlgoRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargePlanAlgoRequest_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus", "RequestAsJsonString",
             });
     com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor();

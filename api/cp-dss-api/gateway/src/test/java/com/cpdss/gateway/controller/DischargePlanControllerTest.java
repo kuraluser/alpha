@@ -7,7 +7,10 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionResponse;
@@ -105,36 +108,132 @@ public class DischargePlanControllerTest {
         .andExpect(status().isOk());
   }
 
+  /**
+   * Test method for ADD discharging instruction
+   *
+   * @throws Exception
+   */
   @ValueSource(
       strings = {
         CLOUD_API_URL_PREFIX + DIS_ADD_INSTRUCTION,
         SHIP_API_URL_PREFIX + DIS_ADD_INSTRUCTION
       })
   @ParameterizedTest
-  public void addDischargeInstructionsTestCase1(String url) throws Exception {
-
-    DischargingInstructionsSaveRequest request = new DischargingInstructionsSaveRequest();
-    request.setInstruction("test");
-    request.setInstructionHeaderId(1L);
-    request.setInstructionTypeId(1L);
-    request.setIsChecked(false);
-    request.setIsSingleHeader(false);
-    request.setIsSubHeader(false);
-    request.setSubHeaderId(1L);
-    String inputJson = this.mapToJson(request);
+  void testAddDischargingInstruction(String url) throws Exception {
     when(this.dischargingInstructionService.addDischargingInstruction(
             anyLong(), anyLong(), anyLong(), any(DischargingInstructionsSaveRequest.class)))
         .thenReturn(
-            new DischargingInstructionsSaveResponse(new CommonSuccessResponse(SUCCESS, "")));
+            new DischargingInstructionsSaveResponse(new CommonSuccessResponse("SUCCESS", "")));
+    DischargingInstructionsSaveRequest request = new DischargingInstructionsSaveRequest();
+    ObjectMapper mapper = new ObjectMapper();
     this.mockMvc
         .perform(
-            MockMvcRequestBuilders.post(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_DISCHARGE_INFO_ID, TEST_VOYAGE_ID)
+                .content(mapper.writeValueAsString(request))
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk());
+  }
+
+  /**
+   * Test method for ADD discharging instruction- negative scenario
+   *
+   * @throws Exception
+   */
+  @ValueSource(
+      strings = {
+        CLOUD_API_URL_PREFIX + DIS_ADD_INSTRUCTION,
+        SHIP_API_URL_PREFIX + DIS_ADD_INSTRUCTION
+      })
+  @ParameterizedTest
+  void testAddDischargingInstructionException(String url) throws Exception {
+    when(this.dischargingInstructionService.addDischargingInstruction(
+            anyLong(), anyLong(), anyLong(), any(DischargingInstructionsSaveRequest.class)))
+        .thenThrow(this.getGenericException());
+    DischargingInstructionsSaveRequest request = new DischargingInstructionsSaveRequest();
+    ObjectMapper mapper = new ObjectMapper();
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_DISCHARGE_INFO_ID, TEST_VOYAGE_ID)
+                .content(mapper.writeValueAsString(request))
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  /**
+   * Positive test case. Test method for positive response scenario
+   *
+   * @throws Exception
+   */
+  @ValueSource(
+      strings = {
+        CLOUD_API_URL_PREFIX + DIS_GET_INSTRUCTION,
+        SHIP_API_URL_PREFIX + DIS_GET_INSTRUCTION
+      })
+  @ParameterizedTest
+  public void getDischargeInstructionsTestCase1(String url) throws Exception {
+    when(this.dischargingInstructionService.getDischargingInstructions(
+            anyLong(), anyLong(), anyLong()))
+        .thenReturn(new DischargingInstructionResponse());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(
                     url, TEST_VESSEL_ID, TEST_DISCHARGE_INFO_ID, TEST_PORT_ROTATION_ID)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(inputJson)
-                .contentType(MediaType.APPLICATION_JSON)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
         .andExpect(status().isOk());
+  }
+
+  /**
+   * Negative test case. Test method for generic service exception scenario
+   *
+   * @param url
+   * @throws Exception
+   */
+  @ValueSource(
+      strings = {
+        CLOUD_API_URL_PREFIX + DIS_GET_INSTRUCTION,
+        SHIP_API_URL_PREFIX + DIS_GET_INSTRUCTION
+      })
+  @ParameterizedTest
+  void testGetAllDischargingInstructionsException(String url) throws Exception {
+    when(this.dischargingInstructionService.getDischargingInstructions(
+            anyLong(), anyLong(), anyLong()))
+        .thenThrow(this.getGenericException());
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_DISCHARGE_INFO_ID, TEST_VOYAGE_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  /**
+   * Negative test case. Test method for generic service exception scenario
+   *
+   * @param url
+   * @throws Exception
+   */
+  @ValueSource(
+      strings = {
+        CLOUD_API_URL_PREFIX + DIS_GET_INSTRUCTION,
+        SHIP_API_URL_PREFIX + DIS_GET_INSTRUCTION
+      })
+  @ParameterizedTest
+  void testGetAllDischargingInstructionsRuntimeException(String url) throws Exception {
+    when(this.dischargingInstructionService.getDischargingInstructions(
+            anyLong(), anyLong(), anyLong()))
+        .thenThrow(RuntimeException.class);
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_DISCHARGE_INFO_ID, TEST_VOYAGE_ID)
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
   }
 
   @ValueSource(
@@ -169,6 +268,34 @@ public class DischargePlanControllerTest {
         .andExpect(status().isOk());
   }
 
+  /**
+   * Test method for UPDATE loading instruction - negative scenario
+   *
+   * @throws Exception
+   */
+  @ValueSource(
+      strings = {
+        CLOUD_API_URL_PREFIX + DIS_UPDATE_INSTRUCTION,
+        SHIP_API_URL_PREFIX + DIS_UPDATE_INSTRUCTION
+      })
+  @ParameterizedTest
+  void testUpdateDischargingInstructionException(String url) throws Exception {
+    when(this.dischargingInstructionService.updateDischargingInstructions(
+            anyLong(), anyLong(), anyLong(), any(DischargingInstructionsUpdateRequest.class)))
+        .thenThrow(this.getGenericException());
+
+    DischargingInstructionsUpdateRequest request = new DischargingInstructionsUpdateRequest();
+    ObjectMapper mapper = new ObjectMapper();
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_DISCHARGE_INFO_ID, TEST_VOYAGE_ID)
+                .content(mapper.writeValueAsString(request))
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
   @ValueSource(
       strings = {
         CLOUD_API_URL_PREFIX + DIS_EDIT_INSTRUCTION,
@@ -198,24 +325,6 @@ public class DischargePlanControllerTest {
 
   @ValueSource(
       strings = {
-        CLOUD_API_URL_PREFIX + DIS_GET_INSTRUCTION,
-        SHIP_API_URL_PREFIX + DIS_GET_INSTRUCTION
-      })
-  @ParameterizedTest
-  public void getDischargeInstructionsTestCase1(String url) throws Exception {
-    when(this.dischargingInstructionService.getDischargingInstructions(
-            anyLong(), anyLong(), anyLong()))
-        .thenReturn(new DischargingInstructionResponse());
-    this.mockMvc
-        .perform(
-            MockMvcRequestBuilders.get(
-                    url, TEST_VESSEL_ID, TEST_DISCHARGE_INFO_ID, TEST_PORT_ROTATION_ID)
-                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
-        .andExpect(status().isOk());
-  }
-
-  @ValueSource(
-      strings = {
         CLOUD_API_URL_PREFIX + DIS_DELETE_INSTRUCTION,
         SHIP_API_URL_PREFIX + DIS_DELETE_INSTRUCTION
       })
@@ -239,6 +348,40 @@ public class DischargePlanControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE))
         .andExpect(status().isOk());
+  }
+
+  /**
+   * Test method for save all loading instruction status changes - negative scenario
+   *
+   * @throws Exception
+   */
+  @ValueSource(
+      strings = {
+        CLOUD_API_URL_PREFIX + DIS_DELETE_INSTRUCTION,
+        SHIP_API_URL_PREFIX + DIS_DELETE_INSTRUCTION
+      })
+  @ParameterizedTest
+  void testDeleteDischargingInstructionRuntimeException(String url) throws Exception {
+    when(this.dischargingInstructionService.deleteDischargingInstructions(
+            anyLong(), anyLong(), anyLong(), any(DischargingInstructionsStatus.class)))
+        .thenThrow(RuntimeException.class);
+    DischargingInstructionsStatus request = new DischargingInstructionsStatus();
+    ObjectMapper mapper = new ObjectMapper();
+    this.mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_DISCHARGE_INFO_ID, TEST_VOYAGE_ID)
+                .content(mapper.writeValueAsString(request))
+                .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isInternalServerError());
+  }
+
+  private GenericServiceException getGenericException() {
+    return new GenericServiceException(
+        "service exception",
+        CommonErrorCodes.E_GEN_INTERNAL_ERR,
+        HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 
   private String mapToJson(Object object) throws JsonProcessingException {

@@ -11,6 +11,7 @@ import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
+import com.cpdss.gateway.domain.LoadingUpdateUllageResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
@@ -1011,6 +1012,53 @@ public class DischargePlanController {
           e);
     } catch (Exception e) {
       log.error("Exception in Deleting Discharging instruction");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Retrieve all update ullage details
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  // reusing the response which is already created for LS
+  @GetMapping(
+      "/vessels/{vesselId}/pattern/{patternId}/port/{portRotationId}/discharging/update-ullage/{operationType}")
+  public LoadingUpdateUllageResponse getUpdateUllageDetails(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long patternId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @PathVariable String operationType)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Getting all update ullage details of vesselID: {} of pattern: {} with port rotation id: {}",
+          vesselId,
+          patternId,
+          portRotationId);
+      return dischargeInformationService.getUpdateUllageDetails(
+          vesselId, patternId, portRotationId, operationType);
+
+    } catch (GenericServiceException e) {
+      log.error("Getting update ullage details Failed error");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in \"Getting update ullage details");
       e.printStackTrace();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,

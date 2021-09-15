@@ -119,6 +119,8 @@ export class DatatableComponent implements OnInit {
 
   @Input() showHeader = true;
 
+  @Input() showTotalClass: string;
+
   @Input()
   set loading(loading: boolean) {
     this._loading = loading;
@@ -1046,6 +1048,37 @@ export class DatatableComponent implements OnInit {
    */
   getMultiselectedDataAsLabel(multiSelectedArray:any, fieldOptionLabel: string){
     return multiSelectedArray?.map(e => e[fieldOptionLabel]).join(",") ?? '';
+  }
+
+  /**
+   * get the class for heading
+   *
+   * @param {any} col
+   * @memberof DatatableComponent
+   */
+  getColumnCellClass(col){
+    return (col.fieldType === 'NUMBER' ? ('text-right' + (col?.fieldColumnClass ? (' ' + col.fieldColumnClass) : '')) : col.fieldColumnClass );
+  }
+
+  /**
+   * get the class for field
+   *
+   * @param {any} col
+   * @param {any} rowData
+   * @memberof DatatableComponent
+   */
+  getFieldCellClass(col, rowData){
+    let className = '';
+    if(col?.fieldClass){
+      className = className + col?.fieldClass;
+    }
+    if(col.fieldType === 'NUMBER'){
+      className = className + ' text-right';
+    }
+    if(col.fieldType === 'NUMBER' && (!this.editMode || !rowData[col.field]?.isEditMode)) {
+      className = className + ' no-ediable-field';
+    }
+    return className;
   }
 
 }

@@ -184,12 +184,16 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
       {
         field: 'estimatedAPI',
         header: 'CARGO_TO_BE_LOADED_API',
-        numberFormat: '1.2-2'
+        numberFormat: '1.2-2',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'estimatedTemp',
         header: 'CARGO_TO_BE_LOADED_TEMP',
-        numberFormat: '1.2-2'
+        numberFormat: '1.2-2',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'loadingPortsLabels',
@@ -198,29 +202,42 @@ getCargoPriorityGridMoreTableColumn(): IDataTableColumn[] {
       {
         field: 'orderedQuantity',
         header: 'CARGO_TO_BE_LOADED_NOMINATION',
-        numberFormat: quantityNumberFormat
+        numberFormat: quantityNumberFormat,
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'minMaxTolerance',
-        header: 'CARGO_TO_BE_LOADED_MIN_MAX_TOLERANCE'
+        header: 'CARGO_TO_BE_LOADED_MIN_MAX_TOLERANCE',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'loadableMT',
         header: 'CARGO_TO_BE_LOADED_SHIP_LOADABLE',
-        numberFormat: quantityNumberFormat
+        numberFormat: quantityNumberFormat,
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
+        
       },
       {
         field: 'differencePercentage',
-        header: 'CARGO_TO_BE_LOADED_DIFFERENCE'
+        header: 'CARGO_TO_BE_LOADED_DIFFERENCE',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'timeRequiredForLoading',
-        header: 'CARGO_TO_BE_LOADED_TIME_REQUIRED'
+        header: 'CARGO_TO_BE_LOADED_TIME_REQUIRED',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'slopQuantity',
         header: 'CARGO_TO_BE_LOADED_SLOP_QTY',
-        numberFormat: quantityNumberFormat
+        numberFormat: quantityNumberFormat,
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right no-ediable-field'
       }
     ]
   }

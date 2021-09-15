@@ -3,7 +3,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, V
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DATATABLE_EDITMODE, DATATABLE_FIELD_TYPE, DATATABLE_SELECTIONMODE, IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE } from '../../../shared/components/datatable/datatable.model';
-import { ICargoQuantities, IShipCargoTank, ITankOptions, IVoyagePortDetails, TANKTYPE, IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../core/models/common.model';
+import { ICargoQuantities, IShipCargoTank, ITankOptions, IVoyagePortDetails, TANKTYPE, IBallastQuantities, IShipBallastTank, IShipBunkerTank, OPERATIONS } from '../../core/models/common.model';
 import { UllageUpdatePopupTransformationService } from './ullage-update-popup-transformation.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
@@ -38,6 +38,8 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
   @Input() vesselId: number;
   @Input() patternId: number;
   @Input() portRotationId: number;
+  @Input() operation: OPERATIONS;
+
   private ngUnsubscribe: Subject<any> = new Subject();
 
   portId: number;
@@ -107,6 +109,7 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
 
   readonly tankType = TANKTYPE;
   readonly ULLAGE_STATUS = ULLAGE_STATUS;
+  readonly OPERATIONS = OPERATIONS;
 
   cargoTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api', weightField: 'actualWeight', commodityNameField: 'abbreviation', weightUnit: AppConfigurationService.settings.baseUnit };
   ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit };
@@ -327,13 +330,13 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
           cargo.difference.mt = this.decimalPipe.transform((cargo.actual.mt - cargo.blFigure.mt), AppConfigurationService.settings.quantityNumberFormatMT);
           cargo.difference.mt = cargo.difference.mt ? Number(cargo.difference.mt.replaceAll(',', '')) : 0;
 
-          cargo.diffPercentage.bbl = Number(((cargo.difference.bbl / cargo.actual.bbl) * 100).toFixed(2));
+          cargo.diffPercentage.bbl = cargo.actual.bbl !== 0 ? Number(((cargo.difference.bbl / cargo.actual.bbl) * 100).toFixed(2)) : 0;
           cargo.diffPercentage.bbl = isNaN(cargo.diffPercentage.bbl) ? 0 : cargo.diffPercentage.bbl;
-          cargo.diffPercentage.kl = Number(((cargo.difference.kl / cargo.actual.kl) * 100).toFixed(2));
+          cargo.diffPercentage.kl = cargo.actual.kl !== 0 ? Number(((cargo.difference.kl / cargo.actual.kl) * 100).toFixed(2)) : 0;
           cargo.diffPercentage.kl = isNaN(cargo.diffPercentage.kl) ? 0 : cargo.diffPercentage.kl;
-          cargo.diffPercentage.lt = Number(((cargo.difference.lt / cargo.actual.lt) * 100).toFixed(2));
+          cargo.diffPercentage.lt = cargo.actual.lt !== 0 ? Number(((cargo.difference.lt / cargo.actual.lt) * 100).toFixed(2)) : 0;
           cargo.diffPercentage.lt = isNaN(cargo.diffPercentage.lt) ? 0 : cargo.diffPercentage.lt;
-          cargo.diffPercentage.mt = Number(((cargo.difference.mt / cargo.actual.mt) * 100).toFixed(2));
+          cargo.diffPercentage.mt = cargo.actual.mt !== 0 ? Number(((cargo.difference.mt / cargo.actual.mt) * 100).toFixed(2)) : 0;
           cargo.diffPercentage.mt = isNaN(cargo.diffPercentage.mt) ? 0 : cargo.diffPercentage.mt;
         }
       });
@@ -461,7 +464,7 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
   bunkerTankFormGroup(tank) {
     return this.fb.group({
       tankName: this.fb.control(tank.tankName.value),
-      quantity: this.fb.control(tank.quantity.value),
+      quantity: this.fb.control(tank.quantity.value, [Validators.required]),
     });
   }
   /**
@@ -473,7 +476,7 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
     return this.fb.group({
       tankName: this.fb.control(tank.tankName.value),
       quantity: this.fb.control(tank.quantity.value),
-      sounding: this.fb.control(tank.sounding.value, [tankCapacityValidator(null, null, 'sounding', 'fillingPercentage', 100)]),
+      sounding: this.fb.control(tank.sounding.value, [Validators.required, tankCapacityValidator(null, null, 'sounding', 'fillingPercentage', 100)]),
     });
   }
 
@@ -485,9 +488,9 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
   cargoTankFormGroup(tank) {
     return this.fb.group({
       tankName: this.fb.control(tank.tankName.value),
-      ullage: this.fb.control(tank.ullage.value, [tankCapacityValidator(null, null, 'ullage', 'fillingPercentage')]),
-      temperature: this.fb.control(tank.temperature.value, [tankCapacityValidator(null, null, 'temperature', 'fillingPercentage')]),
-      api: this.fb.control(tank.api.value, [tankCapacityValidator(null, null, 'api', 'fillingPercentage')]),
+      ullage: this.fb.control(tank.ullage.value, [Validators.required, tankCapacityValidator(null, null, 'ullage', 'fillingPercentage')]),
+      temperature: this.fb.control(tank.temperature.value, [Validators.required, tankCapacityValidator(null, null, 'temperature', 'fillingPercentage')]),
+      api: this.fb.control(tank.api.value, [Validators.required, tankCapacityValidator(null, null, 'api', 'fillingPercentage')]),
       quantity: this.fb.control(tank.quantity.value),
       fillingPercentage: this.fb.control(tank.fillingPercentage.value)
     });
@@ -943,6 +946,9 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
    * @memberof UllageUpdatePopupComponent
    */
   async cargoEditCompleted(event) {
+    if(event.data.api.value === "" || event.data.ullage.value === "" || event.data.temperature.value === "") {
+      return;
+    }
     const param = {
       api: event.data.api.value,
       correctedUllage: event.data.ullage.value,
@@ -1002,6 +1008,9 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
    * @memberof UllageUpdatePopupComponent
    */
   async ballastEditCompleted(event) {
+    if(event.data.sounding.value === "") {
+      return;
+    }
     const param = {
       api: '',
       correctedUllage: event.data.sounding.value,

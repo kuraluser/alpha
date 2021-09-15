@@ -158,6 +158,132 @@ public final class VesselInfo {
     // @@protoc_insertion_point(enum_scope:VesselPumpTypes)
   }
 
+  /**
+   *
+   *
+   * <pre>
+   * To Show in machines in use Drop Down
+   * </pre>
+   *
+   * Protobuf enum {@code TankTypeForOperations}
+   */
+  public enum TankTypeForOperations implements com.google.protobuf.ProtocolMessageEnum {
+    /** <code>EMPTY_TANK_TYPE = 0;</code> */
+    EMPTY_TANK_TYPE(0),
+    /** <code>PORT = 1;</code> */
+    PORT(1),
+    /** <code>CENTER = 2;</code> */
+    CENTER(2),
+    /** <code>STBD = 3;</code> */
+    STBD(3),
+    /** <code>WP = 4;</code> */
+    WP(4),
+    /** <code>WS = 5;</code> */
+    WS(5),
+    UNRECOGNIZED(-1),
+    ;
+
+    /** <code>EMPTY_TANK_TYPE = 0;</code> */
+    public static final int EMPTY_TANK_TYPE_VALUE = 0;
+    /** <code>PORT = 1;</code> */
+    public static final int PORT_VALUE = 1;
+    /** <code>CENTER = 2;</code> */
+    public static final int CENTER_VALUE = 2;
+    /** <code>STBD = 3;</code> */
+    public static final int STBD_VALUE = 3;
+    /** <code>WP = 4;</code> */
+    public static final int WP_VALUE = 4;
+    /** <code>WS = 5;</code> */
+    public static final int WS_VALUE = 5;
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static TankTypeForOperations valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static TankTypeForOperations forNumber(int value) {
+      switch (value) {
+        case 0:
+          return EMPTY_TANK_TYPE;
+        case 1:
+          return PORT;
+        case 2:
+          return CENTER;
+        case 3:
+          return STBD;
+        case 4:
+          return WP;
+        case 5:
+          return WS;
+        default:
+          return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<TankTypeForOperations>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+
+    private static final com.google.protobuf.Internal.EnumLiteMap<TankTypeForOperations>
+        internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<TankTypeForOperations>() {
+              public TankTypeForOperations findValueByNumber(int number) {
+                return TankTypeForOperations.forNumber(number);
+              }
+            };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor getValueDescriptor() {
+      return getDescriptor().getValues().get(ordinal());
+    }
+
+    public final com.google.protobuf.Descriptors.EnumDescriptor getDescriptorForType() {
+      return getDescriptor();
+    }
+
+    public static final com.google.protobuf.Descriptors.EnumDescriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.getDescriptor().getEnumTypes().get(1);
+    }
+
+    private static final TankTypeForOperations[] VALUES = values();
+
+    public static TankTypeForOperations valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException("EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private TankTypeForOperations(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:TankTypeForOperations)
+  }
+
   public interface VesselRequestWithPagingOrBuilder
       extends
       // @@protoc_insertion_point(interface_extends:VesselRequestWithPaging)
@@ -79178,33 +79304,36 @@ public final class VesselInfo {
           + "PUMP\020\001\022\020\n\014BALLAST_PUMP\020\002\022\013\n\007GS_PUMP\020\003\022\013\n"
           + "\007IG_PUMP\020\004\022\022\n\016STRIPPING_PUMP\020\005\022\021\n\rSTRIP_"
           + "EDUCTOR\020\006\022\014\n\010COW_PUMP\020\007\022\023\n\017BALLAST_EDUCT"
-          + "OR\020\010\022\026\n\022TANK_CLEANING_PUMP\020\t2\344\007\n\021VesselI"
-          + "nfoService\0228\n\026GetAllVesselsByCompany\022\016.V"
-          + "esselRequest\032\014.VesselReply\"\000\0226\n\024GetVesse"
-          + "lDetailsById\022\016.VesselRequest\032\014.VesselRep"
-          + "ly\"\000\0220\n\016GetVesselTanks\022\016.VesselRequest\032\014"
-          + ".VesselReply\"\000\0225\n\023GetVesselCargoTanks\022\016."
-          + "VesselRequest\032\014.VesselReply\"\000\022A\n\027GetVess"
-          + "elDetailsForAlgo\022\022.VesselAlgoRequest\032\020.V"
-          + "esselAlgoReply\"\000\022C\n!GetVesselDetailForSy"
-          + "nopticalTable\022\016.VesselRequest\032\014.VesselRe"
-          + "ply\"\000\022;\n\031GetVesselDetailByVesselId\022\016.Ves"
-          + "selRequest\032\014.VesselReply\"\000\022A\n\025GetVesselI"
-          + "nfoByPaging\022\030.VesselRequestWithPaging\032\014."
-          + "VesselReply\"\000\022C\n\026GetVesselInfoBytankIds\022"
-          + "\022.VesselTankRequest\032\023.VesselTankResponse"
-          + "\"\000\022C\n\032GetDWTFromVesselByVesselId\022\021.Vesse"
-          + "lDWTRequest\032\022.VesselDWTResponse\022@\n\027GetVe"
-          + "sselInfoByVesselId\022\020.VesselIdRequest\032\021.V"
-          + "esselIdResponse\"\000\022D\n\030GetVesselPumpsByVes"
-          + "selId\022\020.VesselIdRequest\032\024.VesselPumpsRes"
-          + "ponse\"\000\022H\n\036GetRulesByVesselIdAndSectionI"
-          + "d\022\022.VesselRuleRequest\032\020.VesselRuleReply\""
-          + "\000\022E\n\026GetVesselValveSequence\022\016.VesselRequ"
-          + "est\032\031.VesselValveSequenceReply\"\000\022I\n\023GetL"
-          + "oadingInfoRules\022\030.LoadingInfoRulesReques"
-          + "t\032\026.LoadingInfoRulesReply\"\000B\036\n\032com.cpdss"
-          + ".common.generatedP\000b\006proto3"
+          + "OR\020\010\022\026\n\022TANK_CLEANING_PUMP\020\t*\\\n\025TankType"
+          + "ForOperations\022\023\n\017EMPTY_TANK_TYPE\020\000\022\010\n\004PO"
+          + "RT\020\001\022\n\n\006CENTER\020\002\022\010\n\004STBD\020\003\022\006\n\002WP\020\004\022\006\n\002WS"
+          + "\020\0052\344\007\n\021VesselInfoService\0228\n\026GetAllVessel"
+          + "sByCompany\022\016.VesselRequest\032\014.VesselReply"
+          + "\"\000\0226\n\024GetVesselDetailsById\022\016.VesselReque"
+          + "st\032\014.VesselReply\"\000\0220\n\016GetVesselTanks\022\016.V"
+          + "esselRequest\032\014.VesselReply\"\000\0225\n\023GetVesse"
+          + "lCargoTanks\022\016.VesselRequest\032\014.VesselRepl"
+          + "y\"\000\022A\n\027GetVesselDetailsForAlgo\022\022.VesselA"
+          + "lgoRequest\032\020.VesselAlgoReply\"\000\022C\n!GetVes"
+          + "selDetailForSynopticalTable\022\016.VesselRequ"
+          + "est\032\014.VesselReply\"\000\022;\n\031GetVesselDetailBy"
+          + "VesselId\022\016.VesselRequest\032\014.VesselReply\"\000"
+          + "\022A\n\025GetVesselInfoByPaging\022\030.VesselReques"
+          + "tWithPaging\032\014.VesselReply\"\000\022C\n\026GetVessel"
+          + "InfoBytankIds\022\022.VesselTankRequest\032\023.Vess"
+          + "elTankResponse\"\000\022C\n\032GetDWTFromVesselByVe"
+          + "sselId\022\021.VesselDWTRequest\032\022.VesselDWTRes"
+          + "ponse\022@\n\027GetVesselInfoByVesselId\022\020.Vesse"
+          + "lIdRequest\032\021.VesselIdResponse\"\000\022D\n\030GetVe"
+          + "sselPumpsByVesselId\022\020.VesselIdRequest\032\024."
+          + "VesselPumpsResponse\"\000\022H\n\036GetRulesByVesse"
+          + "lIdAndSectionId\022\022.VesselRuleRequest\032\020.Ve"
+          + "sselRuleReply\"\000\022E\n\026GetVesselValveSequenc"
+          + "e\022\016.VesselRequest\032\031.VesselValveSequenceR"
+          + "eply\"\000\022I\n\023GetLoadingInfoRules\022\030.LoadingI"
+          + "nfoRulesRequest\032\026.LoadingInfoRulesReply\""
+          + "\000B\036\n\032com.cpdss.common.generatedP\000b\006proto"
+          + "3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

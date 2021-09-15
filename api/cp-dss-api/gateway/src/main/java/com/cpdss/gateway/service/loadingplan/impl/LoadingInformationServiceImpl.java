@@ -42,6 +42,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
@@ -456,14 +457,18 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         }
 
         if (!grpcReply.getTankTypeList().isEmpty()) {
-          List<PumpType> tankTypes = new ArrayList<>();
-          for (VesselInfo.TankType type : grpcReply.getTankTypeList()) {
-            PumpType type1 = new PumpType();
-            type1.setId(type.getId());
-            type1.setName(type.getTypeName());
-            tankTypes.add(type1);
-          }
-          machineryInUse.setTankTypes(tankTypes);
+          var tankList =
+              grpcReply.getTankTypeList().stream()
+                  .filter(v -> GatewayConstants.OPERATIONS_TANK_TYPE.contains(v.getId()))
+                  .map(
+                      v -> {
+                        PumpType type = new PumpType();
+                        Optional.ofNullable(v.getId()).ifPresent(type::setId);
+                        Optional.ofNullable(v.getTypeName()).ifPresent(type::setName);
+                        return type;
+                      })
+                  .collect(Collectors.toList());
+          machineryInUse.setTankTypes(tankList);
         }
 
         log.info(

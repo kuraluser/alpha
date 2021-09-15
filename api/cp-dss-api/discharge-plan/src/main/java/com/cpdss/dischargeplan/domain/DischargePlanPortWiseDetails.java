@@ -1,5 +1,5 @@
 /* Licensed at AlphaOri Technologies */
-package com.cpdss.dischargeplan.domain.cargo;
+package com.cpdss.dischargeplan.domain;
 
 import lombok.Data;
 
@@ -8,6 +8,6 @@ public class DischargePlanPortWiseDetails {
   private Long portId;
   private String portCode;
   private Long portRotationId;
-  private LoadablePatternDetails arrivalCondition;
-  private LoadablePatternDetails departureCondition;
+  private DischargePatternDetails arrivalCondition;
+  private DischargePatternDetails departureCondition;
 }

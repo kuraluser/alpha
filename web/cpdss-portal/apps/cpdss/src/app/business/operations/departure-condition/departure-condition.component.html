@@ -22,8 +22,8 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-8">
-        <div class="col col-11 loading-discharging-tank-layout m-auto pt-30">
+    <div class="col">
+        <div class="col col-12 loading-discharging-tank-layout m-auto pt-30">
             <cpdss-portal-cargo-tank-layout *ngIf="selectedTab === tankType.CARGO" [tanks]="departureCargoTanks"
                 [options]="cargoTankOptions">
             </cpdss-portal-cargo-tank-layout>
@@ -37,7 +37,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col sidebar-right-loading-discharging-plan">
         <div class="row">
             <div class="col">
                 <cpdss-portal-loading-discharging-cargo-details-table [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargoConditions]="cargoConditions"
@@ -47,7 +47,7 @@
         </div>
         <div class="row pt-10">
             <div class="col text-center">
-                <button class="btn btn-main mr-5 mt-5" id="cargo_status">{{ULLAGE_STATUS_TEXT[loadingPlanData?.loadingInformation?.loadingPlanDepStatusId] }}</button>
+                <button class="btn btn-main mr-5 mt-5" id="cargo_status">{{ULLAGE_STATUS_TEXT[loadingPlanData?.loadingInformation?.loadingPlanDepStatusId] | translate}}</button>
                 <button (click)="display = true" class="btn btn-main mr-5 mt-5"
                     id="departure_uptate_ullage">{{'LOADABLE_PLAN_DEPARTURE_CONDITION_CARGO_UPDATE_ULLAGE' | translate}}</button>
                     <button (click)="showError()" *ngIf="loadingPlanData?.loadingInformation?.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.ERROR" class="btn btn-main mr-5 mt-5" id="cargo_error">{{'ULLAGE_UPDATE_SHOW_ERROR_LABEL'| translate}}</button>
@@ -69,4 +69,4 @@
     </div>
 </div>
 
-<cpdss-portal-ullage-update-popup  [vesselId]="vesselId" [patternId]="loadingPlanData?.loadingInformation?.loadablePatternId" [portRotationId]="portRotationId" [status]="ULLAGE_STATUS.DEPARTURE" [loadingInfoId]="loadingInfoId" *ngIf="display" (closePopup)="closePopUp($event)"></cpdss-portal-ullage-update-popup>
+<cpdss-portal-ullage-update-popup  [vesselId]="vesselId" [patternId]="loadingPlanData?.loadingInformation?.loadablePatternId" [portRotationId]="portRotationId" [status]="ULLAGE_STATUS.DEPARTURE" [operation]="operation" [loadingInfoId]="loadingInfoId" *ngIf="display" (closePopup)="closePopUp($event)"></cpdss-portal-ullage-update-popup>

@@ -611,6 +611,7 @@ message LoadableQuantityCargoDetails {
 	 string dischargingRate = 31;
 	 string timeRequiredForDischarging = 32;
 	 repeated COWDetail cowDetails = 33;
+	 int64 dscargoNominationId = 34;
 	 
 	 
 }
@@ -1442,6 +1443,7 @@ message LoadingPlanIdRequest {
 	string operationType = 4;
 	int64 portRotationId = 5;
 	int64 portId = 6;
+	bool cargoNominationFilter = 7; // default value - false
 }
 
 message LoadingPlanCommonResponse{

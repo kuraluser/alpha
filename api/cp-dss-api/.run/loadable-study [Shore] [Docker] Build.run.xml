@@ -1,0 +1,28 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="loadable-study [Shore] [Docker] Build" type="GradleRunConfiguration" factoryName="Gradle" folderName="Loadable Study">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="loadable-study-container-shore" />
+          <entry key="IMAGE_NAME" value="cpdss-loadable-study-shore" />
+          <entry key="SERVICE_NAME" value="loadable-study-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/loadable-study" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="jib -PbuildEnv=local" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+</component>

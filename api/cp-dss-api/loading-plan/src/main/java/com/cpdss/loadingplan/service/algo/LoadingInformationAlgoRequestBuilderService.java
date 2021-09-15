@@ -264,6 +264,7 @@ public class LoadingInformationAlgoRequestBuilderService {
                 .setOperationType("DEP")
                 .setPortRotationId(entity.getPortRotationXId())
                 .setPortId(entity.getPortXId())
+                .setCargoNominationFilter(false)
                 .build());
 
     if (!LoadingPlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
@@ -386,11 +387,15 @@ public class LoadingInformationAlgoRequestBuilderService {
         StringUtils.isEmpty(loadingRate.getMinDeBallastingRate())
             ? null
             : new BigDecimal(loadingRate.getMinDeBallastingRate()));
-    loadingInfo.setLoadingRates(loadingRates);
+    loadingRates.setMinLoadingRate(
+        StringUtils.isEmpty(loadingRate.getMinLoadingRate())
+            ? null
+            : new BigDecimal(loadingRate.getMinLoadingRate()));
     loadingRates.setShoreLoadingRate(
         loadingRate.getShoreLoadingRate().isEmpty()
             ? null
             : new BigDecimal(loadingRate.getShoreLoadingRate()));
+    loadingInfo.setLoadingRates(loadingRates);
   }
 
   private void buildLoadingMachines(

@@ -1,0 +1,30 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="cargo-info [Ship] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Cargo Info">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="cargo-info-container-ship" />
+          <entry key="DEBUG_PORT_HOST" value="5091" />
+          <entry key="GRPC_PORT_HOST" value="9091" />
+          <entry key="IMAGE_NAME" value="cargo-info-ship" />
+          <entry key="SERVICE_NAME" value="cargo-info-service-ship" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/cargo-info" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+</component>

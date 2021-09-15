@@ -913,6 +913,9 @@ public class LoadableStudyRuleService {
                                     Optional.ofNullable(inputs.getDefaultValue())
                                         .filter(item -> item.trim().length() != 0)
                                         .ifPresent(ruleInput::setDefaultValue);
+                                    Optional.ofNullable(inputs.getDefaultValue())
+                                        .filter(item -> item.trim().length() != 0)
+                                        .ifPresent(ruleInput::setValue);
                                     Optional.ofNullable(inputs.getPrefix())
                                         .filter(item -> item.trim().length() != 0)
                                         .ifPresent(ruleInput::setPrefix);
@@ -1105,6 +1108,9 @@ public class LoadableStudyRuleService {
                   .filter(item -> item.trim().length() != 0)
                   .ifPresentOrElse(
                       ruleInput::setDefaultValue, () -> ruleInput.setDefaultValue(null));
+              Optional.ofNullable(loadableStudyRuleInput.getDefaultValue())
+                  .filter(item -> item.trim().length() != 0)
+                  .ifPresentOrElse(ruleInput::setValue, () -> ruleInput.setValue(null));
               Optional.ofNullable(loadableStudyRuleInput.getPrefix())
                   .filter(item -> item.trim().length() != 0)
                   .ifPresentOrElse(ruleInput::setPrefix, () -> ruleInput.setPrefix(null));

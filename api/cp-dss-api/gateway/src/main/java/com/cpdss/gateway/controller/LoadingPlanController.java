@@ -673,7 +673,7 @@ public class LoadingPlanController {
           portRotationId);
       LoadingUpdateUllageResponse response =
           loadingPlanService.getUpdateUllageDetails(
-              vesselId, patternId, portRotationId, operationType);
+              vesselId, patternId, portRotationId, operationType, false);
       return response;
     } catch (GenericServiceException e) {
       log.error("Getting update ullage details Failed error");

@@ -414,8 +414,8 @@ export class DischargeStudyDetailsTransformationService {
       ]
       columns = [...columns, ...etaEtd];
     }
-    // Note:- Permission is not implemented in port tab.
-    if (permission && [VOYAGE_STATUS.ACTIVE].includes(voyageStatusId)) {
+   
+    if (permission && [VOYAGE_STATUS.ACTIVE].includes(voyageStatusId) &&  [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(dischargeStudyStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if (permission?.add) {
         actions.push(DATATABLE_ACTION.SAVE);
@@ -876,7 +876,7 @@ getDischargeStudyCargoDatatableColumns(): IDataTableColumn[] {
 * @returns {IDataTableColumn[]}
 * @memberof DischargeStudyDetailsTransformationService
 */
-getDischargeStudyBackLoadingDatatableColumns(permission: IPermission): IDataTableColumn[] {
+getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeStudyStatusId: number , voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
   let columns:IDataTableColumn[] = [
     {
       field: 'slNo',
@@ -975,7 +975,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission): IDataTabl
       }
     }
   ]
-  if((permission?.edit === undefined || permission?.edit)) {
+  if((permission?.edit === undefined || permission?.edit) && [VOYAGE_STATUS.ACTIVE].includes(voyageStatusId) &&  [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(dischargeStudyStatusId)) {
     const actions: DATATABLE_ACTION[] = [];
     actions.push(DATATABLE_ACTION.SAVE);
     actions.push(DATATABLE_ACTION.DELETE);

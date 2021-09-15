@@ -30,7 +30,7 @@ public interface LoadablePlanStowageDetailsTempRepository
       Long loadablePatternId, Boolean isActive);
 
   @Query(
-      "SELECT LPSD.id, LPSD.tankId, coalesce(CAST(LPSDT.quantity AS string ), LPSD.metricTon), LPSD.colorCode, LPSD.sg FROM LoadablePlanBallastDetails LPSD LEFT JOIN LoadablePlanStowageDetailsTemp LPSDT ON LPSD.id = LPSDT.loadablePlanBallastDetails.id AND LPSDT.isActive = ?2 WHERE LPSD.loadablePattern.id = ?1 AND LPSD.isActive = ?2")
+      "SELECT LPSD.id, LPSD.tankId, coalesce(CAST(LPSDT.quantity AS string ), LPSD.metricTon), LPSD.colorCode, LPSD.sg FROM LoadablePlanBallastDetails LPSD LEFT JOIN LoadablePlanStowageDetailsTemp LPSDT ON LPSD.id = LPSDT.loadablePlanBallastDetails.id AND LPSDT.isActive = ?2 WHERE LPSD.loadablePattern.id = ?1 AND LPSD.isActive = ?2 ORDER BY LPSD.id")
   public List<Object> findByLoadablePlanBallastTempDetailsAndIsActive(
       Long loadablePatternId, Boolean isActive);
 

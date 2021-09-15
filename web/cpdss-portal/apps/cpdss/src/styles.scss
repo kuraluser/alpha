@@ -1280,9 +1280,8 @@ td.sl div{
 }
 
 .p-multiselect-label{
-  line-height: 17px;
     height: 25px;
-    padding: 0 5px!important;
+    padding: 3px 5px!important;
 }
 .confirmation-dialog{
   &.p-toast .p-toast-message.p-toast-message-warn{
@@ -3105,4 +3104,10 @@ textarea{
 .tank-tabs{
   width: 57px;
   height: 35px;
+}
+
+.sidebar-right-loading-discharging-plan{
+  width: 400px;
+  max-width: 400px;
+  min-width: 400px;
 }
