@@ -22,8 +22,8 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-8">
-        <div class="col col-11 loading-discharging-tank-layout m-auto pt-30">
+    <div class="col">
+        <div class="col col-12 loading-discharging-tank-layout m-auto pt-30">
             <cpdss-portal-cargo-tank-layout *ngIf="selectedTab === tankType.CARGO" [tanks]="departureCargoTanks"
                 [options]="cargoTankOptions">
             </cpdss-portal-cargo-tank-layout>
@@ -37,7 +37,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col sidebar-right-loading-discharging-plan">
         <div class="row">
             <div class="col">
                 <cpdss-portal-loading-discharging-cargo-details-table [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargoConditions]="cargoConditions"
