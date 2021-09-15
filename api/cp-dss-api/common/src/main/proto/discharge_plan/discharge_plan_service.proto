@@ -6,6 +6,7 @@ option java_package = "com.cpdss.common.generated.discharge_plan";
 // import common definitions like ResponseStatus
 import "common.proto";
 import "discharge_plan/discharge_plan_models.proto";
+import "loading_plan/loading_plan_models.proto";
 
 service DischargeInformationService {
   rpc getDischargeInformation(DischargeInformationRequest) returns (DischargeInformation) {}
@@ -17,6 +18,7 @@ service DischargeInformationService {
 
 service DischargePlanService{
   rpc DischargePlanSynchronization(DischargeStudyDataTransferRequest) returns (ResponseStatus) {}
+  rpc GetDischargeUpdateUllageDetails (UpdateUllageDetailsRequest) returns (UpdateUllageDetailsResponse) {}
   rpc generateDischargePlan(DischargeInformationRequest) returns (DischargePlanAlgoRequest) {}
 }
 
