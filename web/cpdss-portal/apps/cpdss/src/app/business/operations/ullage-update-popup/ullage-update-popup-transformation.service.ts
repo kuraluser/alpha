@@ -179,6 +179,7 @@ export class UllageUpdatePopupTransformationService {
         header: 'ULLAGE_UPDATE_CARGO_TABLE_QUANTITY_LABEL',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         editable: false,
+        showTotal: true,
         fieldPlaceholder: ''
       },
 
@@ -218,6 +219,7 @@ export class UllageUpdatePopupTransformationService {
         header: 'ULLAGE_UPDATE_CARGO_TABLE_QUANTITY_LABEL',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: '',
+        showTotal: true,
         editable: false
       }
 
@@ -253,6 +255,7 @@ export class UllageUpdatePopupTransformationService {
         fieldColumnClass: 'pr-25',
         fieldPlaceholder: '',
         editable: true,
+        showTotal: true,
         errorMessages: {
           'required': 'ULLAGE_UPDATE_QUANTITY_REQUIRED'
         }

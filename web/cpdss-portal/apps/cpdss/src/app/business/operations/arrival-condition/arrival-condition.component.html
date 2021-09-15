@@ -55,4 +55,4 @@
     </div>
 </div>
 
-<cpdss-portal-ullage-update-popup [vesselId]="vesselId"  [patternId]="loadingPlanData?.loadingInformation?.loadablePatternId" [portRotationId]="portRotationId" [status]="ULLAGE_STATUS.ARRIVAL" [loadingInfoId]="loadingInfoId" (closePopup)="closePopUp($event)" *ngIf="display"></cpdss-portal-ullage-update-popup>
+<cpdss-portal-ullage-update-popup [vesselId]="vesselId"  [patternId]="loadingPlanData?.loadingInformation?.loadablePatternId" [portRotationId]="portRotationId" [status]="ULLAGE_STATUS.ARRIVAL" [operation]="operation" [loadingInfoId]="loadingInfoId" (closePopup)="closePopUp($event)" *ngIf="display"></cpdss-portal-ullage-update-popup>
