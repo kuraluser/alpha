@@ -55,6 +55,7 @@ public class LoadableQuantityCargoDetails {
   private Integer priority;
   private Integer loadingOrder;
   private Long cargoNominationId;
+  private Long dscargoNominationId;
 
   private String slopQuantity;
   private String timeRequiredForLoading;

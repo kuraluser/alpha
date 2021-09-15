@@ -529,7 +529,7 @@ public class LoadablePatternService {
         new DischargePatternQuantityCargoPortwiseDetails();
     loadableQuantityCargoDetails.setIsActive(true);
     loadableQuantityCargoDetails.setCargoId(lpcd.getCargoId());
-    loadableQuantityCargoDetails.setCargoNominationId(lpcd.getCargoNominationId());
+    loadableQuantityCargoDetails.setCargoNominationId(lpcd.getDscargoNominationId());
     loadableQuantityCargoDetails.setPortId(portId);
     if (portRotationId > 0) {
       loadableQuantityCargoDetails.setPortRotationId(portRotationId);

@@ -611,6 +611,7 @@ message LoadableQuantityCargoDetails {
 	 string dischargingRate = 31;
 	 string timeRequiredForDischarging = 32;
 	 repeated COWDetail cowDetails = 33;
+	 int64 dscargoNominationId = 34;
 	 
 	 
 }

@@ -3844,6 +3844,8 @@ public class LoadableStudyService {
     Optional.ofNullable(lpqcd.getSlopQuantity()).ifPresent(qunatityBuilder::setSlopQuantity);
     Optional.ofNullable(lpqcd.getCargoNominationId())
         .ifPresent(qunatityBuilder::setCargoNominationId);
+    Optional.ofNullable(lpqcd.getDscargoNominationId())
+        .ifPresent(qunatityBuilder::setDscargoNominationId);
     Optional.ofNullable(lpqcd.getTimeRequiredForLoading())
         .ifPresent(qunatityBuilder::setTimeRequiredForLoading);
     Optional.ofNullable(lpqcd.getToppingSequence())
