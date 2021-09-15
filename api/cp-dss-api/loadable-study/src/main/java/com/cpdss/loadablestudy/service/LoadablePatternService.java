@@ -473,7 +473,8 @@ public class LoadablePatternService {
       saveStabilityParameterForNonLodicator(request.getHasLodicator(), loadablePattern, lpd);
       // TODO ROB details - Data is coming from OHQ - As of now decided to not save here.
       if (requestType.equals(DICHARGE_STUDY)) {
-        saveLoadableQuantityCargoDetails(lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern);
+        saveLoadableQuantityCargoDetails(
+            lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern, loadableStudyOpt.get());
       }
     }
     return loadablePatterns;
@@ -481,7 +482,8 @@ public class LoadablePatternService {
 
   private void saveLoadableQuantityCargoDetails(
       List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetailsList,
-      LoadablePattern loadablePattern) {
+      LoadablePattern loadablePattern,
+      LoadableStudy loadableStudy) {
     if (ofNullable(loadablePlanPortWiseDetailsList).isPresent()) {
       loadablePlanPortWiseDetailsList.forEach(
           lppwd -> {
@@ -495,7 +497,8 @@ public class LoadablePatternService {
                           lppwd.getPortId(),
                           lppwd.getPortRotationId(),
                           SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
-                          loadablePattern);
+                          loadablePattern,
+                          loadableStudy);
                     });
             lppwd
                 .getDepartureCondition()
@@ -507,7 +510,8 @@ public class LoadablePatternService {
                           lppwd.getPortId(),
                           lppwd.getPortRotationId(),
                           SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
-                          loadablePattern);
+                          loadablePattern,
+                          loadableStudy);
                     });
           });
     }
@@ -518,7 +522,8 @@ public class LoadablePatternService {
       long portId,
       long portRotationId,
       String operationType,
-      LoadablePattern loadablePattern) {
+      LoadablePattern loadablePattern,
+      LoadableStudy loadableStudy) {
 
     DischargePatternQuantityCargoPortwiseDetails loadableQuantityCargoDetails =
         new DischargePatternQuantityCargoPortwiseDetails();
@@ -526,7 +531,13 @@ public class LoadablePatternService {
     loadableQuantityCargoDetails.setCargoId(lpcd.getCargoId());
     loadableQuantityCargoDetails.setCargoNominationId(lpcd.getCargoNominationId());
     loadableQuantityCargoDetails.setPortId(portId);
-    loadableQuantityCargoDetails.setPortRotationId(portRotationId);
+    if (portRotationId > 0) {
+      loadableQuantityCargoDetails.setPortRotationId(portRotationId);
+    } else {
+      loadableQuantityCargoDetails.setPortRotationId(
+          getPortRotationIDFromDSId(portId, loadableStudy));
+    }
+
     loadableQuantityCargoDetails.setLoadablePatternId(loadablePattern.getId());
     loadableQuantityCargoDetails.setCargoAbbreviation(lpcd.getCargoAbbreviation());
     loadableQuantityCargoDetails.setEstimatedAPI(
@@ -578,6 +589,13 @@ public class LoadablePatternService {
     loadableQuantityCargoDetails.setCowDetails(cowDetailFromAlgoList);
 
     dischargePatternQuantityCargoPortwiseRepository.save(loadableQuantityCargoDetails);
+  }
+
+  private Long getPortRotationIDFromDSId(long portId, LoadableStudy loadableStudy) {
+    LoadableStudyPortRotation loadableStudyPortRotation =
+        loadableStudyPortRotationRepository.findByLoadableStudyAndPortAndOperation(
+            loadableStudy, portId);
+    return loadableStudyPortRotation.getId();
   }
 
   /**
@@ -987,7 +1005,7 @@ public class LoadablePatternService {
             : null);
     loadablePatternCargoDetails.setCargoNominationId(lpsd.getCargoNominationId());
     loadablePatternCargoDetails.setCargoNominationTemperature(
-        new BigDecimal(lpsd.getCargoNominationTemperature()));
+        new BigDecimal(lpsd.getTemperature()));
     loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
     //    DS field
     loadablePatternCargoDetails.setOnBoard(
