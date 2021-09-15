@@ -9,7 +9,6 @@ import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
 import com.cpdss.gateway.domain.loadingplan.LoadingStages;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -49,7 +48,7 @@ public class DischargeInformation {
   private Long dischargePlanArrStatusId;
   private Long dischargePlanDepStatusId;
   private Long dischargePatternId;
-  private Boolean isDischargeInstructionsComplete;
-  private Boolean isDischargeSequenceGenerated;
-  private Boolean isDischargePlanGenerated;
+  private Boolean isDischargeInstructionsComplete=false;
+  private Boolean isDischargeSequenceGenerated=false;
+  private Boolean isDischargePlanGenerated=false;
 }

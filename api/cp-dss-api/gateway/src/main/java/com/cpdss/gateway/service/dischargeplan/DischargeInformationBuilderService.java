@@ -263,6 +263,7 @@ public class DischargeInformationBuilderService {
       }
       log.info("Loading plan machine in use added, Size {}", var1.size());
       machineryInUse.setLoadingMachinesInUses(list2);
+      machineryInUse.setDischargeMachinesInUses(list2);
     }
     return machineryInUse;
   }

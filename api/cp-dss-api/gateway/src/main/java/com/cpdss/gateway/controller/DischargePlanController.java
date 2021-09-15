@@ -26,7 +26,7 @@ import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveRequest
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsStatus;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsUpdateRequest;
-import com.cpdss.gateway.domain.dischargeplan.DischargingPlanResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
@@ -779,7 +779,7 @@ public class DischargePlanController {
    */
   @GetMapping(
       "/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-plan/{portRotationId}")
-  public DischargingPlanResponse getLoadingPlan(
+  public DischargePlanResponse getDischargePlan(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,

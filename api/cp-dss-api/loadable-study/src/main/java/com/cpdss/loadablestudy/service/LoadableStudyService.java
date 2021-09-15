@@ -2671,6 +2671,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     ResponseStatus.Builder repBuilder = ResponseStatus.newBuilder();
     try {
       this.synopticService.fetchLoadingInformationSynopticDetails(request, builder, repBuilder);
+      System.out.println();
     } catch (Exception e) {
       e.printStackTrace();
       log.error("Failed to Get Synoptic Record", request.getId());
