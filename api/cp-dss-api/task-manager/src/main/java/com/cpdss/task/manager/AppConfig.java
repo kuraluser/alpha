@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Import;
 @Import({
   CommonConfig.class,
   Log4j2Config.class,
-  RestConfig.class,
   SpringDataConfig.class,
   GrpcServerConfig.class
 })

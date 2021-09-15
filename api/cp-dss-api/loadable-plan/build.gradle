@@ -11,5 +11,4 @@ appConfig {
 
 dependencies {
     implementation project(':common')
-	compile group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
 }

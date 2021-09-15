@@ -4,16 +4,21 @@ ext{
     dbName = System.getenv('DB_NAME') ?: ""
     dbUser = System.getenv('DB_USER') ?: ""
     dbPassword = System.getenv('DB_PASSWORD') ?: ""
-    grpcPort = System.getenv('GRPC_PORT') ?: ""
 	keycloakURL = System.getenv('KEYCLOAK_URL')?:""
 	hostRootPath = System.getenv('HOST_ROOT_PATH')?:""
 	cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:"" 
-        redisPassword = System.getenv('REDIS_PASSWORD')?:"" 
-        keycloakAdminUsername = System.getenv('KEYCLOAK_ADMIN_USER_NAME')?:""
-        keycloakAdminPassword = System.getenv('KEYCLOAK_ADMIN_PASSWORD')?:""
-        keycloakAdminClientId = System.getenv('KEYCLOAK_ADMIN_CLIENT_ID')?:""
+    redisPassword = System.getenv('REDIS_PASSWORD')?:""
+    keycloakAdminUsername = System.getenv('KEYCLOAK_ADMIN_USER_NAME')?:""
+    keycloakAdminPassword = System.getenv('KEYCLOAK_ADMIN_PASSWORD')?:""
+    keycloakAdminClientId = System.getenv('KEYCLOAK_ADMIN_CLIENT_ID')?:""
 	shipjwtSecret = System.getenv('SHIP_JWT_SECRET')?:""
     shipjwtValidity = System.getenv('SHIP_JWT_VALIDITY')?:""
+
+    restPortHost = System.getenv('REST_PORT_HOST') ?: '8085'
+    debugPortHost = System.getenv('DEBUG_PORT_HOST') ?: '5085'
+    imageNameVal = System.getenv('IMAGE_NAME') ?: 'cpdss-gateway'
+    containerNameVal = System.getenv('CONTAINER_NAME') ?: 'gateway-container'
+    serviceNameVal = System.getenv('SERVICE_NAME') ?: 'gateway-service'
 }
 
 appConfig {
@@ -26,26 +31,34 @@ appConfig {
   devTools = 'y'
   unitTest = 'y'
   security = 'jwt'
+  rest = 'y'
   monitoring = 'y'
   docker {
-        imageName = 'cpdss-gateway'
-        containerName = 'gateway-container'
+        imageName = imageNameVal
+        containerName = containerNameVal
         networkName = 'cpdss-network'
+        memoryLimitInMB = 300
         hostVolumeMapping {
           hostPath = hostRootPath
           containerPath = "/data"
         }
         hostPortMapping {
-            hostRestPort = 8080
+          hostRestPort = Integer.parseInt(restPortHost)
+          hostDebugPort = Integer.parseInt(debugPortHost)
+        }
+        healthCheck {
+          healthCheckCmd = 'wget --no-verbose --spider http://localhost:8080/actuator/health'
+          healthCheckIntervalInSec = 30
+          healthCheckInitialDelayInSec = 60
         }
         swarm {
-            serviceName = 'gateway-service'
+            serviceName = serviceNameVal
             swarmMode = REPLICATED_MODE
             replicas = 1
             rollbackOnUpdateFailure = true
         }
 	  dns = ['8.8.8.8']	
-      environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 
+      environment = ['REST_PORT': '8080', 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser,
 	                 'DB_PASSWORD': dbPassword, 'ATTACHMENT_ROOT_PATH': '/data', 'KEYCLOAK_URL': keycloakURL,
                      'CPDSS_BUILD_ENV': cpdssBuildEnv, 'REDIS_PASSWORD': redisPassword,
                      'KEYCLOAK_ADMIN_USER_NAME': keycloakAdminUsername, 'KEYCLOAK_ADMIN_PASSWORD': keycloakAdminPassword,
