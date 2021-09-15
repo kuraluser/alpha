@@ -223,29 +223,33 @@ public class SynopticService {
 
     // Above list provide all cargo details at this port,
     // we don't need this data (only need what loading/discharge at that port)
-
     List<LoadablePlanQuantity> dataList = new ArrayList<>();
 
-    // Need to filter based on the cargo nomination id
-    Optional<LoadablePattern> lp =
-        loadablePatternRepository.findByIdAndIsActive(request.getPatternId(), true);
-    if (lp.isPresent()) {
-      Long studyId = lp.get().getLoadableStudy().getId();
-      List<CargoNomination> cargoNominations =
-          this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderById(studyId, true);
+    if (request.getCargoNominationFilter()) {
+      // Need to filter based on the cargo nomination id
+      Optional<LoadablePattern> lp =
+          loadablePatternRepository.findByIdAndIsActive(request.getPatternId(), true);
+      if (lp.isPresent()) {
+        Long studyId = lp.get().getLoadableStudy().getId();
+        List<CargoNomination> cargoNominations =
+            this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderById(
+                studyId, true);
 
-      List<Long> nominationIds =
-          cargoNominations.stream()
-              .map(CargoNomination::getCargoNominationPortDetails)
-              .flatMap(Collection::stream)
-              .filter(v -> v.getPortId().equals(request.getPortId()))
-              .map(CargoNominationPortDetails::getCargoNomination)
-              .map(CargoNomination::getId)
-              .collect(Collectors.toList());
-      dataList =
-          list.stream()
-              .filter(v -> nominationIds.contains(v.getCargoNominationId()))
-              .collect(Collectors.toList());
+        List<Long> nominationIds =
+            cargoNominations.stream()
+                .map(CargoNomination::getCargoNominationPortDetails)
+                .flatMap(Collection::stream)
+                .filter(v -> v.getPortId().equals(request.getPortId()))
+                .map(CargoNominationPortDetails::getCargoNomination)
+                .map(CargoNomination::getId)
+                .collect(Collectors.toList());
+        dataList =
+            list.stream()
+                .filter(v -> nominationIds.contains(v.getCargoNominationId()))
+                .collect(Collectors.toList());
+      }
+    } else {
+      dataList = list; // no filter, add all data
     }
 
     if (!dataList.isEmpty()) {

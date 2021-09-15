@@ -256,6 +256,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
                 .setOperationType(operationType)
                 .setPortRotationId(portRotationId)
                 .setPortId(portId)
+                .setCargoNominationFilter(true)
                 .build());
 
     if (response.getResponseStatus().getStatus().equals(SUCCESS)) {
