@@ -9,6 +9,8 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
+import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
@@ -34,7 +36,11 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.CargoInfos;
 import com.cpdss.common.generated.PortInfo.CargoPortMapping;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
-import com.cpdss.common.generated.discharge_plan.*;
+import com.cpdss.common.generated.discharge_plan.CowTankDetails;
+import com.cpdss.common.generated.discharge_plan.DSCowDetails;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
+import com.cpdss.common.generated.discharge_plan.PortData;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest;
@@ -60,7 +66,16 @@ import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
+import com.cpdss.loadablestudy.repository.DischargeStudyCowDetailRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
+import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
+import com.cpdss.loadablestudy.repository.VoyageRepository;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -1319,8 +1334,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       List<CargoNomination> cargos =
           cargoNominationService.getCargoNominationByLoadableStudyId(DischargeStudy.getId());
       List<DischargePatternQuantityCargoPortwiseDetails> generatedCargos =
-          dischargePatternQuantityCargoPortwiseRepository.findByCargoNominationIdIn(
-              cargos.stream().map(CargoNomination::getId).collect(Collectors.toList()));
+          dischargePatternQuantityCargoPortwiseRepository.findByCargoNominationIdInAndOperationType(
+              cargos.stream().map(CargoNomination::getId).collect(Collectors.toList()),
+              SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE);
       Map<Long, List<DischargePatternQuantityCargoPortwiseDetails>> portWiseCargo =
           generatedCargos.stream()
               .collect(
@@ -1335,16 +1351,21 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     .forEach(
                         pCargo -> {
                           CargoNominationDetail.Builder cargo = CargoNominationDetail.newBuilder();
-                          cargo.setAbbreviation(pCargo.getCargoAbbreviation());
-                          cargo.setApi(pCargo.getEstimatedAPI().toString());
-                          cargo.setCargoId(pCargo.getCargoId());
-                          cargo.setId(pCargo.getCargoNominationId());
-                          cargo.setTemperature(pCargo.getCargoNominationTemperature().toString());
-                          cargo.setColor(pCargo.getColorCode());
-                          cargo.setQuantity(pCargo.getDischargeMT().toString());
-                          cargo.setDischargingRate(pCargo.getDischargingRate().toString());
-                          cargo.setDischargingTime(
-                              pCargo.getTimeRequiredForDischarging().toString());
+                          ofNullable(pCargo.getCargoAbbreviation())
+                              .ifPresent(cargo::setAbbreviation);
+                          ofNullable(pCargo.getEstimatedAPI())
+                              .ifPresent(api -> cargo.setApi(api.toString()));
+                          ofNullable(pCargo.getCargoId()).ifPresent(cargo::setCargoId);
+                          ofNullable(pCargo.getCargoNominationId()).ifPresent(cargo::setId);
+                          ofNullable(pCargo.getEstimatedTemp())
+                              .ifPresent(value -> cargo.setTemperature(value.toString()));
+                          ofNullable(pCargo.getColorCode()).ifPresent(cargo::setColor);
+                          ofNullable(pCargo.getDischargeMT())
+                              .ifPresent(value -> cargo.setQuantity(value.toString()));
+                          ofNullable(pCargo.getDischargingRate())
+                              .ifPresent(value -> cargo.setDischargingRate(value.toString()));
+                          ofNullable(pCargo.getTimeRequiredForDischarging())
+                              .ifPresent(value -> cargo.setDischargingTime(value.toString()));
                           LoadingPortDetail.Builder portDetail = LoadingPortDetail.newBuilder();
                           portDetail.setPortId(port.getPortXId());
                           portDetail.setQuantity(pCargo.getDischargeMT().toString());
