@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter , OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators, FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -31,7 +31,7 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
   templateUrl: './ullage-update-popup.component.html',
   styleUrls: ['./ullage-update-popup.component.scss']
 })
-export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
+export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
 
   @Input() loadingInfoId: number;
   @Input() status: ULLAGE_STATUS;
@@ -94,6 +94,7 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
   ullageResponseDataCopy: any;
   selectedTank: any;
   percentageFilled: string;
+  selectedPortName: string;
 
   showAs = {
     id: 1, label: 'Actual'
@@ -162,6 +163,7 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.portId = Number(localStorage.getItem('selectedPortId'));
+    this.selectedPortName = localStorage.getItem('selectedPortName');
     this.ngxSpinnerService.show();
     try {
       const status = this.status === ULLAGE_STATUS.ARRIVAL ? 'ARR' : 'DEP';
@@ -227,11 +229,11 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
     })
   }
 
-   
- /**
- * unsubscribing loading plan observable
- * @memberof UllageUpdatePopupComponent
- */
+
+  /**
+  * unsubscribing loading plan observable
+  * @memberof UllageUpdatePopupComponent
+  */
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
@@ -464,7 +466,7 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
   bunkerTankFormGroup(tank) {
     return this.fb.group({
       tankName: this.fb.control(tank.tankName.value),
-      quantity: this.fb.control(tank.quantity.value, [Validators.required]),
+      quantity: this.fb.control(tank.quantity.value, [Validators.min(0), Validators.required]),
     });
   }
   /**
@@ -628,15 +630,17 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
     this.blFigure['items'] = [];
     const blData = data?.billOfLaddingList ? data?.billOfLaddingList : [];
     blData.map(item => {
-      const cargoData = [];
-      if (item?.billOfLaddings?.length) {
-        item?.billOfLaddings?.map(bl => {
-          cargoData.push({ 'cargo': this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(bl, item, false, false) });
-        });
-      } else {
-        cargoData.push({ 'cargo': this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{ portId: this.portId }, item, true, true) });
+      if (item.cargoToBeLoaded) {
+        const cargoData = [];
+        if (item?.billOfLaddings?.length) {
+          item?.billOfLaddings?.map(bl => {
+            cargoData.push({ 'cargo': this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(bl, item, false, false) });
+          });
+        } else {
+          cargoData.push({ 'cargo': this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{ portId: this.portId }, item, true, true) });
+        }
+        this.blFigure['items'].push(cargoData);
       }
-      this.blFigure['items'].push(cargoData);
     });
     this.blFigure.items.map((blItems, blRowIndex) => {
       const items = this.tableForm.get('items') as FormArray;
@@ -814,7 +818,7 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
   */
   initCargoDetails(cargo: any): FormGroup {
     return this.fb.group({
-      blRefNo: this.fb.control(cargo.blRefNo.value, [Validators.minLength(4), Validators.maxLength(12), Validators.pattern(/^[ A-Za-z0-9#&()/":-=+*]*$/)]),
+      blRefNo: this.fb.control(cargo.blRefNo.value, [Validators.minLength(4), Validators.maxLength(12), Validators.pattern(/^[ A-Za-z0-9#&()/":\-=+*]*$/)]),
       bbl: this.fb.control(cargo.bbl.value, [numberValidator(0, 7)]),
       lt: this.fb.control(cargo.lt.value, [numberValidator(2, 7)]),
       mt: this.fb.control(cargo.mt.value, [numberValidator(2, 7)]),
@@ -872,14 +876,19 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
     if (this.showAs.id === 2) {
       this.updateCargoTanks();
     }
-    const error = this.setBlError(rowData, key);
-    if (error) {
-      control.setErrors({ rangeError: true });
-      rowData[key].isEditMode = true;
+    if (key === 'blRefNo' || key === 'api' || key === 'temp') {
+      rowData[key].isEditMode = control.errors ? true : false;
     } else {
-      rowData[key].isEditMode = false;
-      control.setErrors(null);
+      const error = this.setBlError(rowData, key);
+      if (error) {
+        control.setErrors({ rangeError: true });
+        rowData[key].isEditMode = true;
+      } else {
+        rowData[key].isEditMode = false;
+        control.setErrors(null);
+      }
     }
+
     setTimeout(() => {
       this.validateBlFigTable();
     });
@@ -946,7 +955,7 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
    * @memberof UllageUpdatePopupComponent
    */
   async cargoEditCompleted(event) {
-    if(event.data.api.value === "" || event.data.ullage.value === "" || event.data.temperature.value === "") {
+    if (event.data.api.value === "" || event.data.ullage.value === "" || event.data.temperature.value === "") {
       return;
     }
     const param = {
@@ -1008,7 +1017,7 @@ export class UllageUpdatePopupComponent implements OnInit , OnDestroy {
    * @memberof UllageUpdatePopupComponent
    */
   async ballastEditCompleted(event) {
-    if(event.data.sounding.value === "") {
+    if (event.data.sounding.value === "") {
       return;
     }
     const param = {

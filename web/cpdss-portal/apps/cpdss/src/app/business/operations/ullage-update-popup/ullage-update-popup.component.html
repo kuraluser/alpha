@@ -7,6 +7,12 @@
             <div class="col-md-4" style="display:none">
                 <i class="pi pi-upload"></i>
             </div>
+            <div class="col-md-3">
+                <label for="">{{'ULLAGE_UPDATE_PORT_LABEL' | translate}}</label> 
+                <span class="pl-20">
+                    <label >{{ selectedPortName ? selectedPortName : ''}}</label>
+                </span>
+            </div>
             <div class="col-md-4">
                 <label for="">{{'LOADABLE_PLAN_ULLAGE_UPDATE_STATUS_LABEL' | translate}}</label> 
                 <span class="pl-20">
@@ -351,7 +357,7 @@
                 <button (click)="saveUllage(false)" class="btn btn-main" id="new-loadable-study-popup-save"
                     form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted">{{'SAVE' | translate}}</button>
                 <button (click)="saveUllage(true)" class="btn btn-main" id="new-loadable-study-popup-save"
-                    form="fg_newLoadableStudy" autofocus focusTrap>{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
+                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
                     translate}}</button>
             </div>
         </div>
