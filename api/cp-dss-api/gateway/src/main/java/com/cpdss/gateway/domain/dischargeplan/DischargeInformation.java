@@ -30,30 +30,26 @@ public class DischargeInformation {
   private Boolean isDischargeInfoComplete;
 
   // reusing common class from discharging
-  @JsonProperty("dischargingDetails")
   private LoadingDetails dischargeDetails;
 
-  @JsonProperty("dischargingRates")
   private DischargeRates dischargeRates;
 
   private LoadingBerthDetails berthDetails;
   private CargoMachineryInUse machineryInUses;
 
-  @JsonProperty("dischargingStages")
   private LoadingStages dischargeStages;
 
-  @JsonProperty("dischargingSequences")
   private LoadingSequences dischargeSequences;
 
   private CowPlan cowPlan;
   private PostDischargeStage postDischargeStageTime;
   // For layout and Grid
   private CargoVesselTankDetails cargoVesselTankDetails;
-  private Long dischargingInfoStatusId;
-  private Long dischargingPlanArrStatusId;
-  private Long dischargingPlanDepStatusId;
+  private Long dischargeInfoStatusId;
+  private Long dischargePlanArrStatusId;
+  private Long dischargePlanDepStatusId;
   private Long dischargePatternId;
-  private Boolean isDischargingInstructionsComplete;
-  private Boolean isDischargingSequenceGenerated;
-  private Boolean isDischargingPlanGenerated;
+  private Boolean isDischargeInstructionsComplete;
+  private Boolean isDischargeSequenceGenerated;
+  private Boolean isDischargePlanGenerated;
 }
