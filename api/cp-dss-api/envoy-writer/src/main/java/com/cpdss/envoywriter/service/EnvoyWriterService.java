@@ -91,7 +91,7 @@ public class EnvoyWriterService {
       HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity =
           new HttpEntity<LinkedMultiValueMap<String, Object>>(
               map, createHeaderParameters(getCheckSum(tempFile)));
-
+      log.debug("Envoy writer API URL : " + uploadUrlBuilder(request, uuid, sequenceNumber));
       ResponseEntity<String> result =
           restTemplate.exchange(
               uploadUrlBuilder(request, uuid, sequenceNumber),
@@ -102,7 +102,8 @@ public class EnvoyWriterService {
 
       ObjectMapper mapper = new ObjectMapper();
       WriterResponse writerResponse = mapper.readValue(result.getBody(), WriterResponse.class);
-
+      log.debug("Envoy writer file upload response: {}", result.toString());
+      log.debug("Envoy writer file upload body: {}", result.getBody());
       buildWriterResponse(writerBuilder, writerResponse /*, encryptedString*/);
 
     } catch (IOException e) {

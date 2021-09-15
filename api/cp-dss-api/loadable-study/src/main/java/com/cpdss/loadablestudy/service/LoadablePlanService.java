@@ -2563,7 +2563,7 @@ public class LoadablePlanService {
     } else {
       LoadabalePatternValidateRequest loadabalePatternValidateRequest =
           new LoadabalePatternValidateRequest();
-
+      log.info("------- Started preparing request");
       ModelMapper modelMapper = new ModelMapper();
       com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
           new com.cpdss.loadablestudy.domain.LoadableStudy();
@@ -2573,6 +2573,7 @@ public class LoadablePlanService {
           loadablePatternOpt.get().getLoadableStudy(),
           loadableStudy,
           modelMapper);
+      log.info("------- Started preparing buildLoadablePlanPortWiseDetails");
       buildLoadablePlanPortWiseDetails(loadablePatternOpt.get(), loadabalePatternValidateRequest);
 
       loadabalePatternValidateRequest.setLoadableStudy(loadableStudy);
@@ -2581,11 +2582,18 @@ public class LoadablePlanService {
           stowageDetailsTempRepository.isBallastEdited(request.getLoadablePatternId(), true));
       loadabalePatternValidateRequest.setLoadablePatternId(request.getLoadablePatternId());
       loadabalePatternValidateRequest.setCaseNumber(loadablePatternOpt.get().getCaseNumber());
+      log.info("------- Before save payload into db");
       ObjectMapper objectMapper = new ObjectMapper();
       jsonDataService.saveJsonToDatabase(
           request.getLoadablePatternId(),
           LOADABLE_PATTERN_EDIT_REQUEST,
           objectMapper.writeValueAsString(loadabalePatternValidateRequest));
+      log.info(
+          "------- After save payload into db : "
+              + this.rootFolder
+              + "/json/loadablePattern_request_"
+              + request.getLoadablePatternId()
+              + ".json");
       objectMapper.writeValue(
           new File(
               this.rootFolder
@@ -2593,14 +2601,18 @@ public class LoadablePlanService {
                   + request.getLoadablePatternId()
                   + ".json"),
           loadabalePatternValidateRequest);
+      log.info("------- Payload has successfully saved in file");
       LoadabalePatternValidateRequest communicationServiceRequest = loadabalePatternValidateRequest;
       buildCommunicationServiceRequest(communicationServiceRequest, loadablePatternOpt.get());
+      log.info("------- Before envoy writer calling");
       EnvoyWriter.WriterReply ewReply =
           communicationService.passRequestPayloadToEnvoyWriter(
               objectMapper.writeValueAsString(communicationServiceRequest),
               loadableStudy.getVesselId(),
               MessageTypes.VALIDATEPLAN.getMessageType());
+      log.info("------- After envoy writer calling");
       if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+        log.info("------- Envoy writer has called successfully : " + ewReply.toString());
         LoadableStudyCommunicationStatus lsCommunicationStatus =
             new LoadableStudyCommunicationStatus();
         if (ewReply.getMessageId() != null) {
@@ -2613,18 +2625,20 @@ public class LoadablePlanService {
         lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
         this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
       } else {
-        AlgoResponse algoResponse =
-            restTemplate.postForObject(
-                loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
-
-        updateProcessIdForLoadablePattern(
-            algoResponse.getProcessId(),
-            loadablePatternOpt.get(),
-            LOADABLE_PATTERN_VALIDATION_STARTED_ID);
-        replyBuilder
-            .setProcesssId(algoResponse.getProcessId())
-            .setResponseStatus(
-                Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
+        log.info("------- Envoy writer calling has failed : " + ewReply.getStatusCode());
+        //        AlgoResponse algoResponse =
+        //            restTemplate.postForObject(
+        //                loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
+        //
+        //        updateProcessIdForLoadablePattern(
+        //            algoResponse.getProcessId(),
+        //            loadablePatternOpt.get(),
+        //            LOADABLE_PATTERN_VALIDATION_STARTED_ID);
+        //        replyBuilder
+        //            .setProcesssId(algoResponse.getProcessId())
+        //            .setResponseStatus(
+        //
+        // Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
       }
     }
     return replyBuilder;
