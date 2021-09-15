@@ -31,7 +31,7 @@
     <ExternalSystemSettings>
       <option name="env">
         <map>
-          <entry key="CONTAINER_NAME" value="task-manager-shore" />
+          <entry key="CONTAINER_NAME" value="task-manager-container-shore" />
           <entry key="DEBUG_PORT_HOST" value="5284" />
           <entry key="GRPC_PORT_HOST" value="9284" />
           <entry key="IMAGE_NAME" value="task-manager-shore" />

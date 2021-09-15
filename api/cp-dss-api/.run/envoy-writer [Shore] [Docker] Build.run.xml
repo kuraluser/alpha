@@ -22,7 +22,7 @@
     <ExternalSystemSettings>
       <option name="env">
         <map>
-          <entry key="CONTAINER_NAME" value="envoy-writer-shore" />
+          <entry key="CONTAINER_NAME" value="envoy-writer-container-shore" />
           <entry key="IMAGE_NAME" value="envoy-writer-shore" />
           <entry key="SERVICE_NAME" value="envoy-writer-service-shore" />
         </map>

@@ -1,17 +1,19 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="task-manager [Ship] [Docker] Build" type="GradleRunConfiguration" factoryName="Gradle" folderName="Task Manager">
+  <configuration default="false" name="envoy-writer [Ship] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Envoy Writer">
     <ExternalSystemSettings>
       <option name="env">
         <map>
-          <entry key="CONTAINER_NAME" value="task-manager-container-ship" />
-          <entry key="IMAGE_NAME" value="task-manager-ship" />
-          <entry key="SERVICE_NAME" value="task-manager-service-ship" />
+          <entry key="CONTAINER_NAME" value="envoy-writer-container-ship" />
+          <entry key="DEBUG_PORT_HOST" value="5095" />
+          <entry key="GRPC_PORT_HOST" value="9095" />
+          <entry key="IMAGE_NAME" value="envoy-writer-ship" />
+          <entry key="SERVICE_NAME" value="envoy-writer-service-ship" />
         </map>
       </option>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/task-manager" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/envoy-writer" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="jib -PbuildEnv=local" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
       <option name="taskDescriptions">
         <list />
       </option>

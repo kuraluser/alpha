@@ -22,7 +22,7 @@
     <ExternalSystemSettings>
       <option name="env">
         <map>
-          <entry key="CONTAINER_NAME" value="task-manager-shore" />
+          <entry key="CONTAINER_NAME" value="task-manager-container-shore" />
           <entry key="IMAGE_NAME" value="task-manager-shore" />
           <entry key="SERVICE_NAME" value="task-manager-service-shore" />
         </map>
