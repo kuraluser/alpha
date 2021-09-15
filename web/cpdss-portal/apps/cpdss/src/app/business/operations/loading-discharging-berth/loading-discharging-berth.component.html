@@ -44,7 +44,7 @@
 <div class="row pt-10">
   <div class="col-md-12">
     <form [formGroup]="berthDetailsForm" id="fg_load_discharge_details">
-      <div class="container-fluid">
+      <div class="container-fluid pr-0">
         <div class="row item-row-wrapper">
           <div class="col">
 
@@ -209,12 +209,12 @@
                 class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_REGULATION_RESTRICTION_LABEL'
                 | translate}}</label>
               <div class="col error-icon-wrapper">
-                <textarea type="text" class="form-control " id="berth-regulation-restriction"
+                <textarea type="text" class="form-control text-right" id="berth-regulation-restriction"
                   *ngIf="editMode;else regulationAndRestriction" formControlName="regulationAndRestriction"
                   placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_REGULATION_RESTRICTION_PLACE_HOLDER' | translate}}"
                   (change)="change('regulationAndRestriction')" [readonly]="false"></textarea>
                 <ng-template #regulationAndRestriction>
-                  <div class="">{{berthDetailsFormControl?.regulationAndRestriction?.value}}</div>
+                  <div class="text-right">{{berthDetailsFormControl?.regulationAndRestriction?.value}}</div>
                 </ng-template>
                 <cpdss-portal-validation-error [errors]="fieldError('regulationAndRestriction')"
                   [errorMessages]="errorMesages.regulationAndRestriction">
@@ -227,12 +227,12 @@
                 class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_ITEMS_TO_BE_AGREED_WITH_LABEL'
                 | translate}}</label>
               <div class="col  error-icon-wrapper">
-                <textarea type="text" class="form-control" id="berth-itemsToBeAgreedWith"
+                <textarea type="text" class="form-control text-right" id="berth-itemsToBeAgreedWith"
                   *ngIf="editMode;else itemsToBeAgreedWith" formControlName="itemsToBeAgreedWith"
                   placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_ITEMS_TO_BE_AGREED_WITH_PLACE_HOLDER' | translate}}"
                   (change)="change('itemsToBeAgreedWith')" [readonly]="false"></textarea>
                 <ng-template #itemsToBeAgreedWith>
-                  <div class="">{{berthDetailsFormControl?.itemsToBeAgreedWith?.value}}</div>
+                  <div class="text-right">{{berthDetailsFormControl?.itemsToBeAgreedWith?.value}}</div>
                 </ng-template>
                 <cpdss-portal-validation-error [errors]="fieldError('itemsToBeAgreedWith')"
                   [errorMessages]="errorMesages.itemsToBeAgreedWith"></cpdss-portal-validation-error>
