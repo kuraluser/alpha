@@ -17,6 +17,7 @@ import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanResponse;
+import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
@@ -268,6 +269,11 @@ public class DischargeInformationService {
             planReply.getDischargingInformation().getDischargeStage());
     dischargeInformation.setDischargeStages(dischargeStages);
 
+    // post discharge stage
+    PostDischargeStage postDischargeStage =
+        this.loadingInformationService.getPostDischargeStage(
+            planReply.getDischargingInformation().getPostDischargeStageTime());
+    dischargeInformation.setPostDischargeStageTime(postDischargeStage);
     CargoVesselTankDetails vesselTankDetails =
         this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
             vesselId,

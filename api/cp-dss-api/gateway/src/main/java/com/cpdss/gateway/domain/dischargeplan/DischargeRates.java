@@ -12,4 +12,5 @@ public class DischargeRates {
   private BigDecimal maxDischargingRate;
   private BigDecimal minBallastRate;
   private BigDecimal maxBallastRate;
+  private Long id;
 }
