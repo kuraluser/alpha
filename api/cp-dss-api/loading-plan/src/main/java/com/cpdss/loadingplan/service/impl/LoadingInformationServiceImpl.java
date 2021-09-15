@@ -287,7 +287,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     // Loading Delay
     List<ReasonForDelay> list5 = this.reasonForDelayRepository.findAll();
     List<LoadingDelay> list6 =
-        this.loadingDelayRepository.findAllByLoadingInformationAndIsActiveTrue(var1.orElse(null));
+        this.loadingDelayRepository.findAllByLoadingInformationAndIsActiveTrueOrderById(
+            var1.orElse(null));
     LoadingPlanModels.LoadingDelay loadingDelay =
         this.informationBuilderService.buildLoadingDelayMessage(list5, list6);
 
