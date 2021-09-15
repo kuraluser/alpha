@@ -160,4 +160,9 @@ public interface LoadableStudyPortRotationRepository
   @Query(
       "UPDATE LoadableStudyPortRotation SET isPortRotationOhqComplete = ?2 WHERE id = ?1 AND isActive = true")
   public void updateIsOhqCompleteByIdAndIsActiveTrue(Long id, Boolean isOhqComplete);
+
+  @Query(
+      "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy= ?1 AND  LSPR.portXId= ?2 and LSPR.operation.id = 2 AND LSPR.isActive = true")
+  public LoadableStudyPortRotation findByLoadableStudyAndPortAndOperation(
+      LoadableStudy loadableStudy, long portId);
 }
