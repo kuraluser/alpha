@@ -5,8 +5,8 @@
 </div>
 
 <div class="row">
-    <div class="col-md-8">
-        <div class="col col-11  m-auto">
+    <div class="col">
+        <div class="col col-12  m-auto">
             <div class="row ">
                 <div class="col-md-12 text-center">
                     <div class="pt-15">
@@ -39,7 +39,7 @@
             
         </div>
     </div>
-    <div class="col-md-4 pt-30">
+    <div class="col sidebar-right-loading-discharging-plan pt-30">
         <div class="row">
             <div class="col">
             <cpdss-portal-loading-discharging-cargo-details-table [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargoConditions]="cargoConditions" [cargoQuantities]="cargoQuantities"></cpdss-portal-loading-discharging-cargo-details-table>
@@ -55,4 +55,4 @@
     </div>
 </div>
 
-<cpdss-portal-ullage-update-popup [vesselId]="vesselId"  [patternId]="loadingPlanData?.loadingInformation?.loadablePatternId" [portRotationId]="portRotationId" [status]="ULLAGE_STATUS.ARRIVAL" [loadingInfoId]="loadingInfoId" (closePopup)="closePopUp($event)" *ngIf="display"></cpdss-portal-ullage-update-popup>
+<cpdss-portal-ullage-update-popup [vesselId]="vesselId"  [patternId]="loadingPlanData?.loadingInformation?.loadablePatternId" [portRotationId]="portRotationId" [status]="ULLAGE_STATUS.ARRIVAL" [operation]="operation" [loadingInfoId]="loadingInfoId" (closePopup)="closePopUp($event)" *ngIf="display"></cpdss-portal-ullage-update-popup>

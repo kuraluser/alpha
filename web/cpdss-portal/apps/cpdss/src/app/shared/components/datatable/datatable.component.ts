@@ -119,6 +119,8 @@ export class DatatableComponent implements OnInit {
 
   @Input() showHeader = true;
 
+  @Input() showTotalClass: string;
+
   @Input()
   set loading(loading: boolean) {
     this._loading = loading;

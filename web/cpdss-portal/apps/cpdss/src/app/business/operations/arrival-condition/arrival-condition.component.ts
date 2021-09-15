@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
-import { ITankOptions, IShipCargoTank, IVoyagePortDetails, TANKTYPE, ICargoQuantities, IShipBallastTank } from '../../core/models/common.model';
+import { ITankOptions, IShipCargoTank, IVoyagePortDetails, TANKTYPE, ICargoQuantities, IShipBallastTank, OPERATIONS } from '../../core/models/common.model';
 import { ArrivalConditionTransformationService } from './arrival-condition-transformation.service';
 import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
 import { ULLAGE_STATUS, ULLAGE_STATUS_TEXT, ULLAGE_STATUS_VALUE } from '../models/loading-discharging.model';
@@ -30,6 +30,7 @@ export class ArrivalConditionComponent implements OnInit {
   @Input() loadingInfoId: number;
   @Input() vesselId: number;
   @Input() portRotationId: number;
+  @Input() operation: OPERATIONS;
 
   @Input() get loadingPlanData(): any {
     return this._loadingPlanData;
@@ -81,6 +82,7 @@ export class ArrivalConditionComponent implements OnInit {
   readonly ULLAGE_STATUS = ULLAGE_STATUS;
   readonly ULLAGE_STATUS_TEXT = ULLAGE_STATUS_TEXT;
   readonly ULLAGE_STATUS_VALUE = ULLAGE_STATUS_VALUE;
+  readonly OPERATIONS = OPERATIONS;
 
   constructor(
     private arrivalConditionTransformationService: ArrivalConditionTransformationService,

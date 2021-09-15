@@ -1,9 +1,14 @@
 ext{
-    grpcPort = System.getenv('GRPC_PORT') ?: ""
 	salt = System.getenv('SALT') ?: ""
     cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
     shipUrl = System.getenv('SHIP_URL')?:""
     shoreUrl = System.getenv('SHORE_URL')?:""
+
+    grpcPortHost = System.getenv('GRPC_PORT_HOST') ?: '9096'
+    debugPortHost = System.getenv('DEBUG_PORT_HOST') ?: '5096'
+    imageNameVal = System.getenv('IMAGE_NAME') ?: 'cpdss-envoy-reader'
+    containerNameVal = System.getenv('CONTAINER_NAME') ?: 'envoy-reader-container'
+    serviceNameVal = System.getenv('SERVICE_NAME') ?: 'envoy-reader-service'
 }
 
 appConfig {
@@ -11,27 +16,33 @@ appConfig {
   logging = 'y'
   javaMainClass = "com.cpdss.envoyreader.Application"
   appName = 'envoy-reader'
+  rest = 'y'
   monitoring = 'y'
-  //persistence = 'springData'
-  //dataBase = 'postgres'
   devTools = 'y'
 docker {
-    imageName = 'cpdss-envoy-reader'
-    containerName = 'envoy-reader-container'
+    imageName = imageNameVal
+    containerName = containerNameVal
     networkName = 'cpdss-network'
+    memoryLimitInMB = 300
+    hostPortMapping {
+        hostGrpcPort = Integer.parseInt(grpcPortHost)
+        hostDebugPort = Integer.parseInt(debugPortHost)
+    }
+    healthCheck {
+        healthCheckCmd = 'wget --no-verbose --spider http://localhost:8080/actuator/health'
+        healthCheckIntervalInSec = 30
+        healthCheckInitialDelayInSec = 60
+    }
     swarm {
-      serviceName = 'envoy-reader-service'
+      serviceName = serviceNameVal
       swarmMode = REPLICATED_MODE
       replicas = 1
       rollbackOnUpdateFailure = true
     }
-    environment = ['GRPC_PORT': grpcPort, 'SALT': salt,'CPDSS_BUILD_ENV': cpdssBuildEnv, 'SHIP_URL': shipUrl,'SHORE_URL':shoreUrl]
+    environment = ['GRPC_PORT': '8090', 'SALT': salt,'CPDSS_BUILD_ENV': cpdssBuildEnv, 'SHIP_URL': shipUrl,'SHORE_URL':shoreUrl]
   }
 }
 
 dependencies {
     implementation project(':common')
-    // compile group: 'org.springframework', name: 'spring-web', version: '5.1.3.RELEASE'
-    //     compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
-	  // compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
 }

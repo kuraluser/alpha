@@ -35,6 +35,7 @@ export class DepartureConditionComponent implements OnInit {
   @Input() loadingInfoId: number;
   @Input() vesselId: number;
   @Input() portRotationId: number;
+  @Input() operation: OPERATIONS;
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
   }

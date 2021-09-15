@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ICargo, ILoadableQuantityCargo, IShipCargoTank, IAlgoResponse, IAlgoError } from '../../../core/models/common.model';
+import { ICargo, ILoadableQuantityCargo, IShipCargoTank, IAlgoResponse, IAlgoError, OPERATIONS } from '../../../core/models/common.model';
 import { ILoadingDischargingSequences, IToppingOffSequence } from '../../models/loading-discharging.model';
 import { LoadingPlanApiService } from './../../services/loading-plan-api.service';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
@@ -48,6 +48,8 @@ export class LoadingPlanComponent implements OnInit {
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   errorMessage: IAlgoError[];
   errorPopUp = false;
+
+  readonly OPERATIONS = OPERATIONS;
 
 
   constructor(

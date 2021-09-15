@@ -1,0 +1,58 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="envoy-writer [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Envoy Writer">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="envoy-writer-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5295" />
+          <entry key="GRPC_PORT_HOST" value="9295" />
+          <entry key="IMAGE_NAME" value="envoy-writer-shore" />
+          <entry key="SERVICE_NAME" value="envoy-writer-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/api/cp-dss-api/envoy-writer" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="envoy-writer [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Envoy Writer">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="envoy-writer-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5295" />
+          <entry key="GRPC_PORT_HOST" value="9295" />
+          <entry key="IMAGE_NAME" value="envoy-writer-shore" />
+          <entry key="SERVICE_NAME" value="envoy-writer-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/api/cp-dss-api/envoy-writer" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+</component>
