@@ -68,7 +68,7 @@
     <div class="row"  *ngIf="selectedTab === tankType.CARGO">
         <div class="col  ml-30 mr-30">
             <cpdss-portal-datatable [tableId]="'cargoTobeLoaded'" [columns]="cargoTobeLoadedColumns"
-                [value]="cargoTobeLoaded" [scrollable]="false">
+                [value]="cargoTobeLoaded" [scrollable]="false" [editMode]="false">
             </cpdss-portal-datatable>
         </div>
     </div>

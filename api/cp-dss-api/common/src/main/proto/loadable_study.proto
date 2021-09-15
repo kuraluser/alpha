@@ -1442,6 +1442,7 @@ message LoadingPlanIdRequest {
 	string operationType = 4;
 	int64 portRotationId = 5;
 	int64 portId = 6;
+	bool cargoNominationFilter = 7; // default value - false
 }
 
 message LoadingPlanCommonResponse{

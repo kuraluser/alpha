@@ -11,14 +11,14 @@
                 <ng-template pTemplate="header" let-columns>
                     <ng-container>
                         <tr>
-                            <th *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan" [attr.rowspan]="col.rowspan">
+                            <th [class]="col.fieldClass" *ngFor="let col of columns; let colIndex = index" [attr.colspan]="col.colspan" [attr.rowspan]="col.rowspan">
                                 <div [class]="col.fieldColumnClass">{{col.header | translate}}</div>
                             </th>
                         </tr>
                         <tr>
                             <ng-container *ngFor="let col of columns; let colIndex = index">
                                 <ng-container *ngIf="col?.subColumns?.length;">
-                                    <th *ngFor="let subCol of col.subColumns;">{{subCol.header | translate}}</th>
+                                    <th [class]="subCol.fieldClass" *ngFor="let subCol of col.subColumns;">{{subCol.header | translate}}</th>
                                 </ng-container>
                             </ng-container>
                         </tr>
@@ -29,13 +29,13 @@
                         <ng-container *ngFor="let col of columns">
                             <ng-container *ngIf="col?.subColumns?.length;else col_content">
                                 <ng-container *ngFor="let subCol of col.subColumns;">
-                                    <td>
+                                    <td [class]="subCol.fieldClass">
                                         <span>{{subCol?.numberFormat === 'quantity' ? (rowData[subCol.field] | quantityDecimalFormat: subCol?.unit): rowData[subCol.field]}}</span>
                                     </td>
                                 </ng-container>
                             </ng-container>
                             <ng-template #col_content>
-                                <td><span  [ngClass]="col.field === 'differencePercentage' ? getDiffClass(rowData[col.field]) : ''">{{col.field === 'differencePercentage' ? (rowData[col.field]+'%') : rowData[col.field] }}</span></td>
+                                <td class="text-right"><span  [ngClass]="col.field === 'differencePercentage' ? getDiffClass(rowData[col.field]) : ''">{{col.field === 'differencePercentage' ? (rowData[col.field]+'%') : rowData[col.field] }}</span></td>
                             </ng-template>
                         </ng-container>
                     </tr>
@@ -43,15 +43,15 @@
                 <ng-template pTemplate="footer">
                     <tr>
                         <td colspan="3">{{'LOADABLE_QUANTITY_TOTAL' | translate}}</td>
-                        <td>{{total?.orderedQuantity | quantityDecimalFormat: 'MT'}}</td>
-                        <td>{{total?.orderBbls60f | quantityDecimalFormat: 'BBLS'}}</td>
+                        <td class="text-right">{{total?.orderedQuantity | quantityDecimalFormat: 'MT'}}</td>
+                        <td class="text-right">{{total?.orderBbls60f | quantityDecimalFormat: 'BBLS'}}</td>
                         <td colspan="2"></td>
-                        <td>{{total?.loadableBblsdbs | quantityDecimalFormat: 'OBSBBLS'}}</td>
-                        <td>{{total?.loadableBbls60f | quantityDecimalFormat: 'BBLS'}}</td>
-                        <td>{{total?.loadableLT | quantityDecimalFormat: 'LT'}}</td>
-                        <td>{{total?.loadableMT | quantityDecimalFormat: 'MT'}}</td>
-                        <td>{{total?.loadableKL | quantityDecimalFormat: 'KL'}}</td>
-                        <td><span  [ngClass]="getTotalDiffClass(total?.differencePercentage)">{{total?.differencePercentage | number :'1.2-2'}} %</span></td>
+                        <td class="text-right">{{total?.loadableBblsdbs | quantityDecimalFormat: 'OBSBBLS'}}</td>
+                        <td class="text-right">{{total?.loadableBbls60f | quantityDecimalFormat: 'BBLS'}}</td>
+                        <td class="text-right">{{total?.loadableLT | quantityDecimalFormat: 'LT'}}</td>
+                        <td class="text-right">{{total?.loadableMT | quantityDecimalFormat: 'MT'}}</td>
+                        <td class="text-right">{{total?.loadableKL | quantityDecimalFormat: 'KL'}}</td>
+                        <td class="text-right"><span  [ngClass]="getTotalDiffClass(total?.differencePercentage)">{{total?.differencePercentage | number :'1.2-2'}} %</span></td>
                     </tr>
                 </ng-template>
             </p-table>

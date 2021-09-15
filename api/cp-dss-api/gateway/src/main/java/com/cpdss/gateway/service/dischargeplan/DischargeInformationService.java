@@ -12,6 +12,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.LoadingUpdateUllageResponse;
 import com.cpdss.gateway.domain.PortRotation;
+import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
@@ -25,10 +26,12 @@ import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
 import com.cpdss.gateway.domain.loadingplan.LoadingStages;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
+import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
+import com.cpdss.gateway.utility.AdminRuleValueExtract;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +45,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class DischargeInformationService {
 
-  private final String OPERATION_TYPE_ARR = "ARR";
-
   @Autowired DischargeInformationGrpcService dischargeInformationGrpcService;
 
   @Autowired DischargeInformationBuilderService infoBuilderService;
@@ -55,6 +56,8 @@ public class DischargeInformationService {
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
 
   @Autowired LoadingPlanService loadingPlanService;
+
+  @Autowired VesselInfoService vesselInfoService;
 
   @GrpcClient("dischargeInformationService")
   private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
@@ -97,16 +100,25 @@ public class DischargeInformationService {
       dischargeInformation.setDischargeStudyName(activeVoyage.getActiveDs().getName());
     }
 
+    // RPC call to vessel info, Get Rules (default value for Discharge Info)
+    RuleResponse ruleResponse =
+        vesselInfoService.getRulesByVesselIdAndSectionId(
+            vesselId, GatewayConstants.DISCHARGING_RULE_MASTER_ID, null, null);
+    AdminRuleValueExtract extract =
+        AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
+
     // discharge details
     LoadingDetails dischargeDetails =
         this.infoBuilderService.buildDischargeDetailFromMessage(
             disRpcReplay.getDischargeDetails(),
             portRotation.get().getPortId(),
-            portRotation.get().getId());
+            portRotation.get().getId(),
+            extract);
 
     // discharge rates
     DischargeRates dischargeRates =
-        this.infoBuilderService.buildDischargeRatesFromMessage(disRpcReplay.getDischargeRate());
+        this.infoBuilderService.buildDischargeRatesFromMessage(
+            disRpcReplay.getDischargeRate(), extract);
 
     // discharge berth (master data)
     List<BerthDetails> availableBerths =
@@ -132,7 +144,8 @@ public class DischargeInformationService {
             disRpcReplay.getDischargeDelay());
 
     // cow plan
-    CowPlan cowPlan = this.infoBuilderService.buildDischargeCowPlan(disRpcReplay.getCowPlan());
+    CowPlan cowPlan =
+        this.infoBuilderService.buildDischargeCowPlan(disRpcReplay.getCowPlan(), extract);
 
     // Call 1 to DS for cargo details
     CargoVesselTankDetails vesselTankDetails =
@@ -143,14 +156,14 @@ public class DischargeInformationService {
             portRotation.get().getPortId(),
             portRotation.get().getPortOrder(),
             portRotation.get().getId(),
-            OPERATION_TYPE_ARR); // Discharge Info needed Arrival Conditions
+            GatewayConstants.OPERATION_TYPE_ARR); // Discharge Info needed Arrival Conditions
 
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
     vesselTankDetails.setLoadableQuantityCargoDetails(
         this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
             vesselId,
             activeVoyage.getDischargePatternId(),
-            OPERATION_TYPE_ARR, // Discharge Info needed Arrival Conditions
+            GatewayConstants.OPERATION_TYPE_ARR, // Discharge Info needed Arrival Conditions
             portRotation.get().getId(),
             portRotation.get().getPortId()));
 
@@ -211,7 +224,7 @@ public class DischargeInformationService {
     // discharge rates
     DischargeRates dischargeRates =
         this.infoBuilderService.buildDischargeRatesFromMessage(
-            planReply.getDischargingInformation().getDischargeRate());
+            planReply.getDischargingInformation().getDischargeRate(), null); // rule not needed
     dischargeInformation.setDischargeRates(dischargeRates);
 
     // re using the already written call for loading. and copying the tank details to discharging
@@ -263,13 +276,13 @@ public class DischargeInformationService {
             portRotation.get().getPortId(),
             portRotation.get().getPortOrder(),
             portRotation.get().getId(),
-            OPERATION_TYPE_ARR);
+            GatewayConstants.OPERATION_TYPE_ARR);
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
     vesselTankDetails.setDischargeQuantityCargoDetails(
         this.loadingInformationService.getDischargePlanCargoDetailsByPort(
             vesselId,
             activeVoyage.getPatternId(),
-            OPERATION_TYPE_ARR,
+            GatewayConstants.OPERATION_TYPE_ARR,
             portRotation.get().getId(),
             portRotation.get().getPortId()));
     dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);

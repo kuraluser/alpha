@@ -24,7 +24,7 @@
                     <th *ngFor="let col of columns" [pSortableColumn]="col?.sortField ? col?.sortField : col.field"
                         [pSortableColumnDisabled]="!col.sortable" [colSpan]="col?.columns?.length"
                         [rowSpan]="col?.columns?.length ? 1 : getRowSpan(columns, filterable)"
-                        [class]="col?.fieldColumnClass" [ngClass]="{'text-right': col.fieldType === 'NUMBER'}">
+                        [class]="getColumnCellClass(col)">
                         <span>{{col.header| translate}}</span>
                         <span *ngIf="col?.fieldHeaderTooltipIcon && col?.fieldHeaderTooltipText" class="inline-block ml-5 v-middle pointer pi" [ngClass]="col?.fieldHeaderTooltipIcon" pTooltip="{{col?.fieldHeaderTooltipText | translate}}" tooltipPosition="top"></span>
                         <p-sortIcon [field]="col?.sortField ? col?.sortField : col.field" *ngIf="col.sortable">
@@ -131,9 +131,9 @@
                     </ng-container>
                     <ng-template #rowTemplate let-rowData="rowData" let-col="column" let-colIndex="colIndex"
                         let-rowIndex="rowIndex" let-columns="columns">
-                        <td [class]="col.fieldClass" [ngSwitch]="col.fieldType" [pEditableColumn]="rowData"
+                        <td [class]="getFieldCellClass(col, rowData)" [ngSwitch]="col.fieldType" [pEditableColumn]="rowData"
                             [pEditableColumnField]="col.field" [pEditableColumnRowIndex]="rowIndex"
-                            (click)="onClick($event, rowData, rowIndex, col)" [ngClass]="{'text-right': col.fieldType === 'NUMBER','no-ediable-field': col.fieldType === 'NUMBER' && (!editMode || !rowData[col.field]?.isEditMode)}">
+                            (click)="onClick($event, rowData, rowIndex, col)" >
                             <div [attr.tabindex]="col.field !== 'actions' && col.fieldType !== fieldType.SLNO ? (rowIndex*10)+colIndex+rowIndex : null"
                                 (keyup)="onKeyChange($event, rowData, col, colIndex, rowIndex)"
                                 (keydown.enter)="onKeyChange($event, rowData, col, colIndex, rowIndex)"

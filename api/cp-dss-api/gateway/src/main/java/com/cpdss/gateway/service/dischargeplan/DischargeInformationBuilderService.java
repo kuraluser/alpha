@@ -17,6 +17,8 @@ import com.cpdss.gateway.domain.vessel.PumpType;
 import com.cpdss.gateway.domain.vessel.VesselPump;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
+import com.cpdss.gateway.utility.AdminRuleTemplate;
+import com.cpdss.gateway.utility.AdminRuleValueExtract;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,7 +39,8 @@ public class DischargeInformationBuilderService {
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
 
   public LoadingDetails buildDischargeDetailFromMessage(
-      DischargeDetails var1, Long portId, Long portRId) throws GenericServiceException {
+      DischargeDetails var1, Long portId, Long portRId, AdminRuleValueExtract extract)
+      throws GenericServiceException {
     LoadingDetails var2 = new LoadingDetails();
     LoadableStudy.LoadingSynopticResponse var3 =
         loadingPlanGrpcService.fetchSynopticRecordForPortRotation(
@@ -87,28 +90,33 @@ public class DischargeInformationBuilderService {
   }
 
   public DischargeRates buildDischargeRatesFromMessage(
-      com.cpdss.common.generated.discharge_plan.DischargeRates var1) {
+      com.cpdss.common.generated.discharge_plan.DischargeRates var1,
+      AdminRuleValueExtract extract) {
     DischargeRates var2 = new DischargeRates();
     if (var1.getInitialDischargeRate().isEmpty()) {
-      // get admin data or default value
+      String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_INITIAL_RATE);
+      var2.setInitialDischargingRate(val.isEmpty() ? null : new BigDecimal(val));
     } else {
       var2.setInitialDischargingRate(new BigDecimal(var1.getInitialDischargeRate()));
     }
 
     if (var1.getMaxDischargeRate().isEmpty()) {
-      // get admin data or default value
+      String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_MAXIMUM_RATE);
+      var2.setMaxDischargingRate(val.isEmpty() ? null : new BigDecimal(val));
     } else {
       var2.setMaxDischargingRate(new BigDecimal(var1.getMaxDischargeRate()));
     }
 
     if (var1.getMinBallastRate().isEmpty()) {
-      // get admin data or default value
+      String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_MIN_DE_BALLAST_RATE);
+      var2.setMinBallastRate(val.isEmpty() ? null : new BigDecimal(val));
     } else {
       var2.setMinBallastRate(new BigDecimal(var1.getMaxBallastRate()));
     }
 
     if (var1.getMaxBallastRate().isEmpty()) {
-      // get admin data or default value
+      String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_MAX_DE_BALLAST_RATE);
+      var2.setMaxBallastRate(val.isEmpty() ? null : new BigDecimal(val));
     } else {
       var2.setMaxBallastRate(new BigDecimal(var1.getMaxBallastRate()));
     }
@@ -308,11 +316,23 @@ public class DischargeInformationBuilderService {
     return delays;
   }
 
-  public com.cpdss.gateway.domain.dischargeplan.CowPlan buildDischargeCowPlan(CowPlan cowPlan) {
+  public com.cpdss.gateway.domain.dischargeplan.CowPlan buildDischargeCowPlan(
+      CowPlan cowPlan, AdminRuleValueExtract extract) {
     com.cpdss.gateway.domain.dischargeplan.CowPlan var1 =
         new com.cpdss.gateway.domain.dischargeplan.CowPlan();
     try {
       BeanUtils.copyProperties(cowPlan, var1);
+
+      // If no value in discharge-plan DB, set admin Rule Value
+      if (cowPlan.getTrimCowMin().isEmpty()) {
+        String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_COW_TRIM_MIN, false);
+        var1.setTrimCowMin(val);
+      }
+      if (cowPlan.getTrimCowMax().isEmpty()) {
+        String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_COW_TRIM_MAX, true);
+        var1.setTrimCowMax(val);
+      }
+
       var topCow =
           cowPlan.getCowTankDetailsList().stream()
               .filter(v -> v.getCowType().equals(Common.COW_TYPE.TOP_COW))

@@ -1170,10 +1170,10 @@ export interface IUllageQuantityResponse {
 * @enum ULLAGE_STATUS_TEXT
 */
 export enum ULLAGE_STATUS_TEXT {
-  'Plan Generated'= 5,
-  'Validation In Progress' = 12,
-  'Validation Successfull' = 13,
-  'Validation Failed' = 14,
+  'ULLAGE_UPDATE_PLAN_GENERATED'= 5,
+  'ULLAGE_UPDATE_PLAN_INPROGRESS' = 12,
+  'ULLAGE_UPDATE_PLAN_SUCCESS' = 13,
+  'ULLAGE_UPDATE_PLAN_VALIDATION_FAILED' = 14,
 }
 
 /**

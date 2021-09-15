@@ -264,6 +264,7 @@ public class LoadingInformationAlgoRequestBuilderService {
                 .setOperationType("DEP")
                 .setPortRotationId(entity.getPortRotationXId())
                 .setPortId(entity.getPortXId())
+                .setCargoNominationFilter(false)
                 .build());
 
     if (!LoadingPlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {

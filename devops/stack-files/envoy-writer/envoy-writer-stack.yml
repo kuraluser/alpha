@@ -2,8 +2,6 @@ version: "3.7"
 services: 
   envoy-writer-service:
     image: "${DOCKER_REGISTRY}/${IMAGE_NAME}:${TAG_NAME}"
-    ports: 
-    - ${PORTS}
     environment: 
     - DB_HOST=${DB_HOST}
     - DB_NAME=${DB_NAME} 
