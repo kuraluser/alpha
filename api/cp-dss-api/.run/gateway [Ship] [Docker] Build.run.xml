@@ -9,7 +9,7 @@
         </map>
       </option>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/api/cp-dss-api/gateway" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/gateway" />
       <option name="externalSystemIdString" value="GRADLE" />
       <option name="scriptParameters" value="jib -PbuildEnv=local" />
       <option name="taskDescriptions">

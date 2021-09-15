@@ -2,7 +2,7 @@
   <configuration default="false" name="envoy-writer [Shore] [Docker] Build" type="GradleRunConfiguration" factoryName="Gradle" folderName="Envoy Writer">
     <ExternalSystemSettings>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/api/cp-dss-api/envoy-writer" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/envoy-writer" />
       <option name="externalSystemIdString" value="GRADLE" />
       <option name="scriptParameters" value="jib -PbuildEnv=local" />
       <option name="taskDescriptions">
@@ -28,7 +28,7 @@
         </map>
       </option>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/api/cp-dss-api/envoy-writer" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/envoy-writer" />
       <option name="externalSystemIdString" value="GRADLE" />
       <option name="scriptParameters" value="jib -PbuildEnv=local" />
       <option name="taskDescriptions">
