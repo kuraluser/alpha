@@ -29,7 +29,7 @@
     </div>
    
     <div *ngIf="rulesService.vessels">
-                <cpdss-portal-rules-table *ngIf="rulesJson" [rulesJson]="rulesJson" [rulesService]="rulesService" (isSaveClicked)="saveChanges($event)">
+                <cpdss-portal-rules-table #rulesTable *ngIf="rulesJson" [rulesJson]="rulesJson" [rulesService]="rulesService" (isSaveClicked)="saveChanges($event)">
                 </cpdss-portal-rules-table>
     
 </div>

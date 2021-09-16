@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges , HostListener } from '@angular/core';
+import { Observable } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { IValidationErrorMessages } from 'apps/cpdss/src/app/shared/components/validation-error/validation-error.model';
@@ -9,6 +10,7 @@ import { RULE_TYPES } from '../../models/rules.model'
 import { numberValidator } from '../../../core/directives/number-validator.directive'
 import { RulesValidator } from '../../../core/directives/rules-validator-directive'
 import { NgxSpinnerService } from 'ngx-spinner';
+import { UnsavedChangesGuard } from '../../../../shared/services/guards/unsaved-data-guard';
 
 /**
  * Component Class for Rules Table
@@ -57,9 +59,15 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
 
   rulesFormTemp: any;
   rules: any;
+  
+  @HostListener('window:beforeunload')
+  canDeactivate(): Observable<boolean> | boolean {
+    return !(this.rulesForm?.dirty);
+  }
 
   constructor(private translateService: TranslateService,
-    private messageService: MessageService, private ngxSpinner: NgxSpinnerService,) { }
+    private messageService: MessageService, private ngxSpinner: NgxSpinnerService,
+    private unsavedChangesGuard: UnsavedChangesGuard) { }
 
   /**
   * Component lifecycle ngOnInit
@@ -151,7 +159,10 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
    * @param {*} index
    * @memberof RulesTableComponent
    */
-  setIndex(index: any) {
+  async setIndex(index: any) {
+    const value = await this.unsavedChangesGuard.canDeactivate(this);
+    if (!value) { return };
+
     this.selectedIndex = index;
     this.setRules();
   }
