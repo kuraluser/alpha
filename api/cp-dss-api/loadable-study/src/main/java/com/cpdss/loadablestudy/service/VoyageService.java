@@ -207,8 +207,8 @@ public class VoyageService {
               builder.addDischargePortRotation(grpcPRBuilder.build());
               log.info(
                   "Get Active voyage, Discharge Study Name {}, Id {}",
-                  confirmedLs.get().getName(),
-                  confirmedLs.get().getId());
+                  confirmedDs.get().getName(),
+                  confirmedDs.get().getId());
               List<LoadablePattern> patterns =
                   loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
                       confirmedDs.get().getId(), LS_STATUS_CONFIRMED);
