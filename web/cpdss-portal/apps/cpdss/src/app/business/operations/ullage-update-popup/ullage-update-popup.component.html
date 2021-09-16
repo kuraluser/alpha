@@ -7,6 +7,12 @@
             <div class="col-md-4" style="display:none">
                 <i class="pi pi-upload"></i>
             </div>
+            <div class="col-md-3">
+                <label for="">{{'ULLAGE_UPDATE_PORT_LABEL' | translate}}</label> 
+                <span class="pl-20">
+                    <label >{{ selectedPortName ? selectedPortName : ''}}</label>
+                </span>
+            </div>
             <div class="col-md-4">
                 <label for="">{{'LOADABLE_PLAN_ULLAGE_UPDATE_STATUS_LABEL' | translate}}</label> 
                 <span class="pl-20">
@@ -41,24 +47,23 @@
         </div>
         <div class="row pt-20">
             <div class="col-5 auto-layout">
-                <cpdss-portal-datatable [showTotalClass]="'text-left'" [showTotal]="true" *ngIf="selectedTab === tankType.CARGO" [value]="cargoQuantities"
+                <cpdss-portal-datatable [showTotalClass]="'text-left'" [showTotal]="true"  [scrollable]="false" *ngIf="selectedTab === tankType.CARGO" [value]="cargoQuantities"
                     [filterable]="false" [tableId]="'cargo_list'" [selectionMode]="selectionMode"
                     (columnClick)="onRowSelection($event)" [(selection)]="selectedTank"
                     (editComplete)="cargoEditCompleted($event)" [form]="cargoTankForm" [editMode]="editMode"
                     [columns]="cargoColumns"></cpdss-portal-datatable>
-                <cpdss-portal-datatable [showTotalClass]="'text-left'" [showTotal]="true" [selectionMode]="selectionMode" [form]="ballastTankForm" [editMode]="editMode"
+                <cpdss-portal-datatable [showTotalClass]="'text-left'" [showTotal]="true" [scrollable]="false" [selectionMode]="selectionMode" [form]="ballastTankForm" [editMode]="editMode"
                     *ngIf="selectedTab === tankType.BALLAST" (editComplete)="ballastEditCompleted($event)"
                     [value]="ballastQuantities" [filterable]="false" [tableId]="'ballast_list'"
                     (columnClick)="onRowSelection($event)" [(selection)]="selectedTank" [columns]="ballastColumns">
                 </cpdss-portal-datatable>
-                <cpdss-portal-datatable [showTotalClass]="'text-left'" [showTotal]="true" [selectionMode]="selectionMode" *ngIf="selectedTab === tankType.BUNKER"
+                <cpdss-portal-datatable [showTotalClass]="'text-left'" [scrollable]="false" [showTotal]="true" [selectionMode]="selectionMode" *ngIf="selectedTab === tankType.BUNKER"
                     [value]="bunkerTanksList" [filterable]="false" [tableId]="'bunker_table'"
                     (columnClick)="onRowSelection($event)" [(selection)]="selectedTank" [form]="bunkerTankForm"
                     [editMode]="editMode" [columns]="bunkerColumns"></cpdss-portal-datatable>
             </div>
             <div class="col-7">
                 <div class="row" *ngIf="selectedTab === tankType.CARGO">
-
                     <div class="col-5">
                         <div class="row">
                             <div class="col-4">
@@ -352,7 +357,7 @@
                 <button (click)="saveUllage(false)" class="btn btn-main" id="new-loadable-study-popup-save"
                     form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted">{{'SAVE' | translate}}</button>
                 <button (click)="saveUllage(true)" class="btn btn-main" id="new-loadable-study-popup-save"
-                    form="fg_newLoadableStudy" autofocus focusTrap>{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
+                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
                     translate}}</button>
             </div>
         </div>

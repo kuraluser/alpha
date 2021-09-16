@@ -3,40 +3,40 @@
   <div class="col-12">
     <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
       *ngIf="cargoSequenceGanttChart && cargoSequenceChartSeries" [options]="cargoSequenceGanttChart"
-      [callbackFunction]="cargoSequenceGanttChartCallback" [(update)]="updateCargoTankChart" [oneToOne]=true
+      [callbackFunction]="cargoSequenceGanttChartCallback" [(update)]="updateCargoTankChart" [oneToOne]="oneToOne"
       (chartInstance)="setCargoTankChartInstance($event)" class="sequence-chart cargo-sequence-chart">
     </highcharts-chart>
   </div>
   <div class="col-12" *ngIf="operation === OPERATIONS.DISCHARGING">
     <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
       *ngIf="cargoPumpSequenceGanttChart && cargoPumpSequenceChartSeries" [options]="cargoPumpSequenceGanttChart"
-      [(update)]="updateCargoPumpChart" [oneToOne]=true (chartInstance)="setCargoPumpChartInstance($event)"
+      [(update)]="updateCargoPumpChart" [oneToOne]="oneToOne" (chartInstance)="setCargoPumpChartInstance($event)"
       class="sequence-chart cargo-sequence-chart cargo-pumb-sequence-chart">
     </highcharts-chart>
   </div>
   <div class="col-12">
     <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
       *ngIf="ballastSequenceGanttChart && ballastSequenceChartSeries" [options]="ballastSequenceGanttChart"
-      [(update)]="updateBallastTankChart" [oneToOne]=true (chartInstance)="setBallastTankChartInstance($event)"
+      [(update)]="updateBallastTankChart" [oneToOne]="oneToOne" (chartInstance)="setBallastTankChartInstance($event)"
       class="sequence-chart ballast-sequence">
     </highcharts-chart>
   </div>
   <div class="col-12">
     <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
       *ngIf="ballastPumpSequenceGanttChart && ballastPumpSequenceChartSeries" [options]="ballastPumpSequenceGanttChart"
-      [(update)]="updateBallastPumpChart" [oneToOne]=true (chartInstance)="setBallastPumpChartInstance($event)"
+      [(update)]="updateBallastPumpChart" [oneToOne]="oneToOne" (chartInstance)="setBallastPumpChartInstance($event)"
       class="sequence-chart ballast-pump-sequence">
     </highcharts-chart>
   </div>
   <div class="col-12">
     <highcharts-chart [Highcharts]="Highcharts" *ngIf="flowRateAreaChart && flowRateChartSeries"
-      [options]="flowRateAreaChart" [(update)]="updateFlowRateChart" [oneToOne]=true
+      [options]="flowRateAreaChart" [(update)]="updateFlowRateChart" [oneToOne]="oneToOne"
       (chartInstance)="setFlowRateChartInstance($event)" class="sequence-chart flow-rate-chart">
     </highcharts-chart>
   </div>
   <div class="col-12">
     <highcharts-chart [Highcharts]="Highcharts" *ngIf="stabilityGanttChart && stabilityChartSeries"
-      [options]="stabilityGanttChart" [(update)]="updateStabilityParamsChart" [oneToOne]=true
+      [options]="stabilityGanttChart" [(update)]="updateStabilityParamsChart" [oneToOne]="oneToOne"
       (chartInstance)="setStabilityParamsChartInstance($event)" class="sequence-chart stabilityparams-chart">
     </highcharts-chart>
   </div>

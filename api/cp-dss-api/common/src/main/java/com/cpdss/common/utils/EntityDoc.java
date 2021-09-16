@@ -13,6 +13,7 @@ import javax.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -29,10 +30,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class EntityDoc implements Doc {
+public abstract class EntityDoc implements Doc, Identifiable<Long> {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GenericGenerator(
+      name = "assigned-identity",
+      strategy = "com.cpdss.common.utils.AssignedIdentityGenerator")
+  @GeneratedValue(generator = "assigned-identity", strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Version private Long version;

@@ -68,6 +68,8 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
         localStorage.setItem("voyageId", this.voyageId.toString());
         localStorage.removeItem("loadableStudyId")
         this.selectedPortName = localStorage.getItem('selectedPortName');
+        this.currentTab = OPERATION_TAB.INFORMATION;
+        this.loadingDischargingTransformationService.setTabChange(OPERATION_TAB.INFORMATION);
       });
   }
 

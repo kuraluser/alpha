@@ -600,7 +600,16 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
     List<LoadableStudy.LoadableQuantityCargoDetails> list =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
-            patternId, operationType, portRotationId, portId);
+            patternId, operationType, portRotationId, portId, true);
+    return this.buildLoadablePlanQuantity(list, vesselId);
+  }
+
+  @Override
+  public List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPortUnfiltered(
+      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
+    List<LoadableStudy.LoadableQuantityCargoDetails> list =
+        this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
+            patternId, operationType, portRotationId, portId, false);
     return this.buildLoadablePlanQuantity(list, vesselId);
   }
 
@@ -609,7 +618,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
     List<LoadableStudy.LoadableQuantityCargoDetails> list =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
-            patternId, operationType, portRotationId, portId);
+            patternId, operationType, portRotationId, portId, true);
     return this.buildDischargePlanQuantity(list, vesselId);
   }
 

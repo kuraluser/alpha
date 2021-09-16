@@ -64,6 +64,9 @@ public interface LoadingInformationService {
   List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
       Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId);
 
+  List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPortUnfiltered(
+      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId);
+
   List<DischargeQuantityCargoDetails> getDischargePlanCargoDetailsByPort(
       Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId);
 
