@@ -334,6 +334,8 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
     this.loadingDischargingDetailsForm.controls.timeOfSunset.updateValueAndValidity();
     fieldReferenceName.hideOverlay();
     if (!this.fieldError(field)) {
+      const selectedTime = new Date(this.loadingDischargingDetailsForm.value[field]);
+      this.loadingDischargingDetailsResponse[field] = ((selectedTime.getHours() < 10 ? ('0' + selectedTime.getHours()) : selectedTime.getHours())) + ":" + ((selectedTime.getMinutes() < 10 ? ('0' + selectedTime.getMinutes()) : selectedTime.getMinutes()));
       this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
     }
   }
