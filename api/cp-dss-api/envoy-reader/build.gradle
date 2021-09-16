@@ -17,7 +17,7 @@ appConfig {
   javaMainClass = "com.cpdss.envoyreader.Application"
   appName = 'envoy-reader'
   rest = 'y'
-  monitoring = 'y'
+  monitoring = 'n'
   devTools = 'y'
 docker {
     imageName = imageNameVal

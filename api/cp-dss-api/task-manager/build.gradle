@@ -19,7 +19,7 @@ appConfig {
   devTools = 'y'
   persistence = 'springData'
   dataBase = 'postgres'
-  monitoring = 'y'
+  monitoring = 'n'
   grpc = 'y'
   rest = 'y'
   docker {

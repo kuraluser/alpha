@@ -11,7 +11,7 @@ import lombok.Data;
 public class LoadabalePatternValidateRequest {
   private String module = LOADABLE_STUDY_JSON_MODULE_NAME;
   private LoadableStudy loadableStudy;
-  //private LoadablePlanDetailsAlgoJson loadablePlanDetails;
+  // private LoadablePlanDetailsAlgoJson loadablePlanDetails;
   private List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails;
   private Boolean ballastEdited;
   private Long loadablePatternId;

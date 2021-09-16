@@ -2624,6 +2624,10 @@ public class LoadablePlanService {
         lsCommunicationStatus.setMessageType(String.valueOf(MessageTypes.VALIDATEPLAN));
         lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
         this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
+        replyBuilder
+            .setProcesssId("")
+            .setResponseStatus(
+                Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
       } else {
         log.info("------- Envoy writer calling has failed : " + ewReply.getStatusCode());
         //        AlgoResponse algoResponse =
@@ -2634,11 +2638,6 @@ public class LoadablePlanService {
         //            algoResponse.getProcessId(),
         //            loadablePatternOpt.get(),
         //            LOADABLE_PATTERN_VALIDATION_STARTED_ID);
-        //        replyBuilder
-        //            .setProcesssId(algoResponse.getProcessId())
-        //            .setResponseStatus(
-        //
-        // Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
       }
     }
     return replyBuilder;
@@ -2681,43 +2680,50 @@ public class LoadablePlanService {
       }
       loadableQuantityCargoDetails.add(builder.build());
     }
-    loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream()
-        .forEach(
-            port -> {
-              port.getArrivalCondition()
-                  .setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
-              port.getDepartureCondition()
-                  .setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
-            });
+    //    loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream()
+    //        .forEach(
+    //            port -> {
+    //              port.getArrivalCondition()
+    //                  .setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
+    //              port.getDepartureCondition()
+    //                  .setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
+    //            });
   }
 
   private void buldLoadablPlanStabilityDetails(
       LoadabalePatternValidateRequest loadabalePatternValidateRequest,
       Long patternId,
       ModelMapper modelMapper) {
-    loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream()
-        .forEach(
-            port -> {
-              port.getArrivalCondition().setStabilityParameter(new StabilityParameter());
-              SynopticalTableLoadicatorData synopticalTableLoadicatorDataArr =
-                  synopticalTableLoadicatorDataRepository
-                      .findByLoadablePatternIdAndPortIdAndOperationId(
-                          patternId, port.getPortId(), LOADING_OPERATION_ID);
-              SynopticalTableLoadicatorData synopticalTableLoadicatorDataDep =
-                  synopticalTableLoadicatorDataRepository
-                      .findByLoadablePatternIdAndPortIdAndOperationId(
-                          patternId, port.getPortId(), DISCHARGING_OPERATION_ID);
-              StabilityParameter stabilityParameter =
-                  modelMapper.map(
-                      synopticalTableLoadicatorDataArr,
-                      com.cpdss.loadablestudy.domain.StabilityParameter.class);
-              port.getArrivalCondition().setStabilityParameter(stabilityParameter);
-              StabilityParameter stabilityParameterDep =
-                  modelMapper.map(
-                      synopticalTableLoadicatorDataDep,
-                      com.cpdss.loadablestudy.domain.StabilityParameter.class);
-              port.getDepartureCondition().setStabilityParameter(stabilityParameterDep);
-            });
+    if (loadabalePatternValidateRequest != null
+        && !loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().isEmpty()) {
+      loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream()
+          .forEach(
+              port -> {
+                port.getArrivalCondition().setStabilityParameter(new StabilityParameter());
+                SynopticalTableLoadicatorData synopticalTableLoadicatorDataArr =
+                    synopticalTableLoadicatorDataRepository
+                        .findByLoadablePatternIdAndPortIdAndOperationId(
+                            patternId, port.getPortId(), LOADING_OPERATION_ID);
+                SynopticalTableLoadicatorData synopticalTableLoadicatorDataDep =
+                    synopticalTableLoadicatorDataRepository
+                        .findByLoadablePatternIdAndPortIdAndOperationId(
+                            patternId, port.getPortId(), DISCHARGING_OPERATION_ID);
+                if (synopticalTableLoadicatorDataArr != null) {
+                  StabilityParameter stabilityParameter =
+                      modelMapper.map(
+                          synopticalTableLoadicatorDataArr,
+                          com.cpdss.loadablestudy.domain.StabilityParameter.class);
+                  port.getArrivalCondition().setStabilityParameter(stabilityParameter);
+                }
+                if (synopticalTableLoadicatorDataDep != null) {
+                  StabilityParameter stabilityParameterDep =
+                      modelMapper.map(
+                          synopticalTableLoadicatorDataDep,
+                          com.cpdss.loadablestudy.domain.StabilityParameter.class);
+                  port.getDepartureCondition().setStabilityParameter(stabilityParameterDep);
+                }
+              });
+    }
   }
 
   private void buldLoadablPlanBallastDetails(

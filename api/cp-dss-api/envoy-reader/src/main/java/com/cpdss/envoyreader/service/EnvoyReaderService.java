@@ -71,13 +71,14 @@ public class EnvoyReaderService {
                 return responseUrl;
               });
       log.debug("Envoy reader download response: {}", response);
+      log.info("Envoy Reader Client Response 1" + downloadUrlBuilder(request));
 
       // read message info from header
       ObjectMapper mapper = new ObjectMapper();
       ReaderResponse responseDto =
           mapper.readValue(
               response.getResponseHeader().getFirst("message-info"), ReaderResponse.class);
-
+      log.info("Envoy Reader Client Response 2 " + downloadUrlBuilder(request));
       // checksum compare
       if (!isCheckSum(response.getFile(), responseDto.getChecksum())) {
         throw new GenericServiceException(
@@ -85,7 +86,7 @@ public class EnvoyReaderService {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-
+      log.info("Envoy Reader Client Response 3" + downloadUrlBuilder(request));
       String decryptedData = null;
       ZipFile zipFile = new ZipFile(response.getFile());
       for (Enumeration e = zipFile.entries(); e.hasMoreElements(); ) {
@@ -97,11 +98,12 @@ public class EnvoyReaderService {
           System.out.println("-- " + decryptedData);
         }
       }
-
+      log.info("Envoy Reader Client Response 4" + downloadUrlBuilder(request));
       buildReaderResponse(decryptedData, responseDto, readerBuilder);
 
     } catch (JsonProcessingException e) {
-      log.error("JsonProcessingException in sending file: " + e);
+      e.printStackTrace();
+      log.error("JsonProcessingException in sending file 1: " + e.getStackTrace()[0]);
       readerBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
@@ -109,7 +111,8 @@ public class EnvoyReaderService {
               .setStatus(FAILED)
               .build());
     } catch (IOException e) {
-      log.error("JsonProcessingException in sending file: " + e);
+      e.printStackTrace();
+      log.error("JsonProcessingException in sending file 2: " + e.getStackTrace()[0]);
       readerBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
@@ -117,7 +120,8 @@ public class EnvoyReaderService {
               .setStatus(FAILED)
               .build());
     } catch (Exception e) {
-      log.error("JsonProcessingException in sending file: " + e);
+      e.printStackTrace();
+      log.error("JsonProcessingException in sending file 3: " + e.getStackTrace()[0]);
       readerBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
