@@ -1,7 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan;
 
-import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest.Builder;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanStabilityParam;
@@ -9,7 +8,6 @@ import com.cpdss.gateway.domain.loadingplan.sequence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -43,8 +41,7 @@ public class LoadingPlanBuilderService {
   }
 
   public List<LoadingPlanBallastDetails> buildLoadingPlanBallastFromRpc(
-      List<LoadingPlanModels.LoadingPlanTankDetails> list,
-      List<LoadablePlanBallastDetails> loadablePlanBallastDetails) {
+      List<LoadingPlanModels.LoadingPlanTankDetails> list) {
     List<LoadingPlanBallastDetails> response = new ArrayList<>();
     for (LoadingPlanModels.LoadingPlanTankDetails var1 : list) {
       LoadingPlanBallastDetails var2 = new LoadingPlanBallastDetails();
@@ -57,14 +54,6 @@ public class LoadingPlanBuilderService {
       var2.setValueType(var1.getValueType());
       var2.setColorCode(var1.getColorCode());
       var2.setSg(var1.getSg());
-      Optional<LoadablePlanBallastDetails> ballastOpt =
-          loadablePlanBallastDetails.stream()
-              .filter(
-                  ballast ->
-                      (ballast.getTankId() == var1.getTankId())
-                          && !StringUtils.isEmpty(ballast.getColorCode()))
-              .findFirst();
-      ballastOpt.ifPresent(ballast -> var2.setColorCode(ballast.getColorCode()));
       response.add(var2);
     }
     return response;

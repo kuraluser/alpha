@@ -9,7 +9,6 @@ import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
 import com.cpdss.gateway.domain.loadingplan.LoadingStages;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
