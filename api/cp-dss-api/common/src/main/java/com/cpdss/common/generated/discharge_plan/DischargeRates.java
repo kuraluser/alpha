@@ -76,6 +76,11 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
               maxBallastRate_ = s;
               break;
             }
+          case 40:
+            {
+              id_ = input.readInt64();
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -250,6 +255,17 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
     }
   }
 
+  public static final int ID_FIELD_NUMBER = 5;
+  private long id_;
+  /**
+   * <code>int64 id = 5;</code>
+   *
+   * @return The id.
+   */
+  public long getId() {
+    return id_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -276,6 +292,9 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
     if (!getMaxBallastRateBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 4, maxBallastRate_);
     }
+    if (id_ != 0L) {
+      output.writeInt64(5, id_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -297,6 +316,9 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
     if (!getMaxBallastRateBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, maxBallastRate_);
     }
+    if (id_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, id_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -317,6 +339,7 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
     if (!getMaxDischargeRate().equals(other.getMaxDischargeRate())) return false;
     if (!getMinBallastRate().equals(other.getMinBallastRate())) return false;
     if (!getMaxBallastRate().equals(other.getMaxBallastRate())) return false;
+    if (getId() != other.getId()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -336,6 +359,8 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
     hash = (53 * hash) + getMinBallastRate().hashCode();
     hash = (37 * hash) + MAXBALLASTRATE_FIELD_NUMBER;
     hash = (53 * hash) + getMaxBallastRate().hashCode();
+    hash = (37 * hash) + ID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -482,6 +507,8 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
 
       maxBallastRate_ = "";
 
+      id_ = 0L;
+
       return this;
     }
 
@@ -513,6 +540,7 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
       result.maxDischargeRate_ = maxDischargeRate_;
       result.minBallastRate_ = minBallastRate_;
       result.maxBallastRate_ = maxBallastRate_;
+      result.id_ = id_;
       onBuilt();
       return result;
     }
@@ -578,6 +606,9 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
       if (!other.getMaxBallastRate().isEmpty()) {
         maxBallastRate_ = other.maxBallastRate_;
         onChanged();
+      }
+      if (other.getId() != 0L) {
+        setId(other.getId());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -909,6 +940,39 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
       checkByteStringIsUtf8(value);
 
       maxBallastRate_ = value;
+      onChanged();
+      return this;
+    }
+
+    private long id_;
+    /**
+     * <code>int64 id = 5;</code>
+     *
+     * @return The id.
+     */
+    public long getId() {
+      return id_;
+    }
+    /**
+     * <code>int64 id = 5;</code>
+     *
+     * @param value The id to set.
+     * @return This builder for chaining.
+     */
+    public Builder setId(long value) {
+
+      id_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 id = 5;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearId() {
+
+      id_ = 0L;
       onChanged();
       return this;
     }

@@ -24,6 +24,7 @@ public class CargoMachineryInUse {
   private List<VesselComponent> vesselBottomLine; // Master data
 
   private List<LoadingMachinesInUse> loadingMachinesInUses; // User selected data
+  private List<LoadingMachinesInUse> dischargeMachinesInUses; // User selected data
 
   private Map<String, Integer> machineTypes = new HashMap<>();
 

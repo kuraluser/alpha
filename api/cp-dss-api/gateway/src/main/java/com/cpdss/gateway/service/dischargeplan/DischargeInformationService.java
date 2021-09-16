@@ -16,7 +16,7 @@ import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
-import com.cpdss.gateway.domain.dischargeplan.DischargingPlanResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
@@ -181,10 +181,10 @@ public class DischargeInformationService {
     return dischargeInformation;
   }
 
-  public DischargingPlanResponse getDischargingPlan(
+  public DischargePlanResponse getDischargingPlan(
       Long vesselId, Long voyageId, Long infoId, Long portRotationId, String correlationId)
       throws GenericServiceException {
-    DischargingPlanResponse dischargingPlanResponse = new DischargingPlanResponse();
+    DischargePlanResponse dischargingPlanResponse = new DischargePlanResponse();
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(
@@ -220,6 +220,7 @@ public class DischargeInformationService {
           planReply.getDischargingInformation().getSynopticTableId());
       dischargeInformation.setDischargeStudyId(activeVoyage.getActiveDs().getId());
       dischargeInformation.setDischargeStudyName(activeVoyage.getActiveDs().getName());
+      dischargeInformation.setDischargePatternId(activeVoyage.getDischargePatternId());
     }
 
     // discharge rates
@@ -261,6 +262,7 @@ public class DischargeInformationService {
     CargoMachineryInUse machineryInUse =
         this.infoBuilderService.buildDischargeMachinesFromMessage(
             planReply.getDischargingInformation().getMachineInUseList(), vesselId);
+    machineryInUse.setLoadingMachinesInUses(null);
     dischargeInformation.setMachineryInUses(machineryInUse);
 
     // discharge stages ()
@@ -298,6 +300,15 @@ public class DischargeInformationService {
         this.infoBuilderService.buildDischargeSequencesAndDelayFromMessage(
             planReply.getDischargingInformation().getDischargeDelay());
     dischargeInformation.setDischargeSequences(dischargeSequences);
+
+    // discharge details
+    LoadingDetails dischargeDetails =
+        this.infoBuilderService.buildDischargeDetailFromMessage(
+            planReply.getDischargingInformation().getDischargeDetails(),
+            portRotation.get().getPortId(),
+            portRotation.get().getId(),
+            null);
+    dischargeInformation.setDischargeDetails(dischargeDetails);
 
     dischargingPlanResponse.setDischargingInformation(dischargeInformation);
 

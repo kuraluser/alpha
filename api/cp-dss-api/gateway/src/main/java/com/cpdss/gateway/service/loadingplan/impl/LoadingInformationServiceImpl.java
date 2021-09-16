@@ -706,37 +706,42 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     for (LoadableStudy.LoadableQuantityCargoDetails lqcd : list) {
       com.cpdss.gateway.domain.DischargeQuantityCargoDetails cargoDetails =
           new com.cpdss.gateway.domain.DischargeQuantityCargoDetails();
-      cargoDetails.setDifferenceColor(lqcd.getDifferenceColor());
-      cargoDetails.setDifferencePercentage(lqcd.getDifferencePercentage());
+      cargoDetails.setCargoAbbreviation(lqcd.getCargoAbbreviation());
+      cargoDetails.setCargoId(lqcd.getCargoId());
+      cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
+      cargoDetails.setColorCode(lqcd.getColorCode());
       cargoDetails.setEstimatedAPI(lqcd.getEstimatedAPI());
       cargoDetails.setEstimatedTemp(lqcd.getEstimatedTemp());
       cargoDetails.setGrade(lqcd.getGrade());
       cargoDetails.setId(lqcd.getId());
-      cargoDetails.setDischargeBbls60f(lqcd.getLoadableBbls60F());
-      cargoDetails.setDischargeBblsdbs(lqcd.getLoadableBblsdbs());
-      cargoDetails.setDischargeKL(lqcd.getLoadableKL());
-      cargoDetails.setDischargeLT(lqcd.getLoadableLT());
-      cargoDetails.setDischargeMT(lqcd.getLoadableMT());
-      cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
-      cargoDetails.setMinTolerence(lqcd.getMinTolerence());
-      cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());
-      cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
-      cargoDetails.setOrderedQuantity(lqcd.getOrderQuantity());
-
+      cargoDetails.setMaxDischargingRate(this.getLoadingRateFromVesselService(vesselId));
       cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
       cargoDetails.setTimeRequiredForDischarging(lqcd.getTimeRequiredForLoading());
 
-      cargoDetails.setCargoNominationTemperature(lqcd.getCargoNominationTemperature());
-      cargoDetails.setCargoId(lqcd.getCargoId());
-      cargoDetails.setCargoAbbreviation(lqcd.getCargoAbbreviation());
-      cargoDetails.setColorCode(lqcd.getColorCode());
-      cargoDetails.setPriority(lqcd.getPriority());
-      cargoDetails.setDischargingOrder(lqcd.getLoadingOrder());
-
-      cargoDetails.setOrderQuantity(lqcd.getOrderQuantity());
-      cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
-      cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
-      cargoDetails.setMaxDischargingRate(this.getLoadingRateFromVesselService(vesselId));
+      // these are not needed now informed by ui team. if it is needed in future can un comment this
+      // code
+      /*
+       * cargoDetails.setDifferenceColor(lqcd.getDifferenceColor());
+       * cargoDetails.setDifferencePercentage(lqcd.getDifferencePercentage());
+       * cargoDetails.setDischargeBbls60f(lqcd.getLoadableBbls60F());
+       * cargoDetails.setDischargeBblsdbs(lqcd.getLoadableBblsdbs());
+       * cargoDetails.setDischargeKL(lqcd.getLoadableKL());
+       * cargoDetails.setDischargeLT(lqcd.getLoadableLT());
+       * cargoDetails.setDischargeMT(lqcd.getLoadableMT());
+       * cargoDetails.setMaxTolerence(lqcd.getMaxTolerence());
+       * cargoDetails.setMinTolerence(lqcd.getMinTolerence());
+       * cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());
+       * cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
+       * cargoDetails.setOrderedQuantity(lqcd.getOrderQuantity());
+       *
+       *
+       * cargoDetails.setCargoNominationTemperature(lqcd.getCargoNominationTemperature
+       * ()); cargoDetails.setPriority(lqcd.getPriority());
+       * cargoDetails.setDischargingOrder(lqcd.getLoadingOrder());
+       *
+       * cargoDetails.setOrderQuantity(lqcd.getOrderQuantity());
+       * cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
+       */
 
       response.add(cargoDetails);
     }

@@ -461,6 +461,7 @@ public class DischargeInformationBuilderService {
           .ifPresent(v -> builder1.setMinBallastRate(v.toString()));
       Optional.ofNullable(disEntity.getMaxBallastRate())
           .ifPresent(v -> builder1.setMaxBallastRate(v.toString()));
+      Optional.ofNullable(disEntity.getId()).ifPresent(builder1::setId);
 
       builder.setDischargeRate(builder1.build());
       log.info("Setting Discharge Rates");
