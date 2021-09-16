@@ -306,7 +306,7 @@ public class DischargeInformationService {
             activeVoyage.getPatternId(), portRotation.get().getId());
     dischargingPlanResponse.setPlanBallastDetails(
         loadingPlanBuilderService.buildLoadingPlanBallastFromRpc(
-            planReply.getPortDischargingPlanBallastDetailsList(), loadablePlanBallastDetails));
+            planReply.getPortDischargingPlanBallastDetailsList()));
     dischargingPlanResponse.setPlanStowageDetails(
         loadingPlanBuilderService.buildLoadingPlanStowageFromRpc(
             planReply.getPortDischargingPlanStowageDetailsList()));

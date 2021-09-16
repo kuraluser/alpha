@@ -75,6 +75,4 @@ public class DischargeQuantityCargoDetails {
   private Boolean protested;
   private Boolean isCommingledDischarge;
   private Boolean isCommingledCargo;
-
-  
 }
