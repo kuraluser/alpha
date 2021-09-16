@@ -58,9 +58,11 @@ import com.cpdss.loadingplan.repository.LoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceStabiltyParametersRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanBallastTempDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanStowageTempDetailsRepository;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -112,6 +114,12 @@ public class LoadingPlanAlgoService {
   @Autowired LoadingSequenceStabiltyParametersRepository loadingSequenceStabilityParamsRepository;
   @Autowired AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @Autowired AlgoErrorsRepository algoErrorsRepository;
+
+  @Autowired
+  PortLoadingPlanStowageTempDetailsRepository portLoadingPlanStowageTempDetailsRepository;
+
+  @Autowired
+  PortLoadingPlanBallastTempDetailsRepository portLoadingPlanBallastTempDetailsRepository;
 
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
@@ -424,6 +432,8 @@ public class LoadingPlanAlgoService {
     portRobDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
     portStabilityParamsRepository.deleteByLoadingInformationId(loadingInfoId);
     portStowageDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
+    portLoadingPlanStowageTempDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
+    portLoadingPlanBallastTempDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
   }
 
   private void deleteLoadingSequences(
