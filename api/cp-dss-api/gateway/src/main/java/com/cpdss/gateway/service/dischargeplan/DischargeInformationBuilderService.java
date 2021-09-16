@@ -120,6 +120,8 @@ public class DischargeInformationBuilderService {
     } else {
       var2.setMaxBallastRate(new BigDecimal(var1.getMaxBallastRate()));
     }
+    var2.setId(var1.getId());
+
     return var2;
   }
 
