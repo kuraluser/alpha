@@ -749,7 +749,7 @@ export class LoadingDischargingTransformationService {
       const end = stageTickPositions[index + 1];
       const rate = new Set<number>();
       cargoLoadingRates.forEach(element => {
-        if ((element.startTime >= start && element.endTime <= end) || (start >= element.startTime && start < element.endTime) || (end > element.startTime && end <= element.endTime)) {
+        if ((element.startTime >= start && element.endTime <= end) || (start >= element.startTime && start < element.endTime) || (end > element.startTime && end < element.endTime)) {
           element.loadingRates.forEach(rate.add, rate);
         }
       });

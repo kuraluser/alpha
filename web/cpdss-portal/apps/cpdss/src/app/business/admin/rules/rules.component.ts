@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , ViewChild , HostListener } from '@angular/core';
+import { Observable } from 'rxjs';
 import { RulesService } from '../../core/services/rules.service';
+import { UnsavedChangesGuard } from '../../../shared/services/guards/unsaved-data-guard';
 import { RULES_TABS } from './../models/rules.model'
 import { DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
@@ -22,6 +24,7 @@ import { Subject } from 'rxjs';
 })
 export class RulesComponent implements OnInit {
 
+  @ViewChild('rulesTable') rulesTable;
   TABS = RULES_TABS;
   tabs = Object.keys(this.TABS)
   selectedTab: string = this.TABS[this.tabs[0]];
@@ -36,10 +39,16 @@ export class RulesComponent implements OnInit {
   vessels: any;
   selectedVessel: any;
   rulesChange = new Subject();
+  
+  @HostListener('window:beforeunload')
+  canDeactivate(): Observable<boolean> | boolean {
+    return !(this.rulesTable.rulesForm?.dirty);
+  }
 
   constructor(
     public rulesService: RulesService, private translateService: TranslateService, private messageService: MessageService,
     private ngxSpinner: NgxSpinnerService,
+    private unsavedChangesGuard: UnsavedChangesGuard
   ) { }
 
   /**
@@ -149,8 +158,10 @@ export class RulesComponent implements OnInit {
   * @memberof RulesComponent
   */
   async onTabClick(tab) {
+    const value = await this.unsavedChangesGuard.canDeactivate(this);
+    if (!value) { return };
+    
     this.ngxSpinner.show();
-    this.selectedTab = tab;
     switch (tab.toLowerCase()) {
       case 'plan': {
         this.tabIndex = 1;
@@ -167,6 +178,7 @@ export class RulesComponent implements OnInit {
       }
     }
     this.triggerGetRules();
+    this.selectedTab = tab;
     this.ngxSpinner.hide();
   }
 

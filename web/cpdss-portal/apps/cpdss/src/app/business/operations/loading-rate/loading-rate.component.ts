@@ -52,30 +52,30 @@ export class LoadingRateComponent implements OnInit {
 
   actualValues : any = {
     maxLoadingRate :{
-      defaultvalue:'',
+      defaultValue:'',
       lastEditedUnit:'M3',
       BblsValue :''
     },
     shoreLoadingRate :{
-      defaultvalue:'',
+      defaultValue:'',
       lastEditedUnit:'M3',
       BblsValue :''
     }
     ,
     minLoadingRate :{
-      defaultvalue:'',
+      defaultValue:'',
       lastEditedUnit:'M3',
       BblsValue :''
     }
     ,
     minDeBallastingRate :{
-      defaultvalue:'',
+      defaultValue:'',
       lastEditedUnit:'M3',
       BblsValue :''
     }
     ,
     maxDeBallastingRate :{
-      defaultvalue:'',
+      defaultValue:'',
       lastEditedUnit:'M3',
       BblsValue :''
     }
@@ -133,14 +133,14 @@ export class LoadingRateComponent implements OnInit {
     this.actualValues.shoreLoadingRate.defaultValue = this.loadingRates.shoreLoadingRate;
     this.actualValues.shoreLoadingRate.BblsValue = this.loadingRates.shoreLoadingRate/this.conversionFactor;
 
-    this.actualValues.minLoadingRate.defaultValue = this.loadingRates.shoreLoadingRate;
-    this.actualValues.minLoadingRate.BblsValue = this.loadingRates.shoreLoadingRate/this.conversionFactor;
+    this.actualValues.minLoadingRate.defaultValue = this.loadingRates.minLoadingRate;
+    this.actualValues.minLoadingRate.BblsValue = this.loadingRates.minLoadingRate/this.conversionFactor;
 
-    this.actualValues.minDeBallastingRate.defaultValue = this.loadingRates.shoreLoadingRate;
-    this.actualValues.minDeBallastingRate.BblsValue = this.loadingRates.shoreLoadingRate/this.conversionFactor;
+    this.actualValues.minDeBallastingRate.defaultValue = this.loadingRates.minDeBallastingRate;
+    this.actualValues.minDeBallastingRate.BblsValue = this.loadingRates.minDeBallastingRate/this.conversionFactor;
 
-    this.actualValues.maxDeBallastingRate.defaultValue = this.loadingRates.shoreLoadingRate;
-    this.actualValues.maxDeBallastingRate.BblsValue = this.loadingRates.shoreLoadingRate/this.conversionFactor;
+    this.actualValues.maxDeBallastingRate.defaultValue = this.loadingRates.maxDeBallastingRate;
+    this.actualValues.maxDeBallastingRate.BblsValue = this.loadingRates.maxDeBallastingRate/this.conversionFactor;
     
   }
 

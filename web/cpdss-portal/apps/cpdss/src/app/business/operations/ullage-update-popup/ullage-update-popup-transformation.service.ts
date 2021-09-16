@@ -257,7 +257,8 @@ export class UllageUpdatePopupTransformationService {
         editable: true,
         showTotal: true,
         errorMessages: {
-          'required': 'ULLAGE_UPDATE_QUANTITY_REQUIRED'
+          'required': 'ULLAGE_UPDATE_QUANTITY_REQUIRED',
+          'min': 'ULLAGE_UPDATE_INVALID_ERROR'
         }
       }
 

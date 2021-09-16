@@ -2,7 +2,12 @@
 package com.cpdss.gateway.domain.dischargeplan;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
-import com.cpdss.gateway.domain.loadingplan.*;
+import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
+import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingBerthDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
+import com.cpdss.gateway.domain.loadingplan.LoadingStages;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
@@ -23,15 +28,27 @@ public class DischargeInformation {
   private Long synopticTableId;
   private Boolean isDischargeInfoComplete;
 
-  // reusing common class from loading
+  // reusing common class from discharging
   private LoadingDetails dischargeDetails;
+
   private DischargeRates dischargeRates;
+
   private LoadingBerthDetails berthDetails;
   private CargoMachineryInUse machineryInUses;
-  private LoadingStages dischargeStages;
-  private LoadingSequences dischargeSequences;
-  private CowPlan cowPlan;
 
+  private LoadingStages dischargeStages;
+
+  private LoadingSequences dischargeSequences;
+
+  private CowPlan cowPlan;
+  private PostDischargeStage postDischargeStageTime;
   // For layout and Grid
   private CargoVesselTankDetails cargoVesselTankDetails;
+  private Long dischargeInfoStatusId;
+  private Long dischargePlanArrStatusId;
+  private Long dischargePlanDepStatusId;
+  private Long dischargePatternId;
+  private Boolean isDischargeInstructionsComplete;
+  private Boolean isDischargeSequenceGenerated;
+  private Boolean isDischargePlanGenerated;
 }

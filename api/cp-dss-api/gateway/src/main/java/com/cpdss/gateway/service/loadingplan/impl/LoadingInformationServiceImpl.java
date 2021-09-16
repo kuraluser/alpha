@@ -8,6 +8,7 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest;
@@ -23,8 +24,32 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.common.GatewayConstants;
-import com.cpdss.gateway.domain.*;
-import com.cpdss.gateway.domain.loadingplan.*;
+import com.cpdss.gateway.domain.AlgoError;
+import com.cpdss.gateway.domain.AlgoErrorResponse;
+import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
+import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
+import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.UpdateUllage;
+import com.cpdss.gateway.domain.UploadTideDetailResponse;
+import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
+import com.cpdss.gateway.domain.loadingplan.BerthDetails;
+import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
+import com.cpdss.gateway.domain.loadingplan.LoadingDelays;
+import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
+import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatus;
+import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
+import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
+import com.cpdss.gateway.domain.loadingplan.LoadingMachinesInUse;
+import com.cpdss.gateway.domain.loadingplan.LoadingRates;
+import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
+import com.cpdss.gateway.domain.loadingplan.LoadingStages;
+import com.cpdss.gateway.domain.loadingplan.ReasonForDelay;
+import com.cpdss.gateway.domain.loadingplan.StageDuration;
+import com.cpdss.gateway.domain.loadingplan.StageOffset;
+import com.cpdss.gateway.domain.loadingplan.ToppingOffSequence;
+import com.cpdss.gateway.domain.loadingplan.TrimAllowed;
+import com.cpdss.gateway.domain.loadingplan.VesselComponent;
 import com.cpdss.gateway.domain.vessel.PumpType;
 import com.cpdss.gateway.domain.vessel.VesselPump;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
@@ -575,7 +600,16 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
     List<LoadableStudy.LoadableQuantityCargoDetails> list =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
-            patternId, operationType, portRotationId, portId);
+            patternId, operationType, portRotationId, portId, true);
+    return this.buildLoadablePlanQuantity(list, vesselId);
+  }
+
+  @Override
+  public List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPortUnfiltered(
+      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
+    List<LoadableStudy.LoadableQuantityCargoDetails> list =
+        this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
+            patternId, operationType, portRotationId, portId, false);
     return this.buildLoadablePlanQuantity(list, vesselId);
   }
 
@@ -584,7 +618,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
     List<LoadableStudy.LoadableQuantityCargoDetails> list =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
-            patternId, operationType, portRotationId, portId);
+            patternId, operationType, portRotationId, portId, true);
     return this.buildDischargePlanQuantity(list, vesselId);
   }
 
@@ -1014,5 +1048,32 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           HttpStatusCode.valueOf(statusReply.getResponseStatus().getHttpStatusCode()));
     }
     return statusReply.getData().toByteArray();
+  }
+
+  @Override
+  public PostDischargeStage getPostDischargeStage(PostDischargeStageTime postDischargeStageTime) {
+    PostDischargeStage pdStage = new PostDischargeStage();
+    Optional.ofNullable(postDischargeStageTime.getFinalStripping())
+        .ifPresent(
+            value -> {
+              pdStage.setFinalStrippingTime(new BigDecimal(value));
+            });
+    Optional.ofNullable(postDischargeStageTime.getFreshOilWashing())
+        .ifPresent(
+            value -> {
+              pdStage.setFreshOilWashingTime(new BigDecimal(value));
+            });
+    Optional.ofNullable(postDischargeStageTime.getSlopDischarging())
+        .ifPresent(
+            value -> {
+              pdStage.setSlopDischargingTime(new BigDecimal(value));
+            });
+    Optional.ofNullable(postDischargeStageTime.getTimeForDryCheck())
+        .ifPresent(
+            value -> {
+              pdStage.setDryCheckTime(new BigDecimal(value));
+            });
+
+    return pdStage;
   }
 }

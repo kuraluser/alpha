@@ -2,13 +2,25 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.domain.AlgoErrorResponse;
 import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
 import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.UploadTideDetailResponse;
-import com.cpdss.gateway.domain.loadingplan.*;
+import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
+import com.cpdss.gateway.domain.loadingplan.BerthDetails;
+import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
+import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
+import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatus;
+import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
+import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
+import com.cpdss.gateway.domain.loadingplan.LoadingRates;
+import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
+import com.cpdss.gateway.domain.loadingplan.LoadingStages;
+import com.cpdss.gateway.domain.loadingplan.ToppingOffSequence;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,6 +62,9 @@ public interface LoadingInformationService {
   List<ToppingOffSequence> getToppingOffSequence(List<LoadingPlanModels.LoadingToppingOff> var1);
 
   List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
+      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId);
+
+  List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPortUnfiltered(
       Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId);
 
   List<DischargeQuantityCargoDetails> getDischargePlanCargoDetailsByPort(
@@ -94,4 +109,6 @@ public interface LoadingInformationService {
       throws IOException, GenericServiceException;
 
   byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException;
+
+  PostDischargeStage getPostDischargeStage(PostDischargeStageTime postDischargeStageTime);
 }

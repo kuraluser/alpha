@@ -70,4 +70,9 @@ public class DischargeQuantityCargoDetails {
   private String dischargeMT;
   private String dischargingRate;
   private List<ContainerWashing> cowDetails;
+  private BigDecimal blFigure;
+  private BigDecimal shipFigure;
+  private Boolean protested;
+  private Boolean isCommingledDischarge;
+  private Boolean isCommingledCargo;
 }

@@ -146,7 +146,7 @@
         </div> -->
         <div class="row">
             <div class="col pt-5">
-                <cpdss-portal-loading-discharging-cargo-machinery [loadingInfoId]="loadingInfoId" #machineryRef
+                <cpdss-portal-loading-discharging-cargo-machinery [operation]="OPERATIONS.LOADING" [loadingInfoId]="loadingInfoId" #machineryRef
                     [machineryInUses]="loadingInformationData?.machineryInUses"
                     (updatemachineryInUses)="onUpdatemachineryInUses($event)">
                 </cpdss-portal-loading-discharging-cargo-machinery>

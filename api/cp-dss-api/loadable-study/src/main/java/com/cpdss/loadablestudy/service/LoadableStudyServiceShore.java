@@ -679,14 +679,21 @@ public class LoadableStudyServiceShore {
         loadableStudyId, Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE, voyage, true);
   }
 
+  /**
+   * Method to save voyage details on shore side
+   *
+   * @param vesselId vesselId value
+   * @param voyageDto voyage object from ship
+   * @return Voyage Saved voyage object
+   */
   private Voyage saveVoyageShore(Long vesselId, VoyageDto voyageDto) {
-    List<Voyage> voyageList =
-        voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
-            1L, vesselId, voyageDto.getVoyageNo());
-    if (voyageList != null && voyageList.size() != 0) {
-      return voyageList.get(0);
-    } else {
-      Voyage voyage = new Voyage();
+
+    Voyage voyage = voyageRepository.findByIdAndIsActive(voyageDto.getId(), true);
+
+    // Create a new voyage record if not existing
+    if (null == voyage) {
+      voyage = new Voyage();
+      voyage.setId(voyageDto.getId());
       voyage.setVoyageNo(voyageDto.getVoyageNo());
       voyage.setVesselXId(vesselId);
       voyage.setIsActive(true);
@@ -709,8 +716,8 @@ public class LoadableStudyServiceShore {
                       .parse(voyageDto.getVoyageEndDate()))
               : null);
       voyage = voyageRepository.save(voyage);
-      return voyage;
     }
+    return voyage;
   }
 
   private LoadableStudy saveLoadableStudyShore(
@@ -775,6 +782,7 @@ public class LoadableStudyServiceShore {
       }
       entity.setAttachments(attachmentCollection);
     }
+    entity.setId(loadableStudy.getId());
     entity = this.loadableStudyRepository.save(entity);
     return entity;
   }

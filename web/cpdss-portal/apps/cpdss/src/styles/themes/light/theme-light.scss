@@ -1548,3 +1548,15 @@ header{
     border-bottom: 28px solid $tank-ohq-border;
   }
 }
+
+.highcharts-scrollbar-track{
+  fill: $body-bg!important;
+  stroke:$body-bg!important;
+  height: 6px;
+}
+
+.highcharts-scrollbar-thumb{
+  rx:5px;
+  ry:5px;
+  height: 6px;
+}

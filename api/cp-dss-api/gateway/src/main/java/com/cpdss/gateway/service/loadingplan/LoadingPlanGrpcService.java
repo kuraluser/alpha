@@ -49,7 +49,7 @@ public interface LoadingPlanGrpcService {
       String operationType);
 
   List<LoadableStudy.LoadableQuantityCargoDetails> fetchLoadablePlanCargoDetails(
-      Long patternId, String operationType, Long portRotationId, Long portId);
+      Long patternId, String operationType, Long portRotationId, Long portId, Boolean isFilterOn);
 
   List<LoadableStudy.LoadablePlanBallastDetails> fetchLoadablePlanBallastDetails(
       Long patternId, Long portRotationId);

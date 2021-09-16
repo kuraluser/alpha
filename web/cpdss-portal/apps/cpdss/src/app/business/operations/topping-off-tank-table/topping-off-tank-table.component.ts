@@ -147,10 +147,9 @@ export class ToppingOffTankTableComponent implements OnInit {
       this.loadingDischargingPLanData?.planStowageDetails?.map(item => {
         if (item.conditionType === 2 && item.valueType === 2 && item.tankId === obj.tankId) {
           obj.ullage = item?.ullage && !isNaN(Number(item?.ullage)) ? Number(Number(item?.ullage).toFixed(3)) : 0;
-          obj.quantity = Number(item?.quantityMT);
+          obj.quantity = this.quantityPipe.transform(item?.quantityMT, QUANTITY_UNIT.MT , this.currentQuantitySelectedUnit, obj.api, obj.temperature, -1);
         }
       });
-      obj.quantity = this.quantityPipe.transform(obj.quantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, obj.api, obj.temperature, -1);
       const key = obj['cargoId'];
       if (!acc[key]) {
         acc[key] = [];

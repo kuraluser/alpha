@@ -38,6 +38,24 @@ declare module 'highcharts' {
     searchPoint(e: PointerEventObject, compareX?: boolean): (Point | undefined);
   }
 
+  /**
+   * Overriding interface for Tick
+   *
+   * @interface Tick
+   */
+  interface Tick {
+    getPosition(horiz: boolean, pos: number, tickmarkOffset: number)
+  }
+
+  /**
+   * Overriding interface for Axis
+   *
+   * @interface Axis
+   */
+  interface Axis {
+    tickmarkOffset: number | undefined
+  }
+
   export let hoverChartIndex: number;
 }
 
@@ -244,7 +262,7 @@ export interface IFlowRate {
  * @export
  * @enum {number}
  */
-export enum LOADING_SEQUENCE_CHARTS {
+export enum SEQUENCE_CHARTS {
   CARGO_TANK = "CARGO_TANK",
   CARGO_PUMP = "CARGO_PUMP",
   BALLAST_TANK = "BALLAST_TANK",
