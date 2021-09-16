@@ -11,5 +11,6 @@ public class CargoBillOfLadding {
   private String cargoName;
   private String cargoAbbrevation;
   private Long cargoNominationId;
+  private Boolean cargoToBeLoaded;
   private List<BillOfLadding> billOfLaddings;
 }
