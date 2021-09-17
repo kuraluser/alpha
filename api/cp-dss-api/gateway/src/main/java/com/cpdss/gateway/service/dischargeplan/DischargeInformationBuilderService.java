@@ -312,7 +312,7 @@ public class DischargeInformationBuilderService {
         .forEach(
             delay -> {
               BeanUtils.copyProperties(delay, dischargeDelay);
-              dischargeDelay.setDischargingInfoId(delay.getLoadingInfoId());
+              dischargeDelay.setDischargeInfoId(delay.getLoadingInfoId());
               delays.add(dischargeDelay);
             });
 

@@ -241,7 +241,7 @@ public class DischargeInformationService {
         .forEach(
             berth -> {
               berth.setDischargingBerthId(berth.getLoadingBerthId());
-              berth.setDischargingInfoId(berth.getLoadingInfoId());
+              berth.setDischargeInfoId(berth.getLoadingInfoId());
             });
     // discharge berth (selected data)
     List<BerthDetails> selectedBerths =
@@ -251,7 +251,7 @@ public class DischargeInformationService {
         .forEach(
             berth -> {
               berth.setDischargingBerthId(berth.getLoadingBerthId());
-              berth.setDischargingInfoId(berth.getLoadingInfoId());
+              berth.setDischargeInfoId(berth.getLoadingInfoId());
             });
     LoadingBerthDetails berthDetails = new LoadingBerthDetails();
     berthDetails.setAvailableBerths(availableBerths);

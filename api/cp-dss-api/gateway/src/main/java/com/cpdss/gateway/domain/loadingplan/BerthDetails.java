@@ -10,7 +10,7 @@ public class BerthDetails {
   private Long berthId; // Primary key for Berth Info Master table
   private Long portId;
   private Long loadingInfoId;
-  private Long dischargingInfoId;
+  private Long dischargeInfoId;
   private BigDecimal maxShpChannel;
   private String berthName;
   private Long loadingBerthId; // Primary key for loading berth, in Loading Plan DB
