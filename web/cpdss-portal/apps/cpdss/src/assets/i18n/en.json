@@ -1897,8 +1897,7 @@
   "GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE":"No Plan Available",
   "GENERATE_LODABLE_PLAN_CONFIRMED":"Confirmed",
   "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED":"ALGO Processing Started",
-  "GENERATE_LODABLE_PLAN_PLAN_GENERATED"  :"Plan Generated",
-
+  "GENERATE_LODABLE_PLAN_PLAN_GENERATED"  :"plan generated successfully",
   "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED":"ALGO Processing Completed",
   "GENERATE_LODABLE_PLAN_ERROR_OCCURED":"Error Occurred",
   "GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER":"Verification With Loadicator in progress",
@@ -1996,6 +1995,15 @@
   "LOADING_DICHARGING_EXCEL_INVALID_EXCEL_FILE": "Only the file with following extensions are allowed : xlsx",
   "LOADING_DISCHARGING_BERTH":"Info",
   "LOADING_DISCHARGING_BERTH_NO_BERTH_AVAILABLE":"There are no berth available",
-  "LOADING_DICHARGING_EXCEL_EMPTY_FILE": "Empty file uploaded"
+  "LOADING_DICHARGING_EXCEL_EMPTY_FILE": "Empty file uploaded",
+  "DISCHARGE_PLAN_CONFIRMED_PLAN_BUTTON_LABEL": "Confirmed",
+  "DISCHARGE_PLAN_CONFIRM_ERROR": "Error",
+  "DISCHARGE_PLAN_CONFIRM_DETAILS_NOT_CONFIRM": "Do you want to proceed?",
+  "DISCHARGE_PLAN_CONFIRM_DETAILS_CONFIRM": "The status of the other confirmed plan in this voyage will get reverted. Do you want to proceed?",
+  "DISCHARGE_PLAN_CONFIRM_SUMMARY": "Confirm",
+  "DISCHARGE_PLAN_CONFIRM_CONFIRM_LABEL": "Yes",
+  "DISCHARGE_PLAN_CONFIRM_REJECT_LABEL": "No",
+  "DISCHARGE_PLAN_CONFIRM_STATUS_ERROR": "Cannot confirm pattern of the selected discharge study",
+  "DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY": "Total backloading cargo quantity should be less than loadable study"
 }
 

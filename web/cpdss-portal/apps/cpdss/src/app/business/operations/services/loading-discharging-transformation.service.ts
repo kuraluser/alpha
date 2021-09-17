@@ -53,6 +53,8 @@ export class LoadingDischargingTransformationService {
   showUllageErrorPopup$ = this._showUllageErrorPopup.asObservable();
   isDischargeStarted$ = this._isDischargeStarted.asObservable();
 
+  portRotationId: number;
+
   constructor(
     private quantityPipe: QuantityPipe,
     private quantityDecimalFormatPipe: QuantityDecimalFormatPipe) { }
