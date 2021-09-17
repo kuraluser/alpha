@@ -1535,6 +1535,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               ? 0
                               : ullageList.getCorrectionFactor().longValue())
                       .setIsUpdate(ullageList.getIsUpdate())
+                      .setColorCode(
+                          ullageList.getColor_code() == null ? "" : ullageList.getColor_code())
+                      .setAbbreviation(
+                          ullageList.getAbbreviation() == null ? "" : ullageList.getAbbreviation())
+                      .setCargoId(ullageList.getCargoId() == null ? 0 : ullageList.getCargoId())
                       .build();
                   builder.addUpdateUllage(updateUllageBuilder.build());
                 });
@@ -1639,13 +1644,13 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               : String.valueOf(ullageList.getQuantity()))
                       .setIsUpdate(ullageList.getIsUpdate())
                       .setDensity(
-                          ullageList.getDensity() == null ? 0 : ullageList.getDensity().longValue())
+                          ullageList.getDensity() == null ? "" : ullageList.getDensity().toString())
                       // .setObservedM3(ullageList.getObservedM3() == null? 0:
                       // ullageList.getObservedM3().longValue())
                       // .setFillingRatio(ullageList.getFillingRatio() == null? 0:
                       // ullageList.getFillingRatio().longValue())
                       .setColourCode(
-                          ullageList.getColourCode() == null ? "" : ullageList.getColourCode())
+                          ullageList.getColour_code() == null ? "" : ullageList.getColour_code())
                       .setArrivalDepartutre(
                           ullageList.getArrival_departutre() == null
                               ? 0

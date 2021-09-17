@@ -835,6 +835,9 @@ message UpdateUllage{
   string ullage = 17;
   bool isUpdate = 18;
   int64 cargo_nomination_xid = 19;
+  string abbreviation = 20;
+  string colorCode = 21;
+  int64 cargoId = 22;
 }
 
 message BallastUpdate{
@@ -867,7 +870,7 @@ message RobUpdate{
   int64 observedM3 =7;
   int64 fillingRatio =8;
   string colour_code = 9;
-  int64 density =10;
+  string density =10;
   int64 arrival_departutre =11;
   int64 actual_planned =12;
   bool isUpdate = 13;

@@ -43,4 +43,10 @@ public class UllageUpdateDetails {
   private Boolean isUpdate;
 
   private BigDecimal cargoNominationId;
+
+  private String color_code;
+
+  private String abbreviation;
+
+  private Long cargoId;
 }
