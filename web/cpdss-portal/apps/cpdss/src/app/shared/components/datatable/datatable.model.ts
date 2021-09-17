@@ -57,6 +57,7 @@ export interface IDataTableColumn {
     maskFormat?: string;
     badgeColorField?: string;
     filterClass?: string;
+    totalFieldClass?: string;
 }
 
 /**

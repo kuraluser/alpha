@@ -113,7 +113,7 @@ export class ArrivalConditionComponent implements OnInit {
     this.cargoQuantities = [];
     this.cargoConditions = [];
     this.loadingDischargingPlanInfo = this.loadingDischargingPlanData?.loadingInformation ? this.loadingDischargingPlanData?.loadingInformation : this.loadingDischargingPlanData?.dischargingInformation
-    this.loadingDischargingPlanInfo?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(item => {
+    this.loadingDischargingPlanData?.currentPortCargos?.map(item => {
       let actualWeight = 0, plannedWeight = 0;
       this.loadingDischargingPlanData?.planStowageDetails?.map(stowage => {
         if (stowage.conditionType === 1 && item.cargoNominationId === stowage.cargoNominationId) {
@@ -149,17 +149,13 @@ export class ArrivalConditionComponent implements OnInit {
             data.api = stowage.api;
             data.temperature = stowage.temperature;
             data.ullage = stowage.ullage;
+            data.colorCode = stowage.colorCode;
+            data.abbreviation = stowage.abbreviation;
           }
         });
         data.plannedWeight = planedQty;
         data.actualWeight = actualQty;
         data.tankId = tank.id;
-        this.loadingDischargingPlanInfo?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(el => {
-          if (el.cargoNominationId === data.cargoNominationId) {
-            data.colorCode = el.colorCode;
-            data.abbreviation = el.cargoAbbreviation;
-          }
-        });
         this.cargoTankQuantity.push(data);
       });
     });

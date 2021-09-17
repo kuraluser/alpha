@@ -934,7 +934,10 @@ export interface IUllageUpdList {
   port_rotation_xid?: string | number;
   grade?: string;
   isActive?: boolean;
-  ullage?: string | number;
+  ullage? : string | number;
+  color_code?: string;
+  abbreviation?: string;
+  cargoId?: number | string;
 }
 
 /**

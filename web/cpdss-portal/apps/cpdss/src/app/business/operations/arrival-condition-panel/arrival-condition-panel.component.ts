@@ -49,10 +49,10 @@ export class ArrivalConditionPanelComponent implements OnInit {
   */
   formatData() {
     const loadingDischargingPlanInfo = this.loadingDischargingPlanData?.loadingInformation ? this.loadingDischargingPlanData?.loadingInformation : this.loadingDischargingPlanData?.dischargingInformation
-    loadingDischargingPlanInfo?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(cargo => {
+    this.loadingDischargingPlanData?.currentPortCargos.map(cargo => {
       let cargoQuantity = 0;
       this.loadingDischargingPlanData?.planStowageDetails?.map(item => {
-        if (item.conditionType === 1 && cargo.cargoNominationId === item.cargoNominationId) {
+        if (item.conditionType === 1 && item.valueType === 2 && cargo.cargoNominationId === item.cargoNominationId) {
           cargoQuantity += Number(item.quantityMT);
         }
       });

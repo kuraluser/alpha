@@ -148,6 +148,8 @@ export interface ITankOptions {
     showDensity?: boolean;
     commodityNameField?: string;
     isSelectable?: boolean;
+    soundingField? : string;
+    showSounding?: boolean;
 }
 
 /**
