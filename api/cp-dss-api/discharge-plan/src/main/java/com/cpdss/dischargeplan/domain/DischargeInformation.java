@@ -3,7 +3,9 @@ package com.cpdss.dischargeplan.domain;
 
 import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.cpdss.dischargeplan.domain.cargo.DischargeQuantityCargoDetails;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -30,4 +32,5 @@ public class DischargeInformation {
   private DischargeSequences dischargeSequences;
   private CowPlan cowPlan;
   private PostDischargeRates postDischargeRates;
+  private List<DischargeQuantityCargoDetails> dischargeQuantityCargoDetails;
 }

@@ -265,6 +265,7 @@ public class LoadingInformationAlgoRequestBuilderService {
                 .setPortRotationId(entity.getPortRotationXId())
                 .setPortId(entity.getPortXId())
                 .setCargoNominationFilter(false)
+                .setPlanningType(Common.PLANNING_TYPE.LOADABLE_STUDY)
                 .build());
 
     if (!LoadingPlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
@@ -671,6 +672,7 @@ public class LoadingInformationAlgoRequestBuilderService {
         loadingInformation.getLoadablePatternXId());
     LoadablePlanDetailsRequest.Builder requestBuilder = LoadablePlanDetailsRequest.newBuilder();
     requestBuilder.setLoadablePatternId(loadingInformation.getLoadablePatternXId());
+    requestBuilder.setIsDischargePlan(false);
     LoadablePatternPortWiseDetailsJson response =
         this.loadableStudyService.getLoadablePatternDetailsJson(requestBuilder.build());
     if (!response.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {

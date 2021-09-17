@@ -194,10 +194,11 @@ public class DischargeInformationRPCService
         // Set Discharge Details
         this.informationBuilderService.buildDischargeDetailsMessageFromEntity(
             disEntity, dischargingInformation);
-        
+
         // set Pump and Machine Details
-        this.informationBuilderService.buildMachineInUseMessageFromEntity(disEntity, dischargingInformation);
-        
+        this.informationBuilderService.buildMachineInUseMessageFromEntity(
+            disEntity, dischargingInformation);
+
         // Set Cow Details
         this.informationBuilderService.buildCowPlanMessageFromEntity(
             disEntity, dischargingInformation);

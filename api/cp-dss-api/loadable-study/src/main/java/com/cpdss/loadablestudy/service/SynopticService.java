@@ -101,6 +101,8 @@ public class SynopticService {
 
   @Autowired SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
+  @Autowired DischargePatternQuantityCargoPortwiseRepository disCargoQuantityRepository;
+
   public void fetchLoadingInformationSynopticDetails(
       LoadableStudy.LoadingPlanIdRequest request,
       LoadableStudy.LoadingPlanCommonResponse.Builder builder,
@@ -117,8 +119,12 @@ public class SynopticService {
     }
     // Not passing operation type and portId when calling for getting ballast details
     if (!StringUtils.isEmpty(request.getOperationType())) {
-      // Cargo details based on port, and operation type
-      this.buildCargoToBeLoadedForPort(request, builder, repBuilder);
+      if (request.getPlanningType().equals(Common.PLANNING_TYPE.LOADABLE_STUDY)) {
+        // Cargo details based on port, and operation type
+        this.buildCargoToBeLoadedForPort(request, builder, repBuilder);
+      } else if (request.getPlanningType().equals(Common.PLANNING_TYPE.DISCHARGE_STUDY)) {
+        this.buildCargoToBeDischargedFroPort(request, builder, repBuilder);
+      }
     }
     // Ballast details based on port rotation
     this.buildBallastDetailsBasedOnPort(request, builder, repBuilder);
@@ -209,11 +215,123 @@ public class SynopticService {
     }
   }
 
+  private void buildCargoToBeDischargedFroPort(
+      LoadableStudy.LoadingPlanIdRequest request,
+      LoadableStudy.LoadingPlanCommonResponse.Builder builder,
+      Common.ResponseStatus.Builder repBuilder) {
+
+    List<DischargePatternQuantityCargoPortwiseDetails> disList =
+        this.disCargoQuantityRepository.findAllByLoadablePatternIdAndIsActiveTrue(
+            request.getPatternId());
+    if (!disList.isEmpty()) {
+      List<DischargePatternQuantityCargoPortwiseDetails> dataList = new ArrayList<>();
+      if (request.getCargoNominationFilter()) {
+        Set<Long> nominationIds =
+            getCargoNominationIdList(request.getPatternId(), request.getPortId());
+        dataList =
+            disList.stream()
+                .filter(v -> nominationIds.contains(v.getCargoNominationId()))
+                .collect(Collectors.toList());
+      } else {
+        dataList = disList; // no filter, add all data
+      }
+
+      // Filter by PortId, Operation Type
+      var quantityList =
+          dataList.stream()
+              .filter(
+                  v ->
+                      (v.getPortId().equals(request.getPortId()))
+                          && (v.getOperationType().equals(request.getOperationType())))
+              .collect(Collectors.toList());
+
+      // build Entity to Message
+      if (!quantityList.isEmpty()) {
+        for (DischargePatternQuantityCargoPortwiseDetails var1 : quantityList) {
+          LoadableStudy.LoadableQuantityCargoDetails.Builder builder1 =
+              LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
+          Optional.ofNullable(var1.getId()).ifPresent(builder1::setId);
+          // Optional.ofNullable(var1.getGrade()).ifPresent(builder1::setGrade);
+          Optional.ofNullable(var1.getEstimatedAPI())
+              .ifPresent(v -> builder1.setEstimatedAPI(v.toString()));
+          Optional.ofNullable(var1.getEstimatedTemp())
+              .ifPresent(v -> builder1.setEstimatedTemp(v.toString()));
+          Optional.ofNullable(var1.getCargoNominationTemperature())
+              .ifPresent(v -> builder1.setCargoNominationTemperature(v.toString()));
+
+          // Optional.ofNullable(var1.getOrderBblsDbs()).ifPresent(builder1::setOrderBblsdbs);
+          // Optional.ofNullable(var1.getOrderBbls60f()).ifPresent(builder1::setOrderBbls60F);
+          // Optional.ofNullable(var1.getMinTolerence()).ifPresent(builder1::setMinTolerence);
+          // Optional.ofNullable(var1.getMaxTolerence()).ifPresent(builder1::setMaxTolerence);
+          // Optional.ofNullable(var1.getLoadableBblsDbs()).ifPresent(builder1::setLoadableBblsdbs);
+          // Optional.ofNullable(var1.getLoadableBbls60f()).ifPresent(builder1::setLoadableBbls60F);
+
+          // Optional.ofNullable(var1.getLoadableLt()).ifPresent(builder1::setLoadableLT);
+          Optional.ofNullable(var1.getDischargeMT())
+              .ifPresent(value1 -> builder1.setDischargeMT(value1.toString()));
+          // Optional.ofNullable(var1.getLoadableKl()).ifPresent(builder1::setLoadableKL);
+          Optional.ofNullable(var1.getDifferencePercentage())
+              .ifPresent(value -> builder1.setDifferencePercentage(value.toString()));
+          // Optional.ofNullable(var1.getDifferenceColor()).ifPresent(builder1::setDifferenceColor);
+
+          Optional.ofNullable(var1.getCargoId()).ifPresent(builder1::setCargoId);
+          Optional.ofNullable(var1.getCargoAbbreviation())
+              .ifPresent(builder1::setCargoAbbreviation);
+          Optional.ofNullable(var1.getColorCode()).ifPresent(builder1::setColorCode);
+          Optional.ofNullable(var1.getPriority()).ifPresent(builder1::setPriority);
+          Optional.ofNullable(var1.getLoadingOrder()).ifPresent(builder1::setLoadingOrder);
+          Optional.ofNullable(var1.getSlopQuantity())
+              .ifPresent(value -> builder1.setSlopQuantity(value.toString()));
+
+          Optional.ofNullable(var1.getOrderedQuantity())
+              .ifPresent(
+                  v -> {
+                    builder1.setOrderQuantity(v.toString());
+                  });
+          Optional.ofNullable(this.getCargoNominationQuantity(var1.getCargoNominationId()))
+              .ifPresent(
+                  v -> {
+                    builder1.setCargoNominationQuantity(v.toString());
+                  });
+
+          Optional.ofNullable(var1.getCargoNominationId())
+              .ifPresent(builder1::setCargoNominationId);
+          Optional.ofNullable(var1.getTimeRequiredForDischarging())
+              .ifPresent(value -> builder1.setTimeRequiredForDischarging(String.valueOf(value)));
+          builder.addLoadableQuantityCargoDetails(builder1.build());
+        }
+      }
+    }
+    builder.setResponseStatus(repBuilder.setStatus(SUCCESS).build());
+    log.info("Get Discharge Quantity details for patter Id {}", request.getPatternId());
+  }
+
+  private Set<Long> getCargoNominationIdList(Long patternId, Long portId) {
+    // Need to filter based on the cargo nomination id
+    Optional<LoadablePattern> lp = loadablePatternRepository.findByIdAndIsActive(patternId, true);
+    if (lp.isPresent()) {
+      Long studyId = lp.get().getLoadableStudy().getId();
+      List<CargoNomination> cargoNominations =
+          this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderById(studyId, true);
+      Set<Long> nominationIds =
+          cargoNominations.stream()
+              .map(CargoNomination::getCargoNominationPortDetails)
+              .flatMap(Collection::stream)
+              .filter(v -> v.getPortId().equals(portId))
+              .map(CargoNominationPortDetails::getCargoNomination)
+              .map(CargoNomination::getId)
+              .collect(Collectors.toSet());
+      return nominationIds;
+    }
+    return new HashSet<>();
+  }
+
   private void buildCargoToBeLoadedForPort(
       LoadableStudy.LoadingPlanIdRequest request,
       LoadableStudy.LoadingPlanCommonResponse.Builder builder,
       Common.ResponseStatus.Builder repBuilder) {
 
+    // For Loading Module
     List<LoadablePlanQuantity> list =
         this.loadablePlanQuantityRepository.PORT_WISE_CARGO_DETAILS(
             request.getPatternId(),
@@ -222,36 +340,18 @@ public class SynopticService {
             request.getPortId());
 
     // Above list provide all cargo details at this port,
-    // we don't need this data (only need what loading/discharge at that port)
+    // we don't need this data (only need what loading/discharge at that port) by nomination
     List<LoadablePlanQuantity> dataList = new ArrayList<>();
-
     if (request.getCargoNominationFilter()) {
-      // Need to filter based on the cargo nomination id
-      Optional<LoadablePattern> lp =
-          loadablePatternRepository.findByIdAndIsActive(request.getPatternId(), true);
-      if (lp.isPresent()) {
-        Long studyId = lp.get().getLoadableStudy().getId();
-        List<CargoNomination> cargoNominations =
-            this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderById(
-                studyId, true);
-
-        List<Long> nominationIds =
-            cargoNominations.stream()
-                .map(CargoNomination::getCargoNominationPortDetails)
-                .flatMap(Collection::stream)
-                .filter(v -> v.getPortId().equals(request.getPortId()))
-                .map(CargoNominationPortDetails::getCargoNomination)
-                .map(CargoNomination::getId)
-                .collect(Collectors.toList());
-        dataList =
-            list.stream()
-                .filter(v -> nominationIds.contains(v.getCargoNominationId()))
-                .collect(Collectors.toList());
-      }
+      Set<Long> nominationIds =
+          getCargoNominationIdList(request.getPatternId(), request.getPortId());
+      dataList =
+          list.stream()
+              .filter(v -> nominationIds.contains(v.getCargoNominationId()))
+              .collect(Collectors.toList());
     } else {
       dataList = list; // no filter, add all data
     }
-
     if (!dataList.isEmpty()) {
       for (LoadablePlanQuantity var1 : dataList) {
         LoadableStudy.LoadableQuantityCargoDetails.Builder builder1 =
@@ -306,6 +406,7 @@ public class SynopticService {
       }
     }
     builder.setResponseStatus(repBuilder.setStatus(SUCCESS).build());
+    log.info("Get Loadable Quantity details for patter Id {}", request.getPatternId());
   }
 
   private BigDecimal getCargoNominationQuantity(Long cargoNominationId) {

@@ -184,6 +184,7 @@ service LoadableStudyService {
 	rpc GetActiveVoyagesByVessel (VoyageRequest) returns (ActiveVoyage) {
 	}
 
+	// For both Loading and Discharge
 	rpc GetSynopticDataForLoadingPlan(LoadingPlanIdRequest) returns (LoadingPlanCommonResponse) {}
 
 	rpc SaveLoadingInfoToSynopticData(LoadingInfoSynopticalUpdateRequest) returns (ResponseStatus) {}
@@ -440,6 +441,7 @@ message LoadablePlanPortWiseDetails {
 
 message LoadablePlanDetailsRequest {
 	int64 loadablePatternId = 1;
+	bool isDischargePlan = 2;
 }
 message LoadableCommingleDetailsReply{
 	ResponseStatus responseStatus = 1;
@@ -1444,6 +1446,7 @@ message LoadingPlanIdRequest {
 	int64 portRotationId = 5;
 	int64 portId = 6;
 	bool cargoNominationFilter = 7; // default value - false
+	PLANNING_TYPE planningType = 8; // to indicate is the request from loading OR discharging
 }
 
 message LoadingPlanCommonResponse{

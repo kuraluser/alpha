@@ -72,8 +72,7 @@ public class DischargeQuantityCargoDetails {
   private List<ContainerWashing> cowDetails;
   private BigDecimal blFigure = new BigDecimal("0");
   private BigDecimal shipFigure = new BigDecimal("0");
-  private Boolean protested=false;
-  private Boolean isCommingledDischarge=false;
-  private Boolean isCommingledCargo=false;
-
+  private Boolean protested = false;
+  private Boolean isCommingledDischarge = false;
+  private Boolean isCommingledCargo = false;
 }
