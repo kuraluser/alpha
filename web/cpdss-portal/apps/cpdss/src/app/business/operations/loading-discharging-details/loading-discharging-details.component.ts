@@ -35,7 +35,7 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
 
   @Input() operation: OPERATIONS;
   @Input() loadingInfoId: number;
-  @Input() dischargingInfoId: number;
+  @Input() dischargeInfoId: number;
 
   @Input()
   get loadingDischargingDetails(): ILoadingDischargingDetails {
@@ -250,7 +250,7 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
   downloadTemplate() {
     let id;
     if(this.operation === OPERATIONS.DISCHARGING) {
-      id = this.dischargingInfoId;
+      id = this.dischargeInfoId;
     } else {
       id = this.loadingInfoId;
     }
@@ -275,7 +275,7 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
     this.fileUploadVariable.nativeElement.disabled = true;
     let id;
     if (this.operation === OPERATIONS.DISCHARGING) {
-      id = this.dischargingInfoId;
+      id = this.dischargeInfoId;
     } else {
       id = this.loadingInfoId;
     }

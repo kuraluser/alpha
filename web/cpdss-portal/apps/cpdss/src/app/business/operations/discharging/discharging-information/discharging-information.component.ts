@@ -52,7 +52,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
 
   dischargingInformationData?: IDischargingInformation;
   dischargingInformationPostData = <IDischargingInformation>{};
-  dischargingInfoId: number;
+  dischargeInfoId: number;
   stageDuration: IStageDuration;
   stageOffset: IStageOffset;
   prevQuantitySelectedUnit: QUANTITY_UNIT;
@@ -118,7 +118,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       const dischargingInformationResponse = await this.loadingDischargingInformationApiService.getDischargingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
       this.dischargingInformationData = this.loadingDischargingTransformationService.transformDischargingInformation(dischargingInformationResponse, this.listData);
       this.initFormArray(this.dischargingInformationData);
-      // this.rulesService.dischargingInfoId.next(this.dischargingInformationData.dischargingInfoId);
+      // this.rulesService.dischargeInfoId.next(this.dischargingInformationData.dischargeInfoId);
       await this.updateGetData();
     }
     catch (error) {
@@ -138,10 +138,10 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   initFormArray(dischargingInformationData: IDischargingInformation) {
     this.dischargingInformationForm = this.fb.group({
       stageDetails: this.fb.group({
-        trackStartEndStage: this.fb.control(dischargingInformationData?.dischargingStages?.trackStartEndStage),
-        trackGradeSwitch: this.fb.control(dischargingInformationData?.dischargingStages?.trackGradeSwitch),
-        stageOffset: this.fb.control(dischargingInformationData?.dischargingStages?.stageOffset),
-        stageDuration: this.fb.control(dischargingInformationData?.dischargingStages?.stageDuration),
+        trackStartEndStage: this.fb.control(dischargingInformationData?.dischargeStages?.trackStartEndStage),
+        trackGradeSwitch: this.fb.control(dischargingInformationData?.dischargeStages?.trackGradeSwitch),
+        stageOffset: this.fb.control(dischargingInformationData?.dischargeStages?.stageOffset),
+        stageDuration: this.fb.control(dischargingInformationData?.dischargeStages?.stageDuration),
       }),
       dischargeSlopTanksFirst: this.fb.control(dischargingInformationData?.dischargeSlopTanksFirst),
       dischargeCommingledCargoSeperately: this.fb.control(dischargingInformationData?.dischargeCommingledCargoSeperately),
@@ -149,13 +149,8 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
         dataTable: this.fb.array([])
       }),
       cowDetails: this.fb.group({}),
-      postDischargeStageTime: this.fb.group({
-        dryCheckTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
-        slopDischargingTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
-        finalStrippingTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
-        freshOilWashingTime: this.fb.control(dischargingInformationData?.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
-      })
-    })
+      postDischargeStageTime: this.fb.group({})
+    });
   }
 
   /**
@@ -165,12 +160,12 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
    */
   async updateGetData() {
     if (this.dischargingInformationData) {
-      this.dischargingInformationPostData.dischargingInfoId = this.dischargingInformationData?.dischargingInfoId;
+      this.dischargingInformationPostData.dischargeInfoId = this.dischargingInformationData?.dischargeInfoId;
       this.dischargingInformationPostData.synopticalTableId = this.dischargingInformationData?.synopticalTableId;
     }
-    this.loadingDischargingTransformationService.setDischargingInformationValidity(this.dischargingInformationData?.isDischargingInfoComplete)
-    this.dischargingInfoId = this.dischargingInformationData?.dischargingInfoId;
-    this.dischargingInformationId.emit(this.dischargingInfoId);
+    this.loadingDischargingTransformationService.setDischargingInformationValidity(this.dischargingInformationData?.isDischargeInfoComplete)
+    this.dischargeInfoId = this.dischargingInformationData?.dischargeInfoId;
+    this.dischargingInformationId.emit(this.dischargeInfoId);
 
   }
 
@@ -200,7 +195,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   * @memberof DischargingInformationComponent
   */
   onStageOffsetValChange(event) {
-    this.dischargingInformationData.dischargingStages.stageOffset = event?.value;
+    this.dischargingInformationData.dischargeStages.stageOffset = event?.value;
     this.onUpdateDischargingStages();
   }
 
@@ -210,7 +205,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   * @memberof DischargingInformationComponent
   */
   onStageDurationValChange(event) {
-    this.dischargingInformationData.dischargingStages.stageDuration = event?.value;
+    this.dischargingInformationData.dischargeStages.stageDuration = event?.value;
     this.onUpdateDischargingStages();
   }
 
@@ -220,10 +215,10 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   * @memberof DischargingInformationComponent
   */
   onUpdateDischargingStages() {
-    this.dischargingInformationPostData.dischargingStages.stageOffset = this.dischargingInformationData?.dischargingStages?.stageOffset;
-    this.dischargingInformationPostData.dischargingStages.stageDuration = this.dischargingInformationData?.dischargingStages?.stageDuration;
-    this.dischargingInformationPostData.dischargingStages.trackStartEndStage = this.dischargingInformationData?.dischargingStages?.trackStartEndStage;
-    this.dischargingInformationPostData.dischargingStages.trackGradeSwitch = this.dischargingInformationData?.dischargingStages?.trackGradeSwitch;
+    this.dischargingInformationPostData.dischargeStages.stageOffset = this.dischargingInformationData?.dischargeStages?.stageOffset;
+    this.dischargingInformationPostData.dischargeStages.stageDuration = this.dischargingInformationData?.dischargeStages?.stageDuration;
+    this.dischargingInformationPostData.dischargeStages.trackStartEndStage = this.dischargingInformationData?.dischargeStages?.trackStartEndStage;
+    this.dischargingInformationPostData.dischargeStages.trackGradeSwitch = this.dischargingInformationData?.dischargeStages?.trackGradeSwitch;
     this.hasUnSavedData = true;
   }
 
@@ -243,7 +238,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
    * @memberof DischargingInformationComponent
    */
   onUpdateLoadingDetails(event) {
-    this.dischargingInformationPostData.dischargingDetails = event;
+    this.dischargingInformationPostData.dischargeDetails = event;
     this.hasUnSavedData = true;
   }
 
@@ -253,8 +248,8 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   * @memberof DischargingInformationComponent
   */
   onTrackStageChange() {
-    this.dischargingInformationPostData.dischargingStages.trackStartEndStage = this.dischargingInformationData?.dischargingStages?.trackStartEndStage;
-    this.dischargingInformationPostData.dischargingStages.trackGradeSwitch = this.dischargingInformationData?.dischargingStages?.trackGradeSwitch;
+    this.dischargingInformationPostData.dischargeStages.trackStartEndStage = this.dischargingInformationData?.dischargeStages?.trackStartEndStage;
+    this.dischargingInformationPostData.dischargeStages.trackGradeSwitch = this.dischargingInformationData?.dischargeStages?.trackGradeSwitch;
     this.onUpdateDischargingStages();
   }
 
@@ -264,7 +259,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   * @memberof DischargingInformationComponent
   */
   onDischargingRateChange(event) {
-    this.dischargingInformationPostData.dischargingRates = event;
+    this.dischargingInformationPostData.dischargeRates = event;
     this.hasUnSavedData = true;
   }
 

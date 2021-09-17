@@ -413,7 +413,7 @@
                                   </ng-container>
                                   <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
                                     <label class="checkbox-custom pr-20">
-                                      <input type="checkbox" [formControlName]="col.field" (change)="onChange($event, rowData, rowIndex, col)" id="{{col.field+'_'+rowIndex}}" readonly="true">
+                                      <input type="checkbox" [formControlName]="col.field" id="{{col.field+'_'+rowIndex}}" disabled="true">
                                       <span class="checkmark"></span>
                                     </label>
                                   </ng-container>

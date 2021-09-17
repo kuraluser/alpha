@@ -2,7 +2,7 @@
 </h5>
 <div class="container-fluid">
   <div class="row">
-    <div class="col auto-layout">
+    <div class="col auto-layout pt-5">
       <p-table [value]="postDischargeStageTimeData">
         <ng-template pTemplate="header">
           <tr>
@@ -12,32 +12,52 @@
             <th>{{ 'DISCHARGING_TIME_FOR_FRESH_OIL_DISCHARGE' | translate }}</th>
           </tr>
         </ng-template>
+
         <ng-template pTemplate="body">
           <tr [formGroup]="postDischargeStageTimeForm">
             <td class="error-icon-wrapper">
-              <p-inputMask type="text" styleClass="form-control" formControlName="dryCheckTime" mask="99:99">
+              <p-inputMask *ngIf="editMode;else dryCheckTime" type="text" styleClass="form-control"
+                formControlName="dryCheckTime" mask="99:99">
               </p-inputMask>
+              <ng-template #dryCheckTime>
+                <span>{{postDischargeStageTimeFormControl?.dryCheckTime?.value}}</span>
+              </ng-template>
               <cpdss-portal-validation-error [errors]="fieldError('dryCheckTime')"
                 [errorMessages]="errorMesages?.dryCheckTime">
               </cpdss-portal-validation-error>
             </td>
+
             <td class="error-icon-wrapper">
-              <p-inputMask type="text" styleClass="form-control" formControlName="slopDischargingTime" mask="99:99">
+              <p-inputMask *ngIf="editMode;else slopDischargingTime" type="text" styleClass="form-control"
+                formControlName="slopDischargingTime" mask="99:99">
               </p-inputMask>
+              <ng-template #slopDischargingTime>
+                <span>{{postDischargeStageTimeFormControl?.slopDischargingTime?.value}}</span>
+              </ng-template>
               <cpdss-portal-validation-error [errors]="fieldError('slopDischargingTime')"
                 [errorMessages]="errorMesages?.slopDischargingTime">
               </cpdss-portal-validation-error>
             </td>
+
             <td class="error-icon-wrapper">
-              <p-inputMask type="text" styleClass="form-control" formControlName="finalStrippingTime" mask="99:99">
+              <p-inputMask *ngIf="editMode;else finalStrippingTime" type="text" styleClass="form-control"
+                formControlName="finalStrippingTime" mask="99:99">
               </p-inputMask>
+              <ng-template #finalStrippingTime>
+                <span>{{postDischargeStageTimeFormControl?.finalStrippingTime?.value}}</span>
+              </ng-template>
               <cpdss-portal-validation-error [errors]="fieldError('finalStrippingTime')"
                 [errorMessages]="errorMesages?.finalStrippingTime">
               </cpdss-portal-validation-error>
             </td>
+
             <td class="error-icon-wrapper">
-              <p-inputMask type="text" styleClass="form-control" formControlName="freshOilWashingTime" mask="99:99">
+              <p-inputMask *ngIf="editMode;else freshOilWashingTime" type="text" styleClass="form-control"
+                formControlName="freshOilWashingTime" mask="99:99">
               </p-inputMask>
+              <ng-template #freshOilWashingTime>
+                <span>{{postDischargeStageTimeFormControl?.freshOilWashingTime?.value}}</span>
+              </ng-template>
               <cpdss-portal-validation-error [errors]="fieldError('freshOilWashingTime')"
                 [errorMessages]="errorMesages?.freshOilWashingTime">
               </cpdss-portal-validation-error>

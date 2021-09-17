@@ -24,6 +24,11 @@ import { DischargingInstructionApiService } from '../services/discharging-instru
 import { LoadingInstructionApiService } from '../services/loading-instruction-api.service';
 import { DischargingSequenceComponent } from './discharging-sequence/discharging-sequence.component';
 import { LoadingDischargingSequenceChartModule } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.module';
+import { DischargingPlanComponent } from './discharging-plan/discharging-plan/discharging-plan.component';
+import { DischargingPlanApiService } from '../services/discharging-plan-api.service';
+import { PlanSidePanelModule } from '../plan-side-panel/plan-side-panel.module';
+import { ArrivalConditionModule } from '../arrival-condition/arrival-condition.module';
+import { DepartureConditionModule } from '../departure-condition/departure-condition.module';
 
 /**
  * Module for discharging operations
@@ -32,7 +37,7 @@ import { LoadingDischargingSequenceChartModule } from '../loading-discharging-se
  * @class DischargingModule
  */
 @NgModule({
-  declarations: [DischargingComponent, DischargingInformationComponent, DischargingInstructionComponent, DischargingSequenceComponent],
+  declarations: [DischargingComponent, DischargingInformationComponent, DischargingInstructionComponent, DischargingSequenceComponent, DischargingPlanComponent],
   imports: [
     CommonModule,
     DischargingRoutingModule,
@@ -50,9 +55,12 @@ import { LoadingDischargingSequenceChartModule } from '../loading-discharging-se
     LoadingDischargingManageSequenceModule,
     LoadingDischargingCargoMachineryModule,
     CowPlanModule,
+    PlanSidePanelModule,
+    ArrivalConditionModule,
+    DepartureConditionModule,
     PostDischargeStageModule,
     LoadingDischargingSequenceChartModule
   ],
-  providers: [LoadingDischargingInformationApiService, DischargingInstructionApiService, LoadingInstructionApiService]
+  providers: [LoadingDischargingInformationApiService, DischargingInstructionApiService, DischargingPlanApiService, LoadingInstructionApiService]
 })
 export class DischargingModule { }

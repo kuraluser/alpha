@@ -2,7 +2,7 @@
   <div class="col-md-6">
     <h5 class="">{{'DISCHARGING_INFORMATION_DISCHARGING_RATES_HEADER' | translate}}</h5>
   </div>
-  <div class="col-md-6 text-right" *ngIf="editMode">
+  <div class="col-md-6 text-right">
     <p-dropdown id="discharging_rate_conversion_dropdown" [options]="conversionDropdown"
       name="discharging_rate_conversion_dropdown" [(ngModel)]="selectedConversion" (onChange)="onConversionChange()"
       optionLabel="value" optionValue="value" resetFilterOnHide="true"></p-dropdown>
@@ -24,7 +24,7 @@
               placeholder="{{'DISCHARGING_RATE_INITIAL_DISCHARGING_RATE_PLACEHOLDER' | translate}}"
               (change)="onChange('initialDischargingRate')" [readonly]="false">
             <ng-template #initialDischargingRate>
-              <span>{{dischargingRatesFormGroupControl?.dischargingRatesFormGroupControl?.initialDischargingRate?.value}}</span>
+              <span>{{dischargingRatesFormGroupControl?.initialDischargingRate?.value}}</span>
             </ng-template>
             <cpdss-portal-validation-error [errors]="fieldError('initialDischargingRate')"
               [errorMessages]="errorMesages?.initialDischargingRate"></cpdss-portal-validation-error>

@@ -22,7 +22,7 @@ export class DischargingSequenceComponent implements OnInit, OnDestroy {
   @Input() vesselId: number;
   @Input() voyageId: number;
   @Input() portRotationId: number;
-  @Input() dischargingInfoId: number;
+  @Input() dischargeInfoId: number;
   @Input() operation: OPERATIONS;
 
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');

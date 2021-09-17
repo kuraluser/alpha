@@ -157,7 +157,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   */
   onUse(column) {
     if (column?.isUsing) {
-      const info = this.operation === OPERATIONS.LOADING ? { loadingInfoId: this.loadingInfoId } : { dischargingInfoId: this.dichargingInfoId };
+      const info = this.operation === OPERATIONS.LOADING ? { loadingInfoId: this.loadingInfoId } : { dischargeInfoId: this.dichargingInfoId };
       const machineInUse: ILoadingMachinesInUse | IDischargingMachinesInUse = {
         id: 0,
         machineId: column.id,
