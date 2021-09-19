@@ -63,9 +63,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
+
   @GrpcClient("dischargeInformationService")
   private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
       dischargePlanServiceBlockingStub;
+
   @GrpcClient("cargoInfoService")
   private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoServiceBlockingStub;
 
@@ -648,7 +650,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     if (isDischarging) {
       response = this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
     } else {
-      response = this.dischargePlanServiceBlockingStub.getDischargeUpdateUllageDetails(requestBuilder.build());
+      response =
+          this.dischargePlanServiceBlockingStub.getDischargeUpdateUllageDetails(
+              requestBuilder.build());
     }
     LoadingUpdateUllageResponse outResponse = new LoadingUpdateUllageResponse();
     // group cargo nomination ids

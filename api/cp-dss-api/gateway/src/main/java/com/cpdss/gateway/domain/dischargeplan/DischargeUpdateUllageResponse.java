@@ -1,8 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.dischargeplan;
 
-import java.util.List;
-
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.gateway.domain.CargoBillOfLadding;
 import com.cpdss.gateway.domain.UpdateUllageCargoQuantityDetail;
@@ -11,11 +9,11 @@ import com.cpdss.gateway.domain.loadingplan.LoadablePlanCommingleDetails;
 import com.cpdss.gateway.domain.loadingplan.PortLoadablePlanBallastDetails;
 import com.cpdss.gateway.domain.loadingplan.PortLoadablePlanRobDetails;
 import com.cpdss.gateway.domain.loadingplan.PortLoadablePlanStowageDetails;
-
+import java.util.List;
 import lombok.Data;
 
 @Data
-public class DischargeUpdateUllageResponse  {
+public class DischargeUpdateUllageResponse {
   private CommonSuccessResponse responseStatus;
   private List<CargoBillOfLadding> billOfLaddingList;
   private Boolean isPlannedValues;

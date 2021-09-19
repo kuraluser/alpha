@@ -1,14 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.dischargeplan;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
@@ -42,9 +34,14 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.utility.AdminRuleValueExtract;
-
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -67,7 +64,7 @@ public class DischargeInformationService {
   @GrpcClient("dischargeInformationService")
   private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
       dischargeInfoServiceStub;
- 
+
   /**
    * Get Discharge Information from discharge-plan and master tables
    *
@@ -339,11 +336,11 @@ public class DischargeInformationService {
   public DischargeUpdateUllageResponse getUpdateUllageDetails(
       Long vesselId, Long patternId, Long portRotationId, String operationType)
       throws GenericServiceException {
-	  DischargeUpdateUllageResponse response= new DischargeUpdateUllageResponse();
-    	  LoadingUpdateUllageResponse loadingUpdateUllageResponse = loadingPlanService.getUpdateUllageDetails(
-    	              vesselId, patternId, portRotationId, operationType, true);
-    	  BeanUtils.copyProperties(loadingUpdateUllageResponse, response);
-   return response; 
-  
+    DischargeUpdateUllageResponse response = new DischargeUpdateUllageResponse();
+    LoadingUpdateUllageResponse loadingUpdateUllageResponse =
+        loadingPlanService.getUpdateUllageDetails(
+            vesselId, patternId, portRotationId, operationType, true);
+    BeanUtils.copyProperties(loadingUpdateUllageResponse, response);
+    return response;
   }
 }
