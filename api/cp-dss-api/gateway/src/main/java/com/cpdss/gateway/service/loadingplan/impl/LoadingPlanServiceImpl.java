@@ -10,6 +10,7 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
@@ -62,7 +63,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
-
+  @GrpcClient("dischargeInformationService")
+  private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
+      dischargePlanServiceBlockingStub;
   @GrpcClient("cargoInfoService")
   private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoServiceBlockingStub;
 
@@ -645,7 +648,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     if (isDischarging) {
       response = this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
     } else {
-      response = this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
+      response = this.dischargePlanServiceBlockingStub.getDischargeUpdateUllageDetails(requestBuilder.build());
     }
     LoadingUpdateUllageResponse outResponse = new LoadingUpdateUllageResponse();
     // group cargo nomination ids
