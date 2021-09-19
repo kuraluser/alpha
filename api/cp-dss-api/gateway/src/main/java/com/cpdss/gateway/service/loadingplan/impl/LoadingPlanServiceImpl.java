@@ -648,11 +648,12 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     // Get Update Ullage Data
     LoadingPlanModels.UpdateUllageDetailsResponse response = null;
     if (isDischarging) {
-      response = this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
+    	 response =
+    	          this.dischargePlanServiceBlockingStub.getDischargeUpdateUllageDetails(
+    	              requestBuilder.build());
     } else {
-      response =
-          this.dischargePlanServiceBlockingStub.getDischargeUpdateUllageDetails(
-              requestBuilder.build());
+    	 response = this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
+     
     }
     LoadingUpdateUllageResponse outResponse = new LoadingUpdateUllageResponse();
     // group cargo nomination ids
@@ -1044,6 +1045,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 stowageDetail.setFillingPercentage(portWiseStowageDetail.getFillingPercentage());
                 stowageDetail.setId(portWiseStowageDetail.getId());
                 stowageDetail.setLoadablePatternId(portWiseStowageDetail.getLoadablePatternId());
+                stowageDetail.setDischargePatternId(portWiseStowageDetail.getLoadablePatternId());
                 stowageDetail.setRdgUllage(portWiseStowageDetail.getRdgUllage());
                 stowageDetail.setTankId(portWiseStowageDetail.getTankId());
                 stowageDetail.setTemperature(portWiseStowageDetail.getTemperature());
@@ -1125,6 +1127,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 ballastDetails.setFillingPercentage(portWiseBallastDetail.getFillingPercentage());
                 ballastDetails.setId(portWiseBallastDetail.getId());
                 ballastDetails.setLoadablePatternId(portWiseBallastDetail.getLoadablePatternId());
+                ballastDetails.setDischargePatternId(portWiseBallastDetail.getLoadablePatternId());
                 ballastDetails.setTankId(portWiseBallastDetail.getTankId());
                 ballastDetails.setTemperature(
                     !portWiseBallastDetail.getTemperature().isEmpty()
@@ -1188,6 +1191,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             PortLoadablePlanRobDetails robDetail = new PortLoadablePlanRobDetails();
             robDetail.setId(portWiseRobDetail.getId());
             robDetail.setLoadablePatternId(portWiseRobDetail.getLoadablePatternId());
+            robDetail.setDischargePatternId(portWiseRobDetail.getLoadablePatternId());
             robDetail.setTankId(portWiseRobDetail.getTankId());
             robDetail.setQuantity(portWiseRobDetail.getQuantity());
             robDetail.setArrivalDeparture(portWiseRobDetail.getArrivalDeparture());
@@ -1720,12 +1724,14 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 LoadablePlanCommingleDetails commingle = new LoadablePlanCommingleDetails();
                 commingle.setId(commingleDetails.getId());
                 commingle.setLoadablePatternId(commingleDetails.getLoadablePatternId());
+                commingle.setDischargePatternId(commingleDetails.getLoadablePatternId());
                 commingle.setTankId(commingleDetails.getTankId());
                 commingle.setQuantity(
                     commingleDetails.getQuantity().isEmpty()
                         ? null
                         : Double.parseDouble(commingleDetails.getQuantity()));
                 commingle.setLoadingInformationId(commingle.getLoadingInformationId());
+                commingle.setDischargeInformationId(commingle.getLoadingInformationId());
                 commingle.setGrade(commingleDetails.getGrade());
                 commingle.setTankName(commingleDetails.getTankName());
                 commingle.setQuantity(
