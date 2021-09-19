@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
@@ -49,7 +50,12 @@ public interface LoadingPlanGrpcService {
       String operationType);
 
   List<LoadableStudy.LoadableQuantityCargoDetails> fetchLoadablePlanCargoDetails(
-      Long patternId, String operationType, Long portRotationId, Long portId, Boolean isFilterOn);
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      Boolean isFilterOn,
+      Common.PLANNING_TYPE planning_type);
 
   List<LoadableStudy.LoadablePlanBallastDetails> fetchLoadablePlanBallastDetails(
       Long patternId, Long portRotationId);

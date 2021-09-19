@@ -176,8 +176,8 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
     this.loadingInformationId.emit(this.loadingInfoId);
     this.loadingInformationData.loadingSequences["loadingDischargingDelays"] = this.loadingInformationData.loadingSequences.loadingDelays;
     this.loadingInformationData.machineryInUses['loadingDischargingMachinesInUses'] = this.loadingInformationData?.machineryInUses?.loadingMachinesInUses;
-    this.trackStartEndStage = this.loadingInformationData?.loadingStages?.trackStartEndStage;
-    this.trackGradeSwitch = this.loadingInformationData?.loadingStages?.trackGradeSwitch;
+    // this.trackStartEndStage = this.loadingInformationData?.loadingStages?.trackStartEndStage; // <!-- TODO-Commented based on the user story  - DSS-4090 --> may require in future
+    // this.trackGradeSwitch = this.loadingInformationData?.loadingStages?.trackGradeSwitch;
     this.cargoVesselTankDetails = this.loadingInformationData?.cargoVesselTankDetails;
     this.stageOffsetList = this.loadingInformationData?.loadingStages.stageOffsetList;
     this.stageDurationList = this.loadingInformationData?.loadingStages.stageDurationList;
@@ -250,8 +250,8 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
     this.loadingInformationPostData.loadingStages = <ILoadingDischargingStages>{};
     this.loadingInformationPostData.loadingStages.stageOffset = this.stageOffset;
     this.loadingInformationPostData.loadingStages.stageDuration = this.stageDuration;
-    this.loadingInformationPostData.loadingStages.trackStartEndStage = this.trackStartEndStage;
-    this.loadingInformationPostData.loadingStages.trackGradeSwitch = this.trackGradeSwitch;
+    // this.loadingInformationPostData.loadingStages.trackStartEndStage = this.trackStartEndStage;  //may require in future
+    // this.loadingInformationPostData.loadingStages.trackGradeSwitch = this.trackGradeSwitch;
     this.hasUnSavedData = true;
   }
 

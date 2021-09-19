@@ -1081,5 +1081,27 @@ export class DatatableComponent implements OnInit {
     return className;
   }
 
+  /**
+   * get the class for total field
+   *
+   * @param {any} col
+   * @param {number} index
+   * @memberof DatatableComponent
+   */
+  getFieldTotalClass(col, index){
+    let clasName = '';
+    if(this.showTotalClass && !index){
+      clasName = this.showTotalClass;
+    } else {
+      clasName = 'text-right';
+    }
+
+    if(col.totalFieldClass){
+      clasName = col.totalFieldClass + ' ' + clasName;
+    }
+
+    return clasName;
+  }
+
 }
 

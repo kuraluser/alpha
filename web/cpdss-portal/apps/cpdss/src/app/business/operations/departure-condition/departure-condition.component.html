@@ -27,30 +27,62 @@
             <cpdss-portal-cargo-tank-layout *ngIf="selectedTab === tankType.CARGO" [tanks]="departureCargoTanks"
                 [options]="cargoTankOptions">
             </cpdss-portal-cargo-tank-layout>
-            
+
         </div>
         <div class="row">
             <div class="col loading-discharging-tank-layout  loadable-plan-ballast ">
                 <cpdss-portal-ballast-layout *ngIf="selectedTab === tankType.BALLAST" [tanks]="centerBallastTanks"
-                [rearTanks]="rearBallastTanks" [frontTanks]="frontBallastTanks" [options]="ballastTankOptions">
-            </cpdss-portal-ballast-layout>
+                    [rearTanks]="rearBallastTanks" [frontTanks]="frontBallastTanks" [options]="ballastTankOptions">
+                </cpdss-portal-ballast-layout>
             </div>
         </div>
     </div>
     <div class="col sidebar-right-loading-discharging-plan">
         <div class="row">
             <div class="col">
-                <cpdss-portal-loading-discharging-cargo-details-table [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargoConditions]="cargoConditions"
-                    [cargoQuantities]="cargoQuantities" ></cpdss-portal-loading-discharging-cargo-details-table>
+                <cpdss-portal-loading-discharging-cargo-details-table
+                    [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargoConditions]="cargoConditions"
+                    [cargoQuantities]="cargoQuantities"></cpdss-portal-loading-discharging-cargo-details-table>
             </div>
 
         </div>
         <div class="row pt-10">
             <div class="col text-center">
-                <button class="btn btn-main mr-5 mt-5" id="cargo_status">{{ULLAGE_STATUS_TEXT[(loadingDischargingPlanData?.loadingInformation ? loadingDischargingPlanInfo?.loadingPlanDepStatusId : loadingDischargingPlanInfo?.dischargePlanDepStatusId)] | translate}}</button>
-                <button (click)="display = true" class="btn btn-main mr-5 mt-5" id="departure_uptate_ullage">{{'LOADABLE_PLAN_DEPARTURE_CONDITION_CARGO_UPDATE_ULLAGE' | translate}}</button>
-                <button (click)="showError()" *ngIf="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.ERROR" class="btn btn-main mr-5 mt-5" id="cargo_error">{{'ULLAGE_UPDATE_SHOW_ERROR_LABEL'| translate}}</button>
-                <button (click)="showError()" *ngIf="loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_VALUE.ERROR" class="btn btn-main mr-5 mt-5" id="cargo_error">{{'ULLAGE_UPDATE_SHOW_ERROR_LABEL'| translate}}</button>
+
+                <ng-container *ngIf="operation === OPERATIONS.LOADING">
+                    <span class="badge-custom badge-success v-middle mr-10"
+                        *ngIf="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_SUCCESS">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.loadingPlanDepStatusId]
+                        | translate}}</span>
+                    <span class="badge-custom badge-danger v-middle mr-10"
+                        *ngIf="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_VALIDATION_FAILED">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.loadingPlanDepStatusId]
+                        | translate}}</span>
+                    <span class="badge-custom badge-info v-middle mr-10"
+                        *ngIf="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS || loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_GENERATED">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.loadingPlanDepStatusId]
+                        | translate}}</span>
+                </ng-container>
+                <ng-container *ngIf="operation === OPERATIONS.DISCHARGING">
+                    <span class="badge-custom badge-success v-middle mr-10"
+                        *ngIf="loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_SUCCESS">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.dischargePlanDepStatusId]
+                        | translate}}</span>
+                    <span class="badge-custom badge-danger v-middle mr-10"
+                        *ngIf="loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_VALIDATION_FAILED">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.dischargePlanDepStatusId]
+                        | translate}}</span>
+                    <span class="badge-custom badge-info v-middle mr-10"
+                        *ngIf="loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS || loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_GENERATED">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.dischargePlanDepStatusId]
+                        | translate}}</span>
+                </ng-container>
+
+                <button (click)="display = true" class="btn btn-main mr-5 mt-5"
+                    id="departure_uptate_ullage">{{'LOADABLE_PLAN_DEPARTURE_CONDITION_CARGO_UPDATE_ULLAGE' |
+                    translate}}</button>
+                <button (click)="showError()"
+                    *ngIf="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.ERROR"
+                    class="btn btn-main mr-5 mt-5" id="cargo_error">{{'ULLAGE_UPDATE_SHOW_ERROR_LABEL'|
+                    translate}}</button>
+                <button (click)="showError()"
+                    *ngIf="loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_VALUE.ERROR"
+                    class="btn btn-main mr-5 mt-5" id="cargo_error">{{'ULLAGE_UPDATE_SHOW_ERROR_LABEL'|
+                    translate}}</button>
             </div>
         </div>
     </div>
@@ -63,10 +95,14 @@
 <div class="row" *ngIf="operation === OPERATIONS.LOADING">
     <div class="col ml-30 pt-5 table-column-flexible-wrapper auto-layout">
         <cpdss-portal-cargo-to-be-loaded-discharged [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
-              [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
-              [cargoVesselTankDetails]="loadingDischargingPlanInfo?.cargoVesselTankDetails" [operation]="OPERATIONS.LOADING">
-            </cpdss-portal-cargo-to-be-loaded-discharged>
+            [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
+            [cargoVesselTankDetails]="loadingDischargingPlanInfo?.cargoVesselTankDetails"
+            [operation]="OPERATIONS.LOADING">
+        </cpdss-portal-cargo-to-be-loaded-discharged>
     </div>
 </div>
 
-<cpdss-portal-ullage-update-popup  [vesselId]="vesselId" [patternId]="loadingPlanData?.loadingInformation?.loadablePatternId" [portRotationId]="portRotationId" [status]="ULLAGE_STATUS.DEPARTURE" [operation]="operation" [loadingInfoId]="loadingInfoId" *ngIf="display" (closePopup)="closePopUp($event)"></cpdss-portal-ullage-update-popup>
+<cpdss-portal-ullage-update-popup [vesselId]="vesselId"
+    [patternId]="loadingDischargingPlanInfo?.loadablePatternId" [portRotationId]="portRotationId"
+    [status]="ULLAGE_STATUS.DEPARTURE" [operation]="operation" [loadingInfoId]="loadingDischargingInfoId" *ngIf="display"
+    (closePopup)="closePopUp($event)"></cpdss-portal-ullage-update-popup>

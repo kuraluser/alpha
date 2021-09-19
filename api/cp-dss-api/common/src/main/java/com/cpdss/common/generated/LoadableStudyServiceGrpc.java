@@ -4104,7 +4104,13 @@ public final class LoadableStudyServiceGrpc {
           getGetActiveVoyagesByVesselMethod(), responseObserver);
     }
 
-    /** */
+    /**
+     *
+     *
+     * <pre>
+     * For both Loading and Discharge
+     * </pre>
+     */
     public void getSynopticDataForLoadingPlan(
         com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
         io.grpc.stub.StreamObserver<
@@ -5360,7 +5366,13 @@ public final class LoadableStudyServiceGrpc {
           responseObserver);
     }
 
-    /** */
+    /**
+     *
+     *
+     * <pre>
+     * For both Loading and Discharge
+     * </pre>
+     */
     public void getSynopticDataForLoadingPlan(
         com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request,
         io.grpc.stub.StreamObserver<
@@ -5921,7 +5933,13 @@ public final class LoadableStudyServiceGrpc {
           getChannel(), getGetActiveVoyagesByVesselMethod(), getCallOptions(), request);
     }
 
-    /** */
+    /**
+     *
+     *
+     * <pre>
+     * For both Loading and Discharge
+     * </pre>
+     */
     public com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse
         getSynopticDataForLoadingPlan(
             com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request) {
@@ -6526,7 +6544,13 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getGetActiveVoyagesByVesselMethod(), getCallOptions()), request);
     }
 
-    /** */
+    /**
+     *
+     *
+     * <pre>
+     * For both Loading and Discharge
+     * </pre>
+     */
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
         getSynopticDataForLoadingPlan(

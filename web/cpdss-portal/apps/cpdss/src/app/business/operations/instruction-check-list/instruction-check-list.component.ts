@@ -410,6 +410,7 @@ export class InstructionCheckListComponent implements OnInit , OnDestroy{
    * @memberof InstructionCheckListComponent
    */
   deleteConfirm(data) {
+    if(this.disableSaveButton) { return; }
     const translationKeys = this.translateService.instant(['LOADING_INSTRUCTION_DELETE_SUMMARY', 'LOADING_INSTRUCTION_DELETE_DETAILS', 'LOADING_INSTRUCTION_DELETE_CONFIRM_LABEL', 'LOADING_INSTRUCTION_DELETE_REJECT_LABEL']);
 
     this.confirmationService.confirm({

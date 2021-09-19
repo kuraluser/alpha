@@ -561,7 +561,7 @@ public class LoadablePlanService {
    * @param loadablePatternCargoDetails
    * @return List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>
    */
-  private List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>
+  public List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>
       addLoadablePatternsStowageDetails(
           List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails>
               loadablePatternCargoDetails,
@@ -620,7 +620,7 @@ public class LoadablePlanService {
    * @param loadablePatternId
    * @return List<com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails>
    */
-  private List<com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails>
+  public List<com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails>
       addLoadablePlanBallastDetails(
           List<LoadablePlanStowageBallastDetails> loadablePlanStowageBallastDetails,
           Boolean isLastPortDeparture,
@@ -667,7 +667,7 @@ public class LoadablePlanService {
    * @param loadablePatternId
    * @return
    */
-  private List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>
+  public List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails>
       addLoadablePlanCommingleDetails(
           List<LoadablePlanComminglePortwiseDetails> loadablePatternCommingleDetails,
           boolean isLastPortDeparture,

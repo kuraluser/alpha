@@ -431,7 +431,7 @@
                     <td *ngIf="progress">
 
                     </td>
-                    <td *ngFor="let col of columns; let i = index" [class]="showTotalClass && i === 0? showTotalClass : 'text-right'">
+                    <td *ngFor="let col of columns; let i = index" [class]="getFieldTotalClass(col,i)">
                         <ng-container *ngIf="i !== 0;else totalRef">
                             {{ col?.numberType === 'quantity' ? (getTotal(col, i) | quantityDecimalFormat: col?.unit) :
                             (getTotal(col, i) | number: col?.numberFormat)}}

@@ -11,10 +11,12 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.domain.*;
 import com.cpdss.dischargeplan.domain.ReasonForDelay;
+import com.cpdss.dischargeplan.domain.cargo.DischargeQuantityCargoDetails;
 import com.cpdss.dischargeplan.domain.cargo.LoadablePlanPortWiseDetails;
 import com.cpdss.dischargeplan.domain.cargo.OnBoardQuantity;
 import com.cpdss.dischargeplan.domain.cargo.OnHandQuantity;
 import com.cpdss.dischargeplan.entity.*;
+import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
 import com.cpdss.dischargeplan.repository.ReasonForDelayRepository;
@@ -93,8 +95,10 @@ public class DischargePlanAlgoService {
 
       // discharge stages
       DischargeStages dischargeStages = new DischargeStages();
-      dischargeStages.setStageDuration(entity.getDischargingStagesDuration().getDuration());
-      dischargeStages.setStageOffset(entity.getDischargingStagesMinAmount().getMinAmount());
+      if (entity.getDischargingStagesDuration() != null)
+        dischargeStages.setStageDuration(entity.getDischargingStagesDuration().getDuration());
+      if (entity.getDischargingStagesMinAmount() != null)
+        dischargeStages.setStageOffset(entity.getDischargingStagesMinAmount().getMinAmount());
       dischargeStages.setTrackGradeSwitch(entity.getIsTrackGradeSwitching());
       dischargeStages.setTrackStartEndStage(entity.getIsTrackStartEndStage());
       disDto.setDischargeStages(dischargeStages);
@@ -112,6 +116,9 @@ public class DischargePlanAlgoService {
 
       // discharge cargo details, LoadablePlanPortWiseDetails (OHQ, OBQ)
       this.buildDischargePlanPortWiseDetails(algoRequest, entity);
+
+      // Discharge Cargo Quantity
+      disDto.setDischargeQuantityCargoDetails(buildCargoVesselTankDetails(entity));
 
       // Build hourly based tide details which upload from loading info page - TO DO
       // buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
@@ -155,6 +162,7 @@ public class DischargePlanAlgoService {
   private CowPlan buildDischargeCowDetails(
       com.cpdss.dischargeplan.entity.DischargeInformation entity) {
     CowPlan cowPlan = new CowPlan();
+    // need null check, also confirm data will insert from DS
     CowPlanDetail cpd = this.cowPlanDetailRepository.findByDischargingId(entity.getId()).get();
     BeanUtils.copyProperties(cpd, cowPlan);
     cowPlan.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(cpd.getCowOperationType()).name());
@@ -319,6 +327,7 @@ public class DischargePlanAlgoService {
     LoadableStudy.LoadablePlanDetailsRequest.Builder requestBuilder =
         LoadableStudy.LoadablePlanDetailsRequest.newBuilder();
     requestBuilder.setLoadablePatternId(entity.getDischargingPatternXid());
+    requestBuilder.setIsDischargePlan(true);
     LoadableStudy.LoadablePatternPortWiseDetailsJson response =
         this.loadableStudyService.getLoadablePatternDetailsJson(requestBuilder.build());
     if (!response.getResponseStatus().getStatus().equals(DischargePlanConstants.SUCCESS)) {
@@ -527,10 +536,10 @@ public class DischargePlanAlgoService {
       throw new GenericServiceException(
           "Failed to fetch on hand quantities from Loadable-Study MS",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(Integer.parseInt(grpcReply.getResponseStatus().getCode())));
     }
 
-    List<OnHandQuantity> ohqList = new ArrayList<OnHandQuantity>();
+    List<OnHandQuantity> ohqList = new ArrayList<>();
     grpcReply
         .getOnHandQuantityList()
         .forEach(
@@ -577,5 +586,46 @@ public class DischargePlanAlgoService {
               ohqList.add(onHandQuantity);
             });
     algoRequest.setOnHandQuantity(ohqList);
+  }
+
+  private List<DischargeQuantityCargoDetails> buildCargoVesselTankDetails(
+      DischargeInformation entity) throws NumberFormatException, GenericServiceException {
+    log.info(
+        "Populating cargo vessel tank details of Port Rotation {} and Loadable Pattern {}",
+        entity.getPortRotationXid(),
+        entity.getDischargingPatternXid());
+    LoadableStudy.LoadingPlanCommonResponse response =
+        this.loadableStudyService.getSynopticDataForLoadingPlan(
+            LoadableStudy.LoadingPlanIdRequest.newBuilder()
+                .setPatternId(entity.getDischargingPatternXid())
+                .setOperationType("ARR")
+                .setPortRotationId(entity.getPortRotationXid())
+                .setPortId(entity.getPortXid())
+                .setCargoNominationFilter(false)
+                .setPlanningType(Common.PLANNING_TYPE.DISCHARGE_STUDY)
+                .build());
+
+    if (!DischargePlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to fetch cargoVesselTankDetails from Loadable-Study MS",
+          response.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(response.getResponseStatus().getCode())));
+    }
+
+    List<DischargeQuantityCargoDetails> loadableQuantityCargoDetails = new ArrayList<>();
+    response
+        .getLoadableQuantityCargoDetailsList()
+        .forEach(
+            cargo -> {
+              DischargeQuantityCargoDetails loadableQuantity = new DischargeQuantityCargoDetails();
+              Optional.of(cargo.getLoadingOrder()).ifPresent(loadableQuantity::setDischargingOrder);
+              Optional.of(cargo.getCargoId()).ifPresent(loadableQuantity::setCargoId);
+              Optional.of(cargo.getCargoNominationId())
+                  .ifPresent(loadableQuantity::setCargoNominationId);
+              Optional.of(cargo.getEstimatedAPI()).ifPresent(loadableQuantity::setEstimatedAPI);
+              Optional.of(cargo.getEstimatedTemp()).ifPresent(loadableQuantity::setEstimatedTemp);
+              loadableQuantityCargoDetails.add(loadableQuantity);
+            });
+    return loadableQuantityCargoDetails;
   }
 }

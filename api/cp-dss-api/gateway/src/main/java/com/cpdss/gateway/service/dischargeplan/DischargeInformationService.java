@@ -15,8 +15,8 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
-import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
@@ -160,8 +160,8 @@ public class DischargeInformationService {
             GatewayConstants.OPERATION_TYPE_ARR); // Discharge Info needed Arrival Conditions
 
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
-    vesselTankDetails.setLoadableQuantityCargoDetails(
-        this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
+    vesselTankDetails.setDischargeQuantityCargoDetails(
+        this.loadingInformationService.getDischargePlanCargoDetailsByPort(
             vesselId,
             activeVoyage.getDischargePatternId(),
             GatewayConstants.OPERATION_TYPE_ARR, // Discharge Info needed Arrival Conditions

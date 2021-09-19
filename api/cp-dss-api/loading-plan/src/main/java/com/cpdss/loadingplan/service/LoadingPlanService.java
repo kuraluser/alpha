@@ -13,6 +13,7 @@ import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
+import io.micrometer.core.instrument.util.StringUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -567,6 +568,9 @@ public class LoadingPlanService {
                       BigDecimal.valueOf(ullageInsert.getCorrectionFactor()));
                   tempData.setIsActive(true);
                   tempData.setUllage(new BigDecimal(ullageInsert.getUllage()));
+                  tempData.setColorCode(ullageInsert.getColorCode());
+                  tempData.setAbbreviation(ullageInsert.getAbbreviation());
+                  tempData.setCargoXId(ullageInsert.getCargoId());
                   loadingPlanStowageDetailsTempRepository.save(tempData);
                 }
               });
@@ -594,6 +598,11 @@ public class LoadingPlanService {
                       Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
                   robDet.setValueType(LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
                   robDet.setIsActive(true);
+                  robDet.setColorCode(ullageInsert.getColourCode());
+                  robDet.setDensity(
+                      StringUtils.isEmpty(ullageInsert.getDensity())
+                          ? null
+                          : new BigDecimal(ullageInsert.getDensity()));
                   loadingPlanRobDetailsRepository.save(robDet);
                 }
               });

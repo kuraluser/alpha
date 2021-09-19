@@ -271,6 +271,8 @@ public class LoadingSequenceService {
               .ifPresent(temperature -> builder.setTemperature(String.valueOf(temperature)));
           Optional.ofNullable(stowage.getUllage())
               .ifPresent(ullage -> builder.setUllage(String.valueOf(ullage)));
+          Optional.ofNullable(stowage.getAbbreviation()).ifPresent(builder::setAbbreviation);
+          Optional.ofNullable(stowage.getColorCode()).ifPresent(builder::setColorCode);
           portWiseDetailsBuilder.addLoadingPlanStowageDetails(builder.build());
         });
   }
@@ -322,6 +324,7 @@ public class LoadingSequenceService {
           Optional.ofNullable(ballast.getSounding())
               .ifPresent(sounding -> builder.setSounding(String.valueOf(sounding)));
           Optional.ofNullable(ballast.getTankXId()).ifPresent(builder::setTankId);
+          Optional.ofNullable(ballast.getColorCode()).ifPresent(builder::setColorCode);
           portWiseDetailsBuilder.addLoadingPlanBallastDetails(builder.build());
         });
   }
