@@ -36,7 +36,6 @@ public class EnvoyReaderGrpcService extends EnvoyReaderServiceImplBase {
       builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
 
     } catch (Exception e) {
-      e.printStackTrace();
       log.error("Exception when getResultFromCommServer in Envoy Reader micro service", e);
       builder.setResponseStatus(
           Common.ResponseStatus.newBuilder()
