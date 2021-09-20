@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
@@ -34,6 +34,7 @@ export class RulesComponent implements OnInit {
   vesselId: number;
   voyageId : number;
   disableSaveButton: boolean = false;
+  @ViewChild('rulesTable') rulesTable: any;
   constructor(private translateService: TranslateService, public rulesService: RulesService,
     private vesselsApiService: VesselsApiService,
     private ngxSpinner: NgxSpinnerService,private messageService: MessageService,
@@ -81,7 +82,8 @@ export class RulesComponent implements OnInit {
  */
   triggerSaveChanges() {
     this.rulesService.save.next();
-    this.onClose();
+    if (this.rulesTable.rulesForm.status === 'VALID')
+      this.onClose();
   }
 
 
@@ -137,7 +139,7 @@ export class RulesComponent implements OnInit {
     this.ngxSpinner.show();
     let msgkeys, severity;
     try {
-      let result = await this.rulesService.postRules(postData,this.vesselId,null,this.loadingInfoId).toPromise(); 
+      let result = await this.rulesService.postRules(postData,this.vesselId,this.voyageId,this.loadingInfoId).toPromise(); 
       if (result?.responseStatus?.status === '200') {
         msgkeys = ['RULES_UPDATE_SUCCESS', 'RULES_UPDATE_SUCCESSFULLY']
         severity = 'success';
