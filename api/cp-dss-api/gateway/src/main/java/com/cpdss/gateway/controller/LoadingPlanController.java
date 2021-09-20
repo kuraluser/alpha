@@ -10,12 +10,19 @@ import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
+import com.cpdss.gateway.service.loadingplan.GenerateLoadingPlanExcelReportService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingInstructionService;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingPlanServiceImpl;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
@@ -894,5 +901,18 @@ public class LoadingPlanController {
           e.getMessage(),
           e);
     }
+  }
+
+  @Autowired GenerateLoadingPlanExcelReportService aenerateLoadingPlanExcelReportService;
+
+  @GetMapping(value = "/testExcel", produces = MediaType.APPLICATION_JSON_VALUE)
+  public void getLoadablePlanReport(@RequestHeader HttpHeaders headers) throws FileNotFoundException {
+	  OutputStream outStream  = new FileOutputStream("abc.xls");
+    aenerateLoadingPlanExcelReportService.generateExcel(outStream);
+    try {
+        outStream.flush();
+        outStream.close();
+      } catch (IOException exception) {
+      }
   }
 }
