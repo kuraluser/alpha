@@ -1433,6 +1433,8 @@ message ActiveVoyage{
 	int64 dischargePatternId = 18;
 	int64 dischargePatternCaseNo = 19;
 	int64 dischargePatternStatus = 20;
+	repeated CargoNominationDetail dischargeCargoNomination = 22;
+	
 }
 
 // Generic Request message
