@@ -10,7 +10,7 @@
           <entry key="GRPC_PORT_HOST" value="9290" />
           <entry key="HOST_ROOT_PATH" value="C:\Users\mathew.g\Desktop\mnt" />
           <entry key="IMAGE_NAME" value="cpdss-loadable-study-shore" />
-          <entry key="SERVICE_NAME" value="loadable-study-service-shore" />
+          <entry key="SERVICE_NAME" value="loadable-study-service-shore-vinoth" />
         </map>
       </option>
       <option name="executionName" />
@@ -23,7 +23,7 @@
       <option name="taskNames">
         <list />
       </option>
-      <option name="vmOptions" />
+      <option name="vmOptions" value="" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>

@@ -48,4 +48,14 @@ public class LoadableStudy {
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private VoyageDto voyage;
+
+  private Long duplicatedFrom;
+  private Long loadableStudyStatusId;
+  private Boolean isCargoNominationCompleted;
+  private Boolean isPortsCompleted;
+  private Boolean isOHQCompleted;
+  private Boolean isOBQCompleted;
+  private Boolean isDischargePortCompleted;
+  private Long planingTypeId;
+  private Integer caseNo;
 }

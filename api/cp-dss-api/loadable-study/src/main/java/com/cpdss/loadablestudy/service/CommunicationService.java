@@ -90,7 +90,9 @@ public class CommunicationService {
             saveLoadableStudyShore(erReply);
           }
         } else if (messageType.getMessageType().equals("ValidatePlan")) {
-          log.info("--------LoadableStudy received at shore side for validating plan ");
+          log.info(
+              "--------LoadableStudy received at shore side for validating plan "
+                  + taskReqParams.toString());
           EnvoyReader.EnvoyReaderResultReply erReply =
               getResultFromEnvoyReaderShore(taskReqParams, messageType);
           if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
@@ -232,7 +234,7 @@ public class CommunicationService {
     request.setMessageType(messageType.getMessageType());
     request.setClientId(taskReqParams.get("ClientId"));
     request.setShipId(taskReqParams.get("ShipId"));
-    log.info("=======Send request to envoy reader : " + request.toString());
+    log.info("=======Send request to envoy reader : " + taskReqParams.toString());
     return this.envoyReaderGrpcService.getResultFromCommServer(request.build());
   }
 

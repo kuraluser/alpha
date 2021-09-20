@@ -1685,6 +1685,31 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } else {
       loadableStudy.setFeedbackLoopCount(0);
     }
+
+    ofNullable(loadableStudyOpt.get().getDuplicatedFrom().getId())
+        .ifPresentOrElse(
+            loadableStudy::setDuplicatedFrom, () -> loadableStudy.setDuplicatedFrom(null));
+    ofNullable(loadableStudyOpt.get().getLoadableStudyStatus().getId())
+        .ifPresentOrElse(
+            loadableStudy::setLoadableStudyStatusId,
+            () -> loadableStudy.setLoadableStudyStatusId(null));
+    ofNullable(loadableStudyOpt.get().getIsCargoNominationComplete())
+        .ifPresentOrElse(
+            loadableStudy::setIsCargoNominationCompleted,
+            () -> loadableStudy.setIsCargoNominationCompleted(false));
+    ofNullable(loadableStudyOpt.get().getIsObqComplete())
+        .ifPresentOrElse(
+            loadableStudy::setIsOBQCompleted, () -> loadableStudy.setIsOBQCompleted(false));
+    ofNullable(loadableStudyOpt.get().getIsOhqComplete())
+        .ifPresentOrElse(
+            loadableStudy::setIsOHQCompleted, () -> loadableStudy.setIsOHQCompleted(false));
+    ofNullable(loadableStudyOpt.get().getIsDischargePortsComplete())
+        .ifPresentOrElse(
+            loadableStudy::setIsDischargePortCompleted,
+            () -> loadableStudy.setIsDischargePortCompleted(false));
+    ofNullable(loadableStudyOpt.get().getIsPortsComplete())
+        .ifPresentOrElse(
+            loadableStudy::setIsPortsCompleted, () -> loadableStudy.setIsPortsCompleted(false));
   }
 
   /** Get on board quantity details corresponding to a loadable study */
