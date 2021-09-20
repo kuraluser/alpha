@@ -614,8 +614,8 @@ message LoadableQuantityCargoDetails {
 	 string timeRequiredForDischarging = 32;
 	 repeated COWDetail cowDetails = 33;
 	 int64 dscargoNominationId = 34;
-	 
-	 
+	 int64 blFigure = 35;
+	 int64 shipFigure = 36;
 }
 
 message COWDetail {
@@ -1433,6 +1433,8 @@ message ActiveVoyage{
 	int64 dischargePatternId = 18;
 	int64 dischargePatternCaseNo = 19;
 	int64 dischargePatternStatus = 20;
+	repeated CargoNominationDetail dischargeCargoNomination = 22;
+	
 }
 
 // Generic Request message

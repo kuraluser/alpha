@@ -627,20 +627,20 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     Long studyId = null;
     // Set loadable study id
     if (isDischarging) {
-     portRotation =
-    	        activeVoyage.getDischargePortRotations().stream()
-    	            .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
-    	            .findFirst();
-    	    // Set portId from discharge portRoatation
-    	    requestBuilder.setPortId(portRotation.get().getPortId());
+      portRotation =
+          activeVoyage.getDischargePortRotations().stream()
+              .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
+              .findFirst();
+      // Set portId from discharge portRoatation
+      requestBuilder.setPortId(portRotation.get().getPortId());
       studyId = activeVoyage.getActiveDs().getId();
     } else {
-    	portRotation =
-    	        activeVoyage.getPortRotations().stream()
-    	            .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
-    	            .findFirst();
-    	    // Set portId from portRoatation
-    	    requestBuilder.setPortId(portRotation.get().getPortId());
+      portRotation =
+          activeVoyage.getPortRotations().stream()
+              .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
+              .findFirst();
+      // Set portId from portRoatation
+      requestBuilder.setPortId(portRotation.get().getPortId());
       studyId = activeVoyage.getActiveLs().getId();
     }
 
@@ -655,12 +655,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     // Get Update Ullage Data
     LoadingPlanModels.UpdateUllageDetailsResponse response = null;
     if (isDischarging) {
-    	 response =
-    	          this.dischargePlanServiceBlockingStub.getDischargeUpdateUllageDetails(
-    	              requestBuilder.build());
+      response =
+          this.dischargePlanServiceBlockingStub.getDischargeUpdateUllageDetails(
+              requestBuilder.build());
     } else {
-    	 response = this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
-     
+      response = this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
     }
     LoadingUpdateUllageResponse outResponse = new LoadingUpdateUllageResponse();
     // group cargo nomination ids
