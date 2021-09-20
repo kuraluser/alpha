@@ -15,7 +15,7 @@ import lombok.Setter;
 
 /** @author jerin.g */
 @Entity
-@Table(name = "loadable_plan_commingle_details")
+@Table(name = "discharging_plan_commingle_details")
 @Getter
 @Setter
 @NoArgsConstructor

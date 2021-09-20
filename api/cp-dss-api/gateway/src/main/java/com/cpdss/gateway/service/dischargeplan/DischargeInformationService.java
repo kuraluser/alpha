@@ -17,10 +17,12 @@ import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
+import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadablePlanCommingleDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingBerthDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
@@ -332,11 +334,19 @@ public class DischargeInformationService {
     return dischargingPlanResponse;
   }
 
-  public LoadingUpdateUllageResponse getUpdateUllageDetails(
+  public DischargeUpdateUllageResponse getUpdateUllageDetails(
       Long vesselId, Long patternId, Long portRotationId, String operationType)
       throws GenericServiceException {
+    DischargeUpdateUllageResponse response = new DischargeUpdateUllageResponse();
+    LoadingUpdateUllageResponse loadingUpdateUllageResponse =
+        loadingPlanService.getUpdateUllageDetails(
+            vesselId, patternId, portRotationId, operationType, true);
+    BeanUtils.copyProperties(loadingUpdateUllageResponse, response);
+    response.setPortDischargePlanBallastDetails(loadingUpdateUllageResponse.getPortLoadablePlanBallastDetails());
+    response.setPortDischargePlanRobDetails(loadingUpdateUllageResponse.getPortLoadablePlanRobDetails());
+    response.setPortDischargePlanStowageDetails(loadingUpdateUllageResponse.getPortLoadablePlanStowageDetails());
+    response.setDischargePlanCommingleDetails(loadingUpdateUllageResponse.getLoadablePlanCommingleDetails());
 
-    return loadingPlanService.getUpdateUllageDetails(
-        vesselId, patternId, portRotationId, operationType, true);
+    return response;
   }
 }

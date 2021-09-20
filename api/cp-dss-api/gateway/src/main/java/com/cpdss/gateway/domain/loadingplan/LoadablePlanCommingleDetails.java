@@ -7,6 +7,7 @@ import lombok.Data;
 public class LoadablePlanCommingleDetails {
   private Long id;
   private Long loadingInformationId;
+  private Long dischargeInformationId;
   private String grade;
   private String tankName;
   private Double quantity;
@@ -26,6 +27,7 @@ public class LoadablePlanCommingleDetails {
   private Double cargo1Kl;
   private Double cargo2Kl;
   private Long loadablePatternId;
+  private Long DischargePatternId;
   private Long priority;
   private Double orderQuantity;
   private Long loadingOrder;

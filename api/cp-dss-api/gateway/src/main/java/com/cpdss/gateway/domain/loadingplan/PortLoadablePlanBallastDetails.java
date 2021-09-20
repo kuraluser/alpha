@@ -14,6 +14,7 @@ public class PortLoadablePlanBallastDetails {
   private Long id;
   private boolean isActive;
   private Long loadablePatternId;
+  private Long dischargePatternId;
   private BigDecimal rdgUllage;
   private Long tankId;
   private String tankName;

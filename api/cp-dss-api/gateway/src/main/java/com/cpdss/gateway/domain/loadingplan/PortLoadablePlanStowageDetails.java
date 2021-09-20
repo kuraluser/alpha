@@ -16,6 +16,7 @@ public class PortLoadablePlanStowageDetails {
   private Long id;
   private boolean isActive;
   private Long loadablePatternId;
+  private Long dischargePatternId;
   private String observedBarrels;
   private String observedBarrelsAt60;
   private String observedM3;
