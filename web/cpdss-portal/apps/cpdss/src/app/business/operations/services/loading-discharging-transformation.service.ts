@@ -53,6 +53,8 @@ export class LoadingDischargingTransformationService {
   showUllageErrorPopup$ = this._showUllageErrorPopup.asObservable();
   isDischargeStarted$ = this._isDischargeStarted.asObservable();
 
+  portRotationId: number;
+
   constructor(
     private quantityPipe: QuantityPipe,
     private quantityDecimalFormatPipe: QuantityDecimalFormatPipe) { }
@@ -428,7 +430,7 @@ export class LoadingDischargingTransformationService {
       if (operation === OPERATIONS.LOADING) {
         _loadingDischargingDelays.loadingInfoId = infoId;
       } else {
-        _loadingDischargingDelays.dischargingInfoId = infoId;
+        _loadingDischargingDelays.dischargeInfoId = infoId;
       }
       _loadingDischargingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
       _loadingDischargingDelays.reasonForDelayIds = loadingValueObject?.reasonForDelay?.value?.map(a => a.id) ?? [];
@@ -928,19 +930,22 @@ export class LoadingDischargingTransformationService {
    */
   transformDischargingInformation(dischargingInformationResponse: IDischargingInformationResponse, listData: IDischargeOperationListData): IDischargingInformation {
     const dischargingInformation = <IDischargingInformation>{};
-    dischargingInformation.dischargingInfoId = dischargingInformationResponse?.dischargingInfoId;
+    dischargingInformation.dischargeInfoId = dischargingInformationResponse?.dischargeInfoId;
     dischargingInformation.dischargeStudyName = dischargingInformationResponse?.dischargeStudyName;
     dischargingInformation.dischargeSlopTanksFirst = dischargingInformationResponse?.dischargeSlopTanksFirst;
     dischargingInformation.dischargeCommingledCargoSeperately = dischargingInformationResponse?.dischargeCommingledCargoSeperately;
     dischargingInformation.synopticalTableId = dischargingInformationResponse?.synopticTableId;
-    dischargingInformation.dischargingDetails = dischargingInformationResponse?.dischargingDetails;
-    dischargingInformation.dischargingRates = dischargingInformationResponse?.dischargingRates;
+    dischargingInformation.dischargeDetails = dischargingInformationResponse?.dischargeDetails;
+    dischargingInformation.dischargeRates = dischargingInformationResponse?.dischargeRates;
     dischargingInformation.berthDetails = dischargingInformationResponse?.berthDetails;
-    dischargingInformation.dischargingSequences = dischargingInformationResponse?.dischargingSequences;
-    dischargingInformation.isDischargingInfoComplete = dischargingInformationResponse?.isDischargingInfoComplete;
+    dischargingInformation.dischargeSequences = dischargingInformationResponse?.dischargeSequences;
+    dischargingInformation.isDischargeInfoComplete = dischargingInformationResponse?.isDischargeInfoComplete;
+    dischargingInformation.isDischargeInstructionsComplete = dischargingInformationResponse?.isDischargeInstructionsComplete;
+    dischargingInformation.isDischargeSequenceGenerated = dischargingInformationResponse?.isDischargeSequenceGenerated;
+    dischargingInformation.isDischargePlanGenerated = dischargingInformationResponse?.isDischargePlanGenerated;
     dischargingInformation.postDischargeStageTime = dischargingInformationResponse?.postDischargeStageTime;
     dischargingInformation.loadedCargos = dischargingInformationResponse?.loadedCargos;
-    dischargingInformation.dischargingSequences.loadingDischargingDelays = dischargingInformationResponse.dischargingSequences.dischargingDelays;
+    dischargingInformation.dischargeSequences.loadingDischargingDelays = dischargingInformationResponse.dischargeSequences.dischargingDelays;
 
     //Update tank list
     const cargoTanks = [];
@@ -1011,15 +1016,15 @@ export class LoadingDischargingTransformationService {
     }
 
     //Update stage details
-    const stageDuration = dischargingInformationResponse?.dischargingStages.stageDurationList?.find(duration => duration.id === dischargingInformationResponse?.dischargingStages?.stageDuration);
-    const stageOffset = dischargingInformationResponse?.dischargingStages.stageOffsetList?.find(offset => offset.id === dischargingInformationResponse?.dischargingStages?.stageOffset);
-    dischargingInformation.dischargingStages = {
-      trackStartEndStage: dischargingInformationResponse?.dischargingStages?.trackGradeSwitch,
-      trackGradeSwitch: dischargingInformationResponse?.dischargingStages?.trackGradeSwitch,
+    const stageDuration = dischargingInformationResponse?.dischargeStages.stageDurationList?.find(duration => duration.id === dischargingInformationResponse?.dischargeStages?.stageDuration);
+    const stageOffset = dischargingInformationResponse?.dischargeStages.stageOffsetList?.find(offset => offset.id === dischargingInformationResponse?.dischargeStages?.stageOffset);
+    dischargingInformation.dischargeStages = {
+      trackStartEndStage: dischargingInformationResponse?.dischargeStages?.trackGradeSwitch,
+      trackGradeSwitch: dischargingInformationResponse?.dischargeStages?.trackGradeSwitch,
       stageDuration,
       stageOffset,
-      stageDurationList: dischargingInformationResponse?.dischargingStages?.stageDurationList,
-      stageOffsetList: dischargingInformationResponse?.dischargingStages?.stageOffsetList
+      stageDurationList: dischargingInformationResponse?.dischargeStages?.stageDurationList,
+      stageOffsetList: dischargingInformationResponse?.dischargeStages?.stageOffsetList
     };
 
     //Update machinery in use

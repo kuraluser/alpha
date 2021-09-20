@@ -133,22 +133,26 @@
               <label class="col-5 no-left-padding">{{'DISCHARGING_BERTH_SELECTED_CARGO_CIRCULATION_AIR_PURGE_LABEL' |
                 translate}}</label>
               <div class="col">
-                <label class="checkbox-custom pr-20">{{'DISCHARGING_CARGO_CIRCULATION'
-                  | translate}}
-                  <input type="checkbox" *ngIf="editMode;else cargoCirculation" formControlName="cargoCirculation"
-                    (change)="change('cargoCirculation')">
-                  <span class="checkmark"></span>
-                </label>
+                <div *ngIf="editMode;else cargoCirculation">
+                  <label class="checkbox-custom pr-20">{{'DISCHARGING_CARGO_CIRCULATION'
+                    | translate}}
+                    <input type="checkbox" formControlName="cargoCirculation"
+                      (change)="change('cargoCirculation')">
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
                 <ng-template #cargoCirculation>
-                  <div class="text-right">{{berthDetailsFormControl?.cargoCirculation?.value}}</div>
+                  <div class="text-right">{{'DISCHARGING_CARGO_CIRCULATION' | translate}} - {{(berthDetailsFormControl?.cargoCirculation?.value ? 'DISCHARGING_BERTH_CHECKBOX_TRUE' : 'DISCHARGING_BERTH_CHECKBOX_FALSE') | translate}}</div>
                 </ng-template>
-                <label class="checkbox-custom pr-20">{{'DISCHARGING_AIR_PURGE'
-                  | translate}}
-                  <input type="checkbox" *ngIf="editMode;else airPurge" formControlName="airPurge" (change)="change('airPurge')">
-                  <span class="checkmark"></span>
-                </label>
+                <div *ngIf="editMode;else airPurge">
+                  <label class="checkbox-custom pr-20">{{'DISCHARGING_AIR_PURGE'
+                    | translate}}
+                    <input type="checkbox" formControlName="airPurge" (change)="change('airPurge')">
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
                 <ng-template #airPurge>
-                  <div class="text-right">{{berthDetailsFormControl?.airPurge?.value}}</div>
+                  <div class="text-right"> {{'DISCHARGING_AIR_PURGE' | translate}} - {{(berthDetailsFormControl?.airPurge?.value ? 'DISCHARGING_BERTH_CHECKBOX_TRUE' : 'DISCHARGING_BERTH_CHECKBOX_FALSE') | translate}}</div>
                 </ng-template>
               </div>
             </div>

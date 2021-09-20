@@ -59,11 +59,11 @@ export class LoadingDischargingInformationApiService {
       "responseStatus": {
         "status": "200"
       },
-      "dischargingInfoId": 136,
+      "dischargeInfoId": 136,
       "dischargeStudyName": "DS1",
       "synopticTableId": 89426,
-      "isDischargingInfoComplete": false,
-      "dischargingDetails": {
+      "isDischargeInfoComplete": false,
+      "dischargeDetails": {
         "timeOfSunrise": "05:39",
         "timeOfSunset": "06:40",
         "startTime": "20:13",
@@ -73,7 +73,7 @@ export class LoadingDischargingInformationApiService {
           "topOffTrim": 1.0000
         }
       },
-      "dischargingRates": {
+      "dischargeRates": {
         "maxDischargingRate": 20500.0000,
         "minBallastingRate": 2500.0000,
         "maxBallastingRate": 6000.0000,
@@ -85,7 +85,7 @@ export class LoadingDischargingInformationApiService {
           {
             "berthId": 20879,
             "portId": 504,
-            "dischargingInfoId": null,
+            "dischargeInfoId": 136,
             "maxShpChannel": 18.0000,
             "berthName": "Oil Jetty",
             "dischargingBerthId": null,
@@ -108,7 +108,7 @@ export class LoadingDischargingInformationApiService {
           {
             "berthId": 20879,
             "portId": null,
-            "dischargingInfoId": 136,
+            "dischargeInfoId": 136,
             "maxShpChannel": null,
             "berthName": null,
             "dischargingBerthId": 89,
@@ -271,7 +271,7 @@ export class LoadingDischargingInformationApiService {
         "dischargingMachinesInUses": [
           {
             "id": 89,
-            "dischargingInfoId": 136,
+            "dischargeInfoId": 136,
             "machineId": 2,
             "capacity": 0.0000,
             "isUsing": true,
@@ -279,7 +279,7 @@ export class LoadingDischargingInformationApiService {
           },
           {
             "id": 90,
-            "dischargingInfoId": 136,
+            "dischargeInfoId": 136,
             "machineId": 3,
             "capacity": 0.0000,
             "isUsing": true,
@@ -315,7 +315,7 @@ export class LoadingDischargingInformationApiService {
           }
         ]
       },
-      "dischargingStages": {
+      "dischargeStages": {
         "id": 136,
         "trackStartEndStage": true,
         "trackGradeSwitch": true,
@@ -386,16 +386,16 @@ export class LoadingDischargingInformationApiService {
           }
         ]
       },
-      "dischargingSequences": {
+      "dischargeSequences": {
         "reasonForDelays": [
           { "id": 2, "reason": "Reason 2" },
           { "id": 1, "reason": "Tank Switching" },
           { "id": 3, "reason": "Reason 3" }
         ],
         "dischargingDelays": [
-          { "id": 197, "dischargingInfoId": 141, "reasonForDelayIds": [2], "duration": 0, "cargoId": 0, "cargoNominationId": 0, "quantity": null },
-          { "id": 199, "dischargingInfoId": 141, "reasonForDelayIds": [2], "duration": 60, "cargoId": 32, "cargoNominationId": 17760, "quantity": 577108, "sequenceNo": 1 },
-          { "id": 198, "dischargingInfoId": 141, "reasonForDelayIds": [2, 1], "duration": 0, "cargoId": 33, "cargoNominationId": 17759, "quantity": 1070147, "sequenceNo": 2 }
+          { "id": 197, "dischargeInfoId": 141, "reasonForDelayIds": [2], "duration": 0, "cargoId": 0, "cargoNominationId": 0, "quantity": null },
+          { "id": 199, "dischargeInfoId": 141, "reasonForDelayIds": [2], "duration": 60, "cargoId": 32, "cargoNominationId": 17760, "quantity": 577108, "sequenceNo": 1 },
+          { "id": 198, "dischargeInfoId": 141, "reasonForDelayIds": [2, 1], "duration": 0, "cargoId": 33, "cargoNominationId": 17759, "quantity": 1070147, "sequenceNo": 2 }
         ]
       },
       "cargoVesselTankDetails": {
@@ -1518,7 +1518,10 @@ export class LoadingDischargingInformationApiService {
           "abbreviation": "ARL",
           "colorCode": "#f91010"
         }
-      ]
+      ],
+      "isDischargeInstructionsComplete": null,
+      "isDischargeSequenceGenerated": null,
+      "isDischargePlanGenerated": null
     };
     return of(response);
   }

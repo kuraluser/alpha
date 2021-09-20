@@ -31,7 +31,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   vesselId: number;
   voyageId: number;
   portRotationId: number;
-  dischargingInfoId: number;
+  dischargeInfoId: number;
   cargoTanks = [];
   display = false;
   selectedPortName: string;
@@ -121,7 +121,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   * @memberof DischargingComponent
   */
   setDischargingInfoId(data) {
-    this.dischargingInfoId = data;
+    this.dischargeInfoId = data;
   }
 
 }

@@ -102,6 +102,7 @@ message DischargeRates {
   string maxDischargeRate = 2;
   string minBallastRate = 3;
   string maxBallastRate = 4;
+  int64 id = 5;
 }
 
 message DischargeBerths {

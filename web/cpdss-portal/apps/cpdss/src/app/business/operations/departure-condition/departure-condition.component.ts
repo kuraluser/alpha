@@ -22,17 +22,17 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
 })
 export class DepartureConditionComponent implements OnInit {
 
-  @Input() get loadingPlanData(): any {
-    return this._loadingPlanData;
+  @Input() get loadingDischargingPlanData(): any {
+    return this._loadingDischargingPlanData;
   };
 
-  set loadingPlanData(value: any) {
-    this._loadingPlanData = value ? JSON.parse(JSON.stringify(value)) : {};
+  set loadingDischargingPlanData(value: any) {
+    this._loadingDischargingPlanData = value ? JSON.parse(JSON.stringify(value)) : {};
     this.formatData();
     this.convertQuantityToSelectedUnit();
   }
   @Input() cargos: any;
-  @Input() loadingInfoId: number;
+  @Input() loadingDischargingInfoId: number;
   @Input() vesselId: number;
   @Input() portRotationId: number;
   @Input() operation: OPERATIONS;
@@ -49,7 +49,7 @@ export class DepartureConditionComponent implements OnInit {
     this.convertQuantityToSelectedUnit();
   }
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
-  private _loadingPlanData: any;
+  private _loadingDischargingPlanData: any;
 
   display = false;
   departureCargoTanks: IShipCargoTank[][] = [];
@@ -76,6 +76,7 @@ export class DepartureConditionComponent implements OnInit {
   centerBallastTanks: IShipBallastTank[][];
   ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'sounding', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit, showWeight: true };
   prevQuantitySelectedUnit: QUANTITY_UNIT;
+  loadingDischargingPlanInfo: any;
 
 
   readonly tankType = TANKTYPE;
@@ -98,10 +99,10 @@ export class DepartureConditionComponent implements OnInit {
     this.getShipLandingTanks();
   }
 
-  initSubscriptions(){
-    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value)=>{
-      if(value){
-        this.loadingPlanData.loadingInformation.loadingPlanDepStatusId = value;
+  initSubscriptions() {
+    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value) => {
+      if (value) {
+        this.loadingDischargingPlanData.loadingInformation.loadingPlanDepStatusId = value;
       }
     });
   }
@@ -115,9 +116,10 @@ export class DepartureConditionComponent implements OnInit {
     this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
     this.cargoQuantities = [];
     this.cargoConditions = [];
-    this.loadingPlanData?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(item => {
+    this.loadingDischargingPlanInfo = this.loadingDischargingPlanData?.loadingInformation ? this.loadingDischargingPlanData?.loadingInformation : this.loadingDischargingPlanData?.dischargingInformation
+    this.loadingDischargingPlanData?.currentPortCargos.map(item => {
       let actualWeight = 0, plannedWeight = 0;
-      this.loadingPlanData?.planStowageDetails?.map(stowage => {
+      this.loadingDischargingPlanData?.planStowageDetails?.map(stowage => {
         if (stowage.conditionType === 2 && item.cargoNominationId === stowage.cargoNominationId) {
           if (stowage.valueType === 1) {
             actualWeight += Number(stowage.quantityMT);
@@ -135,11 +137,11 @@ export class DepartureConditionComponent implements OnInit {
     });
     this.departureCargoTankQuantity = [];
 
-    this.loadingPlanData?.cargoTanks?.map(item => {
+    this.loadingDischargingPlanData?.cargoTanks?.map(item => {
       item.map(tank => {
         let actualQty = 0, planedQty = 0;
         const data: any = {};
-        this.loadingPlanData?.planStowageDetails?.map(stowage => {
+        this.loadingDischargingPlanData?.planStowageDetails?.map(stowage => {
           if (tank.id === stowage.tankId) {
             if (stowage.conditionType === 2 && stowage.valueType === 1) {
               actualQty += Number(stowage.quantityMT);
@@ -151,21 +153,17 @@ export class DepartureConditionComponent implements OnInit {
             data.api = stowage.api;
             data.temperature = stowage.temperature;
             data.ullage = stowage.ullage;
+            data.colorCode = stowage.colorCode;
+            data.abbreviation = stowage.abbreviation;
           }
         });
         data.plannedWeight = planedQty;
         data.actualWeight = actualQty;
         data.tankId = tank.id;
-        this.loadingPlanData?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(el => {
-          if (el.cargoNominationId === data.cargoNominationId) {
-            data.colorCode = el.colorCode;
-            data.abbreviation = el.cargoAbbreviation;
-          }
-        });
         this.departureCargoTankQuantity.push(data);
       });
     });
-    this.departureCargoTanks = this.departureConditionTransformationService.formatCargoTanks(this.loadingPlanData?.cargoTanks, this.departureCargoTankQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.departureCargoTanks = this.departureConditionTransformationService.formatCargoTanks(this.loadingDischargingPlanData?.cargoTanks, this.departureCargoTankQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
   }
 
 
@@ -201,12 +199,12 @@ export class DepartureConditionComponent implements OnInit {
   */
   convertQuantityToSelectedUnit() {
     this.ballastTankQuantity = [];
-    this.loadingPlanData?.ballastRearTanks?.map(item => {
+    this.loadingDischargingPlanData?.ballastRearTanks?.map(item => {
       item.map(tank => {
         let actualQty = 0, planedQty = 0;
         const data: any = {};
         let colorCode = null;
-        this.loadingPlanData?.planBallastDetails?.map(ballast => {
+        this.loadingDischargingPlanData?.planBallastDetails?.map(ballast => {
           if (tank.id === ballast.tankId) {
             colorCode = ballast.colorCode;
             if (ballast.conditionType === 2 && ballast.valueType === 1) {
@@ -226,12 +224,12 @@ export class DepartureConditionComponent implements OnInit {
         this.ballastTankQuantity.push(data);
       });
     });
-    this.loadingPlanData?.ballastCenterTanks?.map(item => {
+    this.loadingDischargingPlanData?.ballastCenterTanks?.map(item => {
       item.map(tank => {
         let actualQty = 0, planedQty = 0;
         const data: any = {};
         let colorCode = null;
-        this.loadingPlanData?.planBallastDetails?.map(ballast => {
+        this.loadingDischargingPlanData?.planBallastDetails?.map(ballast => {
           if (tank.id === ballast.tankId) {
             colorCode = ballast.colorCode;
             if (ballast.conditionType === 2 && ballast.valueType === 1) {
@@ -251,12 +249,12 @@ export class DepartureConditionComponent implements OnInit {
         this.ballastTankQuantity.push(data);
       });
     });
-    this.loadingPlanData?.ballastFrontTanks?.map(item => {
+    this.loadingDischargingPlanData?.ballastFrontTanks?.map(item => {
       item.map(tank => {
         let actualQty = 0, planedQty = 0;
         const data: any = {};
         let colorCode = null;
-        this.loadingPlanData?.planBallastDetails?.map(ballast => {
+        this.loadingDischargingPlanData?.planBallastDetails?.map(ballast => {
           if (tank.id === ballast.tankId) {
             colorCode = ballast.colorCode;
             if (ballast.conditionType === 2 && ballast.valueType === 1) {
@@ -276,9 +274,9 @@ export class DepartureConditionComponent implements OnInit {
         this.ballastTankQuantity.push(data);
       });
     });
-    this.rearBallastTanks = this.departureConditionTransformationService.formatBallastTanks(this.loadingPlanData?.ballastRearTanks, this.ballastTankQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.centerBallastTanks = this.departureConditionTransformationService.formatBallastTanks(this.loadingPlanData?.ballastCenterTanks, this.ballastTankQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.frontBallastTanks = this.departureConditionTransformationService.formatBallastTanks(this.loadingPlanData?.ballastFrontTanks, this.ballastTankQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.rearBallastTanks = this.departureConditionTransformationService.formatBallastTanks(this.loadingDischargingPlanData?.ballastRearTanks, this.ballastTankQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.centerBallastTanks = this.departureConditionTransformationService.formatBallastTanks(this.loadingDischargingPlanData?.ballastCenterTanks, this.ballastTankQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.frontBallastTanks = this.departureConditionTransformationService.formatBallastTanks(this.loadingDischargingPlanData?.ballastFrontTanks, this.ballastTankQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
   }
 
   /**

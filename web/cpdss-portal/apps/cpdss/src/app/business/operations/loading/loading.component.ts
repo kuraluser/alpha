@@ -252,7 +252,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   private swMessageHandler = async event => {
     const translationKeys = await this.translateService.get(["GENERATE_LODABLE_PLAN_PENDING", "GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE", "GENERATE_LODABLE_PLAN_CONFIRMED", "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED", "GENERATE_LODABLE_PLAN_PLAN_GENERATED", "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED", "GENERATE_LODABLE_PLAN_ERROR_OCCURED", "GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER", "GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED",
-      "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION", "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED", "GENERATE_LODABLE_PLAN_INFO","GENERATE_LOADABLE_PATTERN_NO_PLAN","GENERATE_LOADABLE_PLAN_COMPLETE_DONE", "ULLAGE_UPDATE_VALIDATION_SUCCESS_LABEL"]).toPromise();
+      "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION", "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED", "GENERATE_LODABLE_PLAN_INFO","GENERATE_LOADABLE_PATTERN_NO_PLAN","GENERATE_LOADABLE_PLAN_COMPLETE_DONE", "ULLAGE_UPDATE_VALIDATION_SUCCESS_LABEL", "Port"]).toPromise();
     if (event?.data?.errorCode === '210') {
       this.globalErrorHandler.sessionOutMessage();
     }
@@ -278,11 +278,11 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
       else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED) {
         this.setButtonStatus();
-        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: translationKeys["GENERATE_LODABLE_PLAN_PLAN_GENERATED"] ,sticky: true, closable: true });
+        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: event?.data?.pattern?.portName + ' '+ translationKeys["Port"]?.toLowerCase() + ' ' +translationKeys["GENERATE_LODABLE_PLAN_PLAN_GENERATED"] ,sticky: true, closable: true });
 
       }
 
-      if (this.router.url.includes('operations/loading')) {
+      if (this.router.url.includes('operations/loading') && this.loadingDischargingTransformationService.portRotationId === event?.data?.pattern?.portRotationId) {
 
         switch (event?.data?.statusId) {
           case OPERATIONS_PLAN_STATUS.PENDING:
@@ -405,6 +405,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       vesselId: this.vesselId,
       voyageId: this.voyageId,
       loadingInfoId: this.loadingInfoId,
+      portRotationId: this.portRotationId,
+      portName: localStorage.getItem('selectedPortName'),
       type: 'loading-plan-status'
     }
     if (result.responseStatus.status == "SUCCESS") {

@@ -65,7 +65,8 @@ export class UllageUpdatePopupTransformationService {
         for (let index = 0; index < bunkerTankQuantities.length; index++) {
           if (bunkerTankQuantities[index]?.tankId === bunkerTank[groupIndex][tankIndex]?.id) {
             bunkerTank[groupIndex][tankIndex].commodity = bunkerTankQuantities[index];
-            bunkerTank[groupIndex][tankIndex].commodity.volume = bunkerTank[groupIndex][tankIndex].commodity?.density ? bunkerTank[groupIndex][tankIndex].commodity.quantity / bunkerTank[groupIndex][tankIndex].commodity?.density : 0;
+            bunkerTank[groupIndex][tankIndex].commodity.density = bunkerTank[groupIndex][tankIndex].commodity.density ? bunkerTank[groupIndex][tankIndex].commodity.density : bunkerTank[groupIndex][tankIndex].density;
+            bunkerTank[groupIndex][tankIndex].commodity.volume = bunkerTank[groupIndex][tankIndex].commodity?.density ? ( bunkerTank[groupIndex][tankIndex].commodity.quantity / bunkerTank[groupIndex][tankIndex].commodity?.density) : 0;
             break;
           }
         }
@@ -256,9 +257,11 @@ export class UllageUpdatePopupTransformationService {
         fieldPlaceholder: '',
         editable: true,
         showTotal: true,
+        totalFieldClass: 'pr-30',
         errorMessages: {
           'required': 'ULLAGE_UPDATE_QUANTITY_REQUIRED',
-          'min': 'ULLAGE_UPDATE_INVALID_ERROR'
+          'min': 'ULLAGE_UPDATE_INVALID_ERROR',
+          'fillingError': 'ULLAGE_UPDATE_BUNKER_FILLING_ERROR'
         }
       }
 
@@ -372,13 +375,13 @@ export class UllageUpdatePopupTransformationService {
 * @returns {ICargoDetailValueObject}
 * @memberof UllageUpdatePopupTransformationService
 */
-  getFormatedCargoDetails(cargoTankDetail: ICargoDetail, cargoRow: any, isEditMode = true, isAdd : boolean) {
+  getFormatedCargoDetails(cargoTankDetail: ICargoDetail, cargoRow: any, isEditMode = true, isAdd: boolean) {
     const _cargoDetail = <ICargoDetailValueObject>{};
     _cargoDetail.blRefNo = new ValueObject<string>(cargoTankDetail?.blRefNo, true, isEditMode);
-    _cargoDetail.bbl = new ValueObject<number>(cargoTankDetail?.quantityBbls, true, isEditMode);
-    _cargoDetail.lt = new ValueObject<number>(cargoTankDetail?.quantityLT, true, isEditMode);
-    _cargoDetail.mt = new ValueObject<number>(cargoTankDetail?.quantityMt, true, isEditMode);
-    _cargoDetail.kl = new ValueObject<number>(cargoTankDetail?.quantityKl, true, isEditMode);
+    _cargoDetail.bbl = new ValueObject<number>(cargoTankDetail?.quantityBbls ? cargoTankDetail?.quantityBbls : 0, true, isEditMode);
+    _cargoDetail.lt = new ValueObject<number>(cargoTankDetail?.quantityLT ? cargoTankDetail?.quantityLT : 0, true, isEditMode);
+    _cargoDetail.mt = new ValueObject<number>(cargoTankDetail?.quantityMt ? cargoTankDetail?.quantityMt : 0, true, isEditMode);
+    _cargoDetail.kl = new ValueObject<number>(cargoTankDetail?.quantityKl ? cargoTankDetail?.quantityKl : 0, true, isEditMode);
     _cargoDetail.api = new ValueObject<number>(cargoTankDetail?.api, true, isEditMode);
     _cargoDetail.temp = new ValueObject<number>(cargoTankDetail?.temperature, true, isEditMode);
     _cargoDetail.cargoName = cargoRow?.cargoAbbrevation;
@@ -460,7 +463,7 @@ export class UllageUpdatePopupTransformationService {
 
     const _tankDetails = <ITankDetailsValueObject>{};
     _tankDetails.tankName = new ValueObject<string>(bunkerTank?.tankShortName ? bunkerTank?.tankShortName : '', true, false, false, true);
-    _tankDetails.quantity = new ValueObject<number>(bunkerTank?.quantity && !isPlanned? Number(bunkerTank?.quantity) : 0, true, isEditMode, false, true);
+    _tankDetails.quantity = new ValueObject<number>(bunkerTank?.quantity && !isPlanned ? Number(bunkerTank?.quantity) : 0, true, isEditMode, false, true);
     _tankDetails.tankId = bunkerTank.tankId;
     _tankDetails.density = new ValueObject<number>(bunkerTank.density && !isPlanned ? bunkerTank.density : 0, true, false, false, true);
     _tankDetails.loadablePatternId = bunkerTank.loadablePatternId;
@@ -468,6 +471,7 @@ export class UllageUpdatePopupTransformationService {
     _tankDetails.colorCode = bunkerTank?.colorCode;
     _tankDetails.actualPlanned = bunkerTank?.actualPlanned;
     _tankDetails.arrivalDeparture = bunkerTank?.arrivalDeparture;
+    _tankDetails.isAdd = true;
     return _tankDetails;
   }
 
@@ -492,8 +496,8 @@ export class UllageUpdatePopupTransformationService {
       lt: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, data.nominationApi) ?? 0,
       mt: data.plannedQuantityTotal ?? 0,
       kl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, data.nominationApi) ?? 0,
-      api: Number(data.nominationApi),
-      temp: data.nominationTemp
+      api: data.nominationApi ?  Number(Number(data.nominationApi).toFixed(2)) : 0,
+      temp: data.nominationTemp ? Number(Number(data.nominationTemp).toFixed(2)) : 0
     };
     cargoQuantity.actual = {
       bbl: this.quantityPipe.transform(data.actualQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.actualAvgApi),

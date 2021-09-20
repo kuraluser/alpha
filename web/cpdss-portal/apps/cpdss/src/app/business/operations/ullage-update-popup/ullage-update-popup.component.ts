@@ -18,6 +18,7 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { tankCapacityValidator } from './../../core/directives/tankCapacityValidator.directive';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { ConfirmationService } from 'primeng/api';
 
 /**
  * Component class for ullage update
@@ -113,7 +114,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   readonly OPERATIONS = OPERATIONS;
 
   cargoTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api', weightField: 'actualWeight', commodityNameField: 'abbreviation', weightUnit: AppConfigurationService.settings.baseUnit };
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, soundingField: 'sounding', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit, showSounding: true };
   ohqTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, densityField: 'density', weightField: 'quantity', weightUnit: AppConfigurationService.settings.baseUnit };
 
   cargoTanks: IShipCargoTank[][];
@@ -158,7 +159,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     private ullageUpdateApiService: UllageUpdateApiService,
     private ngxSpinnerService: NgxSpinnerService,
     private messageService: MessageService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private confirmationService: ConfirmationService
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -262,6 +264,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     this.ullageResponseData?.billOfLaddingList.map(bl => {
       let actualQuantity = 0;
       let actualAPi = 0;
+      let actualTemp = 0;
+      let actualTempCount = 0;
       let avgCount = 0;
       this.ullageResponseData?.portLoadablePlanStowageDetails.map(item => {
         if (bl.cargoNominationId === item.cargoNominationId) {
@@ -269,6 +273,10 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           actualAPi += Number(item.api);
           if (Number(item.api) > 0) {
             avgCount++;
+          }
+          actualTemp += (item.temperature ? Number(item.temperature) : 0);
+          if(item.temperature && Number(item.temperature) > 0){
+            actualTempCount++;
           }
         }
       });
@@ -304,6 +312,10 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         if (cargo.cargoNominationId === bl.cargoNominationId) {
           const avgActualApi = Number((actualAPi / avgCount).toFixed(2)) ?? 0;
           cargo.actual.api = isNaN(avgActualApi) ? 0 : avgActualApi;
+
+          const avgActualTemp = Number((actualTemp / actualTempCount).toFixed(2)) ?? 0;
+          cargo.actual.temp = isNaN(avgActualTemp) ? 0 : avgActualTemp;
+
           cargo.actual.bbl = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo.actual.api) ?? 0;
           cargo.actual.kl = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargo.actual.api) ?? 0;
           cargo.actual.lt = this.quantityPipe.transform(actualQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, cargo.actual.api) ?? 0;
@@ -663,52 +675,68 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   */
   validateBlFigTable() {
     this.blFigure.items.map((form, mainIndex) => {
-      form?.map((rowData, childIndex) => {
-        if (this.setBlError({ cargoNominationId: rowData?.cargo?.cargoNominationId }, 'bbl')) {
-          const control = this.getControl(mainIndex, childIndex, 'bbl');
-          control.setErrors({ rangeError: true });
-          control.markAsTouched();
-          control.markAsDirty();
-          rowData.cargo.bbl.isEditMode = true;
-        } else {
-          const control = this.getControl(mainIndex, childIndex, 'bbl');
-          control.setErrors(null);
-          rowData.cargo.bbl.isEditMode = false;
-        }
-        if (this.setBlError({ cargoNominationId: rowData?.cargo?.cargoNominationId }, 'kl')) {
-          const control = this.getControl(mainIndex, childIndex, 'kl');
-          control.setErrors({ rangeError: true });
-          control.markAsTouched();
-          control.markAsDirty();
-          rowData.cargo.kl.isEditMode = true;
-        } else {
-          rowData.cargo.kl.isEditMode = false;
-          const control = this.getControl(mainIndex, childIndex, 'kl');
-          control.setErrors(null);
-        }
-        if (this.setBlError({ cargoNominationId: rowData?.cargo?.cargoNominationId }, 'lt')) {
-          const control = this.getControl(mainIndex, childIndex, 'lt');
-          control.setErrors({ rangeError: true });
-          control.markAsTouched();
-          control.markAsDirty();
-          rowData.cargo.lt.isEditMode = true;
-        } else {
-          rowData.cargo.lt.isEditMode = false;
-          const control = this.getControl(mainIndex, childIndex, 'lt');
-          control.setErrors(null);
-        }
-        if (this.setBlError({ cargoNominationId: rowData?.cargo?.cargoNominationId }, 'mt')) {
-          const control = this.getControl(mainIndex, childIndex, 'mt');
-          control.setErrors({ rangeError: true });
-          control.markAsTouched();
-          control.markAsDirty();
-          rowData.cargo.mt.isEditMode = true;
-        } else {
-          rowData.cargo.mt.isEditMode = false;
-          const control = this.getControl(mainIndex, childIndex, 'mt');
-          control.setErrors(null);
-        }
-      });
+      if (!(form?.length === 1 && ((!form[0].cargo?.api?.value || form[0].cargo?.api?.value?.toString() === '0')
+        && (!form[0].cargo?.bbl?.value || form[0].cargo?.bbl?.value?.toString() === '0')
+        && !form[0].cargo?.blRefNo?.value
+        && (!form[0].cargo?.kl?.value || form[0].cargo?.kl?.value?.toString() === '0')
+        && (!form[0].cargo?.lt?.value || form[0].cargo?.lt?.value?.toString() === '0')
+        && (!form[0].cargo?.mt?.value || form[0].cargo?.mt?.value?.toString() === '0')
+        && (!form[0].cargo?.temp?.value || form[0].cargo?.temp?.value?.toString() === '0')))) {
+        form?.map((rowData, childIndex) => {
+          if (this.setBlError({ cargoNominationId: rowData?.cargo?.cargoNominationId }, 'bbl')) {
+            const control = this.getControl(mainIndex, childIndex, 'bbl');
+            setTimeout(() => {
+              control.setErrors({ rangeError: true });
+              control.markAsTouched();
+              control.markAsDirty();
+            });
+            rowData.cargo.bbl.isEditMode = true;
+          } else {
+            const control = this.getControl(mainIndex, childIndex, 'bbl');
+            control.setErrors(null);
+            rowData.cargo.bbl.isEditMode = false;
+          }
+          if (this.setBlError({ cargoNominationId: rowData?.cargo?.cargoNominationId }, 'kl')) {
+            const control = this.getControl(mainIndex, childIndex, 'kl');
+            setTimeout(() => {
+              control.setErrors({ rangeError: true });
+              control.markAsTouched();
+              control.markAsDirty();
+            });
+            rowData.cargo.kl.isEditMode = true;
+          } else {
+            rowData.cargo.kl.isEditMode = false;
+            const control = this.getControl(mainIndex, childIndex, 'kl');
+            control.setErrors(null);
+          }
+          if (this.setBlError({ cargoNominationId: rowData?.cargo?.cargoNominationId }, 'lt')) {
+            const control = this.getControl(mainIndex, childIndex, 'lt');
+            setTimeout(() => {
+              control.setErrors({ rangeError: true });
+              control.markAsTouched();
+              control.markAsDirty();
+            });
+            rowData.cargo.lt.isEditMode = true;
+          } else {
+            rowData.cargo.lt.isEditMode = false;
+            const control = this.getControl(mainIndex, childIndex, 'lt');
+            control.setErrors(null);
+          }
+          if (this.setBlError({ cargoNominationId: rowData?.cargo?.cargoNominationId }, 'mt')) {
+            const control = this.getControl(mainIndex, childIndex, 'mt');
+            setTimeout(() => {
+              control.setErrors({ rangeError: true });
+              control.markAsTouched();
+              control.markAsDirty();
+            });
+            rowData.cargo.mt.isEditMode = true;
+          } else {
+            rowData.cargo.mt.isEditMode = false;
+            const control = this.getControl(mainIndex, childIndex, 'mt');
+            control.setErrors(null);
+          }
+        });
+      }
     });
     this.tableForm.markAllAsTouched();
     this.tableForm.markAsDirty();
@@ -760,6 +788,28 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
 
     this.blFigure.items[rowIndex].push({ cargo: this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{ portId: this.portId }, this.ullageResponseData?.billOfLaddingList[rowIndex], true, true) });
     this.getCargoItems(rowIndex).push(this.initCargoDetails(this.blFigure.items[rowIndex][this.blFigure.items[rowIndex].length - 1].cargo));
+  }
+
+  deleteConfirm(rowIndex: number, colIndex: number) {
+    const translationKeys = this.translateService.instant(['ULLAGE_UPDATE_DELETE_SUMMARY', 'ULLAGE_UPDATE_DELETE_DELETE_DETAILS', 'ULLAGE_UPDATE_DELETE_CONFIRM_LABEL', 'ULLAGE_UPDATE_DELETE_REJECT_LABEL']);
+
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['ULLAGE_UPDATE_DELETE_SUMMARY'],
+      message: translationKeys['ULLAGE_UPDATE_DELETE_DELETE_DETAILS'],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['ULLAGE_UPDATE_DELETE_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: true,
+      rejectLabel: translationKeys['ULLAGE_UPDATE_DELETE_REJECT_LABEL'],
+      rejectIcon: 'pi',
+      rejectButtonStyleClass: 'btn btn-main',
+      accept: async () => {
+        this.deleteCargo(rowIndex, colIndex);
+      }
+    });
+
   }
 
   /**
@@ -876,16 +926,50 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     if (this.showAs.id === 2) {
       this.updateCargoTanks();
     }
+    const row = this.blFigure.items[rowIndex];
     if (key === 'blRefNo' || key === 'api' || key === 'temp') {
       rowData[key].isEditMode = control.errors ? true : false;
+      if ((row?.length === 1 && ((!row[0].cargo?.api?.value || row[0].cargo?.api?.value?.toString() === '0')
+        && (!row[0].cargo?.bbl?.value || row[0].cargo?.bbl?.value?.toString() === '0')
+        && !row[0].cargo?.blRefNo?.value
+        && (!row[0].cargo?.kl?.value || row[0].cargo?.kl?.value?.toString() === '0')
+        && (!row[0].cargo?.lt?.value || row[0].cargo?.lt?.value?.toString() === '0')
+        && (!row[0].cargo?.mt?.value || row[0].cargo?.mt?.value?.toString() === '0')
+        && (!row[0].cargo?.temp?.value || row[0].cargo?.temp?.value?.toString() === '0')))) {
+        const kl = this.getControl(rowIndex, index, 'kl');
+        kl.setErrors(null);
+        const bbl = this.getControl(rowIndex, index, 'bbl');
+        bbl.setErrors(null);
+        const lt = this.getControl(rowIndex, index, 'lt');
+        lt.setErrors(null);
+        const mt = this.getControl(rowIndex, index, 'mt');
+        mt.setErrors(null);
+      }
     } else {
-      const error = this.setBlError(rowData, key);
-      if (error) {
-        control.setErrors({ rangeError: true });
-        rowData[key].isEditMode = true;
+      if (!(row?.length === 1 && ((!row[0].cargo?.api?.value || row[0].cargo?.api?.value?.toString() === '0')
+        && (!row[0].cargo?.bbl?.value || row[0].cargo?.bbl?.value?.toString() === '0')
+        && !row[0].cargo?.blRefNo?.value
+        && (!row[0].cargo?.kl?.value || row[0].cargo?.kl?.value?.toString() === '0')
+        && (!row[0].cargo?.lt?.value || row[0].cargo?.lt?.value?.toString() === '0')
+        && (!row[0].cargo?.mt?.value || row[0].cargo?.mt?.value?.toString() === '0')
+        && (!row[0].cargo?.temp?.value || row[0].cargo?.temp?.value?.toString() === '0')))) {
+        const error = this.setBlError(rowData, key);
+        if (error) {
+          control.setErrors({ rangeError: true });
+          rowData[key].isEditMode = true;
+        } else {
+          rowData[key].isEditMode = false;
+          control.setErrors(null);
+        }
       } else {
-        rowData[key].isEditMode = false;
-        control.setErrors(null);
+        const kl = this.getControl(rowIndex, index, 'kl');
+        kl.setErrors(null);
+        const bbl = this.getControl(rowIndex, index, 'bbl');
+        bbl.setErrors(null);
+        const lt = this.getControl(rowIndex, index, 'lt');
+        lt.setErrors(null);
+        const mt = this.getControl(rowIndex, index, 'mt');
+        mt.setErrors(null);
       }
     }
 
@@ -1037,15 +1121,91 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         if (item.tankId === event.data.tankId) {
           item.quantity.value = result.quantityMt;
           item.sounding.value = result.correctedUllage;
-          item.ullage.value = result.correctedUllage;
         }
       });
       const formControl = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get('quantity');
       formControl.setValue(result.quantityMt);
       formControl.updateValueAndValidity();
-      formControl['controls'][event.field].updateValueAndValidity();
+      formControl.updateValueAndValidity();
+      this.ullageResponseData?.portLoadablePlanBallastDetails?.map(item => {
+        if (item.tankId === event.data.tankId) {
+          item.quantity = result.quantityMt;
+          item.sounding = result.correctedUllage;
+        }
+      });
+      setTimeout(() => {
+        this.rearBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastRearTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
+        this.centerBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastCenterTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
+        this.frontBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastFrontTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
+      });
 
     }
+  }
+
+  /**
+  * Method for bunker quantity check
+  * @param event
+  * @memberof UllageUpdatePopupComponent
+  */
+  bunkerEditCompleted(event) {
+    let fillingRatioError = false;
+    this.ullageResponseData?.bunkerRearTanks?.map(el => {
+      el?.map(rear => {
+        if (rear.id === event.data.tankId && !fillingRatioError) {
+          fillingRatioError = this.geRobFillingRatio(event.data.quantity.value, rear) > 95 ? true : false;
+        }
+      })
+    });
+    this.ullageResponseData?.bunkerTanks?.map(el => {
+      el?.map(bunker => {
+        if (bunker.id === event.data.tankId && !fillingRatioError) {
+          fillingRatioError = this.geRobFillingRatio(event.data.quantity.value, bunker) > 95 ? true : false;
+        }
+      })
+    });
+    const formControls = <FormControl>(<FormArray>this.bunkerTankForm.get('dataTable')).at(event.index);
+    if (fillingRatioError) {
+      setTimeout(() => {
+        formControls['controls'].quantity.setErrors({ fillingError: true });
+        formControls['controls'].quantity.markAsDirty();
+        formControls['controls'].quantity.markAsTouched();
+      });
+    } else {
+      setTimeout(() => {
+        formControls['controls'].quantity.setErrors(null);
+        formControls['controls'].quantity.markAsDirty();
+        formControls['controls'].quantity.markAsTouched();
+      });
+      this.ullageResponseData?.portLoadablePlanRobDetails?.map(item => {
+        if (item.tankId === event.data.tankId) {
+          item.quantity = event.data.quantity.value;
+        }
+      });
+      setTimeout(() => {
+        this.bunkerTanks = [...this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerTanks, this.ullageResponseData?.portLoadablePlanRobDetails, this.status)];
+        this.rearBunkerTanks = [...this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerRearTanks, this.ullageResponseData?.portLoadablePlanRobDetails, this.status)];
+      });
+    }
+    this.bunkerTankForm.markAllAsTouched();
+    this.bunkerTankForm.markAsDirty();
+  }
+
+  /**
+  * Method for bunker quantity check
+  * @param {any} quantity
+  * @param {any} row
+  * @memberof UllageUpdatePopupComponent
+  */
+  geRobFillingRatio(quantity, row) {
+    const volume = row.density && quantity ? (quantity / row.density) : 0;
+    let fillingratio: any = ((volume / Number(row?.fullCapacityCubm)) * 100).toFixed(2);
+    if (Number(fillingratio) === 100) {
+      fillingratio = 100;
+    }
+    if (isNaN(fillingratio) || !fillingratio) {
+      fillingratio = 0;
+    }
+    return fillingratio;
   }
   /**
    * Method for cargo row selection for datatable
@@ -1139,6 +1299,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         port_xid: this.portId,
         port_rotation_xid: this.portRotationId,
         grade: '',
+        color_code: item.colorCode,
+        abbreviation: item.abbreviation,
+        cargoId: item.cargoId,
 
       })
     });

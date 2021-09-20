@@ -15,12 +15,14 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
+import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
-import com.cpdss.gateway.domain.dischargeplan.DischargingPlanResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadablePlanCommingleDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingBerthDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
@@ -160,8 +162,8 @@ public class DischargeInformationService {
             GatewayConstants.OPERATION_TYPE_ARR); // Discharge Info needed Arrival Conditions
 
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
-    vesselTankDetails.setLoadableQuantityCargoDetails(
-        this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
+    vesselTankDetails.setDischargeQuantityCargoDetails(
+        this.loadingInformationService.getDischargePlanCargoDetailsByPort(
             vesselId,
             activeVoyage.getDischargePatternId(),
             GatewayConstants.OPERATION_TYPE_ARR, // Discharge Info needed Arrival Conditions
@@ -181,10 +183,10 @@ public class DischargeInformationService {
     return dischargeInformation;
   }
 
-  public DischargingPlanResponse getDischargingPlan(
+  public DischargePlanResponse getDischargingPlan(
       Long vesselId, Long voyageId, Long infoId, Long portRotationId, String correlationId)
       throws GenericServiceException {
-    DischargingPlanResponse dischargingPlanResponse = new DischargingPlanResponse();
+    DischargePlanResponse dischargingPlanResponse = new DischargePlanResponse();
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(
@@ -220,6 +222,7 @@ public class DischargeInformationService {
           planReply.getDischargingInformation().getSynopticTableId());
       dischargeInformation.setDischargeStudyId(activeVoyage.getActiveDs().getId());
       dischargeInformation.setDischargeStudyName(activeVoyage.getActiveDs().getName());
+      dischargeInformation.setDischargePatternId(activeVoyage.getDischargePatternId());
     }
 
     // discharge rates
@@ -240,7 +243,7 @@ public class DischargeInformationService {
         .forEach(
             berth -> {
               berth.setDischargingBerthId(berth.getLoadingBerthId());
-              berth.setDischargingInfoId(berth.getLoadingInfoId());
+              berth.setDischargeInfoId(berth.getLoadingInfoId());
             });
     // discharge berth (selected data)
     List<BerthDetails> selectedBerths =
@@ -250,7 +253,7 @@ public class DischargeInformationService {
         .forEach(
             berth -> {
               berth.setDischargingBerthId(berth.getLoadingBerthId());
-              berth.setDischargingInfoId(berth.getLoadingInfoId());
+              berth.setDischargeInfoId(berth.getLoadingInfoId());
             });
     LoadingBerthDetails berthDetails = new LoadingBerthDetails();
     berthDetails.setAvailableBerths(availableBerths);
@@ -261,6 +264,7 @@ public class DischargeInformationService {
     CargoMachineryInUse machineryInUse =
         this.infoBuilderService.buildDischargeMachinesFromMessage(
             planReply.getDischargingInformation().getMachineInUseList(), vesselId);
+    machineryInUse.setLoadingMachinesInUses(null);
     dischargeInformation.setMachineryInUses(machineryInUse);
 
     // discharge stages ()
@@ -299,6 +303,15 @@ public class DischargeInformationService {
             planReply.getDischargingInformation().getDischargeDelay());
     dischargeInformation.setDischargeSequences(dischargeSequences);
 
+    // discharge details
+    LoadingDetails dischargeDetails =
+        this.infoBuilderService.buildDischargeDetailFromMessage(
+            planReply.getDischargingInformation().getDischargeDetails(),
+            portRotation.get().getPortId(),
+            portRotation.get().getId(),
+            null);
+    dischargeInformation.setDischargeDetails(dischargeDetails);
+
     dischargingPlanResponse.setDischargingInformation(dischargeInformation);
 
     List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
@@ -321,11 +334,19 @@ public class DischargeInformationService {
     return dischargingPlanResponse;
   }
 
-  public LoadingUpdateUllageResponse getUpdateUllageDetails(
+  public DischargeUpdateUllageResponse getUpdateUllageDetails(
       Long vesselId, Long patternId, Long portRotationId, String operationType)
       throws GenericServiceException {
+    DischargeUpdateUllageResponse response = new DischargeUpdateUllageResponse();
+    LoadingUpdateUllageResponse loadingUpdateUllageResponse =
+        loadingPlanService.getUpdateUllageDetails(
+            vesselId, patternId, portRotationId, operationType, true);
+    BeanUtils.copyProperties(loadingUpdateUllageResponse, response);
+    response.setPortDischargePlanBallastDetails(loadingUpdateUllageResponse.getPortLoadablePlanBallastDetails());
+    response.setPortDischargePlanRobDetails(loadingUpdateUllageResponse.getPortLoadablePlanRobDetails());
+    response.setPortDischargePlanStowageDetails(loadingUpdateUllageResponse.getPortLoadablePlanStowageDetails());
+    response.setDischargePlanCommingleDetails(loadingUpdateUllageResponse.getLoadablePlanCommingleDetails());
 
-    return loadingPlanService.getUpdateUllageDetails(
-        vesselId, patternId, portRotationId, operationType, true);
+    return response;
   }
 }

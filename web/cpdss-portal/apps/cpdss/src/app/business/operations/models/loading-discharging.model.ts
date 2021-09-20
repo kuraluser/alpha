@@ -1,4 +1,4 @@
-import { ICargoConditions, IMode, IPercentage, IResponse, ValueObject } from "../../../shared/models/common.model";
+import { ICargoConditions, IMode, IPercentage, IResponse, IResponseStatus, ValueObject } from "../../../shared/models/common.model";
 import { ICargo, ICargoQuantities, ILoadableQuantityCargo, IProtested, IShipCargoTank, ITank, IShipBallastTank, IShipBunkerTank } from "../../core/models/common.model";
 
 /**
@@ -20,7 +20,6 @@ export interface ILoadingInformationResponse {
   loadingInfoId: number;
   synopticTableId: number;
   isLoadingInfoComplete: boolean;
-
   isLoadingInstructionsComplete: boolean;
   isLoadingPlanGenerated: boolean;
   isLoadingSequenceGenerated: boolean;
@@ -34,17 +33,20 @@ export interface ILoadingInformationResponse {
  * @interface IDischargingInformationResponse
  */
 export interface IDischargingInformationResponse {
-  responseStatus: IResponse;
-  dischargingDetails: ILoadingDischargingDetails;
-  dischargingRates: IDischargingRates;
+  responseStatus?: IResponse;
+  dischargeDetails: ILoadingDischargingDetails;
+  dischargeRates: IDischargingRates;
   berthDetails: IBerthDetails;
   machineryInUses: IMachineryInUsesResponse;
-  dischargingStages: ILoadingDischargingStagesResponse;
-  dischargingSequences: ILoadingDischargingSequencesResponse;
+  dischargeStages: ILoadingDischargingStagesResponse;
+  dischargeSequences: ILoadingDischargingSequencesResponse;
   cargoVesselTankDetails: ICargoVesselTankDetailsResponse;
-  dischargingInfoId: number;
+  dischargeInfoId: number;
   synopticTableId: number;
-  isDischargingInfoComplete: boolean;
+  isDischargeInfoComplete: boolean;
+  isDischargeInstructionsComplete: boolean,
+  isDischargeSequenceGenerated: boolean,
+  isDischargePlanGenerated: boolean
   cowDetails: ICOWDetailsResponse;
   postDischargeStageTime: IPostDischargeStageTime;
   loadedCargos: ICargo[];
@@ -223,7 +225,7 @@ export interface ILoadingMachinesInUse {
  */
 export interface IDischargingMachinesInUse {
   id: number;
-  dischargingInfoId: number;
+  dischargeInfoId: number;
   machineId: number;
   machineTypeId: number;
   capacity: number;
@@ -283,7 +285,7 @@ export interface IBerth {
   regulationAndRestriction: string;
   itemsToBeAgreedWith?: string;
   loadingInfoId?: number;
-  dischargingInfoId?: number;
+  dischargeInfoId?: number;
   maxShpChannel: number;
   loadingBerthId?: number;
   dischargingBerthId?: number;
@@ -344,7 +346,7 @@ export interface IStageDuration {
 export interface IToppingOffSequence {
   id: number;
   loadingInfoId?: number;
-  dischargingInfoId?: number;
+  dischargeInfoId?: number;
   orderNumber: number;
   tankId: number;
   cargoId: number;
@@ -404,7 +406,7 @@ export interface IReasonForDelays {
 export interface ILoadingDischargingDelays {
   id: number;
   loadingInfoId?: number;
-  dischargingInfoId?: number;
+  dischargeInfoId?: number;
   reasonForDelayIds: number[];
   duration: number;
   cargoId: number;
@@ -438,6 +440,7 @@ export interface ICargoVesselTankDetailsResponse {
   cargoTanks: IShipCargoTank[][];
   cargoQuantities: ICargoQuantities[];
   loadableQuantityCargoDetails: ILoadedCargoResponse[];
+  dischargeQuantityCargoDetails?: any[];
 }
 
 /**
@@ -459,7 +462,7 @@ export interface ILoadingInformation {
   vesselId?: number;
   voyageId?: number;
   isLoadingInfoComplete: boolean;
-  isLoadingPlanGenerated:boolean;
+  isLoadingPlanGenerated: boolean;
   isLoadingSequenceGenerated: boolean;
   isLoadingInstructionsComplete: boolean
 
@@ -473,23 +476,26 @@ export interface ILoadingInformation {
  * @interface IDischargingInformation
  */
 export interface IDischargingInformation {
-  dischargingInfoId: number;
+  dischargeInfoId: number;
   synopticalTableId: number;
-  dischargingDetails: ILoadingDischargingDetails;
-  dischargingRates: IDischargingRates;
+  dischargeDetails: ILoadingDischargingDetails;
+  dischargeRates: IDischargingRates;
   dischargingBerths: IBerth[];
   berthDetails: IBerthDetails;
   dischargingMachineries: IDischargingMachinesInUse[];
-  dischargingStages: ILoadingDischargingStages;
+  dischargeStages: ILoadingDischargingStages;
   dischargingDelays: ILoadingDischargingDelays[];
-  dischargingSequences: ILoadingDischargingSequences;
+  dischargeSequences: ILoadingDischargingSequences;
   vesselId?: number;
   voyageId?: number;
   cowDetails: ICOWDetails;
   postDischargeStageTime: IPostDischargeStageTime;
   loadedCargos: ICargo[];
   cargoVesselTankDetails: ICargoVesselTankDetails;
-  isDischargingInfoComplete: boolean;
+  isDischargeInfoComplete: boolean;
+  isDischargeInstructionsComplete?: boolean,
+  isDischargeSequenceGenerated?: boolean,
+  isDischargePlanGenerated?: boolean
   cargoTanks: ITank[];
   machineryInUses: IMachineryInUses;
   dischargeStudyName: string;
@@ -535,7 +541,7 @@ export interface ILoadingInformationSaveResponse {
  * @interface IDischargingInformationSaveResponse
  */
 export interface IDischargingInformationSaveResponse {
-  dischargingInfoId: number;
+  dischargeInfoId: number;
   dischargingInformation: IDischargingInformationResponse;
   responseStatus: IResponse;
   synopticalTableId: number;
@@ -687,6 +693,8 @@ export interface ILoadedCargo extends ILoadableQuantityCargo {
   protested?: ValueObject<IProtested>;
   isCommingledDischarge?: ValueObject<boolean>;
   isCommingledCargo?: boolean;
+  loadingOrder?: number;
+  dischargingOrder?: number;
   isAdd?: boolean;
 }
 
@@ -751,6 +759,7 @@ export interface IPlanBallastAndRob {
   tankId: number;
   tankName: string;
   valueType: number;
+  colorCode?: string
 }
 
 /**
@@ -842,7 +851,7 @@ export interface ITankDetailsValueObject {
   tankId?: number;
   loadablePatternId?: ValueObject<number>;
   fillingPercentage?: ValueObject<number>;
-  sounding?: ValueObject<number|string>;
+  sounding?: ValueObject<number | string>;
   cargoNominationId?: ValueObject<number>;
   isAdd?: boolean;
   arrivalDeparture?: number;
@@ -926,6 +935,9 @@ export interface IUllageUpdList {
   grade?: string;
   isActive?: boolean;
   ullage? : string | number;
+  color_code?: string;
+  abbreviation?: string;
+  cargoId?: number | string;
 }
 
 /**
@@ -954,7 +966,7 @@ export interface IBallastUpdateList {
   portRotationXId?: string | number;
   isValidate?: string;
   isActive?: boolean;
-  ullage? : string | number;
+  ullage?: string | number;
 }
 
 /**
@@ -1183,8 +1195,29 @@ export enum ULLAGE_STATUS_TEXT {
 * @enum ULLAGE_STATUS_TEXT
 */
 export enum ULLAGE_STATUS_VALUE {
-  'GENERATED'= 5,
+  'GENERATED' = 5,
   'IN_PROGRESS' = 12,
   'SUCCESS' = 13,
   'ERROR' = 14,
+}
+
+/**
+ * Interface for Discharging plan details response
+ *
+ * @export
+ * @interface IDischargingPlanDetailsResponse
+ */
+export interface IDischargingPlanDetailsResponse {
+  responseStatus: IResponseStatus;
+  cargoTanks: IShipCargoTank[][];
+  dischargingInformation: IDischargingInformationResponse;
+  planStowageDetails: IPlanStowageDetails[];
+  planBallastDetails: IPlanBallastAndRob[];
+  planRobDetails: IPlanBallastAndRob[];
+  planStabilityParams: IPlanStabilityParams[];
+  ballastCenterTanks: IShipBallastTank[][];
+  ballastFrontTanks: IShipBallastTank[][];
+  ballastRearTanks: IShipBallastTank[][];
+  bunkerRearTanks: IShipBunkerTank[][];
+  bunkerTanks: IShipBunkerTank[][];
 }

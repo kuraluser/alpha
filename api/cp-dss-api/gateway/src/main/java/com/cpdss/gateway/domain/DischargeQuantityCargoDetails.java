@@ -70,9 +70,9 @@ public class DischargeQuantityCargoDetails {
   private String dischargeMT;
   private String dischargingRate;
   private List<ContainerWashing> cowDetails;
-  private BigDecimal blFigure;
-  private BigDecimal shipFigure;
-  private Boolean protested;
-  private Boolean isCommingledDischarge;
-  private Boolean isCommingledCargo;
+  private BigDecimal blFigure = new BigDecimal("0");
+  private BigDecimal shipFigure = new BigDecimal("0");
+  private Boolean protested = false;
+  private Boolean isCommingledDischarge = false;
+  private Boolean isCommingledCargo = false;
 }

@@ -9,6 +9,7 @@ import { PanelModule } from 'primeng/panel';
 import { ArrivalConditionPanelModule } from './../arrival-condition-panel/arrival-condition-panel.module';
 import { LoadingDischargingBerthModule } from '../loading-discharging-berth/loading-discharging-berth.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { DischargingRatesModule } from '../discharging-rates/discharging-rates.module';
 
 /**
  * Module for plan tab side panel
@@ -23,6 +24,7 @@ import { TranslateModule } from '@ngx-translate/core';
     DatatableModule,
     PanelModule,
     LoadingRateModule,
+    DischargingRatesModule,
     DepartureConditionPanelModule,
     ArrivalConditionPanelModule,
     LoadingDischargingBerthModule,

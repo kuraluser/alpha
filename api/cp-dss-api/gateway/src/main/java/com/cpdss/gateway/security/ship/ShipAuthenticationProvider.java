@@ -5,6 +5,7 @@ import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
 import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV_SHIP;
 import static com.cpdss.gateway.security.ship.ShipJwtService.USER_ID_CLAIM;
 
+import com.cpdss.common.utils.AppContext;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import io.jsonwebtoken.Claims;
@@ -50,6 +51,7 @@ public class ShipAuthenticationProvider implements AuthenticationProvider {
       if (null != user.getLoginSuspended() && user.getLoginSuspended()) {
         throw new AuthenticationServiceException("Login was suspended for the user");
       }
+      AppContext.setCurrentUserId(Long.toString(userId));
       final ShipUserContext context = ShipUserContext.create(userId, new ArrayList<>());
       return new ShipAuthenticationToken(context, context.getAuthorities());
     } catch (AuthenticationServiceException ase) {

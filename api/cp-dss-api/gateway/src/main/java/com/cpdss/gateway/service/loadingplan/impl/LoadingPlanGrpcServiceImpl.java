@@ -248,7 +248,12 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
 
   @Override
   public List<LoadableStudy.LoadableQuantityCargoDetails> fetchLoadablePlanCargoDetails(
-      Long patternId, String operationType, Long portRotationId, Long portId, Boolean isFilterOn) {
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      Boolean isFilterOn,
+      Common.PLANNING_TYPE planning_type) {
     LoadableStudy.LoadingPlanCommonResponse response =
         this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
             LoadableStudy.LoadingPlanIdRequest.newBuilder()
@@ -257,6 +262,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
                 .setPortRotationId(portRotationId)
                 .setPortId(portId)
                 .setCargoNominationFilter(isFilterOn)
+                .setPlanningType(planning_type)
                 .build());
 
     if (response.getResponseStatus().getStatus().equals(SUCCESS)) {

@@ -24,7 +24,7 @@ import { OPERATIONS } from '../../core/models/common.model';
 export class LoadingDischargingBerthComponent implements OnInit {
   @Input() editMode = true;
   @Input() loadingInfoId: number;
-  @Input() dischargingInfoId: number;
+  @Input() dischargeInfoId: number;
   @Input() operation: OPERATIONS;
   @Input() get berthDetails(): IBerthDetails {
     return this._berthDetails;
@@ -82,7 +82,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
       regulationAndRestriction: this.fb.control('', [Validators.maxLength(500), Validators.pattern(/[a-zA-Z0-9]/)]),
       itemsToBeAgreedWith: this.fb.control('', [Validators.maxLength(500), Validators.pattern(/[a-zA-Z0-9]/)]),
       loadingInfoId: '',
-      dischargingInfoId: '',
+      dischargeInfoId: '',
       maxShpChannel: '',
       loadingBerthId: 0,
       maxLoa: '',
@@ -312,7 +312,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
       regulationAndRestriction: berthInfo.regulationAndRestriction,
       itemsToBeAgreedWith: berthInfo.itemsToBeAgreedWith,
       loadingInfoId: berthInfo?.loadingInfoId,
-      dischargingInfoId: berthInfo?.dischargingInfoId,
+      dischargeInfoId: berthInfo?.dischargeInfoId,
       maxShpChannel: berthInfo.maxShpChannel,
       loadingBerthId: berthInfo?.loadingBerthId ? berthInfo?.loadingBerthId : 0,
       dischargingBerthId: berthInfo?.dischargingBerthId ? berthInfo?.dischargingBerthId : 0,

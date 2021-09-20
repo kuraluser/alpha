@@ -57,4 +57,11 @@ public interface DischargeRatesOrBuilder
    * @return The bytes for maxBallastRate.
    */
   com.google.protobuf.ByteString getMaxBallastRateBytes();
+
+  /**
+   * <code>int64 id = 5;</code>
+   *
+   * @return The id.
+   */
+  long getId();
 }

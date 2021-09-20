@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
+import { durationValidator } from '../directives/validator/duration-validator.directive';
 import { IPostDischargeStageTime } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
@@ -18,21 +19,64 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
 })
 export class PostDischargeStageComponent implements OnInit {
   @Input() form: FormGroup;
-  @Input() set postDischargeStageTime(postDischargeStageTime: IPostDischargeStageTime) {
+  @Input()
+  get postDischargeStageTime(): IPostDischargeStageTime {
+    return this._postDischargeStageTim;
+  }
+  set postDischargeStageTime(postDischargeStageTime: IPostDischargeStageTime) {
+    this._postDischargeStageTim = postDischargeStageTime;
     this.postDischargeStageTimeData.push(postDischargeStageTime);
   }
-  postDischargeStageTimeData: IPostDischargeStageTime[] = [];
+  @Input()
+  get editMode(): boolean {
+    return this._editMode;
+  }
+  set editMode(editMode: boolean) {
+    this._editMode = editMode;
+  }
 
   get postDischargeStageTimeForm() {
     return <FormGroup>this.form.get('postDischargeStageTime');
   }
 
+  postDischargeStageTimeData: IPostDischargeStageTime[] = [];
   errorMesages: IValidationErrorMessagesSet;
+  private _postDischargeStageTim: IPostDischargeStageTime;
+  private _editMode: boolean;
 
-  constructor(private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
+  constructor(
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService,
+    private fb: FormBuilder
+  ) { }
 
   ngOnInit(): void {
+    this.initPostDischargeStageTimeForm();
+  }
+
+  /**
+   * function to initialise PostDischargeStageTimeForm
+   *
+   * @param {IPostDischargeStageTime} postDischargeStageTime
+   * @memberof PostDischargeStageComponent
+   */
+  initPostDischargeStageTimeForm(): void {
     this.errorMesages = this.loadingDischargingTransformationService.setPostDischargeValidationErrorMessage();
+    this.form.setControl('postDischargeStageTime', this.fb.group({
+      dryCheckTime: this.fb.control(this.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
+      slopDischargingTime: this.fb.control(this.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
+      finalStrippingTime: this.fb.control(this.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
+      freshOilWashingTime: this.fb.control(this.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
+    }));
+  }
+
+  /**
+   * return the form control of PostDischargeStageTimeForm
+   *
+   * @readonly
+   * @memberof PostDischargeStageComponent
+   */
+  get postDischargeStageTimeFormControl() {
+    return this.postDischargeStageTimeForm.controls;
   }
 
   /**

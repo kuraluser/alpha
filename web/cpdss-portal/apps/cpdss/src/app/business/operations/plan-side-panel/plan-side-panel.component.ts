@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
-import { IBerth, IBerthDetails, ILoadingRates } from '../models/loading-discharging.model';
+import { OPERATIONS } from '../../core/models/common.model';
+import { IBerth, IBerthDetails, IDischargingRates, ILoadingRates } from '../models/loading-discharging.model';
 import { PlanSidePanelTransformationService } from './plan-side-panel-transformation.service';
 
 /**
@@ -21,14 +22,16 @@ export class PlanSidePanelComponent implements OnInit {
   departureColumns: IDataTableColumn[];
   berthDetails: IBerthDetails;
   loadingRates: ILoadingRates;
-  _loadingPlanData: any;
+  dischargeRates: IDischargingRates;
+  operation: OPERATIONS;
+  _loadingDischargingPlanData: any;
 
-  @Input() get loadingPlanData(): any{
-    return this._loadingPlanData;
+  @Input() get loadingDischargingPlanData(): any{
+    return this._loadingDischargingPlanData;
   }
 
-  set loadingPlanData(value: any){
-    this._loadingPlanData = value;
+  set loadingDischargingPlanData(value: any){
+    this._loadingDischargingPlanData = value;
     this.setData();
   }
 
@@ -36,13 +39,19 @@ export class PlanSidePanelComponent implements OnInit {
     private planSidePanelTransformationService: PlanSidePanelTransformationService
   ) { }
 
-  ngOnInit(): void {
-       
+  ngOnInit(): void { 
   }
 
   setData(){
-    this.berthDetails = this.loadingPlanData?.loadingInformation?.berthDetails;
-    this.loadingRates = this.loadingPlanData?.loadingInformation?.loadingRates;
+    if (this.loadingDischargingPlanData?.loadingInformation) {
+      this.berthDetails = this.loadingDischargingPlanData?.loadingInformation?.berthDetails;
+      this.loadingRates = this.loadingDischargingPlanData?.loadingInformation?.loadingRates;
+      this.operation = OPERATIONS.LOADING;
+    } else {
+      this.berthDetails = this.loadingDischargingPlanData?.dischargingInformation?.berthDetails;
+      this.dischargeRates = this.loadingDischargingPlanData?.dischargingInformation?.dischargeRates;
+      this.operation = OPERATIONS.DISCHARGING;
+    }
   }
 
 }

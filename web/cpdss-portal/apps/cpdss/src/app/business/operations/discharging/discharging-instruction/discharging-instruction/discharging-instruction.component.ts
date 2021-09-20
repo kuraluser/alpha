@@ -20,7 +20,7 @@ export class DischargingInstructionComponent implements OnInit, ComponentCanDeac
   @Input() vesselId: number;
   @Input() voyageId: number;
   @Input() portRotationId: number;
-  @Input() dischargingInfoId: number;
+  @Input() dischargeInfoId: number;
 
   @ViewChild('instructionCheckList') instructionCheckList;
 
@@ -43,7 +43,7 @@ export class DischargingInstructionComponent implements OnInit, ComponentCanDeac
 
   ngOnInit(): void {
     // Used it for temporary purpose
-    this.dischargingInfoId = 155;
+    this.dischargeInfoId = 155;
     this.portRotationId =  113696;
     this.getDischargingInstructionDetails();
   }
@@ -52,7 +52,7 @@ export class DischargingInstructionComponent implements OnInit, ComponentCanDeac
     this.ngxSpinnerService.show();
     // Will use this once actual API available
     /*
-    const dischargingInstructionResponse: IDischargingInstructionResponse = await this.dischargingInstructionApiService.getDischargingInstructionData(this.vesselId, this.dischargingInfoId, this.portRotationId).toPromise();
+    const dischargingInstructionResponse: IDischargingInstructionResponse = await this.dischargingInstructionApiService.getDischargingInstructionData(this.vesselId, this.dischargeInfoId, this.portRotationId).toPromise();
     if (dischargingInstructionResponse.responseStatus.status === "200") {
       this.instructionData = dischargingInstructionResponse?.dischargingInstructionSubHeader?.length ? dischargingInstructionResponse?.dischargingInstructionSubHeader : [];
       this.sidePanelList = dischargingInstructionResponse?.dischargingInstructionGroupList?.length ? dischargingInstructionResponse?.dischargingInstructionGroupList : [];
@@ -62,7 +62,7 @@ export class DischargingInstructionComponent implements OnInit, ComponentCanDeac
 
     try {
       this.ngxSpinnerService.show();
-      const result = await this.loadingInstructionApiService.getLoadingInstructionData(this.vesselId, this.dischargingInfoId, this.portRotationId).toPromise();
+      const result = await this.loadingInstructionApiService.getLoadingInstructionData(this.vesselId, this.dischargeInfoId, this.portRotationId).toPromise();
       this.instructionData = result?.loadingInstructionSubHeader?.length ? result?.loadingInstructionSubHeader : [];
       this.sidePanelList = result?.loadingInstructionGroupList?.length ? result?.loadingInstructionGroupList : [];
       this.setInstructionSelected();

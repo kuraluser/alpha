@@ -160,9 +160,6 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
    * @memberof RulesTableComponent
    */
   async setIndex(index: any) {
-    const value = await this.unsavedChangesGuard.canDeactivate(this);
-    if (!value) { return };
-
     this.selectedIndex = index;
     this.setRules();
   }

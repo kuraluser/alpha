@@ -18,12 +18,12 @@ export class DischargingInstructionApiService {
    * function to get discharging instruction data
    *
    * @param {number} vesselId
-   * @param {number} dischargingInfoId
+   * @param {number} dischargeInfoId
    * @param {number} portRotationId
    * @return {*}  {Observable<IDischargingInstructionResponse>}
    * @memberof DischargingInstructionApiService
    */
-  getDischargingInstructionData(vesselId: number, dischargingInfoId: number, portRotationId: number): Observable<IDischargingInstructionResponse> {
-    return this.commonApiService.get<IDischargingInstructionResponse>(`vessels/${vesselId}/discharging-info/${dischargingInfoId}/port-rotation/${portRotationId}`)
+  getDischargingInstructionData(vesselId: number, dischargeInfoId: number, portRotationId: number): Observable<IDischargingInstructionResponse> {
+    return this.commonApiService.get<IDischargingInstructionResponse>(`vessels/${vesselId}/discharging-info/${dischargeInfoId}/port-rotation/${portRotationId}`)
   }
 }

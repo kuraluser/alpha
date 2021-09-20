@@ -54,7 +54,6 @@ public class GrpcServerInterceptor implements ServerInterceptor {
       @Override
       public void onHalfClose() {
         try {
-          AppContext.clear();
           super.onHalfClose();
         } catch (Exception e) {
           log.error("Error on half close", e);

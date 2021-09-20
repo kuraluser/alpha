@@ -71,13 +71,21 @@
 
   <div class="row" *ngIf="currentTab === OPERATION_TAB.INSTRUCTION">
     <cpdss-portal-discharging-instruction #dischargingInstruction [vesselId]="vesselId" [voyageId]="voyageId"
-    [portRotationId]="portRotationId" [dischargingInfoId]="dischargingInfoId"></cpdss-portal-discharging-instruction>
+      [portRotationId]="portRotationId" [dischargeInfoId]="dischargeInfoId"></cpdss-portal-discharging-instruction>
   </div>
 
   <div class="row" *ngIf="currentTab === OPERATION_TAB.SEQUENCE">
     <div class="col">
-      <cpdss-portal-discharging-sequence [vesselId]="vesselId" [voyageId]="voyageId" [dischargingInfoId]="dischargingInfoId"
-        [operation]="OPERATIONS.DISCHARGING"></cpdss-portal-discharging-sequence>
+      <cpdss-portal-discharging-sequence [vesselId]="vesselId" [voyageId]="voyageId"
+        [dischargeInfoId]="dischargeInfoId" [operation]="OPERATIONS.DISCHARGING">
+      </cpdss-portal-discharging-sequence>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="currentTab === OPERATION_TAB.PLAN">
+    <div class="col">
+      <cpdss-portal-discharging-plan [cargos]="cargos" [vesselId]="vesselId" [voyageId]="voyageId"
+        [portRotationId]="portRotationId" [dischargeInfoId]="dischargeInfoId"></cpdss-portal-discharging-plan>
     </div>
   </div>
 

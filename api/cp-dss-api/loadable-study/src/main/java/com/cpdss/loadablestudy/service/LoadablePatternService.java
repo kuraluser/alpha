@@ -207,6 +207,8 @@ public class LoadablePatternService {
 
   @Autowired private CowTypeMasterRepository cowTypeMasterRepository;
 
+  @Autowired DischargePlanService dischargePlanService;
+
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
@@ -305,8 +307,13 @@ public class LoadablePatternService {
     if (loadablePatternOpt.isPresent()) {
       LoadabalePatternValidateRequest loadabalePatternValidateRequest =
           new LoadabalePatternValidateRequest();
-      loadablePlanService.buildLoadablePlanPortWiseDetails(
-          loadablePatternOpt.get(), loadabalePatternValidateRequest);
+      if (request.getIsDischargePlan()) { // in this case, we can skip last loading port check
+        dischargePlanService.buildDischargeablePlanPortWiseDetails(
+            loadablePatternOpt.get(), loadabalePatternValidateRequest);
+      } else {
+        loadablePlanService.buildLoadablePlanPortWiseDetails(
+            loadablePatternOpt.get(), loadabalePatternValidateRequest);
+      }
       ObjectMapper mapper = new ObjectMapper();
       builder.setLoadablePatternDetails(
           mapper.writeValueAsString(

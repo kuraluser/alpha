@@ -120,6 +120,8 @@ public class DischargeInformationBuilderService {
     } else {
       var2.setMaxBallastRate(new BigDecimal(var1.getMaxBallastRate()));
     }
+    var2.setId(var1.getId());
+
     return var2;
   }
 
@@ -263,6 +265,7 @@ public class DischargeInformationBuilderService {
       }
       log.info("Loading plan machine in use added, Size {}", var1.size());
       machineryInUse.setLoadingMachinesInUses(list2);
+      machineryInUse.setDischargeMachinesInUses(list2);
     }
     return machineryInUse;
   }
@@ -309,7 +312,7 @@ public class DischargeInformationBuilderService {
         .forEach(
             delay -> {
               BeanUtils.copyProperties(delay, dischargeDelay);
-              dischargeDelay.setDischargingInfoId(delay.getLoadingInfoId());
+              dischargeDelay.setDischargeInfoId(delay.getLoadingInfoId());
               delays.add(dischargeDelay);
             });
 

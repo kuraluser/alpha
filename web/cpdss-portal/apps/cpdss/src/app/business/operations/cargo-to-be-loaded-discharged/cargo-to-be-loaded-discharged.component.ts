@@ -40,6 +40,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
 
   @Input() cargos: ICargo[];
   @Input() prevQuantitySelectedUnit: QUANTITY_UNIT;
+  @Input() isDischargePlanGenerated: boolean;
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
   }
@@ -163,6 +164,15 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         slopQuantityObj.value = slopQuantity;
 
         cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
+
+        if (this.isDischargePlanGenerated) {
+          for (const key in cargo) {
+            if (cargo[key]?.hasOwnProperty('_isEditMode') && cargo[key]?.hasOwnProperty('_isEditable')) {
+              cargo[key].isEditMode = false;
+              cargo[key].isEditable = false;
+            }
+          }
+        }
       }
       return cargo;
     });

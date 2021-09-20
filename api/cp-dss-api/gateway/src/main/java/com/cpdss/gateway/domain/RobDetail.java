@@ -26,7 +26,7 @@ public class RobDetail {
 
   private BigDecimal fillingRatio;
 
-  private String colourCode;
+  private String colour_code;
 
   private BigDecimal density;
 

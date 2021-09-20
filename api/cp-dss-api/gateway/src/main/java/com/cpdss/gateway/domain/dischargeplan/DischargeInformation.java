@@ -48,7 +48,7 @@ public class DischargeInformation {
   private Long dischargePlanArrStatusId;
   private Long dischargePlanDepStatusId;
   private Long dischargePatternId;
-  private Boolean isDischargeInstructionsComplete;
-  private Boolean isDischargeSequenceGenerated;
-  private Boolean isDischargePlanGenerated;
+  private Boolean isDischargeInstructionsComplete = false;
+  private Boolean isDischargeSequenceGenerated = false;
+  private Boolean isDischargePlanGenerated = false;
 }

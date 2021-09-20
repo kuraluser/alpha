@@ -5,7 +5,7 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <cpdss-portal-arrival-condition-panel [loadingPlanData]="loadingPlanData"></cpdss-portal-arrival-condition-panel>
+        <cpdss-portal-arrival-condition-panel [loadingDischargingPlanData]="loadingDischargingPlanData"></cpdss-portal-arrival-condition-panel>
     </div>
 </div>
 <div class="row pt-30 heading-border no-gutters mb-10">
@@ -15,18 +15,22 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <cpdss-portal-departure-condition-panel [loadingPlanData]="loadingPlanData"></cpdss-portal-departure-condition-panel>
+        <cpdss-portal-departure-condition-panel [loadingDischargingPlanData]="loadingDischargingPlanData"></cpdss-portal-departure-condition-panel>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-12 pt-30">
+    <div class="col-md-12 pt-30" *ngIf="loadingRates">
         <cpdss-portal-loading-rate [editMode]="false"
         [loadingRates]="loadingRates"></cpdss-portal-loading-rate>
+    </div>
+    <div class="col-md-12 pt-30" *ngIf="dischargeRates">
+        <cpdss-portal-discharging-rates [editMode]="false"
+            [dischargeRates]="dischargeRates"></cpdss-portal-discharging-rates>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <cpdss-portal-loading-discharging-berth [editMode]="false" [berthDetails]="berthDetails" ></cpdss-portal-loading-discharging-berth>
+        <cpdss-portal-loading-discharging-berth [editMode]="false" [berthDetails]="berthDetails" [operation]="operation"></cpdss-portal-loading-discharging-berth>
     </div>
 </div>

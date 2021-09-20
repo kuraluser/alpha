@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DischargingPlanResponse {
+public class DischargePlanResponse {
 
   private CommonSuccessResponse responseStatus;
 
@@ -31,7 +31,7 @@ public class DischargingPlanResponse {
   private List<List<VesselTank>> ballastRearTanks;
   private List<List<VesselTank>> cargoTanks;
 
-  public DischargingPlanResponse(CommonSuccessResponse responseStatus) {
+  public DischargePlanResponse(CommonSuccessResponse responseStatus) {
     this.responseStatus = responseStatus;
   }
 }
