@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.domain.AlgoErrorResponse;
@@ -111,4 +112,7 @@ public interface LoadingInformationService {
   byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException;
 
   PostDischargeStage getPostDischargeStage(PostDischargeStageTime postDischargeStageTime);
+
+  public List<DischargeQuantityCargoDetails> buildDischargePlanQuantity(
+      List<LoadableStudy.LoadableQuantityCargoDetails> list, Long vesselId);
 }
