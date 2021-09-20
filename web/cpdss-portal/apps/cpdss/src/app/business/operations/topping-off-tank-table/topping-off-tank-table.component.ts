@@ -171,6 +171,11 @@ export class ToppingOffTankTableComponent implements OnInit {
       item.sort((a, b) => a.displayOrder - b.displayOrder);
     });
     this.cargoTypeList?.sort((a, b) => a[0].displayOrder - b[0].displayOrder);
+    this.cargoTypeList?.forEach((element) => {
+      element?.forEach((element,index) => {
+        element.displayOrder = index + 1;
+      });
+    });
   }
 
 
