@@ -2,7 +2,6 @@
 package com.cpdss.gateway.service.dischargeplan;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
@@ -22,7 +21,6 @@ import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadablePlanCommingleDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingBerthDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
@@ -312,11 +310,20 @@ public class DischargeInformationService {
             null);
     dischargeInformation.setDischargeDetails(dischargeDetails);
 
+    // RPC call to vessel info, Get Rules (default value for Discharge Info)
+    RuleResponse ruleResponse =
+        vesselInfoService.getRulesByVesselIdAndSectionId(
+            vesselId, GatewayConstants.DISCHARGING_RULE_MASTER_ID, null, null);
+    AdminRuleValueExtract extract =
+        AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
+    // cow plan
+    CowPlan cowPlan =
+        this.infoBuilderService.buildDischargeCowPlan(
+            planReply.getDischargingInformation().getCowPlan(), extract);
+    dischargeInformation.setCowPlan(cowPlan);
+
     dischargingPlanResponse.setDischargingInformation(dischargeInformation);
 
-    List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
-        loadingPlanGrpcService.fetchLoadablePlanBallastDetails(
-            activeVoyage.getPatternId(), portRotation.get().getId());
     dischargingPlanResponse.setPlanBallastDetails(
         loadingPlanBuilderService.buildLoadingPlanBallastFromRpc(
             planReply.getPortDischargingPlanBallastDetailsList()));
@@ -342,10 +349,14 @@ public class DischargeInformationService {
         loadingPlanService.getUpdateUllageDetails(
             vesselId, patternId, portRotationId, operationType, true);
     BeanUtils.copyProperties(loadingUpdateUllageResponse, response);
-    response.setPortDischargePlanBallastDetails(loadingUpdateUllageResponse.getPortLoadablePlanBallastDetails());
-    response.setPortDischargePlanRobDetails(loadingUpdateUllageResponse.getPortLoadablePlanRobDetails());
-    response.setPortDischargePlanStowageDetails(loadingUpdateUllageResponse.getPortLoadablePlanStowageDetails());
-    response.setDischargePlanCommingleDetails(loadingUpdateUllageResponse.getLoadablePlanCommingleDetails());
+    response.setPortDischargePlanBallastDetails(
+        loadingUpdateUllageResponse.getPortLoadablePlanBallastDetails());
+    response.setPortDischargePlanRobDetails(
+        loadingUpdateUllageResponse.getPortLoadablePlanRobDetails());
+    response.setPortDischargePlanStowageDetails(
+        loadingUpdateUllageResponse.getPortLoadablePlanStowageDetails());
+    response.setDischargePlanCommingleDetails(
+        loadingUpdateUllageResponse.getLoadablePlanCommingleDetails());
 
     return response;
   }
