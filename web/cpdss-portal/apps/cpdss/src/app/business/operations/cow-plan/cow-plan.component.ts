@@ -27,16 +27,20 @@ export class CowPlanComponent implements OnInit {
   @Input() cargoTanks: ITank[];
   @Input() loadedCargos: ICargo[];
   @Input() form: FormGroup;
-
   @Input()
   get cowDetails(): ICOWDetails {
     return this._cowDetails;
   }
-
   set cowDetails(value: ICOWDetails) {
     this._cowDetails = value;
     this.initFormGroup();
-    this.enableDisableFieldsOnCowOption(value?.cowOption);
+  }
+  @Input()
+  get editMode(): boolean {
+    return this._editMode;
+  }
+  set editMode(editMode: boolean) {
+    this._editMode = editMode;
   }
 
   get cowDetailsForm() {
@@ -47,6 +51,7 @@ export class CowPlanComponent implements OnInit {
   maxDuration: string[];
 
   private _cowDetails: ICOWDetails;
+  private _editMode: boolean;
 
   constructor(
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
@@ -54,6 +59,8 @@ export class CowPlanComponent implements OnInit {
 
   ngOnInit(): void {
     this.errorMesages = this.loadingDischargingTransformationService.setCOWValidationErrorMessage();
+    this.initFormGroup();
+    this.enableDisableFieldsOnCowOption(this.cowDetails?.cowOption);
   }
 
   /**
@@ -71,13 +78,16 @@ export class CowPlanComponent implements OnInit {
     });
     this.maxDuration = this.cowDetails?.totalDuration.split(':');
 
-    this.form.setControl('cowDetails', this.fb.group({
+    this.form?.setControl('cowDetails', this.fb.group({
       washTanksWithDifferentCargo: this.fb.control(this.cowDetails?.washTanksWithDifferentCargo),
       cowOption: this.fb.control(this.cowDetails?.cowOption),
       cowPercentage: this.fb.control(this.cowDetails?.cowPercentage),
       topCOWTanks: this.fb.control(this.cowDetails?.topCOWTanks, [tankPreferenceDuplicationValidator('top')]),
+      selectedTopCOWTanks: this.joinDropOptionsToLabel(this.cowDetails?.topCOWTanks),
       bottomCOWTanks: this.fb.control(this.cowDetails?.bottomCOWTanks),
+      selectedBottomCOWTanks: this.joinDropOptionsToLabel(this.cowDetails?.bottomCOWTanks),
       allCOWTanks: this.fb.control(this.cowDetails?.allCOWTanks),
+      selectedAllCOWTanks: this.joinDropOptionsToLabel(this.cowDetails?.allCOWTanks),
       tanksWashingWithDifferentCargo: this.fb.array([...tanksWashingWithDifferentCargo]),
       cowStart: this.fb.control(this.cowDetails?.cowStart, [durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]),
       cowEnd: this.fb.control(this.cowDetails?.cowEnd, [durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]),
@@ -87,6 +97,33 @@ export class CowPlanComponent implements OnInit {
       needFreshCrudeStorage: this.fb.control(this.cowDetails?.needFreshCrudeStorage),
       needFlushingOil: this.fb.control(this.cowDetails?.needFlushingOil),
     }));
+  }
+
+  /**
+   * return the form control of cowDetailsForm
+   *
+   * @readonly
+   * @memberof CowPlanComponent
+   */
+  get cowDetailsFormControl() {
+    return this.cowDetailsForm.controls;
+  }
+
+  /**
+   * function to group the selcted tanks short-name as label
+   *
+   * @param {ITank[]} tanks
+   * @return {*}  {string}
+   * @memberof CowPlanComponent
+   */
+  joinDropOptionsToLabel(tanks: ITank[]): string {
+    let tankShortNamesLabel: string;
+    let tankShortNames: string[] = [];
+    tanks.forEach(selectedTanks => {
+      tankShortNames.push(selectedTanks?.shortName);
+    });
+    tankShortNamesLabel = tankShortNames.join(', ');
+    return tankShortNamesLabel;
   }
 
   /**

@@ -489,9 +489,6 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
             dataTableControl.removeAt(event.index);
             this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
             this.updateFormValidity();
-            if(!event?.data?.isAdd) {
-              this.loadableStudyDetailsTransformationService.compareLoadableQunaityValuesInPopupWithDB();
-            }
           }
           this.ngxSpinnerService.hide();
         }

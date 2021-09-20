@@ -21,6 +21,44 @@ const mockJson = {
   "responseStatus": {
     "status": "200"
   },
+  "currentPortCargos": [
+    {
+      "id": 9252,
+      "grade": "",
+      "estimatedAPI": "29.2000",
+      "estimatedTemp": "105.0000",
+      "cargoId": 33,
+      "cargoAbbreviation": "ARM",
+      "colorCode": "#f6ef0e",
+      "cargoNominationId": 17375,
+      "shipFigure": "127108.7",
+      "slopQuantity": 3301,
+      "timeRequiredForDischarging": "1.00",
+      "blFigure": "118729.5000",
+      "maxDischargingRate": "20500.0000",
+      "protested": true,
+      "isCommingledDischarge": true,
+      "isCommingledCargo": false
+    },
+    {
+      "id": 9253,
+      "grade": "",
+      "estimatedAPI": "33.0000",
+      "estimatedTemp": "120.0000",
+      "cargoId": 32,
+      "cargoAbbreviation": "ARL",
+      "colorCode": "#f91010",
+      "cargoNominationId": 17376,
+      "slopQuantity": 1308.7,
+      "shipFigure": "94952.3",
+      "timeRequiredForDischarging": "7.05",
+      "blFigure": "88692.9000",
+      "maxDischargingRate": "20500.0000",
+      "protested": true,
+      "isCommingledDischarge": false,
+      "isCommingledCargo": true
+    }
+  ],
   "planStowageDetails": [
     {
       "tankId": 25580,
@@ -1662,7 +1700,7 @@ const mockJson = {
       "cowStart": "01:00",
       "cowEnd": "01:00",
       "cowDuration": "12:00",
-      "totalDuration": "14:00",
+      "totalDuration": "8:00",
       "cowTrimMin": 1,
       "cowTrimMax": 1,
       "needFreshCrudeStorage": true,
@@ -2468,18 +2506,25 @@ const mockJson = {
 })
 export class DischargingPlanComponent implements OnInit, OnDestroy {
 
+  @Input() vesselId: number;
+  @Input() voyageId: number;
+  @Input() dischargeInfoId: number;
   @Input() get cargos(): ICargo[] {
     return this._cargos;
   }
   set cargos(cargos: ICargo[]) {
     this._cargos = cargos;
   }
-  @Input() vesselId: number;
-  @Input() voyageId: number;
-  @Input() portRotationId: number;
-  @Input() dischargeInfoId: number;
+  @Input() get portRotationId(): number {
+    return this._portRotationId;
+  }
+  set portRotationId(portRotationId: number) {
+    this._portRotationId = portRotationId;
+    this.getDischargingPlanDetails();
+  }
 
   private _cargos: ICargo[];
+  private _portRotationId: number;
   private ngUnsubscribe: Subject<any> = new Subject();
 
   dischargingPlanDetails: IDischargingPlanDetailsResponse;
@@ -2511,7 +2556,7 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.getDischargingPlanDetails();
+    this.initSubscriptions();
   }
 
   ngOnDestroy() {

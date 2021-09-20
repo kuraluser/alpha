@@ -160,7 +160,7 @@
           <cpdss-portal-cow-plan *ngIf="dischargingInformationData?.cowDetails && dischargingInformationForm && listData"
             [form]="dischargingInformationForm" [cowDetails]="dischargingInformationData?.cowDetails"
             [listData]="listData" [cargoTanks]="dischargingInformationData?.cargoTanks"
-            [loadedCargos]="dischargingInformationData?.loadedCargos">
+            [loadedCargos]="dischargingInformationData?.loadedCargos" [editMode]="true">
           </cpdss-portal-cow-plan>
         </div>
       </div>
