@@ -1414,28 +1414,28 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               : billLanding.getBlRefNumber())
                       .setBblAt60F(
                           StringUtils.isEmpty(billLanding.getBblAt60f())
-                              ? 0
-                              : billLanding.getBblAt60f().longValue())
+                              ? "0"
+                              : billLanding.getBblAt60f().toString())
                       .setQuantityLt(
                           StringUtils.isEmpty(billLanding.getQuantityLt())
-                              ? 0
-                              : billLanding.getQuantityLt().longValue())
+                              ? "0"
+                              : billLanding.getQuantityLt().toString())
                       .setQuantityMt(
                           StringUtils.isEmpty(billLanding.getQuantityMt())
-                              ? 0
-                              : billLanding.getQuantityMt().longValue())
+                              ? "0"
+                              : billLanding.getQuantityMt().toString())
                       .setKlAt15C(
                           StringUtils.isEmpty(billLanding.getKlAt15c())
-                              ? 0
-                              : billLanding.getKlAt15c().longValue())
+                              ? "0"
+                              : billLanding.getKlAt15c().toString())
                       .setApi(
                           StringUtils.isEmpty(billLanding.getApi())
-                              ? 0
-                              : billLanding.getApi().longValue())
+                              ? "0"
+                              : billLanding.getApi().toString())
                       .setTemperature(
                           StringUtils.isEmpty(billLanding.getTemperature())
-                              ? 0
-                              : billLanding.getTemperature().longValue())
+                              ? "0"
+                              : billLanding.getTemperature().toString())
                       .setIsActive(
                           StringUtils.isEmpty(billLanding.getIsActive())
                               ? 0
@@ -1487,23 +1487,23 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
                       .setTemperature(
                           ullageList.getTemperature() == null
-                              ? 0
-                              : ullageList.getTemperature().longValue())
+                              ? "0"
+                              : ullageList.getTemperature().toString())
                       .setCorrectedUllage(
                           ullageList.getCorrectedUllage() == null
-                              ? 0
-                              : ullageList.getCorrectedUllage().longValue())
+                              ? "0"
+                              : ullageList.getCorrectedUllage().toString())
                       .setQuantity(
                           ullageList.getQuantity() == null
                               ? ""
                               : String.valueOf(ullageList.getQuantity()))
                       .setFillingPercentage(
                           ullageList.getFillingPercentage() == null
-                              ? 0
-                              : ullageList.getFillingPercentage())
+                              ? "0"
+                              : ullageList.getFillingPercentage().toString())
                       // .setFillingRatio(ullageList.getFillingRatio() == null? 0:
                       // ullageList.getFillingRatio().longValue())
-                      .setApi(ullageList.getApi() == null ? 0 : ullageList.getApi().longValue())
+                      .setApi(ullageList.getApi() == null ? "0" : ullageList.getApi().toString())
                       .setCargoNominationXid(
                           ullageList.getCargoNominationId() == null
                               ? 0
@@ -1523,17 +1523,17 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setArrivalDepartutre(
                           ullageList.getArrival_departutre() == null
                               ? 0
-                              : ullageList.getArrival_departutre().longValue())
+                              : ullageList.getArrival_departutre().intValue())
                       .setActualPlanned(
                           ullageList.getActual_planned() == null
                               ? 0
-                              : ullageList.getActual_planned().longValue())
+                              : ullageList.getActual_planned().intValue())
                       .setGrade(
                           ullageList.getGrade() == null ? 0 : ullageList.getGrade().longValue())
                       .setCorrectionFactor(
                           ullageList.getCorrectionFactor() == null
-                              ? 0
-                              : ullageList.getCorrectionFactor().longValue())
+                              ? "0"
+                              : ullageList.getCorrectionFactor().toString())
                       .setIsUpdate(ullageList.getIsUpdate())
                       .setColorCode(
                           ullageList.getColor_code() == null ? "" : ullageList.getColor_code())
@@ -1562,47 +1562,47 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
                       .setTemperature(
                           ullageList.getTemperature() == null
-                              ? 0
-                              : ullageList.getTemperature().longValue())
+                              ? "0"
+                              : ullageList.getTemperature().toString())
                       .setCorrectedUllage(
                           ullageList.getCorrectedUllage() == null
-                              ? 0
-                              : ullageList.getCorrectedUllage().longValue())
+                              ? "0"
+                              : ullageList.getCorrectedUllage().toString())
                       .setCorrectionFactor(
                           ullageList.getCorrectionFactor() == null
-                              ? 0
-                              : ullageList.getCorrectionFactor().longValue())
+                              ? "0"
+                              : ullageList.getCorrectionFactor().toString())
                       .setQuantity(
                           ullageList.getQuantity() == null
                               ? ""
                               : String.valueOf(ullageList.getQuantity()))
                       .setObservedM3(
                           ullageList.getObservedM3() == null
-                              ? 0
-                              : ullageList.getObservedM3().longValue())
+                              ? "0"
+                              : ullageList.getObservedM3().toString())
                       .setFillingRatio(
                           ullageList.getFillingRatio() == null
-                              ? 0
-                              : ullageList.getFillingRatio().longValue())
+                              ? "0"
+                              : ullageList.getFillingRatio().toString())
                       .setSounding(
                           ullageList.getSounding() == null
                               ? ""
                               : String.valueOf(ullageList.getSounding()))
                       .setFillingPercentage(
                           ullageList.getFilling_percentage() == null
-                              ? 0
-                              : ullageList.getFilling_percentage().longValue())
+                              ? "0"
+                              : ullageList.getFilling_percentage().toString())
                       .setArrivalDepartutre(
                           ullageList.getArrival_departutre() == null
                               ? 0
-                              : ullageList.getArrival_departutre().longValue())
+                              : ullageList.getArrival_departutre().intValue())
                       .setActualPlanned(
                           ullageList.getActual_planned() == null
                               ? 0
-                              : ullageList.getActual_planned().longValue())
+                              : ullageList.getActual_planned().intValue())
                       .setColorCode(
                           ullageList.getColor_code() == null ? "" : ullageList.getColor_code())
-                      .setSg(ullageList.getSg() == null ? 0 : ullageList.getSg().longValue())
+                      .setSg(ullageList.getSg() == null ? "0" : ullageList.getSg().toString())
                       .setPortXid(ullageList.getPortXId() == null ? 0 : ullageList.getPortXId())
                       .setPortRotationXid(
                           ullageList.getPortRotationXId() == null
@@ -1632,8 +1632,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
                       .setTemperature(
                           ullageList.getTemperature() == null
-                              ? 0
-                              : ullageList.getTemperature().longValue())
+                              ? "0"
+                              : ullageList.getTemperature().toString())
                       // .setCorrectedUllage(ullageList.getCorrectedUllage() == null? 0:
                       // ullageList.getCorrectedUllage().longValue())
                       // .setCorrectionFactor(ullageList.getCorrectionFactor() == null ? 0:
@@ -1654,11 +1654,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setArrivalDepartutre(
                           ullageList.getArrival_departutre() == null
                               ? 0
-                              : ullageList.getArrival_departutre().longValue())
+                              : ullageList.getArrival_departutre().intValue())
                       .setActualPlanned(
                           ullageList.getActual_planned() == null
                               ? 0
-                              : ullageList.getActual_planned().longValue())
+                              : ullageList.getActual_planned().intValue())
                       .setPortXid(ullageList.getPortXId() == null ? 0 : ullageList.getPortXId())
                       .setPortRotationXid(
                           ullageList.getPortRotationXId() == null
