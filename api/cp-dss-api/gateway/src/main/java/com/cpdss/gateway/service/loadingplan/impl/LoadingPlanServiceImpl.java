@@ -623,17 +623,24 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info("Active Voyage {} For Vessel Id {}", activeVoyage.getVoyageNumber(), vesselId);
 
-    Optional<PortRotation> portRotation =
-        activeVoyage.getPortRotations().stream()
-            .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
-            .findFirst();
-    // Set portId from portRoatation
-    requestBuilder.setPortId(portRotation.get().getPortId());
+    Optional<PortRotation> portRotation = null;
     Long studyId = null;
     // Set loadable study id
     if (isDischarging) {
+     portRotation =
+    	        activeVoyage.getDischargePortRotations().stream()
+    	            .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
+    	            .findFirst();
+    	    // Set portId from discharge portRoatation
+    	    requestBuilder.setPortId(portRotation.get().getPortId());
       studyId = activeVoyage.getActiveDs().getId();
     } else {
+    	portRotation =
+    	        activeVoyage.getPortRotations().stream()
+    	            .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
+    	            .findFirst();
+    	    // Set portId from portRoatation
+    	    requestBuilder.setPortId(portRotation.get().getPortId());
       studyId = activeVoyage.getActiveLs().getId();
     }
 
