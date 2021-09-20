@@ -9,7 +9,6 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -42,8 +41,6 @@ import com.cpdss.gateway.utility.AdminRuleValueExtract;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
@@ -315,9 +312,15 @@ public class DischargeInformationService {
                       .orElse(null);
               dqcd.setBlFigure(new BigDecimal(cargoDetail.getQuantity()));
 
-              BigDecimal sum = planReply.getPortDischargingPlanStowageDetailsList().stream().filter(stowage->dqcd.getCargoNominationId().equals(stowage.getCargoNominationId())&&stowage.getValueType()==2 && stowage.getConditionType()==2).map(detail->
-            	  new BigDecimal(detail.getQuantity())
-              ).reduce(BigDecimal.ZERO, BigDecimal::add);
+              BigDecimal sum =
+                  planReply.getPortDischargingPlanStowageDetailsList().stream()
+                      .filter(
+                          stowage ->
+                              dqcd.getCargoNominationId().equals(stowage.getCargoNominationId())
+                                  && stowage.getValueType() == 2
+                                  && stowage.getConditionType() == 2)
+                      .map(detail -> new BigDecimal(detail.getQuantity()))
+                      .reduce(BigDecimal.ZERO, BigDecimal::add);
               dqcd.setShipFigure(sum);
             });
     dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
