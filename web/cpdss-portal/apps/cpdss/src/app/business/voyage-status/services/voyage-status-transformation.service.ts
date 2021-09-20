@@ -175,7 +175,8 @@ export class VoyageStatusTransformationService {
       },
       {
         field: 'sg',
-        header: 'SG'
+        header: 'SG',
+        numberFormat: AppConfigurationService.settings?.sgNumberFormat
       },
       {
         field: 'correctedUllage',
