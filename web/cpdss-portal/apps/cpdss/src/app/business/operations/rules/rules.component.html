@@ -6,7 +6,7 @@
             </div>
         </div>
         <div *ngIf="rulesService.vessels">
-            <cpdss-portal-rules-table *ngIf="rulesJson" [rulesJson]="rulesJson" [displaySettings]="false"
+            <cpdss-portal-rules-table *ngIf="rulesJson" #rulesTable [rulesJson]="rulesJson" [displaySettings]="false"
                 [rulesService]="rulesService" [isCancelChanges]="isCancelChanges"
                 (isSaveClicked)="saveChanges($event)" (formChanges)="updateCancelChangesButton($event)">
             </cpdss-portal-rules-table>
