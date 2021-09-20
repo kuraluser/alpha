@@ -54,4 +54,7 @@ public interface LoadingPlanService {
   byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException;
 
   public void buildTankLayout(Long vesselId, LoadingPlanResponse loadingPlanResponse);
+
+  public com.cpdss.common.generated.LoadableStudy.CargoNominationReply getCargoNominationsByStudyId(
+      Long studyId);
 }

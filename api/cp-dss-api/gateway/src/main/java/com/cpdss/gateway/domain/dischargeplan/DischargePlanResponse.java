@@ -2,6 +2,7 @@
 package com.cpdss.gateway.domain.dischargeplan;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
+import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
 import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanStabilityParam;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
@@ -30,6 +31,7 @@ public class DischargePlanResponse {
   private List<List<VesselTank>> ballastCenterTanks;
   private List<List<VesselTank>> ballastRearTanks;
   private List<List<VesselTank>> cargoTanks;
+  private List<DischargeQuantityCargoDetails> currentPortCargos;
 
   public DischargePlanResponse(CommonSuccessResponse responseStatus) {
     this.responseStatus = responseStatus;

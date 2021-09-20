@@ -714,7 +714,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     return response;
   }
 
-  private List<DischargeQuantityCargoDetails> buildDischargePlanQuantity(
+  public List<DischargeQuantityCargoDetails> buildDischargePlanQuantity(
       List<LoadableStudy.LoadableQuantityCargoDetails> list, Long vesselId) {
     List<DischargeQuantityCargoDetails> response = new ArrayList<>();
     log.info("Cargo to be loaded data from LS, Size {}", list.size());

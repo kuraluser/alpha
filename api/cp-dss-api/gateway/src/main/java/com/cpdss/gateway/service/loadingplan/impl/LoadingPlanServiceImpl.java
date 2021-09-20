@@ -645,12 +645,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     }
 
     // Retrieve cargo Nominations from cargo nomination table
-    com.cpdss.common.generated.LoadableStudy.CargoNominationRequest cargoNominationRequest =
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.newBuilder()
-            .setLoadableStudyId(studyId)
-            .build();
     com.cpdss.common.generated.LoadableStudy.CargoNominationReply cargoNominationReply =
-        loadableStudyServiceBlockingStub.getCargoNominationById(cargoNominationRequest);
+        getCargoNominationsByStudyId(studyId);
 
     // Get Update Ullage Data
     LoadingPlanModels.UpdateUllageDetailsResponse response = null;
@@ -788,6 +784,17 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     //          CommonErrorCodes.E_HTTP_BAD_REQUEST,
     //          HttpStatusCode.BAD_REQUEST);
     //    }
+  }
+
+  @Override
+  public com.cpdss.common.generated.LoadableStudy.CargoNominationReply getCargoNominationsByStudyId(
+      Long studyId) {
+    com.cpdss.common.generated.LoadableStudy.CargoNominationRequest cargoNominationRequest =
+        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.newBuilder()
+            .setLoadableStudyId(studyId)
+            .build();
+
+    return loadableStudyServiceBlockingStub.getCargoNominationById(cargoNominationRequest);
   }
 
   private LoadingUpdateUllageResponse buildUpdateUllageDetails(
