@@ -4,7 +4,6 @@ import * as Highcharts from 'highcharts';
 import Theme from 'highcharts/themes/grid-light';
 import GanttChart from 'highcharts/modules/gantt';
 import Annotations from 'highcharts/modules/annotations';
-import HC_stock from 'highcharts/modules/stock';
 import { ISequenceData, SEQUENCE_CHARTS } from './loading-discharging-sequence-chart.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { OPERATIONS } from '../../core/models/common.model';
@@ -13,6 +12,7 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
 import { TranslateService } from '@ngx-translate/core';
 import { QUANTITY_UNIT, RATE_UNIT } from '../../../shared/models/common.model';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
 /**
  * Override the reset function, we don't need to hide the tooltips and
@@ -26,7 +26,6 @@ import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decima
 Theme(Highcharts);
 GanttChart(Highcharts);
 Annotations(Highcharts);
-HC_stock(Highcharts);
 
 Highcharts.setOptions({
   chart: {
@@ -96,7 +95,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
 
   // Public fileds
   readonly OPERATIONS = OPERATIONS;
-  readonly LOADING_SEQUENCE_CHARTS: SEQUENCE_CHARTS;
+  readonly SEQUENCE_CHARTS = SEQUENCE_CHARTS;
   Highcharts: typeof Highcharts = Highcharts;
   cargoSequenceGanttChart: Highcharts.Options;
   ballastSequenceGanttChart: Highcharts.Options;
@@ -685,11 +684,11 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                 </tr>
                 <tr>
                   <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_QUANTITY']}</th>
-                  <td>${quantity}</td>
+                  <td>${LoadingDischargingSequenceChartComponent._quantityDecimalFormatPipe.transform(quantity, LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit)} ${LoadingDischargingSequenceChartComponent._currentQuantitySelectedUnit}</td>
                 </tr>
                 <tr>
                   <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_ULLAGE']}</th>
-                  <td>${ullage}</td>
+                  <td>${ullage} ${AppConfigurationService.settings.ullageUnit}</td>
                 </tr>
               </table>`;
 
@@ -1839,39 +1838,49 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
    * In order to synchronize tooltips and crosshairs, override the built-in events with handlers defined on the parent element.
    *
    * @param {*} e
+   * @param {SEQUENCE_CHARTS} type
    * @memberof LoadingDischargingSequenceChartComponent
    */
-  synchronizeTooltips(e) {
+  synchronizeTooltips(e, type: SEQUENCE_CHARTS) {
+    const currentChart: Highcharts.Chart = LoadingDischargingSequenceChartComponent.charts[type];
     let chart: Highcharts.Chart,
       points: Array<Highcharts.Point>,
       i;
     for (i = 0; i < Highcharts.charts.length; i++) {
       chart = Highcharts.charts[i];
-      points = [];
-      if (chart) {
-        e = chart?.pointer?.normalize(e); // Find coordinates within the chart
-        chart?.xAxis[0].drawCrosshair(e);
-        chart?.series.forEach((p) => {
-          const point = this.searchPoint(e, chart, p);
-          if (point) {
-            points.push(point)
+      if (chart.index !== currentChart.index) {
+        points = [];
+        if (chart) {
+          e = chart?.pointer?.normalize(e); // Find coordinates within the chart
+          chart?.xAxis[0].drawCrosshair(e);
+          for (let index = 0; index < chart?.series.length; index++) {
+            const series = chart?.series[index];
+            const point = this.searchPoint(e, chart, series);
+            if (point) {
+              points.push(point);
+              if (![LoadingDischargingSequenceChartComponent.charts[SEQUENCE_CHARTS.FLOW_RATE].index, LoadingDischargingSequenceChartComponent.charts[SEQUENCE_CHARTS.STABILITY_PARAMS].index].includes(chart.index)) {
+                break;
+              }
+            }
           }
-        });
-      }
+        }
 
-      if (points.length) {
-        let number = 0;
-        points.forEach((p, index: number) => {
-          if (!p?.series?.visible && chart.index !== LoadingDischargingSequenceChartComponent.charts[SEQUENCE_CHARTS.STABILITY_PARAMS].index) {
-            points.splice(index - number, 1);
-            number++;
-          }
-        })
-        points?.forEach((point) => {
-          // point.onMouseOver(); May be needed in future
-          chart.tooltip.refresh(points); // Show the tooltip
-          // chart.xAxis[0].drawCrosshair(e, points[0]); // Show the crosshair may be needed in future
-        });
+        if (points.length) {
+          let number = 0;
+          points.forEach((p, index: number) => {
+            if (!p?.series?.visible && chart.index !== LoadingDischargingSequenceChartComponent.charts[SEQUENCE_CHARTS.STABILITY_PARAMS].index) {
+              points.splice(index - number, 1);
+              number++;
+            }
+          })
+          points?.forEach((point) => {
+            // point.onMouseOver(); May be needed in future
+            chart.tooltip.refresh(points); // Show the tooltip
+            // chart.xAxis[0].drawCrosshair(e, points[0]); // Show the crosshair may be needed in future
+          });
+        } else {
+          chart.tooltip.hide();
+        }
       }
     }
   };
@@ -1885,17 +1894,22 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
    * @return {*}
    * @memberof LoadingDischargingSequenceChartComponent
    */
-  searchPoint(event, chart: Highcharts.Chart, series) {
-    const points = series?.points,
+  searchPoint(event, chart: Highcharts.Chart, series: Highcharts.Series) {
+    const points = series?.points.sort((pointA, pointB) => pointA.y - pointB.y),
       len = points?.length,
       x = chart.xAxis[0].toValue(event.chartX),
-      range = 1000 * 60 * 5; // Show sychronized tooltip in the range
-    let pointX,
+      range = 1000 * 60; // Show sychronized tooltip in the range +/- 1 minute
+    let pointX, pointX2,
       i;
 
     for (i = 0; i < len; i++) {
       pointX = points[i].x;
+      pointX2 = points[i]?.x2;
       if (x - range < pointX && pointX < x + range) {
+        return points[i];
+      } else if (x - range < pointX2 && pointX2 < x + range) {
+        return points[i];
+      } else if( x > pointX && x < pointX2) {
         return points[i];
       }
     }
@@ -1941,7 +1955,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
     LoadingDischargingSequenceChartComponent.tickPositions.forEach((category, category_index) => {
       const currTick = chart.xAxis[0].ticks[category];
       const dataLabelFixedWidth = 36;
-      let distanceLeft, distanceRight, dataLabelWidth;
+      let distanceLeft, distanceRight;
 
       if (currTick && !currTick?.isLast) {
         const nextTick = chart.xAxis[0].ticks[LoadingDischargingSequenceChartComponent.tickPositions[category_index + 1]];
