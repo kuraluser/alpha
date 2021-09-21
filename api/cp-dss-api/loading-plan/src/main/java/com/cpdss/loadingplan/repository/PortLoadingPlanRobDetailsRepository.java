@@ -17,6 +17,9 @@ public interface PortLoadingPlanRobDetailsRepository
 
   public List<PortLoadingPlanRobDetails> findByLoadingInformationAndIsActive(
       Long fkId, Boolean isActive);
+  
+  public List<PortLoadingPlanRobDetails> findByLoadingInformationAndConditionTypeAndIsActive(
+	      Long fkId, Integer conditionType, Boolean isActive);
 
   @Query(
       "FROM PortLoadingPlanRobDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3 ORDER BY PL.id")
