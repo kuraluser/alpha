@@ -199,6 +199,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
       vessel.setChiefOfficerId(grpcReply.getCheifOfficerId());
       vessel.setCharterer(grpcReply.getCharterer());
       vessel.setHasLoadicator(grpcReply.getHasLoadicator());
+      vessel.setKeelToMastHeight(grpcReply.getKeelToMastHeight());
 
       if (this.isShip()) {
         Optional<Users> userOpt =
