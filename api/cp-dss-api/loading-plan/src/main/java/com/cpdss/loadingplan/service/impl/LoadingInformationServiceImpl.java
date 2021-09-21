@@ -254,6 +254,13 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         });
     Optional.ofNullable(var1.get().getLoadingInformationStatus())
         .ifPresent(status -> builder.setLoadingInfoStatusId(status.getId()));
+
+    Optional.ofNullable(var1.get().getArrivalStatus())
+        .ifPresent(arrStatus -> builder.setLoadingPlanArrStatusId(arrStatus.getId()));
+
+    Optional.ofNullable(var1.get().getDepartureStatus())
+        .ifPresent(depStatus -> builder.setLoadingPlanDepStatusId(depStatus.getId()));
+
     // Loading Details
     LoadingPlanModels.LoadingDetails details =
         this.informationBuilderService.buildLoadingDetailsMessage(var1.orElse(null));
