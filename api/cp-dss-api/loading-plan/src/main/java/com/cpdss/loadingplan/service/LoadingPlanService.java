@@ -511,8 +511,8 @@ public class LoadingPlanService {
       Integer tempBallastCount =
           portLoadingPlanBallastTempDetailsRepository
               .findByLoadingInformationAndConditionTypeAndIsActive(
-                  request.getBallastUpdate(0).getLoadingInformationId(),
-                  request.getBallastUpdate(0).getArrivalDepartutre(),
+                  request.getUpdateUllage(0).getLoadingInformationId(),
+                  request.getUpdateUllage(0).getArrivalDepartutre(),
                   true)
               .size();
       request

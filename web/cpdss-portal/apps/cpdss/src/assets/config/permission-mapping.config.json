@@ -50,5 +50,6 @@
     "VesselInformationComponent":"VESSEL_INFORMATION",
     "DischargeStudyPortETAETD": "DISCHARGE_STUDY_PORTS_ETA/ETD",
     "LoadingInfoSunSet": "LOADING_INFO_SUNSET",
-    "LoadingInfoSunRise": "LOADING_INFO_SUNRISE"
+    "LoadingInfoSunRise": "LOADING_INFO_SUNRISE",
+    "DischargeStudyConfirmPlan": "DISCHARGE_STUDY_CONFIRM_PLAN"
 }

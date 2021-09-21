@@ -27,6 +27,7 @@ import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
+import com.cpdss.gateway.service.UllageReportFileParsingService;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
@@ -56,9 +57,13 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Autowired LoadingInformationService loadingInformationService;
 
+  @Autowired LoadingInformationServiceImpl loadingInformationServiceImpl;
+
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
 
   @Autowired LoadingPlanGrpcServiceImpl loadingPlanGrpcServiceImpl;
+  
+  @Autowired UllageReportFileParsingService ullageReportFileParsingService;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
@@ -314,6 +319,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     var1.setIsLoadingSequenceGenerated(loadingInfo.getIsLoadingSequenceGenerated());
     var1.setIsLoadingPlanGenerated(loadingInfo.getIsLoadingPlanGenerated());
     var1.setLoadingInfoStatusId(loadingInfo.getLoadingInfoStatusId());
+    var1.setLoadingPlanArrStatusId(loadingInfo.getLoadingPlanArrStatusId());
+    var1.setLoadingPlanDepStatusId(loadingInfo.getLoadingPlanDepStatusId());
     var1.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return var1;
   }
@@ -645,12 +652,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     }
 
     // Retrieve cargo Nominations from cargo nomination table
-    com.cpdss.common.generated.LoadableStudy.CargoNominationRequest cargoNominationRequest =
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.newBuilder()
-            .setLoadableStudyId(studyId)
-            .build();
     com.cpdss.common.generated.LoadableStudy.CargoNominationReply cargoNominationReply =
-        loadableStudyServiceBlockingStub.getCargoNominationById(cargoNominationRequest);
+        getCargoNominationsByStudyId(studyId);
 
     // Get Update Ullage Data
     LoadingPlanModels.UpdateUllageDetailsResponse response = null;
@@ -683,6 +686,15 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     // Getting Cargo to Be Loaded in the Port
     List<LoadableQuantityCargoDetails> loadablePlanCargoDetails =
         this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
+            vesselId,
+            activeVoyage.getPatternId(),
+            OPERATION_TYPE,
+            portRotation.get().getId(),
+            portRotation.get().getPortId());
+
+    // Getting already added cargoes until this port
+    List<LoadableQuantityCargoDetails> loadedCargoDetails =
+        this.loadingInformationService.getLoadablePlanCargoDetailsByPortUnfiltered(
             vesselId,
             activeVoyage.getPatternId(),
             OPERATION_TYPE,
@@ -773,7 +785,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         portLoadablePlanStowageDetails,
         cargoReply,
         arrivalDeparture,
-        loadablePlanCargoDetails);
+        loadablePlanCargoDetails,
+        loadedCargoDetails);
 
     outResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
@@ -790,6 +803,17 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     //    }
   }
 
+  @Override
+  public com.cpdss.common.generated.LoadableStudy.CargoNominationReply getCargoNominationsByStudyId(
+      Long studyId) {
+    com.cpdss.common.generated.LoadableStudy.CargoNominationRequest cargoNominationRequest =
+        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.newBuilder()
+            .setLoadableStudyId(studyId)
+            .build();
+
+    return loadableStudyServiceBlockingStub.getCargoNominationById(cargoNominationRequest);
+  }
+
   private LoadingUpdateUllageResponse buildUpdateUllageDetails(
       LoadingPlanModels.UpdateUllageDetailsResponse response,
       LoadingUpdateUllageResponse outResponse,
@@ -798,7 +822,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails,
       CargoInfo.CargoReply cargoReply,
       String arrivalDeparture,
-      List<LoadableQuantityCargoDetails> loadablePlanCargoDetails) {
+      List<LoadableQuantityCargoDetails> loadablePlanCargoDetails,
+      List<LoadableQuantityCargoDetails> loadedCargoDetails) {
     // Setting actual or planned
     boolean isPlanned = true;
     if (portLoadablePlanStowageDetails.size() > 0
@@ -839,6 +864,19 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
           > 0) {
         cargoToBeLoaded = true;
       }
+
+      // set already added cargo or not
+      boolean cargoLoaded = false;
+      if (!cargoToBeLoaded
+          && loadedCargoDetails.stream()
+                  .filter(
+                      loadablePlanCargoDetail ->
+                          loadablePlanCargoDetail.getCargoNominationId().equals(cargoNominationId))
+                  .count()
+              > 0) {
+        cargoLoaded = true;
+      }
+
       // get the bill of laddings for the cargo nomination
       List<Common.BillOfLadding> cargoBills =
           response.getBillOfLaddingList().stream()
@@ -859,6 +897,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       cargoBillOfLadding.setCargoAbbrevation(cargoNomination.getAbbreviation());
       cargoBillOfLadding.setCargoNominationId(cargoNominationId);
       cargoBillOfLadding.setCargoToBeLoaded(cargoToBeLoaded);
+      cargoBillOfLadding.setCargoLoaded(cargoLoaded);
       cargoBillOfLadding.setBillOfLaddings(billOfLaddings);
       billOfLaddingList.add(cargoBillOfLadding);
 
@@ -900,10 +939,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .reduce(0, (subtotal, element) -> subtotal + element);
       cargoQuantityDetail.setActualQuantityTotal(actualQuantityTotal);
       Double plannedQuantityTotal =
-          portLoadablePlanStowageDetails.stream()
+          response.getPortLoadablePlanStowageDetailsList().stream()
               .filter(
                   stowage ->
-                      stowage.getCargoNominationId().doubleValue() == cargoNominationId
+                      stowage.getCargoNominationId() == cargoNominationId.longValue()
                           && stowage.getActualPlanned().equalsIgnoreCase(PLANNED)
                           && stowage.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
@@ -1855,6 +1894,21 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   private Long castInput(String inputData) {
     return StringUtils.isEmpty(inputData) ? 0 : Long.parseLong(inputData);
+  }
+
+  /**
+   * Import ullage report file and parse the content from the file and send it in response.
+   */
+  @Override
+  public ListOfUllageReportResponse importUllageReportFile(
+      MultipartFile file,
+      String tankDetails,
+      Long infoId,
+      Long cargoNominationId,
+      String correlationId,boolean isLoading, Long vesselId)
+      throws GenericServiceException, IOException {
+	  return ullageReportFileParsingService.importUllageReportFile(
+			  file, tankDetails, infoId, cargoNominationId, correlationId, isLoading, vesselId);
   }
 
   /*

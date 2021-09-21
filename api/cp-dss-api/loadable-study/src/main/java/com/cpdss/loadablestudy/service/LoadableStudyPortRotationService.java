@@ -630,6 +630,17 @@ public class LoadableStudyPortRotationService {
               .setMessage(INVALID_LOADABLE_STUDY_ID)
               .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
     } else {
+    	//loadable quantity logic
+      if (loadableStudy.get().getConfirmedLoadableStudyId() != null) {
+        List<LoadableQuantity> quantities =
+            loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
+                loadableStudy.get().getConfirmedLoadableStudyId(), true);
+        BigDecimal sum =
+            quantities.stream()
+                .map(LoadableQuantity::getTotalQuantity)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        portRotationReplyBuilder.setLoadableQuantity(sum != null ? sum.toString() : "0");
+      }
       List<LoadableStudyPortRotation> ports =
           this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
               loadableStudy.get(), true);
@@ -924,13 +935,13 @@ public class LoadableStudyPortRotationService {
                       .setPortName(
                           dataMap.get(i).getPortName() == null ? "" : dataMap.get(i).getPortName())
                       .setEta(
-                          dataMap.get(i).getEtd() == null
-                              ? ""
-                              : dateFormat(dataMap.get(i).getEtd()))
-                      .setEtd(
                           dataMap.get(i).getEta() == null
                               ? ""
                               : dateFormat(dataMap.get(i).getEta()))
+                      .setEtd(
+                          dataMap.get(i).getEtd() == null
+                              ? ""
+                              : dateFormat(dataMap.get(i).getEtd()))
                       .setPortType(
                           dataMap.get(i).getPortType() == null ? "" : dataMap.get(i).getPortType())
                       .setAta(

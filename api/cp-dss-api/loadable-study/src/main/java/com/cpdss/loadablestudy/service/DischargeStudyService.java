@@ -61,6 +61,7 @@ import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
 import com.cpdss.loadablestudy.entity.DischargeStudyCowDetail;
 import com.cpdss.loadablestudy.entity.DischargeStudyPortInstruction;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
@@ -1319,6 +1320,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     log.info("inside getLoadablePlanDetails loadable study service");
     CargoNominationReply.Builder replyBuilder = CargoNominationReply.newBuilder();
     try {
+
       Optional<LoadableStudy> dsOptional =
           dischargeStudyRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
       if (dsOptional.isEmpty()) {
@@ -1327,12 +1329,12 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             CommonErrorCodes.E_CPDSS_NO_DISCHARGE_STUDY_FOUND,
             HttpStatusCode.BAD_REQUEST);
       }
-      LoadableStudy DischargeStudy = dsOptional.get();
+      LoadableStudy dischargeStudy = dsOptional.get();
       List<LoadableStudyPortRotation> ports =
           loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-              DischargeStudy.getId(), true);
+              dischargeStudy.getId(), true);
       List<CargoNomination> cargos =
-          cargoNominationService.getCargoNominationByLoadableStudyId(DischargeStudy.getId());
+          cargoNominationService.getCargoNominationByLoadableStudyId(dischargeStudy.getId());
       List<DischargePatternQuantityCargoPortwiseDetails> generatedCargos =
           dischargePatternQuantityCargoPortwiseRepository.findByCargoNominationIdInAndOperationType(
               cargos.stream().map(CargoNomination::getId).collect(Collectors.toList()),
@@ -1374,6 +1376,13 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                           replyBuilder.addCargoNominations(cargo);
                         });
               });
+      // getting discharge pattern Id
+      List<LoadablePattern> patterns =
+          loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
+              dischargeStudy, true);
+      if (!patterns.isEmpty()) {
+        replyBuilder.setPatternId(patterns.get(0).getId());
+      }
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study - port data", e);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));

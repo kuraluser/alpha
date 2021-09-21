@@ -22,6 +22,7 @@ import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nominat
 import { dischargeStudyCargoQuantityValidator } from '../../directives/validator/discharge-study-cargo-quantity.directive';
 import { dischargeStudyAbbreviationValidator } from '../../directives/validator/discharge-study-abbreviation.directive';
 import { numberValidator } from '../../../core/directives/number-validator.directive';
+import { dischargeStudyLoadableQuantity } from '../../directives/validator/discharge-study-loadable-quantity.directive'
 
 import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service';
 
@@ -272,8 +273,8 @@ export class DischargeStudyComponent implements OnInit {
   initCargoFormGroup(cargo) {
     const quantityDecimal = this.quantityDecimalService.quantityDecimal(QUANTITY_UNIT.KL);
     const min = quantityDecimal ? (1/Math.pow(10, quantityDecimal)) : 1;
-    const quantityValidator  = cargo.mt.value.id === 2 ? [Validators.required,  Validators.min(min) , dischargeStudyCargoQuantityValidator, numberValidator(quantityDecimal,null,false)] :
-      [Validators.required,  Validators.min(min) , dischargeStudyCargoQuantityValidator];
+    const quantityValidator  = cargo.mt.value.id === 2 ? [Validators.required,  Validators.min(0) , dischargeStudyCargoQuantityValidator, numberValidator(quantityDecimal,null,false)] :
+      [Validators.required , dischargeStudyCargoQuantityValidator];
     return this.fb.group({
       maxKl: this.fb.control(cargo.maxKl.value, []),
       abbreviation: this.fb.control(cargo.abbreviation.value, []),
@@ -438,7 +439,7 @@ export class DischargeStudyComponent implements OnInit {
     if (event.field === 'mode') {
       if (event.data.mode?.value.id === 2) {
        
-        quantityFeild.setValidators([Validators.required,  Validators.min(min) , dischargeStudyCargoQuantityValidator, numberValidator(quantityDecimal,null,false)]);
+        quantityFeild.setValidators([Validators.required,  Validators.min(0) , dischargeStudyCargoQuantityValidator, numberValidator(quantityDecimal,null,false)]);
         quantityFeild.updateValueAndValidity();
         selectedPortCargo['kl'].value = '0';
         selectedPortCargo['mt'].value = '0';
@@ -460,7 +461,7 @@ export class DischargeStudyComponent implements OnInit {
           selectedPortCargo['kl'].isEditMode = true;
         }
       } else {
-        quantityFeild.setValidators([Validators.required,  Validators.min(min) , dischargeStudyCargoQuantityValidator]);
+        quantityFeild.setValidators([Validators.required , dischargeStudyCargoQuantityValidator]);
         quantityFeild.updateValueAndValidity();
         selectedPortCargo['kl'].isEditable = false;
         selectedPortCargo['mt'].isEditable = false;

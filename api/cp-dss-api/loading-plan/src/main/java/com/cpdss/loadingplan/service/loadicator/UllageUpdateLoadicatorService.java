@@ -113,6 +113,16 @@ public class UllageUpdateLoadicatorService {
         loadicatorService.getVesselDetailsForLoadicator(loadingInfoOpt.get());
     if (!vesselReply.getVesselsList().get(0).getHasLoadicator()) {
       log.info("Vessel has no loadicator");
+      UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
+      LoadingInfoLoadicatorDataRequest.Builder loadicatorDataRequestBuilder =
+          LoadingInfoLoadicatorDataRequest.newBuilder();
+      loadicatorDataRequestBuilder.setProcessId(processId);
+      buildUllageEditLoadicatorAlgoRequest(
+          loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
+      if (algoRequest.getStages().isEmpty()) {
+        algoRequest.setStages(null);
+      }
+      saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
@@ -129,9 +139,9 @@ public class UllageUpdateLoadicatorService {
           loadingInfoOpt.get(),
           processId,
           loadingInfoStatusOpt.get(),
-          Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()));
+          request.getUpdateUllage(0).getArrivalDepartutre());
       loadingPlanService.saveUpdatedLoadingPlanDetails(
-          loadingInfoOpt.get(), Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()));
+          loadingInfoOpt.get(), request.getUpdateUllage(0).getArrivalDepartutre());
       log.info(
           "Saved updated loading plan details of loading information {}",
           loadingInfoOpt.get().getId());
@@ -141,13 +151,13 @@ public class UllageUpdateLoadicatorService {
         portLoadingPlanStowageDetailsTempRepository
             .findByLoadingInformationAndConditionTypeAndIsActive(
                 loadingInfoOpt.get().getId(),
-                Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()),
+                request.getUpdateUllage(0).getArrivalDepartutre(),
                 true);
     List<PortLoadingPlanBallastTempDetails> tempBallastDetails =
         portLoadingPlanBallastDetailsTempRepository
             .findByLoadingInformationAndConditionTypeAndIsActive(
                 loadingInfoOpt.get().getId(),
-                Math.toIntExact(request.getBallastUpdate(0).getArrivalDepartutre()),
+                request.getUpdateUllage(0).getArrivalDepartutre(),
                 true);
     List<PortLoadingPlanRobDetails> robDetails =
         portLoadingPlanRobDetailsRepository.findByLoadingInformationAndIsActive(
@@ -166,8 +176,7 @@ public class UllageUpdateLoadicatorService {
 
     loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
     loadicatorRequestBuilder.setIsUllageUpdate(true);
-    loadicatorRequestBuilder.setConditionType(
-        Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()));
+    loadicatorRequestBuilder.setConditionType(request.getUpdateUllage(0).getArrivalDepartutre());
     StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
     loadicatorService.buildStowagePlan(
         loadingInfoOpt.get(), 0, processId, cargoReply, vesselReply, portReply, stowagePlanBuilder);
@@ -208,7 +217,7 @@ public class UllageUpdateLoadicatorService {
         loadingInfoOpt.get(),
         processId,
         loadingInfoStatusOpt.get(),
-        Math.toIntExact(request.getUpdateUllage(0).getArrivalDepartutre()));
+        request.getUpdateUllage(0).getArrivalDepartutre());
     return processId;
   }
 
@@ -489,14 +498,14 @@ public class UllageUpdateLoadicatorService {
     LoadingPlanLoadicatorDetails loadingPlanLoadicatorDetails = new LoadingPlanLoadicatorDetails();
 
     List<PortLoadingPlanStowageTempDetails> tempStowageDetails =
-        portLoadingPlanStowageDetailsTempRepository.findByLoadingInformationAndIsActive(
-            loadingInformation.getId(), true);
+        portLoadingPlanStowageDetailsTempRepository.findByLoadingInformationAndConditionTypeAndIsActive(
+            loadingInformation.getId(), request.getConditionType(), true);
     List<PortLoadingPlanBallastTempDetails> tempBallastDetails =
-        portLoadingPlanBallastDetailsTempRepository.findByLoadingInformationAndIsActive(
-            loadingInformation.getId(), true);
+        portLoadingPlanBallastDetailsTempRepository.findByLoadingInformationAndConditionTypeAndIsActive(
+            loadingInformation.getId(), request.getConditionType(), true);
     List<PortLoadingPlanRobDetails> robDetails =
-        portLoadingPlanRobDetailsRepository.findByLoadingInformationAndIsActive(
-            loadingInformation.getId(), true);
+        portLoadingPlanRobDetailsRepository.findByLoadingInformationAndConditionTypeAndIsActive(
+            loadingInformation.getId(), request.getConditionType(), true);
 
     List<LoadicatorStowageDetails> loadicatorStowageDetails =
         new ArrayList<LoadicatorStowageDetails>();

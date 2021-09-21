@@ -834,7 +834,7 @@ public class LoadingPlanController {
       value = "/loading/{loadingId}/upload/port-tide-details",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public UploadTideDetailResponse UploadTideDetails(
+  public UploadTideDetailResponse uploadTideDetails(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long loadingId,
       @RequestHeader HttpHeaders headers,
       @RequestParam(name = "file", required = true) MultipartFile file)
@@ -895,4 +895,5 @@ public class LoadingPlanController {
           e);
     }
   }
+
 }

@@ -750,7 +750,8 @@ export interface ICargoResponseModel {
 export interface IConfirmStatusResponse {
     responseStatus: IResponse;
     confirmed: boolean;
-    loadablePatternStatusId: number;
+    loadablePatternStatusId?: number;
+    disachargePatternStatusId?: number;
     validated: boolean;
 }
 

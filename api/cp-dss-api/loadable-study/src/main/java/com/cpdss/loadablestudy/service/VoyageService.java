@@ -9,6 +9,7 @@ import com.cpdss.common.generated.CargoInfo;
 import com.cpdss.common.generated.CargoInfoServiceGrpc;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
@@ -84,6 +85,8 @@ public class VoyageService {
   @Autowired private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
 
   @Autowired private SynopticService synopticService;
+
+  @Autowired private CargoNominationService cargoNominationService;
 
   @Value("${loadablestudy.voyage.day.difference}")
   private String dayDifference;
@@ -199,6 +202,22 @@ public class VoyageService {
               LoadableStudy.LoadableStudyDetail.newBuilder();
           this.buildLoadableStudyForVoyage(dsBuilder, confirmedDs.get());
           builder.setConfirmedDischargeStudy(dsBuilder);
+          List<CargoNomination> cargoNominations =
+              cargoNominationService.getCargoNominations(confirmedDs.get().getId());
+          if (!cargoNominations.isEmpty()) {
+            cargoNominations.stream()
+                .forEach(
+                    nomination -> {
+                      CargoNominationDetail.Builder dsCargo = CargoNominationDetail.newBuilder();
+                      dsCargo.setId(nomination.getId());
+                      dsCargo.setApi(nomination.getApi().toString());
+                      dsCargo.setColor(nomination.getColor());
+                      dsCargo.setQuantity(nomination.getQuantity().toString());
+                      dsCargo.setTemperature(nomination.getTemperature().toString());
+                      builder.addDischargeCargoNomination(dsCargo);
+                    });
+          }
+
           if (!confirmedDs.get().getPortRotations().isEmpty()) {
             for (LoadableStudyPortRotation dsPr : confirmedDs.get().getPortRotations()) {
               LoadableStudy.PortRotationDetail.Builder grpcPRBuilder =

@@ -100,6 +100,7 @@ export interface IBackLoadingDetails {
  export interface IDischargeStudyDetailsResponse {
     responseStatus: IResponse;
     dischargeStudyId: number;
+    dischargePatternId: number;
     portList: IDischargeStudyPortListDetails[];
 }
 
