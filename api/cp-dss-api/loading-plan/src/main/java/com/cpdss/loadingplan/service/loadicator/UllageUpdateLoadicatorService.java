@@ -113,6 +113,16 @@ public class UllageUpdateLoadicatorService {
         loadicatorService.getVesselDetailsForLoadicator(loadingInfoOpt.get());
     if (!vesselReply.getVesselsList().get(0).getHasLoadicator()) {
       log.info("Vessel has no loadicator");
+      UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
+      LoadingInfoLoadicatorDataRequest.Builder loadicatorDataRequestBuilder =
+          LoadingInfoLoadicatorDataRequest.newBuilder();
+      loadicatorDataRequestBuilder.setProcessId(processId);
+      buildUllageEditLoadicatorAlgoRequest(
+          loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
+      if (algoRequest.getStages().isEmpty()) {
+        algoRequest.setStages(null);
+      }
+      saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
