@@ -27,8 +27,10 @@ import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.AlgoError;
 import com.cpdss.gateway.domain.AlgoErrorResponse;
 import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
+import com.cpdss.gateway.domain.ListOfUllageReportResponse;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
 import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.UllageReportImportResponse;
 import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.UploadTideDetailResponse;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
@@ -1096,4 +1098,5 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
     return pdStage;
   }
+
 }

@@ -46,6 +46,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -95,7 +96,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Autowired PortTideDetailsRepository portTideDetailsRepository;
   @Autowired LoadingInstructionRepository loadingInstructionRepository;
   @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
-
+  
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoServiceBlockingStub;
 
@@ -756,4 +757,5 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     }
     return portsMap;
   }
+
 }

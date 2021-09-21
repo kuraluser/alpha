@@ -27,6 +27,7 @@ import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
+import com.cpdss.gateway.service.UllageReportFileParsingService;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
@@ -56,9 +57,13 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Autowired LoadingInformationService loadingInformationService;
 
+  @Autowired LoadingInformationServiceImpl loadingInformationServiceImpl;
+
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
 
   @Autowired LoadingPlanGrpcServiceImpl loadingPlanGrpcServiceImpl;
+  
+  @Autowired UllageReportFileParsingService ullageReportFileParsingService;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
@@ -1889,6 +1894,21 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   private Long castInput(String inputData) {
     return StringUtils.isEmpty(inputData) ? 0 : Long.parseLong(inputData);
+  }
+
+  /**
+   * Import ullage report file and parse the content from the file and send it in response.
+   */
+  @Override
+  public ListOfUllageReportResponse importUllageReportFile(
+      MultipartFile file,
+      String tankDetails,
+      Long infoId,
+      Long cargoNominationId,
+      String correlationId,boolean isLoading, Long vesselId)
+      throws GenericServiceException, IOException {
+	  return ullageReportFileParsingService.importUllageReportFile(
+			  file, tankDetails, infoId, cargoNominationId, correlationId, isLoading, vesselId);
   }
 
   /*

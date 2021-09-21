@@ -57,4 +57,12 @@ public interface LoadingPlanService {
 
   public com.cpdss.common.generated.LoadableStudy.CargoNominationReply getCargoNominationsByStudyId(
       Long studyId);
+
+  ListOfUllageReportResponse importUllageReportFile(
+      MultipartFile file,
+      String tankDetails,
+      Long infoId,
+      Long cargoNominationId,
+      String correlationId,boolean isLoading, Long vesselId)
+      throws IOException, GenericServiceException;
 }

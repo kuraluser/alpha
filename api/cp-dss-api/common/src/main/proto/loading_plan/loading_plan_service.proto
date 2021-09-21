@@ -46,6 +46,7 @@ service LoadingInformationService {
   rpc UploadPortTideDetails(UploadTideDetailRequest) returns (UploadTideDetailStatusReply){}
   
   rpc DownloadPortTideDetails(DownloadTideDetailRequest) returns (stream DownloadTideDetailStatusReply) {}
+  
 }
 
 service LoadingInstructionService {
