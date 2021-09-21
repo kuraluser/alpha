@@ -630,6 +630,14 @@ public class LoadableStudyPortRotationService {
               .setMessage(INVALID_LOADABLE_STUDY_ID)
               .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
     } else {
+      List<LoadableQuantity> quantities =
+          loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
+              loadableStudy.get().getConfirmedLoadableStudyId(), true);
+      BigDecimal sum =
+          quantities.stream()
+              .map(LoadableQuantity::getTotalQuantity)
+              .reduce(BigDecimal.ZERO, BigDecimal::add);
+      portRotationReplyBuilder.setLoadableQuantity(sum.toString());
       List<LoadableStudyPortRotation> ports =
           this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
               loadableStudy.get(), true);

@@ -687,14 +687,14 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             portRotation.get().getId(),
             portRotation.get().getPortId());
 
-    //Getting already added cargoes until this port
+    // Getting already added cargoes until this port
     List<LoadableQuantityCargoDetails> loadedCargoDetails =
-            this.loadingInformationService.getLoadablePlanCargoDetailsByPortUnfiltered(
-                    vesselId,
-                    activeVoyage.getPatternId(),
-                    OPERATION_TYPE,
-                    portRotation.get().getId(),
-                    portRotation.get().getPortId());
+        this.loadingInformationService.getLoadablePlanCargoDetailsByPortUnfiltered(
+            vesselId,
+            activeVoyage.getPatternId(),
+            OPERATION_TYPE,
+            portRotation.get().getId(),
+            portRotation.get().getPortId());
 
     // Getting ballast tanks
     VesselInfo.VesselRequest.Builder vesselGrpcRequest = VesselInfo.VesselRequest.newBuilder();
@@ -810,15 +810,15 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   }
 
   private LoadingUpdateUllageResponse buildUpdateUllageDetails(
-          LoadingPlanModels.UpdateUllageDetailsResponse response,
-          LoadingUpdateUllageResponse outResponse,
-          List<Long> cargoNominationIds,
-          LoadableStudy.CargoNominationReply cargoNominationReply,
-          List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails,
-          CargoInfo.CargoReply cargoReply,
-          String arrivalDeparture,
-          List<LoadableQuantityCargoDetails> loadablePlanCargoDetails,
-          List<LoadableQuantityCargoDetails> loadedCargoDetails) {
+      LoadingPlanModels.UpdateUllageDetailsResponse response,
+      LoadingUpdateUllageResponse outResponse,
+      List<Long> cargoNominationIds,
+      LoadableStudy.CargoNominationReply cargoNominationReply,
+      List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails,
+      CargoInfo.CargoReply cargoReply,
+      String arrivalDeparture,
+      List<LoadableQuantityCargoDetails> loadablePlanCargoDetails,
+      List<LoadableQuantityCargoDetails> loadedCargoDetails) {
     // Setting actual or planned
     boolean isPlanned = true;
     if (portLoadablePlanStowageDetails.size() > 0
@@ -862,11 +862,12 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
       // set already added cargo or not
       boolean cargoLoaded = false;
-      if (!cargoToBeLoaded && loadedCargoDetails.stream()
-              .filter(
+      if (!cargoToBeLoaded
+          && loadedCargoDetails.stream()
+                  .filter(
                       loadablePlanCargoDetail ->
-                              loadablePlanCargoDetail.getCargoNominationId().equals(cargoNominationId))
-              .count()
+                          loadablePlanCargoDetail.getCargoNominationId().equals(cargoNominationId))
+                  .count()
               > 0) {
         cargoLoaded = true;
       }
