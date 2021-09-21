@@ -37,7 +37,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
 
   set selectedVoyage(voyage: Voyage) {
     this._selectedVoyage = voyage;
-    localStorage.setItem("voyageId", voyage?.id.toString())
+    localStorage.setItem("voyageId", voyage?.id?.toString())
     localStorage.removeItem("loadableStudyId")
     localStorage.removeItem("loadablePatternId")
     localStorage.removeItem("dischargeStudyId")
