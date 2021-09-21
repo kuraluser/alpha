@@ -733,6 +733,7 @@ public class DischargeStudyService {
     DischargeStudyCargoResponse response = new DischargeStudyCargoResponse();
     response.setDischargeStudyId(loadableStudyId);
     response.setPortList(new ArrayList<>());
+    response.setDischargePatternId(cargos.getPatternId());
     buildDischargeStudyCargoResponse(response, portRotationReply, cargos);
 
     return response;
