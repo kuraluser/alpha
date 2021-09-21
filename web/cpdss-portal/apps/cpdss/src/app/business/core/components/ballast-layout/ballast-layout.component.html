@@ -82,9 +82,13 @@
                             <li class="col-5">{{'TANK_LAYOUT_TANK'| translate}}</li>
                             <li class="col-7"> {{tank?.shortName}}</li>
                             <ng-container *ngIf="tank?.commodity && tank?.commodity[options?.weightField]">
-                                <li class="col-5">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
-                                <li class="col-7">
+                                <li *ngIf="!options?.showSounding" class="col-5">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
+                                <li *ngIf="!options?.showSounding" class="col-7">
                                     {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.2-2') : 0}}
+                                    {{options?.ullageUnit}}</li>
+                                <li *ngIf="options?.showSounding" class="col-5">{{'TANK_LAYOUT_SOUNDING'| translate}}</li>
+                                <li *ngIf="options?.showSounding" class="col-7">
+                                    {{tank?.commodity[options?.soundingField] ? (tank?.commodity[options?.soundingField] | number :'1.2-2') : 0}}
                                     {{options?.ullageUnit}}</li>
                                 <li class="col-5">{{'TANK_LAYOUT_SG'| translate}}</li>
                                 <li class="col-7">
@@ -133,9 +137,13 @@
                         <li class="col-5">{{'TANK_LAYOUT_TANK'| translate}}</li>
                         <li class="col-7">{{tank?.shortName}}</li>
                         <ng-container *ngIf="tank?.commodity && tank?.commodity[options?.weightField]">
-                            <li class="col-5">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
-                            <li class="col-7">
+                            <li *ngIf="!options?.showSounding" class="col-5">{{'TANK_LAYOUT_ULLAGE'| translate}}</li>
+                            <li *ngIf="!options?.showSounding" class="col-7">
                                 {{tank?.commodity[options?.ullageField] ? (tank?.commodity[options?.ullageField] | number :'1.2-2' ) : 0}}
+                                {{options?.ullageUnit}}</li>
+                            <li *ngIf="options?.showSounding" class="col-5">{{'TANK_LAYOUT_SOUNDING'| translate}}</li>
+                            <li *ngIf="options?.showSounding" class="col-7">
+                                {{tank?.commodity[options?.soundingField] ? (tank?.commodity[options?.soundingField] | number :'1.2-2') : 0}}
                                 {{options?.ullageUnit}}</li>
                             <li class="col-5">{{'TANK_LAYOUT_SG'| translate}}</li>
                             <li class="col-7">

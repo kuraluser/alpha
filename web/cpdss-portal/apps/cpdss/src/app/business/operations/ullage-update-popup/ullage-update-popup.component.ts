@@ -87,6 +87,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
 
 
   currentQuantitySelectedUnit: QUANTITY_UNIT = null;
+  readonly QUANTITY_UNIT = QUANTITY_UNIT;
 
   blFigure: any = [];
   cargoQuantityList: any = [];
@@ -128,6 +129,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   bunkerColumns: IDataTableColumn[];
   blFigureColumns: IDataTableColumn[];
   cargoQuantities: ITankDetailsValueObject[];
+  gradeDropdown: any[];
 
   ballastQuantities: ITankDetailsValueObject[];
   fuelTypes: any = [];
@@ -185,7 +187,13 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           item.quantity = 0;
           item.density = 0;
         });
-      }
+      };
+      this.gradeDropdown = [];
+      data?.billOfLaddingList?.map(item => {
+        if (item?.cargoToBeLoaded || item?.cargoLoaded) {
+          this.gradeDropdown.push(item);
+        }
+      });
       this.display = true;
       this.ngxSpinnerService.hide();
       this.ullageResponseData = JSON.parse(JSON.stringify(data));
@@ -275,7 +283,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
             avgCount++;
           }
           actualTemp += (item.temperature ? Number(item.temperature) : 0);
-          if(item.temperature && Number(item.temperature) > 0){
+          if (item.temperature && Number(item.temperature) > 0) {
             actualTempCount++;
           }
         }
@@ -478,7 +486,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   bunkerTankFormGroup(tank) {
     return this.fb.group({
       tankName: this.fb.control(tank.tankName.value),
-      quantity: this.fb.control(tank.quantity.value, [Validators.min(0), Validators.required]),
+      quantity: this.fb.control(tank.quantity.value, [Validators.min(0), numberValidator(2, 7, false), Validators.required]),
     });
   }
   /**
@@ -490,7 +498,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     return this.fb.group({
       tankName: this.fb.control(tank.tankName.value),
       quantity: this.fb.control(tank.quantity.value),
-      sounding: this.fb.control(tank.sounding.value, [Validators.required, tankCapacityValidator(null, null, 'sounding', 'fillingPercentage', 100)]),
+      sounding: this.fb.control(tank.sounding.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator(null, null, 'sounding', 'fillingPercentage', 100)]),
     });
   }
 
@@ -502,9 +510,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   cargoTankFormGroup(tank) {
     return this.fb.group({
       tankName: this.fb.control(tank.tankName.value),
-      ullage: this.fb.control(tank.ullage.value, [Validators.required, tankCapacityValidator(null, null, 'ullage', 'fillingPercentage')]),
-      temperature: this.fb.control(tank.temperature.value, [Validators.required, tankCapacityValidator(null, null, 'temperature', 'fillingPercentage')]),
-      api: this.fb.control(tank.api.value, [Validators.required, tankCapacityValidator(null, null, 'api', 'fillingPercentage')]),
+      ullage: this.fb.control(tank.ullage.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator(null, null, 'ullage', 'fillingPercentage')]),
+      temperature: this.fb.control(tank.temperature.value, [Validators.required, Validators.min(0), Validators.max(160), numberValidator(2, 3, false), tankCapacityValidator(null, null, 'temperature', 'fillingPercentage')]),
+      api: this.fb.control(tank.api.value, [Validators.required, Validators.min(0), Validators.max(99), numberValidator(2, 2, false), tankCapacityValidator(null, null, 'api', 'fillingPercentage')]),
       quantity: this.fb.control(tank.quantity.value),
       fillingPercentage: this.fb.control(tank.fillingPercentage.value)
     });
@@ -518,8 +526,25 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   formatCargoQuantity(data) {
     this.cargoQuantityList = [];
     data?.map(item => {
-      this.cargoQuantityList.push(this.ullageUpdatePopupTransformationService.formatCargoQuantity(item));
+      if (this.setCargoTobeLoaded(item)) {
+        this.cargoQuantityList.push(this.ullageUpdatePopupTransformationService.formatCargoQuantity(item));
+      }
     });
+  }
+
+  /**
+   * Method for checking cargo loaded
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  setCargoTobeLoaded(data) {
+    let cargoLoaded = false;
+    this.ullageResponseData?.billOfLaddingList?.map(item => {
+      if (item?.cargoNominationId === data?.cargoNominationId && (item?.cargoToBeLoaded || item?.cargoLoaded)) {
+        cargoLoaded = true;
+      }
+    });
+    return cargoLoaded;
   }
 
   /**
@@ -675,13 +700,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   */
   validateBlFigTable() {
     this.blFigure.items.map((form, mainIndex) => {
-      if (!(form?.length === 1 && ((!form[0].cargo?.api?.value || form[0].cargo?.api?.value?.toString() === '0')
-        && (!form[0].cargo?.bbl?.value || form[0].cargo?.bbl?.value?.toString() === '0')
-        && !form[0].cargo?.blRefNo?.value
-        && (!form[0].cargo?.kl?.value || form[0].cargo?.kl?.value?.toString() === '0')
-        && (!form[0].cargo?.lt?.value || form[0].cargo?.lt?.value?.toString() === '0')
-        && (!form[0].cargo?.mt?.value || form[0].cargo?.mt?.value?.toString() === '0')
-        && (!form[0].cargo?.temp?.value || form[0].cargo?.temp?.value?.toString() === '0')))) {
+      if (!this.blEmptyCheck(form)) {
         form?.map((rowData, childIndex) => {
           if (this.setBlError({ cargoNominationId: rowData?.cargo?.cargoNominationId }, 'bbl')) {
             const control = this.getControl(mainIndex, childIndex, 'bbl');
@@ -736,6 +755,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
             control.setErrors(null);
           }
         });
+      } else {
+        this.resetBlErrors(mainIndex, 0);
       }
     });
     this.tableForm.markAllAsTouched();
@@ -788,6 +809,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
 
     this.blFigure.items[rowIndex].push({ cargo: this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{ portId: this.portId }, this.ullageResponseData?.billOfLaddingList[rowIndex], true, true) });
     this.getCargoItems(rowIndex).push(this.initCargoDetails(this.blFigure.items[rowIndex][this.blFigure.items[rowIndex].length - 1].cargo));
+    setTimeout(() => {
+      this.validateBlFigTable();
+    });
   }
 
   deleteConfirm(rowIndex: number, colIndex: number) {
@@ -869,12 +893,12 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   initCargoDetails(cargo: any): FormGroup {
     return this.fb.group({
       blRefNo: this.fb.control(cargo.blRefNo.value, [Validators.minLength(4), Validators.maxLength(12), Validators.pattern(/^[ A-Za-z0-9#&()/":\-=+*]*$/)]),
-      bbl: this.fb.control(cargo.bbl.value, [numberValidator(0, 7)]),
-      lt: this.fb.control(cargo.lt.value, [numberValidator(2, 7)]),
-      mt: this.fb.control(cargo.mt.value, [numberValidator(2, 7)]),
-      kl: this.fb.control(cargo.kl.value, [numberValidator(3, 7)]),
-      api: this.fb.control(cargo.api.value, [Validators.min(0), numberValidator(2, 3)]),
-      temp: this.fb.control(cargo.temp.value, [numberValidator(2, 3)]),
+      bbl: this.fb.control(cargo.bbl.value, [Validators.min(0), numberValidator(0, 7, false)]),
+      lt: this.fb.control(cargo.lt.value, [Validators.min(0), numberValidator(2, 7, false)]),
+      mt: this.fb.control(cargo.mt.value, [Validators.min(0), numberValidator(2, 7, false)]),
+      kl: this.fb.control(cargo.kl.value, [Validators.min(0), numberValidator(3, 7, false)]),
+      api: this.fb.control(cargo.api.value, [Validators.min(0), Validators.max(99), numberValidator(2, 2, false)]),
+      temp: this.fb.control(cargo.temp.value, [Validators.min(0), Validators.max(160), numberValidator(2, 3, false)]),
       cargoNominationId: this.fb.control(cargo.cargoNominationId),
     });
   }
@@ -897,17 +921,46 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   }
 
   /**
-* Handler for cell on click event
-* @param event
-* @param rowData
-* @param rowIndex
-* @param col
-* @param colIndex
-*/
+  * Handler for cell on click event
+  * @param event
+  * @param rowData
+  * @param rowIndex
+  * @param col
+  * @param colIndex
+  */
   onClick(event, rowData, rowIndex, col: IDataTableColumn) {
     if (rowData[col.field]?.isEditable && this.editMode && (col.editable === undefined || col.editable)) {
       rowData[col.field].isEditMode = true;
     }
+  }
+
+  /**
+  * Handler for checking blill of ladding empty row
+  * @param row
+  */
+  blEmptyCheck(row) {
+    return (row?.length === 1 && ((!row[0].cargo?.api?.value || row[0].cargo?.api?.value?.toString() === '0')
+      && (!row[0].cargo?.bbl?.value || row[0].cargo?.bbl?.value?.toString() === '0')
+      && !row[0].cargo?.blRefNo?.value
+      && (!row[0].cargo?.kl?.value || row[0].cargo?.kl?.value?.toString() === '0')
+      && (!row[0].cargo?.lt?.value || row[0].cargo?.lt?.value?.toString() === '0')
+      && (!row[0].cargo?.mt?.value || row[0].cargo?.mt?.value?.toString() === '0')
+      && (!row[0].cargo?.temp?.value || row[0].cargo?.temp?.value?.toString() === '0')));
+  }
+
+  /**
+  * Handler for resetting blill of ladding errors
+  * @param row
+  */
+  resetBlErrors(rowIndex, index) {
+    const kl = this.getControl(rowIndex, index, 'kl');
+    kl.setErrors(null);
+    const bbl = this.getControl(rowIndex, index, 'bbl');
+    bbl.setErrors(null);
+    const lt = this.getControl(rowIndex, index, 'lt');
+    lt.setErrors(null);
+    const mt = this.getControl(rowIndex, index, 'mt');
+    mt.setErrors(null);
   }
 
   /**
@@ -929,30 +982,11 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     const row = this.blFigure.items[rowIndex];
     if (key === 'blRefNo' || key === 'api' || key === 'temp') {
       rowData[key].isEditMode = control.errors ? true : false;
-      if ((row?.length === 1 && ((!row[0].cargo?.api?.value || row[0].cargo?.api?.value?.toString() === '0')
-        && (!row[0].cargo?.bbl?.value || row[0].cargo?.bbl?.value?.toString() === '0')
-        && !row[0].cargo?.blRefNo?.value
-        && (!row[0].cargo?.kl?.value || row[0].cargo?.kl?.value?.toString() === '0')
-        && (!row[0].cargo?.lt?.value || row[0].cargo?.lt?.value?.toString() === '0')
-        && (!row[0].cargo?.mt?.value || row[0].cargo?.mt?.value?.toString() === '0')
-        && (!row[0].cargo?.temp?.value || row[0].cargo?.temp?.value?.toString() === '0')))) {
-        const kl = this.getControl(rowIndex, index, 'kl');
-        kl.setErrors(null);
-        const bbl = this.getControl(rowIndex, index, 'bbl');
-        bbl.setErrors(null);
-        const lt = this.getControl(rowIndex, index, 'lt');
-        lt.setErrors(null);
-        const mt = this.getControl(rowIndex, index, 'mt');
-        mt.setErrors(null);
+      if (this.blEmptyCheck(row)) {
+        this.resetBlErrors(rowIndex, index);
       }
     } else {
-      if (!(row?.length === 1 && ((!row[0].cargo?.api?.value || row[0].cargo?.api?.value?.toString() === '0')
-        && (!row[0].cargo?.bbl?.value || row[0].cargo?.bbl?.value?.toString() === '0')
-        && !row[0].cargo?.blRefNo?.value
-        && (!row[0].cargo?.kl?.value || row[0].cargo?.kl?.value?.toString() === '0')
-        && (!row[0].cargo?.lt?.value || row[0].cargo?.lt?.value?.toString() === '0')
-        && (!row[0].cargo?.mt?.value || row[0].cargo?.mt?.value?.toString() === '0')
-        && (!row[0].cargo?.temp?.value || row[0].cargo?.temp?.value?.toString() === '0')))) {
+      if (!this.blEmptyCheck(row)) {
         const error = this.setBlError(rowData, key);
         if (error) {
           control.setErrors({ rangeError: true });
@@ -962,14 +996,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           control.setErrors(null);
         }
       } else {
-        const kl = this.getControl(rowIndex, index, 'kl');
-        kl.setErrors(null);
-        const bbl = this.getControl(rowIndex, index, 'bbl');
-        bbl.setErrors(null);
-        const lt = this.getControl(rowIndex, index, 'lt');
-        lt.setErrors(null);
-        const mt = this.getControl(rowIndex, index, 'mt');
-        mt.setErrors(null);
+        this.resetBlErrors(rowIndex, index);
       }
     }
 
@@ -1052,6 +1079,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       tankId: event.data.tankId,
       temperature: event.data.temperature.value
     };
+
     this.ngxSpinnerService.show();
     const result = await this.ullageUpdateApiService.getUllageQuantity(param, event.data.loadablePatternId).toPromise();
     this.ngxSpinnerService.hide();
@@ -1078,6 +1106,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         formControls['controls'].ullage.updateValueAndValidity();
         formControls['controls'].temperature.updateValueAndValidity();
         formControls['controls'].api.updateValueAndValidity();
+      } else if (result.fillingRatio?.toString()?.trim() === '') {
+        formControls['controls'][event.field].setErrors({ maxLimit: true });
       } else {
         formControls['controls'][event.field].updateValueAndValidity();
       }
@@ -1093,6 +1123,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.cargoTanks = this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portLoadablePlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
       this.validateBlFigTable();
     });
+
   }
 
   /**
@@ -1101,7 +1132,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
    * @memberof UllageUpdatePopupComponent
    */
   async ballastEditCompleted(event) {
-    if (event.data.sounding.value === "") {
+    if (event.data.sounding.value === "" || event.data.sounding.value === "-") {
       return;
     }
     const param = {
@@ -1133,6 +1164,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           item.sounding = result.correctedUllage;
         }
       });
+      if (result.fillingRatio?.toString()?.trim() === '') {
+        formControl.setErrors({ maxLimit: true });
+      }
       setTimeout(() => {
         this.rearBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastRearTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
         this.centerBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastCenterTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];

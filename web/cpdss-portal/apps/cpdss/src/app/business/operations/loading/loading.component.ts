@@ -171,7 +171,13 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
      })
     this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       this.isDischargeStarted = value;
-    })
+    });
+
+    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value) => {
+      if (value && value === ULLAGE_STATUS_VALUE.SUCCESS) {
+        this.disableGenerateLoadableButton = true;
+      }
+    });
   this.ngxSpinnerService.hide();
 
   }
@@ -188,7 +194,9 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       voyageId: this.voyageId,
       loadingInfoId: this.loadingInfoId,
       type: 'ullage-update-status',
-      status: value.status
+      status: value.status,
+      portRotationId: this.portRotationId
+
     }
     navigator.serviceWorker.controller.postMessage({ type: 'ullage-update-status', data });
 
@@ -328,7 +336,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: translationKeys["ULLAGE_UPDATE_VALIDATION_SUCCESS_LABEL"] });
       }
 
-      if (this.router.url.includes('operations/loading')) {
+      if (this.router.url.includes('operations/loading') && this.loadingDischargingTransformationService.portRotationId === event?.data?.pattern?.portRotationId) {
 
         switch (event?.data?.statusId) {
           case ULLAGE_STATUS_VALUE.IN_PROGRESS:

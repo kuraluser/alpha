@@ -2,7 +2,7 @@ import { Component, Input, OnInit, EventEmitter, Output , ViewChild , OnDestroy}
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { QUANTITY_UNIT, RATE_UNIT } from '../../../../shared/models/common.model';
-import { ICargoVesselTankDetails, ILoadingDischargingStages, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset } from '../../models/loading-discharging.model';
+import { ICargoVesselTankDetails, ILoadingDischargingStages, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset, ULLAGE_STATUS_VALUE } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
@@ -150,6 +150,11 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
         this.loadingDischargingTransformationService.disableSaveButton.next(true);   
         this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true) 
         this.loadingDischargingTransformationService.disableViewErrorButton.next(true);        
+      }
+      if(this.loadingInformationData.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.SUCCESS){
+        this.loadingDischargingTransformationService.disableSaveButton.next(true);   
+        this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true) 
+        this.loadingDischargingTransformationService.disableViewErrorButton.next(true);  
       }
       this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
