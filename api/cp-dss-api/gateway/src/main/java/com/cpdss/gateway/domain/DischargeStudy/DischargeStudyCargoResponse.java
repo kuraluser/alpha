@@ -13,4 +13,5 @@ public class DischargeStudyCargoResponse {
   private CommonSuccessResponse responseStatus;
   private Long dischargeStudyId;
   private List<PortRotation> portList;
+  private Long dischargePatternId;
 }
