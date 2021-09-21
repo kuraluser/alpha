@@ -28,5 +28,4 @@ public class LoadingPlanReportRequest {
   private List<List<VesselTank>> ballastRearTanks;
   private List<List<VesselTank>> cargoTanks;
   private DischargingInformation dischargingInformation;
-
 }

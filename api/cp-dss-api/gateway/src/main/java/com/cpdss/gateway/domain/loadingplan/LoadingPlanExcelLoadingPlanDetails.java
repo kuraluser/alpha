@@ -19,5 +19,4 @@ public class LoadingPlanExcelLoadingPlanDetails {
   private String etd;
   private String vesselCompliance;
   private String LoadLineZone;
-  
 }

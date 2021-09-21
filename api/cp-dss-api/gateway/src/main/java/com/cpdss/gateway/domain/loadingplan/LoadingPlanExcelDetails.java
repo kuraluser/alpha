@@ -13,5 +13,4 @@ public class LoadingPlanExcelDetails {
   private LoadingPlanExcelLoadingPlanDetails sheetOne;
   private Object sheetTwo;
   private Object sheetThree;
-  
 }
