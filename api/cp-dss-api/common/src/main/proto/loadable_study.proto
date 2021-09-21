@@ -930,6 +930,7 @@ message PortRotationReply{
 	repeated Operation operations=3;
 	int64 portRotationId = 4;
 	int64 lastModifiedPort = 5;
+	string loadableQuantity = 6;
 }
 
 message LoadableQuantityResponse {
