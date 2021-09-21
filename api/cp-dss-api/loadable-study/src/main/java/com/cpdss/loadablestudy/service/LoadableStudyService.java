@@ -1686,9 +1686,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       loadableStudy.setFeedbackLoopCount(0);
     }
 
-    ofNullable(loadableStudyOpt.get().getDuplicatedFrom().getId())
-        .ifPresentOrElse(
-            loadableStudy::setDuplicatedFrom, () -> loadableStudy.setDuplicatedFrom(null));
+    //    ofNullable(loadableStudyOpt.get().getDuplicatedFrom().getId())
+    //        .ifPresentOrElse(
+    //            loadableStudy::setDuplicatedFrom, () -> loadableStudy.setDuplicatedFrom(null));
     ofNullable(loadableStudyOpt.get().getLoadableStudyStatus().getId())
         .ifPresentOrElse(
             loadableStudy::setLoadableStudyStatusId,

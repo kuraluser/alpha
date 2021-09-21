@@ -8,7 +8,6 @@ import static org.springframework.util.StringUtils.isEmpty;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
-import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -92,6 +91,7 @@ public class LoadableStudyServiceShore {
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
 
   @Autowired private LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
+  @Autowired private SynopticalTableRepository synopticalTableRepository;
 
   public LoadableStudy setLoadableStudyShore(String jsonResult, String messageId)
       throws GenericServiceException {
@@ -507,13 +507,26 @@ public class LoadableStudyServiceShore {
     CargoOperation operation = this.cargoOperationRepository.getOne(portRotation.getOperationId());
     loadableStudyPortRotation.setOperation(operation);
     loadableStudyPortRotation.setIsPortRotationOhqComplete(true);
-    if (!synopticalTableDetails.isEmpty()) {
+    if (Objects.nonNull(synopticalTableDetails)) {
       List<SynopticalTable> synopticalTableList =
           synopticalTableDetails.stream()
               .filter(data -> data.getLoadableStudyPortRotationId().equals(portRotation.getId()))
               .map(
                   synopticalTable -> {
-                    SynopticalTable entitySynoptical = new SynopticalTable();
+                    SynopticalTable entitySynoptical = null;
+                    if (synopticalTable.getId() != null) {
+                      Optional<SynopticalTable> synopticalEnity =
+                          synopticalTableRepository.findByIdAndIsActive(
+                              synopticalTable.getId(), true);
+                      if (synopticalEnity.isPresent()) {
+                        entitySynoptical = synopticalEnity.get();
+                      } else {
+                        entitySynoptical = new SynopticalTable();
+                        entitySynoptical.setId(synopticalTable.getId());
+                      }
+                    } else {
+                      entitySynoptical = new SynopticalTable();
+                    }
                     entitySynoptical.setLoadableStudyPortRotation(loadableStudyPortRotation);
                     entitySynoptical.setPortXid(synopticalTable.getPortId());
                     entitySynoptical.setOperationType(synopticalTable.getOperationType());
@@ -620,12 +633,21 @@ public class LoadableStudyServiceShore {
                       Optional<CargoNominationPortDetails> existingCargoNominationPortDetails =
                           cargoNominationOperationDetailsRepository.findById(cargo.getId());
                       if (existingCargoNominationPortDetails.isPresent()) {
+                        if (cargoNomination.getCargoNominationPortDetails() != null) {
+                          cargoNomination.getCargoNominationPortDetails().clear();
+                        }
                         cargoNominationPortDetails = existingCargoNominationPortDetails.get();
+                        cargoNominationPortDetails.setId(
+                            existingCargoNominationPortDetails.get().getId());
+                        log.info("Stowage Edit UPDATE 1 Cargonomination");
                       } else {
                         cargoNominationPortDetails = new CargoNominationPortDetails();
+                        cargoNominationPortDetails.setId(cargo.getId());
+                        log.info("Stowage Edit INSERT 1 Cargonomination");
                       }
                     } else {
                       cargoNominationPortDetails = new CargoNominationPortDetails();
+                      log.info("Stowage Edit INSERT 2 Cargonomination");
                     }
                     cargoNominationPortDetails.setCargoNomination(cargoNomination);
                     cargoNominationPortDetails.setPortId(cargo.getPortId());
@@ -634,7 +656,7 @@ public class LoadableStudyServiceShore {
                     return cargoNominationPortDetails;
                   })
               .collect(Collectors.toSet());
-      cargoNomination.setCargoNominationPortDetails(cargoNominationPortDetailsList);
+      cargoNomination.getCargoNominationPortDetails().addAll(cargoNominationPortDetailsList);
     }
     return cargoNomination;
   }
@@ -810,13 +832,11 @@ public class LoadableStudyServiceShore {
   }
 
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = GenericServiceException.class)
-  public LoadableStudy persistShipPayloadInShoreSide(String jsonResult, String messageId)
+  public LoadableStudy persistShipPayloadInShoreSide(
+      String messageId, LoadabalePatternValidateRequest loadabalePatternValidateRequest)
       throws GenericServiceException, IOException {
     LoadableStudy loadableStudyEntity = null;
-    LoadabalePatternValidateRequest loadabalePatternValidateRequest =
-        new Gson()
-            .fromJson(
-                jsonResult, com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest.class);
+
     com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
         loadabalePatternValidateRequest.getLoadableStudy();
     Voyage voyage =
@@ -825,7 +845,7 @@ public class LoadableStudyServiceShore {
         loadableStudyRepository.findByIdAndIsActive(loadableStudy.getId(), true);
     ModelMapper modelMapper = new ModelMapper();
     if (loadableStudyEntityOpt.isPresent()) {
-      log.debug("Stowage Edit update LS --- id : " + loadableStudy.getId());
+      log.info("Stowage Edit update LS --- id : " + loadableStudy.getId());
       loadableStudyEntity =
           saveOrUpdateLoadableStudyInShore(loadableStudy, voyage, loadableStudyEntityOpt.get());
       updateCommunicationStatus(messageId, loadableStudyEntity);
@@ -833,7 +853,7 @@ public class LoadableStudyServiceShore {
       saveLoadablePlanStowageTempDetailsInShore(loadabalePatternValidateRequest);
       // savePattern(loadabalePatternValidateRequest, loadableStudyEntity);
     } else {
-      log.debug("Stowage Edit insert LS --- id : " + loadableStudy.getId());
+      log.info("Stowage Edit insert LS --- id : " + loadableStudy.getId());
       LoadableStudy entity = new LoadableStudy();
       entity.setId(loadableStudy.getId());
       loadableStudyEntity = saveOrUpdateLoadableStudyInShore(loadableStudy, voyage, entity);
@@ -841,6 +861,7 @@ public class LoadableStudyServiceShore {
       saveOrUpdateLoadableStudyDataInShore(loadableStudyEntity, loadableStudy, modelMapper);
       saveLoadablePlanStowageTempDetailsInShore(loadabalePatternValidateRequest);
     }
+    log.info("Stowage EDIT LS insert or update : " + loadableStudyEntity.getId());
     return loadableStudyEntity;
   }
 
@@ -849,13 +870,13 @@ public class LoadableStudyServiceShore {
     if (Objects.isNull(voyageEntity)) {
       voyageEntity = new Voyage();
       voyageEntity.setId(voyageDto.getId());
-      log.debug(
+      log.info(
           "Stowage Edit insert new voyage --- id : "
               + voyageDto.getId()
               + " vesselId : "
               + vesselId);
     } else {
-      log.debug(
+      log.info(
           "Stowage Edit update existing voyage-- id : "
               + voyageDto.getId()
               + "vesselId : "
@@ -882,6 +903,7 @@ public class LoadableStudyServiceShore {
                 DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT).parse(voyageDto.getVoyageEndDate()))
             : null);
     voyageEntity = voyageRepository.save(voyageEntity);
+    log.info("Stowage EDIT voyage insert or update : " + voyageEntity.getId());
     return voyageEntity;
   }
 
@@ -945,10 +967,10 @@ public class LoadableStudyServiceShore {
             loadableStudyAttachmentsRepository.findByIdAndIsActive(attachment.getId(), true);
         LoadableStudyAttachments attachmentEntity;
         if (loadableStudyAttachment.isPresent()) {
-          log.debug("Stowage Edit Update Attachment File --- id : " + attachment.getId());
+          log.info("Stowage Edit Update Attachment File --- id : " + attachment.getId());
           attachmentEntity = loadableStudyAttachment.get();
         } else {
-          log.debug("Stowage Edit INSERT Attachment File --- id : " + attachment.getId());
+          log.info("Stowage Edit INSERT Attachment File --- id : " + attachment.getId());
           attachmentEntity = new LoadableStudyAttachments();
           attachmentEntity.setId(attachment.getId());
         }
@@ -993,31 +1015,37 @@ public class LoadableStudyServiceShore {
                       this.commingleCargoRepository.findByIdAndIsActive(
                           commingleCargo.getId(), true);
                   if (existingCommingleCargo.isPresent()) {
-                    log.debug(
+                    log.info(
                         "Stowage Edit Update CommingleCargo --- id : " + commingleCargo.getId());
                     commingleCargoEntity = existingCommingleCargo.get();
                   } else {
-                    log.debug(
+                    log.info(
                         "Stowage Edit INSERT CommingleCargo --- id : " + commingleCargo.getId());
                     commingleCargoEntity = new CommingleCargo();
                     commingleCargoEntity.setId(commingleCargo.getId());
                   }
-                } else {
-                  log.debug("Stowage Edit INSERT CommingleCargo --- id : ");
-                  commingleCargoEntity = new CommingleCargo();
-                  commingleCargoEntity.setId(commingleCargo.getId());
+                  buildCommingleCargoShore(
+                      commingleCargoEntity, commingleCargo, loadableStudyEntity.getId());
+                  commingleEntities.add(commingleCargoEntity);
                 }
-                buildCommingleCargoShore(
-                    commingleCargoEntity, commingleCargo, loadableStudyEntity.getId());
-                commingleEntities.add(commingleCargoEntity);
+                //                else {
+                //                  log.info("Stowage Edit INSERT CommingleCargo --- id : ");
+                //                  commingleCargoEntity = new CommingleCargo();
+                //                  commingleCargoEntity.setId(commingleCargo.getId());
+                //                }
+
               } catch (Exception e) {
                 log.error("Exception in creating entities for save commingle cargo", e);
                 throw new RuntimeException(e);
               }
             });
-    List<CommingleCargo> updatedCommingleEntities =
-        this.commingleCargoRepository.saveAll(commingleEntities);
-    log.debug("Stowage Edit no of rows updated for commingle : " + updatedCommingleEntities.size());
+    if (commingleEntities.size() > 0) {
+      List<CommingleCargo> updatedCommingleEntities =
+          this.commingleCargoRepository.saveAll(commingleEntities);
+      log.info(
+          "Stowage Edit no of rows updated for commingle : " + updatedCommingleEntities.size());
+    }
+
     List<CargoNomination> cargoNominationEntities = new ArrayList<>();
     loadableStudy.getCargoNomination().stream()
         .forEach(
@@ -1029,63 +1057,73 @@ public class LoadableStudyServiceShore {
                     cargoNominationRepository.findByIdAndIsActive(cargoNom.getId(), true);
                 if (existingCargoNomination.isPresent()) {
                   cargoNomination = existingCargoNomination.get();
-                  log.debug("Stowage Edit Update CargoNomination --- id : " + cargoNom.getId());
+                  log.info("Stowage Edit Update CargoNomination --- id : " + cargoNom.getId());
                 } else {
                   cargoNomination = new CargoNomination();
-                  log.debug("Stowage Edit INSERT CargoNomination --- id : " + cargoNom.getId());
+                  cargoNomination.setId(cargoNom.getId());
+                  log.info("Stowage Edit INSERT CargoNomination --- id : " + cargoNom.getId());
                 }
-              } else {
-                cargoNomination = new CargoNomination();
-                log.debug("Stowage Edit INSERT CargoNomination --- id : ");
+                buildCargoNomination(
+                    cargoNomination, cargoNom, loadableStudy.getCargoNominationOperationDetails());
+                cargoNomination.setLoadableStudyXId(loadableStudyEntity.getId());
+                cargoNominationEntities.add(cargoNomination);
               }
-              buildCargoNomination(
-                  cargoNomination, cargoNom, loadableStudy.getCargoNominationOperationDetails());
-              cargoNomination.setLoadableStudyXId(loadableStudyEntity.getId());
-              cargoNominationEntities.add(cargoNomination);
+              //              else {
+              //                cargoNomination = new CargoNomination();
+              //                log.info("Stowage Edit INSERT CargoNomination --- id : ");
+              //              }
+
             });
-    List<CargoNomination> updatedCargoNominationEntities =
-        this.cargoNominationRepository.saveAll(cargoNominationEntities);
-    log.debug(
-        "Stowage Edit no of rows updated for CargoNominationEntities : "
-            + updatedCargoNominationEntities.size());
+    if (cargoNominationEntities.size() > 0) {
+      List<CargoNomination> updatedCargoNominationEntities =
+          this.cargoNominationRepository.saveAll(cargoNominationEntities);
+      log.info(
+          "Stowage Edit no of rows updated for CargoNominationEntities : "
+              + updatedCargoNominationEntities.size());
+    }
     List<LoadableStudyPortRotation> loadableStudyPortRotations = new ArrayList<>();
     loadableStudy.getLoadableStudyPortRotation().stream()
         .forEach(
             portRotation -> {
               LoadableStudyPortRotation loadableStudyPortRotation;
               if (portRotation.getId() != null) {
+
                 LoadableStudyPortRotation existingLoadableStudyPortRotation =
                     loadableStudyPortRotationRepository.findByIdAndIsActive(
                         portRotation.getId(), true);
                 if (existingLoadableStudyPortRotation != null) {
                   loadableStudyPortRotation = existingLoadableStudyPortRotation;
-                  log.debug(
+                  log.info(
                       "Stowage Edit UPDATE LoadableStudyPortRotation --- id : "
                           + portRotation.getId());
                 } else {
                   loadableStudyPortRotation = new LoadableStudyPortRotation();
                   loadableStudyPortRotation.setId(portRotation.getId());
-                  log.debug(
+                  log.info(
                       "Stowage Edit INSERT LoadableStudyPortRotation --- id : "
                           + portRotation.getId());
                 }
-              } else {
-                loadableStudyPortRotation = new LoadableStudyPortRotation();
-                log.debug("Stowage Edit INSERT LoadableStudyPortRotation --- id : ");
+                loadableStudyPortRotation.setLoadableStudy(loadableStudyEntity);
+                loadableStudyPortRotation =
+                    buildLoadableStudyPortRotation(
+                        loadableStudyPortRotation,
+                        portRotation,
+                        loadableStudy.getSynopticalTableDetails());
+                loadableStudyPortRotations.add(loadableStudyPortRotation);
               }
-              loadableStudyPortRotation.setLoadableStudy(loadableStudyEntity);
-              loadableStudyPortRotation =
-                  buildLoadableStudyPortRotation(
-                      loadableStudyPortRotation,
-                      portRotation,
-                      loadableStudy.getSynopticalTableDetails());
-              loadableStudyPortRotations.add(loadableStudyPortRotation);
+              //              else {
+              //                loadableStudyPortRotation = new LoadableStudyPortRotation();
+              //                log.info("Stowage Edit INSERT LoadableStudyPortRotation --- id : ");
+              //              }
+
             });
-    List<LoadableStudyPortRotation> updatedLoadableStudyPortRotations =
-        this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
-    log.debug(
-        "Stowage Edit no of rows updated for LoadableStudyPortRotation : "
-            + updatedLoadableStudyPortRotations.size());
+    if (loadableStudyPortRotations.size() > 0) {
+      List<LoadableStudyPortRotation> updatedLoadableStudyPortRotations =
+          this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
+      log.info(
+          "Stowage Edit no of rows updated for LoadableStudyPortRotation : "
+              + updatedLoadableStudyPortRotations.size());
+    }
     List<OnHandQuantity> onHandQuantityEntities = new ArrayList<>();
     loadableStudy.getOnHandQuantity().stream()
         .forEach(
@@ -1095,28 +1133,30 @@ public class LoadableStudyServiceShore {
                 OnHandQuantity existingOnHandQuantity =
                     onHandQuantityRepository.findByIdAndIsActive(onHandQuantity.getId(), true);
                 if (existingOnHandQuantity != null) {
-                  log.debug(
-                      "Stowage Edit UPDATE OnHandQuantity --- id : " + onHandQuantity.getId());
+                  log.info("Stowage Edit UPDATE OnHandQuantity --- id : " + onHandQuantity.getId());
                   onHandQuantityEntity = existingOnHandQuantity;
                 } else {
                   onHandQuantityEntity = new OnHandQuantity();
                   onHandQuantityEntity.setId(onHandQuantity.getId());
-                  log.debug(
-                      "Stowage Edit INSERT OnHandQuantity --- id : " + onHandQuantity.getId());
+                  log.info("Stowage Edit INSERT OnHandQuantity --- id : " + onHandQuantity.getId());
                 }
-              } else {
-                onHandQuantityEntity = new OnHandQuantity();
-                log.debug("Stowage Edit INSERT OnHandQuantity --- id : ");
+                onHandQuantityEntity.setLoadableStudy(loadableStudyEntity);
+                buildOnHandQuantity(onHandQuantityEntity, onHandQuantity);
+                onHandQuantityEntities.add(onHandQuantityEntity);
               }
-              onHandQuantityEntity.setLoadableStudy(loadableStudyEntity);
-              buildOnHandQuantity(onHandQuantityEntity, onHandQuantity);
-              onHandQuantityEntities.add(onHandQuantityEntity);
+              //              else {
+              //                onHandQuantityEntity = new OnHandQuantity();
+              //                log.info("Stowage Edit INSERT OnHandQuantity --- id : ");
+              //              }
+
             });
-    List<OnHandQuantity> updatedOnHandQuantityEntities =
-        this.onHandQuantityRepository.saveAll(onHandQuantityEntities);
-    log.debug(
-        "Stowage Edit no of rows updated for OnHandQuantity : "
-            + updatedOnHandQuantityEntities.size());
+    if (onHandQuantityEntities.size() > 0) {
+      List<OnHandQuantity> updatedOnHandQuantityEntities =
+          this.onHandQuantityRepository.saveAll(onHandQuantityEntities);
+      log.info(
+          "Stowage Edit no of rows updated for OnHandQuantity : "
+              + updatedOnHandQuantityEntities.size());
+    }
     List<OnBoardQuantity> onBoardQuantityEntities = new ArrayList<>();
     loadableStudy.getOnBoardQuantity().stream()
         .forEach(
@@ -1127,152 +1167,162 @@ public class LoadableStudyServiceShore {
                     onBoardQuantityRepository.findByIdAndIsActive(onBoardQuantity.getId(), true);
                 if (existingOnBoardQuantityEntity != null) {
                   onBoardQuantityEntity = existingOnBoardQuantityEntity;
-                  log.debug(
+                  log.info(
                       "Stowage Edit UPDATE OnBoardQuantity --- id : " + onBoardQuantity.getId());
                 } else {
                   onBoardQuantityEntity = new OnBoardQuantity();
                   onBoardQuantityEntity.setId(onBoardQuantity.getId());
-                  log.debug(
+                  log.info(
                       "Stowage Edit INSERT OnBoardQuantity --- id : " + onBoardQuantity.getId());
                 }
-              } else {
-                onBoardQuantityEntity = new OnBoardQuantity();
-                log.debug("Stowage Edit INSERT OnBoardQuantity --- id : ");
+                onBoardQuantityEntity.setLoadableStudy(loadableStudyEntity);
+                buildOnBoardQuantityEntity(onBoardQuantityEntity, onBoardQuantity);
+                onBoardQuantityEntities.add(onBoardQuantityEntity);
               }
-              onBoardQuantityEntity.setLoadableStudy(loadableStudyEntity);
-              buildOnBoardQuantityEntity(onBoardQuantityEntity, onBoardQuantity);
-              onBoardQuantityEntities.add(onBoardQuantityEntity);
+              //              else {
+              //                onBoardQuantityEntity = new OnBoardQuantity();
+              //                log.info("Stowage Edit INSERT OnBoardQuantity --- id : ");
+              //              }
+
             });
-    List<OnBoardQuantity> updatedOnBoardQuantityEntities =
-        this.onBoardQuantityRepository.saveAll(onBoardQuantityEntities);
-    log.debug(
-        "Stowage Edit no of rows updated for OnBoardQuantity : "
-            + updatedOnBoardQuantityEntities.size());
+    if (onBoardQuantityEntities.size() > 0) {
+      List<OnBoardQuantity> updatedOnBoardQuantityEntities =
+          this.onBoardQuantityRepository.saveAll(onBoardQuantityEntities);
+      log.info(
+          "Stowage Edit no of rows updated for OnBoardQuantity : "
+              + updatedOnBoardQuantityEntities.size());
+    }
     com.cpdss.loadablestudy.domain.LoadableQuantity loadableQuantityDomain =
         loadableStudy.getLoadableQuantity();
     if (null != loadableQuantityDomain) {
-      LoadableQuantity loadableQuantity;
+      LoadableQuantity loadableQuantity = null;
       if (loadableQuantityDomain.getId() != null) {
         LoadableQuantity existingLoadableQuantity =
             loadableQuantityRepository.findByIdAndIsActive(loadableQuantityDomain.getId(), true);
         if (existingLoadableQuantity != null) {
           loadableQuantity = existingLoadableQuantity;
-          log.debug(
+          log.info(
               "Stowage Edit UPDATE LoadableQuantity --- id : " + loadableQuantityDomain.getId());
         } else {
           loadableQuantity = new LoadableQuantity();
           loadableQuantity.setId(loadableQuantityDomain.getId());
-          log.debug(
+          log.info(
               "Stowage Edit INSERT LoadableQuantity --- id : " + loadableQuantityDomain.getId());
         }
-      } else {
-        loadableQuantity = new LoadableQuantity();
-        log.debug("Stowage Edit INSERT LoadableQuantity --- id : ");
+        loadableQuantity.setLoadableStudyXId(loadableStudyEntity);
+        loadableQuantity.setConstant(
+            StringUtils.isEmpty(loadableQuantityDomain.getConstant())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getConstant()));
+        loadableQuantity.setDeadWeight(
+            StringUtils.isEmpty(loadableQuantityDomain.getDeadWeight())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getDeadWeight()));
+
+        loadableQuantity.setDistanceFromLastPort(
+            StringUtils.isEmpty(loadableQuantityDomain.getDistanceFromLastPort())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getDistanceFromLastPort()));
+
+        loadableQuantity.setEstimatedDOOnBoard(
+            StringUtils.isEmpty(loadableQuantityDomain.getEstDOOnBoard())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getEstDOOnBoard()));
+
+        loadableQuantity.setEstimatedFOOnBoard(
+            StringUtils.isEmpty(loadableQuantityDomain.getEstFOOnBoard())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getEstFOOnBoard()));
+        loadableQuantity.setEstimatedFWOnBoard(
+            StringUtils.isEmpty(loadableQuantityDomain.getEstFreshWaterOnBoard())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getEstFreshWaterOnBoard()));
+        loadableQuantity.setEstimatedSagging(
+            StringUtils.isEmpty(loadableQuantityDomain.getEstSagging())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getEstSagging()));
+
+        loadableQuantity.setOtherIfAny(
+            StringUtils.isEmpty(loadableQuantityDomain.getOtherIfAny())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getOtherIfAny()));
+        loadableQuantity.setSaggingDeduction(
+            StringUtils.isEmpty(loadableQuantityDomain.getSaggingDeduction())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getSaggingDeduction()));
+
+        loadableQuantity.setSgCorrection(
+            StringUtils.isEmpty(loadableQuantityDomain.getSgCorrection())
+                ? new BigDecimal("0.0000")
+                : new BigDecimal(loadableQuantityDomain.getSgCorrection()));
+
+        loadableQuantity.setTotalQuantity(
+            StringUtils.isEmpty(loadableQuantityDomain.getTotalQuantity())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getTotalQuantity()));
+        loadableQuantity.setTpcatDraft(
+            StringUtils.isEmpty(loadableQuantityDomain.getTpc())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getTpc()));
+
+        loadableQuantity.setVesselAverageSpeed(
+            StringUtils.isEmpty(loadableQuantityDomain.getVesselAverageSpeed())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getVesselAverageSpeed()));
+
+        loadableQuantity.setPortId(
+            StringUtils.isEmpty(loadableQuantityDomain.getPortId())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getPortId()));
+        loadableQuantity.setBoilerWaterOnBoard(
+            StringUtils.isEmpty(loadableQuantityDomain.getBoilerWaterOnBoard())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getBoilerWaterOnBoard()));
+        loadableQuantity.setBallast(
+            StringUtils.isEmpty(loadableQuantityDomain.getBallast())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getBallast()));
+        loadableQuantity.setRunningHours(
+            StringUtils.isEmpty(loadableQuantityDomain.getRunningHours())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getRunningHours()));
+        loadableQuantity.setRunningDays(
+            StringUtils.isEmpty(loadableQuantityDomain.getRunningDays())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getRunningDays()));
+        loadableQuantity.setFoConsumptionInSZ(
+            StringUtils.isEmpty(loadableQuantityDomain.getFoConInSZ())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getFoConInSZ()));
+        loadableQuantity.setDraftRestriction(
+            StringUtils.isEmpty(loadableQuantityDomain.getDraftRestriction())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getDraftRestriction()));
+
+        loadableQuantity.setFoConsumptionPerDay(
+            StringUtils.isEmpty(loadableQuantityDomain.getFoConsumptionPerDay())
+                ? null
+                : new BigDecimal(loadableQuantityDomain.getFoConsumptionPerDay()));
+        loadableQuantity.setIsActive(true);
+        if (loadableQuantityDomain.getPortId() != null) {
+          LoadableStudyPortRotation lsPortRot =
+              loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
+                  loadableStudyEntity, loadableQuantityDomain.getPortId(), true);
+          loadableQuantity.setLoadableStudyPortRotation(lsPortRot);
+        }
       }
-      loadableQuantity.setLoadableStudyXId(loadableStudyEntity);
-      loadableQuantity.setConstant(
-          StringUtils.isEmpty(loadableQuantityDomain.getConstant())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getConstant()));
-      loadableQuantity.setDeadWeight(
-          StringUtils.isEmpty(loadableQuantityDomain.getDeadWeight())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getDeadWeight()));
+      //      else {
+      //        loadableQuantity = new LoadableQuantity();
+      //        log.info("Stowage Edit INSERT LoadableQuantity --- id : ");
+      //      }
 
-      loadableQuantity.setDistanceFromLastPort(
-          StringUtils.isEmpty(loadableQuantityDomain.getDistanceFromLastPort())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getDistanceFromLastPort()));
-
-      loadableQuantity.setEstimatedDOOnBoard(
-          StringUtils.isEmpty(loadableQuantityDomain.getEstDOOnBoard())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getEstDOOnBoard()));
-
-      loadableQuantity.setEstimatedFOOnBoard(
-          StringUtils.isEmpty(loadableQuantityDomain.getEstFOOnBoard())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getEstFOOnBoard()));
-      loadableQuantity.setEstimatedFWOnBoard(
-          StringUtils.isEmpty(loadableQuantityDomain.getEstFreshWaterOnBoard())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getEstFreshWaterOnBoard()));
-      loadableQuantity.setEstimatedSagging(
-          StringUtils.isEmpty(loadableQuantityDomain.getEstSagging())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getEstSagging()));
-
-      loadableQuantity.setOtherIfAny(
-          StringUtils.isEmpty(loadableQuantityDomain.getOtherIfAny())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getOtherIfAny()));
-      loadableQuantity.setSaggingDeduction(
-          StringUtils.isEmpty(loadableQuantityDomain.getSaggingDeduction())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getSaggingDeduction()));
-
-      loadableQuantity.setSgCorrection(
-          StringUtils.isEmpty(loadableQuantityDomain.getSgCorrection())
-              ? new BigDecimal("0.0000")
-              : new BigDecimal(loadableQuantityDomain.getSgCorrection()));
-
-      loadableQuantity.setTotalQuantity(
-          StringUtils.isEmpty(loadableQuantityDomain.getTotalQuantity())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getTotalQuantity()));
-      loadableQuantity.setTpcatDraft(
-          StringUtils.isEmpty(loadableQuantityDomain.getTpc())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getTpc()));
-
-      loadableQuantity.setVesselAverageSpeed(
-          StringUtils.isEmpty(loadableQuantityDomain.getVesselAverageSpeed())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getVesselAverageSpeed()));
-
-      loadableQuantity.setPortId(
-          StringUtils.isEmpty(loadableQuantityDomain.getPortId())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getPortId()));
-      loadableQuantity.setBoilerWaterOnBoard(
-          StringUtils.isEmpty(loadableQuantityDomain.getBoilerWaterOnBoard())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getBoilerWaterOnBoard()));
-      loadableQuantity.setBallast(
-          StringUtils.isEmpty(loadableQuantityDomain.getBallast())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getBallast()));
-      loadableQuantity.setRunningHours(
-          StringUtils.isEmpty(loadableQuantityDomain.getRunningHours())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getRunningHours()));
-      loadableQuantity.setRunningDays(
-          StringUtils.isEmpty(loadableQuantityDomain.getRunningDays())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getRunningDays()));
-      loadableQuantity.setFoConsumptionInSZ(
-          StringUtils.isEmpty(loadableQuantityDomain.getFoConInSZ())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getFoConInSZ()));
-      loadableQuantity.setDraftRestriction(
-          StringUtils.isEmpty(loadableQuantityDomain.getDraftRestriction())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getDraftRestriction()));
-
-      loadableQuantity.setFoConsumptionPerDay(
-          StringUtils.isEmpty(loadableQuantityDomain.getFoConsumptionPerDay())
-              ? null
-              : new BigDecimal(loadableQuantityDomain.getFoConsumptionPerDay()));
-      loadableQuantity.setIsActive(true);
-      if (loadableQuantityDomain.getPortId() != null) {
-        LoadableStudyPortRotation lsPortRot =
-            loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
-                loadableStudyEntity, loadableQuantityDomain.getPortId(), true);
-        loadableQuantity.setLoadableStudyPortRotation(lsPortRot);
+      if (loadableQuantity != null) {
+        LoadableQuantity loadableQuantityEntity =
+            this.loadableQuantityRepository.save(loadableQuantity);
+        log.info("Stowage Edit Loadable Quantity has updated - " + loadableQuantityEntity.getId());
       }
-      this.loadableQuantityRepository.save(loadableQuantity);
     }
-    if (!loadableStudy.getLoadableStudyRuleList().isEmpty()) {
+    /* if (!loadableStudy.getLoadableStudyRuleList().isEmpty()) {
       VesselInfo.VesselRuleRequest.Builder vesselRuleBuilder =
           VesselInfo.VesselRuleRequest.newBuilder();
       vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
@@ -1295,7 +1345,7 @@ public class LoadableStudyServiceShore {
                     .getRules()
                     .forEach(
                         rule -> {
-                          LoadableStudyRules loadableStudyRules;
+                          LoadableStudyRules loadableStudyRules = null;
                           if (rule.getId() != null) {
                             Optional<LoadableStudyRules> existingLoadableStudyRules =
                                 loadableStudyRuleRepository.findById(Long.parseLong(rule.getId()));
@@ -1305,109 +1355,120 @@ public class LoadableStudyServiceShore {
                               loadableStudyRules = new LoadableStudyRules();
                               loadableStudyRules.setId(Long.parseLong(rule.getId()));
                             }
-                          } else {
-                            loadableStudyRules = new LoadableStudyRules();
-                          }
-                          loadableStudyRules.setLoadableStudy(loadableStudyEntity);
-                          loadableStudyRules.setIsActive(true);
-                          Optional.ofNullable(rule.getDisplayInSettings())
-                              .ifPresent(loadableStudyRules::setDisplayInSettings);
-                          Optional.ofNullable(rule.getEnable())
-                              .ifPresent(loadableStudyRules::setIsEnable);
-                          Optional.ofNullable(rule.getIsHardRule())
-                              .ifPresent(loadableStudyRules::setIsHardRule);
-                          Optional.ofNullable(rule.getNumericPrecision())
-                              .ifPresent(loadableStudyRules::setNumericPrecision);
-                          Optional.ofNullable(rule.getNumericScale())
-                              .ifPresent(loadableStudyRules::setNumericScale);
-                          LoadableStudyRules finalLoadableStudyRules = loadableStudyRules;
-                          Optional.ofNullable(rule.getRuleTemplateId())
-                              .ifPresent(
-                                  item ->
-                                      finalLoadableStudyRules.setParentRuleXId(
-                                          Long.parseLong(item)));
-                          loadableStudyRules.setVesselXId(loadableStudyEntity.getVesselXId());
+                            loadableStudyRules.setLoadableStudy(loadableStudyEntity);
+                            loadableStudyRules.setIsActive(true);
+                            Optional.ofNullable(rule.getDisplayInSettings())
+                                .ifPresent(loadableStudyRules::setDisplayInSettings);
+                            Optional.ofNullable(rule.getEnable())
+                                .ifPresent(loadableStudyRules::setIsEnable);
+                            Optional.ofNullable(rule.getIsHardRule())
+                                .ifPresent(loadableStudyRules::setIsHardRule);
+                            Optional.ofNullable(rule.getNumericPrecision())
+                                .ifPresent(loadableStudyRules::setNumericPrecision);
+                            Optional.ofNullable(rule.getNumericScale())
+                                .ifPresent(loadableStudyRules::setNumericScale);
+                            LoadableStudyRules finalLoadableStudyRules = loadableStudyRules;
+                            Optional.ofNullable(rule.getRuleTemplateId())
+                                .ifPresent(
+                                    item ->
+                                        finalLoadableStudyRules.setParentRuleXId(
+                                            Long.parseLong(item)));
+                            loadableStudyRules.setVesselXId(loadableStudyEntity.getVesselXId());
 
-                          if (rule.getRuleType() != null
-                              && rule.getRuleType()
-                                  .equalsIgnoreCase(RuleType.ABSOLUTE.getRuleType())) {
-                            loadableStudyRules.setRuleTypeXId(RuleType.ABSOLUTE.getId());
-                          }
-                          if (rule.getRuleType() != null
-                              && rule.getRuleType()
-                                  .equalsIgnoreCase(RuleType.PREFERABLE.getRuleType())) {
-                            loadableStudyRules.setRuleTypeXId(RuleType.PREFERABLE.getId());
-                          }
-                          List<Common.Rules> rulesList =
-                              vesselRuleReply.getRulePlanList().stream()
-                                  .filter(
-                                      vesselRulePlan ->
-                                          rulePlans.getHeader().equals(vesselRulePlan.getHeader()))
-                                  .flatMap(rules -> rules.getRulesList().stream())
-                                  .collect(Collectors.toList());
-                          Optional<Common.Rules> vesselRule1 =
-                              rulesList.stream()
-                                  .filter(
-                                      vesselRule ->
-                                          vesselRule
-                                              .getRuleTemplateId()
-                                              .equals(loadableStudyRules.getParentRuleXId()))
-                                  .findFirst();
-                          loadableStudyRules.setVesselRuleXId(
-                              Long.valueOf(vesselRule1.get().getVesselRuleXId()));
-                          Optional.ofNullable(rule.getVesselRuleXId())
-                              .ifPresent(
-                                  vesselRuleXId ->
-                                      finalLoadableStudyRules.setVesselRuleXId(
-                                          Long.parseLong(vesselRuleXId)));
-                          List<LoadableStudyRuleInput> ruleVesselMappingInputList =
-                              new ArrayList<>();
-                          for (RulesInputs input : rule.getInputs()) {
-                            LoadableStudyRuleInput ruleTemplateInput;
-                            if (input.getId() != null) {
-                              Optional<LoadableStudyRuleInput> loadableStudyRuleInput =
-                                  loadableStudyRuleInputRepository.findById(
-                                      Long.valueOf(input.getId()));
-                              if (loadableStudyRuleInput.isPresent()) {
-                                ruleTemplateInput = loadableStudyRuleInput.get();
-                              } else {
-                                ruleTemplateInput = new LoadableStudyRuleInput();
-                                ruleTemplateInput.setId(Long.valueOf(input.getId()));
-                              }
-                            } else {
-                              ruleTemplateInput = new LoadableStudyRuleInput();
+                            if (rule.getRuleType() != null
+                                && rule.getRuleType()
+                                    .equalsIgnoreCase(RuleType.ABSOLUTE.getRuleType())) {
+                              loadableStudyRules.setRuleTypeXId(RuleType.ABSOLUTE.getId());
                             }
-                            Optional.ofNullable(input.getDefaultValue())
-                                .ifPresent(ruleTemplateInput::setDefaultValue);
-                            Optional.ofNullable(input.getMax())
-                                .ifPresent(ruleTemplateInput::setMaxValue);
-                            Optional.ofNullable(input.getMin())
-                                .ifPresent(ruleTemplateInput::setMinValue);
-                            Optional.ofNullable(input.getSuffix())
-                                .ifPresent(ruleTemplateInput::setSuffix);
-                            Optional.ofNullable(input.getPrefix())
-                                .ifPresent(ruleTemplateInput::setPrefix);
-                            Optional.ofNullable(input.getType())
-                                .ifPresent(ruleTemplateInput::setTypeValue);
-                            Optional.ofNullable(input.getIsMandatory())
-                                .ifPresent(ruleTemplateInput::setIsMandatory);
-                            ruleTemplateInput.setIsActive(true);
-                            ruleTemplateInput.setLoadableStudyRuleXId(loadableStudyRules);
-                            Optional.ofNullable(input.getType())
-                                .ifPresent(ruleTemplateInput::setTypeValue);
-
-                            ruleVesselMappingInputList.add(ruleTemplateInput);
+                            if (rule.getRuleType() != null
+                                && rule.getRuleType()
+                                    .equalsIgnoreCase(RuleType.PREFERABLE.getRuleType())) {
+                              loadableStudyRules.setRuleTypeXId(RuleType.PREFERABLE.getId());
+                            }
+                            List<Common.Rules> rulesList =
+                                vesselRuleReply.getRulePlanList().stream()
+                                    .filter(
+                                        vesselRulePlan ->
+                                            rulePlans
+                                                .getHeader()
+                                                .equals(vesselRulePlan.getHeader()))
+                                    .flatMap(rules -> rules.getRulesList().stream())
+                                    .collect(Collectors.toList());
+                            LoadableStudyRules finalLoadableStudyRules1 = loadableStudyRules;
+                            Optional<Common.Rules> vesselRule1 =
+                                rulesList.stream()
+                                    .filter(
+                                        vesselRule ->
+                                            vesselRule
+                                                .getRuleTemplateId()
+                                                .equals(
+                                                    finalLoadableStudyRules1.getParentRuleXId()))
+                                    .findFirst();
+                            loadableStudyRules.setVesselRuleXId(
+                                Long.valueOf(vesselRule1.get().getVesselRuleXId()));
+                            Optional.ofNullable(rule.getVesselRuleXId())
+                                .ifPresent(
+                                    vesselRuleXId ->
+                                        finalLoadableStudyRules.setVesselRuleXId(
+                                            Long.parseLong(vesselRuleXId)));
+                            List<LoadableStudyRuleInput> ruleVesselMappingInputList =
+                                new ArrayList<>();
+                            for (RulesInputs input : rule.getInputs()) {
+                              LoadableStudyRuleInput ruleTemplateInput;
+                              if (input.getId() != null) {
+                                Optional<LoadableStudyRuleInput> loadableStudyRuleInput =
+                                    loadableStudyRuleInputRepository.findById(
+                                        Long.valueOf(input.getId()));
+                                if (loadableStudyRuleInput.isPresent()) {
+                                  ruleTemplateInput = loadableStudyRuleInput.get();
+                                } else {
+                                  ruleTemplateInput = new LoadableStudyRuleInput();
+                                  ruleTemplateInput.setId(Long.valueOf(input.getId()));
+                                }
+                                Optional.ofNullable(input.getDefaultValue())
+                                    .ifPresent(ruleTemplateInput::setDefaultValue);
+                                Optional.ofNullable(input.getMax())
+                                    .ifPresent(ruleTemplateInput::setMaxValue);
+                                Optional.ofNullable(input.getMin())
+                                    .ifPresent(ruleTemplateInput::setMinValue);
+                                Optional.ofNullable(input.getSuffix())
+                                    .ifPresent(ruleTemplateInput::setSuffix);
+                                Optional.ofNullable(input.getPrefix())
+                                    .ifPresent(ruleTemplateInput::setPrefix);
+                                Optional.ofNullable(input.getType())
+                                    .ifPresent(ruleTemplateInput::setTypeValue);
+                                Optional.ofNullable(input.getIsMandatory())
+                                    .ifPresent(ruleTemplateInput::setIsMandatory);
+                                ruleTemplateInput.setIsActive(true);
+                                ruleTemplateInput.setLoadableStudyRuleXId(loadableStudyRules);
+                                Optional.ofNullable(input.getType())
+                                    .ifPresent(ruleTemplateInput::setTypeValue);
+                                ruleVesselMappingInputList.add(ruleTemplateInput);
+                              }
+                              //                              else {
+                              //                                ruleTemplateInput = new
+                              // LoadableStudyRuleInput();
+                              //                              }
+                            }
+                            loadableStudyRules.setLoadableStudyRuleInputs(
+                                ruleVesselMappingInputList);
+                            loadableStudyRulesList.add(loadableStudyRules);
                           }
-                          loadableStudyRules.setLoadableStudyRuleInputs(ruleVesselMappingInputList);
-                          loadableStudyRulesList.add(loadableStudyRules);
+                          //                          else {
+                          //                            loadableStudyRules = new
+                          // LoadableStudyRules();
+                          //                          }
+
                         });
               });
-      List<LoadableStudyRules> updatedLoadableStudyRulesList =
-          this.loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
-      log.debug(
-          "Stowage Edit no of rows updated for LoadableStudyRules  : "
-              + updatedLoadableStudyRulesList.size());
-    }
+      if (loadableStudyRulesList.size() > 0) {
+        List<LoadableStudyRules> updatedLoadableStudyRulesList =
+            this.loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
+        log.info(
+            "Stowage Edit no of rows updated for LoadableStudyRules  : "
+                + updatedLoadableStudyRulesList.size());
+      }
+    }*/
   }
 
   private void saveLoadablePlanStowageTempDetailsInShore(
@@ -1467,7 +1528,11 @@ public class LoadableStudyServiceShore {
                 loadablePlanStowageDetailsTemp.setIsCommingle(stowageTemp.getIsCommingle());
                 loadablePlanStowageDetailsTemp.setFillingRatio(
                     isEmpty(stowageTemp.getFillingRatio()) ? null : stowageTemp.getFillingRatio());
-                stowageDetailsTempRepository.save(loadablePlanStowageDetailsTemp);
+                LoadablePlanStowageDetailsTemp lPlanStowageDetailsTemp =
+                    stowageDetailsTempRepository.save(loadablePlanStowageDetailsTemp);
+                log.info(
+                    "Stowage Edit LoadablePlanStowageDetailsTemp insert or update : "
+                        + lPlanStowageDetailsTemp.getId());
               });
     }
   }

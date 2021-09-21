@@ -1,7 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
@@ -10,12 +10,17 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
+import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
+import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsTempRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyCommunicationStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import java.io.File;
@@ -46,6 +51,9 @@ public class CommunicationService {
   @Autowired JsonDataService jsonDataService;
   @Autowired private RestTemplate restTemplate;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
+  @Autowired private LoadablePatternRepository loadablePatternRepository;
+  @Autowired private LoadablePlanService loadablePlanService;
+  @Autowired private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
 
   @Autowired
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
@@ -102,12 +110,9 @@ public class CommunicationService {
                 HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
           }
           if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
-            log.info("LoadableStudy received at shore side ");
+            log.info("@@@@@@@@@@@LoadableStudy received at shore side ");
             saveValidatePlanRequestShore(erReply);
           }
-          log.info(
-              "######### LoadableStudy received at shore side for validating plan "
-                  + erReply.toString());
         }
       } catch (GenericServiceException e) {
         throw new GenericServiceException(
@@ -122,22 +127,24 @@ public class CommunicationService {
   private void saveValidatePlanRequestShore(EnvoyReader.EnvoyReaderResultReply erReply) {
     try {
       String jsonResult = erReply.getPatternResultJson();
-      log.info("Json payload :" + jsonResult);
-      //      LoadableStudy loadableStudyEntity =
-      //          loadableStudyServiceShore.persistShipPayloadInShoreSide(
-      //              jsonResult, erReply.getMessageId());
-      //      if (loadableStudyEntity != null) {
-      //        voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
-      //        this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
-      //        log.info("algo process started in shore");
-      //        processAlgoFromShore(loadableStudyEntity);
-      //      }
-      //    } catch (GenericServiceException e) {
-      //      log.error("GenericServiceException when generating pattern", e);
-      //    } catch (ResourceAccessException e) {
-      // log.info("Error calling ALGO ");
+      // log.info("Json payload :" + jsonResult);
+      LoadabalePatternValidateRequest loadabalePatternValidateRequest =
+          new Gson()
+              .fromJson(
+                  jsonResult, com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest.class);
+      LoadableStudy loadableStudyEntity =
+          loadableStudyServiceShore.persistShipPayloadInShoreSide(
+              erReply.getMessageId(), loadabalePatternValidateRequest);
+      if (loadableStudyEntity != null) {
+        voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
+        this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
+        log.info("algo process started in shore");
+        // processAlgoFromShore(loadableStudyEntity);
+        // processAlgoFromShoreSide(loadabalePatternValidateRequest);
+      }
     } catch (Exception e) {
-      log.error("Exception when when calling algo  ", e);
+      log.error(
+          "Exception has occurred updating payload in shore side which is received from ship  ", e);
     }
   }
 
@@ -190,6 +197,54 @@ public class CommunicationService {
     }
   }
 
+  private void processAlgoFromShoreSide(LoadabalePatternValidateRequest lPValidateRequest)
+      throws IOException, GenericServiceException {
+    LoadabalePatternValidateRequest loadabalePatternValidateRequest =
+        new LoadabalePatternValidateRequest();
+    ModelMapper modelMapper = new ModelMapper();
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    ObjectMapper objectMapper = new ObjectMapper();
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(
+            lPValidateRequest.getLoadablePatternId(), true);
+    loadableStudyService.buildLoadableStudy(
+        loadablePatternOpt.get().getLoadableStudy().getId(),
+        loadablePatternOpt.get().getLoadableStudy(),
+        loadableStudy,
+        modelMapper);
+    loadabalePatternValidateRequest.setLoadableStudy(loadableStudy);
+
+    jsonDataService.saveJsonToDatabase(
+        lPValidateRequest.getLoadablePatternId(),
+        LOADABLE_PATTERN_EDIT_REQUEST,
+        objectMapper.writeValueAsString(loadabalePatternValidateRequest));
+    objectMapper.writeValue(
+        new File(
+            this.rootFolder
+                + "/json/loadablePattern_request_"
+                + loadablePatternOpt.get().getId()
+                + ".json"),
+        loadabalePatternValidateRequest);
+    LoadabalePatternValidateRequest communicationServiceRequest = loadabalePatternValidateRequest;
+    loadablePlanService.buildCommunicationServiceRequest(
+        communicationServiceRequest, loadablePatternOpt.get());
+
+    loadabalePatternValidateRequest.setBallastEdited(
+        stowageDetailsTempRepository.isBallastEdited(loadablePatternOpt.get().getId(), true));
+    loadabalePatternValidateRequest.setLoadablePatternId(loadablePatternOpt.get().getId());
+    loadabalePatternValidateRequest.setCaseNumber(loadablePatternOpt.get().getCaseNumber());
+    AlgoResponse algoResponse =
+        restTemplate.postForObject(
+            loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
+
+    loadablePlanService.updateProcessIdForLoadablePattern(
+        algoResponse.getProcessId(),
+        loadablePatternOpt.get(),
+        LOADABLE_PATTERN_VALIDATION_STARTED_ID);
+    log.info("Algo response : " + algoResponse.toString());
+  }
+
   private void processAlgoFromShore(LoadableStudy loadableStudyEntity)
       throws GenericServiceException, IOException {
     ModelMapper modelMapper = new ModelMapper();
@@ -221,6 +276,7 @@ public class CommunicationService {
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID,
         "",
         true);
+    log.info("Algo response : " + algoResponse.toString());
 
     loadableStudyRepository.updateLoadableStudyStatus(
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());
@@ -234,7 +290,6 @@ public class CommunicationService {
     request.setMessageType(messageType.getMessageType());
     request.setClientId(taskReqParams.get("ClientId"));
     request.setShipId(taskReqParams.get("ShipId"));
-    log.info("=======Send request to envoy reader : " + taskReqParams.toString());
     return this.envoyReaderGrpcService.getResultFromCommServer(request.build());
   }
 

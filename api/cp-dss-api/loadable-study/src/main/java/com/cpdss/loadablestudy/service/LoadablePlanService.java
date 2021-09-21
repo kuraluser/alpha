@@ -2638,20 +2638,20 @@ public class LoadablePlanService {
                 Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
       } else {
         log.info("------- Envoy writer calling has failed : " + ewReply.getStatusCode());
-        //        AlgoResponse algoResponse =
-        //            restTemplate.postForObject(
-        //                loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
-        //
-        //        updateProcessIdForLoadablePattern(
-        //            algoResponse.getProcessId(),
-        //            loadablePatternOpt.get(),
-        //            LOADABLE_PATTERN_VALIDATION_STARTED_ID);
+        AlgoResponse algoResponse =
+            restTemplate.postForObject(
+                loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
+
+        updateProcessIdForLoadablePattern(
+            algoResponse.getProcessId(),
+            loadablePatternOpt.get(),
+            LOADABLE_PATTERN_VALIDATION_STARTED_ID);
       }
     }
     return replyBuilder;
   }
 
-  private void buildCommunicationServiceRequest(
+  public void buildCommunicationServiceRequest(
       LoadabalePatternValidateRequest loadabalePatternValidateRequest,
       LoadablePattern loadablePattern) {
     Long patternId = loadablePattern.getId();
@@ -2673,29 +2673,79 @@ public class LoadablePlanService {
 
     List<LoadablePatternCargoToppingOffSequence> loadablePatternCargoToppingOffSequences =
         toppingOffSequenceRepository.findByLoadablePatternAndIsActive(pattern, true);
-    List<LoadableStudy.LoadableQuantityCargoDetails> loadableQuantityCargoDetails =
-        new ArrayList<>();
+    List<LoadableQuantityCargoDetails> loadableQuantityCargoDetails = new ArrayList<>();
     for (LoadablePlanQuantity loableqty : loadablePlanQuantities) {
-      LoadableStudy.LoadableQuantityCargoDetails.Builder builder =
-          getLoadablePlanQtyBuilder(loableqty);
-      for (LoadablePatternCargoToppingOffSequence toppingOff :
-          loadablePatternCargoToppingOffSequences) {
-        LoadableStudy.CargoToppingOffSequenceDetails.Builder toppingOffBuilder =
-            LoadableStudy.CargoToppingOffSequenceDetails.newBuilder();
-        toppingOffBuilder.setTankId(toppingOff.getTankXId());
-        toppingOffBuilder.setOrderNumber(toppingOff.getOrderNumber());
-        builder.addToppingOffSequences(toppingOffBuilder);
-      }
-      loadableQuantityCargoDetails.add(builder.build());
+      LoadableQuantityCargoDetails loadableQuantityCargoDetailsEntity =
+          new LoadableQuantityCargoDetails();
+      ofNullable(loableqty.getId()).ifPresent(loadableQuantityCargoDetailsEntity::setId);
+      ofNullable(loableqty.getDifferenceColor())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setDifferenceColor);
+      ofNullable(loableqty.getDifferencePercentage())
+          .ifPresent(
+              diffPercentage ->
+                  loadableQuantityCargoDetailsEntity.setDifferencePercentage(
+                      String.valueOf(diffPercentage)));
+      ofNullable(loableqty.getEstimatedApi())
+          .ifPresent(
+              estimatedApi ->
+                  loadableQuantityCargoDetailsEntity.setEstimatedAPI(String.valueOf(estimatedApi)));
+      ofNullable(loableqty.getCargoNominationTemperature())
+          .ifPresent(
+              estimatedTemperature ->
+                  loadableQuantityCargoDetailsEntity.setEstimatedTemp(
+                      String.valueOf(estimatedTemperature)));
+      ofNullable(loableqty.getGrade()).ifPresent(loadableQuantityCargoDetailsEntity::setGrade);
+      ofNullable(loableqty.getLoadableBbls60f())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setLoadableBbls60f);
+      ofNullable(loableqty.getLoadableBblsDbs())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setLoadableBblsdbs);
+      ofNullable(loableqty.getLoadableKl())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setLoadableKL);
+      ofNullable(loableqty.getLoadableLt())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setLoadableLT);
+      ofNullable(loableqty.getLoadableMt())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setLoadableMT);
+      ofNullable(loableqty.getMaxTolerence())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setMaxTolerence);
+      ofNullable(loableqty.getMinTolerence())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setMinTolerence);
+      ofNullable(loableqty.getOrderBbls60f())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setOrderBbls60f);
+      ofNullable(loableqty.getOrderBblsDbs())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setOrderBblsdbs);
+      ofNullable(loableqty.getCargoXId()).ifPresent(loadableQuantityCargoDetailsEntity::setCargoId);
+      ofNullable(loableqty.getOrderQuantity())
+          .ifPresent(
+              orderQuantity ->
+                  loadableQuantityCargoDetailsEntity.setOrderQuantity(
+                      String.valueOf(orderQuantity)));
+      Optional.of(loableqty.getCargoColor())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setColorCode);
+      Optional.of(loableqty.getCargoAbbreviation())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setCargoAbbreviation);
+      Optional.ofNullable(loableqty.getTimeRequiredForLoading())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setTimeRequiredForLoading);
+      Optional.of(loableqty.getCargoNominationId())
+          .ifPresent(loadableQuantityCargoDetailsEntity::setCargoNominationId);
+      loadableQuantityCargoDetails.add(loadableQuantityCargoDetailsEntity);
+      //      for (LoadablePatternCargoToppingOffSequence toppingOff :
+      //          loadablePatternCargoToppingOffSequences) {
+      //          CargoToppingOffSequence toppingOffBuilder = new CargoToppingOffSequence();
+      //        toppingOffBuilder.setTankId(toppingOff.getTankXId());
+      //        toppingOffBuilder.setSequenceOrder(toppingOff.getOrderNumber());
+      //          toppingOffBuilder.setShortName(toppingOff.ge);
+      //        builder.addToppingOffSequences(toppingOffBuilder);
+      //      }
+      //      loadableQuantityCargoDetails.add(builder.build());
     }
-    //    loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream()
-    //        .forEach(
-    //            port -> {
-    //              port.getArrivalCondition()
-    //                  .setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
-    //              port.getDepartureCondition()
-    //                  .setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
-    //            });
+    loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().stream()
+        .forEach(
+            port -> {
+              port.getArrivalCondition()
+                  .setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
+              port.getDepartureCondition()
+                  .setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
+            });
   }
 
   private void buldLoadablPlanStabilityDetails(
@@ -2866,7 +2916,7 @@ public class LoadablePlanService {
    * @param loadablePattern
    * @param loadablePatternProcessingStartedId void
    */
-  private void updateProcessIdForLoadablePattern(
+  public void updateProcessIdForLoadablePattern(
       String processId, LoadablePattern loadablePattern, Long loadablePatternProcessingStartedId) {
     LoadablePatternAlgoStatus status = new LoadablePatternAlgoStatus();
     status.setLoadablePattern(loadablePattern);

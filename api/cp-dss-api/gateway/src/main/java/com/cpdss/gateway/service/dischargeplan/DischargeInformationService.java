@@ -22,7 +22,6 @@ import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadablePlanCommingleDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingBerthDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
@@ -342,10 +341,14 @@ public class DischargeInformationService {
         loadingPlanService.getUpdateUllageDetails(
             vesselId, patternId, portRotationId, operationType, true);
     BeanUtils.copyProperties(loadingUpdateUllageResponse, response);
-    response.setPortDischargePlanBallastDetails(loadingUpdateUllageResponse.getPortLoadablePlanBallastDetails());
-    response.setPortDischargePlanRobDetails(loadingUpdateUllageResponse.getPortLoadablePlanRobDetails());
-    response.setPortDischargePlanStowageDetails(loadingUpdateUllageResponse.getPortLoadablePlanStowageDetails());
-    response.setDischargePlanCommingleDetails(loadingUpdateUllageResponse.getLoadablePlanCommingleDetails());
+    response.setPortDischargePlanBallastDetails(
+        loadingUpdateUllageResponse.getPortLoadablePlanBallastDetails());
+    response.setPortDischargePlanRobDetails(
+        loadingUpdateUllageResponse.getPortLoadablePlanRobDetails());
+    response.setPortDischargePlanStowageDetails(
+        loadingUpdateUllageResponse.getPortLoadablePlanStowageDetails());
+    response.setDischargePlanCommingleDetails(
+        loadingUpdateUllageResponse.getLoadablePlanCommingleDetails());
 
     return response;
   }

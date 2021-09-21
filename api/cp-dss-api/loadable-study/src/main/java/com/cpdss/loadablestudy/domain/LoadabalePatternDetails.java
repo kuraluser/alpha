@@ -12,6 +12,6 @@ public class LoadabalePatternDetails {
   private List<LoadablePlanStowageDetails> loadablePlanStowageDetails;
   private List<LoadablePlanBallastDetails> loadablePlanBallastDetails;
   private List<LoadablePlanStowageDetails> loadablePlanCommingleDetails;
-  // private List<LoadableStudy.LoadableQuantityCargoDetails> loadableQuantityCargoDetails;
+  private List<LoadableQuantityCargoDetails> loadableQuantityCargoDetails;
   StabilityParameter stabilityParameter;
 }
