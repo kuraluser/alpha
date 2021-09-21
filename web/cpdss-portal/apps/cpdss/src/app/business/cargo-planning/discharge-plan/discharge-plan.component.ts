@@ -3,13 +3,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
+
 import { DischargePlanApiService } from '../services/discharge-plan-api.service';
 
 import { NgxSpinnerService } from 'ngx-spinner';
+import { TranslateService } from '@ngx-translate/core';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
-import { Voyage , ICargoResponseModel , ICargo } from '../../core/models/common.model';
+import { Voyage, ICargoResponseModel, ICargo } from '../../core/models/common.model';
 import { IVessel } from '../../core/models/vessel-details.model';
-import { IPort , VOYAGE_STATUS } from '../../core/models/common.model';
+import { IPort, VOYAGE_STATUS, DISCHARGE_STUDY_STATUS } from '../../core/models/common.model';
 import { IDischargeStudy } from './../models/discharge-study-list.model';
 import { IDischargeStudyPortListDetails } from './../models/discharge-study-view-plan.model';
 
@@ -49,8 +52,12 @@ export class DischargePlanComponent implements OnInit {
   voyages: Voyage[];
   selectedVoyage: Voyage;
   cargos: ICargo[];
+  dischargePatternId: number;
   dischargeStudies: IDischargeStudy[];
   dischargeStudyPlanDetails: IDischargeStudyPortListDetails[];
+  confirmPlanPermission: boolean;
+  readonly DISCHARGE_STUDY_STATUS = DISCHARGE_STUDY_STATUS;
+  readonly VOYAGE_STATUS = VOYAGE_STATUS;
 
   private _selectedDischargeStudy: IDischargeStudy;
 
@@ -64,6 +71,9 @@ export class DischargePlanComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService,
     private vesselsApiService: VesselsApiService,
     private voyageService: VoyageService,
+    private translateService: TranslateService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) { }
 
   /**
@@ -96,6 +106,7 @@ export class DischargePlanComponent implements OnInit {
    */
   setPagePermissionContext() {
     this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyViewPlan'], true);
+    this.confirmPlanPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyConfirmPlan'], false)?.view;
   }
 
 
@@ -107,7 +118,7 @@ export class DischargePlanComponent implements OnInit {
   * @memberof DischargePlanComponent
   */
   private async getCargos() {
-    const cargos:ICargoResponseModel = await this.dischargePlanApiService.getCargoDetails().toPromise();
+    const cargos: ICargoResponseModel = await this.dischargePlanApiService.getCargoDetails().toPromise();
     this.cargos = cargos.cargos;
   }
 
@@ -198,5 +209,50 @@ export class DischargePlanComponent implements OnInit {
   planDetails(planDetails: IDischargeStudyPortListDetails[]) {
     this.dischargeStudyPlanDetails = planDetails;
   }
-  
+
+  /**
+   * for confirm plan
+   * @memberof DischargePlanComponent
+  */
+  async confirmPlan() {
+    this.ngxSpinnerService.show();
+    const translationKeys = await this.translateService.get(['DISCHARGE_PLAN_CONFIRM_STATUS_ERROR',
+      'DISCHARGE_PLAN_CONFIRM_REJECT_LABEL', 'DISCHARGE_PLAN_CONFIRM_CONFIRM_LABEL', 'DISCHARGE_PLAN_CONFIRM_SUMMARY', 'DISCHARGE_PLAN_CONFIRM_ERROR', 'DISCHARGE_PLAN_CONFIRM_DETAILS_NOT_CONFIRM', 'DISCHARGE_PLAN_CONFIRM_DETAILS_CONFIRM']).toPromise();
+    
+    let detail;
+    const confirmed = this.dischargeStudies.find(dischargeStudy => dischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED);
+    if (!confirmed) {
+      detail = "DISCHARGE_PLAN_CONFIRM_DETAILS_NOT_CONFIRM";
+    } else {
+      detail = "DISCHARGE_PLAN_CONFIRM_DETAILS_CONFIRM";
+    }
+
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['DISCHARGE_PLAN_CONFIRM_SUMMARY'],
+      message: translationKeys[detail],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['DISCHARGE_PLAN_CONFIRM_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: true,
+      rejectLabel: translationKeys['DISCHARGE_PLAN_CONFIRM_REJECT_LABEL'],
+      rejectIcon: 'pi',
+      rejectButtonStyleClass: 'btn btn-main',
+      accept: async () => {
+        try {
+          const confirmResult = await this.dischargePlanApiService.confirm(this.vesselId, this.voyageId, this.dischargeStudyId, this.dischargePatternId).toPromise();
+          if (confirmResult.responseStatus.status === '200') {
+            this.selectedDischargeStudy.statusId = DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED;
+          }
+        } catch (errorResponse) {
+          if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+            this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_PLAN_CONFIRM_ERROR'], detail: translationKeys['DISCHARGE_PLAN_CONFIRM_STATUS_ERROR'], life: 10000 });
+          }
+        }
+      }
+    });
+
+  }
+
 }

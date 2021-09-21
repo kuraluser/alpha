@@ -953,7 +953,8 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       errorMessages: {
         'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
         'min': 'DISCHARGE_STUDY_QUANTITY_MIN_VALUE',
-        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR'
+        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR',
+        'backloadingGreaterThanLoading': 'DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY'
       }
     },
     {
