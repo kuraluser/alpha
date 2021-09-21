@@ -33,6 +33,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   @ViewChild(LoadingInformationComponent) loadingInformationComponent: LoadingInformationComponent
   @ViewChild('loadingInstruction') loadingInstruction;
+  @ViewChild('loadingInfo') loadingInfo;
   currentTab: OPERATION_TAB = OPERATION_TAB.INFORMATION;
   OPERATION_TAB = OPERATION_TAB;
   vesselId: number;
@@ -454,6 +455,20 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
  async viewError(status) {
     await this.getAlgoErrorMessage(true);
     this.errorPopUp = status;
+  }
+
+  /**
+   * Method to check loading info is valid
+   *
+   * @memberof LoadingComponent
+   */
+  isLoadingInfoValid() {
+    if( this.currentTab === OPERATION_TAB.INFORMATION && this.loadingInfo?.loadingInformationData) {
+      return  (this.loadingInfo.isLoadingInfoValid() && 
+      this.loadingDischargingTransformationService.isMachineryValid && this.loadingDischargingTransformationService.isCargoAdded);
+    } else {
+      return this.loadingInformationComplete;
+    }
   }
 
 }

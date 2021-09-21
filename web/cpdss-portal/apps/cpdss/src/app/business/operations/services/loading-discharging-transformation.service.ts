@@ -54,6 +54,8 @@ export class LoadingDischargingTransformationService {
   isDischargeStarted$ = this._isDischargeStarted.asObservable();
 
   portRotationId: number;
+  isMachineryValid: boolean;
+  isCargoAdded: boolean;
 
   constructor(
     private quantityPipe: QuantityPipe,

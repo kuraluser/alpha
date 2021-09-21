@@ -294,7 +294,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
     if (this.checkIfValid()) {
 
     }
-    const validSequence = await this.manageSequenceComponent.checkCargoCount();
+    const validSequence = await this.manageSequenceComponent.checkCargoCount(true);
     if (!validSequence) {
       return false;
     }

@@ -11,6 +11,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ICargo, OPERATIONS , ILoadableQuantityCargo } from '../../../core/models/common.model';
 import {RulesService}from '../../services/rules/rules.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
+import { LoadingDischargingManageSequenceComponent } from '../../loading-discharging-manage-sequence/loading-discharging-manage-sequence.component';
+import { LoadingDischargingCargoMachineryComponent } from '../../loading-discharging-cargo-machinery/loading-discharging-cargo-machinery.component';
 
 @Component({
   selector: 'cpdss-portal-loading-information',
@@ -26,9 +28,9 @@ import { LoadingDischargingTransformationService } from '../../services/loading-
  * @implements {OnInit}
  */
 export class LoadingInformationComponent implements OnInit , OnDestroy {
-  @ViewChild('manageSequence') manageSequence;
+  @ViewChild('manageSequence') manageSequence: LoadingDischargingManageSequenceComponent;
   @ViewChild('dischargeBerth') dischargeBerth;
-  @ViewChild('machineryRef') machineryRef;
+  @ViewChild('machineryRef') machineryRef: LoadingDischargingCargoMachineryComponent;
   @ViewChild('dischargeDetails') dischargeDetails;
   @ViewChild('loadingRate') loadingRate;
 
@@ -324,6 +326,19 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
     this.hasUnSavedData = true;
   }
 
+  isLoadingInfoValid() {
+    if(this.loadingRate?.loadingRatesFormGroup?.invalid || 
+      this.manageSequence?.loadingDischargingSequenceForm?.invalid || 
+      this.dischargeBerth?.berthForm?.invalid || 
+      this.dischargeBerth?.berthDetailsForm?.invalid ||
+      this.dischargeDetails?.loadingDischargingDetailsForm?.invalid || 
+      this.loadingRate?.loadingRatesFormGroup?.invalid) {
+        return false;
+      } else {
+        return true;
+      }
+  }
+
   /**
   * Method for event to save loading information data
   *
@@ -332,7 +347,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   async saveLoadingInformationData() {
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_INVALID_DATA','LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY', 'LOADING_INFORMATION_NO_BERTHS']).toPromise();
     
-    if(this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid ||
+    if(this.loadingRate?.loadingRatesFormGroup?.invalid || this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid ||
       this.dischargeDetails.loadingDischargingDetailsForm.invalid || this.loadingRate.loadingRatesFormGroup.invalid) {
    
 
@@ -342,11 +357,11 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
       }
       return;
     }
-    const isMachineryValid = await this.machineryRef.isMachineryValid();
+    const isMachineryValid = await this.machineryRef.isMachineryValid(true);
     if(!isMachineryValid) {
       return;
     }
-    const iscargoAdded = await this.manageSequence.checkCargoCount();
+    const iscargoAdded = await this.manageSequence.checkCargoCount(true);
     if(!iscargoAdded) {
       return;
     }
@@ -366,7 +381,9 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
           this.loadingInformationData = result?.loadingInformation;
           await this.updateGetData();
           this.hasUnSavedData = false;
+          this.loadingDischargingTransformationService.setLoadingInformationValidity(true)
           this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INFORMATION_SAVE_SUCCESS'], detail: translationKeys['LOADING_INFORMATION_SAVED_SUCCESSFULLY'] });
+          
         }
         this.ngxSpinnerService.hide();
       }
