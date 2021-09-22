@@ -150,7 +150,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           }
 
           if (trimAllowed.getFinalTrim().isEmpty()) {
-            var a = extract.getDefaultValueForKey(AdminRuleTemplate.INITIAL_TRIM);
+            var a = extract.getDefaultValueForKey(AdminRuleTemplate.FINAL_TRIM);
             trimAllowedDto.setFinalTrim(a.isEmpty() ? null : new BigDecimal(a));
           } else {
             trimAllowedDto.setFinalTrim(new BigDecimal(trimAllowed.getFinalTrim()));

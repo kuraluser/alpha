@@ -500,6 +500,59 @@ public final class DischargeStudyOperationServiceGrpc {
     return getConfirmPlanMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.CowHistoryRequest,
+          com.cpdss.common.generated.LoadableStudy.CowHistoryReply>
+      getGetCowHistoryByVesselIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getCowHistoryByVesselId",
+      requestType = com.cpdss.common.generated.LoadableStudy.CowHistoryRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.CowHistoryReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.CowHistoryRequest,
+          com.cpdss.common.generated.LoadableStudy.CowHistoryReply>
+      getGetCowHistoryByVesselIdMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.CowHistoryRequest,
+            com.cpdss.common.generated.LoadableStudy.CowHistoryReply>
+        getGetCowHistoryByVesselIdMethod;
+    if ((getGetCowHistoryByVesselIdMethod =
+            DischargeStudyOperationServiceGrpc.getGetCowHistoryByVesselIdMethod)
+        == null) {
+      synchronized (DischargeStudyOperationServiceGrpc.class) {
+        if ((getGetCowHistoryByVesselIdMethod =
+                DischargeStudyOperationServiceGrpc.getGetCowHistoryByVesselIdMethod)
+            == null) {
+          DischargeStudyOperationServiceGrpc.getGetCowHistoryByVesselIdMethod =
+              getGetCowHistoryByVesselIdMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.CowHistoryRequest,
+                          com.cpdss.common.generated.LoadableStudy.CowHistoryReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "getCowHistoryByVesselId"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.CowHistoryRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.CowHistoryReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeStudyOperationServiceMethodDescriptorSupplier(
+                              "getCowHistoryByVesselId"))
+                      .build();
+        }
+      }
+    }
+    return getGetCowHistoryByVesselIdMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeStudyOperationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeStudyOperationServiceStub> factory =
@@ -633,6 +686,15 @@ public final class DischargeStudyOperationServiceGrpc {
           getConfirmPlanMethod(), responseObserver);
     }
 
+    /** */
+    public void getCowHistoryByVesselId(
+        com.cpdss.common.generated.LoadableStudy.CowHistoryRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CowHistoryReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetCowHistoryByVesselIdMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -733,6 +795,13 @@ public final class DischargeStudyOperationServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest,
                       com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>(
                       this, METHODID_CONFIRM_PLAN)))
+          .addMethod(
+              getGetCowHistoryByVesselIdMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.CowHistoryRequest,
+                      com.cpdss.common.generated.LoadableStudy.CowHistoryReply>(
+                      this, METHODID_GET_COW_HISTORY_BY_VESSEL_ID)))
           .build();
     }
   }
@@ -853,6 +922,17 @@ public final class DischargeStudyOperationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getCowHistoryByVesselId(
+        com.cpdss.common.generated.LoadableStudy.CowHistoryRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.CowHistoryReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetCowHistoryByVesselIdMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -932,6 +1012,13 @@ public final class DischargeStudyOperationServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getConfirmPlanMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.CowHistoryReply getCowHistoryByVesselId(
+        com.cpdss.common.generated.LoadableStudy.CowHistoryRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetCowHistoryByVesselIdMethod(), getCallOptions(), request);
     }
   }
 
@@ -1024,6 +1111,15 @@ public final class DischargeStudyOperationServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getConfirmPlanMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.CowHistoryReply>
+        getCowHistoryByVesselId(
+            com.cpdss.common.generated.LoadableStudy.CowHistoryRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetCowHistoryByVesselIdMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DELETE_DISCHARGE_STUDY = 0;
@@ -1034,6 +1130,7 @@ public final class DischargeStudyOperationServiceGrpc {
   private static final int METHODID_GENERATE_DISCHARGE_PATTERNS = 5;
   private static final int METHODID_GET_DISCHARGE_PLAN_DETAILS = 6;
   private static final int METHODID_CONFIRM_PLAN = 7;
+  private static final int METHODID_GET_COW_HISTORY_BY_VESSEL_ID = 8;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1137,6 +1234,13 @@ public final class DischargeStudyOperationServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply>)
                   responseObserver);
           break;
+        case METHODID_GET_COW_HISTORY_BY_VESSEL_ID:
+          serviceImpl.getCowHistoryByVesselId(
+              (com.cpdss.common.generated.LoadableStudy.CowHistoryRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.CowHistoryReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1210,6 +1314,7 @@ public final class DischargeStudyOperationServiceGrpc {
                       .addMethod(getGenerateDischargePatternsMethod())
                       .addMethod(getGetDischargePlanDetailsMethod())
                       .addMethod(getConfirmPlanMethod())
+                      .addMethod(getGetCowHistoryByVesselIdMethod())
                       .build();
         }
       }

@@ -215,10 +215,29 @@ service DischargeStudyOperationService {
   rpc GenerateDischargePatterns (AlgoRequest) returns (AlgoReply) {}
   rpc GetDischargePlanDetails(LoadablePlanDetailsRequest) returns (CargoNominationReply) {}
   rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {}
+	rpc getCowHistoryByVesselId(CowHistoryRequest) returns (CowHistoryReply);
 }
 
 service PortInstructionService {
     rpc getInstructions (EmptyRequest)  returns (InstructionReply){}
+}
+
+message CowHistoryRequest {
+	int64 vesselId =2;
+}
+
+message CowHistoryReply {
+	ResponseStatus responseStatus = 1;
+	repeated CowHistory cowHistory = 2;
+}
+
+message CowHistory {
+	int64 id = 1;
+	int64 vesselId =2;
+	int64 voyageId = 3;
+	int64 portId =4 ;
+	int64 tankId = 5;
+	COW_OPTION_TYPE cowOptionType = 6;
 }
 
 message DischargePlanDetailsReply {

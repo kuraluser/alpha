@@ -13,6 +13,6 @@ public class DischargeDelays {
   private List<Long> reasonForDelayIds;
   private BigDecimal duration;
   private Long cargoId;
-  private Long cargoNominationId;
+  private Long dsCargoNominationId;
   private BigDecimal quantity;
 }

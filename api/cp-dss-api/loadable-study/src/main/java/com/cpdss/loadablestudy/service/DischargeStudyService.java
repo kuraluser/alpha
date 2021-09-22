@@ -77,6 +77,8 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.repository.*;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -92,6 +94,9 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
@@ -124,6 +129,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private LoadablePlanService loadablePlanService;
   @Autowired private LoadablePatternRepository loadablePatternRepository;
   @Autowired private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
+  @Autowired CowHistoryRepository cowHistoryRepository;
 
   @GrpcClient("dischargeInformationService")
   private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
@@ -1490,5 +1496,41 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               request.addPortData(portDataBuilder);
             });
     dischargePlanServiceBlockingStub.dischargePlanSynchronization(request.build());
+  }
+
+  public void getCowHistoryByVesselId(
+      com.cpdss.common.generated.LoadableStudy.CowHistoryRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.CowHistoryReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CowHistoryReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.CowHistoryReply.newBuilder();
+    try {
+      Pageable pageable = PageRequest.of(0, 500, Sort.by("lastModifiedDateTime").descending());
+      List<CowHistory> list =
+          cowHistoryRepository.findAllByVesselIdAndIsActiveTrue(request.getVesselId(), pageable);
+      for (CowHistory ch : list) {
+        com.cpdss.common.generated.LoadableStudy.CowHistory.Builder cowBuilder =
+            com.cpdss.common.generated.LoadableStudy.CowHistory.newBuilder();
+        cowBuilder.setId(ch.getId());
+        cowBuilder.setVesselId(ch.getVesselId());
+        cowBuilder.setVoyageId(ch.getVoyageId());
+        cowBuilder.setPortId(ch.getPortId());
+        if (ch.getTankId() != null) {
+          cowBuilder.setTankId(ch.getTankId());
+        }
+        cowBuilder.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(ch.getCowTypeId().intValue()));
+        replyBuilder.addCowHistory(cowBuilder.build());
+      }
+    } catch (Exception e) {
+      log.error("Exception when confirmPlan ", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when confirmPlan Loadable Study Status"));
+
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

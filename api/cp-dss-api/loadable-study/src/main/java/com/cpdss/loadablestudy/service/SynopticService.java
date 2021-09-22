@@ -230,7 +230,7 @@ public class SynopticService {
             getCargoNominationIdList(request.getPatternId(), request.getPortId());
         dataList =
             disList.stream()
-                .filter(v -> nominationIds.contains(v.getCargoNominationId()))
+                .filter(v -> nominationIds.contains(v.getDischargeCargoNominationId()))
                 .collect(Collectors.toList());
       } else {
         dataList = disList; // no filter, add all data
@@ -296,6 +296,8 @@ public class SynopticService {
 
           Optional.ofNullable(var1.getCargoNominationId())
               .ifPresent(builder1::setCargoNominationId);
+          Optional.ofNullable(var1.getDischargeCargoNominationId())
+              .ifPresent(builder1::setDscargoNominationId);
           Optional.ofNullable(var1.getTimeRequiredForDischarging())
               .ifPresent(value -> builder1.setTimeRequiredForDischarging(String.valueOf(value)));
           builder.addLoadableQuantityCargoDetails(builder1.build());

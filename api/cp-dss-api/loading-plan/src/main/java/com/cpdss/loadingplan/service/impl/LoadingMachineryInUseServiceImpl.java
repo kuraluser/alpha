@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.impl;
 
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.LoadingMachineryInUse;
@@ -54,7 +55,12 @@ public class LoadingMachineryInUseServiceImpl implements LoadingMachineryInUseSe
               .get()
               .setCapacity(
                   lm.getCapacity().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lm.getCapacity()));
-          lmVar1.get().setIsActive(true); // For new record always True.
+          lmVar1.get().setIsActive(true); // New entry must be true
+        }
+        // Set capacity to 0, bug fix: DSS-4016
+        if (Common.MachineType.MANIFOLD_VALUE == lm.getMachineTypeValue()
+            || Common.MachineType.BOTTOM_LINE_VALUE == lm.getMachineTypeValue()) {
+          lmVar1.get().setCapacity(BigDecimal.ZERO);
         }
         this.loadingMachineryInUseRepository.save(lmVar1.get());
       }
