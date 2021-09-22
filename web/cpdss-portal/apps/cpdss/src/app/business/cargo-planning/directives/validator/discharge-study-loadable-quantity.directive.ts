@@ -1,4 +1,6 @@
 import { FormArray, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
+import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 
 /**
  * Validator function for loadableQuantity in backloading
@@ -9,6 +11,7 @@ import { FormArray, FormControl, ValidationErrors, ValidatorFn } from '@angular/
  */
 export function dischargeStudyLoadableQuantity(loadableQuantity: number): ValidatorFn {
     return (control: FormControl): ValidationErrors | null => {
+        const quantityPipe = new QuantityPipe();
         if (!control.root || !control.parent) {
             return null;
         }
@@ -18,10 +21,11 @@ export function dischargeStudyLoadableQuantity(loadableQuantity: number): Valida
             const backLoadingDetailsFormControls = item.get('backLoadingDetails').get('dataTable') as FormArray;
             backLoadingDetailsFormControls['controls'].map((backLoadingItems) => {
                 if (backLoadingItems.get('kl').value) {
-                    maxQuantity = Number(backLoadingItems.get('kl').value);
+                    maxQuantity += Number(quantityPipe.transform(backLoadingItems.get('kl').value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, backLoadingItems.get('api').value, backLoadingItems.get('temp').value , -1));
                 }
             })
         })
+        
         if (loadableQuantity < maxQuantity) {
             return { backloadingGreaterThanLoading: true }
         } else {

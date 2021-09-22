@@ -316,6 +316,7 @@ export interface IDischargeStudiesResponse {
  export interface IDischargeStudyDetailsResponse {
     responseStatus: IResponse;
     dischargeStudyId: number;
+    loadableQuantity: number;
     portList: IDischargeStudyPortListDetails[];
 }
 
