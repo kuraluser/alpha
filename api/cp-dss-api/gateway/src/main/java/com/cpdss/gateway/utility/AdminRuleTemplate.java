@@ -13,6 +13,7 @@ public enum AdminRuleTemplate {
   NOTICE_TIME_FOR_RATE_REDUCTION(57L),
   NOTICE_TIME_FOR_STOPPING_LOADING(58L),
   LINE_CONTENT_REMAINING(59L),
+  MIN_INITIAL_RATE(52L),
   // Loading Rules - end
 
   // Discharge Rules -start
