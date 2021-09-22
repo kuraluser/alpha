@@ -218,16 +218,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       // RPC call to vessel info, Get Vessel Details
       VesselInfo.VesselDetail vesselDetail = vesselInfoService.getVesselInfoByVesselId(vesselId);
       if (vesselDetail != null) {
-        // Min Loading Rate
-        if (rateFromLoading.getMinLoadingRate().isEmpty()) {
-          loadingRates.setMinLoadingRate(
-              vesselDetail.getMinLoadingRate().isEmpty()
-                  ? null
-                  : new BigDecimal(vesselDetail.getMinLoadingRate()));
-        } else {
-          loadingRates.setMinLoadingRate(new BigDecimal(rateFromLoading.getMinLoadingRate()));
-        }
-        loadingRates.setMinDischargingRate(loadingRates.getMinLoadingRate());
+        // Min Rate not from vessel, moved to below for rule value
 
         // Max Loading Rate
         if (rateFromLoading.getMaxLoadingRate().isEmpty()) {
@@ -258,6 +249,15 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
       AdminRuleValueExtract extract =
           AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
+
+      // Min Loading Rate
+      if (rateFromLoading.getMinLoadingRate().isEmpty()) {
+        var d = extract.getDefaultValueForKey(AdminRuleTemplate.MIN_INITIAL_RATE);
+        loadingRates.setMinLoadingRate(d.isEmpty() ? null : new BigDecimal(d));
+      } else {
+        loadingRates.setMinLoadingRate(new BigDecimal(rateFromLoading.getMinLoadingRate()));
+      }
+      loadingRates.setMinDischargingRate(loadingRates.getMinLoadingRate());
 
       // Min De ballast rate
       if (rateFromLoading.getMinDeBallastingRate().isEmpty()) {
