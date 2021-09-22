@@ -27,10 +27,8 @@ import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.AlgoError;
 import com.cpdss.gateway.domain.AlgoErrorResponse;
 import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
-import com.cpdss.gateway.domain.ListOfUllageReportResponse;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
 import com.cpdss.gateway.domain.RuleResponse;
-import com.cpdss.gateway.domain.UllageReportImportResponse;
 import com.cpdss.gateway.domain.UpdateUllage;
 import com.cpdss.gateway.domain.UploadTideDetailResponse;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
@@ -573,7 +571,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         Optional.ofNullable(var1.getTankId()).ifPresent(var2::setTankId);
         Optional.ofNullable(var1.getCargoId()).ifPresent(var2::setCargoId);
         Optional.ofNullable(var1.getCargoName()).ifPresent(var2::setCargoName);
-        Optional.ofNullable(var1.getCargoAbbreviation()).ifPresent(var2::setCargoAbbreviation);
+        Optional.ofNullable(var1.getAbbreviation()).ifPresent(var2::setCargoAbbreviation);
         Optional.ofNullable(var1.getColourCode()).ifPresent(var2::setColourCode);
         Optional.ofNullable(var1.getRemark()).ifPresent(var2::setRemark);
         var2.setUllage(
@@ -588,6 +586,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         var2.setTemperature(
             var1.getApi().isEmpty() ? BigDecimal.ZERO : new BigDecimal(var1.getTemperature()));
         Optional.ofNullable(var1.getDisplayOrder()).ifPresent(var2::setDisplayOrder);
+        Optional.ofNullable(var1.getCargoNominationId()).ifPresent(var2::setCargoNominationId);
         list2.add(var2);
         log.info("Loading Plan Topping off list Id {}", var1.getId());
       }
@@ -1098,5 +1097,4 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
     return pdStage;
   }
-
 }

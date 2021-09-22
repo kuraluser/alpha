@@ -175,6 +175,8 @@ message LoadingToppingOff{
   string api = 13;
   string temperature = 14;
   int32  displayOrder = 15;
+  string abbreviation = 16;
+  int64 cargoNominationId = 17;
 }
 
 
@@ -345,6 +347,8 @@ message CargoToppingOffSequence {
   string temperature = 12;
   int32 displayOrder = 13;
   int64 portRotationId = 14;
+  int64 cargoNominationId = 15;
+  string abbreviation = 16;
 }
 
 message LoadingPlanSyncDetails {

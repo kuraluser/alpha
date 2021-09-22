@@ -23,4 +23,5 @@ public class ToppingOffSequence {
   private BigDecimal api;
   private BigDecimal temperature;
   private Integer displayOrder;
+  private Long cargoNominationId;
 }
