@@ -657,6 +657,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     // Get Update Ullage Data
     LoadingPlanModels.UpdateUllageDetailsResponse response = null;
+    //discharging and loading has same functionality after the data taken from specific micro service. so re using the loading plan logic
     if (isDischarging) {
       response =
           this.dischargePlanServiceBlockingStub.getDischargeUpdateUllageDetails(
