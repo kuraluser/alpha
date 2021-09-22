@@ -83,7 +83,6 @@ export class ToppingOffTankTableComponent implements OnInit {
         const cargo = this.findCargo(topping?.cargoId);
         const foundTank = this.findTank(topping?.tankId)
         topping.cargoName = cargo?.name;
-        topping.cargoAbbreviation = cargo?.abbreviation;
         topping.shortName = foundTank?.shortName;
         topping.colourCode = foundTank?.commodity?.colorCode ? foundTank?.commodity?.colorCode : this.getColourCode(topping);
         return topping;
