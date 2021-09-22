@@ -318,8 +318,8 @@
                             <td class="text-right">{{row.plan.lt | quantityDecimalFormat : QUANTITY_UNIT.LT}}</td>
                             <td class="text-right">{{row.plan.mt | quantityDecimalFormat : QUANTITY_UNIT.MT}}</td>
                             <td class="text-right">{{row.plan.kl | quantityDecimalFormat : QUANTITY_UNIT.KT}}</td>
-                            <td class="text-right">{{row.plan.api}}</td>
-                            <td class="text-right">{{row.plan.temp}}</td>
+                            <td class="text-right">{{row.plan.api?.toFixed(2)}}</td>
+                            <td class="text-right">{{row.plan.temp?.toFixed(2)}}</td>
                         </tr>
                         <tr>
                             <td>{{'ULLAGE_UPDATE_ACTUAL_LABEL' | translate}}</td>
@@ -327,8 +327,8 @@
                             <td class="text-right">{{row.actual.lt | quantityDecimalFormat : QUANTITY_UNIT.LT}}</td>
                             <td class="text-right">{{row.actual.mt | quantityDecimalFormat : QUANTITY_UNIT.MT}}</td>
                             <td class="text-right">{{row.actual.kl | quantityDecimalFormat : QUANTITY_UNIT.KL}}</td>
-                            <td class="text-right">{{row.actual.api}}</td>
-                            <td class="text-right">{{row.actual.temp}}</td>
+                            <td class="text-right">{{row.actual.api?.toFixed(2)}}</td>
+                            <td class="text-right">{{row.actual.temp?.toFixed(2)}}</td>
                         </tr>
                         <tr>
                             <td>{{'ULLAGE_UPDATE_BLFIG_LABEL' | translate}}</td>
@@ -336,25 +336,25 @@
                             <td class="text-right">{{row.blFigure.lt | quantityDecimalFormat : QUANTITY_UNIT.LT}}</td>
                             <td class="text-right">{{row.blFigure.mt | quantityDecimalFormat : QUANTITY_UNIT.MT}}</td>
                             <td class="text-right">{{row.blFigure.kl | quantityDecimalFormat : QUANTITY_UNIT.KL}}</td>
-                            <td class="text-right">{{row.blFigure.api}}</td>
-                            <td class="text-right">{{row.blFigure.temp}}</td>
+                            <td class="text-right">{{row.blFigure.api?.toFixed(2)}}</td>
+                            <td class="text-right">{{row.blFigure.temp?.toFixed(2)}}</td>
                         </tr>
                         <tr>
                             <td>{{'ULLAGE_UPDATE_DIFF_LABEL' | translate}}</td>
-                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.bbl !== 0}">{{row.difference.bbl | quantityDecimalFormat : QUANTITY_UNIT.BBLS}}</td>
-                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.lt !== 0}">{{row.difference.lt | quantityDecimalFormat : QUANTITY_UNIT.LT}}</td>
-                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.mt !== 0}">{{row.difference.mt | quantityDecimalFormat : QUANTITY_UNIT.MT}}</td>
-                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.kl !== 0}">{{row.difference.kl | quantityDecimalFormat : QUANTITY_UNIT.KL}}</td>
+                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.bbl != 0}">{{row.difference.bbl | quantityDecimalFormat : QUANTITY_UNIT.BBLS}}</td>
+                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.lt != 0}">{{row.difference.lt | quantityDecimalFormat : QUANTITY_UNIT.LT}}</td>
+                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.mt != 0}">{{row.difference.mt | quantityDecimalFormat : QUANTITY_UNIT.MT}}</td>
+                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.kl != 0}">{{row.difference.kl | quantityDecimalFormat : QUANTITY_UNIT.KL}}</td>
                             <td class="text-right"></td>
                             <td class="text-right"></td>
                         </tr>
                         <tr>
                             <td colspan="2"></td>
                             <td>{{'ULLAGE_UPDATE_DIFFPER_LABEL' | translate}}</td>
-                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.bbl !== 0}">{{row.diffPercentage.bbl}}</td>
-                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.lt !== 0}">{{row.diffPercentage.lt}}</td>
-                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.mt !== 0}">{{row.diffPercentage.mt}}</td>
-                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.kl !== 0}">{{row.diffPercentage.kl}}</td>
+                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.bbl != 0}">{{row.diffPercentage.bbl}}</td>
+                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.lt != 0}">{{row.diffPercentage.lt}}</td>
+                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.mt != 0}">{{row.diffPercentage.mt}}</td>
+                            <td class="text-right" [ngClass]="{'text-danger' : row.difference.kl != 0}">{{row.diffPercentage.kl}}</td>
                             <td class="text-right"></td>
                             <td class="text-right"></td>
                         </tr>

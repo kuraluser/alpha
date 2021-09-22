@@ -850,6 +850,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     this.blFigure.items = [...this.blFigure.items];
     this.getCargoItems(rowIndex).removeAt(colIndex);
     this.calculateTotal();
+    this.updateCargoQuantiyData();
     setTimeout(() => {
       this.validateBlFigTable();
     });
@@ -892,7 +893,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   */
   initCargoDetails(cargo: any): FormGroup {
     return this.fb.group({
-      blRefNo: this.fb.control(cargo.blRefNo.value, [Validators.minLength(4), Validators.maxLength(12), Validators.pattern(/^[ A-Za-z0-9#&()/":\-=+*]*$/)]),
+      blRefNo: this.fb.control(cargo.blRefNo.value, [Validators.minLength(4), Validators.maxLength(12), Validators.pattern(/^[ #&()\/":\-=+*]*[a-zA-Z0-9]/)]),
       bbl: this.fb.control(cargo.bbl.value, [Validators.min(0), numberValidator(0, 7, false)]),
       lt: this.fb.control(cargo.lt.value, [Validators.min(0), numberValidator(2, 7, false)]),
       mt: this.fb.control(cargo.mt.value, [Validators.min(0), numberValidator(2, 7, false)]),

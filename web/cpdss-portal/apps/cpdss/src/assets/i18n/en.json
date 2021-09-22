@@ -1939,7 +1939,7 @@
   "ULLAGE_UPDATE_ERROR_LABEL": "Error",
   "ULLAGE_UPDATE_SUCCESS_LABEL": "Success",
   "ULLAGE_UPDATE_SUCCESS_MESSAGE": "Ullage updated successfully",
-  "ULLAGE_UPDATE_FILLING_ERROR": "The value entered is not within the required limit.",
+  "ULLAGE_UPDATE_FILLING_ERROR": "The value entered is not within the required limit. It exceeds 98% filling percentage",
   "ULLAGE_UPDATE_FILLING_PERCENTAGE_ERROR_ONE": "Filling percentage of",
   "ULLAGE_UPDATE_FILLING_PERCENTAGE_ERROR_TWO": "exceeds max limit",
   "ULLAGE_UPDATE_BLREF_PATTERN_ERROR": "Invalida data",

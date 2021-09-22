@@ -79,7 +79,7 @@
                         *ngIf="loadingDischargingPlanInfo?.dischargePlanArrStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS || loadingDischargingPlanInfo?.dischargePlanArrStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_GENERATED">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.dischargePlanArrStatusId]
                         | translate}}</span>
                 </ng-container>
-                <button (click)="display = true" class="btn btn-main mr-5 mt-5"
+                <button [disabled]="loadingDischargingPlanInfo?.loadingPlanArrStatusId === ULLAGE_STATUS_VALUE.IN_PROGRESS || loadingDischargingPlanInfo?.dischargePlanArrStatusId === ULLAGE_STATUS_VALUE.IN_PROGRESS" (click)="display = true" class="btn btn-main mr-5 mt-5"
                     id="cargo_update">{{'LOADABLE_PLAN_ARRIVAL_CONDITION_CARGO_UPDATE_ULLAGE'| translate}}</button>
                 <button (click)="showError()"
                     *ngIf="loadingDischargingPlanInfo?.loadingPlanArrStatusId === ULLAGE_STATUS_VALUE.ERROR"
