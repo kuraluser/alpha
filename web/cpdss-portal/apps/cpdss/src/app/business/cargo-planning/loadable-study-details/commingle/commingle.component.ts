@@ -601,6 +601,8 @@ export class CommingleComponent implements OnInit {
   updateCommingleFormValue() {
     if (this.isVolumeMaximum) {
       if (this.commingleCargo?.purposeId === 1 && this.commingleCargo?.cargoGroups[0]?.cargo1Id && this.commingleCargo?.cargoGroups[0]?.cargo2Id) {
+        this.cargoNominationsCargo2 = this.selectedCargo1 && this.cargoNominationsCargo.filter(cargos => cargos.id !== this.selectedCargo1.id);
+        this.cargoNominationsCargo1 = this.selectedCargo2 && this.cargoNominationsCargo.filter(cargos => cargos.id !== this.selectedCargo2.id);
         this.commingleForm.controls['preferredTanks'].clearValidators();
         this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
         this.commingleForm.patchValue({
@@ -617,13 +619,15 @@ export class CommingleComponent implements OnInit {
         this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
         this.commingleForm.patchValue({
           purpose: this.purposeOfCommingle.find(purpose => purpose.id === 1),
-          slopOnly: this.commingleCargo?.slopOnly,
+          slopOnly: false,
           cargo1: '',
           cargo2: ''
         });
       }
     }
     else {
+      this.cargoNominationsCargo1 = this.cargoNominationsCargo;
+      this.cargoNominationsCargo2 = this.cargoNominationsCargo;
       this.manualCommingleList && this.manualCommingleList?.length ?
         this.commingleForm.controls['preferredTanks'].setValidators([Validators.required, Validators.maxLength(5)]) : this.commingleForm.controls['preferredTanks'].setValidators([Validators.maxLength(5)]);
       this.commingleForm.controls['preferredTanks'].updateValueAndValidity();
