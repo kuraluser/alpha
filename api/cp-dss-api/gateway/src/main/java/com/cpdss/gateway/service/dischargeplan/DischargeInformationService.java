@@ -385,18 +385,18 @@ public class DischargeInformationService {
       Long vesselId, Long patternId, Long portRotationId, String operationType)
       throws GenericServiceException {
     DischargeUpdateUllageResponse response = new DischargeUpdateUllageResponse();
-    LoadingUpdateUllageResponse loadingUpdateUllageResponse =
+    LoadingUpdateUllageResponse dischargeUllageResponse =
         loadingPlanService.getUpdateUllageDetails(
             vesselId, patternId, portRotationId, operationType, true);
-    BeanUtils.copyProperties(loadingUpdateUllageResponse, response);
+    BeanUtils.copyProperties(dischargeUllageResponse, response);
     response.setPortDischargePlanBallastDetails(
-        loadingUpdateUllageResponse.getPortLoadablePlanBallastDetails());
+    		dischargeUllageResponse.getPortLoadablePlanBallastDetails());
     response.setPortDischargePlanRobDetails(
-        loadingUpdateUllageResponse.getPortLoadablePlanRobDetails());
+    		dischargeUllageResponse.getPortLoadablePlanRobDetails());
     response.setPortDischargePlanStowageDetails(
-        loadingUpdateUllageResponse.getPortLoadablePlanStowageDetails());
+    		dischargeUllageResponse.getPortLoadablePlanStowageDetails());
     response.setDischargePlanCommingleDetails(
-        loadingUpdateUllageResponse.getLoadablePlanCommingleDetails());
+    		dischargeUllageResponse.getLoadablePlanCommingleDetails());
 
     return response;
   }
