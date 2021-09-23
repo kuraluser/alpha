@@ -750,13 +750,17 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     List<VesselInfo.VesselTankDetail> bunkerRearTanks = new ArrayList<>();
     bunkerTanks.addAll(
         bunkerTankList.stream()
-            .filter(tank -> OHQ_CENTER_TANK_CATEGORIES.contains(tank.getTankCategoryId())
-                    && tank.getShowInOhqObq())
+            .filter(
+                tank ->
+                    OHQ_CENTER_TANK_CATEGORIES.contains(tank.getTankCategoryId())
+                        && tank.getShowInOhqObq())
             .collect(Collectors.toList()));
     bunkerRearTanks.addAll(
         bunkerTankList.stream()
-            .filter(tank -> OHQ_REAR_TANK_CATEGORIES.contains(tank.getTankCategoryId())
-                    && tank.getShowInOhqObq())
+            .filter(
+                tank ->
+                    OHQ_REAR_TANK_CATEGORIES.contains(tank.getTankCategoryId())
+                        && tank.getShowInOhqObq())
             .collect(Collectors.toList()));
     outResponse.setBunkerTanks(this.createGroupWiseTankList(this.groupTanks(bunkerTanks)));
     outResponse.setBunkerRearTanks(this.createGroupWiseTankList(this.groupTanks(bunkerRearTanks)));
