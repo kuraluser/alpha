@@ -21,7 +21,7 @@ export class VesselsApiService {
    * Vessel details api result mock
    */
   getVesselsInfo(allVessel = false): Observable<IVessel[]> {
-    if (this._vesselDetails) {
+    if (this._vesselDetails && this._vesselDetails[0]?.id === Number(localStorage.getItem("vesselId"))) {
       return of(this._vesselDetails);
     } else {
       return this.commonApiService.get<IVesselsResponse>('vessels').pipe(map((response) => {
