@@ -450,14 +450,19 @@ public class CargoNominationService {
       }
       // update loadable-study-port-rotation with ports from cargoNomination and port
       // attributes
-      this.loadableStudyPortRotationRepository
-          .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
-          .forEach(
-              portRotation -> {
-                portRotation.setIsPortRotationOhqComplete(false);
-              });
+      Boolean isPortRotationComplete = true;
+      for (LoadableStudyPortRotation portRotation :
+          this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+              loadableStudy.getId(), true)) {
+        portRotation.setIsPortRotationOhqComplete(false);
+        if ((portRotation.getSeaWaterDensity() == null)
+            || (portRotation.getMaxDraft() == null)
+            || (portRotation.getAirDraftRestriction() == null)) {
+          isPortRotationComplete = false;
+        }
+      }
+      loadableStudy.setIsPortsComplete(isPortRotationComplete);
       buildAndSaveLoadableStudyPortRotationEntities(loadableStudy, requestedPortIds, portReply);
-      loadableStudy.setIsPortsComplete(false);
       this.loadableStudyRepository.save(loadableStudy);
       // Set port ordering after updation
       loadableStudyPortRotationService.setPortOrdering(loadableStudy);
