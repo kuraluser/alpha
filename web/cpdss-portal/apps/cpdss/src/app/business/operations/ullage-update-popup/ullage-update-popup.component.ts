@@ -591,7 +591,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     this.rearBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastRearTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.centerBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastCenterTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.frontBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastFrontTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.fuelTypes = [...new Map(this.ullageResponseData.portLoadablePlanRobDetails.map(item => [item['id'], { id: item?.id, name: item?.tankName, colorCode: item?.colorCode, shortName: item?.tankShortName }])).values()];
+    this.fuelTypes = [...new Map(this.ullageResponseData.portLoadablePlanRobDetails.map(item => [item['id'], { id: item?.id, name: item?.tankName, colorCode: item?.colorCode, shortName: item?.fuelTypeShortName }])).values()];
 
   }
 
