@@ -744,17 +744,19 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     // getting bunker tanks
     List<VesselInfo.VesselTankDetail> bunkerTankList =
         sortedTankList.stream()
-            .filter(tankList -> OHQ_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
+            .filter(tank -> OHQ_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
             .collect(Collectors.toList());
     List<VesselInfo.VesselTankDetail> bunkerTanks = new ArrayList<>();
     List<VesselInfo.VesselTankDetail> bunkerRearTanks = new ArrayList<>();
     bunkerTanks.addAll(
         bunkerTankList.stream()
-            .filter(tank -> OHQ_CENTER_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
+            .filter(tank -> OHQ_CENTER_TANK_CATEGORIES.contains(tank.getTankCategoryId())
+                    && tank.getShowInOhqObq())
             .collect(Collectors.toList()));
     bunkerRearTanks.addAll(
         bunkerTankList.stream()
-            .filter(tank -> OHQ_REAR_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
+            .filter(tank -> OHQ_REAR_TANK_CATEGORIES.contains(tank.getTankCategoryId())
+                    && tank.getShowInOhqObq())
             .collect(Collectors.toList()));
     outResponse.setBunkerTanks(this.createGroupWiseTankList(this.groupTanks(bunkerTanks)));
     outResponse.setBunkerRearTanks(this.createGroupWiseTankList(this.groupTanks(bunkerRearTanks)));
@@ -1258,6 +1260,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             if (tankDetail.isPresent()) {
               robDetail.setTankName(tankDetail.get().getTankName());
               robDetail.setTankShortName(tankDetail.get().getShortName());
+              robDetail.setFuelTypeId(tankDetail.get().getTankCategoryId());
+              robDetail.setFuelTypeShortName(tankDetail.get().getTankCategoryShortName());
+              robDetail.setFuelTypeName(tankDetail.get().getTankCategoryName());
             }
 
             portLoadablePlanRobDetailsList.add(robDetail);
