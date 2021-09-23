@@ -390,13 +390,13 @@ public class DischargeInformationService {
             vesselId, patternId, portRotationId, operationType, true);
     BeanUtils.copyProperties(dischargeUllageResponse, response);
     response.setPortDischargePlanBallastDetails(
-    		dischargeUllageResponse.getPortLoadablePlanBallastDetails());
+        dischargeUllageResponse.getPortLoadablePlanBallastDetails());
     response.setPortDischargePlanRobDetails(
-    		dischargeUllageResponse.getPortLoadablePlanRobDetails());
+        dischargeUllageResponse.getPortLoadablePlanRobDetails());
     response.setPortDischargePlanStowageDetails(
-    		dischargeUllageResponse.getPortLoadablePlanStowageDetails());
+        dischargeUllageResponse.getPortLoadablePlanStowageDetails());
     response.setDischargePlanCommingleDetails(
-    		dischargeUllageResponse.getLoadablePlanCommingleDetails());
+        dischargeUllageResponse.getLoadablePlanCommingleDetails());
 
     return response;
   }

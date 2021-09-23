@@ -63,6 +63,8 @@ public interface LoadingPlanService {
       String tankDetails,
       Long infoId,
       Long cargoNominationId,
-      String correlationId,boolean isLoading, Long vesselId)
+      String correlationId,
+      boolean isLoading,
+      Long vesselId)
       throws IOException, GenericServiceException;
 }
