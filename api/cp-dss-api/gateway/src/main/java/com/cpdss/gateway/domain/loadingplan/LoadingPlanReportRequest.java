@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan;
 
+import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
 import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformation;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
@@ -28,4 +29,5 @@ public class LoadingPlanReportRequest {
   private List<List<VesselTank>> ballastRearTanks;
   private List<List<VesselTank>> cargoTanks;
   private DischargingInformation dischargingInformation;
+  private List<LoadableQuantityCargoDetails> currentPortCargos;
 }
