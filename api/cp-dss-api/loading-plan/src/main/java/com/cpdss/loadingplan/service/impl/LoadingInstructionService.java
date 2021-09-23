@@ -245,9 +245,10 @@ public class LoadingInstructionService extends LoadingInstructionServiceImplBase
 
       if (!loadingInstructionRepository.findAny(request.getLoadingInfoId())) {
         log.info("First time intruction fetch - fetching data from template master");
+        Long loadingInstructionId = 5L;// FOR GENERAL INSTRUCTIONS
         List<LoadingInstructionTemplate> templateList =
             loadingInstructionTemplateRepository.findALLByLoadingInsructionTypeIdAndReferenceId(
-                1L, portXId);
+                1L, portXId, loadingInstructionId);
         log.info("templateList {}", templateList.toString());
         if (templateList != null && !templateList.isEmpty()) {
           List<LoadingInstruction> instructionList =

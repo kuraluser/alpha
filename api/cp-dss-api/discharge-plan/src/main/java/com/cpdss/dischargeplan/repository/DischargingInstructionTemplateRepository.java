@@ -12,8 +12,8 @@ public interface DischargingInstructionTemplateRepository
     extends CommonCrudRepository<DischargingInstructionTemplate, Long> {
 
   @Query(
-      "From DischargingInstructionTemplate LIT where LIT.dischargingInsructionType.id = :var1"
-          + " AND LIT.referenceXId = :var2 AND LIT.isActive = true")
+      "From DischargingInstructionTemplate LIT where LIT.dischargingInsructionType.id = ?1"
+          + " AND LIT.referenceXId = ?2 OR LIT.dischargingInsructionType.id = ?3 AND LIT.isActive = true")
   public List<DischargingInstructionTemplate> findALLByDischargingInsructionTypeIdAndReferenceId(
-      Long var1, Long var2);
+      Long var1, Long var2, Long var3);
 }
