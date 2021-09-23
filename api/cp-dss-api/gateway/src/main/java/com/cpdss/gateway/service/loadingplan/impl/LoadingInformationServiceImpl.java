@@ -1025,13 +1025,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   /** Upload Tide data from excel to db */
   @Override
   public UploadTideDetailResponse uploadLoadingTideDetails(
-      Long loadingId, MultipartFile file, String correlationId)
+      Long loadingId, MultipartFile file, String correlationId, String portName, Long portId)
       throws IOException, GenericServiceException {
     String originalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
     if (!(originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())
-            .equals("xlsx")
-        || !(originalFileName.substring(0, originalFileName.lastIndexOf(".")))
-            .equals("Loading_port_tide_details")) {
+            .equals("xlsx")) {
       throw new GenericServiceException(
           "unsupported file type",
           CommonErrorCodes.E_CPDSS_INVALID_EXCEL_FILE,
@@ -1040,6 +1038,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     Builder builder = UploadTideDetailRequest.newBuilder();
     builder.setTideDetaildata(ByteString.copyFrom(file.getBytes()));
     builder.setLoadingId(loadingId);
+    builder.setPortName(portName);
+    builder.setPortId(portId);
     UploadTideDetailStatusReply statusReply =
         loadingInfoServiceBlockingStub.uploadPortTideDetails(builder.build());
     if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {
