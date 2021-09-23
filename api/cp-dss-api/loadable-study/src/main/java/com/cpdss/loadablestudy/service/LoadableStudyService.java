@@ -2933,9 +2933,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       log.error("GenericServiceException in get ullage", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
-              .setCode(e.getCode())
-              .setMessage(e.getMessage())
-              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_CPDSS_ULLAGE_INVALID_CORRECTED_ULLAGE)
+              .setMessage(LoadableStudiesConstants.INVALID_ULLAGE_OR_SOUNDING_VALUE)
+              .setStatus(SUCCESS)
               .build());
     } catch (Exception e) {
       log.error("Exception in update ullage", e);

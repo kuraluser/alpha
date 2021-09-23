@@ -5017,11 +5017,14 @@ public class LoadableStudyService {
     if ("INVALID_LOADABLE_PATTERN_ID".equals(grpcReply.getResponseStatus().getMessage())) {
       response.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.NO_CONTENT.value()), correlationId));
+    } else if ("INVALID_ULLAGE_OR_SOUNDING_VALUE"
+        .equals(grpcReply.getResponseStatus().getMessage())) {
+      response.setResponseStatus(
+          new CommonSuccessResponse(String.valueOf(HttpStatus.NO_CONTENT.value()), correlationId));
     } else {
       response.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     }
-
     return response;
   }
 
@@ -6291,7 +6294,9 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(
               Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
-    if ("INVALID_LOADABLE_PATTERN_ID".equals(grpcReply.getResponseStatus().getMessage())) {
+    if ("INVALID_LOADABLE_PATTERN_ID".equals(grpcReply.getResponseStatus().getMessage())
+        || "INVALID_ULLAGE_OR_SOUNDING_VALUE"
+            .equalsIgnoreCase(grpcReply.getResponseStatus().getMessage())) {
       ResponseStatus status =
           ResponseStatus.newBuilder()
               .setStatus(grpcReply.getResponseStatus().getStatus())
