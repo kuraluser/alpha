@@ -1,18 +1,16 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationDetail;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest;
 import com.cpdss.loadingplan.entity.LoadingInformation;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /** Master service for the Loading Information */
 public interface LoadingInformationService {
@@ -77,5 +75,4 @@ public interface LoadingInformationService {
       DownloadTideDetailRequest request,
       LoadingPlanModels.DownloadTideDetailStatusReply.Builder builder)
       throws GenericServiceException, IOException;
-
 }
