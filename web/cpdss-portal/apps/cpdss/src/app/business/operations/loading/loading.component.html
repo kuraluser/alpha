@@ -1,9 +1,14 @@
 <div class="container-fluid pt-5">
   <div class="row">
-    <div class="col text-uppercase pt-5">
+    <div class="pl-15 text-uppercase pt-5">
       {{selectedPortName}}
     </div>
-    <div class="col text-right">
+    <div class="col">
+      <div class="header-info-pop-up mb-5 text-right text-danger"><span class="info-icon mr-5">!</span>
+          {{'LOADING_OPERATION_REGENARATE_INFO_MESSAGE' | translate}}
+      </div>
+  </div>
+    <div class="pr-15 text-right">
       <button class="btn btn-main mr-10" id="in_use" [disabled]="disableViewErrorButton" (click)="viewError(true)">
 
         {{'LOADING_INFORMATION_VIEW_ERROR' |translate}}

@@ -1981,6 +1981,7 @@
   "ULLAGE_UPDATE_API_MAX_ERROR": "API Est. must be less than or equal to 99.99",
   "ULLAGE_UPDATE_TEMPERATURE_MIN_ERROR": "TEMP Est. must be greater than or equal to 40°F",
   "ULLAGE_UPDATE_TEMPERATURE_MAX_ERROR": "TEMP Est. must be less than or equal to 160°F",
+  "LOADING_OPERATION_REGENARATE_INFO_MESSAGE": "If there is any change in loading information, please regenerate the plan to get the updated figures.",
   "DISCHARGE_STUDY_PORTS_VIEW_PLAN_NOT_AVAILABLE": "PLAN NOT GENERATED FOR THE SELECTED VOYAGE SINCE NO DISCHARGE STUDY AVAILABLE.",
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_INFO": "Info",
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_DETAILS": "Loadable study communicated to shore",

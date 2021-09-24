@@ -862,6 +862,7 @@ export interface ITankDetailsValueObject {
   correctedUllage?: number;
   colorCode?: string;
   sg?: number;
+  percentageFilled?: number | string;
 }
 
 /**

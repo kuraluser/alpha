@@ -19,6 +19,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { tankCapacityValidator } from './../../core/directives/tankCapacityValidator.directive';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { ConfirmationService } from 'primeng/api';
+import { apiTemperatureMinValidator } from './../../core/directives/api-temperature-min-validator.directive';
 
 /**
  * Component class for ullage update
@@ -499,6 +500,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       tankName: this.fb.control(tank.tankName.value),
       quantity: this.fb.control(tank.quantity.value),
       sounding: this.fb.control(tank.sounding.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator(null, null, 'sounding', 'fillingPercentage', 100)]),
+      fillingPercentage:  this.fb.control(tank.fillingPercentage.value)
     });
   }
 
@@ -511,8 +513,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     return this.fb.group({
       tankName: this.fb.control(tank.tankName.value),
       ullage: this.fb.control(tank.ullage.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator(null, null, 'ullage', 'fillingPercentage')]),
-      temperature: this.fb.control(tank.temperature.value, [Validators.required, Validators.min(0), Validators.max(160), numberValidator(2, 3, false), tankCapacityValidator(null, null, 'temperature', 'fillingPercentage')]),
-      api: this.fb.control(tank.api.value, [Validators.required, Validators.min(0), Validators.max(99), numberValidator(2, 2, false), tankCapacityValidator(null, null, 'api', 'fillingPercentage')]),
+      temperature: this.fb.control(tank.temperature.value, [Validators.required, Validators.min(0), Validators.max(160), numberValidator(2, 3, false), tankCapacityValidator(null, null, 'temperature', 'fillingPercentage'), apiTemperatureMinValidator('temperature')]),
+      api: this.fb.control(tank.api.value, [Validators.required, Validators.min(0), Validators.max(99), numberValidator(2, 2, false), tankCapacityValidator(null, null, 'api', 'fillingPercentage'), apiTemperatureMinValidator('api')]),
       quantity: this.fb.control(tank.quantity.value),
       fillingPercentage: this.fb.control(tank.fillingPercentage.value)
     });
@@ -1084,6 +1086,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.show();
     const result = await this.ullageUpdateApiService.getUllageQuantity(param, event.data.loadablePatternId).toPromise();
     this.ngxSpinnerService.hide();
+    this.cargoTankForm.markAllAsTouched();
     if (result.responseStatus.status === '200') {
       this.ullageResponseData?.portLoadablePlanStowageDetails.map(item => {
         if (item.cargoNominationId === event.data.cargoNominationId && item.tankId === event.data.tankId) {
@@ -1100,7 +1103,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.cargoQuantities[event.index].fillingPercentage.value = result.fillingRatio;
       const formControls = <FormControl>(<FormArray>this.cargoTankForm.get('dataTable')).at(event.index);
       formControls['controls'].quantity.setValue(result.quantityMt);
-      formControls['controls'].fillingPercentage.setValue(result.fillingRatio);
+      formControls['controls'].fillingPercentage.setValue(result.fillingRatio ? result.fillingRatio : 100);
       formControls['controls'].quantity.updateValueAndValidity();
       formControls['controls'].fillingPercentage.updateValueAndValidity();
       if (result.fillingRatio < 98) {
@@ -1118,6 +1121,10 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         this.updateCargoTanks();
       }
 
+    } else if (result.responseStatus.status === '325') {
+      const formControls = <FormControl>(<FormArray>this.cargoTankForm.get('dataTable')).at(event.index);
+      formControls['controls'].fillingPercentage.setValue(100);
+      formControls['controls'][event.field].setErrors({ maxLimit: true });
     }
     this.enableDisableBLFigure();
     setTimeout(() => {
@@ -1153,12 +1160,21 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         if (item.tankId === event.data.tankId) {
           item.quantity.value = result.quantityMt;
           item.sounding.value = result.correctedUllage;
+          item.percentageFilled = result.fillingRatio;
         }
       });
       const formControl = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get('quantity');
       formControl.setValue(result.quantityMt);
       formControl.updateValueAndValidity();
       formControl.updateValueAndValidity();
+      formControl.markAllAsTouched();
+      formControl.markAsDirty();
+      const formControlFilling = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get('fillingPercentage');
+      formControlFilling.setValue(result.fillingRatio ? result.fillingRatio : 101);
+      formControlFilling.updateValueAndValidity();
+      formControlFilling.updateValueAndValidity();
+      const formControlSounding = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get(event.field);
+      formControlSounding.updateValueAndValidity();
       this.ullageResponseData?.portLoadablePlanBallastDetails?.map(item => {
         if (item.tankId === event.data.tankId) {
           item.quantity = result.quantityMt;
@@ -1166,13 +1182,21 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         }
       });
       if (result.fillingRatio?.toString()?.trim() === '') {
-        formControl.setErrors({ maxLimit: true });
+        formControlSounding.setErrors({ maxLimit: true });
       }
       setTimeout(() => {
         this.rearBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastRearTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
         this.centerBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastCenterTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
         this.frontBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastFrontTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
       });
+
+    } else if (result.responseStatus.status === '325') {
+      const formControlFilling = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get('fillingPercentage');
+      formControlFilling.setValue(101);
+      formControlFilling.updateValueAndValidity();
+      formControlFilling.updateValueAndValidity();
+      const formControl = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get(event.field);
+      formControl.setErrors({ maxLimit: true });
 
     }
   }
