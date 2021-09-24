@@ -124,6 +124,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
     if (changes?.isCancelChanges?.currentValue) {
       this.initForm();
       this.disableForm();
+      this.error.length = 0;
     }
     if (changes?.rulesJson) {
 
