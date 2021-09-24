@@ -48,6 +48,8 @@ import com.cpdss.gateway.domain.loadingplan.sequence.Pump;
 import com.cpdss.gateway.domain.loadingplan.sequence.PumpCategory;
 import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParam;
 import com.cpdss.gateway.domain.loadingplan.sequence.TankCategory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -329,11 +331,13 @@ public class LoadingSequenceService {
       List<Cargo> cargos = new ArrayList<Cargo>();
       Cargo cargo = new Cargo();
       CargoNominationDetail cargoNomination = cargoNomDetails.get(cargoNomId);
-      cargo.setName(cargoNomination.getCargoName());
-      cargo.setCargoId(cargoNomination.getCargoId());
-      cargo.setAbbreviation(cargoNomination.getAbbreviation());
-      cargo.setCargoNominationId(cargoNomination.getId());
-      cargo.setColor(cargoNomination.getColor());
+      if (cargoNomination != null) {
+    	  cargo.setName(cargoNomination.getCargoName());
+          cargo.setCargoId(cargoNomination.getCargoId());
+          cargo.setAbbreviation(cargoNomination.getAbbreviation());
+          cargo.setCargoNominationId(cargoNomination.getId());
+          cargo.setColor(cargoNomination.getColor());
+      }
       cargo.setApi(
           StringUtils.isEmpty(cargoNomination.getApi())
               ? null
@@ -693,15 +697,17 @@ public class LoadingSequenceService {
       Integer start,
       Integer end) {
     cargo.setCargoNominationId(stowage.getCargoNominationId());
-    cargo.setCargoId(cargoNomination.getCargoId());
     cargo.setQuantity(
         StringUtils.isEmpty(stowage.getQuantity()) ? null : new BigDecimal(stowage.getQuantity()));
     cargo.setTankId(stowage.getTankId());
     cargo.setUllage(
         StringUtils.isEmpty(stowage.getUllage()) ? null : new BigDecimal(stowage.getUllage()));
-    cargo.setColor(cargoNomination.getColor());
-    cargo.setName(cargoNomination.getCargoName());
-    cargo.setAbbreviation(cargoNomination.getAbbreviation());
+    if (cargoNomination != null) {
+      cargo.setCargoId(cargoNomination.getCargoId());
+      cargo.setColor(cargoNomination.getColor());
+      cargo.setName(cargoNomination.getCargoName());
+      cargo.setAbbreviation(cargoNomination.getAbbreviation());
+    }
     cargo.setStart(portEta + (start * 60 * 1000));
     cargo.setEnd(portEta + (end * 60 * 1000));
     cargo.setApi(StringUtils.isEmpty(stowage.getApi()) ? null : new BigDecimal(stowage.getApi()));
