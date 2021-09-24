@@ -2,6 +2,8 @@
 package com.cpdss.gateway.domain.loadingplan.sequence;
 
 import com.cpdss.gateway.domain.AlgoError;
+import com.cpdss.gateway.domain.loadingplan.AlgoLoadingInformation;
+import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
@@ -20,5 +22,6 @@ public class LoadingPlanAlgoRequest {
   // stability parameters per stage
   private List<LoadingSequenceStabilityParam> stages;
   private List<AlgoError> errors;
+  private AlgoLoadingInformation loadingInformation;
   private Boolean hasLoadicator;
 }

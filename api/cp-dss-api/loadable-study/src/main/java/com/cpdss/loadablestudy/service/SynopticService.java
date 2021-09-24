@@ -354,10 +354,7 @@ public class SynopticService {
     } else {
       dataList = list; // no filter, add all data
     }
-    dataList =
-        dataList.stream()
-            .sorted(Comparator.comparing(LoadablePlanQuantity::getLoadingOrder))
-            .collect(Collectors.toList());
+
     if (!dataList.isEmpty()) {
       for (LoadablePlanQuantity var1 : dataList) {
         LoadableStudy.LoadableQuantityCargoDetails.Builder builder1 =

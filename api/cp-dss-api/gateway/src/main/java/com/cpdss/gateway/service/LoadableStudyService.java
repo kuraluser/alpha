@@ -5019,8 +5019,7 @@ public class LoadableStudyService {
           new CommonSuccessResponse(String.valueOf(HttpStatus.NO_CONTENT.value()), correlationId));
     } else if ("INVALID_ULLAGE_OR_SOUNDING_VALUE"
         .equals(grpcReply.getResponseStatus().getMessage())) {
-      response.setResponseStatus(
-          new CommonSuccessResponse(String.valueOf(HttpStatus.NO_CONTENT.value()), correlationId));
+      response.setResponseStatus(new CommonSuccessResponse(String.valueOf("325"), correlationId));
     } else {
       response.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));

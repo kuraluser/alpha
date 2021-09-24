@@ -160,7 +160,8 @@ public class LoadingSequenceService {
             portWiseDetails.getLoadingPlanStowageDetailsList().stream()
                 .filter(
                     stowage ->
-                        stowage.getCargoNominationId() == loadingSequence.getCargoNominationId())
+                        (stowage.getCargoNominationId() == loadingSequence.getCargoNominationId())
+                            || (stowage.getCargoNominationId() == 0))
                 .collect(Collectors.toList());
         for (LoadingPlanTankDetails stowage : filteredStowage) {
           // Adding cargos

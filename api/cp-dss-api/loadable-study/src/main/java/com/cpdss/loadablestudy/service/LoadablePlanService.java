@@ -2749,11 +2749,7 @@ public class LoadablePlanService {
           this.restTemplate.postForEntity(
               this.algoUpdateUllageUrl, algoRequest, UllageUpdateResponse.class);
     } catch (HttpStatusCodeException e) {
-      log.error(
-          "ALGO returned : {}, message {}, response {}",
-          e.getRawStatusCode(),
-          e.getMessage(),
-          e.getResponseBodyAsString());
+      log.error("ALGO returned : {}", e.getRawStatusCode());
       if (e.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR)) {
         responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
       }
