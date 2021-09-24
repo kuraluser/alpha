@@ -98,6 +98,7 @@ import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.Utils;
 import com.cpdss.loadablestudy.domain.ArrivalDepartureConditionJson;
 import com.cpdss.loadablestudy.domain.LoadablePlanDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadableStudyAlgoJson;
@@ -2013,6 +2014,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       SynopticalTableRequest request, StreamObserver<SynopticalTableReply> responseObserver) {
     SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
     try {
+      log.info("Voyage Status or Dash board API");
+      log.info("Get Synoptic Data for port Id : Request payload - {}", Utils.toJson(request));
       synopticService.getSynopticalDataByPortId(request, replyBuilder);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in getSynopticalDataByPortId", e);

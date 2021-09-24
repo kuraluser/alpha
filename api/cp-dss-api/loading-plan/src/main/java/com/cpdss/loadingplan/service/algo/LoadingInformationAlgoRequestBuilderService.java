@@ -474,6 +474,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       if (vesselPump.isPresent()) {
         loadingMachine.setMachineName(vesselPump.get().getComponentName());
         loadingMachine.setMachineTypeName(Common.MachineType.MANIFOLD.name());
+        loadingMachine.setTankTypeName(vesselPump.get().getTankTypeName());
       }
     }
     if (typeId == Common.MachineType.BOTTOM_LINE_VALUE) {

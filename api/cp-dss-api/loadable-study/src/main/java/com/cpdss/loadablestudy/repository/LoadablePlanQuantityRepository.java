@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
+import com.cpdss.loadablestudy.repository.projections.LoadingPlanQtyAndOrder;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +34,6 @@ public interface LoadablePlanQuantityRepository
   @Query(CARGO_TO_BE_LOADED_QUERY_1)
   List<LoadablePlanQuantity> findAllLoadablePlanQuantity(
       Long patternId, String opType, Long portRotation, Long port);
+
+  List<LoadingPlanQtyAndOrder> findByCargoNominationIdAndIsActiveTrue(Long fk);
 }

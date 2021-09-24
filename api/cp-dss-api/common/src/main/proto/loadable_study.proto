@@ -238,6 +238,7 @@ message CowHistory {
 	int64 portId =4 ;
 	int64 tankId = 5;
 	COW_OPTION_TYPE cowOptionType = 6;
+	string voyageEndDate = 7;
 }
 
 message DischargePlanDetailsReply {
@@ -1240,6 +1241,8 @@ message SynopticalCargoRecord{
 	string fillingRatio = 14;
 	int64 cargoNominationId = 15;
 	int64 lpCargoDetailId = 16; // loadable_pattern_cargo_detail ID
+	int64 planQtyId = 17; // loadable_plan_quantity ID OR discharge_quantity_cargo_details ID
+	int32 planQtyCargoOrder = 18; // loading or discharging order
 }
 
 message SynopticalOhqRecord{

@@ -3289,6 +3289,8 @@ public class LoadableStudyService {
         rec.setTemperature(new BigDecimal(protoRec.getTemperature()));
       }
       rec.setFillingRatio(protoRec.getFillingRatio());
+      rec.setPlanQtyId(protoRec.getPlanQtyId());
+      rec.setPlanQtyCargoOrder(protoRec.getPlanQtyCargoOrder());
       list.add(rec);
     }
     synopticalRecord.setCargos(list);
@@ -5195,6 +5197,9 @@ public class LoadableStudyService {
               .forEach(
                   item -> {
                     Cargo cargo = new Cargo();
+                    cargo.setLpCargoDetailsId(item.getLpCargoDetailId());
+                    cargo.setPlanQtyId(item.getPlanQtyId());
+                    cargo.setPlanQtyCargoOrder(item.getPlanQtyCargoOrder());
                     cargo.setAbbreviation(item.getAbbreviation());
                     cargo.setActualWeight(item.getActualWeight());
                     cargo.setApi(String.valueOf(item.getApi()));
@@ -5221,8 +5226,10 @@ public class LoadableStudyService {
               });
 
           List<Cargo> cargoList = new ArrayList<Cargo>(cargoMap.values());
-
-          voyageStatusResponse.setCargoConditions(cargoList);
+          voyageStatusResponse.setCargoConditions(
+              cargoList.stream()
+                  .sorted(Comparator.comparingInt(Cargo::getPlanQtyCargoOrder))
+                  .collect(toList()));
         }
         // build bunker conditions
         BunkerConditions bunkerConditions = new BunkerConditions();
