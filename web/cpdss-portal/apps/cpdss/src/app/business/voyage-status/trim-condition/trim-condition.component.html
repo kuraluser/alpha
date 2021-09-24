@@ -4,8 +4,8 @@
       <div [ngClass]="{'trim-even-keel': !trim, 'trim-head':  trim < 0, 'trim-stern': trim > 0}" class="row">
         <div class="col">
           <div class="row">
-            <div class="col-5 text-secondary pt-25 pr-0">{{'VOYAGE_STATUS_TRIM_WATERLINE' | translate}}</div>
-            <div class="col pt-10">
+            <div class="col-4 text-secondary pt-25 pr-0">{{'VOYAGE_STATUS_TRIM_WATERLINE' | translate}}</div>
+            <div class="col pt-10 pl-0">
               <div class="inline-block text-center">
               {{'VOYAGE_STATUS_TRIM' | translate}}<br>
               <h5 class="text-secondary inline-block" *ngIf="trim !== 0">{{trim | number: '1.2-2'}}{{(trim > 0 ?
