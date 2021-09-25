@@ -30,12 +30,10 @@ import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.utility.ExcelExportUtility;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,7 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -56,7 +53,8 @@ public class GenerateLoadingPlanExcelReportService {
 	public static final String SUCCESS = "SUCCESS";
 	public static final String FAILED = "FAILED";
 
-	public String TEMPLATES_FILE_LOCATION = "/reports/Vessel_{type}_Loading_Plan_Template.xlsx";
+//	public String TEMPLATES_FILE_LOCATION = "/reports/Vessel_{type}_Loading_Plan_Template.xlsx";
+	public String TEMPLATES_FILE_LOCATION = "/reports/Vessel_1_Loading_Plan_Template.xlsx";
 	public String OUTPUT_FILE_LOCATION = "/reports/Vessel_{id}_Loading_Plan_{voy}_{port}.xlsx";
 
 	@Autowired
@@ -93,9 +91,10 @@ public class GenerateLoadingPlanExcelReportService {
 		LoadingPlanExcelDetails loadinPlanExcelDetails = getDataForExcel(requestPayload, vesselId, voyageId, infoId,
 				portRotationId);
 		// Setting file name of output file
-		getFileName(vesselId, voyageId, loadinPlanExcelDetails.getSheetOne().getPortName());
+		OUTPUT_FILE_LOCATION = getFileName(vesselId, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
+				loadinPlanExcelDetails.getSheetOne().getPortName());
 		// Setting file name of input file based on vessel type
-		getLoadingPlanTemplateForVessel(vesselId);
+		TEMPLATES_FILE_LOCATION = getLoadingPlanTemplateForVessel(vesselId);
 		// Getting data mapped and calling excel builder utility
 		FileInputStream resultFileStream = new FileInputStream(
 				excelExportUtil.generateExcel(loadinPlanExcelDetails, TEMPLATES_FILE_LOCATION, OUTPUT_FILE_LOCATION));
@@ -118,24 +117,27 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @param vesselId
 	 * @return
 	 */
-	private void getLoadingPlanTemplateForVessel(Long vesselId) {
-		VesselReply reply = vesselInfoGrpcService
-				.getVesselDetailByVesselId(VesselRequest.newBuilder().setVesselId(vesselId).build());
-		if (!SUCCESS.equalsIgnoreCase(reply.getResponseStatus().getStatus())) {
-			throw new GenericServiceException("Error in calling vessel service - While checking vessel Type",
-					CommonErrorCodes.E_GEN_INTERNAL_ERR, HttpStatusCode.INTERNAL_SERVER_ERROR);
-		}
-		reply.getVesselTypeId();
-		Optional.ofNullable(reply.getVesselTypeId())
-				.ifPresent(TEMPLATES_FILE_LOCATION.replace("{type}", reply.getVesselTypeId().toString()));
+	private String getLoadingPlanTemplateForVessel(Long vesselId) { // TODO
+//		VesselReply reply = vesselInfoGrpcService
+//				.getVesselDetailByVesselId(VesselRequest.newBuilder().setVesselId(vesselId).build());
+//		if (!SUCCESS.equalsIgnoreCase(reply.getResponseStatus().getStatus())) {
+//			throw new GenericServiceException("Error in calling vessel service - While checking vessel Type",
+//					CommonErrorCodes.E_GEN_INTERNAL_ERR, HttpStatusCode.INTERNAL_SERVER_ERROR);
+//		}
+//		reply.getVesselTypeId();
+//		Optional.ofNullable(reply.getVesselTypeId())
+//				.ifPresent(TEMPLATES_FILE_LOCATION.replace("{type}", reply.getVesselTypeId().toString()));
+		return TEMPLATES_FILE_LOCATION;
 	}
 
 	/**
 	 * Get fully qualified name of output file
+	 * 
+	 * @return
 	 */
-	private void getFileName(Long vesselId, Long voyageId, String portName) {
-		OUTPUT_FILE_LOCATION.replace("{id}", vesselId.toString()).replace("{voy}", voyageId.toString())
-				.replace("{port}", portName);
+	private String getFileName(Long vesselId, String voyNo, String portName) {
+		return OUTPUT_FILE_LOCATION.replace("{id}", vesselId.toString()).replace("{voy}", voyNo).replace("{port}",
+				portName);
 	}
 
 	/**
@@ -176,8 +178,6 @@ public class GenerateLoadingPlanExcelReportService {
 		sheetOne.setBerthInformation(getBerthInfoDetails(requestPayload));
 		return sheetOne;
 	}
-
-	
 
 	/**
 	 * Fetch basic vessel and Port details
@@ -248,8 +248,10 @@ public class GenerateLoadingPlanExcelReportService {
 		}
 		return berthInfoList;
 	}
-	
-	/** Calling port GROC for getting Port name
+
+	/**
+	 * Calling port GROC for getting Port name
+	 * 
 	 * @param build
 	 * @return PortReply
 	 */
