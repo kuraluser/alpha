@@ -6,7 +6,7 @@ import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ILoadingPlanDetails } from '../../models/loading-discharging.model';
+import { ILoadingPlanDetails, ULLAGE_STATUS_VALUE } from '../../models/loading-discharging.model';
 import { LoadingApiService } from '../../services/loading-api.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
@@ -101,6 +101,17 @@ export class LoadingPlanComponent implements OnInit {
 
     this.loadingDischargingTransformationService.showUllageErrorPopup$.subscribe((res)=>{
       this.getAlgoErrorMessage(res);
+    });
+
+    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.subscribe((value)=>{
+      if(value === ULLAGE_STATUS_VALUE.SUCCESS){
+        this.getLoadingPlanDetails();
+      }
+    });
+    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value)=>{
+      if(value === ULLAGE_STATUS_VALUE.SUCCESS){
+        this.getLoadingPlanDetails();
+      }
     });
   }
 

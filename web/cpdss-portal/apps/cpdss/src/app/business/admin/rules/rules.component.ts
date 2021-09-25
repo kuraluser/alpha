@@ -136,6 +136,7 @@ export class RulesComponent implements OnInit {
     let msgkeys, severity;
     try {
       let result = await this.rulesService.postRules(postData, this.vesselId, this.tabIndex).toPromise();
+      this.rulesTable.rulesForm.markAsPristine();
       if (result?.responseStatus?.status === '200') {
         msgkeys = ['RULES_UPDATE_SUCCESS', 'RULES_UPDATE_SUCCESSFULLY']
         severity = 'success';

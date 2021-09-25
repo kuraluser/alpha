@@ -135,8 +135,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
       UpdateUllageDetailsRequest request,
       StreamObserver<UpdateUllageDetailsResponse> responseObserver) {
     log.info("Inside get Update Ullage details");
-    LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder =
-        LoadingPlanModels.UpdateUllageDetailsResponse.newBuilder();
+    UpdateUllageDetailsResponse.Builder builder = UpdateUllageDetailsResponse.newBuilder();
     try {
       getBillOfLaddingDetails(request, builder);
       getPortWiseStowageDetails(request, builder);
@@ -147,21 +146,45 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
       getPortWiseCommingleDetails(request, builder);
     } catch (Exception e) {
       log.error("Exception when saveLoadingPlan microservice is called", e);
-      // builder.setResponseStatus(
-      // ResponseStatus.newBuilder()
-      // .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-      // .setMessage(e.getMessage())
-      // .setStatus(LoadingPlanConstants.FAILED)
-      // .build());
+
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
   }
 
+  public void getBillOfLaddingDetails(
+      UpdateUllageDetailsRequest request, UpdateUllageDetailsResponse.Builder builder) {
+
+    List<BillOfLadding> billOfLaddingDetails =
+        this.billOfLaddingRepo.findByDischargePatternXIdAndPortIdAndIsActive(
+            request.getPatternId(), request.getPortId(), true);
+    billOfLaddingDetails.stream()
+        .forEach(
+            bill -> {
+              Common.BillOfLadding.Builder blBuilder = Common.BillOfLadding.newBuilder();
+              blBuilder.setId(bill.getId());
+              blBuilder.setBlRefNo(bill.getBlRefNo());
+              blBuilder.setApi(bill.getApi() != null ? bill.getApi().toString() : "");
+              blBuilder.setTemperature(
+                  bill.getTemperature() != null ? bill.getTemperature().toString() : "");
+              blBuilder.setCargoNominationId(bill.getCargoNominationId());
+              blBuilder.setPortId(bill.getPortId());
+              blBuilder.setQuantityMt(
+                  bill.getQuantityMt() != null ? bill.getQuantityMt().toString() : "");
+              blBuilder.setQuantityBbls(
+                  bill.getQuantityMt() != null ? bill.getQuantityBbls().toString() : "");
+              blBuilder.setQuantityKl(
+                  bill.getQuantityMt() != null ? bill.getQuantityKl().toString() : "");
+              blBuilder.setQuantityLT(
+                  bill.getQuantityLT() != null ? bill.getQuantityLT().toString() : "");
+              blBuilder.setCargoNominationId(bill.getCargoNominationId());
+              builder.addBillOfLadding(blBuilder);
+            });
+  }
+
   public void getPortWiseStowageDetails(
-      LoadingPlanModels.UpdateUllageDetailsRequest request,
-      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+      UpdateUllageDetailsRequest request, UpdateUllageDetailsResponse.Builder builder) {
     List<PortDischargingPlanStowageDetails> portWiseStowageDetails =
         pdpStowageDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
             request.getPatternId(), request.getPortRotationId(), true);
@@ -225,8 +248,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   }
 
   public void getPortWiseBallastDetails(
-      LoadingPlanModels.UpdateUllageDetailsRequest request,
-      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+      UpdateUllageDetailsRequest request, UpdateUllageDetailsResponse.Builder builder) {
     List<PortDischargingPlanBallastDetails> portWiseStowageDetails =
         pdpBallastDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
             request.getPatternId(), request.getPortRotationId(), true);
@@ -280,8 +302,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   }
 
   public void getPortWiseRobDetails(
-      LoadingPlanModels.UpdateUllageDetailsRequest request,
-      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+      UpdateUllageDetailsRequest request, UpdateUllageDetailsResponse.Builder builder) {
     List<PortDischargingPlanRobDetails> portWiseRobDetails =
         pdpRobDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
             request.getPatternId(), request.getPortRotationId(), true);
@@ -312,40 +333,8 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
     }
   }
 
-  public void getBillOfLaddingDetails(
-      LoadingPlanModels.UpdateUllageDetailsRequest request,
-      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
-
-    List<BillOfLadding> billOfLaddingDetails =
-        this.billOfLaddingRepo.findByDischargePatternXIdAndPortIdAndIsActive(
-            request.getPatternId(), request.getPortId(), true);
-    billOfLaddingDetails.stream()
-        .forEach(
-            bill -> {
-              Common.BillOfLadding.Builder blBuilder = Common.BillOfLadding.newBuilder();
-              blBuilder.setId(bill.getId());
-              blBuilder.setBlRefNo(bill.getBlRefNo());
-              blBuilder.setApi(bill.getApi() != null ? bill.getApi().toString() : "");
-              blBuilder.setTemperature(
-                  bill.getTemperature() != null ? bill.getTemperature().toString() : "");
-              blBuilder.setCargoNominationId(bill.getCargoNominationId());
-              blBuilder.setPortId(bill.getPortId());
-              blBuilder.setQuantityMt(
-                  bill.getQuantityMt() != null ? bill.getQuantityMt().toString() : "");
-              blBuilder.setQuantityBbls(
-                  bill.getQuantityMt() != null ? bill.getQuantityBbls().toString() : "");
-              blBuilder.setQuantityKl(
-                  bill.getQuantityMt() != null ? bill.getQuantityKl().toString() : "");
-              blBuilder.setQuantityLT(
-                  bill.getQuantityLT() != null ? bill.getQuantityLT().toString() : "");
-              blBuilder.setCargoNominationId(bill.getCargoNominationId());
-              builder.addBillOfLadding(blBuilder);
-            });
-  }
-
   public void getPortWiseStowageTempDetails(
-      LoadingPlanModels.UpdateUllageDetailsRequest request,
-      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+      UpdateUllageDetailsRequest request, UpdateUllageDetailsResponse.Builder builder) {
     List<PortDischargingPlanStowageTempDetails> portWiseStowageTempDetails =
         portLoadingPlanStowageTempDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
             request.getPatternId(), request.getPortRotationId(), true);
@@ -411,8 +400,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   }
 
   public void getPortWiseBallastTempDetails(
-      LoadingPlanModels.UpdateUllageDetailsRequest request,
-      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+      UpdateUllageDetailsRequest request, UpdateUllageDetailsResponse.Builder builder) {
     List<PortDischargingPlanBallastTempDetails> portWiseBallastTempDetails =
         portLoadingPlanBallastTempDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
             request.getPatternId(), request.getPortRotationId(), true);
@@ -464,8 +452,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   }
 
   public void getPortWiseCommingleDetails(
-      LoadingPlanModels.UpdateUllageDetailsRequest request,
-      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+      UpdateUllageDetailsRequest request, UpdateUllageDetailsResponse.Builder builder) {
     List<DischargePlanCommingleDetails> portWiseRobDetails =
         loadablePlanCommingleDetailsRepository.findByDischargePatternXIdAndIsActive(
             request.getPatternId(), true);

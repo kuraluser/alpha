@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class DischargeStages {
 
-  private Long id;
+  // private Long id; not needed for algo
   private Boolean trackStartEndStage;
   private Boolean trackGradeSwitch;
   private Integer stageOffset = 4; // Default Value

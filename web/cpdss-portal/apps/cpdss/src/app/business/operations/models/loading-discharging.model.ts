@@ -23,7 +23,8 @@ export interface ILoadingInformationResponse {
   isLoadingInstructionsComplete: boolean;
   isLoadingPlanGenerated: boolean;
   isLoadingSequenceGenerated: boolean;
-  loadingInfoStatusId: number
+  loadingInfoStatusId: number;
+  loadingPlanDepStatusId: number;
 }
 
 /**
@@ -813,6 +814,7 @@ export interface ICargoDetailValueObject {
   cargoId: number;
   isNewRow: boolean;
   id: number;
+  cargoColor?: string;
 }
 
 /**
@@ -842,9 +844,9 @@ export interface ICargoDetail {
 */
 export interface ITankDetailsValueObject {
   tankName: ValueObject<string>;
-  ullage: ValueObject<number>;
-  temperature?: ValueObject<number>;
-  api?: ValueObject<number>;
+  ullage: ValueObject<number | string>;
+  temperature?: ValueObject<number | string>;
+  api?: ValueObject<number | string>;
   quantity?: ValueObject<number | string>;
   density?: ValueObject<number>;
   id?: ValueObject<number>;
@@ -860,6 +862,7 @@ export interface ITankDetailsValueObject {
   correctedUllage?: number;
   colorCode?: string;
   sg?: number;
+  percentageFilled?: number | string;
 }
 
 /**
@@ -1029,6 +1032,8 @@ export interface IBillOfLandingListGetResponse {
   cargoColor: string;
   cargoAbbrevation: string;
   billOfLaddings: [];
+  cargoToBeLoaded: boolean;
+  cargoLoaded: boolean;
 }
 
 /**

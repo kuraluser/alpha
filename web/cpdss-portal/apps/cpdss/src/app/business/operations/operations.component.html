@@ -34,7 +34,7 @@
         </div>
     </div>
      <router-outlet *ngIf="vessel && selectedVoyage && [OPERATIONS.LOADING , OPERATIONS.DISCHARGING].includes(operationId)"></router-outlet>
-    <ng-container *ngIf="![OPERATIONS.LOADING , OPERATIONS.DISCHARGING].includes(operationId)">
+    <ng-container *ngIf="![OPERATIONS.LOADING , OPERATIONS.DISCHARGING].includes(operationId) && selectedVoyage">
         <div class="text-center pt-25">
         <div class="well-custom">
             <div class="text-info"><span class="icon-info-rounded">!</span> {{'LOADING_PLAN_ONLY_LOADING_DISCHARGING' | translate}}</div>

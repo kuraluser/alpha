@@ -1,11 +1,13 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CowPlan {
 
   private String cowOptionType;
@@ -24,4 +26,5 @@ public class CowPlan {
   private List<Long> bottomCowTankIds;
   private List<Long> allCowTankIds;
   private List<CargoForCowDetails> cargoCowTankIds;
+  private List<CowHistory> cowHistories;
 }

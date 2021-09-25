@@ -3,6 +3,7 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { ILoadingMachinesInUse, IMachineryInUses, IMachineTankTypes , MACHINE_TYPES , Pump_TYPES , IDischargingMachinesInUse} from '../models/loading-discharging.model';
 import { OPERATIONS } from '../../core/models/common.model';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 
 @Component({
   selector: 'cpdss-portal-loading-discharging-cargo-machinery',
@@ -48,7 +49,8 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   OPERATIONS = OPERATIONS;
   constructor(
     private messageService: MessageService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService
   ) { }
 
 
@@ -133,6 +135,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
     this.pumpValues = [...vesselPumbArray];
     this.machineries['pumpValues'] = this.pumpValues;
     this.machineriesKey = Object.keys(this.machineries);
+    this.isMachineryValid(false);
   }
 
   /**
@@ -147,7 +150,8 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
       }
       return machine;
     })
-    this.updatemachineryInUses.emit(this.machineryInUses.loadingDischargingMachinesInUses)
+    this.updatemachineryInUses.emit(this.machineryInUses.loadingDischargingMachinesInUses);
+    this.isMachineryValid(false);
   }
 
   /**
@@ -178,7 +182,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
       });
       this.updatemachineryInUses.emit(this.machineryInUses.loadingDischargingMachinesInUses);
     }
-
+    this.isMachineryValid(false);
   }
 
   /**
@@ -186,7 +190,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   *
   * @memberof LoadingDischargingCargoMachineryComponent
   */
-  async isMachineryValid() {
+  async isMachineryValid(showToaster: boolean) {
     let bottomLine;
     let manifold;
     let vesselPump;
@@ -211,11 +215,15 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
       }
     });
     if(vesselPump && manifold && bottomLine) {
+      this.loadingDischargingTransformationService.isMachineryValid = true;
       return true;
     } else {
+      this.loadingDischargingTransformationService.isMachineryValid = false;
       const translationKeys = await this.translateService.get(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_CARGO_MACHINERY_MANIFOLD','LOADING_INFORMATION_CARGO_MACHINERY_BOTTOM_LINE', 'LOADING_INFORMATION_CARGO_MACHINERY_PUMP' , 'LOADING_INFORMATION_CARGO_MACHINERY_BALLAST_PUMP']).toPromise();
-      this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'],
-      detail: !manifold ? translationKeys['LOADING_INFORMATION_CARGO_MACHINERY_MANIFOLD'] : !bottomLine ?  translationKeys['LOADING_INFORMATION_CARGO_MACHINERY_BOTTOM_LINE'] : translationKeys['LOADING_INFORMATION_CARGO_MACHINERY_BALLAST_PUMP']});
+      if(showToaster) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'],
+        detail: !manifold ? translationKeys['LOADING_INFORMATION_CARGO_MACHINERY_MANIFOLD'] : !bottomLine ?  translationKeys['LOADING_INFORMATION_CARGO_MACHINERY_BOTTOM_LINE'] : translationKeys['LOADING_INFORMATION_CARGO_MACHINERY_BALLAST_PUMP']});
+      }
       return false;
     }
   }

@@ -118,7 +118,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
         && activeVoyage.getConfirmedDischargeStudy().getId() > 0) {
       com.cpdss.gateway.domain.LoadableStudy loadableStudy =
           new com.cpdss.gateway.domain.LoadableStudy();
-      BeanUtils.copyProperties(activeVoyage.getConfirmedLoadableStudy(), loadableStudy);
+      BeanUtils.copyProperties(activeVoyage.getConfirmedDischargeStudy(), loadableStudy);
       voyageResponse.setActiveDs(loadableStudy);
 
       List<PortRotation> rotationDomain = new ArrayList<>();

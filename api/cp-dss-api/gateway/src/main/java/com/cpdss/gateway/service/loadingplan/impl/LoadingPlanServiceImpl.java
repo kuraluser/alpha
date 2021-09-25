@@ -10,6 +10,7 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
@@ -26,6 +27,7 @@ import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
+import com.cpdss.gateway.service.UllageReportFileParsingService;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
@@ -55,13 +57,21 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Autowired LoadingInformationService loadingInformationService;
 
+  @Autowired LoadingInformationServiceImpl loadingInformationServiceImpl;
+
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
 
   @Autowired LoadingPlanGrpcServiceImpl loadingPlanGrpcServiceImpl;
 
+  @Autowired UllageReportFileParsingService ullageReportFileParsingService;
+
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
+
+  @GrpcClient("dischargeInformationService")
+  private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
+      dischargePlanServiceBlockingStub;
 
   @GrpcClient("cargoInfoService")
   private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoServiceBlockingStub;
@@ -309,6 +319,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     var1.setIsLoadingSequenceGenerated(loadingInfo.getIsLoadingSequenceGenerated());
     var1.setIsLoadingPlanGenerated(loadingInfo.getIsLoadingPlanGenerated());
     var1.setLoadingInfoStatusId(loadingInfo.getLoadingInfoStatusId());
+    var1.setLoadingPlanArrStatusId(loadingInfo.getLoadingPlanArrStatusId());
+    var1.setLoadingPlanDepStatusId(loadingInfo.getLoadingPlanDepStatusId());
     var1.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return var1;
   }
@@ -618,32 +630,39 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info("Active Voyage {} For Vessel Id {}", activeVoyage.getVoyageNumber(), vesselId);
 
-    Optional<PortRotation> portRotation =
-        activeVoyage.getPortRotations().stream()
-            .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
-            .findFirst();
-    // Set portId from portRoatation
-    requestBuilder.setPortId(portRotation.get().getPortId());
+    Optional<PortRotation> portRotation = null;
     Long studyId = null;
     // Set loadable study id
     if (isDischarging) {
+      portRotation =
+          activeVoyage.getDischargePortRotations().stream()
+              .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
+              .findFirst();
+      // Set portId from discharge portRoatation
+      requestBuilder.setPortId(portRotation.get().getPortId());
       studyId = activeVoyage.getActiveDs().getId();
     } else {
+      portRotation =
+          activeVoyage.getPortRotations().stream()
+              .filter(v -> v.getId().doubleValue() == portRotationId.doubleValue())
+              .findFirst();
+      // Set portId from portRoatation
+      requestBuilder.setPortId(portRotation.get().getPortId());
       studyId = activeVoyage.getActiveLs().getId();
     }
 
     // Retrieve cargo Nominations from cargo nomination table
-    com.cpdss.common.generated.LoadableStudy.CargoNominationRequest cargoNominationRequest =
-        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.newBuilder()
-            .setLoadableStudyId(studyId)
-            .build();
     com.cpdss.common.generated.LoadableStudy.CargoNominationReply cargoNominationReply =
-        loadableStudyServiceBlockingStub.getCargoNominationById(cargoNominationRequest);
+        getCargoNominationsByStudyId(studyId);
 
     // Get Update Ullage Data
     LoadingPlanModels.UpdateUllageDetailsResponse response = null;
+    // discharging and loading has same functionality after the data taken from specific micro
+    // service. so re using the loading plan logic
     if (isDischarging) {
-      response = this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
+      response =
+          this.dischargePlanServiceBlockingStub.getDischargeUpdateUllageDetails(
+              requestBuilder.build());
     } else {
       response = this.loadingPlanGrpcService.getUpdateUllageDetails(requestBuilder);
     }
@@ -669,6 +688,15 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     // Getting Cargo to Be Loaded in the Port
     List<LoadableQuantityCargoDetails> loadablePlanCargoDetails =
         this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
+            vesselId,
+            activeVoyage.getPatternId(),
+            OPERATION_TYPE,
+            portRotation.get().getId(),
+            portRotation.get().getPortId());
+
+    // Getting already added cargoes until this port
+    List<LoadableQuantityCargoDetails> loadedCargoDetails =
+        this.loadingInformationService.getLoadablePlanCargoDetailsByPortUnfiltered(
             vesselId,
             activeVoyage.getPatternId(),
             OPERATION_TYPE,
@@ -716,17 +744,23 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     // getting bunker tanks
     List<VesselInfo.VesselTankDetail> bunkerTankList =
         sortedTankList.stream()
-            .filter(tankList -> OHQ_TANK_CATEGORIES.contains(tankList.getTankCategoryId()))
+            .filter(tank -> OHQ_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
             .collect(Collectors.toList());
     List<VesselInfo.VesselTankDetail> bunkerTanks = new ArrayList<>();
     List<VesselInfo.VesselTankDetail> bunkerRearTanks = new ArrayList<>();
     bunkerTanks.addAll(
         bunkerTankList.stream()
-            .filter(tank -> OHQ_CENTER_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
+            .filter(
+                tank ->
+                    OHQ_CENTER_TANK_CATEGORIES.contains(tank.getTankCategoryId())
+                        && tank.getShowInOhqObq())
             .collect(Collectors.toList()));
     bunkerRearTanks.addAll(
         bunkerTankList.stream()
-            .filter(tank -> OHQ_REAR_TANK_CATEGORIES.contains(tank.getTankCategoryId()))
+            .filter(
+                tank ->
+                    OHQ_REAR_TANK_CATEGORIES.contains(tank.getTankCategoryId())
+                        && tank.getShowInOhqObq())
             .collect(Collectors.toList()));
     outResponse.setBunkerTanks(this.createGroupWiseTankList(this.groupTanks(bunkerTanks)));
     outResponse.setBunkerRearTanks(this.createGroupWiseTankList(this.groupTanks(bunkerRearTanks)));
@@ -759,7 +793,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         portLoadablePlanStowageDetails,
         cargoReply,
         arrivalDeparture,
-        loadablePlanCargoDetails);
+        loadablePlanCargoDetails,
+        loadedCargoDetails);
 
     outResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
@@ -776,6 +811,17 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     //    }
   }
 
+  @Override
+  public com.cpdss.common.generated.LoadableStudy.CargoNominationReply getCargoNominationsByStudyId(
+      Long studyId) {
+    com.cpdss.common.generated.LoadableStudy.CargoNominationRequest cargoNominationRequest =
+        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.newBuilder()
+            .setLoadableStudyId(studyId)
+            .build();
+
+    return loadableStudyServiceBlockingStub.getCargoNominationById(cargoNominationRequest);
+  }
+
   private LoadingUpdateUllageResponse buildUpdateUllageDetails(
       LoadingPlanModels.UpdateUllageDetailsResponse response,
       LoadingUpdateUllageResponse outResponse,
@@ -784,7 +830,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       List<PortLoadablePlanStowageDetails> portLoadablePlanStowageDetails,
       CargoInfo.CargoReply cargoReply,
       String arrivalDeparture,
-      List<LoadableQuantityCargoDetails> loadablePlanCargoDetails) {
+      List<LoadableQuantityCargoDetails> loadablePlanCargoDetails,
+      List<LoadableQuantityCargoDetails> loadedCargoDetails) {
     // Setting actual or planned
     boolean isPlanned = true;
     if (portLoadablePlanStowageDetails.size() > 0
@@ -825,6 +872,19 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
           > 0) {
         cargoToBeLoaded = true;
       }
+
+      // set already added cargo or not
+      boolean cargoLoaded = false;
+      if (!cargoToBeLoaded
+          && loadedCargoDetails.stream()
+                  .filter(
+                      loadablePlanCargoDetail ->
+                          loadablePlanCargoDetail.getCargoNominationId().equals(cargoNominationId))
+                  .count()
+              > 0) {
+        cargoLoaded = true;
+      }
+
       // get the bill of laddings for the cargo nomination
       List<Common.BillOfLadding> cargoBills =
           response.getBillOfLaddingList().stream()
@@ -845,6 +905,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       cargoBillOfLadding.setCargoAbbrevation(cargoNomination.getAbbreviation());
       cargoBillOfLadding.setCargoNominationId(cargoNominationId);
       cargoBillOfLadding.setCargoToBeLoaded(cargoToBeLoaded);
+      cargoBillOfLadding.setCargoLoaded(cargoLoaded);
       cargoBillOfLadding.setBillOfLaddings(billOfLaddings);
       billOfLaddingList.add(cargoBillOfLadding);
 
@@ -886,10 +947,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .reduce(0, (subtotal, element) -> subtotal + element);
       cargoQuantityDetail.setActualQuantityTotal(actualQuantityTotal);
       Double plannedQuantityTotal =
-          portLoadablePlanStowageDetails.stream()
+          response.getPortLoadablePlanStowageDetailsList().stream()
               .filter(
                   stowage ->
-                      stowage.getCargoNominationId().doubleValue() == cargoNominationId
+                      stowage.getCargoNominationId() == cargoNominationId.longValue()
                           && stowage.getActualPlanned().equalsIgnoreCase(PLANNED)
                           && stowage.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
@@ -1037,6 +1098,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 stowageDetail.setFillingPercentage(portWiseStowageDetail.getFillingPercentage());
                 stowageDetail.setId(portWiseStowageDetail.getId());
                 stowageDetail.setLoadablePatternId(portWiseStowageDetail.getLoadablePatternId());
+                stowageDetail.setDischargePatternId(portWiseStowageDetail.getLoadablePatternId());
                 stowageDetail.setRdgUllage(portWiseStowageDetail.getRdgUllage());
                 stowageDetail.setTankId(portWiseStowageDetail.getTankId());
                 stowageDetail.setTemperature(portWiseStowageDetail.getTemperature());
@@ -1118,6 +1180,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 ballastDetails.setFillingPercentage(portWiseBallastDetail.getFillingPercentage());
                 ballastDetails.setId(portWiseBallastDetail.getId());
                 ballastDetails.setLoadablePatternId(portWiseBallastDetail.getLoadablePatternId());
+                ballastDetails.setDischargePatternId(portWiseBallastDetail.getLoadablePatternId());
                 ballastDetails.setTankId(portWiseBallastDetail.getTankId());
                 ballastDetails.setTemperature(
                     !portWiseBallastDetail.getTemperature().isEmpty()
@@ -1181,6 +1244,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             PortLoadablePlanRobDetails robDetail = new PortLoadablePlanRobDetails();
             robDetail.setId(portWiseRobDetail.getId());
             robDetail.setLoadablePatternId(portWiseRobDetail.getLoadablePatternId());
+            robDetail.setDischargePatternId(portWiseRobDetail.getLoadablePatternId());
             robDetail.setTankId(portWiseRobDetail.getTankId());
             robDetail.setQuantity(portWiseRobDetail.getQuantity());
             robDetail.setArrivalDeparture(portWiseRobDetail.getArrivalDeparture());
@@ -1200,6 +1264,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             if (tankDetail.isPresent()) {
               robDetail.setTankName(tankDetail.get().getTankName());
               robDetail.setTankShortName(tankDetail.get().getShortName());
+              robDetail.setFuelTypeId(tankDetail.get().getTankCategoryId());
+              robDetail.setFuelTypeShortName(tankDetail.get().getTankCategoryShortName());
+              robDetail.setFuelTypeName(tankDetail.get().getTankCategoryName());
             }
 
             portLoadablePlanRobDetailsList.add(robDetail);
@@ -1414,28 +1481,28 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               : billLanding.getBlRefNumber())
                       .setBblAt60F(
                           StringUtils.isEmpty(billLanding.getBblAt60f())
-                              ? 0
-                              : billLanding.getBblAt60f().longValue())
+                              ? "0"
+                              : billLanding.getBblAt60f().toString())
                       .setQuantityLt(
                           StringUtils.isEmpty(billLanding.getQuantityLt())
-                              ? 0
-                              : billLanding.getQuantityLt().longValue())
+                              ? "0"
+                              : billLanding.getQuantityLt().toString())
                       .setQuantityMt(
                           StringUtils.isEmpty(billLanding.getQuantityMt())
-                              ? 0
-                              : billLanding.getQuantityMt().longValue())
+                              ? "0"
+                              : billLanding.getQuantityMt().toString())
                       .setKlAt15C(
                           StringUtils.isEmpty(billLanding.getKlAt15c())
-                              ? 0
-                              : billLanding.getKlAt15c().longValue())
+                              ? "0"
+                              : billLanding.getKlAt15c().toString())
                       .setApi(
                           StringUtils.isEmpty(billLanding.getApi())
-                              ? 0
-                              : billLanding.getApi().longValue())
+                              ? "0"
+                              : billLanding.getApi().toString())
                       .setTemperature(
                           StringUtils.isEmpty(billLanding.getTemperature())
-                              ? 0
-                              : billLanding.getTemperature().longValue())
+                              ? "0"
+                              : billLanding.getTemperature().toString())
                       .setIsActive(
                           StringUtils.isEmpty(billLanding.getIsActive())
                               ? 0
@@ -1487,23 +1554,23 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
                       .setTemperature(
                           ullageList.getTemperature() == null
-                              ? 0
-                              : ullageList.getTemperature().longValue())
+                              ? "0"
+                              : ullageList.getTemperature().toString())
                       .setCorrectedUllage(
                           ullageList.getCorrectedUllage() == null
-                              ? 0
-                              : ullageList.getCorrectedUllage().longValue())
+                              ? "0"
+                              : ullageList.getCorrectedUllage().toString())
                       .setQuantity(
                           ullageList.getQuantity() == null
                               ? ""
                               : String.valueOf(ullageList.getQuantity()))
                       .setFillingPercentage(
                           ullageList.getFillingPercentage() == null
-                              ? 0
-                              : ullageList.getFillingPercentage())
+                              ? "0"
+                              : ullageList.getFillingPercentage().toString())
                       // .setFillingRatio(ullageList.getFillingRatio() == null? 0:
                       // ullageList.getFillingRatio().longValue())
-                      .setApi(ullageList.getApi() == null ? 0 : ullageList.getApi().longValue())
+                      .setApi(ullageList.getApi() == null ? "0" : ullageList.getApi().toString())
                       .setCargoNominationXid(
                           ullageList.getCargoNominationId() == null
                               ? 0
@@ -1523,17 +1590,17 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setArrivalDepartutre(
                           ullageList.getArrival_departutre() == null
                               ? 0
-                              : ullageList.getArrival_departutre().longValue())
+                              : ullageList.getArrival_departutre().intValue())
                       .setActualPlanned(
                           ullageList.getActual_planned() == null
                               ? 0
-                              : ullageList.getActual_planned().longValue())
+                              : ullageList.getActual_planned().intValue())
                       .setGrade(
                           ullageList.getGrade() == null ? 0 : ullageList.getGrade().longValue())
                       .setCorrectionFactor(
                           ullageList.getCorrectionFactor() == null
-                              ? 0
-                              : ullageList.getCorrectionFactor().longValue())
+                              ? "0"
+                              : ullageList.getCorrectionFactor().toString())
                       .setIsUpdate(ullageList.getIsUpdate())
                       .setColorCode(
                           ullageList.getColor_code() == null ? "" : ullageList.getColor_code())
@@ -1562,47 +1629,47 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
                       .setTemperature(
                           ullageList.getTemperature() == null
-                              ? 0
-                              : ullageList.getTemperature().longValue())
+                              ? "0"
+                              : ullageList.getTemperature().toString())
                       .setCorrectedUllage(
                           ullageList.getCorrectedUllage() == null
-                              ? 0
-                              : ullageList.getCorrectedUllage().longValue())
+                              ? "0"
+                              : ullageList.getCorrectedUllage().toString())
                       .setCorrectionFactor(
                           ullageList.getCorrectionFactor() == null
-                              ? 0
-                              : ullageList.getCorrectionFactor().longValue())
+                              ? "0"
+                              : ullageList.getCorrectionFactor().toString())
                       .setQuantity(
                           ullageList.getQuantity() == null
                               ? ""
                               : String.valueOf(ullageList.getQuantity()))
                       .setObservedM3(
                           ullageList.getObservedM3() == null
-                              ? 0
-                              : ullageList.getObservedM3().longValue())
+                              ? "0"
+                              : ullageList.getObservedM3().toString())
                       .setFillingRatio(
                           ullageList.getFillingRatio() == null
-                              ? 0
-                              : ullageList.getFillingRatio().longValue())
+                              ? "0"
+                              : ullageList.getFillingRatio().toString())
                       .setSounding(
                           ullageList.getSounding() == null
                               ? ""
                               : String.valueOf(ullageList.getSounding()))
                       .setFillingPercentage(
                           ullageList.getFilling_percentage() == null
-                              ? 0
-                              : ullageList.getFilling_percentage().longValue())
+                              ? "0"
+                              : ullageList.getFilling_percentage().toString())
                       .setArrivalDepartutre(
                           ullageList.getArrival_departutre() == null
                               ? 0
-                              : ullageList.getArrival_departutre().longValue())
+                              : ullageList.getArrival_departutre().intValue())
                       .setActualPlanned(
                           ullageList.getActual_planned() == null
                               ? 0
-                              : ullageList.getActual_planned().longValue())
+                              : ullageList.getActual_planned().intValue())
                       .setColorCode(
                           ullageList.getColor_code() == null ? "" : ullageList.getColor_code())
-                      .setSg(ullageList.getSg() == null ? 0 : ullageList.getSg().longValue())
+                      .setSg(ullageList.getSg() == null ? "0" : ullageList.getSg().toString())
                       .setPortXid(ullageList.getPortXId() == null ? 0 : ullageList.getPortXId())
                       .setPortRotationXid(
                           ullageList.getPortRotationXId() == null
@@ -1632,8 +1699,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
                       .setTemperature(
                           ullageList.getTemperature() == null
-                              ? 0
-                              : ullageList.getTemperature().longValue())
+                              ? "0"
+                              : ullageList.getTemperature().toString())
                       // .setCorrectedUllage(ullageList.getCorrectedUllage() == null? 0:
                       // ullageList.getCorrectedUllage().longValue())
                       // .setCorrectionFactor(ullageList.getCorrectionFactor() == null ? 0:
@@ -1654,11 +1721,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setArrivalDepartutre(
                           ullageList.getArrival_departutre() == null
                               ? 0
-                              : ullageList.getArrival_departutre().longValue())
+                              : ullageList.getArrival_departutre().intValue())
                       .setActualPlanned(
                           ullageList.getActual_planned() == null
                               ? 0
-                              : ullageList.getActual_planned().longValue())
+                              : ullageList.getActual_planned().intValue())
                       .setPortXid(ullageList.getPortXId() == null ? 0 : ullageList.getPortXId())
                       .setPortRotationXid(
                           ullageList.getPortRotationXId() == null
@@ -1713,12 +1780,14 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 LoadablePlanCommingleDetails commingle = new LoadablePlanCommingleDetails();
                 commingle.setId(commingleDetails.getId());
                 commingle.setLoadablePatternId(commingleDetails.getLoadablePatternId());
+                commingle.setDischargePatternId(commingleDetails.getLoadablePatternId());
                 commingle.setTankId(commingleDetails.getTankId());
                 commingle.setQuantity(
                     commingleDetails.getQuantity().isEmpty()
                         ? null
                         : Double.parseDouble(commingleDetails.getQuantity()));
                 commingle.setLoadingInformationId(commingle.getLoadingInformationId());
+                commingle.setDischargeInformationId(commingle.getLoadingInformationId());
                 commingle.setGrade(commingleDetails.getGrade());
                 commingle.setTankName(commingleDetails.getTankName());
                 commingle.setQuantity(
@@ -1824,9 +1893,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Override
   public UploadTideDetailResponse uploadLoadingTideDetails(
-      Long loadingId, MultipartFile file, String correlationId)
+      Long loadingId, MultipartFile file, String correlationId, String portName, Long portId)
       throws IOException, GenericServiceException {
-    return loadingInformationService.uploadLoadingTideDetails(loadingId, file, correlationId);
+    return loadingInformationService.uploadLoadingTideDetails(loadingId, file, correlationId, portName, portId);
   }
 
   @Override
@@ -1836,6 +1905,21 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   private Long castInput(String inputData) {
     return StringUtils.isEmpty(inputData) ? 0 : Long.parseLong(inputData);
+  }
+
+  /** Import ullage report file and parse the content from the file and send it in response. */
+  @Override
+  public ListOfUllageReportResponse importUllageReportFile(
+      MultipartFile file,
+      String tankDetails,
+      Long infoId,
+      Long cargoNominationId,
+      String correlationId,
+      boolean isLoading,
+      Long vesselId)
+      throws GenericServiceException, IOException {
+    return ullageReportFileParsingService.importUllageReportFile(
+        file, tankDetails, infoId, cargoNominationId, correlationId, isLoading, vesselId);
   }
 
   /*

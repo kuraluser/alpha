@@ -22,6 +22,7 @@ import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nominat
 import { dischargeStudyCargoQuantityValidator } from '../../directives/validator/discharge-study-cargo-quantity.directive';
 import { dischargeStudyAbbreviationValidator } from '../../directives/validator/discharge-study-abbreviation.directive';
 import { numberValidator } from '../../../core/directives/number-validator.directive';
+import { dischargeStudyLoadableQuantity } from '../../directives/validator/discharge-study-loadable-quantity.directive'
 
 import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service';
 
@@ -58,7 +59,8 @@ export class DischargeStudyComponent implements OnInit {
     this.editMode ? this.dischargeStudyForm?.enable() : this.dischargeStudyForm?.disable();
     this.backLoadingColumns = this.dischargeStudyDetailsTransformationService.getDischargeStudyBackLoadingDatatableColumns(this.permission, this.dischargeStudy?.statusId,this.voyage.statusId);
   }
-
+  
+  loadableQuantity: number;
   editMode: DATATABLE_EDITMODE;
   portDetails: IPortDetailValueObject[];
   instructions: IInstruction[];
@@ -129,6 +131,7 @@ export class DischargeStudyComponent implements OnInit {
     }
     const result = await this.dischargeStudyDetailsApiService.getDischargeStudyDetails(this.vesselId, this.voyageId,this.dischargeStudyId).toPromise();
     if(result.responseStatus.status === '200') {
+      this.loadableQuantity = result.loadableQuantity;
       const portDetails = this.dischargeStudyForm.get('portDetails') as FormArray;
       const portList = result.portList;
       const portUniqueColorAbbrList = [];
@@ -240,7 +243,7 @@ export class DischargeStudyComponent implements OnInit {
       abbreviation: this.fb.control(backLoading.abbreviation.value, [Validators.required, alphabetsOnlyValidator, Validators.maxLength(6), dischargeStudyAbbreviationValidator]),
       cargo: this.fb.control(backLoading?.cargo?.value ? backLoading.cargo?.value : null, [Validators.required]),
       bbls: this.fb.control(backLoading.bbls?.value ? backLoading.bbls?.value : null, []),
-      kl: this.fb.control(backLoading.kl?.value ? backLoading.kl?.value : null, [Validators.required, numberValidator(quantityDecimal,null,false) , Validators.min(min)]),
+      kl: this.fb.control(backLoading.kl?.value ? backLoading.kl?.value : null, [Validators.required, numberValidator(quantityDecimal,null,false) , Validators.min(min) , dischargeStudyLoadableQuantity(this.loadableQuantity)]),
       mt: this.fb.control(backLoading.mt?.value ? backLoading.mt?.value : null, []),
       api: this.fb.control(backLoading.api?.value ? backLoading.api?.value : null, [Validators.required, Validators.min(0), numberValidator(2, 3)]),
       temp: this.fb.control(backLoading.temp?.value ? backLoading.temp?.value : null, [Validators.required , numberValidator(2, 3)]),
@@ -272,8 +275,8 @@ export class DischargeStudyComponent implements OnInit {
   initCargoFormGroup(cargo) {
     const quantityDecimal = this.quantityDecimalService.quantityDecimal(QUANTITY_UNIT.KL);
     const min = quantityDecimal ? (1/Math.pow(10, quantityDecimal)) : 1;
-    const quantityValidator  = cargo.mt.value.id === 2 ? [Validators.required,  Validators.min(min) , dischargeStudyCargoQuantityValidator, numberValidator(quantityDecimal,null,false)] :
-      [Validators.required,  Validators.min(min) , dischargeStudyCargoQuantityValidator];
+    const quantityValidator  = cargo.mt.value.id === 2 ? [Validators.required,  Validators.min(0) , dischargeStudyCargoQuantityValidator, numberValidator(quantityDecimal,null,false)] :
+      [Validators.required , dischargeStudyCargoQuantityValidator];
     return this.fb.group({
       maxKl: this.fb.control(cargo.maxKl.value, []),
       abbreviation: this.fb.control(cargo.abbreviation.value, []),
@@ -438,7 +441,7 @@ export class DischargeStudyComponent implements OnInit {
     if (event.field === 'mode') {
       if (event.data.mode?.value.id === 2) {
        
-        quantityFeild.setValidators([Validators.required,  Validators.min(min) , dischargeStudyCargoQuantityValidator, numberValidator(quantityDecimal,null,false)]);
+        quantityFeild.setValidators([Validators.required,  Validators.min(0) , dischargeStudyCargoQuantityValidator, numberValidator(quantityDecimal,null,false)]);
         quantityFeild.updateValueAndValidity();
         selectedPortCargo['kl'].value = '0';
         selectedPortCargo['mt'].value = '0';
@@ -460,7 +463,7 @@ export class DischargeStudyComponent implements OnInit {
           selectedPortCargo['kl'].isEditMode = true;
         }
       } else {
-        quantityFeild.setValidators([Validators.required,  Validators.min(min) , dischargeStudyCargoQuantityValidator]);
+        quantityFeild.setValidators([Validators.required , dischargeStudyCargoQuantityValidator]);
         quantityFeild.updateValueAndValidity();
         selectedPortCargo['kl'].isEditable = false;
         selectedPortCargo['mt'].isEditable = false;
@@ -726,9 +729,10 @@ export class DischargeStudyComponent implements OnInit {
     } else if(!event.data.isAdd) {
       this.updateDischargeCargoDetails(event,portDetails,event.field);
     }
+    
     selectedPortCargo = this.unitConversion(selectedPortCargo, event, index, 'backLoadingDetails');
     this.checkFormFieldValidity();
-    
+    formGroup.get('kl').updateValueAndValidity();
     this.portDetails = [...portDetails];
   }
 

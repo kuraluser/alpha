@@ -34,6 +34,9 @@ public class DischargePatternQuantityCargoPortwiseDetails extends EntityDoc {
   @Column(name = "cargo_nomination_xid")
   private Long cargoNominationId;
 
+  @Column(name = "discharge_cargo_nomination_xid")
+  private Long dischargeCargoNominationId;
+
   @Column(name = "loadable_pattern_xid")
   private Long loadablePatternId;
 

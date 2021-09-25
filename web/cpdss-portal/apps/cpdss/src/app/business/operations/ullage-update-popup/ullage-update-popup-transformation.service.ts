@@ -66,7 +66,7 @@ export class UllageUpdatePopupTransformationService {
           if (bunkerTankQuantities[index]?.tankId === bunkerTank[groupIndex][tankIndex]?.id) {
             bunkerTank[groupIndex][tankIndex].commodity = bunkerTankQuantities[index];
             bunkerTank[groupIndex][tankIndex].commodity.density = bunkerTank[groupIndex][tankIndex].commodity.density ? bunkerTank[groupIndex][tankIndex].commodity.density : bunkerTank[groupIndex][tankIndex].density;
-            bunkerTank[groupIndex][tankIndex].commodity.volume = bunkerTank[groupIndex][tankIndex].commodity?.density ? ( bunkerTank[groupIndex][tankIndex].commodity.quantity / bunkerTank[groupIndex][tankIndex].commodity?.density) : 0;
+            bunkerTank[groupIndex][tankIndex].commodity.volume = bunkerTank[groupIndex][tankIndex].commodity?.density ? (bunkerTank[groupIndex][tankIndex].commodity.quantity / bunkerTank[groupIndex][tankIndex].commodity?.density) : 0;
             break;
           }
         }
@@ -94,7 +94,7 @@ export class UllageUpdatePopupTransformationService {
             cargoTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight.toFixed(2)) : 0;
             const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
             cargoTank[groupIndex][tankIndex].commodity.actualWeight = cargoTankQuantities[index].quantity;
-            cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, AppConfigurationService.settings.volumeBaseUnit, cargoTank[groupIndex][tankIndex].commodity?.api);
+            cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, QUANTITY_UNIT.OBSKL, cargoTank[groupIndex][tankIndex].commodity?.api, cargoTank[groupIndex][tankIndex].commodity?.temperature);
             cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex]);
             break;
           }
@@ -145,8 +145,9 @@ export class UllageUpdatePopupTransformationService {
         fieldColumnClass: 'pr-25',
         fieldPlaceholder: '',
         errorMessages: {
-          'maxLimit': 'ULLAGE_UPDATE_FILLING_ERROR',
-          'required': 'ULLAGE_UPDATE_ULLAGE_REQUIRED'
+          maxLimit: 'ULLAGE_UPDATE_FILLING_ERROR',
+          required: 'ULLAGE_UPDATE_ULLAGE_REQUIRED',
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ERROR'
         }
       },
       {
@@ -158,8 +159,11 @@ export class UllageUpdatePopupTransformationService {
         fieldColumnClass: 'pr-25',
         fieldPlaceholder: '',
         errorMessages: {
-          'maxLimit': 'ULLAGE_UPDATE_FILLING_ERROR',
-          'required': 'ULLAGE_UPDATE_TEMPERATURTE_REQUIRED'
+          maxLimit: 'ULLAGE_UPDATE_FILLING_ERROR',
+          required: 'ULLAGE_UPDATE_TEMPERATURTE_REQUIRED',
+          min: 'ULLAGE_UPDATE_TEMPERATURE_MIN_ERROR',
+          max: 'ULLAGE_UPDATE_TEMPERATURE_MAX_ERROR',
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ERROR'
         }
       },
       {
@@ -171,8 +175,11 @@ export class UllageUpdatePopupTransformationService {
         editable: true,
         fieldPlaceholder: '',
         errorMessages: {
-          'maxLimit': 'ULLAGE_UPDATE_FILLING_ERROR',
-          'required': 'ULLAGE_UPDATE_API_REQUIRED'
+          maxLimit: 'ULLAGE_UPDATE_FILLING_ERROR',
+          required: 'ULLAGE_UPDATE_API_REQUIRED',
+          min: 'ULLAGE_UPDATE_API_MIN_ERROR',
+          max: 'ULLAGE_UPDATE_API_MAX_ERROR',
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ERROR'
         }
       },
       {
@@ -181,7 +188,8 @@ export class UllageUpdatePopupTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         editable: false,
         showTotal: true,
-        fieldPlaceholder: ''
+        fieldPlaceholder: '',
+        numberFormat: '1.2-2'
       },
 
     ];
@@ -210,8 +218,9 @@ export class UllageUpdatePopupTransformationService {
         editable: true,
         fieldColumnClass: 'pr-25',
         errorMessages: {
-          'maxLimit': 'ULLAGE_UPDATE_FILLING_ERROR',
-          'required': 'ULLAGE_UPDATE_SOUNDING_REQUIRED'
+          maxLimit: 'ULLAGE_UPDATE_FILLING_ERROR',
+          required: 'ULLAGE_UPDATE_SOUNDING_REQUIRED',
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ERROR'
         }
       },
 
@@ -220,6 +229,7 @@ export class UllageUpdatePopupTransformationService {
         header: 'ULLAGE_UPDATE_CARGO_TABLE_QUANTITY_LABEL',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: '',
+        numberFormat: '1.2-2',
         showTotal: true,
         editable: false
       }
@@ -258,10 +268,12 @@ export class UllageUpdatePopupTransformationService {
         editable: true,
         showTotal: true,
         totalFieldClass: 'pr-30',
+        numberFormat: '1.2-2',
         errorMessages: {
-          'required': 'ULLAGE_UPDATE_QUANTITY_REQUIRED',
-          'min': 'ULLAGE_UPDATE_INVALID_ERROR',
-          'fillingError': 'ULLAGE_UPDATE_BUNKER_FILLING_ERROR'
+          required: 'ULLAGE_UPDATE_QUANTITY_REQUIRED',
+          min: 'ULLAGE_UPDATE_INVALID_ERROR',
+          fillingError: 'ULLAGE_UPDATE_BUNKER_FILLING_ERROR',
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ERROR'
         }
       }
 
@@ -279,7 +291,8 @@ export class UllageUpdatePopupTransformationService {
       {
         field: 'cargoName',
         header: 'LOADABLE_PLAN_BL_FIGURE_CARGO_NAME',
-        editable: false
+        editable: false,
+        fieldType: DATATABLE_FIELD_TYPE.BADGE,
       },
       {
         field: 'blRefNo',
@@ -291,7 +304,8 @@ export class UllageUpdatePopupTransformationService {
           required: 'LOADABLE_PLAN_BL_REF_NO_REQUIRED',
           pattern: 'ULLAGE_UPDATE_BLREF_PATTERN_ERROR',
           minlength: 'ULLAGE_UPDATE_BLREF_MIN_LENGTH_ERROR',
-          maxlength: 'ULLAGE_UPDATE_BLREF_MAX_LENGTH_ERROR'
+          maxlength: 'ULLAGE_UPDATE_BLREF_MAX_LENGTH_ERROR',
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ENTRY'
         }
       },
       {
@@ -300,9 +314,12 @@ export class UllageUpdatePopupTransformationService {
         editable: true,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: "LOADABLE_PLAN_BL_BBL@60F_PLACEHOLDER",
+        numberFormat: '1.0',
         errorMessages: {
           required: 'LOADABLE_PLAN_BL_BBL@60F_REQUIRED',
-          rangeError: 'ULLAGE_UPDATE_VALUE_RANGE_ERROR'
+          rangeError: 'ULLAGE_UPDATE_VALUE_RANGE_ERROR',
+          min: 'ULLAGE_UPDATE_QUANTITY_NEGATIVE_ERROR',
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ENTRY'
         }
       },
       {
@@ -311,9 +328,12 @@ export class UllageUpdatePopupTransformationService {
         editable: true,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: "LOADABLE_PLAN_BL_LT_PLACEHOLDER",
+        numberFormat: '1.2-2',
         errorMessages: {
           required: 'LOADABLE_PLAN_BL_LT_REQUIRED',
-          rangeError: 'ULLAGE_UPDATE_VALUE_RANGE_ERROR'
+          rangeError: 'ULLAGE_UPDATE_VALUE_RANGE_ERROR',
+          min: 'ULLAGE_UPDATE_QUANTITY_NEGATIVE_ERROR',
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ENTRY'
         }
       },
       {
@@ -322,9 +342,12 @@ export class UllageUpdatePopupTransformationService {
         editable: true,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: "LOADABLE_PLAN_BL_MT_REQUIRED",
+        numberFormat: '1.2-2',
         errorMessages: {
           required: 'LOADABLE_PLAN_BL_MT_REQUIRED',
-          rangeError: 'ULLAGE_UPDATE_VALUE_RANGE_ERROR'
+          rangeError: 'ULLAGE_UPDATE_VALUE_RANGE_ERROR',
+          min: 'ULLAGE_UPDATE_QUANTITY_NEGATIVE_ERROR',
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ENTRY'
         }
       },
       {
@@ -333,9 +356,12 @@ export class UllageUpdatePopupTransformationService {
         editable: true,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: "LOADABLE_PLAN_BL_KL_PLACEHOLDER",
+        numberFormat: '1.3-3',
         errorMessages: {
           required: 'LOADABLE_PLAN_BL_KL_REQUIRED',
-          rangeError: 'ULLAGE_UPDATE_VALUE_RANGE_ERROR'
+          rangeError: 'ULLAGE_UPDATE_VALUE_RANGE_ERROR',
+          min: 'ULLAGE_UPDATE_QUANTITY_NEGATIVE_ERROR',
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ENTRY'
         }
       },
       {
@@ -344,8 +370,12 @@ export class UllageUpdatePopupTransformationService {
         editable: true,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: "LOADABLE_PLAN_BL_API_PLACEHOLDER",
+        numberFormat: '1.2-2',
         errorMessages: {
-          required: 'LOADABLE_PLAN_BL_API_REQUIRED'
+          required: 'LOADABLE_PLAN_BL_API_REQUIRED',
+          min: 'ULLAGE_UPDATE_API_NEGATIVE_ERROR',
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ENTRY',
+          max: 'ULLAGE_UPDATE_API_MAX_ERROR'
         }
       },
       {
@@ -354,8 +384,12 @@ export class UllageUpdatePopupTransformationService {
         editable: true,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: "LOADABLE_PLAN_BL_TEMP_PLACEHOLDER",
+        numberFormat: '1.2-2',
         errorMessages: {
-          required: 'LOADABLE_PLAN_BL_TEMP_REQUIRED'
+          required: 'LOADABLE_PLAN_BL_TEMP_REQUIRED',
+          min: 'ULLAGE_UPDATE_TEMPERATURE_NEGATIVE_ERROR',
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ENTRY',
+          max: 'ULLAGE_UPDATE_TEMPERATURE_MAX_ERROR'
         }
       },
       {
@@ -391,6 +425,7 @@ export class UllageUpdatePopupTransformationService {
     _cargoDetail.cargoId = cargoRow?.cargoId
     _cargoDetail.isAdd = true;
     _cargoDetail.id = cargoTankDetail?.id;
+    _cargoDetail.cargoColor = cargoRow.cargoColor;
     return _cargoDetail;
   }
 
@@ -490,13 +525,14 @@ export class UllageUpdatePopupTransformationService {
     cargoQuantity.maxQuantity = data.maxQuantity;
     cargoQuantity.minQuantity = data.minQuantity;
     cargoQuantity.api = data.blAvgApi;
+    cargoQuantity.cargoColor = data.cargoColor;
     cargoQuantity.cargoNominationId = data.cargoNominationId;
     cargoQuantity.plan = {
       bbl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.nominationApi) ?? 0,
       lt: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, data.nominationApi) ?? 0,
       mt: data.plannedQuantityTotal ?? 0,
       kl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, data.nominationApi) ?? 0,
-      api: data.nominationApi ?  Number(Number(data.nominationApi).toFixed(2)) : 0,
+      api: data.nominationApi ? Number(Number(data.nominationApi).toFixed(2)) : 0,
       temp: data.nominationTemp ? Number(Number(data.nominationTemp).toFixed(2)) : 0
     };
     cargoQuantity.actual = {

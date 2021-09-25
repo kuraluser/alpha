@@ -1,40 +1,52 @@
-<div class="row mt-10" (mousemove)="synchronizeTooltips($event)" (touchmove)="synchronizeTooltips($event)"
-  (touchstart)="synchronizeTooltips($event)" *ngIf="stageTickPositions">
-  <div class="col-12">
+<div class="row mt-10" *ngIf="stageTickPositions">
+  <div class="col-12" (mousemove)="synchronizeTooltips($event, SEQUENCE_CHARTS.CARGO_TANK)"
+    (touchmove)="synchronizeTooltips($event, SEQUENCE_CHARTS.CARGO_TANK)"
+    (touchstart)="synchronizeTooltips($event, SEQUENCE_CHARTS.CARGO_TANK)">
     <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
       *ngIf="cargoSequenceGanttChart && cargoSequenceChartSeries" [options]="cargoSequenceGanttChart"
       [callbackFunction]="cargoSequenceGanttChartCallback" [(update)]="updateCargoTankChart" [oneToOne]="oneToOne"
       (chartInstance)="setCargoTankChartInstance($event)" class="sequence-chart cargo-sequence-chart">
     </highcharts-chart>
   </div>
-  <div class="col-12" *ngIf="operation === OPERATIONS.DISCHARGING">
+  <div class="col-12" *ngIf="operation === OPERATIONS.DISCHARGING"
+    (mousemove)="synchronizeTooltips($event, SEQUENCE_CHARTS.CARGO_PUMP)"
+    (touchmove)="synchronizeTooltips($event, SEQUENCE_CHARTS.CARGO_PUMP)"
+    (touchstart)="synchronizeTooltips($event, SEQUENCE_CHARTS.CARGO_PUMP)">
     <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
       *ngIf="cargoPumpSequenceGanttChart && cargoPumpSequenceChartSeries" [options]="cargoPumpSequenceGanttChart"
       [(update)]="updateCargoPumpChart" [oneToOne]="oneToOne" (chartInstance)="setCargoPumpChartInstance($event)"
       class="sequence-chart cargo-sequence-chart cargo-pumb-sequence-chart">
     </highcharts-chart>
   </div>
-  <div class="col-12">
+  <div class="col-12" (mousemove)="synchronizeTooltips($event, SEQUENCE_CHARTS.BALLAST_TANK)"
+    (touchmove)="synchronizeTooltips($event, SEQUENCE_CHARTS.BALLAST_TANK)"
+    (touchstart)="synchronizeTooltips($event, SEQUENCE_CHARTS.BALLAST_TANK)">
     <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
       *ngIf="ballastSequenceGanttChart && ballastSequenceChartSeries" [options]="ballastSequenceGanttChart"
       [(update)]="updateBallastTankChart" [oneToOne]="oneToOne" (chartInstance)="setBallastTankChartInstance($event)"
       class="sequence-chart ballast-sequence">
     </highcharts-chart>
   </div>
-  <div class="col-12">
+  <div class="col-12" (mousemove)="synchronizeTooltips($event, SEQUENCE_CHARTS.BALLAST_PUMP)"
+    (touchmove)="synchronizeTooltips($event, SEQUENCE_CHARTS.BALLAST_PUMP)"
+    (touchstart)="synchronizeTooltips($event, SEQUENCE_CHARTS.BALLAST_PUMP)">
     <highcharts-chart [Highcharts]="Highcharts" [constructorType]="'ganttChart'"
       *ngIf="ballastPumpSequenceGanttChart && ballastPumpSequenceChartSeries" [options]="ballastPumpSequenceGanttChart"
       [(update)]="updateBallastPumpChart" [oneToOne]="oneToOne" (chartInstance)="setBallastPumpChartInstance($event)"
       class="sequence-chart ballast-pump-sequence">
     </highcharts-chart>
   </div>
-  <div class="col-12">
+  <div class="col-12" (mousemove)="synchronizeTooltips($event, SEQUENCE_CHARTS.FLOW_RATE)"
+    (touchmove)="synchronizeTooltips($event, SEQUENCE_CHARTS.FLOW_RATE)"
+    (touchstart)="synchronizeTooltips($event, SEQUENCE_CHARTS.FLOW_RATE)">
     <highcharts-chart [Highcharts]="Highcharts" *ngIf="flowRateAreaChart && flowRateChartSeries"
       [options]="flowRateAreaChart" [(update)]="updateFlowRateChart" [oneToOne]="oneToOne"
       (chartInstance)="setFlowRateChartInstance($event)" class="sequence-chart flow-rate-chart">
     </highcharts-chart>
   </div>
-  <div class="col-12">
+  <div class="col-12" (mousemove)="synchronizeTooltips($event, SEQUENCE_CHARTS.STABILITY_PARAMS)"
+    (touchmove)="synchronizeTooltips($event, SEQUENCE_CHARTS.STABILITY_PARAMS)"
+    (touchstart)="synchronizeTooltips($event, SEQUENCE_CHARTS.STABILITY_PARAMS)">
     <highcharts-chart [Highcharts]="Highcharts" *ngIf="stabilityGanttChart && stabilityChartSeries"
       [options]="stabilityGanttChart" [(update)]="updateStabilityParamsChart" [oneToOne]="oneToOne"
       (chartInstance)="setStabilityParamsChartInstance($event)" class="sequence-chart stabilityparams-chart">

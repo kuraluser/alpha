@@ -1,69 +1,71 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col sidebar-loading-and-discharging" *ngIf="dischargingPlanDetails">
-      <div class="row">
-        <div class="col">
-          <cpdss-portal-plan-side-panel [loadingDischargingPlanData]="dischargingPlanDetails">
-          </cpdss-portal-plan-side-panel>
-        </div>
-      </div>
-    </div>
-
-    <div class="col main-content-loading-and-discharging">
-      <cpdss-portal-arrival-condition [vesselId]="vesselId" [portRotationId]="portRotationId"
-        [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
-        [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
-        [loadingDischargingPlanData]="dischargingPlanDetails" [operation]="OPERATIONS.DISCHARGING">
-      </cpdss-portal-arrival-condition>
-
-      <cpdss-portal-departure-condition [vesselId]="vesselId" [portRotationId]="portRotationId"
-        [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
-        [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
-        [loadingDischargingPlanData]="dischargingPlanDetails" [operation]="OPERATIONS.DISCHARGING">
-      </cpdss-portal-departure-condition>
-
-      <div class="row mt-30">
-        <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
-          <h5 class="text-uppercase  heading-border">{{ 'DISCHARGING_INFORMATION_CARGO_TO_BE_DISCHARGED' | translate }}
-          </h5>
-          <cpdss-portal-cargo-to-be-loaded-discharged [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
-            [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
-            [cargoVesselTankDetails]="dischargingInformation?.cargoVesselTankDetails"
-            [operation]="OPERATIONS.DISCHARGING" [listData]="listData"
-            [isDischargePlanGenerated]="dischargingInformation?.isDischargePlanGenerated">
-          </cpdss-portal-cargo-to-be-loaded-discharged>
+<ng-container *ngIf="dischargingPlanForm">
+  <div class="container-fluid" [formGroup]="dischargingPlanForm">
+    <div class="row">
+      <div class="col sidebar-loading-and-discharging" *ngIf="dischargingPlanDetails">
+        <div class="row">
+          <div class="col">
+            <cpdss-portal-plan-side-panel [loadingDischargingPlanData]="dischargingPlanDetails">
+            </cpdss-portal-plan-side-panel>
+          </div>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
-          <cpdss-portal-loading-discharging-manage-sequence [operation]="OPERATIONS.DISCHARGING" [editable]="false"
-            [cargos]="cargos"
-            [loadableQuantityCargo]="dischargingInformation?.cargoVesselTankDetails.loadableQuantityCargoDetails"
-            [loadingDischargingSequences]="dischargingInformation?.dischargeSequences"
-            [currentQuantitySelectedUnit]="currentQuantitySelectedUnit">
-          </cpdss-portal-loading-discharging-manage-sequence>
-        </div>
-      </div>
+      <div class="col main-content-loading-and-discharging">
+        <cpdss-portal-arrival-condition [vesselId]="vesselId" [portRotationId]="portRotationId"
+          [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
+          [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
+          [loadingDischargingPlanData]="dischargingPlanDetails" [operation]="OPERATIONS.DISCHARGING">
+        </cpdss-portal-arrival-condition>
 
-      <!-- TODO: will do this in future -->
-      <!-- <div class="row mt-20">
-        <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
-          <cpdss-portal-cow-plan [cowDetails]="dischargingInformation?.cowDetails"
-            [cargoTanks]="dischargingInformation?.cargoTanks" [loadedCargos]="dischargingInformation?.loadedCargos">
-          </cpdss-portal-cow-plan>
-        </div>
-      </div> -->
+        <cpdss-portal-departure-condition [vesselId]="vesselId" [portRotationId]="portRotationId"
+          [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
+          [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
+          [loadingDischargingPlanData]="dischargingPlanDetails" [operation]="OPERATIONS.DISCHARGING">
+        </cpdss-portal-departure-condition>
 
-      <div class="row mt-30">
-        <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
-          <cpdss-portal-post-discharge-stage
-            *ngIf="dischargingPlanDetails?.dischargingInformation?.postDischargeStageTime" [editMode]="false"
-            [postDischargeStageTime]="dischargingPlanDetails?.dischargingInformation?.postDischargeStageTime"
-            [form]="dischargingPlanForm">
-          </cpdss-portal-post-discharge-stage>
+        <div class="row mt-30">
+          <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
+            <h5 class="text-uppercase  heading-border">
+              {{ 'DISCHARGING_INFORMATION_CARGO_TO_BE_DISCHARGED' | translate }}
+            </h5>
+            <cpdss-portal-cargo-to-be-loaded-discharged [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
+              [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
+              [cargoVesselTankDetails]="dischargingInformation?.cargoVesselTankDetails"
+              [operation]="OPERATIONS.DISCHARGING" [listData]="listData"
+              [isDischargePlanGenerated]="dischargingInformation?.isDischargePlanGenerated">
+            </cpdss-portal-cargo-to-be-loaded-discharged>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
+            <cpdss-portal-loading-discharging-manage-sequence [operation]="OPERATIONS.DISCHARGING" [editable]="false"
+              [cargos]="cargos"
+              [loadableQuantityCargo]="dischargingInformation?.cargoVesselTankDetails.loadableQuantityCargoDetails"
+              [loadingDischargingSequences]="dischargingInformation?.dischargeSequences"
+              [currentQuantitySelectedUnit]="currentQuantitySelectedUnit">
+            </cpdss-portal-loading-discharging-manage-sequence>
+          </div>
+        </div>
+
+        <div class="row mt-20">
+          <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
+            <cpdss-portal-cow-plan [cowDetails]="dischargingInformation?.cowDetails"
+              [form]="dischargingPlanForm" [cargoTanks]="dischargingInformation?.cargoTanks"
+              [loadedCargos]="dischargingInformation?.loadedCargos" [listData]="listData" [editMode]="false">
+            </cpdss-portal-cow-plan>
+          </div>
+        </div>
+
+        <div class="row mt-30">
+          <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
+            <cpdss-portal-post-discharge-stage
+              *ngIf="dischargingInformation?.postDischargeStageTime && dischargingPlanForm" [editMode]="false"
+              [postDischargeStageTime]="dischargingInformation?.postDischargeStageTime" [form]="dischargingPlanForm">
+            </cpdss-portal-post-discharge-stage>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</ng-container>

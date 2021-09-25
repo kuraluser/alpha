@@ -22,6 +22,7 @@ import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.PortOperationTable;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.repository.projections.LoadingPlanQtyAndOrder;
 import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -230,7 +231,7 @@ public class SynopticService {
             getCargoNominationIdList(request.getPatternId(), request.getPortId());
         dataList =
             disList.stream()
-                .filter(v -> nominationIds.contains(v.getCargoNominationId()))
+                .filter(v -> nominationIds.contains(v.getDischargeCargoNominationId()))
                 .collect(Collectors.toList());
       } else {
         dataList = disList; // no filter, add all data
@@ -296,6 +297,8 @@ public class SynopticService {
 
           Optional.ofNullable(var1.getCargoNominationId())
               .ifPresent(builder1::setCargoNominationId);
+          Optional.ofNullable(var1.getDischargeCargoNominationId())
+              .ifPresent(builder1::setDscargoNominationId);
           Optional.ofNullable(var1.getTimeRequiredForDischarging())
               .ifPresent(value -> builder1.setTimeRequiredForDischarging(String.valueOf(value)));
           builder.addLoadableQuantityCargoDetails(builder1.build());
@@ -352,6 +355,7 @@ public class SynopticService {
     } else {
       dataList = list; // no filter, add all data
     }
+
     if (!dataList.isEmpty()) {
       for (LoadablePlanQuantity var1 : dataList) {
         LoadableStudy.LoadableQuantityCargoDetails.Builder builder1 =
@@ -984,6 +988,18 @@ public class SynopticService {
                 .filter(cargo -> cargo.getTankId().equals(tank.getTankId()))
                 .findAny();
         if (tankDataOpt.isPresent()) {
+          // cargo conditions grid must be ordered by loading/discharging order
+          List<LoadingPlanQtyAndOrder> lpQty =
+              loadablePlanQuantityRepository.findByCargoNominationIdAndIsActiveTrue(
+                  tankDataOpt.get().getCargoNominationId());
+          if (!lpQty.isEmpty()) { // means it is a loading port data
+            var obj = lpQty.stream().findAny();
+            Optional.ofNullable(obj.get().getId()).ifPresent(cargoBuilder::setPlanQtyId);
+            Optional.ofNullable(obj.get().getLoadingOrder())
+                .ifPresent(cargoBuilder::setPlanQtyCargoOrder);
+          }
+          // else case is discharge qty, currently no order for discharge
+
           ofNullable(tankDataOpt.get().getCargoNominationId())
               .ifPresent(v -> cargoBuilder.setCargoNominationId(v));
           ofNullable(tankDataOpt.get().getId()).ifPresent(v -> cargoBuilder.setLpCargoDetailId(v));

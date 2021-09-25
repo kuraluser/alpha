@@ -36,8 +36,16 @@
         </div>
         <div class="col text-right">
             <div class="">
-                <button id="generate_plan" class="btn btn-main mr-10">{{'DISCHARGE_STUDY_VIEW_CONFIRM_PLAN' |
-                    translate}}</button>
+
+                    <button class="btn btn-main mr-10" id="generate_plan"
+                    [disabled]="selectedDischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED || !confirmPlanPermission"
+                    [ngClass]="{'confirmed': selectedDischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED}"
+                    *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE"
+                    (click)="onConfirmPlanClick()">
+                    <span class="pi pi-check check-rounded" *ngIf="loadableStudyStatus"></span>
+                    {{ selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED ? ('DISCHARGE_PLAN_CONFIRMED_PLAN_BUTTON_LABEL' |translate) :
+                    ('DISCHARGE_STUDY_VIEW_CONFIRM_PLAN' |translate)}}
+                </button>
     
                 <button id="view_plan" class="btn btn-main"
                     (click)="backToDischargeStudy()">{{'DISCHARGE_STUDY_VIEW_BACK_TO_DISCHARGE_STUDY' | translate
@@ -49,7 +57,9 @@
     <div *ngIf="dischargeStudies?.length && !dischargeStudyPlanDetails?.length">
         {{'DISCHARGE_PLAN_VIEW_NO_PLAN_GENERATED' |translate}}
     </div>
+  
     <cpdss-portal-view-plan *ngIf="ports && cargos && selectedDischargeStudy" [cargos]="cargos" [ports]="ports" [vesselId]="vesselId" [voyageId]="voyageId" [voyage]="selectedVoyage"
-        [dischargeStudyId]="dischargeStudyId" [dischargeStudy]="selectedDischargeStudy" (dischargeStudyPlan)="planDetails($event)"></cpdss-portal-view-plan>
+        [dischargeStudyId]="dischargeStudyId" [dischargeStudy]="selectedDischargeStudy" (dischargeStudyPlan)="planDetails($event)" 
+        [(dischargePatternId)]="dischargePatternId"></cpdss-portal-view-plan>
 
 </div>

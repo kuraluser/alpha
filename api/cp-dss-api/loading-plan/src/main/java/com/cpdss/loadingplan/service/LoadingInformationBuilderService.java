@@ -232,6 +232,8 @@ public class LoadingInformationBuilderService {
           .ifPresent(v -> builder.setTemperature(v.toString()));
       Optional.ofNullable(var1.getDisplayOrder()).ifPresent(builder::setDisplayOrder);
       // cargo name, short name, colour need to add
+      Optional.ofNullable(var1.getAbbreviation()).ifPresent(builder::setAbbreviation);
+      Optional.ofNullable(var1.getCargoNominationXId()).ifPresent(builder::setCargoNominationId);
       toppingOffs.add(builder.build());
     }
     return toppingOffs;

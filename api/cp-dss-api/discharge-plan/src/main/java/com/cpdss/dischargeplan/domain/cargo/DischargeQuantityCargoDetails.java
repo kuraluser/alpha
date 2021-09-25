@@ -59,4 +59,5 @@ public class DischargeQuantityCargoDetails {
   private String estimatedTemp;
   private Long cargoId;
   private Long cargoNominationId;
+  private Long dsCargoNominationId;
 }

@@ -15,6 +15,10 @@ import com.cpdss.dischargeplan.domain.cargo.DischargeQuantityCargoDetails;
 import com.cpdss.dischargeplan.domain.cargo.LoadablePlanPortWiseDetails;
 import com.cpdss.dischargeplan.domain.cargo.OnBoardQuantity;
 import com.cpdss.dischargeplan.domain.cargo.OnHandQuantity;
+import com.cpdss.dischargeplan.domain.vessel.PumpTypes;
+import com.cpdss.dischargeplan.domain.vessel.VesselBottomLine;
+import com.cpdss.dischargeplan.domain.vessel.VesselManifold;
+import com.cpdss.dischargeplan.domain.vessel.VesselPump;
 import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
@@ -166,8 +170,6 @@ public class DischargePlanAlgoService {
     CowPlanDetail cpd = this.cowPlanDetailRepository.findByDischargingId(entity.getId()).get();
     BeanUtils.copyProperties(cpd, cowPlan);
     cowPlan.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(cpd.getCowOperationType()).name());
-    cowPlan.setCowOptionTypeValue(
-        Common.COW_OPTION_TYPE.forNumber(cpd.getCowOperationType()).getNumber());
 
     if (!cpd.getCowTankDetails().isEmpty()) {
       cowPlan.setTopCowTankIds(
@@ -209,8 +211,47 @@ public class DischargePlanAlgoService {
       }
       cowPlan.setCargoCowTankIds(cargoForCowDetails);
     }
+
+    // set cow history
+    cowPlan.setCowHistories(this.setCowHistory(entity.getVesselXid()));
+
     return cowPlan;
   }
+
+  private List<CowHistory> setCowHistory(Long vesselXid) {
+    List<CowHistory> cowHistories = new ArrayList<>();
+    LoadableStudy.CowHistoryReply cowHistoryReply =
+        dischargeStudyOperationServiceBlockingStub.getCowHistoryByVesselId(
+            LoadableStudy.CowHistoryRequest.newBuilder().setVesselId(vesselXid).build());
+
+    if (DischargePlanConstants.FAILED.equals(cowHistoryReply.getResponseStatus().getStatus())) {
+      log.error("Failed to get cow history details");
+      return null;
+    }
+    var result =
+        cowHistoryReply.getCowHistoryList().stream()
+            .filter(v -> v.getId() > 0)
+            .map(this::buildCowHistoryDto)
+            .collect(Collectors.toList());
+    log.info("Cow history added to cow plan Size - {}", result.size());
+    return result;
+  }
+
+  private CowHistory buildCowHistoryDto(LoadableStudy.CowHistory history) {
+    CowHistory cowHistory = new CowHistory();
+    cowHistory.setId(history.getId());
+    cowHistory.setVesselId(history.getVesselId());
+    cowHistory.setVoyageId(history.getVoyageId());
+    cowHistory.setTankId(history.getTankId());
+    cowHistory.setPortId(history.getPortId());
+    cowHistory.setCowOptionType(history.getCowOptionType().name());
+    cowHistory.setVoyageEndDate(history.getVoyageEndDate());
+    return cowHistory;
+  }
+
+  @GrpcClient("loadableStudyService")
+  private DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceBlockingStub
+      dischargeStudyOperationServiceBlockingStub;
 
   private DischargeSequences buildDischargeDelays(
       com.cpdss.dischargeplan.entity.DischargeInformation entity) {
@@ -230,14 +271,14 @@ public class DischargePlanAlgoService {
     dischargeSequences.setReasonForDelays(reasonsForDelay); // Master data
 
     // User Data from DB
-    List<DischargeDelays> loadingDelaysList = new ArrayList<>();
+    List<DischargeDelays> dischargeDelays = new ArrayList<>();
     entity
         .getDischargingDelays()
         .forEach(
             delay -> {
               DischargeDelays ld = new DischargeDelays();
               ld.setCargoId(delay.getCargoXid());
-              ld.setCargoNominationId(delay.getCargoNominationXid());
+              ld.setDsCargoNominationId(delay.getCargoNominationXid());
               ld.setDuration(delay.getDuration());
               ld.setId(delay.getId());
               ld.setDischargeInfoId(delay.getDischargingInformation().getId());
@@ -246,9 +287,9 @@ public class DischargePlanAlgoService {
                   delay.getDischargingDelayReasons().stream()
                       .map(DischargingDelayReason::getId)
                       .collect(Collectors.toList()));
-              loadingDelaysList.add(ld);
+              dischargeDelays.add(ld);
             });
-    dischargeSequences.setLoadingDelays(loadingDelaysList);
+    dischargeSequences.setDischargeDelays(dischargeDelays);
     return dischargeSequences;
   }
 
@@ -263,10 +304,71 @@ public class DischargePlanAlgoService {
             VesselInfo.VesselIdRequest.newBuilder().setVesselId(entity.getVesselXid()).build());
 
     if (!DischargePlanConstants.SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Failed to fetch vessel pump details from Loadable-Study MS",
-          grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+      log.info("Failed to get Vessel Details for Id {}", entity.getVesselXid());
+      return null;
+    }
+
+    // Setting master data
+    if (grpcReply != null) {
+      try {
+        List<PumpTypes> pumpTypes = new ArrayList<>();
+        if (grpcReply.getPumpTypeCount() > 0) {
+          for (VesselInfo.PumpType vpy : grpcReply.getPumpTypeList()) {
+            PumpTypes type = new PumpTypes();
+            BeanUtils.copyProperties(vpy, type);
+            pumpTypes.add(type);
+          }
+        }
+        List<VesselPump> vesselPumps = new ArrayList<>();
+        if (grpcReply.getVesselPumpCount() > 0) {
+          for (VesselInfo.VesselPump vp : grpcReply.getVesselPumpList()) {
+            VesselPump pump = new VesselPump();
+            BeanUtils.copyProperties(vp, pump);
+            vesselPumps.add(pump);
+          }
+        }
+        cargoMachineryInUse.setPumpTypes(pumpTypes);
+        cargoMachineryInUse.setVesselPumps(vesselPumps);
+        if (!grpcReply.getVesselManifoldList().isEmpty()) {
+          List<VesselManifold> list1 = new ArrayList<>();
+          for (VesselInfo.VesselComponent vc : grpcReply.getVesselManifoldList()) {
+            VesselManifold vcDto = new VesselManifold();
+            vcDto.setId(vc.getId());
+            vcDto.setManifoldName(vc.getComponentName());
+            vcDto.setManifoldCode(vc.getComponentCode());
+            if (!grpcReply.getTankTypeList().isEmpty() && vc.getTankTypeId() > 0) {
+              Optional<String> tankType =
+                  grpcReply.getTankTypeList().stream()
+                      .filter(v -> v.getId() == vc.getTankTypeId())
+                      .findFirst()
+                      .map(VesselInfo.TankType::getTypeName);
+              if (tankType.isPresent()) {
+                vcDto.setTankType(tankType.get());
+              }
+            }
+            list1.add(vcDto);
+          }
+          cargoMachineryInUse.setVesselManifolds(list1);
+        }
+        if (!grpcReply.getVesselBottomLineList().isEmpty()) {
+          List<VesselBottomLine> list2 = new ArrayList<>();
+          for (VesselInfo.VesselComponent vc : grpcReply.getVesselBottomLineList()) {
+            VesselBottomLine vcDto = new VesselBottomLine();
+            vcDto.setId(vc.getId());
+            vcDto.setBottomLineName(vc.getComponentName());
+            vcDto.setBottomLineCode(vc.getComponentCode());
+            list2.add(vcDto);
+          }
+          cargoMachineryInUse.setVesselBottomLines(list2);
+        }
+        log.info(
+            "Get loading info, Cargo machines Pump List Size {}, Type Size {} from Vessel Info",
+            vesselPumps.size(),
+            pumpTypes.size());
+      } catch (Exception e) {
+        log.error("Failed to process Vessel Pumps");
+        e.printStackTrace();
+      }
     }
 
     for (DischargingMachineryInUse machine : list) {
@@ -622,6 +724,8 @@ public class DischargePlanAlgoService {
               Optional.of(cargo.getCargoId()).ifPresent(loadableQuantity::setCargoId);
               Optional.of(cargo.getCargoNominationId())
                   .ifPresent(loadableQuantity::setCargoNominationId);
+              Optional.of(cargo.getDscargoNominationId())
+                  .ifPresent(loadableQuantity::setDsCargoNominationId);
               Optional.of(cargo.getEstimatedAPI()).ifPresent(loadableQuantity::setEstimatedAPI);
               Optional.of(cargo.getEstimatedTemp()).ifPresent(loadableQuantity::setEstimatedTemp);
               loadableQuantityCargoDetails.add(loadableQuantity);

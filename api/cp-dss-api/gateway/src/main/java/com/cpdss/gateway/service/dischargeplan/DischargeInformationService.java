@@ -2,7 +2,10 @@
 package com.cpdss.gateway.service.dischargeplan;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
+import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
+import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
@@ -10,6 +13,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.common.GatewayConstants;
+import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
 import com.cpdss.gateway.domain.LoadingUpdateUllageResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.RuleResponse;
@@ -17,6 +21,7 @@ import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
+import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
@@ -33,6 +38,7 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.utility.AdminRuleValueExtract;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +60,7 @@ public class DischargeInformationService {
 
   @Autowired LoadingInformationService loadingInformationService;
 
-  @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
+  @Autowired LoadingPlanBuilderService dischargingPlanBuilderService;
 
   @Autowired LoadingPlanService loadingPlanService;
 
@@ -222,7 +228,7 @@ public class DischargeInformationService {
       dischargeInformation.setDischargeStudyName(activeVoyage.getActiveDs().getName());
       dischargeInformation.setDischargePatternId(activeVoyage.getDischargePatternId());
     }
-
+    // dischargeInformation.setDischargePlanArrStatusId(planReply.getDischargingInformation());
     // discharge rates
     DischargeRates dischargeRates =
         this.infoBuilderService.buildDischargeRatesFromMessage(
@@ -276,6 +282,8 @@ public class DischargeInformationService {
         this.loadingInformationService.getPostDischargeStage(
             planReply.getDischargingInformation().getPostDischargeStageTime());
     dischargeInformation.setPostDischargeStageTime(postDischargeStage);
+    CargoNominationReply nominations =
+        loadingPlanService.getCargoNominationsByStudyId(activeVoyage.getActiveDs().getId());
     CargoVesselTankDetails vesselTankDetails =
         this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
             vesselId,
@@ -293,6 +301,28 @@ public class DischargeInformationService {
             GatewayConstants.OPERATION_TYPE_ARR,
             portRotation.get().getId(),
             portRotation.get().getPortId()));
+    vesselTankDetails
+        .getDischargeQuantityCargoDetails()
+        .forEach(
+            dqcd -> {
+              CargoNominationDetail cargoDetail =
+                  nominations.getCargoNominationsList().stream()
+                      .filter(detail -> dqcd.getCargoNominationId().equals(detail.getId()))
+                      .findFirst()
+                      .orElse(null);
+              dqcd.setBlFigure(new BigDecimal(cargoDetail.getQuantity()));
+
+              BigDecimal sum =
+                  planReply.getPortDischargingPlanStowageDetailsList().stream()
+                      .filter(
+                          stowage ->
+                              dqcd.getCargoNominationId().equals(stowage.getCargoNominationId())
+                                  && stowage.getValueType() == 2
+                                  && stowage.getConditionType() == 2)
+                      .map(detail -> new BigDecimal(detail.getQuantity()))
+                      .reduce(BigDecimal.ZERO, BigDecimal::add);
+              dqcd.setShipFigure(sum);
+            });
     dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
 
     // discharge sequence (reason/delay)
@@ -310,33 +340,64 @@ public class DischargeInformationService {
             null);
     dischargeInformation.setDischargeDetails(dischargeDetails);
 
-    dischargingPlanResponse.setDischargingInformation(dischargeInformation);
+    // RPC call to vessel info, Get Rules (default value for Discharge Info)
+    RuleResponse ruleResponse =
+        vesselInfoService.getRulesByVesselIdAndSectionId(
+            vesselId, GatewayConstants.DISCHARGING_RULE_MASTER_ID, null, null);
+    AdminRuleValueExtract extract =
+        AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
+    // cow plan
+    CowPlan cowPlan =
+        this.infoBuilderService.buildDischargeCowPlan(
+            planReply.getDischargingInformation().getCowPlan(), extract);
+    dischargeInformation.setCowPlan(cowPlan);
 
-    List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
-        loadingPlanGrpcService.fetchLoadablePlanBallastDetails(
-            activeVoyage.getPatternId(), portRotation.get().getId());
+    dischargingPlanResponse.setDischargingInformation(dischargeInformation);
+    List<LoadableStudy.LoadableQuantityCargoDetails> portCargos =
+        this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
+            activeVoyage.getDischargePatternId(),
+            GatewayConstants.OPERATION_TYPE_ARR,
+            portRotationId,
+            portRotation.get().getPortId(),
+            false,
+            Common.PLANNING_TYPE.DISCHARGE_STUDY);
+    List<DischargeQuantityCargoDetails> currentPortCargos =
+        loadingInformationService.buildDischargePlanQuantity(portCargos, vesselId);
+    dischargingPlanResponse.setCurrentPortCargos(currentPortCargos);
     dischargingPlanResponse.setPlanBallastDetails(
-        loadingPlanBuilderService.buildLoadingPlanBallastFromRpc(
+        dischargingPlanBuilderService.buildLoadingPlanBallastFromRpc(
             planReply.getPortDischargingPlanBallastDetailsList()));
     dischargingPlanResponse.setPlanStowageDetails(
-        loadingPlanBuilderService.buildLoadingPlanStowageFromRpc(
+        dischargingPlanBuilderService.buildLoadingPlanStowageFromRpc(
             planReply.getPortDischargingPlanStowageDetailsList()));
     dischargingPlanResponse.setPlanRobDetails(
-        loadingPlanBuilderService.buildLoadingPlanRobFromRpc(
+        dischargingPlanBuilderService.buildLoadingPlanRobFromRpc(
             planReply.getPortDischargingPlanRobDetailsList()));
     dischargingPlanResponse.setPlanStabilityParams(
-        loadingPlanBuilderService.buildLoadingPlanStabilityParamFromRpc(
+        dischargingPlanBuilderService.buildLoadingPlanStabilityParamFromRpc(
             planReply.getPortDischargingPlanStabilityParametersList()));
     dischargingPlanResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return dischargingPlanResponse;
   }
 
-  public LoadingUpdateUllageResponse getUpdateUllageDetails(
+  public DischargeUpdateUllageResponse getUpdateUllageDetails(
       Long vesselId, Long patternId, Long portRotationId, String operationType)
       throws GenericServiceException {
+    DischargeUpdateUllageResponse response = new DischargeUpdateUllageResponse();
+    LoadingUpdateUllageResponse dischargeUllageResponse =
+        loadingPlanService.getUpdateUllageDetails(
+            vesselId, patternId, portRotationId, operationType, true);
+    BeanUtils.copyProperties(dischargeUllageResponse, response);
+    response.setPortDischargePlanBallastDetails(
+        dischargeUllageResponse.getPortLoadablePlanBallastDetails());
+    response.setPortDischargePlanRobDetails(
+        dischargeUllageResponse.getPortLoadablePlanRobDetails());
+    response.setPortDischargePlanStowageDetails(
+        dischargeUllageResponse.getPortLoadablePlanStowageDetails());
+    response.setDischargePlanCommingleDetails(
+        dischargeUllageResponse.getLoadablePlanCommingleDetails());
 
-    return loadingPlanService.getUpdateUllageDetails(
-        vesselId, patternId, portRotationId, operationType, true);
+    return response;
   }
 }

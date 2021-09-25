@@ -52,6 +52,7 @@ public final class LoadingPlanConstants {
 
   public static final String DATE_FORMAT = "dd-MM-yyyy";
   public static final String SHEET = "Sheet1";
+  public static final String ULLAGE_REPORT_SHEET = "Ullage Report";
   public static final String PORT = "Port";
   public static final String TIDE_DATE = "Tide_Date";
   public static final String TIDE_TIME = "Tide_Time";

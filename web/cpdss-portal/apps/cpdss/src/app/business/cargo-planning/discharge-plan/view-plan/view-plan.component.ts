@@ -47,6 +47,7 @@ export class ViewPlanComponent implements OnInit {
    }
 
    @Output() dischargeStudyPlan = new EventEmitter<IDischargeStudyPortListDetails[]>();
+   @Output() dischargePatternIdChange = new EventEmitter<number>();
 
   columns: IDataTableColumn[];
   backLoadingColumns: IDataTableColumn[];
@@ -113,6 +114,7 @@ export class ViewPlanComponent implements OnInit {
     //set dummy details need to remove when actual api comes
     const result = await this.dischargePlanApiService.getDischargeStudyDetails(this.vesselId, this.vesselId,this.dischargeStudyId).toPromise();
     const dischargeStudyDetails = result.portList;
+    this.dischargePatternIdChange.emit(result.dischargePatternId);
     const portDetails = this.dischargeStudyForm.get('portDetails') as FormArray;
     this.portDetails = dischargeStudyDetails.map((portDetail, index) => {
       const isLastIndex = index + 1 === dischargeStudyDetails.length;
@@ -252,7 +254,7 @@ export class ViewPlanComponent implements OnInit {
     if (formGroupName === 'backLoadingDetails' || formGroupName === 'cargoDetail') {
       return portDetails.at(index).get(formGroupName);
     } else {
-      return property ? portDetails.at(index).get(formGroupName).value[property] : portDetails.at(index).get(formGroupName).value;
+      return property && portDetails.at(index).get(formGroupName).value ? portDetails.at(index).get(formGroupName).value[property] : portDetails.at(index).get(formGroupName)?.value;
     }
   }
 

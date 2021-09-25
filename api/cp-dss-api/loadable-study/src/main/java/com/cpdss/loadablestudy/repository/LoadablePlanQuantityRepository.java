@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
+import com.cpdss.loadablestudy.repository.projections.LoadingPlanQtyAndOrder;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -28,9 +29,11 @@ public interface LoadablePlanQuantityRepository
   public void deleteLoadablePlanQuantity(Boolean isActive, Long loadablePatternId);
 
   String CARGO_TO_BE_LOADED_QUERY_1 =
-      "FROM LoadablePlanQuantity lpq WHERE lpq.loadablePattern.id = ?1 AND lpq.cargoNominationId IN (SELECT DISTINCT lpcd.cargoNominationId FROM LoadablePatternCargoDetails lpcd WHERE lpcd.loadablePatternId = ?1 AND lpcd.operationType = ?2 AND lpcd.portRotationId = ?3 AND lpcd.portId = ?4 AND isActive = true)";
+      "FROM LoadablePlanQuantity lpq WHERE lpq.loadablePattern.id = ?1 AND lpq.cargoNominationId IN (SELECT DISTINCT lpcd.cargoNominationId FROM LoadablePatternCargoDetails lpcd WHERE lpcd.loadablePatternId = ?1 AND lpcd.operationType = ?2 AND lpcd.portRotationId = ?3 AND lpcd.portId = ?4 AND lpcd.isActive = true) AND lpq.isActive = true ORDER BY lpq.loadingOrder";
 
   @Query(CARGO_TO_BE_LOADED_QUERY_1)
   List<LoadablePlanQuantity> findAllLoadablePlanQuantity(
       Long patternId, String opType, Long portRotation, Long port);
+
+  List<LoadingPlanQtyAndOrder> findByCargoNominationIdAndIsActiveTrue(Long fk);
 }

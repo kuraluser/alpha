@@ -19,6 +19,12 @@ import lombok.Setter;
 @Table(name = "discharging_information")
 public class DischargeInformation extends EntityDoc {
 
+  @Column(name = "departure_status_xid")
+  private Long departureStatusId;
+
+  @Column(name = "arrival_status_xid")
+  private Long arrivalStatusId;
+
   @Column(name = "discharging_pattern_xid")
   private Long dischargingPatternXid;
 

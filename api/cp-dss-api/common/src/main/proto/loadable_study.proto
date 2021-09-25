@@ -215,10 +215,30 @@ service DischargeStudyOperationService {
   rpc GenerateDischargePatterns (AlgoRequest) returns (AlgoReply) {}
   rpc GetDischargePlanDetails(LoadablePlanDetailsRequest) returns (CargoNominationReply) {}
   rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {}
+	rpc getCowHistoryByVesselId(CowHistoryRequest) returns (CowHistoryReply);
 }
 
 service PortInstructionService {
     rpc getInstructions (EmptyRequest)  returns (InstructionReply){}
+}
+
+message CowHistoryRequest {
+	int64 vesselId =2;
+}
+
+message CowHistoryReply {
+	ResponseStatus responseStatus = 1;
+	repeated CowHistory cowHistory = 2;
+}
+
+message CowHistory {
+	int64 id = 1;
+	int64 vesselId =2;
+	int64 voyageId = 3;
+	int64 portId =4 ;
+	int64 tankId = 5;
+	COW_OPTION_TYPE cowOptionType = 6;
+	string voyageEndDate = 7;
 }
 
 message DischargePlanDetailsReply {
@@ -614,8 +634,8 @@ message LoadableQuantityCargoDetails {
 	 string timeRequiredForDischarging = 32;
 	 repeated COWDetail cowDetails = 33;
 	 int64 dscargoNominationId = 34;
-	 
-	 
+	 int64 blFigure = 35;
+	 int64 shipFigure = 36;
 }
 
 message COWDetail {
@@ -870,6 +890,7 @@ message CargoNominationReply {
 	int64 cargoNominationId = 2;
 	repeated CargoNominationDetail cargoNominations = 3;
 	repeated CargoHistoryDetail cargoHistory = 4;
+	int64 patternId =5;
 }
 
 
@@ -929,6 +950,7 @@ message PortRotationReply{
 	repeated Operation operations=3;
 	int64 portRotationId = 4;
 	int64 lastModifiedPort = 5;
+	string loadableQuantity = 6;
 }
 
 message LoadableQuantityResponse {
@@ -1219,6 +1241,8 @@ message SynopticalCargoRecord{
 	string fillingRatio = 14;
 	int64 cargoNominationId = 15;
 	int64 lpCargoDetailId = 16; // loadable_pattern_cargo_detail ID
+	int64 planQtyId = 17; // loadable_plan_quantity ID OR discharge_quantity_cargo_details ID
+	int32 planQtyCargoOrder = 18; // loading or discharging order
 }
 
 message SynopticalOhqRecord{
@@ -1433,6 +1457,8 @@ message ActiveVoyage{
 	int64 dischargePatternId = 18;
 	int64 dischargePatternCaseNo = 19;
 	int64 dischargePatternStatus = 20;
+	repeated CargoNominationDetail dischargeCargoNomination = 22;
+	
 }
 
 // Generic Request message

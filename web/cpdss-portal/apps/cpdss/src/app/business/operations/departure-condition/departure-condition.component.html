@@ -72,7 +72,7 @@
                         | translate}}</span>
                 </ng-container>
 
-                <button (click)="display = true" class="btn btn-main mr-5 mt-5"
+                <button [disabled]="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.IN_PROGRESS || loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_VALUE.IN_PROGRESS" (click)="display = true" class="btn btn-main mr-5 mt-5"
                     id="departure_uptate_ullage">{{'LOADABLE_PLAN_DEPARTURE_CONDITION_CARGO_UPDATE_ULLAGE' |
                     translate}}</button>
                 <button (click)="showError()"

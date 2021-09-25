@@ -116,7 +116,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       buildLoadablePatternPortWiseDetails(algoRequest, loadingInfoOpt.get());
 
       // Build hourly based tide details which upload from loading info page
-      // buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
+      buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
 
       // Build Loading Rule, service is in loading-plan (self)
       buildLoadingRules(algoRequest, loadingInfoOpt.get());
@@ -198,7 +198,7 @@ public class LoadingInformationAlgoRequestBuilderService {
     log.info("Populating Loading Information {}", entity.getId());
     com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo =
         new com.cpdss.loadingplan.domain.algo.LoadingInformation();
-    buildLoadingBerths(loadingInfo, loadingInformation.getLoadingBerthsList());
+    buildLoadingBerths(loadingInfo, entity.getPortXId(), loadingInformation.getLoadingBerthsList());
     buildLoadingDelays(loadingInfo, loadingInformation.getLoadingDelays());
     buildLoadingDetail(loadingInfo, loadingInformation.getLoadingDetail(), entity);
     loadingInfo.setLoadingInfoId(loadingInformation.getLoadingInfoId());
@@ -393,9 +393,17 @@ public class LoadingInformationAlgoRequestBuilderService {
             ? null
             : new BigDecimal(loadingRate.getMinLoadingRate()));
     loadingRates.setShoreLoadingRate(
-        loadingRate.getShoreLoadingRate().isEmpty()
+        StringUtils.isEmpty(loadingRate.getShoreLoadingRate())
             ? null
             : new BigDecimal(loadingRate.getShoreLoadingRate()));
+    loadingRates.setNoticeTimeRateReduction(
+        StringUtils.isEmpty(loadingRate.getNoticeTimeRateReduction())
+            ? null
+            : new BigDecimal(loadingRate.getNoticeTimeRateReduction()));
+    loadingRates.setNoticeTimeStopLoading(
+        StringUtils.isEmpty(loadingRate.getNoticeTimeStopLoading())
+            ? null
+            : new BigDecimal(loadingRate.getNoticeTimeStopLoading()));
     loadingInfo.setLoadingRates(loadingRates);
   }
 
@@ -466,6 +474,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       if (vesselPump.isPresent()) {
         loadingMachine.setMachineName(vesselPump.get().getComponentName());
         loadingMachine.setMachineTypeName(Common.MachineType.MANIFOLD.name());
+        loadingMachine.setTankTypeName(vesselPump.get().getTankTypeName());
       }
     }
     if (typeId == Common.MachineType.BOTTOM_LINE_VALUE) {
@@ -586,8 +595,10 @@ public class LoadingInformationAlgoRequestBuilderService {
 
   private void buildLoadingBerths(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
+      Long portId,
       List<LoadingBerths> loadingBerthsList) {
     log.info("Populating loading berths");
+    PortInfo.BerthInfoResponse masterBerths = this.getBerthInfoByPortId(portId);
     List<BerthDetails> berthDetails = new ArrayList<BerthDetails>();
     loadingBerthsList.forEach(
         berth -> {
@@ -597,6 +608,27 @@ public class LoadingInformationAlgoRequestBuilderService {
                   ? null
                   : new BigDecimal(berth.getAirDraftLimitation()));
           berthDetail.setId(berth.getBerthId());
+          berthDetail.setPortId(portId);
+          Optional<PortInfo.BerthDetail> selectedBerthOpt =
+              masterBerths.getBerthsList().stream()
+                  .filter(masterBerth -> berth.getBerthId() == masterBerth.getId())
+                  .findFirst();
+          selectedBerthOpt.ifPresent(
+              selectedBerth -> {
+                berthDetail.setBerthName(selectedBerth.getBerthName());
+                berthDetail.setMaxDraft(
+                    StringUtils.isEmpty(selectedBerth.getMaxDraft())
+                        ? null
+                        : new BigDecimal(selectedBerth.getMaxDraft()));
+                berthDetail.setMaxLoa(
+                    StringUtils.isEmpty(selectedBerth.getMaxLoa())
+                        ? null
+                        : new BigDecimal(selectedBerth.getMaxLoa()));
+                berthDetail.setMaxShpChannel(
+                    StringUtils.isEmpty(selectedBerth.getMaxShipChannel())
+                        ? null
+                        : new BigDecimal(selectedBerth.getMaxShipChannel()));
+              });
           berthDetail.setHoseConnections(berth.getHoseConnections());
           berthDetail.setItemsToBeAgreedWith(berth.getItemsToBeAgreedWith());
           berthDetail.setLoadingBerthId(berth.getId());
@@ -606,7 +638,13 @@ public class LoadingInformationAlgoRequestBuilderService {
                   ? null
                   : new BigDecimal(berth.getMaxManifoldHeight()));
           berthDetail.setRegulationAndRestriction(berth.getSpecialRegulationRestriction());
-
+          berthDetail.setSeaDraftLimitation(
+              StringUtils.isEmpty(berth.getSeaDraftLimitation())
+                  ? null
+                  : new BigDecimal(berth.getSeaDraftLimitation()));
+          berthDetail.setMaxShipDepth(
+              StringUtils.isEmpty(berth.getDepth()) ? null : new BigDecimal(berth.getDepth()));
+          berthDetail.setLineDisplacement(berth.getLineDisplacement());
           // Setting controllingDepth, underKeelClearance from port info
           this.getPortInfoIntoBerthData(berth.getBerthId(), berthDetail);
 
@@ -614,6 +652,22 @@ public class LoadingInformationAlgoRequestBuilderService {
         });
 
     loadingInfo.setBerthDetails(berthDetails);
+  }
+
+  /**
+   * grpc Call to port info, to get berth data
+   *
+   * @param portId
+   * @param PortInfo.PortInfoBerthInfoResponse
+   */
+  public PortInfo.BerthInfoResponse getBerthInfoByPortId(Long portId) {
+    PortInfo.BerthInfoResponse response =
+        this.portInfoServiceBlockingStub.getBerthDetailsByPortId(
+            PortInfo.PortIdRequest.newBuilder().setPortId(portId).build());
+    if (response.getResponseStatus().getStatus().equalsIgnoreCase("SUCCESS")) {
+      return response;
+    }
+    return null;
   }
 
   /**

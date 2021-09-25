@@ -1,15 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGING_OPERATION_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ERRO_CALLING_ALGO;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_INITIAL_STATUS_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -54,6 +46,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StowageAndBillO
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.BackLoading;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
@@ -61,11 +54,13 @@ import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
 import com.cpdss.loadablestudy.entity.DischargeStudyCowDetail;
 import com.cpdss.loadablestudy.entity.DischargeStudyPortInstruction;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
 import com.cpdss.loadablestudy.repository.DischargeStudyCowDetailRepository;
@@ -78,6 +73,7 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -91,6 +87,9 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
@@ -123,6 +122,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private LoadablePlanService loadablePlanService;
   @Autowired private LoadablePatternRepository loadablePatternRepository;
   @Autowired private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
+  @Autowired CowHistoryRepository cowHistoryRepository;
 
   @GrpcClient("dischargeInformationService")
   private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
@@ -1319,6 +1319,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     log.info("inside getLoadablePlanDetails loadable study service");
     CargoNominationReply.Builder replyBuilder = CargoNominationReply.newBuilder();
     try {
+
       Optional<LoadableStudy> dsOptional =
           dischargeStudyRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
       if (dsOptional.isEmpty()) {
@@ -1327,12 +1328,12 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             CommonErrorCodes.E_CPDSS_NO_DISCHARGE_STUDY_FOUND,
             HttpStatusCode.BAD_REQUEST);
       }
-      LoadableStudy DischargeStudy = dsOptional.get();
+      LoadableStudy dischargeStudy = dsOptional.get();
       List<LoadableStudyPortRotation> ports =
           loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-              DischargeStudy.getId(), true);
+              dischargeStudy.getId(), true);
       List<CargoNomination> cargos =
-          cargoNominationService.getCargoNominationByLoadableStudyId(DischargeStudy.getId());
+          cargoNominationService.getCargoNominationByLoadableStudyId(dischargeStudy.getId());
       List<DischargePatternQuantityCargoPortwiseDetails> generatedCargos =
           dischargePatternQuantityCargoPortwiseRepository.findByCargoNominationIdInAndOperationType(
               cargos.stream().map(CargoNomination::getId).collect(Collectors.toList()),
@@ -1374,6 +1375,13 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                           replyBuilder.addCargoNominations(cargo);
                         });
               });
+      // getting discharge pattern Id
+      List<LoadablePattern> patterns =
+          loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
+              dischargeStudy, true);
+      if (!patterns.isEmpty()) {
+        replyBuilder.setPatternId(patterns.get(0).getId());
+      }
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching loadable study - port data", e);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED));
@@ -1481,5 +1489,50 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               request.addPortData(portDataBuilder);
             });
     dischargePlanServiceBlockingStub.dischargePlanSynchronization(request.build());
+  }
+
+  public void getCowHistoryByVesselId(
+      com.cpdss.common.generated.LoadableStudy.CowHistoryRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.CowHistoryReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CowHistoryReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.CowHistoryReply.newBuilder();
+    try {
+      Pageable pageable = PageRequest.of(0, 500, Sort.by("lastModifiedDateTime").descending());
+      List<CowHistory> list =
+          cowHistoryRepository.findAllByVesselIdAndIsActiveTrue(request.getVesselId(), pageable);
+      for (CowHistory ch : list) {
+        com.cpdss.common.generated.LoadableStudy.CowHistory.Builder cowBuilder =
+            com.cpdss.common.generated.LoadableStudy.CowHistory.newBuilder();
+        cowBuilder.setId(ch.getId());
+        cowBuilder.setVesselId(ch.getVesselId());
+        cowBuilder.setVoyageId(ch.getVoyageId());
+        cowBuilder.setPortId(ch.getPortId());
+        if (ch.getTankId() != null) {
+          cowBuilder.setTankId(ch.getTankId());
+        }
+        cowBuilder.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(ch.getCowTypeId().intValue()));
+
+        Voyage voyage = voyageRepository.findByIdAndIsActive(ch.getVoyageId(), true);
+        if (voyage != null) {
+          if (voyage.getActualEndDate() != null) {
+            DateTimeFormatter dft = DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT);
+            String endDate = voyage.getVoyageEndDate().format(dft);
+            cowBuilder.setVoyageEndDate(endDate);
+          }
+        }
+        replyBuilder.addCowHistory(cowBuilder.build());
+      }
+    } catch (Exception e) {
+      log.error("Exception when confirmPlan ", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when confirmPlan Loadable Study Status"));
+
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

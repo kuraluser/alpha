@@ -11,7 +11,6 @@ import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
-import com.cpdss.gateway.domain.LoadingUpdateUllageResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
 import com.cpdss.gateway.domain.PortRotation;
@@ -22,6 +21,7 @@ import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.UploadTideDetailResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveResponse;
@@ -1030,8 +1030,8 @@ public class DischargePlanController {
    */
   // reusing the response which is already created for LS
   @GetMapping(
-      "/vessels/{vesselId}/pattern/{patternId}/port/{portRotationId}/discharging/update-ullage/{operationType}")
-  public LoadingUpdateUllageResponse getUpdateUllageDetails(
+      "/vessels/{vesselId}/pattern/{patternId}/port/{portRotationId}/discharging/ullage/{operationType}")
+  public DischargeUpdateUllageResponse getUpdateUllageDetails(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long patternId,

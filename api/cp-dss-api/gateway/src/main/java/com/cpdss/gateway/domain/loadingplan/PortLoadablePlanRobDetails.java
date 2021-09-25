@@ -9,6 +9,7 @@ public class PortLoadablePlanRobDetails {
   private Long id;
   private boolean isActive;
   private Long loadablePatternId;
+  private Long dischargePatternId;
   private Long tankId;
   private String tankName;
   private String tankShortName;
@@ -17,4 +18,7 @@ public class PortLoadablePlanRobDetails {
   private String arrivalDeparture;
   private BigDecimal density;
   private String colorCode;
+  private Long fuelTypeId;
+  private String fuelTypeShortName;
+  private String fuelTypeName;
 }

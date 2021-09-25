@@ -91,7 +91,8 @@
                                         <p-multiSelect
                                             *ngIf="input.type==='MultiSelect' && input.ruleDropDownMaster!='null'"
                                             [options]="input.ruleDropDownMaster" optionLabel="value"
-                                            [formControl]="getControl('inputs',rowIndex,inputIndex)">
+                                            [formControl]="getControl('inputs',rowIndex,inputIndex)"
+                                            (onChange)="onChangeMultiSelect('inputs',rowIndex,inputIndex)">
                                         </p-multiSelect>
                                         <cpdss-portal-validation-error *ngIf="input?.type"
                                             [errors]="fieldError('inputs',rowIndex,inputIndex)"

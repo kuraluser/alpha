@@ -195,4 +195,5 @@ public class LoadableStudiesConstants {
   public static final Integer PLANNING_TYPE_DISCHARGE = 2;
   public static final String LOADING_PORT = "LOADING";
   public static final String DISCHARGE_PORT = "DISCHARGE";
+  public static final String INVALID_ULLAGE_OR_SOUNDING_VALUE = "INVALID_ULLAGE_OR_SOUNDING_VALUE";
 }

@@ -54,6 +54,8 @@ export class LoadingDischargingTransformationService {
   isDischargeStarted$ = this._isDischargeStarted.asObservable();
 
   portRotationId: number;
+  isMachineryValid: boolean;
+  isCargoAdded: boolean;
 
   constructor(
     private quantityPipe: QuantityPipe,
@@ -277,7 +279,7 @@ export class LoadingDischargingTransformationService {
         header: 'Cargo',
         listName: 'loadableQuantityCargo',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
-        fieldOptionLabel: 'grade',
+        fieldOptionLabel: 'cargoAbbreviation',
         fieldPlaceholder: 'LOADING_MANAGE_SEQUENCE_SELCT_CARGO',
         errorMessages: {
           'required': 'LOADING_MANAGE_SEQUENCE_REQUIRED',
@@ -372,7 +374,13 @@ export class LoadingDischargingTransformationService {
   getLoadingDischargingDelayAsValueObject(loadingDischargingDelay: ILoadingDischargingDelays, isNewValue = true, isEditable = true, listData: ILoadingSequenceDropdownData, prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT, operation: OPERATIONS): ILoadingDischargingSequenceValueObject {
     const _loadingDischargingDelay = <ILoadingDischargingSequenceValueObject>{};
     const reasonDelayObj: IReasonForDelays[] = listData?.reasonForDelays?.filter(reason => loadingDischargingDelay?.reasonForDelayIds?.includes(reason.id));
-    const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === loadingDischargingDelay.cargoId);
+    let cargoObj: ILoadableQuantityCargo;
+    if(operation === OPERATIONS.DISCHARGING) {
+      cargoObj = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === loadingDischargingDelay.cargoId);
+    } else {
+      cargoObj = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoNominationId === loadingDischargingDelay.cargoNominationId); 
+    }
+    
     _loadingDischargingDelay.id = loadingDischargingDelay.id;
     let hourDuration = (loadingDischargingDelay.duration / 60).toString();
     hourDuration = hourDuration.includes('.') ? hourDuration.split('.')[0] : hourDuration;
@@ -500,7 +508,7 @@ export class LoadingDischargingTransformationService {
 
     return [
       {
-        field: 'grade',
+        field: 'cargoAbbreviation',
         header: 'LOADING_CARGO_TO_BE_LOADED_KIND_OF_CARGO',
         fieldType: DATATABLE_FIELD_TYPE.BADGE,
         badgeColorField: 'colorCode'
@@ -579,7 +587,7 @@ export class LoadingDischargingTransformationService {
 
     return [
       {
-        field: 'grade',
+        field: 'cargoAbbreviation',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_GRADE',
         fieldType: DATATABLE_FIELD_TYPE.BADGE,
         badgeColorField: 'colorCode'

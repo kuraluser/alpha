@@ -1,9 +1,14 @@
 <div class="container-fluid pt-5">
   <div class="row">
-    <div class="col text-uppercase pt-5">
+    <div class="pl-15 text-uppercase pt-5">
       {{selectedPortName}}
     </div>
-    <div class="col text-right">
+    <div class="col">
+      <div class="header-info-pop-up mb-5 text-right text-danger"><span class="info-icon mr-5">!</span>
+          {{'LOADING_OPERATION_REGENARATE_INFO_MESSAGE' | translate}}
+      </div>
+  </div>
+    <div class="pr-15 text-right">
       <button class="btn btn-main mr-10" id="in_use" [disabled]="disableViewErrorButton" (click)="viewError(true)">
 
         {{'LOADING_INFORMATION_VIEW_ERROR' |translate}}
@@ -23,7 +28,7 @@
       <a (click)="switchTab(OPERATION_TAB.INFORMATION)"
         [ngClass]="{'active' : currentTab === OPERATION_TAB.INFORMATION}" class="tab-btn">
         {{'LOADING_INFORMATION' | translate}}
-        <div *ngIf="loadingInformationComplete else incomplete" class="pt-5">
+        <div *ngIf="(loadingInformationComplete && isLoadingInfoValid()) else incomplete" class="pt-5">
           <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
         </div>
         <ng-template #incomplete>
@@ -45,8 +50,8 @@
         </ng-template>
       </a>
       <button class="btn btn-main tab-center-btn" id="loadingPlanBtn" (click)="onGenerateLoadingPlan()"
-        [disabled]="disableGenerateLoadableButton || isDischargeStarted">
-        {{'GENERATE_LOADING_PLAN' | translate}}
+        [disabled]="disableGenerateLoadableButton || isDischargeStarted || !isLoadingInfoValid()">
+        {{'GENERATE_LOADING_PLAN' | translate}} 
       </button>
       <a (click)="switchTab(OPERATION_TAB.SEQUENCE)"
         [ngClass]="{'active' : currentTab === OPERATION_TAB.SEQUENCE,'disabled':!loadingSequenceComplete}" class="tab-btn">
@@ -75,7 +80,7 @@
     </div>
   </div>
 
-  <cpdss-portal-loading-information (loadingInformationId)="setLoadingInfoId($event)" [cargos]="cargos"
+  <cpdss-portal-loading-information #loadingInfo (loadingInformationId)="setLoadingInfoId($event)" [cargos]="cargos"
     [vesselId]="vesselId" *ngIf="currentTab === OPERATION_TAB.INFORMATION" [voyageId]="voyageId"
     [portRotationId]="portRotationId">
   </cpdss-portal-loading-information>

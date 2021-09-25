@@ -175,6 +175,8 @@ message LoadingToppingOff{
   string api = 13;
   string temperature = 14;
   int32  displayOrder = 15;
+  string abbreviation = 16;
+  int64 cargoNominationId = 17;
 }
 
 
@@ -345,6 +347,8 @@ message CargoToppingOffSequence {
   string temperature = 12;
   int32 displayOrder = 13;
   int64 portRotationId = 14;
+  int64 cargoNominationId = 15;
+  string abbreviation = 16;
 }
 
 message LoadingPlanSyncDetails {
@@ -789,12 +793,12 @@ message BillOfLanding{
   int64 portId = 3;
   int64 cargoId = 4;
   string blRefNumber = 5;
-  int64 bblAt60f = 6;
-  int64 quantityLt = 7;
-  int64 quantityMt = 8;
-  int64 klAt15c = 9;
-  int64 api = 10;
-  int64 temperature = 11;
+  string bblAt60f = 6;
+  string quantityLt = 7;
+  string quantityMt = 8;
+  string klAt15c = 9;
+  string api = 10;
+  string temperature = 11;
   int64 isActive = 12;
   int64 version = 13;
   bool isUpdate = 14;
@@ -806,12 +810,12 @@ message BillOfLandingRemove{
   int64 portId = 3;
   int64 cargoId = 4;
   string blRefNumber = 5;
-  int64 bblAt60f = 6;
-  int64 quantityLt = 7;
-  int64 quantityMt = 8;
-  int64 klAt15c = 9;
-  int64 api = 10;
-  int64 temperature = 11;
+  string bblAt60f = 6;
+  string quantityLt = 7;
+  string quantityMt = 8;
+  string klAt15c = 9;
+  string api = 10;
+  string temperature = 11;
   int64 isActive = 12;
   int64 version = 13;
 }
@@ -819,19 +823,19 @@ message UpdateUllage{
   int64 id = 1;
   int64 loadingInformationId = 2;
   int64 tankId = 3;
-  int64 temperature = 4;
-  int64 correctedUllage = 5;
-  int64 correctionFactor = 6;
+  string temperature = 4;
+  string correctedUllage = 5;
+  string correctionFactor = 6;
   string quantity = 7;
-  int64 observedM3 = 8;
-  int64 fillingRatio = 9;
-  int64 api = 10;
+  string observedM3 = 8;
+  string fillingRatio = 9;
+  string api = 10;
   int64 port_xid = 11;
   int64 port_rotation_xid = 12;
-  int64 arrival_departutre = 13;
-  int64 actual_planned = 14;
+  int32 arrival_departutre = 13;
+  int32 actual_planned = 14;
   int64 grade = 15;
-  int64 fillingPercentage = 16;
+  string fillingPercentage = 16;
   string ullage = 17;
   bool isUpdate = 18;
   int64 cargo_nomination_xid = 19;
@@ -843,18 +847,18 @@ message UpdateUllage{
 message BallastUpdate{
   int64 loadingInformationId =1;
   int64 tankId =2;
-  int64 temperature =3;
-  int64 correctedUllage =4;
-  int64 correctionFactor =5;
+  string temperature =3;
+  string correctedUllage =4;
+  string correctionFactor =5;
   string quantity =6;
-  int64 observedM3 =7;
-  int64 fillingRatio =8;
+  string observedM3 =7;
+  string fillingRatio =8;
   string sounding = 9;
-  int64 filling_percentage= 10;
-  int64 arrival_departutre= 11;
-  int64 actual_planned= 12;
+  string filling_percentage= 10;
+  int32 arrival_departutre= 11;
+  int32 actual_planned= 12;
   string color_code= 13;
-  int64 sg= 14;
+  string sg= 14;
   bool isUpdate = 15;
   int64 port_xid = 16;
   int64 port_rotation_xid = 17;
@@ -863,16 +867,16 @@ message BallastUpdate{
 message RobUpdate{
   int64 loadingInformationId =1;
   int64 tankId =2;
-  int64 temperature =3;
-  int64 correctedUllage =4;
-  int64 correctionFactor =5;
+  string temperature =3;
+  string correctedUllage =4;
+  string correctionFactor =5;
   string quantity =6;
-  int64 observedM3 =7;
-  int64 fillingRatio =8;
+  string observedM3 =7;
+  string fillingRatio =8;
   string colour_code = 9;
   string density =10;
-  int64 arrival_departutre =11;
-  int64 actual_planned =12;
+  int32 arrival_departutre =11;
+  int32 actual_planned =12;
   bool isUpdate = 13;
   int64 port_xid = 14;
   int64 port_rotation_xid = 15;
@@ -898,6 +902,8 @@ message UploadTideDetailRequest {
 	bytes tideDetaildata = 1;
 	ResponseStatus responseStatus = 2;
 	int64 loadingId = 3;
+	string portName = 4;
+	int64 portId = 5;
 }
 
 message UploadTideDetailStatusReply {

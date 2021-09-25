@@ -13,7 +13,6 @@ import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
-import io.micrometer.core.instrument.util.StringUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,6 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Transactional
@@ -445,12 +445,24 @@ public class LoadingPlanService {
                 if (billOfLanding.getIsUpdate()) {
                   billOfLandingRepository.updateBillOfLandingRepository(
                       billOfLanding.getBlRefNumber(),
-                      BigDecimal.valueOf(billOfLanding.getBblAt60F()),
-                      BigDecimal.valueOf(billOfLanding.getQuantityLt()),
-                      BigDecimal.valueOf(billOfLanding.getQuantityMt()),
-                      BigDecimal.valueOf(billOfLanding.getKlAt15C()),
-                      BigDecimal.valueOf(billOfLanding.getApi()),
-                      BigDecimal.valueOf(billOfLanding.getTemperature()),
+                      StringUtils.isEmpty(billOfLanding.getBblAt60F())
+                          ? null
+                          : new BigDecimal(billOfLanding.getBblAt60F()),
+                      StringUtils.isEmpty(billOfLanding.getQuantityLt())
+                          ? null
+                          : new BigDecimal(billOfLanding.getQuantityLt()),
+                      StringUtils.isEmpty(billOfLanding.getQuantityMt())
+                          ? null
+                          : new BigDecimal(billOfLanding.getQuantityMt()),
+                      StringUtils.isEmpty(billOfLanding.getKlAt15C())
+                          ? null
+                          : new BigDecimal(billOfLanding.getKlAt15C()),
+                      StringUtils.isEmpty(billOfLanding.getApi())
+                          ? null
+                          : new BigDecimal(billOfLanding.getApi()),
+                      StringUtils.isEmpty(billOfLanding.getTemperature())
+                          ? null
+                          : new BigDecimal(billOfLanding.getTemperature()),
                       Long.valueOf(billOfLanding.getId() + ""));
                 } else {
                   BillOfLanding landing = new BillOfLanding();
@@ -458,12 +470,30 @@ public class LoadingPlanService {
                   landing.setPortId(billOfLanding.getPortId());
                   landing.setCargoId(billOfLanding.getCargoId());
                   landing.setBlRefNumber(billOfLanding.getBlRefNumber());
-                  landing.setBblAt60f(BigDecimal.valueOf(billOfLanding.getBblAt60F()));
-                  landing.setKlAt15c(BigDecimal.valueOf(billOfLanding.getKlAt15C()));
-                  landing.setQuantityLt(BigDecimal.valueOf(billOfLanding.getQuantityLt()));
-                  landing.setQuantityMt(BigDecimal.valueOf(billOfLanding.getQuantityMt()));
-                  landing.setApi(BigDecimal.valueOf(billOfLanding.getApi()));
-                  landing.setTemperature(BigDecimal.valueOf(billOfLanding.getTemperature()));
+                  landing.setBblAt60f(
+                      StringUtils.isEmpty(billOfLanding.getBblAt60F())
+                          ? null
+                          : new BigDecimal(billOfLanding.getBblAt60F()));
+                  landing.setKlAt15c(
+                      StringUtils.isEmpty(billOfLanding.getKlAt15C())
+                          ? null
+                          : new BigDecimal(billOfLanding.getKlAt15C()));
+                  landing.setQuantityLt(
+                      StringUtils.isEmpty(billOfLanding.getQuantityLt())
+                          ? null
+                          : new BigDecimal(billOfLanding.getQuantityLt()));
+                  landing.setQuantityMt(
+                      StringUtils.isEmpty(billOfLanding.getQuantityMt())
+                          ? null
+                          : new BigDecimal(billOfLanding.getQuantityMt()));
+                  landing.setApi(
+                      StringUtils.isEmpty(billOfLanding.getApi())
+                          ? null
+                          : new BigDecimal(billOfLanding.getApi()));
+                  landing.setTemperature(
+                      StringUtils.isEmpty(billOfLanding.getTemperature())
+                          ? null
+                          : new BigDecimal(billOfLanding.getTemperature()));
                   landing.setIsActive(true);
                   landing.setVersion(billOfLanding.getVersion());
                   billOfLandingRepository.save(landing);
@@ -481,8 +511,8 @@ public class LoadingPlanService {
       Integer tempBallastCount =
           portLoadingPlanBallastTempDetailsRepository
               .findByLoadingInformationAndConditionTypeAndIsActive(
-                  request.getBallastUpdate(0).getLoadingInformationId(),
-                  Integer.valueOf(request.getBallastUpdate(0).getArrivalDepartutre() + ""),
+                  request.getUpdateUllage(0).getLoadingInformationId(),
+                  request.getUpdateUllage(0).getArrivalDepartutre(),
                   true)
               .size();
       request
@@ -491,8 +521,12 @@ public class LoadingPlanService {
               ullageInsert -> {
                 if (ullageInsert.getIsUpdate() && tempBallastCount > 0) {
                   loadingPlanBallastDetailsTempRepository.updateLoadingPlanBallastDetailsRepository(
-                      BigDecimal.valueOf(ullageInsert.getSg()),
-                      BigDecimal.valueOf(ullageInsert.getCorrectedUllage()),
+                      StringUtils.isEmpty(ullageInsert.getSg())
+                          ? null
+                          : new BigDecimal(ullageInsert.getSg()),
+                      StringUtils.isEmpty(ullageInsert.getCorrectedUllage())
+                          ? null
+                          : new BigDecimal(ullageInsert.getCorrectedUllage()),
                       ullageInsert.getColorCode(),
                       new BigDecimal(ullageInsert.getQuantity()),
                       new BigDecimal(ullageInsert.getSounding()),
@@ -507,18 +541,38 @@ public class LoadingPlanService {
                   details.setPortRotationXId(ullageInsert.getPortRotationXid());
                   details.setPortXId(ullageInsert.getPortXid());
                   details.setTankXId(ullageInsert.getTankId());
-                  details.setTemperature(BigDecimal.valueOf(ullageInsert.getTemperature()));
-                  details.setCorrectedUllage(BigDecimal.valueOf(ullageInsert.getCorrectedUllage()));
-                  details.setQuantity(new BigDecimal(ullageInsert.getQuantity()));
-                  details.setObservedM3(BigDecimal.valueOf(ullageInsert.getObservedM3()));
-                  details.setFillingPercentage(BigDecimal.valueOf(ullageInsert.getFillingRatio()));
-                  details.setSounding(new BigDecimal(ullageInsert.getSounding()));
-                  details.setValueType(Integer.valueOf(ullageInsert.getActualPlanned() + ""));
-                  details.setConditionType(
-                      Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
+                  details.setTemperature(
+                      StringUtils.isEmpty(ullageInsert.getTemperature())
+                          ? null
+                          : new BigDecimal(ullageInsert.getTemperature()));
+                  details.setCorrectedUllage(
+                      StringUtils.isEmpty(ullageInsert.getCorrectedUllage())
+                          ? null
+                          : new BigDecimal(ullageInsert.getCorrectedUllage()));
+                  details.setQuantity(
+                      StringUtils.isEmpty(ullageInsert.getQuantity())
+                          ? null
+                          : new BigDecimal(ullageInsert.getQuantity()));
+                  details.setObservedM3(
+                      StringUtils.isEmpty(ullageInsert.getObservedM3())
+                          ? null
+                          : new BigDecimal(ullageInsert.getObservedM3()));
+                  details.setFillingPercentage(
+                      StringUtils.isEmpty(ullageInsert.getFillingPercentage())
+                          ? null
+                          : new BigDecimal(ullageInsert.getFillingPercentage()));
+                  details.setSounding(
+                      StringUtils.isEmpty(ullageInsert.getSounding())
+                          ? null
+                          : new BigDecimal(ullageInsert.getSounding()));
+                  details.setValueType(ullageInsert.getActualPlanned());
+                  details.setConditionType(ullageInsert.getArrivalDepartutre());
                   details.setIsActive(true);
                   details.setColorCode(ullageInsert.getColorCode());
-                  details.setSg(BigDecimal.valueOf(ullageInsert.getSg()));
+                  details.setSg(
+                      StringUtils.isEmpty(ullageInsert.getSg())
+                          ? null
+                          : new BigDecimal(ullageInsert.getSg()));
                   loadingPlanBallastDetailsTempRepository.save(details);
                 }
               });
@@ -527,7 +581,7 @@ public class LoadingPlanService {
           portLoadingPlanStowageTempDetailsRepository
               .findByLoadingInformationAndConditionTypeAndIsActive(
                   request.getUpdateUllage(0).getLoadingInformationId(),
-                  Integer.valueOf(request.getUpdateUllage(0).getArrivalDepartutre() + ""),
+                  request.getUpdateUllage(0).getArrivalDepartutre(),
                   true)
               .size();
 
@@ -541,33 +595,47 @@ public class LoadingPlanService {
                           new BigDecimal(ullageInsert.getQuantity()),
                           new BigDecimal(ullageInsert.getUllage()),
                           new BigDecimal(ullageInsert.getQuantity()),
-                          BigDecimal.valueOf(Long.parseLong(ullageInsert.getApi() + "")),
-                          BigDecimal.valueOf(Long.parseLong(ullageInsert.getTemperature() + "")),
+                          new BigDecimal(ullageInsert.getApi()),
+                          new BigDecimal(ullageInsert.getTemperature()),
                           Long.valueOf(ullageInsert.getTankId()),
-                          ullageInsert.getLoadingInformationId(),
-                          ullageInsert.getArrivalDepartutre());
+                          Long.valueOf(ullageInsert.getLoadingInformationId()),
+                          Long.valueOf(ullageInsert.getArrivalDepartutre()));
                 } else {
                   PortLoadingPlanStowageTempDetails tempData =
                       new PortLoadingPlanStowageTempDetails();
                   tempData.setLoadingInformation(ullageInsert.getLoadingInformationId());
                   tempData.setTankXId(ullageInsert.getTankId());
-                  tempData.setTemperature(BigDecimal.valueOf(ullageInsert.getTemperature()));
+                  tempData.setTemperature(
+                      StringUtils.isEmpty(ullageInsert.getTemperature())
+                          ? null
+                          : new BigDecimal(ullageInsert.getTemperature()));
                   tempData.setCorrectedUllage(
-                      BigDecimal.valueOf(ullageInsert.getCorrectedUllage()));
+                      StringUtils.isEmpty(ullageInsert.getCorrectedUllage())
+                          ? null
+                          : new BigDecimal(ullageInsert.getCorrectedUllage()));
                   tempData.setQuantity(new BigDecimal(ullageInsert.getQuantity()));
                   tempData.setFillingPercentage(
-                      BigDecimal.valueOf(ullageInsert.getFillingPercentage()));
-                  tempData.setApi(BigDecimal.valueOf(ullageInsert.getApi()));
+                      StringUtils.isEmpty(ullageInsert.getFillingPercentage())
+                          ? null
+                          : new BigDecimal(ullageInsert.getFillingPercentage()));
+                  tempData.setApi(
+                      StringUtils.isEmpty(ullageInsert.getApi())
+                          ? null
+                          : new BigDecimal(ullageInsert.getApi()));
                   tempData.setCargoNominationXId(ullageInsert.getCargoNominationXid());
                   tempData.setPortXId(ullageInsert.getPortXid());
                   tempData.setPortRotationXId(ullageInsert.getPortRotationXid());
-                  tempData.setValueType(Integer.valueOf(ullageInsert.getActualPlanned() + ""));
-                  tempData.setConditionType(
-                      Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
+                  tempData.setValueType(ullageInsert.getActualPlanned());
+                  tempData.setConditionType(ullageInsert.getArrivalDepartutre());
                   tempData.setCorrectionFactor(
-                      BigDecimal.valueOf(ullageInsert.getCorrectionFactor()));
+                      StringUtils.isEmpty(ullageInsert.getCorrectionFactor())
+                          ? null
+                          : new BigDecimal(ullageInsert.getCorrectionFactor()));
                   tempData.setIsActive(true);
-                  tempData.setUllage(new BigDecimal(ullageInsert.getUllage()));
+                  tempData.setUllage(
+                      StringUtils.isEmpty(ullageInsert.getUllage())
+                          ? null
+                          : new BigDecimal(ullageInsert.getUllage()));
                   tempData.setColorCode(ullageInsert.getColorCode());
                   tempData.setAbbreviation(ullageInsert.getAbbreviation());
                   tempData.setCargoXId(ullageInsert.getCargoId());
@@ -581,21 +649,27 @@ public class LoadingPlanService {
               ullageInsert -> {
                 if (ullageInsert.getIsUpdate()) {
                   loadingPlanRobDetailsRepository.updatePortLoadingPlanRobDetailsRepository(
-                      new BigDecimal(ullageInsert.getQuantity()),
-                      new BigDecimal(ullageInsert.getQuantity()),
+                      StringUtils.isEmpty(ullageInsert.getQuantity())
+                          ? null
+                          : new BigDecimal(ullageInsert.getQuantity()),
+                      StringUtils.isEmpty(ullageInsert.getQuantity())
+                          ? null
+                          : new BigDecimal(ullageInsert.getQuantity()),
                       Long.valueOf(ullageInsert.getTankId()),
                       ullageInsert.getLoadingInformationId(),
-                      Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""),
-                      Integer.valueOf(ullageInsert.getActualPlanned() + ""));
+                      ullageInsert.getArrivalDepartutre(),
+                      ullageInsert.getActualPlanned());
                 } else {
                   PortLoadingPlanRobDetails robDet = new PortLoadingPlanRobDetails();
                   robDet.setLoadingInformation(ullageInsert.getLoadingInformationId());
                   robDet.setTankXId(Long.valueOf(ullageInsert.getTankId()));
-                  robDet.setQuantity(new BigDecimal(ullageInsert.getQuantity()));
+                  robDet.setQuantity(
+                      StringUtils.isEmpty(ullageInsert.getQuantity())
+                          ? null
+                          : new BigDecimal(ullageInsert.getQuantity()));
                   robDet.setPortXId(Long.valueOf(ullageInsert.getPortXid()));
                   robDet.setPortRotationXId(Long.valueOf(ullageInsert.getPortRotationXid()));
-                  robDet.setConditionType(
-                      Integer.valueOf(ullageInsert.getArrivalDepartutre() + ""));
+                  robDet.setConditionType(ullageInsert.getArrivalDepartutre());
                   robDet.setValueType(LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
                   robDet.setIsActive(true);
                   robDet.setColorCode(ullageInsert.getColourCode());

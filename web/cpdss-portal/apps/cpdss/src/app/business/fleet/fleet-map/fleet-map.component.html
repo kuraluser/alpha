@@ -42,7 +42,7 @@
   <div #vesselCardContainer class="vessel-card-container" [ngClass]="showALlVessel == true ? 'expanded': 'collapsed'">
     <cpdss-portal-fleet-vessel-card *ngIf="vessels" [vesselValues]="vessels" (selectVessel)="onSelectVessel($event)">
     </cpdss-portal-fleet-vessel-card>
-    <div [hidden]="voyagePorts?.length < 4" class="vessel-card-expand-collapse-btn" (click)="toggleViewShowAllVessel()">
+    <div [hidden]="vessels?.length < 4" class="vessel-card-expand-collapse-btn" (click)="toggleViewShowAllVessel()">
       <div class="pi" [ngClass]="showALlVessel == true ? 'pi-angle-up': 'pi-angle-down'">
       </div>
     </div>
