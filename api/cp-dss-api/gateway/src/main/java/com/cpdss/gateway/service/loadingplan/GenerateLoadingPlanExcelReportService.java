@@ -5,6 +5,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.VesselInfo.VesselReply;
+import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
@@ -13,7 +15,10 @@ import com.cpdss.gateway.domain.Vessel;
 import com.cpdss.gateway.domain.VesselResponse;
 import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.loadingplan.ArrivalDeparcherCondition;
+import com.cpdss.gateway.domain.loadingplan.BerthDetails;
+import com.cpdss.gateway.domain.loadingplan.BerthInformation;
 import com.cpdss.gateway.domain.loadingplan.CargoQuantity;
+import com.cpdss.gateway.domain.loadingplan.CargoTobeLoaded;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelLoadingPlanDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanReportRequest;
@@ -24,43 +29,41 @@ import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.VesselInfoService;
+import com.cpdss.gateway.utility.ExcelExportUtility;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.apache.commons.io.IOUtils;
-import org.jxls.common.Context;
-import org.jxls.util.JxlsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author sanalkumar.k
+ *
+ */
 @Slf4j
 @Service
 public class GenerateLoadingPlanExcelReportService {
 	public static final String SUCCESS = "SUCCESS";
 	public static final String FAILED = "FAILED";
 
-	public final String TEMPLATE = "/reports/Vessel_{id}_Loading_Plan_Template.xlsx";
-	public final String OUT_LOCATION = "/reports/Vessel_{id}_Loading_Plan_Report.xlsx";
-
-	@Value("${gateway.attachement.rootFolder}")
-	private String rootFolder;
+	public String TEMPLATES_FILE_LOCATION = "/reports/Vessel_{type}_Loading_Plan_Template.xlsx";
+	public String OUTPUT_FILE_LOCATION = "/reports/Vessel_{id}_Loading_Plan_{voy}_{port}.xlsx";
 
 	@Autowired
 	LoadingPlanGrpcService loadingPlanGrpcService;
+
+	@Autowired
+	ExcelExportUtility excelExportUtil;
 
 	@Autowired
 	private VesselInfoService vesselInfoService;
@@ -79,74 +82,60 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @param voyageId
 	 * @param infoId
 	 * @param portRotationId
+	 * @param downloadRequired
 	 * @return
 	 * @throws GenericServiceException
 	 * @throws IOException
 	 */
-	public byte[] generateExcel(LoadingPlanReportRequest requestPayload, Long vesselId, Long voyageId, Long infoId,
-			Long portRotationId) throws GenericServiceException, IOException {
-		log.info("Inside generateExcel method");
-		String outFile = rootFolder + getLoadingPlanTemplateForVessel(OUT_LOCATION, vesselId);
-		OutputStream outStream = new FileOutputStream(outFile);
-		Map<String, Object> dataMap = getDataMappedForExcel(requestPayload, vesselId, voyageId, infoId, portRotationId);
+	public byte[] generateLoadingPlanExcel(LoadingPlanReportRequest requestPayload, Long vesselId, Long voyageId,
+			Long infoId, Long portRotationId, Boolean downloadRequired) throws GenericServiceException, IOException {
+		// Building data required for Loading plan Excel
+		LoadingPlanExcelDetails loadinPlanExcelDetails = getDataForExcel(requestPayload, vesselId, voyageId, infoId,
+				portRotationId);
+		// Setting file name of output file
+		getFileName(vesselId, voyageId, loadinPlanExcelDetails.getSheetOne().getPortName());
+		// Setting file name of input file based on vessel type
+		getLoadingPlanTemplateForVessel(vesselId);
+		// Getting data mapped and calling excel builder utility
+		FileInputStream resultFileStream = new FileInputStream(
+				excelExportUtil.generateExcel(loadinPlanExcelDetails, TEMPLATES_FILE_LOCATION, OUTPUT_FILE_LOCATION));
 
-		// TODO identify template from vessel Type
-		try (InputStream input = this.getClass()
-				.getResourceAsStream(getLoadingPlanTemplateForVessel(TEMPLATE, vesselId))) {
-			if (input != null) {
-				Context context = getContext(dataMap);
-				// Stamping values into excel template
-				JxlsHelper.getInstance().processTemplate(input, outStream, context);
-			} else {
-				log.info("No input template found for Vessel Id : {}", vesselId);
-				throw new GenericServiceException("Excel generation failed : No input template found",
-						CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new GenericServiceException("Excel generation failed" + e.getMessage(),
-					CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
-		} finally {
-			closeAndFlushOutput(outStream);
+		if (resultFileStream != null) {
+			// TODO put an entry in DB for Communication
 		}
 
-		// Returning Output file as byte array
-		FileInputStream fis = new FileInputStream(new File(outFile));
-		// TODO put an entry in DB for Communication
-		return IOUtils.toByteArray(fis);
+		// Returning Output file as byte array for local download
+		if (downloadRequired) {
+			return IOUtils.toByteArray(resultFileStream);
+		}
+		// No need to for local download if file generated form event trigger
+		return null;
 	}
 
 	/**
-	 * @param data
-	 * @return
-	 */
-	private Context getContext(Map<String, Object> data) {
-		Context context = new Context();
-
-		for (Entry<String, Object> element : data.entrySet()) {
-			context.putVar(element.getKey(), element.getValue());
-		}
-		return context;
-	}
-
-	/**
-	 * @param location
+	 * Get corresponding Loading plan template of a vessel based on its type.
+	 * 
 	 * @param vesselId
 	 * @return
 	 */
-	private String getLoadingPlanTemplateForVessel(String location, Long vesselId) {
-		log.info("Generating file location {} ", location.replace("{id}", vesselId.toString()));
-		return location.replace("{id}", vesselId.toString());
+	private void getLoadingPlanTemplateForVessel(Long vesselId) {
+		VesselReply reply = vesselInfoGrpcService
+				.getVesselDetailByVesselId(VesselRequest.newBuilder().setVesselId(vesselId).build());
+		if (!SUCCESS.equalsIgnoreCase(reply.getResponseStatus().getStatus())) {
+			throw new GenericServiceException("Error in calling vessel service - While checking vessel Type",
+					CommonErrorCodes.E_GEN_INTERNAL_ERR, HttpStatusCode.INTERNAL_SERVER_ERROR);
+		}
+		reply.getVesselTypeId();
+		Optional.ofNullable(reply.getVesselTypeId())
+				.ifPresent(TEMPLATES_FILE_LOCATION.replace("{type}", reply.getVesselTypeId().toString()));
 	}
 
-	private void closeAndFlushOutput(OutputStream outStream) {
-		try {
-			outStream.flush();
-			outStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	/**
+	 * Get fully qualified name of output file
+	 */
+	private void getFileName(Long vesselId, Long voyageId, String portName) {
+		OUTPUT_FILE_LOCATION.replace("{id}", vesselId.toString()).replace("{voy}", voyageId.toString())
+				.replace("{port}", portName);
 	}
 
 	/**
@@ -161,25 +150,37 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @throws GenericServiceException
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<String, Object> getDataMappedForExcel(LoadingPlanReportRequest requestPayload, Long vesselId,
+	private LoadingPlanExcelDetails getDataForExcel(LoadingPlanReportRequest requestPayload, Long vesselId,
 			Long voyageId, Long infoId, Long portRotationId) throws GenericServiceException {
 		LoadingPlanExcelDetails excelData = new LoadingPlanExcelDetails();
+		excelData.setSheetOne(buildSheetOne(requestPayload, vesselId, voyageId, infoId, portRotationId));
+//		excelData.setSheetTwo(buildSheetTwo(requestPayload, vesselId, voyageId, infoId, portRotationId));
+		return excelData;
+	}
+
+	/**
+	 * Build data model for Sheet 1
+	 * 
+	 * @return sheet one
+	 * @throws GenericServiceException
+	 */
+	private LoadingPlanExcelLoadingPlanDetails buildSheetOne(LoadingPlanReportRequest requestPayload, Long vesselId,
+			Long voyageId, Long infoId, Long portRotationId) throws GenericServiceException {
+		// TODO call getloading plan call here and get the response
 		LoadingPlanExcelLoadingPlanDetails sheetOne = new LoadingPlanExcelLoadingPlanDetails();
 		getBasicVesselDetails(sheetOne, vesselId, voyageId, infoId, portRotationId);
 		// Condition type 1 is arrival
 		sheetOne.setArrivalCondition(getVesselConditionDetails(requestPayload, 1));
 		sheetOne.setDeparcherCondition(getVesselConditionDetails(requestPayload, 2));
-		excelData.setSheetOne(sheetOne);
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> dataMap = mapper.convertValue(excelData, Map.class);
-		dataMap.entrySet().forEach(entry -> {
-			System.out.println(entry.getKey() + " : " + entry.getValue()); // TODO remove
-		});
-		return dataMap;
+		sheetOne.setCargoTobeLoaded(getCargoTobeLoadedDetails(requestPayload));
+		sheetOne.setBerthInformation(getBerthInfoDetails(requestPayload));
+		return sheetOne;
 	}
 
+	
+
 	/**
-	 * Fecth basic vessel and Port details
+	 * Fetch basic vessel and Port details
 	 * 
 	 * @param excelData
 	 * @param requestPayload
@@ -221,11 +222,71 @@ public class GenerateLoadingPlanExcelReportService {
 	}
 
 	/**
+	 * Berth information details
+	 * 
+	 * @param requestPayload
+	 * @return
+	 */
+	private List<BerthInformation> getBerthInfoDetails(LoadingPlanReportRequest requestPayload) {
+		List<BerthInformation> berthInfoList = new ArrayList<>();
+		List<BerthDetails> berthDetailsList = requestPayload.getLoadingInformation().getBerthDetails()
+				.getSelectedBerths();
+		if (!berthDetailsList.isEmpty()) {
+			berthDetailsList.forEach(item -> {
+				BerthInformation berthInformation = new BerthInformation();
+				Optional.ofNullable(item.getBerthName()).ifPresent(berthInformation::setBerthName);
+				Optional.ofNullable(item.getHoseConnections()).ifPresent(berthInformation::setHoseConnection);
+				Optional.ofNullable(item.getMaxManifoldPressure()).ifPresent(berthInformation::setMaxManifoldPressure);
+				Optional.ofNullable(item.getAirDraftLimitation()).ifPresent(berthInformation::setAirDraftLimitation);
+				Optional.ofNullable(item.getAirPurge()).ifPresent(berthInformation::setAirPurge);
+				Optional.ofNullable(item.getRegulationAndRestriction())
+						.ifPresent(berthInformation::setSpecialRegulation);
+				Optional.ofNullable(item.getItemsToBeAgreedWith())
+						.ifPresent(berthInformation::setItemsAgreedWithTerminal);
+				berthInfoList.add(berthInformation);
+			});
+		}
+		return berthInfoList;
+	}
+	
+	/** Calling port GROC for getting Port name
 	 * @param build
 	 * @return PortReply
 	 */
 	public PortInfo.PortReply getPortInfo(PortInfo.GetPortInfoByPortIdsRequest build) {
 		return portInfoGrpcService.getPortInfoByPortIds(build);
+	}
+
+	/**
+	 * Fetch cargo to be loaded details
+	 * 
+	 * @param requestPayload
+	 * @return
+	 */
+	private List<CargoTobeLoaded> getCargoTobeLoadedDetails(LoadingPlanReportRequest requestPayload) {
+		List<CargoTobeLoaded> cargoTobeLoadedList = new ArrayList<>();
+		List<LoadableQuantityCargoDetails> LoadableQuantityCargoList = requestPayload.getLoadingInformation()
+				.getCargoVesselTankDetails().getLoadableQuantityCargoDetails();
+		if (!LoadableQuantityCargoList.isEmpty()) {
+			LoadableQuantityCargoList.forEach(item -> {
+				CargoTobeLoaded cargoTobeLoaded = new CargoTobeLoaded();
+				Optional.ofNullable(item.getCargoAbbreviation()).ifPresent(cargoTobeLoaded::setCargoName);
+				Optional.ofNullable(item.getColorCode()).ifPresent(cargoTobeLoaded::setColorCode);
+				Optional.ofNullable(item.getEstimatedAPI()).ifPresent(cargoTobeLoaded::setApi);
+				Optional.ofNullable(item.getEstimatedTemp()).ifPresent(cargoTobeLoaded::setTemperature);
+//				TODO loading port coming as a list expected only a string
+//				Optional.ofNullable(item.getLoadingPorts()).ifPresent(cargoTobeLoaded::setLoadingPort);
+				Optional.ofNullable(item.getCargoNominationQuantity()).ifPresent(cargoTobeLoaded::setNomination);
+				Optional.ofNullable(item.getLoadableMT()).ifPresent(cargoTobeLoaded::setShipLoadable);
+				Optional.ofNullable(item.getMaxTolerence()).ifPresent(cargoTobeLoaded::setTolerance);
+				Optional.ofNullable(item.getDifferencePercentage()).ifPresent(cargoTobeLoaded::setDifference);
+				Optional.ofNullable(item.getTimeRequiredForLoading())
+						.ifPresent(cargoTobeLoaded::setTimeRequiredForLoading);
+				Optional.ofNullable(item.getSlopQuantity()).ifPresent(cargoTobeLoaded::setSlopQuantity);
+				cargoTobeLoadedList.add(cargoTobeLoaded);
+			});
+		}
+		return cargoTobeLoadedList;
 	}
 
 	/**
@@ -241,7 +302,7 @@ public class GenerateLoadingPlanExcelReportService {
 		ArrivalDeparcherCondition vesselCondition = new ArrivalDeparcherCondition();
 		setCargoTanksWithQuantityForReport(vesselCondition, requestPayload, conditionType);
 		setBallastTanksWithQuantityForReport(vesselCondition, requestPayload, conditionType);
-		setCargoQuantityList(vesselCondition, requestPayload.getCurrentPortCargos(), conditionType);
+		setCargoQuantityList(vesselCondition, requestPayload, conditionType);
 		return vesselCondition;
 
 	}
@@ -250,20 +311,25 @@ public class GenerateLoadingPlanExcelReportService {
 	 * Get list of cargo in a port
 	 * 
 	 * @param vesselCondition
-	 * @param currentPortCargos
+	 * @param requestPayload
 	 * @param conditionType
 	 */
 	private void setCargoQuantityList(ArrivalDeparcherCondition vesselCondition,
-			List<LoadableQuantityCargoDetails> currentPortCargos, Integer conditionType) {
-		List<CargoQuantity> list = new ArrayList<>();
-		currentPortCargos.forEach(item -> {
+			LoadingPlanReportRequest requestPayload, Integer conditionType) {
+		List<CargoQuantity> cargoQuantitylist = new ArrayList<>();
+		requestPayload.getCurrentPortCargos().forEach(item -> {
 			CargoQuantity cargo = new CargoQuantity();
+			Double totalQuantity = 0.0;
 			Optional.ofNullable(item.getCargoAbbreviation()).ifPresent(cargo::setCargoName);
 			Optional.ofNullable(item.getColorCode()).ifPresent(cargo::setColorCode);
-			Optional.ofNullable(item.getLoadableMT()).ifPresent(cargo::setQuantity);
-			list.add(cargo);
+			totalQuantity = requestPayload.getPlanStowageDetails().stream()
+					.filter(psd -> psd.getConditionType().equals(conditionType)
+							&& psd.getCargoId().equals(item.getCargoId()) && psd.getValueType().equals(2))
+					.mapToDouble(i -> Double.parseDouble(i.getQuantityMT())).sum();
+			cargo.setQuantity(totalQuantity.toString());
+			cargoQuantitylist.add(cargo);
 		});
-		vesselCondition.setCargoDetails(list);
+		vesselCondition.setCargoDetails(cargoQuantitylist);
 	}
 
 	/**

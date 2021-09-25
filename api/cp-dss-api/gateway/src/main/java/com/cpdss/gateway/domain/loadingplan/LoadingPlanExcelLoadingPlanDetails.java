@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,4 +23,6 @@ public class LoadingPlanExcelLoadingPlanDetails {
   private String LoadLineZone;
   private ArrivalDeparcherCondition arrivalCondition;
   private ArrivalDeparcherCondition deparcherCondition;
+  private List<CargoTobeLoaded> cargoTobeLoaded;
+  private List<BerthInformation> berthInformation;
 }

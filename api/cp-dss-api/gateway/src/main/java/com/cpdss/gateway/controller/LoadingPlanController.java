@@ -935,8 +935,8 @@ public class LoadingPlanController {
       // Send file
       return new HttpEntity<ByteArrayResource>(
           new ByteArrayResource(
-              generateLoadingPlanExcelReportService.generateExcel(
-                  requestPayload, vesselId, voyageId, infoId, portRotationId)),
+              generateLoadingPlanExcelReportService.generateLoadingPlanExcel(
+                  requestPayload, vesselId, voyageId, infoId, portRotationId,true)),
           header);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in getLoadablePlanReport method", e);
