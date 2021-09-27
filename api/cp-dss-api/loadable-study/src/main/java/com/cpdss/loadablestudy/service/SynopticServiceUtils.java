@@ -65,18 +65,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.transaction.Transactional;
-
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
 /**
  * util functions which is consumed by {@link SynopticService}
- * @author arun.j
  *
+ * @author arun.j
  */
 @Slf4j
 @Service
@@ -181,7 +180,8 @@ public class SynopticServiceUtils {
       LoadableStudy.SynopticalTableRequest request,
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
       SynopticalTable entity,
-      LoadableStudy.SynopticalRecord record,boolean isUpdate)
+      LoadableStudy.SynopticalRecord record,
+      boolean isUpdate)
       throws GenericServiceException {
     List<Long> portIds = loadableStudyPortRotationService.getPortRoationPortIds(loadableStudy);
     if (null == portIds || portIds.isEmpty()) {
@@ -193,7 +193,7 @@ public class SynopticServiceUtils {
     Long firstPortId = portIds.get(0);
     if (entity.getPortXid().equals(firstPortId)
         && SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())) {
-      this.saveSynopticalObqData(loadableStudy, record,isUpdate);
+      this.saveSynopticalObqData(loadableStudy, record, isUpdate);
     } else if (request.getLoadablePatternId() > 0) {
       this.saveSynopticalCargoByLoadablePattern(request, entity, record);
     }
@@ -202,7 +202,8 @@ public class SynopticServiceUtils {
   public void saveSynopticalOhqData(
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
       SynopticalTable entity,
-      LoadableStudy.SynopticalRecord record,boolean isUpdate)
+      LoadableStudy.SynopticalRecord record,
+      boolean isUpdate)
       throws GenericServiceException {
     List<OnHandQuantity> ohqEntities =
         this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
@@ -227,9 +228,10 @@ public class SynopticServiceUtils {
         ohqEntity.setPortRotation(entity.getLoadableStudyPortRotation());
         ohqEntity.setIsActive(true);
       }
-      //if the update happening from loading plan to save actual then there is no need to call validate
-      if(!isUpdate) {
-      this.validateSaveSynopticalOhqData(ohqEntity, entity, ohqRecord, loadableStudy);
+      // if the update happening from loading plan to save actual then there is no need to call
+      // validate
+      if (!isUpdate) {
+        this.validateSaveSynopticalOhqData(ohqEntity, entity, ohqRecord, loadableStudy);
       }
       if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())) {
         ohqEntity.setArrivalQuantity(
@@ -295,12 +297,13 @@ public class SynopticServiceUtils {
    *
    * @param loadableStudy
    * @param record
- * @param isUpdate 
+   * @param isUpdate
    * @throws GenericServiceException
    */
   public void saveSynopticalObqData(
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
-      LoadableStudy.SynopticalRecord record, boolean isUpdate)
+      LoadableStudy.SynopticalRecord record,
+      boolean isUpdate)
       throws GenericServiceException {
     List<OnBoardQuantity> obqEntities =
         this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
@@ -325,8 +328,8 @@ public class SynopticServiceUtils {
         obqEntity.setLoadableStudy(loadableStudy);
         obqEntity.setIsActive(true);
       }
-      if(!isUpdate) {
-          this.validateSaveSynopticalObqData(obqEntity, cargoRecord, loadableStudy);
+      if (!isUpdate) {
+        this.validateSaveSynopticalObqData(obqEntity, cargoRecord, loadableStudy);
       }
 
       obqEntity.setPlannedArrivalWeight(

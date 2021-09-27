@@ -22,7 +22,6 @@ import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.loadingplan.utility.LoadingPlanUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -747,7 +746,8 @@ public class LoadingPlanService {
 
   public void saveUpdatedLoadingPlanDetails(
       LoadingInformation loadingInformation, Integer conditionType)
-      throws IllegalAccessException, InvocationTargetException, NumberFormatException, GenericServiceException {
+      throws IllegalAccessException, InvocationTargetException, NumberFormatException,
+          GenericServiceException {
     // Method used for Updating port loading plan stowage and ballast details from  temp table to
     // permanent after loadicator done
     log.info("Updating Loading Plan Details of Loading Information {}", loadingInformation.getId());
@@ -855,13 +855,14 @@ public class LoadingPlanService {
               synopticalData.addOhq(ohq);
             });
     request.addSynopticalRecord(synopticalData);
-    ResponseStatus response = synopticalOperationServiceBlockingStub.updateSynopticalTable(request.build());
+    ResponseStatus response =
+        synopticalOperationServiceBlockingStub.updateSynopticalTable(request.build());
     if (!SUCCESS.equals(response.getStatus())) {
-        throw new GenericServiceException(
-            "Failed to update actuals",
-            response.getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(response.getCode())));
-      }
+      throw new GenericServiceException(
+          "Failed to update actuals",
+          response.getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(response.getCode())));
+    }
     // Deleting existing entry from temp tables
     portLoadingPlanStowageTempDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
         loadingInformation.getId(), conditionType);

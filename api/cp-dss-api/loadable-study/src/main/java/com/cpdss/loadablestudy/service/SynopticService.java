@@ -98,17 +98,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -1574,8 +1571,9 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
         synpoticServiceUtils.saveSynopticalBallastData(
             request.getLoadablePatternId(), record, entity);
       }
-      synpoticServiceUtils.saveSynopticalCargoData(request, loadableStudyOpt.get(), entity, record,false);
-      synpoticServiceUtils.saveSynopticalOhqData(loadableStudyOpt.get(), entity, record,false);
+      synpoticServiceUtils.saveSynopticalCargoData(
+          request, loadableStudyOpt.get(), entity, record, false);
+      synpoticServiceUtils.saveSynopticalOhqData(loadableStudyOpt.get(), entity, record, false);
     }
     replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
@@ -1868,9 +1866,9 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
         synpoticServiceUtils.saveSynopticalBallastData(
             request.getLoadablePatternId(), synopticalRecord, synopticalData.get());
         synpoticServiceUtils.saveSynopticalCargoData(
-            request, loadableStudy.get(), synopticalData.get(), synopticalRecord,true);
+            request, loadableStudy.get(), synopticalData.get(), synopticalRecord, true);
         synpoticServiceUtils.saveSynopticalOhqData(
-            loadableStudy.get(), synopticalData.get(), synopticalRecord,true);
+            loadableStudy.get(), synopticalData.get(), synopticalRecord, true);
       }
       replyBuilder.setStatus(SUCCESS);
     } catch (GenericServiceException e) {
@@ -1882,14 +1880,14 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
           .setMessage("Error saving loadable study")
           .setStatus(FAILED)
           .build();
-    }catch (Exception e) {
-        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-    	replyBuilder.setStatus(FAILED).setMessage(e.getMessage()).build();
-        e.printStackTrace();
-        log.info("Failed to build synoptic data, {}", e.getMessage());
-    }finally {
-        responseObserver.onNext(replyBuilder.build());
-        responseObserver.onCompleted();
-      }
+    } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+      replyBuilder.setStatus(FAILED).setMessage(e.getMessage()).build();
+      e.printStackTrace();
+      log.info("Failed to build synoptic data, {}", e.getMessage());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
   }
 }
