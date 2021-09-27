@@ -5,7 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { IAlgoError, IAlgoResponse, ICargo, ICargoResponseModel, OPERATIONS, OPERATIONS_PLAN_STATUS } from '../../core/models/common.model';
 import { OPERATION_TAB } from '../models/operations.model';
 import { LoadingInformationComponent } from './loading-information/loading-information.component';
-import { UnsavedChangesGuard, ComponentCanDeactivate } from './../../../shared/services/guards/unsaved-data-guard';
+import { UnsavedChangesGuard } from './../../../shared/services/guards/unsaved-data-guard';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { OperationsApiService } from '../services/operations-api.service';
 import { LoadingApiService } from '../services/loading-api.service';
@@ -14,7 +14,7 @@ import { MessageService } from 'primeng/api';
 import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
 import { SecurityService } from '../../../shared/services/security/security.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { RATE_UNIT } from '../../../shared/models/common.model';
+import { ComponentCanDeactivate, RATE_UNIT } from '../../../shared/models/common.model';
 import { ULLAGE_STATUS_VALUE } from './../models/loading-discharging.model';
 
 /**
@@ -85,7 +85,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.ngxSpinnerService.show();
     this.initSubsciptions();
     this.getCargos();
-    this.listenEvents();    
+    this.listenEvents();
     this.activatedRoute.paramMap
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(params => {
@@ -464,7 +464,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    */
   isLoadingInfoValid() {
     if( this.currentTab === OPERATION_TAB.INFORMATION && this.loadingInfo?.loadingInformationData) {
-      return  (this.loadingInfo.isLoadingInfoValid() && 
+      return  (this.loadingInfo.isLoadingInfoValid() &&
       this.loadingDischargingTransformationService.isMachineryValid && this.loadingDischargingTransformationService.isCargoAdded);
     } else {
       return this.loadingInformationComplete;

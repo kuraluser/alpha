@@ -3,9 +3,10 @@ import { LoadingInstructionApiService } from './../../services/loading-instructi
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
 import {  OPERATIONS  } from '../../../core/models/common.model';
-import { UnsavedChangesGuard, ComponentCanDeactivate } from './../../../../shared/services/guards/unsaved-data-guard';
+import { UnsavedChangesGuard } from './../../../../shared/services/guards/unsaved-data-guard';
 import { ILoadingInstructionGroup, ILoadingInstructionSubHeaderData } from './../../models/loading-instruction.model';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
+import { ComponentCanDeactivate } from './../../../../shared/models/common.model';
 @Component({
   selector: 'cpdss-portal-loading-instruction',
   templateUrl: './loading-instruction.component.html',

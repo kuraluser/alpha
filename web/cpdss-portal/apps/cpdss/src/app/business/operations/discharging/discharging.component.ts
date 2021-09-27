@@ -3,12 +3,13 @@ import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ComponentCanDeactivate, UnsavedChangesGuard } from '../../../shared/services/guards/unsaved-data-guard';
+import { UnsavedChangesGuard } from '../../../shared/services/guards/unsaved-data-guard';
 import { ICargo, ICargoResponseModel } from '../../core/models/common.model';
 import { OPERATION_TAB } from '../models/operations.model';
 import { OperationsApiService } from '../services/operations-api.service';
 import { OPERATIONS } from '../../core/models/common.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { ComponentCanDeactivate } from '../../../shared/models/common.model';
 
 /**
  * Component for discharging module
