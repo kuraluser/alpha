@@ -142,4 +142,7 @@ public class LoadingInformation extends EntityDoc {
 
   @Column(name = "loadable_study_process_xid")
   private String loadableStudyProcessId;
+
+  @Column(name = "loading_plan_details_from_algo")
+  private String loadingPlanDetailsFromAlgo;
 }

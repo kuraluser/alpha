@@ -583,7 +583,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           attachmentEntity.setIsActive(true);
           attachmentCollection.add(attachmentEntity);
         }
-        entity.setAttachments(attachmentCollection);
+        this.loadableStudyAttachmentsRepository.saveAll(attachmentCollection);
       }
 
       if (request.getId() != 0) {
@@ -2273,9 +2273,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableStudyAttachmentsList.forEach(
               loadableStudyAttachment -> {
                 entityManager.detach(loadableStudyAttachment);
-                loadableStudyAttachment.setId(null);
-                loadableStudyAttachment.setLoadableStudy(entity);
-                loadableStudyAttachments.add(loadableStudyAttachment);
+                LoadableStudyAttachments attachments = new LoadableStudyAttachments();
+                attachments.setId(null);
+                attachments.setFilePath(loadableStudyAttachment.getFilePath());
+                attachments.setLoadableStudy(entity);
+                attachments.setIsActive(true);
+                attachments.setUploadedFileName(loadableStudyAttachment.getUploadedFileName());
+                loadableStudyAttachments.add(attachments);
               });
           this.loadableStudyAttachmentsRepository.saveAll(loadableStudyAttachments);
         }

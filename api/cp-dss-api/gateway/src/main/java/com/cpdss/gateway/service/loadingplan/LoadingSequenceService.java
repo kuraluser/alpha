@@ -240,7 +240,8 @@ public class LoadingSequenceService {
     this.buildStabilityParamSequence(reply, portEta, stabilityParams);
     this.buildFlowRates(loadingRates, vesselTankMap, portEta, response);
     this.buildBallastPumpCategories(vesselId, response);
-    this.removePreviousPortBallasts(ballasts, ballastTankCategories);
+    this.removeEmptyBallasts(ballasts, ballastTankCategories);
+    this.removeEmptyCargos(cargos, cargoTankCategories);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);
@@ -264,29 +265,50 @@ public class LoadingSequenceService {
   }
 
   /**
+   * @param cargos
+   * @param cargoTankCategories
+   */
+  private void removeEmptyCargos(List<Cargo> cargos, Set<TankCategory> cargoTankCategories) {
+    Set<Long> tankIds = cargos.stream().map(Cargo::getTankId).collect(Collectors.toSet());
+    Optional<Long> cargoStartOpt =
+        cargos.stream().map(cargo -> cargo.getStart()).sorted().findFirst();
+    tankIds.forEach(
+        tankId -> {
+          List<Cargo> tankWiseCargos =
+              cargos.stream()
+                  .filter(cargo -> cargo.getTankId().equals(tankId))
+                  .collect(Collectors.toList());
+          if (tankWiseCargos.size() < 2) {
+            cargos.removeIf(cargo -> cargo.getTankId().equals(tankId));
+            cargoTankCategories.removeIf(category -> category.getId().equals(tankId));
+          } else if ((tankWiseCargos.get(0).getQuantity().compareTo(BigDecimal.ZERO) == 0)
+              && (tankWiseCargos.get(1).getQuantity().compareTo(BigDecimal.ZERO) == 0)) {
+            cargos.removeIf(
+                cargo ->
+                    cargo.getTankId().equals(tankId)
+                        && (cargo.getQuantity().compareTo(BigDecimal.ZERO) == 0)
+                        && !cargo.getStart().equals(cargoStartOpt.get()));
+            if (tankWiseCargos.get(1).getStart().equals(cargoStartOpt.get())) {
+              cargos.remove(tankWiseCargos.get(1));
+            }
+          }
+        });
+  }
+
+  /**
    * @param ballasts
    * @param ballastTankCategories
    */
-  private void removePreviousPortBallasts(
+  private void removeEmptyBallasts(
       List<Ballast> ballasts, Set<TankCategory> ballastTankCategories) {
-
-    Optional<Long> ballastStartOpt =
-        ballasts.stream().map(ballast -> ballast.getStart()).sorted().findFirst();
-    ballastStartOpt.ifPresent(
-        startTime -> {
-          List<Ballast> initialBallasts =
-              ballasts.stream()
-                  .filter(ballast -> (ballast.getStart().equals(startTime)))
-                  .collect(Collectors.toList());
-          for (Ballast ballast : initialBallasts) {
-            if (ballasts.stream()
-                    .filter(balst -> balst.getTankId().equals(ballast.getTankId()))
-                    .count()
-                <= 1) {
-              ballasts.remove(ballast);
-              ballastTankCategories.removeIf(
-                  category -> category.getId().equals(ballast.getTankId()));
-            }
+    Set<Long> tankIds = ballasts.stream().map(Ballast::getTankId).collect(Collectors.toSet());
+    tankIds.forEach(
+        tankId -> {
+          if (ballasts.stream()
+              .filter(ballast -> ballast.getTankId().equals(tankId))
+              .allMatch(ballast -> ballast.getSounding().compareTo(BigDecimal.ZERO) == 0)) {
+            ballasts.removeIf(ballast -> ballast.getTankId().equals(tankId));
+            ballastTankCategories.removeIf(category -> category.getId().equals(tankId));
           }
         });
   }
@@ -332,11 +354,11 @@ public class LoadingSequenceService {
       Cargo cargo = new Cargo();
       CargoNominationDetail cargoNomination = cargoNomDetails.get(cargoNomId);
       if (cargoNomination != null) {
-    	  cargo.setName(cargoNomination.getCargoName());
-          cargo.setCargoId(cargoNomination.getCargoId());
-          cargo.setAbbreviation(cargoNomination.getAbbreviation());
-          cargo.setCargoNominationId(cargoNomination.getId());
-          cargo.setColor(cargoNomination.getColor());
+        cargo.setName(cargoNomination.getCargoName());
+        cargo.setCargoId(cargoNomination.getCargoId());
+        cargo.setAbbreviation(cargoNomination.getAbbreviation());
+        cargo.setCargoNominationId(cargoNomination.getId());
+        cargo.setColor(cargoNomination.getColor());
       }
       cargo.setApi(
           StringUtils.isEmpty(cargoNomination.getApi())
@@ -762,6 +784,16 @@ public class LoadingSequenceService {
     if (loadingPlanAlgoRequest.getErrors() != null
         && !loadingPlanAlgoRequest.getErrors().isEmpty()) {
       this.buildAlgoErrors(loadingPlanAlgoRequest.getErrors(), builder);
+    }
+
+    if (loadingPlanAlgoRequest.getLoadingInformation() != null) {
+      ObjectMapper mapper = new ObjectMapper();
+      try {
+        builder.setLoadingPlanDetailsFromAlgo(
+            mapper.writeValueAsString(loadingPlanAlgoRequest.getLoadingInformation()));
+      } catch (JsonProcessingException e) {
+        log.error("Could not parse Loading Plan Details from ALGO");
+      }
     }
   }
 
