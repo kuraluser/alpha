@@ -10,6 +10,8 @@ import { ILoadingPlanDetails, ULLAGE_STATUS_VALUE } from '../../models/loading-d
 import { LoadingApiService } from '../../services/loading-api.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { IPermission } from '../../../../shared/models/user-profile.model';
+
 /**
  * Component class for loading plan component
  *
@@ -37,6 +39,7 @@ export class LoadingPlanComponent implements OnInit {
   @Input() voyageId: number;
   @Input() portRotationId: number;
   @Input() loadingInfoId: number;
+  @Input() permission: IPermission;
 
   private _cargos: ICargo[];
   toppingOffSequence: IToppingOffSequence[];

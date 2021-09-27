@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -66,6 +67,7 @@ public class LoadableStudyPortRotationService {
   @Autowired private PortInstructionService portInstructionService;
   @Autowired private CowDetailService cowDetailService;
   @Autowired private OnHandQuantityService onHandQuantityService;
+  @Autowired private EntityManager entityManager;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -99,45 +101,52 @@ public class LoadableStudyPortRotationService {
         this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
             loadableStudy, true);
 
+    List<LoadableStudyPortRotation> newPortRotations = new ArrayList<>();
     for (LoadableStudyPortRotation portRotation : loadableStudyPortRotations) {
       if (portRotation.getOperation().getId() == 1L) {
-        Integer loc = loadableStudyPortRotations.indexOf(portRotation);
+        newPortRotations.add(portRotation);
+        int loc = newPortRotations.indexOf(portRotation);
         for (int index = 0; index <= loc; index++) {
-          LoadableStudyPortRotation portAbove = loadableStudyPortRotations.get(index);
+          LoadableStudyPortRotation portAbove = newPortRotations.get(index);
           if (portAbove.getOperation().getId().equals(2L)) {
-            loadableStudyPortRotations.remove(portRotation);
-            loadableStudyPortRotations.add(index, portRotation);
+            newPortRotations.remove(portRotation);
+            newPortRotations.add(index, portRotation);
           }
         }
+      } else {
+        newPortRotations.add(portRotation);
       }
     }
 
     Optional<LoadableStudyPortRotation> lastPortRotationOpt =
-        loadableStudyPortRotations.stream()
-            .sorted(Comparator.comparingLong(LoadableStudyPortRotation::getPortOrder).reversed())
+        newPortRotations.stream()
+            .sorted(
+                Comparator.comparing(portRotation -> newPortRotations.indexOf(portRotation))
+                    .reversed())
             .findFirst();
 
     if (lastPortRotationOpt.isPresent()
         && !lastPortRotationOpt.get().getOperation().getId().equals(2L)) {
       Optional<LoadableStudyPortRotation> lastDischargePortOpt =
-          loadableStudyPortRotations.stream()
+          newPortRotations.stream()
               .filter(portRotation -> portRotation.getOperation().getId().equals(2L))
-              .sorted(Comparator.comparingLong(LoadableStudyPortRotation::getPortOrder).reversed())
+              .sorted(
+                  Comparator.comparing(portRotation -> newPortRotations.indexOf(portRotation))
+                      .reversed())
               .findFirst();
       if (lastDischargePortOpt.isPresent()) {
-        Integer index = loadableStudyPortRotations.indexOf(lastPortRotationOpt.get());
-        loadableStudyPortRotations.remove(lastDischargePortOpt.get());
-        loadableStudyPortRotations.add(index, lastDischargePortOpt.get());
+        Integer index = newPortRotations.indexOf(lastPortRotationOpt.get());
+        newPortRotations.remove(lastDischargePortOpt.get());
+        newPortRotations.add(index, lastDischargePortOpt.get());
       }
     }
 
     AtomicLong newPortOrder = new AtomicLong(0);
-    loadableStudyPortRotations.forEach(
+    newPortRotations.forEach(
         portRotation -> {
           portRotation.setPortOrder(newPortOrder.incrementAndGet());
         });
-
-    this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
+    this.loadableStudyPortRotationRepository.saveAll(newPortRotations);
   }
 
   /**

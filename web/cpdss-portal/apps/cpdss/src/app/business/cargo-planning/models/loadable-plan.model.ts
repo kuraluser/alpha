@@ -454,6 +454,7 @@ export enum VALIDATION_AND_SAVE_STATUS {
      minTolerence: number;
      maxTolerence: number;
      cargoNominationId? : number;
+     commingleTotalQuantity?: number;
  }
 
  /**

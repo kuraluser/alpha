@@ -72,6 +72,7 @@ public class LoadableStudyController {
   private static final String LOADABLE_PLAN_REPORT_FILE_NAME =
       "MOL_Stowage_Plan_Before_Loading.xlsx";
   private static final String INVALID_LOADABLE_PATTERN_ID = "INVALID_LOADABLE_PATTERN_ID";
+  private static final String INVALID_ULLAGE_OR_SOUNDING_VALUE = "INVALID_ULLAGE_OR_SOUNDING_VALUE";
 
   /**
    * API for save voyage
@@ -2280,6 +2281,9 @@ public class LoadableStudyController {
       if (reply.getResponseStatus() != null
           && "204".equals(reply.getResponseStatus().getStatus())) {
         reply.setErrMessage(INVALID_LOADABLE_PATTERN_ID);
+      } else if (reply.getResponseStatus() != null
+          && "325".equals(reply.getResponseStatus().getStatus())) {
+        reply.setErrMessage(INVALID_ULLAGE_OR_SOUNDING_VALUE);
       }
       return reply;
     } catch (GenericServiceException e) {

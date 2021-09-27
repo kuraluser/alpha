@@ -13,6 +13,9 @@ import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
+import com.cpdss.loadingplan.utility.LoadingPlanUtility;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -153,16 +156,47 @@ public class LoadingPlanService {
           LoadingPlanModels.LoadingInformation.newBuilder();
 
       // Loading Rate From Loading Info
-      LoadingPlanModels.LoadingRates rates =
-          this.informationBuilderService.buildLoadingRateMessage(var1.get());
-      loadingInformation.setLoadingRate(rates);
+      //      LoadingPlanModels.LoadingRates rates =
+      //          this.informationBuilderService.buildLoadingRateMessage(var1.get());
+      //      loadingInformation.setLoadingRate(rates);
 
       // Set Saved Berth Data
-      List<LoadingBerthDetail> list1 =
-          this.berthDetailsRepository.findAllByLoadingInformationAndIsActiveTrue(var1.orElse(null));
-      List<LoadingPlanModels.LoadingBerths> berths =
-          this.informationBuilderService.buildLoadingBerthsMessage(list1);
-      loadingInformation.addAllLoadingBerths(berths);
+      //      List<LoadingBerthDetail> list1 =
+      //
+      // this.berthDetailsRepository.findAllByLoadingInformationAndIsActiveTrue(var1.orElse(null));
+      //      List<LoadingPlanModels.LoadingBerths> berths =
+      //          this.informationBuilderService.buildLoadingBerthsMessage(list1);
+
+      ObjectMapper mapper = new ObjectMapper();
+      if (var1.get().getLoadingPlanDetailsFromAlgo() != null) {
+        com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfoFromAlgo;
+        try {
+          loadingInfoFromAlgo =
+              mapper.readValue(
+                  var1.get().getLoadingPlanDetailsFromAlgo(),
+                  com.cpdss.loadingplan.domain.algo.LoadingInformation.class);
+
+          LoadingPlanModels.LoadingRates rates =
+              LoadingPlanUtility.buildLoadingRates(loadingInfoFromAlgo.getLoadingRates());
+          loadingInformation.setLoadingRate(rates);
+
+          List<LoadingPlanModels.LoadingBerths> berths =
+              LoadingPlanUtility.buildBerthDetails(loadingInfoFromAlgo.getBerthDetails());
+          loadingInformation.addAllLoadingBerths(berths);
+
+          LoadingPlanModels.LoadingDelay loadingDelay =
+              LoadingPlanUtility.buildLoadingDelays(loadingInfoFromAlgo.getLoadingSequences());
+          loadingInformation.setLoadingDelays(loadingDelay);
+
+        } catch (JsonProcessingException e) {
+          log.error("Could not process loading plan details from ALGO");
+        }
+      } else {
+        throw new GenericServiceException(
+            "Cannot find loading plan details obtained from ALGO",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
 
       // Topping Off Sequence
       List<CargoToppingOffSequence> list2 =
@@ -180,14 +214,14 @@ public class LoadingPlanService {
           this.informationBuilderService.buildLoadingStageMessage(var1.orElse(null), list3, list4);
       loadingInformation.setLoadingStage(loadingStages);
 
-      // Loading Delay
-      List<ReasonForDelay> list5 = this.reasonForDelayRepository.findAll();
-      List<LoadingDelay> list6 =
-          this.loadingDelayRepository.findAllByLoadingInformationAndIsActiveTrueOrderById(
-              var1.orElse(null));
-      LoadingPlanModels.LoadingDelay loadingDelay =
-          this.informationBuilderService.buildLoadingDelayMessage(list5, list6);
-      loadingInformation.setLoadingDelays(loadingDelay);
+      //      // Loading Delay
+      //      List<ReasonForDelay> list5 = this.reasonForDelayRepository.findAll();
+      //      List<LoadingDelay> list6 =
+      //          this.loadingDelayRepository.findAllByLoadingInformationAndIsActiveTrueOrderById(
+      //              var1.orElse(null));
+      //      LoadingPlanModels.LoadingDelay loadingDelay =
+      //          this.informationBuilderService.buildLoadingDelayMessage(list5, list6);
+
       Optional.ofNullable(var1.get().getLoadingInformationStatus())
           .ifPresent(status -> loadingInformation.setLoadingInfoStatusId(status.getId()));
       Optional.ofNullable(var1.get().getArrivalStatus())

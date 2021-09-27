@@ -3289,6 +3289,8 @@ public class LoadableStudyService {
         rec.setTemperature(new BigDecimal(protoRec.getTemperature()));
       }
       rec.setFillingRatio(protoRec.getFillingRatio());
+      rec.setPlanQtyId(protoRec.getPlanQtyId());
+      rec.setPlanQtyCargoOrder(protoRec.getPlanQtyCargoOrder());
       list.add(rec);
     }
     synopticalRecord.setCargos(list);
@@ -4121,11 +4123,14 @@ public class LoadableStudyService {
                 userEntity.ifPresent(
                     user -> {
                       try {
-                        KeycloakUser keycloakUser =
-                            userCachingService.getUser(userEntity.get().getKeycloakId());
-                        commets.setUserName(
-                            String.format(
-                                "%s %s", keycloakUser.getFirstName(), keycloakUser.getLastName()));
+                        if (userEntity.get().getKeycloakId() != null) {
+                          KeycloakUser keycloakUser =
+                              userCachingService.getUser(userEntity.get().getKeycloakId());
+                          commets.setUserName(
+                              String.format(
+                                  "%s %s",
+                                  keycloakUser.getFirstName(), keycloakUser.getLastName()));
+                        }
                       } catch (GenericServiceException e) {
                         commets.setUserName(DEFAULT_USER_NAME);
                       }
@@ -5017,11 +5022,13 @@ public class LoadableStudyService {
     if ("INVALID_LOADABLE_PATTERN_ID".equals(grpcReply.getResponseStatus().getMessage())) {
       response.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.NO_CONTENT.value()), correlationId));
+    } else if ("INVALID_ULLAGE_OR_SOUNDING_VALUE"
+        .equals(grpcReply.getResponseStatus().getMessage())) {
+      response.setResponseStatus(new CommonSuccessResponse(String.valueOf("325"), correlationId));
     } else {
       response.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     }
-
     return response;
   }
 
@@ -5190,6 +5197,9 @@ public class LoadableStudyService {
               .forEach(
                   item -> {
                     Cargo cargo = new Cargo();
+                    cargo.setLpCargoDetailsId(item.getLpCargoDetailId());
+                    cargo.setPlanQtyId(item.getPlanQtyId());
+                    cargo.setPlanQtyCargoOrder(item.getPlanQtyCargoOrder());
                     cargo.setAbbreviation(item.getAbbreviation());
                     cargo.setActualWeight(item.getActualWeight());
                     cargo.setApi(String.valueOf(item.getApi()));
@@ -5216,8 +5226,10 @@ public class LoadableStudyService {
               });
 
           List<Cargo> cargoList = new ArrayList<Cargo>(cargoMap.values());
-
-          voyageStatusResponse.setCargoConditions(cargoList);
+          voyageStatusResponse.setCargoConditions(
+              cargoList.stream()
+                  .sorted(Comparator.comparingInt(Cargo::getPlanQtyCargoOrder))
+                  .collect(toList()));
         }
         // build bunker conditions
         BunkerConditions bunkerConditions = new BunkerConditions();
@@ -6291,7 +6303,9 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(
               Integer.valueOf(grpcReply.getResponseStatus().getHttpStatusCode())));
     }
-    if ("INVALID_LOADABLE_PATTERN_ID".equals(grpcReply.getResponseStatus().getMessage())) {
+    if ("INVALID_LOADABLE_PATTERN_ID".equals(grpcReply.getResponseStatus().getMessage())
+        || "INVALID_ULLAGE_OR_SOUNDING_VALUE"
+            .equalsIgnoreCase(grpcReply.getResponseStatus().getMessage())) {
       ResponseStatus status =
           ResponseStatus.newBuilder()
               .setStatus(grpcReply.getResponseStatus().getStatus())

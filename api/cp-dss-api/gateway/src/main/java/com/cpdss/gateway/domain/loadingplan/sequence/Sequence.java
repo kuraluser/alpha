@@ -28,7 +28,7 @@ public class Sequence {
   Map<String, List<Pump>> ballast;
 
   private Map<String, String> ballastingRateM3_Hr;
-  private List simDeballastingRateM3_Hr;
-  private List simBallastingRateM3_Hr;
+  //  private List simDeballastingRateM3_Hr;
+  //  private List simBallastingRateM3_Hr;
   private Map simCargoLoadingRatePerTankM3_Hr;
 }

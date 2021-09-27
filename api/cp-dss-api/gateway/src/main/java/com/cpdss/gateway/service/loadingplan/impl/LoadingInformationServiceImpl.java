@@ -220,19 +220,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       if (vesselDetail != null) {
         // Min Rate not from vessel, moved to below for rule value
 
-        // Max Loading Rate
-        if (rateFromLoading.getMaxLoadingRate().isEmpty()) {
-          loadingRates.setMaxLoadingRate(
-              vesselDetail.getMaxLoadingRate().isEmpty()
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(vesselDetail.getMaxLoadingRate()));
-        } else {
-          loadingRates.setMaxLoadingRate(
-              rateFromLoading.getMaxLoadingRate().isEmpty()
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(rateFromLoading.getMaxLoadingRate()));
-        }
-        loadingRates.setMaxLoadingRate(loadingRates.getMaxLoadingRate());
+        // Max Loading Rate from vessel, moved to below for rule value
 
         // Reduced loading rate
         // Default value shows as - 1500 (min value for this)
@@ -257,7 +245,17 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       } else {
         loadingRates.setMinLoadingRate(new BigDecimal(rateFromLoading.getMinLoadingRate()));
       }
-      loadingRates.setMinDischargingRate(loadingRates.getMinLoadingRate());
+
+      // Max Loading rate
+      if (rateFromLoading.getMaxLoadingRate().isEmpty()) {
+        var d = extract.getDefaultValueForKey(AdminRuleTemplate.MAX_LOADING_RATE);
+        loadingRates.setMaxLoadingRate(d.isEmpty() ? null : new BigDecimal(d));
+      } else {
+        loadingRates.setMaxLoadingRate(
+            rateFromLoading.getMaxLoadingRate().isEmpty()
+                ? BigDecimal.ZERO
+                : new BigDecimal(rateFromLoading.getMaxLoadingRate()));
+      }
 
       // Min De ballast rate
       if (rateFromLoading.getMinDeBallastingRate().isEmpty()) {
@@ -1025,13 +1023,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   /** Upload Tide data from excel to db */
   @Override
   public UploadTideDetailResponse uploadLoadingTideDetails(
-      Long loadingId, MultipartFile file, String correlationId)
+      Long loadingId, MultipartFile file, String correlationId, String portName, Long portId)
       throws IOException, GenericServiceException {
     String originalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
     if (!(originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())
-            .equals("xlsx")
-        || !(originalFileName.substring(0, originalFileName.lastIndexOf(".")))
-            .equals("Loading_port_tide_details")) {
+        .equals("xlsx")) {
       throw new GenericServiceException(
           "unsupported file type",
           CommonErrorCodes.E_CPDSS_INVALID_EXCEL_FILE,
@@ -1040,6 +1036,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     Builder builder = UploadTideDetailRequest.newBuilder();
     builder.setTideDetaildata(ByteString.copyFrom(file.getBytes()));
     builder.setLoadingId(loadingId);
+    builder.setPortName(portName);
+    builder.setPortId(portId);
     UploadTideDetailStatusReply statusReply =
         loadingInfoServiceBlockingStub.uploadPortTideDetails(builder.build());
     if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {

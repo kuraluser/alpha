@@ -124,6 +124,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
     if (changes?.isCancelChanges?.currentValue) {
       this.initForm();
       this.disableForm();
+      this.error.length = 0;
     }
     if (changes?.rulesJson) {
 
@@ -468,6 +469,19 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       formGroup.disable();
       formGroup.get('enable').enable();
+    }
+    formGroup.get('displayInSettings').enable();
+  }
+
+  /**
+  * Method to sort the multiselect array
+  *
+  * @memberof RulesTableComponent
+  */
+  onChangeMultiSelect(key,rowIndex,inputIndex){
+    const fc = this.getControl(key,rowIndex,inputIndex);
+    if(fc.value && fc.value.length && fc.value.length > 0){
+      fc.value.sort(function(a, b) { return a.id - b.id; })
     }
   }
 

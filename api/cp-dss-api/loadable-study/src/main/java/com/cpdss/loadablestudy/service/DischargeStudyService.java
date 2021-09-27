@@ -1,15 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGING_OPERATION_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ERRO_CALLING_ALGO;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_INITIAL_STATUS_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -81,6 +73,7 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -1518,6 +1511,15 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           cowBuilder.setTankId(ch.getTankId());
         }
         cowBuilder.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(ch.getCowTypeId().intValue()));
+
+        Voyage voyage = voyageRepository.findByIdAndIsActive(ch.getVoyageId(), true);
+        if (voyage != null) {
+          if (voyage.getActualEndDate() != null) {
+            DateTimeFormatter dft = DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT);
+            String endDate = voyage.getVoyageEndDate().format(dft);
+            cowBuilder.setVoyageEndDate(endDate);
+          }
+        }
         replyBuilder.addCowHistory(cowBuilder.build());
       }
     } catch (Exception e) {

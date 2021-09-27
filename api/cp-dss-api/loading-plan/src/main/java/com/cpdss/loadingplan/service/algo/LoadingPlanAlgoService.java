@@ -295,6 +295,9 @@ public class LoadingPlanAlgoService {
           HttpStatusCode.BAD_REQUEST);
     }
 
+    loadingInformationRepository.updateLoadingPlanDetailsFromAlgo(
+        loadingInfoOpt.get().getId(), request.getLoadingPlanDetailsFromAlgo());
+
     if (request.getLoadingSequencesList().isEmpty()) {
       log.info("No Plans Available for Loading Information {}", loadingInfoOpt.get().getId());
       Optional<LoadingInformationStatus> noPlanAvailableStatusOpt =

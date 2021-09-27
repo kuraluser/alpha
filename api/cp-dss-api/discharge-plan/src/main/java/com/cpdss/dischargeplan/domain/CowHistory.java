@@ -11,4 +11,5 @@ public class CowHistory {
   private Long portId;
   private Long tankId;
   private String cowOptionType;
+  private String voyageEndDate;
 }

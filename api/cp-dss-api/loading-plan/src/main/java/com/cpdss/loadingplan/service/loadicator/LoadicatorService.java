@@ -145,6 +145,7 @@ public class LoadicatorService {
     cargoNominationIds.addAll(
         loadingPlanStowageDetails.stream()
             .map(LoadingPlanStowageDetails::getCargoNominationId)
+            .filter(cargoNominationId -> cargoNominationId.longValue() != 0)
             .collect(Collectors.toList()));
     Map<Long, CargoNominationDetail> cargoNomDetails =
         this.getCargoNominationDetails(cargoNominationIds);
@@ -368,6 +369,7 @@ public class LoadicatorService {
       Builder stowagePlanBuilder) {
     stowageDetails.stream()
         .map(stowage -> stowage.getCargoNominationId())
+        .filter(cargoNominationId -> cargoNominationId.longValue() != 0)
         .collect(Collectors.toSet())
         .forEach(
             cargoNominationId -> {
@@ -421,35 +423,38 @@ public class LoadicatorService {
       VesselInfo.VesselReply vesselReply,
       CargoInfo.CargoReply cargoReply,
       Builder stowagePlanBuilder) {
-    stowageDetails.forEach(
-        stowage -> {
-          Loadicator.StowageDetails.Builder stowageDetailsBuilder =
-              Loadicator.StowageDetails.newBuilder();
-          CargoNominationDetail cargoNomDetail =
-              cargoNomDetails.get(stowage.getCargoNominationId());
-          Optional.ofNullable(cargoNomDetail.getCargoId())
-              .ifPresent(stowageDetailsBuilder::setCargoId);
-          Optional.ofNullable(stowage.getTankXId()).ifPresent(stowageDetailsBuilder::setTankId);
-          Optional.ofNullable(stowage.getQuantity())
-              .ifPresent(quantity -> stowageDetailsBuilder.setQuantity(String.valueOf(quantity)));
-          Optional.ofNullable(cargoNomDetail.getAbbreviation())
-              .ifPresent(stowageDetailsBuilder::setCargoName);
-          Optional.ofNullable(loadingInformation.getPortXId())
-              .ifPresent(stowageDetailsBuilder::setPortId);
-          Optional.ofNullable(stowageDetailsBuilder.getStowageId())
-              .ifPresent(stowageDetailsBuilder::setStowageId);
-          Optional<VesselInfo.VesselTankDetail> tankDetail =
-              vesselReply.getVesselTanksList().stream()
-                  .filter(tank -> Long.valueOf(tank.getTankId()).equals(stowage.getTankXId()))
-                  .findAny();
-          if (tankDetail.isPresent()) {
-            Optional.ofNullable(tankDetail.get().getTankName())
-                .ifPresent(stowageDetailsBuilder::setTankName);
-            Optional.ofNullable(tankDetail.get().getShortName())
-                .ifPresent(stowageDetailsBuilder::setShortName);
-          }
-          stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
-        });
+    stowageDetails.stream()
+        .filter(stowage -> stowage.getCargoNominationId().longValue() != 0)
+        .forEach(
+            stowage -> {
+              Loadicator.StowageDetails.Builder stowageDetailsBuilder =
+                  Loadicator.StowageDetails.newBuilder();
+              CargoNominationDetail cargoNomDetail =
+                  cargoNomDetails.get(stowage.getCargoNominationId());
+              Optional.ofNullable(cargoNomDetail.getCargoId())
+                  .ifPresent(stowageDetailsBuilder::setCargoId);
+              Optional.ofNullable(stowage.getTankXId()).ifPresent(stowageDetailsBuilder::setTankId);
+              Optional.ofNullable(stowage.getQuantity())
+                  .ifPresent(
+                      quantity -> stowageDetailsBuilder.setQuantity(String.valueOf(quantity)));
+              Optional.ofNullable(cargoNomDetail.getAbbreviation())
+                  .ifPresent(stowageDetailsBuilder::setCargoName);
+              Optional.ofNullable(loadingInformation.getPortXId())
+                  .ifPresent(stowageDetailsBuilder::setPortId);
+              Optional.ofNullable(stowageDetailsBuilder.getStowageId())
+                  .ifPresent(stowageDetailsBuilder::setStowageId);
+              Optional<VesselInfo.VesselTankDetail> tankDetail =
+                  vesselReply.getVesselTanksList().stream()
+                      .filter(tank -> Long.valueOf(tank.getTankId()).equals(stowage.getTankXId()))
+                      .findAny();
+              if (tankDetail.isPresent()) {
+                Optional.ofNullable(tankDetail.get().getTankName())
+                    .ifPresent(stowageDetailsBuilder::setTankName);
+                Optional.ofNullable(tankDetail.get().getShortName())
+                    .ifPresent(stowageDetailsBuilder::setShortName);
+              }
+              stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
+            });
   }
 
   public void buildStowagePlan(

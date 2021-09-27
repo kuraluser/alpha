@@ -224,8 +224,9 @@ public class DischargePlanAlgoService {
         dischargeStudyOperationServiceBlockingStub.getCowHistoryByVesselId(
             LoadableStudy.CowHistoryRequest.newBuilder().setVesselId(vesselXid).build());
 
-    if (!DischargePlanConstants.FAILED.equals(cowHistoryReply.getResponseStatus().getStatus())) {
+    if (DischargePlanConstants.FAILED.equals(cowHistoryReply.getResponseStatus().getStatus())) {
       log.error("Failed to get cow history details");
+      return null;
     }
     var result =
         cowHistoryReply.getCowHistoryList().stream()
@@ -244,6 +245,7 @@ public class DischargePlanAlgoService {
     cowHistory.setTankId(history.getTankId());
     cowHistory.setPortId(history.getPortId());
     cowHistory.setCowOptionType(history.getCowOptionType().name());
+    cowHistory.setVoyageEndDate(history.getVoyageEndDate());
     return cowHistory;
   }
 
@@ -302,10 +304,8 @@ public class DischargePlanAlgoService {
             VesselInfo.VesselIdRequest.newBuilder().setVesselId(entity.getVesselXid()).build());
 
     if (!DischargePlanConstants.SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
-      throw new GenericServiceException(
-          "Failed to fetch vessel pump details from Loadable-Study MS",
-          grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+      log.info("Failed to get Vessel Details for Id {}", entity.getVesselXid());
+      return null;
     }
 
     // Setting master data

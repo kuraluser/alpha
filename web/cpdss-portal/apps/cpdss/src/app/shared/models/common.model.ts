@@ -1,5 +1,5 @@
 import Dexie from 'dexie';
-import { IPort } from '../../business/core/models/common.model';
+import { Observable } from 'rxjs';
 
 /**
  * Class for converting values to value object with additional status like modified, visible, edited etc
@@ -391,4 +391,12 @@ export interface IMonth {
  */
  export enum LENGTH_UNIT {
     M = "M"
+}
+
+/**
+ *  Interface for component candeactivate function
+ *
+ */
+export interface ComponentCanDeactivate {
+  canDeactivate: () => boolean | Observable<boolean>;
 }

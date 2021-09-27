@@ -117,13 +117,13 @@ export class LoadingRateComponent implements OnInit {
     this.errorMesages = this.loadingDischargingTransformationService.setValidationMessageForLoadingRate(this.selectedConversion.unit);
     this.loadingRatesFormGroup = this.fb.group({
       id: this.loadingRates?.id ? this.loadingRates?.id : 0,
-      maxLoadingRate: this.fb.control(this.loadingRates.maxLoadingRate, [numberValidator(0, 5),Validators.required, compareNumberValidator('minLoadingRate', '<'), Validators.min(4000), Validators.max(21000)]),
-      shoreLoadingRate: this.fb.control(this.loadingRates.shoreLoadingRate, [numberValidator(0, 5), Validators.min(1000), Validators.max(20000)]),
-      minLoadingRate: this.fb.control(this.loadingRates.minLoadingRate, [numberValidator(0, 4),Validators.required, compareNumberValidator('maxLoadingrate', '>'), Validators.min(1000), Validators.max(3000)]),
-      minDeBallastingRate: this.fb.control(this.loadingRates.minDeBallastingRate, [numberValidator(0, 4),Validators.required, numberValidator(0, 6), Validators.min(2500), Validators.max(4000)]),
-      maxDeBallastingRate: this.fb.control(this.loadingRates.maxDeBallastingRate, [Validators.required, numberValidator(0, 4), Validators.min(6000), Validators.max(7500)]),
-      noticeTimeRateReduction: this.fb.control(this.loadingRates.noticeTimeRateReduction, [Validators.required, numberValidator(0, 2), Validators.min(30), Validators.max(60)]),
-      noticeTimeStopLoading: this.fb.control(this.loadingRates.noticeTimeStopLoading, [Validators.required, numberValidator(0, 2), Validators.min(30), Validators.max(60)])
+      maxLoadingRate: this.fb.control(this.loadingRates.maxLoadingRate, [numberValidator(0, 6),Validators.required, compareNumberValidator('minLoadingRate', '<'), Validators.min(4000), Validators.max(21000)]),
+      shoreLoadingRate: this.fb.control(this.loadingRates.shoreLoadingRate, [numberValidator(0, 6), Validators.min(1000), Validators.max(20000)]),
+      minLoadingRate: this.fb.control(this.loadingRates.minLoadingRate, [numberValidator(0, 5),Validators.required, compareNumberValidator('maxLoadingrate', '>'), Validators.min(1000), Validators.max(3000)]),
+      minDeBallastingRate: this.fb.control(this.loadingRates.minDeBallastingRate, [numberValidator(0, 5),Validators.required, numberValidator(0, 6), Validators.min(2500), Validators.max(4000)]),
+      maxDeBallastingRate: this.fb.control(this.loadingRates.maxDeBallastingRate, [Validators.required, numberValidator(0, 5), Validators.min(6000), Validators.max(7500)]),
+      noticeTimeRateReduction: this.fb.control(this.loadingRates.noticeTimeRateReduction, [Validators.required, numberValidator(0, 3), Validators.min(30), Validators.max(60)]),
+      noticeTimeStopLoading: this.fb.control(this.loadingRates.noticeTimeStopLoading, [Validators.required, numberValidator(0, 3), Validators.min(30), Validators.max(60)])
     })
  
     this.actualValues.maxLoadingRate.defaultValue = this.loadingRates.maxLoadingRate;
@@ -229,15 +229,15 @@ export class LoadingRateComponent implements OnInit {
         minDeBallastingRate: (this.actualValues.minDeBallastingRate.lastEditedUnit =='BBLS') ? (this.actualValues.minDeBallastingRate.defaultValue) : Math.round(Number(this.loadingRatesFormGroup?.value.minDeBallastingRate * this.conversionFactor)),
         maxDeBallastingRate: (this.actualValues.maxDeBallastingRate.lastEditedUnit =='BBLS') ? (this.actualValues.maxDeBallastingRate.defaultValue) : Math.round(Number(this.loadingRatesFormGroup?.value.maxDeBallastingRate * this.conversionFactor)),
       })
-      this.loadingRatesFormGroup?.controls['maxLoadingRate'].setValidators([numberValidator(0, 5),compareNumberValidator('minLoadingRate', '<'), Validators.min(4000 * this.conversionFactor), Validators.max(21000 * this.conversionFactor)]);
+      this.loadingRatesFormGroup?.controls['maxLoadingRate'].setValidators([numberValidator(0, 6),compareNumberValidator('minLoadingRate', '<'), Validators.min(Math.round(4000 * this.conversionFactor)), Validators.max(Math.round(21000 * this.conversionFactor))]);
       this.loadingRatesFormGroup?.controls['maxLoadingRate'].updateValueAndValidity();
-      this.loadingRatesFormGroup?.controls['shoreLoadingRate'].setValidators([numberValidator(0, 5), Validators.min(1000 * this.conversionFactor), Validators.max(20000 *this.conversionFactor)]);
+      this.loadingRatesFormGroup?.controls['shoreLoadingRate'].setValidators([numberValidator(0, 6), Validators.min(Math.round(1000 * this.conversionFactor)), Validators.max(Math.round(20000 *this.conversionFactor))]);
       this.loadingRatesFormGroup?.controls['shoreLoadingRate'].updateValueAndValidity();
-      this.loadingRatesFormGroup?.controls['minLoadingRate'].setValidators([numberValidator(0, 5),compareNumberValidator('maxLoadingrate', '>'), Validators.min(1000 * this.conversionFactor), Validators.max(3000 * this.conversionFactor)]);
+      this.loadingRatesFormGroup?.controls['minLoadingRate'].setValidators([numberValidator(0, 5),compareNumberValidator('maxLoadingrate', '>'), Validators.min(Math.round(1000 * this.conversionFactor)), Validators.max(Math.round(3000 * this.conversionFactor))]);
       this.loadingRatesFormGroup?.controls['minLoadingRate'].updateValueAndValidity();
-      this.loadingRatesFormGroup?.controls['minDeBallastingRate'].setValidators([numberValidator(0, 5), Validators.min(2500 * this.conversionFactor), Validators.max(4000 * this.conversionFactor)]);
+      this.loadingRatesFormGroup?.controls['minDeBallastingRate'].setValidators([numberValidator(0, 5), Validators.min(Math.round(2500 * this.conversionFactor)), Validators.max(Math.round(4000 * this.conversionFactor))]);
       this.loadingRatesFormGroup?.controls['minDeBallastingRate'].updateValueAndValidity();
-      this.loadingRatesFormGroup?.controls['maxDeBallastingRate'].setValidators([numberValidator(0, 5), Validators.min(6000 * this.conversionFactor), Validators.max(7500 * this.conversionFactor)]);
+      this.loadingRatesFormGroup?.controls['maxDeBallastingRate'].setValidators([numberValidator(0, 5), Validators.min(Math.round(6000 * this.conversionFactor)), Validators.max(Math.round(7500 * this.conversionFactor))]);
       this.loadingRatesFormGroup?.controls['maxDeBallastingRate'].updateValueAndValidity();
     } else {
      

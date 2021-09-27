@@ -1893,9 +1893,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Override
   public UploadTideDetailResponse uploadLoadingTideDetails(
-      Long loadingId, MultipartFile file, String correlationId)
+      Long loadingId, MultipartFile file, String correlationId, String portName, Long portId)
       throws IOException, GenericServiceException {
-    return loadingInformationService.uploadLoadingTideDetails(loadingId, file, correlationId);
+    return loadingInformationService.uploadLoadingTideDetails(
+        loadingId, file, correlationId, portName, portId);
   }
 
   @Override

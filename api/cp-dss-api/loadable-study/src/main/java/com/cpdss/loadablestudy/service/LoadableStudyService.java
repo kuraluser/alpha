@@ -98,6 +98,7 @@ import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.Utils;
 import com.cpdss.loadablestudy.domain.ArrivalDepartureConditionJson;
 import com.cpdss.loadablestudy.domain.LoadablePlanDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadableStudyAlgoJson;
@@ -582,7 +583,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           attachmentEntity.setIsActive(true);
           attachmentCollection.add(attachmentEntity);
         }
-        entity.setAttachments(attachmentCollection);
+        this.loadableStudyAttachmentsRepository.saveAll(attachmentCollection);
       }
 
       if (request.getId() != 0) {
@@ -2013,6 +2014,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       SynopticalTableRequest request, StreamObserver<SynopticalTableReply> responseObserver) {
     SynopticalTableReply.Builder replyBuilder = SynopticalTableReply.newBuilder();
     try {
+      log.info("Voyage Status or Dash board API");
+      log.info("Get Synoptic Data for port Id : Request payload - {}", Utils.toJson(request));
       synopticService.getSynopticalDataByPortId(request, replyBuilder);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in getSynopticalDataByPortId", e);
@@ -2270,9 +2273,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           loadableStudyAttachmentsList.forEach(
               loadableStudyAttachment -> {
                 entityManager.detach(loadableStudyAttachment);
-                loadableStudyAttachment.setId(null);
-                loadableStudyAttachment.setLoadableStudy(entity);
-                loadableStudyAttachments.add(loadableStudyAttachment);
+                LoadableStudyAttachments attachments = new LoadableStudyAttachments();
+                attachments.setId(null);
+                attachments.setFilePath(loadableStudyAttachment.getFilePath());
+                attachments.setLoadableStudy(entity);
+                attachments.setIsActive(true);
+                attachments.setUploadedFileName(loadableStudyAttachment.getUploadedFileName());
+                loadableStudyAttachments.add(attachments);
               });
           this.loadableStudyAttachmentsRepository.saveAll(loadableStudyAttachments);
         }
@@ -2933,9 +2940,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       log.error("GenericServiceException in get ullage", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
-              .setCode(e.getCode())
-              .setMessage(e.getMessage())
-              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_CPDSS_ULLAGE_INVALID_CORRECTED_ULLAGE)
+              .setMessage(LoadableStudiesConstants.INVALID_ULLAGE_OR_SOUNDING_VALUE)
+              .setStatus(SUCCESS)
               .build());
     } catch (Exception e) {
       log.error("Exception in update ullage", e);

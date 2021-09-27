@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ComponentCanDeactivate, UnsavedChangesGuard } from './../../../../../shared/services/guards/unsaved-data-guard';
+import { UnsavedChangesGuard } from './../../../../../shared/services/guards/unsaved-data-guard';
 
 import { LoadingInstructionApiService } from '../../../services/loading-instruction-api.service';
 import { DischargingInstructionApiService } from './../../../services/discharging-instruction-api.service';
@@ -9,6 +9,7 @@ import { LoadingDischargingTransformationService } from '../../../services/loadi
 
 import { IDischargingInstructionGroup, IDischargingInstructionResponse, IDischargingInstructionSubHeaderData } from './../../../models/discharging-instruction.model';
 import { ILoadingInstructionSubHeaderData } from '../../../models/loading-instruction.model';
+import { ComponentCanDeactivate } from './../../../../../shared/models/common.model';
 
 @Component({
   selector: 'cpdss-portal-discharging-instruction',
@@ -98,7 +99,7 @@ export class DischargingInstructionComponent implements OnInit, ComponentCanDeac
    * function to filter instruction set based on selected group
    *
    * @param {*} id
-   * @return {*} 
+   * @return {*}
    * @memberof DischargingInstructionComponent
    */
   setInstructionList(id: number): void {
@@ -110,7 +111,7 @@ export class DischargingInstructionComponent implements OnInit, ComponentCanDeac
    * function to select the side panel instruction group
    *
    * @param {*} event
-   * @return {*} 
+   * @return {*}
    * @memberof DischargingInstructionComponent
    */
   async sidePanelInstructionChange(event) {

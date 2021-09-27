@@ -426,6 +426,7 @@ message LoadingPlanSaveRequest {
   repeated LoadingPlanStabilityParameters loadingSequenceStabilityParameters = 8;
   repeated AlgoErrors algoErrors = 9;
   bool hasLoadicator = 10;
+  string loadingPlanDetailsFromAlgo = 11;
 }
 
 message LoadingSequence {
@@ -902,6 +903,8 @@ message UploadTideDetailRequest {
 	bytes tideDetaildata = 1;
 	ResponseStatus responseStatus = 2;
 	int64 loadingId = 3;
+	string portName = 4;
+	int64 portId = 5;
 }
 
 message UploadTideDetailStatusReply {

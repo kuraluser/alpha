@@ -26,8 +26,10 @@ export class FleetTransformationService {
     let portsArray = voyagePorts;
     portsArray.map((port, index) => {
       if (index === 0) {
-        if (port.etd && !port.atd) {
+        if (port.etd && port.ata && !port.atd) {
           port.iconUrl = 'assets/images/themes/light/map-icon/ship-location.png';
+        } else if (port.eta && port.etd && !port.ata && !port.atd) {
+          port.iconUrl = this.fetchIconByPortType(false, port.portType.toLowerCase());
         } else if (port.etd && port.atd && portsArray[index + 1].ata) {
           port.iconUrl = this.fetchIconByPortType(true, port.portType.toLowerCase());
         } else if (port.etd && port.atd && !portsArray[index + 1].ata && portsArray[index + 1].eta) {

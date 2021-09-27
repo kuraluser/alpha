@@ -601,12 +601,12 @@ public class UserService {
 
       // Deactivate other roles for the user
       List<RoleUserMapping> userRoleList =
-          ListUtils.emptyIfNull(this.roleUserRepository.findByUserIds(permission.getUserId()));
+          ListUtils.emptyIfNull(
+              this.roleUserRepository.findByUserIdsAndIsActive(permission.getUserId(), true));
       userRoleList.stream()
           .filter(userRole -> !Objects.equals(role.get().getId(), userRole.getRoles().getId()))
           .forEach(userRole -> userRole.setIsActive(false));
       roleUserList.addAll(userRoleList);
-
       // Update roles
       this.roleUserRepository.saveAll(roleUserList);
     }
@@ -616,6 +616,7 @@ public class UserService {
     if (users != null && !users.isEmpty()) {
       users.forEach(
           user -> {
+
             // Activate user if user in requested for approval
             if (null != user.getStatus()
                 && user.getStatus().getId().equals(UserStatusValue.REQUESTED.getId())) {
@@ -640,6 +641,19 @@ public class UserService {
               this.notificationRepository.saveAll(notificationsList);
 
               // Update roles - first time
+              Optional<RoleUserMapping> roleUserOpt =
+                  this.roleUserRepository.findByUsersAndIsActive(
+                      user.getId(), true, role.get().getId());
+              RoleUserMapping roleUser = roleUserOpt.orElseGet(RoleUserMapping::new);
+              roleUser.setIsActive(true);
+              roleUser.setRoles(role.get());
+              roleUser.setUsers(user);
+              this.roleUserRepository.save(roleUser);
+            }
+            // Update user role if environment is ship and user status is approved
+            else if (isShip()
+                && null != user.getStatus()
+                && user.getStatus().getId().equals(UserStatusValue.APPROVED.getId())) {
               Optional<RoleUserMapping> roleUserOpt =
                   this.roleUserRepository.findByUsersAndIsActive(
                       user.getId(), true, role.get().getId());
