@@ -2741,7 +2741,7 @@ public class LoadablePlanService {
    * @return
    * @throws GenericServiceException
    */
-  private UllageUpdateResponse callAlgoUllageUpdateApi(UllageUpdateRequest algoRequest)
+  public UllageUpdateResponse callAlgoUllageUpdateApi(UllageUpdateRequest algoRequest)
       throws GenericServiceException {
     ResponseEntity<UllageUpdateResponse> responseEntity = null;
     try {
