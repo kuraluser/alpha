@@ -19,6 +19,7 @@ public interface StagingRepository extends CommonCrudRepository<DataTransferStag
 
   @Transactional
   @Modifying
-  @Query("UPDATE DataTransferStage staging SET staging.status = ?2 where staging.id = ?1")
+  @Query(
+      "UPDATE DataTransferStage staging SET staging.status = ?2 where staging.id = ?1 and staging.status != ?2")
   public int updateStatus(Long id, String status);
 }
