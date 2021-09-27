@@ -915,7 +915,7 @@ public class LoadingPlanController {
    */
   @PostMapping(
       value =
-          "/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/loading-plan/{portRotationId}/report",
+          "/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/port-rotation/{portRotationId}/report",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public HttpEntity<ByteArrayResource> getLoadingReport(
@@ -925,7 +925,7 @@ public class LoadingPlanController {
       @PathVariable Long infoId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long portRotationId,
-      @RequestBody LoadingPlanReportRequest requestPayload)
+      @RequestBody(required = false) LoadingPlanResponse requestPayload )
       throws CommonRestException {
 
     try {
@@ -941,10 +941,10 @@ public class LoadingPlanController {
                   requestPayload, vesselId, voyageId, infoId, portRotationId,true)),
           header);
     } catch (GenericServiceException e) {
-      log.error("GenericServiceException in getLoadablePlanReport method", e);
+      log.error("GenericServiceException in generateLoadingPlanExcel method", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
-      log.error("Exception in getLoadablePlanReport method", e);
+      log.error("Exception in generateLoadingPlanExcel method", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

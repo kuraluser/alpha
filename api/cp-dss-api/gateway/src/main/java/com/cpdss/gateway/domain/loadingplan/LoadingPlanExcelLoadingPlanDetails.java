@@ -25,4 +25,5 @@ public class LoadingPlanExcelLoadingPlanDetails {
   private ArrivalDeparcherCondition deparcherCondition;
   private List<CargoTobeLoaded> cargoTobeLoaded;
   private List<BerthInformation> berthInformation;
+  private String itemsAgreedWithTerminal;
 }

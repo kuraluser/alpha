@@ -21,7 +21,7 @@ import com.cpdss.gateway.domain.loadingplan.CargoQuantity;
 import com.cpdss.gateway.domain.loadingplan.CargoTobeLoaded;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelLoadingPlanDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanReportRequest;
+import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanStabilityParam;
 import com.cpdss.gateway.domain.loadingplan.TankCargoDetails;
 import com.cpdss.gateway.domain.loadingplan.TankRow;
@@ -29,12 +29,18 @@ import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.VesselInfoService;
+import com.cpdss.gateway.service.loadingplan.impl.LoadingPlanServiceImpl;
 import com.cpdss.gateway.utility.ExcelExportUtility;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
@@ -59,16 +65,14 @@ public class GenerateLoadingPlanExcelReportService {
 
 	@Autowired
 	LoadingPlanGrpcService loadingPlanGrpcService;
-
 	@Autowired
 	ExcelExportUtility excelExportUtil;
-
 	@Autowired
 	private VesselInfoService vesselInfoService;
-
+	@Autowired
+	private LoadingPlanServiceImpl loadingPlanServiceImpl;
 	@GrpcClient("vesselInfoService")
 	private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
-
 	@GrpcClient("portInfoService")
 	private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
@@ -85,8 +89,8 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @throws GenericServiceException
 	 * @throws IOException
 	 */
-	public byte[] generateLoadingPlanExcel(LoadingPlanReportRequest requestPayload, Long vesselId, Long voyageId,
-			Long infoId, Long portRotationId, Boolean downloadRequired) throws GenericServiceException, IOException {
+	public byte[] generateLoadingPlanExcel(LoadingPlanResponse requestPayload, Long vesselId, Long voyageId,
+			Long infoId, Long portRotationId, Boolean downloadRequired) throws Exception {
 		// Building data required for Loading plan Excel
 		LoadingPlanExcelDetails loadinPlanExcelDetails = getDataForExcel(requestPayload, vesselId, voyageId, infoId,
 				portRotationId);
@@ -113,9 +117,6 @@ public class GenerateLoadingPlanExcelReportService {
 
 	/**
 	 * Get corresponding Loading plan template of a vessel based on its type.
-	 * 
-	 * @param vesselId
-	 * @return
 	 */
 	private String getLoadingPlanTemplateForVessel(Long vesselId) { // TODO
 //		VesselReply reply = vesselInfoGrpcService
@@ -132,12 +133,10 @@ public class GenerateLoadingPlanExcelReportService {
 
 	/**
 	 * Get fully qualified name of output file
-	 * 
-	 * @return
 	 */
 	private String getFileName(Long vesselId, String voyNo, String portName) {
 		return OUTPUT_FILE_LOCATION.replace("{id}", vesselId.toString()).replace("{voy}", voyNo).replace("{port}",
-				portName);
+				portName).replace(" ", "_");
 	}
 
 	/**
@@ -150,13 +149,24 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @param portRotationId
 	 * @return
 	 * @throws GenericServiceException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
 	 */
 	@SuppressWarnings("unchecked")
-	private LoadingPlanExcelDetails getDataForExcel(LoadingPlanReportRequest requestPayload, Long vesselId,
-			Long voyageId, Long infoId, Long portRotationId) throws GenericServiceException {
+	private LoadingPlanExcelDetails getDataForExcel(LoadingPlanResponse requestPayload, Long vesselId, Long voyageId,
+			Long infoId, Long portRotationId) throws GenericServiceException, InterruptedException, ExecutionException {
+		log.info("Getting details for excel sheetwise ");
+		// ExecutorService threadPool = Executors.newFixedThreadPool(3);
+		// Callable<LoadingPlanExcelLoadingPlanDetails> callable = () ->
+		// buildSheetOne(requestPayload, vesselId, voyageId,
+		// infoId, portRotationId);
+		// Future<LoadingPlanExcelLoadingPlanDetails> future =
+		// threadPool.submit(callable);
 		LoadingPlanExcelDetails excelData = new LoadingPlanExcelDetails();
+		// excelData.setSheetOne(future.get());
 		excelData.setSheetOne(buildSheetOne(requestPayload, vesselId, voyageId, infoId, portRotationId));
 //		excelData.setSheetTwo(buildSheetTwo(requestPayload, vesselId, voyageId, infoId, portRotationId));
+//		threadPool.shutdown();
 		return excelData;
 	}
 
@@ -166,16 +176,19 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @return sheet one
 	 * @throws GenericServiceException
 	 */
-	private LoadingPlanExcelLoadingPlanDetails buildSheetOne(LoadingPlanReportRequest requestPayload, Long vesselId,
+	private LoadingPlanExcelLoadingPlanDetails buildSheetOne(LoadingPlanResponse requestPayload, Long vesselId,
 			Long voyageId, Long infoId, Long portRotationId) throws GenericServiceException {
-		// TODO call getloading plan call here and get the response
+		if (requestPayload == null) {
+			// Calling loading plan get plan details service
+			requestPayload = loadingPlanServiceImpl.getLoadingPlan(vesselId, voyageId, infoId, portRotationId);
+		}
 		LoadingPlanExcelLoadingPlanDetails sheetOne = new LoadingPlanExcelLoadingPlanDetails();
 		getBasicVesselDetails(sheetOne, vesselId, voyageId, infoId, portRotationId);
 		// Condition type 1 is arrival
 		sheetOne.setArrivalCondition(getVesselConditionDetails(requestPayload, 1));
 		sheetOne.setDeparcherCondition(getVesselConditionDetails(requestPayload, 2));
 		sheetOne.setCargoTobeLoaded(getCargoTobeLoadedDetails(requestPayload));
-		sheetOne.setBerthInformation(getBerthInfoDetails(requestPayload));
+		getBerthInfoDetails(sheetOne,requestPayload);
 		return sheetOne;
 	}
 
@@ -223,14 +236,16 @@ public class GenerateLoadingPlanExcelReportService {
 
 	/**
 	 * Berth information details
+	 * @param sheetOne 
 	 * 
 	 * @param requestPayload
 	 * @return
 	 */
-	private List<BerthInformation> getBerthInfoDetails(LoadingPlanReportRequest requestPayload) {
+	private void getBerthInfoDetails(LoadingPlanExcelLoadingPlanDetails sheetOne, LoadingPlanResponse requestPayload) {
 		List<BerthInformation> berthInfoList = new ArrayList<>();
 		List<BerthDetails> berthDetailsList = requestPayload.getLoadingInformation().getBerthDetails()
 				.getSelectedBerths();
+		String itemsAgreedWithTerminal = "";
 		if (!berthDetailsList.isEmpty()) {
 			berthDetailsList.forEach(item -> {
 				BerthInformation berthInformation = new BerthInformation();
@@ -242,11 +257,17 @@ public class GenerateLoadingPlanExcelReportService {
 				Optional.ofNullable(item.getRegulationAndRestriction())
 						.ifPresent(berthInformation::setSpecialRegulation);
 				Optional.ofNullable(item.getItemsToBeAgreedWith())
-						.ifPresent(berthInformation::setItemsAgreedWithTerminal);
+						.ifPresent(i ->{
+							if(! itemsAgreedWithTerminal.contains(i)) {
+								itemsAgreedWithTerminal.concat(",/n" + i);
+							}
+						});
 				berthInfoList.add(berthInformation);
 			});
 		}
-		return berthInfoList;
+		
+		sheetOne.setBerthInformation(berthInfoList);
+		sheetOne.setItemsAgreedWithTerminal(itemsAgreedWithTerminal);
 	}
 
 	/**
@@ -265,7 +286,7 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @param requestPayload
 	 * @return
 	 */
-	private List<CargoTobeLoaded> getCargoTobeLoadedDetails(LoadingPlanReportRequest requestPayload) {
+	private List<CargoTobeLoaded> getCargoTobeLoadedDetails(LoadingPlanResponse requestPayload) {
 		List<CargoTobeLoaded> cargoTobeLoadedList = new ArrayList<>();
 		List<LoadableQuantityCargoDetails> LoadableQuantityCargoList = requestPayload.getLoadingInformation()
 				.getCargoVesselTankDetails().getLoadableQuantityCargoDetails();
@@ -299,7 +320,7 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @param
 	 * @throws GenericServiceException
 	 */
-	private ArrivalDeparcherCondition getVesselConditionDetails(LoadingPlanReportRequest requestPayload,
+	private ArrivalDeparcherCondition getVesselConditionDetails(LoadingPlanResponse requestPayload,
 			Integer conditionType) throws GenericServiceException {
 		ArrivalDeparcherCondition vesselCondition = new ArrivalDeparcherCondition();
 		setCargoTanksWithQuantityForReport(vesselCondition, requestPayload, conditionType);
@@ -316,8 +337,8 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @param requestPayload
 	 * @param conditionType
 	 */
-	private void setCargoQuantityList(ArrivalDeparcherCondition vesselCondition,
-			LoadingPlanReportRequest requestPayload, Integer conditionType) {
+	private void setCargoQuantityList(ArrivalDeparcherCondition vesselCondition, LoadingPlanResponse requestPayload,
+			Integer conditionType) {
 		List<CargoQuantity> cargoQuantitylist = new ArrayList<>();
 		requestPayload.getCurrentPortCargos().forEach(item -> {
 			CargoQuantity cargo = new CargoQuantity();
@@ -343,7 +364,7 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @throws GenericServiceException
 	 */
 	private void setBallastTanksWithQuantityForReport(ArrivalDeparcherCondition vesselCondition,
-			LoadingPlanReportRequest requestPayload, Integer conditionType) {
+			LoadingPlanResponse requestPayload, Integer conditionType) {
 		List<LoadingPlanBallastDetails> loadingPlanBallastDetailsList = requestPayload.getPlanBallastDetails();
 		List<TankCargoDetails> tankCargoDetailsList = new ArrayList<>();
 		Double ballastWaterSum = 0.0;
@@ -437,7 +458,7 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @throws GenericServiceException
 	 */
 	private void setCargoTanksWithQuantityForReport(ArrivalDeparcherCondition vesselCondition,
-			LoadingPlanReportRequest requestPayload, Integer conditionType) throws GenericServiceException {
+			LoadingPlanResponse requestPayload, Integer conditionType) throws GenericServiceException {
 		setStabilityParamForReport(vesselCondition, requestPayload.getPlanStabilityParams(), conditionType);
 
 		List<LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList = requestPayload.getLoadingInformation()
