@@ -13,6 +13,7 @@ import {RulesService}from '../../services/rules/rules.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 import { LoadingDischargingManageSequenceComponent } from '../../loading-discharging-manage-sequence/loading-discharging-manage-sequence.component';
 import { LoadingDischargingCargoMachineryComponent } from '../../loading-discharging-cargo-machinery/loading-discharging-cargo-machinery.component';
+import { IPermission } from '../../../../shared/models/user-profile.model';
 
 @Component({
   selector: 'cpdss-portal-loading-information',
@@ -37,6 +38,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   @Input() voyageId: number;
   @Input() vesselId: number;
   disableSaveButton: boolean;
+  @Input() permission: IPermission;
   @Input() get cargos(): ICargo[] {
     return this._cargos;
   }

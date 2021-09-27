@@ -102,7 +102,7 @@
     </div>
 </div>
 
-<cpdss-portal-ullage-update-popup [vesselId]="vesselId"
+<cpdss-portal-ullage-update-popup [vesselId]="vesselId" [permission]="permission"
     [patternId]="loadingDischargingPlanInfo?.loadablePatternId" [portRotationId]="portRotationId"
     [status]="ULLAGE_STATUS.DEPARTURE" [operation]="operation" [loadingInfoId]="loadingDischargingInfoId" *ngIf="display"
     (closePopup)="closePopUp($event)"></cpdss-portal-ullage-update-popup>

@@ -825,7 +825,7 @@ export class DatatableComponent implements OnInit {
   onClearDateRange(event, formGroupIndex: number, formControlName: string, rowData: Object) {
     const formControl = this.field(formGroupIndex, formControlName);
     rowData[formControlName].value = "";
-    formControl.setErrors({ 'required': true });
+    this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
   }
 
   /**

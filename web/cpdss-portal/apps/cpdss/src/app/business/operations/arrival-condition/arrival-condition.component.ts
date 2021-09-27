@@ -5,6 +5,7 @@ import { ArrivalConditionTransformationService } from './arrival-condition-trans
 import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
 import { IDischargingInformationResponse, ILoadingInformationResponse, ULLAGE_STATUS, ULLAGE_STATUS_TEXT, ULLAGE_STATUS_VALUE } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { IPermission } from '../../../shared/models/user-profile.model';
 
 /**
  * Component class for arrival condition block
@@ -31,6 +32,7 @@ export class ArrivalConditionComponent implements OnInit {
   @Input() vesselId: number;
   @Input() portRotationId: number;
   @Input() operation: OPERATIONS;
+  @Input() permission: IPermission;
 
   @Input() get loadingDischargingPlanData(): any {
     return this._loadingDischargingPlanData;

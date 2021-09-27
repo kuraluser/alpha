@@ -6,6 +6,7 @@ import {  OPERATIONS  } from '../../../core/models/common.model';
 import { UnsavedChangesGuard } from './../../../../shared/services/guards/unsaved-data-guard';
 import { ILoadingInstructionGroup, ILoadingInstructionSubHeaderData } from './../../models/loading-instruction.model';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
+import { IPermission } from '../../../../shared/models/user-profile.model';
 import { ComponentCanDeactivate } from './../../../../shared/models/common.model';
 @Component({
   selector: 'cpdss-portal-loading-instruction',
@@ -27,6 +28,7 @@ export class LoadingInstructionComponent implements OnInit, ComponentCanDeactiva
   @Input() voyageId: number;
   @Input() portRotationId: number;
   @Input() loadingInfoId: number;
+  @Input() permission: IPermission;
 
   @ViewChild('instructionCheckList') instructionCheckList;
 

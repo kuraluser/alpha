@@ -695,6 +695,8 @@
   "PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY": "Port details saved successfully",
   "PORT_ROTATION_RIBBON_INVALID": "Invalid",
   "PORT_ROTATION_RIBBON_INVALID_DATA": "Some of the data entered is invalid",
+  "PORT_ROTATION_RIBBON_INVALID_DATE": "Invalid date",
+  "PORT_ROTATION_RIBBON_WARNING": "Warning",
   "VOYAGE_STATUS_ACTIVE_VOYAGE": "Voyage",
   "SHIP_LANDING_VOYAGE_DISTANCE": "Voyage Distance",
   "MAX_AIR_TEMP_MAX": "Max air tem. should be above -99 and below 99",

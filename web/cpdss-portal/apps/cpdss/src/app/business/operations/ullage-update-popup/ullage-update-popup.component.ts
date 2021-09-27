@@ -20,6 +20,7 @@ import { tankCapacityValidator } from './../../core/directives/tankCapacityValid
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { ConfirmationService } from 'primeng/api';
 import { apiTemperatureMinValidator } from './../../core/directives/api-temperature-min-validator.directive';
+import { IPermission } from '../../../shared/models/user-profile.model';
 
 /**
  * Component class for ullage update
@@ -41,7 +42,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   @Input() patternId: number;
   @Input() portRotationId: number;
   @Input() operation: OPERATIONS;
-
+  @Input() permission: IPermission;
+  
   private ngUnsubscribe: Subject<any> = new Subject();
 
   portId: number;
