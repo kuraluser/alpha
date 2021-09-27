@@ -1,37 +1,60 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_CENTER_TANK;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_FRONT_TANK;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_REAR_TANK;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_TANK_CATEGORIES;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_TANK_CATEGORY_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_OPERATION_ARR_DEP_SYNOPTICAL;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_TANK_CATEGORIES;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CLOSE_VOYAGE_STATUS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_FORMAT;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DIESEL_OIL_TANK_CATEGORY_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_PORT;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGING_OPERATION_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ETA_ETD_FORMAT;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FRESH_WATER_TANK_CATEGORY_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FUEL_OIL_TANK_CATEGORY_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LAY_CAN_FORMAT;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_PORT;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LS_STATUS_CONFIRMED;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.OHQ_TANK_CATEGORIES;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.OPERATION_TYPE_ARR;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.OPERATION_TYPE_DEP;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.PLANNING_TYPE_DISCHARGE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_TANK_CATEGORIES;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.TIME_FORMATTER;
 import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
 
-import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.*;
-import com.cpdss.common.generated.Common.ResponseStatus;
-import com.cpdss.common.generated.LoadableStudy;
-import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
-import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
-import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
-import com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse.Builder;
-import com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest;
-import com.cpdss.common.rest.CommonErrorCodes;
-import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.domain.OperationsTable;
-import com.cpdss.loadablestudy.domain.PortDetails;
-import com.cpdss.loadablestudy.domain.PortOperationTable;
-import com.cpdss.loadablestudy.entity.*;
-import com.cpdss.loadablestudy.repository.*;
-import com.cpdss.loadablestudy.repository.projections.LoadingPlanQtyAndOrder;
 import java.math.BigDecimal;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import javax.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
-import net.devh.boot.grpc.client.inject.GrpcClient;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,6 +64,67 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternReply;
+import com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
+import com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse.Builder;
+import com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest;
+import com.cpdss.common.generated.LoadableStudy.SynopticalRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
+import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.common.generated.SynopticalOperationServiceGrpc.SynopticalOperationServiceImplBase;
+import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.OperationsTable;
+import com.cpdss.loadablestudy.domain.PortDetails;
+import com.cpdss.loadablestudy.domain.PortOperationTable;
+import com.cpdss.loadablestudy.entity.CargoNomination;
+import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
+import com.cpdss.loadablestudy.entity.CargoOperation;
+import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
+import com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
+import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.OnBoardQuantity;
+import com.cpdss.loadablestudy.entity.OnHandQuantity;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
+import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.entity.VoyageStatus;
+import com.cpdss.loadablestudy.repository.CargoNominationRepository;
+import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
+import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
+import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
+import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
+import com.cpdss.loadablestudy.repository.projections.LoadingPlanQtyAndOrder;
+
+import io.grpc.stub.StreamObserver;
+import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
+
 /**
  * Master Service For Synoptic Related Operations
  *
@@ -49,7 +133,7 @@ import org.springframework.util.StringUtils;
  */
 @Slf4j
 @Service
-public class SynopticService {
+public class SynopticService  extends SynopticalOperationServiceImplBase{
 
   @Autowired SynopticalTableRepository synopticalTableRepository;
 
@@ -2702,4 +2786,15 @@ public class SynopticService {
     replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
     return replyBuilder;
   }
+  
+  @Override
+	public void updateSynopticalTable(SynopticalTableRequest request, StreamObserver<ResponseStatus> responseObserver) {
+	  Optional<Long> portRotationId = request.getSynopticalRecordList().stream().map(SynopticalRecord::getPortRotationId).findFirst();
+	  request.getSynopticalRecordList().forEach(record->{
+		  
+		  
+	  });
+	  
+	}
+  
 }
