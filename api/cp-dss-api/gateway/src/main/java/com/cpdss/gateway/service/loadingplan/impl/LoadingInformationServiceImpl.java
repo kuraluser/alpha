@@ -1027,7 +1027,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       throws IOException, GenericServiceException {
     String originalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
     if (!(originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())
-            .equals("xlsx")) {
+        .equals("xlsx")) {
       throw new GenericServiceException(
           "unsupported file type",
           CommonErrorCodes.E_CPDSS_INVALID_EXCEL_FILE,

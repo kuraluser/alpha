@@ -4,6 +4,12 @@ package com.cpdss.loadingplan.service;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
+import com.cpdss.common.generated.SynopticalOperationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply;
@@ -23,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +43,9 @@ public class LoadingPlanService {
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
+  private static final String ARR = "ARR";
+  private static final String DEP = "DEP";
+  private static final int VALUE_TYPE = 1;
   @Autowired LoadingInformationService loadingInformationService;
   @Autowired CargoToppingOffSequenceService cargoToppingOffSequenceService;
   @Autowired LoadablePlanBallastDetailsService loadablePlanBallastDetailsService;
@@ -80,6 +90,9 @@ public class LoadingPlanService {
 
   @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
 
+  @GrpcClient("loadableStudyService")
+  private SynopticalOperationServiceGrpc.SynopticalOperationServiceBlockingStub
+      synopticalOperationServiceBlockingStub;
   /**
    * @param request
    * @param builder
@@ -733,7 +746,8 @@ public class LoadingPlanService {
 
   public void saveUpdatedLoadingPlanDetails(
       LoadingInformation loadingInformation, Integer conditionType)
-      throws IllegalAccessException, InvocationTargetException {
+      throws IllegalAccessException, InvocationTargetException, NumberFormatException,
+          GenericServiceException {
     // Method used for Updating port loading plan stowage and ballast details from  temp table to
     // permanent after loadicator done
     log.info("Updating Loading Plan Details of Loading Information {}", loadingInformation.getId());
@@ -741,9 +755,9 @@ public class LoadingPlanService {
         portLoadingPlanStowageTempDetailsRepository
             .findByLoadingInformationAndConditionTypeAndIsActive(
                 loadingInformation.getId(), conditionType, true);
+    List<PortLoadingPlanStowageDetails> stowageEntityList = new ArrayList<>();
     if (!tempStowageList.isEmpty()) {
       log.info("Copying stowage details from temporary tables");
-      List<PortLoadingPlanStowageDetails> stowageEntityList = new ArrayList<>();
       for (PortLoadingPlanStowageTempDetails tempStowageEntity : tempStowageList) {
         PortLoadingPlanStowageDetails stowageEntity = new PortLoadingPlanStowageDetails();
         BeanUtils.copyProperties(tempStowageEntity, stowageEntity);
@@ -771,9 +785,9 @@ public class LoadingPlanService {
         portLoadingPlanBallastTempDetailsRepository
             .findByLoadingInformationAndConditionTypeAndIsActive(
                 loadingInformation.getId(), conditionType, true);
+    List<PortLoadingPlanBallastDetails> ballastEntityList = new ArrayList<>();
     if (!tempBallastList.isEmpty()) {
       log.info("Copying ballast details from temporary tables");
-      List<PortLoadingPlanBallastDetails> ballastEntityList = new ArrayList<>();
       for (PortLoadingPlanBallastTempDetails tempBallastEntity : tempBallastList) {
         PortLoadingPlanBallastDetails ballastEntity = new PortLoadingPlanBallastDetails();
         BeanUtils.copyProperties(tempBallastEntity, ballastEntity);
@@ -788,7 +802,6 @@ public class LoadingPlanService {
         ballastEntity.setLoadingInformation(loadingInformation);
         ballastEntityList.add(ballastEntity);
       }
-
       // Deleting existing entry from actual table before pushing new records
       portLoadingPlanBallastDetailsRepository
           .deleteExistingByLoadingInfoAndConditionTypeAndValueType(
@@ -797,7 +810,59 @@ public class LoadingPlanService {
               LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
       portLoadingPlanBallastDetailsRepository.saveAll(ballastEntityList);
     }
-
+    /**
+     * copying data to synoptical table. stowage quantity as cargo rob quantity as ohq ballas as
+     * ballast condition type is used to determine which records are need to be updated(arrival/
+     * departure) port id and port rotation id is also needed
+     */
+    SynopticalTableRequest.Builder request = SynopticalTableRequest.newBuilder();
+    request.setLoadablePatternId(loadingInformation.getLoadablePatternXId());
+    if (conditionType.equals(1)) {
+      request.setOperationType(ARR);
+    } else {
+      request.setOperationType(DEP);
+    }
+    request.setVesselId(loadingInformation.getVesselXId());
+    SynopticalRecord.Builder synopticalData = SynopticalRecord.newBuilder();
+    synopticalData.setPortId(loadingInformation.getPortXId());
+    synopticalData.setPortRotationId(loadingInformation.getPortRotationXId());
+    stowageEntityList.stream()
+        .forEach(
+            stowage -> {
+              SynopticalCargoRecord.Builder cargo = SynopticalCargoRecord.newBuilder();
+              cargo.setActualWeight(stowage.getQuantity().toString());
+              cargo.setTankId(stowage.getTankXId());
+              synopticalData.addCargo(cargo);
+            });
+    ballastEntityList.stream()
+        .forEach(
+            ballast -> {
+              SynopticalBallastRecord.Builder ballastRecord = SynopticalBallastRecord.newBuilder();
+              ballastRecord.setActualWeight(ballast.getQuantity().toString());
+              ballastRecord.setTankId(ballast.getTankXId());
+              synopticalData.addBallast(ballastRecord);
+            });
+    List<PortLoadingPlanRobDetails> robDetails =
+        portLoadingPlanRobDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
+                loadingInformation.getId(), conditionType, VALUE_TYPE, true);
+    robDetails.stream()
+        .forEach(
+            rob -> {
+              SynopticalOhqRecord.Builder ohq = SynopticalOhqRecord.newBuilder();
+              ohq.setActualWeight(rob.getQuantity().toString());
+              ohq.setTankId(rob.getTankXId());
+              synopticalData.addOhq(ohq);
+            });
+    request.addSynopticalRecord(synopticalData);
+    ResponseStatus response =
+        synopticalOperationServiceBlockingStub.updateSynopticalTable(request.build());
+    if (!SUCCESS.equals(response.getStatus())) {
+      throw new GenericServiceException(
+          "Failed to update actuals",
+          response.getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(response.getCode())));
+    }
     // Deleting existing entry from temp tables
     portLoadingPlanStowageTempDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
         loadingInformation.getId(), conditionType);
