@@ -4,8 +4,11 @@ package com.cpdss.common.communication;
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.communication.repository.StagingRepository;
 import com.cpdss.common.exception.GenericServiceException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,9 +31,6 @@ public class StagingService {
   private static final String CREATED_OR_UPDATED_BY = "communication";
   private static final String DATA = "data";
   private static final String META_DATA = "meta_data";
-  private static final String TABLE_NAME = "table_name";
-  private static final String PROCESS_ID = "process_id";
-  private static final String PROCESS_GROUP = "process_group";
 
   /**
    * Method save used to save json to data_transfer_stage table.
@@ -40,10 +40,19 @@ public class StagingService {
    */
   public DataTransferStage save(String jsonResult) throws GenericServiceException {
     try {
-      log.info("Json string get in DataTransferStage method: " + jsonResult);
+      log.info("Json string get in save method: " + jsonResult);
       if (!StringUtils.isEmpty(jsonResult)) {
-        return stagingRepository.save(
-            new ObjectMapper().readValue(jsonResult, DataTransferStage.class));
+        final JsonObject obj = new Gson().fromJson(jsonResult, JsonObject.class);
+        final JsonArray data = obj.getAsJsonArray(DATA);
+        final JsonObject metaData = obj.getAsJsonObject(META_DATA);
+        DataTransferStage dataTransferStage =
+            new Gson().fromJson(metaData, DataTransferStage.class);
+        dataTransferStage.setData(data);
+        dataTransferStage.setStatus(STATUS);
+        dataTransferStage.setProcessType(PROCESS_TYPE);
+        dataTransferStage.setCreatedBy(CREATED_OR_UPDATED_BY);
+        dataTransferStage.setLastModifiedBy(CREATED_OR_UPDATED_BY);
+        return stagingRepository.save(dataTransferStage);
       }
     } catch (ResourceAccessException e) {
       log.info("Error when saving into DB ", e);
@@ -82,10 +91,18 @@ public class StagingService {
    */
   public boolean isAllDataReceived(String processId, List<String> processIdentifierList) {
     List<DataTransferStage> list = this.getByProcessId(processId);
-    if (list != null && !list.isEmpty() && list.containsAll(processIdentifierList)) {
-      log.info("All data received in the data_transfer_stage table  " + list);
-      return true;
+    if (list != null
+            && !list.isEmpty()){
+      List<String> processIdentifierFromDB =
+              list.stream().map(DataTransferStage::getProcessIdentifier).collect(Collectors.toList());
+      if (processIdentifierFromDB != null
+              && !processIdentifierFromDB.isEmpty()
+              && processIdentifierFromDB.containsAll(processIdentifierList)) {
+        log.info("All data received in the data_transfer_stage table  " + list);
+        return true;
+      }
+      return false;
     }
-    return false;
+       return false;
   }
 }

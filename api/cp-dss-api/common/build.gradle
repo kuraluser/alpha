@@ -6,10 +6,13 @@
  * User Manual available at https://docs.gradle.org/6.3/userguide/java_library_plugin.html
  */
 appConfig {
+
     autoGenerateJavaClassForProtoFiles = 'y'
+    unitTest = 'y'
 }
 
 dependencies {
+
     implementation group: 'org.reflections', name: 'reflections', version: '0.9.11'
     implementation group: 'com.vladmihalcea', name: 'hibernate-types-52', version: '2.9.7'
     implementation('commons-beanutils:commons-beanutils:1.9.4')
