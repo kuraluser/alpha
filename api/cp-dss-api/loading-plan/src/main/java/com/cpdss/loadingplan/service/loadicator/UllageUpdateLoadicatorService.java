@@ -160,8 +160,12 @@ public class UllageUpdateLoadicatorService {
                 request.getUpdateUllage(0).getArrivalDepartutre(),
                 true);
     List<PortLoadingPlanRobDetails> robDetails =
-        portLoadingPlanRobDetailsRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get().getId(), true);
+        portLoadingPlanRobDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
+                loadingInfoOpt.get().getId(),
+                request.getUpdateUllage(0).getArrivalDepartutre(),
+                LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE,
+                true);
     Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
 
     cargoNominationIds.addAll(
