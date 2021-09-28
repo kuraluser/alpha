@@ -133,7 +133,8 @@ public class LoadableQuantityService {
         if (portRotation.getMaxDraft() != null) {
           minDraftValue.add(portRotation.getMaxDraft());
         }
-        // minDraftValue.add(loadableStudy.get().getDraftMark());
+        // DSS-4224 need min value of draft
+        minDraftValue.add(loadableStudy.get().getDraftMark());
         Optional<BigDecimal> minVal =
             minDraftValue.stream().min(Comparator.comparing(BigDecimal::doubleValue));
         if (minVal.isPresent()) {
