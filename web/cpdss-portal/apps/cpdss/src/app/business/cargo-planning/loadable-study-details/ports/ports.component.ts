@@ -497,7 +497,7 @@ export class PortsComponent implements OnInit, OnDestroy {
         this.updateValidityAndEditMode(valueIndex - 1, 'etd');
       }
       const nextRow = this.portsLists[valueIndex + 1] ? this.portsLists[valueIndex + 1] : null;
-      if (nextRow && nextRow.port.value.id === this.portsLists[valueIndex].port.value.id && this.portsLists[valueIndex].operation.value.id === OPERATIONS.DISCHARGING && nextRow.operation.value.id === OPERATIONS.BUNKERING) {
+      if (nextRow && nextRow.port.value.id === this.portsLists[valueIndex].port.value.id && (this.portsLists[valueIndex].operation.value.id === OPERATIONS.DISCHARGING || this.portsLists[valueIndex].operation.value.id === OPERATIONS.LOADING) && nextRow.operation.value.id === OPERATIONS.BUNKERING) {
         this.portsLists[valueIndex + 1]['etd'].value = event.data.etd.value;
         this.updateValidityAndEditMode(valueIndex - 1, 'etd');
       }
@@ -512,7 +512,7 @@ export class PortsComponent implements OnInit, OnDestroy {
         this.updateValidityAndEditMode(valueIndex - 1, 'eta');
       }
       const nextRow = this.portsLists[valueIndex + 1] ? this.portsLists[valueIndex + 1] : null;
-      if (nextRow && nextRow.port.value.id === this.portsLists[valueIndex].port.value.id && this.portsLists[valueIndex].operation.value.id === OPERATIONS.DISCHARGING && nextRow.operation.value.id === OPERATIONS.BUNKERING) {
+      if (nextRow && nextRow.port.value.id === this.portsLists[valueIndex].port.value.id && (this.portsLists[valueIndex].operation.value.id === OPERATIONS.DISCHARGING || this.portsLists[valueIndex].operation.value.id === OPERATIONS.LOADING) && nextRow.operation.value.id === OPERATIONS.BUNKERING) {
         this.portsLists[valueIndex + 1]['eta'].value = event.data.eta.value;
         this.updateValidityAndEditMode(valueIndex - 1, 'eta');
       }
