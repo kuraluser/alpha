@@ -889,35 +889,32 @@ public class LoadableStudyPortRotationService {
                             PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
                                 .addId(loadableStudyPortRotation.getPortXId())
                                 .build());
-                    LocalDateTime eta=null;
-                    LocalDateTime etd=null;
-                    if(loadableStudyPortRotation.getSynopticalTable() != null) {  
-                     eta=  loadableStudyPortRotation.getSynopticalTable().stream()
-                                    .filter(
-                                        synoptical ->
-                                            synoptical
-                                                .getOperationType()
-                                                .equals(
-                                                    LoadableStudiesConstants
-                                                        .OPERATION_TYPE_ARR))
-                                    .findFirst()
-                                    .get()
-                                    .getEtaActual();
-                     
-                     etd=  loadableStudyPortRotation.getSynopticalTable().stream()
-                                    .filter(
-                                        synoptical ->
-                                            synoptical
-                                                .getOperationType()
-                                                .equals(
-                                                    LoadableStudiesConstants
-                                                        .OPERATION_TYPE_DEP))
-                                    .findFirst()
-                                    .get()
-                                    .getEtdActual();
-                    
-                    }                 
-                    
+                    LocalDateTime eta = null;
+                    LocalDateTime etd = null;
+                    if (loadableStudyPortRotation.getSynopticalTable() != null) {
+                      eta =
+                          loadableStudyPortRotation.getSynopticalTable().stream()
+                              .filter(
+                                  synoptical ->
+                                      synoptical
+                                          .getOperationType()
+                                          .equals(LoadableStudiesConstants.OPERATION_TYPE_ARR))
+                              .findFirst()
+                              .get()
+                              .getEtaActual();
+
+                      etd =
+                          loadableStudyPortRotation.getSynopticalTable().stream()
+                              .filter(
+                                  synoptical ->
+                                      synoptical
+                                          .getOperationType()
+                                          .equals(LoadableStudiesConstants.OPERATION_TYPE_DEP))
+                              .findFirst()
+                              .get()
+                              .getEtdActual();
+                    }
+
                     dataMap.add(
                         new VoyagePorts(
                             String.valueOf(loadableStudyPortRotation.getPortXId()),
@@ -927,8 +924,8 @@ public class LoadableStudyPortRotationService {
                             String.valueOf(loadableStudyPortRotation.getOperation().getName()),
                             null,
                             null,
-                            eta!=null?String.valueOf(eta):null,
-                            etd!=null?String.valueOf(etd):null,
+                            eta != null ? String.valueOf(eta) : null,
+                            etd != null ? String.valueOf(etd) : null,
                             reply.getPortsCount() > 0 ? reply.getPorts(0).getLat() : "",
                             reply.getPortsCount() > 0 ? reply.getPorts(0).getLon() : "",
                             reply.getPortsCount() > 0 ? reply.getPorts(0).getName() : ""));
