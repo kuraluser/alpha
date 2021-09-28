@@ -48,7 +48,7 @@
 
                             </div>
                             <div class="row" *ngIf=" port.type === 'Arrival'" (click)="editPort($event, port, 'date')">
-                                <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_ETA' | translate }}</label>
+                                <label class="carousel-card-label">{{ (port.etaActual ? 'PORT_ROTATION_RIBBON_ATA' : 'PORT_ROTATION_RIBBON_ETA') | translate }}</label>
                                 <div *ngIf="!port?.isDateEditable" class="col text-secondary content-ellipsis text-capitalise">
                                     {{port.portDate}}</div>
                                 <div class="col text-secondary error-icon-wrapper relative mr-10" *ngIf="port?.isDateEditable">
@@ -66,7 +66,7 @@
                             </div>
                             <div class="row" *ngIf=" port.type === 'Departure'"
                                 (click)="editPort($event, port, 'date')">
-                                <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_ETD' | translate }}</label>
+                                <label class="carousel-card-label">{{ (port.etdActual ? 'PORT_ROTATION_RIBBON_ATD' : 'PORT_ROTATION_RIBBON_ETD') | translate }}</label>
                                 <div *ngIf="!port?.isDateEditable" class="col text-secondary content-ellipsis text-capitalise" >
                                     {{port.portDate}}</div>
                                 <div class="col text-secondary validation-error relative mr-10" *ngIf="port?.isDateEditable">
