@@ -1550,6 +1550,8 @@ export class LoadingDischargingInformationApiService {
   uploadTemplate(loadingId: number, file: any, operation: OPERATIONS): Observable<IResponse> {
     const formData: FormData = new FormData();
     formData.append('file', file);
+    formData.append('portName', localStorage.getItem('selectedPortName') ?? '');
+    formData.append('portId', localStorage.getItem('selectedPortId') ?? '');
     if (operation === OPERATIONS.LOADING) {
       return this.commonApiService.postFormData<any>(`loading/${loadingId}/upload/port-tide-details`, formData);
     }
