@@ -13,6 +13,8 @@ import * as moment from 'moment';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { IVessel } from '../../core/models/vessel-details.model';
+import { TranslateService } from '@ngx-translate/core';
 
 
 /**
@@ -42,6 +44,7 @@ export class LoadableStudyDetailsTransformationService {
   private _compareLQvaluesWithPoupDB: Subject<any> = new Subject();
 
   // public fields
+  vesselInfo: IVessel;
   addCargoNomination$ = this._addCargoNominationSource.asObservable();
   totalQuantityCargoNomination$ = this._totalQuantityCargoNominationSource.asObservable();
   cargoNominationValidity$ = this._cargoNominationValiditySource.asObservable();
@@ -57,7 +60,8 @@ export class LoadableStudyDetailsTransformationService {
   compareLQvalues$ = this._compareLQvaluesWithPoupDB.asObservable();
   ohqPortsValidity: { id: number; isPortRotationOhqComplete: boolean; }[];
 
-  constructor(private timeZoneTransformationService: TimeZoneTransformationService) { }
+  constructor(private timeZoneTransformationService: TimeZoneTransformationService,
+    private translateService: TranslateService) { }
 
   /**
    * Method for formating cargo nomination data
@@ -723,8 +727,10 @@ export class LoadableStudyDetailsTransformationService {
  * @returns {IDataTableColumn[]}
  * @memberof LoadableStudyDetailsTransformationService
  */
-  getPortDatatableColumns(permission: IPermission, portEtaEtdPermission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+  async getPortDatatableColumns(permission: IPermission, portEtaEtdPermission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): Promise<IDataTableColumn[]> {
     const minDate = new Date();
+    const translatedMessages = await this.translateService.get(['PORT_MAX_AIR_DRAFT_MIN_ERROR']).toPromise();
+    const minAirDraftMessage = translatedMessages['PORT_MAX_AIR_DRAFT_MIN_ERROR'] + this.getMinAirDraft().toFixed(2)
     let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
@@ -854,9 +860,9 @@ export class LoadableStudyDetailsTransformationService {
         numberFormat: '1.2-2',
         errorMessages: {
           'required': 'PORT_MAX_AIR_DRAFT_REQUIRED_ERROR',
-          'min': 'PORT_MAX_AIR_DRAFT_MIN_ERROR',
+          'min': minAirDraftMessage,
           'invalidNumber': 'PORT_VALUE_INVALID_ERROR'
-        }
+        },
       },
 
     ];
@@ -1714,5 +1720,24 @@ export class LoadableStudyDetailsTransformationService {
    */
   compareLoadableQunaityValuesInPopupWithDB() {
     this._compareLQvaluesWithPoupDB.next();
+  }
+
+  /**
+   * function to get min air draft value
+   */
+  getMinAirDraft() {
+    let summerDraft = 0;
+    if (this.vesselInfo.loadlines && this.vesselInfo.loadlines.length) {
+      this.vesselInfo.loadlines[0].draftMarks.forEach((draftMark: any) => {
+        if (draftMark > summerDraft) {
+          summerDraft = draftMark
+        }
+      })
+    }
+    if(this.vesselInfo.keelToMastHeight){
+      return Number(this.vesselInfo.keelToMastHeight) - summerDraft;
+    } else {
+      return summerDraft;
+    }
   }
 }

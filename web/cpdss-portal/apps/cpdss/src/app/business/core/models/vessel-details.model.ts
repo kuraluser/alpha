@@ -14,6 +14,7 @@ export interface IVessel {
     charterer: string;
     imoNumber: string;
     flagPath: string;
+    keelToMastHeight: number;
 
 }
 

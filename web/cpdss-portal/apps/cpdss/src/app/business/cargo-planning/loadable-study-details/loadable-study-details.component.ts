@@ -238,6 +238,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.show();
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     this.vesselInfo = res[0] ?? <IVessel>{};
+    this.loadableStudyDetailsTransformationService.vesselInfo = this.vesselInfo
     this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     this.ports = await this.getPorts();
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
