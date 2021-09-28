@@ -373,7 +373,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         var1.setNoticeTimeForStopLoading(Integer.valueOf(source.getNoticeTimeStopLoading()));
 
       if (!source.getShoreLoadingRate().isEmpty())
-          var1.setShoreLoadingRate(new BigDecimal(source.getShoreLoadingRate()));
+        var1.setShoreLoadingRate(new BigDecimal(source.getShoreLoadingRate()));
 
       loadingInformationRepository.save(var1);
       return var1;

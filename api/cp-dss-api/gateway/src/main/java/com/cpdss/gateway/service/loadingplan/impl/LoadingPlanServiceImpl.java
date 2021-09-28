@@ -1174,7 +1174,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 PortLoadablePlanBallastDetails ballastDetails =
                     new PortLoadablePlanBallastDetails();
                 ballastDetails.setCargoId(portWiseBallastDetail.getCargoId());
-                ballastDetails.setColorCode(portWiseBallastDetail.getColorCode());
+                ballastDetails.setColorCode(
+                    StringUtils.isEmpty(portWiseBallastDetail.getColorCode())
+                        ? GatewayConstants.BALLAST_COLOR
+                        : portWiseBallastDetail.getColorCode());
                 ballastDetails.setCorrectedUllage(portWiseBallastDetail.getCorrectedUllage());
                 ballastDetails.setCorrectionFactor(portWiseBallastDetail.getCorrectionFactor());
                 ballastDetails.setFillingPercentage(portWiseBallastDetail.getFillingPercentage());
