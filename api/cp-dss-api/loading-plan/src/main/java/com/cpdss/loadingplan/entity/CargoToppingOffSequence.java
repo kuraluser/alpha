@@ -60,4 +60,10 @@ public class CargoToppingOffSequence extends EntityDoc {
 
   @Column(name = "display_order")
   private Integer displayOrder;
+
+  @Column(name = "cargo_nomination_xid")
+  private Long cargoNominationXId;
+
+  @Column(name = "abbreviation")
+  private String abbreviation;
 }

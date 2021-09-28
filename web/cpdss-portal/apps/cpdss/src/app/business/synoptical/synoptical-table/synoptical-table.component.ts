@@ -904,7 +904,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               type: this.fieldType.NUMBER,
               validators: ['required', 'ddddddd.dd.+']
             }],
-            editable: this.checkIfConfirmed(),
+            editable: false,
           },
         ],
       },
@@ -931,7 +931,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Actual',
-            editable: this.checkIfConfirmed(),
+            editable: false
 
           },
         ],
@@ -959,7 +959,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Actual',
-            editable: this.checkIfConfirmed(),
+            editable: false,
 
           },
         ],
@@ -987,7 +987,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Actual',
-            editable: this.checkIfConfirmed(),
+            editable: false,
 
           },
         ],
@@ -1042,7 +1042,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               validators: ['required', 'ddddddd.dd.+']
             }],
             header: 'Actual',
-            editable: this.checkIfConfirmed(),
+            editable: false,
           },
         ],
       },

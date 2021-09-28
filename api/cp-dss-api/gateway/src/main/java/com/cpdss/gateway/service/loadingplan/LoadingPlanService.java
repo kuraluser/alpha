@@ -48,7 +48,7 @@ public interface LoadingPlanService {
       throws GenericServiceException;
 
   UploadTideDetailResponse uploadLoadingTideDetails(
-      Long loadingId, MultipartFile file, String correlationId)
+      Long loadingId, MultipartFile file, String correlationId, String portName, Long portId)
       throws IOException, GenericServiceException;
 
   byte[] downloadLoadingPortTideDetails(Long loadingId) throws GenericServiceException;

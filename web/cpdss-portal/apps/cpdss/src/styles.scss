@@ -860,6 +860,7 @@ input[type=number] {
   outline: none;
   box-shadow: none;
   border: 0;
+  padding: 0 3px;
   &:focus, &:hover{
     outline: none;
     box-shadow: none;
@@ -1938,7 +1939,7 @@ height: 15px;
     }
   }
   .tank-outer-ohq{
-    height: calc(100% - 6px)!important;
+    height: calc(100% - 0px)!important;
     max-height: 350px;
   }
 }

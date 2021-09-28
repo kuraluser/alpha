@@ -175,6 +175,8 @@ message LoadingToppingOff{
   string api = 13;
   string temperature = 14;
   int32  displayOrder = 15;
+  string abbreviation = 16;
+  int64 cargoNominationId = 17;
 }
 
 
@@ -345,6 +347,8 @@ message CargoToppingOffSequence {
   string temperature = 12;
   int32 displayOrder = 13;
   int64 portRotationId = 14;
+  int64 cargoNominationId = 15;
+  string abbreviation = 16;
 }
 
 message LoadingPlanSyncDetails {
@@ -422,6 +426,7 @@ message LoadingPlanSaveRequest {
   repeated LoadingPlanStabilityParameters loadingSequenceStabilityParameters = 8;
   repeated AlgoErrors algoErrors = 9;
   bool hasLoadicator = 10;
+  string loadingPlanDetailsFromAlgo = 11;
 }
 
 message LoadingSequence {
@@ -898,6 +903,8 @@ message UploadTideDetailRequest {
 	bytes tideDetaildata = 1;
 	ResponseStatus responseStatus = 2;
 	int64 loadingId = 3;
+	string portName = 4;
+	int64 portId = 5;
 }
 
 message UploadTideDetailStatusReply {

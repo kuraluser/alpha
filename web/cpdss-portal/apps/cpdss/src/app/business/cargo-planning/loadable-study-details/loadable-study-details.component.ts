@@ -555,7 +555,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           default:
             break;
         }
-        if ([4, 5].includes(statusId) && this.router.url.includes('loadable-study-details')) {
+        if ([4, 5, 7].includes(statusId) && this.router.url.includes('loadable-study-details')) {
           loadableStudy.isActionsEnabled = false;
         }
         else if ([2, 3].includes(statusId)) {

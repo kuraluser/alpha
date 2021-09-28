@@ -44,4 +44,7 @@ public class SynopticalCargoBallastRecord {
   private BigDecimal temperature = BigDecimal.ZERO;
 
   private String fillingRatio;
+
+  private Long planQtyId;
+  private Integer planQtyCargoOrder;
 }

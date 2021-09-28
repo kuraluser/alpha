@@ -321,9 +321,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
   convertQuantityToSelectedUnit() {
     const loadablePatterns = this.loadablePatterns?.map(pattern => {
       const loadablePatternCargoDetails = pattern.loadablePatternCargoDetails.map(cargo => {
-        const orderedQuantity = this.quantityPipe.transform(cargo.orderedQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.api);
+        const orderedQuantity = this.quantityPipe.transform(cargo.orderedQuantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.api,cargo?.temperature,-1);
         cargo.orderedQuantity = orderedQuantity ? orderedQuantity : 0;
-        const quantity = this.quantityPipe.transform(cargo.quantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.api);
+        const quantity = this.quantityPipe.transform(cargo.quantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.api,cargo?.temperature,-1);
         cargo.quantity = quantity ? quantity : 0;
         const difference = cargo.orderedQuantity - cargo.quantity;
         cargo.difference = difference ? Number(difference.toFixed(2)) : 0;
@@ -332,7 +332,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
       pattern.loadablePatternCargoDetails = loadablePatternCargoDetails;
       const loadablePlanStowageDetails = pattern.loadablePlanStowageDetails?.map(loadableStowage => {
         if (loadableStowage) {
-          const quantity = this.quantityPipe.transform(loadableStowage?.weightOrginal, this.baseUnit , this.currentQuantitySelectedUnit, loadableStowage?.api);
+          const quantity = this.quantityPipe.transform(loadableStowage?.weightOrginal, this.baseUnit , this.currentQuantitySelectedUnit, loadableStowage?.api,loadableStowage?.temperature,-1);
           loadableStowage.quantity = Number(quantity);
         }
         return loadableStowage;

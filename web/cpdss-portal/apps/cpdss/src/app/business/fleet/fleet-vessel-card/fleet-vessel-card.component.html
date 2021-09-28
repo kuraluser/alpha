@@ -16,37 +16,47 @@
                 </div>
               </div>
 
-              <div class="row vessel-card-bottom-content pt-20">
+              <div class="row vessel-card-bottom-content pt-20"
+                *ngIf="vessel?.voyageId && vessel?.voyageId !== 0 && vessel?.voyagePorts?.length;else noActiveVoyage">
                 <div class="col-6 pr-0 text-medium" *ngIf="vessel?.voyageStart?.atd">{{'FLEET_PORT_ATD' | translate}}
                   {{vessel?.voyageStart?.atd ? (vessel?.voyageStart?.atd | momentFormat: dateFormat) : '-'}}
                   <br>
                   {{vessel?.voyageStart?.portName}}
                 </div>
-                <div class="col-6 pr-0 text-medium" *ngIf="!vessel?.voyageStart?.atd && vessel?.voyageStart?.ata && vessel?.voyageStart?.etd">{{'FLEET_PORT_ETD' | translate}}
+                <div class="col-6 pr-0 text-medium"
+                  *ngIf="!vessel?.voyageStart?.atd && vessel?.voyageStart?.ata && vessel?.voyageStart?.etd">
+                  {{'FLEET_PORT_ETD' | translate}}
                   {{vessel?.voyageStart?.etd ? (vessel?.voyageStart?.etd | momentFormat: dateFormat) : '-'}}
                   <br>
                   {{vessel?.voyageStart?.portName}}
                 </div>
-                <div class="col-6 pr-0 text-medium" *ngIf="!vessel?.voyageStart?.atd && !vessel?.voyageStart?.ata && vessel?.voyageStart?.eta">{{'FLEET_PORT_ETA' | translate}}
+                <div class="col-6 pr-0 text-medium"
+                  *ngIf="!vessel?.voyageStart?.atd && !vessel?.voyageStart?.ata && vessel?.voyageStart?.eta">
+                  {{'FLEET_PORT_ETA' | translate}}
                   {{vessel?.voyageStart?.eta ? (vessel?.voyageStart?.eta | momentFormat: dateFormat) : '-'}}
                   <br>
                   {{vessel?.voyageStart?.portName}}
                 </div>
 
-                <div class="col-6 pl-0 text-right text-medium" *ngIf="vessel?.voyageEnd?.ata">{{'FLEET_PORT_ATA' | translate}}
+                <div class="col-6 pl-0 text-right text-medium" *ngIf="vessel?.voyageEnd?.ata">
+                  {{'FLEET_PORT_ATA' | translate}}
                   {{vessel?.voyageEnd?.ata ? (vessel?.voyageEnd?.ata | momentFormat: dateFormat) : '-'}}
                   <br>
                   {{vessel?.voyageEnd?.portName}}
                 </div>
-                <div class="col-6 pl-0 text-right text-medium" *ngIf="!vessel?.voyageEnd?.ata">{{'FLEET_PORT_ETA' | translate}}
+                <div class="col-6 pl-0 text-right text-medium" *ngIf="!vessel?.voyageEnd?.ata">
+                  {{'FLEET_PORT_ETA' | translate}}
                   {{vessel?.voyageEnd?.eta ? (vessel?.voyageEnd?.eta | momentFormat: dateFormat) : '-'}}
                   <br>{{vessel?.voyageEnd?.portName}}
                 </div>
-
-                <div class="col-6 pl-0 text-right text-medium" *ngIf="!vessel?.voyageId">{{'FLEET_PORT_ETA' | translate}}
-                  {{'FLEET_VESSEL_NO_ACTIVE_VOYAGE' | translate}}
-                </div>
               </div>
+              <ng-template #noActiveVoyage>
+                <div class="row vessel-card-bottom-content pt-20">
+                  <div class="col-6">
+                    {{'FLEET_VESSEL_NO_ACTIVE_VOYAGE' | translate}}
+                  </div>
+                </div>
+              </ng-template>
 
               <!-- Will use in future -->
               <!-- <div class="row">
@@ -66,16 +76,20 @@
         <div class="vessel-card-submenu">
           <ul>
             <li>
-              <a pTooltip="{{'DASHBOARD' | translate}}" tooltipPosition="top" (click)="navigateToPage('voyage-status', vessel)" class="menu-item-icon status"></a>
+              <a pTooltip="{{'DASHBOARD' | translate}}" tooltipPosition="top"
+                (click)="navigateToPage('voyage-status', vessel)" class="menu-item-icon status"></a>
             </li>
             <li>
-              <a pTooltip="{{'FILES' | translate}} - Comming Soon" tooltipPosition="top" class="menu-item-icon files"></a>
+              <a pTooltip="{{'FILES' | translate}} - Comming Soon" tooltipPosition="top"
+                class="menu-item-icon files"></a>
             </li>
             <li>
-              <a pTooltip="{{'SYNOPTICAL' | translate}}" tooltipPosition="top" (click)="navigateToPage('synoptical', vessel)" class="menu-item-icon synoptical-table"></a>
+              <a pTooltip="{{'SYNOPTICAL' | translate}}" tooltipPosition="top"
+                (click)="navigateToPage('synoptical', vessel)" class="menu-item-icon synoptical-table"></a>
             </li>
             <li>
-              <a pTooltip="{{'VOYAGES' | translate}}" tooltipPosition="top" (click)="navigateToPage('voyages', vessel)" class="menu-item-icon voyages"></a>
+              <a pTooltip="{{'VOYAGES' | translate}}" tooltipPosition="top" (click)="navigateToPage('voyages', vessel)"
+                class="menu-item-icon voyages"></a>
             </li>
           </ul>
         </div>

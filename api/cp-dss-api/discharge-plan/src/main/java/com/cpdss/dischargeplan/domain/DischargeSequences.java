@@ -8,5 +8,5 @@ import lombok.Data;
 public class DischargeSequences {
 
   private List<ReasonForDelay> reasonForDelays;
-  private List<DischargeDelays> loadingDelays;
+  private List<DischargeDelays> dischargeDelays;
 }

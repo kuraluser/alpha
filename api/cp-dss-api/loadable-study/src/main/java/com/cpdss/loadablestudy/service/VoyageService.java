@@ -781,7 +781,10 @@ public class VoyageService {
                       .filter(
                           details ->
                               details.getPortRotationId().equals(portRotation.getId())
-                                  && details.getTankId().equals(sequenceBuilder.getTankXId()))
+                                  && details.getTankId().equals(sequenceBuilder.getTankXId())
+                                  && details
+                                      .getOperationType()
+                                      .equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE))
                       .findAny();
               if (cargoDetailOpt.isPresent()) {
                 Optional.ofNullable(cargoDetailOpt.get().getApi())
@@ -797,6 +800,15 @@ public class VoyageService {
                     .ifPresent(
                         fillingRatio ->
                             sequenceBuilder.setFillingRatio(String.valueOf(fillingRatio)));
+                Optional.ofNullable(cargoDetailOpt.get().getAbbreviation())
+                    .ifPresent(
+                        abbreviation ->
+                            sequenceBuilder.setAbbreviation(String.valueOf(abbreviation)));
+
+                Optional.ofNullable(cargoDetailOpt.get().getCargoNominationId())
+                    .ifPresent(
+                        cargoNominationId ->
+                            sequenceBuilder.setCargoNominationId(cargoNominationId));
               }
               Optional.ofNullable(toppingSequence.getDisplayOrder())
                   .ifPresent(sequenceBuilder::setDisplayOrder);

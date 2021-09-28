@@ -150,7 +150,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           }
 
           if (trimAllowed.getFinalTrim().isEmpty()) {
-            var a = extract.getDefaultValueForKey(AdminRuleTemplate.INITIAL_TRIM);
+            var a = extract.getDefaultValueForKey(AdminRuleTemplate.FINAL_TRIM);
             trimAllowedDto.setFinalTrim(a.isEmpty() ? null : new BigDecimal(a));
           } else {
             trimAllowedDto.setFinalTrim(new BigDecimal(trimAllowed.getFinalTrim()));
@@ -218,30 +218,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       // RPC call to vessel info, Get Vessel Details
       VesselInfo.VesselDetail vesselDetail = vesselInfoService.getVesselInfoByVesselId(vesselId);
       if (vesselDetail != null) {
-        // Min Loading Rate
-        if (rateFromLoading.getMinLoadingRate().isEmpty()) {
-          loadingRates.setMinLoadingRate(
-              vesselDetail.getMinLoadingRate().isEmpty()
-                  ? null
-                  : new BigDecimal(vesselDetail.getMinLoadingRate()));
-        } else {
-          loadingRates.setMinLoadingRate(new BigDecimal(rateFromLoading.getMinLoadingRate()));
-        }
-        loadingRates.setMinDischargingRate(loadingRates.getMinLoadingRate());
+        // Min Rate not from vessel, moved to below for rule value
 
-        // Max Loading Rate
-        if (rateFromLoading.getMaxLoadingRate().isEmpty()) {
-          loadingRates.setMaxLoadingRate(
-              vesselDetail.getMaxLoadingRate().isEmpty()
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(vesselDetail.getMaxLoadingRate()));
-        } else {
-          loadingRates.setMaxLoadingRate(
-              rateFromLoading.getMaxLoadingRate().isEmpty()
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(rateFromLoading.getMaxLoadingRate()));
-        }
-        loadingRates.setMaxLoadingRate(loadingRates.getMaxLoadingRate());
+        // Max Loading Rate from vessel, moved to below for rule value
 
         // Reduced loading rate
         // Default value shows as - 1500 (min value for this)
@@ -258,6 +237,25 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
       AdminRuleValueExtract extract =
           AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
+
+      // Min Loading Rate
+      if (rateFromLoading.getMinLoadingRate().isEmpty()) {
+        var d = extract.getDefaultValueForKey(AdminRuleTemplate.MIN_INITIAL_RATE);
+        loadingRates.setMinLoadingRate(d.isEmpty() ? null : new BigDecimal(d));
+      } else {
+        loadingRates.setMinLoadingRate(new BigDecimal(rateFromLoading.getMinLoadingRate()));
+      }
+
+      // Max Loading rate
+      if (rateFromLoading.getMaxLoadingRate().isEmpty()) {
+        var d = extract.getDefaultValueForKey(AdminRuleTemplate.MAX_LOADING_RATE);
+        loadingRates.setMaxLoadingRate(d.isEmpty() ? null : new BigDecimal(d));
+      } else {
+        loadingRates.setMaxLoadingRate(
+            rateFromLoading.getMaxLoadingRate().isEmpty()
+                ? BigDecimal.ZERO
+                : new BigDecimal(rateFromLoading.getMaxLoadingRate()));
+      }
 
       // Min De ballast rate
       if (rateFromLoading.getMinDeBallastingRate().isEmpty()) {
@@ -571,7 +569,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         Optional.ofNullable(var1.getTankId()).ifPresent(var2::setTankId);
         Optional.ofNullable(var1.getCargoId()).ifPresent(var2::setCargoId);
         Optional.ofNullable(var1.getCargoName()).ifPresent(var2::setCargoName);
-        Optional.ofNullable(var1.getCargoAbbreviation()).ifPresent(var2::setCargoAbbreviation);
+        Optional.ofNullable(var1.getAbbreviation()).ifPresent(var2::setCargoAbbreviation);
         Optional.ofNullable(var1.getColourCode()).ifPresent(var2::setColourCode);
         Optional.ofNullable(var1.getRemark()).ifPresent(var2::setRemark);
         var2.setUllage(
@@ -586,6 +584,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         var2.setTemperature(
             var1.getApi().isEmpty() ? BigDecimal.ZERO : new BigDecimal(var1.getTemperature()));
         Optional.ofNullable(var1.getDisplayOrder()).ifPresent(var2::setDisplayOrder);
+        Optional.ofNullable(var1.getCargoNominationId()).ifPresent(var2::setCargoNominationId);
         list2.add(var2);
         log.info("Loading Plan Topping off list Id {}", var1.getId());
       }
@@ -1024,13 +1023,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   /** Upload Tide data from excel to db */
   @Override
   public UploadTideDetailResponse uploadLoadingTideDetails(
-      Long loadingId, MultipartFile file, String correlationId)
+      Long loadingId, MultipartFile file, String correlationId, String portName, Long portId)
       throws IOException, GenericServiceException {
     String originalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
     if (!(originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())
-            .equals("xlsx")
-        || !(originalFileName.substring(0, originalFileName.lastIndexOf(".")))
-            .equals("Loading_port_tide_details")) {
+        .equals("xlsx")) {
       throw new GenericServiceException(
           "unsupported file type",
           CommonErrorCodes.E_CPDSS_INVALID_EXCEL_FILE,
@@ -1039,6 +1036,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     Builder builder = UploadTideDetailRequest.newBuilder();
     builder.setTideDetaildata(ByteString.copyFrom(file.getBytes()));
     builder.setLoadingId(loadingId);
+    builder.setPortName(portName);
+    builder.setPortId(portId);
     UploadTideDetailStatusReply statusReply =
         loadingInfoServiceBlockingStub.uploadPortTideDetails(builder.build());
     if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {

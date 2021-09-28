@@ -16,4 +16,7 @@ public class Cargo {
   private BigDecimal plannedWeight;
   private BigDecimal actualWeight;
   private Long dischargeTime;
+  private Long lpCargoDetailsId;
+  private Long planQtyId;
+  private Integer planQtyCargoOrder;
 }

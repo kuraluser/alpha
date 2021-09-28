@@ -88,6 +88,8 @@ public class CargoToppingOffSequenceServiceImpl implements CargoToppingOffSequen
                   .ifPresent(cargoToppingOffSequence::setDisplayOrder);
               cargoToppingOffSequence.setLoadingInformation(loadingInformation);
               cargoToppingOffSequence.setIsActive(true);
+              cargoToppingOffSequence.setAbbreviation(cargoToppingOff.getAbbreviation());
+              cargoToppingOffSequence.setCargoNominationXId(cargoToppingOff.getCargoNominationId());
               cargoToppingOffSequenceRepository.save(cargoToppingOffSequence);
             });
   }

@@ -7,6 +7,7 @@ import { DecimalPipe } from '@angular/common';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ULLAGE_STATUS, ULLAGE_STATUS_TEXT, ULLAGE_STATUS_VALUE } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { IPermission } from '../../../shared/models/user-profile.model';
 
 /**
  * Component class for departure condition block
@@ -36,6 +37,7 @@ export class DepartureConditionComponent implements OnInit {
   @Input() vesselId: number;
   @Input() portRotationId: number;
   @Input() operation: OPERATIONS;
+  @Input() permission: IPermission;
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
   }

@@ -18,4 +18,7 @@ public class PortLoadablePlanRobDetails {
   private String arrivalDeparture;
   private BigDecimal density;
   private String colorCode;
+  private Long fuelTypeId;
+  private String fuelTypeShortName;
+  private String fuelTypeName;
 }

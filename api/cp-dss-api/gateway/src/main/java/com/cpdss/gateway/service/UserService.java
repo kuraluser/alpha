@@ -599,14 +599,13 @@ public class UserService {
           .filter(roleUser -> permission.getUserId().contains(roleUser.getUsers().getId()))
           .forEach(roleUser -> roleUser.setIsActive(true));
 
-      // Deactivate other roles for the user
+      // Deactivate other roles for the user 
       List<RoleUserMapping> userRoleList =
-          ListUtils.emptyIfNull(this.roleUserRepository.findByUserIds(permission.getUserId()));
+    		ListUtils.emptyIfNull(this.roleUserRepository.findByUserIdsAndIsActive(permission.getUserId(), true));
       userRoleList.stream()
           .filter(userRole -> !Objects.equals(role.get().getId(), userRole.getRoles().getId()))
           .forEach(userRole -> userRole.setIsActive(false));
       roleUserList.addAll(userRoleList);
-
       // Update roles
       this.roleUserRepository.saveAll(roleUserList);
     }
@@ -616,6 +615,7 @@ public class UserService {
     if (users != null && !users.isEmpty()) {
       users.forEach(
           user -> {
+        	  
             // Activate user if user in requested for approval
             if (null != user.getStatus()
                 && user.getStatus().getId().equals(UserStatusValue.REQUESTED.getId())) {
@@ -639,16 +639,16 @@ public class UserService {
                   });
               this.notificationRepository.saveAll(notificationsList);
 
-              // Update roles - first time
-              Optional<RoleUserMapping> roleUserOpt =
-                  this.roleUserRepository.findByUsersAndIsActive(
-                      user.getId(), true, role.get().getId());
-              RoleUserMapping roleUser = roleUserOpt.orElseGet(RoleUserMapping::new);
-              roleUser.setIsActive(true);
-              roleUser.setRoles(role.get());
-              roleUser.setUsers(user);
-              this.roleUserRepository.save(roleUser);
             }
+         // Update roles - first time
+            Optional<RoleUserMapping> roleUserOpt =
+                this.roleUserRepository.findByUsersAndIsActive(
+                    user.getId(), true, role.get().getId());
+            RoleUserMapping roleUser = roleUserOpt.orElseGet(RoleUserMapping::new);
+            roleUser.setIsActive(true);
+            roleUser.setRoles(role.get());
+            roleUser.setUsers(user);
+            this.roleUserRepository.save(roleUser);
           });
     }
 

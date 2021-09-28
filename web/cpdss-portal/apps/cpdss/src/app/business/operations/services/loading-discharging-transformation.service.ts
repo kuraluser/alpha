@@ -279,7 +279,7 @@ export class LoadingDischargingTransformationService {
         header: 'Cargo',
         listName: 'loadableQuantityCargo',
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
-        fieldOptionLabel: 'grade',
+        fieldOptionLabel: 'cargoAbbreviation',
         fieldPlaceholder: 'LOADING_MANAGE_SEQUENCE_SELCT_CARGO',
         errorMessages: {
           'required': 'LOADING_MANAGE_SEQUENCE_REQUIRED',
@@ -508,7 +508,7 @@ export class LoadingDischargingTransformationService {
 
     return [
       {
-        field: 'grade',
+        field: 'cargoAbbreviation',
         header: 'LOADING_CARGO_TO_BE_LOADED_KIND_OF_CARGO',
         fieldType: DATATABLE_FIELD_TYPE.BADGE,
         badgeColorField: 'colorCode'
@@ -587,7 +587,7 @@ export class LoadingDischargingTransformationService {
 
     return [
       {
-        field: 'grade',
+        field: 'cargoAbbreviation',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_GRADE',
         fieldType: DATATABLE_FIELD_TYPE.BADGE,
         badgeColorField: 'colorCode'

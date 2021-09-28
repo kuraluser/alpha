@@ -44,8 +44,10 @@ import org.apache.poi.xssf.usermodel.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 /** Master Service for Loadable Plans */
@@ -3058,11 +3060,19 @@ public class LoadablePlanService {
    * @return
    * @throws GenericServiceException
    */
-  private UllageUpdateResponse callAlgoUllageUpdateApi(UllageUpdateRequest algoRequest)
+  public UllageUpdateResponse callAlgoUllageUpdateApi(UllageUpdateRequest algoRequest)
       throws GenericServiceException {
-    ResponseEntity<UllageUpdateResponse> responseEntity =
-        this.restTemplate.postForEntity(
-            this.algoUpdateUllageUrl, algoRequest, UllageUpdateResponse.class);
+    ResponseEntity<UllageUpdateResponse> responseEntity = null;
+    try {
+      responseEntity =
+          this.restTemplate.postForEntity(
+              this.algoUpdateUllageUrl, algoRequest, UllageUpdateResponse.class);
+    } catch (HttpStatusCodeException e) {
+      log.error("ALGO returned : {}", e.getRawStatusCode());
+      if (e.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR)) {
+        responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+      }
+    }
     if (HttpStatusCode.OK.value() != responseEntity.getStatusCodeValue()) {
       throw new GenericServiceException(
           "Error calling algo: invalid status received",

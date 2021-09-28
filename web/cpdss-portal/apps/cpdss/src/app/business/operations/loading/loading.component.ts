@@ -5,7 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { IAlgoError, IAlgoResponse, ICargo, ICargoResponseModel, OPERATIONS, OPERATIONS_PLAN_STATUS } from '../../core/models/common.model';
 import { OPERATION_TAB } from '../models/operations.model';
 import { LoadingInformationComponent } from './loading-information/loading-information.component';
-import { UnsavedChangesGuard, ComponentCanDeactivate } from './../../../shared/services/guards/unsaved-data-guard';
+import { UnsavedChangesGuard } from './../../../shared/services/guards/unsaved-data-guard';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { OperationsApiService } from '../services/operations-api.service';
 import { LoadingApiService } from '../services/loading-api.service';
@@ -14,8 +14,11 @@ import { MessageService } from 'primeng/api';
 import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
 import { SecurityService } from '../../../shared/services/security/security.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { RATE_UNIT } from '../../../shared/models/common.model';
+import { ComponentCanDeactivate, RATE_UNIT , PERMISSION_ACTION } from '../../../shared/models/common.model';
 import { ULLAGE_STATUS_VALUE } from './../models/loading-discharging.model';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { IPermission } from '../../../shared/models/user-profile.model';
 
 /**
  * Component class for loading component
@@ -51,7 +54,15 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   OPERATIONS = OPERATIONS;
   errorMessage: IAlgoError[];
   disableGenerateLoadableButton: boolean = true;
-  loadinfoTemp:number;
+  loadinfoTemp: number;
+
+  loadingInfoTabPermission: IPermission;
+  loadingInstructionTabPermission: IPermission;
+  loadingSequenceTabPermission: IPermission;
+  loadingPlanTabPermission: IPermission;
+
+
+
 
   private ngUnsubscribe: Subject<any> = new Subject();
   errorPopUp: boolean = false;
@@ -75,7 +86,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     private messageService: MessageService,
     private globalErrorHandler: GlobalErrorHandler,
     private router: Router,
-    private ngxSpinnerService: NgxSpinnerService
+    private ngxSpinnerService: NgxSpinnerService,
+    private permissionsService: PermissionsService
   ) {
   }
 
@@ -84,8 +96,9 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   ngOnInit(): void {
     this.ngxSpinnerService.show();
     this.initSubsciptions();
+    this.setPagePermission();
     this.getCargos();
-    this.listenEvents();    
+    this.listenEvents();
     this.activatedRoute.paramMap
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(params => {
@@ -95,10 +108,38 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         localStorage.setItem("vesselId", this.vesselId.toString());
         localStorage.setItem("voyageId", this.voyageId.toString());
         this.selectedPortName = localStorage.getItem('selectedPortName');
-        this.currentTab = OPERATION_TAB.INFORMATION;
-        this.loadingDischargingTransformationService.setTabChange(OPERATION_TAB.INFORMATION);
+        this.tabPermission();
         localStorage.setItem('rate_unit', RATE_UNIT.BBLS_PER_HR);
       });
+  }
+
+  /**
+ * select tab permission
+ * @memberof LoadingComponent
+ */
+  tabPermission() {
+    if (this.loadingInfoTabPermission === undefined || this.loadingInfoTabPermission?.view) {
+      this.currentTab = OPERATION_TAB.INFORMATION;
+    } else if (this.loadingInstructionTabPermission?.view) {
+      this.currentTab = OPERATION_TAB.INSTRUCTION;
+    } else if (this.loadingSequenceTabPermission?.view) {
+      this.currentTab = OPERATION_TAB.SEQUENCE;
+    } else if (this.loadingPlanTabPermission?.view) {
+      this.currentTab = OPERATION_TAB.PLAN;
+    }
+    this.loadingDischargingTransformationService.setTabChange(this.currentTab);
+  }
+
+  /**
+  * Set page permission
+  *
+  * @memberof LoadingComponent
+  */
+  setPagePermission() {
+    this.loadingInfoTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationLoadingInformation'], false);
+    this.loadingInstructionTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationLoadingInstruction'], false);
+    this.loadingSequenceTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationLoadingSequence'], false);
+    this.loadingPlanTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationLoadingPlan'], false);
   }
 
   ngOnDestroy() {
@@ -138,7 +179,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     });
 
     this.loadingDischargingTransformationService.loadingInformationValidity$.subscribe((res) => {
-        this.loadingInformationComplete = res;
+      this.loadingInformationComplete = res;
       if (!this.processing) {
         this.loadingDischargingTransformationService.disableSaveButton.next(false)
 
@@ -151,11 +192,11 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
 
     });
-    this.loadingDischargingTransformationService.inProcessing.subscribe((status)=>{
-     this.processing = status;
+    this.loadingDischargingTransformationService.inProcessing.subscribe((status) => {
+      this.processing = status;
     })
     this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((res) => {
-        this.loadingInstructionComplete = res;
+      this.loadingInstructionComplete = res;
       if (!this.processing) {
         this.loadingDischargingTransformationService.disableSaveButton.next(false)
         if (this.loadingInstructionComplete && this.loadingInformationComplete) {
@@ -167,9 +208,9 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
 
     });
-    this.loadingDischargingTransformationService.disableViewErrorButton.subscribe((status)=>{
+    this.loadingDischargingTransformationService.disableViewErrorButton.subscribe((status) => {
       this.disableViewErrorButton = status;
-     })
+    })
     this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       this.isDischargeStarted = value;
     });
@@ -179,7 +220,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         this.disableGenerateLoadableButton = true;
       }
     });
-  this.ngxSpinnerService.hide();
+    this.ngxSpinnerService.hide();
 
   }
 
@@ -261,15 +302,15 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   private swMessageHandler = async event => {
     const translationKeys = await this.translateService.get(["GENERATE_LODABLE_PLAN_PENDING", "GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE", "GENERATE_LODABLE_PLAN_CONFIRMED", "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED", "GENERATE_LODABLE_PLAN_PLAN_GENERATED", "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED", "GENERATE_LODABLE_PLAN_ERROR_OCCURED", "GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER", "GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED",
-      "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION", "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED", "GENERATE_LODABLE_PLAN_INFO","GENERATE_LOADABLE_PATTERN_NO_PLAN","GENERATE_LOADABLE_PLAN_COMPLETE_DONE", "ULLAGE_UPDATE_VALIDATION_SUCCESS_LABEL", "Port"]).toPromise();
+      "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION", "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED", "GENERATE_LODABLE_PLAN_INFO", "GENERATE_LOADABLE_PATTERN_NO_PLAN", "GENERATE_LOADABLE_PLAN_COMPLETE_DONE", "ULLAGE_UPDATE_VALIDATION_SUCCESS_LABEL", "Port"]).toPromise();
     if (event?.data?.errorCode === '210') {
       this.globalErrorHandler.sessionOutMessage();
     }
     if (event?.data?.pattern?.type === 'loading-plan-status') {
       this.loadinfoTemp = event?.data?.pattern?.loadingInfoId
-      if(this.loadingInfoId === this.loadinfoTemp){
-        this.loadingDischargingTransformationService.isLoadingSequenceGenerated.next(  event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED);
-        this.loadingDischargingTransformationService.isLoadingPlanGenerated.next( event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED);
+      if (this.loadingInfoId === this.loadinfoTemp) {
+        this.loadingDischargingTransformationService.isLoadingSequenceGenerated.next(event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED);
+        this.loadingDischargingTransformationService.isLoadingPlanGenerated.next(event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED);
       }
       this.ngxSpinnerService.hide();
 
@@ -287,7 +328,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
       else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED) {
         this.setButtonStatus();
-        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: event?.data?.pattern?.portName + ' '+ translationKeys["Port"]?.toLowerCase() + ' ' +translationKeys["GENERATE_LODABLE_PLAN_PLAN_GENERATED"] ,sticky: true, closable: true });
+        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: event?.data?.pattern?.portName + ' ' + translationKeys["Port"]?.toLowerCase() + ' ' + translationKeys["GENERATE_LODABLE_PLAN_PLAN_GENERATED"], sticky: true, closable: true });
 
       }
 
@@ -295,32 +336,32 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
         switch (event?.data?.statusId) {
           case OPERATIONS_PLAN_STATUS.PENDING:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_PENDING"], closable: false});
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_PENDING"], closable: false });
             this.setButtonStatusInProcessing();
             break;
           case OPERATIONS_PLAN_STATUS.CONFIRMED:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_CONFIRMED"] ,closable: false });
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_CONFIRMED"], closable: false });
             this.setButtonStatusInProcessing();
             break;
           case OPERATIONS_PLAN_STATUS.PLAN_ALGO_PROCESSING_STARTED:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED"],closable: false });
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED"], closable: false });
             this.setButtonStatusInProcessing();
             break;
           case OPERATIONS_PLAN_STATUS.VERIFICATION_WITH_LOADICATOR:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER"] ,closable: false});
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER"], closable: false });
             this.setButtonStatusInProcessing();
             break;
           case OPERATIONS_PLAN_STATUS.VERFICATION_WITH_LOADICATOT_COMPLETED:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED"] ,closable: false});
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED"], closable: false });
             this.setButtonStatusInProcessing();
             break;
           case OPERATIONS_PLAN_STATUS.ALGO_PROCESSING_COMPLETED:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED"],closable: false });
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED"], closable: false });
             this.setButtonStatusInProcessing();
             break;
 
           case OPERATIONS_PLAN_STATUS.LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED:
-            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED"],closable: false });
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED"], closable: false });
             this.setButtonStatusInProcessing();
             break;
         }
@@ -349,7 +390,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
       if (event?.data?.pattern?.status === 1) {
         this.loadingDischargingTransformationService.setUllageArrivalBtnStatus(event?.data.statusId);
-    }
+      }
       if (event?.data?.pattern?.status === 2) {
         this.loadingDischargingTransformationService.setUllageDepartureBtnStatus(event?.data.statusId);
       }
@@ -438,7 +479,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     if ((this.loadinfoTemp == this.loadingInfoId) || (!this.loadinfoTemp)) {
       const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
       if (algoError.responseStatus.status === 'SUCCESS') {
-            this.ngxSpinnerService.hide();
+        this.ngxSpinnerService.hide();
 
         this.errorMessage = algoError.algoErrors;
         this.errorPopUp = status;
@@ -452,7 +493,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    *
    * @memberof LoadingComponent
    */
- async viewError(status) {
+  async viewError(status) {
     await this.getAlgoErrorMessage(true);
     this.errorPopUp = status;
   }
@@ -464,7 +505,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    */
   isLoadingInfoValid() {
     if( this.currentTab === OPERATION_TAB.INFORMATION && this.loadingInfo?.loadingInformationData) {
-      return  (this.loadingInfo.isLoadingInfoValid() && 
+      return  (this.loadingInfo.isLoadingInfoValid() &&
       this.loadingDischargingTransformationService.isMachineryValid && this.loadingDischargingTransformationService.isCargoAdded);
     } else {
       return this.loadingInformationComplete;

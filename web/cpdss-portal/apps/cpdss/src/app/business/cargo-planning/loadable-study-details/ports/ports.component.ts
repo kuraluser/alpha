@@ -23,7 +23,6 @@ import { PermissionsService } from '../../../../shared/services/permissions/perm
 import * as moment from 'moment';
 import { seaWaterDensityRangeValidator } from '../../../core/directives/seawater-density-range-validator.directive';
 
-
 /**
  * Component class of ports screen
  *
@@ -349,6 +348,11 @@ export class PortsComponent implements OnInit, OnDestroy {
     const dataTableControl = <FormArray>this.portsForm.get('dataTable');
     dataTableControl.push(this.initPortsFormGroup(_ports, this.portsLists.length));
     this.portsLists = [...this.portsLists, _ports];
+    setTimeout(() => {
+      if(document.getElementById(`${this.columns[1].field}_${this.portsLists.length -1}input`)) {
+        document.getElementById(`${this.columns[1].field}_${this.portsLists.length -1}input`).focus();
+      }
+    })
   }
 
   /**

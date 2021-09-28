@@ -38,4 +38,7 @@ public class LoadablePlanStowageDetails {
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private Long cargo2NominationId;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private Long dischargeCargoNominationId;
 }

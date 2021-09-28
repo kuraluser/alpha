@@ -124,6 +124,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
     if (changes?.isCancelChanges?.currentValue) {
       this.initForm();
       this.disableForm();
+      this.error.length = 0;
     }
     if (changes?.rulesJson) {
 
@@ -310,7 +311,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
           formGroup.addControl('displayInSettings', new FormControl(rule.displayInSettings))
         }
 
-        formGroup.addControl('enable', new FormControl(rule.enable))
+        formGroup.addControl('enable', new FormControl(rule?.enable))
 
         const formArray = new FormArray([])
         if (rule?.inputs.length > 0) {
@@ -463,11 +464,24 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
  */
   disableOrEnableRule(rowIndex, fg = null) {
     const formGroup = fg ? fg : <FormGroup>(<FormArray>this.rulesForm.at(this.selectedIndex)).at(rowIndex);
-    if (formGroup.get('enable').value) {
-      formGroup.enable()
+    if (formGroup.get('enable')?.value) {
+      formGroup?.enable()
     } else {
-      formGroup.disable();
-      formGroup.get('enable').enable();
+      formGroup?.disable();
+      formGroup.get('enable')?.enable();
+    }
+    formGroup.get('displayInSettings')?.enable();
+  }
+
+  /**
+  * Method to sort the multiselect array
+  *
+  * @memberof RulesTableComponent
+  */
+  onChangeMultiSelect(key,rowIndex,inputIndex){
+    const fc = this.getControl(key,rowIndex,inputIndex);
+    if(fc.value && fc.value.length && fc.value.length > 0){
+      fc.value.sort(function(a, b) { return a.id - b.id; })
     }
   }
 

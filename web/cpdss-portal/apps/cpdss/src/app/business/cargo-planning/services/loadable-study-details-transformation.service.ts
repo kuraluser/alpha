@@ -649,7 +649,7 @@ export class LoadableStudyDetailsTransformationService {
         actions.push(DATATABLE_ACTION.EDIT);
       }
 
-      if (permission?.add) {
+      if (permission?.add && ![VOYAGE_STATUS.ACTIVE].includes(voyageStatusId)) {
         actions.push(DATATABLE_ACTION.DUPLICATE);
       }
 

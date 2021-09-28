@@ -59,7 +59,8 @@ export class DischargeStudyComponent implements OnInit {
     this.editMode ? this.dischargeStudyForm?.enable() : this.dischargeStudyForm?.disable();
     this.backLoadingColumns = this.dischargeStudyDetailsTransformationService.getDischargeStudyBackLoadingDatatableColumns(this.permission, this.dischargeStudy?.statusId,this.voyage.statusId);
   }
-
+  
+  loadableQuantity: number;
   editMode: DATATABLE_EDITMODE;
   portDetails: IPortDetailValueObject[];
   instructions: IInstruction[];
@@ -130,6 +131,7 @@ export class DischargeStudyComponent implements OnInit {
     }
     const result = await this.dischargeStudyDetailsApiService.getDischargeStudyDetails(this.vesselId, this.voyageId,this.dischargeStudyId).toPromise();
     if(result.responseStatus.status === '200') {
+      this.loadableQuantity = result.loadableQuantity;
       const portDetails = this.dischargeStudyForm.get('portDetails') as FormArray;
       const portList = result.portList;
       const portUniqueColorAbbrList = [];
@@ -241,7 +243,7 @@ export class DischargeStudyComponent implements OnInit {
       abbreviation: this.fb.control(backLoading.abbreviation.value, [Validators.required, alphabetsOnlyValidator, Validators.maxLength(6), dischargeStudyAbbreviationValidator]),
       cargo: this.fb.control(backLoading?.cargo?.value ? backLoading.cargo?.value : null, [Validators.required]),
       bbls: this.fb.control(backLoading.bbls?.value ? backLoading.bbls?.value : null, []),
-      kl: this.fb.control(backLoading.kl?.value ? backLoading.kl?.value : null, [Validators.required, numberValidator(quantityDecimal,null,false) , Validators.min(min)]),
+      kl: this.fb.control(backLoading.kl?.value ? backLoading.kl?.value : null, [Validators.required, numberValidator(quantityDecimal,null,false) , Validators.min(min) , dischargeStudyLoadableQuantity(this.loadableQuantity)]),
       mt: this.fb.control(backLoading.mt?.value ? backLoading.mt?.value : null, []),
       api: this.fb.control(backLoading.api?.value ? backLoading.api?.value : null, [Validators.required, Validators.min(0), numberValidator(2, 3)]),
       temp: this.fb.control(backLoading.temp?.value ? backLoading.temp?.value : null, [Validators.required , numberValidator(2, 3)]),
@@ -727,9 +729,10 @@ export class DischargeStudyComponent implements OnInit {
     } else if(!event.data.isAdd) {
       this.updateDischargeCargoDetails(event,portDetails,event.field);
     }
+    
     selectedPortCargo = this.unitConversion(selectedPortCargo, event, index, 'backLoadingDetails');
     this.checkFormFieldValidity();
-    
+    formGroup.get('kl').updateValueAndValidity();
     this.portDetails = [...portDetails];
   }
 
