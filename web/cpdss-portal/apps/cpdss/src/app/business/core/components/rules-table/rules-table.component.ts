@@ -483,6 +483,19 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
     if(fc.value && fc.value.length && fc.value.length > 0){
       fc.value.sort(function(a, b) { return a.id - b.id; })
     }
+    formGroup.get('displayInSettings')?.enable();
+  }
+
+  /**
+  * Method to sort the multiselect array
+  *
+  * @memberof RulesTableComponent
+  */
+  onChangeMultiSelect(key,rowIndex,inputIndex){
+    const fc = this.getControl(key,rowIndex,inputIndex);
+    if(fc.value && fc.value.length && fc.value.length > 0){
+      fc.value.sort(function(a, b) { return a.id - b.id; })
+    }
   }
 
 }
