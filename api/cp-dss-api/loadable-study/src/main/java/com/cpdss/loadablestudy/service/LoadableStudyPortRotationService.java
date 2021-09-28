@@ -19,6 +19,7 @@ import com.cpdss.loadablestudy.domain.VoyagePorts;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -888,6 +889,31 @@ public class LoadableStudyPortRotationService {
                             PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
                                 .addId(loadableStudyPortRotation.getPortXId())
                                 .build());
+                    LocalDateTime eta = null;
+                    LocalDateTime etd = null;
+                    if (loadableStudyPortRotation.getSynopticalTable() != null) {
+                      eta =
+                          loadableStudyPortRotation.getSynopticalTable().stream()
+                              .filter(
+                                  synoptical ->
+                                      synoptical
+                                          .getOperationType()
+                                          .equals(LoadableStudiesConstants.OPERATION_TYPE_ARR))
+                              .findFirst()
+                              .get()
+                              .getEtaActual();
+
+                      etd =
+                          loadableStudyPortRotation.getSynopticalTable().stream()
+                              .filter(
+                                  synoptical ->
+                                      synoptical
+                                          .getOperationType()
+                                          .equals(LoadableStudiesConstants.OPERATION_TYPE_DEP))
+                              .findFirst()
+                              .get()
+                              .getEtdActual();
+                    }
 
                     dataMap.add(
                         new VoyagePorts(
@@ -898,36 +924,8 @@ public class LoadableStudyPortRotationService {
                             String.valueOf(loadableStudyPortRotation.getOperation().getName()),
                             null,
                             null,
-                            String.valueOf(
-                                (loadableStudyPortRotation.getSynopticalTable() != null
-                                        && loadableStudyPortRotation.getSynopticalTable().size()
-                                            > 0)
-                                    ? loadableStudyPortRotation
-                                                .getSynopticalTable()
-                                                .get(0)
-                                                .getEtaActual()
-                                            == null
-                                        ? ""
-                                        : loadableStudyPortRotation
-                                            .getSynopticalTable()
-                                            .get(0)
-                                            .getEtaActual()
-                                    : ""),
-                            String.valueOf(
-                                (loadableStudyPortRotation.getSynopticalTable() != null
-                                        && loadableStudyPortRotation.getSynopticalTable().size()
-                                            > 0)
-                                    ? loadableStudyPortRotation
-                                                .getSynopticalTable()
-                                                .get(1)
-                                                .getEtdActual()
-                                            == null
-                                        ? ""
-                                        : loadableStudyPortRotation
-                                            .getSynopticalTable()
-                                            .get(1)
-                                            .getEtdActual()
-                                    : ""),
+                            eta != null ? String.valueOf(eta) : null,
+                            etd != null ? String.valueOf(etd) : null,
                             reply.getPortsCount() > 0 ? reply.getPorts(0).getLat() : "",
                             reply.getPortsCount() > 0 ? reply.getPorts(0).getLon() : "",
                             reply.getPortsCount() > 0 ? reply.getPorts(0).getName() : ""));
