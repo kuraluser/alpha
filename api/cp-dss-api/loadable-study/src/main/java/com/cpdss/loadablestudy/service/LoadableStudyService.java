@@ -2114,7 +2114,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               HttpStatusCode.BAD_REQUEST);
         }
         entity.setDischargeCargoNominationId(
-            loadableStudyOpt.get().getDischargeCargoNominationId());
+            cargoNominationIdMap.get(loadableStudyOpt.get().getDischargeCargoNominationId()));
         entity.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
         entity.setIsCargoNominationComplete(loadableStudyOpt.get().getIsCargoNominationComplete());
         entity.setIsDischargePortsComplete(loadableStudyOpt.get().getIsDischargePortsComplete());
