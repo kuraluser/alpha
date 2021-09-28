@@ -62,7 +62,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
 
   @Autowired LoadingPlanGrpcServiceImpl loadingPlanGrpcServiceImpl;
-  
+
   @Autowired UllageReportFileParsingService ullageReportFileParsingService;
 
   @GrpcClient("loadableStudyService")
@@ -1896,19 +1896,19 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     return StringUtils.isEmpty(inputData) ? 0 : Long.parseLong(inputData);
   }
 
-  /**
-   * Import ullage report file and parse the content from the file and send it in response.
-   */
+  /** Import ullage report file and parse the content from the file and send it in response. */
   @Override
   public ListOfUllageReportResponse importUllageReportFile(
       MultipartFile file,
       String tankDetails,
       Long infoId,
       Long cargoNominationId,
-      String correlationId,boolean isLoading, Long vesselId)
+      String correlationId,
+      boolean isLoading,
+      Long vesselId)
       throws GenericServiceException, IOException {
-	  return ullageReportFileParsingService.importUllageReportFile(
-			  file, tankDetails, infoId, cargoNominationId, correlationId, isLoading, vesselId);
+    return ullageReportFileParsingService.importUllageReportFile(
+        file, tankDetails, infoId, cargoNominationId, correlationId, isLoading, vesselId);
   }
 
   /*

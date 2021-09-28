@@ -11,13 +11,11 @@ import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
+import com.cpdss.loadablestudy.domain.LoadablePatternAlgoRequest;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsTempRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyCommunicationStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -113,6 +111,19 @@ public class CommunicationService {
             log.info("@@@@@@@@@@@LoadableStudy received at shore side ");
             saveValidatePlanRequestShore(erReply);
           }
+        } else if (messageType.getMessageType().equals("PatternDetail")) {
+          EnvoyReader.EnvoyReaderResultReply erReply =
+              getResultFromEnvoyReaderShore(taskReqParams, messageType);
+          if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+            throw new GenericServiceException(
+                "Failed to get Result from Communication Server",
+                erReply.getResponseStatus().getCode(),
+                HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
+          }
+          if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
+            log.info("-------Pattern received  received at ship side ");
+            savePatternInShipSide(erReply);
+          }
         }
       } catch (GenericServiceException e) {
         throw new GenericServiceException(
@@ -122,6 +133,54 @@ public class CommunicationService {
             e);
       }
     }
+  }
+
+  @Autowired private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
+  @Autowired private AlgoErrorsRepository algoErrorsRepository;
+
+  @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
+
+  private void savePatternInShipSide(EnvoyReader.EnvoyReaderResultReply erReply)
+      throws GenericServiceException {
+    String jsonResult = erReply.getPatternResultJson();
+    log.info("------Pattern details payload : " + jsonResult);
+    LoadablePatternAlgoRequest loadablePatternAlgoRequest =
+        new Gson()
+            .fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadablePatternAlgoRequest.class);
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(
+            loadablePatternAlgoRequest.getLoadablePatternId(), true);
+    if (!loadablePatternOpt.isPresent()) {
+      throw new GenericServiceException(
+          "Loadable pattern does not exist",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    //    if(!loadablePatternAlgoRequest.getValidated()){
+    //      loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+    //              LOADABLE_PATTERN_VALIDATION_FAILED_ID,
+    // loadablePatternAlgoRequest.getProcessId(), true);
+    //
+    //      algoErrorsRepository.deleteAlgoError(false,
+    // loadablePatternAlgoRequest.getLoadablePatternId());
+    //      algoErrorHeadingRepository.deleteAlgoErrorHeading(false,
+    // loadablePatternAlgoRequest.getLoadablePatternId());
+    //      if(loadablePatternAlgoRequest.getAlgoError() != null){
+    //        loadablePatternAlgoRequest.getAlgoError().forEach(algoErrors ->{
+    //          com.cpdss.loadablestudy.entity.AlgoErrors algoErrorsEntity =
+    //                  new com.cpdss.loadablestudy.entity.AlgoErrors();
+    //          algoErrorsEntity.setAlgoErrorHeading(algoErrors.getAlgoErrorHeading());
+    //          algoErrorsEntity.setErrorMessage(algoErrors.getErrorMessage());
+    //          algoErrorsEntity.setIsActive(true);
+    //          algoErrorsRepository.save(algoErrors);
+    //        });
+    //      }
+    //    }else{
+    //      if(loadablePatternAlgoRequest.getPatternDetails() != null){
+    //
+    // loadableStudyServiceShore.savePatternInShipSide(loadablePatternAlgoRequest.getPatternDetails());
+    //      }
+    //    }
   }
 
   private void saveValidatePlanRequestShore(EnvoyReader.EnvoyReaderResultReply erReply) {

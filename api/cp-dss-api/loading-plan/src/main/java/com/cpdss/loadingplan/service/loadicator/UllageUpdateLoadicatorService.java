@@ -498,11 +498,13 @@ public class UllageUpdateLoadicatorService {
     LoadingPlanLoadicatorDetails loadingPlanLoadicatorDetails = new LoadingPlanLoadicatorDetails();
 
     List<PortLoadingPlanStowageTempDetails> tempStowageDetails =
-        portLoadingPlanStowageDetailsTempRepository.findByLoadingInformationAndConditionTypeAndIsActive(
-            loadingInformation.getId(), request.getConditionType(), true);
+        portLoadingPlanStowageDetailsTempRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInformation.getId(), request.getConditionType(), true);
     List<PortLoadingPlanBallastTempDetails> tempBallastDetails =
-        portLoadingPlanBallastDetailsTempRepository.findByLoadingInformationAndConditionTypeAndIsActive(
-            loadingInformation.getId(), request.getConditionType(), true);
+        portLoadingPlanBallastDetailsTempRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInformation.getId(), request.getConditionType(), true);
     List<PortLoadingPlanRobDetails> robDetails =
         portLoadingPlanRobDetailsRepository.findByLoadingInformationAndConditionTypeAndIsActive(
             loadingInformation.getId(), request.getConditionType(), true);

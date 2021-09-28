@@ -140,15 +140,17 @@ public class AlgoService {
 
   /**
    * @param request
-   * @param loadableStudy
    * @param loadablePattern
+   * @param loadableStudy
    * @param isPatternErrorSaving
+   * @return
    */
-  public void saveAlgoErrorToDB(
+  public List<com.cpdss.loadablestudy.entity.AlgoErrors> saveAlgoErrorToDB(
       LoadableStudy.LoadablePatternAlgoRequest request,
       LoadablePattern loadablePattern,
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
       boolean isPatternErrorSaving) {
+    List<com.cpdss.loadablestudy.entity.AlgoErrors> listOfAlgoError = new ArrayList<>();
     request
         .getAlgoErrorsList()
         .forEach(
@@ -171,9 +173,11 @@ public class AlgoService {
                         algoErrors.setAlgoErrorHeading(algoErrorHeading);
                         algoErrors.setErrorMessage(error);
                         algoErrors.setIsActive(true);
-                        algoErrorsRepository.save(algoErrors);
+                        algoErrors = algoErrorsRepository.save(algoErrors);
+                        listOfAlgoError.add(algoErrors);
                       });
             });
+    return listOfAlgoError;
   }
 
   public LoadableStudy.AlgoErrorReply.Builder getAlgoErrors(

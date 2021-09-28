@@ -17,6 +17,7 @@ import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
+import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
@@ -2637,7 +2638,7 @@ public class LoadablePlanService {
             .setResponseStatus(
                 Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
       } else {
-        log.info("------- Envoy writer calling has failed : " + ewReply.getStatusCode());
+
         AlgoResponse algoResponse =
             restTemplate.postForObject(
                 loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
@@ -2646,6 +2647,11 @@ public class LoadablePlanService {
             algoResponse.getProcessId(),
             loadablePatternOpt.get(),
             LOADABLE_PATTERN_VALIDATION_STARTED_ID);
+        log.info("------- Algo Response  : " + algoResponse.toString());
+        replyBuilder
+            .setProcesssId(algoResponse.getProcessId())
+            .setResponseStatus(
+                Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
       }
     }
     return replyBuilder;

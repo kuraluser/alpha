@@ -630,7 +630,7 @@ public class LoadableStudyPortRotationService {
               .setMessage(INVALID_LOADABLE_STUDY_ID)
               .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
     } else {
-    	//loadable quantity logic
+      // loadable quantity logic
       if (loadableStudy.get().getConfirmedLoadableStudyId() != null) {
         List<LoadableQuantity> quantities =
             loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
