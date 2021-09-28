@@ -834,6 +834,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableQuantityReply request, StreamObserver<LoadableQuantityResponse> responseObserver) {
     LoadableQuantityResponse.Builder builder = LoadableQuantityResponse.newBuilder();
     try {
+      log.info("Get Loadable Quantity payload - {}", Utils.toJson(request));
       loadableQuantityService.loadableQuantityByPortId(
           builder, request.getLoadableStudyId(), request.getPortRotationId());
     } catch (GenericServiceException e) {

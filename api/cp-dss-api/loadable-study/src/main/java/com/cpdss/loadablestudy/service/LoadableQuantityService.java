@@ -173,6 +173,7 @@ public class LoadableQuantityService {
                     isLoadingPort
                         ? OnHandQuantity::getDepartureQuantity
                         : OnHandQuantity::getArrivalQuantity)
+                .filter(v -> v != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         doOnboard =
             onHandQuantityList.stream()
@@ -187,6 +188,7 @@ public class LoadableQuantityService {
                     isLoadingPort
                         ? OnHandQuantity::getDepartureQuantity
                         : OnHandQuantity::getArrivalQuantity)
+                .filter(v -> v != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         freshWaterOnBoard =
             onHandQuantityList.stream()
@@ -201,6 +203,7 @@ public class LoadableQuantityService {
                     isLoadingPort
                         ? OnHandQuantity::getDepartureQuantity
                         : OnHandQuantity::getArrivalQuantity)
+                .filter(v -> v != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         boileWaterOnBoard =
             onHandQuantityList.stream()
@@ -214,6 +217,7 @@ public class LoadableQuantityService {
                     isLoadingPort
                         ? OnHandQuantity::getDepartureQuantity
                         : OnHandQuantity::getArrivalQuantity)
+                .filter(v -> v != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         log.info(
