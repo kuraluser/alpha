@@ -5,8 +5,6 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
-import com.cpdss.common.generated.VesselInfo.VesselReply;
-import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
@@ -31,22 +29,32 @@ import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingPlanServiceImpl;
 import com.cpdss.gateway.utility.ExcelExportUtility;
+
+import java.awt.Color;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -62,7 +70,15 @@ public class GenerateLoadingPlanExcelReportService {
 //	public String TEMPLATES_FILE_LOCATION = "/reports/Vessel_{type}_Loading_Plan_Template.xlsx";
 	public String TEMPLATES_FILE_LOCATION = "/reports/Vessel_1_Loading_Plan_Template.xlsx";
 	public String OUTPUT_FILE_LOCATION = "/reports/Vessel_{id}_Loading_Plan_{voy}_{port}.xlsx";
+	public String TEMP_LOCATION = "temp.xlsx";
+	public final Integer START_ROW = 14;
+	public final Integer END_ROW = 71;
+	public final Integer END_COLUMN = 25;
+	public static String SHEET_NAMES[] = {"CRUD - 021 pg1","CRUD - 021 pg2","CRUD - 021 pg3"};
 
+	@Value("${gateway.attachement.rootFolder}")
+	private String rootFolder;
+	
 	@Autowired
 	LoadingPlanGrpcService loadingPlanGrpcService;
 	@Autowired
@@ -102,16 +118,89 @@ public class GenerateLoadingPlanExcelReportService {
 		// Getting data mapped and calling excel builder utility
 		FileInputStream resultFileStream = new FileInputStream(
 				excelExportUtil.generateExcel(loadinPlanExcelDetails, TEMPLATES_FILE_LOCATION, OUTPUT_FILE_LOCATION));
-
-		if (resultFileStream != null) {
-			// TODO put an entry in DB for Communication
-		}
-
+		
+		// Getting data mapped and calling excel builder utility
+//				FileInputStream resultFileStream = new FileInputStream(
+//						excelExportUtil.generateExcel(loadinPlanExcelDetails, TEMPLATES_FILE_LOCATION, TEMP_LOCATION));
+//		
+//		FileOutputStream outFile = new FileOutputStream(OUTPUT_FILE_LOCATION);
+//		if (resultFileStream != null) {
+//			// TODO put an entry in DB for Communication
+//			Workbook workbook = new XSSFWorkbook(resultFileStream);
+//			setCellStyle(workbook, loadinPlanExcelDetails);
+//			workbook.write(outFile);
+//			outFile.close();
+//			workbook.close();
+//		}
+//		resultFileStream.close();
+//		resultFileStream = new FileInputStream(OUTPUT_FILE_LOCATION);
 		// Returning Output file as byte array for local download
-		if (downloadRequired) {
+		if (downloadRequired && resultFileStream != null) {
 			return IOUtils.toByteArray(resultFileStream);
 		}
 		// No need to for local download if file generated form event trigger
+		return null;
+	}
+
+	/**
+	 * Add style in excel
+	 * @param workbook 
+	 * 
+	 * @param resultFileStream
+	 * @param loadinPlanExcelDetails
+	 * @throws EncryptedDocumentException
+	 * @throws IOException
+	 */
+	private void setCellStyle(Workbook workbook, LoadingPlanExcelDetails loadinPlanExcelDetails)
+			throws EncryptedDocumentException, IOException {
+		
+		setCargoColor(workbook,
+				loadinPlanExcelDetails.getSheetOne().getDeparcherCondition().getCargoTopTanks().getTank());
+		setCargoColor(workbook,
+				loadinPlanExcelDetails.getSheetOne().getDeparcherCondition().getCargoCenterTanks().getTank());
+		
+	}
+
+	private void setCargoColor(Workbook workbook, List<TankCargoDetails> tanks) {
+		Sheet sheet = workbook.getSheet(SHEET_NAMES[0]);
+		Cell cell = null;
+		for (int row = START_ROW; row <= END_ROW; row++) {
+			for (int col = 1; col <= END_COLUMN; col++) {
+				cell = sheet.getRow(row).getCell(col);
+				String value = getCellValue(cell);
+				if (value != null && !value.isBlank()) {
+					for (TankCargoDetails tank : tanks) {
+					 if (value.equals(tank.getTankName())) {
+								if (tank.getColorCode() != null && !tank.getColorCode().isBlank()) {
+								CellStyle cellStyle = cell.getCellStyle();
+								CellStyle newCellStyle = workbook.createCellStyle();
+								newCellStyle.setDataFormat(cellStyle.getDataFormat());
+								newCellStyle.setFont(workbook.getFontAt(cellStyle.getFontIndex()));
+//								newCellStyle.setFillBackgroundColor(
+//										new XSSFColor(Color.decode(tank.getColorCode()), new DefaultIndexedColorMap())
+//										.getIndex());
+								Color color = Color.decode(tank.getColorCode());
+								newCellStyle.setFillForegroundColor(
+										new XSSFColor(color, new DefaultIndexedColorMap())
+												.getIndex());
+								cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+								cell.setCellStyle(newCellStyle);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private String getCellValue(Cell cell) {
+		if (cell != null) {
+			if (cell.getCellType().equals(CellType.NUMERIC)) {
+				return ((Double) cell.getNumericCellValue()).toString();
+			} else {
+				return cell.getStringCellValue();
+			}
+		}
 		return null;
 	}
 
@@ -135,8 +224,8 @@ public class GenerateLoadingPlanExcelReportService {
 	 * Get fully qualified name of output file
 	 */
 	private String getFileName(Long vesselId, String voyNo, String portName) {
-		return OUTPUT_FILE_LOCATION.replace("{id}", vesselId.toString()).replace("{voy}", voyNo).replace("{port}",
-				portName).replace(" ", "_");
+		return OUTPUT_FILE_LOCATION.replace("{id}", vesselId.toString()).replace("{voy}", voyNo)
+				.replace("{port}", portName).replace(" ", "_");
 	}
 
 	/**
@@ -188,7 +277,7 @@ public class GenerateLoadingPlanExcelReportService {
 		sheetOne.setArrivalCondition(getVesselConditionDetails(requestPayload, 1));
 		sheetOne.setDeparcherCondition(getVesselConditionDetails(requestPayload, 2));
 		sheetOne.setCargoTobeLoaded(getCargoTobeLoadedDetails(requestPayload));
-		getBerthInfoDetails(sheetOne,requestPayload);
+		getBerthInfoDetails(sheetOne, requestPayload);
 		return sheetOne;
 	}
 
@@ -236,7 +325,8 @@ public class GenerateLoadingPlanExcelReportService {
 
 	/**
 	 * Berth information details
-	 * @param sheetOne 
+	 * 
+	 * @param sheetOne
 	 * 
 	 * @param requestPayload
 	 * @return
@@ -256,16 +346,15 @@ public class GenerateLoadingPlanExcelReportService {
 				Optional.ofNullable(item.getAirPurge()).ifPresent(berthInformation::setAirPurge);
 				Optional.ofNullable(item.getRegulationAndRestriction())
 						.ifPresent(berthInformation::setSpecialRegulation);
-				Optional.ofNullable(item.getItemsToBeAgreedWith())
-						.ifPresent(i ->{
-							if(! itemsAgreedWithTerminal.contains(i)) {
-								itemsAgreedWithTerminal.concat(",/n" + i);
-							}
-						});
+				Optional.ofNullable(item.getItemsToBeAgreedWith()).ifPresent(i -> {
+					if (!itemsAgreedWithTerminal.contains(i)) {
+						itemsAgreedWithTerminal.concat(",/n" + i);
+					}
+				});
 				berthInfoList.add(berthInformation);
 			});
 		}
-		
+
 		sheetOne.setBerthInformation(berthInfoList);
 		sheetOne.setItemsAgreedWithTerminal(itemsAgreedWithTerminal);
 	}
@@ -446,7 +535,12 @@ public class GenerateLoadingPlanExcelReportService {
 					.ifPresent(tankCargoDetails::setColorCode);
 		} else {
 			tankCargoDetails.setQuantity(0.0);
+			tankCargoDetails.setColorCode("");
 		}
+		tankCargoDetails.setCargoName("");
+		tankCargoDetails.setColorCode("");
+		tankCargoDetails.setUllage("0");
+		tankCargoDetails.setFillingRatio(0L);
 	}
 
 	/**
@@ -502,6 +596,7 @@ public class GenerateLoadingPlanExcelReportService {
 					.ifPresent(tankCargoDetails::setTemperature);
 			Optional.ofNullable(loadingPlanStowageDetails.get().getUllage()).ifPresent(tankCargoDetails::setUllage);
 			// TODO filling ratio
+			tankCargoDetails.setFillingRatio(0L);
 			Optional<LoadableQuantityCargoDetails> loadableQuantityCargoDetails = loadableQuantityCargoDetailsList
 					.stream().filter(i -> i.getCargoNominationId()
 							.equals(loadingPlanStowageDetails.get().getCargoNominationId()))

@@ -3,6 +3,7 @@ package com.cpdss.gateway.utility;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,20 +15,26 @@ import java.util.Map.Entry;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jxls.area.Area;
 import org.jxls.area.XlsArea;
 import org.jxls.builder.AreaBuilder;
 import org.jxls.builder.xls.XlsCommentAreaBuilder;
+import org.jxls.command.EachCommand;
 import org.jxls.common.AreaListener;
+import org.jxls.common.AreaRef;
 import org.jxls.common.CellRef;
 import org.jxls.common.Context;
+import org.jxls.transform.Transformer;
 import org.jxls.transform.poi.PoiTransformer;
 import org.jxls.util.JxlsHelper;
+import org.jxls.util.TransformerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -70,18 +77,18 @@ public class ExcelExportUtility {
 		log.info("Inside generateExcel utility - Creating " + outputFileLocation + " file using " + inputFileLocation
 				+ " template.");
 		String outFile = rootFolder + outputFileLocation;
+//		String outFile = outputFileLocation;
 		OutputStream outStream = new FileOutputStream(outFile);
 
 		try (InputStream inStream = this.getClass().getResourceAsStream(inputFileLocation)) {
 			if (inStream != null) {
 				// Converting object in to excel context
 				Context context = getContext(dataObj);
+
+				bindDataUsingAreaListener(inStream, outStream, context);
 				
-				// Setting Area Listener in template for dynamic cell coloring
-				setCellStyling(inStream, context);
-				
-				// Stamping values into excel template
-				JxlsHelper.getInstance().processTemplate(inStream, outStream, context);
+				//Stamping values into excel template
+//				JxlsHelper.getInstance().processTemplate(inStream, outStream, context);
 				
 			} else {
 				log.info("Invalid template location - no file present");
@@ -93,32 +100,77 @@ public class ExcelExportUtility {
 			throw new GenericServiceException("Excel generation failed" + e.getMessage(),
 					CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
 		} finally {
-
 			closeAndFlushOutput(outStream);
 		}
 		return new File(outFile);
 	}
 
 	/**
-	 * Set dynamic styling on template
+	 * Method to set dynamic styling using area Listener and write data to excel
 	 * 
-	 * @param inStream
-	 * @param context
 	 * @throws IOException
 	 * @throws EncryptedDocumentException
 	 */
-	private void setCellStyling(InputStream inStream, Context context) throws EncryptedDocumentException, IOException {
-		Workbook workbook = WorkbookFactory.create(inStream);
-		// creating JxlsPlus transformer for the workbook
-		PoiTransformer transformer = PoiTransformer.createTransformer(workbook);
-		// creating XlsCommentAreaBuilder instance
-		AreaBuilder areaBuilder = new XlsCommentAreaBuilder(transformer);
-		// using area builder to construct a list of processing areas
-		List<Area> xlsAreaList = areaBuilder.build();
+	private void bindDataUsingAreaListener(InputStream inStream, OutputStream outStream, Context context)
+			throws EncryptedDocumentException, IOException {
+		Transformer transformer = TransformerFactory.createTransformer(inStream, outStream);
+		//Parent area
+		XlsArea xlsArea = new XlsArea(GenerateLoadingPlanExcelReportStyle.SHEET_NAMES[0] + "!"
+				+ GenerateLoadingPlanExcelReportStyle.PARENT_AREA, transformer);
+		//Child area
+		XlsArea arrivalConditionArea = new XlsArea(GenerateLoadingPlanExcelReportStyle.SHEET_NAMES[0]+"!"
+				+ GenerateLoadingPlanExcelReportStyle.ARRIVAL_TANK_AREA, transformer);
+		//child area
+		XlsArea deparcherConditionArea = new XlsArea(GenerateLoadingPlanExcelReportStyle.SHEET_NAMES[0]+"!"
+				+ GenerateLoadingPlanExcelReportStyle.DEPARCHER_TANK_AREA, transformer);
+		//Adding listener for dynamic cell coloring
+		arrivalConditionArea.addAreaListener(new GenerateLoadingPlanExcelReportStyle(arrivalConditionArea));
+		deparcherConditionArea.addAreaListener(new GenerateLoadingPlanExcelReportStyle(deparcherConditionArea));
+		//Child loop area
+		XlsArea arrivalCargoListArea = new XlsArea(GenerateLoadingPlanExcelReportStyle.SHEET_NAMES[0] + "!"
+				+ GenerateLoadingPlanExcelReportStyle.ARRIVAL_CARGO_AREA, transformer);
+		//loop
+		EachCommand arrivalCargoListEachCommand = new EachCommand("arrCargoList", "sheetOne.arrivalCondition.cargoDetails", arrivalCargoListArea);
+		//Child loop area
+		XlsArea deparcherCargoListArea = new XlsArea(GenerateLoadingPlanExcelReportStyle.SHEET_NAMES[0] + "!"
+				+ GenerateLoadingPlanExcelReportStyle.DEPARCHER_CARGO_AREA, transformer);
+		//loop
+		EachCommand deparcherCargoListEachCommand = new EachCommand("depCargoList", "sheetOne.deparcherCondition.cargoDetails", deparcherCargoListArea);
+		
+		//Adding loop logic to parent area
+		xlsArea.addCommand(new AreaRef(GenerateLoadingPlanExcelReportStyle.SHEET_NAMES[0] + "!"
+				+ GenerateLoadingPlanExcelReportStyle.ARRIVAL_CARGO_AREA), arrivalCargoListEachCommand);
+		xlsArea.addCommand(new AreaRef(GenerateLoadingPlanExcelReportStyle.SHEET_NAMES[0] + "!"
+				+ GenerateLoadingPlanExcelReportStyle.DEPARCHER_CARGO_AREA), deparcherCargoListEachCommand);
+		
+		//Applying template parent area to out file
+		xlsArea.applyAt(new CellRef(GenerateLoadingPlanExcelReportStyle.SHEET_NAMES[0] + "!"
+				+ GenerateLoadingPlanExcelReportStyle.PARENT_AREA.split(":")[0]), context);
+		xlsArea.processFormulas();
+		// Stamping values into excel template
+		transformer.write();
+
+	}
+
+	
+
+
+	/**
+	 * Set dynamic styling on template
+	 */
+	private void setCellStyling(InputStream inStream, OutputStream outStream, Context context)
+			throws EncryptedDocumentException, IOException {
+//		Workbook workbook = WorkbookFactory.create(inStream);
+//		// creating JxlsPlus transformer for the workbook
+//		PoiTransformer transformer = PoiTransformer.createTransformer(workbook);
+//		// creating XlsCommentAreaBuilder instance
+//		AreaBuilder areaBuilder = new XlsCommentAreaBuilder(transformer);
+//		// using area builder to construct a list of processing areas
+//		List<Area> xlsAreaList = areaBuilder.build();
 		// getting the main area from the list
-		Area xlsArea = xlsAreaList.get(0);
-		System.out.println(xlsArea.getAreaRef().getSheetName());
-		xlsArea.addAreaListener(new GenerateLoadingPlanExcelReportStyle(xlsArea));
+//		Area xlsArea = xlsAreaList.get(1);
+//		System.out.println(xlsArea.getAreaRef().getSheetName());
+//		
 	}
 
 	/**
@@ -158,5 +210,4 @@ public class ExcelExportUtility {
 		}
 	}
 
-	
 }
