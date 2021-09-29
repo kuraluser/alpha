@@ -27,4 +27,6 @@ public interface BillOfLaddingRepository extends CommonCrudRepository<BillOfLadd
       "FROM BillOfLadding BL INNER JOIN DischargeInformation LI ON BL.dischargeInformation.id = LI.id AND LI.dischargingPatternXid = ?1 AND BL.isActive = ?2")
   public List<BillOfLadding> findByDischargePatternXIdAndIsActive(
       Long loadablePatternId, Boolean isActive);
+
+  public List<BillOfLadding> findByIdIn(List<Long> ids);
 }

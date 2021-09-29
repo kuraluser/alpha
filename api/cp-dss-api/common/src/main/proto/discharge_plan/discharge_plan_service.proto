@@ -20,6 +20,8 @@ service DischargePlanService{
   rpc DischargePlanSynchronization(DischargeStudyDataTransferRequest) returns (ResponseStatus) {}
   rpc GetDischargeUpdateUllageDetails (UpdateUllageDetailsRequest) returns (UpdateUllageDetailsResponse) {}
   rpc generateDischargePlan(DischargeInformationRequest) returns (DischargePlanAlgoRequest) {}
+  rpc updateDischargeUllageDetails(UllageBillRequest) returns (UllageBillReply){}
+  
 }
 
 service DischargingInstructionService {
