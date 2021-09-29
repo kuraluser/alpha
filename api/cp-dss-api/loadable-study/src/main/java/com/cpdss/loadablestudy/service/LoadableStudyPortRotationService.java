@@ -142,6 +142,20 @@ public class LoadableStudyPortRotationService {
       }
     }
 
+    Optional<LoadableStudyPortRotation> firstPortOpt = newPortRotations.stream().findFirst();
+
+    if (firstPortOpt.isPresent() && !firstPortOpt.get().getOperation().getId().equals(1L)) {
+      Optional<LoadableStudyPortRotation> firstLoadingPortOpt =
+          newPortRotations.stream()
+              .filter(portRotation -> portRotation.getOperation().getId().equals(1L))
+              .findFirst();
+      if (firstLoadingPortOpt.isPresent()) {
+        Integer index = newPortRotations.indexOf(firstPortOpt.get());
+        newPortRotations.remove(firstLoadingPortOpt.get());
+        newPortRotations.add(index, firstLoadingPortOpt.get());
+      }
+    }
+
     AtomicLong newPortOrder = new AtomicLong(0);
     newPortRotations.forEach(
         portRotation -> {
