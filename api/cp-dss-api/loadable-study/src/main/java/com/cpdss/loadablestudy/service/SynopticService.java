@@ -1107,6 +1107,7 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
     if (null != loadicatorData.getDeflection()) {
       deflection = loadicatorData.getDeflection();
     }
+    deflection = deflection.divide(new BigDecimal(100));
     BigDecimal calculatedDraftFwd = BigDecimal.ZERO;
     if (null != loadicatorData.getCalculatedDraftFwdActual()) {
       calculatedDraftFwd = loadicatorData.getCalculatedDraftFwdActual();
