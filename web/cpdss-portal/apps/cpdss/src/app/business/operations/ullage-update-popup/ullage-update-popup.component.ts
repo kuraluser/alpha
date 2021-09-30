@@ -36,7 +36,7 @@ import { IPermission } from '../../../shared/models/user-profile.model';
 })
 export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
 
-  @Input() loadingInfoId: number;
+  @Input() infoId: number;
   @Input() status: ULLAGE_STATUS;
   @Input() vesselId: number;
   @Input() patternId: number;
@@ -176,29 +176,46 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.show();
     try {
       const status = this.status === ULLAGE_STATUS.ARRIVAL ? 'ARR' : 'DEP';
-      const data = await this.ullageUpdateApiService.getUllageDetails(this.vesselId, this.patternId, this.portRotationId, status).toPromise();
+      let data;
+      if (this.operation === OPERATIONS.LOADING) {
+        data = await this.ullageUpdateApiService.getUllageDetails(this.vesselId, this.patternId, this.portRotationId, status).toPromise();
+      } else {
+        data = await this.ullageUpdateApiService.getDischargePlanUllageDetails(this.vesselId, this.patternId, this.portRotationId, status).toPromise();
+      }
+      data.portPlanStowageDetails = this.operation === OPERATIONS.LOADING ? data.portLoadablePlanStowageDetails : data.portDischargePlanStowageDetails;
+      data.portPlanBallastDetails = this.operation === OPERATIONS.LOADING ? data.portLoadablePlanBallastDetails : data.portDischargePlanBallastDetails;
+      data.portPlanRobDetails = this.operation === OPERATIONS.LOADING ? data.portLoadablePlanRobDetails : data.portDischargePlanRobDetails;
       if (data?.isPlannedValues) {
-        data.portLoadablePlanStowageDetails?.map(item => {
+        data.portPlanStowageDetails?.map(item => {
           item.quantity = 0;
           item.ullage = 0;
           item.temperature = 0;
           item.api = 0;
         });
-        data.portLoadablePlanBallastDetails?.map(item => {
+        data.portPlanBallastDetails?.map(item => {
           item.quantity = 0;
           item.sounding = 0;
         });
-        data.portLoadablePlanRobDetails?.map(item => {
+        data.portPlanRobDetails?.map(item => {
           item.quantity = 0;
           item.density = 0;
         });
-      };
+      }
       this.gradeDropdown = [];
-      data?.billOfLaddingList?.map(item => {
-        if (item?.cargoToBeLoaded || item?.cargoLoaded) {
-          this.gradeDropdown.push(item);
-        }
-      });
+      if (this.operation === OPERATIONS.LOADING) {
+        data?.billOfLaddingList?.map(item => {
+          if (item?.cargoToBeLoaded || item?.cargoLoaded) {
+            this.gradeDropdown.push(item);
+          }
+        });
+      } else {
+        data?.billOfLaddingList?.map(item => {
+          if (item?.cargoToBeDischarged || item?.cargoDischarged) {
+            this.gradeDropdown.push(item);
+          }
+        });
+      }
+
       this.display = true;
       this.ngxSpinnerService.hide();
       this.ullageResponseData = JSON.parse(JSON.stringify(data));
@@ -232,8 +249,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     this.blFigGrid(this.ullageResponseData);
     this.getShipLandingTanks();
     this.setCargoQuantities();
-    this.setBallastQuantities(this.ullageResponseData?.portLoadablePlanBallastDetails);
-    this.setBunkerQuantities(this.ullageResponseData?.portLoadablePlanRobDetails);
+    this.setBallastQuantities(this.ullageResponseData?.portPlanBallastDetails);
+    this.setBunkerQuantities(this.ullageResponseData?.portPlanRobDetails);
     this.getCargoTankFormGroup();
     this.getBallastTankFormGroup();
     this.getBunkerTankFormGroup();
@@ -264,7 +281,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     if (this.showAs.id === 2) {
       this.updateCargoTanks();
     } else {
-      this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portLoadablePlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+      this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
     }
   }
 
@@ -280,7 +297,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       let actualTemp = 0;
       let actualTempCount = 0;
       let avgCount = 0;
-      this.ullageResponseData?.portLoadablePlanStowageDetails.map(item => {
+      this.ullageResponseData?.portPlanStowageDetails.map(item => {
         if (bl.cargoNominationId === item.cargoNominationId) {
           actualQuantity += Number(item.quantity);
           actualAPi += Number(item.api);
@@ -380,7 +397,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   async updateCargoTanks() {
     let fillingPercentageError = false;
     let tankName = null;
-    this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portLoadablePlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+    this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
     this.cargoQuantityList.map(item => {
       const differenecPercentage = item.diffPercentage.mt;
       this.cargoTanks.map(tank => {
@@ -437,7 +454,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
    */
   setCargoQuantities() {
     this.cargoQuantities = [];
-    this.ullageResponseData?.portLoadablePlanStowageDetails?.map(item => {
+    this.ullageResponseData?.portPlanStowageDetails?.map(item => {
       if (this.selectedCargo.cargoNominationId === item.cargoNominationId) {
         this.cargoQuantities.push(this.ullageUpdatePopupTransformationService.getFormatedTankDetailsCargo(item, true, false, true))
       }
@@ -532,7 +549,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   formatCargoQuantity(data) {
     this.cargoQuantityList = [];
     data?.map(item => {
-      if (this.setCargoTobeLoaded(item)) {
+      if (this.setCargoTobeLoadedOrDischarged(item)) {
         this.cargoQuantityList.push(this.ullageUpdatePopupTransformationService.formatCargoQuantity(item));
       }
     });
@@ -543,14 +560,22 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
    *
    * @memberof UllageUpdatePopupComponent
    */
-  setCargoTobeLoaded(data) {
-    let cargoLoaded = false;
-    this.ullageResponseData?.billOfLaddingList?.map(item => {
-      if (item?.cargoNominationId === data?.cargoNominationId && (item?.cargoToBeLoaded || item?.cargoLoaded)) {
-        cargoLoaded = true;
-      }
-    });
-    return cargoLoaded;
+  setCargoTobeLoadedOrDischarged(data) {
+    let cargoLoadedDischarged = false;
+    if (this.operation === OPERATIONS.LOADING) {
+      this.ullageResponseData?.billOfLaddingList?.map(item => {
+        if (item?.cargoNominationId === data?.cargoNominationId && (item?.cargoToBeLoaded || item?.cargoLoaded)) {
+          cargoLoadedDischarged = true;
+        }
+      });
+    } else {
+      this.ullageResponseData?.billOfLaddingList?.map(item => {
+        if (item?.cargoNominationId === data?.cargoNominationId && (item?.cargoToBeDischarged || item?.cargoDischarged)) {
+          cargoLoadedDischarged = true;
+        }
+      });
+    }
+    return cargoLoadedDischarged;
   }
 
   /**
@@ -590,15 +615,13 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   * @memberof UllageUpdatePopupComponent
   */
   convertQuantityToSelectedUnit() {
-
-    this.bunkerTanks = this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerTanks, this.ullageResponseData?.portLoadablePlanRobDetails, this.status);
-    this.rearBunkerTanks = this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerRearTanks, this.ullageResponseData?.portLoadablePlanRobDetails, this.status);
-    this.cargoTanks = this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portLoadablePlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.rearBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastRearTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.centerBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastCenterTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.frontBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastFrontTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.fuelTypes = [...new Map(this.ullageResponseData.portLoadablePlanRobDetails.map(item => [item['fuelTypeId'], { id: item?.fuelTypeId, name: item?.tankName, colorCode: item?.colorCode, shortName: item?.fuelTypeShortName }])).values()];
-
+    this.bunkerTanks = this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerTanks, this.ullageResponseData?.portPlanRobDetails, this.status);
+    this.rearBunkerTanks = this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerRearTanks, this.ullageResponseData?.portPlanRobDetails, this.status);
+    this.cargoTanks = this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.rearBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastRearTanks, this.ullageResponseData?.portPlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.centerBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastCenterTanks, this.ullageResponseData?.portPlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.frontBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastFrontTanks, this.ullageResponseData?.portPlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.fuelTypes = [...new Map(this.ullageResponseData.portPlanRobDetails.map(item => [item['fuelTypeId'], { id: item?.fuelTypeId, name: item?.tankName, colorCode: item?.colorCode, shortName: item?.fuelTypeShortName }])).values()];
   }
 
   /**
@@ -673,7 +696,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     this.blFigure['items'] = [];
     const blData = data?.billOfLaddingList ? data?.billOfLaddingList : [];
     blData.map(item => {
-      if (item.cargoToBeLoaded) {
+      if (item?.cargoToBeLoaded || item?.cargoToBeDischarged) {
         const cargoData = [];
         if (item?.billOfLaddings?.length) {
           item?.billOfLaddings?.map(bl => {
@@ -685,13 +708,15 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         this.blFigure['items'].push(cargoData);
       }
     });
+
     this.blFigure.items.map((blItems, blRowIndex) => {
       const items = this.tableForm.get('items') as FormArray;
       items.push(this.initItems())
       blItems.forEach((cargoDetails, index) => {
         this.addCargoItems(blRowIndex, cargoDetails.cargo);
       });
-    })
+    });
+
     this.calculateTotal();
     this.enableDisableBLFigure();
     setTimeout(() => {
@@ -777,11 +802,12 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   enableDisableBLFigure() {
     this.ullageResponseData?.billOfLaddingList?.map(item => {
       let totQuantity = 0;
-      this.ullageResponseData?.portLoadablePlanStowageDetails.map(stowage => {
+      this.ullageResponseData?.portPlanStowageDetails.map(stowage => {
         if (item.cargoNominationId === stowage.cargoNominationId) {
           totQuantity += Number(stowage.quantity);
         }
       });
+
       this.tableForm.controls.items['controls'].map(form => {
         form.controls.cargos.controls.map(child => {
           if (child.controls.cargoNominationId.value === item.cargoNominationId) {
@@ -1088,11 +1114,12 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     };
 
     this.ngxSpinnerService.show();
-    const result = await this.ullageUpdateApiService.getUllageQuantity(param, event.data.loadablePatternId).toPromise();
+    const patternId = this.operation === OPERATIONS.LOADING ? event.data.loadablePatternId : event.data.dischargePatternId;
+    const result = await this.ullageUpdateApiService.getUllageQuantity(param, patternId).toPromise();
     this.ngxSpinnerService.hide();
     this.cargoTankForm.markAllAsTouched();
     if (result.responseStatus.status === '200') {
-      this.ullageResponseData?.portLoadablePlanStowageDetails.map(item => {
+      this.ullageResponseData?.portPlanStowageDetails.map(item => {
         if (item.cargoNominationId === event.data.cargoNominationId && item.tankId === event.data.tankId) {
           item.quantity = result.quantityMt;
           item.actualWeight = result.quantityMt;
@@ -1103,6 +1130,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           item.temperature = event.data.temperature.value;
         }
       });
+
       this.cargoQuantities[event.index].quantity.value = result.quantityMt;
       this.cargoQuantities[event.index].fillingPercentage.value = result.fillingRatio;
       const formControls = <FormControl>(<FormArray>this.cargoTankForm.get('dataTable')).at(event.index);
@@ -1132,7 +1160,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     }
     this.enableDisableBLFigure();
     setTimeout(() => {
-      this.cargoTanks = this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portLoadablePlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+      this.cargoTanks = this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
       this.validateBlFigTable();
     });
 
@@ -1157,7 +1185,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       temperature: event.data.temperature.value
     };
     this.ngxSpinnerService.show();
-    const result = await this.ullageUpdateApiService.getUllageQuantity(param, event.data.loadablePatternId).toPromise();
+    const patternId = this.operation === OPERATIONS.LOADING ? event.data.loadablePatternId : event.data.dischargePatternId;
+    const result = await this.ullageUpdateApiService.getUllageQuantity(param, patternId).toPromise();
     this.ngxSpinnerService.hide();
     if (result.responseStatus.status === '200') {
       this.ballastQuantities?.map(item => {
@@ -1179,19 +1208,20 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       formControlFilling.updateValueAndValidity();
       const formControlSounding = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get(event.field);
       formControlSounding.updateValueAndValidity();
-      this.ullageResponseData?.portLoadablePlanBallastDetails?.map(item => {
+      this.ullageResponseData?.portPlanBallastDetails?.map(item => {
         if (item.tankId === event.data.tankId) {
           item.quantity = result.quantityMt;
           item.sounding = result.correctedUllage;
         }
       });
+
       if (result.fillingRatio?.toString()?.trim() === '') {
         formControlSounding.setErrors({ maxLimit: true });
       }
       setTimeout(() => {
-        this.rearBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastRearTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
-        this.centerBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastCenterTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
-        this.frontBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastFrontTanks, this.ullageResponseData?.portLoadablePlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
+        this.rearBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastRearTanks, this.ullageResponseData?.portPlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
+        this.centerBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastCenterTanks, this.ullageResponseData?.portPlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
+        this.frontBallastTanks = [...this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastFrontTanks, this.ullageResponseData?.portPlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit)];
       });
 
     } else if (result.responseStatus.status === '325') {
@@ -1239,14 +1269,15 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         formControls['controls'].quantity.markAsDirty();
         formControls['controls'].quantity.markAsTouched();
       });
-      this.ullageResponseData?.portLoadablePlanRobDetails?.map(item => {
+      this.ullageResponseData?.portPlanRobDetails?.map(item => {
         if (item.tankId === event.data.tankId) {
           item.quantity = event.data.quantity.value;
         }
       });
+
       setTimeout(() => {
-        this.bunkerTanks = [...this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerTanks, this.ullageResponseData?.portLoadablePlanRobDetails, this.status)];
-        this.rearBunkerTanks = [...this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerRearTanks, this.ullageResponseData?.portLoadablePlanRobDetails, this.status)];
+        this.bunkerTanks = [...this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerTanks, this.ullageResponseData?.portPlanRobDetails, this.status)];
+        this.rearBunkerTanks = [...this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerRearTanks, this.ullageResponseData?.portPlanRobDetails, this.status)];
       });
     }
     this.bunkerTankForm.markAllAsTouched();
@@ -1302,7 +1333,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         item.map(row => {
           data.billOfLandingList.push(
             {
-              loadingId: this.loadingInfoId ? this.loadingInfoId?.toString() : '',
+              loadingId: this.infoId ? this.infoId?.toString() : '',
               portId: row.cargo.portId ? row.cargo.portId?.toString() : '',
               cargoId: row.cargo.cargoNominationId ? row.cargo.cargoNominationId?.toString() : '',
               blRefNumber: row.cargo.blRefNo.value ? row.cargo.blRefNo.value?.toString() : '',
@@ -1324,7 +1355,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.billOfLaddingRemovedList.map(item => {
         data.billOfLandingListRemove.push(
           {
-            loadingId: this.loadingInfoId ? this.loadingInfoId?.toString() : '',
+            loadingId: this.infoId ? this.infoId?.toString() : '',
             portId: item.cargo.portId ? item.cargo.portId?.toString() : '',
             cargoId: item.cargo.cargoNominationId ? item.cargo.cargoNominationId?.toString() : '',
             blRefNumber: item.cargo.blRefNo.value ? item.cargo.blRefNo.value?.toString() : '',
@@ -1344,9 +1375,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
 
     }
 
-    this.ullageResponseData?.portLoadablePlanStowageDetails.map(item => {
+    this.ullageResponseData?.portPlanStowageDetails.map(item => {
       data.ullageUpdList.push({
-        loadingInformationId: this.loadingInfoId?.toString(),
+        loadingInformationId: this.infoId?.toString(),
         tankId: item.tankId?.toString(),
         temperature: item.temperature?.toString(),
         correctedUllage: item.correctedUllage?.toString(),
@@ -1371,7 +1402,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
 
     this.ballastQuantities.map(item => {
       data.ballastUpdateList.push({
-        loadingInformationId: this.loadingInfoId?.toString(),
+        loadingInformationId: this.infoId?.toString(),
         tankId: item.tankId?.toString(),
         temperature: item.temperature.value?.toString(),
         quantity: item.quantity.value?.toString(),
@@ -1395,7 +1426,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
 
     this.bunkerTanksList.map(item => {
       data.robUpdateList.push({
-        loadingInformationId: this.loadingInfoId?.toString(),
+        loadingInformationId: this.infoId?.toString(),
         tankId: item.tankId?.toString(),
         quantity: item.quantity.value?.toString(),
         isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
@@ -1449,12 +1480,12 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TANK_NAME_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_ULLAGE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_API_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TEMPERATURE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_WEIGHT_ERROR']).toPromise();
     const formData: FormData = new FormData();
     formData.append('file', event.target.files[0]);
-    formData.append('infoId', this.loadingInfoId?.toString());
+    formData.append('infoId', this.infoId?.toString());
     formData.append('cargoNominationId', this.selectedCargo?.cargoNominationId);
-    formData.append('isLoading', 'true');
+    formData.append('isLoading', this.operation === OPERATIONS.LOADING ? 'true' : 'false');
     formData.append('vesselId', this.vesselId?.toString());
     const tanks = [];
-    this.ullageResponseData?.portLoadablePlanStowageDetails?.map(item => {
+    this.ullageResponseData?.portPlanStowageDetails?.map(item => {
       if (item.cargoNominationId === this.selectedCargo?.cargoNominationId) {
         tanks.push({ tankId: item.tankId, shortName: item.tankShortName });
       }
@@ -1467,7 +1498,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.ngxSpinnerService.hide();
       if (result.responseStatus.status === '200') {
         this.messageService.add({ severity: 'success', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_SUCCESS_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_SUCCESS_MESSAGE'] });
-        this.ullageResponseData?.portLoadablePlanStowageDetails?.map(item => {
+        this.ullageResponseData?.portPlanStowageDetails?.map(item => {
           if (item.cargoNominationId === this.selectedCargo?.cargoNominationId) {
             result?.ullageReportResponse?.map(data => {
               if (data.tankId === item.tankId) {
@@ -1484,7 +1515,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         this.getCargoTankFormGroup();
         this.updateCargoQuantiyData();
         this.validateBlFigTable();
-        this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portLoadablePlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+        this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
       }
     } catch (err) {
       this.ngxSpinnerService.hide();
