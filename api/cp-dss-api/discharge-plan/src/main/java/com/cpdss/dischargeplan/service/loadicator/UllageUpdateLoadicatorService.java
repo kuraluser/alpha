@@ -246,16 +246,16 @@ public class UllageUpdateLoadicatorService {
    */
   private void buildRobDetails(
       DischargeInformation dischargeInformation,
-      List<PortLoadingPlanRobDetails> robDetails,
+      List<PortDischargingPlanRobDetails> robDetails,
       VesselReply vesselReply,
       Builder stowagePlanBuilder) {
     robDetails.forEach(
         rob -> {
           Loadicator.OtherTankInfo.Builder otherTankBuilder = Loadicator.OtherTankInfo.newBuilder();
-          otherTankBuilder.setTankId(rob.getTankId());
+          otherTankBuilder.setTankId(rob.getTankXId());
           Optional<VesselInfo.VesselTankDetail> tankDetail =
               vesselReply.getVesselTanksList().stream()
-                  .filter(tank -> Long.valueOf(tank.getTankId()).equals(rob.getTankId()))
+                  .filter(tank -> Long.valueOf(tank.getTankId()).equals(rob.getTankXId())
                   .findAny();
           if (tankDetail.isPresent()) {
             Optional.ofNullable(tankDetail.get().getTankName())
