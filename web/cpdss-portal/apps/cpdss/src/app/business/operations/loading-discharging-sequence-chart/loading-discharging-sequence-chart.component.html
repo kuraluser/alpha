@@ -1,4 +1,4 @@
-<div class="row mt-10" *ngIf="stageTickPositions">
+<div class="row mt-10" *ngIf="stageTickPositions && Highcharts">
   <div class="col-12" (mousemove)="synchronizeTooltips($event, SEQUENCE_CHARTS.CARGO_TANK)"
     (touchmove)="synchronizeTooltips($event, SEQUENCE_CHARTS.CARGO_TANK)"
     (touchstart)="synchronizeTooltips($event, SEQUENCE_CHARTS.CARGO_TANK)">

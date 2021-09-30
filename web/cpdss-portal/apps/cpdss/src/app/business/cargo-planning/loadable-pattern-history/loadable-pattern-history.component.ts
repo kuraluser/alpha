@@ -179,7 +179,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
         else if ([2, 3].includes(statusId)) {
           loadableStudy.isEditable = false;
           loadableStudy.isDeletable = false;
-          loadableStudy.isActionsEnabled = true;
+          loadableStudy.isActionsEnabled = [VOYAGE_STATUS.ACTIVE].includes(this.selectedVoyage?.statusId) ? false : true;
         }
         else if ([6, 1].includes(statusId)) {
           loadableStudy.isActionsEnabled = true;

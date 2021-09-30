@@ -380,7 +380,7 @@ export class UllageUpdatePopupTransformationService {
       },
       {
         field: 'temp',
-        header: 'LOADABLE_PLAN_BL_TEMP',
+        header: 'ULLAGE_UPDATE_TEMPERATURE',
         editable: true,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: "LOADABLE_PLAN_BL_TEMP_PLACEHOLDER",
@@ -519,7 +519,7 @@ export class UllageUpdatePopupTransformationService {
   formatCargoQuantity(data) {
     const cargoQuantity: any = {};
     cargoQuantity.cargoAbbrevation = data.cargoAbbrevation;
-    cargoQuantity.nominationTotal = data.nominationTotal;
+    cargoQuantity.nominationTotal = this.quantityPipe.transform(data.nominationTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.nominationApi) ?? 0;
     cargoQuantity.maxTolerance = data.maxTolerance;
     cargoQuantity.minTolerance = data.minTolerance;
     cargoQuantity.maxQuantity = data.maxQuantity;
@@ -527,6 +527,8 @@ export class UllageUpdatePopupTransformationService {
     cargoQuantity.api = data.blAvgApi;
     cargoQuantity.cargoColor = data.cargoColor;
     cargoQuantity.cargoNominationId = data.cargoNominationId;
+    cargoQuantity.cargoLoaded = data.cargoLoaded;
+    cargoQuantity.cargoToBeLoaded = data.cargoToBeLoaded;
     cargoQuantity.plan = {
       bbl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.nominationApi) ?? 0,
       lt: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, data.nominationApi) ?? 0,
