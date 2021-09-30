@@ -18,4 +18,8 @@ public interface PortDischargingPlanRobDetailsRepository
       "FROM PortDischargingPlanRobDetails PL INNER JOIN DischargeInformation LI ON PL.dischargingInformation = LI.id AND LI.dischargingPatternXid = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3")
   public List<PortDischargingPlanRobDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
+
+  public List<PortDischargingPlanRobDetails>
+      findByDischargingInformationAndConditionTypeAndIsActive(
+          long loadingInformationId, int arrivalDepartutre, boolean b);
 }

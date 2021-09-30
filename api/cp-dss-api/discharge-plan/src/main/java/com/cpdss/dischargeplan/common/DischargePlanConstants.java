@@ -19,6 +19,7 @@ public class DischargePlanConstants {
   public static final String TIDE_HEIGHT = "Tide_Height";
   public static final String PORT_TITLE_FONT_STYLE = "Ariel";
   public static final int PORT_TITLE_FONT_HEIGHT = 11;
+  public static final int ACTUAL_TYPE_VALUE = 1;
   public static final List<String> PORT_EXCEL_TEMPLATE_TITLES =
       Arrays.asList(PORT, TIDE_DATE, TIDE_TIME, TIDE_HEIGHT);
 }

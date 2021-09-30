@@ -10,7 +10,6 @@ import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortLoadingPlanRobDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsRequest;
@@ -33,18 +32,17 @@ import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepositor
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageTempDetailsRepository;
+import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
 import com.cpdss.dischargeplan.service.DischargePlanSynchronizeService;
-import com.cpdss.dischargeplan.service.DischargeUllageService;
+import com.cpdss.dischargeplan.service.DischargeUllageServiceUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
-import java.math.BigDecimal;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.util.StringUtils;
 
 @Slf4j
 @GrpcService
@@ -58,6 +56,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   @Autowired PortDischargingPlanRobDetailsRepository pdpRobDetailsRepository;
   @Autowired PortDischargingPlanStabilityParametersRepository pdpStabilityParametersRepository;
   @Autowired BillOfLaddingRepository billOfLaddingRepo;
+  @Autowired DischargeInformationService dischargeInformationService;
 
   @Autowired
   PortDischargingPlanStowageTempDetailsRepository portLoadingPlanStowageTempDetailsRepository;
@@ -66,8 +65,6 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   PortDischargingPlanBallastTempDetailsRepository portLoadingPlanBallastTempDetailsRepository;
 
   @Autowired DischargePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
-
-  @Autowired DischargeUllageService dischargeUllageService;
 
   @Override
   public void dischargePlanSynchronization(
@@ -595,54 +592,47 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
       UllageBillRequest request, StreamObserver<UllageBillReply> responseObserver) {
     LoadingPlanModels.UllageBillReply.Builder builder =
         LoadingPlanModels.UllageBillReply.newBuilder();
-
     String processId = "";
     try {
-      List<BillOfLadding> updatedBillOfLadding =
-          dischargeUllageService.updateBillOfLadding(request);
 
+      // update and save ballast
+      List<PortDischargingPlanBallastTempDetails> tempBallast =
+          portLoadingPlanBallastTempDetailsRepository
+              .findByDischargingInformationAndConditionTypeAndIsActive(
+                  request.getUpdateUllage(0).getLoadingInformationId(),
+                  request.getUpdateUllage(0).getArrivalDepartutre(),
+                  true);
       List<PortDischargingPlanBallastTempDetails> updatedBallast =
-          dischargeUllageService.updateBallast(request);
+          DischargeUllageServiceUtils.updateBallast(request, tempBallast);
+      portLoadingPlanBallastTempDetailsRepository.saveAll(updatedBallast);
 
+      // update and save stowage
+      List<PortDischargingPlanStowageTempDetails> tempStowage =
+          portLoadingPlanStowageTempDetailsRepository
+              .findByDischargingInformationAndConditionTypeAndIsActive(
+                  request.getUpdateUllage(0).getLoadingInformationId(),
+                  request.getUpdateUllage(0).getArrivalDepartutre(),
+                  true);
       List<PortDischargingPlanStowageTempDetails> updatedStowage =
-          dischargeUllageService.updateStowage(request);
-      request
-          .getRobUpdateList()
-          .forEach(
-              ullageInsert -> {
-                if (ullageInsert.getIsUpdate()) {
-                  loadingPlanRobDetailsRepository.updatePortLoadingPlanRobDetailsRepository(
-                      StringUtils.isEmpty(ullageInsert.getQuantity())
-                          ? null
-                          : new BigDecimal(ullageInsert.getQuantity()),
-                      StringUtils.isEmpty(ullageInsert.getQuantity())
-                          ? null
-                          : new BigDecimal(ullageInsert.getQuantity()),
-                      Long.valueOf(ullageInsert.getTankId()),
-                      ullageInsert.getLoadingInformationId(),
-                      ullageInsert.getArrivalDepartutre(),
-                      ullageInsert.getActualPlanned());
-                } else {
-                  PortLoadingPlanRobDetails robDet = new PortLoadingPlanRobDetails();
-                  robDet.setLoadingInformation(ullageInsert.getLoadingInformationId());
-                  robDet.setTankXId(Long.valueOf(ullageInsert.getTankId()));
-                  robDet.setQuantity(
-                      StringUtils.isEmpty(ullageInsert.getQuantity())
-                          ? null
-                          : new BigDecimal(ullageInsert.getQuantity()));
-                  robDet.setPortXId(Long.valueOf(ullageInsert.getPortXid()));
-                  robDet.setPortRotationXId(Long.valueOf(ullageInsert.getPortRotationXid()));
-                  robDet.setConditionType(ullageInsert.getArrivalDepartutre());
-                  robDet.setValueType(LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
-                  robDet.setIsActive(true);
-                  robDet.setColorCode(ullageInsert.getColourCode());
-                  robDet.setDensity(
-                      StringUtils.isEmpty(ullageInsert.getDensity())
-                          ? null
-                          : new BigDecimal(ullageInsert.getDensity()));
-                  loadingPlanRobDetailsRepository.save(robDet);
-                }
-              });
+          DischargeUllageServiceUtils.updateStowage(request, tempStowage);
+      portLoadingPlanStowageTempDetailsRepository.saveAll(updatedStowage);
+
+      // update and save ROB
+      List<PortDischargingPlanRobDetails> tempRob =
+          pdpRobDetailsRepository.findByDischargingInformationAndConditionTypeAndIsActive(
+              request.getRobUpdate(0).getLoadingInformationId(),
+              request.getRobUpdate(0).getArrivalDepartutre(),
+              true);
+      List<PortDischargingPlanRobDetails> updatedRob =
+          DischargeUllageServiceUtils.updateRob(request, tempRob);
+      pdpRobDetailsRepository.saveAll(updatedRob);
+
+      // update and save bill of ladding
+      List<BillOfLadding> updatedBillOfLadding =
+          DischargeUllageServiceUtils.updateBillOfLadding(
+              request, billOfLaddingRepo, dischargeInformationService);
+      billOfLaddingRepo.saveAll(updatedBillOfLadding);
+
       if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
         processId = validateAndSaveData(request);
       }
@@ -654,11 +644,16 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage(e.getMessage())
-              .setStatus(LoadingPlanConstants.FAILED)
+              .setStatus(DischargePlanConstants.FAILED)
               .build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  private String validateAndSaveData(UllageBillRequest request) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

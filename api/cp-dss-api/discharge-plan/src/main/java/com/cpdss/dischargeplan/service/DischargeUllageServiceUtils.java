@@ -6,38 +6,27 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLanding;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLandingRemove;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllage;
+import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.entity.BillOfLadding;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastTempDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageTempDetails;
 import com.cpdss.dischargeplan.repository.BillOfLaddingRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastTempDetailsRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageTempDetailsRepository;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-@Slf4j
-@Service
-@Transactional
-public class DischargeUllageService {
+public class DischargeUllageServiceUtils {
 
-  @Autowired DischargeInformationService dischargeInformationService;
-  @Autowired BillOfLaddingRepository billOfLaddingRepo;
+  private DischargeUllageServiceUtils() {}
 
-  @Autowired
-  PortDischargingPlanBallastTempDetailsRepository portDischargingPlanBallastTempDetailsRepository;
-
-  @Autowired
-  PortDischargingPlanStowageTempDetailsRepository portDischargingPlanStowageTempDetailsRepository;
-
-  public List<BillOfLadding> updateBillOfLadding(UllageBillRequest request) {
+  public static List<BillOfLadding> updateBillOfLadding(
+      UllageBillRequest request,
+      BillOfLaddingRepository billOfLaddingRepo,
+      DischargeInformationService dischargeInformationService) {
     List<Long> ids =
         request.getBillOfLandingList().stream()
             .filter(BillOfLanding::getIsUpdate)
@@ -124,16 +113,11 @@ public class DischargeUllageService {
               bLToDisable.setIsActive(false);
               updatedEntities.add(bLToDisable);
             });
-    return billOfLaddingRepo.saveAll(updatedEntities);
+    return updatedEntities;
   }
 
-  public List<PortDischargingPlanBallastTempDetails> updateBallast(UllageBillRequest request) {
-    List<PortDischargingPlanBallastTempDetails> tempBallast =
-        portDischargingPlanBallastTempDetailsRepository
-            .findByDischargingInformationAndConditionTypeAndIsActive(
-                request.getUpdateUllage(0).getLoadingInformationId(),
-                request.getUpdateUllage(0).getArrivalDepartutre(),
-                true);
+  public static List<PortDischargingPlanBallastTempDetails> updateBallast(
+      UllageBillRequest request, List<PortDischargingPlanBallastTempDetails> tempBallast) {
     List<PortDischargingPlanBallastTempDetails> udpatedBallast = new ArrayList<>();
     request
         .getBallastUpdateList()
@@ -171,10 +155,10 @@ public class DischargeUllageService {
                 udpatedBallast.add(createBallast(ballastRequest));
               }
             });
-    return portDischargingPlanBallastTempDetailsRepository.saveAll(udpatedBallast);
+    return udpatedBallast;
   }
 
-  private PortDischargingPlanBallastTempDetails createBallast(BallastUpdate ballastRequest) {
+  private static PortDischargingPlanBallastTempDetails createBallast(BallastUpdate ballastRequest) {
     PortDischargingPlanBallastTempDetails details = new PortDischargingPlanBallastTempDetails();
     details.setDischargingInformation(ballastRequest.getLoadingInformationId());
     details.setPortRotationXId(ballastRequest.getPortRotationXid());
@@ -215,13 +199,8 @@ public class DischargeUllageService {
     return details;
   }
 
-  public List<PortDischargingPlanStowageTempDetails> updateStowage(UllageBillRequest request) {
-    List<PortDischargingPlanStowageTempDetails> tempStowage =
-        portDischargingPlanStowageTempDetailsRepository
-            .findByDischargingInformationAndConditionTypeAndIsActive(
-                request.getUpdateUllage(0).getLoadingInformationId(),
-                request.getUpdateUllage(0).getArrivalDepartutre(),
-                true);
+  public static List<PortDischargingPlanStowageTempDetails> updateStowage(
+      UllageBillRequest request, List<PortDischargingPlanStowageTempDetails> tempStowage) {
     List<PortDischargingPlanStowageTempDetails> stowageToSave = new ArrayList<>();
     request
         .getUpdateUllageList()
@@ -251,10 +230,10 @@ public class DischargeUllageService {
                 stowageToSave.add(createStowage(stowageRequest));
               }
             });
-    return portDischargingPlanStowageTempDetailsRepository.saveAll(stowageToSave);
+    return stowageToSave;
   }
 
-  private PortDischargingPlanStowageTempDetails createStowage(UpdateUllage stowageRequest) {
+  public static PortDischargingPlanStowageTempDetails createStowage(UpdateUllage stowageRequest) {
     PortDischargingPlanStowageTempDetails tempData = new PortDischargingPlanStowageTempDetails();
     tempData.setDischargingInformation(stowageRequest.getLoadingInformationId());
     tempData.setTankXId(stowageRequest.getTankId());
@@ -293,5 +272,60 @@ public class DischargeUllageService {
     tempData.setAbbreviation(stowageRequest.getAbbreviation());
     tempData.setCargoXId(stowageRequest.getCargoId());
     return tempData;
+  }
+
+  public static List<PortDischargingPlanRobDetails> updateRob(
+      UllageBillRequest request, List<PortDischargingPlanRobDetails> tempRob) {
+
+    List<PortDischargingPlanRobDetails> robToSave = new ArrayList<>();
+    request
+        .getRobUpdateList()
+        .forEach(
+            robRequest -> {
+              BigDecimal quantity =
+                  StringUtils.isEmpty(robRequest.getQuantity())
+                      ? null
+                      : new BigDecimal(robRequest.getQuantity());
+              if (robRequest.getIsUpdate() && !tempRob.isEmpty()) {
+                PortDischargingPlanRobDetails dbData =
+                    tempRob.stream()
+                        .filter(
+                            ballast ->
+                                ballast.getTankXId().equals(robRequest.getTankId())
+                                    && ballast
+                                        .getDischargingInformation()
+                                        .equals(robRequest.getLoadingInformationId())
+                                    && ballast
+                                        .getConditionType()
+                                        .equals(robRequest.getArrivalDepartutre())
+                                    && ballast.getValueType().equals(robRequest.getActualPlanned()))
+                        .findFirst()
+                        .orElse(null);
+                dbData.setQuantity(quantity);
+                dbData.setQuantityM3(quantity);
+                robToSave.add(dbData);
+              } else {
+                PortDischargingPlanRobDetails robDet = new PortDischargingPlanRobDetails();
+                robDet.setDischargingInformation(robRequest.getLoadingInformationId());
+                robDet.setTankXId(Long.valueOf(robRequest.getTankId()));
+                robDet.setQuantity(
+                    StringUtils.isEmpty(robRequest.getQuantity())
+                        ? null
+                        : new BigDecimal(robRequest.getQuantity()));
+                robDet.setPortXId(Long.valueOf(robRequest.getPortXid()));
+                robDet.setPortRotationXId(Long.valueOf(robRequest.getPortRotationXid()));
+                robDet.setConditionType(robRequest.getArrivalDepartutre());
+                robDet.setValueType(DischargePlanConstants.ACTUAL_TYPE_VALUE);
+                robDet.setIsActive(true);
+                robDet.setColorCode(robRequest.getColourCode());
+                robDet.setDensity(
+                    StringUtils.isEmpty(robRequest.getDensity())
+                        ? null
+                        : new BigDecimal(robRequest.getDensity()));
+                robToSave.add(robDet);
+              }
+            });
+
+    return robToSave;
   }
 }
