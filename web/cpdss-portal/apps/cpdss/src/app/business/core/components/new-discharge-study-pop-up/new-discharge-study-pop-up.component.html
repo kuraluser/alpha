@@ -1,4 +1,4 @@
-<p-dialog header="{{popUpHeader |translate}}" [(visible)]="display"  [draggable]="false" [closable]="false"  (onHide)="closeDialogue()"  styleClass="discharge-study-pop-up">
+<p-dialog header="{{popUpHeader |translate}}" [(visible)]="display"  [draggable]="false" [modal]="true"  [closable]="false"  (onHide)="closeDialogue()"  styleClass="discharge-study-pop-up">
     <form [formGroup]="dischargeStudyForm" id="fg_dischargeStudy" *ngIf="dischargeStudyForm" (submit)="saveOrUpdateDischargeStudy()">
         <div class="container-fluid">
             <div class="row form-group">

@@ -157,6 +157,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
       }
       if(this.loadingInformationData.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.SUCCESS){
         this.loadingDischargingTransformationService.disableSaveButton.next(true);   
+        this.loadingDischargingTransformationService.inProcessing.next(true);
         this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true) 
         this.loadingDischargingTransformationService.disableViewErrorButton.next(true);  
       }

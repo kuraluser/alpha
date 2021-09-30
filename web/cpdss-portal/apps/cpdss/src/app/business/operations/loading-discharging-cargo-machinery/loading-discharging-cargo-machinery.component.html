@@ -36,8 +36,8 @@
                 <ng-container *ngFor="let column of row.columns; let i=index">
                   <tr>
                     <td *ngIf="i === 0" [attr.rowspan]="row.columns.length">{{row.machine}}</td>
-                    <td *ngIf="key === 'cargoMachineryValues' && i === 0" [attr.rowspan]="row.columns.length">
-                      <p-dropdown *ngIf="row.machine === 'Manifold'" styleClass="dropdown-w-180 form-control"
+                    <td *ngIf="key === 'cargoMachineryValues' && i === 0" [attr.rowspan]="row.columns.length" class="text-uppercase">
+                      <p-dropdown *ngIf="row.machine === 'Manifold'" styleClass="dropdown-w-180 form-control text-uppercase"
                         [options]="machineryInUses.tankTypes" [(ngModel)]="selectedType" optionLabel="name"
                         [filter]="true" placeholder="{{ 'LOADING_INFORMATION_MACHINERY_TYPE_SELECT' | translate}}"
                         resetFilterOnHide="true" (onChange)="onTypeChange($event)">

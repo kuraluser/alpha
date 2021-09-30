@@ -834,6 +834,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableQuantityReply request, StreamObserver<LoadableQuantityResponse> responseObserver) {
     LoadableQuantityResponse.Builder builder = LoadableQuantityResponse.newBuilder();
     try {
+      log.info("Get Loadable Quantity payload - {}", Utils.toJson(request));
       loadableQuantityService.loadableQuantityByPortId(
           builder, request.getLoadableStudyId(), request.getPortRotationId());
     } catch (GenericServiceException e) {
@@ -2940,7 +2941,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       log.error("GenericServiceException in get ullage", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
-              .setCode(CommonErrorCodes.E_CPDSS_ULLAGE_INVALID_CORRECTED_ULLAGE)
+              .setCode(CommonErrorCodes.E_CPDSS_ULLAGE_UPDATE_INVALID_VALUE)
               .setMessage(LoadableStudiesConstants.INVALID_ULLAGE_OR_SOUNDING_VALUE)
               .setStatus(SUCCESS)
               .build());

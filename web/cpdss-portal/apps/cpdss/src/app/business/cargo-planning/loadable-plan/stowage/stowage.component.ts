@@ -551,9 +551,9 @@ export class StowageComponent implements OnInit {
           cargoQuantity += Number(cargoDetail?.weight?.value);
         }
       });
-      if (total > loadableQuantityCargo?.maxTolerence) {
+      if (Number(total?.toFixed(2)) > loadableQuantityCargo?.maxTolerence) {
         exceedToleranceLimit = loadableQuantityCargo;
-      } else if (total < loadableQuantityCargo?.minTolerence) {
+      } else if (Number(total?.toFixed(2)) < loadableQuantityCargo?.minTolerence) {
         exceedToleranceLimit = loadableQuantityCargo;
       }
     });

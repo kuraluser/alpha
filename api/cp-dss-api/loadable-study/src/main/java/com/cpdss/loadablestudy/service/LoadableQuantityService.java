@@ -133,7 +133,8 @@ public class LoadableQuantityService {
         if (portRotation.getMaxDraft() != null) {
           minDraftValue.add(portRotation.getMaxDraft());
         }
-        // minDraftValue.add(loadableStudy.get().getDraftMark());
+        // DSS-4224 need min value of draft
+        minDraftValue.add(loadableStudy.get().getDraftMark());
         Optional<BigDecimal> minVal =
             minDraftValue.stream().min(Comparator.comparing(BigDecimal::doubleValue));
         if (minVal.isPresent()) {
@@ -172,6 +173,7 @@ public class LoadableQuantityService {
                     isLoadingPort
                         ? OnHandQuantity::getDepartureQuantity
                         : OnHandQuantity::getArrivalQuantity)
+                .filter(v -> v != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         doOnboard =
             onHandQuantityList.stream()
@@ -186,6 +188,7 @@ public class LoadableQuantityService {
                     isLoadingPort
                         ? OnHandQuantity::getDepartureQuantity
                         : OnHandQuantity::getArrivalQuantity)
+                .filter(v -> v != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         freshWaterOnBoard =
             onHandQuantityList.stream()
@@ -200,6 +203,7 @@ public class LoadableQuantityService {
                     isLoadingPort
                         ? OnHandQuantity::getDepartureQuantity
                         : OnHandQuantity::getArrivalQuantity)
+                .filter(v -> v != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         boileWaterOnBoard =
             onHandQuantityList.stream()
@@ -213,6 +217,7 @@ public class LoadableQuantityService {
                     isLoadingPort
                         ? OnHandQuantity::getDepartureQuantity
                         : OnHandQuantity::getArrivalQuantity)
+                .filter(v -> v != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         log.info(

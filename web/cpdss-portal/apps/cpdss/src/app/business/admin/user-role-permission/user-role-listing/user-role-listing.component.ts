@@ -175,7 +175,7 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
     }
     const permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['UserRoleListing']);
     if (permission.edit) {
-      this.router.navigate([event.data.id], { relativeTo: this.activatedRoute.parent });
+      this.editRow(event);
     }
   }
 

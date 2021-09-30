@@ -47,4 +47,6 @@ public class GatewayConstants {
   public static final String DISCHARGE_STUDY_SAVE_REQUEST = "DS_SAVE";
   public static final String LOADABLE_STUDY = "LS";
   public static final String DICHARGE_STUDY = "DS";
+
+  public static final String BALLAST_COLOR = "#01717D";
 }
