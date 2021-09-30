@@ -2898,7 +2898,7 @@ public class LoadablePlanService {
       LoadabalePatternValidateRequest loadabalePatternValidateRequest,
       Long patternId,
       ModelMapper modelMapper) {
-    loadabalePatternValidateRequest.setLoadablePlanStowageTempDetails(new ArrayList<>());
+    // loadabalePatternValidateRequest.setLoadablePlanStowageTempDetails(new ArrayList<>());
     Optional<LoadablePattern> pattern =
         loadablePatternRepository.findByIdAndIsActive(patternId, true);
     List<LoadablePlanStowageDetailsTemp> stowageTempList =
@@ -2913,9 +2913,9 @@ public class LoadablePlanService {
                   modelMapper.map(
                       stowageTemp,
                       com.cpdss.loadablestudy.domain.LoadablePlanStowageTempDetails.class);
-              loadabalePatternValidateRequest
-                  .getLoadablePlanStowageTempDetails()
-                  .add(loadablePlanStowageTempDetails);
+              //              loadabalePatternValidateRequest
+              //                  .getLoadablePlanStowageTempDetails()
+              //                  .add(loadablePlanStowageTempDetails);
             });
   }
 

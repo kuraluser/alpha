@@ -24,10 +24,7 @@ import com.google.protobuf.util.JsonFormat;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -111,19 +108,6 @@ public class CommunicationService {
             log.info("@@@@@@@@@@@LoadableStudy received at shore side ");
             saveValidatePlanRequestShore(erReply);
           }
-        } else if (messageType.getMessageType().equals("PatternDetail")) {
-          EnvoyReader.EnvoyReaderResultReply erReply =
-              getResultFromEnvoyReaderShore(taskReqParams, messageType);
-          if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
-            throw new GenericServiceException(
-                "Failed to get Result from Communication Server",
-                erReply.getResponseStatus().getCode(),
-                HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
-          }
-          if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
-            log.info("-------Pattern received  received at ship side ");
-            savePatternInShipSide(erReply);
-          }
         }
       } catch (GenericServiceException e) {
         throw new GenericServiceException(
@@ -156,31 +140,42 @@ public class CommunicationService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    //    if(!loadablePatternAlgoRequest.getValidated()){
-    //      loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
-    //              LOADABLE_PATTERN_VALIDATION_FAILED_ID,
-    // loadablePatternAlgoRequest.getProcessId(), true);
-    //
-    //      algoErrorsRepository.deleteAlgoError(false,
-    // loadablePatternAlgoRequest.getLoadablePatternId());
-    //      algoErrorHeadingRepository.deleteAlgoErrorHeading(false,
-    // loadablePatternAlgoRequest.getLoadablePatternId());
-    //      if(loadablePatternAlgoRequest.getAlgoError() != null){
-    //        loadablePatternAlgoRequest.getAlgoError().forEach(algoErrors ->{
-    //          com.cpdss.loadablestudy.entity.AlgoErrors algoErrorsEntity =
-    //                  new com.cpdss.loadablestudy.entity.AlgoErrors();
-    //          algoErrorsEntity.setAlgoErrorHeading(algoErrors.getAlgoErrorHeading());
-    //          algoErrorsEntity.setErrorMessage(algoErrors.getErrorMessage());
-    //          algoErrorsEntity.setIsActive(true);
-    //          algoErrorsRepository.save(algoErrors);
-    //        });
-    //      }
-    //    }else{
-    //      if(loadablePatternAlgoRequest.getPatternDetails() != null){
-    //
-    // loadableStudyServiceShore.savePatternInShipSide(loadablePatternAlgoRequest.getPatternDetails());
-    //      }
-    //    }
+    if (!loadablePatternAlgoRequest.getValidated()) {
+      loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+          LOADABLE_PATTERN_VALIDATION_FAILED_ID, loadablePatternAlgoRequest.getProcessId(), true);
+
+      algoErrorsRepository.deleteAlgoError(
+          false, loadablePatternAlgoRequest.getLoadablePatternId());
+      algoErrorHeadingRepository.deleteAlgoErrorHeading(
+          false, loadablePatternAlgoRequest.getLoadablePatternId());
+      if (loadablePatternAlgoRequest.getAlgoError() != null) {
+        loadablePatternAlgoRequest
+            .getAlgoError()
+            .forEach(
+                algoErrors -> {
+                  com.cpdss.loadablestudy.entity.AlgoErrors algoErrorsEntity =
+                      new com.cpdss.loadablestudy.entity.AlgoErrors();
+                  algoErrorsEntity.setAlgoErrorHeading(algoErrors.getAlgoErrorHeading());
+                  algoErrorsEntity.setErrorMessage(algoErrors.getErrorMessage());
+                  algoErrorsEntity.setIsActive(true);
+                  algoErrorsRepository.save(algoErrors);
+                });
+      }
+    } else {
+      if (loadablePatternAlgoRequest.getPatternDetails() != null) {
+        loadablePatternService.deleteExistingPlanDetails(loadablePatternOpt.get());
+        loadableStudyServiceShore.savePatternInShipSide(
+            loadablePatternAlgoRequest.getPatternDetails(), loadablePatternOpt.get());
+        if (loadablePatternAlgoRequest.getHasLoadicator()) {
+
+        } else {
+          loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+              LOADABLE_PATTERN_VALIDATION_SUCCESS_ID,
+              loadablePatternAlgoRequest.getProcessId(),
+              true);
+        }
+      }
+    }
   }
 
   private void saveValidatePlanRequestShore(EnvoyReader.EnvoyReaderResultReply erReply) {
@@ -198,8 +193,7 @@ public class CommunicationService {
         voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
         this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
         log.info("algo process started in shore");
-        // processAlgoFromShore(loadableStudyEntity);
-        // processAlgoFromShoreSide(loadabalePatternValidateRequest);
+        processAlgoFromShoreSide(loadabalePatternValidateRequest, loadableStudyEntity);
       }
     } catch (Exception e) {
       log.error(
@@ -220,7 +214,14 @@ public class CommunicationService {
               erReply.getResponseStatus().getCode(),
               HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
         }
-        if (messageType.getMessageType().equals("AlgoResult")) saveAlgoPatternFromShore(erReply);
+        if (messageType.getMessageType().equals("AlgoResult")) {
+          saveAlgoPatternFromShore(erReply);
+        } else if (messageType.getMessageType().equals("PatternDetail")) {
+          if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
+            log.info("-------Pattern received  received at ship side ");
+            savePatternInShipSide(erReply);
+          }
+        }
       } catch (GenericServiceException e) {
         throw new GenericServiceException(
             e.getMessage(),
@@ -256,7 +257,8 @@ public class CommunicationService {
     }
   }
 
-  private void processAlgoFromShoreSide(LoadabalePatternValidateRequest lPValidateRequest)
+  private void processAlgoFromShoreSide(
+      LoadabalePatternValidateRequest lPValidateRequest, LoadableStudy loadableStudyEntity)
       throws IOException, GenericServiceException {
     LoadabalePatternValidateRequest loadabalePatternValidateRequest =
         new LoadabalePatternValidateRequest();
@@ -268,12 +270,14 @@ public class CommunicationService {
         this.loadablePatternRepository.findByIdAndIsActive(
             lPValidateRequest.getLoadablePatternId(), true);
     loadableStudyService.buildLoadableStudy(
-        loadablePatternOpt.get().getLoadableStudy().getId(),
-        loadablePatternOpt.get().getLoadableStudy(),
-        loadableStudy,
-        modelMapper);
+        loadableStudyEntity.getId(), loadableStudyEntity, loadableStudy, modelMapper);
+    loadablePlanService.buildLoadablePlanPortWiseDetails(
+        loadablePatternOpt.get(), loadabalePatternValidateRequest);
     loadabalePatternValidateRequest.setLoadableStudy(loadableStudy);
-
+    loadabalePatternValidateRequest.setBallastEdited(
+        stowageDetailsTempRepository.isBallastEdited(loadablePatternOpt.get().getId(), true));
+    loadabalePatternValidateRequest.setLoadablePatternId(loadablePatternOpt.get().getId());
+    loadabalePatternValidateRequest.setCaseNumber(loadablePatternOpt.get().getCaseNumber());
     jsonDataService.saveJsonToDatabase(
         lPValidateRequest.getLoadablePatternId(),
         LOADABLE_PATTERN_EDIT_REQUEST,
@@ -285,14 +289,6 @@ public class CommunicationService {
                 + loadablePatternOpt.get().getId()
                 + ".json"),
         loadabalePatternValidateRequest);
-    LoadabalePatternValidateRequest communicationServiceRequest = loadabalePatternValidateRequest;
-    loadablePlanService.buildCommunicationServiceRequest(
-        communicationServiceRequest, loadablePatternOpt.get());
-
-    loadabalePatternValidateRequest.setBallastEdited(
-        stowageDetailsTempRepository.isBallastEdited(loadablePatternOpt.get().getId(), true));
-    loadabalePatternValidateRequest.setLoadablePatternId(loadablePatternOpt.get().getId());
-    loadabalePatternValidateRequest.setCaseNumber(loadablePatternOpt.get().getCaseNumber());
     AlgoResponse algoResponse =
         restTemplate.postForObject(
             loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);

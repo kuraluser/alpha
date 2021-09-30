@@ -17,7 +17,6 @@ import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.CommingleCargo;
-import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
@@ -560,7 +559,12 @@ public class LoadableStudyServiceShore {
 
   private OnBoardQuantity buildOnBoardQuantityEntity(
       OnBoardQuantity entity, com.cpdss.loadablestudy.domain.OnBoardQuantity request) {
-    entity.setCargoId(0 == request.getCargoId() ? null : request.getCargoId());
+    if (request.getCargoId() != null && 0 != request.getCargoId()) {
+      entity.setCargoId(request.getCargoId());
+    } else {
+      entity.setCargoId(null);
+    }
+
     entity.setTankId(request.getTankId());
     entity.setPortId(request.getPortId());
 
@@ -673,7 +677,9 @@ public class LoadableStudyServiceShore {
                     return cargoNominationPortDetails;
                   })
               .collect(Collectors.toSet());
-      cargoNomination.getCargoNominationPortDetails().addAll(cargoNominationPortDetailsList);
+      if (cargoNominationPortDetailsList != null && cargoNominationPortDetailsList.size() > 0) {
+        cargoNomination.getCargoNominationPortDetails().addAll(cargoNominationPortDetailsList);
+      }
     }
     return cargoNomination;
   }
@@ -867,7 +873,7 @@ public class LoadableStudyServiceShore {
           saveOrUpdateLoadableStudyInShore(loadableStudy, voyage, loadableStudyEntityOpt.get());
       updateCommunicationStatus(messageId, loadableStudyEntity);
       saveOrUpdateLoadableStudyDataInShore(loadableStudyEntity, loadableStudy, modelMapper);
-      saveLoadablePlanStowageTempDetailsInShore(loadabalePatternValidateRequest);
+      // saveLoadablePlanStowageTempDetailsInShore(loadabalePatternValidateRequest);
       savePatternDetailsInShoreSide(loadabalePatternValidateRequest, loadableStudyEntity);
     } else {
       log.info("Stowage Edit insert LS --- id : " + loadableStudy.getId());
@@ -876,7 +882,7 @@ public class LoadableStudyServiceShore {
       loadableStudyEntity = saveOrUpdateLoadableStudyInShore(loadableStudy, voyage, entity);
       updateCommunicationStatus(messageId, loadableStudyEntity);
       saveOrUpdateLoadableStudyDataInShore(loadableStudyEntity, loadableStudy, modelMapper);
-      saveLoadablePlanStowageTempDetailsInShore(loadabalePatternValidateRequest);
+      // saveLoadablePlanStowageTempDetailsInShore(loadabalePatternValidateRequest);
       savePatternDetailsInShoreSide(loadabalePatternValidateRequest, loadableStudyEntity);
     }
     log.info("Stowage EDIT LS insert or update : " + loadableStudyEntity.getId());
@@ -1495,73 +1501,76 @@ public class LoadableStudyServiceShore {
     }*/
   }
 
-  private void saveLoadablePlanStowageTempDetailsInShore(
-      LoadabalePatternValidateRequest loadabalePatternValidateRequest) {
-    if (!loadabalePatternValidateRequest.getLoadablePlanStowageTempDetails().isEmpty()) {
-      loadabalePatternValidateRequest
-          .getLoadablePlanStowageTempDetails()
-          .forEach(
-              stowageTemp -> {
-                LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp =
-                    new LoadablePlanStowageDetailsTemp();
-                Optional<Long> isBallastExist =
-                    Optional.ofNullable(stowageTemp.getBallastDetailsId());
-                if (isBallastExist.isPresent()) {
-                  LoadablePlanBallastDetails ballastDetails =
-                      this.loadablePlanBallastDetailsRepository.getOne(
-                          stowageTemp.getBallastDetailsId());
-                  loadablePlanStowageDetailsTemp.setLoadablePlanBallastDetails(ballastDetails);
-                }
-                Optional<Boolean> isCommingleExist =
-                    Optional.ofNullable(stowageTemp.getIsCommingle());
-                if (isCommingleExist.isPresent()) {
-                  LoadablePlanCommingleDetails commingleDetails =
-                      this.loadablePlanCommingleDetailsRepository.getOne(
-                          stowageTemp.getCommingleDetailId());
-                  loadablePlanStowageDetailsTemp.setLoadablePlanCommingleDetails(commingleDetails);
-                }
-                Optional<Long> isStowageExist =
-                    Optional.ofNullable(stowageTemp.getStowageDetailsId());
-                if (isStowageExist.isPresent()) {
-                  LoadablePlanStowageDetails stowageDetails =
-                      this.loadablePlanStowageDetailsRespository.getOne(
-                          stowageTemp.getStowageDetailsId());
-                  loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(stowageDetails);
-                }
-                Optional<LoadablePattern> loadablePatternOpt =
-                    this.loadablePatternRepository.findByIdAndIsActive(
-                        stowageTemp.getLoadablePatternId(), true);
-                if (loadablePatternOpt.isPresent()) {
-                  loadablePlanStowageDetailsTemp.setLoadablePattern(loadablePatternOpt.get());
-                }
-                loadablePlanStowageDetailsTemp.setIsActive(true);
-                loadablePlanStowageDetailsTemp.setCorrectedUllage(
-                    isEmpty(stowageTemp.getCorrectedUllage())
-                        ? null
-                        : stowageTemp.getCorrectedUllage());
-                loadablePlanStowageDetailsTemp.setCorrectionFactor(
-                    isEmpty(stowageTemp.getCorrectionFactor())
-                        ? null
-                        : stowageTemp.getCorrectionFactor());
+  //  private void saveLoadablePlanStowageTempDetailsInShore(
+  //      LoadabalePatternValidateRequest loadabalePatternValidateRequest) {
+  //    if (loadabalePatternValidateRequest.getLoadablePlanStowageTempDetails() != null ) {
+  //      log.info("********* getLoadablePlanStowageTempDetails");
+  //      loadabalePatternValidateRequest
+  //          .getLoadablePlanStowageTempDetails()
+  //          .forEach(
+  //              stowageTemp -> {
+  //                LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp =
+  //                    new LoadablePlanStowageDetailsTemp();
+  //                Optional<Long> isBallastExist =
+  //                    Optional.ofNullable(stowageTemp.getBallastDetailsId());
+  //                if (isBallastExist.isPresent()) {
+  //                  LoadablePlanBallastDetails ballastDetails =
+  //                      this.loadablePlanBallastDetailsRepository.getOne(
+  //                          stowageTemp.getBallastDetailsId());
+  //                  loadablePlanStowageDetailsTemp.setLoadablePlanBallastDetails(ballastDetails);
+  //                }
+  //                Optional<Boolean> isCommingleExist =
+  //                    Optional.ofNullable(stowageTemp.getIsCommingle());
+  //                if (isCommingleExist.isPresent()) {
+  //                  LoadablePlanCommingleDetails commingleDetails =
+  //                      this.loadablePlanCommingleDetailsRepository.getOne(
+  //                          stowageTemp.getCommingleDetailId());
+  //
+  // loadablePlanStowageDetailsTemp.setLoadablePlanCommingleDetails(commingleDetails);
+  //                }
+  //                Optional<Long> isStowageExist =
+  //                    Optional.ofNullable(stowageTemp.getStowageDetailsId());
+  //                if (isStowageExist.isPresent()) {
+  //                  LoadablePlanStowageDetails stowageDetails =
+  //                      this.loadablePlanStowageDetailsRespository.getOne(
+  //                          stowageTemp.getStowageDetailsId());
+  //                  loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(stowageDetails);
+  //                }
+  //                Optional<LoadablePattern> loadablePatternOpt =
+  //                    this.loadablePatternRepository.findByIdAndIsActive(
+  //                        stowageTemp.getLoadablePatternId(), true);
+  //                if (loadablePatternOpt.isPresent()) {
+  //                  loadablePlanStowageDetailsTemp.setLoadablePattern(loadablePatternOpt.get());
+  //                }
+  //                loadablePlanStowageDetailsTemp.setIsActive(true);
+  //                loadablePlanStowageDetailsTemp.setCorrectedUllage(
+  //                    isEmpty(stowageTemp.getCorrectedUllage())
+  //                        ? null
+  //                        : stowageTemp.getCorrectedUllage());
+  //                loadablePlanStowageDetailsTemp.setCorrectionFactor(
+  //                    isEmpty(stowageTemp.getCorrectionFactor())
+  //                        ? null
+  //                        : stowageTemp.getCorrectionFactor());
+  //
+  //                loadablePlanStowageDetailsTemp.setQuantity(
+  //                    isEmpty(stowageTemp.getQuantity()) ? null : stowageTemp.getQuantity());
+  //                loadablePlanStowageDetailsTemp.setRdgUllage(
+  //                    isEmpty(stowageTemp.getRdgUllage()) ? null : stowageTemp.getRdgUllage());
+  //                loadablePlanStowageDetailsTemp.setIsBallast(stowageTemp.getIsBallast());
+  //                loadablePlanStowageDetailsTemp.setIsCommingle(stowageTemp.getIsCommingle());
+  //                loadablePlanStowageDetailsTemp.setFillingRatio(
+  //                    isEmpty(stowageTemp.getFillingRatio()) ? null :
+  // stowageTemp.getFillingRatio());
+  //                LoadablePlanStowageDetailsTemp lPlanStowageDetailsTemp =
+  //                    stowageDetailsTempRepository.save(loadablePlanStowageDetailsTemp);
+  //                log.info(
+  //                    "Stowage Edit LoadablePlanStowageDetailsTemp insert or update : "
+  //                        + lPlanStowageDetailsTemp.getId());
+  //              });
+  //    }
+  //  }
 
-                loadablePlanStowageDetailsTemp.setQuantity(
-                    isEmpty(stowageTemp.getQuantity()) ? null : stowageTemp.getQuantity());
-                loadablePlanStowageDetailsTemp.setRdgUllage(
-                    isEmpty(stowageTemp.getRdgUllage()) ? null : stowageTemp.getRdgUllage());
-                loadablePlanStowageDetailsTemp.setIsBallast(stowageTemp.getIsBallast());
-                loadablePlanStowageDetailsTemp.setIsCommingle(stowageTemp.getIsCommingle());
-                loadablePlanStowageDetailsTemp.setFillingRatio(
-                    isEmpty(stowageTemp.getFillingRatio()) ? null : stowageTemp.getFillingRatio());
-                LoadablePlanStowageDetailsTemp lPlanStowageDetailsTemp =
-                    stowageDetailsTempRepository.save(loadablePlanStowageDetailsTemp);
-                log.info(
-                    "Stowage Edit LoadablePlanStowageDetailsTemp insert or update : "
-                        + lPlanStowageDetailsTemp.getId());
-              });
-    }
-  }
-
-  void savePatternInShipSide(PatternDetails patternDetails) {
+  void savePatternInShipSide(PatternDetails patternDetails, LoadablePattern loadablePattern) {
 
     if (!Objects.isNull(patternDetails)) {
       if (patternDetails.getLoadablePlanQuantityList() != null) {
@@ -1592,7 +1601,7 @@ public class LoadableStudyServiceShore {
                       (lqcd.getOrderQuantity() != null)
                           ? lqcd.getOrderQuantity()
                           : new BigDecimal(0));
-                  loadablePlanQuantity.setLoadablePattern(lqcd.getLoadablePattern());
+                  loadablePlanQuantity.setLoadablePattern(loadablePattern);
                   loadablePlanQuantity.setCargoAbbreviation(lqcd.getCargoAbbreviation());
                   loadablePlanQuantity.setCargoColor(lqcd.getCargoColor());
                   loadablePlanQuantity.setPriority(lqcd.getPriority());
@@ -1632,7 +1641,7 @@ public class LoadableStudyServiceShore {
                 lpctos.setCargoXId(lqcd.getCargoXId());
                 lpctos.setTankXId(lqcd.getTankXId());
                 lpctos.setOrderNumber(lqcd.getOrderNumber());
-                lpctos.setLoadablePattern(lqcd.getLoadablePattern());
+                lpctos.setLoadablePattern(loadablePattern);
                 lpctos.setIsActive(true);
                 toppingOffSequenceRepository.save(lpctos);
               });
@@ -1675,8 +1684,7 @@ public class LoadableStudyServiceShore {
                 loadablePlanCommingleDetails.setGrade(
                     loadableQuantityCommingleCargoDetailsList.getGrade());
                 loadablePlanCommingleDetails.setIsActive(true);
-                loadablePlanCommingleDetails.setLoadablePattern(
-                    loadableQuantityCommingleCargoDetailsList.getLoadablePattern());
+                loadablePlanCommingleDetails.setLoadablePattern(loadablePattern);
                 loadablePlanCommingleDetails.setQuantity(
                     loadableQuantityCommingleCargoDetailsList.getQuantity());
                 loadablePlanCommingleDetails.setTankName(
@@ -1741,7 +1749,7 @@ public class LoadableStudyServiceShore {
                 loadablePlanStowageDetails.setWeight(lpsd.getWeight());
                 loadablePlanStowageDetails.setTemperature(lpsd.getTemperature());
                 loadablePlanStowageDetails.setIsActive(true);
-                loadablePlanStowageDetails.setLoadablePattern(lpsd.getLoadablePattern());
+                loadablePlanStowageDetails.setLoadablePattern(loadablePattern);
                 loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
                 loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
                 loadablePlanStowageDetails.setCargoNominationId(lpsd.getCargoNominationId());
@@ -1776,7 +1784,7 @@ public class LoadableStudyServiceShore {
                 loadablePlanBallastDetails.setTankId(lpbd.getTankId());
                 loadablePlanBallastDetails.setRdgLevel(lpbd.getRdgLevel());
                 loadablePlanBallastDetails.setIsActive(true);
-                loadablePlanBallastDetails.setLoadablePattern(lpbd.getLoadablePattern());
+                loadablePlanBallastDetails.setLoadablePattern(loadablePattern);
                 loadablePlanBallastDetails.setColorCode(BALLAST_TANK_COLOR_CODE);
                 loadablePlanBallastDetails.setCorrectedLevel(lpbd.getCorrectedLevel());
                 loadablePlanBallastDetails.setCorrectionFactor(lpbd.getCorrectionFactor());
@@ -1818,7 +1826,7 @@ public class LoadableStudyServiceShore {
                 loadablePlanComminglePortwiseDetails.setCargo2Percentage(it.getCargo2Percentage());
                 loadablePlanComminglePortwiseDetails.setGrade(it.getGrade());
                 loadablePlanComminglePortwiseDetails.setIsActive(true);
-                loadablePlanComminglePortwiseDetails.setLoadablePattern(it.getLoadablePattern());
+                loadablePlanComminglePortwiseDetails.setLoadablePattern(loadablePattern);
                 loadablePlanComminglePortwiseDetails.setQuantity(it.getQuantity());
                 loadablePlanComminglePortwiseDetails.setTankName(it.getTankName());
                 loadablePlanComminglePortwiseDetails.setTemperature(it.getTemperature());
@@ -1936,39 +1944,43 @@ public class LoadableStudyServiceShore {
               });
     }
 
-    if (Objects.isNull(patternDetails.getSynopticalTableLoadicatorData())) {
-      patternDetails
-          .getSynopticalTableLoadicatorData()
-          .forEach(
-              lsd -> {
-                SynopticalTableLoadicatorData synopticalTableLoadicatorData = null;
-                if (lsd.getId() != null) {
-                  Optional<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataExist =
-                      synopticalTableLoadicatorDataRepository.findById(lsd.getId());
-                  if (synopticalTableLoadicatorDataExist.isPresent()) {
-                    synopticalTableLoadicatorData = synopticalTableLoadicatorDataExist.get();
-                  } else {
-                    synopticalTableLoadicatorData = new SynopticalTableLoadicatorData();
-                    synopticalTableLoadicatorData.setId(lsd.getId());
-                  }
-                } else {
-                  synopticalTableLoadicatorData = new SynopticalTableLoadicatorData();
-                }
-                synopticalTableLoadicatorData.setLoadablePatternId(lsd.getLoadablePatternId());
-                synopticalTableLoadicatorData.setCalculatedDraftFwdPlanned(
-                    lsd.getCalculatedDraftFwdPlanned());
-                synopticalTableLoadicatorData.setCalculatedDraftMidPlanned(
-                    lsd.getCalculatedDraftMidPlanned());
-                synopticalTableLoadicatorData.setCalculatedDraftAftPlanned(
-                    lsd.getCalculatedDraftAftPlanned());
-                synopticalTableLoadicatorData.setCalculatedTrimPlanned(
-                    lsd.getCalculatedTrimPlanned());
-                synopticalTableLoadicatorData.setBendingMoment(lsd.getBendingMoment());
-                synopticalTableLoadicatorData.setShearingForce(lsd.getShearingForce());
-                synopticalTableLoadicatorData.setActive(true);
-                synopticalTableLoadicatorData.setSynopticalTable(lsd.getSynopticalTable());
-                synopticalTableLoadicatorDataRepository.save(synopticalTableLoadicatorData);
-              });
-    }
+    //    if (Objects.isNull(patternDetails.getSynopticalTableLoadicatorData())) {
+    //      patternDetails
+    //          .getSynopticalTableLoadicatorData()
+    //          .forEach(
+    //              lsd -> {
+    //                SynopticalTableLoadicatorData synopticalTableLoadicatorData = null;
+    //                if (lsd.getId() != null) {
+    //                  Optional<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataExist =
+    //                      synopticalTableLoadicatorDataRepository.findById(lsd.getId());
+    //                  if (synopticalTableLoadicatorDataExist.isPresent()) {
+    //                    synopticalTableLoadicatorData = synopticalTableLoadicatorDataExist.get();
+    //                  } else {
+    //                    synopticalTableLoadicatorData = new SynopticalTableLoadicatorData();
+    //                    synopticalTableLoadicatorData.setId(lsd.getId());
+    //                  }
+    //                } else {
+    //                  synopticalTableLoadicatorData = new SynopticalTableLoadicatorData();
+    //                }
+    //
+    // synopticalTableLoadicatorData.setLoadablePatternId(lsd.getLoadablePatternId());
+    //                synopticalTableLoadicatorData.setCalculatedDraftFwdPlanned(
+    //                    lsd.getCalculatedDraftFwdPlanned());
+    //                synopticalTableLoadicatorData.setCalculatedDraftMidPlanned(
+    //                    lsd.getCalculatedDraftMidPlanned());
+    //                synopticalTableLoadicatorData.setCalculatedDraftAftPlanned(
+    //                    lsd.getCalculatedDraftAftPlanned());
+    //                synopticalTableLoadicatorData.setCalculatedTrimPlanned(
+    //                    lsd.getCalculatedTrimPlanned());
+    //                synopticalTableLoadicatorData.setBendingMoment(lsd.getBendingMoment());
+    //                synopticalTableLoadicatorData.setShearingForce(lsd.getShearingForce());
+    //                synopticalTableLoadicatorData.setActive(true);
+    //                synopticalTableLoadicatorData.setSynopticalTable(lsd.getSynopticalTable());
+    //
+    // synopticalTableLoadicatorDataRepository.findBySynopticalT(lsd.getSynopticalTable().getId(),
+    // lsd.getLoadablePatternId(), true )
+    //                synopticalTableLoadicatorDataRepository.save(synopticalTableLoadicatorData);
+    //              });
+    //    }
   }
 }

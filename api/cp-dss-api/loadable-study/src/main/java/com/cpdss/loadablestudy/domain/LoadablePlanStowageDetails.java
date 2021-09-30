@@ -38,6 +38,9 @@ public class LoadablePlanStowageDetails {
   private Long cargo2NominationId;
 
   @JsonInclude(Include.NON_NULL)
+  private String colorCode;
+
+  @JsonInclude(Include.NON_NULL)
   private String abbreviation;
 
   @JsonInclude(Include.NON_NULL)
@@ -54,9 +57,6 @@ public class LoadablePlanStowageDetails {
 
   @JsonInclude(Include.NON_NULL)
   private String correctionFactor;
-
-  @JsonInclude(Include.NON_NULL)
-  private String colorCode;
 
   @JsonInclude(Include.NON_NULL)
   private String tankShortName;
