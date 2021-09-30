@@ -937,7 +937,7 @@ export interface IUllageUpdList {
   port_rotation_xid?: string | number;
   grade?: string;
   isActive?: boolean;
-  ullage? : string | number;
+  ullage?: string | number;
   color_code?: string;
   abbreviation?: string;
   cargoId?: number | string;
@@ -1187,7 +1187,7 @@ export interface IUllageQuantityResponse {
 * @enum ULLAGE_STATUS_TEXT
 */
 export enum ULLAGE_STATUS_TEXT {
-  'ULLAGE_UPDATE_PLAN_GENERATED'= 5,
+  'ULLAGE_UPDATE_PLAN_GENERATED' = 5,
   'ULLAGE_UPDATE_PLAN_INPROGRESS' = 12,
   'ULLAGE_UPDATE_PLAN_SUCCESS' = 13,
   'ULLAGE_UPDATE_PLAN_VALIDATION_FAILED' = 14,
@@ -1225,4 +1225,31 @@ export interface IDischargingPlanDetailsResponse {
   ballastRearTanks: IShipBallastTank[][];
   bunkerRearTanks: IShipBunkerTank[][];
   bunkerTanks: IShipBunkerTank[][];
+}
+
+/**
+ * Interface for ullage excel export data
+ *
+ * @export
+ * @interface IDischargingPlanDetailsResponse
+ */
+export interface IUllageExcelResponseDetails {
+  api: number;
+  cargoNominationId: number;
+  tank: string;
+  tankId: number;
+  temperature: number;
+  ullageObserved: number;
+  weight: number;
+}
+
+/**
+ * Interface for ullage excel export response
+ *
+ * @export
+ * @interface IDischargingPlanDetailsResponse
+ */
+export interface IUllageExcelResponse {
+  responseStatus: IResponseStatus;
+  ullageReportResponse: IUllageExcelResponseDetails[];
 }

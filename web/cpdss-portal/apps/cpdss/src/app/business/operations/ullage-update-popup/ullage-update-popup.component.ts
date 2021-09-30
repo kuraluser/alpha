@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators, FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -7,7 +7,7 @@ import { ICargoQuantities, IShipCargoTank, ITankOptions, IVoyagePortDetails, TAN
 import { UllageUpdatePopupTransformationService } from './ullage-update-popup-transformation.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
-import { ICargoDetail, ICargoDetailValueObject, ITankDetailsValueObject, ULLAGE_STATUS, IUllageSaveDetails } from '../models/loading-discharging.model';
+import { ICargoDetail, ICargoDetailValueObject, ITankDetailsValueObject, ULLAGE_STATUS, IUllageSaveDetails, ULLAGE_STATUS_TEXT } from '../models/loading-discharging.model';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 import { IBlFigureTotal } from '../models/operations.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
@@ -43,7 +43,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   @Input() portRotationId: number;
   @Input() operation: OPERATIONS;
   @Input() permission: IPermission;
-  
+
+  @ViewChild('fileUpload') file;
+
   private ngUnsubscribe: Subject<any> = new Subject();
 
   portId: number;
@@ -389,7 +391,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
             elem.commodity.actualWeight = elem.commodity.quantity;
             elem.commodity.volume = this.quantityPipe.transform(elem.commodity.actualWeight, this.currentQuantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, elem.commodity.api);
             elem.commodity.percentageFilled = this.ullageUpdatePopupTransformationService.getFillingPercentage(elem);
-            if (Number(elem.commodity.percentageFilled) > 98.5 && !fillingPercentageError) {
+            if (Number(elem.commodity.percentageFilled) > 98.5 && !fillingPercentageError && !item.cargoLoaded) {
               fillingPercentageError = true;
               tankName = elem.shortName;
             }
@@ -502,7 +504,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       tankName: this.fb.control(tank.tankName.value),
       quantity: this.fb.control(tank.quantity.value),
       sounding: this.fb.control(tank.sounding.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator(null, null, 'sounding', 'fillingPercentage', 100)]),
-      fillingPercentage:  this.fb.control(tank.fillingPercentage.value)
+      fillingPercentage: this.fb.control(tank.fillingPercentage.value)
     });
   }
 
@@ -1418,6 +1420,12 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_SUCCESS_LABEL', 'ULLAGE_UPDATE_SUCCESS_MESSAGE']).toPromise();
         this.messageService.add({ severity: 'success', summary: translationKeys['ULLAGE_UPDATE_SUCCESS_LABEL'], detail: translationKeys['ULLAGE_UPDATE_SUCCESS_MESSAGE'] });
         if (validate && result['processId']) {
+          if (this.status === ULLAGE_STATUS.DEPARTURE) {
+            this.loadingDischargingTransformationService.setUllageDepartureBtnStatus(ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS);
+          }
+          if (this.status === ULLAGE_STATUS.ARRIVAL) {
+            this.loadingDischargingTransformationService.setUllageArrivalBtnStatus(ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS);
+          }
           this.loadingDischargingTransformationService.validateUllage({ validate: true, processId: result['processId'], status: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2 });
         }
         this.ngxSpinnerService.hide();
@@ -1425,6 +1433,76 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       }
     } catch (e) {
       this.ngxSpinnerService.hide();
+    }
+  }
+
+  /**
+   * Method for file upload
+   * @param event
+   * @memberof UllageUpdatePopupComponent
+   */
+  async excelUpload(event) {
+    if (!event.target?.files?.length) {
+      return;
+    }
+    const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL', 'ULLAGE_UPDATE_FILE_UPLOAD_UNSUPPORTED_FILE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_CONTENT_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_SUCCESS_LABEL', 'ULLAGE_UPDATE_FILE_UPLOAD_SUCCESS_MESSAGE',
+      'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TANK_NAME_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_ULLAGE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_API_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TEMPERATURE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_WEIGHT_ERROR']).toPromise();
+    const formData: FormData = new FormData();
+    formData.append('file', event.target.files[0]);
+    formData.append('infoId', this.loadingInfoId?.toString());
+    formData.append('cargoNominationId', this.selectedCargo?.cargoNominationId);
+    formData.append('isLoading', 'true');
+    formData.append('vesselId', this.vesselId?.toString());
+    const tanks = [];
+    this.ullageResponseData?.portLoadablePlanStowageDetails?.map(item => {
+      if (item.cargoNominationId === this.selectedCargo?.cargoNominationId) {
+        tanks.push({ tankId: item.tankId, shortName: item.tankShortName });
+      }
+    });
+    formData.append('tanks', JSON.stringify(tanks));
+    try {
+      this.ngxSpinnerService.show();
+      const result = await this.ullageUpdateApiService.uploadFile(formData).toPromise();
+      this.file.nativeElement.value = '';
+      this.ngxSpinnerService.hide();
+      if (result.responseStatus.status === '200') {
+        this.messageService.add({ severity: 'success', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_SUCCESS_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_SUCCESS_MESSAGE'] });
+        this.ullageResponseData?.portLoadablePlanStowageDetails?.map(item => {
+          if (item.cargoNominationId === this.selectedCargo?.cargoNominationId) {
+            result?.ullageReportResponse?.map(data => {
+              if (data.tankId === item.tankId) {
+                item.quantity = data.weight;
+                item.ullage = data.ullageObserved;
+                item.correctedUllage = data.ullageObserved;
+                item.temperature = data.temperature;
+                item.api = data.api;
+              }
+            });
+          }
+        });
+        this.setCargoQuantities();
+        this.getCargoTankFormGroup();
+        this.updateCargoQuantiyData();
+        this.validateBlFigTable();
+        this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portLoadablePlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+      }
+    } catch (err) {
+      this.ngxSpinnerService.hide();
+      if (err?.error?.errorCode === "ERR-RICO-314") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_UNSUPPORTED_FILE_ERROR'] });
+      } else if (err?.error?.errorCode === "ERR-RICO-316") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_INVALID_CONTENT_ERROR'] });
+      } else if (err?.error?.errorCode === "ERR-RICO-320") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TANK_NAME_ERROR'] });
+      } else if (err?.error?.errorCode === "ERR-RICO-321") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_INVALID_ULLAGE_ERROR'] });
+      } else if (err?.error?.errorCode === "ERR-RICO-322") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_INVALID_API_ERROR'] });
+      } else if (err?.error?.errorCode === "ERR-RICO-323") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TEMPERATURE_ERROR'] });
+      } else if (err?.error?.errorCode === "ERR-RICO-324") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_INVALID_WEIGHT_ERROR'] });
+      }
     }
   }
 }
