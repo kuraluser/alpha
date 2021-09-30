@@ -1,11 +1,13 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.repository;
 
-import com.cpdss.common.springdata.CommonCrudRepository;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import java.util.List;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import com.cpdss.common.springdata.CommonCrudRepository;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 
 @Repository
 public interface PortDischargingPlanRobDetailsRepository
@@ -22,4 +24,8 @@ public interface PortDischargingPlanRobDetailsRepository
   public List<PortDischargingPlanRobDetails>
       findByDischargingInformationAndConditionTypeAndIsActive(
           long loadingInformationId, int arrivalDepartutre, boolean b);
+  
+  public List<PortDischargingPlanRobDetails>
+  findByDischargingInformationAndConditionTypeAndValueTypeAndIsActive(
+      Long fkId, Integer conditionType, Integer valueType, Boolean isActive);
 }

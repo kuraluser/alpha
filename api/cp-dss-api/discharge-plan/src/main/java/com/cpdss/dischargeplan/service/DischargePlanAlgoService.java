@@ -3,14 +3,50 @@ package com.cpdss.dischargeplan.service;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
+import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudyServiceGrpc;
+import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
-import com.cpdss.dischargeplan.domain.*;
+import com.cpdss.dischargeplan.domain.BerthDetails;
+import com.cpdss.dischargeplan.domain.CargoForCowDetails;
+import com.cpdss.dischargeplan.domain.CargoMachineryInUse;
+import com.cpdss.dischargeplan.domain.CowHistory;
+import com.cpdss.dischargeplan.domain.CowPlan;
+import com.cpdss.dischargeplan.domain.DischargeBerthDetails;
+import com.cpdss.dischargeplan.domain.DischargeDelays;
+import com.cpdss.dischargeplan.domain.DischargeDetails;
+import com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest;
+import com.cpdss.dischargeplan.domain.DischargeMachinesInUse;
+import com.cpdss.dischargeplan.domain.DischargePatternDetails;
+import com.cpdss.dischargeplan.domain.DischargePlanPortWiseDetails;
+import com.cpdss.dischargeplan.domain.DischargeRates;
+import com.cpdss.dischargeplan.domain.DischargeSequences;
+import com.cpdss.dischargeplan.domain.DischargeStages;
+import com.cpdss.dischargeplan.domain.PostDischargeRates;
 import com.cpdss.dischargeplan.domain.ReasonForDelay;
+import com.cpdss.dischargeplan.domain.TrimAllowed;
 import com.cpdss.dischargeplan.domain.cargo.DischargeQuantityCargoDetails;
 import com.cpdss.dischargeplan.domain.cargo.LoadablePlanPortWiseDetails;
 import com.cpdss.dischargeplan.domain.cargo.OnBoardQuantity;
@@ -19,21 +55,26 @@ import com.cpdss.dischargeplan.domain.vessel.PumpTypes;
 import com.cpdss.dischargeplan.domain.vessel.VesselBottomLine;
 import com.cpdss.dischargeplan.domain.vessel.VesselManifold;
 import com.cpdss.dischargeplan.domain.vessel.VesselPump;
-import com.cpdss.dischargeplan.entity.*;
+import com.cpdss.dischargeplan.entity.CowPlanDetail;
+import com.cpdss.dischargeplan.entity.CowTankDetail;
+import com.cpdss.dischargeplan.entity.CowWithDifferentCargo;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
+import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
+import com.cpdss.dischargeplan.entity.DischargingDelayReason;
+import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
+import com.cpdss.dischargeplan.entity.DischargingMachineryInUse;
 import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
+import com.cpdss.dischargeplan.repository.DischargeInformationStatusRepository;
 import com.cpdss.dischargeplan.repository.ReasonForDelayRepository;
+import com.cpdss.loadingplan.entity.LoadingInformation;
+import com.cpdss.loadingplan.entity.LoadingInformationAlgoStatus;
+import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -46,7 +87,8 @@ public class DischargePlanAlgoService {
   @Autowired ReasonForDelayRepository reasonForDelayRepository;
 
   @Autowired CowPlanDetailRepository cowPlanDetailRepository;
-
+DischargeInformationStatusRepository dischargeInformationStatusRepository;
+  
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub loadableStudyService;
 
@@ -732,4 +774,42 @@ public class DischargePlanAlgoService {
             });
     return loadableQuantityCargoDetails;
   }
+
+/**
+   * Fetches Loading Information Status based on status ID.
+   *
+   * @param loadingInformationProcessingStartedId
+   * @return
+   * @throws GenericServiceException
+   */
+  public Optional<DischargingInformationStatus> getDischargingInformationStatus(
+      Long dischargingInformationStatusId) throws GenericServiceException {
+    Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
+    		dischargeInformationStatusRepository.findByIdAndIsActive(dischargingInformationStatusId, true);
+    if (dischargingInfoStatusOpt.isEmpty()) {
+      throw new GenericServiceException(
+          "Could not find loading information status with id " + dischargingInformationStatusId,
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    return dischargingInfoStatusOpt;
+  }
+
+public void createDischargingInformationAlgoStatus(DischargeInformation dischargeInformation, String processId,
+		DischargingInformationStatus dischargingInformationStatus, int arrivalDepartutre) {
+	  log.info(
+		      "Creating ALGO status for Loading Information {}, condition Type {}",
+		      dischargeInformation.getId(),
+		      arrivalDepartutre);
+		  LoadingInformationAlgoStatus algoStatus = new LoadingInformationAlgoStatus();
+		  algoStatus.setIsActive(true);
+		  algoStatus.setLoadingInformation(dischargeInformation);
+		  algoStatus.setLoadingInformationStatus(dischargingInformationStatus);
+		  algoStatus.setConditionType(arrivalDepartutre);
+		  algoStatus.setProcessId(processId);
+		  algoStatus.setVesselXId(dischargeInformation.getVesselXId());
+		  loadingInfoAlgoStatusRepository.save(algoStatus);
+}
+
 }
