@@ -953,7 +953,6 @@ public class DischargeInformationBuilderService {
               Optional.ofNullable(rulePlans.getHeader()).ifPresent(rulePlanBuilder::setHeader);
               List<Common.Rules> ruleList =
                   rulePlans.getRulesList().stream()
-                      .filter(item -> item.getEnable())
                       .collect(Collectors.toList());
               if (ruleList != null && ruleList.size() > 0) {
                 rulePlanBuilder.addAllRules(ruleList);
