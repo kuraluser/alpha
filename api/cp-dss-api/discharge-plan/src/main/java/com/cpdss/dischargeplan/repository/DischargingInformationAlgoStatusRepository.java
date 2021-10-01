@@ -22,9 +22,8 @@ public interface DischargingInformationAlgoStatusRepository
   public void updateDischargingInformationAlgoStatus(
       Long dischargingInformationStatusId, String processId);
 
-  Optional<DischargingInformationAlgoStatus>
-      findByProcessIdAndDischargeInformationAndIsActiveTrue(
-          String processId, Long dischargingInfoId);
+  Optional<DischargingInformationAlgoStatus> findByProcessIdAndDischargeInformationAndIsActiveTrue(
+      String processId, Long dischargingInfoId);
 
   @Transactional
   @Modifying

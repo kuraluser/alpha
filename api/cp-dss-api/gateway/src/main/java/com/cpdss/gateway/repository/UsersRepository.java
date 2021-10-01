@@ -31,7 +31,7 @@ public interface UsersRepository extends CommonCrudRepository<Users, Long> {
       List<String> keycloakIds, UserStatus status, boolean isActive);
 
   public List<Users> findByKeycloakIdInOrderById(List<String> keycloakIds);
-  
+
   public List<Users> findByKeycloakIdInAndIsActiveTrueOrderById(List<String> keycloakIds);
 
   public List<Users> findByCompanyXIdAndIdInAndIsActive(

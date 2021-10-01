@@ -21,7 +21,6 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.SynopticalOperationServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
-import com.cpdss.common.generated.discharge_plan.DischargePlanService;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -117,13 +116,13 @@ public class UllageUpdateLoadicatorService {
       throws GenericServiceException, IllegalAccessException, InvocationTargetException {
     Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
         Loadicator.LoadicatorRequest.newBuilder();
-    Long loadingInfoId = request.getUpdateUllage(0).getLoadingInformationId();
+    Long dsichargingInfoId = request.getUpdateUllage(0).getDischargingInfoId();
     Optional<DischargeInformation> dischargingInfoOpt =
-        dischargeInformationRepository.findByIdAndIsActiveTrue(loadingInfoId);
+        dischargeInformationRepository.findByIdAndIsActiveTrue(dsichargingInfoId);
     if (dischargingInfoOpt.isEmpty()) {
-      log.info("Cannot find loading information with id {}", loadingInfoId);
+      log.info("Cannot find dsicharging information with id {}", dsichargingInfoId);
       throw new GenericServiceException(
-          "Could not find loading information " + loadingInfoId,
+          "Could not find loading information " + dsichargingInfoId,
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
@@ -235,11 +234,11 @@ public class UllageUpdateLoadicatorService {
     if (DischargePlanConstants.ARRIVAL_CONDITION_VALUE
         == request.getUpdateUllage(0).getArrivalDepartutre()) {
       dischargeInformationRepository.updateDischargeInformationArrivalStatus(
-          dischargingInfoStatusOpt.get().getId(), loadingInfoId);
+          dischargingInfoStatusOpt.get().getId(), dsichargingInfoId);
     } else if (DischargePlanConstants.DEPARTURE_CONDITION_VALUE
         == request.getUpdateUllage(0).getArrivalDepartutre()) {
       dischargeInformationRepository.updateDischargeInformationDepartureStatus(
-          dischargingInfoStatusOpt.get().getId(), loadingInfoId);
+          dischargingInfoStatusOpt.get().getId(), dsichargingInfoId);
     }
     dischargingPlanAlgoService.createLoadingInformationAlgoStatus(
         dischargingInfoOpt.get(),
