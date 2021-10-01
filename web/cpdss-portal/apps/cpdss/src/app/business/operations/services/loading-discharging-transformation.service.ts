@@ -200,13 +200,13 @@ export class LoadingDischargingTransformationService {
       },
       minDeBallastingRate: {
         'required': 'LOADING_RATE_REQUIRED',
-        'min': "MIN_DEBALLAST_MINIMUM",
-        'max': "MIN_DEBALLAST_MAXIMUM"
+        'min': `MIN_DEBALLAST_MINIMUM_${unit}`,
+        'max': `MIN_DEBALLAST_MAXIMUM_${unit}`
       },
       maxDeBallastingRate: {
         'required': 'LOADING_RATE_REQUIRED',
-        'min': "MAX_DEBALLAST_MINIMUM",
-        'max': "MAX_DEBALLAST_MAXIMUM"
+        'min': `MAX_DEBALLAST_MINIMUM_${unit}`,
+        'max': `MAX_DEBALLAST_MAXIMUM_${unit}`
       },
       noticeTimeRateReduction: {
         'required': 'LOADING_RATE_REQUIRED',
