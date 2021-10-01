@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
 import { durationValidator } from '../directives/validator/duration-validator.directive';
@@ -25,7 +25,7 @@ export class PostDischargeStageComponent implements OnInit {
   }
   set postDischargeStageTime(postDischargeStageTime: IPostDischargeStageTime) {
     this._postDischargeStageTim = postDischargeStageTime;
-    this.postDischargeStageTimeData.push(postDischargeStageTime);
+    this.postDischargeStageTimeData = [{...postDischargeStageTime}];
   }
   @Input()
   get editMode(): boolean {
@@ -34,6 +34,8 @@ export class PostDischargeStageComponent implements OnInit {
   set editMode(editMode: boolean) {
     this._editMode = editMode;
   }
+
+  @Output() updatePostDischargeDetails = new EventEmitter<IPostDischargeStageTime>();
 
   get postDischargeStageTimeForm() {
     return <FormGroup>this.form.get('postDischargeStageTime');
@@ -101,5 +103,15 @@ export class PostDischargeStageComponent implements OnInit {
   field(formControlName: string): FormControl {
     const formControl = <FormControl>this.postDischargeStageTimeForm?.get(formControlName);
     return formControl;
+  }
+
+  /**
+   * Handler for post dicharge stage input change event
+   *
+   * @param {*} event
+   * @memberof PostDischargeStageComponent
+   */
+  onChange(event) {
+    this.updatePostDischargeDetails.emit(this.postDischargeStageTimeForm?.value);
   }
 }

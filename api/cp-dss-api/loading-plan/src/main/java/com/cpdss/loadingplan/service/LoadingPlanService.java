@@ -18,6 +18,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
+import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.loadingplan.utility.LoadingPlanUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -87,8 +88,10 @@ public class LoadingPlanService {
   @Autowired ReasonForDelayRepository reasonForDelayRepository;
   @Autowired LoadingDelayRepository loadingDelayRepository;
   @Autowired LoadingSequenceRepository loadingSequenceRepository;
+  @Autowired LoadingInformationRepository loadingInformationRepository;
 
   @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
+  @Autowired private LoadingPlanAlgoService loadingPlanAlgoService;
 
   @GrpcClient("loadableStudyService")
   private SynopticalOperationServiceGrpc.SynopticalOperationServiceBlockingStub
@@ -729,6 +732,11 @@ public class LoadingPlanService {
               });
       if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
         processId = validateAndSaveData(request);
+      } else {
+        updateLoadingPlanStatusForUllageUpdate(
+            request.getUpdateUllage(0).getLoadingInformationId(),
+            request.getUpdateUllage(0).getArrivalDepartutre(),
+            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_PENDING_ID);
       }
       builder.setProcessId(processId);
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -737,6 +745,52 @@ public class LoadingPlanService {
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
     }
     // log.info("getLoadableStudyShoreTwo ", request);
+  }
+
+  /**
+   * Updates loading information status based on the condition i.e. Arrival / Departure.
+   *
+   * @param loadingInformationId
+   * @param arrivalDepartutre
+   * @param updateUllageValidationPendingId
+   * @throws GenericServiceException
+   */
+  private void updateLoadingPlanStatusForUllageUpdate(
+      long loadingInformationId, int arrivalDeparture, Long statusId)
+      throws GenericServiceException {
+    Optional<LoadingInformation> loadingInfoOpt =
+        loadingInformationRepository.findByIdAndIsActiveTrue(loadingInformationId);
+    if (loadingInfoOpt.isEmpty()) {
+      throw new GenericServiceException(
+          "Cannot find Loading Information: " + loadingInformationId,
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+        loadingPlanAlgoService.getLoadingInformationStatus(statusId);
+
+    if (loadingInfoOpt.isEmpty()) {
+      throw new GenericServiceException(
+          "Cannot find Loading Information Status: " + statusId,
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    updateLoadingPlanStatus(loadingInfoOpt.get(), loadingInfoStatusOpt.get(), arrivalDeparture);
+  }
+
+  public void updateLoadingPlanStatus(
+      LoadingInformation loadingInformation,
+      LoadingInformationStatus loadingInfoStatus,
+      int conditionType) {
+    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE == conditionType) {
+      loadingInformationRepository.updateLoadingInformationArrivalStatus(
+          loadingInfoStatus, loadingInformation.getId());
+    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE == conditionType) {
+      loadingInformationRepository.updateLoadingInformationDepartureStatus(
+          loadingInfoStatus, loadingInformation.getId());
+    }
   }
 
   private String validateAndSaveData(LoadingPlanModels.UllageBillRequest request)

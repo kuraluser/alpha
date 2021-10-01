@@ -41,7 +41,7 @@ public class LoadableStudyPortRotation extends EntityDoc {
   @JoinColumn(name = "loadable_study_xid")
   private LoadableStudy loadableStudy;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "operation_xid")
   private CargoOperation operation;
 

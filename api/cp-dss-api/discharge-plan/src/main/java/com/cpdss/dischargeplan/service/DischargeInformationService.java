@@ -118,7 +118,8 @@ public class DischargeInformationService {
 
   public void getDischargeInformation(
       DischargeInformationRequest request,
-      com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder) {
+      com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder)
+      throws GenericServiceException {
     DischargeInformation disEntity =
         this.getDischargeInformation(
             request.getVesselId(), request.getVoyageId(), request.getPortRotationId());
@@ -128,10 +129,13 @@ public class DischargeInformationService {
           request.getVesselId(),
           request.getVoyageId(),
           request.getPortRotationId());
+      throw new GenericServiceException(
+          "No Discharge information found",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.NO_CONTENT);
     }
 
     try {
-      assert disEntity != null;
       builder.setDischargeInfoId(disEntity.getId());
       builder.setSynopticTableId(disEntity.getSynopticTableXid());
       log.info("Setting Discharge PK and Synoptic Id");

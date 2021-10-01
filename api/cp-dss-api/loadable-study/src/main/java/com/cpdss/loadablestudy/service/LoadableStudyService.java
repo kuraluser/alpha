@@ -498,7 +498,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Builder replyBuilder = LoadableStudyReply.newBuilder();
     LoadableStudy entity = null;
     try {
-
+      log.info("Create Loadable Study payload - {}", Utils.toJson(request));
       this.voyageService.checkIfVoyageClosed(request.getVoyageId());
       List<LoadableStudyRules> listOfExistingLSRules = null;
       if (request.getId() != 0) {
@@ -2093,18 +2093,28 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         List<LoadableStudyPortRotation> loadableStudyPortRotationParentList =
             this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
                 request.getDuplicatedFromId(), true);
+        log.info(
+            "duplicate LS, Port Rotation Parent Size - {}",
+            loadableStudyPortRotationParentList.size());
         List<LoadableStudyPortRotation> loadableStudyDuplicatedPorts = new ArrayList<>();
         if (!loadableStudyPortRotationParentList.isEmpty()) {
-          for (LoadableStudyPortRotation loadableStudyPortRotation :
-              loadableStudyPortRotationParentList) {
-            entityManager.detach(loadableStudyPortRotation);
-            loadableStudyPortRotation.setId(null);
-            loadableStudyPortRotation.setLoadableStudy(entity);
-            loadableStudyDuplicatedPorts.add(loadableStudyPortRotation);
+          for (LoadableStudyPortRotation lspr : loadableStudyPortRotationParentList) {
+            log.info(
+                "duplicate LS, Duplicated Port Rotation - Id {}, Port Id {}, Operation {}",
+                lspr.getId(),
+                lspr.getPortXId(),
+                lspr.getOperation().getName());
+            entityManager.detach(lspr);
+            lspr.setId(null);
+            lspr.setLoadableStudy(entity);
+            loadableStudyDuplicatedPorts.add(lspr);
           }
           loadableStudyDuplicatedPorts =
               this.loadableStudyPortRotationRepository.saveAll(loadableStudyDuplicatedPorts);
         }
+        log.info(
+            "duplicate LS, Duplicated Port Rotation Child Size - {}",
+            loadableStudyDuplicatedPorts.size());
 
         Optional<LoadableStudy> loadableStudyOpt =
             this.loadableStudyRepository.findByIdAndIsActive(request.getDuplicatedFromId(), true);
@@ -2126,23 +2136,39 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         List<OnHandQuantity> onHandQuantityList =
             this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
                 loadableStudyOpt.get(), true);
+        log.info("duplicate LS, OHQ list size - {}", onHandQuantityList.size());
+
         if (!onHandQuantityList.isEmpty()) {
           List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
           for (OnHandQuantity onHandQuantity :
               onHandQuantityList.stream()
                   .filter(ohq -> ohq.getPortRotation().isActive())
                   .collect(Collectors.toList())) {
+
+            // In ohq port id not getting updated with port rotation port id.
             Optional<LoadableStudyPortRotation> duplicated =
                 loadableStudyDuplicatedPorts.stream()
                     .filter(
                         port ->
-                            port.getPortXId().equals(onHandQuantity.getPortXId())
-                                && onHandQuantity.getPortRotation() != null
+                            port.getPortXId()
+                                    .equals(
+                                        onHandQuantity
+                                            .getPortRotation()
+                                            .getPortXId()) // compare port id
+                                && onHandQuantity.getPortRotation()
+                                    != null // parent ohq port rotation
                                 && port.getOperation()
                                     .getId()
-                                    .equals(onHandQuantity.getPortRotation().getOperation().getId())
+                                    .equals(
+                                        onHandQuantity
+                                            .getPortRotation()
+                                            .getOperation()
+                                            .getId()) // operation check
                                 && port.getPortOrder()
-                                    .equals(onHandQuantity.getPortRotation().getPortOrder()))
+                                    .equals(
+                                        onHandQuantity
+                                            .getPortRotation()
+                                            .getPortOrder())) // port order
                     .findAny();
 
             if (!duplicated.isPresent()) {

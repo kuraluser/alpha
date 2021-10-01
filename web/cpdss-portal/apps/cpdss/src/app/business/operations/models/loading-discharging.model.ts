@@ -127,7 +127,7 @@ export interface IMachineryInUsesResponse {
   pumpTypes: IPumpTypes[];
   vesselPumps: IVesselPumps[];
   loadingMachinesInUses?: Array<ILoadingMachinesInUse>;
-  dischargingMachinesInUses?: Array<IDischargingMachinesInUse>;
+  dischargeMachinesInUses?: Array<IDischargingMachinesInUse>;
 }
 
 /**
@@ -216,6 +216,7 @@ export interface ILoadingMachinesInUse {
   capacity: number;
   isUsing?: boolean;
   pumpTypeId?: string;
+  pumpCapacity?: number;
 }
 
 /**
@@ -232,6 +233,7 @@ export interface IDischargingMachinesInUse {
   capacity: number;
   isUsing?: boolean;
   pumpTypeId?: string;
+  pumpCapacity?: number;
 }
 
 
@@ -716,14 +718,14 @@ export enum MACHINE_TYPES {
  * @export
  * @enum {number}
  */
-export enum Pump_TYPES {
-  Cargo_Pump = 1,
-  Ballast_Pump = 2,
-  GS_Pump = 3,
-  IG_Pump = 4,
-  Stripping_Pump = 5,
-  Strip_Eductor = 6,
-  COW_Pump = 7
+export enum PUMP_TYPES {
+  CARGO_PUMP = 1,
+  BALLAST_PUMP = 2,
+  GS_PUMP = 3,
+  IG_PUMP = 4,
+  STRIPPING_PUMP = 5,
+  STRIP_EDUCTOR = 6,
+  COW_PUMP = 7
 }
 
 /**
@@ -805,8 +807,8 @@ export interface ICargoDetailValueObject {
   lt: ValueObject<number>;
   mt: ValueObject<number>;
   kl: ValueObject<number>;
-  api: ValueObject<number>;
-  temp: ValueObject<number>;
+  api: ValueObject<number | string>;
+  temp: ValueObject<number | string>;
   cargoName: string;
   isAdd: boolean;
   cargoNominationId: number;
@@ -864,6 +866,7 @@ export interface ITankDetailsValueObject {
   colorCode?: string;
   sg?: number;
   percentageFilled?: number | string;
+  fullCapacityCubm?: null | string;
 }
 
 /**
@@ -1199,19 +1202,21 @@ export enum ULLAGE_STATUS_TEXT {
   'ULLAGE_UPDATE_PLAN_INPROGRESS' = 12,
   'ULLAGE_UPDATE_PLAN_SUCCESS' = 13,
   'ULLAGE_UPDATE_PLAN_VALIDATION_FAILED' = 14,
+  'ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING' = 16
 }
 
 /**
 * Enum for ullage status
 *
 * @export
-* @enum ULLAGE_STATUS_TEXT
+* @enum ULLAGE_STATUS_VALUE
 */
 export enum ULLAGE_STATUS_VALUE {
   'GENERATED' = 5,
   'IN_PROGRESS' = 12,
   'SUCCESS' = 13,
   'ERROR' = 14,
+  'VERIFICATION_PENDING' = 16
 }
 
 /**

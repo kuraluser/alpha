@@ -95,7 +95,7 @@
                     </div>
                     <div class="col-3">
                         <div class="upload-file v-bottom">
-                            {{'LOADING_DETAILS_BROWSE_BUTTON_LABEL' | translate}}
+                            {{'ULLAGE_UPDATE_FILE_UPLOAD_LABEL' | translate}}
                             <input type="file" name="fl_attachMail" #fileUpload
                                 title="No file selected"  focusTrap (change)="excelUpload($event)" />
                         </div>
@@ -172,6 +172,11 @@
         <div *ngIf="selectedTab === tankType.CARGO && status === ULLAGE_STATUS.DEPARTURE" class="row pt-25">
             <div class="col-md-4 pb-10">
                 <label>{{'LOADABLE_PLAN_BL_FIGURE_HEADING'| translate}}</label>
+            </div>
+            <div class="col-md-8 pb-10">
+                <div class="header-info-pop-up mb-5 text-right"><span class="info-icon mr-5">!</span>
+                    {{'ULLAGE_UPDATE_BLFIG_INFO_MESSAGE' | translate}}
+                </div>
             </div>
         </div>
         <div *ngIf="selectedTab === tankType.CARGO && status === ULLAGE_STATUS.DEPARTURE" class="row">
@@ -331,8 +336,8 @@
                             <td class="text-right">{{row.actual.lt | quantityDecimalFormat : QUANTITY_UNIT.LT}}</td>
                             <td class="text-right">{{row.actual.mt | quantityDecimalFormat : QUANTITY_UNIT.MT}}</td>
                             <td class="text-right">{{row.actual.kl | quantityDecimalFormat : QUANTITY_UNIT.KL}}</td>
-                            <td class="text-right">{{row.actual.api?.toFixed(2)}}</td>
-                            <td class="text-right">{{row.actual.temp?.toFixed(2)}}</td>
+                            <td class="text-right">{{row.actual?.api?.toFixed(2)}}</td>
+                            <td class="text-right">{{row.actual?.temp?.toFixed(2)}}</td>
                         </tr>
                         <tr>
                             <td>{{'ULLAGE_UPDATE_BLFIG_LABEL' | translate}}</td>

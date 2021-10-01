@@ -20,6 +20,8 @@ import { tankCapacityValidator } from './../../core/directives/tankCapacityValid
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { ConfirmationService } from 'primeng/api';
 import { apiTemperatureMinValidator } from './../../core/directives/api-temperature-min-validator.directive';
+import { apiTemperatureBlfigValidator } from './../../core/directives/api-temperature-blfigure-validator.directive';
+import { blReferenceValidator } from './../../core/directives/bl-reference-validator.directive';;
 import { IPermission } from '../../../shared/models/user-profile.model';
 
 /**
@@ -119,8 +121,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   readonly ULLAGE_STATUS = ULLAGE_STATUS;
   readonly OPERATIONS = OPERATIONS;
 
-  cargoTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api', weightField: 'actualWeight', commodityNameField: 'abbreviation', weightUnit: AppConfigurationService.settings.baseUnit };
-  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, soundingField: 'sounding', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit, showSounding: true };
+  cargoTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'ullage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api', weightField: 'actualWeight', commodityNameField: 'abbreviation', weightUnit: AppConfigurationService.settings.baseUnit, showWeight: true };
+  ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, soundingField: 'sounding', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'actualWeight', weightUnit: AppConfigurationService.settings.baseUnit, showSounding: true, showWeight: true };
   ohqTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, densityField: 'density', weightField: 'quantity', weightUnit: AppConfigurationService.settings.baseUnit };
 
   cargoTanks: IShipCargoTank[][];
@@ -402,13 +404,13 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       const differenecPercentage = item.diffPercentage.mt;
       this.cargoTanks.map(tank => {
         tank.map(elem => {
-          if (elem?.commodity && elem?.commodity['cargoNominationId'] === item.cargoNominationId) {
+          if (elem?.commodity && elem?.commodity['cargoNominationId'] === item.cargoNominationId && !item.cargoLoaded && item.blFigure.mt) {
             const changeInQty = (differenecPercentage / 100) * Number(elem.commodity.quantity);
             elem.commodity.quantity = differenecPercentage >= 0 ? Number(elem.commodity.quantity) + changeInQty : Number(elem.commodity.quantity) - changeInQty;
             elem.commodity.actualWeight = elem.commodity.quantity;
             elem.commodity.volume = this.quantityPipe.transform(elem.commodity.actualWeight, this.currentQuantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, elem.commodity.api);
             elem.commodity.percentageFilled = this.ullageUpdatePopupTransformationService.getFillingPercentage(elem);
-            if (Number(elem.commodity.percentageFilled) > 98.5 && !fillingPercentageError && !item.cargoLoaded) {
+            if (Number(elem.commodity.percentageFilled) > 98.5 && !fillingPercentageError) {
               fillingPercentageError = true;
               tankName = elem.shortName;
             }
@@ -444,6 +446,38 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     this.ballastQuantities = [];
     data.map(item => {
       this.ballastQuantities.push(this.ullageUpdatePopupTransformationService.getFormatedTankDetailsBallast(item, true, false, true))
+    });
+    this.setBallastTankQuantity();
+  }
+
+  /**
+   * Method for seting ballast capacity
+   *
+   * @memberof UllageUpdatePopupComponent
+   */
+  setBallastTankQuantity() {
+    this.ballastQuantities.map(item => {
+      this.rearBallastTanks.map(el => {
+        el.map(tank => {
+          if (item.tankId === tank.id) {
+            item.fullCapacityCubm = tank.fullCapacityCubm;
+          }
+        });
+      })
+      this.centerBallastTanks.map(el => {
+        el.map(tank => {
+          if (item.tankId === tank.id) {
+            item.fullCapacityCubm = tank.fullCapacityCubm;
+          }
+        });
+      });
+      this.frontBallastTanks.map(el => {
+        el.map(tank => {
+          if (item.tankId === tank.id) {
+            item.fullCapacityCubm = tank.fullCapacityCubm;
+          }
+        });
+      });
     });
   }
 
@@ -520,7 +554,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     return this.fb.group({
       tankName: this.fb.control(tank.tankName.value),
       quantity: this.fb.control(tank.quantity.value),
-      sounding: this.fb.control(tank.sounding.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator(null, null, 'sounding', 'fillingPercentage', 100)]),
+      sounding: this.fb.control(tank.sounding.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator('quantity', tank.fullCapacityCubm, 'sounding', 'fillingPercentage', 100)]),
       fillingPercentage: this.fb.control(tank.fillingPercentage.value)
     });
   }
@@ -535,9 +569,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       tankName: this.fb.control(tank.tankName.value),
       ullage: this.fb.control(tank.ullage.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator(null, null, 'ullage', 'fillingPercentage')]),
       temperature: this.fb.control(tank.temperature.value, [Validators.required, Validators.min(0), Validators.max(160), numberValidator(2, 3, false), tankCapacityValidator(null, null, 'temperature', 'fillingPercentage'), apiTemperatureMinValidator('temperature')]),
-      api: this.fb.control(tank.api.value, [Validators.required, Validators.min(0), Validators.max(99), numberValidator(2, 2, false), tankCapacityValidator(null, null, 'api', 'fillingPercentage'), apiTemperatureMinValidator('api')]),
+      api: this.fb.control(tank.api.value, [Validators.required, Validators.min(0), Validators.max(99.99), numberValidator(2, 2, false), tankCapacityValidator(null, null, 'api', 'fillingPercentage'), apiTemperatureMinValidator('api')]),
       quantity: this.fb.control(tank.quantity.value),
-      fillingPercentage: this.fb.control(tank.fillingPercentage.value)
+      fillingPercentage: this.fb.control(tank.fillingPercentage.value),
     });
   }
 
@@ -564,12 +598,20 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     let cargoLoadedDischarged = false;
     if (this.operation === OPERATIONS.LOADING) {
       this.ullageResponseData?.billOfLaddingList?.map(item => {
+        if (item?.cargoNominationId === data?.cargoNominationId) {
+          data.cargoToBeLoaded = item?.cargoToBeLoaded;
+          data.cargoLoaded = item?.cargoLoaded;
+        }
         if (item?.cargoNominationId === data?.cargoNominationId && (item?.cargoToBeLoaded || item?.cargoLoaded)) {
           cargoLoadedDischarged = true;
         }
       });
     } else {
       this.ullageResponseData?.billOfLaddingList?.map(item => {
+        if (item?.cargoNominationId === data?.cargoNominationId) {
+          data.cargoToBeDischarged = item?.cargoToBeDischarged;
+          data.cargoDischarged = item?.cargoDischarged;
+        }
         if (item?.cargoNominationId === data?.cargoNominationId && (item?.cargoToBeDischarged || item?.cargoDischarged)) {
           cargoLoadedDischarged = true;
         }
@@ -596,6 +638,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   onTabClick(selectedTab: TANKTYPE) {
     this.selectedTab = selectedTab;
     this.percentageFilled = null;
+    if (selectedTab === TANKTYPE.BUNKER) {
+      this.checkBunkerTankError();
+    }
   }
 
 
@@ -925,13 +970,13 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   */
   initCargoDetails(cargo: any): FormGroup {
     return this.fb.group({
-      blRefNo: this.fb.control(cargo.blRefNo.value, [Validators.minLength(4), Validators.maxLength(12), Validators.pattern(/^[ #&()\/":\-=+*]*[a-zA-Z0-9]/)]),
+      blRefNo: this.fb.control(cargo.blRefNo.value, [Validators.minLength(4), Validators.maxLength(12), blReferenceValidator()]),
       bbl: this.fb.control(cargo.bbl.value, [Validators.min(0), numberValidator(0, 7, false)]),
       lt: this.fb.control(cargo.lt.value, [Validators.min(0), numberValidator(2, 7, false)]),
       mt: this.fb.control(cargo.mt.value, [Validators.min(0), numberValidator(2, 7, false)]),
       kl: this.fb.control(cargo.kl.value, [Validators.min(0), numberValidator(3, 7, false)]),
-      api: this.fb.control(cargo.api.value, [Validators.min(0), Validators.max(99), numberValidator(2, 2, false)]),
-      temp: this.fb.control(cargo.temp.value, [Validators.min(0), Validators.max(160), numberValidator(2, 3, false)]),
+      api: this.fb.control(cargo.api.value, [Validators.max(99.99), numberValidator(2, 2, false), apiTemperatureBlfigValidator('api')]),
+      temp: this.fb.control(cargo.temp.value, [Validators.max(160), numberValidator(2, 3, false), apiTemperatureBlfigValidator('temperature')]),
       cargoNominationId: this.fb.control(cargo.cargoNominationId),
     });
   }
@@ -1006,12 +1051,18 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   */
   onEditComplete(event: any, rowData: any, key: string, rowIndex: number, index: number) {
     rowData[key]['value'] = event.target.value;
+    this.tableForm.markAllAsTouched();
+    this.tableForm.markAsDirty();
     const control = this.getControl(rowIndex, index, key);
     this.calculateTotal();
     this.updateCargoQuantiyData();
     if (this.showAs.id === 2) {
       this.updateCargoTanks();
     }
+    const api = this.getControl(rowIndex, index, 'api');
+    api.updateValueAndValidity();
+    const temp = this.getControl(rowIndex, index, 'temp');
+    temp.updateValueAndValidity();
     const row = this.blFigure.items[rowIndex];
     if (key === 'blRefNo' || key === 'api' || key === 'temp') {
       rowData[key].isEditMode = control.errors ? true : false;
@@ -1146,6 +1197,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         formControls['controls'][event.field].setErrors({ maxLimit: true });
       } else {
         formControls['controls'][event.field].updateValueAndValidity();
+        formControls['controls'].temperature.updateValueAndValidity();
+        formControls['controls'].api.updateValueAndValidity();
       }
 
       this.updateCargoQuantiyData();
@@ -1203,7 +1256,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       formControl.markAllAsTouched();
       formControl.markAsDirty();
       const formControlFilling = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get('fillingPercentage');
-      formControlFilling.setValue(result.fillingRatio ? result.fillingRatio : 101);
+      formControlFilling.setValue(result.fillingRatio);
       formControlFilling.updateValueAndValidity();
       formControlFilling.updateValueAndValidity();
       const formControlSounding = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get(event.field);
@@ -1236,23 +1289,71 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   }
 
   /**
+  * Method for bunker setErrors
+  * @memberof UllageUpdatePopupComponent
+  */
+  setErrorBunker(value, tank, index) {
+    const formControls = <FormControl>(<FormArray>this.bunkerTankForm.get('dataTable')).at(index);
+    if (this.getRobFillingRatio(value, tank) > 95) {
+      setTimeout(() => {
+        formControls['controls'].quantity.setErrors({ fillingError: true });
+        formControls['controls'].quantity.markAsDirty();
+        formControls['controls'].quantity.markAsTouched();
+      });
+    } else {
+      setTimeout(() => {
+        formControls['controls'].quantity.setErrors(null);
+        formControls['controls'].quantity.markAsDirty();
+        formControls['controls'].quantity.markAsTouched();
+      });
+    }
+  }
+
+  /**
+  * Method for bunker validation check
+  * @memberof UllageUpdatePopupComponent
+  */
+  checkBunkerTankError() {
+    this.bunkerTankForm.markAllAsTouched();
+    this.bunkerTankForm.markAsDirty();
+    this.bunkerTanksList.map((item, index) => {
+      this.ullageResponseData?.bunkerRearTanks?.map(el => {
+        el?.map(rear => {
+          if (rear.id === item.tankId) {
+            this.setErrorBunker(item.quantity.value, rear, index);
+          }
+        })
+      });
+      this.ullageResponseData?.bunkerTanks?.map(el => {
+        el?.map(bunker => {
+          if (bunker.id === item.tankId) {
+            this.setErrorBunker(item.quantity.value, bunker, index);
+          }
+        })
+      });
+    });
+  }
+
+  /**
   * Method for bunker quantity check
   * @param event
   * @memberof UllageUpdatePopupComponent
   */
   bunkerEditCompleted(event) {
     let fillingRatioError = false;
+    this.bunkerTankForm.markAllAsTouched();
+    this.bunkerTankForm.markAsDirty();
     this.ullageResponseData?.bunkerRearTanks?.map(el => {
       el?.map(rear => {
         if (rear.id === event.data.tankId && !fillingRatioError) {
-          fillingRatioError = this.geRobFillingRatio(event.data.quantity.value, rear) > 95 ? true : false;
+          fillingRatioError = this.getRobFillingRatio(event.data.quantity.value, rear) > 95 ? true : false;
         }
       })
     });
     this.ullageResponseData?.bunkerTanks?.map(el => {
       el?.map(bunker => {
         if (bunker.id === event.data.tankId && !fillingRatioError) {
-          fillingRatioError = this.geRobFillingRatio(event.data.quantity.value, bunker) > 95 ? true : false;
+          fillingRatioError = this.getRobFillingRatio(event.data.quantity.value, bunker) > 95 ? true : false;
         }
       })
     });
@@ -1280,8 +1381,6 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         this.rearBunkerTanks = [...this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerRearTanks, this.ullageResponseData?.portPlanRobDetails, this.status)];
       });
     }
-    this.bunkerTankForm.markAllAsTouched();
-    this.bunkerTankForm.markAsDirty();
   }
 
   /**
@@ -1290,7 +1389,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   * @param {any} row
   * @memberof UllageUpdatePopupComponent
   */
-  geRobFillingRatio(quantity, row) {
+  getRobFillingRatio(quantity, row) {
     const volume = row.density && quantity ? (quantity / row.density) : 0;
     let fillingratio: any = ((volume / Number(row?.fullCapacityCubm)) * 100).toFixed(2);
     if (Number(fillingratio) === 100) {
@@ -1452,12 +1551,19 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         this.messageService.add({ severity: 'success', summary: translationKeys['ULLAGE_UPDATE_SUCCESS_LABEL'], detail: translationKeys['ULLAGE_UPDATE_SUCCESS_MESSAGE'] });
         if (validate && result['processId']) {
           if (this.status === ULLAGE_STATUS.DEPARTURE) {
-            this.loadingDischargingTransformationService.setUllageDepartureBtnStatus(ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS);
+            this.loadingDischargingTransformationService.setUllageDepartureBtnStatus({ status: ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS, portRotationId: this.portRotationId });
           }
           if (this.status === ULLAGE_STATUS.ARRIVAL) {
-            this.loadingDischargingTransformationService.setUllageArrivalBtnStatus(ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS);
+            this.loadingDischargingTransformationService.setUllageArrivalBtnStatus({ status: ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS, portRotationId: this.portRotationId });
           }
-          this.loadingDischargingTransformationService.validateUllage({ validate: true, processId: result['processId'], status: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2 });
+          this.loadingDischargingTransformationService.validateUllage({ validate: true, processId: result['processId'], status: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2, portRotationId: this.portRotationId });
+        } else {
+          if (this.status === ULLAGE_STATUS.DEPARTURE) {
+            this.loadingDischargingTransformationService.setUllageDepartureBtnStatus({ status: ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING, portRotationId: this.portRotationId });
+          }
+          if (this.status === ULLAGE_STATUS.ARRIVAL) {
+            this.loadingDischargingTransformationService.setUllageArrivalBtnStatus({ status: ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING, portRotationId: this.portRotationId });
+          }
         }
         this.ngxSpinnerService.hide();
         this.closePopup.emit(true);
@@ -1515,10 +1621,12 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         this.getCargoTankFormGroup();
         this.updateCargoQuantiyData();
         this.validateBlFigTable();
+        this.enableDisableBLFigure();
         this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
       }
     } catch (err) {
       this.ngxSpinnerService.hide();
+      this.file.nativeElement.value = '';
       if (err?.error?.errorCode === "ERR-RICO-314") {
         this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_UNSUPPORTED_FILE_ERROR'] });
       } else if (err?.error?.errorCode === "ERR-RICO-316") {

@@ -123,9 +123,7 @@ public class LoadingPlanRuleServiceImpl implements LoadingPlanRuleService {
                 Common.RulePlans.Builder rulePlanBuilder = Common.RulePlans.newBuilder();
                 Optional.ofNullable(rulePlans.getHeader()).ifPresent(rulePlanBuilder::setHeader);
                 List<Common.Rules> ruleList =
-                    rulePlans.getRulesList().stream()
-                        .filter(item -> item.getEnable())
-                        .collect(Collectors.toList());
+                    rulePlans.getRulesList().stream().collect(Collectors.toList());
                 if (ruleList != null && ruleList.size() > 0) {
                   rulePlanBuilder.addAllRules(ruleList);
                   builder.addRulePlan(rulePlanBuilder);

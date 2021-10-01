@@ -14,7 +14,7 @@ import { MessageService } from 'primeng/api';
 import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
 import { SecurityService } from '../../../shared/services/security/security.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ComponentCanDeactivate, RATE_UNIT , PERMISSION_ACTION } from '../../../shared/models/common.model';
+import { ComponentCanDeactivate, RATE_UNIT, PERMISSION_ACTION } from '../../../shared/models/common.model';
 import { ULLAGE_STATUS_VALUE } from './../models/loading-discharging.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
@@ -36,7 +36,6 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   @ViewChild(LoadingInformationComponent) loadingInformationComponent: LoadingInformationComponent
   @ViewChild('loadingInstruction') loadingInstruction;
-  @ViewChild('loadingInfo') loadingInfo;
   currentTab: OPERATION_TAB = OPERATION_TAB.INFORMATION;
   OPERATION_TAB = OPERATION_TAB;
   vesselId: number;
@@ -156,7 +155,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   private async initSubsciptions() {
 
     this.ngxSpinnerService.show();
-    this.loadingDischargingTransformationService.generateLoadingPlanButton.subscribe((status)=>{
+    this.loadingDischargingTransformationService.generateLoadingPlanButton.subscribe((status) => {
       this.disableGenerateLoadableButton = status;
     })
     this.loadingDischargingTransformationService.isLoadingPlanGenerated.subscribe((status) => {
@@ -389,10 +388,10 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
       }
       if (event?.data?.pattern?.status === 1) {
-        this.loadingDischargingTransformationService.setUllageArrivalBtnStatus(event?.data.statusId);
+        this.loadingDischargingTransformationService.setUllageArrivalBtnStatus({ status: event?.data.statusId, portRotationId: event?.data?.pattern?.portRotationId });
       }
       if (event?.data?.pattern?.status === 2) {
-        this.loadingDischargingTransformationService.setUllageDepartureBtnStatus(event?.data.statusId);
+        this.loadingDischargingTransformationService.setUllageDepartureBtnStatus({ status: event?.data.statusId, portRotationId: event?.data?.pattern?.portRotationId });
       }
     }
 
@@ -408,10 +407,10 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false)
       this.processing = false;
       this.loadingDischargingTransformationService.disableSaveButton.next(false);
-      if(error){
+      if (error) {
         this.loadingDischargingTransformationService.disableViewErrorButton.next(false)
       }
-      else{
+      else {
         this.loadingDischargingTransformationService.disableViewErrorButton.next(true)
 
       }
@@ -504,8 +503,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @memberof LoadingComponent
    */
   isLoadingInfoValid() {
-    if( this.currentTab === OPERATION_TAB.INFORMATION && this.loadingInfo?.loadingInformationData) {
-      return  (this.loadingInfo.isLoadingInfoValid() &&
+    if (this.currentTab === OPERATION_TAB.INFORMATION && this.loadingInformationComponent?.loadingInformationData) {
+      return (this.loadingInformationComponent.isLoadingInfoValid() &&
       this.loadingDischargingTransformationService.isMachineryValid && this.loadingDischargingTransformationService.isCargoAdded);
     } else {
       return this.loadingInformationComplete;

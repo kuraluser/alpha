@@ -59,6 +59,9 @@
                     <span class="badge-custom badge-info v-middle mr-10"
                         *ngIf="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS || loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_GENERATED">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.loadingPlanDepStatusId]
                         | translate}}</span>
+                    <span class="badge-custom badge-muted v-middle mr-10"
+                        *ngIf="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.loadingPlanDepStatusId]
+                        | translate}}</span>
                 </ng-container>
                 <ng-container *ngIf="operation === OPERATIONS.DISCHARGING">
                     <span class="badge-custom badge-success v-middle mr-10"
@@ -69,6 +72,9 @@
                         | translate}}</span>
                     <span class="badge-custom badge-info v-middle mr-10"
                         *ngIf="loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS || loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_GENERATED">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.dischargePlanDepStatusId]
+                        | translate}}</span>
+                        <span class="badge-custom badge-muted v-middle mr-10"
+                        *ngIf="loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.loadingPlanDepStatusId]
                         | translate}}</span>
                 </ng-container>
 
