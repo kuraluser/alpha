@@ -1,17 +1,11 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.domain.algo;
 
-import java.util.List;
-
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
-
+import java.util.List;
 import lombok.Data;
 
-/**
- * 
- * @author arun.j
- *
- */
+/** @author arun.j */
 @Data
 public class UllageEditLoadicatorAlgoRequest {
 

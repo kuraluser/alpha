@@ -5,10 +5,11 @@ import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastTempDetails;
-
 import java.util.List;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface PortDischargingPlanBallastDetailsRepository
@@ -22,6 +23,14 @@ public interface PortDischargingPlanBallastDetailsRepository
   public List<PortDischargingPlanBallastDetails> findByPatternIdAndPortRotationIdAndIsActive(
       long patternId, long portRotationId, boolean b);
 
-public List<PortDischargingPlanBallastTempDetails> findByDischargingInformationAndConditionTypeAndIsActive(Long id,
-		int conditionType, boolean b);
+  public List<PortDischargingPlanBallastTempDetails>
+      findByDischargingInformationAndConditionTypeAndIsActive(
+          Long id, int conditionType, boolean b);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "Update PortDischargingPlanBallastDetails set isActive = false WHERE dischargingInformation.id = ?1 and conditionType = ?2 and valueType = ?3 and isActive = true")
+  public void deleteExistingByDischargingInfoAndConditionTypeAndValueType(
+      Long loadingInfoId, Integer conditionType, Integer valueType);
 }

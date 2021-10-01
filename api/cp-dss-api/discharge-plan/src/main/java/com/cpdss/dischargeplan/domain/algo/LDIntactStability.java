@@ -3,11 +3,7 @@ package com.cpdss.dischargeplan.domain.algo;
 
 import lombok.Data;
 
-/**
- * 
- * @author arun.j
- *
- */
+/** @author arun.j */
 @Data
 public class LDIntactStability {
   private Long id;

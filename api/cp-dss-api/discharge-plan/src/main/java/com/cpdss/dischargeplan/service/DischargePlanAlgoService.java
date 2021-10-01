@@ -3,19 +3,6 @@ package com.cpdss.dischargeplan.service;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
@@ -61,20 +48,29 @@ import com.cpdss.dischargeplan.entity.CowWithDifferentCargo;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
 import com.cpdss.dischargeplan.entity.DischargingDelayReason;
+import com.cpdss.dischargeplan.entity.DischargingInformationAlgoStatus;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import com.cpdss.dischargeplan.entity.DischargingMachineryInUse;
 import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeInformationStatusRepository;
+import com.cpdss.dischargeplan.repository.DischargingInformationAlgoStatusRepository;
 import com.cpdss.dischargeplan.repository.ReasonForDelayRepository;
-import com.cpdss.loadingplan.entity.LoadingInformation;
-import com.cpdss.loadingplan.entity.LoadingInformationAlgoStatus;
-import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -87,8 +83,11 @@ public class DischargePlanAlgoService {
   @Autowired ReasonForDelayRepository reasonForDelayRepository;
 
   @Autowired CowPlanDetailRepository cowPlanDetailRepository;
-DischargeInformationStatusRepository dischargeInformationStatusRepository;
-  
+  private DischargeInformationStatusRepository dischargeInformationStatusRepository;
+
+  @Autowired
+  private DischargingInformationAlgoStatusRepository dischargingInformationAlgoStatusRepository;
+
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub loadableStudyService;
 
@@ -775,7 +774,7 @@ DischargeInformationStatusRepository dischargeInformationStatusRepository;
     return loadableQuantityCargoDetails;
   }
 
-/**
+  /**
    * Fetches Loading Information Status based on status ID.
    *
    * @param loadingInformationProcessingStartedId
@@ -785,7 +784,8 @@ DischargeInformationStatusRepository dischargeInformationStatusRepository;
   public Optional<DischargingInformationStatus> getDischargingInformationStatus(
       Long dischargingInformationStatusId) throws GenericServiceException {
     Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
-    		dischargeInformationStatusRepository.findByIdAndIsActive(dischargingInformationStatusId, true);
+        dischargeInformationStatusRepository.findByIdAndIsActive(
+            dischargingInformationStatusId, true);
     if (dischargingInfoStatusOpt.isEmpty()) {
       throw new GenericServiceException(
           "Could not find loading information status with id " + dischargingInformationStatusId,
@@ -796,20 +796,47 @@ DischargeInformationStatusRepository dischargeInformationStatusRepository;
     return dischargingInfoStatusOpt;
   }
 
-public void createDischargingInformationAlgoStatus(DischargeInformation dischargeInformation, String processId,
-		DischargingInformationStatus dischargingInformationStatus, int arrivalDepartutre) {
-	  log.info(
-		      "Creating ALGO status for Loading Information {}, condition Type {}",
-		      dischargeInformation.getId(),
-		      arrivalDepartutre);
-		  LoadingInformationAlgoStatus algoStatus = new LoadingInformationAlgoStatus();
-		  algoStatus.setIsActive(true);
-		  algoStatus.setLoadingInformation(dischargeInformation);
-		  algoStatus.setLoadingInformationStatus(dischargingInformationStatus);
-		  algoStatus.setConditionType(arrivalDepartutre);
-		  algoStatus.setProcessId(processId);
-		  algoStatus.setVesselXId(dischargeInformation.getVesselXId());
-		  loadingInfoAlgoStatusRepository.save(algoStatus);
-}
-
+  public void createDischargingInformationAlgoStatus(
+      DischargeInformation dischargeInformation,
+      String processId,
+      DischargingInformationStatus dischargingInformationStatus,
+      int arrivalDepartutre) {
+    log.info(
+        "Creating ALGO status for Loading Information {}, condition Type {}",
+        dischargeInformation.getId(),
+        arrivalDepartutre);
+    DischargingInformationAlgoStatus algoStatus = new DischargingInformationAlgoStatus();
+    algoStatus.setIsActive(true);
+    algoStatus.setDischargeInformation(dischargeInformation);
+    algoStatus.setDischargingInformationStatus(dischargingInformationStatus);
+    algoStatus.setConditionType(arrivalDepartutre);
+    algoStatus.setProcessId(processId);
+    algoStatus.setVesselXId(dischargeInformation.getVesselXid());
+    dischargingInformationAlgoStatusRepository.save(algoStatus);
+  }
+  /**
+   * Updates ALGO status of Loading Information
+   *
+   * @param loadingInformation
+   * @param processId
+   * @param status
+   */
+  public void createLoadingInformationAlgoStatus(
+      DischargeInformation dsischargeInformation,
+      String processId,
+      DischargingInformationStatus status,
+      Integer conditionType) {
+    log.info(
+        "Creating ALGO status for Loading Information {}, condition Type {}",
+        dsischargeInformation.getId(),
+        conditionType);
+    DischargingInformationAlgoStatus algoStatus = new DischargingInformationAlgoStatus();
+    algoStatus.setIsActive(true);
+    algoStatus.setDischargeInformation(dsischargeInformation);
+    algoStatus.setDischargingInformationStatus(status);
+    algoStatus.setConditionType(conditionType);
+    algoStatus.setProcessId(processId);
+    algoStatus.setVesselXId(dsischargeInformation.getVesselXid());
+    dischargingInformationAlgoStatusRepository.save(algoStatus);
+  }
 }

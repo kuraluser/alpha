@@ -3,39 +3,26 @@ package com.cpdss.dischargeplan.service.loadicator;
 
 import static java.lang.String.valueOf;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
+import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
+import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.Loadicator;
 import com.cpdss.common.generated.Loadicator.StowagePlan;
 import com.cpdss.common.generated.Loadicator.StowagePlan.Builder;
 import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.SynopticalOperationServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.discharge_plan.DischargePlanService;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortLoadingPlanRobDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -48,8 +35,10 @@ import com.cpdss.dischargeplan.domain.algo.LoadicatorStowageDetails;
 import com.cpdss.dischargeplan.domain.algo.UllageEditLoadicatorAlgoRequest;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastTempDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageTempDetails;
 import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastDetailsRepository;
@@ -60,8 +49,24 @@ import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageTempDetailsR
 import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /** @author pranav.k */
 @Slf4j
@@ -76,19 +81,30 @@ public class UllageUpdateLoadicatorService {
   private String rootFolder;
 
   @Autowired DischargeInformationRepository dischargeInformationRepository;
-  @Autowired PortDischargingPlanStowageDetailsRepository portDischargingPlanStowageDetailsRepository;
-  @Autowired PortDischargingPlanBallastDetailsRepository portDischargingPlanBallastDetailsRepository;
+
+  @Autowired
+  PortDischargingPlanStowageDetailsRepository portDischargingPlanStowageDetailsRepository;
+
+  @Autowired
+  PortDischargingPlanBallastDetailsRepository portDischargingPlanBallastDetailsRepository;
+
   @Autowired PortDischargingPlanRobDetailsRepository portDischargingPlanRobDetailsRepository;
 
   @Autowired
-  PortDischargingPlanStowageTempDetailsRepository portLoadingPlanStowageDetailsTempRepository;
+  PortDischargingPlanStowageTempDetailsRepository portDischargingPlanStowageTempDetailsRepository;
 
   @Autowired
-  PortDischargingPlanBallastTempDetailsRepository portLoadingPlanBallastDetailsTempRepository;
+  PortDischargingPlanBallastTempDetailsRepository portDischargingPlanBallastDetailsTempRepository;
 
   @Autowired DischargePlanAlgoService dischargingPlanAlgoService;
   @Autowired LoadicatorService loadicatorService;
-  @Autowired DischargePlanService loadingPlanService;
+  @Autowired DischargePlanService dischargePlanService;
+
+  @GrpcClient("loadableStudyService")
+  private SynopticalOperationServiceGrpc.SynopticalOperationServiceBlockingStub
+      synopticalOperationServiceBlockingStub;
+
+  private static final int VALUE_TYPE = 1;
 
   /**
    * Sends StowagePlans to loadicator-integration MS for Loadicator processing.
@@ -104,7 +120,7 @@ public class UllageUpdateLoadicatorService {
         Loadicator.LoadicatorRequest.newBuilder();
     Long loadingInfoId = request.getUpdateUllage(0).getLoadingInformationId();
     Optional<DischargeInformation> dischargingInfoOpt =
-    		dischargeInformationRepository.findByIdAndIsActiveTrue(loadingInfoId);
+        dischargeInformationRepository.findByIdAndIsActiveTrue(loadingInfoId);
     if (dischargingInfoOpt.isEmpty()) {
       log.info("Cannot find loading information with id {}", loadingInfoId);
       throw new GenericServiceException(
@@ -129,29 +145,15 @@ public class UllageUpdateLoadicatorService {
       }
       saveUllageEditLoadicatorRequestJson(algoRequest, dischargingInfoOpt.get().getId());
       Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
-    		  dischargingPlanAlgoService.getDischargingInformationStatus(
+          dischargingPlanAlgoService.getDischargingInformationStatus(
               DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
-      if (DischargePlanConstants.ARRIVAL_CONDITION_VALUE
-          == request.getUpdateUllage(0).getArrivalDepartutre()) {
-          DischargeInformation info = dischargeInformationRepository.findById(dischargingInfoStatusOpt.get().getId()).orElse(null);
-          if(info!=null) {
-        	  info.setArrivalStatusId(dischargingInfoStatusOpt.get().getId());
-          }
-          dischargeInformationRepository.save(info); 
-       } else if (DischargePlanConstants.DEPARTURE_CONDITION_VALUE
-          == request.getUpdateUllage(0).getArrivalDepartutre()) {
-    	   DischargeInformation info = dischargeInformationRepository.findById(dischargingInfoStatusOpt.get().getId()).orElse(null);
-           if(info!=null) {
-         	  info.setDepartureStatusId(dischargingInfoStatusOpt.get().getId());
-           }
-           dischargeInformationRepository.save(info);
-      }
+
       dischargingPlanAlgoService.createDischargingInformationAlgoStatus(
           dischargingInfoOpt.get(),
           processId,
           dischargingInfoStatusOpt.get(),
           request.getUpdateUllage(0).getArrivalDepartutre());
-      loadingPlanService.saveUpdatedLoadingPlanDetails(
+      saveUpdatedDischargingPlanDetails(
           dischargingInfoOpt.get(), request.getUpdateUllage(0).getArrivalDepartutre());
       log.info(
           "Saved updated loading plan details of loading information {}",
@@ -159,13 +161,13 @@ public class UllageUpdateLoadicatorService {
       return processId;
     }
     List<PortDischargingPlanStowageTempDetails> tempStowageDetails =
-    		portLoadingPlanStowageDetailsTempRepository
+        portDischargingPlanStowageTempDetailsRepository
             .findByDischargingInformationAndConditionTypeAndIsActive(
                 dischargingInfoOpt.get().getId(),
                 request.getUpdateUllage(0).getArrivalDepartutre(),
                 true);
     List<PortDischargingPlanBallastTempDetails> tempBallastDetails =
-        portLoadingPlanBallastDetailsTempRepository
+        portDischargingPlanBallastDetailsTempRepository
             .findByDischargingInformationAndConditionTypeAndIsActive(
                 dischargingInfoOpt.get().getId(),
                 request.getUpdateUllage(0).getArrivalDepartutre(),
@@ -187,14 +189,21 @@ public class UllageUpdateLoadicatorService {
         loadicatorService.getCargoNominationDetails(cargoNominationIds);
     CargoInfo.CargoReply cargoReply =
         loadicatorService.getCargoInfoForLoadicator(dischargingInfoOpt.get());
-    PortInfo.PortReply portReply = loadicatorService.getPortInfoForLoadicator(dischargingInfoOpt.get());
+    PortInfo.PortReply portReply =
+        loadicatorService.getPortInfoForLoadicator(dischargingInfoOpt.get());
 
     loadicatorRequestBuilder.setTypeId(DischargePlanConstants.LOADICATOR_TYPE_ID);
     loadicatorRequestBuilder.setIsUllageUpdate(true);
     loadicatorRequestBuilder.setConditionType(request.getUpdateUllage(0).getArrivalDepartutre());
     StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
     loadicatorService.buildStowagePlan(
-        dischargingInfoOpt.get(), 0, processId, cargoReply, vesselReply, portReply, stowagePlanBuilder);
+        dischargingInfoOpt.get(),
+        0,
+        processId,
+        cargoReply,
+        vesselReply,
+        portReply,
+        stowagePlanBuilder);
     buildStowagePlanDetails(
         dischargingInfoOpt.get(),
         tempStowageDetails,
@@ -203,13 +212,18 @@ public class UllageUpdateLoadicatorService {
         cargoReply,
         stowagePlanBuilder);
     buildCargoDetails(
-        dischargingInfoOpt.get(), cargoNomDetails, tempStowageDetails, cargoReply, stowagePlanBuilder);
-    buildBallastDetails(dischargingInfoOpt.get(), tempBallastDetails, vesselReply, stowagePlanBuilder);
+        dischargingInfoOpt.get(),
+        cargoNomDetails,
+        tempStowageDetails,
+        cargoReply,
+        stowagePlanBuilder);
+    buildBallastDetails(
+        dischargingInfoOpt.get(), tempBallastDetails, vesselReply, stowagePlanBuilder);
     buildRobDetails(dischargingInfoOpt.get(), robDetails, vesselReply, stowagePlanBuilder);
     loadicatorRequestBuilder.addStowagePlanDetails(stowagePlanBuilder.build());
     Loadicator.LoadicatorReply reply =
         loadicatorService.saveLoadicatorInfo(loadicatorRequestBuilder.build());
-    if (!reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
+    if (!reply.getResponseStatus().getStatus().equals(DischargePlanConstants.SUCCESS)) {
       throw new GenericServiceException(
           "Failed to send Stowage plans to Loadicator",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
@@ -217,18 +231,18 @@ public class UllageUpdateLoadicatorService {
     }
 
     Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
-        loadingPlanAlgoService.getLoadingInformationStatus(
-            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
-    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE
+        dischargingPlanAlgoService.getDischargingInformationStatus(
+            DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
+    if (DischargePlanConstants.ARRIVAL_CONDITION_VALUE
         == request.getUpdateUllage(0).getArrivalDepartutre()) {
-      dischargeInformationRepository.updateLoadingInformationArrivalStatus(
-          dischargingInfoStatusOpt.get(), loadingInfoId);
-    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE
+      dischargeInformationRepository.updateDischargeInformationArrivalStatus(
+          dischargingInfoStatusOpt.get().getId(), loadingInfoId);
+    } else if (DischargePlanConstants.DEPARTURE_CONDITION_VALUE
         == request.getUpdateUllage(0).getArrivalDepartutre()) {
-      dischargeInformationRepository.updateLoadingInformationDepartureStatus(
-          dischargingInfoStatusOpt.get(), loadingInfoId);
+      dischargeInformationRepository.updateDischargeInformationDepartureStatus(
+          dischargingInfoStatusOpt.get().getId(), loadingInfoId);
     }
-    loadingPlanAlgoService.createLoadingInformationAlgoStatus(
+    dischargingPlanAlgoService.createLoadingInformationAlgoStatus(
         dischargingInfoOpt.get(),
         processId,
         dischargingInfoStatusOpt.get(),
@@ -236,10 +250,136 @@ public class UllageUpdateLoadicatorService {
     return processId;
   }
 
+  public void saveUpdatedDischargingPlanDetails(
+      DischargeInformation dischargeInformation, Integer conditionType)
+      throws IllegalAccessException, InvocationTargetException, NumberFormatException,
+          GenericServiceException {
+    // Method used for Updating port discharging plan stowage and ballast details from  temp table
+    // to
+    // permanent after loadicator done
+    log.info(
+        "Updating Loading Plan Details of Loading Information {}", dischargeInformation.getId());
+    List<PortDischargingPlanStowageTempDetails> tempStowageList =
+        portDischargingPlanStowageTempDetailsRepository
+            .findByDischargingInformationAndConditionTypeAndIsActive(
+                dischargeInformation.getId(), conditionType, true);
+    List<PortDischargingPlanStowageDetails> stowageEntityList = new ArrayList<>();
+    if (!tempStowageList.isEmpty()) {
+      log.info("Copying stowage details from temporary tables");
+      for (PortDischargingPlanStowageTempDetails tempStowageEntity : tempStowageList) {
+        PortDischargingPlanStowageDetails stowageEntity = new PortDischargingPlanStowageDetails();
+        BeanUtils.copyProperties(tempStowageEntity, stowageEntity);
+        stowageEntity.setId(null);
+        stowageEntity.setCreatedBy(null);
+        stowageEntity.setCreatedDate(null);
+        stowageEntity.setCreatedDateTime(null);
+        stowageEntity.setLastModifiedBy(null);
+        stowageEntity.setLastModifiedDate(null);
+        stowageEntity.setLastModifiedDateTime(null);
+        stowageEntity.setIsActive(true);
+        stowageEntity.setDischargingInformation(dischargeInformation);
+        stowageEntityList.add(stowageEntity);
+      }
+      // Deleting existing entry from actual table before pushing new records
+      portDischargingPlanStowageDetailsRepository
+          .deleteExistingByDischargingInfoAndConditionTypeAndValueType(
+              dischargeInformation.getId(),
+              conditionType,
+              DischargePlanConstants.ACTUAL_TYPE_VALUE);
+      portDischargingPlanStowageDetailsRepository.saveAll(stowageEntityList);
+    }
+
+    List<PortDischargingPlanBallastTempDetails> tempBallastList =
+        portDischargingPlanBallastDetailsTempRepository
+            .findByDischargingInformationAndConditionTypeAndIsActive(
+                dischargeInformation.getId(), conditionType, true);
+    List<PortDischargingPlanBallastDetails> ballastEntityList = new ArrayList<>();
+    if (!tempBallastList.isEmpty()) {
+      log.info("Copying ballast details from temporary tables");
+      for (PortDischargingPlanBallastTempDetails tempBallastEntity : tempBallastList) {
+        PortDischargingPlanBallastDetails ballastEntity = new PortDischargingPlanBallastDetails();
+        BeanUtils.copyProperties(tempBallastEntity, ballastEntity);
+        ballastEntity.setId(null);
+        ballastEntity.setCreatedBy(null);
+        ballastEntity.setCreatedDate(null);
+        ballastEntity.setCreatedDateTime(null);
+        ballastEntity.setLastModifiedBy(null);
+        ballastEntity.setLastModifiedDate(null);
+        ballastEntity.setLastModifiedDateTime(null);
+        ballastEntity.setIsActive(true);
+        ballastEntity.setDischargingInformation(dischargeInformation);
+        ballastEntityList.add(ballastEntity);
+      }
+      // Deleting existing entry from actual table before pushing new records
+      portDischargingPlanBallastDetailsRepository
+          .deleteExistingByDischargingInfoAndConditionTypeAndValueType(
+              dischargeInformation.getId(),
+              conditionType,
+              DischargePlanConstants.ACTUAL_TYPE_VALUE);
+      portDischargingPlanBallastDetailsRepository.saveAll(ballastEntityList);
+    }
+    /**
+     * copying data to synoptical table. stowage quantity as cargo rob quantity as ohq ballas as
+     * ballast condition type is used to determine which records are need to be updated(arrival/
+     * departure) port id and port rotation id is also needed
+     */
+    SynopticalTableRequest.Builder request = SynopticalTableRequest.newBuilder();
+    request.setLoadablePatternId(dischargeInformation.getDischargingPatternXid());
+    if (conditionType.equals(1)) {
+      request.setOperationType(DischargePlanConstants.ARRIVAL_CONDITION_TYPE);
+    } else {
+      request.setOperationType(DischargePlanConstants.DEPARTURE_CONDITION_TYPE);
+    }
+    request.setVesselId(dischargeInformation.getVesselXid());
+    SynopticalRecord.Builder synopticalData = SynopticalRecord.newBuilder();
+    synopticalData.setPortId(dischargeInformation.getPortXid());
+    synopticalData.setPortRotationId(dischargeInformation.getPortRotationXid());
+    stowageEntityList.stream()
+        .forEach(
+            stowage -> {
+              SynopticalCargoRecord.Builder cargo = SynopticalCargoRecord.newBuilder();
+              cargo.setActualWeight(stowage.getQuantity().toString());
+              cargo.setTankId(stowage.getTankXId());
+              synopticalData.addCargo(cargo);
+            });
+    ballastEntityList.stream()
+        .forEach(
+            ballast -> {
+              SynopticalBallastRecord.Builder ballastRecord = SynopticalBallastRecord.newBuilder();
+              ballastRecord.setActualWeight(ballast.getQuantity().toString());
+              ballastRecord.setTankId(ballast.getTankXId());
+              synopticalData.addBallast(ballastRecord);
+            });
+    List<PortDischargingPlanRobDetails> robDetails =
+        portDischargingPlanRobDetailsRepository
+            .findByDischargingInformationAndConditionTypeAndValueTypeAndIsActive(
+                dischargeInformation.getId(), conditionType, VALUE_TYPE, true);
+    robDetails.stream()
+        .forEach(
+            rob -> {
+              SynopticalOhqRecord.Builder ohq = SynopticalOhqRecord.newBuilder();
+              ohq.setActualWeight(rob.getQuantity().toString());
+              ohq.setTankId(rob.getTankXId());
+              synopticalData.addOhq(ohq);
+            });
+    request.addSynopticalRecord(synopticalData);
+    ResponseStatus response =
+        synopticalOperationServiceBlockingStub.updateSynopticalTable(request.build());
+    if (!DischargePlanConstants.SUCCESS.equals(response.getStatus())) {
+      throw new GenericServiceException(
+          "Failed to update actuals",
+          response.getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(response.getCode())));
+    }
+    // Deleting existing entry from temp tables
+    portDischargingPlanStowageTempDetailsRepository.deleteExistingByDischargingInfoAndConditionType(
+        dischargeInformation.getId(), conditionType);
+    portDischargingPlanBallastDetailsTempRepository.deleteExistingByDischargingInfoAndConditionType(
+        dischargeInformation.getId(), conditionType);
+  }
+
   /**
-   * Build ROB details for Stowage Plan
-   *
-   * @param dischargeInformation
+   * @param loadingInformation
    * @param robDetails
    * @param vesselReply
    * @param stowagePlanBuilder
@@ -255,7 +395,7 @@ public class UllageUpdateLoadicatorService {
           otherTankBuilder.setTankId(rob.getTankXId());
           Optional<VesselInfo.VesselTankDetail> tankDetail =
               vesselReply.getVesselTanksList().stream()
-                  .filter(tank -> Long.valueOf(tank.getTankId()).equals(rob.getTankXId())
+                  .filter(tank -> Long.valueOf(tank.getTankId()).equals(rob.getTankXId()))
                   .findAny();
           if (tankDetail.isPresent()) {
             Optional.ofNullable(tankDetail.get().getTankName())
@@ -290,7 +430,8 @@ public class UllageUpdateLoadicatorService {
           Optional.ofNullable(stowagePlanBuilder.getStowageId())
               .ifPresent(ballastBuilder::setStowageId);
           Optional.ofNullable(ballast.getTankXId()).ifPresent(ballastBuilder::setTankId);
-          Optional.ofNullable(dischargeInformation.getPortXid()).ifPresent(ballastBuilder::setPortId);
+          Optional.ofNullable(dischargeInformation.getPortXid())
+              .ifPresent(ballastBuilder::setPortId);
           Optional<VesselInfo.VesselTankDetail> tankDetail =
               vesselReply.getVesselTanksList().stream()
                   .filter(tank -> Long.valueOf(tank.getTankId()).equals(ballast.getTankXId()))
@@ -403,53 +544,6 @@ public class UllageUpdateLoadicatorService {
   }
 
   /**
-   * @param request
-   * @throws GenericServiceException
-   * @throws InvocationTargetException
-   * @throws IllegalAccessException
-   */
-  public void getLoadicatorData(LoadingInfoLoadicatorDataRequest request)
-      throws GenericServiceException, IllegalAccessException, InvocationTargetException {
-    log.info(
-        "Recieved stability parameters of Loading Plam of Loading Information {} from Loadicator",
-        request.getLoadingInformationId());
-    Optional<LoadingInformation> dischargingInfoOpt =
-        dischargeInformationRepository.findByIdAndIsActiveTrue(request.getLoadingInformationId());
-    if (dischargingInfoOpt.isEmpty()) {
-      throw new GenericServiceException(
-          "Could not find loading information " + request.getLoadingInformationId(),
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
-    UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
-    buildUllageEditLoadicatorAlgoRequest(dischargingInfoOpt.get(), request, algoRequest);
-    saveUllageEditLoadicatorRequestJson(algoRequest, dischargingInfoOpt.get().getId());
-
-    //    	    LoadicatorAlgoResponse algoResponse =
-    //    	        restTemplate.postForObject(loadicatorUrl, algoRequest,
-    // LoadicatorAlgoResponse.class);
-    //    	    saveLoadicatorResponseJson(algoResponse, dischargingInfoOpt.get().getId());
-    //
-    //    	    saveLoadingSequenceStabilityParameters(dischargingInfoOpt.get(), algoResponse);
-
-    Optional<LoadingInformationStatus> dischargingInfoStatusOpt =
-        loadingPlanAlgoService.getLoadingInformationStatus(
-            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
-    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE == request.getConditionType()) {
-      dischargeInformationRepository.updateLoadingInformationArrivalStatus(
-          dischargingInfoStatusOpt.get(), dischargingInfoOpt.get().getId());
-    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE
-        == request.getConditionType()) {
-      dischargeInformationRepository.updateLoadingInformationDepartureStatus(
-          dischargingInfoStatusOpt.get(), dischargingInfoOpt.get().getId());
-    }
-    loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
-        dischargingInfoOpt.get(), request.getProcessId(), dischargingInfoStatusOpt.get());
-    loadingPlanService.saveUpdatedLoadingPlanDetails(
-        dischargingInfoOpt.get(), request.getConditionType());
-  }
-
-  /**
    * @param algoRequest
    * @param id
    * @throws GenericServiceException
@@ -460,7 +554,7 @@ public class UllageUpdateLoadicatorService {
     log.info("Saving Loadicator request to Loadable study DB");
     JsonRequest.Builder jsonBuilder = JsonRequest.newBuilder();
     jsonBuilder.setReferenceId(loadingInfoId);
-    jsonBuilder.setJsonTypeId(LoadingPlanConstants.UPDATE_ULLAGE_LOADICATOR_REQUEST_JSON_TYPE_ID);
+    jsonBuilder.setJsonTypeId(DischargePlanConstants.UPDATE_ULLAGE_LOADICATOR_REQUEST_JSON_TYPE_ID);
     ObjectMapper mapper = new ObjectMapper();
     try {
       mapper.writeValue(
@@ -486,13 +580,11 @@ public class UllageUpdateLoadicatorService {
     }
   }
 
- 
- /**
-  * 
-  * @param dischargeInformation
-  * @param request
-  * @param algoRequest
-  */
+  /**
+   * @param dischargeInformation
+   * @param request
+   * @param algoRequest
+   */
   private void buildUllageEditLoadicatorAlgoRequest(
       DischargeInformation dischargeInformation,
       LoadingInfoLoadicatorDataRequest request,
@@ -501,8 +593,8 @@ public class UllageUpdateLoadicatorService {
     algoRequest.setProcessId(request.getProcessId());
     algoRequest.setVesselId(dischargeInformation.getVesselXid());
     algoRequest.setPortId(dischargeInformation.getPortXid());
-    //TODO ask pranav about the process id. there is no process id for DS
-    //algoRequest.setLoadableStudyProcessId(dischargeInformation.get);
+    // TODO ask pranav about the process id. there is no process id for DS
+    // algoRequest.setLoadableStudyProcessId(dischargeInformation.get);
     List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
     request
         .getLoadingInfoLoadicatorDetailsList()
@@ -517,21 +609,23 @@ public class UllageUpdateLoadicatorService {
             });
     algoRequest.setStages(stages);
 
-    DischargingPlanLoadicatorDetails loadingPlanLoadicatorDetails = new DischargingPlanLoadicatorDetails();
+    DischargingPlanLoadicatorDetails loadingPlanLoadicatorDetails =
+        new DischargingPlanLoadicatorDetails();
 
     List<PortDischargingPlanStowageTempDetails> tempStowageDetails =
-        portLoadingPlanStowageDetailsTempRepository
+        portDischargingPlanStowageTempDetailsRepository
             .findByDischargingInformationAndConditionTypeAndIsActive(
                 dischargeInformation.getId(), request.getConditionType(), true);
     List<PortDischargingPlanBallastTempDetails> tempBallastDetails =
-        portDischargingPlanBallastDetailsRepository.findByDischargingInformationAndConditionTypeAndIsActive(
+        portDischargingPlanBallastDetailsRepository
+            .findByDischargingInformationAndConditionTypeAndIsActive(
                 dischargeInformation.getId(), request.getConditionType(), true);
     List<PortDischargingPlanRobDetails> robDetails =
-        portDischargingPlanRobDetailsRepository.findByDischargingInformationAndConditionTypeAndIsActive(
-            dischargeInformation.getId(), request.getConditionType(), true);
+        portDischargingPlanRobDetailsRepository
+            .findByDischargingInformationAndConditionTypeAndIsActive(
+                dischargeInformation.getId(), request.getConditionType(), true);
 
-    List<LoadicatorStowageDetails> loadicatorStowageDetails =
-        new ArrayList<>();
+    List<LoadicatorStowageDetails> loadicatorStowageDetails = new ArrayList<>();
     tempStowageDetails.forEach(
         stowage -> {
           LoadicatorStowageDetails stowageDetails = new LoadicatorStowageDetails();
@@ -539,8 +633,7 @@ public class UllageUpdateLoadicatorService {
           loadicatorStowageDetails.add(stowageDetails);
         });
     loadingPlanLoadicatorDetails.setStowageDetails(loadicatorStowageDetails);
-    List<LoadicatorBallastDetails> loadicatorBallastDetails =
-        new ArrayList<>();
+    List<LoadicatorBallastDetails> loadicatorBallastDetails = new ArrayList<>();
     tempBallastDetails.forEach(
         ballast -> {
           LoadicatorBallastDetails ballastDetails = new LoadicatorBallastDetails();
@@ -559,5 +652,4 @@ public class UllageUpdateLoadicatorService {
     loadingPlanLoadicatorDetails.setRobDetails(loadicatorRobDetails);
     algoRequest.setPlanDetails(loadingPlanLoadicatorDetails);
   }
-
 }

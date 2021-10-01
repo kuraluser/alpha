@@ -4,12 +4,6 @@ package com.cpdss.dischargeplan.service.grpc;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.FAILED;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
@@ -45,10 +39,13 @@ import com.cpdss.dischargeplan.service.DischargePlanSynchronizeService;
 import com.cpdss.dischargeplan.service.DischargeUllageServiceUtils;
 import com.cpdss.dischargeplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.grpc.stub.StreamObserver;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 @Slf4j
 @GrpcService
@@ -71,7 +68,8 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   PortDischargingPlanBallastTempDetailsRepository portLoadingPlanBallastTempDetailsRepository;
 
   @Autowired DischargePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
-  @Autowired UllageUpdateLoadicatorService UllageUpdateLoadicatorService;
+  @Autowired UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
+
   @Override
   public void dischargePlanSynchronization(
       DischargeStudyDataTransferRequest request, StreamObserver<ResponseStatus> responseObserver) {
@@ -659,7 +657,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   }
 
   private String validateAndSaveData(UllageBillRequest request)
-	      throws GenericServiceException, IllegalAccessException, InvocationTargetException {
-	    return UllageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(request);
-	  }
+      throws GenericServiceException, IllegalAccessException, InvocationTargetException {
+    return ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(request);
+  }
 }
