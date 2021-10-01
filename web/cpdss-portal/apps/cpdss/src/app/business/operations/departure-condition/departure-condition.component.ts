@@ -103,8 +103,8 @@ export class DepartureConditionComponent implements OnInit {
 
   initSubscriptions() {
     this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value) => {
-      if (value) {
-        this.loadingDischargingPlanData.loadingInformation.loadingPlanDepStatusId = value;
+      if (value && value.portRotationId === this.portRotationId) {
+        this.loadingDischargingPlanData.loadingInformation.loadingPlanDepStatusId = value.status;
       }
     });
   }
@@ -150,13 +150,13 @@ export class DepartureConditionComponent implements OnInit {
             }
             if (stowage.conditionType === 2 && stowage.valueType === 2) {
               planedQty += Number(stowage.quantityMT);
+              data.api = stowage.api;
+              data.temperature = stowage.temperature;
+              data.ullage = stowage.ullage;
+              data.colorCode = stowage.colorCode;
+              data.abbreviation = stowage.abbreviation;
             }
             data.cargoNominationId = stowage.cargoNominationId;
-            data.api = stowage.api;
-            data.temperature = stowage.temperature;
-            data.ullage = stowage.ullage;
-            data.colorCode = stowage.colorCode;
-            data.abbreviation = stowage.abbreviation;
           }
         });
         data.plannedWeight = planedQty;
@@ -208,15 +208,15 @@ export class DepartureConditionComponent implements OnInit {
         let colorCode = null;
         this.loadingDischargingPlanData?.planBallastDetails?.map(ballast => {
           if (tank.id === ballast.tankId) {
-            colorCode = ballast.colorCode;
             if (ballast.conditionType === 2 && ballast.valueType === 1) {
               actualQty += Number(ballast.quantityMT);
             }
             if (ballast.conditionType === 2 && ballast.valueType === 2) {
               planedQty += Number(ballast.quantityMT);
+              data.sg = ballast.sg;
+              data.sounding = ballast.sounding;
+              colorCode = ballast.colorCode;
             }
-            data.sg = ballast.sg;
-            data.sounding = ballast.sounding;
           }
         });
         data.plannedWeight = planedQty;
@@ -233,15 +233,15 @@ export class DepartureConditionComponent implements OnInit {
         let colorCode = null;
         this.loadingDischargingPlanData?.planBallastDetails?.map(ballast => {
           if (tank.id === ballast.tankId) {
-            colorCode = ballast.colorCode;
             if (ballast.conditionType === 2 && ballast.valueType === 1) {
               actualQty += Number(ballast.quantityMT);
             }
             if (ballast.conditionType === 2 && ballast.valueType === 2) {
               planedQty += Number(ballast.quantityMT);
+              data.sg = ballast.sg;
+              data.sounding = ballast.sounding;
+              colorCode = ballast.colorCode;
             }
-            data.sg = ballast.sg;
-            data.sounding = ballast.sounding;
           }
         });
         data.plannedWeight = planedQty;
@@ -258,15 +258,15 @@ export class DepartureConditionComponent implements OnInit {
         let colorCode = null;
         this.loadingDischargingPlanData?.planBallastDetails?.map(ballast => {
           if (tank.id === ballast.tankId) {
-            colorCode = ballast.colorCode;
             if (ballast.conditionType === 2 && ballast.valueType === 1) {
               actualQty += Number(ballast.quantityMT);
             }
             if (ballast.conditionType === 2 && ballast.valueType === 2) {
               planedQty += Number(ballast.quantityMT);
+              colorCode = ballast.colorCode;
+              data.sg = ballast.sg;
+              data.sounding = ballast.sounding;
             }
-            data.sg = ballast.sg;
-            data.sounding = ballast.sounding;
           }
         });
         data.plannedWeight = planedQty;

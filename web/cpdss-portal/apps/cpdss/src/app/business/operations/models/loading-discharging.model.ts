@@ -852,6 +852,7 @@ export interface ITankDetailsValueObject {
   id?: ValueObject<number>;
   tankId?: number;
   loadablePatternId?: ValueObject<number>;
+  dischargePatternId?: ValueObject<number>;
   fillingPercentage?: ValueObject<number>;
   sounding?: ValueObject<number | string>;
   cargoNominationId?: ValueObject<number>;
@@ -1005,6 +1006,7 @@ export interface IRobUpdateList {
 * @interface IUllageUpdateDetails
 */
 export interface IUllageUpdateDetails {
+  responseStatus?: IResponseStatus;
   ballastCenterTanks: IShipBallastTank[][];
   ballastFrontTanks: IShipBallastTank[][];
   ballastRearTanks: IShipBallastTank[][];
@@ -1013,9 +1015,9 @@ export interface IUllageUpdateDetails {
   bunkerTanks: IShipBunkerTank[][];
   cargoQuantityDetails: ICargoQuantityGetResponse[];
   cargoTanks: IShipCargoTank[][];
-  portLoadablePlanBallastDetails: ILoadablePlanBallastDetails[];
-  portLoadablePlanRobDetails: ILoadablePlanRobDetails[];
-  portLoadablePlanStowageDetails: ILoadablePlanStowageDetails[];
+  portPlanBallastDetails?: IUllagePlanBallastDetails[];
+  portPlanRobDetails?: IUllagePlanRobDetails[];
+  portPlanStowageDetails?: IUllagePlanStowageDetails[];
   isPlannedValues?: boolean;
 }
 
@@ -1031,9 +1033,11 @@ export interface IBillOfLandingListGetResponse {
   cargoId: number;
   cargoColor: string;
   cargoAbbrevation: string;
-  billOfLaddings: [];
-  cargoToBeLoaded: boolean;
-  cargoLoaded: boolean;
+  billOfLaddings: any[];
+  cargoToBeLoaded?: boolean;
+  cargoLoaded?: boolean;
+  cargoToBeDischarged?: boolean;
+  cargoDischarged?: boolean;
 }
 
 /**
@@ -1056,7 +1060,7 @@ export interface ICargoQuantityGetResponse {
   cargoColor: string
   cargoId: number
   cargoName: string;
-  cargoNominationId: 17759
+  cargoNominationId: number;
   difference: number;
   maxQuantity: number;
   maxTolerance: number;
@@ -1065,15 +1069,16 @@ export interface ICargoQuantityGetResponse {
   nominationApi: number
   nominationTemp: number
   nominationTotal: number;
+  plannedQuantityTotal?: number;
 }
 
 /**
-* Interface for loadable plan ballast details
+* Interface for Ullage update ballast details
 *
 * @export
-* @interface ILoadablePlanBallastDetails
+* @interface IUllagePlanBallastDetails
 */
-export interface ILoadablePlanBallastDetails {
+export interface IUllagePlanBallastDetails {
   active: boolean;
   actualPlanned: number;
   arrivalDeparture: number;
@@ -1083,7 +1088,8 @@ export interface ILoadablePlanBallastDetails {
   correctionFactor: number;
   fillingPercentage: string;
   id: number;
-  loadablePatternId: number;
+  loadablePatternId?: number;
+  dischargePatternId?: number;
   quantity: number;
   rdgUllage: number;
   sg: number | string;
@@ -1091,23 +1097,24 @@ export interface ILoadablePlanBallastDetails {
   tankId: number;
   tankName: string;
   tankShortName: string;
-
+  temperature: number;
 }
 
 /**
-* Interface for loadable plan rob details
+* Interface for Ullage update rob details
 *
 * @export
-* @interface ILoadablePlanRobDetails
+* @interface IUllagePlanRobDetails
 */
-export interface ILoadablePlanRobDetails {
+export interface IUllagePlanRobDetails {
   active: boolean;
   actualPlanned: number;
   arrivalDeparture: number;
   colorCode: string;
   density: number;
   id: number;
-  loadablePatternId: number;
+  loadablePatternId?: number;
+  dischargePatternId?: number;
   quantity: number;
   tankId: number
   tankName: string;
@@ -1115,12 +1122,12 @@ export interface ILoadablePlanRobDetails {
 }
 
 /**
-* Interface for loadable plan stowage details
+* Interface for Ullage update stowage details
 *
 * @export
-* @interface ILoadablePlanStowageDetails
+* @interface IUllagePlanStowageDetails
 */
-export interface ILoadablePlanStowageDetails {
+export interface IUllagePlanStowageDetails {
   abbreviation: string;
   active: boolean;
   actualPlanned: number;
@@ -1133,7 +1140,8 @@ export interface ILoadablePlanStowageDetails {
   correctionFactor: number;
   fillingPercentage: string
   id: number;
-  loadablePatternId: number;
+  loadablePatternId?: number;
+  dischargePatternId?: number;
   observedBarrels: number;
   observedBarrelsAt60: number;
   observedM3: number;
@@ -1231,7 +1239,7 @@ export interface IDischargingPlanDetailsResponse {
  * Interface for ullage excel export data
  *
  * @export
- * @interface IDischargingPlanDetailsResponse
+ * @interface IUllageExcelResponseDetails
  */
 export interface IUllageExcelResponseDetails {
   api: number;
@@ -1247,7 +1255,7 @@ export interface IUllageExcelResponseDetails {
  * Interface for ullage excel export response
  *
  * @export
- * @interface IDischargingPlanDetailsResponse
+ * @interface IUllageExcelResponse
  */
 export interface IUllageExcelResponse {
   responseStatus: IResponseStatus;
