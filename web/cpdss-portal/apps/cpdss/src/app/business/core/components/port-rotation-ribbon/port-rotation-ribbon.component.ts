@@ -308,8 +308,12 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     const form = <FormGroup>(<FormArray>this.portRotationForm.get('portsData')).at(index);
     form.markAllAsTouched()
     form.updateValueAndValidity();
-    const translationKeys = await this.translateService.get(['PORT_ROTATION_RIBBON_SUCCESS', 'PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY', 'PORT_ROTATION_RIBBON_INVALID', 'PORT_ROTATION_RIBBON_INVALID_DATA', 'PORT_ROTATION_UPDATE_ERROR', 'PORT_ROTATION_UPDATE_STATUS_ERROR']).toPromise();
+    const translationKeys = await this.translateService.get(['PORT_ROTATION_RIBBON_WARNING','PORT_ROTATION_RIBBON_INVALID_DATE','PORT_ROTATION_RIBBON_SUCCESS', 'PORT_ROTATION_RIBBON_SAVED_SUCCESSFULLY', 'PORT_ROTATION_RIBBON_INVALID', 'PORT_ROTATION_RIBBON_INVALID_DATA', 'PORT_ROTATION_UPDATE_ERROR', 'PORT_ROTATION_UPDATE_STATUS_ERROR']).toPromise();
     if (form.valid) {
+      if(moment(form.controls['date'].value).isAfter(this.maxDate))  {
+        this.messageService.add({ severity: 'warn', summary: translationKeys['PORT_ROTATION_RIBBON_WARNING'], detail: translationKeys['PORT_ROTATION_RIBBON_INVALID_DATE'] });
+        return;
+      }
       if (port.type === 'Arrival') {
         const newEtaActual = this.timeZoneTransformationService.formatDateTime(form.controls['date'].value) + ' ' + this.timeZoneTransformationService.formatDateTime(form.controls['time'].value, { customFormat: 'HH:mm' });
         port.etaActual = this.convertToPortBasedTimeZone(newEtaActual, port?.portTimezoneId, 'portToUTC');

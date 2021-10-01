@@ -59,6 +59,7 @@ export interface ILoadablePatternCargoDetail extends ILoadableCargo {
     orderedQuantity: number;
     loadingOrder: number;
     api: number;
+    temperature?: string;
     difference?: number;
 }
 

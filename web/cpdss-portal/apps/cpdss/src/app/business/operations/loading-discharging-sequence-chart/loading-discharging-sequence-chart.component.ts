@@ -198,10 +198,14 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
    * @memberof LoadingDischargingSequenceChartComponent
    */
   async initializeCharts() {
+    this.ngxSpinnerService.show();
     if (!LoadingDischargingSequenceChartComponent.translationKeys) {
       await this.getTranslationKeys();
     }
     if (LoadingDischargingSequenceChartComponent.sequenceData) {
+      if (LoadingDischargingSequenceChartComponent?.charts[SEQUENCE_CHARTS.CARGO_TANK]) {
+        LoadingDischargingSequenceChartComponent?.charts[SEQUENCE_CHARTS.CARGO_TANK]?.xAxis[0]?.setExtremes(LoadingDischargingSequenceChartComponent.minXAxisValue, this.maxXAxisScrollValue);
+      }
       LoadingDischargingSequenceChartComponent.sequenceData = this.loadingDischargingTransformationService.transformSequenceDataToSelectedUnit(LoadingDischargingSequenceChartComponent.sequenceData, this.currentQuantitySelectedUnit, this.currentRateSelectedUnit);
 
       this.setCargoTankSequenceData();
@@ -229,6 +233,10 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       this.setStabilityData();
       this.setStabilityChartOptions();
       this.updateStabilityParamsChart = true;
+
+      setTimeout(() => {
+        this.ngxSpinnerService.hide();
+      }, 100);
     }
   }
 
@@ -599,7 +607,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                   const cargos = [];
 
                   LoadingDischargingSequenceChartComponent.sequenceData?.cargos.forEach((cargo: any) => {
-                    if (cargo?.tankId === Number(this.value) && !cargos.some(item => item?.cargoNominationId === cargo?.cargoNominationId)) {
+                    if (cargo?.tankId === Number(this.value) && cargo?.cargoNominationId && !cargos.some(item => item?.cargoNominationId === cargo?.cargoNominationId)) {
                       cargos.push({ cargoNominationId: cargo?.cargoNominationId, color: cargo?.color, abbreviation: cargo?.abbreviation });
                     }
                   });
@@ -1496,7 +1504,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       },
       legend: {
         backgroundColor: 'transparent',
-        itemMarginBottom: 20
+        itemMarginBottom: 20,
+        x: 100
       },
       title: {
         text: null
@@ -1504,8 +1513,6 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       plotOptions: {
         series: {
           events: {
-            hide: this.makeSumSeries,
-            show: this.makeSumSeries,
             legendItemClick: function () {
               return false;
             }
@@ -1858,7 +1865,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             const point = this.searchPoint(e, chart, series);
             if (point) {
               points.push(point);
-              if (![LoadingDischargingSequenceChartComponent.charts[SEQUENCE_CHARTS.FLOW_RATE].index, LoadingDischargingSequenceChartComponent.charts[SEQUENCE_CHARTS.STABILITY_PARAMS].index].includes(chart.index)) {
+              if (![LoadingDischargingSequenceChartComponent.charts[SEQUENCE_CHARTS.FLOW_RATE]?.index, LoadingDischargingSequenceChartComponent.charts[SEQUENCE_CHARTS.STABILITY_PARAMS]?.index].includes(chart.index)) {
                 break;
               }
             }
@@ -1909,7 +1916,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         return points[i];
       } else if (x - range < pointX2 && pointX2 < x + range) {
         return points[i];
-      } else if( x > pointX && x < pointX2) {
+      } else if (x > pointX && x < pointX2) {
         return points[i];
       }
     }

@@ -292,8 +292,8 @@ public class LoadableStudyRuleService {
                 Optional.ofNullable(rulePlans.getHeader()).ifPresent(rulePlanBuilder::setHeader);
                 List<Common.Rules> ruleList =
                     rulePlans.getRulesList().stream()
-                        .filter(item -> item.getEnable())
                         .collect(Collectors.toList());
+                System.out.println(ruleList.size());
                 if (ruleList != null && ruleList.size() > 0) {
                   rulePlanBuilder.addAllRules(ruleList);
                   builder.addRulePlan(rulePlanBuilder);
@@ -872,7 +872,6 @@ public class LoadableStudyRuleService {
                   .forEach(
                       rules -> {
                         Optional<Boolean> isEnable = Optional.ofNullable(rules.getEnable());
-                        if (isEnable.isPresent() && isEnable.get()) {
                           com.cpdss.loadablestudy.domain.Rules rule =
                               new com.cpdss.loadablestudy.domain.Rules();
                           Optional.ofNullable(rules.getId())
@@ -1048,7 +1047,6 @@ public class LoadableStudyRuleService {
                                   });
                           rule.setInputs(rInputList);
                           rList.add(rule);
-                        }
                       });
               rulePlan.setRules(rList);
               listOfLSRulesPlan.add(rulePlan);

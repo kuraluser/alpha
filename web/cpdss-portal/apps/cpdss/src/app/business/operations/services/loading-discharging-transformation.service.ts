@@ -39,7 +39,7 @@ export class LoadingDischargingTransformationService {
   public inProcessing: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public generateLoadingPlanButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public disableViewErrorButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  
+
 
   loadingInformationValidity$ = this._loadingInformationSource.asObservable();
   dischargingInformationValidity$ = this._dischargingInformationSource.asObservable();
@@ -139,8 +139,8 @@ export class LoadingDischargingTransformationService {
       },
       maxManifoldPressure: {
         'required': 'LOADING_DISCHARGING_BERTH_REQUIRED',
-        'min': 'LOADING_DISCHARGING_BERTH_MANIFOLD_HEIGHT_MIN_ERROR',
-        'max': 'LOADING_DISCHARGING_BERTH_MANIFOLD_HEIGHT_AX_ERROR'
+        'min': 'LOADING_DISCHARGING_BERTH_MANIFOLD_PRESSURE_MIN_ERROR',
+        'max': 'LOADING_DISCHARGING_BERTH_MANIFOLD_PRESSURE_MAX_ERROR'
       },
       seaDraftLimitation: {
         'required': 'LOADING_DISCHARGING_BERTH_REQUIRED',
@@ -200,13 +200,13 @@ export class LoadingDischargingTransformationService {
       },
       minDeBallastingRate: {
         'required': 'LOADING_RATE_REQUIRED',
-        'min': "MIN_DEBALLAST_MINIMUM",
-        'max': "MIN_DEBALLAST_MAXIMUM"
+        'min': `MIN_DEBALLAST_MINIMUM_${unit}`,
+        'max': `MIN_DEBALLAST_MAXIMUM_${unit}`
       },
       maxDeBallastingRate: {
         'required': 'LOADING_RATE_REQUIRED',
-        'min': "MAX_DEBALLAST_MINIMUM",
-        'max': "MAX_DEBALLAST_MAXIMUM"
+        'min': `MAX_DEBALLAST_MINIMUM_${unit}`,
+        'max': `MAX_DEBALLAST_MAXIMUM_${unit}`
       },
       noticeTimeRateReduction: {
         'required': 'LOADING_RATE_REQUIRED',
@@ -253,8 +253,8 @@ export class LoadingDischargingTransformationService {
       maxBallastingRate: {
         'required': 'DISCHARGING_RATE_REQUIRED',
         'invalidNumber': 'DISCHARGING_RATE_INVALID',
-        'min': `MAX_DEBALLAST_MINIMUM_${unit}`,
-        'max': `MAX_DEBALLAST_MAXIMUM_${unit}`
+        'min': `MAX_BALLAST_MINIMUM_${unit}`,
+        'max': `MAX_BALLAST_MAXIMUM_${unit}`
       }
     }
   }
@@ -974,11 +974,11 @@ export class LoadingDischargingTransformationService {
     cowDetails.cowEnd = dischargingInformationResponse?.cowDetails?.cowEnd;
     cowDetails.cowStart = dischargingInformationResponse?.cowDetails?.cowStart;
     cowDetails.totalDuration = dischargingInformationResponse?.cowDetails?.totalDuration;
-    const totalDurationInMinutes = this.convertTimeStringToMinutes(dischargingInformationResponse?.cowDetails?.totalDuration);
-    const startTimeInMinutes = this.convertTimeStringToMinutes(dischargingInformationResponse?.cowDetails?.cowStart);
-    const endTimeInMinutes = this.convertTimeStringToMinutes(dischargingInformationResponse?.cowDetails?.cowEnd);
-    const _duration = totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes;
-    cowDetails.cowDuration = moment.utc(_duration * 60 * 1000).format("HH:mm");
+    const totalDurationInMinutes = dischargingInformationResponse?.cowDetails?.totalDuration ? this.convertTimeStringToMinutes(dischargingInformationResponse?.cowDetails?.totalDuration) : null;
+    const startTimeInMinutes = dischargingInformationResponse?.cowDetails?.cowStart ? this.convertTimeStringToMinutes(dischargingInformationResponse?.cowDetails?.cowStart) : null;
+    const endTimeInMinutes = dischargingInformationResponse?.cowDetails?.cowEnd ? this.convertTimeStringToMinutes(dischargingInformationResponse?.cowDetails?.cowEnd) : null;
+    const _duration = totalDurationInMinutes ? totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes : null;
+    cowDetails.cowDuration = moment.utc(_duration * 60 * 1000).format("HH:mm") ?? null;
     cowDetails.cowTrimMax = dischargingInformationResponse?.cowDetails?.cowTrimMax;
     cowDetails.cowTrimMin = dischargingInformationResponse?.cowDetails?.cowTrimMin;
     cowDetails.needFlushingOil = dischargingInformationResponse?.cowDetails?.needFlushingOil;
@@ -991,7 +991,7 @@ export class LoadingDischargingTransformationService {
     dischargingInformation.cowDetails = cowDetails;
 
     //Update cargon details
-    const loadableQuantityCargoDetails: ILoadedCargo[] = dischargingInformationResponse?.cargoVesselTankDetails?.loadableQuantityCargoDetails.map(cargo => {
+    const loadableQuantityCargoDetails: ILoadedCargo[] = dischargingInformationResponse?.cargoVesselTankDetails?.dischargeQuantityCargoDetails?.map(cargo => {
       const _cargo = <ILoadedCargo>{};
       _cargo.isAdd = true;
       for (const key in cargo) {
@@ -1041,7 +1041,7 @@ export class LoadingDischargingTransformationService {
       vesselPumps: dischargingInformationResponse?.machineryInUses?.vesselPumps,
       vesselManifold: dischargingInformationResponse?.machineryInUses?.vesselManifold,
       vesselBottomLine: dischargingInformationResponse?.machineryInUses?.vesselBottomLine,
-      loadingDischargingMachinesInUses: dischargingInformationResponse?.machineryInUses?.dischargingMachinesInUses,
+      loadingDischargingMachinesInUses: dischargingInformationResponse?.machineryInUses?.dischargeMachinesInUses,
       machineTypes: dischargingInformationResponse?.machineryInUses?.machineTypes,
       tankTypes: dischargingInformationResponse?.machineryInUses?.tankTypes
     };

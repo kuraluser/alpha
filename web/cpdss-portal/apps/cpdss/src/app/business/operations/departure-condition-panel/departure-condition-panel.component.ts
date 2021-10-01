@@ -48,6 +48,7 @@ export class DepartureConditionPanelComponent implements OnInit {
   * @memberof DepartureConditionPanelComponent
   */
   formatData() {
+    this.departureConditionCargoInfo = [];
     const loadingDischargingPlanInfo = this.loadingDischargingPlanData?.loadingInformation ? this.loadingDischargingPlanData?.loadingInformation : this.loadingDischargingPlanData?.dischargingInformation
     this.loadingDischargingPlanData?.currentPortCargos?.map(cargo => {
       let cargoQuantity = 0;

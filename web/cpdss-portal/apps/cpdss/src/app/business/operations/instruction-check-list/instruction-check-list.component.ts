@@ -11,6 +11,7 @@ import { IInstructionDetails, IDeleteData, ISaveStatusData } from './models/inst
 import { whiteSpaceValidator } from '../../core/directives/space-validator.directive';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { OPERATIONS } from '../../core/models/common.model';
+import { IPermission } from '../../../shared/models/user-profile.model';
 @Component({
   selector: 'cpdss-portal-instruction-check-list',
   templateUrl: './instruction-check-list.component.html',
@@ -48,6 +49,7 @@ export class InstructionCheckListComponent implements OnInit , OnDestroy{
   @Input() portRotationId: number;
   @Input() groupId: number;
   @Input() loadingDischargingInfoId: number;
+  @Input() permission: IPermission;
 
   selectAll: boolean;
   instructionListData: TreeNode[];

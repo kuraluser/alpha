@@ -238,6 +238,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.show();
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     this.vesselInfo = res[0] ?? <IVessel>{};
+    this.loadableStudyDetailsTransformationService.vesselInfo = this.vesselInfo
     this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     this.ports = await this.getPorts();
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
@@ -555,13 +556,13 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           default:
             break;
         }
-        if ([4, 5].includes(statusId) && this.router.url.includes('loadable-study-details')) {
+        if ([4, 5, 7].includes(statusId) && this.router.url.includes('loadable-study-details')) {
           loadableStudy.isActionsEnabled = false;
         }
         else if ([2, 3].includes(statusId)) {
           loadableStudy.isEditable = false;
           loadableStudy.isDeletable = false;
-          loadableStudy.isActionsEnabled = true;
+          loadableStudy.isActionsEnabled = [VOYAGE_STATUS.ACTIVE].includes(this.selectedVoyage?.statusId) ? false : true;
         }
         else if ([6, 1, 11].includes(statusId)) {
           loadableStudy.isActionsEnabled = true;
@@ -570,7 +571,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           }
         }
       } else if (!loadableStudyId && !statusId) {
-        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) ? false : true;
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) ||
+        ([VOYAGE_STATUS.ACTIVE].includes(this.selectedVoyage?.statusId) && [LOADABLE_STUDY_STATUS.PLAN_CONFIRMED , LOADABLE_STUDY_STATUS.PLAN_GENERATED].includes(loadableStudy?.statusId)) ? false : true;
         loadableStudy.isEditable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
         loadableStudy.isDeletable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
       }

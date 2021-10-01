@@ -12,12 +12,12 @@
             </cpdss-portal-rules-table>
         </div>
     </div>
-    <p-footer>
+    <p-footer >
         <div class="row">
             <div class="col text-right">
                 <button class="btn btn-main mr-10" *ngIf="formChanges" id="cancelBtn"
                     (click)="cancelChanges()" focusTrap>{{'RULES_CANCEL' | translate}}</button>
-                <button class="btn btn-main mr-10" id="saveBtn" (click)="triggerSaveChanges()"[disabled]="disableSaveButton" autofocus focusTrap>{{'RULES_SAVE' |
+                <button class="btn btn-main mr-10" id="saveBtn" (click)="triggerSaveChanges()" [disabled]="disableSaveButton" autofocus focusTrap>{{'RULES_SAVE' |
                     translate}}</button>
             </div>
         </div>

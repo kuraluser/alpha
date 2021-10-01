@@ -204,6 +204,11 @@ service LoadableStudyService {
 	rpc GetLoadableStudyPortRotationByPortRotationId(PortRotationRequest) returns (PortRotationDetailReply) {}
 
 	rpc GetLoadableStudySimulatorJsonData(SimulatorJsonRequest) returns (SimulatorJsonReply){}
+	
+}
+
+service SynopticalOperationService{
+	rpc updateSynopticalTable(SynopticalTableRequest) returns (ResponseStatus){}
 }
 
 service DischargeStudyOperationService {

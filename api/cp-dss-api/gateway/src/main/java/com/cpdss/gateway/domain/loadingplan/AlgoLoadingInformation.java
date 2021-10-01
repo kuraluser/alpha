@@ -1,21 +1,14 @@
-/**
- * 
- */
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan;
 
 import java.util.List;
-
 import lombok.Data;
 
-/**
- * @author pranav.k
- *
- */
-
+/** @author pranav.k */
 @Data
 public class AlgoLoadingInformation {
 
-	private LoadingRates loadingRates;
-	private List<BerthDetails> berthDetails;
-	private LoadingSequences loadingSequences;
+  private AlgoLoadingRates loadingRates;
+  private List<AlgoBerthDetails> berthDetails;
+  private AlgoLoadingSequences loadingSequences;
 }

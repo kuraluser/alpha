@@ -544,15 +544,16 @@ export class StowageComponent implements OnInit {
 
     this.loadableQuantityCargo.map(loadableQuantityCargo => {
       let total = 0;
+      total += Number(loadableQuantityCargo.commingleTotalQuantity);
       this.cargoTankDetails.map((cargoDetail) => {
         if (loadableQuantityCargo?.cargoNominationId === cargoDetail?.cargoNominationId) {
           total += Number(cargoDetail.weight?.value);
           cargoQuantity += Number(cargoDetail?.weight?.value);
         }
       });
-      if (total > loadableQuantityCargo?.maxTolerence) {
+      if (Number(total?.toFixed(2)) > loadableQuantityCargo?.maxTolerence) {
         exceedToleranceLimit = loadableQuantityCargo;
-      } else if (total < loadableQuantityCargo?.minTolerence) {
+      } else if (Number(total?.toFixed(2)) < loadableQuantityCargo?.minTolerence) {
         exceedToleranceLimit = loadableQuantityCargo;
       }
     });

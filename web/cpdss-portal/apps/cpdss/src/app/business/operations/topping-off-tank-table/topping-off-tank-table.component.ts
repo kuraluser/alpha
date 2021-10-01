@@ -26,6 +26,7 @@ export class ToppingOffTankTableComponent implements OnInit {
     return this._currentQuantitySelectedUnit;
   }
 
+
   set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
     this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
     this._currentQuantitySelectedUnit = value;
@@ -50,6 +51,7 @@ export class ToppingOffTankTableComponent implements OnInit {
     this._toppingOffSequence = toppingOffSequence;
     if (this.toppingOffSequence) {
       this.initToppingOffSequence();
+      
     }
   }
 
@@ -58,6 +60,7 @@ export class ToppingOffTankTableComponent implements OnInit {
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   private _toppingOffSequence: IToppingOffSequence[];
   private _cargos: ICargo[];
+  private cargoSequenceOrder;
 
   cargoTypeColumns: IDataTableColumn[] = [];
   cargoTypeList: any = [];
@@ -78,6 +81,8 @@ export class ToppingOffTankTableComponent implements OnInit {
 * @memberof ToppingOffTankTableComponent
 */
   initToppingOffSequence() {
+    this.cargoSequenceOrder = 0;
+
     if (this.toppingOffSequence && this.cargos) {
       this.toppingOffSequence?.map((topping) => {
         const cargo = this.findCargo(topping?.cargoId);
@@ -171,8 +176,8 @@ export class ToppingOffTankTableComponent implements OnInit {
     });
     this.cargoTypeList?.sort((a, b) => a[0].displayOrder - b[0].displayOrder);
     this.cargoTypeList?.forEach((element) => {
-      element?.forEach((element,index) => {
-        element.displayOrder = index + 1;
+      element?.forEach((element,index) => {       
+        element.displayOrder =  ++this.cargoSequenceOrder      
       });
     });
   }

@@ -1,7 +1,7 @@
-<div>
-  <div class="row">
+<div *ngIf="form" [formGroup]="form">
+  <div class="row" *ngIf="machineryForm" [formGroup]="machineryForm">
     <ng-container *ngFor="let key of machineriesKey; let i = index;">
-      <div class="col" [ngClass]="{'col-12' : operation === OPERATIONS.DISCHARGING}">
+      <div class="col" [ngClass]="{'col-12' : operation === OPERATIONS.DISCHARGING}" [formArrayName]="key === 'cargoMachineryValues' ? 'cargoMachinery' : 'pumps'">
         <div class="row">
           <div class="col">
             <h5 class="text-uppercase heading-border pt-25 mb-10">
@@ -12,7 +12,7 @@
         </div>
         <div class="row">
           <div class="col pl-30 pr-30">
-            <p-table [value]="machineries[key]" styleClass="body-header-row-span-table rowspan-no-border">
+            <p-table *ngIf="machineries[key]" [value]="machineries[key]" styleClass="body-header-row-span-table rowspan-no-border">
               <ng-template pTemplate="colgroup">
                 <colgroup>
                   <col class="table-header-machinery">
@@ -32,27 +32,29 @@
                   <th *ngIf="key === 'pumpValues'">{{'LOADING_MACHINERY_CAPACITY_HEADER' | translate}}</th>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-row let-index>
-                <ng-container *ngFor="let column of row.columns; let i=index">
-                  <tr>
+              <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+                <ng-container *ngFor="let column of row.columns; let i=index;">
+                  <tr [formGroupName]="rowIndex+ i + (rowIndex * (machineries[key][rowIndex-1]?.columns?.length - 1))">
                     <td *ngIf="i === 0" [attr.rowspan]="row.columns.length">{{row.machine}}</td>
-                    <td *ngIf="key === 'cargoMachineryValues' && i === 0" [attr.rowspan]="row.columns.length">
-                      <p-dropdown *ngIf="row.machine === 'Manifold'" styleClass="dropdown-w-180 form-control"
-                        [options]="machineryInUses.tankTypes" [(ngModel)]="selectedType" optionLabel="name"
+                    <td *ngIf="key === 'cargoMachineryValues' && i === 0" [attr.rowspan]="row.columns.length" class="text-uppercase">
+                      <p-dropdown *ngIf="row.machine === 'Manifold'" styleClass="dropdown-w-180 form-control text-uppercase"
+                        [options]="machineryInUses.tankTypes" formControlName="selectedType" optionLabel="name"
                         [filter]="true" placeholder="{{ 'LOADING_INFORMATION_MACHINERY_TYPE_SELECT' | translate}}"
                         resetFilterOnHide="true" (onChange)="onTypeChange($event)">
                       </p-dropdown>
                     </td>
                     <td class="text-center">
                       <label class="checkbox-custom">
-                        <input type="checkbox" [(ngModel)]="column.isUsing" (change)="onUse(column)">
+                        <input type="checkbox" formControlName="isUsing" (change)="onUse($event, column)">
                         <span class="checkmark"></span>
                       </label>
                     </td>
                     <td>{{column[row.field]}}</td>
-                    <td *ngIf="key === 'pumpValues'">
-                      <input type="text" cpdssPortalNumberDecimal [(ngModel)]="column.capacity" class="form-control"
-                        [disabled]="!column.isUsing" (change)="onChange(column)">
+                    <td [ngClass]="{'error-icon-wrapper' : column.isUsing && operation === OPERATIONS.DISCHARGING}" *ngIf="key === 'pumpValues' && ![PUMP_TYPES.IG_PUMP, PUMP_TYPES.STRIP_EDUCTOR].includes(row.pumpTypeId)">
+                      <input type="text" cpdssPortalNumberDecimal [decimal]="false" [negative]="false" class="form-control" formControlName="capacity"
+                        [attr.disabled]="column.isUsing ? null : true" (change)="onChange($event, column)">
+                        <cpdss-portal-validation-error *ngIf="column.isUsing && operation === OPERATIONS.DISCHARGING" [errors]="fieldError(rowIndex+ i + (rowIndex * (machineries[key][rowIndex-1]?.columns?.length - 1)), 'capacity', 'pumps')" [errorMessages]="errorMessages?.capacity">
+                        </cpdss-portal-validation-error>
                     </td>
                   </tr>
                 </ng-container>

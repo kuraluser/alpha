@@ -79,4 +79,9 @@ public interface LoadingInformationRepository
   @Modifying
   @Query("UPDATE LoadingInformation SET departureStatus = ?1 WHERE id = ?2")
   public void updateLoadingInformationDepartureStatus(LoadingInformationStatus depStatus, Long id);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadingInformation SET loadingPlanDetailsFromAlgo = ?2 WHERE id = ?1")
+  public void updateLoadingPlanDetailsFromAlgo(Long id, String loadingPlanDetailsFromAlgo);
 }

@@ -505,165 +505,172 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
   private LDIntactStability.Builder buildStabilityDetails(IntactStability stability) {
     LDIntactStability.Builder ldStability = LDIntactStability.newBuilder();
 
-    StowagePlanDetail stowageDetail =
-        this.stowagePlanRepository.findPortForStability(stability.getStowagePlanId());
-    ldStability.setPortId(stowageDetail.getPortId());
-    ldStability.setId(stability.getId());
-    ldStability.setSynopticalId(stowageDetail.getSynopticalId());
-    Optional.ofNullable(stability.getStowagePlanId()).ifPresent(ldStability::setStowagePlanId);
-    Optional.ofNullable(stability.getBigintialGomvalue())
-        .ifPresent(item -> ldStability.setBigintialGomValue(String.valueOf(item)));
-    Optional.ofNullable(stability.getBigintialGomjudgement())
-        .ifPresent(item -> ldStability.setBigIntialGomJudgement(String.valueOf(item)));
-    Optional.ofNullable(stability.getMaximumRightingLeverValue())
-        .ifPresent(item -> ldStability.setMaximumRightingLeverValue(String.valueOf(item)));
-    Optional.ofNullable(stability.getMaximumRightingLeverJudgement())
-        .ifPresent(item -> ldStability.setMaximumRightingLeverJudgement(String.valueOf(item)));
-    Optional.ofNullable(stability.getAngleatMaxrLeverValue())
-        .ifPresent(item -> ldStability.setAngleatmaxrleverValue(String.valueOf(item)));
-    Optional.ofNullable(stability.getAngleatMaxrLeverJudgement())
-        .ifPresent(item -> ldStability.setAngleatmaxrleverJudgement(String.valueOf(item)));
-    Optional.ofNullable(stability.getAreaOfStability_0_30_Value())
-        .ifPresent(item -> ldStability.setAreaofStability030Value(String.valueOf(item)));
-    Optional.ofNullable(stability.getAreaOfstability_0_30_Judgement())
-        .ifPresent(item -> ldStability.setAreaofStability030Judgement(String.valueOf(item)));
-    Optional.ofNullable(stability.getAreaOfStability_0_40_Value())
-        .ifPresent(item -> ldStability.setAreaofStability040Value(String.valueOf(item)));
-    Optional.ofNullable(stability.getAreaOfStability_0_40_Judgement())
-        .ifPresent(item -> ldStability.setAreaofStability040Judgement(String.valueOf(item)));
-    Optional.ofNullable(stability.getAreaOfStability_30_40_Value())
-        .ifPresent(item -> ldStability.setAreaofStability3040Value(String.valueOf(item)));
-    Optional.ofNullable(stability.getAreaOfStability_30_40_Judgement())
-        .ifPresent(item -> ldStability.setAreaofStability3040Judgement(String.valueOf(item)));
-    Optional.ofNullable(stability.getHeelBySteadyWindValue())
-        .ifPresent(item -> ldStability.setHeelBySteadyWindValue(String.valueOf(item)));
-    Optional.ofNullable(stability.getHeelBySteadyWindJudgement())
-        .ifPresent(item -> ldStability.setHeelBySteadyWindJudgement(String.valueOf(item)));
-    Optional.ofNullable(stability.getAreaOfStability_30_40_Judgement())
-        .ifPresent(item -> ldStability.setAreaofStability3040Judgement(String.valueOf(item)));
-    Optional.ofNullable(stability.getStabilityAreaBaValue())
-        .ifPresent(item -> ldStability.setStabilityAreaBaValue(String.valueOf(item)));
-    Optional.ofNullable(stability.getStabilityAreaBaJudgement())
-        .ifPresent(item -> ldStability.setStabilityAreaBaJudgement(String.valueOf(item)));
-    Optional.ofNullable(stability.getGmAllowableCurveCheckValue())
-        .ifPresent(item -> ldStability.setGmAllowableCurveCheckValue(String.valueOf(item)));
-    Optional.ofNullable(stability.getGm_allowableCurveCheckJudgement())
-        .ifPresent(item -> ldStability.setGmAllowableCurveCheckJudgement(String.valueOf(item)));
-    Optional.ofNullable(stability.getErrorStatus())
-        .ifPresent(item -> ldStability.setErrorStatus(item));
-    Optional.ofNullable(stability.getErrorDetails())
-        .ifPresent(item -> ldStability.setErrorDetails(String.valueOf(item)));
-    Optional.ofNullable(stability.getMessageText())
-        .ifPresent(item -> ldStability.setMessageText(String.valueOf(item)));
+    if (stability != null) {
+      StowagePlanDetail stowageDetail =
+          this.stowagePlanRepository.findPortForStability(stability.getStowagePlanId());
+      ldStability.setPortId(stowageDetail.getPortId());
+      ldStability.setId(stability.getId());
+      ldStability.setSynopticalId(stowageDetail.getSynopticalId());
+      Optional.ofNullable(stability.getStowagePlanId()).ifPresent(ldStability::setStowagePlanId);
+      Optional.ofNullable(stability.getBigintialGomvalue())
+          .ifPresent(item -> ldStability.setBigintialGomValue(String.valueOf(item)));
+      Optional.ofNullable(stability.getBigintialGomjudgement())
+          .ifPresent(item -> ldStability.setBigIntialGomJudgement(String.valueOf(item)));
+      Optional.ofNullable(stability.getMaximumRightingLeverValue())
+          .ifPresent(item -> ldStability.setMaximumRightingLeverValue(String.valueOf(item)));
+      Optional.ofNullable(stability.getMaximumRightingLeverJudgement())
+          .ifPresent(item -> ldStability.setMaximumRightingLeverJudgement(String.valueOf(item)));
+      Optional.ofNullable(stability.getAngleatMaxrLeverValue())
+          .ifPresent(item -> ldStability.setAngleatmaxrleverValue(String.valueOf(item)));
+      Optional.ofNullable(stability.getAngleatMaxrLeverJudgement())
+          .ifPresent(item -> ldStability.setAngleatmaxrleverJudgement(String.valueOf(item)));
+      Optional.ofNullable(stability.getAreaOfStability_0_30_Value())
+          .ifPresent(item -> ldStability.setAreaofStability030Value(String.valueOf(item)));
+      Optional.ofNullable(stability.getAreaOfstability_0_30_Judgement())
+          .ifPresent(item -> ldStability.setAreaofStability030Judgement(String.valueOf(item)));
+      Optional.ofNullable(stability.getAreaOfStability_0_40_Value())
+          .ifPresent(item -> ldStability.setAreaofStability040Value(String.valueOf(item)));
+      Optional.ofNullable(stability.getAreaOfStability_0_40_Judgement())
+          .ifPresent(item -> ldStability.setAreaofStability040Judgement(String.valueOf(item)));
+      Optional.ofNullable(stability.getAreaOfStability_30_40_Value())
+          .ifPresent(item -> ldStability.setAreaofStability3040Value(String.valueOf(item)));
+      Optional.ofNullable(stability.getAreaOfStability_30_40_Judgement())
+          .ifPresent(item -> ldStability.setAreaofStability3040Judgement(String.valueOf(item)));
+      Optional.ofNullable(stability.getHeelBySteadyWindValue())
+          .ifPresent(item -> ldStability.setHeelBySteadyWindValue(String.valueOf(item)));
+      Optional.ofNullable(stability.getHeelBySteadyWindJudgement())
+          .ifPresent(item -> ldStability.setHeelBySteadyWindJudgement(String.valueOf(item)));
+      Optional.ofNullable(stability.getAreaOfStability_30_40_Judgement())
+          .ifPresent(item -> ldStability.setAreaofStability3040Judgement(String.valueOf(item)));
+      Optional.ofNullable(stability.getStabilityAreaBaValue())
+          .ifPresent(item -> ldStability.setStabilityAreaBaValue(String.valueOf(item)));
+      Optional.ofNullable(stability.getStabilityAreaBaJudgement())
+          .ifPresent(item -> ldStability.setStabilityAreaBaJudgement(String.valueOf(item)));
+      Optional.ofNullable(stability.getGmAllowableCurveCheckValue())
+          .ifPresent(item -> ldStability.setGmAllowableCurveCheckValue(String.valueOf(item)));
+      Optional.ofNullable(stability.getGm_allowableCurveCheckJudgement())
+          .ifPresent(item -> ldStability.setGmAllowableCurveCheckJudgement(String.valueOf(item)));
+      Optional.ofNullable(stability.getErrorStatus())
+          .ifPresent(item -> ldStability.setErrorStatus(item));
+      Optional.ofNullable(stability.getErrorDetails())
+          .ifPresent(item -> ldStability.setErrorDetails(String.valueOf(item)));
+      Optional.ofNullable(stability.getMessageText())
+          .ifPresent(item -> ldStability.setMessageText(String.valueOf(item)));
+    }
+
     return ldStability;
   }
 
   LDStrength.Builder buildStrengthDetails(LoadicatorStrength strength) {
     LDStrength.Builder ldStrength = LDStrength.newBuilder();
-
-    StowagePlanDetail stowageDetail =
-        this.stowagePlanRepository.findPortForStrength(strength.getStowagePlanId());
-    ldStrength.setPortId(stowageDetail.getPortId());
-    ldStrength.setSynopticalId(stowageDetail.getSynopticalId());
-    ldStrength.setId(strength.getId());
-    Optional.ofNullable(strength.getStowagePlanId()).ifPresent(ldStrength::setStowagePlanId);
-    Optional.ofNullable(strength.getShearingForcePresentValue())
-        .ifPresent(item -> ldStrength.setShearingForcePersentValue(String.valueOf(item)));
-    Optional.ofNullable(strength.getShearingForceJudgement())
-        .ifPresent(item -> ldStrength.setShearingForceJudgement(String.valueOf(item)));
-    Optional.ofNullable(strength.getSfFrameNumber())
-        .ifPresent(item -> ldStrength.setSfFrameNumber(String.valueOf(item)));
-    Optional.ofNullable(strength.getSfSideShellValue())
-        .ifPresent(item -> ldStrength.setSfSideShellValue(String.valueOf(item)));
-    Optional.ofNullable(strength.getSfSideShellJudgement())
-        .ifPresent(item -> ldStrength.setSfSideShellJudgement(String.valueOf(item)));
-    Optional.ofNullable(strength.getSfSideShellFrameNumber())
-        .ifPresent(item -> ldStrength.setSfSideShellFrameNumber(String.valueOf(item)));
-    Optional.ofNullable(strength.getSfHopperValue())
-        .ifPresent(item -> ldStrength.setSfHopperValue(String.valueOf(item)));
-    Optional.ofNullable(strength.getSfHopperJudgement())
-        .ifPresent(item -> ldStrength.setSfHopperJudgement(String.valueOf(item)));
-    Optional.ofNullable(strength.getSfHopperJudgement())
-        .ifPresent(item -> ldStrength.setSfHopperJudgement(String.valueOf(item)));
-    Optional.ofNullable(strength.getSfHopperFrameNumber())
-        .ifPresent(item -> ldStrength.setSfHopperFrameNumber(String.valueOf(item)));
-    Optional.ofNullable(strength.getOuterLongiBhdFrameNumber())
-        .ifPresent(item -> ldStrength.setOuterLongiBhdFrameNumber(String.valueOf(item)));
-    Optional.ofNullable(strength.getOuterLongiBhdValue())
-        .ifPresent(item -> ldStrength.setOuterLongiBhdValue(String.valueOf(item)));
-    Optional.ofNullable(strength.getInnerLongiBhdFrameNumber())
-        .ifPresent(item -> ldStrength.setInnerLongiBhdFrameNumber(String.valueOf(item)));
-    Optional.ofNullable(strength.getInnerLongiBhdJudgement())
-        .ifPresent(item -> ldStrength.setInnerLongiBhdJudgement(String.valueOf(item)));
-    Optional.ofNullable(strength.getInnerLongiBhdValue())
-        .ifPresent(item -> ldStrength.setInnerLongiBhdValue(String.valueOf(item)));
-    Optional.ofNullable(strength.getInnerLongiBhdJudgement())
-        .ifPresent(item -> ldStrength.setInnerLongiBhdJudgement(String.valueOf(item)));
-    Optional.ofNullable(strength.getBendingMomentPersentValue())
-        .ifPresent(item -> ldStrength.setBendingMomentPersentValue(String.valueOf(item)));
-    Optional.ofNullable(strength.getBendingMomentPersentJudgement())
-        .ifPresent(item -> ldStrength.setBendingMomentPersentJudgement(String.valueOf(item)));
-    Optional.ofNullable(strength.getBendingMomentPersentFrameNumber())
-        .ifPresent(item -> ldStrength.setBendingMomentPersentFrameNumber(String.valueOf(item)));
-    Optional.ofNullable(strength.getBendingMomentPersentFrameNumber())
-        .ifPresent(item -> ldStrength.setBendingMomentPersentFrameNumber(String.valueOf(item)));
-    Optional.ofNullable(strength.getErrorStatus())
-        .ifPresent(item -> ldStrength.setErrorStatus(item));
-    Optional.ofNullable(strength.getErrorDetails())
-        .ifPresent(item -> ldStrength.setErrorDetails(String.valueOf(item)));
-    Optional.ofNullable(strength.getMessageText())
-        .ifPresent(item -> ldStrength.setMessageText(String.valueOf(item)));
+    if (strength != null) {
+      StowagePlanDetail stowageDetail =
+          this.stowagePlanRepository.findPortForStrength(strength.getStowagePlanId());
+      ldStrength.setPortId(stowageDetail.getPortId());
+      ldStrength.setSynopticalId(stowageDetail.getSynopticalId());
+      ldStrength.setId(strength.getId());
+      Optional.ofNullable(strength.getStowagePlanId()).ifPresent(ldStrength::setStowagePlanId);
+      Optional.ofNullable(strength.getShearingForcePresentValue())
+          .ifPresent(item -> ldStrength.setShearingForcePersentValue(String.valueOf(item)));
+      Optional.ofNullable(strength.getShearingForceJudgement())
+          .ifPresent(item -> ldStrength.setShearingForceJudgement(String.valueOf(item)));
+      Optional.ofNullable(strength.getSfFrameNumber())
+          .ifPresent(item -> ldStrength.setSfFrameNumber(String.valueOf(item)));
+      Optional.ofNullable(strength.getSfSideShellValue())
+          .ifPresent(item -> ldStrength.setSfSideShellValue(String.valueOf(item)));
+      Optional.ofNullable(strength.getSfSideShellJudgement())
+          .ifPresent(item -> ldStrength.setSfSideShellJudgement(String.valueOf(item)));
+      Optional.ofNullable(strength.getSfSideShellFrameNumber())
+          .ifPresent(item -> ldStrength.setSfSideShellFrameNumber(String.valueOf(item)));
+      Optional.ofNullable(strength.getSfHopperValue())
+          .ifPresent(item -> ldStrength.setSfHopperValue(String.valueOf(item)));
+      Optional.ofNullable(strength.getSfHopperJudgement())
+          .ifPresent(item -> ldStrength.setSfHopperJudgement(String.valueOf(item)));
+      Optional.ofNullable(strength.getSfHopperJudgement())
+          .ifPresent(item -> ldStrength.setSfHopperJudgement(String.valueOf(item)));
+      Optional.ofNullable(strength.getSfHopperFrameNumber())
+          .ifPresent(item -> ldStrength.setSfHopperFrameNumber(String.valueOf(item)));
+      Optional.ofNullable(strength.getOuterLongiBhdFrameNumber())
+          .ifPresent(item -> ldStrength.setOuterLongiBhdFrameNumber(String.valueOf(item)));
+      Optional.ofNullable(strength.getOuterLongiBhdValue())
+          .ifPresent(item -> ldStrength.setOuterLongiBhdValue(String.valueOf(item)));
+      Optional.ofNullable(strength.getInnerLongiBhdFrameNumber())
+          .ifPresent(item -> ldStrength.setInnerLongiBhdFrameNumber(String.valueOf(item)));
+      Optional.ofNullable(strength.getInnerLongiBhdJudgement())
+          .ifPresent(item -> ldStrength.setInnerLongiBhdJudgement(String.valueOf(item)));
+      Optional.ofNullable(strength.getInnerLongiBhdValue())
+          .ifPresent(item -> ldStrength.setInnerLongiBhdValue(String.valueOf(item)));
+      Optional.ofNullable(strength.getInnerLongiBhdJudgement())
+          .ifPresent(item -> ldStrength.setInnerLongiBhdJudgement(String.valueOf(item)));
+      Optional.ofNullable(strength.getBendingMomentPersentValue())
+          .ifPresent(item -> ldStrength.setBendingMomentPersentValue(String.valueOf(item)));
+      Optional.ofNullable(strength.getBendingMomentPersentJudgement())
+          .ifPresent(item -> ldStrength.setBendingMomentPersentJudgement(String.valueOf(item)));
+      Optional.ofNullable(strength.getBendingMomentPersentFrameNumber())
+          .ifPresent(item -> ldStrength.setBendingMomentPersentFrameNumber(String.valueOf(item)));
+      Optional.ofNullable(strength.getBendingMomentPersentFrameNumber())
+          .ifPresent(item -> ldStrength.setBendingMomentPersentFrameNumber(String.valueOf(item)));
+      Optional.ofNullable(strength.getErrorStatus())
+          .ifPresent(item -> ldStrength.setErrorStatus(item));
+      Optional.ofNullable(strength.getErrorDetails())
+          .ifPresent(item -> ldStrength.setErrorDetails(String.valueOf(item)));
+      Optional.ofNullable(strength.getMessageText())
+          .ifPresent(item -> ldStrength.setMessageText(String.valueOf(item)));
+    }
     return ldStrength;
   }
 
   LDtrim.Builder buildLoadicatorTrimDetails(LoadicatorTrim trim) {
     LDtrim.Builder ldTrim = LDtrim.newBuilder();
 
-    StowagePlanDetail stowageDetail =
-        this.stowagePlanRepository.findPortForTrim(trim.getStowagePlanId());
-    ldTrim.setPortId(stowageDetail.getPortId());
-    ldTrim.setSynopticalId(stowageDetail.getSynopticalId());
-    ldTrim.setId(trim.getId());
-    Optional.ofNullable(trim.getStowagePlanId()).ifPresent(ldTrim::setStowagePlanId);
-    Optional.ofNullable(trim.getAftDraft())
-        .ifPresent(item -> ldTrim.setAftDraftValue(String.valueOf(item)));
-    Optional.ofNullable(trim.getForeDraft())
-        .ifPresent(item -> ldTrim.setForeDraftValue(String.valueOf(item)));
-    Optional.ofNullable(trim.getTrim())
-        .ifPresent(item -> ldTrim.setTrimValue(String.valueOf(item)));
-    Optional.ofNullable(trim.getHeel())
-        .ifPresent(item -> ldTrim.setHeelValue(String.valueOf(item)));
-    Optional.ofNullable(trim.getMeanDraft())
-        .ifPresent(item -> ldTrim.setMeanDraftValue(String.valueOf(item)));
-    Optional.ofNullable(trim.getMeanDraftJudgement())
-        .ifPresent(item -> ldTrim.setMeanDraftJudgement(String.valueOf(item)));
-    Optional.ofNullable(trim.getDisplacementJudgement())
-        .ifPresent(item -> ldTrim.setDisplacementJudgement(String.valueOf(item)));
-    Optional.ofNullable(trim.getDisplacementValue())
-        .ifPresent(item -> ldTrim.setDisplacementValue(String.valueOf(item)));
-    Optional.ofNullable(trim.getMaximumDraft())
-        .ifPresent(item -> ldTrim.setMaximumDraftValue(String.valueOf(item)));
-    Optional.ofNullable(trim.getMaximumDraftJudgement())
-        .ifPresent(item -> ldTrim.setMaximumDraftJudgement(String.valueOf(item)));
-    Optional.ofNullable(trim.getAirDraft())
-        .ifPresent(item -> ldTrim.setAirDraftValue(String.valueOf(item)));
-    Optional.ofNullable(trim.getAirDraftJudgement())
-        .ifPresent(item -> ldTrim.setAirDraftJudgement(String.valueOf(item)));
-    Optional.ofNullable(trim.getMinimumForeDraftInRoughWeatherValue())
-        .ifPresent(item -> ldTrim.setMinimumForeDraftInRoughWeatherValue(String.valueOf(item)));
-    Optional.ofNullable(trim.getMinimumForeDraftInRoughWeatherValueJudgement())
-        .ifPresent(item -> ldTrim.setMinimumForeDraftInRoughWeatherJudgement(String.valueOf(item)));
-    Optional.ofNullable(trim.getMaximumAllowableVisibility())
-        .ifPresent(item -> ldTrim.setMaximumAllowableVisibility(String.valueOf(item)));
-    Optional.ofNullable(trim.getMaximumAllowableJudgement())
-        .ifPresent(item -> ldTrim.setMaximumAllowableJudement(String.valueOf(item)));
-    Optional.ofNullable(trim.getErrorStatus()).ifPresent(item -> ldTrim.setErrorStatus(item));
-    Optional.ofNullable(trim.getErrorDetails())
-        .ifPresent(item -> ldTrim.setErrorDetails(String.valueOf(item)));
-    Optional.ofNullable(trim.getMessageText())
-        .ifPresent(item -> ldTrim.setMessageText(String.valueOf(item)));
-    Optional.ofNullable(trim.getDeflection())
-        .ifPresent(item -> ldTrim.setDeflection(String.valueOf(item)));
+    if (trim != null) {
+      StowagePlanDetail stowageDetail =
+          this.stowagePlanRepository.findPortForTrim(trim.getStowagePlanId());
+      ldTrim.setPortId(stowageDetail.getPortId());
+      ldTrim.setSynopticalId(stowageDetail.getSynopticalId());
+      ldTrim.setId(trim.getId());
+      Optional.ofNullable(trim.getStowagePlanId()).ifPresent(ldTrim::setStowagePlanId);
+      Optional.ofNullable(trim.getAftDraft())
+          .ifPresent(item -> ldTrim.setAftDraftValue(String.valueOf(item)));
+      Optional.ofNullable(trim.getForeDraft())
+          .ifPresent(item -> ldTrim.setForeDraftValue(String.valueOf(item)));
+      Optional.ofNullable(trim.getTrim())
+          .ifPresent(item -> ldTrim.setTrimValue(String.valueOf(item)));
+      Optional.ofNullable(trim.getHeel())
+          .ifPresent(item -> ldTrim.setHeelValue(String.valueOf(item)));
+      Optional.ofNullable(trim.getMeanDraft())
+          .ifPresent(item -> ldTrim.setMeanDraftValue(String.valueOf(item)));
+      Optional.ofNullable(trim.getMeanDraftJudgement())
+          .ifPresent(item -> ldTrim.setMeanDraftJudgement(String.valueOf(item)));
+      Optional.ofNullable(trim.getDisplacementJudgement())
+          .ifPresent(item -> ldTrim.setDisplacementJudgement(String.valueOf(item)));
+      Optional.ofNullable(trim.getDisplacementValue())
+          .ifPresent(item -> ldTrim.setDisplacementValue(String.valueOf(item)));
+      Optional.ofNullable(trim.getMaximumDraft())
+          .ifPresent(item -> ldTrim.setMaximumDraftValue(String.valueOf(item)));
+      Optional.ofNullable(trim.getMaximumDraftJudgement())
+          .ifPresent(item -> ldTrim.setMaximumDraftJudgement(String.valueOf(item)));
+      Optional.ofNullable(trim.getAirDraft())
+          .ifPresent(item -> ldTrim.setAirDraftValue(String.valueOf(item)));
+      Optional.ofNullable(trim.getAirDraftJudgement())
+          .ifPresent(item -> ldTrim.setAirDraftJudgement(String.valueOf(item)));
+      Optional.ofNullable(trim.getMinimumForeDraftInRoughWeatherValue())
+          .ifPresent(item -> ldTrim.setMinimumForeDraftInRoughWeatherValue(String.valueOf(item)));
+      Optional.ofNullable(trim.getMinimumForeDraftInRoughWeatherValueJudgement())
+          .ifPresent(
+              item -> ldTrim.setMinimumForeDraftInRoughWeatherJudgement(String.valueOf(item)));
+      Optional.ofNullable(trim.getMaximumAllowableVisibility())
+          .ifPresent(item -> ldTrim.setMaximumAllowableVisibility(String.valueOf(item)));
+      Optional.ofNullable(trim.getMaximumAllowableJudgement())
+          .ifPresent(item -> ldTrim.setMaximumAllowableJudement(String.valueOf(item)));
+      Optional.ofNullable(trim.getErrorStatus()).ifPresent(item -> ldTrim.setErrorStatus(item));
+      Optional.ofNullable(trim.getErrorDetails())
+          .ifPresent(item -> ldTrim.setErrorDetails(String.valueOf(item)));
+      Optional.ofNullable(trim.getMessageText())
+          .ifPresent(item -> ldTrim.setMessageText(String.valueOf(item)));
+      Optional.ofNullable(trim.getDeflection())
+          .ifPresent(item -> ldTrim.setDeflection(String.valueOf(item)));
+    }
     return ldTrim;
   }
 

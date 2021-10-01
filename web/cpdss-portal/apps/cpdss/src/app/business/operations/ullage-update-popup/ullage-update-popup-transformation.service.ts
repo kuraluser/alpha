@@ -218,7 +218,7 @@ export class UllageUpdatePopupTransformationService {
         editable: true,
         fieldColumnClass: 'pr-25',
         errorMessages: {
-          maxLimit: 'ULLAGE_UPDATE_FILLING_ERROR',
+          maxLimit: 'ULLAGE_UPDATE_BALLAST_FILLING_ERROR',
           required: 'ULLAGE_UPDATE_SOUNDING_REQUIRED',
           invalidNumber: 'ULLAGE_UPDATE_INVALID_ERROR'
         }
@@ -373,21 +373,21 @@ export class UllageUpdatePopupTransformationService {
         numberFormat: '1.2-2',
         errorMessages: {
           required: 'LOADABLE_PLAN_BL_API_REQUIRED',
-          min: 'ULLAGE_UPDATE_API_NEGATIVE_ERROR',
+          min: 'ULLAGE_UPDATE_API_MIN_ERROR',
           invalidNumber: 'ULLAGE_UPDATE_INVALID_ENTRY',
           max: 'ULLAGE_UPDATE_API_MAX_ERROR'
         }
       },
       {
         field: 'temp',
-        header: 'LOADABLE_PLAN_BL_TEMP',
+        header: 'ULLAGE_UPDATE_TEMPERATURE',
         editable: true,
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: "LOADABLE_PLAN_BL_TEMP_PLACEHOLDER",
         numberFormat: '1.2-2',
         errorMessages: {
           required: 'LOADABLE_PLAN_BL_TEMP_REQUIRED',
-          min: 'ULLAGE_UPDATE_TEMPERATURE_NEGATIVE_ERROR',
+          min: 'ULLAGE_UPDATE_TEMPERATURE_MIN_ERROR',
           invalidNumber: 'ULLAGE_UPDATE_INVALID_ENTRY',
           max: 'ULLAGE_UPDATE_TEMPERATURE_MAX_ERROR'
         }
@@ -447,7 +447,8 @@ export class UllageUpdatePopupTransformationService {
     _tankDetails.quantity = new ValueObject<number>(cargoTank?.quantity && !isPlanned ? cargoTank?.quantity : 0, true, false, false, true);
     _tankDetails.id = cargoTank.id;
     _tankDetails.tankId = cargoTank.tankId;
-    _tankDetails.loadablePatternId = cargoTank.loadablePatternId;
+    _tankDetails.loadablePatternId = cargoTank?.loadablePatternId;
+    _tankDetails.dischargePatternId = cargoTank?.dischargePatternId;
     _tankDetails.fillingPercentage = new ValueObject<number>(cargoTank.fillingPercentage ? cargoTank.fillingPercentage : '');
     _tankDetails.cargoNominationId = cargoTank.cargoNominationId;
     _tankDetails.arrivalDeparture = cargoTank.arrivalDeparture
@@ -472,7 +473,8 @@ export class UllageUpdatePopupTransformationService {
     _tankDetails.quantity = new ValueObject<number | string>(ballastTank?.quantity && !isPlanned ? Number(ballastTank?.quantity) : 0, true, false, false, true);
     _tankDetails.sounding = new ValueObject<number | string>(ballastTank.sounding && !isPlanned ? Number(ballastTank.sounding) : 0, true, isEditMode, false, true);
     _tankDetails.tankId = ballastTank.tankId;
-    _tankDetails.loadablePatternId = ballastTank.loadablePatternId;
+    _tankDetails.loadablePatternId = ballastTank?.loadablePatternId;
+    _tankDetails.dischargePatternId = ballastTank?.dischargePatternId;
     _tankDetails.temperature = new ValueObject<number>(ballastTank.temperature ? ballastTank.temperature : '', true, false, false, true);
     _tankDetails.isAdd = true;
     _tankDetails.id = ballastTank?.id;
@@ -501,7 +503,8 @@ export class UllageUpdatePopupTransformationService {
     _tankDetails.quantity = new ValueObject<number>(bunkerTank?.quantity && !isPlanned ? Number(bunkerTank?.quantity) : 0, true, isEditMode, false, true);
     _tankDetails.tankId = bunkerTank.tankId;
     _tankDetails.density = new ValueObject<number>(bunkerTank.density && !isPlanned ? bunkerTank.density : 0, true, false, false, true);
-    _tankDetails.loadablePatternId = bunkerTank.loadablePatternId;
+    _tankDetails.loadablePatternId = bunkerTank?.loadablePatternId;
+    _tankDetails.dischargePatternId = bunkerTank?.dischargePatternId;
     _tankDetails.temperature = bunkerTank?.temperature;
     _tankDetails.colorCode = bunkerTank?.colorCode;
     _tankDetails.actualPlanned = bunkerTank?.actualPlanned;
@@ -519,7 +522,7 @@ export class UllageUpdatePopupTransformationService {
   formatCargoQuantity(data) {
     const cargoQuantity: any = {};
     cargoQuantity.cargoAbbrevation = data.cargoAbbrevation;
-    cargoQuantity.nominationTotal = data.nominationTotal;
+    cargoQuantity.nominationTotal = this.quantityPipe.transform(data.nominationTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.nominationApi) ?? 0;
     cargoQuantity.maxTolerance = data.maxTolerance;
     cargoQuantity.minTolerance = data.minTolerance;
     cargoQuantity.maxQuantity = data.maxQuantity;
@@ -527,6 +530,10 @@ export class UllageUpdatePopupTransformationService {
     cargoQuantity.api = data.blAvgApi;
     cargoQuantity.cargoColor = data.cargoColor;
     cargoQuantity.cargoNominationId = data.cargoNominationId;
+    cargoQuantity.cargoLoaded = data?.cargoLoaded;
+    cargoQuantity.cargoToBeLoaded = data?.cargoToBeLoaded;
+    cargoQuantity.cargoDischarged = data?.cargoDischarged;
+    cargoQuantity.cargoToBeDischarged = data?.cargoToBeDischarged;
     cargoQuantity.plan = {
       bbl: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, data.nominationApi) ?? 0,
       lt: this.quantityPipe.transform(data.plannedQuantityTotal, QUANTITY_UNIT.MT, QUANTITY_UNIT.LT, data.nominationApi) ?? 0,

@@ -84,6 +84,16 @@ function buildApp(cb) {
       console.log(stderr);
       cb(err);
     });
+  } else if (argv.uat) {
+    let cmd = `npm run build:${appName}:${
+      argv.shore ? 'shore' : argv.ship ? 'ship' : ''
+    }`;
+    console.log(`${cmd}:uat`);
+    exec(`${cmd}:uat`, function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+      cb(err);
+    });
   }
 }
 //Copy files

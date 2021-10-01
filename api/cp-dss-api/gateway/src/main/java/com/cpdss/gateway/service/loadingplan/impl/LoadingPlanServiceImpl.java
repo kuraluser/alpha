@@ -1174,7 +1174,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 PortLoadablePlanBallastDetails ballastDetails =
                     new PortLoadablePlanBallastDetails();
                 ballastDetails.setCargoId(portWiseBallastDetail.getCargoId());
-                ballastDetails.setColorCode(portWiseBallastDetail.getColorCode());
+                ballastDetails.setColorCode(
+                    StringUtils.isEmpty(portWiseBallastDetail.getColorCode())
+                        ? GatewayConstants.BALLAST_COLOR
+                        : portWiseBallastDetail.getColorCode());
                 ballastDetails.setCorrectedUllage(portWiseBallastDetail.getCorrectedUllage());
                 ballastDetails.setCorrectionFactor(portWiseBallastDetail.getCorrectionFactor());
                 ballastDetails.setFillingPercentage(portWiseBallastDetail.getFillingPercentage());
@@ -1895,7 +1898,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   public UploadTideDetailResponse uploadLoadingTideDetails(
       Long loadingId, MultipartFile file, String correlationId, String portName, Long portId)
       throws IOException, GenericServiceException {
-    return loadingInformationService.uploadLoadingTideDetails(loadingId, file, correlationId, portName, portId);
+    return loadingInformationService.uploadLoadingTideDetails(
+        loadingId, file, correlationId, portName, portId);
   }
 
   @Override

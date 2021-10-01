@@ -5,7 +5,7 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { ICargo, OPERATIONS } from '../../../core/models/common.model';
-import { IStageOffset, IStageDuration, IDischargingInformation, IDischargeOperationListData } from '../../models/loading-discharging.model';
+import { IStageOffset, IStageDuration, IDischargingInformation, IDischargeOperationListData, ILoadingDischargingStages } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 import { RulesService } from '../../services/rules/rules.service';
@@ -13,7 +13,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LoadingDischargingManageSequenceComponent } from '../../loading-discharging-manage-sequence/loading-discharging-manage-sequence.component';
-import { durationValidator } from '../../directives/validator/duration-validator.directive';
+import { LoadingDischargingBerthComponent } from '../../loading-discharging-berth/loading-discharging-berth.component';
+import { LoadingDischargingCargoMachineryComponent } from '../../loading-discharging-cargo-machinery/loading-discharging-cargo-machinery.component';
+import { LoadingDischargingDetailsComponent } from '../../loading-discharging-details/loading-discharging-details.component';
+import { DischargingRatesComponent } from '../../discharging-rates/discharging-rates.component';
 
 /**
  * Component class for discharge information component
@@ -29,6 +32,10 @@ import { durationValidator } from '../../directives/validator/duration-validator
 })
 export class DischargingInformationComponent implements OnInit, OnDestroy {
   @ViewChild(LoadingDischargingManageSequenceComponent) manageSequenceComponent: LoadingDischargingManageSequenceComponent;
+  @ViewChild(LoadingDischargingBerthComponent) dischargeBerthComponent: LoadingDischargingBerthComponent;
+  @ViewChild(LoadingDischargingCargoMachineryComponent) machineryRefComponent: LoadingDischargingCargoMachineryComponent;
+  @ViewChild(LoadingDischargingDetailsComponent) dischargeDetailsComponent: LoadingDischargingDetailsComponent;
+  @ViewChild(DischargingRatesComponent) dischargeRatesComponent: DischargingRatesComponent;
 
   @Input() voyageId: number;
   @Input() vesselId: number;
@@ -145,6 +152,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       }),
       dischargeSlopTanksFirst: this.fb.control(dischargingInformationData?.dischargeSlopTanksFirst),
       dischargeCommingledCargoSeperately: this.fb.control(dischargingInformationData?.dischargeCommingledCargoSeperately),
+      machinery: this.fb.group({}),
       cargoTobeLoadedDischarged: this.fb.group({
         dataTable: this.fb.array([])
       }),
@@ -215,10 +223,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   * @memberof DischargingInformationComponent
   */
   onUpdateDischargingStages() {
-    this.dischargingInformationPostData.dischargeStages.stageOffset = this.dischargingInformationData?.dischargeStages?.stageOffset;
-    this.dischargingInformationPostData.dischargeStages.stageDuration = this.dischargingInformationData?.dischargeStages?.stageDuration;
-    this.dischargingInformationPostData.dischargeStages.trackStartEndStage = this.dischargingInformationData?.dischargeStages?.trackStartEndStage;
-    this.dischargingInformationPostData.dischargeStages.trackGradeSwitch = this.dischargingInformationData?.dischargeStages?.trackGradeSwitch;
+    this.dischargingInformationPostData.dischargeStages = this.dischargingInformationData?.dischargeStages;
     this.hasUnSavedData = true;
   }
 
@@ -237,7 +242,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
    *
    * @memberof DischargingInformationComponent
    */
-  onUpdateLoadingDetails(event) {
+  onUpdateDischargingDetails(event) {
     this.dischargingInformationPostData.dischargeDetails = event;
     this.hasUnSavedData = true;
   }
@@ -248,8 +253,8 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   * @memberof DischargingInformationComponent
   */
   onTrackStageChange() {
-    this.dischargingInformationPostData.dischargeStages.trackStartEndStage = this.dischargingInformationData?.dischargeStages?.trackStartEndStage;
-    this.dischargingInformationPostData.dischargeStages.trackGradeSwitch = this.dischargingInformationData?.dischargeStages?.trackGradeSwitch;
+    this.dischargingInformationData.dischargeStages.trackStartEndStage = this.dischargingInformationForm?.value?.stageDetails?.trackStartEndStage;
+    this.dischargingInformationPostData.dischargeStages.trackGradeSwitch = this.dischargingInformationForm?.value?.stageDetails?.trackGradeSwitch;
     this.onUpdateDischargingStages();
   }
 
@@ -286,17 +291,61 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Handler for on change of cargo to be discharged grid
+   *
+   * @param {*} event
+   * @memberof DischargingInformationComponent
+   */
+  onCargoToBeDischargedChange(event) {
+    this.hasUnSavedData = true;
+  }
+
+  /**
+   * Handler for on change of cow plan details
+   *
+   * @param {*} event
+   * @memberof DischargingInformationComponent
+   */
+  onCowPlanUpdate(event) {
+    this.hasUnSavedData = true;
+  }
+
+  /**
+     * Handler for on change of post discharge ste time details
+     *
+     * @param {*} event
+     * @memberof DischargingInformationComponent
+     */
+  onPostDischargeTimeUpdate(event) {
+    this.hasUnSavedData = true;
+  }
+
+  /**
   * Method for event to save discharging information data
   *
   * @memberof DischargingInformationComponent
   */
   async saveDischargingInformationData() {
-    if (this.checkIfValid()) {
+    this.manageSequenceComponent?.loadingDischargingSequenceForm?.markAsDirty();
+    this.manageSequenceComponent?.loadingDischargingSequenceForm?.markAllAsTouched();
 
-    }
-    const validSequence = await this.manageSequenceComponent.checkCargoCount(true);
-    if (!validSequence) {
-      return false;
+    this.dischargeDetailsComponent.loadingDischargingDetailsForm?.markAsDirty();
+    this.dischargeDetailsComponent.loadingDischargingDetailsForm?.markAllAsTouched();
+
+    this.dischargeBerthComponent.berthDetailsForm?.markAsDirty();
+    this.dischargeBerthComponent.berthDetailsForm?.updateValueAndValidity();
+
+    this.dischargeRatesComponent.dischargingRatesFormGroup?.markAsDirty();
+    this.dischargeRatesComponent.dischargingRatesFormGroup?.updateValueAndValidity();
+
+    this.dischargingInformationForm.markAsDirty();
+    this.dischargingInformationForm?.updateValueAndValidity();
+
+    this.dischargingInformationData.isDischargeInfoComplete = await this.checkIfValid() && this.dischargingInformationForm.valid;
+    this.loadingDischargingTransformationService.setDischargingInformationValidity(this.dischargingInformationData?.isDischargeInfoComplete)
+
+    if (this.dischargingInformationData.isDischargeInfoComplete) {
+
     }
     //TODO:Need to integrate with discharge info save
     /* const translationKeys = await this.translateService.get(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY']).toPromise();
@@ -321,7 +370,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
    * @return {*}  {boolean}
    * @memberof DischargingInformationComponent
    */
-  checkIfValid(): boolean {
+  async checkIfValid(): Promise<boolean> {
     const translationKeys = this.translateService.instant(['DISCHARGING_INFO_MIN_CARGO_SELECTED_ERROR', 'DISCHARGING_INFO_MIN_CARGO_SELECTED', 'DISCHARGING_COW_TANK_NOT_SELECTED', 'DISCHARGING_STAGE_DURATION_ERROR']);
     const commingledCargos = this.dischargingInformationForm?.value?.cargoTobeLoadedDischarged?.dataTable?.filter(cargo => cargo?.isCommingledDischarge === true);
     if (commingledCargos?.length && commingledCargos?.length < 2) {
@@ -334,9 +383,19 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       return false
     }
 
-    if (this.dischargingInformationForm?.value?.stageDetails?.stageDuration?.duration * 60 > this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.dischargingInformationData?.cowDetails?.totalDuration)) {
+    if (this.dischargingInformationData?.cowDetails?.totalDuration && this.dischargingInformationForm?.value?.stageDetails?.stageDuration?.duration * 60 > this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.dischargingInformationData?.cowDetails?.totalDuration)) {
       this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_MIN_CARGO_SELECTED_ERROR'], detail: translationKeys['DISCHARGING_STAGE_DURATION_ERROR'] });
       return false
+    }
+
+    const isMachineryValid = await this.machineryRefComponent.isMachineryValid(true);
+    if (!isMachineryValid) {
+      return false;
+    }
+
+    const validSequence = await this.manageSequenceComponent.checkCargoCount(true);
+    if (!validSequence) {
+      return false;
     }
 
     return true;

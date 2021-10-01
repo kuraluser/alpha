@@ -26,7 +26,7 @@
   <div class="row">
     <div class="col text-center loading-and-discharging-tab pt-10">
       <a (click)="switchTab(OPERATION_TAB.INFORMATION)"
-        [ngClass]="{'active' : currentTab === OPERATION_TAB.INFORMATION}" class="tab-btn">
+        [ngClass]="{'active' : currentTab === OPERATION_TAB.INFORMATION, 'disabled': !loadingInfoTabPermission?.view}" class="tab-btn">
         {{'LOADING_INFORMATION' | translate}}
         <div *ngIf="(loadingInformationComplete && isLoadingInfoValid()) else incomplete" class="pt-5">
           <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
@@ -38,7 +38,7 @@
         </ng-template>
       </a>
       <a (click)="switchTab(OPERATION_TAB.INSTRUCTION)"
-        [ngClass]="{'active' : currentTab === OPERATION_TAB.INSTRUCTION}" class="tab-btn">
+        [ngClass]="{'active' : currentTab === OPERATION_TAB.INSTRUCTION, 'disabled': !loadingInstructionTabPermission?.view}" class="tab-btn">
         {{'LOADING_INSTRUCTION' | translate}}
         <div *ngIf="loadingInstructionComplete else incomplete" class="pt-5">
           <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
@@ -54,7 +54,7 @@
         {{'GENERATE_LOADING_PLAN' | translate}} 
       </button>
       <a (click)="switchTab(OPERATION_TAB.SEQUENCE)"
-        [ngClass]="{'active' : currentTab === OPERATION_TAB.SEQUENCE,'disabled':!loadingSequenceComplete}" class="tab-btn">
+        [ngClass]="{'active' : currentTab === OPERATION_TAB.SEQUENCE,'disabled':!loadingSequenceComplete || !loadingSequenceTabPermission?.view}" class="tab-btn">
         {{'LOADING_SEQUENCE' | translate}}
         <div *ngIf="loadingSequenceComplete else notGenerated" class="pt-5">
           <div class="tab-status-icon pi pi-check completed"></div> {{'GENERATED'|translate}}
@@ -66,7 +66,7 @@
         </ng-template>
       </a>
       <a (click)="switchTab(OPERATION_TAB.PLAN)"
-         [ngClass]="{'active' : currentTab === OPERATION_TAB.PLAN ,'disabled':!loadingPlanComplete}" class="tab-btn">
+         [ngClass]="{'active' : currentTab === OPERATION_TAB.PLAN ,'disabled':!loadingPlanComplete || !loadingPlanTabPermission?.view}" class="tab-btn">
         {{'LOADING_PLAN' | translate}}
         <div *ngIf="loadingPlanComplete else incompletePlan" class="pt-5">
           <div class="tab-status-icon pi pi-check completed"></div> {{'GENERATED'|translate}}
@@ -81,13 +81,13 @@
   </div>
 
   <cpdss-portal-loading-information #loadingInfo (loadingInformationId)="setLoadingInfoId($event)" [cargos]="cargos"
-    [vesselId]="vesselId" *ngIf="currentTab === OPERATION_TAB.INFORMATION" [voyageId]="voyageId"
+    [vesselId]="vesselId" *ngIf="currentTab === OPERATION_TAB.INFORMATION" [voyageId]="voyageId" [permission]="loadingInfoTabPermission"
     [portRotationId]="portRotationId">
   </cpdss-portal-loading-information>
 
   <div class="row" *ngIf="currentTab === OPERATION_TAB.INSTRUCTION">
     <cpdss-portal-loading-instruction #loadingInstruction [vesselId]="vesselId" [voyageId]="voyageId"
-      [portRotationId]="portRotationId" [loadingInfoId]="loadingInfoId"></cpdss-portal-loading-instruction>
+      [portRotationId]="portRotationId" [loadingInfoId]="loadingInfoId" [permission]="loadingInstructionTabPermission"></cpdss-portal-loading-instruction>
   </div>
 
   <div class="row" *ngIf="currentTab === OPERATION_TAB.SEQUENCE">
@@ -98,7 +98,7 @@
   </div>
 
   <div class="row" *ngIf="currentTab === OPERATION_TAB.PLAN">
-    <cpdss-portal-loading-plan [cargos]="cargos" [vesselId]="vesselId" [voyageId]="voyageId"
+    <cpdss-portal-loading-plan [cargos]="cargos" [vesselId]="vesselId" [voyageId]="voyageId" [permission]="loadingPlanTabPermission"
       [portRotationId]="portRotationId" [loadingInfoId]="loadingInfoId"></cpdss-portal-loading-plan>
   </div>
 </div>

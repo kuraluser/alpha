@@ -218,13 +218,12 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       // RPC call to vessel info, Get Vessel Details
       VesselInfo.VesselDetail vesselDetail = vesselInfoService.getVesselInfoByVesselId(vesselId);
       if (vesselDetail != null) {
-        // Min Rate not from vessel, moved to below for rule value
 
-        // Max Loading Rate
+        // Max Loading Rate from vessel
         if (rateFromLoading.getMaxLoadingRate().isEmpty()) {
           loadingRates.setMaxLoadingRate(
               vesselDetail.getMaxLoadingRate().isEmpty()
-                  ? BigDecimal.ZERO
+                  ? null
                   : new BigDecimal(vesselDetail.getMaxLoadingRate()));
         } else {
           loadingRates.setMaxLoadingRate(
@@ -232,32 +231,29 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                   ? BigDecimal.ZERO
                   : new BigDecimal(rateFromLoading.getMaxLoadingRate()));
         }
-        loadingRates.setMaxLoadingRate(loadingRates.getMaxLoadingRate());
-
-        // Reduced loading rate
-        // Default value shows as - 1500 (min value for this)
-        if (rateFromLoading.getReducedLoadingRate().isEmpty()) {
-          loadingRates.setReducedLoadingRate(new BigDecimal(1500));
-        } else {
-          loadingRates.setReducedLoadingRate(
-              rateFromLoading.getReducedLoadingRate().isEmpty()
-                  ? null
-                  : new BigDecimal(rateFromLoading.getReducedLoadingRate()));
-        }
       }
-      loadingRates.setReducedDischaringRate(loadingRates.getReducedLoadingRate());
-
-      AdminRuleValueExtract extract =
-          AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
 
       // Min Loading Rate
+      // Default value is - 1000
       if (rateFromLoading.getMinLoadingRate().isEmpty()) {
-        var d = extract.getDefaultValueForKey(AdminRuleTemplate.MIN_INITIAL_RATE);
-        loadingRates.setMinLoadingRate(d.isEmpty() ? null : new BigDecimal(d));
+        loadingRates.setMinLoadingRate(new BigDecimal(1000));
       } else {
         loadingRates.setMinLoadingRate(new BigDecimal(rateFromLoading.getMinLoadingRate()));
       }
-      loadingRates.setMinDischargingRate(loadingRates.getMinLoadingRate());
+
+      // Reduced loading rate
+      // Default value shows as - 1500 (min value for this)
+      if (rateFromLoading.getReducedLoadingRate().isEmpty()) {
+        loadingRates.setReducedLoadingRate(new BigDecimal(1500));
+      } else {
+        loadingRates.setReducedLoadingRate(
+            rateFromLoading.getReducedLoadingRate().isEmpty()
+                ? null
+                : new BigDecimal(rateFromLoading.getReducedLoadingRate()));
+      }
+
+      AdminRuleValueExtract extract =
+          AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
 
       // Min De ballast rate
       if (rateFromLoading.getMinDeBallastingRate().isEmpty()) {
@@ -319,7 +315,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       // Shore Loading Rate
       loadingRates.setShoreLoadingRate(
           rateFromLoading.getShoreLoadingRate().isEmpty()
-              ? BigDecimal.ZERO
+              ? null
               : new BigDecimal(rateFromLoading.getShoreLoadingRate()));
       loadingRates.setShoreDischargingRate(loadingRates.getShoreLoadingRate());
       // Set Loading Info Id
@@ -1029,7 +1025,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       throws IOException, GenericServiceException {
     String originalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
     if (!(originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())
-            .equals("xlsx")) {
+        .equals("xlsx")) {
       throw new GenericServiceException(
           "unsupported file type",
           CommonErrorCodes.E_CPDSS_INVALID_EXCEL_FILE,
