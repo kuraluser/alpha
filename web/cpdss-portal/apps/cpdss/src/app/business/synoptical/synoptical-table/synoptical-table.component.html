@@ -81,12 +81,12 @@
             <td *ngIf="!rowData.colSpan || (colIndex%2 == 1 && (!rowData.betweenPorts || colIndex < synopticalService.synopticalRecords.length - 1))" [attr.colSpan]="rowData.colSpan ? rowData.colSpan : 1"
                 [class.text-right]="true">
                 <ng-container *ngFor="let field of rowData.fields;let i = index">
-                    <div class="pr-0" *ngIf="i > 0" [class.pr-0]="rowData.editable && synopticalService.editMode && checkEditableCondition(field.key,colIndex,rowData)">
+                    <div class="pr-0" *ngIf="i > 0" [class.pr-20]="rowData.editable && synopticalService.editMode && checkEditableCondition(field.key,colIndex,rowData)">
                         &nbsp;-&nbsp;
                     </div>
                     <ng-container
                         *ngIf="rowData.editable && synopticalService.editMode &&  checkEditableCondition(field.key,colIndex,rowData); else noEdit">
-                        <div class="error-icon-wrapper">
+                        <div class="error-icon-wrapper"  [ngClass]="{'inputWidth': rowData?.fields?.length>1}">
                             <ng-container [ngSwitch]="field.type">
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
                                     <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"

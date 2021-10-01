@@ -36,9 +36,9 @@
       </div>
       <div class="row">
         <div class="col pt-5">
-          <cpdss-portal-loading-discharging-cargo-machinery [dischargeInfoId]="dischargeInfoId"
+          <cpdss-portal-loading-discharging-cargo-machinery [dischargeInfoId]="dischargeInfoId" [operation]="OPERATIONS.DISCHARGING" [form]="dischargingInformationForm"
             [machineryInUses]="dischargingInformationData?.machineryInUses"
-            (updatemachineryInUses)="onUpdateMachineryInUses($event)" [operation]="OPERATIONS.DISCHARGING">
+            (updatemachineryInUses)="onUpdateMachineryInUses($event)">
           </cpdss-portal-loading-discharging-cargo-machinery>
         </div>
       </div>
@@ -83,7 +83,7 @@
           <cpdss-portal-cargo-to-be-loaded-discharged *ngIf="dischargingInformationData?.cargoVesselTankDetails && cargos && listData"
             [operation]="OPERATIONS.DISCHARGING" [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
             [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
-            [cargoVesselTankDetails]="dischargingInformationData?.cargoVesselTankDetails" [listData]="listData"
+            [cargoVesselTankDetails]="dischargingInformationData?.cargoVesselTankDetails" [listData]="listData" (updateCargoToBeLoaded)="onCargoToBeDischargedChange($event)"
             [form]="dischargingInformationForm">
           </cpdss-portal-cargo-to-be-loaded-discharged>
         </div>
@@ -127,7 +127,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <!-- <div class="row">
             <div class="col ml-30 ">
               <div class="row no-gutters row-divider border-bottom">
                 <div class="col pl-10 offset-3 mt-10">
@@ -144,7 +144,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <cpdss-portal-loading-discharging-manage-sequence
@@ -160,7 +160,7 @@
           <cpdss-portal-cow-plan *ngIf="dischargingInformationData?.cowDetails && dischargingInformationForm && listData"
             [form]="dischargingInformationForm" [cowDetails]="dischargingInformationData?.cowDetails"
             [listData]="listData" [cargoTanks]="dischargingInformationData?.cargoTanks"
-            [loadedCargos]="dischargingInformationData?.loadedCargos" [editMode]="true">
+            [loadedCargos]="dischargingInformationData?.loadedCargos" [editMode]="true" (updateCowPlan)="onCowPlanUpdate($event)">
           </cpdss-portal-cow-plan>
         </div>
       </div>
@@ -169,7 +169,7 @@
           <cpdss-portal-post-discharge-stage
             *ngIf="dischargingInformationData?.postDischargeStageTime && dischargingInformationForm" [editMode]="true"
             [postDischargeStageTime]="dischargingInformationData?.postDischargeStageTime"
-            [form]="dischargingInformationForm"></cpdss-portal-post-discharge-stage>
+            [form]="dischargingInformationForm" (updatePostDischargeDetails)="onPostDischargeTimeUpdate($event)"></cpdss-portal-post-discharge-stage>
         </div>
       </div>
     </div>

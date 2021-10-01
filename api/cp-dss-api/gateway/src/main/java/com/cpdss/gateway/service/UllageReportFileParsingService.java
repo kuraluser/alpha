@@ -111,7 +111,7 @@ public class UllageReportFileParsingService {
       Sheet sheetAt = workbook.getSheet(ULLAGE_REPORT_SHEET);
       fileSheetIsCorrect(sheetAt);
       Iterator<Row> rowIterator = sheetAt.iterator();
-      for (int rowCount = 0; rowCount <= 7; rowCount++) {
+      for (int rowCount = 0; rowCount < 7; rowCount++) {
         if (rowCount == 6) {
           checkIsTheFileContentFormat(rowIterator);
         }

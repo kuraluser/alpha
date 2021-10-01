@@ -91,7 +91,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
     });
 
     if(this.operation === OPERATIONS.DISCHARGING) {
-      this.berthDetailsForm.addControl('maxManifoldPressure', this.fb.control('', [Validators.required, Validators.min(0.1), Validators.max(99.99), numberValidator(2, 2)]))
+      this.berthDetailsForm.addControl('maxManifoldPressure', this.fb.control('', [Validators.required, Validators.min(0.1), Validators.max(99.99), numberValidator(4, 2)]))
       this.berthDetailsForm.addControl('cargoCirculation', this.fb.control(false));
       this.berthDetailsForm.addControl('airPurge', this.fb.control(false));
     }
@@ -374,7 +374,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
   }
 
   /**
-   * Method to check form valid 
+   * Method to check form valid
    * @memberof LoadingDischargingBerthComponent
    */
   checkFormValidity() {

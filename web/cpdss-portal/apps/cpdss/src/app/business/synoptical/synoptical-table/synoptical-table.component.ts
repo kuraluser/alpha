@@ -394,7 +394,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           validators: ['d.dddd.+', 'seaWaterDensity'],
           numberFormat: AppConfigurationService.settings?.sgNumberFormat
         }],
-        editable: true,
+        editable: !this.checkIfPlanGenerated() && !this.checkIfConfirmed(),
       },
       {
         header: 'H.W Tide & Time',
@@ -2129,6 +2129,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       }
 
     }
+  }
 
+  /**
+   * Check if plan generated
+  */
+  checkIfPlanGenerated(){
+    return this.synopticalService.selectedLoadablePattern ? true : false;
   }
 }

@@ -1,7 +1,7 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
+import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
@@ -64,6 +64,8 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   @Input() form: FormGroup;
   @Input() listData;
 
+  @Output() updateCargoToBeLoaded = new EventEmitter<ILoadedCargo[]>();
+
   get cargoTobeLoadedDischargedForm() {
     return <FormGroup> this.form.get('cargoTobeLoadedDischarged');
   }
@@ -123,7 +125,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         cargo.minMaxTolerance = maxTolerence + (minTolerence ? "/" + minTolerence : '');
         cargo.differencePercentage = cargo.differencePercentage ? (cargo.differencePercentage.includes('%') ? cargo.differencePercentage : cargo.differencePercentage + '%') : '';
         cargo.grade = this.findCargo(cargo);
-  
+
         const convertedOrderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), QUANTITY_UNIT.MT , this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
         cargo.convertedOrderedQuantity = convertedOrderedQuantity.toString();
 
@@ -153,10 +155,10 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
     this.cargoTobeLoadedDischarged = this.cargoVesselTankDetails.loadableQuantityCargoDetails?.map(cargo => {
       if (cargo) {
         cargo.grade = this.findCargo(cargo);
-        const blFigure = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.blFigure), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
+        const blFigure = cargo?.blFigure ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.blFigure), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : null;
         cargo.blFigure = this.quantityDecimalFormatPipe.transform(blFigure, this.currentQuantitySelectedUnit)?.toString().replace(/,/g, '');
 
-        const shipFigure = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
+        const shipFigure = cargo?.loadableMT ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : null;
         cargo.shipFigure = this.quantityDecimalFormatPipe.transform(shipFigure, this.currentQuantitySelectedUnit)?.toString().replace(/,/g, '');
 
         const slopQuantityObj = (<ValueObject<number>>cargo?.slopQuantity);
@@ -222,6 +224,18 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
       }
     })
     return cargoDetail?.name;
+  }
+
+  /**
+   * Handler for cargo tobe load/discharged grid input change event
+   *
+   * @param {IDataTableEvent} event
+   * @memberof CargoToBeLoadedDischargedComponent
+   */
+  onEditComplete(event: IDataTableEvent) {
+    if(this.operation === OPERATIONS.DISCHARGING) {
+      this.updateCargoToBeLoaded.emit(this.cargoTobeLoadedDischargedForm?.value());
+    }
   }
 
 }

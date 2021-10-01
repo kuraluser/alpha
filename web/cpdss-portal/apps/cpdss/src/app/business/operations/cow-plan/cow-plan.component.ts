@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { ICargo, ITank } from '../../core/models/common.model';
@@ -42,6 +42,8 @@ export class CowPlanComponent implements OnInit {
   set editMode(editMode: boolean) {
     this._editMode = editMode;
   }
+
+  @Output() updateCowPlan = new EventEmitter<ICOWDetails>();
 
   get cowDetailsForm() {
     return <FormGroup>this.form.get('cowDetails');
@@ -118,7 +120,7 @@ export class CowPlanComponent implements OnInit {
    */
   joinDropOptionsToLabel(tanks: ITank[]): string {
     let tankShortNamesLabel: string;
-    let tankShortNames: string[] = [];
+    const tankShortNames: string[] = [];
     tanks.forEach(selectedTanks => {
       tankShortNames.push(selectedTanks?.shortName);
     });
@@ -134,6 +136,7 @@ export class CowPlanComponent implements OnInit {
    */
   onCowOptionChange(event) {
     this.enableDisableFieldsOnCowOption(event?.value);
+    this.updateCowPlan.emit(this.cowDetailsForm?.value);
   }
 
   /**
@@ -168,6 +171,7 @@ export class CowPlanComponent implements OnInit {
    */
   onWashWithDifferentCargoChange(event) {
     this.enableDisableTanksWashWithDifferentCargoFields(event?.value);
+    this.updateCowPlan.emit(this.cowDetailsForm?.value);
   }
 
   /**
@@ -207,6 +211,17 @@ export class CowPlanComponent implements OnInit {
     }
     this.cowDetailsForm.controls?.cowStart.updateValueAndValidity();
     this.cowDetailsForm.controls?.cowEnd.updateValueAndValidity();
+    this.updateCowPlan.emit(this.cowDetailsForm?.value);
+  }
+
+  /**
+   * Handler for input chnage event for various cow fields
+   *
+   * @param {*} event
+   * @memberof CowPlanComponent
+   */
+  onChange(event) {
+    this.updateCowPlan.emit(this.cowDetailsForm?.value);
   }
 
   /**
