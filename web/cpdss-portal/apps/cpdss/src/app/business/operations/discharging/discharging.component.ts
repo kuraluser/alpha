@@ -10,6 +10,7 @@ import { OperationsApiService } from '../services/operations-api.service';
 import { OPERATIONS } from '../../core/models/common.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { ComponentCanDeactivate } from '../../../shared/models/common.model';
+import { DischargingInformationComponent } from './discharging-information/discharging-information.component';
 
 /**
  * Component for discharging module
@@ -25,6 +26,7 @@ import { ComponentCanDeactivate } from '../../../shared/models/common.model';
 })
 export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
 
+  @ViewChild(DischargingInformationComponent) dischargingInformationComponent: DischargingInformationComponent;
   @ViewChild('dischargingInstruction') dischargingInstruction;
 
   currentTab: OPERATION_TAB = OPERATION_TAB.INFORMATION;
@@ -45,7 +47,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
-    return !(this.dischargingInstruction?.instructionCheckList?.hasUnsavedChanges || this.dischargingInstruction?.instructionCheckList?.instructionForm?.dirty);
+    return !(this.dischargingInstruction?.instructionCheckList?.hasUnsavedChanges || this.dischargingInstruction?.instructionCheckList?.instructionForm?.dirty || this.dischargingInformationComponent?.hasUnSavedData);
   }
 
   constructor(
@@ -86,7 +88,9 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
    * @memberof DischargingComponent
    */
   private async initSubsciptions() {
-
+    this.loadingDischargingTransformationService.dischargingInformationValidity$.subscribe((res) => {
+      this.dischargingInformationComplete = res;
+    });
   }
 
 

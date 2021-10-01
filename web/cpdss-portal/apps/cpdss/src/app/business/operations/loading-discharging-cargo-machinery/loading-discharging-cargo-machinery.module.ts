@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NumberDirectiveModule } from '../../../shared/directives/number-directive/number-directive.module';
 import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule } from '@ngx-translate/core';
+import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
 
 /**
  * Module for loading discharging cargo machinery module
@@ -23,7 +24,8 @@ import { TranslateModule } from '@ngx-translate/core';
     ReactiveFormsModule,
     NumberDirectiveModule,
     DropdownModule,
-    TranslateModule
+    TranslateModule,
+    ValidationErrorModule
   ]
 })
 export class LoadingDischargingCargoMachineryModule { }

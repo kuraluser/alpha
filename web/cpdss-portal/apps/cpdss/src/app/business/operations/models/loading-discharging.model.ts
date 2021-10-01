@@ -127,7 +127,7 @@ export interface IMachineryInUsesResponse {
   pumpTypes: IPumpTypes[];
   vesselPumps: IVesselPumps[];
   loadingMachinesInUses?: Array<ILoadingMachinesInUse>;
-  dischargingMachinesInUses?: Array<IDischargingMachinesInUse>;
+  dischargeMachinesInUses?: Array<IDischargingMachinesInUse>;
 }
 
 /**
@@ -216,6 +216,7 @@ export interface ILoadingMachinesInUse {
   capacity: number;
   isUsing?: boolean;
   pumpTypeId?: string;
+  pumpCapacity?: number;
 }
 
 /**
@@ -232,6 +233,7 @@ export interface IDischargingMachinesInUse {
   capacity: number;
   isUsing?: boolean;
   pumpTypeId?: string;
+  pumpCapacity?: number;
 }
 
 
@@ -716,14 +718,14 @@ export enum MACHINE_TYPES {
  * @export
  * @enum {number}
  */
-export enum Pump_TYPES {
-  Cargo_Pump = 1,
-  Ballast_Pump = 2,
-  GS_Pump = 3,
-  IG_Pump = 4,
-  Stripping_Pump = 5,
-  Strip_Eductor = 6,
-  COW_Pump = 7
+export enum PUMP_TYPES {
+  CARGO_PUMP = 1,
+  BALLAST_PUMP = 2,
+  GS_PUMP = 3,
+  IG_PUMP = 4,
+  STRIPPING_PUMP = 5,
+  STRIP_EDUCTOR = 6,
+  COW_PUMP = 7
 }
 
 /**
