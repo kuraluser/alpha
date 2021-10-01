@@ -20,12 +20,12 @@ public interface DischargingPlanStowageDetailsRepository
   @Modifying
   @Transactional
   @Query(
-      "UPDATE DischargingPlanStowageDetails SET isActive = false WHERE loadingPlanPortWiseDetails = ?1")
+      "UPDATE DischargingPlanStowageDetails SET isActive = false WHERE dischargingPlanPortWiseDetails = ?1")
   public void deleteByDischargingPlanPortWiseDetails(
       DischargingPlanPortWiseDetails loadingPlanPortWiseDetails);
 
   @Query(
-      "SELECT LPSD FROM DischargingPlanStowageDetails LPSD WHERE LPSD.loadingPlanPortWiseDetails.id IN ?1 AND LPSD.isActive = ?2")
+      "SELECT LPSD FROM DischargingPlanStowageDetails LPSD WHERE LPSD.dischargingPlanPortWiseDetails.id IN ?1 AND LPSD.isActive = ?2")
   public List<DischargingPlanStowageDetails> findByPortWiseDetailIdsAndIsActive(
       List<Long> portWiseDetailIds, Boolean isActive);
 }

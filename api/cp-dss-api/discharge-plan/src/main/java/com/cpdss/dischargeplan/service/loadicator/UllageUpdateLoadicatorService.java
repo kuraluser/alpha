@@ -98,7 +98,6 @@ public class UllageUpdateLoadicatorService {
 
   @Autowired DischargePlanAlgoService dischargingPlanAlgoService;
   @Autowired LoadicatorService loadicatorService;
-  @Autowired DischargePlanService dischargePlanService;
 
   @GrpcClient("loadableStudyService")
   private SynopticalOperationServiceGrpc.SynopticalOperationServiceBlockingStub

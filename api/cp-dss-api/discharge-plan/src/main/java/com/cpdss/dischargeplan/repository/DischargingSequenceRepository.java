@@ -14,11 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 public interface DischargingSequenceRepository
     extends CommonCrudRepository<DischargingSequence, Long> {
 
-  public List<DischargingSequence> findByDischargingInformationAndIsActive(
-      DischargeInformation dischargingInformation, Boolean isActive);
+  public List<DischargingSequence> findByDischargeInformationAndIsActive(
+      DischargeInformation dischargeInformation, Boolean isActive);
 
   public List<DischargingSequence> findByDischargeInformationAndIsActiveOrderBySequenceNumber(
-      DischargeInformation dischargingInformation, Boolean isActive);
+      DischargeInformation dischargeInformation, Boolean isActive);
 
   @Modifying
   @Transactional
@@ -27,11 +27,11 @@ public interface DischargingSequenceRepository
 
   @Modifying
   @Transactional
-  @Query("UPDATE DischargingSequence SET isActive = false WHERE dischargingInformation.id = ?1")
+  @Query("UPDATE DischargingSequence SET isActive = false WHERE dischargeInformation.id = ?1")
   public void deleteByDischargeInformationId(Long dischargingInfoId);
 
   @Query(
-      "SELECT DISTINCT cargoNominationXId FROM DischargingSequence WHERE dischargingInformation = ?1 AND isActive = ?2")
-  public List<Long> findToBeDischargedCargoNominationIdByDischargingInformationAndIsActive(
-      DischargeInformation dischargingInformation, Boolean isActive);
+      "SELECT DISTINCT cargoNominationXId FROM DischargingSequence WHERE dischargeInformation = ?1 AND isActive = ?2")
+  public List<Long> findToBeDischargedCargoNominationIdBydischargeInformationAndIsActive(
+      DischargeInformation dischargeInformation, Boolean isActive);
 }

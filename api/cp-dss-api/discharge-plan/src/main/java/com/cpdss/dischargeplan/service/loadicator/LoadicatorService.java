@@ -64,7 +64,7 @@ public class LoadicatorService {
   @Value(value = "${algo.loadicatorUrl}")
   private String loadicatorUrl;
 
-  @Value(value = "${dischargeplan.attachment.rootFolder}")
+  @Value(value = "${loadingplan.attachment.rootFolder}")
   private String rootFolder;
 
   @Autowired DischargeInformationRepository dischargeInformationRepository;

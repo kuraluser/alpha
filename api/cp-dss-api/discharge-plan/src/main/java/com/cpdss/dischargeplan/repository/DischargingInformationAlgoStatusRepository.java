@@ -23,17 +23,17 @@ public interface DischargingInformationAlgoStatusRepository
       Long dischargingInformationStatusId, String processId);
 
   Optional<DischargingInformationAlgoStatus>
-      findByProcessIdAndDischargingInformationIdAndIsActiveTrue(
+      findByProcessIdAndDischargeInformationAndIsActiveTrue(
           String processId, Long dischargingInfoId);
 
   @Transactional
   @Modifying
   @Query(
-      "UPDATE DischargingInformationAlgoStatus SET isActive = false WHERE dischargingInformation.id = ?1 AND processId = ?2")
+      "UPDATE DischargingInformationAlgoStatus SET isActive = false WHERE dischargeInformation.id = ?1 AND processId = ?2")
   public void deleteDischargingInformationAlgoStatus(Long dischargingInfoId, String processId);
 
   Optional<DischargingInformationAlgoStatus>
-      findByProcessIdAndDischargingInformationIdAndConditionTypeAndIsActiveTrue(
+      findByProcessIdAndDischargeInformationAndConditionTypeAndIsActiveTrue(
           String processId, Long dischargingInfoId, Integer conditionType);
 
   @Transactional
