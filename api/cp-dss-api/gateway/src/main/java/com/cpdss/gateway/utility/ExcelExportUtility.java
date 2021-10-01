@@ -76,19 +76,19 @@ public class ExcelExportUtility {
 			throws GenericServiceException, IOException {
 		log.info("Inside generateExcel utility - Creating " + outputFileLocation + " file using " + inputFileLocation
 				+ " template.");
-		String outFile = rootFolder + outputFileLocation;
-//		String outFile = outputFileLocation;
+//		String outFile = rootFolder + outputFileLocation;
+		String outFile = outputFileLocation;
 		OutputStream outStream = new FileOutputStream(outFile);
 
 		try (InputStream inStream = this.getClass().getResourceAsStream(inputFileLocation)) {
 			if (inStream != null) {
 				// Converting object in to excel context
 				Context context = getContext(dataObj);
-
-				bindDataUsingAreaListener(inStream, outStream, context);
+//TODO remove
+//				bindDataUsingAreaListener(inStream, outStream, context);
 				
 				//Stamping values into excel template
-//				JxlsHelper.getInstance().processTemplate(inStream, outStream, context);
+				JxlsHelper.getInstance().processTemplate(inStream, outStream, context);
 				
 			} else {
 				log.info("Invalid template location - no file present");
@@ -103,6 +103,45 @@ public class ExcelExportUtility {
 			closeAndFlushOutput(outStream);
 		}
 		return new File(outFile);
+	}
+
+	
+
+	/**
+	 * Create JSLX context form map
+	 * 
+	 * @param dataObj
+	 * @return
+	 */
+	private Context getContext(Object dataObj) {
+		Context context = new Context();
+		ObjectMapper mapper = new ObjectMapper();
+		// object to a map
+		@SuppressWarnings("unchecked")
+		Map<String, Object> dataMap = mapper.convertValue(dataObj, Map.class);
+
+		dataMap.entrySet().forEach(entry -> {
+			log.info(entry.getKey() + " : " + entry.getValue()); // TODO remove
+		});
+		// Creating JXLS context
+		for (Entry<String, Object> element : dataMap.entrySet()) {
+			context.putVar(element.getKey(), element.getValue());
+		}
+		return context;
+	}
+
+	/**
+	 * Closing I/O streams
+	 * 
+	 * @param outStream
+	 */
+	private void closeAndFlushOutput(OutputStream outStream) {
+		try {
+			outStream.flush();
+			outStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -172,42 +211,4 @@ public class ExcelExportUtility {
 //		System.out.println(xlsArea.getAreaRef().getSheetName());
 //		
 	}
-
-	/**
-	 * Create JSLX context form map
-	 * 
-	 * @param dataObj
-	 * @return
-	 */
-	private Context getContext(Object dataObj) {
-		Context context = new Context();
-		ObjectMapper mapper = new ObjectMapper();
-		// object to a map
-		@SuppressWarnings("unchecked")
-		Map<String, Object> dataMap = mapper.convertValue(dataObj, Map.class);
-
-		dataMap.entrySet().forEach(entry -> {
-			log.info(entry.getKey() + " : " + entry.getValue()); // TODO remove
-		});
-		// Creating JXLS context
-		for (Entry<String, Object> element : dataMap.entrySet()) {
-			context.putVar(element.getKey(), element.getValue());
-		}
-		return context;
-	}
-
-	/**
-	 * Closing I/O streams
-	 * 
-	 * @param outStream
-	 */
-	private void closeAndFlushOutput(OutputStream outStream) {
-		try {
-			outStream.flush();
-			outStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 }
