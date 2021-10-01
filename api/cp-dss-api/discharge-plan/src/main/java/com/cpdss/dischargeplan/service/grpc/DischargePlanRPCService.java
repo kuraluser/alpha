@@ -4,12 +4,15 @@ package com.cpdss.dischargeplan.service.grpc;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.FAILED;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
 
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsResponse;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -30,10 +33,14 @@ import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepositor
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageTempDetailsRepository;
+import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
 import com.cpdss.dischargeplan.service.DischargePlanSynchronizeService;
+import com.cpdss.dischargeplan.service.DischargeUllageServiceUtils;
+import com.cpdss.dischargeplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -52,6 +59,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   @Autowired PortDischargingPlanRobDetailsRepository pdpRobDetailsRepository;
   @Autowired PortDischargingPlanStabilityParametersRepository pdpStabilityParametersRepository;
   @Autowired BillOfLaddingRepository billOfLaddingRepo;
+  @Autowired DischargeInformationService dischargeInformationService;
 
   @Autowired
   PortDischargingPlanStowageTempDetailsRepository portLoadingPlanStowageTempDetailsRepository;
@@ -60,6 +68,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   PortDischargingPlanBallastTempDetailsRepository portLoadingPlanBallastTempDetailsRepository;
 
   @Autowired DischargePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
+  @Autowired UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
 
   @Override
   public void dischargePlanSynchronization(
@@ -580,5 +589,75 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
               : portWiseCommingleDetail.getTimeRequiredForDischarging());
       builder.addLoadablePlanCommingleDetails(newBuilder);
     }
+  }
+
+  @Override
+  public void updateDischargeUllageDetails(
+      UllageBillRequest request, StreamObserver<UllageBillReply> responseObserver) {
+    LoadingPlanModels.UllageBillReply.Builder builder =
+        LoadingPlanModels.UllageBillReply.newBuilder();
+    String processId = "";
+    try {
+
+      // update and save ballast
+      List<PortDischargingPlanBallastTempDetails> tempBallast =
+          portLoadingPlanBallastTempDetailsRepository
+              .findByDischargingInformationAndConditionTypeAndIsActive(
+                  request.getUpdateUllage(0).getLoadingInformationId(),
+                  request.getUpdateUllage(0).getArrivalDepartutre(),
+                  true);
+      List<PortDischargingPlanBallastTempDetails> updatedBallast =
+          DischargeUllageServiceUtils.updateBallast(request, tempBallast);
+      portLoadingPlanBallastTempDetailsRepository.saveAll(updatedBallast);
+
+      // update and save stowage
+      List<PortDischargingPlanStowageTempDetails> tempStowage =
+          portLoadingPlanStowageTempDetailsRepository
+              .findByDischargingInformationAndConditionTypeAndIsActive(
+                  request.getUpdateUllage(0).getLoadingInformationId(),
+                  request.getUpdateUllage(0).getArrivalDepartutre(),
+                  true);
+      List<PortDischargingPlanStowageTempDetails> updatedStowage =
+          DischargeUllageServiceUtils.updateStowage(request, tempStowage);
+      portLoadingPlanStowageTempDetailsRepository.saveAll(updatedStowage);
+
+      // update and save ROB
+      List<PortDischargingPlanRobDetails> tempRob =
+          pdpRobDetailsRepository.findByDischargingInformationAndConditionTypeAndIsActive(
+              request.getRobUpdate(0).getLoadingInformationId(),
+              request.getRobUpdate(0).getArrivalDepartutre(),
+              true);
+      List<PortDischargingPlanRobDetails> updatedRob =
+          DischargeUllageServiceUtils.updateRob(request, tempRob);
+      pdpRobDetailsRepository.saveAll(updatedRob);
+
+      // update and save bill of ladding
+      List<BillOfLadding> updatedBillOfLadding =
+          DischargeUllageServiceUtils.updateBillOfLadding(
+              request, billOfLaddingRepo, dischargeInformationService);
+      billOfLaddingRepo.saveAll(updatedBillOfLadding);
+
+      if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
+        processId = validateAndSaveData(request);
+      }
+      builder.setProcessId(processId);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(DischargePlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private String validateAndSaveData(UllageBillRequest request)
+      throws GenericServiceException, IllegalAccessException, InvocationTargetException {
+    return ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(request);
   }
 }
