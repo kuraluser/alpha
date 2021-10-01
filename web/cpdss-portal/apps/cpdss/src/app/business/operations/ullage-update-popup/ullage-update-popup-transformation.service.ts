@@ -218,7 +218,7 @@ export class UllageUpdatePopupTransformationService {
         editable: true,
         fieldColumnClass: 'pr-25',
         errorMessages: {
-          maxLimit: 'ULLAGE_UPDATE_FILLING_ERROR',
+          maxLimit: 'ULLAGE_UPDATE_BALLAST_FILLING_ERROR',
           required: 'ULLAGE_UPDATE_SOUNDING_REQUIRED',
           invalidNumber: 'ULLAGE_UPDATE_INVALID_ERROR'
         }
@@ -373,7 +373,7 @@ export class UllageUpdatePopupTransformationService {
         numberFormat: '1.2-2',
         errorMessages: {
           required: 'LOADABLE_PLAN_BL_API_REQUIRED',
-          min: 'ULLAGE_UPDATE_API_NEGATIVE_ERROR',
+          min: 'ULLAGE_UPDATE_API_MIN_ERROR',
           invalidNumber: 'ULLAGE_UPDATE_INVALID_ENTRY',
           max: 'ULLAGE_UPDATE_API_MAX_ERROR'
         }
@@ -387,7 +387,7 @@ export class UllageUpdatePopupTransformationService {
         numberFormat: '1.2-2',
         errorMessages: {
           required: 'LOADABLE_PLAN_BL_TEMP_REQUIRED',
-          min: 'ULLAGE_UPDATE_TEMPERATURE_NEGATIVE_ERROR',
+          min: 'ULLAGE_UPDATE_TEMPERATURE_MIN_ERROR',
           invalidNumber: 'ULLAGE_UPDATE_INVALID_ENTRY',
           max: 'ULLAGE_UPDATE_TEMPERATURE_MAX_ERROR'
         }
