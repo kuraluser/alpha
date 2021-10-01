@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
+import javax.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -37,6 +38,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Log4j2
 @Service
+@Transactional
 public class CommunicationService {
   @Autowired private LoadableStudyServiceShore loadableStudyServiceShore;
   @Autowired VoyageService voyageService;

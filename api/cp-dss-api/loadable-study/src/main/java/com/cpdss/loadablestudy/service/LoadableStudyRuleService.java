@@ -291,8 +291,7 @@ public class LoadableStudyRuleService {
                 Common.RulePlans.Builder rulePlanBuilder = Common.RulePlans.newBuilder();
                 Optional.ofNullable(rulePlans.getHeader()).ifPresent(rulePlanBuilder::setHeader);
                 List<Common.Rules> ruleList =
-                    rulePlans.getRulesList().stream()
-                        .collect(Collectors.toList());
+                    rulePlans.getRulesList().stream().collect(Collectors.toList());
                 System.out.println(ruleList.size());
                 if (ruleList != null && ruleList.size() > 0) {
                   rulePlanBuilder.addAllRules(ruleList);
