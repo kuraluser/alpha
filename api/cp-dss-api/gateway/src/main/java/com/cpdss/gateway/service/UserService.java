@@ -513,8 +513,7 @@ public class UserService {
         KeycloakUser[] keycloakUsersList = keycloakService.getUsers();
         List<String> keyCloakIds =
             Arrays.stream(keycloakUsersList).map(KeycloakUser::getId).collect(Collectors.toList());
-
-        users = this.usersRepository.findByKeycloakIdInOrderById(keyCloakIds);
+        users = this.usersRepository.findByKeycloakIdInAndIsActiveTrueOrderById(keyCloakIds);
         users.forEach(
             userEntity -> {
               KeycloakUser keycloakUser = null;
