@@ -126,15 +126,10 @@ public class UllageUpdateLoadicatorService {
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
-      if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE
-          == request.getUpdateUllage(0).getArrivalDepartutre()) {
-        loadingInformationRepository.updateLoadingInformationArrivalStatus(
-            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
-      } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE
-          == request.getUpdateUllage(0).getArrivalDepartutre()) {
-        loadingInformationRepository.updateLoadingInformationDepartureStatus(
-            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
-      }
+      loadingPlanService.updateLoadingPlanStatus(
+          loadingInfoOpt.get(),
+          loadingInfoStatusOpt.get(),
+          request.getUpdateUllage(0).getArrivalDepartutre());
       loadingPlanAlgoService.createLoadingInformationAlgoStatus(
           loadingInfoOpt.get(),
           processId,
@@ -208,15 +203,12 @@ public class UllageUpdateLoadicatorService {
     Optional<LoadingInformationStatus> loadingInfoStatusOpt =
         loadingPlanAlgoService.getLoadingInformationStatus(
             LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
-    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE
-        == request.getUpdateUllage(0).getArrivalDepartutre()) {
-      loadingInformationRepository.updateLoadingInformationArrivalStatus(
-          loadingInfoStatusOpt.get(), loadingInfoId);
-    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE
-        == request.getUpdateUllage(0).getArrivalDepartutre()) {
-      loadingInformationRepository.updateLoadingInformationDepartureStatus(
-          loadingInfoStatusOpt.get(), loadingInfoId);
-    }
+
+    loadingPlanService.updateLoadingPlanStatus(
+        loadingInfoOpt.get(),
+        loadingInfoStatusOpt.get(),
+        request.getUpdateUllage(0).getArrivalDepartutre());
+
     loadingPlanAlgoService.createLoadingInformationAlgoStatus(
         loadingInfoOpt.get(),
         processId,
@@ -424,14 +416,8 @@ public class UllageUpdateLoadicatorService {
     Optional<LoadingInformationStatus> loadingInfoStatusOpt =
         loadingPlanAlgoService.getLoadingInformationStatus(
             LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
-    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE == request.getConditionType()) {
-      loadingInformationRepository.updateLoadingInformationArrivalStatus(
-          loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
-    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE
-        == request.getConditionType()) {
-      loadingInformationRepository.updateLoadingInformationDepartureStatus(
-          loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
-    }
+    loadingPlanService.updateLoadingPlanStatus(
+        loadingInfoOpt.get(), loadingInfoStatusOpt.get(), request.getConditionType());
     loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
         loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
     loadingPlanService.saveUpdatedLoadingPlanDetails(
