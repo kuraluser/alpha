@@ -8,7 +8,6 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_T
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_TANK_COLOR_CODE;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_BALLAST_TANK_CATEGORIES;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_TANK_CATEGORIES;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.COMMINGLE;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CREATED_DATE_FORMAT;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DICHARGE_STUDY;
@@ -49,6 +48,7 @@ import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
+import com.cpdss.loadablestudy.entity.CommingleCargo;
 import com.cpdss.loadablestudy.entity.CowTypeMaster;
 import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
 import com.cpdss.loadablestudy.entity.DischargePlanCowDetailFromAlgo;
@@ -73,6 +73,7 @@ import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.CowTypeMasterRepository;
 import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
@@ -208,6 +209,8 @@ public class LoadablePatternService {
   @Autowired private CowTypeMasterRepository cowTypeMasterRepository;
 
   @Autowired DischargePlanService dischargePlanService;
+
+  @Autowired private CommingleCargoRepository commingleCargoRepository;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -688,7 +691,14 @@ public class LoadablePatternService {
           loadableQuantityCommingleCargoDetailsList.get(i).getCargo2MT());
       loadablePlanCommingleDetails.setCargo2Percentage(
           loadableQuantityCommingleCargoDetailsList.get(i).getCargo2Percentage());
-      loadablePlanCommingleDetails.setGrade(COMMINGLE + (i + 1));
+      Optional<CommingleCargo> commingleCargoOpt =
+          commingleCargoRepository
+              .findByLoadableStudyXIdAndCargoNomination1IdAndCargoNomination2IdAndIsActiveTrue(
+                  loadablePattern.getLoadableStudy().getId(),
+                  loadableQuantityCommingleCargoDetailsList.get(i).getCargo1NominationId(),
+                  loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
+      commingleCargoOpt.ifPresent(
+          commingle -> loadablePlanCommingleDetails.setGrade(commingle.getAbbreviation()));
       loadablePlanCommingleDetails.setIsActive(true);
       loadablePlanCommingleDetails.setLoadablePattern(loadablePattern);
       loadablePlanCommingleDetails.setQuantity(
@@ -1161,6 +1171,16 @@ public class LoadablePatternService {
                     // .actualQuantity(it.getActualQuantity()!= null ? new
                     // BigDecimal(it.getActualQuantity()): null)
                     .build();
+
+            Optional<CommingleCargo> commingleCargoOpt =
+                commingleCargoRepository
+                    .findByLoadableStudyXIdAndCargoNomination1IdAndCargoNomination2IdAndIsActiveTrue(
+                        loadablePattern.getLoadableStudy().getId(),
+                        it.getCargo1NominationId(),
+                        it.getCargo2NominationId());
+            commingleCargoOpt.ifPresent(
+                commingle ->
+                    loadablePlanComminglePortwiseDetails.setGrade(commingle.getAbbreviation()));
 
             loadablePlanCommingleDetailsPortwiseRepository.save(
                 loadablePlanComminglePortwiseDetails);

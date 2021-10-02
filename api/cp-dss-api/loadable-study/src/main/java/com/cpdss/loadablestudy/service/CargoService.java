@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -350,6 +351,7 @@ public class CargoService {
       Long loadableStudyId = request.getLoadableStudyId();
       List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleEntities = new ArrayList<>();
       // for id = 0 save as new commingle cargo
+      AtomicInteger counter = new AtomicInteger(0);
       request
           .getCommingleCargoList()
           .forEach(
@@ -368,11 +370,13 @@ public class CargoService {
                     }
                     commingleCargoEntity = existingCommingleCargo.get();
                     commingleCargoEntity =
-                        buildCommingleCargo(commingleCargoEntity, commingleCargo, loadableStudyId);
+                        buildCommingleCargo(
+                            commingleCargoEntity, commingleCargo, loadableStudyId, counter);
                   } else if (commingleCargo != null && commingleCargo.getId() == 0) {
                     commingleCargoEntity = new com.cpdss.loadablestudy.entity.CommingleCargo();
                     commingleCargoEntity =
-                        buildCommingleCargo(commingleCargoEntity, commingleCargo, loadableStudyId);
+                        buildCommingleCargo(
+                            commingleCargoEntity, commingleCargo, loadableStudyId, counter);
                   }
 
                   commingleEntities.add(commingleCargoEntity);
@@ -446,7 +450,8 @@ public class CargoService {
   private com.cpdss.loadablestudy.entity.CommingleCargo buildCommingleCargo(
       com.cpdss.loadablestudy.entity.CommingleCargo commingleCargoEntity,
       LoadableStudy.CommingleCargo requestRecord,
-      Long loadableStudyId) {
+      Long loadableStudyId,
+      AtomicInteger counter) {
     List<Long> cargoNominationIds = new ArrayList<>();
     cargoNominationIds.add(requestRecord.getCargoNomination1Id());
     cargoNominationIds.add(requestRecord.getCargoNomination2Id());
@@ -477,6 +482,7 @@ public class CargoService {
             : null);
     commingleCargoEntity.setIsActive(true);
     commingleCargoEntity.setIsSlopOnly(requestRecord.getSlopOnly());
+    commingleCargoEntity.setAbbreviation(COMMINGLE + counter.incrementAndGet());
     return commingleCargoEntity;
   }
 
