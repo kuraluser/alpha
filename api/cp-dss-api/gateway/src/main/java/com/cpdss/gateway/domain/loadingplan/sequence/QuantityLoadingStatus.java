@@ -1,8 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan.sequence;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,8 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TankWithSequenceUllage {
+public class QuantityLoadingStatus {
 
-  private Long tankId;
-  private List<String> ullage;
+  private Boolean present;
+  private String colorCode;
+  private String cargoName;
 }

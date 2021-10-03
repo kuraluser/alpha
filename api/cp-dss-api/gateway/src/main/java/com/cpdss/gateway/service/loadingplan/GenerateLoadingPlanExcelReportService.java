@@ -31,11 +31,12 @@ import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanExcelLoadingSequ
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingRateForSequence;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
+import com.cpdss.gateway.domain.loadingplan.sequence.QuantityLoadingStatus;
 import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParam;
 import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParamsOfLoadingSequence;
 import com.cpdss.gateway.domain.loadingplan.sequence.TankCategory;
 import com.cpdss.gateway.domain.loadingplan.sequence.TankCategoryForSequence;
-import com.cpdss.gateway.domain.loadingplan.sequence.TankWithSequenceUllage;
+import com.cpdss.gateway.domain.loadingplan.sequence.TankWithSequenceDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingPlanServiceImpl;
@@ -45,6 +46,8 @@ import java.awt.Color;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -87,7 +90,9 @@ public class GenerateLoadingPlanExcelReportService {
 	public final Integer START_ROW = 14;
 	public final Integer END_ROW = 71;
 	public final Integer END_COLUMN = 25;
-	public static String SHEET_NAMES[] = { "CRUD - 021 pg1", "CRUD - 021 pg2", "CRUD - 021 pg3" };
+	public String SHEET_NAMES[] = { "CRUD - 021 pg1", "CRUD - 021 pg2", "CRUD - 021 pg3" };
+	public List<TankCargoDetails> cargoTanks = null;
+	public List<TankCargoDetails> ballastTanks = null;
 
 	@Value("${gateway.attachement.rootFolder}")
 	private String rootFolder;
@@ -302,6 +307,46 @@ public class GenerateLoadingPlanExcelReportService {
 		return excelData;
 	}
 
+	private void getAllBallastTanks(List<List<VesselTank>> ballastFrontTanks, List<List<VesselTank>> ballastCenterTanks,
+			List<List<VesselTank>> ballastRearTanks) {
+		List<TankCargoDetails> ballastTanks = new ArrayList<>();
+		for (List<VesselTank> tankList : ballastFrontTanks) {
+			for (VesselTank tank : tankList) {
+				TankCargoDetails tankObj = new TankCargoDetails();
+				tankObj.setTankName(tank.getName());
+				tankObj.setId(tank.getId());
+				ballastTanks.add(tankObj);
+			}
+		}
+		for (List<VesselTank> tankList : ballastFrontTanks) {
+			for (VesselTank tank : tankList) {
+				TankCargoDetails tankObj = new TankCargoDetails();
+				tankObj.setTankName(tank.getName());
+				tankObj.setId(tank.getId());
+				ballastTanks.add(tankObj);
+			}
+		}
+		for (List<VesselTank> tankList : ballastFrontTanks) {
+			for (VesselTank tank : tankList) {
+				TankCargoDetails tankObj = new TankCargoDetails();
+				tankObj.setTankName(tank.getName());
+				tankObj.setId(tank.getId());
+				ballastTanks.add(tankObj);
+			}
+		}
+		ballastTanks = ballastTanks;
+	}
+
+	private List<VesselTank> getAllCargoTanks(List<List<VesselTank>> cargoTanks) {
+		List<VesselTank> tanks = new ArrayList<>();
+		for (List<VesselTank> tankGroup : cargoTanks) {
+			tankGroup.forEach(item -> {
+				tanks.add(item);
+			});
+		}
+		return tanks;
+	}
+
 	/**
 	 * Build data model for Sheet 3
 	 * 
@@ -316,20 +361,36 @@ public class GenerateLoadingPlanExcelReportService {
 				infoId);
 
 		LoadingPlanExcelLoadingSequenceDetails sheetThree = new LoadingPlanExcelLoadingSequenceDetails();
-		sheetThree.setCargoTanks(
-				getCargoTanks(loadingSequenceResponse.getCargoTankCategories(), loadingSequenceResponse.getCargos()));
-		sheetThree.setBallastTanks(loadingSequenceResponse.getBallastTankCategories());
-		sheetThree.setStabilityParams(getStabilityParams(loadingSequenceResponse.getStabilityParams()));
-		sheetThree.setLoadingRates(getLoadingRate(loadingSequenceResponse.getCargoLoadingRates(),
-				loadingSequenceResponse.getStageTickPositions()));
+		// Calculating no of stages in sequence
 		sheetThree.setTickPoints(getTickPoints(loadingSequenceResponse.getMinXAxisValue(),
 				loadingSequenceResponse.getStageTickPositions()));
-		sheetThree.setCargoTankUllage(getCargoTankUllage(loadingSequenceResponse.getStageTickPositions(),
-				loadingSequenceResponse.getCargos(), loadingSequenceResponse.getCargoTankCategories()));
-		sheetThree.setBallastTankUllage(getBallastTankUllage(loadingSequenceResponse.getStageTickPositions(),
-				loadingSequenceResponse.getBallasts(), loadingSequenceResponse.getBallastTankCategories()));
-		log.info("Building sheet 3 : completed");
+		log.info("getTickPoints list " + sheetThree.getTickPoints().size());
+		if (sheetThree.getTickPoints().size() > 0) {
+			// Getting all tanks present in sequence
+			sheetThree.setCargoTanks(getCargoTanks(loadingSequenceResponse.getCargoTankCategories(),
+					loadingSequenceResponse.getCargos()));
+			log.info("CArgo list " + sheetThree.getCargoTanks().size());
+			if(sheetThree.getCargoTanks().size() >0) {
+				sheetThree.setCargoTankUllage(getCargoTankUllageAndQuantity(loadingSequenceResponse.getStageTickPositions(),
+						loadingSequenceResponse.getCargos(),sheetThree.getCargoTanks()));
+			}
+			log.info("setCargoTankUllage " + sheetThree.getCargoTankUllage().size());
+			sheetThree.setBallastTanks(loadingSequenceResponse.getBallastTankCategories());
+			log.info("BallastTanks list " + sheetThree.getBallastTanks().size());
+			sheetThree.setBallastTankUllage(
+					getBallastTankUllageAndQuantity(loadingSequenceResponse.getStageTickPositions(),
+							loadingSequenceResponse.getBallasts(), loadingSequenceResponse.getBallastTankCategories()));
+			log.info("setBallastTankUllage list " + sheetThree.getBallastTankUllage().size());
+			sheetThree.setStabilityParams(getStabilityParams(loadingSequenceResponse.getStabilityParams()));
+			sheetThree.setLoadingRates(getLoadingRate(loadingSequenceResponse.getCargoLoadingRates(),
+					loadingSequenceResponse.getStageTickPositions()));
+			log.info("setLoadingRates list " + sheetThree.getLoadingRates().size());
+
+			log.info("Building sheet 3 : completed");
+
+		}
 		return sheetThree;
+
 	}
 
 	/**
@@ -340,26 +401,38 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @param ballastTankCategories
 	 * @return
 	 */
-	private List<TankWithSequenceUllage> getBallastTankUllage(Set<Long> stageTickPositions, List<Ballast> ballasts,
-			List<TankCategory> ballastTankCategories) {
-		List<TankWithSequenceUllage> tanksUllageList = new ArrayList<>();
+	private List<TankWithSequenceDetails> getBallastTankUllageAndQuantity(Set<Long> stageTickPositions,
+			List<Ballast> ballasts, List<TankCategory> ballastTankCategories) {
+		List<TankWithSequenceDetails> tanksUllageList = new ArrayList<>();
 		// Getting ullages on each tick position of each tank
 		for (TankCategory tank : ballastTankCategories) {
-			TankWithSequenceUllage tanksUllageObj = new TankWithSequenceUllage();
+			TankWithSequenceDetails tanksUllageObj = new TankWithSequenceDetails();
 			tanksUllageObj.setTankId(tank.getId());
 			List<Ballast> ballastListOfpresentTank = ballasts.stream()
 					.filter(cargo -> cargo.getTankId().equals(tank.getId())).collect(Collectors.toList());
 			List<String> ullages = new ArrayList<>();
+			List<QuantityLoadingStatus> ballastStatusList = new ArrayList<>();
 			stageTickPositions.forEach(position -> {
+				QuantityLoadingStatus ballastStatus = new QuantityLoadingStatus();
 				Optional<Ballast> ballastMatch = ballastListOfpresentTank.stream()
-						.filter(cargo -> cargo.getStart().equals(position)).findFirst();
+						.filter(cargo -> cargo.getStart().equals(position) && cargo.getEnd() > position).findFirst();
 				if (ballastMatch.isPresent()) {
 					ullages.add(ballastMatch.get().getSounding().toString());
+					if (ballastMatch.get().getQuantity().compareTo(BigDecimal.ZERO) > 0
+							&& ballastMatch.get().getColor() != null) {
+						ballastStatus.setPresent(true);
+						ballastStatus.setColorCode(ballastMatch.get().getColor());
+					} else {
+						ballastStatus.setPresent(false);
+					}
 				} else {
 					ullages.add("");
+					ballastStatus.setPresent(false);
 				}
+				ballastStatusList.add(ballastStatus);
 			});
 			tanksUllageObj.setUllage(ullages);
+			tanksUllageObj.setStatus(ballastStatusList);
 			tanksUllageList.add(tanksUllageObj);
 		}
 		return tanksUllageList;
@@ -367,32 +440,50 @@ public class GenerateLoadingPlanExcelReportService {
 
 	/**
 	 * Get ullage of ballast tanks in each tick position
+	 * @param tankList 
 	 * 
 	 * @param loadingSequenceResponse
 	 * @param tankCategories
 	 * @return
 	 */
-	private List<TankWithSequenceUllage> getCargoTankUllage(Set<Long> stageTickPositions, List<Cargo> cargos,
-			List<TankCategory> tankCategories) {
-		List<TankWithSequenceUllage> tanksUllageList = new ArrayList<>();
+	private List<TankWithSequenceDetails> getCargoTankUllageAndQuantity(Set<Long> stageTickPositions,
+			List<Cargo> cargos, List<TankCategoryForSequence> tankList) {
+		List<TankWithSequenceDetails> tanksUllageList = new ArrayList<>();
 		// Getting ullages on each tick position of each tank
-		for (TankCategory tank : tankCategories) {
-			TankWithSequenceUllage tanksUllageObj = new TankWithSequenceUllage();
+		for (TankCategoryForSequence tank : tankList) {
+			TankWithSequenceDetails tanksUllageObj = new TankWithSequenceDetails();
 			tanksUllageObj.setTankId(tank.getId());
 			List<Cargo> cargoListOfpresentTank = cargos.stream().filter(cargo -> cargo.getTankId().equals(tank.getId()))
 					.collect(Collectors.toList());
-			List<String> ullages = new ArrayList<>();
-			stageTickPositions.forEach(position -> {
-				Optional<Cargo> cargoMatch = cargoListOfpresentTank.stream()
-						.filter(cargo -> cargo.getStart().equals(position)).findFirst();
-				if (cargoMatch.isPresent()) {
-					ullages.add(cargoMatch.get().getUllage().toString());
-				} else {
-					ullages.add("");
-				}
-			});
-			tanksUllageObj.setUllage(ullages);
-			tanksUllageList.add(tanksUllageObj);
+			if(!cargoListOfpresentTank.isEmpty()) {
+				List<String> ullages = new ArrayList<>();
+				List<QuantityLoadingStatus> quantityStatusList = new ArrayList<>();
+				// Finding ullage in each tick position
+				stageTickPositions.forEach(position -> {
+					QuantityLoadingStatus loadingStatus = new QuantityLoadingStatus();
+					Optional<Cargo> cargoMatch = cargoListOfpresentTank.stream()
+							.filter(cargo -> cargo.getStart().equals(position) && cargo.getEnd() > position).findFirst();
+					if (cargoMatch.isPresent()) {
+						ullages.add(cargoMatch.get().getUllage().toString());
+						if (cargoMatch.get().getQuantity().compareTo(BigDecimal.ZERO) > 0
+								&& cargoMatch.get().getCargoNominationId() > 0 && cargoMatch.get().getColor() != null) {
+							loadingStatus.setPresent(true);
+							loadingStatus.setCargoName(cargoMatch.get().getAbbreviation());
+							loadingStatus.setColorCode(cargoMatch.get().getColor());
+						} else {
+							loadingStatus.setPresent(false);
+						}
+					} else {
+						ullages.add("");
+						loadingStatus.setPresent(false);
+					}
+					quantityStatusList.add(loadingStatus);
+				});
+				tanksUllageObj.setUllage(ullages);
+				tanksUllageObj.setStatus(quantityStatusList);
+				tanksUllageList.add(tanksUllageObj);
+			}
+			
 		}
 		return tanksUllageList;
 	}
@@ -404,12 +495,20 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @param stageTickPositions
 	 * @return
 	 */
-	private List<Long> getTickPoints(Long minXAxisValue, Set<Long> stageTickPositions) {
-		List<Long> tickPoints = new ArrayList<>();
-		stageTickPositions.stream().forEach(xValue -> {
-			tickPoints.add((TimeUnit.MILLISECONDS.toHours(xValue - minXAxisValue)) % 24);
-		});
-		return tickPoints.stream().sorted().collect(Collectors.toList());
+	private List<String> getTickPoints(Long minXAxisValue, Set<Long> stageTickPositions) {
+		List<String> tickPoints = new ArrayList<>();
+		for (Long xValue : stageTickPositions) {
+			Long hours = TimeUnit.MILLISECONDS.toHours(xValue - minXAxisValue);
+			System.out.println(hours);
+			if (tickPoints.contains(hours.toString())) {
+				Double temp = ((xValue.doubleValue() - minXAxisValue.doubleValue()) / 1000) / 3600;
+				String result = String.format("%.2f", temp);
+				tickPoints.add(result);
+			} else {
+				tickPoints.add(hours.toString());
+			}
+		}
+		return tickPoints;
 	}
 
 	/**
@@ -422,18 +521,23 @@ public class GenerateLoadingPlanExcelReportService {
 	private List<TankCategoryForSequence> getCargoTanks(List<TankCategory> cargoTankCategories, List<Cargo> cargos) {
 		List<TankCategoryForSequence> tankList = new ArrayList<>();
 		// List of tanks with cargo details
-		for (TankCategory item : cargoTankCategories) {
+		for (TankCargoDetails cargoTank : cargoTanks) {
 			TankCategoryForSequence tankCategoryObj = new TankCategoryForSequence();
-			tankCategoryObj.setId(item.getId());
-			tankCategoryObj.setTankName(item.getTankName());
-			tankCategoryObj.setUllage(item.getUllage());
-			tankCategoryObj.setDisplayOrder(item.getDisplayOrder());
-			Optional<Cargo> cargoOpt = cargos.stream().filter(cargo -> cargo.getTankId().equals(item.getId()))
-					.findFirst();
-			if (cargoOpt.isEmpty()) {
-				tankCategoryObj.setCargoName(cargoOpt.get().getName());
-				tankCategoryObj.setColorCode(cargoOpt.get().getColor());
-			}
+			tankCategoryObj.setId(cargoTank.getId());
+			tankCategoryObj.setTankName(cargoTank.getTankName());
+			cargoTankCategories.forEach(item -> {
+				if (item.getId().equals(cargoTank.getId())) {
+					tankCategoryObj.setUllage(item.getUllage());
+					tankCategoryObj.setDisplayOrder(item.getDisplayOrder());
+					Optional<Cargo> cargoOpt = cargos.stream().filter(cargo -> cargo.getTankId().equals(item.getId())
+							&& cargo.getQuantity().compareTo(BigDecimal.ZERO) > 0).findFirst();
+					if (cargoOpt.isPresent()) {
+						tankCategoryObj.setCargoName(cargoOpt.get().getName());
+						tankCategoryObj.setColorCode(cargoOpt.get().getColor());
+					}
+				}
+			});
+			tankList.add(tankCategoryObj);
 		}
 		return tankList;
 	}
@@ -538,6 +642,10 @@ public class GenerateLoadingPlanExcelReportService {
 			// Calling loading plan get plan details service
 			requestPayload = loadingPlanServiceImpl.getLoadingPlan(vesselId, voyageId, infoId, portRotationId);
 		}
+		// Get a list of all ballast tanks for sheet3
+		getAllBallastTanks(requestPayload.getBallastFrontTanks(), requestPayload.getBallastCenterTanks(),
+				requestPayload.getBallastRearTanks());
+
 		LoadingPlanExcelLoadingPlanDetails sheetOne = new LoadingPlanExcelLoadingPlanDetails();
 		getBasicVesselDetails(sheetOne, vesselId, voyageId, infoId, portRotationId);
 		// Condition type 1 is arrival
@@ -784,6 +892,7 @@ public class GenerateLoadingPlanExcelReportService {
 						.findAny();
 				TankCargoDetails tankCargoDetails = new TankCargoDetails();
 				tankCargoDetails.setTankName(tank.getShortName());
+				tankCargoDetails.setId(tank.getId());
 				setBallasTankValues(loadingPlanBallastDetailsOpt, tankCargoDetails);
 				tankCargoDetailsList.add(tankCargoDetails);
 			});
@@ -835,10 +944,15 @@ public class GenerateLoadingPlanExcelReportService {
 						.findAny();
 				TankCargoDetails tankCargoDetails = new TankCargoDetails();
 				tankCargoDetails.setTankName(item.getShortName());
+				tankCargoDetails.setId(item.getId());
 				// Adding cargo details in this tank
 				setCargoTankValues(loadingPlanStowageDetails, loadableQuantityCargoDetailsList, tankCargoDetails);
 				tankCargoDetailsList.add(tankCargoDetails);
 			});
+		}
+		// Getting all tank list for later
+		if (cargoTanks != null) {
+			cargoTanks = tankCargoDetailsList;
 		}
 		vesselCondition.setCargoTopTanks(getTankAgainstPossision(tankCargoDetailsList, "P"));
 		vesselCondition.setCargoCenterTanks(getTankAgainstPossision(tankCargoDetailsList, "C"));

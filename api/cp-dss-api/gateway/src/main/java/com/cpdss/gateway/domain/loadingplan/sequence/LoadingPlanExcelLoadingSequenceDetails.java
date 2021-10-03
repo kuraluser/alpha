@@ -16,7 +16,7 @@ public class LoadingPlanExcelLoadingSequenceDetails {
   private List<TankCategory> ballastTanks;
   private StabilityParamsOfLoadingSequence stabilityParams;
   private List<LoadingRateForSequence> loadingRates;
-  private List<Long> tickPoints;
-  private List<TankWithSequenceUllage> cargoTankUllage;
-  private List<TankWithSequenceUllage> ballastTankUllage;
+  private List<String> tickPoints;
+  private List<TankWithSequenceDetails> cargoTankUllage;
+  private List<TankWithSequenceDetails> ballastTankUllage;
 }

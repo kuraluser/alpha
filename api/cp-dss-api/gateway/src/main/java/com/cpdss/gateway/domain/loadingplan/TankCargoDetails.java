@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class TankCargoDetails {
 
   private String tankName;
+  private Long id;
   private String cargoName;
   private String colorCode;
   private Double quantity;
