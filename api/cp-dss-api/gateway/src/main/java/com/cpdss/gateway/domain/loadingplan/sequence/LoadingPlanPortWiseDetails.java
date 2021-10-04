@@ -10,7 +10,7 @@ import lombok.Data;
 public class LoadingPlanPortWiseDetails {
 
   private String time;
-  private List loadableQuantityCommingleCargoDetails;
+  private List<LoadingQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetails;
   private List<LoadingPlanStowageDetails> loadablePlanStowageDetails;
   private List<LoadingPlanRobDetails> loadablePlanRoBDetails;
   private List<LoadingPlanBallastDetails> loadablePlanBallastDetails;

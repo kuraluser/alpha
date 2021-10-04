@@ -12,6 +12,7 @@ public class LoadingPlan {
   private List<LoadingPlanStowageDetails> loadablePlanStowageDetails;
   private List<LoadingPlanBallastDetails> loadablePlanBallastDetails;
   private List<LoadingPlanRobDetails> loadablePlanRoBDetails;
+  private List<LoadingQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetails;
   private String foreDraft;
   private String meanDraft;
   private String afterDraft;

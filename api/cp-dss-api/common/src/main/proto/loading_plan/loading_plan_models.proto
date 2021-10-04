@@ -427,6 +427,24 @@ message LoadingPlanSaveRequest {
   repeated AlgoErrors algoErrors = 9;
   bool hasLoadicator = 10;
   string loadingPlanDetailsFromAlgo = 11;
+  repeated LoadingPlanCommingleDetails portLoadingPlanCommingleDetails = 12;
+}
+
+message LoadingPlanCommingleDetails {
+	int64 id = 1;
+	string tankName = 2;
+    int64 tankId = 3;
+    string quantityMT = 4;
+    string quantityM3 = 5;
+    string api = 6;
+    string temperature = 7;
+    string ullage = 8;
+    int64 cargoNomination1Id = 9;
+    int64 cargoNomination2Id = 10;
+    int64 cargo1Id = 11;
+    int64 cargo2Id = 12;
+    string colorCode = 13;
+    string abbreviation = 14;
 }
 
 message LoadingSequence {
@@ -454,6 +472,7 @@ message LoadingPlanPortWiseDetails {
   LoadingPlanStabilityParameters loadingPlanStabilityParameters = 4;
   repeated LoadingPlanTankDetails loadingPlanStowageDetails = 5;
   int32 time = 6;
+  repeated LoadingPlanCommingleDetails loadingPlanCommingleDetails = 7;
 }
 
 message LoadingPlanStabilityParameters {

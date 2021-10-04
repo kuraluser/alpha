@@ -403,8 +403,9 @@ public class DischargeInformationService {
     return response;
   }
 
-  public UllageBillReply updateUllage(UllageBillRequest request) throws GenericServiceException {
-    // validate the request and call the discharge update ullage
-    return null;
+  public UllageBillReply updateUllage(UllageBillRequest request, String correlationId)
+      throws GenericServiceException {
+
+    return loadingPlanService.getLoadableStudyShoreTwo(correlationId, request, true);
   }
 }

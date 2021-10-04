@@ -707,6 +707,7 @@ public class LoadablePlanService {
           details.setCargo2QuantityMT(lpsd.getCargo2Mt());
           details.setCargo1NominationId(lpsd.getCargo1NominationId());
           details.setCargo2NominationId(lpsd.getCargo2NominationId());
+          details.setAbbreviation(lpsd.getGrade());
           stowageDetails.add(details);
         });
     // }

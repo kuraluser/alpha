@@ -15,7 +15,7 @@ public class Sequence {
   private Boolean toLoadicator;
 
   @JsonProperty("cargoLoadingRatePerTankM3_Hr")
-  private Map<String, String> tankWiseCargoLoadingRates;
+  private List<Map<String, String>> tankWiseCargoLoadingRates;
 
   @JsonProperty("deballastingRateM3_Hr")
   private Map<String, String> deballastingRates;
@@ -30,5 +30,5 @@ public class Sequence {
   private Map<String, String> ballastingRateM3_Hr;
   private List simDeballastingRateM3_Hr;
   private List simBallastingRateM3_Hr;
-  private Map simCargoLoadingRatePerTankM3_Hr;
+  private List simCargoLoadingRatePerTankM3_Hr;
 }

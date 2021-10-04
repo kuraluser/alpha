@@ -22,9 +22,9 @@ public interface CargoNominationRepository extends CommonCrudRepository<CargoNom
 
   public List<CargoNomination> findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
       Long loadableStudyXId, Boolean isActive);
-  
+
   @Query(
-	      "SELECT DISTINCT CN.cargoXId, CN.loadableStudyXId, CN.id FROM CargoNomination CN where CN.loadableStudyXId IN ?1 AND isActive = true ORDER BY CN.id DESC")
+      "SELECT DISTINCT CN.cargoXId, CN.loadableStudyXId, CN.id FROM CargoNomination CN where CN.loadableStudyXId IN ?1 AND isActive = true ORDER BY CN.id DESC")
   public List<Object[]> findByLoadableStudyIdIn(List<Long> loadableStudyIds);
 
   @Transactional

@@ -1447,6 +1447,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             port -> {
               PortData.Builder portDataBuilder = PortData.newBuilder();
               portDataBuilder.setPortRotationId(port.getId());
+              portDataBuilder.setPortId(port.getPortXId());
               Optional<SynopticalTable> synopticalTableOpt =
                   port.getSynopticalTable().stream()
                       .filter(

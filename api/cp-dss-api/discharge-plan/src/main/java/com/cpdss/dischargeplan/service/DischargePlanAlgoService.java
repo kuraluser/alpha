@@ -47,7 +47,6 @@ import com.cpdss.dischargeplan.entity.CowTankDetail;
 import com.cpdss.dischargeplan.entity.CowWithDifferentCargo;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
-import com.cpdss.dischargeplan.entity.DischargingDelayReason;
 import com.cpdss.dischargeplan.entity.DischargingInformationAlgoStatus;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import com.cpdss.dischargeplan.entity.DischargingMachineryInUse;
@@ -83,7 +82,8 @@ public class DischargePlanAlgoService {
   @Autowired ReasonForDelayRepository reasonForDelayRepository;
 
   @Autowired CowPlanDetailRepository cowPlanDetailRepository;
-  private DischargeInformationStatusRepository dischargeInformationStatusRepository;
+
+  @Autowired private DischargeInformationStatusRepository dischargeInformationStatusRepository;
 
   @Autowired
   private DischargingInformationAlgoStatusRepository dischargingInformationAlgoStatusRepository;
@@ -788,7 +788,7 @@ public class DischargePlanAlgoService {
             dischargingInformationStatusId, true);
     if (dischargingInfoStatusOpt.isEmpty()) {
       throw new GenericServiceException(
-          "Could not find loading information status with id " + dischargingInformationStatusId,
+          "Could not find dsicharging information status with id " + dischargingInformationStatusId,
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
