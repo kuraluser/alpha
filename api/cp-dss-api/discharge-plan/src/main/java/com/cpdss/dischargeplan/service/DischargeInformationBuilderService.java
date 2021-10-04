@@ -523,10 +523,10 @@ public class DischargeInformationBuilderService {
       LoadingPlanModels.LoadingStages.Builder builder1 =
           LoadingPlanModels.LoadingStages.newBuilder();
       Optional.ofNullable(disEntity.getId()).ifPresent(builder1::setId);
-      Optional.ofNullable(disEntity.getDischargingStagesMinAmount().getId())
-          .ifPresent(v -> builder1.setStageOffset(v.intValue()));
-      Optional.ofNullable(disEntity.getDischargingStagesDuration().getId())
-          .ifPresent(v -> builder1.setStageDuration(v.intValue()));
+      Optional.ofNullable(disEntity.getDischargingStagesMinAmount())
+          .ifPresent(v -> builder1.setStageOffset(v.getId().intValue()));
+      Optional.ofNullable(disEntity.getDischargingStagesDuration())
+          .ifPresent(v -> builder1.setStageDuration(v.getId().intValue()));
       Optional.ofNullable(disEntity.getIsTrackStartEndStage())
           .ifPresent(builder1::setTrackStartEndStage);
       Optional.ofNullable(disEntity.getIsTrackGradeSwitching())
@@ -674,52 +674,61 @@ public class DischargeInformationBuilderService {
       com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder) {
     try {
       CowPlan.Builder builder1 = CowPlan.newBuilder();
-      CowPlanDetail cpd = this.cowPlanDetailRepository.findByDischargingId(disEntity.getId()).get();
-      Optional.ofNullable(cpd.getCowOperationType())
-          .ifPresent(v -> builder1.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(v)));
-      Optional.ofNullable(cpd.getCowPercentage())
-          .ifPresent(v -> builder1.setCowTankPercent(v.toString()));
+      Optional<CowPlanDetail> cpdOpt =
+          this.cowPlanDetailRepository.findByDischargingId(disEntity.getId());
+      if (cpdOpt.isPresent()) {
+        CowPlanDetail cpd = cpdOpt.get();
+        Optional.ofNullable(cpd.getCowOperationType())
+            .ifPresent(v -> builder1.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(v)));
+        Optional.ofNullable(cpd.getCowPercentage())
+            .ifPresent(v -> builder1.setCowTankPercent(v.toString()));
 
-      Optional.ofNullable(cpd.getCowPercentage())
-          .ifPresent(v -> builder1.setCowTankPercent(v.toString()));
-      Optional.ofNullable(cpd.getCowStartTime())
-          .ifPresent(v -> builder1.setCowStartTime(v.toString()));
-      Optional.ofNullable(cpd.getCowEndTime()).ifPresent(v -> builder1.setCowEndTime(v.toString()));
-      Optional.ofNullable(cpd.getEstimatedCowDuration())
-          .ifPresent(v -> builder1.setEstCowDuration(v.toString()));
+        Optional.ofNullable(cpd.getCowPercentage())
+            .ifPresent(v -> builder1.setCowTankPercent(v.toString()));
+        Optional.ofNullable(cpd.getCowStartTime())
+            .ifPresent(v -> builder1.setCowStartTime(v.toString()));
+        Optional.ofNullable(cpd.getCowEndTime())
+            .ifPresent(v -> builder1.setCowEndTime(v.toString()));
+        Optional.ofNullable(cpd.getEstimatedCowDuration())
+            .ifPresent(v -> builder1.setEstCowDuration(v.toString()));
 
-      Optional.ofNullable(cpd.getCowMinTrim()).ifPresent(v -> builder1.setTrimCowMin(v.toString()));
-      Optional.ofNullable(cpd.getCowMaxTrim()).ifPresent(v -> builder1.setTrimCowMax(v.toString()));
+        Optional.ofNullable(cpd.getCowMinTrim())
+            .ifPresent(v -> builder1.setTrimCowMin(v.toString()));
+        Optional.ofNullable(cpd.getCowMaxTrim())
+            .ifPresent(v -> builder1.setTrimCowMax(v.toString()));
 
-      Optional.ofNullable(cpd.getNeedFreshCrudeStorage())
-          .ifPresent(builder1::setNeedFreshCrudeStorage);
-      Optional.ofNullable(cpd.getNeedFlushingOil()).ifPresent(builder1::setNeedFlushingOil);
+        Optional.ofNullable(cpd.getNeedFreshCrudeStorage())
+            .ifPresent(builder1::setNeedFreshCrudeStorage);
+        Optional.ofNullable(cpd.getNeedFlushingOil()).ifPresent(builder1::setNeedFlushingOil);
 
-      // tank wise details
-      if (!cpd.getCowTankDetails().isEmpty()) {
-        this.buildCowTankDetails(
-            Common.COW_TYPE.TOP_COW,
-            builder1,
-            cpd.getCowTankDetails().stream()
-                .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.TOP_COW_VALUE))
-                .collect(Collectors.toList()));
-        this.buildCowTankDetails(
-            Common.COW_TYPE.BOTTOM_COW,
-            builder1,
-            cpd.getCowTankDetails().stream()
-                .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.BOTTOM_COW_VALUE))
-                .collect(Collectors.toList()));
-        this.buildCowTankDetails(
-            Common.COW_TYPE.ALL_COW,
-            builder1,
-            cpd.getCowTankDetails().stream()
-                .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.ALL_COW_VALUE))
-                .collect(Collectors.toList()));
+        // tank wise details
+        if (!cpd.getCowTankDetails().isEmpty()) {
+          this.buildCowTankDetails(
+              Common.COW_TYPE.TOP_COW,
+              builder1,
+              cpd.getCowTankDetails().stream()
+                  .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.TOP_COW_VALUE))
+                  .collect(Collectors.toList()));
+          this.buildCowTankDetails(
+              Common.COW_TYPE.BOTTOM_COW,
+              builder1,
+              cpd.getCowTankDetails().stream()
+                  .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.BOTTOM_COW_VALUE))
+                  .collect(Collectors.toList()));
+          this.buildCowTankDetails(
+              Common.COW_TYPE.ALL_COW,
+              builder1,
+              cpd.getCowTankDetails().stream()
+                  .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.ALL_COW_VALUE))
+                  .collect(Collectors.toList()));
+        }
+        if (!cpd.getCowWithDifferentCargos().isEmpty()) {
+          this.buildCowTankDetails(
+              Common.COW_TYPE.CARGO, builder1, cpd.getCowWithDifferentCargos());
+        }
+      } else {
+        log.error("Cow data not found for Discharge info {}", disEntity.getId());
       }
-      if (!cpd.getCowWithDifferentCargos().isEmpty()) {
-        this.buildCowTankDetails(Common.COW_TYPE.CARGO, builder1, cpd.getCowWithDifferentCargos());
-      }
-
       builder.setCowPlan(builder1.build());
     } catch (Exception e) {
       log.error("Failed to set cow plan");
@@ -952,9 +961,7 @@ public class DischargeInformationBuilderService {
               Common.RulePlans.Builder rulePlanBuilder = Common.RulePlans.newBuilder();
               Optional.ofNullable(rulePlans.getHeader()).ifPresent(rulePlanBuilder::setHeader);
               List<Common.Rules> ruleList =
-                  rulePlans.getRulesList().stream()
-                      .filter(item -> item.getEnable())
-                      .collect(Collectors.toList());
+                  rulePlans.getRulesList().stream().collect(Collectors.toList());
               if (ruleList != null && ruleList.size() > 0) {
                 rulePlanBuilder.addAllRules(ruleList);
                 builder.addRulePlan(rulePlanBuilder);

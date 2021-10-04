@@ -18,6 +18,8 @@ import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.PortWiseCargoResponse;
 import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.UllageBillReply;
+import com.cpdss.gateway.domain.UllageBillRequest;
 import com.cpdss.gateway.domain.UploadTideDetailResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
@@ -1059,6 +1061,43 @@ public class DischargePlanController {
           e);
     } catch (Exception e) {
       log.error("Exception in \"Getting update ullage details");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Delete Discharging Instruction
+   *
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value = "/discharge/ullage-update",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public UllageBillReply updateUllage(
+      @RequestHeader HttpHeaders headers, @RequestBody UllageBillRequest inputData)
+      throws CommonRestException {
+    try {
+      return dischargeInformationService.updateUllage(inputData);
+
+    } catch (GenericServiceException e) {
+      log.error("Deleting Discharging instruction failed");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Deleting Discharging instruction");
       e.printStackTrace();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,

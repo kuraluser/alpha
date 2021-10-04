@@ -3,12 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ComponentCanDeactivate, UnsavedChangesGuard } from '../../../shared/services/guards/unsaved-data-guard';
+import { UnsavedChangesGuard } from '../../../shared/services/guards/unsaved-data-guard';
 import { ICargo, ICargoResponseModel } from '../../core/models/common.model';
 import { OPERATION_TAB } from '../models/operations.model';
 import { OperationsApiService } from '../services/operations-api.service';
 import { OPERATIONS } from '../../core/models/common.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { ComponentCanDeactivate } from '../../../shared/models/common.model';
+import { DischargingInformationComponent } from './discharging-information/discharging-information.component';
 
 /**
  * Component for discharging module
@@ -24,6 +26,7 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
 })
 export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
 
+  @ViewChild(DischargingInformationComponent) dischargingInformationComponent: DischargingInformationComponent;
   @ViewChild('dischargingInstruction') dischargingInstruction;
 
   currentTab: OPERATION_TAB = OPERATION_TAB.INFORMATION;
@@ -44,7 +47,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
-    return !(this.dischargingInstruction?.instructionCheckList?.hasUnsavedChanges || this.dischargingInstruction?.instructionCheckList?.instructionForm?.dirty);
+    return !(this.dischargingInstruction?.instructionCheckList?.hasUnsavedChanges || this.dischargingInstruction?.instructionCheckList?.instructionForm?.dirty || this.dischargingInformationComponent?.hasUnSavedData);
   }
 
   constructor(
@@ -85,7 +88,9 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
    * @memberof DischargingComponent
    */
   private async initSubsciptions() {
-
+    this.loadingDischargingTransformationService.dischargingInformationValidity$.subscribe((res) => {
+      this.dischargingInformationComplete = res;
+    });
   }
 
 

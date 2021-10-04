@@ -51,5 +51,9 @@
     "DischargeStudyPortETAETD": "DISCHARGE_STUDY_PORTS_ETA/ETD",
     "LoadingInfoSunSet": "LOADING_INFO_SUNSET",
     "LoadingInfoSunRise": "LOADING_INFO_SUNRISE",
-    "DischargeStudyConfirmPlan": "DISCHARGE_STUDY_CONFIRM_PLAN"
+    "DischargeStudyConfirmPlan": "DISCHARGE_STUDY_CONFIRM_PLAN",
+    "OperationLoadingInstruction": "OPERATIONS_LOADING_INSTRUCTION",
+    "OperationLoadingSequence": "OPERATIONS_LOADING_SEQUENCE",
+    "OperationLoadingPlan": "OPERATIONS_LOADING_PLAN",
+    "OperationLoadingInformation": "OPERATIONS_LOADING_INFO"
 }

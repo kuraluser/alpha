@@ -81,7 +81,7 @@ export class ParameterListComponent implements OnInit {
           numberFormat = AppConfigurationService.settings.quantityNumberFormatMT;
           break;
         case "freshWaterWeight":
-          newKey = "VOYAGE_STATUS_PARAMETER_LIST_FREASH_WATER_WEIGHT";
+          newKey = "VOYAGE_STATUS_PARAMETER_LIST_FW_DW_BW";
           numberFormat = AppConfigurationService.settings.quantityNumberFormatMT;
           break;
         case "othersWeight":

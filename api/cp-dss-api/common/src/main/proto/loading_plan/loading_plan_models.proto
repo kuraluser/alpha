@@ -377,7 +377,7 @@ message UpdateUllageLoadingRequest {
   string correctedUllage = 11;
   string correctionFactor = 12;
 
-  int64 cargoToppingOffId = 13; // Primary key for Table cargo_topping_off_sequence
+  int64 cargoToppingOffId = 13; // Primary key for Table cargo_topping_off_sequence  
 }
 
 message UpdateUllageLoadingReplay {
@@ -803,6 +803,8 @@ message BillOfLanding{
   int64 isActive = 12;
   int64 version = 13;
   bool isUpdate = 14;
+  int64 dischargingId = 15;
+  
 }
 
 message BillOfLandingRemove{
@@ -819,6 +821,8 @@ message BillOfLandingRemove{
   string temperature = 11;
   int64 isActive = 12;
   int64 version = 13;
+  int64 dischargingId = 14;
+  
 }
 message UpdateUllage{
   int64 id = 1;
@@ -843,6 +847,8 @@ message UpdateUllage{
   string abbreviation = 20;
   string colorCode = 21;
   int64 cargoId = 22;
+  int64 dischargingInfoId = 23;
+  
 }
 
 message BallastUpdate{
@@ -863,6 +869,8 @@ message BallastUpdate{
   bool isUpdate = 15;
   int64 port_xid = 16;
   int64 port_rotation_xid = 17;
+  int64 dischargingInformationId =18;
+  
 }
 
 message RobUpdate{
@@ -881,6 +889,8 @@ message RobUpdate{
   bool isUpdate = 13;
   int64 port_xid = 14;
   int64 port_rotation_xid = 15;
+  int64 dischargingInformationId =16;
+  
 }
 
 message UllageBillRequest{

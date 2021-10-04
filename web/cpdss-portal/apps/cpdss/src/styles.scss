@@ -1500,7 +1500,7 @@ td.sl div{
         width: 90px;
 }
       .ship-rear-pattern{
-        width: 90px;
+        width: 80px;
         .rear-top-pattern, .rear-bottom-pattern{
           border-right: 86px solid transparent;
           &:after{
@@ -3115,4 +3115,8 @@ textarea{
   width: 400px;
   max-width: 400px;
   min-width: 400px;
+}
+
+.text-uppercase .p-dropdown-label{
+  text-transform: uppercase!important;
 }

@@ -352,6 +352,11 @@ export class PortsComponent implements OnInit, OnDestroy {
     } else {
       this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_MAX_ERROR'], detail: translationKeys['DISCHARGE_STUDY_MAX_ERROR_SUMMERY'] });
     }
+    setTimeout(() => {
+      if(document.getElementById(`${this.columns[1].field}_${this.portsLists.length -1}input`)) {
+        document.getElementById(`${this.columns[1].field}_${this.portsLists.length -1}input`).focus();
+      }
+    })
   }
 
   /**

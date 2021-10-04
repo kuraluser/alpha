@@ -1,5 +1,5 @@
 import { Component , OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
@@ -48,6 +48,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
   readonly OPERATIONS = OPERATIONS;
   readonly OPERATION_TAB = OPERATION_TAB;
   currentTab: OPERATION_TAB = OPERATION_TAB.INFORMATION;
+  selectedPort: IVoyagePortDetails;
 
   private _selectedVoyage: Voyage;
   private _ngUnsubscribe: Subject<any> = new Subject();
@@ -66,6 +67,11 @@ export class OperationsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getVesselInfo();
     this.initSubscriptions();
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd && event.url === '/business/operations') {
+        this.onPortSelection(this.selectedPort);
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -162,6 +168,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
    * @memberof OperationsComponent
    */
   async onPortSelection(port: IVoyagePortDetails) {
+    this.selectedPort = port;
     await localStorage.setItem('selectedPortName', port?.name);
     localStorage.setItem('selectedPortId', port?.portId?.toString());
     this.loadingDischargingTransformationService.isDischargeStarted(false);

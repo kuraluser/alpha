@@ -214,7 +214,8 @@ public class DischargingInstructionService extends DischargingInstructionService
         Long dischargingInstructionId = 5L;
         List<DischargingInstructionTemplate> templateList =
             dischargingInstructionTemplateRepository
-                .findALLByDischargingInsructionTypeIdAndReferenceId(1L, portXId, dischargingInstructionId);
+                .findALLByDischargingInsructionTypeIdAndReferenceId(
+                    1L, portXId, dischargingInstructionId);
         log.info("templateList {}", templateList.toString());
         if (templateList != null && !templateList.isEmpty()) {
           List<DischargingInstruction> instructionList =

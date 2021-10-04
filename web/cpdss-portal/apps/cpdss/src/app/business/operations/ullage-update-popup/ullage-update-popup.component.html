@@ -4,9 +4,6 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4" style="display:none">
-                <i class="pi pi-upload"></i>
-            </div>
             <div class="col-md-3">
                 <label for="">{{'ULLAGE_UPDATE_PORT_LABEL' | translate}}</label>
                 <span class="pl-20">
@@ -96,6 +93,13 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-3">
+                        <div class="upload-file v-bottom">
+                            {{'ULLAGE_UPDATE_FILE_UPLOAD_LABEL' | translate}}
+                            <input type="file" name="fl_attachMail" #fileUpload
+                                title="No file selected"  focusTrap (change)="excelUpload($event)" />
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col loading-discharging-tank-layout m-auto" *ngIf="selectedTab === tankType.CARGO">
@@ -168,6 +172,11 @@
         <div *ngIf="selectedTab === tankType.CARGO && status === ULLAGE_STATUS.DEPARTURE" class="row pt-25">
             <div class="col-md-4 pb-10">
                 <label>{{'LOADABLE_PLAN_BL_FIGURE_HEADING'| translate}}</label>
+            </div>
+            <div class="col-md-8 pb-10">
+                <div class="header-info-pop-up mb-5 text-right"><span class="info-icon mr-5">!</span>
+                    {{'ULLAGE_UPDATE_BLFIG_INFO_MESSAGE' | translate}}
+                </div>
             </div>
         </div>
         <div *ngIf="selectedTab === tankType.CARGO && status === ULLAGE_STATUS.DEPARTURE" class="row">
@@ -312,7 +321,7 @@
                     <ng-template pTemplate="body" let-row let-index>
                         <tr>
                             <td rowspan="4"><span class="badge-custom" [ngStyle]="{'background': row.cargoColor}">{{row.cargoAbbrevation}}</span></td>
-                            <td class="text-right" rowspan="4">{{row.nominationTotal}}</td>
+                            <td class="text-right" rowspan="4">{{row.nominationTotal | quantityDecimalFormat: 'OBSBBLS'}}</td>
                             <td>{{'ULLAGE_UPDATE_PLAN_LABEL' | translate}}</td>
                             <td class="text-right">{{row.plan.bbl | quantityDecimalFormat : QUANTITY_UNIT.BBLS}}</td>
                             <td class="text-right">{{row.plan.lt | quantityDecimalFormat : QUANTITY_UNIT.LT}}</td>
@@ -327,8 +336,8 @@
                             <td class="text-right">{{row.actual.lt | quantityDecimalFormat : QUANTITY_UNIT.LT}}</td>
                             <td class="text-right">{{row.actual.mt | quantityDecimalFormat : QUANTITY_UNIT.MT}}</td>
                             <td class="text-right">{{row.actual.kl | quantityDecimalFormat : QUANTITY_UNIT.KL}}</td>
-                            <td class="text-right">{{row.actual.api?.toFixed(2)}}</td>
-                            <td class="text-right">{{row.actual.temp?.toFixed(2)}}</td>
+                            <td class="text-right">{{row.actual?.api?.toFixed(2)}}</td>
+                            <td class="text-right">{{row.actual?.temp?.toFixed(2)}}</td>
                         </tr>
                         <tr>
                             <td>{{'ULLAGE_UPDATE_BLFIG_LABEL' | translate}}</td>
@@ -370,11 +379,11 @@
                 <button type="button" class="btn btn-main" (click)="closeDialog()" id="new-loadable-study-popup-cancel"
                     focusTrap>{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
                 <button (click)="saveUllage(false)" class="btn btn-main" id="new-loadable-study-popup-save"
-                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted">{{'SAVE' |
+                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted || !permission?.view">{{'SAVE' |
                     translate}}</button>
                 <button (click)="saveUllage(true)" class="btn btn-main" id="new-loadable-study-popup-save"
                     form="fg_newLoadableStudy" autofocus focusTrap
-                    [disabled]="isDischargeStarted">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
+                    [disabled]="isDischargeStarted || !permission?.view">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
                     translate}}</button>
             </div>
         </div>

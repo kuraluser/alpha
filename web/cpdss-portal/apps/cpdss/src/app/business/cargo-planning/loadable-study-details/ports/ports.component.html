@@ -1,4 +1,4 @@
-<div class="" *ngIf="portsForm">
+<div class="" *ngIf="portsForm && columns">
     <form [formGroup]="portsForm">
         <div class="form-group row">
             <div class="col table-responsive-custom" [ngClass]="{'datatable-loading': dataTableLoading }">

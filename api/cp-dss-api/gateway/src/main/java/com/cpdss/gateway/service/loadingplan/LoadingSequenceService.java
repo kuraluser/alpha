@@ -292,6 +292,15 @@ public class LoadingSequenceService {
               cargos.remove(tankWiseCargos.get(1));
             }
           }
+
+          tankWiseCargos =
+              cargos.stream()
+                  .filter(cargo -> cargo.getTankId().equals(tankId))
+                  .collect(Collectors.toList());
+          if (tankWiseCargos.size() < 2) {
+            cargos.removeIf(cargo -> cargo.getTankId().equals(tankId));
+            cargoTankCategories.removeIf(category -> category.getId().equals(tankId));
+          }
         });
   }
 

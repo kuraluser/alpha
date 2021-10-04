@@ -262,7 +262,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
   updateLoadablePlanStowageData() {
     this.selectedLoadablePattern.loadablePlanStowageDetails = this.selectedLoadablePattern.loadablePlanStowageDetails?.map(loadableStowage => {
       if (loadableStowage) {
-        const quantity = this.quantityPipe.transform(loadableStowage?.quantityMT, this.baseUnit, this.currentQuantitySelectedUnit, loadableStowage?.api);
+        const quantity = this.quantityPipe.transform(loadableStowage?.quantityMT, this.baseUnit, this.currentQuantitySelectedUnit, loadableStowage?.api,loadableStowage?.temperature,-1);
         loadableStowage.quantity = Number(quantity);
       }
       return loadableStowage;
@@ -279,7 +279,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
   updateLoadablePatternCargoDetails() {
     this.selectedLoadablePattern.loadablePatternCargoDetails = this.selectedLoadablePattern.loadablePatternCargoDetails?.map(cargoDetail => {
       if (cargoDetail) {
-        const quantity = this.quantityPipe.transform(cargoDetail?.quantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargoDetail?.api);
+        const quantity = this.quantityPipe.transform(cargoDetail?.quantity, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargoDetail?.api, cargoDetail.temperature,-1);
         cargoDetail.quantity = Number(quantity);
       }
       return cargoDetail;

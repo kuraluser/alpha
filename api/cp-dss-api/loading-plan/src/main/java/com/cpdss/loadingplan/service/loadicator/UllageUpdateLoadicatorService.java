@@ -126,15 +126,10 @@ public class UllageUpdateLoadicatorService {
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
-      if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE
-          == request.getUpdateUllage(0).getArrivalDepartutre()) {
-        loadingInformationRepository.updateLoadingInformationArrivalStatus(
-            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
-      } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE
-          == request.getUpdateUllage(0).getArrivalDepartutre()) {
-        loadingInformationRepository.updateLoadingInformationDepartureStatus(
-            loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
-      }
+      loadingPlanService.updateLoadingPlanStatus(
+          loadingInfoOpt.get(),
+          loadingInfoStatusOpt.get(),
+          request.getUpdateUllage(0).getArrivalDepartutre());
       loadingPlanAlgoService.createLoadingInformationAlgoStatus(
           loadingInfoOpt.get(),
           processId,
@@ -160,8 +155,12 @@ public class UllageUpdateLoadicatorService {
                 request.getUpdateUllage(0).getArrivalDepartutre(),
                 true);
     List<PortLoadingPlanRobDetails> robDetails =
-        portLoadingPlanRobDetailsRepository.findByLoadingInformationAndIsActive(
-            loadingInfoOpt.get().getId(), true);
+        portLoadingPlanRobDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
+                loadingInfoOpt.get().getId(),
+                request.getUpdateUllage(0).getArrivalDepartutre(),
+                LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE,
+                true);
     Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
 
     cargoNominationIds.addAll(
@@ -204,15 +203,12 @@ public class UllageUpdateLoadicatorService {
     Optional<LoadingInformationStatus> loadingInfoStatusOpt =
         loadingPlanAlgoService.getLoadingInformationStatus(
             LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
-    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE
-        == request.getUpdateUllage(0).getArrivalDepartutre()) {
-      loadingInformationRepository.updateLoadingInformationArrivalStatus(
-          loadingInfoStatusOpt.get(), loadingInfoId);
-    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE
-        == request.getUpdateUllage(0).getArrivalDepartutre()) {
-      loadingInformationRepository.updateLoadingInformationDepartureStatus(
-          loadingInfoStatusOpt.get(), loadingInfoId);
-    }
+
+    loadingPlanService.updateLoadingPlanStatus(
+        loadingInfoOpt.get(),
+        loadingInfoStatusOpt.get(),
+        request.getUpdateUllage(0).getArrivalDepartutre());
+
     loadingPlanAlgoService.createLoadingInformationAlgoStatus(
         loadingInfoOpt.get(),
         processId,
@@ -307,6 +303,7 @@ public class UllageUpdateLoadicatorService {
       Builder stowagePlanBuilder) {
     tempStowageDetails.stream()
         .map(stowage -> stowage.getCargoNominationXId())
+        .filter(cargoNominationId -> cargoNominationId.longValue() != 0)
         .collect(Collectors.toSet())
         .forEach(
             cargoNominationId -> {
@@ -352,35 +349,38 @@ public class UllageUpdateLoadicatorService {
       VesselReply vesselReply,
       CargoReply cargoReply,
       Builder stowagePlanBuilder) {
-    tempStowageDetails.forEach(
-        stowage -> {
-          Loadicator.StowageDetails.Builder stowageDetailsBuilder =
-              Loadicator.StowageDetails.newBuilder();
-          CargoNominationDetail cargoNomDetail =
-              cargoNomDetails.get(stowage.getCargoNominationXId());
-          Optional.ofNullable(cargoNomDetail.getCargoId())
-              .ifPresent(stowageDetailsBuilder::setCargoId);
-          Optional.ofNullable(stowage.getTankXId()).ifPresent(stowageDetailsBuilder::setTankId);
-          Optional.ofNullable(stowage.getQuantity())
-              .ifPresent(quantity -> stowageDetailsBuilder.setQuantity(String.valueOf(quantity)));
-          Optional.ofNullable(cargoNomDetail.getAbbreviation())
-              .ifPresent(stowageDetailsBuilder::setCargoName);
-          Optional.ofNullable(loadingInformation.getPortXId())
-              .ifPresent(stowageDetailsBuilder::setPortId);
-          Optional.ofNullable(stowageDetailsBuilder.getStowageId())
-              .ifPresent(stowageDetailsBuilder::setStowageId);
-          Optional<VesselInfo.VesselTankDetail> tankDetail =
-              vesselReply.getVesselTanksList().stream()
-                  .filter(tank -> Long.valueOf(tank.getTankId()).equals(stowage.getTankXId()))
-                  .findAny();
-          if (tankDetail.isPresent()) {
-            Optional.ofNullable(tankDetail.get().getTankName())
-                .ifPresent(stowageDetailsBuilder::setTankName);
-            Optional.ofNullable(tankDetail.get().getShortName())
-                .ifPresent(stowageDetailsBuilder::setShortName);
-          }
-          stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
-        });
+    tempStowageDetails.stream()
+        .filter(stowage -> stowage.getCargoNominationXId().longValue() != 0)
+        .forEach(
+            stowage -> {
+              Loadicator.StowageDetails.Builder stowageDetailsBuilder =
+                  Loadicator.StowageDetails.newBuilder();
+              CargoNominationDetail cargoNomDetail =
+                  cargoNomDetails.get(stowage.getCargoNominationXId());
+              Optional.ofNullable(cargoNomDetail.getCargoId())
+                  .ifPresent(stowageDetailsBuilder::setCargoId);
+              Optional.ofNullable(stowage.getTankXId()).ifPresent(stowageDetailsBuilder::setTankId);
+              Optional.ofNullable(stowage.getQuantity())
+                  .ifPresent(
+                      quantity -> stowageDetailsBuilder.setQuantity(String.valueOf(quantity)));
+              Optional.ofNullable(cargoNomDetail.getAbbreviation())
+                  .ifPresent(stowageDetailsBuilder::setCargoName);
+              Optional.ofNullable(loadingInformation.getPortXId())
+                  .ifPresent(stowageDetailsBuilder::setPortId);
+              Optional.ofNullable(stowageDetailsBuilder.getStowageId())
+                  .ifPresent(stowageDetailsBuilder::setStowageId);
+              Optional<VesselInfo.VesselTankDetail> tankDetail =
+                  vesselReply.getVesselTanksList().stream()
+                      .filter(tank -> Long.valueOf(tank.getTankId()).equals(stowage.getTankXId()))
+                      .findAny();
+              if (tankDetail.isPresent()) {
+                Optional.ofNullable(tankDetail.get().getTankName())
+                    .ifPresent(stowageDetailsBuilder::setTankName);
+                Optional.ofNullable(tankDetail.get().getShortName())
+                    .ifPresent(stowageDetailsBuilder::setShortName);
+              }
+              stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
+            });
   }
 
   /**
@@ -416,14 +416,8 @@ public class UllageUpdateLoadicatorService {
     Optional<LoadingInformationStatus> loadingInfoStatusOpt =
         loadingPlanAlgoService.getLoadingInformationStatus(
             LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
-    if (LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE == request.getConditionType()) {
-      loadingInformationRepository.updateLoadingInformationArrivalStatus(
-          loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
-    } else if (LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE
-        == request.getConditionType()) {
-      loadingInformationRepository.updateLoadingInformationDepartureStatus(
-          loadingInfoStatusOpt.get(), loadingInfoOpt.get().getId());
-    }
+    loadingPlanService.updateLoadingPlanStatus(
+        loadingInfoOpt.get(), loadingInfoStatusOpt.get(), request.getConditionType());
     loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
         loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
     loadingPlanService.saveUpdatedLoadingPlanDetails(

@@ -101,7 +101,7 @@ export class VoyageStatusComponent implements OnInit {
     this.vesselInfo = res[0] ?? <IVessel>{};
     if (this.vesselInfo?.id) {
       localStorage.setItem("vesselId", this.vesselInfo?.id.toString())
-      this.getVoyageInfo(this.vesselInfo?.id);
+      await this.getVoyageInfo(this.vesselInfo?.id);
     }
     this.ngxSpinnerService.hide();
   }

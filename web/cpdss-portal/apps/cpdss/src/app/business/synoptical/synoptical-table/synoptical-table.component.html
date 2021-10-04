@@ -86,7 +86,7 @@
                     </div>
                     <ng-container
                         *ngIf="rowData.editable && synopticalService.editMode &&  checkEditableCondition(field.key,colIndex,rowData); else noEdit">
-                        <div class="error-icon-wrapper">
+                        <div class="error-icon-wrapper"  [ngClass]="{'inputWidth': rowData?.fields?.length>1}">
                             <ng-container [ngSwitch]="field.type">
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
                                     <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"

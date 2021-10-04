@@ -2,11 +2,18 @@ version: "3.7"
 services: 
   discharge-plan-service:
     image: "${DOCKER_REGISTRY}/${IMAGE_NAME}:${TAG_NAME}"
+    volumes:
+    - type: bind
+      source: ${VOL_SOURCE}
+      target: /data
     environment: 
     - DB_HOST=${DB_HOST}
     - DB_NAME=${DB_NAME} 
     - DB_USER=${DB_USER} 
-    - DB_PASSWORD=${DB_PASSWORD} 
+    - DB_PASSWORD=${DB_PASSWORD}
+    - ALGO_BASE_URL=${ALGO_BASE_URL}
+    - ATTACHMENT_ROOT_PATH=/data
+    - REDIS_PASSWORD=${REDIS_PASSWORD}
     - REST_PORT=8080
     - GRPC_PORT=8090
     dns: 8.8.8.8

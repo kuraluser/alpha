@@ -395,15 +395,26 @@ export class LoadablePlanComponent implements OnInit {
     this.confirmPlanEligibility = loadablePlanRes?.confirmPlanEligibility;
     this.loadableQuantityCargoDetails = loadablePlanRes.loadableQuantityCargoDetails;
     this.portRotationId = loadablePlanRes.lastModifiedPort;
+    this.loadableQuantityCommingleCargoDetails = loadablePlanRes.loadableQuantityCommingleCargoDetails;
     this.loadableQuantityCargoDetails.map((loadableQuantityCargoDetail) => {
       loadableQuantityCargoDetail['grade'] = this.fingCargo(loadableQuantityCargoDetail);
+      const commingleTotalQuantity =  this.loadableQuantityCommingleCargoDetails.reduce((previousValue: any, currentValue: ILoadableQuantityCommingleCargo) => {
+        if(currentValue.cargo1Abbreviation === loadableQuantityCargoDetail.cargoAbbreviation) {
+          return previousValue + Number(currentValue.cargo1MT);
+        } else if(currentValue.cargo2Abbreviation === loadableQuantityCargoDetail.cargoAbbreviation) {
+          return previousValue + Number(currentValue.cargo2MT);
+        } else {
+          return previousValue;
+        }
+      }, 0);
       const minTolerence = (Number(loadableQuantityCargoDetail.minTolerence) / 100) * Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
       const maxTolerence = (Number(loadableQuantityCargoDetail.maxTolerence) / 100) * Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
-      this.loadableQuantityCargo.push({ 'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, cargoNominationId: loadableQuantityCargoDetail.cargoNominationId, total: 0, minTolerence: minTolerence, maxTolerence: maxTolerence })
+      this.loadableQuantityCargo.push({ 'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, cargoNominationId: loadableQuantityCargoDetail.cargoNominationId, total: 0, minTolerence: minTolerence, maxTolerence: maxTolerence 
+      , commingleTotalQuantity: commingleTotalQuantity})
     })
     await this.getLoadableQuantity();
     this.loadableQuantity = Number(loadablePlanRes.loadableQuantity) ?? this.loadableQuantity;
-    this.loadableQuantityCommingleCargoDetails = loadablePlanRes.loadableQuantityCommingleCargoDetails;
+   
     this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails ? loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => {
       const tank = this.findCargoTank(cargo.tankId, loadablePlanRes?.tankLists)
       cargo.fullCapacityCubm = tank.fullCapacityCubm
@@ -466,7 +477,6 @@ export class LoadablePlanComponent implements OnInit {
         foOnboard: loadableQuantity.estFOOnBoard,
         doOnboard: loadableQuantity.estDOOnBoard,
         freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
-        boilerWaterOnboard: loadableQuantity.boilerWaterOnBoard,
         ballast: loadableQuantity.ballast,
         constant: loadableQuantity.constant,
         others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
@@ -483,7 +493,6 @@ export class LoadablePlanComponent implements OnInit {
         foOnboard: loadableQuantity.estFOOnBoard,
         doOnboard: loadableQuantity.estDOOnBoard,
         freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
-        boilerWaterOnboard: loadableQuantity.boilerWaterOnBoard,
         ballast: loadableQuantity.ballast,
         constant: loadableQuantity.constant,
         others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
