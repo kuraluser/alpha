@@ -47,7 +47,6 @@ import com.cpdss.dischargeplan.entity.CowTankDetail;
 import com.cpdss.dischargeplan.entity.CowWithDifferentCargo;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
-import com.cpdss.dischargeplan.entity.DischargingDelayReason;
 import com.cpdss.dischargeplan.entity.DischargingInformationAlgoStatus;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import com.cpdss.dischargeplan.entity.DischargingMachineryInUse;

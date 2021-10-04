@@ -39,6 +39,8 @@ public class DischargePlanSynchronizeService {
               dischargeInformation.setDischargingPatternXid(request.getDischargePatternId());
               dischargeInformation.setPortRotationXid(port.getPortRotationId());
               dischargeInformation.setSynopticTableXid(port.getSynopticTableId());
+              dischargeInformation.setIsActive(true);
+              dischargeInformation.setPortXid(port.getPortId());
               infos.add(dischargeInformation);
               log.info("Discharge Study Synchronization Port Data - {}", Utils.toJson(port));
             });
