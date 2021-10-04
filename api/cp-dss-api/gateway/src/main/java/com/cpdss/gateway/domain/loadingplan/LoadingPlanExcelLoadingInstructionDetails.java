@@ -2,6 +2,8 @@
 package com.cpdss.gateway.domain.loadingplan;
 
 
+import java.util.List;
+
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanExcelLoadingSequenceDetails;
 
 import lombok.AllArgsConstructor;
@@ -11,9 +13,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoadingPlanExcelDetails {
+public class LoadingPlanExcelLoadingInstructionDetails {
 
-  private LoadingPlanExcelLoadingPlanDetails sheetOne;
-  private LoadingPlanExcelLoadingInstructionDetails sheetTwo;
-  private LoadingPlanExcelLoadingSequenceDetails sheetThree;
+  private List<String> instructions;
+  private Object vesselPurticulars;
 }

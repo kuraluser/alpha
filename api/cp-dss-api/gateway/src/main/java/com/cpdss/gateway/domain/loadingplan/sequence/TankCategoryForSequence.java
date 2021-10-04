@@ -17,4 +17,5 @@ public class TankCategoryForSequence {
   private String cargoName;
   private Integer displayOrder; 
   private String colorCode; 
+  private TankWithSequenceDetails cargoTankUllage;
 }

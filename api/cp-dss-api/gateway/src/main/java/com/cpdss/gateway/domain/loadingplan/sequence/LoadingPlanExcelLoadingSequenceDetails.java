@@ -13,10 +13,9 @@ import lombok.NoArgsConstructor;
 public class LoadingPlanExcelLoadingSequenceDetails {
 
   private List<TankCategoryForSequence> cargoTanks;
-  private List<TankCategory> ballastTanks;
+  private List<TankCategoryForSequence> ballastTanks;
   private StabilityParamsOfLoadingSequence stabilityParams;
   private List<LoadingRateForSequence> loadingRates;
   private List<String> tickPoints;
-  private List<TankWithSequenceDetails> cargoTankUllage;
   private List<TankWithSequenceDetails> ballastTankUllage;
 }
