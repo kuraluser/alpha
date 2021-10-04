@@ -6,6 +6,7 @@ import { IdraftMarks, ILoadLineList, INewLoadableStudyListNames, Voyage } from "
 import { IVessel } from '../../../core/models/vessel-details.model';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
 import { LoadableStudy } from '../../../cargo-planning/models/loadable-study-list.model';
+import { LOADABLE_STUDY_STATUS } from '../../../core/models/common.model';
 import { Router } from '@angular/router';
 import { numberValidator } from '../../../core/directives/number-validator.directive'
 import { MessageService } from 'primeng/api';
@@ -41,7 +42,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   @Input()
   get loadableStudyList(): LoadableStudy[] { return this._loadableStudyList; }
   set loadableStudyList(loadableStudyList: LoadableStudy[]) {
-    this._loadableStudyList = loadableStudyList.filter(loadable => ![4, 5].includes(loadable?.statusId));
+    this._loadableStudyList = loadableStudyList.filter(loadable => 
+      ![LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED , LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE , LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadable?.statusId));
   }
 
   @Input()

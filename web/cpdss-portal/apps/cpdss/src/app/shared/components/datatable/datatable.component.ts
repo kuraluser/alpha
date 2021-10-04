@@ -1046,8 +1046,13 @@ export class DatatableComponent implements OnInit {
    * @param {string} fieldOptionLabel
    * @memberof DatatableComponent
    */
-  getMultiselectedDataAsLabel(multiSelectedArray:any, fieldOptionLabel: string){
-    return multiSelectedArray?.map(e => e[fieldOptionLabel]).join(",") ?? '';
+  getMultiselectedDataAsLabel(multiSelectedArray:any, fieldOptionLabel: string, maxSelectedLabels: number){
+    if(multiSelectedArray?.length <= maxSelectedLabels) {
+      return multiSelectedArray?.map(e => e[fieldOptionLabel]).join(",") ?? '';
+    } else {
+      return `${multiSelectedArray?.length} items selected`;
+    }
+    
   }
 
   /**

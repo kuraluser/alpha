@@ -315,6 +315,7 @@ export class LoadingDischargingTransformationService {
         listName: 'reasonForDelays',
         fieldType: DATATABLE_FIELD_TYPE.MULTISELECT,
         fieldOptionLabel: 'reason',
+        maxSelectedLabels: 2,
         fieldPlaceholder: 'LOADING_MANAGE_SEQUENCE_SELECT_REASON',
         errorMessages: {
           'required': 'LOADING_MANAGE_SEQUENCE_REQUIRED'

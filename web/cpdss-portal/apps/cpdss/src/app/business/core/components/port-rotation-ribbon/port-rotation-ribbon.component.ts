@@ -216,17 +216,16 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   * Method to get current position of the ship
   */
   currentPosition() {
-    let currentPort = 0;
+    let currentPort = -1;
     for (let index = 0; index < this.portList.length; index++) {
       const port = this.portList[index]
       if ((port.type === 'Arrival' && port.etaActual) || (port.type === 'Departure' && port.etdActual)) {
         currentPort = index;
       }
     }
-    if (currentPort < 0) {
-      currentPort = 0;
+    if(currentPort !== -1) {
+      this.portList[currentPort].currentPort = true;
     }
-    this.portList[currentPort].currentPort = true;
   }
   /**
    * Method to delete port
@@ -334,6 +333,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
             }
           }
           this.editPortRotationApiService.updateVoyageDistance(voyageDistance);
+          this.currentPosition();
         }
       }
       catch (errorResponse) {

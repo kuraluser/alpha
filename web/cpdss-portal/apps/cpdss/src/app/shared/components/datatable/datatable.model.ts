@@ -58,6 +58,7 @@ export interface IDataTableColumn {
     badgeColorField?: string;
     filterClass?: string;
     totalFieldClass?: string;
+    maxSelectedLabels?: number;
 }
 
 /**
