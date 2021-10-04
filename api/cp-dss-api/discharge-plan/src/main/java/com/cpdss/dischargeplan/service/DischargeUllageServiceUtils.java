@@ -81,7 +81,7 @@ public class DischargeUllageServiceUtils {
                 BillOfLadding ladding = new BillOfLadding();
                 ladding.setDischargeInformation(
                     dischargeInformationService.getDischargeInformation(
-                        billOfLadding.getLoadingId()));
+                        billOfLadding.getDischargingId()));
                 ladding.setPortId(billOfLadding.getPortId());
                 ladding.setCargoNominationId(billOfLadding.getCargoId());
                 ladding.setBlRefNo(billOfLadding.getBlRefNumber());
@@ -131,7 +131,7 @@ public class DischargeUllageServiceUtils {
                                 ballast.getTankXId().equals(ballastRequest.getTankId())
                                     && ballast
                                         .getDischargingInformation()
-                                        .equals(ballastRequest.getLoadingInformationId())
+                                        .equals(ballastRequest.getDischargingInformationId())
                                     && ballast
                                         .getConditionType()
                                         .equals(ballastRequest.getArrivalDepartutre()))
@@ -160,7 +160,7 @@ public class DischargeUllageServiceUtils {
 
   private static PortDischargingPlanBallastTempDetails createBallast(BallastUpdate ballastRequest) {
     PortDischargingPlanBallastTempDetails details = new PortDischargingPlanBallastTempDetails();
-    details.setDischargingInformation(ballastRequest.getLoadingInformationId());
+    details.setDischargingInformation(ballastRequest.getDischargingInformationId());
     details.setPortRotationXId(ballastRequest.getPortRotationXid());
     details.setPortXId(ballastRequest.getPortXid());
     details.setTankXId(ballastRequest.getTankId());
@@ -214,7 +214,7 @@ public class DischargeUllageServiceUtils {
                                 ballast.getTankXId().equals(stowageRequest.getTankId())
                                     && ballast
                                         .getDischargingInformation()
-                                        .equals(stowageRequest.getLoadingInformationId())
+                                        .equals(stowageRequest.getDischargingInfoId())
                                     && ballast
                                         .getConditionType()
                                         .equals(stowageRequest.getArrivalDepartutre()))
@@ -235,7 +235,7 @@ public class DischargeUllageServiceUtils {
 
   public static PortDischargingPlanStowageTempDetails createStowage(UpdateUllage stowageRequest) {
     PortDischargingPlanStowageTempDetails tempData = new PortDischargingPlanStowageTempDetails();
-    tempData.setDischargingInformation(stowageRequest.getLoadingInformationId());
+    tempData.setDischargingInformation(stowageRequest.getDischargingInfoId());
     tempData.setTankXId(stowageRequest.getTankId());
     tempData.setTemperature(
         StringUtils.isEmpty(stowageRequest.getTemperature())
@@ -294,7 +294,7 @@ public class DischargeUllageServiceUtils {
                                 ballast.getTankXId().equals(robRequest.getTankId())
                                     && ballast
                                         .getDischargingInformation()
-                                        .equals(robRequest.getLoadingInformationId())
+                                        .equals(robRequest.getDischargingInformationId())
                                     && ballast
                                         .getConditionType()
                                         .equals(robRequest.getArrivalDepartutre())
@@ -306,7 +306,7 @@ public class DischargeUllageServiceUtils {
                 robToSave.add(dbData);
               } else {
                 PortDischargingPlanRobDetails robDet = new PortDischargingPlanRobDetails();
-                robDet.setDischargingInformation(robRequest.getLoadingInformationId());
+                robDet.setDischargingInformation(robRequest.getDischargingInformationId());
                 robDet.setTankXId(Long.valueOf(robRequest.getTankId()));
                 robDet.setQuantity(
                     StringUtils.isEmpty(robRequest.getQuantity())
