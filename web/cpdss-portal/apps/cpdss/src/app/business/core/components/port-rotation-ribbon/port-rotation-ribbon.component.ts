@@ -74,6 +74,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
 
   // private fields
   private _voyageDetails: Voyage;
+  private _currentPort: number;
 
 
 
@@ -92,6 +93,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    * @memberof PortRotationRibbonComponent
    */
   async ngOnInit(): Promise<void> {
+    this._currentPort = -1;
     this.resizeObservable$ = fromEvent(window, 'resize')
     this.carouselDateFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat)
     this.resizeSubscription$ = this.resizeObservable$.subscribe((evt) => {
@@ -224,6 +226,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       }
     }
     if(currentPort !== -1) {
+      this._currentPort = currentPort;
       this.portList[currentPort].currentPort = true;
     }
   }
@@ -333,6 +336,9 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
             }
           }
           this.editPortRotationApiService.updateVoyageDistance(voyageDistance);
+          if(this._currentPort !== -1) {
+            this.portList[this._currentPort].currentPort = false;
+          }
           this.currentPosition();
         }
       }
