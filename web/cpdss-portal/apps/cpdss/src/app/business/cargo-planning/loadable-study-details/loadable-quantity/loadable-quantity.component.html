@@ -183,7 +183,7 @@
 
                     <div class="row form-group">
                         <label for="loadable_quantity_fresh_water_onboard"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_FRESH_WATER_ON_BOARD' | translate}}</label>
+                            class="col col-form-label">{{'VOYAGE_STATUS_PARAMETER_LIST_FW_DW_BW' | translate}}</label>
                         <div class="col">
                             <input type="text"  class="form-control"
                                 id="loadable_quantity_fresh_water_onboard" [value]="getControlLabel('freshWaterOnboard')| number :'1.2-2'"
@@ -193,21 +193,6 @@
                         <div class="col error-column text-center">
                             <cpdss-portal-validation-error [errors]="fieldError('freshWaterOnboard')"
                                 [errorMessages]="errorMesages.freshWaterOnboard"></cpdss-portal-validation-error>
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <label for="loadable_quantity_boiler_water_onboard"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_BOILER_WATER_ON_BOARD' | translate}}</label>
-                        <div class="col">
-                            <input type="text" class="form-control"
-                                id="loadable_quantity_boiler_water_onboard" [value]="getControlLabel('boilerWaterOnboard')| number :'1.2-2'"
-                                (change)="getSubTotal()" [disabled]="true" focusTrap>
-                        </div>
-                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column text-center">
-                            <cpdss-portal-validation-error [errors]="fieldError('boilerWaterOnboard')"
-                                [errorMessages]="errorMesages.boilerWaterOnboard"></cpdss-portal-validation-error>
                         </div>
                     </div>
 

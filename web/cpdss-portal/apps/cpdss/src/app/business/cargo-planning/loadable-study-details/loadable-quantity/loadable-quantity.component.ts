@@ -137,9 +137,6 @@ export class LoadableQuantityComponent implements OnInit {
         foOnboard: [{ value: '', disabled: true }, [Validators.required, numberValidator(2, 7), Validators.min(0)]],
         doOnboard: [{ value: '', disabled: true }, [Validators.required, numberValidator(2, 7), Validators.min(0)]],
         freshWaterOnboard: [{ value: '', disabled: true }, [Validators.required, numberValidator(2, 7), Validators.min(0)]],
-
-        boilerWaterOnboard: [{ value: '', disabled: true }, [Validators.required, numberValidator(0, 7), Validators.pattern(/^[0-9]\d{0,6}$/)]],
-
         ballast: ['', [Validators.required, numberValidator(2, 7), Validators.min(0)]],
         constant: ['', [Validators.required, numberValidator(2)]],
         others: ['', [Validators.required, numberValidator(2, 7), Validators.min(0)]],
@@ -201,7 +198,6 @@ export class LoadableQuantityComponent implements OnInit {
     this.loadableQuantityForm.controls.doOnboard.setValue(Number(this.loadableQuantity.estDOOnBoard));
 
     this.loadableQuantityForm.controls.freshWaterOnboard.setValue(Number(this.loadableQuantity.estFreshWaterOnBoard));
-    this.loadableQuantityForm.controls.boilerWaterOnboard.setValue(Number(this.loadableQuantity.boilerWaterOnBoard));
     this.loadableQuantityForm.controls.ballast.setValue(this.loadableQuantity.ballast);
     this.loadableQuantityForm.controls.constant.setValue(this.loadableQuantity.constant);
     this.loadableQuantityForm.controls.others.setValue(this.loadableQuantity.otherIfAny === '' ? 0 : this.loadableQuantity.otherIfAny);
@@ -263,7 +259,6 @@ export class LoadableQuantityComponent implements OnInit {
           estDOOnBoard: this.loadableQuantityForm.controls.doOnboard.value,
           estFreshWaterOnBoard: this.loadableQuantityForm.controls.freshWaterOnboard.value,
           ballast: this.loadableQuantityForm.controls.ballast.value,
-          boilerWaterOnBoard: this.loadableQuantityForm.controls.boilerWaterOnboard.value,
           constant: this.loadableQuantityForm.controls.constant.value,
           otherIfAny: this.loadableQuantityForm.controls.others.value,
           totalQuantity: this.loadableQuantityForm.controls.totalQuantity.value,
@@ -295,7 +290,6 @@ export class LoadableQuantityComponent implements OnInit {
           estDOOnBoard: this.loadableQuantityForm.controls.doOnboard.value,
           estFreshWaterOnBoard: this.loadableQuantityForm.controls.freshWaterOnboard.value,
           ballast: this.loadableQuantityForm.controls.ballast.value,
-          boilerWaterOnBoard: this.loadableQuantityForm.controls.boilerWaterOnboard.value,
           constant: this.loadableQuantityForm.controls.constant.value,
           otherIfAny: this.loadableQuantityForm.controls.others.value,
           totalQuantity: this.loadableQuantityForm.controls.totalQuantity.value
@@ -319,7 +313,6 @@ export class LoadableQuantityComponent implements OnInit {
           estDOOnBoard: this.loadableQuantityForm.controls.doOnboard.value,
           estFreshWaterOnBoard: this.loadableQuantityForm.controls.freshWaterOnboard.value,
           ballast: this.loadableQuantityForm.controls.ballast.value,
-          boilerWaterOnBoard: this.loadableQuantityForm.controls.boilerWaterOnboard.value,
           constant: this.loadableQuantityForm.controls.constant.value,
           otherIfAny: this.loadableQuantityForm.controls.others.value,
           totalQuantity: this.loadableQuantityForm.controls.totalQuantity.value,
@@ -449,7 +442,6 @@ export class LoadableQuantityComponent implements OnInit {
         foOnboard: this.loadableQuantityForm.get('foOnboard').value,
         doOnboard: this.loadableQuantityForm.get('doOnboard').value,
         freshWaterOnboard: this.loadableQuantityForm.get('freshWaterOnboard').value,
-        boilerWaterOnboard: this.loadableQuantityForm.get('boilerWaterOnboard').value,
         ballast: this.loadableQuantityForm.get('ballast').value,
         constant: this.loadableQuantityForm.get('constant').value,
         others: this.loadableQuantityForm.get('others').value
