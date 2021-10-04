@@ -4,7 +4,6 @@ package com.cpdss.dischargeplan.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastTempDetails;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,7 +22,7 @@ public interface PortDischargingPlanBallastDetailsRepository
   public List<PortDischargingPlanBallastDetails> findByPatternIdAndPortRotationIdAndIsActive(
       long patternId, long portRotationId, boolean b);
 
-  public List<PortDischargingPlanBallastTempDetails>
+  public List<PortDischargingPlanBallastDetails>
       findByDischargingInformationAndConditionTypeAndIsActive(
           Long id, int conditionType, boolean b);
 

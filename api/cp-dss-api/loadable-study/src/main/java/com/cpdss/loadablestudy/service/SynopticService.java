@@ -1854,6 +1854,15 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
               portRotationId.get(),
               request.getOperationType(),
               true);
+      // checking whether the port rotation is part of discharge study
+      if (synopticalData.isEmpty()) {
+        synopticalData =
+            synopticalTableRepository.findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                builder.getConfirmedDischargeStudy().getId(),
+                portRotationId.get(),
+                request.getOperationType(),
+                true);
+      }
       if (synopticalData.isEmpty()) {
         throw new GenericServiceException(
             "Synoptic Data Not Found for Port Rotation Id "

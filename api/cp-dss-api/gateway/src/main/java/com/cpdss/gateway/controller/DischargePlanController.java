@@ -1085,7 +1085,8 @@ public class DischargePlanController {
       @RequestHeader HttpHeaders headers, @RequestBody UllageBillRequest inputData)
       throws CommonRestException {
     try {
-      return dischargeInformationService.updateUllage(inputData);
+      return dischargeInformationService.updateUllage(
+          inputData, headers.getFirst(CORRELATION_ID_HEADER));
 
     } catch (GenericServiceException e) {
       log.error("Deleting Discharging instruction failed");
