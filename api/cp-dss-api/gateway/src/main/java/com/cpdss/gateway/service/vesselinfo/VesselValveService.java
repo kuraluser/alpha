@@ -56,12 +56,6 @@ public class VesselValveService {
                   .map(v -> new VesselValveSeq().getInstance(v))
                   .collect(Collectors.toList()));
         }
-
-        int x = 1;
-        for (VesselValveSequence v : seqEntityList.getValue()) {
-          // map4.put("sequence_" + x, new VesselValveSeq().getInstance(v));
-          x++;
-        }
         map3.put(toCamelCase(seqEntityList.getKey()), map4);
       }
       map11.put(toCamelCase(var2.getKey()), map3);

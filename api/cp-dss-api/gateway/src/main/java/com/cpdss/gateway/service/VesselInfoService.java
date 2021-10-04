@@ -436,7 +436,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
         this.buildUllageTrimCorrections(vesselAlgoReply));
     vesselDetailsResponse.setSelectableParameter(this.buildSelectableParameters(vesselAlgoReply));
     if (enableValveSeq)
-      vesselDetailsResponse.setVesselValveSequence(this.getVesselValveSequenceData());
+      vesselDetailsResponse.setVesselValveSequence(this.getVesselValveSequenceData(vesselId));
     vesselDetailsResponse.setPumpTypes(this.buildPumpTypes(vesselAlgoReply));
     vesselDetailsResponse.setVesselPumps(this.buildVesselPumps(vesselAlgoReply));
     vesselDetailsResponse.setTankTypes(this.buildTankTypes(vesselAlgoReply));
@@ -470,8 +470,9 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     return vesselDetailsResponse;
   }
 
-  private Map<Object, Object> getVesselValveSequenceData() {
+  private Map<Object, Object> getVesselValveSequenceData(Long vesselId) {
     VesselInfo.VesselRequest.Builder builder = VesselInfo.VesselRequest.newBuilder();
+    builder.setVesselId(vesselId);
     VesselInfo.VesselValveSequenceReply reply =
         this.vesselInfoGrpcService.getVesselValveSequence(builder.build());
     if (reply.getResponseStatus().getStatus().equals(SUCCESS)) {
@@ -484,7 +485,13 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
           "eductionProcess",
           this.vesselValveService.buildVesselValveEductorResponse(
               reply.getVvEducationEntitiesList()));
-      log.info("Vessel Valve Sequence data size {}", response);
+      // Air Purge
+      response.put("airPurge", reply.getVvAirPurgeSequenceList());
+
+      // Stripping Sequence
+      response.put("strippingSequence", reply.getVvStrippingSequenceList());
+
+      log.info("Vessel Valve Sequence data size {}", response.size());
       return response;
     }
     log.info("Vessel Valve Sequence data not found");
