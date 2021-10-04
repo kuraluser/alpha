@@ -18,7 +18,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.web.client.ResourceAccessException;
 
 /**
  * @Author Selvy Thomas
@@ -56,7 +55,7 @@ public class StagingServiceTest {
     // assertEquals((long) 1, ds.getId());
   }
 
-/*  @Test
+  /*  @Test
   public void saveTestNegativeCase() throws GenericServiceException {
 
     Mockito.when(this.stagingRepository.save(ArgumentMatchers.any(DataTransferStage.class)))

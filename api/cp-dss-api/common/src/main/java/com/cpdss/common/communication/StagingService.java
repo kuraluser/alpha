@@ -13,10 +13,7 @@ import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.persistence.MappedSuperclass;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -26,17 +23,19 @@ import org.springframework.web.client.ResourceAccessException;
  * @author Selvy Thomas
  */
 @Log4j2
-@Service
-@MappedSuperclass
 public class StagingService {
 
-  @Autowired private StagingRepository stagingRepository;
+  private StagingRepository stagingRepository;
 
   private static final String PROCESS_TYPE = "table";
   private static final String STATUS = "draft";
   private static final String CREATED_OR_UPDATED_BY = "communication";
   private static final String DATA = "data";
   private static final String META_DATA = "meta_data";
+
+  public StagingService(StagingRepository stagingRepository) {
+    this.stagingRepository = stagingRepository;
+  }
 
   /**
    * Method save used to save json to data_transfer_stage table.
