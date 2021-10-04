@@ -4,11 +4,16 @@ package com.cpdss.common.communication;
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.communication.repository.StagingRepository;
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.persistence.MappedSuperclass;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +27,7 @@ import org.springframework.web.client.ResourceAccessException;
  */
 @Log4j2
 @Service
+@MappedSuperclass
 public class StagingService {
 
   @Autowired private StagingRepository stagingRepository;
@@ -41,23 +47,38 @@ public class StagingService {
   public DataTransferStage save(String jsonResult) throws GenericServiceException {
     try {
       log.info("Json string get in save method: " + jsonResult);
+      DataTransferStage dataTransferStage = null;
       if (!StringUtils.isEmpty(jsonResult)) {
-        final JsonObject obj = new Gson().fromJson(jsonResult, JsonObject.class);
-        final JsonArray data = obj.getAsJsonArray(DATA);
-        final JsonObject metaData = obj.getAsJsonObject(META_DATA);
-        DataTransferStage dataTransferStage =
-            new Gson().fromJson(metaData, DataTransferStage.class);
-        dataTransferStage.setData(data);
-        dataTransferStage.setStatus(STATUS);
-        dataTransferStage.setProcessType(PROCESS_TYPE);
-        dataTransferStage.setCreatedBy(CREATED_OR_UPDATED_BY);
-        dataTransferStage.setLastModifiedBy(CREATED_OR_UPDATED_BY);
-        return stagingRepository.save(dataTransferStage);
+        JsonArray jsonArrayObj = new Gson().fromJson(jsonResult, JsonArray.class);
+        for (JsonElement jsonElement : jsonArrayObj) {
+          final JsonObject obj = jsonElement.getAsJsonObject();
+          final JsonArray data = obj.getAsJsonArray(DATA);
+          final JsonObject metaData = obj.getAsJsonObject(META_DATA);
+          dataTransferStage = new Gson().fromJson(metaData, DataTransferStage.class);
+          dataTransferStage.setData(data.toString());
+          dataTransferStage.setStatus(STATUS);
+          dataTransferStage.setProcessType(PROCESS_TYPE);
+          dataTransferStage.setCreatedBy(CREATED_OR_UPDATED_BY);
+          dataTransferStage.setLastModifiedBy(CREATED_OR_UPDATED_BY);
+          stagingRepository.save(dataTransferStage);
+        }
+        // final JsonObject obj = new Gson().fromJson(jsonResult, JsonObject.class);
+
+        // return stagingRepository.save(dataTransferStage);
+        return dataTransferStage;
       }
     } catch (ResourceAccessException e) {
       log.info("Error when saving into DB ", e);
+      throw new GenericServiceException(
+          "Exception occurs in save method",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
     } catch (Exception e) {
       log.error("Exception occurs in save method  ", e);
+      throw new GenericServiceException(
+          "Exception occurs in save method",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
     }
     return null;
   }
@@ -91,18 +112,35 @@ public class StagingService {
    */
   public boolean isAllDataReceived(String processId, List<String> processIdentifierList) {
     List<DataTransferStage> list = this.getByProcessId(processId);
-    if (list != null
-            && !list.isEmpty()){
+    if (list != null && !list.isEmpty()) {
       List<String> processIdentifierFromDB =
-              list.stream().map(DataTransferStage::getProcessIdentifier).collect(Collectors.toList());
+          list.stream().map(DataTransferStage::getProcessIdentifier).collect(Collectors.toList());
       if (processIdentifierFromDB != null
-              && !processIdentifierFromDB.isEmpty()
-              && processIdentifierFromDB.containsAll(processIdentifierList)) {
+          && !processIdentifierFromDB.isEmpty()
+          && processIdentifierFromDB.containsAll(processIdentifierList)) {
         log.info("All data received in the data_transfer_stage table  " + list);
         return true;
       }
       return false;
     }
-       return false;
+    return false;
+  }
+  /**
+   * Method updateStatusForProcessId used to status to In progress
+   *
+   * @param processId - Id
+   */
+  public void updateStatusForProcessId(String processId) {
+    List<DataTransferStage> list = this.getByProcessId(processId);
+    if (list != null && !list.isEmpty()) {
+      List<Long> Ids = list.stream().map(DataTransferStage::getId).collect(Collectors.toList());
+      if (Ids != null && !Ids.isEmpty()) {
+        Ids.stream().forEach(id -> stagingRepository.updateStatus(id, "In progress"));
+      }
+    }
+  }
+
+  public Optional<DataTransferStage> getById(Long id) {
+    return stagingRepository.findById(id);
   }
 }

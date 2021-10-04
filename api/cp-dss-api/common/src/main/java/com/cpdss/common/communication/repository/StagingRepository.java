@@ -6,6 +6,7 @@ import com.cpdss.common.springdata.CommonCrudRepository;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author Selvy Thomas
  */
+@Repository
 public interface StagingRepository extends CommonCrudRepository<DataTransferStage, Long> {
 
   public List<DataTransferStage> findByProcessId(String processId);

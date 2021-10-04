@@ -62,7 +62,7 @@ public class SpringDataConfig {
   @Value("${ro.db.auto.generate:false}")
   private boolean autoGenerate;
 
-  private static final String  STAGE_ENTITY_PACKAGE_NAME = "com.cpdss.common.communication.entity";
+  private static final String STAGE_ENTITY_PACKAGE_NAME = "com.cpdss.common.communication.entity";
 
   @Autowired
   @Qualifier("multitenancy")
