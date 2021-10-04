@@ -1474,7 +1474,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                         StringUtils.isEmpty(billLanding.getLoadingId())
                             ? 0
                             : billLanding.getLoadingId())
-                    .setDischargingId(isDischarging ? billLanding.getDischargingId() : null)
+                    .setDischargingId(isDischarging ? billLanding.getDischargingId() : 0)
                     .setPortId(
                         StringUtils.isEmpty(billLanding.getPortId()) ? 0 : billLanding.getPortId())
                     .setCargoId(
@@ -1531,7 +1531,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                     .setId(billLanding.getId() == null ? 0 : billLanding.getId())
                     .setLoadingId(
                         billLanding.getLoadingId() == null ? 0 : billLanding.getLoadingId())
-                    .setDischargingId(isDischarging ? billLanding.getDischargingId() : null)
+                    .setDischargingId(isDischarging ? billLanding.getDischargingId() : 0)
                     .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
                     .setCargoId(billLanding.getCargoId() == null ? 0 : billLanding.getCargoId())
                     .build();
@@ -1548,7 +1548,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                             ? 0
                             : ullageList.getLoadingInformationId().longValue())
                     .setDischargingInfoId(
-                        isDischarging ? ullageList.getDischargingInformationId().longValue() : null)
+                        isDischarging ? ullageList.getDischargingInformationId().longValue() : 0)
                     .setTankId(
                         ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
                     .setTemperature(
@@ -1617,7 +1617,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                             ? 0
                             : ullageList.getLoadingInformationId().longValue())
                     .setDischargingInformationId(
-                        isDischarging ? ullageList.getDischargingInformationId().longValue() : null)
+                        isDischarging ? ullageList.getDischargingInformationId().longValue() : 0)
                     .setTankId(
                         ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
                     .setTemperature(
@@ -1684,7 +1684,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                             ? 0
                             : ullageList.getLoadingInformationId().longValue())
                     .setDischargingInformationId(
-                        isDischarging ? ullageList.getDischargingInformationId().longValue() : null)
+                        isDischarging ? ullageList.getDischargingInformationId().longValue() : 0)
                     .setTankId(
                         ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
                     .setTemperature(
