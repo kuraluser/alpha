@@ -13,8 +13,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoadingPlanExcelLoadingInstructionDetails {
+public class LoadingInstructionForExcel {
 
-  private List<LoadingInstructionForExcel> instructions;
-  private Object vesselPurticulars;
+  private Integer group;
+  private String heading;
+  private String instruction;
 }

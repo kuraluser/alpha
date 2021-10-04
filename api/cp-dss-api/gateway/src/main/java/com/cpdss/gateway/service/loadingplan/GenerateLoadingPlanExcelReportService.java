@@ -17,7 +17,11 @@ import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.BerthInformation;
 import com.cpdss.gateway.domain.loadingplan.CargoQuantity;
 import com.cpdss.gateway.domain.loadingplan.CargoTobeLoaded;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionForExcel;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionList;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionResponse;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionSubHeader;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructions;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelLoadingInstructionDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelLoadingPlanDetails;
@@ -60,6 +64,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.apache.commons.io.IOUtils;
@@ -95,6 +101,7 @@ public class GenerateLoadingPlanExcelReportService {
 	public final Integer END_ROW = 71;
 	public final Integer END_COLUMN = 25;
 	public String SHEET_NAMES[] = { "CRUD - 021 pg1", "CRUD - 021 pg2", "CRUD - 021 pg3" };
+	public Long INSTRUCTION_ORDER[] = { 1L, 17L, 13L, 15L, 2L, 14L, 11L, 4L };
 	public List<TankCargoDetails> cargoTanks = null;
 	public List<TankCargoDetails> ballastTanks = null;
 
@@ -107,6 +114,8 @@ public class GenerateLoadingPlanExcelReportService {
 	ExcelExportUtility excelExportUtil;
 	@Autowired
 	private VesselInfoService vesselInfoService;
+	@Autowired
+	private LoadingInstructionService loadingInstructionService;
 	@Autowired
 	private LoadingPlanServiceImpl loadingPlanServiceImpl;
 	@GrpcClient("vesselInfoService")
@@ -309,24 +318,82 @@ public class GenerateLoadingPlanExcelReportService {
 //		threadPool.shutdown();
 		return excelData;
 	}
-	@Autowired
-	private LoadingInstructionService loadingInstructionService;
+
 	/**
-	 * @param vesselId
-	 * @param voyageId
-	 * @param infoId
-	 * @param portRotationId
-	 * @return
-	 * @throws GenericServiceException 
+	 * Preparing sheet 2
+	 * 
 	 */
-	private LoadingPlanExcelLoadingInstructionDetails buildSheetTwo(Long vesselId, Long voyageId, Long infoId, Long portRotationId) throws GenericServiceException {
+	private LoadingPlanExcelLoadingInstructionDetails buildSheetTwo(Long vesselId, Long voyageId, Long infoId,
+			Long portRotationId) throws GenericServiceException {
 		log.info("Building sheet 2 : Loading instructions");
 		// Calling loading plan get sequence details service
-		LoadingInstructionResponse loadingSequenceResponse = loadingInstructionService.getLoadingInstructions(vesselId, infoId, portRotationId);
+		LoadingInstructionResponse loadingSequenceResponse = loadingInstructionService.getLoadingInstructions(vesselId,
+				infoId, portRotationId);
 		LoadingPlanExcelLoadingInstructionDetails sheetTwo = new LoadingPlanExcelLoadingInstructionDetails();
-		return null;
+		sheetTwo.setInstructions(getInstructions(loadingSequenceResponse));
+		log.info("Building sheet 2 : Completed");
+		return sheetTwo;
 	}
 
+	/**
+	 * Get list of instructions segregated against heading
+	 * 
+	 * @param integer
+	 * @param loadingSequenceResponse
+	 * @return
+	 */
+	private List<LoadingInstructionForExcel> getInstructions(LoadingInstructionResponse loadingSequenceResponse) {
+		List<LoadingInstructionForExcel> instructionsList = new ArrayList<>();
+		int group = 0;
+		for (Long headerId : INSTRUCTION_ORDER) {
+			String heading = loadingSequenceResponse.getLoadingInstructionGroupList().stream()
+					.filter(value -> value.getGroupId().equals(headerId)).findAny().get().getGroupName();
+			List<LoadingInstructionSubHeader> listUnderHeader = loadingSequenceResponse.getLoadingInstructionSubHeader()
+					.stream().filter(item -> item.getInstructionHeaderId().equals(headerId) && item.getIsChecked())
+					.collect(Collectors.toList());
+			int count = 1;
+			if (!listUnderHeader.isEmpty()) {
+				for (LoadingInstructionSubHeader item : listUnderHeader) {
+					LoadingInstructionForExcel instructionObj = new LoadingInstructionForExcel();
+					instructionObj.setGroup(group);
+					instructionObj.setHeading(group + 5 + ".  " + heading);
+					instructionObj.setInstruction(count + ".  " + item.getSubHeaderName());
+					instructionsList.add(instructionObj);
+					count++;
+					if (!item.getIsSingleHeader() && item.getLoadingInstructionsList().size() > 0) {
+						int childCount = 1;
+						for (LoadingInstructions subItem : item.getLoadingInstructionsList()) {
+							if (subItem.getIsChecked()) {
+								LoadingInstructionForExcel subInstructionObj = new LoadingInstructionForExcel();
+								subInstructionObj.setGroup(group);
+								subInstructionObj.setHeading(heading);
+								subInstructionObj
+										.setInstruction("    " + childCount + ".  " + subItem.getInstruction());
+								instructionsList.add(subInstructionObj);
+								childCount++;
+							}
+						}
+					}
+				}
+			} else {
+				LoadingInstructionForExcel instructionObj = new LoadingInstructionForExcel();
+				instructionObj.setGroup(group);
+				instructionObj.setHeading(group + 5 + ".  " + heading);
+				instructionObj.setInstruction("-No instructions available under this section-");
+				instructionsList.add(instructionObj);
+			}
+			group++;
+		}
+		return instructionsList;
+	}
+
+	/**
+	 * List of all ballast tanks available for ship
+	 * 
+	 * @param ballastFrontTanks
+	 * @param ballastCenterTanks
+	 * @param ballastRearTanks
+	 */
 	private void getAllBallastTanks(List<List<VesselTank>> ballastFrontTanks, List<List<VesselTank>> ballastCenterTanks,
 			List<List<VesselTank>> ballastRearTanks) {
 		List<TankCargoDetails> tanks = new ArrayList<>();
@@ -335,7 +402,7 @@ public class GenerateLoadingPlanExcelReportService {
 				TankCargoDetails tankObj = new TankCargoDetails();
 				tankObj.setTankName(tank.getShortName());
 				tankObj.setId(tank.getId());
-				if(!tank.getShortName().contains("VOID")) {
+				if (!tank.getShortName().contains("VOID")) {
 					tanks.add(tankObj);
 				}
 			}
@@ -345,7 +412,7 @@ public class GenerateLoadingPlanExcelReportService {
 				TankCargoDetails tankObj = new TankCargoDetails();
 				tankObj.setTankName(tank.getShortName());
 				tankObj.setId(tank.getId());
-				if(!tank.getShortName().contains("VOID")) {
+				if (!tank.getShortName().contains("VOID")) {
 					tanks.add(tankObj);
 				}
 			}
@@ -355,14 +422,13 @@ public class GenerateLoadingPlanExcelReportService {
 				TankCargoDetails tankObj = new TankCargoDetails();
 				tankObj.setTankName(tank.getShortName());
 				tankObj.setId(tank.getId());
-				if(!tank.getShortName().contains("VOID")) {
+				if (!tank.getShortName().contains("VOID")) {
 					tanks.add(tankObj);
 				}
 			}
 		}
 		ballastTanks = tanks;
 	}
-
 
 	/**
 	 * Build data model for Sheet 3
@@ -396,12 +462,14 @@ public class GenerateLoadingPlanExcelReportService {
 			}
 			sheetThree.setBallastTanks(getBallastTanks(loadingSequenceResponse.getBallastTankCategories(),
 					loadingSequenceResponse.getBallasts()));
-			log.info("BallastTanks list " + sheetThree.getBallastTanks().size());// TODO check tank number against template
+			log.info("BallastTanks list " + sheetThree.getBallastTanks().size());// TODO check tank number against
+																					// template
 			if (sheetThree.getBallastTanks().size() > 0) {
 				getBallastTankUllageAndQuantity(loadingSequenceResponse.getStageTickPositions(),
 						loadingSequenceResponse.getBallasts(), sheetThree.getBallastTanks());
 			}
-			sheetThree.setStabilityParams(getStabilityParams(loadingSequenceResponse.getStabilityParams()));
+			sheetThree.setStabilityParams(getStabilityParams(loadingSequenceResponse.getStabilityParams(),
+					sheetThree.getTickPoints().size()));
 		}
 		log.info("Building sheet 3 : completed");
 		return sheetThree;
@@ -431,8 +499,7 @@ public class GenerateLoadingPlanExcelReportService {
 				stageTickPositions.forEach(position -> {
 					QuantityLoadingStatus ballastStatus = new QuantityLoadingStatus();
 					Optional<Ballast> ballastMatch = ballastListOfpresentTank.stream()
-							.filter(cargo -> cargo.getStart().equals(position) && cargo.getEnd() > position)
-							.findFirst();
+							.filter(cargo -> cargo.getStart().equals(position)).findFirst();
 					if (ballastMatch.isPresent()) {
 						ullages.add(ballastMatch.get().getSounding().toString());
 						if (ballastMatch.get().getQuantity().compareTo(BigDecimal.ZERO) > 0
@@ -450,6 +517,11 @@ public class GenerateLoadingPlanExcelReportService {
 				});
 				tanksUllageObj.setUllage(ullages);
 				tanksUllageObj.setStatus(ballastStatusList);
+			} else {
+				// setting empty values for look and feel
+				IntStream.range(0, stageTickPositions.size()).forEach(i -> tanksUllageObj.getUllage().add(""));
+				IntStream.range(0, stageTickPositions.size())
+						.forEach(i -> tanksUllageObj.getStatus().add(new QuantityLoadingStatus(false, "", "")));
 			}
 			tank.setCargoTankUllage(tanksUllageObj);
 		}
@@ -495,14 +567,31 @@ public class GenerateLoadingPlanExcelReportService {
 							loadingStatus.setPresent(false);
 						}
 					} else {
-						ullages.add("");
-						loadingStatus.setPresent(false);
+						// Avoiding entry in 0th position
+						Optional<Cargo> firstPosition = cargoListOfpresentTank.stream()
+								.filter(cargo -> cargo.getStart().equals(position) && cargo.getEnd().equals(position))
+								.findFirst();
+						if (!firstPosition.isPresent()) {
+							ullages.add("");
+							loadingStatus.setPresent(false);
+						}
 					}
-					quantityStatusList.add(loadingStatus);
+					// Avoiding entry in 0th position
+					Optional<Cargo> firstPosition = cargoListOfpresentTank.stream()
+							.filter(cargo -> cargo.getStart().equals(position) && cargo.getEnd().equals(position))
+							.findFirst();
+					if (!firstPosition.isPresent()) {
+						quantityStatusList.add(loadingStatus);
+					}
 				});
 				tanksUllageObj.setUllage(ullages);
 				tanksUllageObj.setStatus(quantityStatusList);
 
+			} else {
+				// setting empty values for look and feel
+				IntStream.range(0, stageTickPositions.size() - 1).forEach(i -> tanksUllageObj.getUllage().add(""));
+				IntStream.range(0, stageTickPositions.size() - 1)
+						.forEach(i -> tanksUllageObj.getStatus().add(new QuantityLoadingStatus(false, "", "")));
 			}
 			tank.setCargoTankUllage(tanksUllageObj);
 		}
@@ -552,6 +641,7 @@ public class GenerateLoadingPlanExcelReportService {
 					Optional<Cargo> cargoOpt = cargos.stream().filter(cargo -> cargo.getTankId().equals(item.getId())
 							&& cargo.getQuantity().compareTo(BigDecimal.ZERO) > 0).findFirst();
 					if (cargoOpt.isPresent()) {
+						tankCategoryObj.setQuantity(cargoOpt.get().getQuantity());
 						tankCategoryObj.setCargoName(cargoOpt.get().getName());
 						tankCategoryObj.setColorCode(cargoOpt.get().getColor());
 					}
@@ -593,18 +683,18 @@ public class GenerateLoadingPlanExcelReportService {
 	 */
 	private List<LoadingRateForSequence> getLoadingRate(List<CargoLoadingRate> cargoLoadingRates,
 			Set<Long> stageTickPositions) {
-		List<LoadingRateForSequence> loadingRates = new ArrayList<>(stageTickPositions.size());
+		List<LoadingRateForSequence> loadingRates = new ArrayList<>();
 		List<Long> positions = new ArrayList<>();
-		int index = 0;
 		for (Long i : stageTickPositions) {
 			positions.add(i);
-			LoadingRateForSequence lrsObj = new LoadingRateForSequence();
-			lrsObj.setPosision(index);
-			lrsObj.setRate("");
-			loadingRates.add(lrsObj);
-			index++;
 		}
 		positions.stream().sorted();
+		IntStream.range(0, stageTickPositions.size() - 1).forEach(i -> {
+			LoadingRateForSequence lrsObj = new LoadingRateForSequence();
+			lrsObj.setPosision(i);
+			lrsObj.setRate("");
+			loadingRates.add(lrsObj);
+		});
 		List<CargoLoadingRate> selectedItem = cargoLoadingRates.stream()
 				.filter(item -> !item.getLoadingRates().isEmpty()).collect(Collectors.toList());
 		for (CargoLoadingRate rate : selectedItem) {
@@ -626,10 +716,13 @@ public class GenerateLoadingPlanExcelReportService {
 	}
 
 	/**
+	 * Stability params of each type
+	 * 
 	 * @param stabilityParams
+	 * @param size
 	 * @return
 	 */
-	private StabilityParamsOfLoadingSequence getStabilityParams(List<StabilityParam> stabilityParams) {
+	private StabilityParamsOfLoadingSequence getStabilityParams(List<StabilityParam> stabilityParams, Integer size) {
 		StabilityParamsOfLoadingSequence sequenceStability = new StabilityParamsOfLoadingSequence();
 		List<String> fwList = new ArrayList<>();
 		List<String> afterList = new ArrayList<>();
@@ -641,39 +734,25 @@ public class GenerateLoadingPlanExcelReportService {
 		for (StabilityParam stabilityParam : stabilityParams) {
 			switch (stabilityParam.getName()) {
 			case "fore_draft":
-				stabilityParam.getData().forEach(i -> {
-					fwList.add(i.get(1).toString());
-				});
+				matchStabilityParam(fwList, stabilityParam.getData(), size);
 				break;
 			case "aft_draft":
-				stabilityParam.getData().forEach(i -> {
-					afterList.add(i.get(1).toString());
-				});
+				matchStabilityParam(afterList, stabilityParam.getData(), size);
 				break;
 			case "trim":
-				stabilityParam.getData().forEach(i -> {
-					trimList.add(i.get(1).toString());
-				});
+				matchStabilityParam(trimList, stabilityParam.getData(), size);
 				break;
 			case "gm":
-				stabilityParam.getData().forEach(i -> {
-					gmList.add(i.get(1).toString());
-				});
+				matchStabilityParam(gmList, stabilityParam.getData(), size);
 				break;
 			case "sf":
-				stabilityParam.getData().forEach(i -> {
-					sfList.add(i.get(1).toString());
-				});
+				matchStabilityParam(sfList, stabilityParam.getData(), size);
 				break;
 			case "bm":
-				stabilityParam.getData().forEach(i -> {
-					bmList.add(i.get(1).toString());
-				});
+				matchStabilityParam(bmList, stabilityParam.getData(), size);
 				break;
 			case "ukc":
-				stabilityParam.getData().forEach(i -> {
-					ukcList.add(i.get(1).toString());
-				});
+				matchStabilityParam(ukcList, stabilityParam.getData(), size);
 				break;
 			default:
 				break;
@@ -688,6 +767,17 @@ public class GenerateLoadingPlanExcelReportService {
 		sequenceStability.setShearingForce(sfList);
 		sequenceStability.setShearingForce(sfList);
 		return sequenceStability;
+	}
+
+	private void matchStabilityParam(List<String> paramsList, List<List> params, Integer size) {
+		if (params.isEmpty()) {
+			// Setting empty value for excel look and feel
+			IntStream.range(0, size + 1).forEach(i -> paramsList.add(""));
+		} else {
+			params.forEach(i -> {
+				paramsList.add(i.get(1).toString());
+			});
+		}
 	}
 
 	/**
