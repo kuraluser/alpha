@@ -4121,20 +4121,26 @@ public class LoadableStudyService {
                 Long userId = Long.parseLong(lpc.getCreatedBy());
                 Optional<Users> userEntity = this.usersRepository.findById(userId);
                 userEntity.ifPresent(
-                    user -> {
-                      try {
-                        if (userEntity.get().getKeycloakId() != null) {
-                          KeycloakUser keycloakUser =
-                              userCachingService.getUser(userEntity.get().getKeycloakId());
-                          commets.setUserName(
-                              String.format(
-                                  "%s %s",
-                                  keycloakUser.getFirstName(), keycloakUser.getLastName()));
-                        }
-                      } catch (GenericServiceException e) {
-                        commets.setUserName(DEFAULT_USER_NAME);
-                      }
-                    });
+                        user -> {
+                          try {
+                            if (user.getKeycloakId() != null) {
+                              KeycloakUser keycloakUser =
+                                      userCachingService.getUser(user.getKeycloakId());
+                              commets.setUserName(
+                                      String.format(
+                                              "%s %s", keycloakUser.getFirstName(), keycloakUser.getLastName()));
+                            } else {
+                              if (user.getIsShipUser()) {
+                                log.info("Get User Name, from users DB username - {}", user.getUsername().trim());
+                                commets.setUserName(user
+                                        .getUsername().trim()
+                                        .toUpperCase());
+                              }
+                            }
+                          } catch (GenericServiceException e) {
+                            commets.setUserName(DEFAULT_USER_NAME);
+                          }
+                        });
               } catch (NumberFormatException e) {
                 commets.setUserName(DEFAULT_USER_NAME);
               }
