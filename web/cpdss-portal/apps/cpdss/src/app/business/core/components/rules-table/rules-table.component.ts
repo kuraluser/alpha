@@ -254,7 +254,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
                 }
 
                 else {
-                  this.rulesJson[this.data][index]["rules"][j]["inputs"][t].defaultValue = controls["controls"]["inputs"]["controls"][t].value;
+                  this.rulesJson[this.data][index]["rules"][j]["inputs"][t].defaultValue = controls["controls"]["inputs"]["controls"][t].value?.toString();
                 }
               }
               this.rulesJson[this.data][index]["rules"][j].enable = controls["controls"]["enable"].value;

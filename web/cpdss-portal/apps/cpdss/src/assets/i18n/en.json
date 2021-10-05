@@ -2015,7 +2015,7 @@
   "ULLAGE_UPDATE_FILE_UPLOAD_LABEL": "Upload",
   "ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING": "Verification Pending",
   "ULLAGE_UPDATE_BLFIG_INFO_MESSAGE": "B/L figures can be entered only after entering the actuals",
-  "LOADING_OPERATION_REGENARATE_INFO_MESSAGE": "If there is any change in loading information, please regenerate the plan to get the updated figures.",
+  "LOADING_OPERATION_REGENARATE_INFO_MESSAGE": "If there is any change in loading information,loading rules, please regenerate the plan to get the updated figures.",
   "DISCHARGE_STUDY_PORTS_VIEW_PLAN_NOT_AVAILABLE": "PLAN NOT GENERATED FOR THE SELECTED VOYAGE SINCE NO DISCHARGE STUDY AVAILABLE.",
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_INFO": "Info",
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_DETAILS": "Loadable study communicated to shore",
@@ -2050,6 +2050,7 @@
   "DISCHARGE_PLAN_CONFIRM_CONFIRM_LABEL": "Yes",
   "DISCHARGE_PLAN_CONFIRM_REJECT_LABEL": "No",
   "DISCHARGE_PLAN_CONFIRM_STATUS_ERROR": "Cannot confirm pattern of the selected discharge study",
-  "DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY": "Total backloading cargo quantity should be less than loadable study"
+  "DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY": "Total backloading cargo quantity should be less than loadable study",
+  "RULES_SELECT_OPTION_PLACEHOLDER":"Select the value"
 }
 
