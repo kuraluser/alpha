@@ -890,7 +890,7 @@ public class VoyageService {
     List<Long> voyageIds = new ArrayList<>();
     List<Long> loadbleStudyList = new ArrayList<>();
     entityList.forEach(voyage -> voyageIds.add(voyage.getId()));
-    Map<Long, Long> loadableStudyMap = new HashMap<>();
+    Map<Long, com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyMap = new HashMap<>();
     Map<Long, String> loadableStudyChartererMap = new HashMap<>();
     // To fetch all loadableStudy for the requested voyageIds
     List<com.cpdss.loadablestudy.entity.LoadableStudy> listOfLoadableStudy =
@@ -901,7 +901,7 @@ public class VoyageService {
               && STATUS_CONFIRMED.equalsIgnoreCase(
                   loadableStudy.getLoadableStudyStatus().getName())) {
             loadbleStudyList.add(loadableStudy.getId());
-            loadableStudyMap.put(loadableStudy.getVoyage().getId(), loadableStudy.getId());
+            loadableStudyMap.put(loadableStudy.getVoyage().getId(), loadableStudy);
             loadableStudyChartererMap.put(loadableStudy.getId(), loadableStudy.getCharterer());
           }
         });
@@ -942,33 +942,17 @@ public class VoyageService {
       // Check any loadableStudy for that voyage is in confirmed status for active voyages
       boolean containsKey = loadableStudyMap.containsKey(entity.getId());
       if (containsKey) {
-        Long loadableStudyId = loadableStudyMap.get(entity.getId());
-        detailbuilder.setConfirmedLoadableStudyId(loadableStudyId);
-        List<Long> ports = loadingPortHashMap.get(loadableStudyId);
-        for (Long id : ports) {
-          Optional<PortDetail> portDetail =
-              portsList.stream().filter(item -> item.getId() == id).findAny();
-          if (portDetail.isPresent()) {
-            LoadableStudy.LoadingPortDetail.Builder loadingPortDetail =
-                LoadableStudy.LoadingPortDetail.newBuilder();
-            loadingPortDetail.setName(portDetail.get().getName());
-            loadingPortDetail.setPortId(portDetail.get().getId());
-            detailbuilder.addLoadingPorts(loadingPortDetail);
-          }
+        com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
+            loadableStudyMap.get(entity.getId());
+        detailbuilder.setConfirmedLoadableStudyId(loadableStudy.getId());
+        // loading ports wil not be available for discharging. SO based on the planning type id,
+        // populating the discharging ports and loading ports
+        if (loadableStudy.getPlanningTypeXId() == 1) {
+          addLoadingPorts(loadingPortHashMap, portsList, detailbuilder, loadableStudy);
+        } else if (loadableStudy.getPlanningTypeXId() == 2) {
+          addDischargingPorts(dischargingPortHashMap, portsList, detailbuilder, loadableStudy);
         }
-        List<Long> dischargePorts = dischargingPortHashMap.get(loadableStudyId);
-        for (Long id : dischargePorts) {
-          Optional<PortDetail> portDetail =
-              portsList.stream().filter(item -> item.getId() == id).findAny();
-          if (portDetail.isPresent()) {
-            LoadableStudy.DischargingPortDetail.Builder dischargingPortDetail =
-                LoadableStudy.DischargingPortDetail.newBuilder();
-            dischargingPortDetail.setName(portDetail.get().getName());
-            dischargingPortDetail.setPortId(portDetail.get().getId());
-            detailbuilder.addDischargingPorts(dischargingPortDetail);
-          }
-        }
-        List<Long> cargos = cargoHashMap.get(loadableStudyId);
+        List<Long> cargos = cargoHashMap.get(loadableStudy.getId());
         List<CargoInfo.CargoDetail> cargoes =
             cargoReply.getCargosList().stream()
                 .filter(cargo -> cargos.contains(cargo.getId()))
@@ -981,13 +965,54 @@ public class VoyageService {
               cargoDetails.setCargoId(cargo.getId());
               detailbuilder.addCargos(cargoDetails);
             });
-        detailbuilder.setCharterer(loadableStudyChartererMap.get(loadableStudyId));
+        if (loadableStudyChartererMap.get(loadableStudy.getId()) != null) {
+          detailbuilder.setCharterer(loadableStudyChartererMap.get(loadableStudy.getId()));
+        }
       }
 
       builder.addVoyages(detailbuilder.build());
     }
     builder.setResponseStatus(LoadableStudy.StatusReply.newBuilder().setStatus(SUCCESS).build());
     return builder;
+  }
+
+  private void addDischargingPorts(
+      Map<Long, List<Long>> dischargingPortHashMap,
+      List<PortDetail> portsList,
+      LoadableStudy.VoyageDetail.Builder detailbuilder,
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy) {
+    List<Long> dischargePorts = dischargingPortHashMap.get(loadableStudy.getId());
+    for (Long id : dischargePorts) {
+      Optional<PortDetail> portDetail =
+          portsList.stream().filter(item -> item.getId() == id).findAny();
+      if (portDetail.isPresent()) {
+        LoadableStudy.DischargingPortDetail.Builder dischargingPortDetail =
+            LoadableStudy.DischargingPortDetail.newBuilder();
+        dischargingPortDetail.setName(portDetail.get().getName());
+        dischargingPortDetail.setPortId(portDetail.get().getId());
+        detailbuilder.addDischargingPorts(dischargingPortDetail);
+      }
+    }
+  }
+
+  private void addLoadingPorts(
+      Map<Long, List<Long>> loadingPortHashMap,
+      List<PortDetail> portsList,
+      LoadableStudy.VoyageDetail.Builder detailbuilder,
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy) {
+    List<Long> ports = loadingPortHashMap.get(loadableStudy.getId());
+
+    for (Long id : ports) {
+      Optional<PortDetail> portDetail =
+          portsList.stream().filter(item -> item.getId() == id).findAny();
+      if (portDetail.isPresent()) {
+        LoadableStudy.LoadingPortDetail.Builder loadingPortDetail =
+            LoadableStudy.LoadingPortDetail.newBuilder();
+        loadingPortDetail.setName(portDetail.get().getName());
+        loadingPortDetail.setPortId(portDetail.get().getId());
+        detailbuilder.addLoadingPorts(loadingPortDetail);
+      }
+    }
   }
 
   /**

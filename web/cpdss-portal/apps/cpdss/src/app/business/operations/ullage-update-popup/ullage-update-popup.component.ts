@@ -404,7 +404,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       const differenecPercentage = item.diffPercentage.mt;
       this.cargoTanks.map(tank => {
         tank.map(elem => {
-          if (elem?.commodity && elem?.commodity['cargoNominationId'] === item.cargoNominationId && !item.cargoLoaded && item.blFigure.mt) {
+          if (elem?.commodity && elem?.commodity['cargoNominationId'] === item.cargoNominationId && (!item.cargoLoaded || !item.cargoDischarged) && item.blFigure.mt) {
             const changeInQty = (differenecPercentage / 100) * Number(elem.commodity.quantity);
             elem.commodity.quantity = differenecPercentage >= 0 ? Number(elem.commodity.quantity) + changeInQty : Number(elem.commodity.quantity) - changeInQty;
             elem.commodity.actualWeight = elem.commodity.quantity;
@@ -881,16 +881,24 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
    * @param {number} colIndex
    * @memberof UllageUpdatePopupComponent
   */
-  newCargo(rowIndex: number, colIndex: number) {
+  newCargo(rowIndex: number, colIndex: number, rowData) {
     if (this.getCargoItems(rowIndex).disabled) { return; }
-
-    this.blFigure.items[rowIndex].push({ cargo: this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{ portId: this.portId }, this.ullageResponseData?.billOfLaddingList[rowIndex], true, true) });
-    this.getCargoItems(rowIndex).push(this.initCargoDetails(this.blFigure.items[rowIndex][this.blFigure.items[rowIndex].length - 1].cargo));
-    setTimeout(() => {
-      this.validateBlFigTable();
-    });
+    const getBlFigure = this.ullageResponseData?.billOfLaddingList.filter((item) => item.cargoNominationId === rowData.cargoNominationId);
+    if (getBlFigure?.length) {
+      this.blFigure.items[rowIndex].push({ cargo: this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{ portId: this.portId }, getBlFigure[0], true, true) });
+      this.getCargoItems(rowIndex).push(this.initCargoDetails(this.blFigure.items[rowIndex][this.blFigure.items[rowIndex].length - 1].cargo));
+      setTimeout(() => {
+        this.validateBlFigTable();
+      });
+    }
   }
 
+  /**
+   * Delete confirmation functoin
+   * @param {number} rowIndex
+   * @param {number} colIndex
+   * @memberof UllageUpdatePopupComponent
+  */
   deleteConfirm(rowIndex: number, colIndex: number) {
     const translationKeys = this.translateService.instant(['ULLAGE_UPDATE_DELETE_SUMMARY', 'ULLAGE_UPDATE_DELETE_DELETE_DETAILS', 'ULLAGE_UPDATE_DELETE_CONFIRM_LABEL', 'ULLAGE_UPDATE_DELETE_REJECT_LABEL']);
 
@@ -1245,7 +1253,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.ballastQuantities?.map(item => {
         if (item.tankId === event.data.tankId) {
           item.quantity.value = result.quantityMt;
-          item.sounding.value = result.correctedUllage;
+          item.sounding.value = event.data.sounding.value;
           item.percentageFilled = result.fillingRatio;
         }
       });
@@ -1430,53 +1438,47 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     if (this.status === ULLAGE_STATUS.DEPARTURE) {
       this.blFigure.items.map(item => {
         item.map(row => {
-          data.billOfLandingList.push(
-            {
-              loadingId: this.infoId ? this.infoId?.toString() : '',
-              portId: row.cargo.portId ? row.cargo.portId?.toString() : '',
-              cargoId: row.cargo.cargoNominationId ? row.cargo.cargoNominationId?.toString() : '',
-              blRefNumber: row.cargo.blRefNo.value ? row.cargo.blRefNo.value?.toString() : '',
-              bblAt60f: row.cargo.bbl.value ? row.cargo.bbl.value?.toString() : '',
-              quantityLt: row.cargo.lt.value ? row.cargo.lt.value?.toString() : '',
-              quantityMt: row.cargo.mt.value ? row.cargo.mt.value?.toString() : '',
-              klAt15c: row.cargo.kl.value ? row.cargo.kl.value?.toString() : '',
-              api: row.cargo.api.value ? Number(row.cargo.api.value) : '',
-              temperature: row.cargo.temp.value ? row.cargo.temp.value : '',
-              isUpdate: row.cargo.isNewRow ? false : true,
-              id: row.cargo.id ? row.cargo.id.toString() : '',
-              isActive: '',
-              version: ''
-            }
-          )
+          data.billOfLandingList.push({
+            portId: row.cargo.portId ? row.cargo.portId?.toString() : '',
+            cargoId: row.cargo.cargoNominationId ? row.cargo.cargoNominationId?.toString() : '',
+            blRefNumber: row.cargo.blRefNo.value ? row.cargo.blRefNo.value?.toString() : '',
+            bblAt60f: row.cargo.bbl.value ? row.cargo.bbl.value?.toString() : '',
+            quantityLt: row.cargo.lt.value ? row.cargo.lt.value?.toString() : '',
+            quantityMt: row.cargo.mt.value ? row.cargo.mt.value?.toString() : '',
+            klAt15c: row.cargo.kl.value ? row.cargo.kl.value?.toString() : '',
+            api: row.cargo.api.value ? Number(row.cargo.api.value) : '',
+            temperature: row.cargo.temp.value ? row.cargo.temp.value : '',
+            isUpdate: row.cargo.isNewRow ? false : true,
+            id: row.cargo.id ? row.cargo.id.toString() : '',
+            isActive: '',
+            version: '',
+            ...(this.operation === OPERATIONS.LOADING ? { loadingId: this.infoId?.toString() } : { dischargingId: this.infoId?.toString() })
+          });
         });
       });
 
       this.billOfLaddingRemovedList.map(item => {
-        data.billOfLandingListRemove.push(
-          {
-            loadingId: this.infoId ? this.infoId?.toString() : '',
-            portId: item.cargo.portId ? item.cargo.portId?.toString() : '',
-            cargoId: item.cargo.cargoNominationId ? item.cargo.cargoNominationId?.toString() : '',
-            blRefNumber: item.cargo.blRefNo.value ? item.cargo.blRefNo.value?.toString() : '',
-            bblAt60f: item.cargo.bbl.value ? item.cargo.bbl.value?.toString() : '',
-            quantityLt: item.cargo.lt.value ? item.cargo.lt.value?.toString() : '',
-            quantityMt: item.cargo.mt.value ? item.cargo.mt.value?.toString() : '',
-            klAt15c: item.cargo.kl.value ? item.cargo.kl.value?.toString() : '',
-            api: item.cargo.api.value ? Number(item.cargo.api.value) : '',
-            temperature: item.cargo.temp.value ? item.cargo.temp.value : '',
-            id: item.cargo.id ? item.cargo.id.toString() : '',
-            isUpdate: true,
-            isActive: '',
-            version: ''
-          }
-        )
+        data.billOfLandingListRemove.push({
+          portId: item.cargo.portId ? item.cargo.portId?.toString() : '',
+          cargoId: item.cargo.cargoNominationId ? item.cargo.cargoNominationId?.toString() : '',
+          blRefNumber: item.cargo.blRefNo.value ? item.cargo.blRefNo.value?.toString() : '',
+          bblAt60f: item.cargo.bbl.value ? item.cargo.bbl.value?.toString() : '',
+          quantityLt: item.cargo.lt.value ? item.cargo.lt.value?.toString() : '',
+          quantityMt: item.cargo.mt.value ? item.cargo.mt.value?.toString() : '',
+          klAt15c: item.cargo.kl.value ? item.cargo.kl.value?.toString() : '',
+          api: item.cargo.api.value ? Number(item.cargo.api.value) : '',
+          temperature: item.cargo.temp.value ? item.cargo.temp.value : '',
+          id: item.cargo.id ? item.cargo.id.toString() : '',
+          isUpdate: true,
+          isActive: '',
+          version: '',
+          ...(this.operation === OPERATIONS.LOADING ? { loadingId: this.infoId?.toString() } : { dischargingId: this.infoId?.toString() })
+        });
       });
-
     }
 
     this.ullageResponseData?.portPlanStowageDetails.map(item => {
       data.ullageUpdList.push({
-        loadingInformationId: this.infoId?.toString(),
         tankId: item.tankId?.toString(),
         temperature: item.temperature?.toString(),
         correctedUllage: item.correctedUllage?.toString(),
@@ -1495,13 +1497,12 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         color_code: item.colorCode,
         abbreviation: item.abbreviation,
         cargoId: item.cargoId,
-
-      })
+        ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
+      });
     });
 
     this.ballastQuantities.map(item => {
       data.ballastUpdateList.push({
-        loadingInformationId: this.infoId?.toString(),
         tankId: item.tankId?.toString(),
         temperature: item.temperature.value?.toString(),
         quantity: item.quantity.value?.toString(),
@@ -1520,12 +1521,12 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         portRotationXId: this.portRotationId,
         isValidate: '',
         isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
+        ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
       });
     });
 
     this.bunkerTanksList.map(item => {
       data.robUpdateList.push({
-        loadingInformationId: this.infoId?.toString(),
         tankId: item.tankId?.toString(),
         quantity: item.quantity.value?.toString(),
         isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
@@ -1541,11 +1542,18 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         ullage: '',
         correctionFactor: '',
         fillingRatio: '',
-      })
+        ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
+      });
     });
+
     try {
       this.ngxSpinnerService.show();
-      const result = await this.ullageUpdateApiService.updateUllage(data).toPromise();
+      let result;
+      if (this.operation === OPERATIONS.LOADING) {
+        result = await this.ullageUpdateApiService.updateUllage(data).toPromise();
+      } else {
+        result = await this.ullageUpdateApiService.dischargePlanUpdateUllage(data).toPromise();
+      }
       if (result.responseStatus.status === '200') {
         const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_SUCCESS_LABEL', 'ULLAGE_UPDATE_SUCCESS_MESSAGE']).toPromise();
         this.messageService.add({ severity: 'success', summary: translationKeys['ULLAGE_UPDATE_SUCCESS_LABEL'], detail: translationKeys['ULLAGE_UPDATE_SUCCESS_MESSAGE'] });

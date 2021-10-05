@@ -486,10 +486,14 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
           this.vesselValveService.buildVesselValveEductorResponse(
               reply.getVvEducationEntitiesList()));
       // Air Purge
-      response.put("airPurge", reply.getVvAirPurgeSequenceList());
+      response.put(
+          "airPurge",
+          this.vesselValveService.buildVesselValveAirPurge(reply.getVvAirPurgeSequenceList()));
 
       // Stripping Sequence
-      response.put("strippingSequence", reply.getVvStrippingSequenceList());
+      response.put(
+          "strippingSequence",
+          this.vesselValveService.buildVesselValveStrippingSeq(reply.getVvStrippingSequenceList()));
 
       log.info("Vessel Valve Sequence data size {}", response.size());
       return response;

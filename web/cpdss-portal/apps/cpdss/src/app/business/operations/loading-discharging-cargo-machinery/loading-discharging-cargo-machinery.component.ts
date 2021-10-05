@@ -95,7 +95,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   *
   * @memberof LoadingDischargingCargoMachineryComponent
   */
-  updateMachinery(clear = false) {
+  updateMachinery() {
     this.machineries = [];
     this.machineryInUses?.vesselPumps?.map((vesselpump) => {
       vesselpump.isUsing = this.machineryInUses?.loadingDischargingMachinesInUses?.some(machine => machine.machineId === vesselpump.id && machine.machineTypeId === vesselpump.machineType);
@@ -132,7 +132,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
       field: 'componentCode'
     }
     this.machineryInUses.vesselBottomLine.map((bottoLine) => {
-      bottoLine.isUsing = clear ? false : this.machineryInUses?.loadingDischargingMachinesInUses?.some(machine => machine.machineId === bottoLine.id && machine.machineTypeId === bottoLine.machineTypeId);
+      bottoLine.isUsing = this.machineryInUses?.loadingDischargingMachinesInUses?.some(machine => machine.machineId === bottoLine.id && machine.machineTypeId === bottoLine.machineTypeId);
     });
     const bottomLineObject = {
       machine: 'BottomLine',
@@ -346,7 +346,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   * @memberof LoadingDischargingCargoMachineryComponent
   */
   onTypeChange(event) {
-    this.updateMachinery(true);
+    this.updateMachinery();
     this.selectedType = event.value;
   }
 
