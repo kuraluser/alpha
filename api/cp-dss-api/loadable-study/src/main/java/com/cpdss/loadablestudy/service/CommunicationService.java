@@ -168,13 +168,11 @@ public class CommunicationService {
         loadablePatternService.deleteExistingPlanDetails(loadablePatternOpt.get());
         loadableStudyServiceShore.savePatternInShipSide(
             loadablePatternAlgoRequest.getPatternDetails(), loadablePatternOpt.get());
-        if (loadablePatternAlgoRequest.getHasLoadicator()) {
-
-        } else {
+        if (!loadablePatternAlgoRequest.getHasLoadicator()) {
           loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
-              LOADABLE_PATTERN_VALIDATION_SUCCESS_ID,
-              loadablePatternAlgoRequest.getProcessId(),
-              true);
+                  LOADABLE_PATTERN_VALIDATION_SUCCESS_ID,
+                  loadablePatternAlgoRequest.getProcessId(),
+                  true);
         }
       }
     }
