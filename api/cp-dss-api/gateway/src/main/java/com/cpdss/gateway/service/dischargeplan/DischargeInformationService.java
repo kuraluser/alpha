@@ -391,6 +391,12 @@ public class DischargeInformationService {
         loadingPlanService.getUpdateUllageDetails(
             vesselId, patternId, portRotationId, operationType, true);
     BeanUtils.copyProperties(dischargeUllageResponse, response);
+    dischargeUllageResponse.getBillOfLaddingList().stream()
+        .forEach(
+            ladding -> {
+              ladding.setCargoToBeDischarged(ladding.getCargoToBeLoaded());
+              ladding.setCargoDischarged(ladding.getCargoLoaded());
+            });
     response.setPortDischargePlanBallastDetails(
         dischargeUllageResponse.getPortLoadablePlanBallastDetails());
     response.setPortDischargePlanRobDetails(
