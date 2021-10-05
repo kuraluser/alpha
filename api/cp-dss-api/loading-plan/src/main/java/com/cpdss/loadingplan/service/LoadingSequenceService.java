@@ -19,6 +19,7 @@ import com.cpdss.loadingplan.entity.CargoLoadingRate;
 import com.cpdss.loadingplan.entity.DeballastingRate;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.LoadingPlanBallastDetails;
+import com.cpdss.loadingplan.entity.LoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanStabilityParameters;
@@ -30,6 +31,7 @@ import com.cpdss.loadingplan.repository.CargoLoadingRateRepository;
 import com.cpdss.loadingplan.repository.DeballastingRateRepository;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanBallastDetailsRepository;
+import com.cpdss.loadingplan.repository.LoadingPlanCommingleDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanPortWiseDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanStabilityParametersRepository;
@@ -60,6 +62,7 @@ public class LoadingSequenceService {
   @Autowired LoadingPlanStabilityParametersRepository stabilityParametersRepository;
   @Autowired LoadingPlanStowageDetailsRepository stowageDetailsRepository;
   @Autowired LoadingSequenceStabiltyParametersRepository loadingSequenceStabilityParamsRepository;
+  @Autowired LoadingPlanCommingleDetailsRepository commingleDetailsRepository;
 
   @GrpcClient("loadableStudyService")
   LoadableStudyServiceBlockingStub loadableStudyGrpcService;
@@ -243,11 +246,49 @@ public class LoadingSequenceService {
                   portWiseDetails);
           buildStabilityParams(portWiseDetailsBuilder, stabilityParametersOpt);
 
+          List<LoadingPlanCommingleDetails> commingleDetails =
+              commingleDetailsRepository.findByLoadingPlanPortWiseDetailsAndIsActiveTrueOrderById(
+                  portWiseDetails);
+          buildCommingleDetails(portWiseDetailsBuilder, commingleDetails);
+
           List<LoadingPlanStowageDetails> stowageDetails =
               stowageDetailsRepository.findByLoadingPlanPortWiseDetailsAndIsActiveTrueOrderById(
                   portWiseDetails);
           buildStowageDetails(portWiseDetailsBuilder, stowageDetails);
           sequenceBuilder.addLoadingPlanPortWiseDetails(portWiseDetailsBuilder.build());
+        });
+  }
+
+  private void buildCommingleDetails(
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails.Builder
+          portWiseDetailsBuilder,
+      List<LoadingPlanCommingleDetails> commingleDetails) {
+    commingleDetails.forEach(
+        commingle -> {
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails
+                  .Builder
+              builder =
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .LoadingPlanCommingleDetails.newBuilder();
+          Optional.ofNullable(commingle.getAbbreviation()).ifPresent(builder::setAbbreviation);
+          Optional.ofNullable(commingle.getApi()).ifPresent(api -> builder.setApi(api.toString()));
+          Optional.ofNullable(commingle.getCargo1XId()).ifPresent(builder::setCargo1Id);
+          Optional.ofNullable(commingle.getCargo2XId()).ifPresent(builder::setCargo2Id);
+          Optional.ofNullable(commingle.getCargoNomination1XId())
+              .ifPresent(builder::setCargoNomination1Id);
+          Optional.ofNullable(commingle.getCargoNomination2XId())
+              .ifPresent(builder::setCargoNomination2Id);
+          Optional.ofNullable(commingle.getId()).ifPresent(builder::setId);
+          Optional.ofNullable(commingle.getQuantity())
+              .ifPresent(quantity -> builder.setQuantityMT(quantity.toString()));
+          Optional.ofNullable(commingle.getQuantityM3())
+              .ifPresent(quantityM3 -> builder.setQuantityM3(quantityM3.toString()));
+          Optional.ofNullable(commingle.getTankXId()).ifPresent(builder::setTankId);
+          Optional.ofNullable(commingle.getTemperature())
+              .ifPresent(temperature -> builder.setTemperature(temperature.toString()));
+          Optional.ofNullable(commingle.getUllage())
+              .ifPresent(ullage -> builder.setUllage(ullage.toString()));
+          portWiseDetailsBuilder.addLoadingPlanCommingleDetails(builder.build());
         });
   }
 

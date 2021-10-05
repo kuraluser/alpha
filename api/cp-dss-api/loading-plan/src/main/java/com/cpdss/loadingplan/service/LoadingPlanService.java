@@ -57,6 +57,7 @@ public class LoadingPlanService {
   @Autowired PortLoadingPlanStowageDetailsRepository plpStowageDetailsRepository;
   @Autowired PortLoadingPlanRobDetailsRepository plpRobDetailsRepository;
   @Autowired PortLoadingPlanStabilityParametersRepository plpStabilityParametersRepository;
+  @Autowired PortLoadingPlanCommingleDetailsRepository plpCommingleDetailsRepository;
   @Autowired LoadingInformationBuilderService informationBuilderService;
   @Autowired LoadingBerthDetailsRepository berthDetailsRepository;
   @Autowired CargoToppingOffSequenceRepository cargoToppingOffSequenceRepository;
@@ -258,7 +259,8 @@ public class LoadingPlanService {
           plpRobDetailsRepository.findByLoadingInformationAndIsActive(var1.get().getId(), true);
       List<PortLoadingPlanStabilityParameters> plpStabilityList =
           plpStabilityParametersRepository.findByLoadingInformationAndIsActive(var1.get(), true);
-
+      List<PortLoadingPlanCommingleDetails> plpCommingleList =
+          plpCommingleDetailsRepository.findByLoadingInformationAndIsActive(var1.get(), true);
       // Removing tanks that were loaded from previous port.
       List<Long> toBeLoadedCargoNominationIds =
           loadingSequenceRepository.findToBeLoadedCargoNominationIdByLoadingInformationAndIsActive(
@@ -283,6 +285,8 @@ public class LoadingPlanService {
           this.informationBuilderService.buildLoadingPlanTankRobMessage(plpRobList));
       masterBuilder.addAllPortLoadingPlanStabilityParameters(
           this.informationBuilderService.buildLoadingPlanTankStabilityMessage(plpStabilityList));
+      masterBuilder.addAllPortLoadingPlanCommingleDetails(
+          this.informationBuilderService.buildLoadingPlanCommingleMessage(plpCommingleList));
       // <---Loading Information End-->
     } else {
       log.error("Failed to fetch Loading Plan, Loading info Id is 0");
