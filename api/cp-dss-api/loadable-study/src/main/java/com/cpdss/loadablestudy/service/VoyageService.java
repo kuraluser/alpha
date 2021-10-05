@@ -1022,7 +1022,7 @@ public class VoyageService {
     return cargoInfoGrpcService.getCargoInfo(build);
   }
 
-  public void builVoyageDetails(
+  public void buildVoyageDetails(
       ModelMapper modelMapper, com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
     loadableStudy.setVoyage(new VoyageDto());
     Voyage voyage = this.voyageRepository.findByIdAndIsActive(loadableStudy.getVoyageId(), true);

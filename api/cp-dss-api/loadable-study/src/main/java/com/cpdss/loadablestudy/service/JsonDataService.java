@@ -28,8 +28,9 @@ public class JsonDataService {
       jsonData.setReferenceXId(referenceId);
       jsonData.setJsonTypeXId(jsonTypeOpt.get());
       jsonData.setJsonData(json);
-      jsonDataRepository.save(jsonData);
+      jsonData = jsonDataRepository.save(jsonData);
       log.info(String.format("Saved %s JSON in database.", jsonTypeOpt.get().getTypeName()));
+      log.info("====" + jsonData.getId() + " ===" + jsonData.getReferenceXId());
     } else {
       log.error("Cannot find JSON type in database.");
     }

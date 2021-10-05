@@ -10,9 +10,10 @@ import lombok.Getter;
 public enum MessageTypes {
   LOADABLESTUDY("LoadableStudy"),
   ALGORESULT("AlgoResult"),
-  VALIDATEPLAN("ValidatePlan");
+  VALIDATEPLAN("ValidatePlan"),
+  PATTERNDETAIL("PatternDetail");
 
-  public static EnumSet<MessageTypes> ship = EnumSet.of(ALGORESULT);
+  public static EnumSet<MessageTypes> ship = EnumSet.of(ALGORESULT, PATTERNDETAIL);
   public static EnumSet<MessageTypes> shore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN);
   private final String messageType;
 }
