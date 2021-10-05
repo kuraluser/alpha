@@ -129,7 +129,7 @@ public class CommunicationService {
   private void savePatternInShipSide(EnvoyReader.EnvoyReaderResultReply erReply)
       throws GenericServiceException {
     String jsonResult = erReply.getPatternResultJson();
-    log.info("------Pattern details payload : " + jsonResult);
+    //log.info("------Pattern details payload : " + jsonResult);
     LoadablePatternAlgoRequest loadablePatternAlgoRequest =
         new Gson()
             .fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadablePatternAlgoRequest.class);
