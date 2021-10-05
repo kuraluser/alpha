@@ -203,7 +203,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       await this.getTranslationKeys();
     }
     if (LoadingDischargingSequenceChartComponent.sequenceData) {
-      if (LoadingDischargingSequenceChartComponent?.charts[SEQUENCE_CHARTS.CARGO_TANK]) {
+      if (LoadingDischargingSequenceChartComponent?.charts[SEQUENCE_CHARTS.CARGO_TANK] && LoadingDischargingSequenceChartComponent?.charts[SEQUENCE_CHARTS.CARGO_TANK]?.xAxis) {
         LoadingDischargingSequenceChartComponent?.charts[SEQUENCE_CHARTS.CARGO_TANK]?.xAxis[0]?.setExtremes(LoadingDischargingSequenceChartComponent.minXAxisValue, this.maxXAxisScrollValue);
       }
       LoadingDischargingSequenceChartComponent.sequenceData = this.loadingDischargingTransformationService.transformSequenceDataToSelectedUnit(LoadingDischargingSequenceChartComponent.sequenceData, this.currentQuantitySelectedUnit, this.currentRateSelectedUnit);

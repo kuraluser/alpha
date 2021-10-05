@@ -154,6 +154,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
      */
   async getLoadableStudies(vesselId: number, voyageId: number, loadableStudyId: number) {
     this.ngxSpinnerService.show();
+    const res = await this.vesselsApiService.getVesselsInfo().toPromise();
+    this.vesselInfo = res[0] ?? <IVessel>{};
+    this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     if (this.loadableStudies.length) {
@@ -173,7 +176,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   setProcessingLoadableStudyActions(loadableStudyId: number, statusId: number) {
     const loadableStudies = this.loadableStudies.map(loadableStudy => {
       if (loadableStudyId === loadableStudy?.id) {
-        if ([4, 5].includes(statusId) && this.router.url.includes('loadable-pattern-history')) {
+        if ([4, 5, 7].includes(statusId) && this.router.url.includes('loadable-pattern-history')) {
           loadableStudy.isActionsEnabled = false;
         }
         else if ([2, 3].includes(statusId)) {
@@ -185,7 +188,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
           loadableStudy.isActionsEnabled = true;
         }
       } else if (!loadableStudyId && !statusId) {
-        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE , LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) ? false : true;
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) || ([VOYAGE_STATUS.ACTIVE].includes(this.selectedVoyage?.statusId) && [LOADABLE_STUDY_STATUS.PLAN_CONFIRMED, LOADABLE_STUDY_STATUS.PLAN_GENERATED].includes(loadableStudy?.statusId)) ? false : true;
         loadableStudy.isEditable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
         loadableStudy.isDeletable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
       }
@@ -236,9 +239,6 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   async getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number) {
-    const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-    this.vesselInfo = res[0] ?? <IVessel>{};
-    this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     this.loadablePatternResponse = await this.loadablePatternApiService.getLoadablePatterns(vesselId, voyageId, loadableStudyId).toPromise();
     if (this.loadablePatternResponse.responseStatus.status === '200') {
       this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;
