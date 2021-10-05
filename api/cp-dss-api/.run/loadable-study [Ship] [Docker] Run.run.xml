@@ -9,7 +9,7 @@
           <entry key="DEBUG_PORT_HOST" value="5090" />
           <entry key="ENABLE_COMM" value="true" />
           <entry key="GRPC_PORT_HOST" value="9090" />
-          <entry key="HOST_ROOT_PATH" value="D:\File" />
+          <entry key="HOST_ROOT_PATH" value="D:\data" />
           <entry key="IMAGE_NAME" value="cpdss-loadable-study-ship" />
           <entry key="SERVICE_NAME" value="loadable-study-service-ship" />
         </map>
