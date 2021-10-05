@@ -3,6 +3,7 @@ package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -68,7 +69,7 @@ public class CargoNomination extends EntityDoc {
       cascade = CascadeType.ALL,
       orphanRemoval = true,
       fetch = FetchType.LAZY)
-  private Set<CargoNominationPortDetails> cargoNominationPortDetails;
+  private Set<CargoNominationPortDetails> cargoNominationPortDetails = new LinkedHashSet<>();
 
   @Column(name = "is_backloading")
   private Boolean isBackloading = false;
