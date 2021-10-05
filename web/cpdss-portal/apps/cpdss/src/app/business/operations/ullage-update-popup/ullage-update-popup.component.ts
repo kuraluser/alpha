@@ -881,16 +881,24 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
    * @param {number} colIndex
    * @memberof UllageUpdatePopupComponent
   */
-  newCargo(rowIndex: number, colIndex: number) {
+  newCargo(rowIndex: number, colIndex: number, rowData) {
     if (this.getCargoItems(rowIndex).disabled) { return; }
-
-    this.blFigure.items[rowIndex].push({ cargo: this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{ portId: this.portId }, this.ullageResponseData?.billOfLaddingList[rowIndex], true, true) });
-    this.getCargoItems(rowIndex).push(this.initCargoDetails(this.blFigure.items[rowIndex][this.blFigure.items[rowIndex].length - 1].cargo));
-    setTimeout(() => {
-      this.validateBlFigTable();
-    });
+    const getBlFigure = this.ullageResponseData?.billOfLaddingList.filter((item) => item.cargoNominationId === rowData.cargoNominationId);
+    if (getBlFigure?.length) {
+      this.blFigure.items[rowIndex].push({ cargo: this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{ portId: this.portId }, getBlFigure[0], true, true) });
+      this.getCargoItems(rowIndex).push(this.initCargoDetails(this.blFigure.items[rowIndex][this.blFigure.items[rowIndex].length - 1].cargo));
+      setTimeout(() => {
+        this.validateBlFigTable();
+      });
+    }
   }
 
+  /**
+   * Delete confirmation functoin
+   * @param {number} rowIndex
+   * @param {number} colIndex
+   * @memberof UllageUpdatePopupComponent
+  */
   deleteConfirm(rowIndex: number, colIndex: number) {
     const translationKeys = this.translateService.instant(['ULLAGE_UPDATE_DELETE_SUMMARY', 'ULLAGE_UPDATE_DELETE_DELETE_DETAILS', 'ULLAGE_UPDATE_DELETE_CONFIRM_LABEL', 'ULLAGE_UPDATE_DELETE_REJECT_LABEL']);
 
@@ -1245,7 +1253,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.ballastQuantities?.map(item => {
         if (item.tankId === event.data.tankId) {
           item.quantity.value = result.quantityMt;
-          item.sounding.value = result.correctedUllage;
+          item.sounding.value = event.data.sounding.value;
           item.percentageFilled = result.fillingRatio;
         }
       });

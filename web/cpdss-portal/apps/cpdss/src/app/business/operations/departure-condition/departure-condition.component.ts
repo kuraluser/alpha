@@ -46,7 +46,6 @@ export class DepartureConditionComponent implements OnInit {
     this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
     this._currentQuantitySelectedUnit = value;
     this.cargoTankOptions.weightUnit = value;
-    this.ballastTankOptions.weightUnit = value;
     this.formatData();
     this.convertQuantityToSelectedUnit();
   }

@@ -266,7 +266,7 @@
                                             <i class="pi pi-minus-circle" *ngIf="index !== 0"
                                                 (click)="deleteConfirm(rowIndex,index)"></i>
                                             <i class="pi pi-plus-circle" *ngIf="index === 0"
-                                                (click)="newCargo(rowIndex,index)"></i>
+                                                (click)="newCargo(rowIndex,index, rowData)"></i>
                                         </ng-container>
 
 
@@ -326,7 +326,7 @@
                             <td class="text-right">{{row.plan.bbl | quantityDecimalFormat : QUANTITY_UNIT.BBLS}}</td>
                             <td class="text-right">{{row.plan.lt | quantityDecimalFormat : QUANTITY_UNIT.LT}}</td>
                             <td class="text-right">{{row.plan.mt | quantityDecimalFormat : QUANTITY_UNIT.MT}}</td>
-                            <td class="text-right">{{row.plan.kl | quantityDecimalFormat : QUANTITY_UNIT.KT}}</td>
+                            <td class="text-right">{{row.plan.kl | quantityDecimalFormat : QUANTITY_UNIT.KL}}</td>
                             <td class="text-right">{{row.plan.api?.toFixed(2)}}</td>
                             <td class="text-right">{{row.plan.temp?.toFixed(2)}}</td>
                         </tr>

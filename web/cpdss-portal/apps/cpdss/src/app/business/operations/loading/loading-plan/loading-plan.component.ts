@@ -107,12 +107,12 @@ export class LoadingPlanComponent implements OnInit {
     });
 
     this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.subscribe((value)=>{
-      if(value === ULLAGE_STATUS_VALUE.SUCCESS){
+      if(value.status === ULLAGE_STATUS_VALUE.SUCCESS){
         this.getLoadingPlanDetails();
       }
     });
     this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value)=>{
-      if(value === ULLAGE_STATUS_VALUE.SUCCESS){
+      if(value.status === ULLAGE_STATUS_VALUE.SUCCESS){
         this.getLoadingPlanDetails();
       }
     });
