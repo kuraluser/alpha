@@ -5,7 +5,7 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ICargoQuantities } from '../../core/models/common.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
-
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'
 @Component({
   selector: 'cpdss-portal-loading-discharging-cargo-details-table',
   templateUrl: './loading-discharging-cargo-details-table.component.html',
@@ -56,6 +56,7 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _cargoQuantities: any[];
   constructor(
+    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe,
     private quantityPipe: QuantityPipe,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService
   ) { }
@@ -102,9 +103,12 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
       const actualWeight = this.quantityPipe.transform(cargoList.actualWeight, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargoList?.api, cargoList?.temperature , -1);
       cargoList.actualWeight = actualWeight ? Number(actualWeight) : 0;
 
-      this.totalPlanned = cargoList.plannedWeight + this.totalPlanned;
-      const difference = (Number(cargoList.actualWeight - cargoList.plannedWeight) / cargoList.plannedWeight) * 100;
-      this.totalActual = cargoList.actualWeight + this.totalActual;
+      const formatedPlannedWeight = this.formateQuantity(cargoList.plannedWeight);
+      const formatedActualWeight = this.formateQuantity(cargoList.actualWeight);
+
+      this.totalPlanned = formatedPlannedWeight + this.totalPlanned;
+      const difference = (Number(formatedActualWeight - formatedPlannedWeight) / formatedPlannedWeight) * 100;
+      this.totalActual = formatedActualWeight + this.totalActual;
       cargoList.difference = difference ? Number(difference) : 0;
       cargoList.isPositive = difference > 0 ? true : false;
     });
@@ -116,6 +120,15 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
       this.totalDifference = 0;
     }
     this.totalDifference > 0 ? this.isTotalPositive = true : this.isTotalPositive = false;
+  }
+
+  /**
+   * Method to formate quantity
+   *
+   * @memberof LoadingDischargingCargoDetailsTableComponent
+   */
+  formateQuantity(value: string): number{
+    return value ? Number(this.quantityDecimalFormatPipe.transform(value,this.currentQuantitySelectedUnit).replace(/,/g, '')) : 0;
   }
 
 }

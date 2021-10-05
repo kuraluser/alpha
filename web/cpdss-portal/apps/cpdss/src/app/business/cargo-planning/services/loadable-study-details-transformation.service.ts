@@ -1622,11 +1622,6 @@ export class LoadableStudyDetailsTransformationService {
         'min': 'LOADABLE_QUANTITY_ERROR',
         'invalidNumber': 'LOADABLE_QUANTITY_FRESH_WATER_INVALID'
       },
-      boilerWaterOnboard: {
-        'required': 'LOADABLE_QUANTITY_BOILER_WATER_ONBOARD_REQUIRED',
-        'pattern': 'LOADABLE_QUANTITY_ERROR',
-        'invalidNumber': 'LOADABLE_QUANTITY_BOILER_WATER_ONBOARD_INVALID',
-      },
       ballast: {
         'required': 'LOADABLE_QUANTITY_BALLAST_REQUIRED',
         'min': 'LOADABLE_QUANTITY_ERROR',
@@ -1691,7 +1686,7 @@ export class LoadableStudyDetailsTransformationService {
  */
   getSubTotal(data: ISubTotal): Number {
     const subTotal = Number(data.dwt) - Number(data.sagCorrection) + Number(data.sgCorrection ? data.sgCorrection : 0) - Number(data.foOnboard)
-      - Number(data.doOnboard) - Number(data.freshWaterOnboard) - Number(data.boilerWaterOnboard) - Number(data.ballast)
+      - Number(data.doOnboard) - Number(data.freshWaterOnboard) - Number(data.ballast)
       - Number(data.constant) - Number(data.others);
     return Number(subTotal);
   }

@@ -648,7 +648,7 @@ export class LoadablePlanTransformationService {
  */
   getSubTotal(data: ISubTotal): Number {
     const subTotal = Number(data.dwt) - Number(data.sagCorrection) + Number(data.sgCorrection ? data.sgCorrection : 0) - Number(data.foOnboard)
-      - Number(data.doOnboard) - Number(data.freshWaterOnboard) - Number(data.boilerWaterOnboard) - Number(data.ballast)
+      - Number(data.doOnboard) - Number(data.freshWaterOnboard) - Number(data.ballast)
       - Number(data.constant) - Number(data.others);
     return Number(subTotal);
   }

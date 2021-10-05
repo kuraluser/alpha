@@ -58,4 +58,7 @@ public class CommingleCargo extends EntityDoc {
 
   @Column(name = "cargo_nomination2_xid")
   private Long cargoNomination2Id;
+
+  @Column(name = "abbreviation")
+  private String abbreviation;
 }

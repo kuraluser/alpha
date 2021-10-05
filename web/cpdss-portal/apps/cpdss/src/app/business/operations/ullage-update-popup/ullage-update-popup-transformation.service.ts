@@ -220,7 +220,8 @@ export class UllageUpdatePopupTransformationService {
         errorMessages: {
           maxLimit: 'ULLAGE_UPDATE_BALLAST_FILLING_ERROR',
           required: 'ULLAGE_UPDATE_SOUNDING_REQUIRED',
-          invalidNumber: 'ULLAGE_UPDATE_INVALID_ERROR'
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ERROR',
+          greaterThanTankCapacity: 'ULLAGE_UPDATE_BALLAST_FILLING_ERROR'
         }
       },
 
@@ -416,8 +417,8 @@ export class UllageUpdatePopupTransformationService {
     _cargoDetail.lt = new ValueObject<number>(cargoTankDetail?.quantityLT ? cargoTankDetail?.quantityLT : 0, true, isEditMode);
     _cargoDetail.mt = new ValueObject<number>(cargoTankDetail?.quantityMt ? cargoTankDetail?.quantityMt : 0, true, isEditMode);
     _cargoDetail.kl = new ValueObject<number>(cargoTankDetail?.quantityKl ? cargoTankDetail?.quantityKl : 0, true, isEditMode);
-    _cargoDetail.api = new ValueObject<number>(cargoTankDetail?.api, true, isEditMode);
-    _cargoDetail.temp = new ValueObject<number>(cargoTankDetail?.temperature, true, isEditMode);
+    _cargoDetail.api = new ValueObject<number | string>(cargoTankDetail?.api ? cargoTankDetail?.api : '', true, isEditMode);
+    _cargoDetail.temp = new ValueObject<number | string>(cargoTankDetail?.temperature ? cargoTankDetail?.temperature : '', true, isEditMode);
     _cargoDetail.cargoName = cargoRow?.cargoAbbrevation;
     _cargoDetail.isNewRow = isAdd;
     _cargoDetail.cargoNominationId = cargoRow?.cargoNominationId;

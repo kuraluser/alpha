@@ -5,10 +5,11 @@
         <map>
           <entry key="ATTACHMENT_ROOT_PATH" value="/data" />
           <entry key="CONTAINER_NAME" value="loadable-study-container-shore" />
+          <entry key="CPDSS_BUILD_ENV" value="cloud" />
           <entry key="DEBUG_PORT_HOST" value="5290" />
           <entry key="ENABLE_COMM" value="true" />
           <entry key="GRPC_PORT_HOST" value="9290" />
-          <entry key="HOST_ROOT_PATH" value="C:\Users\mathew.g\Desktop\mnt" />
+          <entry key="HOST_ROOT_PATH" value="D:\File" />
           <entry key="IMAGE_NAME" value="cpdss-loadable-study-shore" />
           <entry key="SERVICE_NAME" value="loadable-study-service-shore" />
         </map>

@@ -46,9 +46,8 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
-import com.cpdss.loadablestudy.domain.AlgoResponse;
-import com.cpdss.loadablestudy.domain.CommunicationStatus;
-import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
+import com.cpdss.loadablestudy.domain.*;
+import com.cpdss.loadablestudy.entity.CommingleCargo;
 import com.cpdss.loadablestudy.entity.CowTypeMaster;
 import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
 import com.cpdss.loadablestudy.entity.DischargePlanCowDetailFromAlgo;
@@ -73,6 +72,7 @@ import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.CowTypeMasterRepository;
 import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
@@ -97,6 +97,7 @@ import com.cpdss.loadablestudy.repository.StabilityParameterRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
@@ -208,6 +209,8 @@ public class LoadablePatternService {
   @Autowired private CowTypeMasterRepository cowTypeMasterRepository;
 
   @Autowired DischargePlanService dischargePlanService;
+
+  @Autowired private CommingleCargoRepository commingleCargoRepository;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -688,7 +691,14 @@ public class LoadablePatternService {
           loadableQuantityCommingleCargoDetailsList.get(i).getCargo2MT());
       loadablePlanCommingleDetails.setCargo2Percentage(
           loadableQuantityCommingleCargoDetailsList.get(i).getCargo2Percentage());
-      loadablePlanCommingleDetails.setGrade(COMMINGLE + (i + 1));
+      Optional<CommingleCargo> commingleCargoOpt =
+          commingleCargoRepository
+              .findByLoadableStudyXIdAndCargoNomination1IdAndCargoNomination2IdAndIsActiveTrue(
+                  loadablePattern.getLoadableStudy().getId(),
+                  loadableQuantityCommingleCargoDetailsList.get(i).getCargo1NominationId(),
+                  loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
+      commingleCargoOpt.ifPresent(
+          commingle -> loadablePlanCommingleDetails.setGrade(commingle.getAbbreviation()));
       loadablePlanCommingleDetails.setIsActive(true);
       loadablePlanCommingleDetails.setLoadablePattern(loadablePattern);
       loadablePlanCommingleDetails.setQuantity(
@@ -744,7 +754,7 @@ public class LoadablePatternService {
   public com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder savePatternValidateResult(
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
       com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder builder)
-      throws GenericServiceException {
+      throws GenericServiceException, JsonProcessingException {
     log.info("savePatternValidateResult - loadable study micro service");
     Optional<LoadablePattern> loadablePatternOpt =
         this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
@@ -754,7 +764,17 @@ public class LoadablePatternService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-
+    LoadablePatternAlgoRequest loadablePatternAlgoRequest = new LoadablePatternAlgoRequest();
+    Optional.ofNullable(request.getValidated()).ifPresent(loadablePatternAlgoRequest::setValidated);
+    Optional.ofNullable(loadablePatternOpt.get().getLoadableStudy().getId())
+        .ifPresent(loadablePatternAlgoRequest::setLoadableStudyId);
+    Optional.ofNullable(request.getHasLodicator())
+        .ifPresent(loadablePatternAlgoRequest::setHasLoadicator);
+    Optional.ofNullable(request.getProcesssId())
+        .ifPresent(loadablePatternAlgoRequest::setProcessId);
+    Optional.ofNullable(request.getLoadablePatternId())
+        .ifPresent(loadablePatternAlgoRequest::setLoadablePatternId);
+    PatternDetails patternDetails = new PatternDetails();
     if (!request.getValidated()) {
       loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
           LOADABLE_PATTERN_VALIDATION_FAILED_ID, request.getProcesssId(), true);
@@ -762,10 +782,14 @@ public class LoadablePatternService {
       algoErrorsRepository.deleteAlgoError(false, request.getLoadablePatternId());
       algoErrorHeadingRepository.deleteAlgoErrorHeading(false, request.getLoadablePatternId());
 
-      algoService.saveAlgoErrorToDB(request, loadablePatternOpt.get(), new LoadableStudy(), true);
+      List<com.cpdss.loadablestudy.entity.AlgoErrors> algoError =
+          algoService.saveAlgoErrorToDB(
+              request, loadablePatternOpt.get(), new LoadableStudy(), true);
 
+      if (env.equals("cloud")) {
+        loadablePatternAlgoRequest.setAlgoError(algoError);
+      }
     } else {
-
       deleteExistingPlanDetails(loadablePatternOpt.get());
 
       Long lastLoadingPort =
@@ -823,6 +847,39 @@ public class LoadablePatternService {
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
       }
+      if (env.equals("cloud")) {
+        fetchSavedPatternFromDB(patternDetails, loadablePatternOpt.get());
+        loadablePatternAlgoRequest.setPatternDetails(patternDetails);
+      }
+    }
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    // log.info("============ Result : " +
+    // objectMapper.writeValueAsString(loadablePatternAlgoRequest));
+
+    objectMapper.writeValueAsString(loadablePatternAlgoRequest);
+    if (env.equals("cloud")) {
+      EnvoyWriter.WriterReply ewReply =
+          communicationService.passRequestPayloadToEnvoyWriter(
+              objectMapper.writeValueAsString(loadablePatternAlgoRequest),
+              loadablePatternOpt.get().getLoadableStudy().getVesselXId(),
+              MessageTypes.PATTERNDETAIL.getMessageType());
+      if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+        log.info("------- Envoy writer has called successfully : " + ewReply.toString());
+        LoadableStudyCommunicationStatus lsCommunicationStatus =
+            new LoadableStudyCommunicationStatus();
+        if (ewReply.getMessageId() != null) {
+          lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+          lsCommunicationStatus.setCommunicationStatus(
+              CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+        }
+        lsCommunicationStatus.setReferenceId(loadablePatternOpt.get().getLoadableStudy().getId());
+        lsCommunicationStatus.setMessageType(MessageTypes.PATTERNDETAIL.getMessageType());
+        lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+        LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
+            this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
+        log.info("Communication table update : " + loadableStudyCommunicationStatus.getId());
+      }
     }
 
     builder
@@ -830,6 +887,90 @@ public class LoadablePatternService {
             Common.ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
         .build();
     return builder;
+  }
+
+  private void fetchSavedPatternFromDB(
+      PatternDetails patternDetails, LoadablePattern loadablePattern) {
+    ModelMapper modelMapper = new ModelMapper();
+    List<LoadablePlanQuantity> loadablePlanQuantityList =
+        loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(loadablePattern, true);
+    List<LoadablePlanQuantityDto> loadablePlanQuantityDtoList =
+        Arrays.asList(modelMapper.map(loadablePlanQuantityList, LoadablePlanQuantityDto[].class));
+    patternDetails.setLoadablePlanQuantityList(loadablePlanQuantityDtoList);
+
+    List<LoadablePatternCargoToppingOffSequence> toppingOffSequenceList =
+        toppingOffSequenceRepository.findByLoadablePatternAndIsActive(loadablePattern, true);
+    List<LoadablePatternCargoToppingOffSequenceDto> loadablePatternCargoToppingOffSequenceDtoList =
+        Arrays.asList(
+            modelMapper.map(
+                toppingOffSequenceList, LoadablePatternCargoToppingOffSequenceDto[].class));
+    patternDetails.setToppingOffSequenceList(loadablePatternCargoToppingOffSequenceDtoList);
+
+    List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
+        loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+            loadablePattern, true);
+    List<LoadablePlanCommingleDetailsDto> loadablePlanCommingleDetailsDtoList =
+        Arrays.asList(
+            modelMapper.map(loadablePlanCommingleDetails, LoadablePlanCommingleDetailsDto[].class));
+    patternDetails.setLoadablePlanCommingleDetails(loadablePlanCommingleDetailsDtoList);
+
+    List<LoadablePlanStowageDetails> loadablePlanStowageDetailsList =
+        loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
+            loadablePattern, true);
+    List<LoadablePlanStowageDetailsDto> loadablePlanStowageDetailsDtoList =
+        Arrays.asList(
+            modelMapper.map(loadablePlanStowageDetailsList, LoadablePlanStowageDetailsDto[].class));
+    patternDetails.setLoadablePlanStowageDetailsList(loadablePlanStowageDetailsDtoList);
+
+    List<LoadablePlanBallastDetails> loadablePlanBallastDetailsList =
+        loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
+            loadablePattern, true);
+    List<LoadablePlanBallastDetailsDto> loadablePlanBallastDetailsDtoList =
+        Arrays.asList(
+            modelMapper.map(loadablePlanBallastDetailsList, LoadablePlanBallastDetailsDto[].class));
+    patternDetails.setLoadablePlanBallastDetailsList(loadablePlanBallastDetailsDtoList);
+
+    List<LoadablePlanComminglePortwiseDetails> loadablePlanComminglePortwiseDetailsList =
+        loadablePlanCommingleDetailsPortwiseRepository.findByLoadablePatternIdAndIsActive(
+            loadablePattern.getId(), true);
+    List<LoadablePlanComminglePortwiseDetailsDto> loadablePlanComminglePortwiseDetailsDtoList =
+        Arrays.asList(
+            modelMapper.map(
+                loadablePlanComminglePortwiseDetailsList,
+                LoadablePlanComminglePortwiseDetailsDto[].class));
+    patternDetails.setLoadablePlanComminglePortwiseDetailsList(
+        loadablePlanComminglePortwiseDetailsDtoList);
+
+    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails>
+        loadablePatternCargoDetailsList =
+            loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
+                loadablePattern.getId(), true);
+    List<LoadablePatternCargoDetailsDto> loadablePatternCargoDetailsDtoList =
+        Arrays.asList(
+            modelMapper.map(
+                loadablePatternCargoDetailsList, LoadablePatternCargoDetailsDto[].class));
+    patternDetails.setLoadablePatternCargoDetailsList(loadablePatternCargoDetailsDtoList);
+
+    List<LoadablePlanStowageBallastDetails> loadablePlanStowageBallastDetailsList =
+        loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdAndIsActive(
+            loadablePattern.getId(), true);
+    List<LoadablePlanStowageBallastDetailsDto> loadablePlanStowageBallastDetailsDtoList =
+        Arrays.asList(
+            modelMapper.map(
+                loadablePlanStowageBallastDetailsList,
+                LoadablePlanStowageBallastDetailsDto[].class));
+    patternDetails.setLoadablePlanStowageBallastDetailsList(
+        loadablePlanStowageBallastDetailsDtoList);
+
+    List<com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData>
+        synopticalTableLoadicatorData =
+            synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
+                loadablePattern.getId(), true);
+    List<SynopticalTableLoadicatorDataDto> synopticalTableLoadicatorDataDtoList =
+        Arrays.asList(
+            modelMapper.map(
+                synopticalTableLoadicatorData, SynopticalTableLoadicatorDataDto[].class));
+    patternDetails.setSynopticalTableLoadicatorData(synopticalTableLoadicatorDataDtoList);
   }
 
   /**
@@ -1162,6 +1303,16 @@ public class LoadablePatternService {
                     // BigDecimal(it.getActualQuantity()): null)
                     .build();
 
+            Optional<CommingleCargo> commingleCargoOpt =
+                commingleCargoRepository
+                    .findByLoadableStudyXIdAndCargoNomination1IdAndCargoNomination2IdAndIsActiveTrue(
+                        loadablePattern.getLoadableStudy().getId(),
+                        it.getCargo1NominationId(),
+                        it.getCargo2NominationId());
+            commingleCargoOpt.ifPresent(
+                commingle ->
+                    loadablePlanComminglePortwiseDetails.setGrade(commingle.getAbbreviation()));
+
             loadablePlanCommingleDetailsPortwiseRepository.save(
                 loadablePlanComminglePortwiseDetails);
 
@@ -1341,7 +1492,7 @@ public class LoadablePatternService {
           LOADABLE_STUDY_REQUEST,
           objectMapper.writeValueAsString(loadableStudy));
       if (enableCommunication && env.equals("ship")) {
-        this.voyageService.builVoyageDetails(modelMapper, loadableStudy);
+        this.voyageService.buildVoyageDetails(modelMapper, loadableStudy);
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(
                 objectMapper.writeValueAsString(loadableStudy),

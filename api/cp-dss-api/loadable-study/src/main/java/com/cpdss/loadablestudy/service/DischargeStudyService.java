@@ -1335,9 +1335,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       List<CargoNomination> cargos =
           cargoNominationService.getCargoNominationByLoadableStudyId(dischargeStudy.getId());
       List<DischargePatternQuantityCargoPortwiseDetails> generatedCargos =
-          dischargePatternQuantityCargoPortwiseRepository.findByDischargeCargoNominationIdInAndOperationType(
-              cargos.stream().map(CargoNomination::getId).collect(Collectors.toList()),
-              SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE);
+          dischargePatternQuantityCargoPortwiseRepository
+              .findByDischargeCargoNominationIdInAndOperationType(
+                  cargos.stream().map(CargoNomination::getId).collect(Collectors.toList()),
+                  SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE);
       Map<Long, List<DischargePatternQuantityCargoPortwiseDetails>> portWiseCargo =
           generatedCargos.stream()
               .collect(
@@ -1357,7 +1358,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                           ofNullable(pCargo.getEstimatedAPI())
                               .ifPresent(api -> cargo.setApi(api.toString()));
                           ofNullable(pCargo.getCargoId()).ifPresent(cargo::setCargoId);
-                          ofNullable(pCargo.getDischargeCargoNominationId()).ifPresent(cargo::setId);
+                          ofNullable(pCargo.getDischargeCargoNominationId())
+                              .ifPresent(cargo::setId);
                           ofNullable(pCargo.getEstimatedTemp())
                               .ifPresent(value -> cargo.setTemperature(value.toString()));
                           ofNullable(pCargo.getColorCode()).ifPresent(cargo::setColor);
@@ -1445,6 +1447,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             port -> {
               PortData.Builder portDataBuilder = PortData.newBuilder();
               portDataBuilder.setPortRotationId(port.getId());
+              portDataBuilder.setPortId(port.getPortXId());
               Optional<SynopticalTable> synopticalTableOpt =
                   port.getSynopticalTable().stream()
                       .filter(

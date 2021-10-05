@@ -273,7 +273,7 @@
                                             (onChange)="onChange($event, rowData, rowIndex, col)"
                                             (onPanelHide)="onMultiselectClose(rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
-                                            itemSize="30" >
+                                            itemSize="30" [maxSelectedLabels]="col.maxSelectedLabels ? col.maxSelectedLabels : 3">
                                         </p-multiSelect>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
@@ -281,7 +281,7 @@
                                     </ng-container>
                                     <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
                                         <span>{{
-                                            getMultiselectedDataAsLabel(rowData[col.field]?.value, col.fieldOptionLabel)}}</span>
+                                            getMultiselectedDataAsLabel(rowData[col.field]?.value, col.fieldOptionLabel,col.maxSelectedLabels)}}</span>
                                     </ng-container>
                                 </ng-container>
 

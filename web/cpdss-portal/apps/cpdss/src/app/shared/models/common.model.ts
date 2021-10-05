@@ -265,7 +265,6 @@ export interface ISubTotal {
   foOnboard: string;
   doOnboard: string;
   freshWaterOnboard: string;
-  boilerWaterOnboard: string;
   ballast: string;
   constant: string;
   others: string;

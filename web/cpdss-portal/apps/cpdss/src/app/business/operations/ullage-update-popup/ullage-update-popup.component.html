@@ -173,6 +173,11 @@
             <div class="col-md-4 pb-10">
                 <label>{{'LOADABLE_PLAN_BL_FIGURE_HEADING'| translate}}</label>
             </div>
+            <div class="col-md-8 pb-10">
+                <div class="header-info-pop-up mb-5 text-right"><span class="info-icon mr-5">!</span>
+                    {{'ULLAGE_UPDATE_BLFIG_INFO_MESSAGE' | translate}}
+                </div>
+            </div>
         </div>
         <div *ngIf="selectedTab === tankType.CARGO && status === ULLAGE_STATUS.DEPARTURE" class="row">
             <div class="col">

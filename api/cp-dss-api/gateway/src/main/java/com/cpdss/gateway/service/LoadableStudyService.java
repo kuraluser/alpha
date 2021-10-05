@@ -4123,13 +4123,20 @@ public class LoadableStudyService {
                 userEntity.ifPresent(
                     user -> {
                       try {
-                        if (userEntity.get().getKeycloakId() != null) {
+                        if (user.getKeycloakId() != null) {
                           KeycloakUser keycloakUser =
-                              userCachingService.getUser(userEntity.get().getKeycloakId());
+                              userCachingService.getUser(user.getKeycloakId());
                           commets.setUserName(
                               String.format(
                                   "%s %s",
                                   keycloakUser.getFirstName(), keycloakUser.getLastName()));
+                        } else {
+                          if (user.getIsShipUser()) {
+                            log.info(
+                                "Get User Name, from users DB username - {}",
+                                user.getUsername().trim());
+                            commets.setUserName(user.getUsername().trim().toUpperCase());
+                          }
                         }
                       } catch (GenericServiceException e) {
                         commets.setUserName(DEFAULT_USER_NAME);

@@ -23,7 +23,7 @@
             <a class="btn btn-link icon-btn plus-icon-rounded ml-15 disabled" id="show-popup"
                 (click)="addPort()">{{'OPERATIONS_ADD_PORT_BUTTON_LABEL' | translate}}</a>
         </div> -->
-        <button id="rulesButton" class="btn btn-main  mr-10" (click)="isRuleModalVisible = !isRuleModalVisible">{{'RULES'|translate}}</button>
+        <button id="rulesButton" class="btn btn-main  mr-10" (click)="isRuleModalVisible = !isRuleModalVisible" [disabled]="generatePatternStatus">{{'RULES'|translate}}</button>
     </div>
     <div class="row">
         <div class="col">

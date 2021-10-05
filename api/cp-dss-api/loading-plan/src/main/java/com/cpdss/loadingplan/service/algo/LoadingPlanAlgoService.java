@@ -10,6 +10,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRat
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply.Builder;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStabilityParameters;
@@ -37,6 +38,7 @@ import com.cpdss.loadingplan.entity.LoadingPlanBallastDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.LoadingSequenceStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
@@ -51,6 +53,7 @@ import com.cpdss.loadingplan.repository.LoadingInformationAlgoStatusRepository;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.LoadingInformationStatusRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanBallastDetailsRepository;
+import com.cpdss.loadingplan.repository.LoadingPlanCommingleDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanPortWiseDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanStabilityParametersRepository;
@@ -59,6 +62,7 @@ import com.cpdss.loadingplan.repository.LoadingSequenceRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceStabiltyParametersRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastTempDetailsRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanCommingleDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
@@ -120,6 +124,9 @@ public class LoadingPlanAlgoService {
 
   @Autowired
   PortLoadingPlanBallastTempDetailsRepository portLoadingPlanBallastTempDetailsRepository;
+
+  @Autowired LoadingPlanCommingleDetailsRepository loadingPlanCommingleDetailsRepository;
+  @Autowired PortLoadingPlanCommingleDetailsRepository portLoadingPlanCommingleDetailsRepository;
 
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
@@ -437,6 +444,7 @@ public class LoadingPlanAlgoService {
     portStowageDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
     portLoadingPlanStowageTempDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
     portLoadingPlanBallastTempDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
+    portLoadingPlanCommingleDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
   }
 
   private void deleteLoadingSequences(
@@ -469,6 +477,8 @@ public class LoadingPlanAlgoService {
               loadingPlanPortWiseDetails);
           loadingPlanStowageDetailsRepository.deleteByLoadingPlanPortWiseDetails(
               loadingPlanPortWiseDetails);
+          loadingPlanCommingleDetailsRepository.deleteByLoadingPlanPortWiseDetails(
+              loadingPlanPortWiseDetails);
         });
   }
 
@@ -479,6 +489,30 @@ public class LoadingPlanAlgoService {
     savePortStabilityParams(
         loadingInformation, request.getPortLoadingPlanStabilityParametersList());
     savePortStowageDetails(loadingInformation, request.getPortLoadingPlanStowageDetailsList());
+    savePortCommingleDetails(loadingInformation, request.getPortLoadingPlanCommingleDetailsList());
+  }
+
+  /**
+   * @param loadingInformation
+   * @param portLoadingPlanCommingleDetailsList
+   */
+  private void savePortCommingleDetails(
+      LoadingInformation loadingInformation,
+      List<LoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList) {
+    log.info(
+        "Saving Loading Plan Commingle Details for LoadingInformation {}, PortRotation",
+        loadingInformation.getId(),
+        loadingInformation.getPortRotationXId());
+    List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetails =
+        new ArrayList<PortLoadingPlanCommingleDetails>();
+    portLoadingPlanCommingleDetailsList.forEach(
+        commingle -> {
+          PortLoadingPlanCommingleDetails commingleDetails = new PortLoadingPlanCommingleDetails();
+          loadingPlanBuilderService.buildPortCommingle(
+              loadingInformation, commingleDetails, commingle);
+          portLoadingPlanCommingleDetails.add(commingleDetails);
+        });
+    portLoadingPlanCommingleDetailsRepository.saveAll(portLoadingPlanCommingleDetails);
   }
 
   private void savePortStowageDetails(
@@ -630,7 +664,32 @@ public class LoadingPlanAlgoService {
               savedPortWiseDetails, details.getLoadingPlanStowageDetailsList());
           saveLoadingPlanStabilityParameters(
               savedPortWiseDetails, details.getLoadingPlanStabilityParameters());
+          saveLoadingPlanCommingleDetails(
+              savedPortWiseDetails, details.getLoadingPlanCommingleDetailsList());
         });
+  }
+
+  /**
+   * @param savedPortWiseDetails
+   * @param loadingPlanCommingleDetailsList
+   */
+  private void saveLoadingPlanCommingleDetails(
+      com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails loadingPlanPortWiseDetails,
+      List<LoadingPlanCommingleDetails> loadingPlanCommingleDetailsList) {
+    log.info(
+        "Saving Loading Plan Commingle Details for LoadingPlanPortWiseDetails {}",
+        loadingPlanPortWiseDetails.getId());
+    List<com.cpdss.loadingplan.entity.LoadingPlanCommingleDetails> loadingPlanCommingleDetails =
+        new ArrayList<com.cpdss.loadingplan.entity.LoadingPlanCommingleDetails>();
+    loadingPlanCommingleDetailsList.forEach(
+        commingle -> {
+          com.cpdss.loadingplan.entity.LoadingPlanCommingleDetails commingleDetails =
+              new com.cpdss.loadingplan.entity.LoadingPlanCommingleDetails();
+          loadingPlanBuilderService.buildLoadingPlanCommingleDetails(
+              loadingPlanPortWiseDetails, commingleDetails, commingle);
+          loadingPlanCommingleDetails.add(commingleDetails);
+        });
+    loadingPlanCommingleDetailsRepository.saveAll(loadingPlanCommingleDetails);
   }
 
   private void saveLoadingPlanStabilityParameters(

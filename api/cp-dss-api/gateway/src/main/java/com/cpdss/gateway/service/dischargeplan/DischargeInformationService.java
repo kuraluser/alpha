@@ -17,6 +17,8 @@ import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
 import com.cpdss.gateway.domain.LoadingUpdateUllageResponse;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.UllageBillReply;
+import com.cpdss.gateway.domain.UllageBillRequest;
 import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
@@ -389,6 +391,12 @@ public class DischargeInformationService {
         loadingPlanService.getUpdateUllageDetails(
             vesselId, patternId, portRotationId, operationType, true);
     BeanUtils.copyProperties(dischargeUllageResponse, response);
+    dischargeUllageResponse.getBillOfLaddingList().stream()
+        .forEach(
+            ladding -> {
+              ladding.setCargoToBeDischarged(ladding.getCargoToBeLoaded());
+              ladding.setCargoDischarged(ladding.getCargoLoaded());
+            });
     response.setPortDischargePlanBallastDetails(
         dischargeUllageResponse.getPortLoadablePlanBallastDetails());
     response.setPortDischargePlanRobDetails(
@@ -399,5 +407,11 @@ public class DischargeInformationService {
         dischargeUllageResponse.getLoadablePlanCommingleDetails());
 
     return response;
+  }
+
+  public UllageBillReply updateUllage(UllageBillRequest request, String correlationId)
+      throws GenericServiceException {
+
+    return loadingPlanService.getLoadableStudyShoreTwo(correlationId, request, true);
   }
 }

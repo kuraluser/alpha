@@ -42,4 +42,25 @@ public class LoadablePlanStowageDetails {
 
   @JsonInclude(Include.NON_NULL)
   private String abbreviation;
+
+  @JsonInclude(Include.NON_NULL)
+  private String correctedUllage; // ullage(M)
+
+  @JsonInclude(Include.NON_NULL)
+  private String fillingRatio;
+
+  @JsonInclude(Include.NON_NULL)
+  private String tankName;
+
+  @JsonInclude(Include.NON_NULL)
+  private String rdgUllage;
+
+  @JsonInclude(Include.NON_NULL)
+  private String correctionFactor;
+
+  @JsonInclude(Include.NON_NULL)
+  private String tankShortName;
+
+  @JsonInclude(Include.NON_NULL)
+  private String cargoNominationTemperature;
 }

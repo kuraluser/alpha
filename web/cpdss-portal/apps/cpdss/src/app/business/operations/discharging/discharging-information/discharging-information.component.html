@@ -13,7 +13,7 @@
           <h5 class="text-uppercase heading-border">{{'DISCHARGING_INFORMATION_LOADING_DETAILS_HEADER' | translate }}
           </h5>
           <cpdss-portal-loading-discharging-details *ngIf="dischargingInformationData?.dischargeDetails"
-            [operation]="OPERATIONS.DISCHARGING"
+            [operation]="OPERATIONS.DISCHARGING" [dischargeInfoId]="dischargeInfoId"
             [loadingDischargingDetails]="dischargingInformationData?.dischargeDetails"
             (updateLoadingDischargingDetails)="onUpdateDischargingDetails($event)">
           </cpdss-portal-loading-discharging-details>

@@ -141,6 +141,9 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired VesselValveSequenceRepository vesselValveSequenceRepository;
   @Autowired RuleTemplateInputRepository ruleTemplateInputRepository;
   @Autowired RuleVesselDropDownValuesRepository ruleVesselDropDownValuesRepository;
+  @Autowired VesselValveEducationProcessRepository educationProcessRepository;
+  @Autowired VesselValveAirPurgeSequenceRepository airPurgeSequenceRepository;
+  @Autowired VesselValveStrippingSequenceRepository strippingSequenceRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -2269,8 +2272,6 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     }
   }
 
-  @Autowired VesselValveEducationProcessRepository educationProcessRepository;
-
   @Override
   public void getVesselValveSequence(
       VesselRequest request,
@@ -2281,9 +2282,18 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     try {
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       builder.addAllVvSequenceEntities(
-          vesselPumpService.buildVesselValveSeqMessage(vesselValveSequenceRepository.findAll()));
+          vesselPumpService.buildVesselValveSeqMessage(
+              vesselValveSequenceRepository.findAllByVesselXid(request.getVesselId())));
       builder.addAllVvEducationEntities(
-          vesselPumpService.buildVesselValveEducator(educationProcessRepository.findAll()));
+          vesselPumpService.buildVesselValveEducator(
+              educationProcessRepository.findAllByVesselXid(request.getVesselId())));
+      builder.addAllVvAirPurgeSequence(
+          vesselPumpService.buildVesselValveAirPurge(
+              airPurgeSequenceRepository.findAllByVesselId(request.getVesselId())));
+      builder.addAllVvStrippingSequence(
+          vesselPumpService.buildVesselValveStrippingSequence(
+              strippingSequenceRepository.findAllByVesselId(request.getVesselId())));
+
     } catch (Exception e) {
       builder.setResponseStatus(
           ResponseStatus.newBuilder()

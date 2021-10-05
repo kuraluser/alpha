@@ -123,8 +123,16 @@ public interface LoadableStudyPortRotationRepository
   public List<Long> getLoadingPorts(LoadableStudy loadableStudy);
 
   @Query(
+      "SELECT DISTINCT portXId, lspr.loadableStudy.id, lspr.portOrder FROM LoadableStudyPortRotation lspr where lspr.loadableStudy.id IN ?1 AND lspr.operation.id = 1  AND isActive = true ORDER BY lspr.portOrder ASC")
+  public List<Object[]> getDistinctLoadingPorts(List<Long> loadableStudy);
+
+  @Query(
       "SELECT portXId FROM LoadableStudyPortRotation where loadableStudy = ?1 AND operation.id = 2  AND isActive = true")
   public List<Long> getDischarigingPorts(LoadableStudy loadableStudy);
+
+  @Query(
+      "SELECT DISTINCT portXId, lspr.loadableStudy.id, lspr.id FROM LoadableStudyPortRotation lspr where lspr.loadableStudy.id IN ?1 AND lspr.operation.id = 2  AND isActive = true ORDER BY lspr.id DESC")
+  public List<Object[]> getDistinctDischarigingPortsById(List<Long> loadableStudy);
 
   public LoadableStudyPortRotation findFirstByLoadableStudyAndIsActiveOrderByPortOrderAsc(
       LoadableStudy loadableStudy, boolean isActive);

@@ -10,6 +10,8 @@ public class BallastDetail {
 
   private BigDecimal loadingInformationId;
 
+  private BigDecimal dischargingInformationId;
+
   private BigDecimal tankId;
 
   private BigDecimal temperature;

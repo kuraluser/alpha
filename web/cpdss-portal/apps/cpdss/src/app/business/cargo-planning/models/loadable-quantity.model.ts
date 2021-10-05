@@ -23,7 +23,6 @@ export class LodadableQuantity {
     public sgCorrection?: string;
     public estSagging: string;
     public saggingDeduction?: string;
-    public boilerWaterOnBoard: string;
     public ballast: string;
     public constant: string;
     public estFOOnBoard: string;
@@ -43,7 +42,7 @@ export class LodadableQuantity {
     public totalQuantity?: string;
     public loadableQuantityId?: number;
     public id?: number;
-    private loadableStudyId?: number
+    private loadableStudyId?: number;
 }
 
 /**

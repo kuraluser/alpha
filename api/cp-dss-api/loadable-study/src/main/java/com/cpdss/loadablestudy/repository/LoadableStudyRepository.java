@@ -51,6 +51,9 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
   public LoadableStudy findByVoyageAndNameIgnoreCaseAndIsActiveAndPlanningTypeXId(
       Voyage voyage, String name, boolean isActive, Integer planningId);
 
+  @Query("FROM LoadableStudy LS WHERE LS.voyage.id IN ?1 AND LS.isActive = true")
+  List<LoadableStudy> findByListOfVoyage(List<Long> voyageIds);
+
   @Transactional
   @Modifying
   @Query(

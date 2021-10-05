@@ -518,6 +518,35 @@ message BendingMomentType1 {
 		ResponseStatus responseStatus = 1;
 		repeated VesselValveSequence vvSequenceEntities = 2;
 		repeated VesselValveEducationProcess vvEducationEntities = 3;
+		repeated VesselValveAirPurgeSequence vvAirPurgeSequence = 4;
+		repeated VesselValveStrippingSequence vvStrippingSequence = 5;
+	}
+
+	message VesselValveStrippingSequence {
+		int64 id = 1;
+		int64 vesselId = 2;
+		string vesselName = 3;
+		int32 pipeLineId = 4;
+		string pipeLineName = 5;
+		string colour = 6;
+		int32 valveId = 7;
+		string valve = 8;
+		int32 sequenceNumber = 9;
+	}
+
+	message VesselValveAirPurgeSequence {
+		int64 id = 1;
+		int64 vesselId = 2;
+		string vesselName = 3;
+		string shortname = 4;
+		int64 tankId = 5;
+		int64 pumpId = 6;
+		string pumpCode = 7;
+		int32 sequenceNumber = 8;
+		string valveNumber = 9;
+		int32 valveId = 10;
+		bool isShut = 11;
+		bool isCopWarmup = 12;
 	}
 
 	message VesselValveSequence{

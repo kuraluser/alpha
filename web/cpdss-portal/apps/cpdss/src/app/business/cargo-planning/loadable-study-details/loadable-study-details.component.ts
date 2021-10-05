@@ -921,7 +921,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         foOnboard: loadableQuantity.estFOOnBoard,
         doOnboard: loadableQuantity.estDOOnBoard,
         freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
-        boilerWaterOnboard: loadableQuantity.boilerWaterOnBoard,
         ballast: loadableQuantity.ballast,
         constant: loadableQuantity.constant,
         others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
@@ -937,7 +936,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         foOnboard: loadableQuantity.estFOOnBoard,
         doOnboard: loadableQuantity.estDOOnBoard,
         freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
-        boilerWaterOnboard: loadableQuantity.boilerWaterOnBoard,
         ballast: loadableQuantity.ballast,
         constant: loadableQuantity.constant,
         others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny

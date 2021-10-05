@@ -31,4 +31,7 @@ public interface SynopticalTableLoadicatorDataRepository
 
   public List<SynopticalTableLoadicatorData> findByLoadablePatternIdAndIsActive(
       Long loadablePatternId, boolean isActive);
+
+  public SynopticalTableLoadicatorData findByLoadablePatternIdAndPortIdAndOperationId(
+      Long loadablePatternId, Long portId, Long operationId);
 }

@@ -58,12 +58,8 @@ appConfig {
             rollbackOnUpdateFailure = true
         }
 	  dns = ['8.8.8.8']	
-      environment = ['REST_PORT': '8080', 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser,
-	                 'DB_PASSWORD': dbPassword, 'ATTACHMENT_ROOT_PATH': '/data', 'KEYCLOAK_URL': keycloakURL,
-                     'CPDSS_BUILD_ENV': cpdssBuildEnv, 'REDIS_PASSWORD': redisPassword,
-                     'KEYCLOAK_ADMIN_USER_NAME': keycloakAdminUsername, 'KEYCLOAK_ADMIN_PASSWORD': keycloakAdminPassword,
-                     'KEYCLOAK_ADMIN_CLIENT_ID': keycloakAdminClientId, 'SHIP_JWT_SECRET': shipjwtSecret,
-                     'SHIP_JWT_VALIDITY': shipjwtValidity]
+      environment = ['GRPC_PORT': '8090', 'REST_PORT': '8080', 'ATTACHMENT_ROOT_PATH': '/data',
+                     'CPDSS_BUILD_ENV': cpdssBuildEnv]
   }
   javaMainClass = "com.cpdss.gateway.Application"
   keyvaluestore = 'y'

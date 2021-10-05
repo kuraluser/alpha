@@ -123,4 +123,25 @@ public class PortLoadingPlanCommingleDetails extends EntityDoc {
 
   @Column(name = "short_name")
   private String shortName;
+
+  @Column(name = "ullage")
+  private String ullage;
+
+  @Column(name = "cargo_nomination1_xid")
+  private Long cargoNomination1XId;
+
+  @Column(name = "cargo_nomination2_xid")
+  private Long cargoNomination2XId;
+
+  @Column(name = "cargo1_xid")
+  private Long cargo1XId;
+
+  @Column(name = "cargo2_xid")
+  private Long cargo2XId;
+
+  @Column(name = "quantity_m3")
+  private String quantityM3;
+
+  @Column(name = "color_code")
+  private String colorCode;
 }
