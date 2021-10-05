@@ -20,7 +20,7 @@ appConfig {
   logging = 'y'
   devTools = 'y'
   unitTest = 'y'
-  monitoring = 'n'
+  monitoring = 'y'
   docker {
     imageName = imageNameVal
     containerName = containerNameVal

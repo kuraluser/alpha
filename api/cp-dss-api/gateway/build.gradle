@@ -32,7 +32,7 @@ appConfig {
   unitTest = 'y'
   security = 'jwt'
   rest = 'y'
-  monitoring = 'n'
+  monitoring = 'y'
   docker {
         imageName = imageNameVal
         containerName = containerNameVal

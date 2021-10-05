@@ -24,7 +24,7 @@ appConfig {
   dataBase = 'postgres'
   devTools = 'y'
   rest = 'y'
-  monitoring = 'n'
+  monitoring = 'y'
 docker {
     imageName = imageNameVal
     containerName = containerNameVal
