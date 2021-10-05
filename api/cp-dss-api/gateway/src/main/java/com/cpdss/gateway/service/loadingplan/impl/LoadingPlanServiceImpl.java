@@ -531,6 +531,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     loadingPlanResponse.setPlanStabilityParams(
         loadingPlanBuilderService.buildLoadingPlanStabilityParamFromRpc(
             planReply.getPortLoadingPlanStabilityParametersList()));
+    loadingPlanResponse.setPlanCommingleDetails(
+        loadingPlanBuilderService.buildLoadingPlanCommingleFromRpc(
+            planReply.getPortLoadingPlanCommingleDetailsList()));
     loadingPlanResponse.setCurrentPortCargos(
         this.loadingInformationService.getLoadablePlanCargoDetailsByPortUnfiltered(
             vesselId,

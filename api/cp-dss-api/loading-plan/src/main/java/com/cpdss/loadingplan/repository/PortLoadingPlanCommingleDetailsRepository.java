@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
+import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,4 +22,7 @@ public interface PortLoadingPlanCommingleDetailsRepository
   @Query(
       "UPDATE PortLoadingPlanCommingleDetails SET isActive = false WHERE loadingInformation.id = ?1")
   public void deleteByLoadingInformationId(Long loadingInfoId);
+
+  public List<PortLoadingPlanCommingleDetails> findByLoadingInformationAndIsActive(
+      LoadingInformation loadingInformation, Boolean isActive);
 }

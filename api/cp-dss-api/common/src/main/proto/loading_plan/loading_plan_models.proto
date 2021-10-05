@@ -752,6 +752,7 @@ message LoadingPlanReply {
   repeated LoadingPlanTankDetails portLoadingPlanBallastDetails = 4;
   repeated LoadingPlanTankDetails portLoadingPlanRobDetails = 5;
   repeated LoadingPlanStabilityParameters portLoadingPlanStabilityParameters = 6;
+  repeated LoadingPlanCommingleDetails portLoadingPlanCommingleDetails = 9;
 }
 
 message BillOfLaddingRequest{

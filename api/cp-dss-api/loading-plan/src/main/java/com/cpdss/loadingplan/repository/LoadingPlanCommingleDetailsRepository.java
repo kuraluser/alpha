@@ -26,4 +26,7 @@ public interface LoadingPlanCommingleDetailsRepository
       "SELECT LPCD FROM LoadingPlanCommingleDetails LPCD WHERE LPCD.loadingPlanPortWiseDetails.id IN ?1 AND LPCD.isActive = ?2")
   public List<LoadingPlanCommingleDetails> findByPortWiseDetailIdsAndIsActive(
       List<Long> portWiseDetailIds, Boolean isActive);
+
+  public List<LoadingPlanCommingleDetails> findByLoadingPlanPortWiseDetailsAndIsActiveTrueOrderById(
+      LoadingPlanPortWiseDetails portWiseDetails);
 }
