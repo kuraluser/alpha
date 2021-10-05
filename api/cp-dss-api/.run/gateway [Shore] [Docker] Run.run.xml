@@ -33,6 +33,7 @@
         <map>
           <entry key="CONTAINER_NAME" value="gateway-container-shore" />
           <entry key="DEBUG_PORT_HOST" value="5285" />
+          <entry key="HOST_ROOT_PATH" value="D:\File" />
           <entry key="IMAGE_NAME" value="gateway-shore" />
           <entry key="REST_PORT_HOST" value="9285" />
           <entry key="SERVICE_NAME" value="gateway-service-shore" />

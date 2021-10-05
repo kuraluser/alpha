@@ -5,6 +5,7 @@
         <map>
           <entry key="ATTACHMENT_ROOT_PATH" value="/data" />
           <entry key="CONTAINER_NAME" value="loadable-study-container-ship" />
+          <entry key="CPDSS_BUILD_ENV" value="ship" />
           <entry key="DEBUG_PORT_HOST" value="5090" />
           <entry key="ENABLE_COMM" value="true" />
           <entry key="GRPC_PORT_HOST" value="9090" />
@@ -23,7 +24,7 @@
       <option name="taskNames">
         <list />
       </option>
-      <option name="vmOptions" value="" />
+      <option name="vmOptions" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
