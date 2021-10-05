@@ -5,7 +5,7 @@
         <map>
           <entry key="CONTAINER_NAME" value="loadable-study-container-shore" />
           <entry key="IMAGE_NAME" value="cpdss-loadable-study-shore" />
-          <entry key="SERVICE_NAME" value="loadable-study-service-shore-vinoth" />
+          <entry key="SERVICE_NAME" value="loadable-study-service-shore" />
         </map>
       </option>
       <option name="executionName" />
