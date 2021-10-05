@@ -1943,6 +1943,8 @@
   "DISCHARGING_MANAGE_SEQUENCE_REQUIRED": "Required",
   "DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID": "Invalid",
   "DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID_VALUE": "Values must be incremented by 1 or equal to previous sequence number",
+  "DSICHARGING_PLAN_ALGO_ERROR": "Error",
+  "DSICHARGING_PLAN_ALGO_NO_PLAN": "No Plan Available",
   "LOADABLE_STUDY_NAME_PREFIX":"Loadable Study ",
   "LOADABLE_PATTERN":" - Loadable Pattern",
   "DISCHARGE_STUDY_NAME_PREFIX": "Discharge Study ",

@@ -795,6 +795,7 @@ export class UllageUpdateApiService {
           "active": false
         }
       ],
+      "dischargePlanCommingleDetails": [],
       "bunkerRearTanks": [
         [
           {
@@ -1585,5 +1586,14 @@ export class UllageUpdateApiService {
       ]
     };
     return of(response)
+  }
+
+  /**
+   * method for save ullage update for discharge plan
+   *
+   * @memberof UllageUpdateApiService
+   */
+  dischargePlanUpdateUllage(data: IUllageSaveDetails) {
+    return this.commonApiService.post<IUllageSaveDetails, IResponse>(`discharge/ullage-update`, data);
   }
 }
