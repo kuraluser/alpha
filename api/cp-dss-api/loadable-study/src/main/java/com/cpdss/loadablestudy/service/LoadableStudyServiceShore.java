@@ -93,11 +93,10 @@ public class LoadableStudyServiceShore {
   @Autowired private LoadableQuantityService loadableQuantityService;
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
 
-  @Autowired
-  private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
+
 
   @Autowired private LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
-  @Autowired private SynopticalTableRepository synopticalTableRepository;
+
   @Autowired private LoadablePatternService loadablePatternService;
   @Autowired private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
   @Autowired private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
