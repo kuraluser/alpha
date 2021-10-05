@@ -256,8 +256,13 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
     }
     this.loadingDischargingInformationApiService.downloadTemplate(id,this.operation).subscribe((data) => {
       const blob = new Blob([data], { type: data.type })
-      const fileurl = window.URL.createObjectURL(blob)
-      saveAs(fileurl, 'Loading_port_tide_details.xlsx');
+      const fileurl = window.URL.createObjectURL(blob);
+      if(this.operation === OPERATIONS.DISCHARGING) {
+        saveAs(fileurl, 'Discharging_port_tide_details.xlsx');
+      } else {
+        saveAs(fileurl, 'Loading_port_tide_details.xlsx');
+      }
+      
     });
   }
 

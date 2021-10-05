@@ -68,24 +68,28 @@ export class LoadingDischargingInformationApiService {
   downloadTemplate(id: number, operation: OPERATIONS): Observable<any> {
     if (operation === OPERATIONS.LOADING) {
       return this.commonApiService.get<any>(`loading/download/port-tide-template?loadingId=${id}`, { responseType: 'blob' as 'json' });
+    } else {
+      return this.commonApiService.get<any>(`discharging/download/port-tide-template?dischargingId=${id}`, { responseType: 'blob' as 'json' });
     }
   }
 
   /**
   * Method to upload template
   *
-  * @param {number} loadingId
+  * @param {number} id
   * @param {*} file
   * @return {*}  {Observable<IResponse>}
   * @memberof LoadingDischargingInformationApiService
   */
-  uploadTemplate(loadingId: number, file: any, operation: OPERATIONS): Observable<IResponse> {
+  uploadTemplate(id: number, file: any, operation: OPERATIONS): Observable<IResponse> {
     const formData: FormData = new FormData();
     formData.append('file', file);
     formData.append('portName', localStorage.getItem('selectedPortName') ?? '');
     formData.append('portId', localStorage.getItem('selectedPortId') ?? '');
     if (operation === OPERATIONS.LOADING) {
-      return this.commonApiService.postFormData<any>(`loading/${loadingId}/upload/port-tide-details`, formData);
+      return this.commonApiService.postFormData<any>(`loading/${id}/upload/port-tide-details`, formData);
+    } else {
+      return this.commonApiService.postFormData<any>(`discharging/${id}/upload/port-tide-details`, formData);
     }
   }
 }
