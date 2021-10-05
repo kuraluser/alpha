@@ -8,7 +8,6 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_T
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_TANK_COLOR_CODE;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_BALLAST_TANK_CATEGORIES;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_TANK_CATEGORIES;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.COMMINGLE;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CREATED_DATE_FORMAT;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DICHARGE_STUDY;
