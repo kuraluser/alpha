@@ -129,7 +129,7 @@ public class CommunicationService {
   private void savePatternInShipSide(EnvoyReader.EnvoyReaderResultReply erReply)
       throws GenericServiceException {
     String jsonResult = erReply.getPatternResultJson();
-    //log.info("------Pattern details payload : " + jsonResult);
+    // log.info("------Pattern details payload : " + jsonResult);
     LoadablePatternAlgoRequest loadablePatternAlgoRequest =
         new Gson()
             .fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadablePatternAlgoRequest.class);
@@ -170,9 +170,9 @@ public class CommunicationService {
             loadablePatternAlgoRequest.getPatternDetails(), loadablePatternOpt.get());
         if (!loadablePatternAlgoRequest.getHasLoadicator()) {
           loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
-                  LOADABLE_PATTERN_VALIDATION_SUCCESS_ID,
-                  loadablePatternAlgoRequest.getProcessId(),
-                  true);
+              LOADABLE_PATTERN_VALIDATION_SUCCESS_ID,
+              loadablePatternAlgoRequest.getProcessId(),
+              true);
         }
       }
     }
