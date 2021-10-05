@@ -9,5 +9,6 @@ import java.util.List;
 /** @Author jerin.g */
 public interface VesselDraftConditionRepository
     extends CommonCrudRepository<VesselDraftCondition, Long> {
+	
   public List<VesselDraftCondition> findByVesselAndIsActive(Vessel vessel, Boolean isActive);
 }
