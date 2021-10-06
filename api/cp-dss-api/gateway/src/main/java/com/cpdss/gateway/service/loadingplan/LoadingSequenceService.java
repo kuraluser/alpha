@@ -1103,6 +1103,7 @@ public class LoadingSequenceService {
                 Optional.ofNullable(commingle.getTemperature())
                     .ifPresent(commingleBuilder::setTemperature);
                 Optional.ofNullable(commingle.getUllage()).ifPresent(commingleBuilder::setUllage);
+                commingleBuilder.setConditionType(conditionType);
                 builder.addPortLoadingPlanCommingleDetails(commingleBuilder.build());
               });
     }
