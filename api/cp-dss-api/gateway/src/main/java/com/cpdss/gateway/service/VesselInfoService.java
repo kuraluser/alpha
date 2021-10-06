@@ -1088,7 +1088,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
 		request.setVesselId(vesselId);
 		VesselParticulars reply = vesselInfoGrpcService.getVesselParticulars(request.build());
 		if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-			throw new GenericServiceException("failed to fetch vessels particulars",
+			throw new GenericServiceException("GRPC call failed to fetch vessels particulars",
 					reply.getResponseStatus().getCode(),
 					HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
 		}
@@ -1106,6 +1106,10 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
 		Optional.ofNullable(reply.getSummerDeadweight()).ifPresent(vesselParticulars::setSummerDeadweight);
 		Optional.ofNullable(reply.getSummerDisplacement()).ifPresent(vesselParticulars::setSummerDisplacement);
 		Optional.ofNullable(reply.getCargoTankCapacity()).ifPresent(vesselParticulars::setCargoTankCapacity);
+		Optional.ofNullable(reply.getHighVelocityVentingPressure()).ifPresent(vesselParticulars::setHighVelocityVentingPressure);
+		Optional.ofNullable(reply.getHighVelocityVentingVaccum()).ifPresent(vesselParticulars::setHighVelocityVentingVaccum);
+		Optional.ofNullable(reply.getPvBreakerVentingPressure()).ifPresent(vesselParticulars::setPvBreakerVentingPressure);
+		Optional.ofNullable(reply.getPvBreakerVentingVaccum()).ifPresent(vesselParticulars::setPvBreakerVentingVaccum);
 		log.info("vessel particulars fetched succesfully");
 		return vesselParticulars;
 	}

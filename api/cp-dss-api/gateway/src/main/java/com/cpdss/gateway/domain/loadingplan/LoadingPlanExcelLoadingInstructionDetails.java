@@ -16,5 +16,6 @@ import lombok.NoArgsConstructor;
 public class LoadingPlanExcelLoadingInstructionDetails {
 
   private List<LoadingInstructionForExcel> instructions;
-  private Object vesselPurticulars;
+  private VesselParticularsForExcel vesselPurticulars;
+  private Object cargoMAchineryInUse;
 }

@@ -2054,14 +2054,17 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
 	@Override
 	public void getVesselParticulars(LoadingInfoRulesRequest request,
 			StreamObserver<VesselParticulars> responseObserver) {
+		log.info("Getting vessel particulars for vessel Id : {}",request.getVesselId());
 		VesselParticulars.Builder builder = VesselParticulars.newBuilder();
 		try {
 			vesselParticularService.getVesselParticulars(builder,request);
 		} catch (GenericServiceException e) {
-			// TODO Auto-generated catch block
+			log.info("Getting vessel particulars failed for vessel Id : {}",request.getVesselId());
 			e.printStackTrace();
+			builder.setResponseStatus(ResponseStatus.newBuilder().setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+					.setMessage(null != e.getMessage() ? e.getMessage() : "").setStatus(FAILED).build());
 		}
-		
+		builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
 		responseObserver.onNext(builder.build());
 		responseObserver.onCompleted();
 	}

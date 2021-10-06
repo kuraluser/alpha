@@ -18,4 +18,6 @@ public class LoadingInstructionForExcel {
   private Integer group;
   private String heading;
   private String instruction;
+  private Boolean cargoLoadingVisible;
+  private Boolean machineryInuseVisible;
 }

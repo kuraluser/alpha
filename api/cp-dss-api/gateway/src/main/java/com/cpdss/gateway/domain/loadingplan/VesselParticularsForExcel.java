@@ -21,4 +21,8 @@ public class VesselParticularsForExcel {
   private String summerDeadweight;
   private String summerDisplacement;
   private String cargoTankCapacity;
+  private String highVelocityVentingPressure;
+  private String highVelocityVentingVaccum;
+  private String pvBreakerVentingPressure;
+  private String pvBreakerVentingVaccum;
 }

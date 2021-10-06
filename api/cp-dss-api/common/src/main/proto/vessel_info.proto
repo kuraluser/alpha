@@ -66,6 +66,10 @@ message VesselParticulars {
 	string summerDisplacement =14;
 	string cargoTankCapacity =15;
 	ResponseStatus responseStatus = 16;
+	string highVelocityVentingPressure = 17;
+	string highVelocityVentingVaccum = 18;
+	string pvBreakerVentingPressure = 19;
+	string pvBreakerVentingVaccum = 20;
 }
 
 // Mapped to pump_type Table in vessel DB
