@@ -127,6 +127,9 @@ public class UllageUpdateLoadicatorService {
       LoadingInfoLoadicatorDataRequest.Builder loadicatorDataRequestBuilder =
           LoadingInfoLoadicatorDataRequest.newBuilder();
       loadicatorDataRequestBuilder.setProcessId(processId);
+      loadicatorDataRequestBuilder.setConditionType(
+          request.getUpdateUllage(0).getArrivalDepartutre());
+      loadicatorDataRequestBuilder.setProcessId(processId);
       buildUllageEditLoadicatorAlgoRequest(
           loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
       saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
@@ -253,7 +256,7 @@ public class UllageUpdateLoadicatorService {
 
       Optional<LoadingInformationStatus> validationFailedStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID);
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
       loadingPlanService.updateLoadingPlanStatus(
           loadingInformation, validationFailedStatusOpt.get(), conditionType);
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
@@ -474,7 +477,7 @@ public class UllageUpdateLoadicatorService {
 
       Optional<LoadingInformationStatus> validationFailedStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID);
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
       loadingPlanService.updateLoadingPlanStatus(
           loadingInfoOpt.get(), validationFailedStatusOpt.get(), request.getConditionType());
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
