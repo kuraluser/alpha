@@ -441,6 +441,7 @@ public class LoadingSequenceService {
     cargo.setEnd(portEta + (end * 60 * 1000));
     cargo.setApi(
         StringUtils.isEmpty(commingle.getApi()) ? null : new BigDecimal(commingle.getApi()));
+    cargo.setIsCommingle(true);
     return end;
   }
 
@@ -951,6 +952,7 @@ public class LoadingSequenceService {
     cargo.setStart(portEta + (start * 60 * 1000));
     cargo.setEnd(portEta + (end * 60 * 1000));
     cargo.setApi(StringUtils.isEmpty(stowage.getApi()) ? null : new BigDecimal(stowage.getApi()));
+    cargo.setIsCommingle(false);
     return end;
   }
 
