@@ -573,7 +573,7 @@ public class LoadingPlanService {
           .getBallastUpdateList()
           .forEach(
               ullageInsert -> {
-                if (ullageInsert.getIsUpdate() && tempBallastCount > 0) {
+                if (ullageInsert.getIsUpdate() || tempBallastCount > 0) {
                   loadingPlanBallastDetailsTempRepository.updateLoadingPlanBallastDetailsRepository(
                       StringUtils.isEmpty(ullageInsert.getSg())
                           ? null
@@ -643,7 +643,7 @@ public class LoadingPlanService {
           .getUpdateUllageList()
           .forEach(
               ullageInsert -> {
-                if (ullageInsert.getIsUpdate() && tempStowageCount > 0) {
+                if (ullageInsert.getIsUpdate() || tempStowageCount > 0) {
                   loadingPlanStowageDetailsTempRepository
                       .updatePortLoadingPlanStowageDetailsRepository(
                           new BigDecimal(ullageInsert.getQuantity()),
@@ -697,11 +697,20 @@ public class LoadingPlanService {
                 }
               });
 
+      Integer robActualsCount =
+          portLoadingPlanRobDetailsRepository
+              .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
+                  request.getUpdateUllage(0).getLoadingInformationId(),
+                  request.getUpdateUllage(0).getArrivalDepartutre(),
+                  LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE,
+                  true)
+              .size();
+
       request
           .getRobUpdateList()
           .forEach(
               ullageInsert -> {
-                if (ullageInsert.getIsUpdate()) {
+                if (ullageInsert.getIsUpdate() || robActualsCount > 0) {
                   loadingPlanRobDetailsRepository.updatePortLoadingPlanRobDetailsRepository(
                       StringUtils.isEmpty(ullageInsert.getQuantity())
                           ? null

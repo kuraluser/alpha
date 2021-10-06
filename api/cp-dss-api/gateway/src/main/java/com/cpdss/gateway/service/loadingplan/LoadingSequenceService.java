@@ -179,6 +179,32 @@ public class LoadingSequenceService {
                   cargos,
                   cargoTankCategories);
         }
+
+        List<LoadingPlanCommingleDetails> filteredComingleDetails =
+            portWiseDetails.getLoadingPlanCommingleDetailsList().stream()
+                .filter(
+                    commingle ->
+                        (commingle.getCargoNomination1Id()
+                                == loadingSequence.getCargoNominationId())
+                            || (commingle.getCargoNomination2Id()
+                                == loadingSequence.getCargoNominationId()))
+                .collect(Collectors.toList());
+
+        for (LoadingPlanCommingleDetails commingle : filteredComingleDetails) {
+          // Adding commingle cargos
+          temp =
+              this.buildCommingleSequence(
+                  commingle,
+                  currentCargoNomId,
+                  vesselTankMap,
+                  cargoNomDetails,
+                  portEta,
+                  start,
+                  portWiseDetails,
+                  cargos,
+                  cargoTankCategories);
+        }
+
         for (LoadingPlanTankDetails ballast : portWiseDetails.getLoadingPlanBallastDetailsList()) {
           // Adding ballasts
           temp =
@@ -194,6 +220,16 @@ public class LoadingSequenceService {
         }
 
         addCargoStage(
+            portWiseDetails,
+            cargoNomDetails,
+            loadingSequence.getCargoNominationId(),
+            stageNumber,
+            portEta,
+            start,
+            temp,
+            cargoStages);
+
+        addCommingleCargoStage(
             portWiseDetails,
             cargoNomDetails,
             loadingSequence.getCargoNominationId(),
@@ -263,6 +299,178 @@ public class LoadingSequenceService {
                     ballast -> vesselTankDetails.indexOf(vesselTankMap.get(ballast.getId()))))
             .collect(Collectors.toList()));
     response.setCargoStages(cargoStages);
+  }
+
+  /**
+   * @param portWiseDetails
+   * @param cargoNomDetails
+   * @param cargoNominationId
+   * @param stageNumber
+   * @param portEta
+   * @param start
+   * @param temp
+   * @param cargoStages
+   */
+  private void addCommingleCargoStage(
+      LoadingPlanPortWiseDetails portWiseDetails,
+      Map<Long, CargoNominationDetail> cargoNomDetails,
+      long cargoNominationId,
+      AtomicInteger stageNumber,
+      Long portEta,
+      Integer start,
+      Integer end,
+      List<CargoStage> cargoStages) {
+    CargoStage cargoStage = new CargoStage();
+    if (portWiseDetails.getLoadingPlanCommingleDetailsCount() > 0) {
+      List<Cargo> cargos = new ArrayList<Cargo>();
+      Cargo cargo = new Cargo();
+      CargoNominationDetail cargoNomination = cargoNomDetails.get(cargoNominationId);
+      if (cargoNomination != null) {
+        cargo.setName(cargoNomination.getCargoName());
+        cargo.setCargoId(cargoNomination.getCargoId());
+        cargo.setAbbreviation(cargoNomination.getAbbreviation());
+        cargo.setCargoNominationId(cargoNomination.getId());
+        cargo.setColor(cargoNomination.getColor());
+      }
+      cargo.setApi(
+          StringUtils.isEmpty(cargoNomination.getApi())
+              ? null
+              : new BigDecimal(cargoNomination.getApi()));
+      BigDecimal total =
+          portWiseDetails.getLoadingPlanCommingleDetailsList().stream()
+              .filter(
+                  commingle ->
+                      ((commingle.getCargoNomination1Id() == cargoNominationId)
+                              || (commingle.getCargoNomination2Id() == cargoNominationId))
+                          && !StringUtils.isEmpty(commingle.getQuantityMT()))
+              .map(commingle -> new BigDecimal(commingle.getQuantityMT()))
+              .reduce(
+                  new BigDecimal(0),
+                  (val1, val2) -> {
+                    return val1.add(val2);
+                  });
+      cargo.setQuantity(total);
+      cargos.add(cargo);
+      cargoStage.setName("Stage " + stageNumber.incrementAndGet());
+      cargoStage.setStart(portEta + (start * 60 * 1000));
+      cargoStage.setEnd(portEta + (end * 60 * 1000));
+      cargoStage.setCargos(cargos);
+      cargoStages.add(cargoStage);
+    }
+  }
+
+  /**
+   * @param commingle
+   * @param currentCargoNominationId
+   * @param vesselTankMap
+   * @param cargoNomDetails
+   * @param portEta
+   * @param start
+   * @param portWiseDetails
+   * @param cargos
+   * @param cargoTankCategories
+   * @return
+   */
+  private Integer buildCommingleSequence(
+      LoadingPlanCommingleDetails commingle,
+      Long currentCargoNominationId,
+      Map<Long, VesselTankDetail> vesselTankMap,
+      Map<Long, CargoNominationDetail> cargoNomDetails,
+      Long portEta,
+      Integer start,
+      LoadingPlanPortWiseDetails portWiseDetails,
+      List<Cargo> cargos,
+      Set<TankCategory> cargoTankCategories) {
+    Cargo cargo = new Cargo();
+    Optional<VesselTankDetail> tankDetailOpt =
+        Optional.ofNullable(vesselTankMap.get(commingle.getTankId()));
+    Integer end =
+        buildCommingleCargo(
+            commingle,
+            currentCargoNominationId,
+            cargoNomDetails,
+            cargo,
+            portEta,
+            start,
+            portWiseDetails.getTime());
+    buildCommingleCargoTankCategory(commingle, tankDetailOpt, cargoTankCategories);
+    tankDetailOpt.ifPresent(tank -> cargo.setTankName(tank.getShortName()));
+    cargos.add(cargo);
+    return end;
+  }
+
+  /**
+   * @param commingle
+   * @param cargoNomDetails
+   * @param currentCargoNominationId
+   * @param cargo
+   * @param portEta
+   * @param start
+   * @param time
+   * @return
+   */
+  private Integer buildCommingleCargo(
+      LoadingPlanCommingleDetails commingle,
+      Long currentCargoNominationId,
+      Map<Long, CargoNominationDetail> cargoNomDetails,
+      Cargo cargo,
+      Long portEta,
+      Integer start,
+      int end) {
+    CargoNominationDetail cargoNomination = null;
+    if (currentCargoNominationId.equals(commingle.getCargoNomination1Id())
+        || currentCargoNominationId.equals(commingle.getCargoNomination2Id())) {
+      cargo.setCargoNominationId(currentCargoNominationId);
+      cargoNomination = cargoNomDetails.get(currentCargoNominationId);
+    }
+
+    cargo.setQuantity(
+        StringUtils.isEmpty(commingle.getQuantityMT())
+            ? null
+            : new BigDecimal(commingle.getQuantityMT()));
+    cargo.setTankId(commingle.getTankId());
+    cargo.setUllage(
+        StringUtils.isEmpty(commingle.getUllage()) ? null : new BigDecimal(commingle.getUllage()));
+    if (cargoNomination != null) {
+      cargo.setCargoId(cargoNomination.getCargoId());
+      cargo.setColor(cargoNomination.getColor());
+      cargo.setName(cargoNomination.getCargoName());
+      cargo.setAbbreviation(cargoNomination.getAbbreviation());
+    }
+    cargo.setStart(portEta + (start * 60 * 1000));
+    cargo.setEnd(portEta + (end * 60 * 1000));
+    cargo.setApi(
+        StringUtils.isEmpty(commingle.getApi()) ? null : new BigDecimal(commingle.getApi()));
+    return end;
+  }
+
+  /**
+   * @param commingle
+   * @param tankDetailOpt
+   * @param cargoTankCategories
+   */
+  private void buildCommingleCargoTankCategory(
+      LoadingPlanCommingleDetails commingle,
+      Optional<VesselTankDetail> tankDetailOpt,
+      Set<TankCategory> cargoTankCategories) {
+    TankCategory tankCategory = new TankCategory();
+    tankDetailOpt.ifPresent(
+        tank -> {
+          tankCategory.setTankName(tank.getShortName());
+          tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
+        });
+    if (cargoTankCategories.stream()
+        .anyMatch(cargo -> cargo.getId().equals(commingle.getTankId()))) {
+      cargoTankCategories.removeIf(cargo -> cargo.getId().equals(commingle.getTankId()));
+    }
+    tankCategory.setId(commingle.getTankId());
+    tankCategory.setQuantity(
+        StringUtils.isEmpty(commingle.getQuantityMT())
+            ? null
+            : new BigDecimal(commingle.getQuantityMT()));
+    tankCategory.setUllage(
+        StringUtils.isEmpty(commingle.getUllage()) ? null : new BigDecimal(commingle.getUllage()));
+    cargoTankCategories.add(tankCategory);
   }
 
   /**
