@@ -134,6 +134,8 @@ public class LoadingPlanBuilderService {
           StringUtils.isEmpty(commingle.getUllage())
               ? null
               : new BigDecimal(commingle.getUllage()));
+      commingleDetails.setConditionType(commingle.getConditionType());
+      commingleDetails.setValueType(commingle.getValueType());
       response.add(commingleDetails);
     }
     return response;

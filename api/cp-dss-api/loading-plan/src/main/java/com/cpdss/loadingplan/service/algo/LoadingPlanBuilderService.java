@@ -445,5 +445,7 @@ public class LoadingPlanBuilderService {
     commingleDetails.setColorCode(commingle.getColorCode());
     commingleDetails.setQuantityM3(commingle.getQuantityM3());
     commingleDetails.setUllage(commingle.getUllage());
+    commingleDetails.setConditionType(commingle.getConditionType());
+    commingleDetails.setValueType(LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
   }
 }
