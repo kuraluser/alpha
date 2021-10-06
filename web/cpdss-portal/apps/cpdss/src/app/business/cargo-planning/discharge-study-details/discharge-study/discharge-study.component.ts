@@ -47,6 +47,7 @@ export class DischargeStudyComponent implements OnInit {
   @Input() permission: IPermission;
   @Input() ports: IPort[];
   @Input() cargos: ICargo[];
+  @Input() isPlanConfirmed: IDischargeStudy;
 
   @Input()
   get dischargeStudy() {
@@ -55,7 +56,7 @@ export class DischargeStudyComponent implements OnInit {
   set dischargeStudy(value: IDischargeStudy) {
     this._dischargeStudy = value;
     this.editMode = (this.permission?.edit === undefined || this.permission?.edit)  && [VOYAGE_STATUS.ACTIVE].includes(this.voyage?.statusId) 
-    && [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(this._dischargeStudy?.statusId)? DATATABLE_EDITMODE.CELL : null;
+    && [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(this._dischargeStudy?.statusId) && !this.isPlanConfirmed? DATATABLE_EDITMODE.CELL : null;
     this.editMode ? this.dischargeStudyForm?.enable() : this.dischargeStudyForm?.disable();
     this.backLoadingColumns = this.dischargeStudyDetailsTransformationService.getDischargeStudyBackLoadingDatatableColumns(this.permission, this.dischargeStudy?.statusId,this.voyage.statusId);
   }

@@ -154,7 +154,7 @@ export class DischargePlanComponent implements OnInit {
       this.dischargeStudies = dischargeStudies;
       this.selectedDischargeStudy = dischargeStudyId ? this.dischargeStudies.find(dischargeStudy => dischargeStudy.id === dischargeStudyId) : this.dischargeStudies[0];
     }
-    const confirmed = this.dischargeStudies.find(dischargeStudy => dischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED);
+    const confirmed = this.dischargeStudies.findIndex(dischargeStudy => dischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED);
     if(confirmed !== -1) {
       this.planConfirmed = true;
     }

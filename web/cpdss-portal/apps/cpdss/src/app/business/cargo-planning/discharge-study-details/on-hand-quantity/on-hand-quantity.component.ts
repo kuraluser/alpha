@@ -52,6 +52,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   @Input() vesselId: number;
 
   @Input() permission: IPermission;
+  @Input() isPlanConfirmed: IDischargeStudy;
 
   @Input()
   get dischargeStudy(): IDischargeStudy {
@@ -60,7 +61,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   set dischargeStudy(value: IDischargeStudy) {
     this._dischargeStudy = value;
     this.editMode = (this.permission?.edit === undefined || this.permission?.edit)  && [VOYAGE_STATUS.ACTIVE].includes(this.voyage?.statusId) 
-      &&  [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(this._dischargeStudy?.statusId)? DATATABLE_EDITMODE.CELL : null;
+      &&  [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(this._dischargeStudy?.statusId) && !this.isPlanConfirmed? DATATABLE_EDITMODE.CELL : null;
   }
 
   get selectedPortOHQTankDetails() {

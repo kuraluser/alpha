@@ -9,13 +9,13 @@ import { IPermission } from '../../../shared/models/user-profile.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
-import { Voyage, VOYAGE_STATUS } from '../../core/models/common.model';
+import { Voyage, VOYAGE_STATUS , DISCHARGE_STUDY_STATUS  } from '../../core/models/common.model';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
 import { DischargeStudyListApiService } from '../services/discharge-study-list-api.service';
 import { DischargeStudyListTransformationApiService } from '../services/discharge-study-list-transformation-api.service';
-
+import { IDischargeStudy } from './../models/discharge-study-list.model';
 
 /**
  *
@@ -43,10 +43,11 @@ export class DischargeStudyListComponent implements OnInit {
   readonly editMode = null;
   isVoyageIdSelected = true;
   permission: IPermission;
-  dischargeStudyList: any[]
+  dischargeStudyList: IDischargeStudy[]
   VOYAGE_STATUS = VOYAGE_STATUS;
   selectedDischargeStudy: any //ToDo - change the type to any to model type once actual api is availble.
-  addDSBtnPermissionContext: IPermissionContext
+  addDSBtnPermissionContext: IPermissionContext;
+  confirmedPlan: IDischargeStudy;
 
 
  /**
@@ -177,7 +178,6 @@ export class DischargeStudyListComponent implements OnInit {
 
   onRowSelect(event: any) {
     if (event?.field !== "actions") {
-      this.display = true;
       this.selectedDischargeStudy = null;
       this.router.navigate([`/business/cargo-planning/discharge-study-details/${this.vesselDetails?.id}/${this.selectedVoyage.id}/${event.data.id}`]);
     }
@@ -268,6 +268,10 @@ export class DischargeStudyListComponent implements OnInit {
         return dischargeStudy;
       });
       dischargeStudyList?.length ? this.dischargeStudyList = [...dischargeStudyList] : this.dischargeStudyList = [];
+      this.confirmedPlan = this.dischargeStudyList.find(dischargeStudy => DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED === dischargeStudy.statusId);
+      if(this.confirmedPlan) {
+        this.columns.pop();
+      }
     }
     this.ngxSpinnerService.hide();
   }

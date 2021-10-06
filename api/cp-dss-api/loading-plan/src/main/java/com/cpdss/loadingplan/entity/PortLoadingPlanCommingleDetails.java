@@ -144,4 +144,10 @@ public class PortLoadingPlanCommingleDetails extends EntityDoc {
 
   @Column(name = "color_code")
   private String colorCode;
+
+  @Column(name = "arrival_departure")
+  private Integer conditionType;
+
+  @Column(name = "actual_planned")
+  private Integer valueType;
 }
