@@ -92,6 +92,7 @@
                                             *ngIf="input.type==='MultiSelect' && input.ruleDropDownMaster!='null'"
                                             [options]="input.ruleDropDownMaster" optionLabel="value"
                                             [formControl]="getControl('inputs',rowIndex,inputIndex)"
+                                            placeholder="{{'RULES_SELECT_OPTION_PLACEHOLDER' | translate}}"
                                             (onChange)="onChangeMultiSelect('inputs',rowIndex,inputIndex)">
                                         </p-multiSelect>
                                         <cpdss-portal-validation-error *ngIf="input?.type"
@@ -99,7 +100,7 @@
                                             [errorMessages]="errorMessages">
                                         </cpdss-portal-validation-error>
                                         <p-dropdown *ngIf="input.type==='Dropdown'" [options]="input.ruleDropDownMaster"
-                                            styleClass="form-control"
+                                            styleClass="form-control"  placeholder="{{'RULES_SELECT_OPTION_PLACEHOLDER' | translate}}"
                                             [formControl]="getControl('inputs',rowIndex,inputIndex)" optionLabel="value"
                                             resetFilterOnHide="true">
                                         </p-dropdown>
@@ -111,7 +112,9 @@
                                 <p-dropdown [id]="'rule_type' + rowIndex " [options]="ruleTypes"
                                     styleClass="form-control" [formControl]="getControl('ruleType',rowIndex)"
                                     (onChange)="onRuleTypeSelected($event)" optionLabel="value"
-                                    resetFilterOnHide="true"></p-dropdown>
+                                    resetFilterOnHide="true"
+                                    placeholder="{{'RULES_SELECT_OPTION_PLACEHOLDER' | translate}}"
+                                    ></p-dropdown>
                             </td>
 
                             <td class="text-center">

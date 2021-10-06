@@ -42,6 +42,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 @Slf4j
 @GrpcService
+@Transactional
 public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargePlanServiceImplBase {
 
   @Autowired DischargePlanSynchronizeService dischargePlanSynchronizeService;
@@ -643,6 +645,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
       builder.setProcessId(processId);
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (Exception e) {
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       e.printStackTrace();
       builder.setResponseStatus(
           ResponseStatus.newBuilder()

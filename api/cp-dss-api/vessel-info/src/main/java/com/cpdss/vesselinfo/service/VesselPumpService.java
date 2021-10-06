@@ -181,6 +181,7 @@ public class VesselPumpService {
       }
       sequenceList.add(builder.build());
     }
+    log.info("Vessel Valve RPC build Seq - Size {}", sequenceList.size());
     return sequenceList;
   }
 
@@ -208,6 +209,60 @@ public class VesselPumpService {
         e.printStackTrace();
       }
     }
+    log.info("Vessel Valve RPC build Educator - Size {}", list.size());
     return list;
+  }
+
+  public Iterable<VesselInfo.VesselValveAirPurgeSequence> buildVesselValveAirPurge(
+      List<VesselValveAirPurgeSequence> all) {
+    var response = new ArrayList<VesselInfo.VesselValveAirPurgeSequence>();
+    for (VesselValveAirPurgeSequence vvA : all) {
+      VesselInfo.VesselValveAirPurgeSequence.Builder builder =
+          VesselInfo.VesselValveAirPurgeSequence.newBuilder();
+      try {
+        Optional.ofNullable(vvA.getId()).ifPresent(builder::setId);
+        Optional.ofNullable(vvA.getVesselId()).ifPresent(builder::setVesselId);
+        Optional.ofNullable(vvA.getVesselName()).ifPresent(builder::setVesselName);
+        Optional.ofNullable(vvA.getShortname()).ifPresent(builder::setShortname);
+        Optional.ofNullable(vvA.getTankId()).ifPresent(builder::setTankId);
+        Optional.ofNullable(vvA.getPumpId()).ifPresent(builder::setPumpId);
+        Optional.ofNullable(vvA.getPumpCode()).ifPresent(builder::setPumpCode);
+        Optional.ofNullable(vvA.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
+        Optional.ofNullable(vvA.getValveNumber()).ifPresent(builder::setValveNumber);
+        Optional.ofNullable(vvA.getValveId()).ifPresent(builder::setValveId);
+        Optional.ofNullable(vvA.getIsShut()).ifPresent(builder::setIsShut);
+        Optional.ofNullable(vvA.getIsCopWarmup()).ifPresent(builder::setIsCopWarmup);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      response.add(builder.build());
+    }
+    log.info("Vessel Valve RPC build AirPurge - Size {}", response.size());
+    return response;
+  }
+
+  public Iterable<VesselInfo.VesselValveStrippingSequence> buildVesselValveStrippingSequence(
+      List<VesselValveStrippingSequence> all) {
+    var response = new ArrayList<VesselInfo.VesselValveStrippingSequence>();
+    for (VesselValveStrippingSequence vvS : all) {
+      VesselInfo.VesselValveStrippingSequence.Builder builder =
+          VesselInfo.VesselValveStrippingSequence.newBuilder();
+      try {
+        Optional.ofNullable(vvS.getId()).ifPresent(builder::setId);
+        Optional.ofNullable(vvS.getVesselId()).ifPresent(builder::setVesselId);
+        Optional.ofNullable(vvS.getVesselName()).ifPresent(builder::setVesselName);
+        Optional.ofNullable(vvS.getPipeLineId()).ifPresent(builder::setPipeLineId);
+        Optional.ofNullable(vvS.getPipeLineName()).ifPresent(builder::setPipeLineName);
+        Optional.ofNullable(vvS.getColour()).ifPresent(builder::setColour);
+        Optional.ofNullable(vvS.getValveId()).ifPresent(builder::setValveId);
+        Optional.ofNullable(vvS.getValve()).ifPresent(builder::setValve);
+        Optional.ofNullable(vvS.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      response.add(builder.build());
+    }
+    log.info("Vessel Valve RPC build StrippingSequence - Size {}", response.size());
+    return response;
   }
 }

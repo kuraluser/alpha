@@ -15,12 +15,14 @@ import com.cpdss.loadingplan.entity.CargoValve;
 import com.cpdss.loadingplan.entity.DeballastingRate;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.LoadingPlanBallastDetails;
+import com.cpdss.loadingplan.entity.LoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.LoadingPlanStowageDetails;
 import com.cpdss.loadingplan.entity.LoadingSequence;
 import com.cpdss.loadingplan.entity.LoadingSequenceStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
@@ -379,5 +381,71 @@ public class LoadingPlanBuilderService {
     stabilityParameters.setList(
         StringUtils.isEmpty(param.getList()) ? null : new BigDecimal(param.getList()));
     stabilityParameters.setTime(param.getTime());
+  }
+
+  /**
+   * @param loadingPlanPortWiseDetails
+   * @param commingleDetails
+   * @param commingle
+   */
+  public void buildLoadingPlanCommingleDetails(
+      com.cpdss.loadingplan.entity.LoadingPlanPortWiseDetails loadingPlanPortWiseDetails,
+      LoadingPlanCommingleDetails commingleDetails,
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails
+          commingle) {
+    commingleDetails.setAbbreviation(commingle.getAbbreviation());
+    commingleDetails.setApi(
+        StringUtils.isEmpty(commingle.getApi()) ? null : new BigDecimal(commingle.getApi()));
+    commingleDetails.setCargo1XId(commingle.getCargo1Id());
+    commingleDetails.setCargo2XId(commingle.getCargo2Id());
+    commingleDetails.setCargoNomination1XId(commingle.getCargoNomination1Id());
+    commingleDetails.setCargoNomination2XId(commingle.getCargoNomination2Id());
+    commingleDetails.setColorCode(commingle.getColorCode());
+    commingleDetails.setIsActive(true);
+    commingleDetails.setLoadingPlanPortWiseDetails(loadingPlanPortWiseDetails);
+    commingleDetails.setQuantity(
+        StringUtils.isEmpty(commingle.getQuantityMT())
+            ? null
+            : new BigDecimal(commingle.getQuantityMT()));
+    commingleDetails.setQuantityM3(
+        StringUtils.isEmpty(commingle.getQuantityM3())
+            ? null
+            : new BigDecimal(commingle.getQuantityM3()));
+    commingleDetails.setTankXId(commingle.getTankId());
+    commingleDetails.setTemperature(
+        StringUtils.isEmpty(commingle.getTemperature())
+            ? null
+            : new BigDecimal(commingle.getTemperature()));
+    commingleDetails.setUllage(
+        StringUtils.isEmpty(commingle.getUllage()) ? null : new BigDecimal(commingle.getUllage()));
+  }
+
+  /**
+   * @param loadingInformation
+   * @param commingleDetails
+   * @param commingle
+   */
+  public void buildPortCommingle(
+      LoadingInformation loadingInformation,
+      PortLoadingPlanCommingleDetails commingleDetails,
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails
+          commingle) {
+    commingleDetails.setApi(commingle.getApi());
+    commingleDetails.setGrade(commingle.getAbbreviation());
+    commingleDetails.setIsActive(true);
+    commingleDetails.setLoadingInformation(loadingInformation);
+    commingleDetails.setLoadablePatternId(loadingInformation.getLoadablePatternXId());
+    commingleDetails.setQuantity(commingle.getQuantityMT());
+    commingleDetails.setTankId(commingle.getTankId());
+    commingleDetails.setTemperature(commingle.getTemperature());
+    commingleDetails.setCargoNomination1XId(commingle.getCargoNomination1Id());
+    commingleDetails.setCargoNomination2XId(commingle.getCargoNomination2Id());
+    commingleDetails.setCargo1XId(commingle.getCargo1Id());
+    commingleDetails.setCargo2XId(commingle.getCargo2Id());
+    commingleDetails.setColorCode(commingle.getColorCode());
+    commingleDetails.setQuantityM3(commingle.getQuantityM3());
+    commingleDetails.setUllage(commingle.getUllage());
+    commingleDetails.setConditionType(commingle.getConditionType());
+    commingleDetails.setValueType(LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
   }
 }

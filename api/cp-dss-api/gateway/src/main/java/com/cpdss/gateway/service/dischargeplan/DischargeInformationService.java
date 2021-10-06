@@ -391,6 +391,12 @@ public class DischargeInformationService {
         loadingPlanService.getUpdateUllageDetails(
             vesselId, patternId, portRotationId, operationType, true);
     BeanUtils.copyProperties(dischargeUllageResponse, response);
+    dischargeUllageResponse.getBillOfLaddingList().stream()
+        .forEach(
+            ladding -> {
+              ladding.setCargoToBeDischarged(ladding.getCargoToBeLoaded());
+              ladding.setCargoDischarged(ladding.getCargoLoaded());
+            });
     response.setPortDischargePlanBallastDetails(
         dischargeUllageResponse.getPortLoadablePlanBallastDetails());
     response.setPortDischargePlanRobDetails(
@@ -403,8 +409,9 @@ public class DischargeInformationService {
     return response;
   }
 
-  public UllageBillReply updateUllage(UllageBillRequest request) throws GenericServiceException {
-    // validate the request and call the discharge update ullage
-    return null;
+  public UllageBillReply updateUllage(UllageBillRequest request, String correlationId)
+      throws GenericServiceException {
+
+    return loadingPlanService.getLoadableStudyShoreTwo(correlationId, request, true);
   }
 }

@@ -12,6 +12,8 @@ public class BillOfLanding {
 
   private Long loadingId;
 
+  private Long dischargingId;
+
   private Long portId;
 
   private Long cargoId;

@@ -26,13 +26,10 @@ export class DischargingInstructionComponent implements OnInit, ComponentCanDeac
   @ViewChild('instructionCheckList') instructionCheckList;
 
   sidePanelList: IDischargingInstructionGroup[];
-  // will use once actual API available
-  // instructionData: IDischargingInstructionSubHeaderData[];
-  // instructionList: IDischargingInstructionSubHeaderData[];
+  
+  instructionData: IDischargingInstructionSubHeaderData[];
+  instructionList: IDischargingInstructionSubHeaderData[];
   groupId: number;
-
-  instructionList: ILoadingInstructionSubHeaderData[] = [];
-  instructionData: ILoadingInstructionSubHeaderData[] = [];
 
   constructor(
     private loadingInstructionApiService: LoadingInstructionApiService,
@@ -43,29 +40,17 @@ export class DischargingInstructionComponent implements OnInit, ComponentCanDeac
   ) { }
 
   ngOnInit(): void {
-    // Used it for temporary purpose
-    this.dischargeInfoId = 155;
-    this.portRotationId =  113696;
     this.getDischargingInstructionDetails();
   }
 
   async getDischargingInstructionDetails() {
     this.ngxSpinnerService.show();
-    // Will use this once actual API available
-    /*
-    const dischargingInstructionResponse: IDischargingInstructionResponse = await this.dischargingInstructionApiService.getDischargingInstructionData(this.vesselId, this.dischargeInfoId, this.portRotationId).toPromise();
-    if (dischargingInstructionResponse.responseStatus.status === "200") {
-      this.instructionData = dischargingInstructionResponse?.dischargingInstructionSubHeader?.length ? dischargingInstructionResponse?.dischargingInstructionSubHeader : [];
-      this.sidePanelList = dischargingInstructionResponse?.dischargingInstructionGroupList?.length ? dischargingInstructionResponse?.dischargingInstructionGroupList : [];
-      this.setInstructionSelected();
-    }
-    */
 
     try {
       this.ngxSpinnerService.show();
-      const result = await this.loadingInstructionApiService.getLoadingInstructionData(this.vesselId, this.dischargeInfoId, this.portRotationId).toPromise();
-      this.instructionData = result?.loadingInstructionSubHeader?.length ? result?.loadingInstructionSubHeader : [];
-      this.sidePanelList = result?.loadingInstructionGroupList?.length ? result?.loadingInstructionGroupList : [];
+      const dischargingInstructionResponse: IDischargingInstructionResponse = await this.dischargingInstructionApiService.getDischargingInstructionData(this.vesselId, this.dischargeInfoId, this.portRotationId).toPromise();
+      this.instructionData = dischargingInstructionResponse?.dischargingInstructionSubHeader?.length ? dischargingInstructionResponse?.dischargingInstructionSubHeader : [];
+      this.sidePanelList = dischargingInstructionResponse?.dischargingInstructionGroupList?.length ? this.formatPanelList(dischargingInstructionResponse?.dischargingInstructionGroupList) : [];
       this.setInstructionSelected();
       this.ngxSpinnerService.hide();
     } catch {
@@ -148,6 +133,18 @@ export class DischargingInstructionComponent implements OnInit, ComponentCanDeac
    */
   setTabStatus(event) {
     this.loadingDischargingTransformationService.setLoadingInstructionValidity(event);
+  }
+
+  /**
+   * Unselect panel data
+   *
+   * @memberof LoadingInstructionComponent
+   */
+  formatPanelList(data) {
+    data.map(item => {
+      item.selected = false;
+    });
+    return data;
   }
 
 }

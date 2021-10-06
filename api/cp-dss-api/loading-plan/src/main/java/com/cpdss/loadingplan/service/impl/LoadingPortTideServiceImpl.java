@@ -16,7 +16,7 @@ public class LoadingPortTideServiceImpl implements LoadingPortTideService {
 
   @Autowired PortTideDetailsRepository portTideDetailsRepository;
 
-  PageRequest defaultPage = PageRequest.of(0, 50);
+  PageRequest defaultPage = PageRequest.of(0, 1);
 
   public List<PortTideAlgo> findAllByPortIdAndPageable(Long portId) {
     return this.portTideDetailsRepository

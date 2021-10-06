@@ -1,6 +1,6 @@
 {
-    "apiUrl" : "",
+    "apiUrl" : "login/",
     "keycloakUrl": "",
-    "path": ":9004/",
+    "path": "/cpdss/",
     "clientId": "frontend"
 }

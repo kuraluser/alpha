@@ -492,7 +492,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             header: "FWD",
             fields: [{
               key: "finalDraftFwd",
-              type: this.fieldType.NUMBER
+              type: this.fieldType.NUMBER,
+              numberFormat: "1.2-2"
             }],
             editable: false,
           },
@@ -500,7 +501,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             header: "AFT",
             fields: [{
               key: "finalDraftAft",
-              type: this.fieldType.NUMBER
+              type: this.fieldType.NUMBER,
+              numberFormat: "1.2-2"
             }],
             editable: false,
           },
@@ -508,7 +510,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             header: "MID",
             fields: [{
               key: "finalDraftMid",
-              type: this.fieldType.NUMBER
+              type: this.fieldType.NUMBER,
+              numberFormat: "1.2-2"
             }],
             editable: false,
           },

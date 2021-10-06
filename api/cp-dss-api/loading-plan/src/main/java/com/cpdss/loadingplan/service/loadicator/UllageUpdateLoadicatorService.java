@@ -19,7 +19,9 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReque
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
+import com.cpdss.loadingplan.domain.algo.LoadicatorAlgoResponse;
 import com.cpdss.loadingplan.domain.algo.LoadicatorBallastDetails;
+import com.cpdss.loadingplan.domain.algo.LoadicatorResult;
 import com.cpdss.loadingplan.domain.algo.LoadicatorRobDetails;
 import com.cpdss.loadingplan.domain.algo.LoadicatorStage;
 import com.cpdss.loadingplan.domain.algo.LoadicatorStowageDetails;
@@ -29,11 +31,13 @@ import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import com.cpdss.loadingplan.entity.PortLoadingPlanBallastTempDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageTempDetails;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastTempDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageTempDetailsRepository;
 import com.cpdss.loadingplan.service.LoadingPlanService;
@@ -57,6 +61,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 /** @author pranav.k */
 @Slf4j
@@ -81,9 +86,14 @@ public class UllageUpdateLoadicatorService {
   @Autowired
   PortLoadingPlanBallastTempDetailsRepository portLoadingPlanBallastDetailsTempRepository;
 
+  @Autowired
+  PortLoadingPlanStabilityParametersRepository portLoadingPlanStabilityParametersRepository;
+
   @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
   @Autowired LoadicatorService loadicatorService;
   @Autowired LoadingPlanService loadingPlanService;
+
+  @Autowired RestTemplate restTemplate;
 
   /**
    * Sends StowagePlans to loadicator-integration MS for Loadicator processing.
@@ -117,12 +127,17 @@ public class UllageUpdateLoadicatorService {
       LoadingInfoLoadicatorDataRequest.Builder loadicatorDataRequestBuilder =
           LoadingInfoLoadicatorDataRequest.newBuilder();
       loadicatorDataRequestBuilder.setProcessId(processId);
+      loadicatorDataRequestBuilder.setConditionType(
+          request.getUpdateUllage(0).getArrivalDepartutre());
+      loadicatorDataRequestBuilder.setProcessId(processId);
       buildUllageEditLoadicatorAlgoRequest(
           loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
-      if (algoRequest.getStages().isEmpty()) {
-        algoRequest.setStages(null);
-      }
       saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
+      checkStabilityWithAlgo(
+          loadingInfoOpt.get(),
+          algoRequest,
+          processId,
+          request.getUpdateUllage(0).getArrivalDepartutre());
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
@@ -215,6 +230,53 @@ public class UllageUpdateLoadicatorService {
         loadingInfoStatusOpt.get(),
         request.getUpdateUllage(0).getArrivalDepartutre());
     return processId;
+  }
+
+  /**
+   * @param conditionType
+   * @param processId
+   * @param algoRequest
+   * @throws GenericServiceException
+   * @throws InvocationTargetException
+   * @throws IllegalAccessException
+   * @throws NumberFormatException
+   */
+  private void checkStabilityWithAlgo(
+      LoadingInformation loadingInformation,
+      UllageEditLoadicatorAlgoRequest algoRequest,
+      String processId,
+      int conditionType)
+      throws GenericServiceException, NumberFormatException, IllegalAccessException,
+          InvocationTargetException {
+    LoadicatorAlgoResponse algoResponse =
+        restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+    saveLoadicatorResponseJson(algoResponse, loadingInformation.getId());
+
+    if (algoResponse.getLoadicatorResults().get(0).getErrorDetails().size() > 0) {
+
+      Optional<LoadingInformationStatus> validationFailedStatusOpt =
+          loadingPlanAlgoService.getLoadingInformationStatus(
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+      loadingPlanService.updateLoadingPlanStatus(
+          loadingInformation, validationFailedStatusOpt.get(), conditionType);
+      loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+          loadingInformation, processId, validationFailedStatusOpt.get());
+
+    } else {
+      saveLoadingPlanStabilityParameters(
+          loadingInformation,
+          algoResponse,
+          conditionType,
+          LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          loadingPlanAlgoService.getLoadingInformationStatus(
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+      loadingPlanService.updateLoadingPlanStatus(
+          loadingInformation, loadingInfoStatusOpt.get(), conditionType);
+      loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+          loadingInformation, processId, loadingInfoStatusOpt.get());
+      loadingPlanService.saveUpdatedLoadingPlanDetails(loadingInformation, conditionType);
+    }
   }
 
   /**
@@ -402,26 +464,114 @@ public class UllageUpdateLoadicatorService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+
     UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
     buildUllageEditLoadicatorAlgoRequest(loadingInfoOpt.get(), request, algoRequest);
     saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
 
-    //    	    LoadicatorAlgoResponse algoResponse =
-    //    	        restTemplate.postForObject(loadicatorUrl, algoRequest,
-    // LoadicatorAlgoResponse.class);
-    //    	    saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
-    //
-    //    	    saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
+    LoadicatorAlgoResponse algoResponse =
+        restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+    saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
 
-    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-        loadingPlanAlgoService.getLoadingInformationStatus(
-            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
-    loadingPlanService.updateLoadingPlanStatus(
-        loadingInfoOpt.get(), loadingInfoStatusOpt.get(), request.getConditionType());
-    loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
-        loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
-    loadingPlanService.saveUpdatedLoadingPlanDetails(
-        loadingInfoOpt.get(), request.getConditionType());
+    if (algoResponse.getLoadicatorResults().get(0).getErrorDetails().size() > 0) {
+
+      Optional<LoadingInformationStatus> validationFailedStatusOpt =
+          loadingPlanAlgoService.getLoadingInformationStatus(
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+      loadingPlanService.updateLoadingPlanStatus(
+          loadingInfoOpt.get(), validationFailedStatusOpt.get(), request.getConditionType());
+      loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+          loadingInfoOpt.get(), request.getProcessId(), validationFailedStatusOpt.get());
+
+    } else {
+      saveLoadingPlanStabilityParameters(
+          loadingInfoOpt.get(),
+          algoResponse,
+          request.getConditionType(),
+          LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          loadingPlanAlgoService.getLoadingInformationStatus(
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+      loadingPlanService.updateLoadingPlanStatus(
+          loadingInfoOpt.get(), loadingInfoStatusOpt.get(), request.getConditionType());
+      loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+          loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+      loadingPlanService.saveUpdatedLoadingPlanDetails(
+          loadingInfoOpt.get(), request.getConditionType());
+    }
+  }
+
+  /**
+   * @param loadingInformation
+   * @param algoResponse
+   * @param conditionType
+   */
+  private void saveLoadingPlanStabilityParameters(
+      LoadingInformation loadingInformation,
+      LoadicatorAlgoResponse algoResponse,
+      int conditionType,
+      int valueType) {
+    PortLoadingPlanStabilityParameters stabilityParameters =
+        new PortLoadingPlanStabilityParameters();
+    buildLoadingPlanStabilityParams(
+        algoResponse, loadingInformation, conditionType, valueType, stabilityParameters);
+    portLoadingPlanStabilityParametersRepository.save(stabilityParameters);
+  }
+
+  /**
+   * @param algoResponse
+   * @param loadingInformation
+   * @param conditionType
+   * @param valueType
+   * @param stabilityParameters
+   */
+  private void buildLoadingPlanStabilityParams(
+      LoadicatorAlgoResponse algoResponse,
+      LoadingInformation loadingInformation,
+      int conditionType,
+      int valueType,
+      PortLoadingPlanStabilityParameters stabilityParameters) {
+    LoadicatorResult result = algoResponse.getLoadicatorResults().get(0);
+    loadicatorService.buildPortStabilityParams(
+        loadingInformation, result, stabilityParameters, conditionType, valueType);
+    portLoadingPlanStabilityParametersRepository.save(stabilityParameters);
+  }
+
+  /**
+   * @param algoResponse
+   * @param id
+   * @throws GenericServiceException
+   */
+  private void saveLoadicatorResponseJson(LoadicatorAlgoResponse algoResponse, Long loadingInfoId)
+      throws GenericServiceException {
+    log.info("Saving Loadicator response to Loadable study DB");
+    JsonRequest.Builder jsonBuilder = JsonRequest.newBuilder();
+    jsonBuilder.setReferenceId(loadingInfoId);
+    jsonBuilder.setJsonTypeId(
+        LoadingPlanConstants.UPDATE_ULLAGE_EDIT_LOADICATOR_RESPONSE_JSON_TYPE_ID);
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      mapper.writeValue(
+          new File(
+              this.rootFolder
+                  + "/json/loadingPlanEditLoadicatorResponse_"
+                  + loadingInfoId
+                  + ".json"),
+          algoResponse);
+      jsonBuilder.setJson(mapper.writeValueAsString(algoResponse));
+      loadicatorService.saveJson(jsonBuilder);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "Could not save response JSON to DB",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } catch (IOException e) {
+      throw new GenericServiceException(
+          "Could not save response JSON to Filesystem",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
   }
 
   /**
@@ -481,6 +631,7 @@ public class UllageUpdateLoadicatorService {
         .forEach(
             loadicatorDetails -> {
               LoadicatorStage loadicatorStage = new LoadicatorStage();
+              loadicatorStage.setTime(loadicatorDetails.getTime());
               loadicatorService.buildLdTrim(loadicatorDetails.getLDtrim(), loadicatorStage);
               loadicatorService.buildLdIntactStability(
                   loadicatorDetails.getLDIntactStability(), loadicatorStage);
@@ -500,8 +651,12 @@ public class UllageUpdateLoadicatorService {
             .findByLoadingInformationAndConditionTypeAndIsActive(
                 loadingInformation.getId(), request.getConditionType(), true);
     List<PortLoadingPlanRobDetails> robDetails =
-        portLoadingPlanRobDetailsRepository.findByLoadingInformationAndConditionTypeAndIsActive(
-            loadingInformation.getId(), request.getConditionType(), true);
+        portLoadingPlanRobDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
+                loadingInformation.getId(),
+                request.getConditionType(),
+                LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE,
+                true);
 
     List<LoadicatorStowageDetails> loadicatorStowageDetails =
         new ArrayList<LoadicatorStowageDetails>();

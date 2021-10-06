@@ -13,6 +13,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
@@ -110,7 +111,7 @@ public class LoadicatorService {
   private LoadicatorServiceGrpc.LoadicatorServiceBlockingStub loadicatorService;
 
   public void saveLodicatorDataForSynoptical(
-      LoadablePattern loadablePattern,
+      com.cpdss.loadablestudy.entity.LoadablePattern loadablePattern,
       LoadableStudy.LoadablePlanDetailsReply arrivalCondition,
       LoadableStudy.LoadablePlanDetails lpd,
       String portType,

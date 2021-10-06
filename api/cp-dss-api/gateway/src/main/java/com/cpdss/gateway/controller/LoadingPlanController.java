@@ -806,7 +806,7 @@ public class LoadingPlanController {
     try {
       reply =
           loadingPlanService.getLoadableStudyShoreTwo(
-              headers.getFirst(CORRELATION_ID_HEADER), inputData);
+              headers.getFirst(CORRELATION_ID_HEADER), inputData, false);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when update bill rules", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

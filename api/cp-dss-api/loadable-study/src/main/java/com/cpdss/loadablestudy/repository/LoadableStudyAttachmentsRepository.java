@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.jpa.repository.Query;
 
@@ -20,4 +21,6 @@ public interface LoadableStudyAttachmentsRepository
       Long loadableStudyId, Boolean isActive);
 
   public Set<LoadableStudyAttachments> findByIdInAndIsActive(List<Long> idList, Boolean isActive);
+
+  public Optional<LoadableStudyAttachments> findByIdAndIsActive(Long id, Boolean isActive);
 }

@@ -29,6 +29,7 @@ import { DischargingPlanApiService } from '../services/discharging-plan-api.serv
 import { PlanSidePanelModule } from '../plan-side-panel/plan-side-panel.module';
 import { ArrivalConditionModule } from '../arrival-condition/arrival-condition.module';
 import { DepartureConditionModule } from '../departure-condition/departure-condition.module';
+import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error-log-popup.module';
 
 /**
  * Module for discharging operations
@@ -59,7 +60,8 @@ import { DepartureConditionModule } from '../departure-condition/departure-condi
     ArrivalConditionModule,
     DepartureConditionModule,
     PostDischargeStageModule,
-    LoadingDischargingSequenceChartModule
+    LoadingDischargingSequenceChartModule,
+    ErrorLogPopupModule
   ],
   providers: [LoadingDischargingInformationApiService, DischargingInstructionApiService, DischargingPlanApiService, LoadingInstructionApiService]
 })

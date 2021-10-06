@@ -531,6 +531,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     loadingPlanResponse.setPlanStabilityParams(
         loadingPlanBuilderService.buildLoadingPlanStabilityParamFromRpc(
             planReply.getPortLoadingPlanStabilityParametersList()));
+    loadingPlanResponse.setPlanCommingleDetails(
+        loadingPlanBuilderService.buildLoadingPlanCommingleFromRpc(
+            planReply.getPortLoadingPlanCommingleDetailsList()));
     loadingPlanResponse.setCurrentPortCargos(
         this.loadingInformationService.getLoadablePlanCargoDetailsByPortUnfiltered(
             vesselId,
@@ -1428,13 +1431,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   }
 
   @Override
-  public UllageBillReply getLoadableStudyShoreTwo(String correlationID, UllageBillRequest inputData)
+  public UllageBillReply getLoadableStudyShoreTwo(
+      String correlationID, UllageBillRequest inputData, boolean isDischarging)
       throws GenericServiceException {
-
-    String errorValidationLandingMsg = "";
-    String errorValidationUllageMsg = "";
-    String errorValidationBallastMsg = "";
-    String errorValidationRobMsg = "";
 
     LoadingPlanModels.UllageBillRequest.Builder builder =
         LoadingPlanModels.UllageBillRequest.newBuilder();
@@ -1459,288 +1458,276 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     try {
 
-      if (inputData.getBillOfLandingList().size() > 0) {
-        inputData
-            .getBillOfLandingList()
-            .forEach(
-                billLanding -> {
-                  billOfLandingBuilder
-                      .setId(StringUtils.isEmpty(billLanding.getId()) ? 0 : billLanding.getId())
-                      .setLoadingId(
-                          StringUtils.isEmpty(billLanding.getLoadingId())
-                              ? 0
-                              : billLanding.getLoadingId())
-                      .setPortId(
-                          StringUtils.isEmpty(billLanding.getPortId())
-                              ? 0
-                              : billLanding.getPortId())
-                      .setCargoId(
-                          StringUtils.isEmpty(billLanding.getCargoId())
-                              ? 0
-                              : billLanding.getCargoId())
-                      .setBlRefNumber(
-                          StringUtils.isEmpty(billLanding.getBlRefNumber())
-                              ? ""
-                              : billLanding.getBlRefNumber())
-                      .setBblAt60F(
-                          StringUtils.isEmpty(billLanding.getBblAt60f())
-                              ? "0"
-                              : billLanding.getBblAt60f().toString())
-                      .setQuantityLt(
-                          StringUtils.isEmpty(billLanding.getQuantityLt())
-                              ? "0"
-                              : billLanding.getQuantityLt().toString())
-                      .setQuantityMt(
-                          StringUtils.isEmpty(billLanding.getQuantityMt())
-                              ? "0"
-                              : billLanding.getQuantityMt().toString())
-                      .setKlAt15C(
-                          StringUtils.isEmpty(billLanding.getKlAt15c())
-                              ? "0"
-                              : billLanding.getKlAt15c().toString())
-                      .setApi(
-                          StringUtils.isEmpty(billLanding.getApi())
-                              ? "0"
-                              : billLanding.getApi().toString())
-                      .setTemperature(
-                          StringUtils.isEmpty(billLanding.getTemperature())
-                              ? "0"
-                              : billLanding.getTemperature().toString())
-                      .setIsActive(
-                          StringUtils.isEmpty(billLanding.getIsActive())
-                              ? 0
-                              : billLanding.getIsActive().longValue())
-                      .setVersion(
-                          StringUtils.isEmpty(billLanding.getVersion())
-                              ? 0
-                              : billLanding.getVersion())
-                      .setIsUpdate(
-                          billLanding.getIsUpdate() == false ? false : billLanding.getIsUpdate())
-                      .build();
-                  builder.addBillOfLanding(billOfLandingBuilder.build());
-                });
-
-      } else {
-        errorValidationLandingMsg = "Required data for Update is missing";
+      if (inputData.getBillOfLandingList().isEmpty()
+          || inputData.getUllageUpdList().isEmpty()
+          || inputData.getBallastUpdateList().isEmpty()
+          || inputData.getRobUpdateList().isEmpty()) {
+        throw new GenericServiceException(
+            "invalid input  error",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.valueOf(500));
       }
+      inputData
+          .getBillOfLandingList()
+          .forEach(
+              billLanding -> {
+                billOfLandingBuilder
+                    .setId(StringUtils.isEmpty(billLanding.getId()) ? 0 : billLanding.getId())
+                    .setLoadingId(
+                        StringUtils.isEmpty(billLanding.getLoadingId())
+                            ? 0
+                            : billLanding.getLoadingId())
+                    .setDischargingId(isDischarging ? billLanding.getDischargingId() : 0)
+                    .setPortId(
+                        StringUtils.isEmpty(billLanding.getPortId()) ? 0 : billLanding.getPortId())
+                    .setCargoId(
+                        StringUtils.isEmpty(billLanding.getCargoId())
+                            ? 0
+                            : billLanding.getCargoId())
+                    .setBlRefNumber(
+                        StringUtils.isEmpty(billLanding.getBlRefNumber())
+                            ? ""
+                            : billLanding.getBlRefNumber())
+                    .setBblAt60F(
+                        StringUtils.isEmpty(billLanding.getBblAt60f())
+                            ? "0"
+                            : billLanding.getBblAt60f().toString())
+                    .setQuantityLt(
+                        StringUtils.isEmpty(billLanding.getQuantityLt())
+                            ? "0"
+                            : billLanding.getQuantityLt().toString())
+                    .setQuantityMt(
+                        StringUtils.isEmpty(billLanding.getQuantityMt())
+                            ? "0"
+                            : billLanding.getQuantityMt().toString())
+                    .setKlAt15C(
+                        StringUtils.isEmpty(billLanding.getKlAt15c())
+                            ? "0"
+                            : billLanding.getKlAt15c().toString())
+                    .setApi(
+                        StringUtils.isEmpty(billLanding.getApi())
+                            ? "0"
+                            : billLanding.getApi().toString())
+                    .setTemperature(
+                        StringUtils.isEmpty(billLanding.getTemperature())
+                            ? "0"
+                            : billLanding.getTemperature().toString())
+                    .setIsActive(
+                        StringUtils.isEmpty(billLanding.getIsActive())
+                            ? 0
+                            : billLanding.getIsActive().longValue())
+                    .setVersion(
+                        StringUtils.isEmpty(billLanding.getVersion())
+                            ? 0
+                            : billLanding.getVersion())
+                    .setIsUpdate(
+                        billLanding.getIsUpdate() == false ? false : billLanding.getIsUpdate())
+                    .build();
+                builder.addBillOfLanding(billOfLandingBuilder.build());
+              });
 
-      if (inputData.getBillOfLandingListRemove().size() > 0) {
-        errorValidationLandingMsg = "";
-        inputData
-            .getBillOfLandingListRemove()
-            .forEach(
-                billLanding -> {
-                  updateBillRemoveBuilder
-                      .setId(billLanding.getId() == null ? 0 : billLanding.getId())
-                      .setLoadingId(
-                          billLanding.getLoadingId() == null ? 0 : billLanding.getLoadingId())
-                      .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
-                      .setCargoId(billLanding.getCargoId() == null ? 0 : billLanding.getCargoId())
-                      .build();
-                  builder.addBillOfLandingRemove(updateBillRemoveBuilder.build());
-                });
-      } else {
-        errorValidationLandingMsg = "Required data for Update is missing";
-      }
+      inputData
+          .getBillOfLandingListRemove()
+          .forEach(
+              billLanding -> {
+                updateBillRemoveBuilder
+                    .setId(billLanding.getId() == null ? 0 : billLanding.getId())
+                    .setLoadingId(
+                        billLanding.getLoadingId() == null ? 0 : billLanding.getLoadingId())
+                    .setDischargingId(isDischarging ? billLanding.getDischargingId() : 0)
+                    .setPortId(billLanding.getPortId() == null ? 0 : billLanding.getPortId())
+                    .setCargoId(billLanding.getCargoId() == null ? 0 : billLanding.getCargoId())
+                    .build();
+                builder.addBillOfLandingRemove(updateBillRemoveBuilder.build());
+              });
 
-      if (inputData.getUllageUpdList().size() > 0) {
-        inputData
-            .getUllageUpdList()
-            .forEach(
-                ullageList -> {
-                  updateUllageBuilder
-                      .setLoadingInformationId(
-                          ullageList.getLoadingInformationId() == null
-                              ? 0
-                              : ullageList.getLoadingInformationId().longValue())
-                      .setTankId(
-                          ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
-                      .setTemperature(
-                          ullageList.getTemperature() == null
-                              ? "0"
-                              : ullageList.getTemperature().toString())
-                      .setCorrectedUllage(
-                          ullageList.getCorrectedUllage() == null
-                              ? "0"
-                              : ullageList.getCorrectedUllage().toString())
-                      .setQuantity(
-                          ullageList.getQuantity() == null
-                              ? ""
-                              : String.valueOf(ullageList.getQuantity()))
-                      .setFillingPercentage(
-                          ullageList.getFillingPercentage() == null
-                              ? "0"
-                              : ullageList.getFillingPercentage().toString())
-                      // .setFillingRatio(ullageList.getFillingRatio() == null? 0:
-                      // ullageList.getFillingRatio().longValue())
-                      .setApi(ullageList.getApi() == null ? "0" : ullageList.getApi().toString())
-                      .setCargoNominationXid(
-                          ullageList.getCargoNominationId() == null
-                              ? 0
-                              : ullageList.getCargoNominationId().longValue())
-                      .setUllage(
-                          ullageList.getUllage() == null
-                              ? ""
-                              : String.valueOf(ullageList.getUllage()))
-                      .setPortXid(
-                          ullageList.getPort_xid() == null
-                              ? 0
-                              : ullageList.getPort_xid().longValue())
-                      .setPortRotationXid(
-                          ullageList.getPort_rotation_xid() == null
-                              ? 0
-                              : ullageList.getPort_rotation_xid().longValue())
-                      .setArrivalDepartutre(
-                          ullageList.getArrival_departutre() == null
-                              ? 0
-                              : ullageList.getArrival_departutre().intValue())
-                      .setActualPlanned(
-                          ullageList.getActual_planned() == null
-                              ? 0
-                              : ullageList.getActual_planned().intValue())
-                      .setGrade(
-                          ullageList.getGrade() == null ? 0 : ullageList.getGrade().longValue())
-                      .setCorrectionFactor(
-                          ullageList.getCorrectionFactor() == null
-                              ? "0"
-                              : ullageList.getCorrectionFactor().toString())
-                      .setIsUpdate(ullageList.getIsUpdate())
-                      .setColorCode(
-                          ullageList.getColor_code() == null ? "" : ullageList.getColor_code())
-                      .setAbbreviation(
-                          ullageList.getAbbreviation() == null ? "" : ullageList.getAbbreviation())
-                      .setCargoId(ullageList.getCargoId() == null ? 0 : ullageList.getCargoId())
-                      .build();
-                  builder.addUpdateUllage(updateUllageBuilder.build());
-                });
+      inputData
+          .getUllageUpdList()
+          .forEach(
+              ullageList -> {
+                updateUllageBuilder
+                    .setLoadingInformationId(
+                        ullageList.getLoadingInformationId() == null
+                            ? 0
+                            : ullageList.getLoadingInformationId().longValue())
+                    .setDischargingInfoId(
+                        isDischarging ? ullageList.getDischargingInformationId().longValue() : 0)
+                    .setTankId(
+                        ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
+                    .setTemperature(
+                        ullageList.getTemperature() == null
+                            ? "0"
+                            : ullageList.getTemperature().toString())
+                    .setCorrectedUllage(
+                        ullageList.getCorrectedUllage() == null
+                            ? "0"
+                            : ullageList.getCorrectedUllage().toString())
+                    .setQuantity(
+                        ullageList.getQuantity() == null
+                            ? ""
+                            : String.valueOf(ullageList.getQuantity()))
+                    .setFillingPercentage(
+                        ullageList.getFillingPercentage() == null
+                            ? "0"
+                            : ullageList.getFillingPercentage().toString())
+                    // .setFillingRatio(ullageList.getFillingRatio() == null? 0:
+                    // ullageList.getFillingRatio().longValue())
+                    .setApi(ullageList.getApi() == null ? "0" : ullageList.getApi().toString())
+                    .setCargoNominationXid(
+                        ullageList.getCargoNominationId() == null
+                            ? 0
+                            : ullageList.getCargoNominationId().longValue())
+                    .setUllage(
+                        ullageList.getUllage() == null
+                            ? ""
+                            : String.valueOf(ullageList.getUllage()))
+                    .setPortXid(
+                        ullageList.getPort_xid() == null ? 0 : ullageList.getPort_xid().longValue())
+                    .setPortRotationXid(
+                        ullageList.getPort_rotation_xid() == null
+                            ? 0
+                            : ullageList.getPort_rotation_xid().longValue())
+                    .setArrivalDepartutre(
+                        ullageList.getArrival_departutre() == null
+                            ? 0
+                            : ullageList.getArrival_departutre().intValue())
+                    .setActualPlanned(
+                        ullageList.getActual_planned() == null
+                            ? 0
+                            : ullageList.getActual_planned().intValue())
+                    .setGrade(ullageList.getGrade() == null ? 0 : ullageList.getGrade().longValue())
+                    .setCorrectionFactor(
+                        ullageList.getCorrectionFactor() == null
+                            ? "0"
+                            : ullageList.getCorrectionFactor().toString())
+                    .setIsUpdate(ullageList.getIsUpdate())
+                    .setColorCode(
+                        ullageList.getColor_code() == null ? "" : ullageList.getColor_code())
+                    .setAbbreviation(
+                        ullageList.getAbbreviation() == null ? "" : ullageList.getAbbreviation())
+                    .setCargoId(ullageList.getCargoId() == null ? 0 : ullageList.getCargoId())
+                    .build();
+                builder.addUpdateUllage(updateUllageBuilder.build());
+              });
 
-      } else {
-        errorValidationUllageMsg = "Required data for Update is missing";
-      }
+      inputData
+          .getBallastUpdateList()
+          .forEach(
+              ullageList -> {
+                updateBallastBuilder
+                    .setLoadingInformationId(
+                        ullageList.getLoadingInformationId() == null
+                            ? 0
+                            : ullageList.getLoadingInformationId().longValue())
+                    .setDischargingInformationId(
+                        isDischarging ? ullageList.getDischargingInformationId().longValue() : 0)
+                    .setTankId(
+                        ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
+                    .setTemperature(
+                        ullageList.getTemperature() == null
+                            ? "0"
+                            : ullageList.getTemperature().toString())
+                    .setCorrectedUllage(
+                        ullageList.getCorrectedUllage() == null
+                            ? "0"
+                            : ullageList.getCorrectedUllage().toString())
+                    .setCorrectionFactor(
+                        ullageList.getCorrectionFactor() == null
+                            ? "0"
+                            : ullageList.getCorrectionFactor().toString())
+                    .setQuantity(
+                        ullageList.getQuantity() == null
+                            ? ""
+                            : String.valueOf(ullageList.getQuantity()))
+                    .setObservedM3(
+                        ullageList.getObservedM3() == null
+                            ? "0"
+                            : ullageList.getObservedM3().toString())
+                    .setFillingRatio(
+                        ullageList.getFillingRatio() == null
+                            ? "0"
+                            : ullageList.getFillingRatio().toString())
+                    .setSounding(
+                        ullageList.getSounding() == null
+                            ? ""
+                            : String.valueOf(ullageList.getSounding()))
+                    .setFillingPercentage(
+                        ullageList.getFilling_percentage() == null
+                            ? "0"
+                            : ullageList.getFilling_percentage().toString())
+                    .setArrivalDepartutre(
+                        ullageList.getArrival_departutre() == null
+                            ? 0
+                            : ullageList.getArrival_departutre().intValue())
+                    .setActualPlanned(
+                        ullageList.getActual_planned() == null
+                            ? 0
+                            : ullageList.getActual_planned().intValue())
+                    .setColorCode(
+                        ullageList.getColor_code() == null ? "" : ullageList.getColor_code())
+                    .setSg(ullageList.getSg() == null ? "0" : ullageList.getSg().toString())
+                    .setPortXid(ullageList.getPortXId() == null ? 0 : ullageList.getPortXId())
+                    .setPortRotationXid(
+                        ullageList.getPortRotationXId() == null
+                            ? 0
+                            : ullageList.getPortRotationXId())
+                    .setIsUpdate(
+                        ullageList.getIsUpdate() == false ? false : ullageList.getIsUpdate())
+                    .build();
+                builder.addBallastUpdate(updateBallastBuilder.build());
+              });
 
-      if (inputData.getBallastUpdateList().size() > 0) {
-        inputData
-            .getBallastUpdateList()
-            .forEach(
-                ullageList -> {
-                  updateBallastBuilder
-                      .setLoadingInformationId(
-                          ullageList.getLoadingInformationId() == null
-                              ? 0
-                              : ullageList.getLoadingInformationId().longValue())
-                      .setTankId(
-                          ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
-                      .setTemperature(
-                          ullageList.getTemperature() == null
-                              ? "0"
-                              : ullageList.getTemperature().toString())
-                      .setCorrectedUllage(
-                          ullageList.getCorrectedUllage() == null
-                              ? "0"
-                              : ullageList.getCorrectedUllage().toString())
-                      .setCorrectionFactor(
-                          ullageList.getCorrectionFactor() == null
-                              ? "0"
-                              : ullageList.getCorrectionFactor().toString())
-                      .setQuantity(
-                          ullageList.getQuantity() == null
-                              ? ""
-                              : String.valueOf(ullageList.getQuantity()))
-                      .setObservedM3(
-                          ullageList.getObservedM3() == null
-                              ? "0"
-                              : ullageList.getObservedM3().toString())
-                      .setFillingRatio(
-                          ullageList.getFillingRatio() == null
-                              ? "0"
-                              : ullageList.getFillingRatio().toString())
-                      .setSounding(
-                          ullageList.getSounding() == null
-                              ? ""
-                              : String.valueOf(ullageList.getSounding()))
-                      .setFillingPercentage(
-                          ullageList.getFilling_percentage() == null
-                              ? "0"
-                              : ullageList.getFilling_percentage().toString())
-                      .setArrivalDepartutre(
-                          ullageList.getArrival_departutre() == null
-                              ? 0
-                              : ullageList.getArrival_departutre().intValue())
-                      .setActualPlanned(
-                          ullageList.getActual_planned() == null
-                              ? 0
-                              : ullageList.getActual_planned().intValue())
-                      .setColorCode(
-                          ullageList.getColor_code() == null ? "" : ullageList.getColor_code())
-                      .setSg(ullageList.getSg() == null ? "0" : ullageList.getSg().toString())
-                      .setPortXid(ullageList.getPortXId() == null ? 0 : ullageList.getPortXId())
-                      .setPortRotationXid(
-                          ullageList.getPortRotationXId() == null
-                              ? 0
-                              : ullageList.getPortRotationXId())
-                      .setIsUpdate(
-                          ullageList.getIsUpdate() == false ? false : ullageList.getIsUpdate())
-                      .build();
-                  builder.addBallastUpdate(updateBallastBuilder.build());
-                });
+      inputData
+          .getRobUpdateList()
+          .forEach(
+              ullageList -> {
+                updateRobBuilder
+                    .setLoadingInformationId(
+                        ullageList.getLoadingInformationId() == null
+                            ? 0
+                            : ullageList.getLoadingInformationId().longValue())
+                    .setDischargingInformationId(
+                        isDischarging ? ullageList.getDischargingInformationId().longValue() : 0)
+                    .setTankId(
+                        ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
+                    .setTemperature(
+                        ullageList.getTemperature() == null
+                            ? "0"
+                            : ullageList.getTemperature().toString())
+                    // .setCorrectedUllage(ullageList.getCorrectedUllage() == null? 0:
+                    // ullageList.getCorrectedUllage().longValue())
+                    // .setCorrectionFactor(ullageList.getCorrectionFactor() == null ? 0:
+                    // ullageList.getCorrectionFactor().longValue())
+                    .setQuantity(
+                        ullageList.getQuantity() == null
+                            ? ""
+                            : String.valueOf(ullageList.getQuantity()))
+                    .setIsUpdate(ullageList.getIsUpdate())
+                    .setDensity(
+                        ullageList.getDensity() == null ? "" : ullageList.getDensity().toString())
+                    // .setObservedM3(ullageList.getObservedM3() == null? 0:
+                    // ullageList.getObservedM3().longValue())
+                    // .setFillingRatio(ullageList.getFillingRatio() == null? 0:
+                    // ullageList.getFillingRatio().longValue())
+                    .setColourCode(
+                        ullageList.getColour_code() == null ? "" : ullageList.getColour_code())
+                    .setArrivalDepartutre(
+                        ullageList.getArrival_departutre() == null
+                            ? 0
+                            : ullageList.getArrival_departutre().intValue())
+                    .setActualPlanned(
+                        ullageList.getActual_planned() == null
+                            ? 0
+                            : ullageList.getActual_planned().intValue())
+                    .setPortXid(ullageList.getPortXId() == null ? 0 : ullageList.getPortXId())
+                    .setPortRotationXid(
+                        ullageList.getPortRotationXId() == null
+                            ? 0
+                            : ullageList.getPortRotationXId())
+                    .build();
+                builder.addRobUpdate(updateRobBuilder.build());
+              });
 
-      } else {
-        errorValidationBallastMsg = "Required data for Update is missing";
-      }
-
-      if (inputData.getRobUpdateList().size() > 0) {
-        inputData
-            .getRobUpdateList()
-            .forEach(
-                ullageList -> {
-                  updateRobBuilder
-                      .setLoadingInformationId(
-                          ullageList.getLoadingInformationId() == null
-                              ? 0
-                              : ullageList.getLoadingInformationId().longValue())
-                      .setTankId(
-                          ullageList.getTankId() == null ? 0 : ullageList.getTankId().longValue())
-                      .setTemperature(
-                          ullageList.getTemperature() == null
-                              ? "0"
-                              : ullageList.getTemperature().toString())
-                      // .setCorrectedUllage(ullageList.getCorrectedUllage() == null? 0:
-                      // ullageList.getCorrectedUllage().longValue())
-                      // .setCorrectionFactor(ullageList.getCorrectionFactor() == null ? 0:
-                      // ullageList.getCorrectionFactor().longValue())
-                      .setQuantity(
-                          ullageList.getQuantity() == null
-                              ? ""
-                              : String.valueOf(ullageList.getQuantity()))
-                      .setIsUpdate(ullageList.getIsUpdate())
-                      .setDensity(
-                          ullageList.getDensity() == null ? "" : ullageList.getDensity().toString())
-                      // .setObservedM3(ullageList.getObservedM3() == null? 0:
-                      // ullageList.getObservedM3().longValue())
-                      // .setFillingRatio(ullageList.getFillingRatio() == null? 0:
-                      // ullageList.getFillingRatio().longValue())
-                      .setColourCode(
-                          ullageList.getColour_code() == null ? "" : ullageList.getColour_code())
-                      .setArrivalDepartutre(
-                          ullageList.getArrival_departutre() == null
-                              ? 0
-                              : ullageList.getArrival_departutre().intValue())
-                      .setActualPlanned(
-                          ullageList.getActual_planned() == null
-                              ? 0
-                              : ullageList.getActual_planned().intValue())
-                      .setPortXid(ullageList.getPortXId() == null ? 0 : ullageList.getPortXId())
-                      .setPortRotationXid(
-                          ullageList.getPortRotationXId() == null
-                              ? 0
-                              : ullageList.getPortRotationXId())
-                      .build();
-                  builder.addRobUpdate(updateRobBuilder.build());
-                });
-
-      } else {
-        errorValidationRobMsg = "Required data for Update is missing";
-      }
     } catch (Exception e) {
       log.error("GenericServiceException when update LoadableStudy", e);
       throw new GenericServiceException(
@@ -1749,12 +1736,21 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
           HttpStatusCode.valueOf(500));
     }
 
-    Common.ResponseStatus.Builder ruleResponse = Common.ResponseStatus.newBuilder();
-    if (errorValidationLandingMsg == "Required data for Update is missing"
-        && errorValidationUllageMsg == "Required data for Update is missing"
-        && errorValidationBallastMsg == "Required data for Update is missing"
-        && errorValidationRobMsg == "Required data for Update is missing") {
-      ruleResponse.setCode("200").setStatus("Invalid Input Error");
+    if (isDischarging) {
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply
+          dischargeUllageReply =
+              dischargePlanServiceBlockingStub.updateDischargeUllageDetails(builder.build());
+      if (!SUCCESS.equals(dischargeUllageReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "failed to get or save UllageBill ",
+            dischargeUllageReply.getResponseStatus().getStatus(),
+            HttpStatusCode.valueOf(500));
+      }
+      replays.setProcessId(dischargeUllageReply.getProcessId());
+      replays.setResponseStatus(
+          new CommonSuccessResponse(
+              dischargeUllageReply.getResponseStatus().getStatus(),
+              dischargeUllageReply.getResponseStatus().getCode()));
     } else {
       replays = loadingPlanGrpcService.getLoadableStudyShoreTwo(correlationID, builder);
       if (!SUCCESS.equals(replays.getResponseStatus().getStatus())) {

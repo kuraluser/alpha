@@ -615,7 +615,7 @@ public class UllageUpdateLoadicatorService {
             .findByDischargingInformationAndConditionTypeAndIsActive(
                 dischargeInformation.getId(), request.getConditionType(), true);
     List<PortDischargingPlanBallastTempDetails> tempBallastDetails =
-        portDischargingPlanBallastDetailsRepository
+        portDischargingPlanBallastDetailsTempRepository
             .findByDischargingInformationAndConditionTypeAndIsActive(
                 dischargeInformation.getId(), request.getConditionType(), true);
     List<PortDischargingPlanRobDetails> robDetails =

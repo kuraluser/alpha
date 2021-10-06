@@ -20,6 +20,10 @@ public class VesselValveSeq {
   private Integer vesselValveId;
   private boolean isShut;
 
+  private String pumpCode;
+  private String pumpName;
+  private String pumpType;
+
   public VesselValveSeq getInstance(VesselValveSequence v) {
     VesselValveSeq vq = new VesselValveSeq();
     vq.valveCategory = v.getValveCategory();
@@ -32,6 +36,10 @@ public class VesselValveSeq {
     vq.stageNumber = v.getStageNumber();
     vq.vesselValveId = v.getValveId();
     vq.isShut = v.getIsShut();
+
+    vq.pumpCode = v.getPumpCode();
+    vq.pumpName = v.getPumpName();
+    vq.pumpType = v.getPumpType();
     return vq;
   }
 }

@@ -12,6 +12,8 @@ public class RobDetail {
 
   private BigDecimal loadingInformationId;
 
+  private BigDecimal dischargingInformationId;
+
   private BigDecimal tankId;
 
   private BigDecimal temperature;

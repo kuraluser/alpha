@@ -7,6 +7,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.entity.*;
@@ -443,5 +444,46 @@ public class LoadingInformationBuilderService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  /**
+   * @param plpCommingleList
+   * @return
+   * @throws GenericServiceException
+   */
+  public List<LoadingPlanCommingleDetails> buildLoadingPlanCommingleMessage(
+      List<PortLoadingPlanCommingleDetails> plpCommingleList) throws GenericServiceException {
+    List<LoadingPlanCommingleDetails> portLoadingPlanCommingleDetails =
+        new ArrayList<LoadingPlanCommingleDetails>();
+    try {
+      plpCommingleList.forEach(
+          commingle -> {
+            LoadingPlanCommingleDetails.Builder builder = LoadingPlanCommingleDetails.newBuilder();
+            Optional.ofNullable(commingle.getGrade()).ifPresent(builder::setAbbreviation);
+            Optional.ofNullable(commingle.getApi()).ifPresent(builder::setApi);
+            Optional.ofNullable(commingle.getCargo1XId()).ifPresent(builder::setCargo1Id);
+            Optional.ofNullable(commingle.getCargo2XId()).ifPresent(builder::setCargo2Id);
+            Optional.ofNullable(commingle.getCargoNomination1XId())
+                .ifPresent(builder::setCargoNomination1Id);
+            Optional.ofNullable(commingle.getCargoNomination2XId())
+                .ifPresent(builder::setCargoNomination2Id);
+            Optional.ofNullable(commingle.getId()).ifPresent(builder::setId);
+            Optional.ofNullable(commingle.getQuantity()).ifPresent(builder::setQuantityMT);
+            Optional.ofNullable(commingle.getQuantityM3()).ifPresent(builder::setQuantityM3);
+            Optional.ofNullable(commingle.getTankId()).ifPresent(builder::setTankId);
+            Optional.ofNullable(commingle.getTemperature()).ifPresent(builder::setTemperature);
+            Optional.ofNullable(commingle.getUllage()).ifPresent(builder::setUllage);
+            Optional.ofNullable(commingle.getConditionType()).ifPresent(builder::setConditionType);
+            Optional.ofNullable(commingle.getValueType()).ifPresent(builder::setValueType);
+            portLoadingPlanCommingleDetails.add(builder.build());
+          });
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "LoadingPlanCommingleDetails Object Build failed",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    return portLoadingPlanCommingleDetails;
   }
 }

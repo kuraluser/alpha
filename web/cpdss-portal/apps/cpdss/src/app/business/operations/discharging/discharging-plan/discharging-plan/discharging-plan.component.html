@@ -69,3 +69,5 @@
     </div>
   </div>
 </ng-container>
+<cpdss-portal-error-log-popup [(visible)]="errorPopUp" (visibleChange)="viewError($event)"
+  [header]="'GENERATED_PLAN_ERROR_MESSAGE_HEADING'" [errorMessage]="errorMessage"></cpdss-portal-error-log-popup>

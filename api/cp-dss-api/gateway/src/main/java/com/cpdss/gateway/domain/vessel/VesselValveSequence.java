@@ -63,4 +63,8 @@ public class VesselValveSequence implements Serializable {
   private String stageNumber;
   private Integer valveId;
   private Boolean isShut;
+
+  private String pumpCode;
+  private String pumpName;
+  private String pumpType;
 }

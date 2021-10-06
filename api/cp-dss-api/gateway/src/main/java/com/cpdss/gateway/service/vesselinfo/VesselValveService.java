@@ -2,10 +2,7 @@
 package com.cpdss.gateway.service.vesselinfo;
 
 import com.cpdss.common.generated.VesselInfo;
-import com.cpdss.gateway.domain.vessel.VesselValveEdu;
-import com.cpdss.gateway.domain.vessel.VesselValveEducationProcess;
-import com.cpdss.gateway.domain.vessel.VesselValveSeq;
-import com.cpdss.gateway.domain.vessel.VesselValveSequence;
+import com.cpdss.gateway.domain.vessel.*;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,12 +52,6 @@ public class VesselValveService {
               entry.getValue().stream()
                   .map(v -> new VesselValveSeq().getInstance(v))
                   .collect(Collectors.toList()));
-        }
-
-        int x = 1;
-        for (VesselValveSequence v : seqEntityList.getValue()) {
-          // map4.put("sequence_" + x, new VesselValveSeq().getInstance(v));
-          x++;
         }
         map3.put(toCamelCase(seqEntityList.getKey()), map4);
       }
@@ -139,5 +130,33 @@ public class VesselValveService {
       list.add(eduction);
     }
     return list;
+  }
+
+  public List<VesselValveAirPurge> buildVesselValveAirPurge(
+      List<VesselInfo.VesselValveAirPurgeSequence> vvAirPurgeSequenceList) {
+    var resp =
+        vvAirPurgeSequenceList.stream()
+            .map(
+                v -> {
+                  VesselValveAirPurge var1 = new VesselValveAirPurge();
+                  BeanUtils.copyProperties(v, var1);
+                  return var1;
+                })
+            .collect(Collectors.toList());
+    return resp;
+  }
+
+  public List<VesselValveStrippingSequence> buildVesselValveStrippingSeq(
+      List<VesselInfo.VesselValveStrippingSequence> vvStrippingSequenceList) {
+    var resp =
+        vvStrippingSequenceList.stream()
+            .map(
+                v -> {
+                  VesselValveStrippingSequence var1 = new VesselValveStrippingSequence();
+                  BeanUtils.copyProperties(v, var1);
+                  return var1;
+                })
+            .collect(Collectors.toList());
+    return resp;
   }
 }
