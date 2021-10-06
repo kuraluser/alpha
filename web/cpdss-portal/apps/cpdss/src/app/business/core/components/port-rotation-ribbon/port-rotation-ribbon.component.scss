@@ -1,5 +1,15 @@
 .card-border {
   margin-top: 8px;
+  position: relative;
+  .ship-location{
+    position: absolute;
+    height: 7px;
+    width: 30px;
+    left: 0px;
+    right: 0;
+    top: -6px;
+    margin: auto;
+  }
 }
 
 .carousel-card {
