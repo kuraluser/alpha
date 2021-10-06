@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan.sequence;
 
+import com.cpdss.gateway.domain.dischargeplan.DischargingPlanPortWiseDetails;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +18,21 @@ public class Sequence {
   @JsonProperty("cargoLoadingRatePerTankM3_Hr")
   private List<Map<String, String>> tankWiseCargoLoadingRates;
 
+  @JsonProperty("cargoDischargingRatePerTankM3_Hr")
+  private List<Map<String, String>> tankWiseCargoDischargingRates;
+  
   @JsonProperty("deballastingRateM3_Hr")
   private Map<String, String> deballastingRates;
 
   @JsonProperty("cargoLoadingRateM3_Hr")
   private Map<String, String> stageWiseCargoLoadingRates;
 
+  @JsonProperty("cargoDischargingRateM3_Hr")
+  private Map<String, String> stageWiseCargoDischargingRates;
+  
   private List<LoadingPlanPortWiseDetails> loadablePlanPortWiseDetails;
+  
+  private List<DischargingPlanPortWiseDetails> dischargePlanPortWiseDetails;
 
   Map<String, List<Pump>> ballast;
 

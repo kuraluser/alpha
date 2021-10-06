@@ -301,3 +301,18 @@ message DischargePlanAlgoRequest {
   ResponseStatus responseStatus = 1;
   string requestAsJsonString = 2;
 }
+
+message LoadingPlanSaveRequest {
+  int64 loadingInfoId = 1;
+  string processId = 2;
+  repeated LoadingSequence dischargingSequences = 3;
+  repeated LoadingPlanTankDetails portDischargingPlanStowageDetails = 4;
+  repeated LoadingPlanTankDetails portDischargingPlanBallastDetails = 5;
+  repeated LoadingPlanTankDetails portDischargingPlanRobDetails = 6;
+  repeated LoadingPlanStabilityParameters portDischargingPlanStabilityParameters = 7;
+  repeated LoadingPlanStabilityParameters dischargingSequenceStabilityParameters = 8;
+  repeated AlgoErrors algoErrors = 9;
+  bool hasLoadicator = 10;
+  string loadingPlanDetailsFromAlgo = 11;
+  repeated LoadingPlanCommingleDetails portDischargingPlanCommingleDetails = 12;
+}
