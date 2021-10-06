@@ -183,7 +183,7 @@
             <div class="col">
                 <form>
                     <ng-container>
-                        <p-table [value]="blFigure.items" [columns]="blFigureColumns" dataKey="cargoName">
+                        <p-table [value]="blFigure.items" [columns]="blFigureColumns" styleClass="body-header-row-span-table" dataKey="cargoName">
                             <ng-template pTemplate="header" let-columns>
                                 <tr>
                                     <th *ngFor="let col of columns">{{col?.header | translate}}</th>
@@ -303,7 +303,7 @@
         </div>
         <div *ngIf="selectedTab === tankType.CARGO && status === ULLAGE_STATUS.DEPARTURE" class="row">
             <div class="col-md-12 pt-20">
-                <p-table [value]="cargoQuantityList">
+                <p-table [value]="cargoQuantityList" styleClass="body-header-row-span-table">
                     <ng-template pTemplate="header">
                         <tr>
                             <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_NAME' | translate}}</th>
