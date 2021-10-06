@@ -20,7 +20,7 @@ public class Sequence {
 
   @JsonProperty("cargoDischargingRatePerTankM3_Hr")
   private List<Map<String, String>> tankWiseCargoDischargingRates;
-  
+
   @JsonProperty("deballastingRateM3_Hr")
   private Map<String, String> deballastingRates;
 
@@ -29,9 +29,9 @@ public class Sequence {
 
   @JsonProperty("cargoDischargingRateM3_Hr")
   private Map<String, String> stageWiseCargoDischargingRates;
-  
+
   private List<LoadingPlanPortWiseDetails> loadablePlanPortWiseDetails;
-  
+
   private List<DischargingPlanPortWiseDetails> dischargePlanPortWiseDetails;
 
   Map<String, List<Pump>> ballast;

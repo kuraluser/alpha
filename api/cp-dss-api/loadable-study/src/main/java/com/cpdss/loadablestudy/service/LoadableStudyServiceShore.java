@@ -93,8 +93,6 @@ public class LoadableStudyServiceShore {
   @Autowired private LoadableQuantityService loadableQuantityService;
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
 
-
-
   @Autowired private LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
 
   @Autowired private LoadablePatternService loadablePatternService;

@@ -30,7 +30,6 @@ import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveRespons
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsStatus;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsUpdateRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
-import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
@@ -1111,7 +1110,7 @@ public class DischargePlanController {
           e);
     }
   }
-  
+
   /**
    * Save discharging Sequence API
    *
@@ -1136,7 +1135,8 @@ public class DischargePlanController {
           vesselId,
           voyageId,
           infoId);
-      return dischargeInformationService.saveDischargingPlan(vesselId, voyageId, infoId, dischargingPlanAlgoRequest);
+      return dischargeInformationService.saveDischargingPlan(
+          vesselId, voyageId, infoId, dischargingPlanAlgoRequest);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in Save Loading Plan API");
       e.printStackTrace();

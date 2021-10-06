@@ -1,16 +1,14 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.dischargeplan;
 
-import java.util.List;
-import java.util.Map;
-
 import com.cpdss.gateway.domain.AlgoError;
 import com.cpdss.gateway.domain.loadingplan.AlgoLoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.sequence.Event;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceStabilityParam;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
+import java.util.List;
+import java.util.Map;
 import lombok.Data;
 
 @Data

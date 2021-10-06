@@ -1,5 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.dischargeplan;
+
 import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -49,15 +50,11 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.utility.AdminRuleValueExtract;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-
-import javax.validation.constraints.Min;
-
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
@@ -87,6 +84,7 @@ public class DischargeInformationService {
   @GrpcClient("dischargeInformationService")
   private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
       dischargeInfoServiceStub;
+
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
   /**
@@ -432,10 +430,12 @@ public class DischargeInformationService {
     return loadingPlanService.getLoadableStudyShoreTwo(correlationId, request, true);
   }
 
-public LoadingPlanAlgoResponse saveDischargingPlan( Long vesselId,
-		Long voyageId,Long infoId,
-		DischargingPlanAlgoRequest dischargingPlanAlgoRequest)  throws GenericServiceException{
-	
+  public LoadingPlanAlgoResponse saveDischargingPlan(
+      Long vesselId,
+      Long voyageId,
+      Long infoId,
+      DischargingPlanAlgoRequest dischargingPlanAlgoRequest)
+      throws GenericServiceException {
 
     LoadingPlanAlgoResponse algoResponse = new LoadingPlanAlgoResponse();
     LoadingPlanSaveRequest.Builder builder = LoadingPlanSaveRequest.newBuilder();
@@ -460,8 +460,8 @@ public LoadingPlanAlgoResponse saveDischargingPlan( Long vesselId,
     } catch (JsonProcessingException e) {
       log.error("Exception encountered when processing Loading Information Response JSON");
     }
-//    loadingSequenceService.buildLoadingPlanSaveRequest(
-//        loadingPlanAlgoRequest, vesselId, infoId, builder);
+    //    loadingSequenceService.buildLoadingPlanSaveRequest(
+    //        loadingPlanAlgoRequest, vesselId, infoId, builder);
     LoadingPlanSaveResponse response = loadingPlanGrpcService.saveLoadingPlan(builder.build());
     if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error("Exception occured when saving loading plan");
@@ -473,20 +473,19 @@ public LoadingPlanAlgoResponse saveDischargingPlan( Long vesselId,
     algoResponse.setProcessId(dischargingPlanAlgoRequest.getProcessId());
     algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
     return algoResponse;
-  
-}
+  }
 
-/**
- * @param referenceId
- * @return StatusReply
- */
-public StatusReply saveJson(Long referenceId, Long jsonTypeId, String json) {
-  JsonRequest jsonRequest =
-      JsonRequest.newBuilder()
-          .setReferenceId(referenceId)
-          .setJsonTypeId(jsonTypeId)
-          .setJson(json)
-          .build();
-  return this.loadingPlanGrpcService.saveJson(jsonRequest);
-}
+  /**
+   * @param referenceId
+   * @return StatusReply
+   */
+  public StatusReply saveJson(Long referenceId, Long jsonTypeId, String json) {
+    JsonRequest jsonRequest =
+        JsonRequest.newBuilder()
+            .setReferenceId(referenceId)
+            .setJsonTypeId(jsonTypeId)
+            .setJson(json)
+            .build();
+    return this.loadingPlanGrpcService.saveJson(jsonRequest);
+  }
 }

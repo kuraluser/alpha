@@ -1,14 +1,12 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.dischargeplan;
 
-import java.util.List;
-
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanRobDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingQuantityCommingleCargoDetails;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.util.List;
 import lombok.Data;
 
 @Data
