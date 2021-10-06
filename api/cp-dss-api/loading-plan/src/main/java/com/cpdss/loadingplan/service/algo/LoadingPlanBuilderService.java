@@ -398,6 +398,8 @@ public class LoadingPlanBuilderService {
         StringUtils.isEmpty(commingle.getApi()) ? null : new BigDecimal(commingle.getApi()));
     commingleDetails.setCargo1XId(commingle.getCargo1Id());
     commingleDetails.setCargo2XId(commingle.getCargo2Id());
+    commingleDetails.setCargoNomination1XId(commingle.getCargoNomination1Id());
+    commingleDetails.setCargoNomination2XId(commingle.getCargoNomination2Id());
     commingleDetails.setColorCode(commingle.getColorCode());
     commingleDetails.setIsActive(true);
     commingleDetails.setLoadingPlanPortWiseDetails(loadingPlanPortWiseDetails);
