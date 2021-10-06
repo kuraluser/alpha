@@ -125,7 +125,7 @@ export class LoadingRateComponent implements OnInit {
       noticeTimeStopLoading: this.fb.control(this.loadingRates.noticeTimeStopLoading, [Validators.required, numberValidator(0, 3), Validators.min(30), Validators.max(60)])
     })
  
-
+    
     for (let key in this.actualValues) {
       this.actualValues[key].defaultValue = this.loadingRates[key];
       if(this.loadingRates[key] !== "" && this.loadingRates[key] !== null)
@@ -134,7 +134,8 @@ export class LoadingRateComponent implements OnInit {
       this.loadingRatesFormGroup.value[key] =   this.loadingRates[key];
     }   
    
-  
+    this.loadingRatesFormGroup.markAllAsTouched();
+    this.loadingRatesFormGroup.markAsTouched();
 }
 
 
