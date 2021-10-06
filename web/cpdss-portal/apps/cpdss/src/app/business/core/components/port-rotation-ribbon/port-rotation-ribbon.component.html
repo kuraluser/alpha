@@ -71,7 +71,7 @@
                                 <label class="carousel-card-label">{{ (port.etdActual ? 'PORT_ROTATION_RIBBON_ATD' : 'PORT_ROTATION_RIBBON_ETD') | translate }}</label>
                                 <div *ngIf="!port?.isDateEditable" class="col text-secondary content-ellipsis text-capitalise" >
                                     {{port.portDate}}</div>
-                                <div class="col text-secondary validation-error relative mr-10" *ngIf="port?.isDateEditable">
+                                <div class="col text-secondary validation-error error-icon-wrapper relative mr-10" *ngIf="port?.isDateEditable">
                                     <p-calendar appendTo="body" formControlName="date"
                                         (onClose)="onBlur($event, port, 'date')"
                                         id="etd_date_{{portList.indexOf(port)}}" [maxDate]="maxDate"
