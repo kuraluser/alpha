@@ -106,16 +106,16 @@
             [permission]="cargoNominationTabPermission" [vesselId]="vesselId" [voyageId]="voyageId"
             [voyage]="selectedVoyage" [dischargeStudyId]="dischargeStudyId"
             (cargoNominationUpdate)="cargoNominationUpdate($event)" [ports]="ports"></cpdss-portal-cargo-nomination>
-        <cpdss-portal-ports *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.PORTS" [permission]="portsTabPermission"
+        <cpdss-portal-ports *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.PORTS" [isPlanConfirmed]="isPlanConfirmed" [permission]="portsTabPermission"
             [voyage]="selectedVoyage" [vesselId]="vesselId" [voyageId]="voyageId" [dischargeStudyId]="dischargeStudyId"
             [dischargeStudy]="selectedDischargeStudy">
         </cpdss-portal-ports>
         <cpdss-portal-on-hand-quantity *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.OHQ"
-            [voyage]="selectedVoyage" [vesselId]="vesselId" [voyageId]="voyageId" [dischargeStudyId]="dischargeStudyId"
+            [voyage]="selectedVoyage" [vesselId]="vesselId" [voyageId]="voyageId" [isPlanConfirmed]="isPlanConfirmed" [dischargeStudyId]="dischargeStudyId"
             [permission]="ohqTabPermission" [dischargeStudy]="selectedDischargeStudy">
         </cpdss-portal-on-hand-quantity>
         <cpdss-portal-discharge-study #dischargeStudy *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.DISCHARGE_STUDY && ports && cargos"
-            [voyage]="selectedVoyage" [vesselId]="vesselId" [voyageId]="voyageId" [dischargeStudyId]="dischargeStudyId"
+            [voyage]="selectedVoyage" [vesselId]="vesselId" [voyageId]="voyageId"  [isPlanConfirmed]="isPlanConfirmed" [dischargeStudyId]="dischargeStudyId"
             [permission]="dischargeStudyTabPermission" [dischargeStudy]="selectedDischargeStudy" [ports]="ports" [cargos]="cargos">
         </cpdss-portal-discharge-study>
     </ng-container>

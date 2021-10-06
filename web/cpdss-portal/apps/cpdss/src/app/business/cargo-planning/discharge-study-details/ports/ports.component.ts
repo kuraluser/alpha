@@ -47,6 +47,7 @@ export class PortsComponent implements OnInit, OnDestroy {
   @Input() dischargeStudyId: number;
   @Input() vesselId: number;
   @Input() permission: IPermission;
+  @Input() isPlanConfirmed: IDischargeStudy;
   // properties
   get portsLists(): IDischargeStudyPortsValueObject[] {
     return this._portsLists;
@@ -70,7 +71,7 @@ export class PortsComponent implements OnInit, OnDestroy {
   set dischargeStudy(value: IDischargeStudy) {
     this._dischargeStudy = value;
     this.editMode = (this.permission?.edit === undefined || this.permission?.edit || this.permission?.add === undefined || this.permission?.add) && [VOYAGE_STATUS.ACTIVE].includes(this.voyage?.statusId) 
-    && [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(this._dischargeStudy?.statusId)? DATATABLE_EDITMODE.CELL : null;
+    && [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(this._dischargeStudy?.statusId) && !this.isPlanConfirmed ? DATATABLE_EDITMODE.CELL : null;
   }
 
   @Output() portUpdate = new EventEmitter<boolean>();

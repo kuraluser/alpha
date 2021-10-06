@@ -418,7 +418,7 @@ export class LoadingDischargingTransformationService {
   * @memberof LoadingDischargingTransformationService
   */
   manageSequenceUnitConversion(value: number, loadingDischargingDelay: ILoadingDischargingSequenceValueObject, listData: ILoadingSequenceDropdownData, prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT) {
-    const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === loadingDischargingDelay?.cargo?.value?.cargoId);
+    const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoNominationId === loadingDischargingDelay?.cargo?.value?.cargoNominationId);
     const loadableMT = this.quantityPipe.transform(cargoObj.loadableMT, QUANTITY_UNIT.MT, currUnit, cargoObj?.estimatedAPI, cargoObj?.estimatedTemp, -1);
     return loadableMT;
   }

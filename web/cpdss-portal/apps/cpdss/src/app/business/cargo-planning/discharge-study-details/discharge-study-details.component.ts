@@ -90,6 +90,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
   isGenerateClicked: boolean;
   errorPopup: boolean;
   errorMessage: IAlgoError[];
+  isPlanConfirmed: IDischargeStudy;
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
@@ -393,6 +394,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       this.selectedDischargeStudy = null;
       this.dischargeStudies = [];
     }
+    this.isPlanConfirmed = this.dischargeStudies.find(dischargeStudy => DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED === dischargeStudy.statusId);
     this.ports = await this.getPorts();
     const cargos = await this.dischargeStudyDetailsApiService.getCargoDetails().toPromise();
     this.cargos = cargos.cargos;
