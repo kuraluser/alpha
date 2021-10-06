@@ -21,6 +21,7 @@ public class DischargingPlan {
   private String meanDraft;
   private String afterDraft;
   private String trim;
+  private String airDraft;
 
   @JsonProperty("heel")
   private String list;

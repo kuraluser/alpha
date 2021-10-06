@@ -310,7 +310,7 @@ message DischargePlanAlgoRequest {
 }
 
 message DischargingPlanSaveRequest {
-  int64 loadingInfoId = 1;
+  int64 dischargingInfoId = 1;
   string processId = 2;
   repeated DischargingSequence dischargingSequences = 3;
   repeated LoadingPlanTankDetails portDischargingPlanStowageDetails = 4;
@@ -320,7 +320,7 @@ message DischargingPlanSaveRequest {
   repeated LoadingPlanStabilityParameters dischargingSequenceStabilityParameters = 8;
   repeated AlgoErrors algoErrors = 9;
   bool hasLoadicator = 10;
-  string loadingPlanDetailsFromAlgo = 11;
+  string dischargingPlanDetailsFromAlgo = 11;
   repeated LoadingPlanCommingleDetails portDischargingPlanCommingleDetails = 12;
 }
 message DischargingPlanSaveResponse {

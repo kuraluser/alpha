@@ -18,26 +18,36 @@ public class Sequence {
   @JsonProperty("cargoLoadingRatePerTankM3_Hr")
   private List<Map<String, String>> tankWiseCargoLoadingRates;
 
-  @JsonProperty("cargoDischargingRatePerTankM3_Hr")
-  private List<Map<String, String>> tankWiseCargoDischargingRates;
-
   @JsonProperty("deballastingRateM3_Hr")
   private Map<String, String> deballastingRates;
 
   @JsonProperty("cargoLoadingRateM3_Hr")
   private Map<String, String> stageWiseCargoLoadingRates;
 
-  @JsonProperty("cargoDischargingRateM3_Hr")
-  private Map<String, String> stageWiseCargoDischargingRates;
-
   private List<LoadingPlanPortWiseDetails> loadablePlanPortWiseDetails;
-
-  private List<DischargingPlanPortWiseDetails> dischargePlanPortWiseDetails;
 
   Map<String, List<Pump>> ballast;
 
-  private Map<String, String> ballastingRateM3_Hr;
+  @JsonProperty("ballastingRateM3_Hr")
+  private Map<String, String> ballastingRates;
+
   private List simDeballastingRateM3_Hr;
   private List simBallastingRateM3_Hr;
   private List simCargoLoadingRatePerTankM3_Hr;
+
+  // for discharging
+  private List<Long> cargoValves;
+  private List<Long> ballastValves;
+  private Map<String, List<Cargo>> cargo;
+
+  @JsonProperty("cargoDischargingRateM3_Hr")
+  private Map<String, String> stageWiseCargoDischargingRates;
+
+  @JsonProperty("cargoDischargingRatePerTankM3_Hr")
+  private List<Map<String, String>> tankWiseCargoDischargingRates;
+
+  private List<DischargingPlanPortWiseDetails> dischargePlanPortWiseDetails;
+  private Map<String, String> simCargoDischargingRatePerTankM3_Hr;
+  private Map<String, String> simBallastingRatePerTankM3_Hr;
+  private Map<String, String> simDeballastingRatePerTankM3_Hr;
 }

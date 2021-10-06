@@ -1124,9 +1124,9 @@ public class DischargePlanController {
   @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-plan")
   public LoadingPlanAlgoResponse saveDischargePlan(
       @RequestHeader HttpHeaders headers,
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
-      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
-      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable Long vesselId,
+      @PathVariable Long voyageId,
+      @PathVariable Long infoId,
       @RequestBody DischargingPlanAlgoRequest dischargingPlanAlgoRequest)
       throws CommonRestException {
     try {

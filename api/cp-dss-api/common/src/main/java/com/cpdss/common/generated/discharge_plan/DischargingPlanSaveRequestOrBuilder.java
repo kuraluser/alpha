@@ -7,11 +7,11 @@ public interface DischargingPlanSaveRequestOrBuilder
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>int64 loadingInfoId = 1;</code>
+   * <code>int64 dischargingInfoId = 1;</code>
    *
-   * @return The loadingInfoId.
+   * @return The dischargingInfoId.
    */
-  long getLoadingInfoId();
+  long getDischargingInfoId();
 
   /**
    * <code>string processId = 2;</code>
@@ -182,17 +182,17 @@ public interface DischargingPlanSaveRequestOrBuilder
   boolean getHasLoadicator();
 
   /**
-   * <code>string loadingPlanDetailsFromAlgo = 11;</code>
+   * <code>string dischargingPlanDetailsFromAlgo = 11;</code>
    *
-   * @return The loadingPlanDetailsFromAlgo.
+   * @return The dischargingPlanDetailsFromAlgo.
    */
-  java.lang.String getLoadingPlanDetailsFromAlgo();
+  java.lang.String getDischargingPlanDetailsFromAlgo();
   /**
-   * <code>string loadingPlanDetailsFromAlgo = 11;</code>
+   * <code>string dischargingPlanDetailsFromAlgo = 11;</code>
    *
-   * @return The bytes for loadingPlanDetailsFromAlgo.
+   * @return The bytes for dischargingPlanDetailsFromAlgo.
    */
-  com.google.protobuf.ByteString getLoadingPlanDetailsFromAlgoBytes();
+  com.google.protobuf.ByteString getDischargingPlanDetailsFromAlgoBytes();
 
   /**
    * <code>repeated .LoadingPlanCommingleDetails portDischargingPlanCommingleDetails = 12;</code>

@@ -317,27 +317,27 @@ public final class DischargePlanModels {
           + "structionId\030\001 \001(\003\022\021\n\tisChecked\030\002 \001(\010\022\023\n\013"
           + "instruction\030\003 \001(\t\"`\n\030DischargePlanAlgoRe"
           + "quest\022\'\n\016responseStatus\030\001 \001(\0132\017.Response"
-          + "Status\022\033\n\023requestAsJsonString\030\002 \001(\t\"\213\005\n\032"
-          + "DischargingPlanSaveRequest\022\025\n\rloadingInf"
-          + "oId\030\001 \001(\003\022\021\n\tprocessId\030\002 \001(\t\0222\n\024discharg"
-          + "ingSequences\030\003 \003(\0132\024.DischargingSequence"
-          + "\022B\n!portDischargingPlanStowageDetails\030\004 "
-          + "\003(\0132\027.LoadingPlanTankDetails\022B\n!portDisc"
-          + "hargingPlanBallastDetails\030\005 \003(\0132\027.Loadin"
-          + "gPlanTankDetails\022>\n\035portDischargingPlanR"
-          + "obDetails\030\006 \003(\0132\027.LoadingPlanTankDetails"
-          + "\022O\n&portDischargingPlanStabilityParamete"
-          + "rs\030\007 \003(\0132\037.LoadingPlanStabilityParameter"
-          + "s\022O\n&dischargingSequenceStabilityParamet"
-          + "ers\030\010 \003(\0132\037.LoadingPlanStabilityParamete"
-          + "rs\022\037\n\nalgoErrors\030\t \003(\0132\013.AlgoErrors\022\025\n\rh"
-          + "asLoadicator\030\n \001(\010\022\"\n\032loadingPlanDetails"
-          + "FromAlgo\030\013 \001(\t\022I\n#portDischargingPlanCom"
-          + "mingleDetails\030\014 \003(\0132\034.LoadingPlanComming"
-          + "leDetails\"F\n\033DischargingPlanSaveResponse"
-          + "\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatu"
-          + "sB-\n)com.cpdss.common.generated.discharg"
-          + "e_planP\001b\006proto3"
+          + "Status\022\033\n\023requestAsJsonString\030\002 \001(\t\"\223\005\n\032"
+          + "DischargingPlanSaveRequest\022\031\n\021dischargin"
+          + "gInfoId\030\001 \001(\003\022\021\n\tprocessId\030\002 \001(\t\0222\n\024disc"
+          + "hargingSequences\030\003 \003(\0132\024.DischargingSequ"
+          + "ence\022B\n!portDischargingPlanStowageDetail"
+          + "s\030\004 \003(\0132\027.LoadingPlanTankDetails\022B\n!port"
+          + "DischargingPlanBallastDetails\030\005 \003(\0132\027.Lo"
+          + "adingPlanTankDetails\022>\n\035portDischargingP"
+          + "lanRobDetails\030\006 \003(\0132\027.LoadingPlanTankDet"
+          + "ails\022O\n&portDischargingPlanStabilityPara"
+          + "meters\030\007 \003(\0132\037.LoadingPlanStabilityParam"
+          + "eters\022O\n&dischargingSequenceStabilityPar"
+          + "ameters\030\010 \003(\0132\037.LoadingPlanStabilityPara"
+          + "meters\022\037\n\nalgoErrors\030\t \003(\0132\013.AlgoErrors\022"
+          + "\025\n\rhasLoadicator\030\n \001(\010\022&\n\036dischargingPla"
+          + "nDetailsFromAlgo\030\013 \001(\t\022I\n#portDischargin"
+          + "gPlanCommingleDetails\030\014 \003(\0132\034.LoadingPla"
+          + "nCommingleDetails\"F\n\033DischargingPlanSave"
+          + "Response\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
+          + "nseStatusB-\n)com.cpdss.common.generated."
+          + "discharge_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -725,7 +725,7 @@ public final class DischargePlanModels {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingPlanSaveRequest_descriptor,
             new java.lang.String[] {
-              "LoadingInfoId",
+              "DischargingInfoId",
               "ProcessId",
               "DischargingSequences",
               "PortDischargingPlanStowageDetails",
@@ -735,7 +735,7 @@ public final class DischargePlanModels {
               "DischargingSequenceStabilityParameters",
               "AlgoErrors",
               "HasLoadicator",
-              "LoadingPlanDetailsFromAlgo",
+              "DischargingPlanDetailsFromAlgo",
               "PortDischargingPlanCommingleDetails",
             });
     internal_static_DischargingPlanSaveResponse_descriptor =

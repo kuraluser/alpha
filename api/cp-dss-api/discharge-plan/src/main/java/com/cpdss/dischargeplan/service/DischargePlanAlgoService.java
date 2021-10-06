@@ -13,6 +13,7 @@ import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
@@ -50,6 +51,7 @@ import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
 import com.cpdss.dischargeplan.entity.DischargingInformationAlgoStatus;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import com.cpdss.dischargeplan.entity.DischargingMachineryInUse;
+import com.cpdss.dischargeplan.entity.DischargingSequence;
 import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeInformationStatusRepository;
@@ -838,5 +840,87 @@ public class DischargePlanAlgoService {
     algoStatus.setProcessId(processId);
     algoStatus.setVesselXId(dsischargeInformation.getVesselXid());
     dischargingInformationAlgoStatusRepository.save(algoStatus);
+  }
+
+  public void saveDischargingSequenceAndPlan(DischargingPlanSaveRequest request) {
+    log.info(
+        "Saving Loading plan and sequence of loading information {}",
+        request.getDischargingInfoId());
+
+    DischargeInformation dischargingInfo =
+        dischargeInformationService.getDischargeInformation(request.getDischargingInfoId());
+    if (dischargingInfo == null) {
+      throw new GenericServiceException(
+          "Could not find discharging information " + request.getDischargingInfoId(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    loadingInformationRepository.updateLoadingPlanDetailsFromAlgo(
+        dischargingInfo.getId(), request.getDischargingPlanDetailsFromAlgo());
+
+    if (request.getDischargingSequencesList().isEmpty()) {
+      log.info("No Plans Available for Loading Information {}", dischargingInfo.getId());
+      Optional<DischargingInformationStatus> noPlanAvailableStatusOpt =
+          getDischargingInformationStatus(
+              DischargePlanConstants.DISCHARGING_INFORMATION_NO_PLAN_AVAILABLE_ID);
+      loadingInformationRepository.updateLoadingInformationStatus(
+          noPlanAvailableStatusOpt.get(), dischargingInfo.getId());
+      updateDischargingInfoAlgoStatus(
+          dischargingInfo, request.getProcessId(), noPlanAvailableStatusOpt.get());
+    }
+
+    if (!request.getAlgoErrorsList().isEmpty()) {
+      saveAlgoErrors(dischargingInfo, request);
+    }
+
+    if (!request.getDischargingSequencesList().isEmpty()) {
+      List<DischargingSequence> oldLoadingSequences =
+          dischargingSequenceRepository.findByLoadingInformationAndIsActive(dischargingInfo, true);
+      // Saving Loading Sequence
+      request.getDischargingSequencesList().stream()
+          .forEach(
+              sequence -> {
+                saveDischargingSequence(sequence, dischargingInfo);
+              });
+      deleteLoadingSequences(dischargingInfo.getId(), oldLoadingSequences);
+      deleteLoadingSequenceStabilityParams(dischargingInfo.getId());
+      saveLoadingSequenceStabilityParams(request, dischargingInfo);
+
+      deleteLoadingPlan(dischargingInfo.getId());
+      saveLoadingPlan(request, dischargingInfo);
+      if (request.getHasLoadicator()) {
+        log.info("Passing Loading Sequence to Loadicator");
+        loadicatorService.saveLoadicatorInfo(dischargingInfo, request.getProcessId());
+        Optional<DischargingInformationStatus> loadicatorVerificationStatusOpt =
+            getLoadingInformationStatus(
+                DischargePlanConstants.LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID);
+        updateLoadingInfoAlgoStatus(
+            dischargingInfo, request.getProcessId(), loadicatorVerificationStatusOpt.get());
+      } else {
+        Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
+            getDischargingInformationStatus(DischargePlanConstants.PLAN_GENERATED_ID);
+        dischargingInformationRepository.updateLoadingInformationStatuses(
+            dischargingInfoStatusOpt.get(),
+            dischargingInfoStatusOpt.get(),
+            dischargingInfoStatusOpt.get(),
+            dischargingInfo.getId());
+        updateDischargingInfoAlgoStatus(
+            dischargingInfo, request.getProcessId(), dischargingInfoStatusOpt.get());
+        loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
+            dischargingInfo.getId(), true);
+        loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
+            dischargingInfo.getId(), true);
+      }
+    }
+  }
+
+  public void updateDischargingInfoAlgoStatus(
+      DischargeInformation loadingInformation,
+      String processId,
+      DischargingInformationStatus loadingInformationStatus) {
+
+    this.dischargingInformationAlgoStatusRepository.updateDischargingInformationAlgoStatus(
+        loadingInformationStatus.getId(), loadingInformation.getId(), processId);
   }
 }

@@ -21,7 +21,7 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
     portDischargingPlanStabilityParameters_ = java.util.Collections.emptyList();
     dischargingSequenceStabilityParameters_ = java.util.Collections.emptyList();
     algoErrors_ = java.util.Collections.emptyList();
-    loadingPlanDetailsFromAlgo_ = "";
+    dischargingPlanDetailsFromAlgo_ = "";
     portDischargingPlanCommingleDetails_ = java.util.Collections.emptyList();
   }
 
@@ -57,7 +57,7 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
             break;
           case 8:
             {
-              loadingInfoId_ = input.readInt64();
+              dischargingInfoId_ = input.readInt64();
               break;
             }
           case 18:
@@ -183,7 +183,7 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
             {
               java.lang.String s = input.readStringRequireUtf8();
 
-              loadingPlanDetailsFromAlgo_ = s;
+              dischargingPlanDetailsFromAlgo_ = s;
               break;
             }
           case 98:
@@ -266,15 +266,15 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
             com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest.Builder.class);
   }
 
-  public static final int LOADINGINFOID_FIELD_NUMBER = 1;
-  private long loadingInfoId_;
+  public static final int DISCHARGINGINFOID_FIELD_NUMBER = 1;
+  private long dischargingInfoId_;
   /**
-   * <code>int64 loadingInfoId = 1;</code>
+   * <code>int64 dischargingInfoId = 1;</code>
    *
-   * @return The loadingInfoId.
+   * @return The dischargingInfoId.
    */
-  public long getLoadingInfoId() {
-    return loadingInfoId_;
+  public long getDischargingInfoId() {
+    return dischargingInfoId_;
   }
 
   public static final int PROCESSID_FIELD_NUMBER = 2;
@@ -574,35 +574,35 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
     return hasLoadicator_;
   }
 
-  public static final int LOADINGPLANDETAILSFROMALGO_FIELD_NUMBER = 11;
-  private volatile java.lang.Object loadingPlanDetailsFromAlgo_;
+  public static final int DISCHARGINGPLANDETAILSFROMALGO_FIELD_NUMBER = 11;
+  private volatile java.lang.Object dischargingPlanDetailsFromAlgo_;
   /**
-   * <code>string loadingPlanDetailsFromAlgo = 11;</code>
+   * <code>string dischargingPlanDetailsFromAlgo = 11;</code>
    *
-   * @return The loadingPlanDetailsFromAlgo.
+   * @return The dischargingPlanDetailsFromAlgo.
    */
-  public java.lang.String getLoadingPlanDetailsFromAlgo() {
-    java.lang.Object ref = loadingPlanDetailsFromAlgo_;
+  public java.lang.String getDischargingPlanDetailsFromAlgo() {
+    java.lang.Object ref = dischargingPlanDetailsFromAlgo_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      loadingPlanDetailsFromAlgo_ = s;
+      dischargingPlanDetailsFromAlgo_ = s;
       return s;
     }
   }
   /**
-   * <code>string loadingPlanDetailsFromAlgo = 11;</code>
+   * <code>string dischargingPlanDetailsFromAlgo = 11;</code>
    *
-   * @return The bytes for loadingPlanDetailsFromAlgo.
+   * @return The bytes for dischargingPlanDetailsFromAlgo.
    */
-  public com.google.protobuf.ByteString getLoadingPlanDetailsFromAlgoBytes() {
-    java.lang.Object ref = loadingPlanDetailsFromAlgo_;
+  public com.google.protobuf.ByteString getDischargingPlanDetailsFromAlgoBytes() {
+    java.lang.Object ref = dischargingPlanDetailsFromAlgo_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      loadingPlanDetailsFromAlgo_ = b;
+      dischargingPlanDetailsFromAlgo_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -667,8 +667,8 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
 
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-    if (loadingInfoId_ != 0L) {
-      output.writeInt64(1, loadingInfoId_);
+    if (dischargingInfoId_ != 0L) {
+      output.writeInt64(1, dischargingInfoId_);
     }
     if (!getProcessIdBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, processId_);
@@ -697,8 +697,9 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
     if (hasLoadicator_ != false) {
       output.writeBool(10, hasLoadicator_);
     }
-    if (!getLoadingPlanDetailsFromAlgoBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 11, loadingPlanDetailsFromAlgo_);
+    if (!getDischargingPlanDetailsFromAlgoBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(
+          output, 11, dischargingPlanDetailsFromAlgo_);
     }
     for (int i = 0; i < portDischargingPlanCommingleDetails_.size(); i++) {
       output.writeMessage(12, portDischargingPlanCommingleDetails_.get(i));
@@ -712,8 +713,8 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
     if (size != -1) return size;
 
     size = 0;
-    if (loadingInfoId_ != 0L) {
-      size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, loadingInfoId_);
+    if (dischargingInfoId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, dischargingInfoId_);
     }
     if (!getProcessIdBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, processId_);
@@ -753,9 +754,10 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
     if (hasLoadicator_ != false) {
       size += com.google.protobuf.CodedOutputStream.computeBoolSize(10, hasLoadicator_);
     }
-    if (!getLoadingPlanDetailsFromAlgoBytes().isEmpty()) {
+    if (!getDischargingPlanDetailsFromAlgoBytes().isEmpty()) {
       size +=
-          com.google.protobuf.GeneratedMessageV3.computeStringSize(11, loadingPlanDetailsFromAlgo_);
+          com.google.protobuf.GeneratedMessageV3.computeStringSize(
+              11, dischargingPlanDetailsFromAlgo_);
     }
     for (int i = 0; i < portDischargingPlanCommingleDetails_.size(); i++) {
       size +=
@@ -778,7 +780,7 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
     com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest other =
         (com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest) obj;
 
-    if (getLoadingInfoId() != other.getLoadingInfoId()) return false;
+    if (getDischargingInfoId() != other.getDischargingInfoId()) return false;
     if (!getProcessId().equals(other.getProcessId())) return false;
     if (!getDischargingSequencesList().equals(other.getDischargingSequencesList())) return false;
     if (!getPortDischargingPlanStowageDetailsList()
@@ -793,7 +795,7 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
         .equals(other.getDischargingSequenceStabilityParametersList())) return false;
     if (!getAlgoErrorsList().equals(other.getAlgoErrorsList())) return false;
     if (getHasLoadicator() != other.getHasLoadicator()) return false;
-    if (!getLoadingPlanDetailsFromAlgo().equals(other.getLoadingPlanDetailsFromAlgo()))
+    if (!getDischargingPlanDetailsFromAlgo().equals(other.getDischargingPlanDetailsFromAlgo()))
       return false;
     if (!getPortDischargingPlanCommingleDetailsList()
         .equals(other.getPortDischargingPlanCommingleDetailsList())) return false;
@@ -808,8 +810,8 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + LOADINGINFOID_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadingInfoId());
+    hash = (37 * hash) + DISCHARGINGINFOID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getDischargingInfoId());
     hash = (37 * hash) + PROCESSID_FIELD_NUMBER;
     hash = (53 * hash) + getProcessId().hashCode();
     if (getDischargingSequencesCount() > 0) {
@@ -842,8 +844,8 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
     }
     hash = (37 * hash) + HASLOADICATOR_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getHasLoadicator());
-    hash = (37 * hash) + LOADINGPLANDETAILSFROMALGO_FIELD_NUMBER;
-    hash = (53 * hash) + getLoadingPlanDetailsFromAlgo().hashCode();
+    hash = (37 * hash) + DISCHARGINGPLANDETAILSFROMALGO_FIELD_NUMBER;
+    hash = (53 * hash) + getDischargingPlanDetailsFromAlgo().hashCode();
     if (getPortDischargingPlanCommingleDetailsCount() > 0) {
       hash = (37 * hash) + PORTDISCHARGINGPLANCOMMINGLEDETAILS_FIELD_NUMBER;
       hash = (53 * hash) + getPortDischargingPlanCommingleDetailsList().hashCode();
@@ -997,7 +999,7 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      loadingInfoId_ = 0L;
+      dischargingInfoId_ = 0L;
 
       processId_ = "";
 
@@ -1045,7 +1047,7 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
       }
       hasLoadicator_ = false;
 
-      loadingPlanDetailsFromAlgo_ = "";
+      dischargingPlanDetailsFromAlgo_ = "";
 
       if (portDischargingPlanCommingleDetailsBuilder_ == null) {
         portDischargingPlanCommingleDetails_ = java.util.Collections.emptyList();
@@ -1083,7 +1085,7 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
       com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest result =
           new com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest(this);
       int from_bitField0_ = bitField0_;
-      result.loadingInfoId_ = loadingInfoId_;
+      result.dischargingInfoId_ = dischargingInfoId_;
       result.processId_ = processId_;
       if (dischargingSequencesBuilder_ == null) {
         if (((bitField0_ & 0x00000001) != 0)) {
@@ -1158,7 +1160,7 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
         result.algoErrors_ = algoErrorsBuilder_.build();
       }
       result.hasLoadicator_ = hasLoadicator_;
-      result.loadingPlanDetailsFromAlgo_ = loadingPlanDetailsFromAlgo_;
+      result.dischargingPlanDetailsFromAlgo_ = dischargingPlanDetailsFromAlgo_;
       if (portDischargingPlanCommingleDetailsBuilder_ == null) {
         if (((bitField0_ & 0x00000080) != 0)) {
           portDischargingPlanCommingleDetails_ =
@@ -1223,8 +1225,8 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
       if (other
           == com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest
               .getDefaultInstance()) return this;
-      if (other.getLoadingInfoId() != 0L) {
-        setLoadingInfoId(other.getLoadingInfoId());
+      if (other.getDischargingInfoId() != 0L) {
+        setDischargingInfoId(other.getDischargingInfoId());
       }
       if (!other.getProcessId().isEmpty()) {
         processId_ = other.processId_;
@@ -1429,8 +1431,8 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
       if (other.getHasLoadicator() != false) {
         setHasLoadicator(other.getHasLoadicator());
       }
-      if (!other.getLoadingPlanDetailsFromAlgo().isEmpty()) {
-        loadingPlanDetailsFromAlgo_ = other.loadingPlanDetailsFromAlgo_;
+      if (!other.getDischargingPlanDetailsFromAlgo().isEmpty()) {
+        dischargingPlanDetailsFromAlgo_ = other.dischargingPlanDetailsFromAlgo_;
         onChanged();
       }
       if (portDischargingPlanCommingleDetailsBuilder_ == null) {
@@ -1494,35 +1496,35 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
 
     private int bitField0_;
 
-    private long loadingInfoId_;
+    private long dischargingInfoId_;
     /**
-     * <code>int64 loadingInfoId = 1;</code>
+     * <code>int64 dischargingInfoId = 1;</code>
      *
-     * @return The loadingInfoId.
+     * @return The dischargingInfoId.
      */
-    public long getLoadingInfoId() {
-      return loadingInfoId_;
+    public long getDischargingInfoId() {
+      return dischargingInfoId_;
     }
     /**
-     * <code>int64 loadingInfoId = 1;</code>
+     * <code>int64 dischargingInfoId = 1;</code>
      *
-     * @param value The loadingInfoId to set.
+     * @param value The dischargingInfoId to set.
      * @return This builder for chaining.
      */
-    public Builder setLoadingInfoId(long value) {
+    public Builder setDischargingInfoId(long value) {
 
-      loadingInfoId_ = value;
+      dischargingInfoId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>int64 loadingInfoId = 1;</code>
+     * <code>int64 dischargingInfoId = 1;</code>
      *
      * @return This builder for chaining.
      */
-    public Builder clearLoadingInfoId() {
+    public Builder clearDischargingInfoId() {
 
-      loadingInfoId_ = 0L;
+      dischargingInfoId_ = 0L;
       onChanged();
       return this;
     }
@@ -3470,78 +3472,78 @@ public final class DischargingPlanSaveRequest extends com.google.protobuf.Genera
       return this;
     }
 
-    private java.lang.Object loadingPlanDetailsFromAlgo_ = "";
+    private java.lang.Object dischargingPlanDetailsFromAlgo_ = "";
     /**
-     * <code>string loadingPlanDetailsFromAlgo = 11;</code>
+     * <code>string dischargingPlanDetailsFromAlgo = 11;</code>
      *
-     * @return The loadingPlanDetailsFromAlgo.
+     * @return The dischargingPlanDetailsFromAlgo.
      */
-    public java.lang.String getLoadingPlanDetailsFromAlgo() {
-      java.lang.Object ref = loadingPlanDetailsFromAlgo_;
+    public java.lang.String getDischargingPlanDetailsFromAlgo() {
+      java.lang.Object ref = dischargingPlanDetailsFromAlgo_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        loadingPlanDetailsFromAlgo_ = s;
+        dischargingPlanDetailsFromAlgo_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string loadingPlanDetailsFromAlgo = 11;</code>
+     * <code>string dischargingPlanDetailsFromAlgo = 11;</code>
      *
-     * @return The bytes for loadingPlanDetailsFromAlgo.
+     * @return The bytes for dischargingPlanDetailsFromAlgo.
      */
-    public com.google.protobuf.ByteString getLoadingPlanDetailsFromAlgoBytes() {
-      java.lang.Object ref = loadingPlanDetailsFromAlgo_;
+    public com.google.protobuf.ByteString getDischargingPlanDetailsFromAlgoBytes() {
+      java.lang.Object ref = dischargingPlanDetailsFromAlgo_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        loadingPlanDetailsFromAlgo_ = b;
+        dischargingPlanDetailsFromAlgo_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string loadingPlanDetailsFromAlgo = 11;</code>
+     * <code>string dischargingPlanDetailsFromAlgo = 11;</code>
      *
-     * @param value The loadingPlanDetailsFromAlgo to set.
+     * @param value The dischargingPlanDetailsFromAlgo to set.
      * @return This builder for chaining.
      */
-    public Builder setLoadingPlanDetailsFromAlgo(java.lang.String value) {
+    public Builder setDischargingPlanDetailsFromAlgo(java.lang.String value) {
       if (value == null) {
         throw new NullPointerException();
       }
 
-      loadingPlanDetailsFromAlgo_ = value;
+      dischargingPlanDetailsFromAlgo_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string loadingPlanDetailsFromAlgo = 11;</code>
+     * <code>string dischargingPlanDetailsFromAlgo = 11;</code>
      *
      * @return This builder for chaining.
      */
-    public Builder clearLoadingPlanDetailsFromAlgo() {
+    public Builder clearDischargingPlanDetailsFromAlgo() {
 
-      loadingPlanDetailsFromAlgo_ = getDefaultInstance().getLoadingPlanDetailsFromAlgo();
+      dischargingPlanDetailsFromAlgo_ = getDefaultInstance().getDischargingPlanDetailsFromAlgo();
       onChanged();
       return this;
     }
     /**
-     * <code>string loadingPlanDetailsFromAlgo = 11;</code>
+     * <code>string dischargingPlanDetailsFromAlgo = 11;</code>
      *
-     * @param value The bytes for loadingPlanDetailsFromAlgo to set.
+     * @param value The bytes for dischargingPlanDetailsFromAlgo to set.
      * @return This builder for chaining.
      */
-    public Builder setLoadingPlanDetailsFromAlgoBytes(com.google.protobuf.ByteString value) {
+    public Builder setDischargingPlanDetailsFromAlgoBytes(com.google.protobuf.ByteString value) {
       if (value == null) {
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
 
-      loadingPlanDetailsFromAlgo_ = value;
+      dischargingPlanDetailsFromAlgo_ = value;
       onChanged();
       return this;
     }
