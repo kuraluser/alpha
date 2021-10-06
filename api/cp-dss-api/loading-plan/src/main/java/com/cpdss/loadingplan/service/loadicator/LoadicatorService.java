@@ -980,10 +980,20 @@ public class LoadicatorService {
     LoadicatorResult departureStabilityParameters =
         algoResponse.getLoadicatorResults().get(algoResponse.getLoadicatorResults().size() - 1);
     PortLoadingPlanStabilityParameters portArrStability = new PortLoadingPlanStabilityParameters();
-    buildPortStabilityParams(loadingInformation, arrivalStabilityParameters, portArrStability, 1);
+    buildPortStabilityParams(
+        loadingInformation,
+        arrivalStabilityParameters,
+        portArrStability,
+        LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE,
+        LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
     portLoadingPlanStabilityParametersRepository.save(portArrStability);
     PortLoadingPlanStabilityParameters portDepStability = new PortLoadingPlanStabilityParameters();
-    buildPortStabilityParams(loadingInformation, departureStabilityParameters, portDepStability, 2);
+    buildPortStabilityParams(
+        loadingInformation,
+        departureStabilityParameters,
+        portDepStability,
+        LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE,
+        LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
     portLoadingPlanStabilityParametersRepository.save(portDepStability);
   }
 
@@ -993,11 +1003,12 @@ public class LoadicatorService {
    * @param portStabilityParameters
    * @param conditionType
    */
-  private void buildPortStabilityParams(
+  public void buildPortStabilityParams(
       LoadingInformation loadingInformation,
       LoadicatorResult result,
       PortLoadingPlanStabilityParameters portStabilityParameters,
-      Integer conditionType) {
+      Integer conditionType,
+      Integer valueType) {
     portStabilityParameters.setAftDraft(
         StringUtils.isEmpty(result.getCalculatedDraftAftPlanned())
             ? null
@@ -1029,7 +1040,7 @@ public class LoadicatorService {
             : new BigDecimal(result.getCalculatedTrimPlanned()));
     portStabilityParameters.setConditionType(conditionType);
     portStabilityParameters.setPortRotationXId(loadingInformation.getPortRotationXId());
-    portStabilityParameters.setValueType(LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+    portStabilityParameters.setValueType(valueType);
   }
 
   private void deleteLoadingSequenceStabilityParameters(LoadingInformation loadingInformation) {
@@ -1039,7 +1050,7 @@ public class LoadicatorService {
         loadingInformation.getId());
   }
 
-  private void buildLoadingSequenceStabilityParameters(
+  public void buildLoadingSequenceStabilityParameters(
       LoadingInformation loadingInformation,
       LoadicatorResult result,
       LoadingSequenceStabilityParameters stabilityParameters) {
