@@ -37,4 +37,5 @@ dependencies {
     implementation project(':common')
 	compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'
     compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
+    compile group: 'com.google.protobuf', name: 'protobuf-java-util', version: '3.12.0'
 }

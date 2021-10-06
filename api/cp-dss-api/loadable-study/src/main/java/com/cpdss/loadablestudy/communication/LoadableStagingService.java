@@ -10,6 +10,8 @@ import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -99,6 +101,8 @@ public class LoadableStagingService extends StagingService {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
     objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+    objectMapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
+    objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
     String j = dataTransferStage.getData();
     // String k= j.replace("\\","").replace("[","");
     // String k = j.replaceAll("[\\\\|\\[|\\]]", "").replaceFirst("\"", "");
