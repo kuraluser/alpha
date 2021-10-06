@@ -180,16 +180,15 @@ export class LoadingRateComponent implements OnInit {
   onChange(field) {
    
     const loadingRates = {...this.loadingRatesFormGroup.value};
-    if (this.selectedConversion.id == 2) {
-      this.actualValues[field].defaultValue = this.loadingRatesFormGroup?.value[field];
+    this.actualValues[field].defaultValue = this.loadingRatesFormGroup?.value[field];
+    if (this.selectedConversion.id == 2) {    
       this.actualValues[field].lastEditedUnit = 'BBLS';
     }
     else {
-      this.actualValues[field].defaultValue = this.loadingRatesFormGroup?.value[field];
       this.actualValues[field].lastEditedUnit = 'M3';
     }
-    for (let key in this.actualValues) {
-     
+    this.loadingRates [field]  = this.loadingRatesFormGroup?.value[field];
+    for (let key in this.actualValues) {     
       if (this.actualValues[key].lastEditedUnit == 'BBLS') {
         if(this.actualValues[key]?.defaultValue !== "" && this.actualValues[key]?.defaultValue !== null)
         loadingRates[key] = this.actualValues[key]?.defaultValue / this.conversionFactor;
@@ -220,7 +219,7 @@ export class LoadingRateComponent implements OnInit {
       for (let key in this.actualValues) {
         if (this.loadingRatesFormGroup?.value[key] !== "" && this.loadingRatesFormGroup?.value[key] != null) {
           this.loadingRatesFormGroup?.patchValue({
-            [key]: (this.actualValues[key].lastEditedUnit == 'BBLS') ? (this.actualValues[key].defaultValue) : Math.round(Number(this.loadingRatesFormGroup?.value[key] * this.conversionFactor)),
+            [key]: (this.actualValues[key].lastEditedUnit == 'BBLS') ? (this.actualValues[key].defaultValue) : Math.round(Number(this.loadingRates[key]* this.conversionFactor)),
 
           })
         }
@@ -240,7 +239,7 @@ export class LoadingRateComponent implements OnInit {
       for (let key in this.actualValues) {
         if (this.loadingRatesFormGroup?.value[key] !== "" && this.loadingRatesFormGroup?.value[key] != null) {
           this.loadingRatesFormGroup?.patchValue({
-            [key]: (this.actualValues[key].lastEditedUnit == 'M3') ? (this.actualValues[key].defaultValue) : Math.round(Number(this.loadingRatesFormGroup?.value[key] / this.conversionFactor)),
+            [key]: (this.actualValues[key].lastEditedUnit == 'M3') ? (this.actualValues[key].defaultValue) : Math.round(Number(this.loadingRates[key]/ this.conversionFactor)),
 
           })
         }
