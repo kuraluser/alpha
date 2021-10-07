@@ -173,6 +173,7 @@
                                 title="No file selected"  focusTrap (change)="selectFilesToUpload()" [disabled]="isDischargeStarted"/>
                         </div>
                         <a type="button" class="download-icon ml-10 mr-10" (click)="downloadTemplate()"></a>
+                        <div class="icon-info-rounded" pTooltip="{{'FILE_UPLOADING_TIDE_DETAILS' | translate}}" tooltipPosition="top" >!</div>
                     </div>
                     <!-- <div class="col error-column">
                         <cpdss-portal-validation-error [errors]="fieldError('portName')"
