@@ -995,6 +995,9 @@ public class LoadicatorService {
           this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
           loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
               LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
+          log.info(
+                  "LoadablePattern algo status process id: "
+                          + algoResponse.getProcessId());
         }
       }
     } else {

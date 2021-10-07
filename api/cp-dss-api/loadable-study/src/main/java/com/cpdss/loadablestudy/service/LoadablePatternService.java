@@ -754,7 +754,7 @@ public class LoadablePatternService {
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
       com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder builder)
       throws GenericServiceException, JsonProcessingException {
-    log.info("savePatternValidateResult - loadable study micro service");
+    log.info("savePatternValidateResult - loadable study micro service :");
     Optional<LoadablePattern> loadablePatternOpt =
         this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
     if (!loadablePatternOpt.isPresent()) {
@@ -785,7 +785,7 @@ public class LoadablePatternService {
           algoService.saveAlgoErrorToDB(
               request, loadablePatternOpt.get(), new LoadableStudy(), true);
 
-      if (env.equals("cloud")) {
+      if (!env.equals("ship") && enableCommunication) {
         loadablePatternAlgoRequest.setAlgoError(algoError);
       }
     } else {
@@ -841,30 +841,32 @@ public class LoadablePatternService {
             loadablePatternOpt.get().getLoadableStudy(),
             request.getProcesssId(),
             request.getLoadablePatternId(),
-            new ArrayList<LoadablePattern>());
+            new ArrayList<>());
       } else {
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, request.getProcesssId(), true);
-      }
-      if (env.equals("cloud")) {
-        fetchSavedPatternFromDB(patternDetails, loadablePatternOpt.get());
-        loadablePatternAlgoRequest.setPatternDetails(patternDetails);
+        if (!env.equals("ship") && enableCommunication) {
+          fetchSavedPatternFromDB(patternDetails, loadablePatternOpt.get());
+          loadablePatternAlgoRequest.setPatternDetails(patternDetails);
+        }
       }
     }
+
     ObjectMapper objectMapper = new ObjectMapper();
-
-    // log.info("============ Result : " +
+    log.info("============ process ID : " +request.getProcesssId()+" Env : "+env+" Communication Status : " +
+            ""+enableCommunication + " Lodicator Status : "+request.getHasLodicator());
+    //
     // objectMapper.writeValueAsString(loadablePatternAlgoRequest));
-
-    objectMapper.writeValueAsString(loadablePatternAlgoRequest);
-    if (env.equals("cloud")) {
+    if (!env.equals("ship") && enableCommunication && !request.getHasLodicator()) {
       EnvoyWriter.WriterReply ewReply =
           communicationService.passRequestPayloadToEnvoyWriter(
               objectMapper.writeValueAsString(loadablePatternAlgoRequest),
               loadablePatternOpt.get().getLoadableStudy().getVesselXId(),
               MessageTypes.PATTERNDETAIL.getMessageType());
       if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-        log.info("------- Envoy writer has called successfully : " + ewReply.toString());
+        log.info(
+            "------- Envoy writer has called successfully in algo call back: "
+                + ewReply.toString());
         LoadableStudyCommunicationStatus lsCommunicationStatus =
             new LoadableStudyCommunicationStatus();
         if (ewReply.getMessageId() != null) {
