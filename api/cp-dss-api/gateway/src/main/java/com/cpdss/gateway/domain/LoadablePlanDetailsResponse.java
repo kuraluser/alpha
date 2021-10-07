@@ -19,6 +19,7 @@ public class LoadablePlanDetailsResponse {
   private List<LoadableQuantityCommingleCargoDetails> loadableQuantityCommingleCargoDetails;
   private List<List<VesselTank>> tankLists;
   private List<LoadablePlanStowageDetails> loadablePlanStowageDetails;
+  private Object loadablePlanRoBDetails;
   private List<List<VesselTank>> frontBallastTanks;
 
   private List<List<VesselTank>> centerBallastTanks;

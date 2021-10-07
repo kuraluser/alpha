@@ -79,7 +79,11 @@ export class FleetTransformationService {
           break;
         case 'bunkering': iconUrl = 'assets/images/themes/light/map-icon/bunkering.png'
           break;
-        case 'bunkering-departed': iconUrl = 'assets/images/themes/light/map-icon/bunkering.png'
+        case 'bunkering-departed': iconUrl = 'assets/images/themes/light/map-icon/bunkering-departed.png'
+          break;
+        case 'transit': iconUrl = 'assets/images/themes/light/map-icon/transit.png'
+          break;
+        case 'transit-departed': iconUrl = 'assets/images/themes/light/map-icon/transit-departed.png'
           break;
       }
     } else {
@@ -89,6 +93,8 @@ export class FleetTransformationService {
         case 'discharging': iconUrl = 'assets/images/themes/light/map-icon/discharging-blue.png'
           break;
         case 'bunkering': iconUrl = 'assets/images/themes/light/map-icon/bunkering-blue.png'
+          break;
+        case 'transit': iconUrl = 'assets/images/themes/light/map-icon/transit-blue.png'
           break;
       }
     }
@@ -110,6 +116,8 @@ export class FleetTransformationService {
       case 'discharging': iconUrl = 'assets/images/themes/light/map-icon/ship-discharging.png'
         break;
       case 'bunkering': iconUrl = 'assets/images/themes/light/map-icon/ship-bunkering.png'
+        break;
+      case 'transit': iconUrl = 'assets/images/themes/light/map-icon/ship-transit.png'
         break;
     }
     return iconUrl;

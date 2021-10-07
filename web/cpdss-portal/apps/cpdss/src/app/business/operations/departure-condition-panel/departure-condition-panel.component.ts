@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { QUANTITY_UNIT, LENGTH_UNIT } from './../../../shared/models/common.model';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
 /**
  * Component class for departure condition panel
@@ -49,18 +50,43 @@ export class DepartureConditionPanelComponent implements OnInit {
   */
   formatData() {
     this.departureConditionCargoInfo = [];
+    const commingleArray = [];
+    this.departureConditionCargoTotalQuantity = 0;
+    this.loadingDischargingPlanData?.planCommingleDetails?.map(com => {
+      if (com.conditionType === 2) {
+        commingleArray.push({ abbreviation: com.abbreviation, colorCode: AppConfigurationService.settings.commingleColor, quantity: 0, tankId: com.tankId });
+      }
+    });
     const loadingDischargingPlanInfo = this.loadingDischargingPlanData?.loadingInformation ? this.loadingDischargingPlanData?.loadingInformation : this.loadingDischargingPlanData?.dischargingInformation
     this.loadingDischargingPlanData?.currentPortCargos?.map(cargo => {
       let cargoQuantity = 0;
       this.loadingDischargingPlanData?.planStowageDetails?.map(item => {
         if (item.conditionType === 2 && item.valueType === 2 && cargo.cargoNominationId === item.cargoNominationId) {
-          cargoQuantity += Number(item.quantityMT);
+          if (item.isCommingleCargo) {
+            commingleArray?.map(com => {
+              if (com.tankId === item.tankId) {
+                com.quantity += Number(item.quantityMT);
+              }
+            });
+          } else {
+            cargoQuantity += Number(item.quantityMT);
+          }
         }
       });
       this.departureConditionCargoTotalQuantity += cargoQuantity;
-      this.departureConditionCargoInfo.push({ abbreviation: cargo.cargoAbbreviation, colorCode: cargo.colorCode, quantity: Number(cargoQuantity.toFixed(2)) })
+      this.departureConditionCargoInfo.push({ abbreviation: cargo.cargoAbbreviation, colorCode: cargo.colorCode, quantity: cargoQuantity });
     });
-    this.departureConditionCargoTotalQuantity = Number(this.departureConditionCargoTotalQuantity.toFixed(2));
+    commingleArray?.map(com => {
+      this.loadingDischargingPlanData?.planStowageDetails?.map(item => {
+        if (item.isCommingleCargo && item.conditionType === 2 && item.valueType === 2) {
+          if (com.tankId === item.tankId) {
+            com.quantity += Number(item.quantityMT);
+            this.departureConditionCargoTotalQuantity += Number(item.quantityMT);
+          }
+        }
+      });
+    });
+    this.departureConditionCargoInfo = [...commingleArray, ...this.departureConditionCargoInfo];
     let ballastQuantity = 0;
     this.loadingDischargingPlanData?.planBallastDetails?.map(item => {
       if (item.conditionType === 2) {

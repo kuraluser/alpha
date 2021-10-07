@@ -37,6 +37,7 @@ public class LoadablePlanStowageDetails {
   private String temperature;
   private String colorCode;
   private String quantityMT; // by ALGO
+  private String quantityM3; // by ALGO
   private Long cargoNominationId;
 
   @JsonInclude(Include.NON_NULL)

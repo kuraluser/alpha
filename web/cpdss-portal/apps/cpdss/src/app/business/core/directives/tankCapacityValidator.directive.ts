@@ -17,7 +17,7 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
         return null;
       }
 
-      if(Number(control['parent']?.get(field)?.value) > Number(compareValue)) {
+      if(Number(control['parent']?.get(field)?.value) > (Number(compareValue) * 1.025)) {
         const formControl = <FormControl>control.parent.controls[errorField];
         formControl.markAsTouched();
         formControl.markAsDirty();

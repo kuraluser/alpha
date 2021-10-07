@@ -379,11 +379,11 @@
                 <button type="button" class="btn btn-main" (click)="closeDialog()" id="new-loadable-study-popup-cancel"
                     focusTrap>{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
                 <button (click)="saveUllage(false)" class="btn btn-main" id="new-loadable-study-popup-save"
-                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted || !permission?.view">{{'SAVE' |
+                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted || !permission?.edit">{{'SAVE' |
                     translate}}</button>
                 <button (click)="saveUllage(true)" class="btn btn-main" id="new-loadable-study-popup-save"
                     form="fg_newLoadableStudy" autofocus focusTrap
-                    [disabled]="isDischargeStarted || !permission?.view">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
+                    [disabled]="isDischargeStarted || !permission?.edit">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
                     translate}}</button>
             </div>
         </div>

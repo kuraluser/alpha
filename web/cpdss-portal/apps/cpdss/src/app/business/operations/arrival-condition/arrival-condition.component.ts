@@ -96,9 +96,9 @@ export class ArrivalConditionComponent implements OnInit {
     this.getShipLandingTanks();
   }
 
-  initSubscriptions(){
-    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.subscribe((value)=>{
-      if(value && this.portRotationId === value.portRotationId){
+  initSubscriptions() {
+    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.subscribe((value) => {
+      if (value && this.portRotationId === value.portRotationId) {
         this.loadingDischargingPlanData.loadingInformation.loadingPlanArrStatusId = value.status;
       }
     });
@@ -113,17 +113,51 @@ export class ArrivalConditionComponent implements OnInit {
     this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
     this.cargoQuantities = [];
     this.cargoConditions = [];
+    const commingleArray = [];
+    this.loadingDischargingPlanData?.planCommingleDetails?.map(com => {
+      if (com.conditionType === 1) {
+        commingleArray.push(
+          {
+            abbreviation: com.abbreviation,
+            actualWeight: 0,
+            plannedWeight: 0,
+            colorCode: AppConfigurationService.settings.commingleColor,
+            tankId: com.tankId,
+            cargoId: 0
+          });
+      }
+    });
     this.loadingDischargingPlanInfo = this.loadingDischargingPlanData?.loadingInformation ? this.loadingDischargingPlanData?.loadingInformation : this.loadingDischargingPlanData?.dischargingInformation
     this.loadingDischargingPlanData?.currentPortCargos?.map(item => {
       let actualWeight = 0, plannedWeight = 0;
       this.loadingDischargingPlanData?.planStowageDetails?.map(stowage => {
         if (stowage.conditionType === 1 && item.cargoNominationId === stowage.cargoNominationId) {
           if (stowage.valueType === 1) {
-            actualWeight += Number(stowage.quantityMT);
+            if (stowage.isCommingleCargo) {
+              commingleArray?.map(com => {
+                if (com.tankId === stowage.tankId) {
+                  com.actualWeight += Number(stowage.quantityMT);
+                }
+              });
+            } else {
+              actualWeight += Number(stowage.quantityMT);
+            }
           }
           if (stowage.valueType === 2) {
-            plannedWeight += Number(stowage.quantityMT);
-            this.cargoQuantities.push(this.arrivalConditionTransformationService.formatCargoQuantities(stowage, item));
+            if (stowage.isCommingleCargo) {
+              commingleArray?.map(com => {
+                if (com.tankId === stowage.tankId) {
+                  com.plannedWeight += Number(stowage.quantityMT);
+                }
+              });
+              const commingleData = this.loadingDischargingPlanData?.planCommingleDetails?.filter(commingle => commingle.tankId === stowage.tankId);
+              if (commingleData?.length) {
+                this.cargoQuantities.push(this.arrivalConditionTransformationService.formatCargoQuantities(stowage, item, true, commingleData[0]));
+              }
+            } else {
+              plannedWeight += Number(stowage.quantityMT);
+              this.cargoQuantities.push(this.arrivalConditionTransformationService.formatCargoQuantities(stowage, item));
+            }
           }
         }
       });
@@ -132,6 +166,25 @@ export class ArrivalConditionComponent implements OnInit {
       conditionObj.plannedWeight = plannedWeight;
       this.cargoConditions.push(conditionObj);
     });
+    commingleArray?.map(com => {
+      this.loadingDischargingPlanData?.planStowageDetails?.map(stowage => {
+        if (stowage.isCommingleCargo && stowage.conditionType === 1) {
+          if (com.tankId === stowage.tankId) {
+            if (stowage.valueType === 1) {
+              com.actualWeight += Number(stowage.quantityMT);
+            }
+            if (stowage.valueType === 2) {
+              com.plannedWeight += Number(stowage.quantityMT);
+              const commingleData = this.loadingDischargingPlanData?.planCommingleDetails?.filter(commingle => commingle.tankId === stowage.tankId);
+              if (commingleData?.length) {
+                this.cargoQuantities.push(this.arrivalConditionTransformationService.formatCargoQuantities(stowage, null, true, commingleData[0]));
+              }
+            }
+          }
+        }
+      });
+    });
+    this.cargoConditions = [...commingleArray, ...this.cargoConditions];
     this.cargoTankQuantity = [];
 
     this.loadingDischargingPlanData?.cargoTanks?.map(item => {
@@ -149,7 +202,15 @@ export class ArrivalConditionComponent implements OnInit {
               data.temperature = stowage.temperature;
               data.ullage = stowage.ullage;
               data.colorCode = stowage.colorCode;
-              data.abbreviation = stowage.abbreviation;
+              if (stowage.isCommingleCargo) {
+                const commingleData = this.loadingDischargingPlanData?.planCommingleDetails?.filter(commingle => commingle.tankId === stowage.tankId);
+                if (commingleData?.length) {
+                  data.abbreviation = commingleData[0].abbreviation;
+                }
+              } else {
+                data.abbreviation = stowage.abbreviation;
+              }
+              data.isCommingleCargo = stowage.isCommingleCargo;
             }
             data.cargoNominationId = stowage.cargoNominationId;
           }
@@ -285,7 +346,7 @@ export class ArrivalConditionComponent implements OnInit {
    * @memberof ArrivalConditionComponent
    */
   showError() {
-    this.loadingDischargingTransformationService.showUllageError({ value: true, status: 1});
+    this.loadingDischargingTransformationService.showUllageError({ value: true, status: 1 });
   }
 
 }
