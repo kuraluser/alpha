@@ -183,7 +183,7 @@
             <div class="col">
                 <form>
                     <ng-container>
-                        <p-table [value]="blFigure.items" [columns]="blFigureColumns" dataKey="cargoName">
+                        <p-table [value]="blFigure.items" [columns]="blFigureColumns" styleClass="body-header-row-span-table" dataKey="cargoName">
                             <ng-template pTemplate="header" let-columns>
                                 <tr>
                                     <th *ngFor="let col of columns">{{col?.header | translate}}</th>
@@ -303,7 +303,7 @@
         </div>
         <div *ngIf="selectedTab === tankType.CARGO && status === ULLAGE_STATUS.DEPARTURE" class="row">
             <div class="col-md-12 pt-20">
-                <p-table [value]="cargoQuantityList">
+                <p-table [value]="cargoQuantityList" styleClass="body-header-row-span-table">
                     <ng-template pTemplate="header">
                         <tr>
                             <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_NAME' | translate}}</th>
@@ -379,11 +379,11 @@
                 <button type="button" class="btn btn-main" (click)="closeDialog()" id="new-loadable-study-popup-cancel"
                     focusTrap>{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
                 <button (click)="saveUllage(false)" class="btn btn-main" id="new-loadable-study-popup-save"
-                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted || !permission?.view">{{'SAVE' |
+                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted || !permission?.edit">{{'SAVE' |
                     translate}}</button>
                 <button (click)="saveUllage(true)" class="btn btn-main" id="new-loadable-study-popup-save"
                     form="fg_newLoadableStudy" autofocus focusTrap
-                    [disabled]="isDischargeStarted || !permission?.view">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
+                    [disabled]="isDischargeStarted || !permission?.edit">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
                     translate}}</button>
             </div>
         </div>

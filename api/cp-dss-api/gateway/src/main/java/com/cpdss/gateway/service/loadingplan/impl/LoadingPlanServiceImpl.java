@@ -1458,8 +1458,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     try {
 
-      if (inputData.getBillOfLandingList().isEmpty()
-          || inputData.getUllageUpdList().isEmpty()
+      if (inputData.getUllageUpdList().isEmpty()
           || inputData.getBallastUpdateList().isEmpty()
           || inputData.getRobUpdateList().isEmpty()) {
         throw new GenericServiceException(

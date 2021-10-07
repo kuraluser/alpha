@@ -768,13 +768,12 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
    * @return Max Loading Rate
    */
   private String getLoadingRateFromVesselService(Long vesselId) {
-    VesselInfo.VesselPumpsResponse grpcReply =
-        vesselInfoService.getVesselPumpsFromVesselInfo(vesselId);
-    if (grpcReply.getResponseStatus().getStatus().equals("SUCCESS")) {
+    VesselInfo.VesselDetail grpcReply = vesselInfoService.getVesselInfoByVesselId(vesselId);
+    if (grpcReply != null) {
       log.info(
           "Vessel Max Loading Rate found for LoadablePlanQuantity- {}",
-          grpcReply.getVesselDetails().getHomogeneousLoadingRate());
-      String maxLoadingRate = grpcReply.getVesselDetails().getHomogeneousLoadingRate();
+          grpcReply.getMaxLoadingRate());
+      String maxLoadingRate = grpcReply.getMaxLoadingRate();
       if (!maxLoadingRate.isEmpty()) {
         return maxLoadingRate;
       }
