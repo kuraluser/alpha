@@ -183,9 +183,11 @@ export class NewLoadableStudyPopupComponent implements OnInit {
                 this.loadableStudyDetailsTransformationService.setLoadLineChange(true);
               }
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
+              this.ngxSpinnerService.hide();
               this.loadableStudyDetailsTransformationService.updateLoadableStudyData(true);
             } else {
               this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
+              this.ngxSpinnerService.hide();
             }
             this.closeDialog();
             this.addedNewLoadableStudy.emit(result.loadableStudyId);
@@ -198,8 +200,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
             const messageKey = this.isEdit ? translationKeys['NEW_LOADABLE_STUDY_POPUP_UPDATE_VOYAGE_ACTIVE_CLOSED'] : this.newLoadableStudyPopupModel?.createdFromId ? translationKeys['NEW_LOADABLE_STUDY_POPUP_DUPLICATE_VOYAGE_ACTIVE_CLOSED'] : translationKeys['NEW_LOADABLE_STUDY_POPUP_VOYAGE_ACTIVE_CLOSED'];
             this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: messageKey, life: 10000 });
           }
+          this.ngxSpinnerService.hide();
         }
-        this.ngxSpinnerService.hide();
+        
       } else {
         //TODO: This must be moved to above catch expression
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['LOADABLE_STUDY_ALREADY_EXIST'] });
