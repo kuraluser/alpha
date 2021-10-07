@@ -19,6 +19,8 @@ public interface PortTideDetailsRepository extends CommonCrudRepository<PortTide
 
   List<PortTideDetail> findByLoadingXidAndIsActive(Long loadingXid, boolean active);
 
+  List<PortTideAlgo> findByLoadingXidAndPortXidAndIsActiveTrue(Long loadingXid, Long portId);
+
   @Transactional
   @Modifying
   @Query("UPDATE PortTideDetail SET isActive = false WHERE loadingXid = ?1")

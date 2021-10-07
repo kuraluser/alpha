@@ -326,14 +326,20 @@ public class DischargeInformationBuilderService {
     try {
       BeanUtils.copyProperties(cowPlan, var1);
 
+      var1.setCowOption(cowPlan.getCowOptionTypeValue());
+      var1.setCowPercentage(cowPlan.getCowTankPercent());
+      var1.setCowStart(cowPlan.getCowStartTime());
+      var1.setCowEnd(cowPlan.getCowEndTime());
+      var1.setCowDuration(cowPlan.getEstCowDuration());
+
       // If no value in discharge-plan DB, set admin Rule Value
       if (cowPlan.getTrimCowMin().isEmpty()) {
         String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_COW_TRIM_MIN, false);
-        var1.setTrimCowMin(val);
+        var1.setCowTrimMin(val);
       }
       if (cowPlan.getTrimCowMax().isEmpty()) {
         String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_COW_TRIM_MAX, true);
-        var1.setTrimCowMax(val);
+        var1.setCowTrimMax(val);
       }
 
       var topCow =
