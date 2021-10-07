@@ -859,8 +859,16 @@ public class LoadablePatternService {
     }
 
     ObjectMapper objectMapper = new ObjectMapper();
-    log.info("============ process ID : " +request.getProcesssId()+" Env : "+env+" Communication Status : " +
-            ""+enableCommunication + " Lodicator Status : "+request.getHasLodicator());
+    log.info(
+        "============ process ID : "
+            + request.getProcesssId()
+            + " Env : "
+            + env
+            + " Communication Status : "
+            + ""
+            + enableCommunication
+            + " Lodicator Status : "
+            + request.getHasLodicator());
     //
     // objectMapper.writeValueAsString(loadablePatternAlgoRequest));
     if (!env.equals("ship") && enableCommunication && !request.getHasLodicator()) {
@@ -896,7 +904,7 @@ public class LoadablePatternService {
     return builder;
   }
 
-  private void fetchSavedPatternFromDB(
+  public void fetchSavedPatternFromDB(
       PatternDetails patternDetails, LoadablePattern loadablePattern) {
     ModelMapper modelMapper = new ModelMapper();
     List<LoadablePlanQuantity> loadablePlanQuantityList =
