@@ -4,20 +4,20 @@
             <div class="col pt-5 pb-5" >
                 <span [ngStyle]="{'background-color': cargo?.colorCode}" class="badge-custom">{{cargo?.abbreviation}}</span>
             </div>
-            <div class="pull-right pt-5 pb-5">{{cargo?.quantity}} {{QUANTITY_UNIT.MT}}</div>
+            <div class="pull-right pt-5 pb-5">{{cargo?.quantity | quantityDecimalFormat: 'MT'}} {{QUANTITY_UNIT.MT}}</div>
         </div>
         
         <div class="row no-gutters">
             <div class="col pt-5 pb-5">{{'LOADABLE_PLAN_DEPARTURE_CONDITION_TOTAL_CARGO' | translate}}</div>
-            <div class="text-right pt-5 pb-5">{{departureConditionCargoTotalQuantity}} {{QUANTITY_UNIT.MT}}</div>
+            <div class="text-right pt-5 pb-5">{{departureConditionCargoTotalQuantity | quantityDecimalFormat: 'MT'}} {{QUANTITY_UNIT.MT}}</div>
         </div>
         <div class="row no-gutters">
             <div class="col pt-5 pb-5">{{'LOADABLE_PLAN_DEPARTURE_CONDITION_SIDE_PANEL_BALLAST' | translate}}</div>
-            <div class="text-right pt-5 pb-5">{{ballastQuantity}} {{QUANTITY_UNIT.MT}}</div>
+            <div class="text-right pt-5 pb-5">{{ballastQuantity | quantityDecimalFormat: 'MT'}} {{QUANTITY_UNIT.MT}}</div>
         </div>
         <div class="row no-gutters">
             <div class="col pt-5 pb-5">{{'LOADABLE_PLAN_DEPARTURE_CONDITION_SIDE_PANEL_DRAFT_F' | translate}}</div>
-            <div class="text-right pt-5 pb-5">{{draftFValue}} {{LENGTH_UNIT.M}}</div>
+            <div class="text-right pt-5 pb-5">{{draftFValue | quantityDecimalFormat: 'MT'}} {{LENGTH_UNIT.M}}</div>
         </div>
         <div class="row no-gutters">
             <div class="col pt-5 pb-5">{{'LOADABLE_PLAN_DEPARTURE_CONDITION_SIDE_PANEL_DRAFT_A' | translate}}</div>

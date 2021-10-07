@@ -147,7 +147,8 @@ export class UllageUpdatePopupTransformationService {
         errorMessages: {
           maxLimit: 'ULLAGE_UPDATE_FILLING_ERROR',
           required: 'ULLAGE_UPDATE_ULLAGE_REQUIRED',
-          invalidNumber: 'ULLAGE_UPDATE_INVALID_ERROR'
+          invalidNumber: 'ULLAGE_UPDATE_INVALID_ERROR',
+          invalidUllage: 'ULLAGE_UPDATE_INVALID_ULLAGE_ERROR'
         }
       },
       {
@@ -221,7 +222,8 @@ export class UllageUpdatePopupTransformationService {
           maxLimit: 'ULLAGE_UPDATE_BALLAST_FILLING_ERROR',
           required: 'ULLAGE_UPDATE_SOUNDING_REQUIRED',
           invalidNumber: 'ULLAGE_UPDATE_INVALID_ERROR',
-          greaterThanTankCapacity: 'ULLAGE_UPDATE_BALLAST_FILLING_ERROR'
+          greaterThanTankCapacity: 'ULLAGE_UPDATE_BALLAST_FILLING_ERROR',
+          invalidSounding: 'ULLAGE_UPDATE_INVALID_SOUNDING_ERROR'
         }
       },
 

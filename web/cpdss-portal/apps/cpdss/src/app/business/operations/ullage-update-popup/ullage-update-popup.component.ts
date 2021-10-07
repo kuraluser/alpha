@@ -1123,26 +1123,26 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     });
     switch (key) {
       case 'mt':
-        if ((mtQty > ((Number(cargoQuantityData?.actual?.mt) * 0.1) + Number(cargoQuantityData?.actual?.mt)))
-          || (mtQty < (Number(cargoQuantityData?.actual?.mt) - (Number(cargoQuantityData?.actual?.mt) * 0.1)))) {
+        if ((mtQty > ((Number(cargoQuantityData?.actual?.mt) * 0.01) + Number(cargoQuantityData?.actual?.mt)))
+          || (mtQty < (Number(cargoQuantityData?.actual?.mt) - (Number(cargoQuantityData?.actual?.mt) * 0.01)))) {
           hasError = true;
         }
         break;
       case 'bbl':
-        if ((bblQty > ((Number(cargoQuantityData?.actual?.bbl) * 0.1) + Number(cargoQuantityData?.actual?.bbl)))
-          || (bblQty < (Number(cargoQuantityData?.actual?.bbl) - (Number(cargoQuantityData?.actual?.bbl) * 0.1)))) {
+        if ((bblQty > ((Number(cargoQuantityData?.actual?.bbl) * 0.01) + Number(cargoQuantityData?.actual?.bbl)))
+          || (bblQty < (Number(cargoQuantityData?.actual?.bbl) - (Number(cargoQuantityData?.actual?.bbl) * 0.01)))) {
           hasError = true;
         }
         break;
       case 'kl':
-        if ((klQty > ((Number(cargoQuantityData?.actual?.kl) * 0.1) + Number(cargoQuantityData?.actual?.kl)))
-          || (klQty < (Number(cargoQuantityData?.actual?.kl) - (Number(cargoQuantityData?.actual?.kl) * 0.1)))) {
+        if ((klQty > ((Number(cargoQuantityData?.actual?.kl) * 0.01) + Number(cargoQuantityData?.actual?.kl)))
+          || (klQty < (Number(cargoQuantityData?.actual?.kl) - (Number(cargoQuantityData?.actual?.kl) * 0.01)))) {
           hasError = true;
         }
         break;
       case 'lt':
-        if ((ltQty > ((Number(cargoQuantityData?.actual?.lt) * 0.1) + Number(cargoQuantityData?.actual?.lt)))
-          || (ltQty < (Number(cargoQuantityData?.actual?.lt) - (Number(cargoQuantityData?.actual?.lt) * 0.1)))) {
+        if ((ltQty > ((Number(cargoQuantityData?.actual?.lt) * 0.01) + Number(cargoQuantityData?.actual?.lt)))
+          || (ltQty < (Number(cargoQuantityData?.actual?.lt) - (Number(cargoQuantityData?.actual?.lt) * 0.01)))) {
           hasError = true;
         }
         break;
@@ -1193,6 +1193,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.cargoQuantities[event.index].quantity.value = result.quantityMt;
       this.cargoQuantities[event.index].fillingPercentage.value = result.fillingRatio;
       const formControls = <FormControl>(<FormArray>this.cargoTankForm.get('dataTable')).at(event.index);
+      formControls['controls'][event.field].setErrors(null);
       formControls['controls'].quantity.setValue(result.quantityMt);
       formControls['controls'].fillingPercentage.setValue(result.fillingRatio ? result.fillingRatio : 100);
       formControls['controls'].quantity.updateValueAndValidity();
@@ -1217,7 +1218,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     } else if (result.responseStatus.status === '325') {
       const formControls = <FormControl>(<FormArray>this.cargoTankForm.get('dataTable')).at(event.index);
       formControls['controls'].fillingPercentage.setValue(100);
-      formControls['controls'][event.field].setErrors({ maxLimit: true });
+      formControls['controls'][event.field].setErrors({ invalidUllage: true });
     }
     this.enableDisableBLFigure();
     setTimeout(() => {
@@ -1291,7 +1292,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       formControlFilling.updateValueAndValidity();
       formControlFilling.updateValueAndValidity();
       const formControl = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get(event.field);
-      formControl.setErrors({ maxLimit: true });
+      formControl.setErrors({ invalidSounding: true });
 
     }
   }

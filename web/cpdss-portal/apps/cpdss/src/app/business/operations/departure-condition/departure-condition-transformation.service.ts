@@ -154,7 +154,10 @@ export class DepartureConditionTransformationService {
             const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api);
             cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight.toFixed(2)) : 0;
             cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, currUnit, QUANTITY_UNIT.OBSKL, cargoTank[groupIndex][tankIndex].commodity?.api, cargoTank[groupIndex][tankIndex].commodity?.temperature);
-            cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex])
+            cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex]);
+            if (cargoTank[groupIndex][tankIndex].commodity?.isCommingleCargo) {
+              cargoTank[groupIndex][tankIndex].commodity.colorCode = AppConfigurationService.settings.commingleColor;
+            }
             break;
           }
         }
@@ -215,13 +218,13 @@ export class DepartureConditionTransformationService {
    * Format congo quantity data
    * @returns {object}
   */
-  formatCargoQuantities(value: any, loadableQuantityCargoDetails: ILoadableQuantityCargo) {
+  formatCargoQuantities(value: any, loadableQuantityCargoDetails: ILoadableQuantityCargo, isCommingle = false, commingleData = null) {
     const data = <ICargoQuantities>{};
-    data.abbreviation = loadableQuantityCargoDetails.cargoAbbreviation;
+    data.abbreviation = isCommingle ? commingleData.abbreviation : loadableQuantityCargoDetails.cargoAbbreviation;
     data.actualWeight = 0;
     data.api = value.api;
     data.cargoId = loadableQuantityCargoDetails.cargoId;
-    data.colorCode = loadableQuantityCargoDetails.colorCode;
+    data.colorCode = isCommingle ? AppConfigurationService.settings.commingleColor : loadableQuantityCargoDetails.colorCode;
     return data;
   }
 }
