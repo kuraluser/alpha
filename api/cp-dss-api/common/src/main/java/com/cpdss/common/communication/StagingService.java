@@ -142,4 +142,9 @@ public class StagingService {
   public Optional<DataTransferStage> getById(Long id) {
     return stagingRepository.findById(id);
   }
+
+  public List<DataTransferStage> getAllNotStarted(String status){
+    return stagingRepository.getAllNotStarted(status);
+  }
+
 }

@@ -4,6 +4,7 @@ package com.cpdss.loadingplan.service;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
@@ -15,7 +16,10 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSync
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
+import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
+import com.cpdss.loadingplan.domain.CommunicationStatus;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
@@ -25,10 +29,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import com.google.gson.JsonArray;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
@@ -93,6 +98,12 @@ public class LoadingPlanService {
 
   @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
   @Autowired private LoadingPlanAlgoService loadingPlanAlgoService;
+  @Autowired private CommunicationService communicationService;
+  @Autowired private LoadingPlanStagingService loadingPlanStagingService;
+
+  @Autowired
+  private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
+
 
   @GrpcClient("loadableStudyService")
   private SynopticalOperationServiceGrpc.SynopticalOperationServiceBlockingStub
@@ -132,6 +143,30 @@ public class LoadingPlanService {
               .setMessage("Successfully saved loading information in database")
               .setStatus(LoadingPlanConstants.SUCCESS)
               .build());
+      JsonArray jsonArray= loadingPlanStagingService.getCommunicationData
+              (Arrays.asList("loading_information","cargo_topping_off_sequence"), UUID.randomUUID().toString(),"loading-plan-synchronization-service",loadingInformation.getVesselXId());
+      EnvoyWriter.WriterReply ewReply =
+              communicationService.passRequestPayloadToEnvoyWriter(
+                      jsonArray.toString(),
+                      loadingInformation.getVesselXId(),
+                      MessageTypes.LOADINGPLAN.getMessageType());
+
+      if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+        log.info("------- Envoy writer has called successfully : " + ewReply.toString());
+        LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
+                new LoadingPlanCommunicationStatus();
+        if (ewReply.getMessageId() != null) {
+          loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+          loadingPlanCommunicationStatus.setCommunicationStatus(
+                  CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+        }
+        loadingPlanCommunicationStatus.setReferenceId(loadingInformation.getId());
+        loadingPlanCommunicationStatus.setMessageType(MessageTypes.VALIDATEPLAN.getMessageType());
+        loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+        LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
+                this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
+        log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
+       }
     } catch (Exception e) {
       log.info(
           "Failed to save LoadingInformation on port "
@@ -764,8 +799,8 @@ public class LoadingPlanService {
    * Updates loading information status based on the condition i.e. Arrival / Departure.
    *
    * @param loadingInformationId
-   * @param arrivalDepartutre
-   * @param updateUllageValidationPendingId
+   * @param arrivalDeparture
+   * @param statusId
    * @throws GenericServiceException
    */
   private void updateLoadingPlanStatusForUllageUpdate(

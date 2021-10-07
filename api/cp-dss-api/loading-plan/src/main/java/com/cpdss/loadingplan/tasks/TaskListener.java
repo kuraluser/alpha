@@ -33,8 +33,8 @@ public class TaskListener implements ExecuteTaskListener {
     // To-Do Task Execution
     log.info("Communication Enabled " + enableCommunication);
     if (enableCommunication) {
-      if (taskName.contains("DOWNLOAD_RESULT_")) {
-        log.info("inside TaskNmae " + taskName);
+      if (taskName.contains("LOADING_PLAN_DOWNLOAD_RESULT_")) {
+        log.info("inside TaskName " + taskName);
         if (taskReqParams.get("env").equals("ship")) {
           communicationService.getDataFromCommInShipSide(taskReqParams, MessageTypes.ship);
         } else {
@@ -42,7 +42,16 @@ public class TaskListener implements ExecuteTaskListener {
           communicationService.getDataFromCommInShoreSide(taskReqParams, MessageTypes.shore);
         }
 
-      } else if (taskName.contains("STATUS_CHECK_")) {
+      } else if (taskName.contains("LOADING_DATA_UPDATE_")){
+        log.info("inside TaskName " + taskName);
+        if (taskReqParams.get("env").equals("ship")) {
+          //communicationService.getDataFromCommInShipSide(taskReqParams, MessageTypes.ship);
+        } else {
+          log.info("inside taskReqParams " + taskReqParams.get("env"));
+          communicationService.getDataFromStagingTable();
+        }
+
+      } else if (taskName.contains("LOADING_PLAN_STATUS_CHECK_")) {
         // communicationService.checkLoadableStudyStatus(taskReqParams);
       }
     }
