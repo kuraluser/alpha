@@ -79,6 +79,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   showPortRotationPopup = false;
   selectedLoadablePatternId: number;
   readonly VALIDATION_AND_SAVE_STATUS = VALIDATION_AND_SAVE_STATUS;
+  enableBackLoading: boolean;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -103,6 +104,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
     const permission = await this.getPagePermission();
     this.activatedRoute.paramMap.subscribe(async params => {
       if (permission.view) {
+        this.enableBackLoading = false;
         this.isViewPattern = Number(params.get('isViewPattern')) === 0 ? true : false;
         this.vesselId = Number(params.get('vesselId'));
         this.voyageId = Number(params.get('voyageId'));
@@ -113,10 +115,13 @@ export class LoadablePatternHistoryComponent implements OnInit {
         localStorage.removeItem("loadablePatternId")
         localStorage.removeItem("dischargeStudyId")
         if (this.isViewPattern) {
-          this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+          await this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+        } else {
+          this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
         }
-        this.getCargos();
-        this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
+        await this.getCargos();
+        await this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
+        this.enableBackLoading = true;
       }
     });
   }
@@ -165,6 +170,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
     } else {
       this.selectedLoadableStudy = null;
     }
+    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -205,9 +211,11 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   async getVoyages(vesselId: number, voyageId: number) {
+    this.ngxSpinnerService.show();
     const result = await this.voyageService.getVoyagesByVesselId(vesselId).toPromise();
     const voyages = result ?? [];
     this.selectedVoyage = voyages.find(voyage => voyage.id === voyageId);
+    this.ngxSpinnerService.hide();
     return voyages;
   }
 
@@ -239,6 +247,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   async getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number) {
+    this.ngxSpinnerService.show();
     this.loadablePatternResponse = await this.loadablePatternApiService.getLoadablePatterns(vesselId, voyageId, loadableStudyId).toPromise();
     if (this.loadablePatternResponse.responseStatus.status === '200') {
       this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;
@@ -499,7 +508,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
   * @memberof LoadablePatternHistoryComponent
 */
   async getCargos() {
+    this.ngxSpinnerService.show();
     const cargos: ICargoResponseModel = await this.loadablePatternApiService.getCargos().toPromise();
+    this.ngxSpinnerService.hide();
     if (cargos.responseStatus.status === '200') {
       this.cargos = cargos.cargos;
     }
