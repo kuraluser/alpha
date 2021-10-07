@@ -11,4 +11,7 @@ public class LoadablePlanPortWiseDetails {
   private Long portRotationId;
   private LoadabalePatternDetails arrivalCondition;
   private LoadabalePatternDetails departureCondition;
+  // DS fields
+  private String seaWaterTemperature;
+  private String ambientTemperature;
 }
