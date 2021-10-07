@@ -107,6 +107,7 @@ export class LoadingPlanComponent implements OnInit {
             plan.api = item.api;
             plan.temperature = item.temperature;
             plan.abbreviation = item.abbreviation;
+            plan.cargoNominationId = null;
           }
         });
       });

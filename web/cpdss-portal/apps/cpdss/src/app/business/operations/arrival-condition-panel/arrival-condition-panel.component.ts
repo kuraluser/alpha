@@ -51,6 +51,7 @@ export class ArrivalConditionPanelComponent implements OnInit {
   formatData() {
     this.arrivalConditionCargoInfo = [];
     const commingleArray = [];
+    this.arrivalConditionCargoTotalQuantity = 0;
     this.loadingDischargingPlanData?.planCommingleDetails?.map(com => {
       if (com.conditionType === 1) {
         commingleArray.push({ abbreviation: com.abbreviation, colorCode: AppConfigurationService.settings.commingleColor, quantity: 0, tankId: com.tankId });
@@ -75,8 +76,17 @@ export class ArrivalConditionPanelComponent implements OnInit {
       this.arrivalConditionCargoTotalQuantity += cargoQuantity;
       this.arrivalConditionCargoInfo.push({ abbreviation: cargo.cargoAbbreviation, colorCode: cargo.colorCode, quantity: cargoQuantity });
     });
+    commingleArray?.map(com => {
+      this.loadingDischargingPlanData?.planStowageDetails?.map(item => {
+        if (item.isCommingleCargo && item.conditionType === 1 && item.valueType === 2) {
+          if (com.tankId === item.tankId) {
+            com.quantity += Number(item.quantityMT);
+            this.arrivalConditionCargoTotalQuantity += Number(item.quantityMT);
+          }
+        }
+      });
+    });
     this.arrivalConditionCargoInfo = [...commingleArray, ...this.arrivalConditionCargoInfo];
-    this.arrivalConditionCargoTotalQuantity = Number(this.arrivalConditionCargoTotalQuantity.toFixed(2));
     let ballastQuantity = 0;
     this.loadingDischargingPlanData?.planBallastDetails?.map(item => {
       if (item.conditionType === 1) {

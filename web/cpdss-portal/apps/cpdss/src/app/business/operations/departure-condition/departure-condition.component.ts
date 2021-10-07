@@ -126,7 +126,8 @@ export class DepartureConditionComponent implements OnInit {
             actualWeight: 0,
             plannedWeight: 0,
             colorCode: AppConfigurationService.settings.commingleColor,
-            tankId: com.tankId
+            tankId: com.tankId,
+            cargoId: 0
           });
       }
     });
@@ -168,6 +169,24 @@ export class DepartureConditionComponent implements OnInit {
       conditionObj.actualWeight = actualWeight;
       conditionObj.plannedWeight = plannedWeight;
       this.cargoConditions.push(conditionObj);
+    });
+    commingleArray?.map(com => {
+      this.loadingDischargingPlanData?.planStowageDetails?.map(stowage => {
+        if (stowage.isCommingleCargo && stowage.conditionType === 2) {
+          if (com.tankId === stowage.tankId) {
+            if (stowage.valueType === 1) {
+              com.actualWeight += Number(stowage.quantityMT);
+            }
+            if (stowage.valueType === 2) {
+              com.plannedWeight += Number(stowage.quantityMT);
+              const commingleData = this.loadingDischargingPlanData?.planCommingleDetails?.filter(commingle => commingle.tankId === stowage.tankId);
+              if (commingleData?.length) {
+                this.cargoQuantities.push(this.departureConditionTransformationService.formatCargoQuantities(stowage, null, true, commingleData[0]));
+              }
+            }
+          }
+        }
+      });
     });
     this.cargoConditions = [...commingleArray, ...this.cargoConditions];
     this.departureCargoTankQuantity = [];

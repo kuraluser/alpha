@@ -223,7 +223,7 @@ export class DepartureConditionTransformationService {
     data.abbreviation = isCommingle ? commingleData.abbreviation : loadableQuantityCargoDetails.cargoAbbreviation;
     data.actualWeight = 0;
     data.api = value.api;
-    data.cargoId = loadableQuantityCargoDetails.cargoId;
+    data.cargoId = isCommingle ? commingleData.cargoId : loadableQuantityCargoDetails.cargoId;
     data.colorCode = isCommingle ? AppConfigurationService.settings.commingleColor : loadableQuantityCargoDetails.colorCode;
     return data;
   }
