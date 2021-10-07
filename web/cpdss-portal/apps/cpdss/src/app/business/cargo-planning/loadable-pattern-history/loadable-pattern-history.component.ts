@@ -176,7 +176,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   setProcessingLoadableStudyActions(loadableStudyId: number, statusId: number) {
     const loadableStudies = this.loadableStudies.map(loadableStudy => {
       if (loadableStudyId === loadableStudy?.id) {
-        if ([4, 5, 7].includes(statusId) && this.router.url.includes('loadable-pattern-history')) {
+        if ([LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING, LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE].includes(statusId) && this.router.url.includes('loadable-pattern-history')) {
           loadableStudy.isActionsEnabled = false;
         }
         else if ([2, 3].includes(statusId)) {
