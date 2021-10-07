@@ -2,7 +2,7 @@ import { IDataTableEvent } from '../../../shared/components/datatable/datatable.
 import { IResponseStatus, ValueObject , IResponse } from '../../../shared/models/common.model';
 import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableCargo, ILoadableQuantityCargo } from '../../core/models/common.model';
 import { ILoadablePlanSynopticalRecord } from './cargo-planning.model';
-
+import { DATATABLE_EDITMODE } from '../../../shared/components/datatable/datatable.model';
 
 /**
  * Interface for Loadable Quantity api response
@@ -468,6 +468,17 @@ export enum VALIDATION_AND_SAVE_STATUS {
     responseStatus: IResponseStatus;
  }
 
+ /**
+  * interface for validate save status
+  *
+  * @export
+  * @interface IValidateSaveStatus
+  */
+ export interface IValidateSaveStatus {
+    validateAndSaveProcessing: boolean;
+    buttonStatus?: number;
+    editMode?: DATATABLE_EDITMODE | null;
+ }
 
 
 

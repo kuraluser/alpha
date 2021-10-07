@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 import { IBallastStowageDetails, IBallastTank, ICargoTank, ILoadableQuantityCargo } from '../../core/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ICargoTankDetail, ILoadableQuantityCommingleCargo, ICommingleCargoDispaly,  ICargoTankDetailValueObject, ISynopticalRecordArrangeModel , IBallastTankDetailValueObject } from '../models/loadable-plan.model';
+import { ICargoTankDetail, ILoadableQuantityCommingleCargo, ICommingleCargoDispaly,  ICargoTankDetailValueObject, ISynopticalRecordArrangeModel , IBallastTankDetailValueObject , IValidateSaveStatus } from '../models/loadable-plan.model';
 import { DATATABLE_FIELD_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { QUANTITY_UNIT, ValueObject , ISubTotal } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
@@ -27,7 +27,7 @@ export class LoadablePlanTransformationService {
   private quantityPipe: QuantityPipe = new QuantityPipe();
   public baseUnit = AppConfigurationService.settings.baseUnit;
   private savedComments = new Subject();
-  private editBallastStatus = new Subject();
+  private editBallastStatus = new BehaviorSubject<IValidateSaveStatus>({validateAndSaveProcessing: false});
 
   public savedComments$ = this.savedComments.asObservable();
   public editBallastStatus$ = this.editBallastStatus.asObservable();
