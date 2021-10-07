@@ -4131,12 +4131,10 @@ public class LoadableStudyService {
                                   "%s %s",
                                   keycloakUser.getFirstName(), keycloakUser.getLastName()));
                         } else {
-                          if (user.getIsShipUser()) {
-                            log.info(
-                                "Get User Name, from users DB username - {}",
-                                user.getUsername().trim());
-                            commets.setUserName(user.getUsername().trim().toUpperCase());
-                          }
+                          log.info(
+                              "Get User Name, from users DB username - {}",
+                              user.getUsername().trim());
+                          commets.setUserName(user.getUsername().trim().toUpperCase());
                         }
                       } catch (GenericServiceException e) {
                         commets.setUserName(DEFAULT_USER_NAME);
