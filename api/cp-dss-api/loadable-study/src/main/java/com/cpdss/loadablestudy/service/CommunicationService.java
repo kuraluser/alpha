@@ -429,7 +429,8 @@ public class CommunicationService {
       EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
           EnvoyWriter.EnvoyWriterRequest.newBuilder();
       writerRequest.setJsonPayload(jsonPayload);
-      writerRequest.setClientId("KAZUSA_VINOTH");
+      //writerRequest.setClientId("KAZUSA_VINOTH");
+      writerRequest.setClientId(vesselReply.getName());
       writerRequest.setImoNumber(vesselReply.getImoNumber());
       writerRequest.setMessageType(MessageTypes.ALGORESULT.getMessageType());
       writerRequest.setMessageId(algoResponseCommunication.getMessageId());
@@ -463,7 +464,8 @@ public class CommunicationService {
     EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
         EnvoyWriter.EnvoyWriterRequest.newBuilder();
     writerRequest.setJsonPayload(requestJson);
-    writerRequest.setClientId("KAZUSA_VINOTH");
+    //writerRequest.setClientId("KAZUSA_VINOTH");
+    writerRequest.setClientId(vesselReply.getName());
     writerRequest.setMessageType(messageType);
     writerRequest.setImoNumber(vesselReply.getImoNumber());
     return this.envoyWriterService.getCommunicationServer(writerRequest.build());
