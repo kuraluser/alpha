@@ -485,7 +485,7 @@ public class UllageUpdateLoadicatorService {
 
       Optional<LoadingInformationStatus> validationFailedStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID);
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
       loadingPlanService.updateLoadingPlanStatus(
           loadingInfoOpt.get(), validationFailedStatusOpt.get(), request.getConditionType());
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
