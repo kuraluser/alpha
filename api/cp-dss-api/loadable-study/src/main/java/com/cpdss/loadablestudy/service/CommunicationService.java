@@ -129,6 +129,7 @@ public class CommunicationService {
   private void savePatternInShipSide(EnvoyReader.EnvoyReaderResultReply erReply)
       throws GenericServiceException {
     String jsonResult = erReply.getPatternResultJson();
+    log.info("Pattern has reached in ship side from shore side");
     // log.info("------Pattern details payload : " + jsonResult);
     LoadablePatternAlgoRequest loadablePatternAlgoRequest =
         new Gson()
@@ -176,6 +177,7 @@ public class CommunicationService {
         }
       }
     }
+    log.info("Pattern has successfully updated in shore");
   }
 
   private void saveValidatePlanRequestShore(EnvoyReader.EnvoyReaderResultReply erReply) {
@@ -427,6 +429,7 @@ public class CommunicationService {
       EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
           EnvoyWriter.EnvoyWriterRequest.newBuilder();
       writerRequest.setJsonPayload(jsonPayload);
+      //writerRequest.setClientId("KAZUSA_VINOTH");
       writerRequest.setClientId(vesselReply.getName());
       writerRequest.setImoNumber(vesselReply.getImoNumber());
       writerRequest.setMessageType(MessageTypes.ALGORESULT.getMessageType());
@@ -461,6 +464,7 @@ public class CommunicationService {
     EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
         EnvoyWriter.EnvoyWriterRequest.newBuilder();
     writerRequest.setJsonPayload(requestJson);
+    //writerRequest.setClientId("KAZUSA_VINOTH");
     writerRequest.setClientId(vesselReply.getName());
     writerRequest.setMessageType(messageType);
     writerRequest.setImoNumber(vesselReply.getImoNumber());
