@@ -21,4 +21,6 @@ public class LoadingPlanCommingleDetails {
   private Long cargo2Id;
   private String colorCode;
   private String abbreviation;
+  private Integer conditionType;
+  private Integer valueType;
 }

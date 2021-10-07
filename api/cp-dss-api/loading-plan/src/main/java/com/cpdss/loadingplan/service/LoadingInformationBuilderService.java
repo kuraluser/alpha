@@ -473,6 +473,8 @@ public class LoadingInformationBuilderService {
             Optional.ofNullable(commingle.getTankId()).ifPresent(builder::setTankId);
             Optional.ofNullable(commingle.getTemperature()).ifPresent(builder::setTemperature);
             Optional.ofNullable(commingle.getUllage()).ifPresent(builder::setUllage);
+            Optional.ofNullable(commingle.getConditionType()).ifPresent(builder::setConditionType);
+            Optional.ofNullable(commingle.getValueType()).ifPresent(builder::setValueType);
             portLoadingPlanCommingleDetails.add(builder.build());
           });
     } catch (Exception e) {

@@ -346,9 +346,10 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   * @memberof LoadingDischargingCargoMachineryComponent
   */
   onTypeChange(event) {
+    this.selectedType = event?.value;
     this.updateMachinery();
-    this.selectedType = event.value;
-  }
+
+    }
 
   /**
    * Method to check for field errors

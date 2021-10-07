@@ -393,8 +393,9 @@ public class LoadablePatternService {
           LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, loadableStudyOpt.get().getId());
     } else {
 
+      // Save pattern details shore
       List<LoadablePattern> loadablePatterns =
-          savePatternDetails(request, loadableStudyOpt, requestType);
+          savePatternDetails(request, loadableStudyOpt, requestType, false);
       if (request.getHasLodicator()) {
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
             LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_ID, request.getProcesssId(), true);
@@ -428,7 +429,8 @@ public class LoadablePatternService {
   private List<LoadablePattern> savePatternDetails(
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
       Optional<LoadableStudy> loadableStudyOpt,
-      String requestType) {
+      String requestType,
+      boolean isShip) {
 
     Long lastLoadingPort = 0L;
     if (requestType.equals(LOADABLE_STUDY)) {
@@ -441,7 +443,7 @@ public class LoadablePatternService {
     for (LoadablePlanDetails lpd : request.getLoadablePlanDetailsList()) {
 
       LoadablePattern loadablePattern =
-          saveloadablePattern(lpd, loadableStudyOpt.get(), request.getHasLodicator());
+          saveloadablePattern(lpd, loadableStudyOpt.get(), request.getHasLodicator(), isShip);
       loadablePatterns.add(loadablePattern);
       saveConstrains(lpd, loadablePattern);
       if (requestType.equals(LOADABLE_STUDY)) {
@@ -616,13 +618,17 @@ public class LoadablePatternService {
   private LoadablePattern saveloadablePattern(
       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetails lpd,
       LoadableStudy loadableStudy,
-      boolean hasLoadicator) {
+      boolean hasLoadicator,
+      boolean isShip) {
     LoadablePattern loadablePattern = new LoadablePattern();
     loadablePattern.setCaseNumber(lpd.getCaseNumber());
-    if (hasLoadicator) {
-      loadablePattern.setIsActive(false);
-    } else {
+
+    // Activate pattern in ship after communication without checking loadicator. On shore activate
+    // based on loadicator status.
+    if (isShip) {
       loadablePattern.setIsActive(true);
+    } else {
+      loadablePattern.setIsActive(!hasLoadicator);
     }
 
     loadablePattern.setLoadableStudy(loadableStudy);
@@ -2170,7 +2176,8 @@ public class LoadablePatternService {
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID, loadableStudyOpt.get().getId());
       } else {
-        savePatternDetails(patternResult, loadableStudyOpt, LOADABLE_STUDY);
+        // Save pattern ship after communication
+        savePatternDetails(patternResult, loadableStudyOpt, LOADABLE_STUDY, true);
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadableStudyOpt.get().getId());
         if (responseCommunication.getLoadicatorResultsRequest() != null) {

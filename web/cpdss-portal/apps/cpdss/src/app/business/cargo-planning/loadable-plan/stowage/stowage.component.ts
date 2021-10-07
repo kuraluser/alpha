@@ -227,7 +227,7 @@ export class StowageComponent implements OnInit {
       }
     })
     this.loadablePlanTransformationService.editBallastStatus$.subscribe((value: any) => {
-      this.validateAndSaveProcessing = value.validateAndSaveProcessing !== undefined ? value.validateAndSaveProcessing : this.validateAndSaveProcessing
+      this.validateAndSaveProcessing = value?.validateAndSaveProcessing !== undefined ? value.validateAndSaveProcessing : this.validateAndSaveProcessing
     })
   }
 
@@ -246,6 +246,11 @@ export class StowageComponent implements OnInit {
       this.selectedTab = selectedTab;
       this.buttonStatus = 0;
       this.editMode = null;
+      this.loadablePlanTransformationService.ballastEditStatus({
+        buttonStatus: this.buttonStatus,
+        editMode: this.editMode,
+        validateAndSaveProcessing: this.validateAndSaveProcessing
+      })
     }
   }
 

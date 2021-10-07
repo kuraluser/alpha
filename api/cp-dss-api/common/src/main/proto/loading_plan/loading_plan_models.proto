@@ -445,6 +445,8 @@ message LoadingPlanCommingleDetails {
     int64 cargo2Id = 12;
     string colorCode = 13;
     string abbreviation = 14;
+    int32 conditionType = 15;
+    int32 valueType = 16;
 }
 
 message LoadingSequence {
