@@ -1356,29 +1356,21 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
               ? arrSynopticalTableLoadicatorData.getDeflection()
               : BigDecimal.ZERO;
       BigDecimal depAft =
-          depSynopticalTableLoadicatorData.getCalculatedDraftAftActual() != null
-              ? depSynopticalTableLoadicatorData.getCalculatedDraftAftActual()
-              : (depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
+          depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
                   ? depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned()
-                  : BigDecimal.ZERO);
+                  : BigDecimal.ZERO;
       BigDecimal arrAft =
-          arrSynopticalTableLoadicatorData.getCalculatedDraftAftActual() != null
-              ? arrSynopticalTableLoadicatorData.getCalculatedDraftAftActual()
-              : (arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
+         arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
                   ? arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned()
-                  : BigDecimal.ZERO);
+                  : BigDecimal.ZERO;
       BigDecimal depFwd =
-          depSynopticalTableLoadicatorData.getCalculatedDraftFwdActual() != null
-              ? depSynopticalTableLoadicatorData.getCalculatedDraftFwdActual()
-              : (depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
+          depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
                   ? depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned()
-                  : BigDecimal.ZERO);
+                  : BigDecimal.ZERO;
       BigDecimal arrFwd =
-          arrSynopticalTableLoadicatorData.getCalculatedDraftAftActual() != null
-              ? arrSynopticalTableLoadicatorData.getCalculatedDraftFwdActual()
-              : (arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
+          arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
                   ? arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned()
-                  : BigDecimal.ZERO);
+                  : BigDecimal.ZERO;
 
       // Setting timezone converted dates
       String eta =

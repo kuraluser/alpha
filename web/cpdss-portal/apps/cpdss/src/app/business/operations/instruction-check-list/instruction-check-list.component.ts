@@ -330,7 +330,10 @@ export class InstructionCheckListComponent implements OnInit, OnDestroy {
     }
     this.instructionListData = [...this.instructionListData];
     setTimeout(() => {
-      this.editElement.nativeElement.scrollIntoView();
+      const isElementInViewport = this.isElementInViewPort(this.editElement.nativeElement);
+      if(!isElementInViewport) {
+        this.editElement.nativeElement.scrollIntoView();
+      }
     });
   }
 
@@ -359,7 +362,10 @@ export class InstructionCheckListComponent implements OnInit, OnDestroy {
     this.textFieldLength = 250;
     this.instructionListData = [...this.instructionListData];
     setTimeout(() => {
-      this.editElement.nativeElement.scrollIntoView();
+      const isElementInViewport = this.isElementInViewPort(this.editElement.nativeElement);
+      if(!isElementInViewport) {
+        this.editElement.nativeElement.scrollIntoView();
+      }
     });
   }
 
@@ -388,7 +394,10 @@ export class InstructionCheckListComponent implements OnInit, OnDestroy {
     this.textFieldLength = 500;
     this.instructionListData = [...this.instructionListData];
     setTimeout(() => {
-      this.editElement.nativeElement.scrollIntoView();
+      const isElementInViewport = this.isElementInViewPort(this.editElement.nativeElement);
+      if(!isElementInViewport) {
+        this.editElement.nativeElement.scrollIntoView();
+      }
     });
   }
 
@@ -587,6 +596,19 @@ export class InstructionCheckListComponent implements OnInit, OnDestroy {
   field(formControlName: string): FormControl {
     const formControl = <FormControl>this.instructionForm.get(formControlName);
     return formControl;
+  }
+
+  /**
+  * Method to check is element at view port
+  * @returns {*} element
+  * @memberof InstructionCheckListComponent
+  */
+  isElementInViewPort(el: any) {
+    const rect = el.getBoundingClientRect();
+    return rect.bottom > 0 &&
+        rect.right > 0 &&
+        rect.left < (window.innerWidth || document.documentElement.clientWidth) &&
+        rect.top < ((window.innerHeight - 53) || (document.documentElement.clientHeight - 53));
   }
 
 }

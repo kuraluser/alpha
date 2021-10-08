@@ -1898,7 +1898,7 @@ public class LoadablePlanService {
       kl15CTotal += kl15CValue;
       ltTotal += ltValue;
       diffBblsTotal += diffBbls;
-      diffPercentageTotal += diffPercentage;
+//      diffPercentageTotal += diffPercentage;
       Long portId =
           cargoNominationDetails.get().getCargoNominationPortDetails().stream()
               .findFirst()
@@ -1941,6 +1941,9 @@ public class LoadablePlanService {
 
       cargosTableList.add(cargosTable);
     }
+    diffPercentageTotal =
+              Double.parseDouble(Float.toString(diffBblsTotal))
+                      / Double.parseDouble(Float.toString(cargoNominationTotal));
     return CargoDetailsTable.builder()
         .cargosTableList(cargosTableList)
         .cargoNominationTotal(Double.parseDouble(Float.toString(cargoNominationTotal)))
