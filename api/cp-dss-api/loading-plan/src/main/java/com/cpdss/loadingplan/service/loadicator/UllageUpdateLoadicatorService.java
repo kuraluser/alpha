@@ -496,7 +496,7 @@ public class UllageUpdateLoadicatorService {
           loadingInfoOpt.get(), validationFailedStatusOpt.get(), request.getConditionType());
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), validationFailedStatusOpt.get());
-      saveLoadingPlanAlgoErrors(
+      saveLoadingPlanLoadicatorErrors(
           algoResponse.getLoadicatorResults().get(0).getErrorDetails(),
           loadingInfoOpt.get(),
           request.getConditionType());
@@ -523,8 +523,14 @@ public class UllageUpdateLoadicatorService {
    * @param loadingInformation
    * @param conditionType
    */
-  private void saveLoadingPlanAlgoErrors(
+  private void saveLoadingPlanLoadicatorErrors(
       List<String> errorDetails, LoadingInformation loadingInformation, int conditionType) {
+
+    algoErrorHeadingRepository.deleteByLoadingInformationAndConditionType(
+        loadingInformation, conditionType);
+    algoErrorsRepository.deleteByLoadingInformationAndConditionType(
+        loadingInformation, conditionType);
+
     AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
     algoErrorHeading.setErrorHeading("Loadicator Errors");
     algoErrorHeading.setLoadingInformation(loadingInformation);
