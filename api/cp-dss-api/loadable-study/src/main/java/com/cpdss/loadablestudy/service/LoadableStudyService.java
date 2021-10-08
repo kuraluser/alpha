@@ -2938,9 +2938,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                               .getDepartureCondition()
                               .getLoadableQuantityCommingleCargoDetails());
                       departureCondition.setLoadablePlanRoBDetails(
-                              portWiseDetails
-                                      .getDepartureCondition()
-                                      .getLoadablePlanRoBDetails());
+                          portWiseDetails.getDepartureCondition().getLoadablePlanRoBDetails());
                       departureCondition.setStabilityParameters(
                           portWiseDetails.getDepartureCondition().getStabilityParameters());
                       departureCondition.setConfirmPlanEligibility(
@@ -2971,9 +2969,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       log.error("GenericServiceException in get ullage", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
-              .setCode(CommonErrorCodes.E_CPDSS_ULLAGE_UPDATE_INVALID_VALUE)
-              .setMessage(LoadableStudiesConstants.INVALID_ULLAGE_OR_SOUNDING_VALUE)
-              .setStatus(SUCCESS)
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
               .build());
     } catch (Exception e) {
       log.error("Exception in update ullage", e);

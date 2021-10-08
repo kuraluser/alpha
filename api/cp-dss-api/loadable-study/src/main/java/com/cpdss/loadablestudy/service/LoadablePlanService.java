@@ -23,6 +23,7 @@ import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
 import java.awt.Color;
@@ -2956,9 +2957,20 @@ public class LoadablePlanService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    UllageUpdateResponse algoResponse =
-        this.callAlgoUllageUpdateApi(
-            this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    UllageUpdateResponse algoResponse = null;
+    try {
+      algoResponse =
+          this.callAlgoUllageUpdateApi(
+              this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    } catch (GenericServiceException e) {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(SUCCESS)
+              .setCode(CommonErrorCodes.E_CPDSS_ULLAGE_UPDATE_INVALID_VALUE)
+              .setMessage(LoadableStudiesConstants.INVALID_ULLAGE_OR_SOUNDING_VALUE)
+              .build());
+      return replyBuilder;
+    }
     if (!request.getUpdateUllageForLoadingPlan() && !algoResponse.getFillingRatio().equals("")) {
       this.saveUllageUpdateResponse(algoResponse, request, loadablePatternOpt.get());
     }
@@ -3242,9 +3254,21 @@ public class LoadablePlanService {
               .build());
       return replyBuilder;
     }
-    UllageUpdateResponse algoResponse =
-        this.callAlgoUllageUpdateApi(
-            this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    UllageUpdateResponse algoResponse = null;
+
+    try {
+      algoResponse =
+          this.callAlgoUllageUpdateApi(
+              this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    } catch (GenericServiceException e) {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(SUCCESS)
+              .setCode(CommonErrorCodes.E_CPDSS_ULLAGE_UPDATE_INVALID_VALUE)
+              .setMessage(LoadableStudiesConstants.INVALID_ULLAGE_OR_SOUNDING_VALUE)
+              .build());
+      return replyBuilder;
+    }
     replyBuilder.setLoadablePlanStowageDetails(this.buildUpdateUllageReply(algoResponse, request));
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
