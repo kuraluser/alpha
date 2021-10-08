@@ -11,5 +11,6 @@ public class ArrivalDepartureConditionJson {
   private Object loadablePlanStowageDetails;
   private Object loadableQuantityCargoDetails;
   private Object loadableQuantityCommingleCargoDetails;
+  private Object loadablePlanRoBDetails;
   private Object stabilityParameters;
 }

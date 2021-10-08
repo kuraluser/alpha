@@ -49,6 +49,7 @@ public class LoadablePlanBallastDetails {
   private String colorCode;
 
   private String quantityMT; // for saving result
+  private String quantityM3;
   private String fillingRatio; // for saving result
 
   @JsonInclude(Include.NON_NULL)

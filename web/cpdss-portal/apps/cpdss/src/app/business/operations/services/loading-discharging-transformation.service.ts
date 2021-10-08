@@ -444,7 +444,7 @@ export class LoadingDischargingTransformationService {
       _loadingDischargingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
       _loadingDischargingDelays.reasonForDelayIds = loadingValueObject?.reasonForDelay?.value?.map(a => a.id) ?? [];
       if (_loadingDischargingDelays.cargoId) {
-        const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoId === _loadingDischargingDelays.cargoId);
+        const cargoObj: ILoadableQuantityCargo = listData?.loadableQuantityCargo?.find(loadable => loadable.cargoNominationId === loadingValueObject?.cargo?.value?.cargoNominationId);
         _loadingDischargingDelays.quantity = Number(cargoObj.loadableMT);
       } else {
         _loadingDischargingDelays.quantity = loadingValueObject?.quantity?.value;

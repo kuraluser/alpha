@@ -26,7 +26,7 @@
                 <ng-container *ngIf="col.field === 'difference'">
                     <span *ngIf="rowData[col.field]!==0" class="badge-custom content-ellipsis"  
                     [pTooltip]="rowData?.isPositive ? ((rowData[col.field] | number:'0.2-2')+'%') : (rowData[col.field] | number:'0.2-2')+'%'" tooltipPosition="top"
-                        [ngStyle]="{'background': rowData?.isPositive?  'green' : 'red' }"> 
+                        [ngClass]="{'success': rowData?.isPositive, 'error' : !rowData?.isPositive }"> 
                          {{rowData[col.field] | number:'0.2-2'}}%
                     </span>
                     <span *ngIf="rowData[col.field]===0"> {{rowData[col.field] | number:'0.2-2'}}%</span>
@@ -40,7 +40,7 @@
             <td>{{totalPlanned | quantityDecimalFormat: currentQuantitySelectedUnit}}</td>
             <td>{{totalActual | quantityDecimalFormat: currentQuantitySelectedUnit}}</td>
             <td>
-                <span *ngIf="totalDifference!==0" class="badge-custom content-ellipsis" [ngStyle]="{'background': isTotalPositive?  'green' : 'red' }"
+                <span *ngIf="totalDifference!==0" class="badge-custom content-ellipsis" [ngClass]="{'success': isTotalPositive, 'error' : !isTotalPositive }"
                 [pTooltip]="rowData?.isPositive ? ((totalDifference | number:'0.2-2')+'%') : (totalDifference | number:'0.2-2')+'%'" tooltipPosition="top">
                      {{totalDifference | number:'0.2-2'}}%
                 </span>

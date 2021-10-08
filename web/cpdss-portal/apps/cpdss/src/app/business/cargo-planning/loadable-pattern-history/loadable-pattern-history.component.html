@@ -18,7 +18,7 @@
             <button class="btn btn-main mr-10 ml-10" id="btn_callNewLoadableStudyPopup"
                 (click)="patternHistory()">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL' | translate}}</button>
             <button class="btn btn-main" id="btn_callNewLoadableStudyPopup"
-                (click)="backToLoadableStudy()">{{'LOADABLE_PATTERN_HISTORY_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
+                (click)="backToLoadableStudy()" [disabled]="!enableBackLoading">{{'LOADABLE_PATTERN_HISTORY_BACK_TO_LOADABLE_STUDY_BUTTON_LABEL' |
                 translate}}</button>
         </div>
 

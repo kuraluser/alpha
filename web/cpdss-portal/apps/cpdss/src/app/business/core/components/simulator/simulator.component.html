@@ -1,0 +1,5 @@
+<button type="button" class="btn btn-main mr-10" (click)="menu.toggle($event)">
+  {{buttonLabel | translate}}
+  <span class="pi pi-angle-down ml-5"></span>
+</button>
+<p-menu #menu styleClass="simulator-menu-drop-down" [popup]="true" [model]="simulatorMenu"></p-menu>

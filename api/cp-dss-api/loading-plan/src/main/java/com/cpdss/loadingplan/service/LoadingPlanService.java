@@ -561,7 +561,7 @@ public class LoadingPlanService {
                           ? null
                           : new BigDecimal(billOfLanding.getTemperature()),
                       Long.valueOf(billOfLanding.getId() + ""));
-                } else {
+                } else if (billOfLanding.getId() == 0) {
                   BillOfLanding landing = new BillOfLanding();
                   landing.setLoadingId(billOfLanding.getLoadingId());
                   landing.setPortId(billOfLanding.getPortId());
@@ -616,7 +616,7 @@ public class LoadingPlanService {
           .getBallastUpdateList()
           .forEach(
               ullageInsert -> {
-                if (ullageInsert.getIsUpdate() || tempBallastCount > 0) {
+                if ((ullageInsert.getIsUpdate() && tempBallastCount > 0) || tempBallastCount > 0) {
                   loadingPlanBallastDetailsTempRepository.updateLoadingPlanBallastDetailsRepository(
                       StringUtils.isEmpty(ullageInsert.getSg())
                           ? null
@@ -686,7 +686,7 @@ public class LoadingPlanService {
           .getUpdateUllageList()
           .forEach(
               ullageInsert -> {
-                if (ullageInsert.getIsUpdate() || tempStowageCount > 0) {
+                if ((ullageInsert.getIsUpdate() && tempStowageCount > 0) || tempStowageCount > 0) {
                   loadingPlanStowageDetailsTempRepository
                       .updatePortLoadingPlanStowageDetailsRepository(
                           new BigDecimal(ullageInsert.getQuantity()),

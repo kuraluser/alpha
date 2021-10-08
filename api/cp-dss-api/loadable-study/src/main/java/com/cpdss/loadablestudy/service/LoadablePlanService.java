@@ -23,6 +23,7 @@ import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
 import java.awt.Color;
@@ -126,6 +127,12 @@ public class LoadablePlanService {
 
   @Value("${algo.stowage.edit.api.url}")
   private String algoUpdateUllageUrl;
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
+
+  @Value("${cpdss.build.env}")
+  private String env;
 
   public void buildLoadablePlanQuantity(
       List<LoadablePlanQuantity> loadablePlanQuantities,
@@ -1891,7 +1898,7 @@ public class LoadablePlanService {
       kl15CTotal += kl15CValue;
       ltTotal += ltValue;
       diffBblsTotal += diffBbls;
-      diffPercentageTotal += diffPercentage;
+//      diffPercentageTotal += diffPercentage;
       Long portId =
           cargoNominationDetails.get().getCargoNominationPortDetails().stream()
               .findFirst()
@@ -1934,6 +1941,9 @@ public class LoadablePlanService {
 
       cargosTableList.add(cargosTable);
     }
+    diffPercentageTotal =
+              Double.parseDouble(Float.toString(diffBblsTotal))
+                      / Double.parseDouble(Float.toString(cargoNominationTotal));
     return CargoDetailsTable.builder()
         .cargosTableList(cargosTableList)
         .cargoNominationTotal(Double.parseDouble(Float.toString(cargoNominationTotal)))
@@ -2579,7 +2589,6 @@ public class LoadablePlanService {
           loadableStudy,
           modelMapper);
       log.info("------- Started preparing buildLoadablePlanPortWiseDetails");
-      voyageService.buildVoyageDetails(modelMapper, loadableStudy);
       buildLoadablePlanPortWiseDetails(loadablePatternOpt.get(), loadabalePatternValidateRequest);
 
       loadabalePatternValidateRequest.setLoadableStudy(loadableStudy);
@@ -2608,40 +2617,42 @@ public class LoadablePlanService {
                   + ".json"),
           loadabalePatternValidateRequest);
       log.info("------- Payload has successfully saved in file");
-      LoadabalePatternValidateRequest communicationServiceRequest = loadabalePatternValidateRequest;
-      buildCommunicationServiceRequest(communicationServiceRequest, loadablePatternOpt.get());
-      log.info(
-          "------- Before envoy writer calling : "
-              + MessageTypes.VALIDATEPLAN.getMessageType()
-              + " "
-              + MessageTypes.LOADABLESTUDY.getMessageType());
-      EnvoyWriter.WriterReply ewReply =
-          communicationService.passRequestPayloadToEnvoyWriter(
-              objectMapper.writeValueAsString(communicationServiceRequest),
-              loadableStudy.getVesselId(),
-              MessageTypes.VALIDATEPLAN.getMessageType());
-      log.info("------- After envoy writer calling");
-      if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-        log.info("------- Envoy writer has called successfully : " + ewReply.toString());
-        LoadableStudyCommunicationStatus lsCommunicationStatus =
-            new LoadableStudyCommunicationStatus();
-        if (ewReply.getMessageId() != null) {
-          lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-          lsCommunicationStatus.setCommunicationStatus(
-              CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+      log.info("-------Communication status for stowage Edit : " + enableCommunication);
+      if (enableCommunication && env.equals("ship")) {
+        LoadabalePatternValidateRequest communicationServiceRequest =
+            loadabalePatternValidateRequest;
+        buildCommunicationServiceRequest(communicationServiceRequest, loadablePatternOpt.get());
+        voyageService.buildVoyageDetails(modelMapper, loadableStudy);
+        EnvoyWriter.WriterReply ewReply =
+            communicationService.passRequestPayloadToEnvoyWriter(
+                objectMapper.writeValueAsString(communicationServiceRequest),
+                loadableStudy.getVesselId(),
+                MessageTypes.VALIDATEPLAN.getMessageType());
+        log.info("------- After envoy writer calling");
+        if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+          log.info("------- Envoy writer has called successfully : " + ewReply.toString());
+          LoadableStudyCommunicationStatus lsCommunicationStatus =
+              new LoadableStudyCommunicationStatus();
+          if (ewReply.getMessageId() != null) {
+            lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+            lsCommunicationStatus.setCommunicationStatus(
+                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+          }
+          lsCommunicationStatus.setReferenceId(loadablePatternOpt.get().getLoadableStudy().getId());
+          lsCommunicationStatus.setMessageType(MessageTypes.VALIDATEPLAN.getMessageType());
+          lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+          LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
+              this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
+          log.info("Communication table update : " + loadableStudyCommunicationStatus.getId());
+          replyBuilder
+              .setProcesssId("")
+              .setResponseStatus(
+                  Common.ResponseStatus.newBuilder()
+                      .setMessage(SUCCESS)
+                      .setStatus(SUCCESS)
+                      .build());
         }
-        lsCommunicationStatus.setReferenceId(loadablePatternOpt.get().getLoadableStudy().getId());
-        lsCommunicationStatus.setMessageType(MessageTypes.VALIDATEPLAN.getMessageType());
-        lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-        LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
-            this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
-        log.info("Communication table update : " + loadableStudyCommunicationStatus.getId());
-        replyBuilder
-            .setProcesssId("")
-            .setResponseStatus(
-                Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
       } else {
-
         AlgoResponse algoResponse =
             restTemplate.postForObject(
                 loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
@@ -2949,9 +2960,20 @@ public class LoadablePlanService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    UllageUpdateResponse algoResponse =
-        this.callAlgoUllageUpdateApi(
-            this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    UllageUpdateResponse algoResponse = null;
+    try {
+      algoResponse =
+          this.callAlgoUllageUpdateApi(
+              this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    } catch (GenericServiceException e) {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(SUCCESS)
+              .setCode(CommonErrorCodes.E_CPDSS_ULLAGE_UPDATE_INVALID_VALUE)
+              .setMessage(LoadableStudiesConstants.INVALID_ULLAGE_OR_SOUNDING_VALUE)
+              .build());
+      return replyBuilder;
+    }
     if (!request.getUpdateUllageForLoadingPlan() && !algoResponse.getFillingRatio().equals("")) {
       this.saveUllageUpdateResponse(algoResponse, request, loadablePatternOpt.get());
     }
@@ -3235,9 +3257,21 @@ public class LoadablePlanService {
               .build());
       return replyBuilder;
     }
-    UllageUpdateResponse algoResponse =
-        this.callAlgoUllageUpdateApi(
-            this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    UllageUpdateResponse algoResponse = null;
+
+    try {
+      algoResponse =
+          this.callAlgoUllageUpdateApi(
+              this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    } catch (GenericServiceException e) {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(SUCCESS)
+              .setCode(CommonErrorCodes.E_CPDSS_ULLAGE_UPDATE_INVALID_VALUE)
+              .setMessage(LoadableStudiesConstants.INVALID_ULLAGE_OR_SOUNDING_VALUE)
+              .build());
+      return replyBuilder;
+    }
     replyBuilder.setLoadablePlanStowageDetails(this.buildUpdateUllageReply(algoResponse, request));
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;

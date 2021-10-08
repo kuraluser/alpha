@@ -35,11 +35,7 @@
                         class="badge-custom badge-muted v-middle mr-10">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_PENDING' |
                         translate}}</span></ng-template>
 
-                <button type="button" class="btn btn-main mr-10" (click)="menu.toggle($event)">
-                    {{'LOADABLE_PLAN_SIMULATOR_BUTTON_LABEL' |translate}}
-                    <span class="pi pi-angle-down ml-5"></span>
-                </button>
-                <p-menu #menu styleClass="simulator-menu-drop-down" [popup]="true" [model]="simulatorMenu"></p-menu>
+                <cpdss-portal-simulator *ngIf="vesselId && loadableStudyId && caseNumber" [vesselId]="vesselId" [loadableStudyId]="loadableStudyId" [caseNumber]="caseNumber" [buttonLabel]="'LOADABLE_PLAN_SIMULATOR_BUTTON_LABEL'"></cpdss-portal-simulator>
 
                 <button class="btn btn-main mr-10" id="confirm_plan"
                     [disabled]="!confirmPlanPermission || confirmButtonStatus || validationPending"

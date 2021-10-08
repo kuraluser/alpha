@@ -122,6 +122,7 @@ public class LoadableStudiesConstants {
   public static final Long LOADABLE_PATTERN_VALIDATION_STARTED_ID = 14L;
   public static final Long LOADABLE_PATTERN_VALIDATION_SUCCESS_ID = 12L;
   public static final Long LOADABLE_PATTERN_VALIDATION_FAILED_ID = 13L;
+  public static final Long LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID = 6L;
   public static final List<Long> VALIDATED_CONDITIONS =
       Arrays.asList(
           LOADABLE_PATTERN_VALIDATION_STARTED_ID,
