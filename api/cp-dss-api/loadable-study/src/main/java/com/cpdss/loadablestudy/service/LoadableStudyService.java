@@ -2899,10 +2899,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       ArrivalDepartureConditionJson departureCondition = new ArrivalDepartureConditionJson();
-      Optional<JsonData> jsonData =
+      JsonData jsonData =
           this.jsonDataService.getJsonData(request.getLoadableStudyId(), Long.valueOf(2));
-      if (jsonData.isPresent()) {
-        String algoJsonString = jsonData.get().getJsonData();
+      if (jsonData != null) {
+        String algoJsonString = jsonData.getJsonData();
         LoadableStudyAlgoJson algoJson =
             new ObjectMapper().readValue(algoJsonString, LoadableStudyAlgoJson.class);
         Optional<LoadablePlanDetailsAlgoJson> loadablePlanDetails =

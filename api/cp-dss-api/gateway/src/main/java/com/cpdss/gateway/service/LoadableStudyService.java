@@ -113,6 +113,7 @@ import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
@@ -6285,7 +6286,9 @@ public class LoadableStudyService {
     DepartureConditionJson departureConditionJson = null;
     SimulatorJsonResponse jsonResponse = new SimulatorJsonResponse();
     departureConditionJson =
-        new ObjectMapper().readValue(reply.getDepartureCondition(), DepartureConditionJson.class);
+        new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .readValue(reply.getDepartureCondition(), DepartureConditionJson.class);
     jsonResponse.setDepartureCondition(departureConditionJson);
     jsonResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
