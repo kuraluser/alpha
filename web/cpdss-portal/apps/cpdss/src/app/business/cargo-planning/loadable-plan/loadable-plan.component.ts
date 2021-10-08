@@ -9,7 +9,7 @@ import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { IBallastTank, ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS, IBallastStowageDetails, ILoadableQuantityCargo, ICargo, ICargoResponseModel } from '../../core/models/common.model';
 import { LoadablePlanApiService } from '../services/loadable-plan-api.service';
-import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, IAlgoError, IloadableQuantityCargoDetails, ILoadablePlanCommentsDetails, VALIDATION_AND_SAVE_STATUS, IAlgoResponse, ILoadablePlanSimulatorResponse } from '../models/loadable-plan.model';
+import { ICargoTankDetailValueObject, ILoadablePlanResponse, ILoadableQuantityCommingleCargo, IAlgoError, IloadableQuantityCargoDetails, ILoadablePlanCommentsDetails, VALIDATION_AND_SAVE_STATUS, IAlgoResponse } from '../models/loadable-plan.model';
 import { LoadablePlanTransformationService } from '../services/loadable-plan-transformation.service';
 import { ITimeZone, ISubTotal } from '../../../shared/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
@@ -159,17 +159,6 @@ export class LoadablePlanComponent implements OnInit {
       this.getVoyages(this.vesselId, this.voyageId);
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
     });
-    const translationKeys = await this.translateService.get(['LOADABLE_PLAN_USER_ROLE_SELECT_MASTER_LABEL', 'LOADABLE_PLAN_USER_ROLE_SELECT_VIEWER_LABEL']).toPromise();
-    this.simulatorMenu = [
-      {
-        label: translationKeys['LOADABLE_PLAN_USER_ROLE_SELECT_MASTER_LABEL'].toUpperCase(),
-        command: () => { this.onLoadSimulator(translationKeys['LOADABLE_PLAN_USER_ROLE_SELECT_MASTER_LABEL']) }
-      },
-      {
-        label: translationKeys['LOADABLE_PLAN_USER_ROLE_SELECT_VIEWER_LABEL'].toUpperCase(),
-        command: () => { this.onLoadSimulator(translationKeys['LOADABLE_PLAN_USER_ROLE_SELECT_VIEWER_LABEL']) }
-      }
-    ];
 
   }
 
@@ -728,56 +717,6 @@ export class LoadablePlanComponent implements OnInit {
     if (e.success) {
       this.confirmPlanEligibility = false;
       this.confirmPlan();
-    }
-  }
-
-  /**
-   * Method to load simulator
-   *
-   * @memberof LoadablePlanComponent
-   */
-  async onLoadSimulator(role) {
-    const simulatorJSON: ILoadablePlanSimulatorResponse = await this.loadablePlanApiService.getSimulatorJsonData(this.vesselId, this.loadableStudyId, this.caseNumber).toPromise();
-    if (simulatorJSON.responseStatus.status === "200") {
-      const userDetails = JSON.parse(localStorage.getItem('userDetails'));
-      const data = {
-        ship: this.vesselInfo.name,
-        path: `$.departureCondition`,
-        json: simulatorJSON.departureCondition,
-        user: userDetails.rolePermissions.role,
-        role: role
-      };
-
-      const url = AppConfigurationService.settings.simulatorDomainUrl + "/sims/cargo/embedded.html";
-      let child = window.open(url, "_blank", "menubar=no,location=no,resizable=yes,scrollbars=yes,status=no");
-      self.addEventListener('message', function (event) {
-        let msg = event.data;
-        if (event.origin === AppConfigurationService.settings.simulatorDomainUrl) {
-          try {
-            msg = JSON.parse(msg);
-            switch (msg.method) {
-              case 'onLoad': {
-                const request = {
-                  method: 'loadStowagePlan',
-                  args: {
-                    ship: data.ship,
-                    json: data.json,
-                    path: data.path,
-                    user: data.user,
-                    role: data.role
-                  }
-                };
-                if (event.origin === AppConfigurationService.settings.simulatorDomainUrl) {
-                  child.postMessage(JSON.stringify(request), event.origin);
-                }
-              }
-            }
-          }
-          catch (err) {
-            console.log(err);
-          }
-        }
-      });
     }
   }
 

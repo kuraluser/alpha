@@ -29,6 +29,7 @@ import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'; 
 import { PortRotationPopupModule } from '../../core/components/port-rotation-popup/port-rotation-popup.module';
 import { MenuModule } from 'primeng/menu';
+import { SimulatorModule } from '../../core/components/simulator/simulator.module';
 /**
  * Module for loadable plan
  *
@@ -52,6 +53,7 @@ import { MenuModule } from 'primeng/menu';
     ValidationErrorModule,
     TooltipModule,
     MenuModule,
+    SimulatorModule,
     QuantityDecimalFormatPipeModule,
     PortRotationPopupModule,
     FormsModule
