@@ -20,6 +20,13 @@ public interface AlgoErrorHeadingRepository extends CommonCrudRepository<AlgoErr
   @Query("UPDATE AlgoErrorHeading SET isActive = false WHERE loadingInformation = ?1")
   public void deleteByLoadingInformation(LoadingInformation loadingInformation);
 
+  @Modifying
+  @Transactional
+  @Query(
+      "UPDATE AlgoErrorHeading SET isActive = false WHERE loadingInformation = ?1 AND conditionType = ?2")
+  public void deleteByLoadingInformationAndConditionType(
+      LoadingInformation loadingInformation, Integer conditionType);
+
   public List<AlgoErrorHeading> findByLoadingInformationIdAndConditionTypeAndIsActiveTrue(
       Long loadingInfoId, Integer conditionType);
 }
