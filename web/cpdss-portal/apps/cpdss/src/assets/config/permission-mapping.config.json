@@ -55,5 +55,6 @@
     "OperationLoadingInstruction": "OPERATIONS_LOADING_INSTRUCTION",
     "OperationLoadingSequence": "OPERATIONS_LOADING_SEQUENCE",
     "OperationLoadingPlan": "OPERATIONS_LOADING_PLAN",
-    "OperationLoadingInformation": "OPERATIONS_LOADING_INFO"
+    "OperationLoadingInformation": "OPERATIONS_LOADING_INFO",
+    "OperationLoadingGeneratePlan": "OPERATIONS_LOADING_GENERATE_PLAN"
 }

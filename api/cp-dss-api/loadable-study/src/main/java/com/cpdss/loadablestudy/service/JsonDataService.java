@@ -39,8 +39,6 @@ public class JsonDataService {
   public Optional<JsonData> getJsonData(Long id, Long typeId) {
     Optional<JsonData> patternJson = Optional.empty();
     Optional<JsonType> type = this.jsonTypeRepository.findByIdAndIsActive(typeId, true);
-    System.out.println(type.isPresent());
-    System.out.println(id);
     if (type.isPresent()) {
       patternJson = this.jsonDataRepository.findByJsonTypeXIdAndReferenceXId(type.get(), id);
     }

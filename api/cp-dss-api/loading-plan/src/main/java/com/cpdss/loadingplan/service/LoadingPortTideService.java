@@ -7,4 +7,6 @@ import java.util.List;
 public interface LoadingPortTideService {
 
   List<PortTideAlgo> findRecentTideDetailsByPortId(Long id);
+
+  List<PortTideAlgo> findRecentTideDetailsByPortIdAndLoadingInfoId(Long portId, Long infoId);
 }

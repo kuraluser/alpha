@@ -2,6 +2,7 @@
 package com.cpdss.gateway.domain.simulator;
 
 import java.util.List;
+
 import lombok.Data;
 
 /** @Author gokul.p */
@@ -12,5 +13,6 @@ public class DepartureConditionJson {
   private List<LoadablePlanStowageDetailsJson> loadablePlanStowageDetails;
   private List<LoadableQuantityCargoDetailsJson> loadableQuantityCargoDetails;
   private List<LoadableQuantityCommingleCargoDetailsJson> loadableQuantityCommingleCargoDetails;
+  private List<LoadablePlanRobDetails> loadablePlanRoBDetails;
   private StabilityParametersJson stabilityParameters;
 }

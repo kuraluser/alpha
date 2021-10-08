@@ -21,10 +21,12 @@ import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import java.io.File;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -85,6 +87,8 @@ public class LoadicatorService {
   @Autowired private LoadableStudyService loadableStudyService;
   @Autowired private JsonDataService jsonDataService;
   @Autowired private CommunicationService communicationService;
+  @Autowired private JsonDataRepository jsonDataRepository;
+  @Autowired private JsonTypeRepository jsonTypeRepository;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -992,9 +996,20 @@ public class LoadicatorService {
               false,
               algoResponse.getFeedbackLoopCount(),
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
-          this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
+          List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataList =
+              this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
           loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
               LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
+          log.info("LoadablePattern algo status process id: " + algoResponse.getProcessId());
+          if (enableCommunication && !env.equals("ship")) {
+            passPatternWithLodicatorToEnvoyWriter(
+                request,
+                request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
+                loadableStudyOpt,
+                synopticalTableLoadicatorDataList,
+                algoResponse.getProcessId(),
+                algoResponse.getFeedbackLoopCount());
+          }
         }
       }
     } else {
@@ -1012,6 +1027,87 @@ public class LoadicatorService {
             .setResponseStatus(
                 Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
     return replyBuilder;
+  }
+
+  /**
+   * To prepare payload and send payload to ship side
+   *
+   * @param request
+   * @param loadablePatternId
+   * @param loadableStudyOpt
+   * @param synopticalTableLoadicatorDataList
+   * @param processId
+   * @param feedbackLoopCount
+   */
+  private void passPatternWithLodicatorToEnvoyWriter(
+      LoadableStudy.LoadicatorDataRequest request,
+      long loadablePatternId,
+      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt,
+      List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataList,
+      String processId,
+      Integer feedbackLoopCount)
+      throws JsonProcessingException, GenericServiceException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    Optional<JsonType> type =
+        this.jsonTypeRepository.findByIdAndIsActive(
+            LoadableStudiesConstants.LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID, true);
+    Optional<LoadablePattern> loadablePatternOpt =
+        this.loadablePatternRepository.findByIdAndIsActive(loadablePatternId, true);
+    if (type.isPresent() && loadableStudyOpt.isPresent() && loadablePatternOpt.isPresent()) {
+      JsonData jsonData =
+          jsonDataRepository.findTopByReferenceXIdAndJsonTypeXIdOrderByIdDesc(
+              loadablePatternId, type.get());
+      if (jsonData != null && jsonData.getJsonData() != null) {
+        PatternValidateResultRequest patternValidateResultRequest =
+            new Gson().fromJson(jsonData.getJsonData(), PatternValidateResultRequest.class);
+        LoadablePatternAlgoRequest loadablePatternAlgoRequest = new LoadablePatternAlgoRequest();
+        Optional.ofNullable(patternValidateResultRequest.getValidated())
+            .ifPresent(loadablePatternAlgoRequest::setValidated);
+        Optional.ofNullable(loadableStudyOpt.get().getId())
+            .ifPresent(loadablePatternAlgoRequest::setLoadableStudyId);
+        Optional.ofNullable(patternValidateResultRequest.getHasLoadicator())
+            .ifPresent(loadablePatternAlgoRequest::setHasLoadicator);
+        Optional.ofNullable(processId).ifPresent(loadablePatternAlgoRequest::setProcessId);
+        Optional.ofNullable(loadablePatternId)
+            .ifPresent(loadablePatternAlgoRequest::setLoadablePatternId);
+        PatternDetails patternDetails = new PatternDetails();
+        loadablePatternService.fetchSavedPatternFromDB(patternDetails, loadablePatternOpt.get());
+        loadablePatternAlgoRequest.setPatternDetails(patternDetails);
+        if (synopticalTableLoadicatorDataList != null) {
+          ModelMapper modelMapper = new ModelMapper();
+          List<SynopticalTableLoadicatorDataDto> synopticalTableLoadicatorDataDtoList =
+              Arrays.asList(
+                  modelMapper.map(
+                      synopticalTableLoadicatorDataList, SynopticalTableLoadicatorDataDto[].class));
+          patternDetails.setSynopticalTableLoadicatorData(synopticalTableLoadicatorDataDtoList);
+        }
+        EnvoyWriter.WriterReply ewReply =
+            communicationService.passRequestPayloadToEnvoyWriter(
+                objectMapper.writeValueAsString(loadablePatternAlgoRequest),
+                loadablePatternOpt.get().getLoadableStudy().getVesselXId(),
+                MessageTypes.PATTERNDETAIL.getMessageType());
+        if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+          log.info(
+              "------- Envoy writer has called successfully in Lodicator(Stowage Edit ): "
+                  + ewReply);
+          LoadableStudyCommunicationStatus lsCommunicationStatus =
+              new LoadableStudyCommunicationStatus();
+          if (ewReply.getMessageId() != null) {
+            lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+            lsCommunicationStatus.setCommunicationStatus(
+                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+          }
+          lsCommunicationStatus.setReferenceId(loadablePatternOpt.get().getLoadableStudy().getId());
+          lsCommunicationStatus.setMessageType(MessageTypes.PATTERNDETAIL.getMessageType());
+          lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+          LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
+              this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
+          log.info(
+              "Communication table update in Lodicator(true) for stowage Edit : "
+                  + loadableStudyCommunicationStatus.getId());
+        }
+      }
+    }
   }
 
   private void passResultToCommunication(
@@ -1201,7 +1297,7 @@ public class LoadicatorService {
    * @param feedbackLoopCount
    * @param status
    */
-  private void updateFeedbackLoopParameters(
+  public void updateFeedbackLoopParameters(
       Long id, Boolean isPattern, Boolean feedbackLoop, Integer feedbackLoopCount, Long status) {
     if (isPattern) {
       this.loadablePatternRepository.updateLoadablePatternStatus(status, id);
@@ -1219,7 +1315,7 @@ public class LoadicatorService {
    *
    * @param algoResponse
    */
-  private void saveloadicatorDataForSynopticalTable(
+  private List<SynopticalTableLoadicatorData> saveloadicatorDataForSynopticalTable(
       LoadicatorAlgoResponse algoResponse, Boolean isPattern) {
     List<SynopticalTableLoadicatorData> entities = new ArrayList<>();
     if (isPattern) {
@@ -1252,7 +1348,9 @@ public class LoadicatorService {
                 });
       }
     }
-    this.synopticalTableLoadicatorDataRepository.saveAll(entities);
+    List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataList =
+        synopticalTableLoadicatorDataRepository.saveAll(entities);
+    return synopticalTableLoadicatorDataList;
   }
 
   /**

@@ -133,11 +133,11 @@ public class UllageUpdateLoadicatorService {
       buildUllageEditLoadicatorAlgoRequest(
           loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
       saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
-      checkStabilityWithAlgo(
-          loadingInfoOpt.get(),
-          algoRequest,
-          processId,
-          request.getUpdateUllage(0).getArrivalDepartutre());
+      //      checkStabilityWithAlgo(
+      //          loadingInfoOpt.get(),
+      //          algoRequest,
+      //          processId,
+      //          request.getUpdateUllage(0).getArrivalDepartutre());
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
@@ -252,8 +252,7 @@ public class UllageUpdateLoadicatorService {
         restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
     saveLoadicatorResponseJson(algoResponse, loadingInformation.getId());
 
-    if (algoResponse.getLoadicatorResults().get(0).getErrorDetails().size() > 0) {
-
+    if (algoResponse.getLoadicatorResults().isEmpty()) {
       Optional<LoadingInformationStatus> validationFailedStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
@@ -261,21 +260,30 @@ public class UllageUpdateLoadicatorService {
           loadingInformation, validationFailedStatusOpt.get(), conditionType);
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInformation, processId, validationFailedStatusOpt.get());
-
     } else {
-      saveLoadingPlanStabilityParameters(
-          loadingInformation,
-          algoResponse,
-          conditionType,
-          LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
-      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-          loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
-      loadingPlanService.updateLoadingPlanStatus(
-          loadingInformation, loadingInfoStatusOpt.get(), conditionType);
-      loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
-          loadingInformation, processId, loadingInfoStatusOpt.get());
-      loadingPlanService.saveUpdatedLoadingPlanDetails(loadingInformation, conditionType);
+      if (algoResponse.getLoadicatorResults().get(0).getErrorDetails().size() > 0) {
+        Optional<LoadingInformationStatus> validationFailedStatusOpt =
+            loadingPlanAlgoService.getLoadingInformationStatus(
+                LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+        loadingPlanService.updateLoadingPlanStatus(
+            loadingInformation, validationFailedStatusOpt.get(), conditionType);
+        loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+            loadingInformation, processId, validationFailedStatusOpt.get());
+      } else {
+        saveLoadingPlanStabilityParameters(
+            loadingInformation,
+            algoResponse,
+            conditionType,
+            LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
+        Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+            loadingPlanAlgoService.getLoadingInformationStatus(
+                LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+        loadingPlanService.updateLoadingPlanStatus(
+            loadingInformation, loadingInfoStatusOpt.get(), conditionType);
+        loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+            loadingInformation, processId, loadingInfoStatusOpt.get());
+        loadingPlanService.saveUpdatedLoadingPlanDetails(loadingInformation, conditionType);
+      }
     }
   }
 
@@ -496,9 +504,10 @@ public class UllageUpdateLoadicatorService {
           loadingInfoOpt.get(), loadingInfoStatusOpt.get(), request.getConditionType());
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
-      loadingPlanService.saveUpdatedLoadingPlanDetails(
-          loadingInfoOpt.get(), request.getConditionType());
     }
+
+    loadingPlanService.saveUpdatedLoadingPlanDetails(
+        loadingInfoOpt.get(), request.getConditionType());
   }
 
   /**

@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface JsonDataRepository extends CommonCrudRepository<JsonData, Long> {
 
   Optional<JsonData> findByJsonTypeXIdAndReferenceXId(JsonType type, Long referId);
+
+  JsonData findTopByReferenceXIdAndJsonTypeXIdOrderByIdDesc(long id, JsonType type);
 }

@@ -116,7 +116,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       buildLoadablePatternPortWiseDetails(algoRequest, loadingInfoOpt.get());
 
       // Build hourly based tide details which upload from loading info page
-      buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
+      buildPortTideDetails(algoRequest, loadingInfoOpt.orElse(null));
 
       // Build Loading Rule, service is in loading-plan (self)
       buildLoadingRules(algoRequest, loadingInfoOpt.get());
@@ -142,10 +142,13 @@ public class LoadingInformationAlgoRequestBuilderService {
     }
   }
 
-  private void buildPortTideDetails(LoadingInformationAlgoRequest algoRequest, Long portXId) {
-    if (portXId != null && portXId > 0) {
+  private void buildPortTideDetails(
+      LoadingInformationAlgoRequest algoRequest,
+      com.cpdss.loadingplan.entity.LoadingInformation info) {
+    if (info != null && info.getPortXId() != null) {
       List<PortTideAlgo> list =
-          loadingPortTideDetailsService.findRecentTideDetailsByPortId(portXId);
+          loadingPortTideDetailsService.findRecentTideDetailsByPortIdAndLoadingInfoId(
+              info.getPortXId(), info.getId());
       algoRequest.setPortTideDetails(list);
     }
   }

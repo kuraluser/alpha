@@ -72,7 +72,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   portsTabPermissionContext: IPermissionContext;
   addCargoBtnPermissionContext: IPermissionContext;
   addPortBtnPermissionContext: IPermissionContext;
-  displayLoadableQuntity: boolean;
+  displayLoadableQuantity: boolean;
   loadableQuantityNew: string;
   loadableQuantityModel: LoadableQuantityModel;
   cargoNominationTabPermission: IPermission;
@@ -110,6 +110,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   isServiceWorkerCallActive = false;
   isRuleModalVisible: boolean = false;
   dischargingPortData: any = [];
+  loadLineChange: boolean;
 
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -243,6 +244,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.ports = await this.getPorts();
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     const loadableStudies = result?.loadableStudies ?? [];
+    this.displayLoadableQuantity = this.loadLineChange;
+    this.loadLineChange = false;
     if (loadableStudies.length) {
       this.setProcessingLoadableStudyActions(0, 0, loadableStudies);
       this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
@@ -382,7 +385,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
     });
     this.loadableStudyDetailsTransformationService.loadLineChange$.subscribe((res) => {
-      this.displayLoadableQuntity = res;
+      this.loadLineChange = res;
     });
     this.loadableStudyDetailsTransformationService.loadablePatternBtnDisable$.subscribe(value => {
       this.isServiceWorkerCallActive = value;
@@ -556,7 +559,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           default:
             break;
         }
-        if ([4, 5, 7].includes(statusId) && this.router.url.includes('loadable-study-details')) {
+        if ([LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING, LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE].includes(statusId) && this.router.url.includes('loadable-study-details')) {
           loadableStudy.isActionsEnabled = false;
         }
         else if ([2, 3].includes(statusId)) {
@@ -706,14 +709,14 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (!this.loadableStudies?.length) {
       return;
     }
-    this.displayLoadableQuntity = true;
+    this.displayLoadableQuantity = true;
   }
 
   /**
    * Value from Loadable Quantity Popup
    */
   displayPopUpTab(displayNew_: boolean) {
-    this.displayLoadableQuntity = displayNew_;
+    this.displayLoadableQuantity = displayNew_;
   }
 
 
@@ -800,7 +803,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   async onLoadableStudyChange(event) {
-    if (event) {
+    if (event !== this.loadableStudyId) {
       this.ngxSpinnerService.show();
       this.loadableStudyId = event;
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
