@@ -240,7 +240,7 @@ public class UllageUpdateLoadicatorService {
       dischargeInformationRepository.updateDischargeInformationDepartureStatus(
           dischargingInfoStatusOpt.get().getId(), dsichargingInfoId);
     }
-    dischargingPlanAlgoService.createLoadingInformationAlgoStatus(
+    dischargingPlanAlgoService.createDischargingInformationAlgoStatus(
         dischargingInfoOpt.get(),
         processId,
         dischargingInfoStatusOpt.get(),

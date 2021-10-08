@@ -3,6 +3,7 @@ package com.cpdss.dischargeplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
+import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +31,35 @@ public interface DischargeInformationRepository
   @Modifying
   @Query("UPDATE DischargeInformation SET departureStatusId = ?1 WHERE id = ?2")
   public void updateDischargeInformationDepartureStatus(Long depStatus, Long id);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE DischargeInformation SET loadingPlanDetailsFromAlgo = ?2 WHERE id = ?1")
+  public void updateDischargingPlanDetailsFromAlgo(Long id, String dischargingPlanDetailsFromAlgo);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE DischargeInformation SET dischargingInformationStatus = ?1 WHERE id = ?2")
+  public void updateDischargingInformationStatus(
+      DischargingInformationStatus dischargingInformationStatus, Long id);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE DischargeInformation SET dischargingInformationStatus = ?1, arrivalStatusId = ?2, arrivalStatusId = ?3 WHERE id = ?4")
+  public void updateDischargingInformationStatuses(
+      DischargingInformationStatus dischargingInformationStatus,
+      Long arrivalStatus,
+      Long departureStatus,
+      Long id);
+
+  //  @Transactional
+  //  @Modifying
+  //  @Query("UPDATE DischargeInformation li SET li.isLoadingSequenceGenerated = ?2 WHERE id = ?1")
+  //  void updateIsLoadingSequenceGeneratedStatus(Long id, boolean status);
+  //
+  //  @Transactional
+  //  @Modifying
+  //  @Query("UPDATE LoadingInformation li SET li.isLoadingPlanGenerated = ?2 WHERE id = ?1")
+  //  void updateIsLoadingPlanGeneratedStatus(Long id, boolean status);
 }

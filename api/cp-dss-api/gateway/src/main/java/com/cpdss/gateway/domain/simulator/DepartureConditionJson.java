@@ -2,7 +2,6 @@
 package com.cpdss.gateway.domain.simulator;
 
 import java.util.List;
-
 import lombok.Data;
 
 /** @Author gokul.p */

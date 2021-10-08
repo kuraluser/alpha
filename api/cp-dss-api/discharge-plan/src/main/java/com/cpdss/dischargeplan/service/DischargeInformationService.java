@@ -37,6 +37,7 @@ import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargePlanRuleInput;
 import com.cpdss.dischargeplan.entity.DischargePlanRules;
 import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
+import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import com.cpdss.dischargeplan.entity.PortTideDetail;
 import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
@@ -775,5 +776,35 @@ public class DischargeInformationService {
           portsList.stream().collect(Collectors.toMap(map -> map.getId(), map -> map.getName()));
     }
     return portsMap;
+  }
+
+  public void updateDischargingPlanDetailsFromAlgo(Long id, String dischargingPlanDetailsFromAlgo) {
+    dischargeInformationRepository.updateDischargingPlanDetailsFromAlgo(
+        id, dischargingPlanDetailsFromAlgo);
+  }
+
+  public void updateDischargingInformationStatus(
+      DischargingInformationStatus dischargingInformationStatus, Long id) {
+    dischargeInformationRepository.updateDischargingInformationStatus(
+        dischargingInformationStatus, id);
+  }
+
+  public void updateDischargingInformationStatuses(
+      DischargingInformationStatus dischargingInformationStatus,
+      DischargingInformationStatus arrivalStatus,
+      DischargingInformationStatus departureStatus,
+      Long id) {
+    dischargeInformationRepository.updateDischargingInformationStatuses(
+        dischargingInformationStatus, arrivalStatus.getId(), departureStatus.getId(), id);
+  }
+
+  public void updateIsDischargingSequenceGeneratedStatus(Long id, boolean b) {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void updateIsDischargingPlanGeneratedStatus(Long id, boolean b) {
+    // TODO Auto-generated method stub
+
   }
 }
