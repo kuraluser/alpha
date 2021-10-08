@@ -4,6 +4,7 @@ package com.cpdss.loadingplan.tasks;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.scheduler.ExecuteTaskListener;
 import com.cpdss.common.utils.MessageTypes;
+import com.cpdss.common.utils.StagingStatus;
 import com.cpdss.loadingplan.service.CommunicationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,9 @@ public class TaskListener implements ExecuteTaskListener {
           //communicationService.getDataFromCommInShipSide(taskReqParams, MessageTypes.ship);
         } else {
           log.info("inside taskReqParams " + taskReqParams.get("env"));
-          communicationService.getDataFromStagingTable();
+          communicationService.getStagingData(StagingStatus.READY_TO_PROCESS.getStatus());
+          communicationService.getStagingData(StagingStatus.RETRY.getStatus());
+          communicationService.getStagingData(StagingStatus.IN_PROGRESS.getStatus());
         }
 
       } else if (taskName.contains("LOADING_PLAN_STATUS_CHECK_")) {

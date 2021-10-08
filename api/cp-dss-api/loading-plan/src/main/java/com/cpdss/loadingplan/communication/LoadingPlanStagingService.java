@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.communication;
 
 import com.cpdss.common.communication.StagingService;
+import com.cpdss.loadingplan.service.LoadingMachineryInUseService;
 import com.cpdss.loadingplan.utility.ProcessIdentifiers;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -44,6 +45,9 @@ public class LoadingPlanStagingService extends StagingService {
   @Autowired private StageOffsetRepository stageOffsetRepository;
   @Autowired private StageDurationRepository stageDurationRepository;
   @Autowired private LoadingInformationStatusRepository loadingInformationStatusRepository;
+  @Autowired private LoadingBerthDetailsRepository loadingBerthDetailsRepository;
+  @Autowired private LoadingDelayRepository loadingDelayRepository;
+  @Autowired private LoadingMachineryInUseRepository loadingMachineryInUseRepository;
 
   public LoadingPlanStagingService(@Autowired LoadingPlanStagingRepository loadingPlanStagingRepository) {
     super(loadingPlanStagingRepository);
@@ -65,7 +69,7 @@ public class LoadingPlanStagingService extends StagingService {
     for (String processIdentifier : processIdentifierList) {
       if(processedList.contains(processIdentifier)){
         log.info("Table already fetched :"+ processIdentifier);
-        break;
+        continue;
       }
       JsonObject jsonObject = new JsonObject();
       switch (ProcessIdentifiers.valueOf(processIdentifier)) {
@@ -86,6 +90,61 @@ public class LoadingPlanStagingService extends StagingService {
           CargoToppingOffSequence getObj=cargoToppingOffSequence.get();
           getObj.setLoadingInformation(null);
          // getLoadingInformation(array, getObj.getLoadingInformation().getId(),"loading_information", processId, processGroupId, processedList);
+          array.add(
+                  createJsonObject(
+                          new Gson().toJson(getObj), processIdentifier, processId, processGroupId));
+          processedList.add(processIdentifier);
+          break;
+        }
+        case loading_berth_details:
+        {
+          Optional<LoadingBerthDetail> loadingBerthDetail= loadingBerthDetailsRepository.findById(Id);
+          if(loadingBerthDetail.isEmpty()){
+            throw new GenericServiceException(
+                    "LoadingBerthDetail with given id does not exist",
+                    CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                    HttpStatusCode.BAD_REQUEST);
+          }
+          LoadingBerthDetail getObj=loadingBerthDetail.get();
+          getObj.setLoadingInformation(null);
+          // getLoadingInformation(array, getObj.getLoadingInformation().getId(),"loading_information", processId, processGroupId, processedList);
+          array.add(
+                  createJsonObject(
+                          new Gson().toJson(getObj), processIdentifier, processId, processGroupId));
+          processedList.add(processIdentifier);
+          break;
+        }
+        case loading_delay:
+        {
+          Optional<LoadingDelay> loadingDelay= loadingDelayRepository.findById(Id);
+          if(loadingDelay.isEmpty()){
+            throw new GenericServiceException(
+                    "LoadingDelay with given id does not exist",
+                    CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                    HttpStatusCode.BAD_REQUEST);
+          }
+          LoadingDelay getObj=loadingDelay.get();
+          getObj.setLoadingInformation(null);
+          getObj.setLoadingDelayReasons(null);
+          // getLoadingInformation(array, getObj.getLoadingInformation().getId(),"loading_information", processId, processGroupId, processedList);
+          array.add(
+                  createJsonObject(
+                          new Gson().toJson(getObj), processIdentifier, processId, processGroupId));
+          processedList.add(processIdentifier);
+          break;
+        }
+        case loading_machinary_in_use:
+        {
+          Optional<LoadingMachineryInUse> loadingMachineryInUse= loadingMachineryInUseRepository.findById(Id);
+          if(loadingMachineryInUse.isEmpty()){
+            throw new GenericServiceException(
+                    "LoadingMachineryInUseService with given id does not exist",
+                    CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                    HttpStatusCode.BAD_REQUEST);
+          }
+          LoadingMachineryInUse getObj=loadingMachineryInUse.get();
+          getObj.setLoadingInformation(null);
+          // getLoadingInformation(array, getObj.getLoadingInformation().getId(),"loading_information", processId, processGroupId, processedList);
           array.add(
                   createJsonObject(
                           new Gson().toJson(getObj), processIdentifier, processId, processGroupId));

@@ -40,4 +40,7 @@ public class DataTransferStage extends EntityDoc {
 
   @Column(name = "status")
   private String status;
+
+  @Column(name = "status_description")
+  private String statusDescription;
 }

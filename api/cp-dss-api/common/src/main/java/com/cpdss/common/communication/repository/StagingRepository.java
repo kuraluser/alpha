@@ -3,6 +3,8 @@ package com.cpdss.common.communication.repository;
 
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.springdata.CommonCrudRepository;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,5 +28,21 @@ public interface StagingRepository extends CommonCrudRepository<DataTransferStag
   public int updateStatus(Long id, String status);
 
   @Query("select * from DataTransferStage where status =?1")
-  public List<DataTransferStage> getAllNotStarted(String status);
+  public List<DataTransferStage> getAllWithStatus(String status);
+
+  @Modifying
+  @Query("UPDATE DataTransferStage staging SET staging.status = ?2 where staging.processId = ?1")
+  public void updateStatusForProcessId(String processId, String status);
+
+  @Modifying
+  @Query("select * from DataTransferStage where status =?1 and lastModifiedDateTime=?2")
+  public List<DataTransferStage> getAllWithStatusAndTime(String status, LocalDateTime dateTime);
+
+  @Modifying
+  @Query("UPDATE DataTransferStage staging SET staging.status = ?2 and staging.lastModifiedDateTime=?3 where staging.processId = ?1")
+   public void updateStatusAndModifiedDateTimeForProcessId(String processId, String status, LocalDateTime modifiedDateTime);
+
+  @Modifying
+  @Query("UPDATE DataTransferStage staging SET staging.status = ?2 and statusDescription =?3 and staging.lastModifiedDateTime=?4 where staging.id = ?1")
+  public  void updateStatusAndStatusDescriptionForId(Long id, String status, String statusDescription, LocalDateTime modifiedDateTime);
 }

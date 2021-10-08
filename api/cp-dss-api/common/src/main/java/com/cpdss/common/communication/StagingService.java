@@ -6,10 +6,13 @@ import com.cpdss.common.communication.repository.StagingRepository;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.StagingStatus;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -61,9 +64,7 @@ public class StagingService {
           dataTransferStage.setLastModifiedBy(CREATED_OR_UPDATED_BY);
           stagingRepository.save(dataTransferStage);
         }
-        // final JsonObject obj = new Gson().fromJson(jsonResult, JsonObject.class);
-
-        // return stagingRepository.save(dataTransferStage);
+       this.updateStatusForProcessId(dataTransferStage.getProcessId(), StagingStatus.READY_TO_PROCESS.getStatus());
         return dataTransferStage;
       }
     } catch (ResourceAccessException e) {
@@ -129,22 +130,27 @@ public class StagingService {
    *
    * @param processId - Id
    */
-  public void updateStatusForProcessId(String processId) {
-    List<DataTransferStage> list = this.getByProcessId(processId);
-    if (list != null && !list.isEmpty()) {
-      List<Long> Ids = list.stream().map(DataTransferStage::getId).collect(Collectors.toList());
-      if (Ids != null && !Ids.isEmpty()) {
-        Ids.stream().forEach(id -> stagingRepository.updateStatus(id, "In progress"));
-      }
-    }
+  public void updateStatusForProcessId(String processId, String status) {
+    stagingRepository.updateStatusForProcessId(processId, status);
   }
-
   public Optional<DataTransferStage> getById(Long id) {
     return stagingRepository.findById(id);
   }
 
-  public List<DataTransferStage> getAllNotStarted(String status){
-    return stagingRepository.getAllNotStarted(status);
+  public List<DataTransferStage> getAllWithStatus(String status){
+    return stagingRepository.getAllWithStatus(status);
+  }
+
+  public List<DataTransferStage> getAllWithStatusAndTime(String status, LocalDateTime dateTime){
+    return stagingRepository.getAllWithStatusAndTime(status, dateTime);
+  }
+
+  public void updateStatusAndModifiedDateTimeForProcessId(String processId, String status, LocalDateTime modifiedDateTime) {
+  stagingRepository.updateStatusAndModifiedDateTimeForProcessId(processId,status,modifiedDateTime);
+  }
+
+  public void updateStatusAndStatusDescriptionForId(Long id, String status, String statusDescription, LocalDateTime modifiedDateTime) {
+    stagingRepository.updateStatusAndStatusDescriptionForId(id,status,statusDescription,modifiedDateTime);
   }
 
 }

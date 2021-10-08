@@ -15,5 +15,8 @@ public enum ProcessIdentifiers {
     loading_sequence_stability_parameters,
     loading_plan_stability_parameters,
     loading_information,
-    cargo_topping_off_sequence;
+    cargo_topping_off_sequence,
+    loading_berth_details,
+    loading_delay,
+    loading_machinary_in_use;
 }
