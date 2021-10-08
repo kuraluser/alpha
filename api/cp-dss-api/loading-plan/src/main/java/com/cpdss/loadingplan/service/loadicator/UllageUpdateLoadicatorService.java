@@ -133,11 +133,11 @@ public class UllageUpdateLoadicatorService {
       buildUllageEditLoadicatorAlgoRequest(
           loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
       saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
-      checkStabilityWithAlgo(
-          loadingInfoOpt.get(),
-          algoRequest,
-          processId,
-          request.getUpdateUllage(0).getArrivalDepartutre());
+      //      checkStabilityWithAlgo(
+      //          loadingInfoOpt.get(),
+      //          algoRequest,
+      //          processId,
+      //          request.getUpdateUllage(0).getArrivalDepartutre());
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
@@ -504,9 +504,10 @@ public class UllageUpdateLoadicatorService {
           loadingInfoOpt.get(), loadingInfoStatusOpt.get(), request.getConditionType());
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
-      loadingPlanService.saveUpdatedLoadingPlanDetails(
-          loadingInfoOpt.get(), request.getConditionType());
     }
+
+    loadingPlanService.saveUpdatedLoadingPlanDetails(
+        loadingInfoOpt.get(), request.getConditionType());
   }
 
   /**
