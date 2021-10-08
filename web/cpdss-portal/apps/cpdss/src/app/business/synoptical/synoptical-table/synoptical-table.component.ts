@@ -1642,11 +1642,11 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'calculatedDraftFwdPlanned': case 'calculatedDraftFwdActual':
         const draftValueFwd = fc.value ? fc.value : this.synopticalService.synopticalRecords[colIndex]['calculatedDraftFwdPlanned'];
-        this.synopticalService.synopticalRecords[colIndex]['finalDraftFwd'] = Number((draftValueFwd + this.synopticalService.synopticalRecords[colIndex][field.key] + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0)).toFixed(2));
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftFwd'] = Number((draftValueFwd + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0)).toFixed(2));
         break;
       case 'calculatedDraftMidPlanned': case 'calculatedDraftMidActual':
         const draftValueMid = fc.value ? fc.value : this.synopticalService.synopticalRecords[colIndex]['calculatedDraftMidPlanned'];
-        this.synopticalService.synopticalRecords[colIndex]['finalDraftMid'] = Number((draftValueMid + this.synopticalService.synopticalRecords[colIndex][field.key] + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0)).toFixed(2));
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftMid'] = Number((draftValueMid + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0)).toFixed(2));
         break;
 
       default:
