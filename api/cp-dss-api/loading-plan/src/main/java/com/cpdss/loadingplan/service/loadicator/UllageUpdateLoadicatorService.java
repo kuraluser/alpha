@@ -491,7 +491,7 @@ public class UllageUpdateLoadicatorService {
     if (algoResponse.getLoadicatorResults().get(0).getErrorDetails().size() > 0) {
       Optional<LoadingInformationStatus> validationFailedStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID);
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
       loadingPlanService.updateLoadingPlanStatus(
           loadingInfoOpt.get(), validationFailedStatusOpt.get(), request.getConditionType());
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
@@ -500,6 +500,8 @@ public class UllageUpdateLoadicatorService {
           algoResponse.getLoadicatorResults().get(0).getErrorDetails(),
           loadingInfoOpt.get(),
           request.getConditionType());
+      loadingPlanService.saveUpdatedLoadingPlanDetails(
+          loadingInfoOpt.get(), request.getConditionType());
     } else {
       saveLoadingPlanStabilityParameters(
           loadingInfoOpt.get(),
