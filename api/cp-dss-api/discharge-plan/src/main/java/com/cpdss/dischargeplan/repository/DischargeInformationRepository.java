@@ -34,7 +34,7 @@ public interface DischargeInformationRepository
 
   @Transactional
   @Modifying
-  @Query("UPDATE DischargeInformation SET loadingPlanDetailsFromAlgo = ?2 WHERE id = ?1")
+  @Query("UPDATE DischargeInformation SET dischargingPlanDetailsFromAlgo = ?2 WHERE id = ?1")
   public void updateDischargingPlanDetailsFromAlgo(Long id, String dischargingPlanDetailsFromAlgo);
 
   @Transactional
@@ -53,13 +53,13 @@ public interface DischargeInformationRepository
       Long departureStatus,
       Long id);
 
-  //  @Transactional
-  //  @Modifying
-  //  @Query("UPDATE DischargeInformation li SET li.isLoadingSequenceGenerated = ?2 WHERE id = ?1")
-  //  void updateIsLoadingSequenceGeneratedStatus(Long id, boolean status);
-  //
-  //  @Transactional
-  //  @Modifying
-  //  @Query("UPDATE LoadingInformation li SET li.isLoadingPlanGenerated = ?2 WHERE id = ?1")
-  //  void updateIsLoadingPlanGeneratedStatus(Long id, boolean status);
+  @Transactional
+  @Modifying
+  @Query("UPDATE DischargeInformation li SET li.isDischargingSequenceGenerated = ?2 WHERE id = ?1")
+  void updateIsDischargingSequenceGeneratedStatus(Long id, boolean status);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE DischargeInformation li SET li.isDischargingPlanGenerated = ?2 WHERE id = ?1")
+  void updateIsDischargingPlanGeneratedStatus(Long id, boolean status);
 }

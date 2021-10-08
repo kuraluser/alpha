@@ -983,7 +983,6 @@ public class DischargePlanAlgoService {
             dischargingInfo.getId());
         updateDischargingInfoAlgoStatus(
             dischargingInfo, request.getProcessId(), dischargingInfoStatusOpt.get());
-        // TODO
         dischargeInformationService.updateIsDischargingSequenceGeneratedStatus(
             dischargingInfo.getId(), true);
         dischargeInformationService.updateIsDischargingPlanGeneratedStatus(
@@ -1196,7 +1195,7 @@ public class DischargePlanAlgoService {
         "ALGO returned errors while generating loading plan for loading information {}",
         dischargeInformation.getId());
 
-    algoErrorHeadingRepository.deleteByLoadingInformation(dischargeInformation);
+    algoErrorHeadingRepository.deleteByDischargingInformation(dischargeInformation);
     algoErrorsRepository.deleteByLoadingInformation(dischargeInformation);
 
     request

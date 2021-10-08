@@ -798,13 +798,11 @@ public class DischargeInformationService {
         dischargingInformationStatus, arrivalStatus.getId(), departureStatus.getId(), id);
   }
 
-  public void updateIsDischargingSequenceGeneratedStatus(Long id, boolean b) {
-    // TODO Auto-generated method stub
-
+  public void updateIsDischargingSequenceGeneratedStatus(Long id, boolean sequence) {
+    dischargeInformationRepository.updateIsDischargingSequenceGeneratedStatus(id, sequence);
   }
 
-  public void updateIsDischargingPlanGeneratedStatus(Long id, boolean b) {
-    // TODO Auto-generated method stub
-
+  public void updateIsDischargingPlanGeneratedStatus(Long id, boolean isPlanGenerated) {
+    dischargeInformationRepository.updateIsDischargingPlanGeneratedStatus(id, isPlanGenerated);
   }
 }

@@ -13,13 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface AlgoErrorHeadingRepository extends CommonCrudRepository<AlgoErrorHeading, Long> {
 
-  public List<AlgoErrorHeading> findByLoadingInformationIdAndIsActiveTrue(Long dischargingInfoId);
+  public List<AlgoErrorHeading> findByDischargingInformationIdAndIsActiveTrue(
+      Long dischargingInfoId);
 
   @Modifying
   @Transactional
   @Query("UPDATE AlgoErrorHeading SET isActive = false WHERE dischargingInformation = ?1")
-  public void deleteByLoadingInformation(DischargeInformation dischargingInformation);
+  public void deleteByDischargingInformation(DischargeInformation dischargingInformation);
 
-  public List<AlgoErrorHeading> findByLoadingInformationIdAndConditionTypeAndIsActiveTrue(
+  public List<AlgoErrorHeading> findByDischargingInformationIdAndConditionTypeAndIsActiveTrue(
       Long dischargingInfoId, Integer conditionType);
 }
