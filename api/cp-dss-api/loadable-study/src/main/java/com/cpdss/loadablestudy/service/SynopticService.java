@@ -1420,10 +1420,10 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
                           + "/"
                           + DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).format(laycanTo)
                       : "")
-              .arrFwdDraft(arrFwd.doubleValue() + arrDeflection.doubleValue())
-              .depFwdDraft(depFwd.doubleValue() + depDeflection.doubleValue())
-              .arrAftDraft(arrAft.doubleValue() + arrDeflection.doubleValue())
-              .depAftDraft(depAft.doubleValue() + depDeflection.doubleValue())
+              .arrFwdDraft(arrFwd.doubleValue())
+              .depFwdDraft(depFwd.doubleValue())
+              .arrAftDraft(arrAft.doubleValue())
+              .depAftDraft(depAft.doubleValue())
               .arrDisplacement(arrDisplacement)
               .depDisp(depDisplacement)
               .build();
