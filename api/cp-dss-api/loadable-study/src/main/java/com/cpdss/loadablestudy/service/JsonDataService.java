@@ -40,7 +40,8 @@ public class JsonDataService {
     JsonData patternJson = null;
     Optional<JsonType> type = this.jsonTypeRepository.findByIdAndIsActive(typeId, true);
     if (type.isPresent()) {
-      patternJson = this.jsonDataRepository.findTopByReferenceXIdAndJsonTypeXIdOrderByIdDesc( id, type.get());
+      patternJson =
+          this.jsonDataRepository.findTopByReferenceXIdAndJsonTypeXIdOrderByIdDesc(id, type.get());
     }
     return patternJson;
   }

@@ -1110,21 +1110,21 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
     deflection = deflection.divide(new BigDecimal(100));
     BigDecimal calculatedDraftFwd = BigDecimal.ZERO;
     if (null != loadicatorData.getCalculatedDraftFwdActual()
-            && loadicatorData.getCalculatedDraftFwdActual().doubleValue() != 0.0) {
+        && loadicatorData.getCalculatedDraftFwdActual().doubleValue() != 0.0) {
       calculatedDraftFwd = loadicatorData.getCalculatedDraftFwdActual();
     } else if (null != loadicatorData.getCalculatedDraftFwdPlanned()) {
       calculatedDraftFwd = loadicatorData.getCalculatedDraftFwdPlanned();
     }
     BigDecimal calculatedDraftAft = BigDecimal.ZERO;
     if (null != loadicatorData.getCalculatedDraftAftActual()
-            && loadicatorData.getCalculatedDraftAftActual().doubleValue() != 0.0) {
+        && loadicatorData.getCalculatedDraftAftActual().doubleValue() != 0.0) {
       calculatedDraftAft = loadicatorData.getCalculatedDraftAftActual();
     } else if (null != loadicatorData.getCalculatedDraftAftPlanned()) {
       calculatedDraftAft = loadicatorData.getCalculatedDraftAftPlanned();
     }
     BigDecimal calculatedDraftMid = BigDecimal.ZERO;
     if (null != loadicatorData.getCalculatedDraftMidActual()
-            && loadicatorData.getCalculatedDraftMidActual().doubleValue() != 0.0) {
+        && loadicatorData.getCalculatedDraftMidActual().doubleValue() != 0.0) {
       calculatedDraftMid = loadicatorData.getCalculatedDraftMidActual();
     } else if (null != loadicatorData.getCalculatedDraftMidPlanned()) {
       calculatedDraftMid = loadicatorData.getCalculatedDraftMidPlanned();
@@ -1362,20 +1362,20 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
               : BigDecimal.ZERO;
       BigDecimal depAft =
           depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
-                  ? depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned()
-                  : BigDecimal.ZERO;
+              ? depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned()
+              : BigDecimal.ZERO;
       BigDecimal arrAft =
-         arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
-                  ? arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned()
-                  : BigDecimal.ZERO;
+          arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
+              ? arrSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned()
+              : BigDecimal.ZERO;
       BigDecimal depFwd =
           depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
-                  ? depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned()
-                  : BigDecimal.ZERO;
+              ? depSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned()
+              : BigDecimal.ZERO;
       BigDecimal arrFwd =
           arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned() != null
-                  ? arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned()
-                  : BigDecimal.ZERO;
+              ? arrSynopticalTableLoadicatorData.getCalculatedDraftFwdPlanned()
+              : BigDecimal.ZERO;
 
       // Setting timezone converted dates
       String eta =
