@@ -1840,18 +1840,18 @@ public class LoadablePlanService {
           cargoNominationList.stream()
               .filter(
                   cargoNomination ->
-                      cargoNomination
-                          .getId()
-                          .longValue() == loadableQuantityCargoDetails.getCargoNominationId())
+                      cargoNomination.getId().longValue()
+                          == loadableQuantityCargoDetails.getCargoNominationId())
               .findFirst();
 
       double shipsFigureMtTotal =
-              !loadableQuantityCargoDetails.getLoadableMT().isEmpty() ?
-                      Double.parseDouble(loadableQuantityCargoDetails.getLoadableMT()) : 0;
+          !loadableQuantityCargoDetails.getLoadableMT().isEmpty()
+              ? Double.parseDouble(loadableQuantityCargoDetails.getLoadableMT())
+              : 0;
 
       float nBblsValue =
           convertToBbls(
-              (float)shipsFigureMtTotal,
+              (float) shipsFigureMtTotal,
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
               loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()
                   ? 0
@@ -1874,8 +1874,7 @@ public class LoadablePlanService {
                               loadableStudyId, loadablePatternId),
                           CommonErrorCodes.E_HTTP_BAD_REQUEST,
                           HttpStatusCode.BAD_REQUEST));
-        double cargoNominationMTValue =
-                cargoNominationDetails.get().getQuantity().doubleValue();
+      double cargoNominationMTValue = cargoNominationDetails.get().getQuantity().doubleValue();
 
       float diffBbls = nBblsValue - cargoNominationBblsValue;
       double diffMt = shipsFigureMtTotal - cargoNominationMTValue;
@@ -1897,7 +1896,7 @@ public class LoadablePlanService {
       ltTotal += ltValue;
       diffBblsTotal += diffBbls;
       diffMtTotal += diffMt;
-//      diffPercentageTotal += diffPercentage;
+      //      diffPercentageTotal += diffPercentage;
       Long portId =
           cargoNominationDetails.get().getCargoNominationPortDetails().stream()
               .findFirst()
@@ -1940,8 +1939,7 @@ public class LoadablePlanService {
 
       cargosTableList.add(cargosTable);
     }
-    diffPercentageTotal =
-              diffMtTotal/ cargoNominationMtTotal;
+    diffPercentageTotal = diffMtTotal / cargoNominationMtTotal;
     return CargoDetailsTable.builder()
         .cargosTableList(cargosTableList)
         .cargoNominationTotal(Double.parseDouble(Float.toString(cargoNominationBblsTotal)))
@@ -2649,8 +2647,14 @@ public class LoadablePlanService {
           LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
               this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
           log.info("Communication table update : " + loadableStudyCommunicationStatus.getId());
+          log.info(
+              "-------  "
+                  + "Pattern validation communicated to shore process id: "
+                  + ewReply.getMessageId());
+          updateProcessIdForLoadablePattern(
+              "", loadablePatternOpt.get(), PATTERN_COMMUNICATED_TO_SHORE);
           replyBuilder
-              .setProcesssId("")
+              .setProcesssId(ewReply.getMessageId())
               .setResponseStatus(
                   Common.ResponseStatus.newBuilder()
                       .setMessage(SUCCESS)

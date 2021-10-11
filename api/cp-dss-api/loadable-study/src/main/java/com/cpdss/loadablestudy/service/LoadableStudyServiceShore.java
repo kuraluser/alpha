@@ -3001,87 +3001,87 @@ public class LoadableStudyServiceShore {
                   synopticalTable = new SynopticalTable();
                 }
                 SynopticalTable finalSynopticalTable = synopticalTable;
-                Optional.of(synopticalTableDto.getConstantActual())
+                Optional.ofNullable(synopticalTableDto.getConstantActual())
                     .ifPresentOrElse(
                         finalSynopticalTable::setConstantActual,
                         () -> finalSynopticalTable.setConstantActual(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getConstantPlanned())
+                Optional.ofNullable(synopticalTableDto.getConstantPlanned())
                     .ifPresentOrElse(
                         finalSynopticalTable::setConstantPlanned,
                         () -> finalSynopticalTable.setConstantPlanned(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getDeadWeightActual())
+                Optional.ofNullable(synopticalTableDto.getDeadWeightActual())
                     .ifPresentOrElse(
                         finalSynopticalTable::setDeadWeightActual,
                         () -> finalSynopticalTable.setDeadWeightActual(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getDeadWeightPlanned())
+                Optional.ofNullable(synopticalTableDto.getDeadWeightPlanned())
                     .ifPresentOrElse(
                         finalSynopticalTable::setDeadWeightPlanned,
                         () -> finalSynopticalTable.setDeadWeightPlanned(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getDisplacementActual())
+                Optional.ofNullable(synopticalTableDto.getDisplacementActual())
                     .ifPresentOrElse(
                         finalSynopticalTable::setDisplacementActual,
                         () -> finalSynopticalTable.setDisplacementActual(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getDisplacementPlanned())
+                Optional.ofNullable(synopticalTableDto.getDisplacementPlanned())
                     .ifPresentOrElse(
                         finalSynopticalTable::setDisplacementPlanned,
                         () -> finalSynopticalTable.setDisplacementActual(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getDistance())
+                Optional.ofNullable(synopticalTableDto.getDistance())
                     .ifPresentOrElse(
                         finalSynopticalTable::setDistance,
                         () -> finalSynopticalTable.setDistance(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getEtaActual())
+                Optional.ofNullable(synopticalTableDto.getEtaActual())
                     .ifPresent(finalSynopticalTable::setEtaActual);
-                Optional.of(synopticalTableDto.getEtdActual())
+                Optional.ofNullable(synopticalTableDto.getEtdActual())
                     .ifPresent(finalSynopticalTable::setEtdActual);
-                Optional.of(synopticalTableDto.getHwTideFrom())
+                Optional.ofNullable(synopticalTableDto.getHwTideFrom())
                     .ifPresentOrElse(
                         finalSynopticalTable::setHwTideFrom,
                         () -> finalSynopticalTable.setHwTideFrom(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getHwTideTimeFrom())
+                Optional.ofNullable(synopticalTableDto.getHwTideTimeFrom())
                     .ifPresent(finalSynopticalTable::setHwTideTimeFrom);
-                Optional.of(synopticalTableDto.getHwTideTimeTo())
+                Optional.ofNullable(synopticalTableDto.getHwTideTimeTo())
                     .ifPresent(finalSynopticalTable::setHwTideTimeTo);
-                Optional.of(synopticalTableDto.getHwTideTo())
+                Optional.ofNullable(synopticalTableDto.getHwTideTo())
                     .ifPresentOrElse(
                         finalSynopticalTable::setHwTideTo,
                         () -> finalSynopticalTable.setHwTideTo(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getInPortHours())
+                Optional.ofNullable(synopticalTableDto.getInPortHours())
                     .ifPresentOrElse(
                         finalSynopticalTable::setInPortHours,
                         () -> finalSynopticalTable.setInPortHours(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getLoadableStudyXId())
+                Optional.ofNullable(synopticalTableDto.getLoadableStudyXId())
                     .ifPresent(finalSynopticalTable::setLoadableStudyXId);
-                Optional.of(synopticalTableDto.getOperationType())
+                Optional.ofNullable(synopticalTableDto.getOperationType())
                     .ifPresentOrElse(
                         finalSynopticalTable::setOperationType,
                         () -> finalSynopticalTable.setOperationType(null));
-                Optional.of(synopticalTableDto.getOperationType())
+                Optional.ofNullable(synopticalTableDto.getOperationType())
                     .ifPresentOrElse(
                         finalSynopticalTable::setOperationType,
                         () -> finalSynopticalTable.setOperationType(null));
-                Optional.of(synopticalTableDto.getOthersActual())
+                Optional.ofNullable(synopticalTableDto.getOthersActual())
                     .ifPresentOrElse(
                         finalSynopticalTable::setOthersActual,
                         () -> finalSynopticalTable.setOthersActual(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getOthersPlanned())
+                Optional.ofNullable(synopticalTableDto.getOthersPlanned())
                     .ifPresentOrElse(
                         finalSynopticalTable::setOthersPlanned,
                         () -> finalSynopticalTable.setOthersPlanned(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getPortXid())
+                Optional.ofNullable(synopticalTableDto.getPortXid())
                     .ifPresentOrElse(
                         finalSynopticalTable::setPortXid,
                         () -> finalSynopticalTable.setPortXid(null));
-                Optional.of(synopticalTableDto.getRunningHours())
+                Optional.ofNullable(synopticalTableDto.getRunningHours())
                     .ifPresentOrElse(
                         finalSynopticalTable::setRunningHours,
                         () -> finalSynopticalTable.setRunningHours(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getSpeed())
+                Optional.ofNullable(synopticalTableDto.getSpeed())
                     .ifPresentOrElse(
                         finalSynopticalTable::setSpeed,
                         () -> finalSynopticalTable.setSpeed(new BigDecimal(0)));
-                Optional.of(synopticalTableDto.getTimeOfSunrise())
+                Optional.ofNullable(synopticalTableDto.getTimeOfSunrise())
                     .ifPresent(finalSynopticalTable::setTimeOfSunrise);
-                Optional.of(synopticalTableDto.getTimeOfSunSet())
+                Optional.ofNullable(synopticalTableDto.getTimeOfSunSet())
                     .ifPresent(finalSynopticalTable::setTimeOfSunSet);
                 if (synopticalTableDto.getLoadableStudyPortRotation() != null
                     && synopticalTableDto.getLoadableStudyPortRotation().getId() != null) {
