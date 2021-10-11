@@ -68,33 +68,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.StabilityParameters;
 import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
-import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
-import com.cpdss.loadablestudy.repository.CargoOperationRepository;
-import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
-import com.cpdss.loadablestudy.repository.CowTypeMasterRepository;
-import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
-import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsTempRepository;
-import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyCommunicationStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
-import com.cpdss.loadablestudy.repository.StabilityParameterRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
-import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -904,6 +878,8 @@ public class LoadablePatternService {
     return builder;
   }
 
+  @Autowired private SynopticalTableRepository synopticalTableRepository;
+
   public void fetchSavedPatternFromDB(
       PatternDetails patternDetails, LoadablePattern loadablePattern) {
     ModelMapper modelMapper = new ModelMapper();
@@ -986,6 +962,12 @@ public class LoadablePatternService {
             modelMapper.map(
                 synopticalTableLoadicatorData, SynopticalTableLoadicatorDataDto[].class));
     patternDetails.setSynopticalTableLoadicatorData(synopticalTableLoadicatorDataDtoList);
+    List<com.cpdss.loadablestudy.entity.SynopticalTable> synopticalTableList =
+        synopticalTableRepository.findByLoadableStudyXIdAndIsActive(
+            loadablePattern.getLoadableStudy().getId(), true);
+    List<SynopticalTableDto> synopticalTableDtoList =
+        Arrays.asList(modelMapper.map(synopticalTableList, SynopticalTableDto[].class));
+    patternDetails.setSynopticalTableDtoList(synopticalTableDtoList);
   }
 
   /**

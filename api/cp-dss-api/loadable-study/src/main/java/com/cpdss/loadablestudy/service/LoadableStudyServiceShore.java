@@ -1452,7 +1452,59 @@ public class LoadableStudyServiceShore {
   private void savePatternDetailsInShoreSide(
       LoadabalePatternValidateRequest loadabalePatternValidateRequest,
       LoadableStudy loadableStudyEntity) {
-    if (loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails() != null) {}
+    log.info(
+        "=======Loadable Pattern list size : "
+            + loadabalePatternValidateRequest.getLoadablePatternDtoList().size());
+    if (loadabalePatternValidateRequest.getLoadablePatternDtoList() != null) {
+      loadabalePatternValidateRequest
+          .getLoadablePatternDtoList()
+          .forEach(
+              loadablePatternDto -> {
+                LoadablePattern loadablePattern = null;
+                if (loadablePatternDto.getId() != null) {
+                  Optional<LoadablePattern> loadablePatternOptional =
+                      loadablePatternRepository.findByIdAndIsActive(
+                          loadablePatternDto.getId(), true);
+                  if (loadablePatternOptional.isPresent()) {
+                    loadablePattern = loadablePatternOptional.get();
+                    log.info(
+                        "Stowage Edit Saved pattern in Shore(Update) : ---"
+                            + loadablePatternDto.getId());
+
+                  } else {
+                    loadablePattern = new LoadablePattern();
+                    loadablePattern.setId(loadablePatternDto.getId());
+                    log.info(
+                        "Stowage Edit Saved pattern in Shore(Insert With Id) : ---"
+                            + loadablePatternDto.getId());
+                  }
+                } else {
+                  loadablePattern = new LoadablePattern();
+                  log.info("Stowage Edit Saved pattern in Shore(insert with new id) : ---");
+                }
+                Optional.ofNullable(loadablePatternDto.getDifferenceColor())
+                    .ifPresent(loadablePattern::setDifferenceColor);
+                Optional.ofNullable(loadablePatternDto.getCaseNumber())
+                    .ifPresent(loadablePattern::setCaseNumber);
+                Optional.ofNullable(loadablePatternDto.getConstraints())
+                    .ifPresent(loadablePattern::setConstraints);
+                Optional.ofNullable(loadablePatternDto.getFeedbackLoop())
+                    .ifPresent(loadablePattern::setFeedbackLoop);
+                Optional.ofNullable(loadablePatternDto.getFeedbackLoopCount())
+                    .ifPresent(loadablePattern::setFeedbackLoopCount);
+                Optional.ofNullable(loadablePatternDto.getLoadableStudyStatus())
+                    .ifPresent(loadablePattern::setLoadableStudyStatus);
+                loadablePattern.setIsActive(true);
+                Optional.ofNullable(loadableStudyEntity)
+                    .ifPresent(loadablePattern::setLoadableStudy);
+                Optional.ofNullable(loadablePatternDto.getDifferenceColor())
+                    .ifPresent(loadablePattern::setDifferenceColor);
+                Optional.ofNullable(loadablePatternDto.getDifferenceColor())
+                    .ifPresent(loadablePattern::setDifferenceColor);
+                LoadablePattern patternResult = loadablePatternRepository.save(loadablePattern);
+                log.info("Stowage Edit Saved pattern in Shore : ---" + patternResult.getId());
+              });
+    }
   }
 
   private Voyage saveOrUpdateVoyageInShoreSide(Long vesselId, VoyageDto voyageDto) {
@@ -2926,6 +2978,126 @@ public class LoadableStudyServiceShore {
         log.info(
             "===Pattern Update LoadablePlanStowageBallastDetails "
                 + loadablePlanStowageBallastDetailsList.size());
+      }
+    }
+    if (patternDetails.getSynopticalTableDtoList() != null) {
+      List<SynopticalTable> synopticalTableEntityList = new ArrayList<>();
+      patternDetails
+          .getSynopticalTableDtoList()
+          .forEach(
+              synopticalTableDto -> {
+                SynopticalTable synopticalTable = null;
+                if (synopticalTableDto.getId() != null) {
+                  Optional<SynopticalTable> optionalSynopticalTable =
+                      synopticalTableRepository.findByIdAndIsActive(
+                          synopticalTableDto.getId(), true);
+                  if (optionalSynopticalTable.isPresent()) {
+                    synopticalTable = optionalSynopticalTable.get();
+                  } else {
+                    synopticalTable = new SynopticalTable();
+                    synopticalTable.setId(synopticalTableDto.getId());
+                  }
+                } else {
+                  synopticalTable = new SynopticalTable();
+                }
+                SynopticalTable finalSynopticalTable = synopticalTable;
+                Optional.of(synopticalTableDto.getConstantActual())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setConstantActual,
+                        () -> finalSynopticalTable.setConstantActual(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getConstantPlanned())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setConstantPlanned,
+                        () -> finalSynopticalTable.setConstantPlanned(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getDeadWeightActual())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setDeadWeightActual,
+                        () -> finalSynopticalTable.setDeadWeightActual(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getDeadWeightPlanned())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setDeadWeightPlanned,
+                        () -> finalSynopticalTable.setDeadWeightPlanned(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getDisplacementActual())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setDisplacementActual,
+                        () -> finalSynopticalTable.setDisplacementActual(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getDisplacementPlanned())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setDisplacementPlanned,
+                        () -> finalSynopticalTable.setDisplacementActual(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getDistance())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setDistance,
+                        () -> finalSynopticalTable.setDistance(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getEtaActual())
+                    .ifPresent(finalSynopticalTable::setEtaActual);
+                Optional.of(synopticalTableDto.getEtdActual())
+                    .ifPresent(finalSynopticalTable::setEtdActual);
+                Optional.of(synopticalTableDto.getHwTideFrom())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setHwTideFrom,
+                        () -> finalSynopticalTable.setHwTideFrom(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getHwTideTimeFrom())
+                    .ifPresent(finalSynopticalTable::setHwTideTimeFrom);
+                Optional.of(synopticalTableDto.getHwTideTimeTo())
+                    .ifPresent(finalSynopticalTable::setHwTideTimeTo);
+                Optional.of(synopticalTableDto.getHwTideTo())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setHwTideTo,
+                        () -> finalSynopticalTable.setHwTideTo(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getInPortHours())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setInPortHours,
+                        () -> finalSynopticalTable.setInPortHours(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getLoadableStudyXId())
+                    .ifPresent(finalSynopticalTable::setLoadableStudyXId);
+                Optional.of(synopticalTableDto.getOperationType())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setOperationType,
+                        () -> finalSynopticalTable.setOperationType(null));
+                Optional.of(synopticalTableDto.getOperationType())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setOperationType,
+                        () -> finalSynopticalTable.setOperationType(null));
+                Optional.of(synopticalTableDto.getOthersActual())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setOthersActual,
+                        () -> finalSynopticalTable.setOthersActual(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getOthersPlanned())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setOthersPlanned,
+                        () -> finalSynopticalTable.setOthersPlanned(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getPortXid())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setPortXid,
+                        () -> finalSynopticalTable.setPortXid(null));
+                Optional.of(synopticalTableDto.getRunningHours())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setRunningHours,
+                        () -> finalSynopticalTable.setRunningHours(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getSpeed())
+                    .ifPresentOrElse(
+                        finalSynopticalTable::setSpeed,
+                        () -> finalSynopticalTable.setSpeed(new BigDecimal(0)));
+                Optional.of(synopticalTableDto.getTimeOfSunrise())
+                    .ifPresent(finalSynopticalTable::setTimeOfSunrise);
+                Optional.of(synopticalTableDto.getTimeOfSunSet())
+                    .ifPresent(finalSynopticalTable::setTimeOfSunSet);
+                if (synopticalTableDto.getLoadableStudyPortRotation() != null
+                    && synopticalTableDto.getLoadableStudyPortRotation().getId() != null) {
+                  LoadableStudyPortRotation loadableStudyPortRotation =
+                      loadableStudyPortRotationRepository.findByIdAndIsActive(
+                          synopticalTableDto.getLoadableStudyPortRotation().getId(), true);
+                  if (loadableStudyPortRotation != null) {
+                    finalSynopticalTable.setLoadableStudyPortRotation(loadableStudyPortRotation);
+                  }
+                }
+                SynopticalTable synopticalTableResult =
+                    synopticalTableRepository.save(synopticalTable);
+                synopticalTableEntityList.add(synopticalTableResult);
+              });
+      if (synopticalTableEntityList.size() > 0) {
+        log.info("===Pattern Update SynopticalTable" + synopticalTableEntityList.size());
       }
     }
 

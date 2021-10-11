@@ -297,17 +297,16 @@ public class CommunicationService {
     jsonDataService.saveJsonToDatabase(
         lPValidateRequest.getLoadablePatternId(),
         LOADABLE_PATTERN_EDIT_REQUEST,
-        objectMapper.writeValueAsString(loadabalePatternValidateRequest));
+        objectMapper.writeValueAsString(lPValidateRequest));
     objectMapper.writeValue(
         new File(
             this.rootFolder
                 + "/json/loadablePattern_request_"
                 + loadablePatternOpt.get().getId()
                 + ".json"),
-        loadabalePatternValidateRequest);
+        lPValidateRequest);
     AlgoResponse algoResponse =
-        restTemplate.postForObject(
-            loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
+        restTemplate.postForObject(loadableStudyUrl, lPValidateRequest, AlgoResponse.class);
 
     loadablePlanService.updateProcessIdForLoadablePattern(
         algoResponse.getProcessId(),
