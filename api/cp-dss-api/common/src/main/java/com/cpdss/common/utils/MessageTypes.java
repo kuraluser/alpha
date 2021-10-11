@@ -12,9 +12,10 @@ public enum MessageTypes {
   ALGORESULT("AlgoResult"),
   VALIDATEPLAN("ValidatePlan"),
   PATTERNDETAIL("PatternDetail"),
-  LOADINGPLAN("LoadingPlan");
+  LOADINGPLAN("LoadingPlan"),
+  LOADINGPLAN_ALGORESULT("LoadingPlan_AlgoResult");
 
-  public static EnumSet<MessageTypes> ship = EnumSet.of(ALGORESULT, PATTERNDETAIL);
+  public static EnumSet<MessageTypes> ship = EnumSet.of(ALGORESULT, PATTERNDETAIL,LOADINGPLAN_ALGORESULT);
   public static EnumSet<MessageTypes> shore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN, LOADINGPLAN);
   private final String messageType;
 }

@@ -2,13 +2,11 @@
 package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+
+import java.util.List;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,4 +46,8 @@ public class LoadingPlanPortWiseDetails extends EntityDoc {
 
   @OneToMany(mappedBy = "loadingPlanPortWiseDetails")
   private Set<DeballastingRate> deballastingRates;
+
+  @Transient
+  private Long communicationSequenceId;
+
 }

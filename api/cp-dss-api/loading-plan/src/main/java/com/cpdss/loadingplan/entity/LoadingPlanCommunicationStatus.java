@@ -2,7 +2,6 @@
 package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
-import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadingplan.domain.CommunicationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

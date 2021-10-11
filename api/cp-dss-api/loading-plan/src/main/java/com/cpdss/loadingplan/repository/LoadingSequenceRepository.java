@@ -33,4 +33,7 @@ public interface LoadingSequenceRepository extends CommonCrudRepository<LoadingS
       "SELECT DISTINCT cargoNominationXId FROM LoadingSequence WHERE loadingInformation = ?1 AND isActive = ?2")
   public List<Long> findToBeLoadedCargoNominationIdByLoadingInformationAndIsActive(
       LoadingInformation loadingInformation, Boolean isActive);
+
+  public List<LoadingSequence> findByLoadingInformationId(
+          Long loadingInformationId);
 }

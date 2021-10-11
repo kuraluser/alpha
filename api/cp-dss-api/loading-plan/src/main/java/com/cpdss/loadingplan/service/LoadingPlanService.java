@@ -168,7 +168,7 @@ public class LoadingPlanService {
                     CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
           }
           loadingPlanCommunicationStatus.setReferenceId(loadingInformation.getId());
-          loadingPlanCommunicationStatus.setMessageType(MessageTypes.VALIDATEPLAN.getMessageType());
+          loadingPlanCommunicationStatus.setMessageType(MessageTypes.LOADINGPLAN.getMessageType());
           loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
           LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
                   this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);

@@ -84,4 +84,7 @@ public interface PortLoadingPlanBallastTempDetailsRepository
       @Param("arrival_departutre") Long arrival_departutre,
       @Param("colour_code") String colour_code,
       @Param("sg") Long sg);
+
+  public List<PortLoadingPlanBallastTempDetails> findByLoadingInformation(
+          Long loadingInfoId);
 }

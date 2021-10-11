@@ -27,4 +27,7 @@ public interface PortLoadingPlanStabilityParametersRepository
   @Query(
       "UPDATE PortLoadingPlanStabilityParameters SET isActive = false WHERE loadingInformation.id = ?1")
   public void deleteByLoadingInformationId(Long loadingInfoId);
+
+  public List<PortLoadingPlanStabilityParameters> findByLoadingInformationId(
+          Long loadingInformationId);
 }

@@ -68,4 +68,6 @@ public interface PortLoadingPlanRobDetailsRepository
       @Param("colour_code") String colourCode,
       @Param("actual_planned") Long actual_planned,
       @Param("arrival_departutre") Long arrival_departutre);
+
+  public List<PortLoadingPlanRobDetails> findByLoadingInformation(Long loadingInfoId);
 }

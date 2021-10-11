@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.service.algo;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
@@ -21,60 +22,22 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.Valve;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
+import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoRequest;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoResponse;
-import com.cpdss.loadingplan.entity.AlgoErrorHeading;
-import com.cpdss.loadingplan.entity.AlgoErrors;
-import com.cpdss.loadingplan.entity.BallastOperation;
-import com.cpdss.loadingplan.entity.BallastValve;
-import com.cpdss.loadingplan.entity.CargoLoadingRate;
-import com.cpdss.loadingplan.entity.CargoValve;
-import com.cpdss.loadingplan.entity.DeballastingRate;
-import com.cpdss.loadingplan.entity.LoadingInformation;
-import com.cpdss.loadingplan.entity.LoadingInformationAlgoStatus;
-import com.cpdss.loadingplan.entity.LoadingInformationStatus;
-import com.cpdss.loadingplan.entity.LoadingPlanBallastDetails;
-import com.cpdss.loadingplan.entity.LoadingPlanRobDetails;
-import com.cpdss.loadingplan.entity.LoadingSequenceStabilityParameters;
-import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
-import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
-import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
-import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
-import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
-import com.cpdss.loadingplan.repository.AlgoErrorHeadingRepository;
-import com.cpdss.loadingplan.repository.AlgoErrorsRepository;
-import com.cpdss.loadingplan.repository.BallastOperationRepository;
-import com.cpdss.loadingplan.repository.BallastValveRepository;
-import com.cpdss.loadingplan.repository.CargoLoadingRateRepository;
-import com.cpdss.loadingplan.repository.CargoValveRepository;
-import com.cpdss.loadingplan.repository.DeballastingRateRepository;
-import com.cpdss.loadingplan.repository.LoadingInformationAlgoStatusRepository;
-import com.cpdss.loadingplan.repository.LoadingInformationRepository;
-import com.cpdss.loadingplan.repository.LoadingInformationStatusRepository;
-import com.cpdss.loadingplan.repository.LoadingPlanBallastDetailsRepository;
-import com.cpdss.loadingplan.repository.LoadingPlanCommingleDetailsRepository;
-import com.cpdss.loadingplan.repository.LoadingPlanPortWiseDetailsRepository;
-import com.cpdss.loadingplan.repository.LoadingPlanRobDetailsRepository;
-import com.cpdss.loadingplan.repository.LoadingPlanStabilityParametersRepository;
-import com.cpdss.loadingplan.repository.LoadingPlanStowageDetailsRepository;
-import com.cpdss.loadingplan.repository.LoadingSequenceRepository;
-import com.cpdss.loadingplan.repository.LoadingSequenceStabiltyParametersRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanBallastTempDetailsRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanCommingleDetailsRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
-import com.cpdss.loadingplan.repository.PortLoadingPlanStowageTempDetailsRepository;
+import com.cpdss.loadingplan.entity.*;
+import com.cpdss.loadingplan.repository.*;
+import com.cpdss.loadingplan.service.CommunicationService;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import com.google.gson.JsonArray;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +56,12 @@ public class LoadingPlanAlgoService {
 
   @Value(value = "${loadingplan.attachment.rootFolder}")
   private String rootFolder;
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
+
+  @Value("${cpdss.build.env}")
+  private String env;
 
   @Autowired RestTemplate restTemplate;
 
@@ -131,6 +100,10 @@ public class LoadingPlanAlgoService {
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
   @Autowired LoadicatorService loadicatorService;
+  @Autowired private CommunicationService communicationService;
+  @Autowired private LoadingPlanStagingService loadingPlanStagingService;
+  @Autowired
+  private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceBlockingStub loadableStudyService;
@@ -335,6 +308,26 @@ public class LoadingPlanAlgoService {
 
       deleteLoadingPlan(loadingInfoOpt.get().getId());
       saveLoadingPlan(request, loadingInfoOpt.get());
+      if (enableCommunication && !env.equals("ship")) {
+        JsonArray jsonArray =
+                loadingPlanStagingService.getCommunicationData(
+                        Arrays.asList("loading_information","loading_sequence","loading_plan_portwise_details",
+                                "port_loading_plan_stability_parameters","port_loading_plan_rob_details",
+                                "loading_plan_ballast_details","loading_plan_rob_details",
+                                "port_loading_plan_stowage_ballast_details","port_loading_plan_stowage_ballast_details_temp",
+                                "port_loading_plan_stowage_details",
+                                "port_loading_plan_stowage_details_temp","loading_plan_stowage_details",
+                                "loading_sequence_stability_parameters","loading_plan_stability_parameters"
+                                ),
+                        UUID.randomUUID().toString(),
+                        "loading-plan-pattern-generation-service",
+                        loadingInfoOpt.get().getId());
+        EnvoyWriter.WriterReply ewReply =
+                communicationService.passRequestPayloadToEnvoyWriter(
+                        jsonArray.toString(),
+                        loadingInfoOpt.get().getVesselXId(),
+                        MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
+      }
       if (request.getHasLoadicator()) {
         log.info("Passing Loading Sequence to Loadicator");
         loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
@@ -358,6 +351,7 @@ public class LoadingPlanAlgoService {
         loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
             loadingInfoOpt.get().getId(), true);
       }
+
     }
   }
 

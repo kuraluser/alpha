@@ -6,12 +6,11 @@ import com.cpdss.common.scheduler.ExecuteTaskListener;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
 import com.cpdss.loadingplan.service.CommunicationService;
+import java.util.Map;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 /** Task Listener service for executing scheduled tasks */
 @Log4j2
@@ -37,23 +36,17 @@ public class TaskListener implements ExecuteTaskListener {
       if (taskName.contains("LOADING_PLAN_DOWNLOAD_RESULT_")) {
         log.info("inside TaskName " + taskName);
         if (taskReqParams.get("env").equals("ship")) {
-          communicationService.getDataFromCommInShipSide(taskReqParams, MessageTypes.ship);
+          communicationService.getDataFromCommunication(taskReqParams, MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
         } else {
           log.info("inside taskReqParams " + taskReqParams.get("env"));
-          communicationService.getDataFromCommInShoreSide(taskReqParams, MessageTypes.shore);
+          communicationService.getDataFromCommunication(taskReqParams, MessageTypes.LOADINGPLAN.getMessageType());
         }
 
-      } else if (taskName.contains("LOADING_DATA_UPDATE_")){
+      } else if (taskName.contains("LOADING_DATA_UPDATE_")) {
         log.info("inside TaskName " + taskName);
-        if (taskReqParams.get("env").equals("ship")) {
-          //communicationService.getDataFromCommInShipSide(taskReqParams, MessageTypes.ship);
-        } else {
-          log.info("inside taskReqParams " + taskReqParams.get("env"));
-          communicationService.getStagingData(StagingStatus.READY_TO_PROCESS.getStatus());
-          communicationService.getStagingData(StagingStatus.RETRY.getStatus());
-          communicationService.getStagingData(StagingStatus.IN_PROGRESS.getStatus());
-        }
-
+          communicationService.getStagingData(StagingStatus.READY_TO_PROCESS.getStatus(),taskReqParams.get("env"));
+          communicationService.getStagingData(StagingStatus.RETRY.getStatus(),taskReqParams.get("env"));
+          communicationService.getStagingData(StagingStatus.IN_PROGRESS.getStatus(),taskReqParams.get("env"));
       } else if (taskName.contains("LOADING_PLAN_STATUS_CHECK_")) {
         // communicationService.checkLoadableStudyStatus(taskReqParams);
       }
