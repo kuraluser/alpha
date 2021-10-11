@@ -1198,7 +1198,9 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       // Get port rotations
       LoadableStudyPortRotation loadableStudyPortRotation =
           loadableStudyDetails.getPortRotations().stream()
-              .filter(rotation -> rotation.getPortXId().equals(portDetails.getPortId()) && rotation.isActive())
+              .filter(
+                  rotation ->
+                      rotation.getPortXId().equals(portDetails.getPortId()) && rotation.isActive())
               .findFirst()
               .orElse(new LoadableStudyPortRotation());
 

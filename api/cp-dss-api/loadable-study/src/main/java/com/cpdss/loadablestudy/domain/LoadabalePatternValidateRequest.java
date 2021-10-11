@@ -17,4 +17,5 @@ public class LoadabalePatternValidateRequest {
   private Boolean ballastEdited;
   private Long loadablePatternId;
   private Integer caseNumber;
+  List<LoadablePatternDto> loadablePatternDtoList;
 }

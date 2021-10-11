@@ -2617,13 +2617,20 @@ public class LoadablePlanService {
       log.info("------- Payload has successfully saved in file");
       log.info("-------Communication status for stowage Edit : " + enableCommunication);
       if (enableCommunication && env.equals("ship")) {
-        LoadabalePatternValidateRequest communicationServiceRequest =
-            loadabalePatternValidateRequest;
-        buildCommunicationServiceRequest(communicationServiceRequest, loadablePatternOpt.get());
+
+        // LoadabalePatternValidateRequest communicationServiceRequest
+        // =loadabalePatternValidateRequest;
+        // buildCommunicationServiceRequest(communicationServiceRequest, loadablePatternOpt.get());
+        List<LoadablePattern> loadablePatternList =
+            loadablePatternRepository.findByLoadableStudyAndIsActive(
+                loadablePatternOpt.get().getLoadableStudy(), true);
+        List<LoadablePatternDto> loadablePatternDtoList =
+            Arrays.asList(modelMapper.map(loadablePatternList, LoadablePatternDto[].class));
+        loadabalePatternValidateRequest.setLoadablePatternDtoList(loadablePatternDtoList);
         voyageService.buildVoyageDetails(modelMapper, loadableStudy);
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(
-                objectMapper.writeValueAsString(communicationServiceRequest),
+                objectMapper.writeValueAsString(loadabalePatternValidateRequest),
                 loadableStudy.getVesselId(),
                 MessageTypes.VALIDATEPLAN.getMessageType());
         log.info("------- After envoy writer calling");
@@ -3126,12 +3133,15 @@ public class LoadablePlanService {
             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
             true);
     if (synopticalTableOpt.isPresent()) {
-      algoRequest.setTrim(
-          String.valueOf(
-              synopticalTableLoadicatorDataRepository
-                  .findBySynopticalTableAndLoadablePatternIdAndIsActive(
-                      synopticalTableOpt.get(), loadablePattern.getId(), true)
-                  .getCalculatedTrimPlanned()));
+      SynopticalTableLoadicatorData synopticalTableLoadicatorData =
+          synopticalTableLoadicatorDataRepository
+              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                  synopticalTableOpt.get(), loadablePattern.getId(), true);
+      if (synopticalTableLoadicatorData != null
+          && synopticalTableLoadicatorData.getCalculatedTrimPlanned() != null) {
+        algoRequest.setTrim(
+            String.valueOf(synopticalTableLoadicatorData.getCalculatedTrimPlanned()));
+      }
     }
     algoRequest.setSg(request.getLoadablePlanStowageDetails().getSg());
     return algoRequest;
