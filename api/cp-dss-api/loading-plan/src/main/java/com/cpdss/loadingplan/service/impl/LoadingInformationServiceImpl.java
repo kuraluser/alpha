@@ -648,7 +648,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       CellType cellType, PortTideDetail tideDetail, Cell cell, String portName, Long portId) {
 
     if (!cellType.equals(CellType.STRING)
-        || !cell.getStringCellValue().equalsIgnoreCase(portName)) {
+        || !cell.getStringCellValue().trim().equalsIgnoreCase(portName.trim())) {
       throw new IllegalStateException(CommonErrorCodes.E_CPDSS_PORT_NAME_INVALID);
     }
     tideDetail.setPortXid(portId);

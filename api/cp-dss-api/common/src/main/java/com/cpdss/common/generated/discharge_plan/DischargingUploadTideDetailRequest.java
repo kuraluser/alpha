@@ -15,6 +15,7 @@ public final class DischargingUploadTideDetailRequest extends com.google.protobu
 
   private DischargingUploadTideDetailRequest() {
     tideDetaildata_ = com.google.protobuf.ByteString.EMPTY;
+    portName_ = "";
   }
 
   @java.lang.Override
@@ -70,6 +71,18 @@ public final class DischargingUploadTideDetailRequest extends com.google.protobu
           case 24:
             {
               loadingId_ = input.readInt64();
+              break;
+            }
+          case 34:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              portName_ = s;
+              break;
+            }
+          case 40:
+            {
+              portId_ = input.readInt64();
               break;
             }
           default:
@@ -154,6 +167,52 @@ public final class DischargingUploadTideDetailRequest extends com.google.protobu
     return loadingId_;
   }
 
+  public static final int PORTNAME_FIELD_NUMBER = 4;
+  private volatile java.lang.Object portName_;
+  /**
+   * <code>string portName = 4;</code>
+   *
+   * @return The portName.
+   */
+  public java.lang.String getPortName() {
+    java.lang.Object ref = portName_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      portName_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string portName = 4;</code>
+   *
+   * @return The bytes for portName.
+   */
+  public com.google.protobuf.ByteString getPortNameBytes() {
+    java.lang.Object ref = portName_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      portName_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int PORTID_FIELD_NUMBER = 5;
+  private long portId_;
+  /**
+   * <code>int64 portId = 5;</code>
+   *
+   * @return The portId.
+   */
+  public long getPortId() {
+    return portId_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -177,6 +236,12 @@ public final class DischargingUploadTideDetailRequest extends com.google.protobu
     if (loadingId_ != 0L) {
       output.writeInt64(3, loadingId_);
     }
+    if (!getPortNameBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, portName_);
+    }
+    if (portId_ != 0L) {
+      output.writeInt64(5, portId_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -194,6 +259,12 @@ public final class DischargingUploadTideDetailRequest extends com.google.protobu
     }
     if (loadingId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, loadingId_);
+    }
+    if (!getPortNameBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, portName_);
+    }
+    if (portId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, portId_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -218,6 +289,8 @@ public final class DischargingUploadTideDetailRequest extends com.google.protobu
       if (!getResponseStatus().equals(other.getResponseStatus())) return false;
     }
     if (getLoadingId() != other.getLoadingId()) return false;
+    if (!getPortName().equals(other.getPortName())) return false;
+    if (getPortId() != other.getPortId()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -237,6 +310,10 @@ public final class DischargingUploadTideDetailRequest extends com.google.protobu
     }
     hash = (37 * hash) + LOADINGID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadingId());
+    hash = (37 * hash) + PORTNAME_FIELD_NUMBER;
+    hash = (53 * hash) + getPortName().hashCode();
+    hash = (37 * hash) + PORTID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -393,6 +470,10 @@ public final class DischargingUploadTideDetailRequest extends com.google.protobu
       }
       loadingId_ = 0L;
 
+      portName_ = "";
+
+      portId_ = 0L;
+
       return this;
     }
 
@@ -431,6 +512,8 @@ public final class DischargingUploadTideDetailRequest extends com.google.protobu
         result.responseStatus_ = responseStatusBuilder_.build();
       }
       result.loadingId_ = loadingId_;
+      result.portName_ = portName_;
+      result.portId_ = portId_;
       onBuilt();
       return result;
     }
@@ -493,6 +576,13 @@ public final class DischargingUploadTideDetailRequest extends com.google.protobu
       }
       if (other.getLoadingId() != 0L) {
         setLoadingId(other.getLoadingId());
+      }
+      if (!other.getPortName().isEmpty()) {
+        portName_ = other.portName_;
+        onChanged();
+      }
+      if (other.getPortId() != 0L) {
+        setPortId(other.getPortId());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -709,6 +799,115 @@ public final class DischargingUploadTideDetailRequest extends com.google.protobu
     public Builder clearLoadingId() {
 
       loadingId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object portName_ = "";
+    /**
+     * <code>string portName = 4;</code>
+     *
+     * @return The portName.
+     */
+    public java.lang.String getPortName() {
+      java.lang.Object ref = portName_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        portName_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string portName = 4;</code>
+     *
+     * @return The bytes for portName.
+     */
+    public com.google.protobuf.ByteString getPortNameBytes() {
+      java.lang.Object ref = portName_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        portName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string portName = 4;</code>
+     *
+     * @param value The portName to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPortName(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      portName_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string portName = 4;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearPortName() {
+
+      portName_ = getDefaultInstance().getPortName();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string portName = 4;</code>
+     *
+     * @param value The bytes for portName to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPortNameBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      portName_ = value;
+      onChanged();
+      return this;
+    }
+
+    private long portId_;
+    /**
+     * <code>int64 portId = 5;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+    /**
+     * <code>int64 portId = 5;</code>
+     *
+     * @param value The portId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPortId(long value) {
+
+      portId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 portId = 5;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearPortId() {
+
+      portId_ = 0L;
       onChanged();
       return this;
     }
