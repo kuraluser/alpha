@@ -185,10 +185,10 @@ export class PatternViewMorePopUpComponent implements OnInit {
         loadable.grade = this.fingCargo(loadable);
 
         const orderedQuantity = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.orderedQuantity), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1);
-        loadable.orderedQuantity = orderedQuantity.toString();
+        loadable.orderedQuantity = orderedQuantity ? orderedQuantity.toString() : '0'; 
 
         const loadableMT = this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1);
-        loadable.loadableMT = loadableMT.toString();
+        loadable.loadableMT = loadableMT ? loadableMT.toString() : '0';
 
         const slopQuantity = loadable?.slopQuantity ? this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.slopQuantity.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1) : 0;
         loadable.slopQuantity = slopQuantity;

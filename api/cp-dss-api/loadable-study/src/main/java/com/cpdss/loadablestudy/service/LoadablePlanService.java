@@ -23,6 +23,7 @@ import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
 import java.awt.Color;
@@ -1798,12 +1799,14 @@ public class LoadablePlanService {
   public CargoDetailsTable buildCargoDetailsTable(long loadableStudyId, long loadablePatternId)
       throws GenericServiceException {
 
-    float cargoNominationTotal = 0;
+    float cargoNominationBblsTotal = 0;
+    double cargoNominationMtTotal = 0;
     float nBblsTotal = 0F;
     float mtTotal = 0F;
     float kl15CTotal = 0F;
     float ltTotal = 0F;
     float diffBblsTotal = 0F;
+    double diffMtTotal = 0;
     double diffPercentageTotal = 0;
 
     //    Get cargo nominations
@@ -1838,29 +1841,23 @@ public class LoadablePlanService {
               .filter(
                   cargoNomination ->
                       cargoNomination
-                          .getAbbreviation()
-                          .equalsIgnoreCase(loadableQuantityCargoDetails.getCargoAbbreviation()))
+                          .getId()
+                          .longValue() == loadableQuantityCargoDetails.getCargoNominationId())
               .findFirst();
 
-      float shipsFigureMtTotal =
-          (float)
-              loadablePlanStowageDetails.stream()
-                  .filter(
-                      loadablePlanStowageDetails1 ->
-                          loadableQuantityCargoDetails
-                              .getCargoAbbreviation()
-                              .equalsIgnoreCase(loadablePlanStowageDetails1.getCargoAbbreviation()))
-                  .mapToDouble(detail -> Double.parseDouble(detail.getWeight()))
-                  .sum();
+      double shipsFigureMtTotal =
+              !loadableQuantityCargoDetails.getLoadableMT().isEmpty() ?
+                      Double.parseDouble(loadableQuantityCargoDetails.getLoadableMT()) : 0;
+
       float nBblsValue =
           convertToBbls(
-              shipsFigureMtTotal,
+              (float)shipsFigureMtTotal,
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
               loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()
                   ? 0
                   : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()),
               ConversionUnit.MT);
-      float cargoNominationValue =
+      float cargoNominationBblsValue =
           cargoNominationDetails
               .map(
                   cargoNomination ->
@@ -1877,8 +1874,11 @@ public class LoadablePlanService {
                               loadableStudyId, loadablePatternId),
                           CommonErrorCodes.E_HTTP_BAD_REQUEST,
                           HttpStatusCode.BAD_REQUEST));
+        double cargoNominationMTValue =
+                cargoNominationDetails.get().getQuantity().doubleValue();
 
-      float diffBbls = nBblsValue - cargoNominationValue;
+      float diffBbls = nBblsValue - cargoNominationBblsValue;
+      double diffMt = shipsFigureMtTotal - cargoNominationMTValue;
       float kl15CValue = convertFromBbls(nBblsValue, 0F, 0F, ConversionUnit.KL15C);
       float ltValue =
           convertFromBbls(
@@ -1886,18 +1886,18 @@ public class LoadablePlanService {
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
               0F,
               ConversionUnit.LT);
-      double diffPercentage =
-          Double.parseDouble(Float.toString(diffBbls))
-              / Double.parseDouble(Float.toString(cargoNominationValue));
+      double diffPercentage = diffMt / cargoNominationMTValue;
 
       //      Calculate totals
-      cargoNominationTotal += cargoNominationValue;
+      cargoNominationBblsTotal += cargoNominationBblsValue;
+      cargoNominationMtTotal += cargoNominationMTValue;
       nBblsTotal += nBblsValue;
       mtTotal += shipsFigureMtTotal;
       kl15CTotal += kl15CValue;
       ltTotal += ltValue;
       diffBblsTotal += diffBbls;
-      diffPercentageTotal += diffPercentage;
+      diffMtTotal += diffMt;
+//      diffPercentageTotal += diffPercentage;
       Long portId =
           cargoNominationDetails.get().getCargoNominationPortDetails().stream()
               .findFirst()
@@ -1919,7 +1919,7 @@ public class LoadablePlanService {
                   loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()
                       ? 0
                       : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
-              .cargoNomination(Double.parseDouble(Float.toString(cargoNominationValue)))
+              .cargoNomination(Double.parseDouble(Float.toString(cargoNominationBblsValue)))
               .tolerance(
                   String.format(
                       "+%s %% / -%s %%",
@@ -1930,7 +1930,7 @@ public class LoadablePlanService {
                           ? 0.00
                           : loadableQuantityCargoDetails.getMinTolerence()))
               .nBbls(Double.parseDouble(Float.toString(nBblsValue)))
-              .mt(Double.parseDouble(Float.toString(shipsFigureMtTotal)))
+              .mt(shipsFigureMtTotal)
               .kl15C(Double.parseDouble(Float.toString(kl15CValue)))
               .lt(Double.parseDouble(Float.toString(ltValue)))
               .colorCode(loadableQuantityCargoDetails.getColorCode())
@@ -1940,9 +1940,11 @@ public class LoadablePlanService {
 
       cargosTableList.add(cargosTable);
     }
+    diffPercentageTotal =
+              diffMtTotal/ cargoNominationMtTotal;
     return CargoDetailsTable.builder()
         .cargosTableList(cargosTableList)
-        .cargoNominationTotal(Double.parseDouble(Float.toString(cargoNominationTotal)))
+        .cargoNominationTotal(Double.parseDouble(Float.toString(cargoNominationBblsTotal)))
         .nBblsTotal(Double.parseDouble(Float.toString(nBblsTotal)))
         .mtTotal(Double.parseDouble(Float.toString(mtTotal)))
         .kl15CTotal(Double.parseDouble(Float.toString(kl15CTotal)))
@@ -2956,9 +2958,20 @@ public class LoadablePlanService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    UllageUpdateResponse algoResponse =
-        this.callAlgoUllageUpdateApi(
-            this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    UllageUpdateResponse algoResponse = null;
+    try {
+      algoResponse =
+          this.callAlgoUllageUpdateApi(
+              this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    } catch (GenericServiceException e) {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(SUCCESS)
+              .setCode(CommonErrorCodes.E_CPDSS_ULLAGE_UPDATE_INVALID_VALUE)
+              .setMessage(LoadableStudiesConstants.INVALID_ULLAGE_OR_SOUNDING_VALUE)
+              .build());
+      return replyBuilder;
+    }
     if (!request.getUpdateUllageForLoadingPlan() && !algoResponse.getFillingRatio().equals("")) {
       this.saveUllageUpdateResponse(algoResponse, request, loadablePatternOpt.get());
     }
@@ -3242,9 +3255,21 @@ public class LoadablePlanService {
               .build());
       return replyBuilder;
     }
-    UllageUpdateResponse algoResponse =
-        this.callAlgoUllageUpdateApi(
-            this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    UllageUpdateResponse algoResponse = null;
+
+    try {
+      algoResponse =
+          this.callAlgoUllageUpdateApi(
+              this.prepareUllageUpdateRequest(request, loadablePatternOpt.get()));
+    } catch (GenericServiceException e) {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setStatus(SUCCESS)
+              .setCode(CommonErrorCodes.E_CPDSS_ULLAGE_UPDATE_INVALID_VALUE)
+              .setMessage(LoadableStudiesConstants.INVALID_ULLAGE_OR_SOUNDING_VALUE)
+              .build());
+      return replyBuilder;
+    }
     replyBuilder.setLoadablePlanStowageDetails(this.buildUpdateUllageReply(algoResponse, request));
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;

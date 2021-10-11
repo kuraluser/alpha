@@ -447,6 +447,11 @@ export class StowageComponent implements OnInit {
             this.initialCargoTankDetails = JSON.parse(JSON.stringify(this.cargoTankDetails));
             this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PLAN_ULLAGE_UPDATED'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS'] });
             this.ngxSpinnerService.hide();
+          } else if(result.responseStatus.status === '325'){
+            this.cargoTankDetails[event.index].rdgUllage['_value'] = this.initialCargoTankDetails[event.index].rdgUllage['_value'];
+            this.updateField(event.index, 'rdgUllage', Number(this.cargoTankDetails[event.index].rdgUllage['_value']), 'cargoTanks');
+            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_RDG_ULLAGE_ERROR'], detail: translationKeys['LOADABLE_PLAN_RDG_ULLAGE'] });
+            this.ngxSpinnerService.hide();
           }
         } catch (error) {
           if (error.error.errorCode === 'ERR-RICO-115') {
@@ -520,6 +525,11 @@ export class StowageComponent implements OnInit {
           this.loadablePlanForm.updateValueAndValidity();
           this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_PLAN_ULLAGE_UPDATED'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS'] });
           this.initBallastTankDetails = JSON.parse(JSON.stringify(this.ballastTankDetails));
+          this.ngxSpinnerService.hide();
+        } else if(result.responseStatus.status === '325'){
+          this.ballastTankDetails[event.index].rdgLevel['_value'] = this.initBallastTankDetails[event.index].rdgLevel['_value'];
+          this.updateField(event.index, 'rdgLevel', Number(this.ballastTankDetails[event.index].rdgLevel['_value']), 'ballastTanks');
+          this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_RDG_ULLAGE_ERROR'], detail: translationKeys['LOADABLE_PLAN_RDG_ULLAGE'] });
           this.ngxSpinnerService.hide();
         }
       } catch (error) {
