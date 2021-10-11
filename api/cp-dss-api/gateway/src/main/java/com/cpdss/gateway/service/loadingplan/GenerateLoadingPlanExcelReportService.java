@@ -78,8 +78,12 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -150,9 +154,9 @@ public class GenerateLoadingPlanExcelReportService {
 		LoadingPlanExcelDetails loadinPlanExcelDetails = getDataForExcel(requestPayload, vesselId, voyageId, infoId,
 				portRotationId);
 		// Setting file name of output file
-		OUTPUT_FILE_LOCATION = rootFolder
-				+ getFileName(vesselId, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
-						loadinPlanExcelDetails.getSheetOne().getPortName());
+		StringBuilder outputLocation = new StringBuilder(
+				rootFolder + getFileName(vesselId, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
+						loadinPlanExcelDetails.getSheetOne().getPortName()));
 
 		// Getting data mapped and calling excel builder utility
 //		FileInputStream resultFileStream = new FileInputStream(
@@ -162,25 +166,34 @@ public class GenerateLoadingPlanExcelReportService {
 		FileInputStream resultFileStream = new FileInputStream(
 				excelExportUtil.generateExcel(loadinPlanExcelDetails, TEMPLATES_FILE_LOCATION, TEMP_LOCATION));
 
-		FileOutputStream outFile = new FileOutputStream(OUTPUT_FILE_LOCATION);
 		if (resultFileStream != null) {
 			// TODO put an entry in DB for Communication
+			System.out.println(outputLocation);
+			FileOutputStream outFile = new FileOutputStream(outputLocation.toString());
 			log.info("Excel generated, setting color based on cargo in all sheets");
-			Workbook workbook = new XSSFWorkbook(resultFileStream);
-			setCellStyle(workbook, loadinPlanExcelDetails);
-			workbook.write(outFile);
-			outFile.close();
-			workbook.close();
-		}
-		resultFileStream.close();
-		resultFileStream = new FileInputStream(OUTPUT_FILE_LOCATION);
-		// Returning Output file as byte array for local download
-		if (downloadRequired && resultFileStream != null) {
-			return IOUtils.toByteArray(resultFileStream);
+			XSSFWorkbook workbook;
+			workbook = new XSSFWorkbook(resultFileStream);
+			try {
+				setCellStyle(workbook, loadinPlanExcelDetails);
+				workbook.write(outFile);
+				resultFileStream.close();
+				// Returning Output file as byte array for local download
+				resultFileStream = new FileInputStream(outputLocation.toString());
+				if (downloadRequired && resultFileStream != null) {
+					return IOUtils.toByteArray(resultFileStream);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.info("Applying style in excel failed");
+			} finally {
+				outFile.close();
+				workbook.close();
+				resultFileStream.close();
+			}
 		}
 		// No need to for local download if file generated form event trigger
 		log.info("No local download required so returning null");
-		return null;
+		return new byte[0];
 	}
 
 	/**
@@ -193,59 +206,110 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @throws EncryptedDocumentException
 	 * @throws IOException
 	 */
-	private void setCellStyle(Workbook workbook, LoadingPlanExcelDetails data)
+	private void setCellStyle(XSSFWorkbook workbook, LoadingPlanExcelDetails data)
 			throws EncryptedDocumentException, IOException {
 
-		Sheet sheet = workbook.getSheet(SHEET_NAMES[0]);
-		Cell cell = null;
+		XSSFSheet sheet = workbook.getSheet(SHEET_NAMES[0]);
+		XSSFCell cell = null;
 		for (int row = START_ROW; row <= END_ROW; row++) {
 			for (int col = 1; col <= END_COLUMN; col++) {
 				cell = sheet.getRow(row).getCell(col);
 				if (row >= 14 && row < 29) {
-					setCargoColor(workbook, cell,
-							data.getSheetOne().getArrivalCondition().getCargoCenterTanks().getTank());
-					setCargoColor(workbook, cell,
-							data.getSheetOne().getArrivalCondition().getCargoTopTanks().getTank());
-					setCargoColor(workbook, cell,
-							data.getSheetOne().getArrivalCondition().getCargoBottomTanks().getTank());
+					setCargoColor(workbook, sheet, cell,
+							data.getSheetOne().getArrivalCondition().getCargoCenterTanks().getTank(), null);
+					setCargoColor(workbook, sheet, cell,
+							data.getSheetOne().getArrivalCondition().getCargoTopTanks().getTank(),
+							data.getSheetOne().getArrivalCondition().getBallastTopTanks().getTank());
+					setCargoColor(workbook, sheet, cell,
+							data.getSheetOne().getArrivalCondition().getCargoBottomTanks().getTank(),
+							data.getSheetOne().getArrivalCondition().getBallastBottomTanks().getTank());
 				} else if (row >= 32 && row < 46) {
-					setCargoColor(workbook, cell,
-							data.getSheetOne().getDeparcherCondition().getCargoCenterTanks().getTank());
-					setCargoColor(workbook, cell,
-							data.getSheetOne().getDeparcherCondition().getCargoTopTanks().getTank());
-					setCargoColor(workbook, cell,
-							data.getSheetOne().getDeparcherCondition().getCargoBottomTanks().getTank());
+					setCargoColor(workbook, sheet, cell,
+							data.getSheetOne().getDeparcherCondition().getCargoCenterTanks().getTank(), null);
+					setCargoColor(workbook, sheet, cell,
+							data.getSheetOne().getDeparcherCondition().getCargoTopTanks().getTank(),
+							data.getSheetOne().getDeparcherCondition().getBallastTopTanks().getTank());
+					setCargoColor(workbook, sheet, cell,
+							data.getSheetOne().getDeparcherCondition().getCargoBottomTanks().getTank(),
+							data.getSheetOne().getDeparcherCondition().getBallastBottomTanks().getTank());
 				}
-
 			}
 		}
-
 	}
 
 	/**
 	 * @param workbook
+	 * @param sheet
 	 * @param cell
-	 * @param tanks
+	 * @param cargoTanks
+	 * @param ballastTanks
 	 */
-	private void setCargoColor(Workbook workbook, Cell cell, List<TankCargoDetails> tanks) {
-		String value = getCellValue(cell);
-		if (value != null && !value.isBlank()) {
-			TankCargoDetails tankFromFile = getTank(value, tanks);
+	private void setCargoColor(XSSFWorkbook workbook, XSSFSheet sheet, XSSFCell cell, List<TankCargoDetails> cargoTanks,
+			List<TankCargoDetails> ballastTanks) {
+		int row = 0;
+		int col = 0;
+		String cellValue = getCellValue(cell);
+		if (cellValue != null && !cellValue.isBlank()) {
+			TankCargoDetails tankFromFile = getTank(cellValue, cargoTanks);
 			if (tankFromFile != null) {
 				if (tankFromFile.getColorCode() != null && !tankFromFile.getColorCode().isBlank()
 						&& tankFromFile.getQuantity() != null && tankFromFile.getQuantity() > 0) {
-					CellStyle cellStyle = cell.getCellStyle();
-					CellStyle newCellStyle = workbook.createCellStyle();
-					newCellStyle.setDataFormat(cellStyle.getDataFormat());
-					newCellStyle.setFont(workbook.getFontAt(cellStyle.getFontIndex()));
-					newCellStyle.setFillForegroundColor(
-							new XSSFColor(Color.decode(tankFromFile.getColorCode()), new DefaultIndexedColorMap())
-									.getIndex());
-					cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-					cell.setCellStyle(newCellStyle);
+					CellAddress address = cell.getAddress();
+					row = address.getRow();
+					col = address.getColumn();
+					setTankCellsColors(workbook, sheet, row, col, tankFromFile);
+					setTankCellsColors(workbook, sheet, row, col + 1, tankFromFile);
+					setTankCellsColors(workbook, sheet, row + 1, col, tankFromFile);
+					setTankCellsColors(workbook, sheet, row + 2, col, tankFromFile);
+					setTankCellsColors(workbook, sheet, row + 2, col + 1, tankFromFile);
+				}
+			} else if (ballastTanks != null) {
+				tankFromFile = getTank(cellValue, ballastTanks);
+				if (tankFromFile != null) {
+					if (tankFromFile.getColorCode() != null && !tankFromFile.getColorCode().isBlank()
+							&& tankFromFile.getQuantity() != null && tankFromFile.getQuantity() > 0) {
+						CellAddress address = cell.getAddress();
+						row = address.getRow();
+						col = address.getColumn();
+						setTankCellsColors(workbook, sheet, row, col, tankFromFile);
+						setTankCellsColors(workbook, sheet, row, col + 1, tankFromFile);
+						setTankCellsColors(workbook, sheet, row + 1, col, tankFromFile);
+					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param workbook
+	 * @param sheet
+	 * @param cell
+	 * @param tankFromFile
+	 */
+	private void setTankCellsColors(XSSFWorkbook workbook, XSSFSheet sheet, int row, int col,
+			TankCargoDetails tankFromFile) {
+		XSSFCell cell = sheet.getRow(row).getCell(col);
+		XSSFCellStyle cellStyle = null;
+		XSSFCellStyle newCellStyle = workbook.createCellStyle();
+		if (cell != null) {
+			cellStyle = cell.getCellStyle();
+			newCellStyle.setDataFormat(cellStyle.getDataFormat());
+			newCellStyle.setFont(workbook.getFontAt(cellStyle.getFontIndex()));
+			newCellStyle.setAlignment(cellStyle.getAlignment());
+			newCellStyle.setVerticalAlignment(cellStyle.getVerticalAlignment());
+			newCellStyle.setBorderBottom(cellStyle.getBorderBottom());
+			newCellStyle.setBorderTop(cellStyle.getBorderTop());
+			newCellStyle.setBorderLeft(cellStyle.getBorderLeft());
+			newCellStyle.setBorderRight(cellStyle.getBorderRight());
+		} else {
+			cell = sheet.getRow(row).createCell(col);
+		}
+		XSSFColor color = new XSSFColor(workbook.getStylesSource().getIndexedColors());
+		color.setARGBHex(tankFromFile.getColorCode().substring(1));
+//		newCellStyle.setFillBackgroundColor(color);
+		newCellStyle.setFillForegroundColor(color);
+		newCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		cell.setCellStyle(newCellStyle);
 	}
 
 	/**
@@ -1154,7 +1218,6 @@ public class GenerateLoadingPlanExcelReportService {
 			tankCargoDetails.setColorCode("");
 		}
 		tankCargoDetails.setCargoName("");
-		tankCargoDetails.setColorCode("");
 		tankCargoDetails.setUllage("0");
 		tankCargoDetails.setFillingRatio(0L);
 	}
