@@ -1,0 +1,31 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="lodicator-integration [Ship] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Lodicator">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="loadicator-integration-container-ship" />
+          <entry key="CPDSS_BUILD_ENV" value="ship" />
+          <entry key="DEBUG_PORT_HOST" value="5094" />
+          <entry key="GRPC_PORT_HOST" value="9094" />
+          <entry key="IMAGE_NAME" value="loadicator-integration-ship" />
+          <entry key="SERVICE_NAME" value="loadicator-integration-service-ship" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/loadicator-integration" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+</component>
