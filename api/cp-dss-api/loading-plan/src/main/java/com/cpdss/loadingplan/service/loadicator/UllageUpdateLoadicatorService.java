@@ -27,12 +27,16 @@ import com.cpdss.loadingplan.domain.algo.LoadicatorStage;
 import com.cpdss.loadingplan.domain.algo.LoadicatorStowageDetails;
 import com.cpdss.loadingplan.domain.algo.LoadingPlanLoadicatorDetails;
 import com.cpdss.loadingplan.domain.algo.UllageEditLoadicatorAlgoRequest;
+import com.cpdss.loadingplan.entity.AlgoErrorHeading;
+import com.cpdss.loadingplan.entity.AlgoErrors;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import com.cpdss.loadingplan.entity.PortLoadingPlanBallastTempDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageTempDetails;
+import com.cpdss.loadingplan.repository.AlgoErrorHeadingRepository;
+import com.cpdss.loadingplan.repository.AlgoErrorsRepository;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastTempDetailsRepository;
@@ -89,6 +93,9 @@ public class UllageUpdateLoadicatorService {
   @Autowired
   PortLoadingPlanStabilityParametersRepository portLoadingPlanStabilityParametersRepository;
 
+  @Autowired AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @Autowired AlgoErrorsRepository algoErrorsRepository;
+
   @Autowired LoadingPlanAlgoService loadingPlanAlgoService;
   @Autowired LoadicatorService loadicatorService;
   @Autowired LoadingPlanService loadingPlanService;
@@ -133,11 +140,11 @@ public class UllageUpdateLoadicatorService {
       buildUllageEditLoadicatorAlgoRequest(
           loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
       saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
-      checkStabilityWithAlgo(
-          loadingInfoOpt.get(),
-          algoRequest,
-          processId,
-          request.getUpdateUllage(0).getArrivalDepartutre());
+      //      checkStabilityWithAlgo(
+      //          loadingInfoOpt.get(),
+      //          algoRequest,
+      //          processId,
+      //          request.getUpdateUllage(0).getArrivalDepartutre());
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
@@ -482,7 +489,6 @@ public class UllageUpdateLoadicatorService {
     saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
 
     if (algoResponse.getLoadicatorResults().get(0).getErrorDetails().size() > 0) {
-
       Optional<LoadingInformationStatus> validationFailedStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
@@ -490,7 +496,12 @@ public class UllageUpdateLoadicatorService {
           loadingInfoOpt.get(), validationFailedStatusOpt.get(), request.getConditionType());
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInfoOpt.get(), request.getProcessId(), validationFailedStatusOpt.get());
-
+      saveLoadingPlanLoadicatorErrors(
+          algoResponse.getLoadicatorResults().get(0).getErrorDetails(),
+          loadingInfoOpt.get(),
+          request.getConditionType());
+      loadingPlanService.saveUpdatedLoadingPlanDetails(
+          loadingInfoOpt.get(), request.getConditionType());
     } else {
       saveLoadingPlanStabilityParameters(
           loadingInfoOpt.get(),
@@ -507,6 +518,35 @@ public class UllageUpdateLoadicatorService {
       loadingPlanService.saveUpdatedLoadingPlanDetails(
           loadingInfoOpt.get(), request.getConditionType());
     }
+  }
+
+  /**
+   * @param errorDetails
+   * @param loadingInformation
+   * @param conditionType
+   */
+  private void saveLoadingPlanLoadicatorErrors(
+      List<String> errorDetails, LoadingInformation loadingInformation, int conditionType) {
+
+    algoErrorHeadingRepository.deleteByLoadingInformationAndConditionType(
+        loadingInformation, conditionType);
+    algoErrorsRepository.deleteByLoadingInformationAndConditionType(
+        loadingInformation, conditionType);
+
+    AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+    algoErrorHeading.setErrorHeading("Loadicator Errors");
+    algoErrorHeading.setLoadingInformation(loadingInformation);
+    algoErrorHeading.setConditionType(conditionType);
+    algoErrorHeading.setIsActive(true);
+    algoErrorHeadingRepository.save(algoErrorHeading);
+    errorDetails.forEach(
+        error -> {
+          AlgoErrors algoErrors = new AlgoErrors();
+          algoErrors.setAlgoErrorHeading(algoErrorHeading);
+          algoErrors.setErrorMessage(error);
+          algoErrors.setIsActive(true);
+          algoErrorsRepository.save(algoErrors);
+        });
   }
 
   /**

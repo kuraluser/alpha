@@ -105,7 +105,7 @@ export class ToppingOffTankTableComponent implements OnInit {
   getColourCode(data) {
     let colourCode = '';
     this.loadingPlanData?.currentPortCargos?.map(item => {
-      if (item.cargoId === data.cargoId) {
+      if (item.cargoNominationId === data.cargoNominationId) {
         colourCode = item.colorCode;
       }
     });

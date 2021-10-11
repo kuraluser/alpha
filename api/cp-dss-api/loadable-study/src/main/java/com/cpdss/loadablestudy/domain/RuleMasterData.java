@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 public enum RuleMasterData {
-  CargoTank("only", "tank can be filled with commingled cargo");
+  CargoTank("**", "**");
 
   private String prefix;
   private String suffix;

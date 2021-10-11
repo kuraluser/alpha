@@ -956,3 +956,14 @@ export enum OPERATIONS_PLAN_STATUS {
     LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED = 11,
 
 }
+
+/**
+  * interface for get simulator json response
+  *
+  * @export
+  * @interface ISimulatorResponse
+  */
+ export interface ISimulatorResponse {
+    departureCondition: any;
+    responseStatus: IResponseStatus;
+ }

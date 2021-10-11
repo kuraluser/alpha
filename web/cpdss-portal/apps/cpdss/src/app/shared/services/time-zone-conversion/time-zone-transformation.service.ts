@@ -18,6 +18,7 @@ import * as moment from 'moment';
 })
 export class TimeZoneTransformationService {
 
+  private _timezonesDetails: ITimeZone[];
   private momentInputStringFormat = 'DD-MM-YYYY HH:mm';
   private dateTimeFormatArray = [
     {
@@ -40,9 +41,14 @@ export class TimeZoneTransformationService {
    * @memberof TimeZoneTransformationService
    */
   getTimeZoneList(): Observable<ITimeZone[]> {
-    return this.commonAPiService.get<ITimeZoneResponse>('global-timezones').pipe(map((response) => {
-      return response?.timezones;
-    }));
+    if (this._timezonesDetails) {
+      return of(this._timezonesDetails);
+    } else {
+      return this.commonAPiService.get<ITimeZoneResponse>('global-timezones').pipe(map((response) => {
+        this._timezonesDetails = response?.timezones;
+        return this._timezonesDetails;
+      }));
+    }
   }
 
   /**

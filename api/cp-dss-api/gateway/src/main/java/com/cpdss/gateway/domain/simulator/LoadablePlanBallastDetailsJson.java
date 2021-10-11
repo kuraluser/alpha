@@ -9,6 +9,7 @@ public class LoadablePlanBallastDetailsJson {
   private Double correctionFactor;
   private Double fillingRatio;
   private Double quantityMT;
+  private Double quantityM3;
   private Double rdgLevel;
   private Double sg;
   private Long tankId;

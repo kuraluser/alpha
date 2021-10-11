@@ -1126,7 +1126,7 @@ public class LoadicatorService {
           .ignoringUnknownFields()
           .merge(objectMapper.writeValueAsString(algoResponse), loadicatorResultsRequest);
       algoRespComm.setLoadicatorResultsRequest(loadicatorResultsRequest.build());
-      Optional<JsonData> patternJson =
+      JsonData patternJson =
           this.jsonDataService.getJsonData(
               loadableStudyOpt.get().getId(),
               LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
@@ -1135,7 +1135,7 @@ public class LoadicatorService {
             LoadableStudy.LoadablePatternAlgoRequest.newBuilder();
         JsonFormat.parser()
             .ignoringUnknownFields()
-            .merge(patternJson.get().getJsonData(), loadablePatternAlgoRequest);
+            .merge(patternJson.getJsonData(), loadablePatternAlgoRequest);
         loadablePatternAlgoRequest.setHasLodicator(true);
         algoRespComm.setLoadablePatternAlgoRequest(loadablePatternAlgoRequest.build());
       }

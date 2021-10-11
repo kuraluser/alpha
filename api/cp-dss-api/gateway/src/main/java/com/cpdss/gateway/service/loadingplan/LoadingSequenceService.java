@@ -276,7 +276,7 @@ public class LoadingSequenceService {
     this.updateCargoLoadingRateIntervals(cargoLoadingRates, stageTickPositions);
     this.buildStabilityParamSequence(reply, portEta, stabilityParams);
     this.buildFlowRates(loadingRates, vesselTankMap, portEta, response);
-    this.buildBallastPumpCategories(vesselId, response);
+    this.buildBallastPumpCategories(vesselId, response, ballastPumps);
     this.removeEmptyBallasts(ballasts, ballastTankCategories);
     this.removeEmptyCargos(cargos, cargoTankCategories);
 
@@ -755,16 +755,19 @@ public class LoadingSequenceService {
     cargoLoadingRates.add(cargoLoadingRate);
   }
 
-  private void buildBallastPumpCategories(Long vesselId, LoadingSequenceResponse response) {
+  private void buildBallastPumpCategories(
+      Long vesselId, LoadingSequenceResponse response, List<BallastPump> ballastPumps) {
     List<PumpCategory> ballastPumpCategories = new ArrayList<>();
     log.info("Populating ballast pump categories");
     VesselIdRequest.Builder builder = VesselIdRequest.newBuilder();
     builder.setVesselId(vesselId);
+    Set<Long> usedPumpIds =
+        ballastPumps.stream().map(pump -> pump.getPumpId()).collect(Collectors.toSet());
     VesselPumpsResponse pumpsResponse =
         vesselInfoGrpcService.getVesselPumpsByVesselId(builder.build());
     if (pumpsResponse.getResponseStatus().getStatus().equals(GatewayConstants.SUCCESS)) {
-      pumpsResponse
-          .getVesselPumpList()
+      pumpsResponse.getVesselPumpList().stream()
+          .filter(vesselPump -> usedPumpIds.contains(vesselPump.getId()))
           .forEach(
               vesselPump -> {
                 PumpCategory pumpCategory = new PumpCategory();

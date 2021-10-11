@@ -113,6 +113,7 @@ import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
@@ -5002,8 +5003,12 @@ public class LoadableStudyService {
             : new BigDecimal(grpcReply.getLoadablePlanStowageDetails().getWeight()));
     response.setFillingRatio(grpcReply.getLoadablePlanStowageDetails().getFillingRatio());
     response.setIsBallast(grpcReply.getLoadablePlanStowageDetails().getIsBallast());
-    response.setResponseStatus(
-        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    if (grpcReply.getResponseStatus().getMessage().equals("INVALID_ULLAGE_OR_SOUNDING_VALUE")) {
+      response.setResponseStatus(new CommonSuccessResponse(String.valueOf(325), correlationId));
+    } else {
+      response.setResponseStatus(
+          new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    }
     return response;
   }
 
@@ -5029,7 +5034,7 @@ public class LoadableStudyService {
           new CommonSuccessResponse(String.valueOf(HttpStatus.NO_CONTENT.value()), correlationId));
     } else if ("INVALID_ULLAGE_OR_SOUNDING_VALUE"
         .equals(grpcReply.getResponseStatus().getMessage())) {
-      response.setResponseStatus(new CommonSuccessResponse(String.valueOf("325"), correlationId));
+      response.setResponseStatus(new CommonSuccessResponse(String.valueOf(325), correlationId));
     } else {
       response.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
@@ -6285,7 +6290,9 @@ public class LoadableStudyService {
     DepartureConditionJson departureConditionJson = null;
     SimulatorJsonResponse jsonResponse = new SimulatorJsonResponse();
     departureConditionJson =
-        new ObjectMapper().readValue(reply.getDepartureCondition(), DepartureConditionJson.class);
+        new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .readValue(reply.getDepartureCondition(), DepartureConditionJson.class);
     jsonResponse.setDepartureCondition(departureConditionJson);
     jsonResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
