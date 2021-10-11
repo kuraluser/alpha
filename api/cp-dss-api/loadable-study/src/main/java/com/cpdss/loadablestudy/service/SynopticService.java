@@ -1109,19 +1109,22 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
     }
     deflection = deflection.divide(new BigDecimal(100));
     BigDecimal calculatedDraftFwd = BigDecimal.ZERO;
-    if (null != loadicatorData.getCalculatedDraftFwdActual()) {
+    if (null != loadicatorData.getCalculatedDraftFwdActual()
+            && loadicatorData.getCalculatedDraftFwdActual().doubleValue() != 0.0) {
       calculatedDraftFwd = loadicatorData.getCalculatedDraftFwdActual();
     } else if (null != loadicatorData.getCalculatedDraftFwdPlanned()) {
       calculatedDraftFwd = loadicatorData.getCalculatedDraftFwdPlanned();
     }
     BigDecimal calculatedDraftAft = BigDecimal.ZERO;
-    if (null != loadicatorData.getCalculatedDraftAftActual()) {
+    if (null != loadicatorData.getCalculatedDraftAftActual()
+            && loadicatorData.getCalculatedDraftAftActual().doubleValue() != 0.0) {
       calculatedDraftAft = loadicatorData.getCalculatedDraftAftActual();
     } else if (null != loadicatorData.getCalculatedDraftAftPlanned()) {
       calculatedDraftAft = loadicatorData.getCalculatedDraftAftPlanned();
     }
     BigDecimal calculatedDraftMid = BigDecimal.ZERO;
-    if (null != loadicatorData.getCalculatedDraftMidActual()) {
+    if (null != loadicatorData.getCalculatedDraftMidActual()
+            && loadicatorData.getCalculatedDraftMidActual().doubleValue() != 0.0) {
       calculatedDraftMid = loadicatorData.getCalculatedDraftMidActual();
     } else if (null != loadicatorData.getCalculatedDraftMidPlanned()) {
       calculatedDraftMid = loadicatorData.getCalculatedDraftMidPlanned();
@@ -1195,7 +1198,9 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       // Get port rotations
       LoadableStudyPortRotation loadableStudyPortRotation =
           loadableStudyDetails.getPortRotations().stream()
-              .filter(rotation -> rotation.getPortXId().equals(portDetails.getPortId()) && rotation.isActive())
+              .filter(
+                  rotation ->
+                      rotation.getPortXId().equals(portDetails.getPortId()) && rotation.isActive())
               .findFirst()
               .orElse(new LoadableStudyPortRotation());
 
@@ -1417,10 +1422,10 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
                           + "/"
                           + DateTimeFormatter.ofPattern(LAY_CAN_FORMAT).format(laycanTo)
                       : "")
-              .arrFwdDraft(arrFwd.doubleValue() + arrDeflection.doubleValue())
-              .depFwdDraft(depFwd.doubleValue() + depDeflection.doubleValue())
-              .arrAftDraft(arrAft.doubleValue() + arrDeflection.doubleValue())
-              .depAftDraft(depAft.doubleValue() + depDeflection.doubleValue())
+              .arrFwdDraft(arrFwd.doubleValue())
+              .depFwdDraft(depFwd.doubleValue())
+              .arrAftDraft(arrAft.doubleValue())
+              .depAftDraft(depAft.doubleValue())
               .arrDisplacement(arrDisplacement)
               .depDisp(depDisplacement)
               .build();

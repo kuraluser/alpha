@@ -20,7 +20,7 @@ public enum CargoDetailsTableTitles {
   KL15C("", "KL 15°C", "#,##0.000", "#,##0.000_ \"KL\"", false),
   LT("", "L/T", "#,##0.00", "#,##0.00_ \"LT\"", false),
   DIFF_BBLS("DIFF. from Nomination", "BBLS", "#,##0", "#,##0_ \"Bbls\"", false),
-  DIFF_PERCENTAGE("", "%", "0.000%", "0.000%", false);
+  DIFF_PERCENTAGE("", "%", "0.00%", "0.00%", false);
 
   private final String columnName;
   private final String subColumnName;

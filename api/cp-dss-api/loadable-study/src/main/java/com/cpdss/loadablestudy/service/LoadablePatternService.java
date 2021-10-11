@@ -95,6 +95,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.StabilityParameterRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -904,6 +905,8 @@ public class LoadablePatternService {
     return builder;
   }
 
+  @Autowired private SynopticalTableRepository synopticalTableRepository;
+
   public void fetchSavedPatternFromDB(
       PatternDetails patternDetails, LoadablePattern loadablePattern) {
     ModelMapper modelMapper = new ModelMapper();
@@ -986,6 +989,12 @@ public class LoadablePatternService {
             modelMapper.map(
                 synopticalTableLoadicatorData, SynopticalTableLoadicatorDataDto[].class));
     patternDetails.setSynopticalTableLoadicatorData(synopticalTableLoadicatorDataDtoList);
+    List<com.cpdss.loadablestudy.entity.SynopticalTable> synopticalTableList =
+        synopticalTableRepository.findByLoadableStudyXIdAndIsActive(
+            loadablePattern.getLoadableStudy().getId(), true);
+    List<SynopticalTableDto> synopticalTableDtoList =
+        Arrays.asList(modelMapper.map(synopticalTableList, SynopticalTableDto[].class));
+    patternDetails.setSynopticalTableDtoList(synopticalTableDtoList);
   }
 
   /**

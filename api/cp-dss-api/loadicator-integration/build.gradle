@@ -5,30 +5,56 @@ ext{
   dbUser = System.getenv('DB_USER') ?: ""
   dbPassword = System.getenv('DB_PASSWORD') ?: ""
   grpcPort = System.getenv('GRPC_PORT') ?: ""
+
+  algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
+  hostRootPath = System.getenv('HOST_ROOT_PATH')?:""
+  enableComm = System.getenv('ENABLE_COMM') ?: ""
+  cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
+  commTimeLimit = System.getenv('COMM_TIME_LIMIT')?:""
+
+  grpcPortHost = System.getenv('GRPC_PORT_HOST') ?: '9094'
+  debugPortHost = System.getenv('DEBUG_PORT_HOST') ?: '5094'
+  imageNameVal = System.getenv('IMAGE_NAME') ?: 'cpdss-loadicator-integration'
+  containerNameVal = System.getenv('CONTAINER_NAME') ?: "loadicator-integration-container"
+  serviceNameVal = System.getenv('SERVICE_NAME') ?: 'cpdss-network'
 }
 
 appConfig {
   appName = 'loadicator-integration'
-  grpc = 'y'
   persistence = 'springData'
   dataBase = 'postgres'
   logging = 'y'
   devTools = 'y'
   unitTest = 'y'
+  rest = 'y'
   monitoring = 'y'
   docker {
-    imageName = 'cpdss-loadicator-integration'
-    containerName = 'loadicator-integration-container'
+    imageName = imageNameVal
+    containerName = containerNameVal
     networkName = 'cpdss-network'
+    hostVolumeMapping {
+      hostPath = hostRootPath
+      containerPath = "/data"
+    }
+    hostPortMapping {
+      hostGrpcPort = Integer.parseInt(grpcPortHost)
+      hostDebugPort = Integer.parseInt(debugPortHost)
+    }
+    healthCheck {
+      healthCheckCmd = 'wget --no-verbose --spider http://localhost:8080/actuator/health'
+      healthCheckIntervalInSec = 30
+      healthCheckInitialDelayInSec = 60
+    }
     swarm {
-      serviceName = 'loadicator-integration-service'
+      serviceName = serviceNameVal
       swarmMode = REPLICATED_MODE
       replicas = 1
       rollbackOnUpdateFailure = true
     }
-    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword]
+    environment = ['GRPC_PORT': '8090', 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword]
   }
   javaMainClass = "com.cpdss.loadicatorintegration.Application"
+  grpc = 'y'
 }
 
 

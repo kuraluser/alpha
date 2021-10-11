@@ -1799,12 +1799,14 @@ public class LoadablePlanService {
   public CargoDetailsTable buildCargoDetailsTable(long loadableStudyId, long loadablePatternId)
       throws GenericServiceException {
 
-    float cargoNominationTotal = 0;
+    float cargoNominationBblsTotal = 0;
+    double cargoNominationMtTotal = 0;
     float nBblsTotal = 0F;
     float mtTotal = 0F;
     float kl15CTotal = 0F;
     float ltTotal = 0F;
     float diffBblsTotal = 0F;
+    double diffMtTotal = 0;
     double diffPercentageTotal = 0;
 
     //    Get cargo nominations
@@ -1839,29 +1841,23 @@ public class LoadablePlanService {
               .filter(
                   cargoNomination ->
                       cargoNomination
-                          .getAbbreviation()
-                          .equalsIgnoreCase(loadableQuantityCargoDetails.getCargoAbbreviation()))
+                          .getId()
+                          .longValue() == loadableQuantityCargoDetails.getCargoNominationId())
               .findFirst();
 
-      float shipsFigureMtTotal =
-          (float)
-              loadablePlanStowageDetails.stream()
-                  .filter(
-                      loadablePlanStowageDetails1 ->
-                          loadableQuantityCargoDetails
-                              .getCargoAbbreviation()
-                              .equalsIgnoreCase(loadablePlanStowageDetails1.getCargoAbbreviation()))
-                  .mapToDouble(detail -> Double.parseDouble(detail.getWeight()))
-                  .sum();
+      double shipsFigureMtTotal =
+              !loadableQuantityCargoDetails.getLoadableMT().isEmpty() ?
+                      Double.parseDouble(loadableQuantityCargoDetails.getLoadableMT()) : 0;
+
       float nBblsValue =
           convertToBbls(
-              shipsFigureMtTotal,
+              (float)shipsFigureMtTotal,
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
               loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()
                   ? 0
                   : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()),
               ConversionUnit.MT);
-      float cargoNominationValue =
+      float cargoNominationBblsValue =
           cargoNominationDetails
               .map(
                   cargoNomination ->
@@ -1878,8 +1874,11 @@ public class LoadablePlanService {
                               loadableStudyId, loadablePatternId),
                           CommonErrorCodes.E_HTTP_BAD_REQUEST,
                           HttpStatusCode.BAD_REQUEST));
+        double cargoNominationMTValue =
+                cargoNominationDetails.get().getQuantity().doubleValue();
 
-      float diffBbls = nBblsValue - cargoNominationValue;
+      float diffBbls = nBblsValue - cargoNominationBblsValue;
+      double diffMt = shipsFigureMtTotal - cargoNominationMTValue;
       float kl15CValue = convertFromBbls(nBblsValue, 0F, 0F, ConversionUnit.KL15C);
       float ltValue =
           convertFromBbls(
@@ -1887,17 +1886,17 @@ public class LoadablePlanService {
               Float.parseFloat(loadableQuantityCargoDetails.getEstimatedAPI()),
               0F,
               ConversionUnit.LT);
-      double diffPercentage =
-          Double.parseDouble(Float.toString(diffBbls))
-              / Double.parseDouble(Float.toString(cargoNominationValue));
+      double diffPercentage = diffMt / cargoNominationMTValue;
 
       //      Calculate totals
-      cargoNominationTotal += cargoNominationValue;
+      cargoNominationBblsTotal += cargoNominationBblsValue;
+      cargoNominationMtTotal += cargoNominationMTValue;
       nBblsTotal += nBblsValue;
       mtTotal += shipsFigureMtTotal;
       kl15CTotal += kl15CValue;
       ltTotal += ltValue;
       diffBblsTotal += diffBbls;
+      diffMtTotal += diffMt;
 //      diffPercentageTotal += diffPercentage;
       Long portId =
           cargoNominationDetails.get().getCargoNominationPortDetails().stream()
@@ -1920,7 +1919,7 @@ public class LoadablePlanService {
                   loadableQuantityCargoDetails.getEstimatedTemp().isEmpty()
                       ? 0
                       : Float.parseFloat(loadableQuantityCargoDetails.getEstimatedTemp()))
-              .cargoNomination(Double.parseDouble(Float.toString(cargoNominationValue)))
+              .cargoNomination(Double.parseDouble(Float.toString(cargoNominationBblsValue)))
               .tolerance(
                   String.format(
                       "+%s %% / -%s %%",
@@ -1931,7 +1930,7 @@ public class LoadablePlanService {
                           ? 0.00
                           : loadableQuantityCargoDetails.getMinTolerence()))
               .nBbls(Double.parseDouble(Float.toString(nBblsValue)))
-              .mt(Double.parseDouble(Float.toString(shipsFigureMtTotal)))
+              .mt(shipsFigureMtTotal)
               .kl15C(Double.parseDouble(Float.toString(kl15CValue)))
               .lt(Double.parseDouble(Float.toString(ltValue)))
               .colorCode(loadableQuantityCargoDetails.getColorCode())
@@ -1942,11 +1941,10 @@ public class LoadablePlanService {
       cargosTableList.add(cargosTable);
     }
     diffPercentageTotal =
-              Double.parseDouble(Float.toString(diffBblsTotal))
-                      / Double.parseDouble(Float.toString(cargoNominationTotal));
+              diffMtTotal/ cargoNominationMtTotal;
     return CargoDetailsTable.builder()
         .cargosTableList(cargosTableList)
-        .cargoNominationTotal(Double.parseDouble(Float.toString(cargoNominationTotal)))
+        .cargoNominationTotal(Double.parseDouble(Float.toString(cargoNominationBblsTotal)))
         .nBblsTotal(Double.parseDouble(Float.toString(nBblsTotal)))
         .mtTotal(Double.parseDouble(Float.toString(mtTotal)))
         .kl15CTotal(Double.parseDouble(Float.toString(kl15CTotal)))
@@ -2619,13 +2617,20 @@ public class LoadablePlanService {
       log.info("------- Payload has successfully saved in file");
       log.info("-------Communication status for stowage Edit : " + enableCommunication);
       if (enableCommunication && env.equals("ship")) {
-        LoadabalePatternValidateRequest communicationServiceRequest =
-            loadabalePatternValidateRequest;
-        buildCommunicationServiceRequest(communicationServiceRequest, loadablePatternOpt.get());
+
+        // LoadabalePatternValidateRequest communicationServiceRequest
+        // =loadabalePatternValidateRequest;
+        // buildCommunicationServiceRequest(communicationServiceRequest, loadablePatternOpt.get());
+        List<LoadablePattern> loadablePatternList =
+            loadablePatternRepository.findByLoadableStudyAndIsActive(
+                loadablePatternOpt.get().getLoadableStudy(), true);
+        List<LoadablePatternDto> loadablePatternDtoList =
+            Arrays.asList(modelMapper.map(loadablePatternList, LoadablePatternDto[].class));
+        loadabalePatternValidateRequest.setLoadablePatternDtoList(loadablePatternDtoList);
         voyageService.buildVoyageDetails(modelMapper, loadableStudy);
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(
-                objectMapper.writeValueAsString(communicationServiceRequest),
+                objectMapper.writeValueAsString(loadabalePatternValidateRequest),
                 loadableStudy.getVesselId(),
                 MessageTypes.VALIDATEPLAN.getMessageType());
         log.info("------- After envoy writer calling");
@@ -3128,12 +3133,15 @@ public class LoadablePlanService {
             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
             true);
     if (synopticalTableOpt.isPresent()) {
-      algoRequest.setTrim(
-          String.valueOf(
-              synopticalTableLoadicatorDataRepository
-                  .findBySynopticalTableAndLoadablePatternIdAndIsActive(
-                      synopticalTableOpt.get(), loadablePattern.getId(), true)
-                  .getCalculatedTrimPlanned()));
+      SynopticalTableLoadicatorData synopticalTableLoadicatorData =
+          synopticalTableLoadicatorDataRepository
+              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                  synopticalTableOpt.get(), loadablePattern.getId(), true);
+      if (synopticalTableLoadicatorData != null
+          && synopticalTableLoadicatorData.getCalculatedTrimPlanned() != null) {
+        algoRequest.setTrim(
+            String.valueOf(synopticalTableLoadicatorData.getCalculatedTrimPlanned()));
+      }
     }
     algoRequest.setSg(request.getLoadablePlanStowageDetails().getSg());
     return algoRequest;

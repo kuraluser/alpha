@@ -110,11 +110,11 @@
                                 <div class="col">
                                     <ul class="list-inline tank-order mb-5">
                                         <li class="pt-5 list-inline-item"
-                                            *ngFor="let cargoDetail of ullageResponseData?.billOfLaddingList; let i = index;">
+                                            *ngFor="let cargoDetail of gradeDropdown; let i = index;">
                                             <span class="badge-custom mr-5" class="badge-custom"
                                                 [ngClass]="cargoDetail?.isCommingle ? 'commingle' : ''"
                                                 [ngStyle]="!cargoDetail?.isCommingle && {'background': cargoDetail.cargoColor}">
-                                                {{cargoDetail.cargoAbbrevation}} </span> <span *ngIf="i !== (ullageResponseData?.billOfLaddingList?.length - 1)"
+                                                {{cargoDetail.cargoAbbrevation}} </span> <span *ngIf="i !== (gradeDropdown?.length - 1)"
                                                 class="ml-5 mr-5">></span>
                                         </li>
                                     </ul>
