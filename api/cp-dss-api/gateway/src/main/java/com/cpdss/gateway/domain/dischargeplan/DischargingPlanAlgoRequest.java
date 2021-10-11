@@ -23,6 +23,6 @@ public class DischargingPlanAlgoRequest {
   // stability parameters per stage
   private List<LoadingSequenceStabilityParam> stages;
   private List<AlgoError> errors;
-  // private AlgoLoadingInformation loadingInformation;
+  private AlgoDischargingInformation dischargingInformation;
   private Boolean hasLoadicator;
 }

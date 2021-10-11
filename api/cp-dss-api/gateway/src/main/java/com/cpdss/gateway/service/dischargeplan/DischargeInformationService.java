@@ -10,16 +10,17 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
+import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.common.GatewayConstants;
-import com.cpdss.gateway.domain.AlgoError;
 import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
 import com.cpdss.gateway.domain.LoadingUpdateUllageResponse;
 import com.cpdss.gateway.domain.PortRotation;
@@ -31,7 +32,6 @@ import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
 import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
-import com.cpdss.gateway.domain.dischargeplan.DischargingPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
@@ -42,10 +42,7 @@ import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
 import com.cpdss.gateway.domain.loadingplan.LoadingStages;
-import com.cpdss.gateway.domain.loadingplan.sequence.Event;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
-import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceStabilityParam;
-import com.cpdss.gateway.domain.loadingplan.sequence.Sequence;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
@@ -58,8 +55,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -85,12 +80,18 @@ public class DischargeInformationService {
   @Autowired LoadingPlanBuilderService dischargingPlanBuilderService;
 
   @Autowired LoadingPlanService loadingPlanService;
-
+  @Autowired DischargingSequenceService dischargingSequenceService;
   @Autowired VesselInfoService vesselInfoService;
+
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   @GrpcClient("dischargeInformationService")
   private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
       dischargeInfoServiceStub;
+
+  @GrpcClient("dischargeInformationService")
+  DischargePlanServiceGrpc.DischargePlanServiceBlockingStub dischargePlanServiceBlockingStub;
 
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
@@ -445,18 +446,9 @@ public class DischargeInformationService {
       throws GenericServiceException {
 
     LoadingPlanAlgoResponse algoResponse = new LoadingPlanAlgoResponse();
-    LoadingPlanSaveRequest.Builder builder = LoadingPlanSaveRequest.newBuilder();
+    DischargingPlanSaveRequest.Builder builder = DischargingPlanSaveRequest.newBuilder();
     ObjectMapper objectMapper = new ObjectMapper();
     try {
-      dischargingPlanAlgoRequest = new DischargingPlanAlgoRequest();
-      dischargingPlanAlgoRequest.setErrors(Arrays.asList(new AlgoError()));
-      Event a = new Event();
-      a.setSequence(Arrays.asList(new Sequence()));
-      dischargingPlanAlgoRequest.setEvents(Arrays.asList(a));
-      HashMap<String, DischargingPlan> hashMap = new HashMap<String, DischargingPlan>();
-      hashMap.put("arrival", new DischargingPlan());
-      dischargingPlanAlgoRequest.setPlans(hashMap);
-      dischargingPlanAlgoRequest.setStages(Arrays.asList(new LoadingSequenceStabilityParam()));
       objectMapper.writeValue(
           new File(this.rootFolder + "/json/loadingInformationResult_" + infoId + ".json"),
           dischargingPlanAlgoRequest);
@@ -476,9 +468,10 @@ public class DischargeInformationService {
     } catch (JsonProcessingException e) {
       log.error("Exception encountered when processing Loading Information Response JSON");
     }
-    //    loadingSequenceService.buildLoadingPlanSaveRequest(
-    //        loadingPlanAlgoRequest, vesselId, infoId, builder);
-    LoadingPlanSaveResponse response = loadingPlanGrpcService.saveLoadingPlan(builder.build());
+    dischargingSequenceService.buildDischargingPlanSaveRequest(
+        dischargingPlanAlgoRequest, vesselId, infoId, builder);
+    DischargingPlanSaveResponse response =
+        dischargePlanServiceBlockingStub.saveDischargingPlan(builder.build());
     if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
       log.error("Exception occured when saving loading plan");
       throw new GenericServiceException(
@@ -490,7 +483,6 @@ public class DischargeInformationService {
     algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
     return algoResponse;
   }
-
   /**
    * @param referenceId
    * @return StatusReply
