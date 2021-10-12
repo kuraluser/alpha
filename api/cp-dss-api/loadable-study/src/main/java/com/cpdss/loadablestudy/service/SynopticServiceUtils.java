@@ -107,6 +107,8 @@ public class SynopticServiceUtils {
 
   @Autowired OnHandQuantityService onHandQuantityService;
 
+  @Autowired LoadablePlanService loadablePlanService;
+
   @Autowired
   private LoadablePlanCommingleDetailsPortwiseRepository
       loadablePlanCommingleDetailsPortwiseRepository;
@@ -672,7 +674,7 @@ public class SynopticServiceUtils {
                   v -> {
                     builder1.setOrderQuantity(v.toString());
                   });
-          Optional.ofNullable(this.getCargoNominationQuantity(var1.getCargoNominationId()))
+          Optional.ofNullable(this.getCargoNominationQuantity(var1.getDischargeCargoNominationId()))
               .ifPresent(
                   v -> {
                     builder1.setCargoNominationQuantity(v.toString());
@@ -684,6 +686,14 @@ public class SynopticServiceUtils {
               .ifPresent(builder1::setDscargoNominationId);
           Optional.ofNullable(var1.getTimeRequiredForDischarging())
               .ifPresent(value -> builder1.setTimeRequiredForDischarging(String.valueOf(value)));
+
+          try {
+            this.setLoadingPortNameFromCargoOperation(
+                var1.getCargoId(), var1.getCargoNominationId(), builder1);
+          } catch (Exception e) {
+            log.error("Failed to set Loading port names");
+          }
+
           builder.addLoadableQuantityCargoDetails(builder1.build());
         }
       }
@@ -794,6 +804,26 @@ public class SynopticServiceUtils {
     }
     builder.setResponseStatus(repBuilder.setStatus(SUCCESS).build());
     log.info("Get Loadable Quantity details for patter Id {}", request.getPatternId());
+  }
+
+  public boolean setLoadingPortNameFromCargoOperation(
+      Long cargoId, Long cargoNomiId, LoadableStudy.LoadableQuantityCargoDetails.Builder builder) {
+    Optional<CargoNomination> cN = cargoNominationRepository.findByIdAndIsActive(cargoNomiId, true);
+    if (cN.isPresent()) {
+      if (cN.get().getCargoXId().equals(cargoId)) {
+        Set<CargoNominationPortDetails> cnPD = cN.get().getCargoNominationPortDetails();
+        if (!cnPD.isEmpty()) {
+          for (CargoNominationPortDetails var1 : cnPD) {
+            if (var1.getPortId() != null) {
+              LoadableStudy.LoadingPortDetail.Builder a =
+                  loadablePlanService.fetchPortNameFromPortService(var1.getPortId());
+              builder.addLoadingPorts(a);
+            }
+          }
+        }
+      }
+    }
+    return true;
   }
 
   public BigDecimal getCargoNominationQuantity(Long cargoNominationId) {

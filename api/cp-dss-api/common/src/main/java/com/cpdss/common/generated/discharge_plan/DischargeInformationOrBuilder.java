@@ -178,4 +178,24 @@ public interface DischargeInformationOrBuilder
   /** <code>.PostDischargeStageTime postDischargeStageTime = 7;</code> */
   com.cpdss.common.generated.discharge_plan.PostDischargeStageTimeOrBuilder
       getPostDischargeStageTimeOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
+   * Cargo Section
+   * </pre>
+   *
+   * <code>bool dischargeSlopTanksFirst = 12;</code>
+   *
+   * @return The dischargeSlopTanksFirst.
+   */
+  boolean getDischargeSlopTanksFirst();
+
+  /**
+   * <code>bool dischargeCommingledCargoSeparately = 13;</code>
+   *
+   * @return The dischargeCommingledCargoSeparately.
+   */
+  boolean getDischargeCommingledCargoSeparately();
 }

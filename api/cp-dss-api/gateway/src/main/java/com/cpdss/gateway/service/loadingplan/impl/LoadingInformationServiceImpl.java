@@ -730,6 +730,24 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
       cargoDetails.setTimeRequiredForDischarging(lqcd.getTimeRequiredForLoading());
 
+      // Set Loading port Names in Cargo To Be Discharge
+      if (!lqcd.getLoadingPortsList().isEmpty()) {
+        cargoDetails.setLoadingPorts(
+            lqcd.getLoadingPortsList().stream()
+                .map(LoadableStudy.LoadingPortDetail::getName)
+                .collect(Collectors.toList()));
+        log.info("Loading Port names are - {}", cargoDetails.getLoadingPorts());
+      }
+
+      if (!lqcd.getDischargeMT().isEmpty()) {
+        cargoDetails.setShipFigure(new BigDecimal(lqcd.getDischargeMT()));
+      }
+
+      if (!lqcd.getCargoNominationQuantity().isEmpty()) {
+        cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
+        cargoDetails.setBlFigure(new BigDecimal(lqcd.getCargoNominationQuantity()));
+      }
+
       // these are not needed now informed by ui team. if it is needed in future can un comment this
       // code
       /*
