@@ -15,6 +15,7 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
   private DischargeInformation() {
     berthDetails_ = java.util.Collections.emptyList();
     machineInUse_ = java.util.Collections.emptyList();
+    dischargeStudyProcessId_ = "";
   }
 
   @java.lang.Override
@@ -206,6 +207,73 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
                 cowPlan_ = subBuilder.buildPartial();
               }
 
+              break;
+            }
+          case 96:
+            {
+              dischargingInfoStatusId_ = input.readInt64();
+              break;
+            }
+          case 104:
+            {
+              dischargingPlanArrStatusId_ = input.readInt64();
+              break;
+            }
+          case 112:
+            {
+              dischargingPlanDepStatusId_ = input.readInt64();
+              break;
+            }
+          case 120:
+            {
+              dischargePatternId_ = input.readInt64();
+              break;
+            }
+          case 128:
+            {
+              isDischargingInstructionsComplete_ = input.readBool();
+              break;
+            }
+          case 136:
+            {
+              isDischargingSequenceGenerated_ = input.readBool();
+              break;
+            }
+          case 144:
+            {
+              isDischargingPlanGenerated_ = input.readBool();
+              break;
+            }
+          case 152:
+            {
+              portId_ = input.readInt64();
+              break;
+            }
+          case 160:
+            {
+              vesselId_ = input.readInt64();
+              break;
+            }
+          case 168:
+            {
+              voyageId_ = input.readInt64();
+              break;
+            }
+          case 176:
+            {
+              portRotationId_ = input.readInt64();
+              break;
+            }
+          case 186:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              dischargeStudyProcessId_ = s;
+              break;
+            }
+          case 192:
+            {
+              isDischargingInfoComplete_ = input.readBool();
               break;
             }
           default:
@@ -533,6 +601,173 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     return getPostDischargeStageTime();
   }
 
+  public static final int DISCHARGINGINFOSTATUSID_FIELD_NUMBER = 12;
+  private long dischargingInfoStatusId_;
+  /**
+   * <code>int64 dischargingInfoStatusId = 12;</code>
+   *
+   * @return The dischargingInfoStatusId.
+   */
+  public long getDischargingInfoStatusId() {
+    return dischargingInfoStatusId_;
+  }
+
+  public static final int DISCHARGINGPLANARRSTATUSID_FIELD_NUMBER = 13;
+  private long dischargingPlanArrStatusId_;
+  /**
+   * <code>int64 dischargingPlanArrStatusId = 13;</code>
+   *
+   * @return The dischargingPlanArrStatusId.
+   */
+  public long getDischargingPlanArrStatusId() {
+    return dischargingPlanArrStatusId_;
+  }
+
+  public static final int DISCHARGINGPLANDEPSTATUSID_FIELD_NUMBER = 14;
+  private long dischargingPlanDepStatusId_;
+  /**
+   * <code>int64 dischargingPlanDepStatusId = 14;</code>
+   *
+   * @return The dischargingPlanDepStatusId.
+   */
+  public long getDischargingPlanDepStatusId() {
+    return dischargingPlanDepStatusId_;
+  }
+
+  public static final int DISCHARGEPATTERNID_FIELD_NUMBER = 15;
+  private long dischargePatternId_;
+  /**
+   * <code>int64 dischargePatternId = 15;</code>
+   *
+   * @return The dischargePatternId.
+   */
+  public long getDischargePatternId() {
+    return dischargePatternId_;
+  }
+
+  public static final int ISDISCHARGINGINSTRUCTIONSCOMPLETE_FIELD_NUMBER = 16;
+  private boolean isDischargingInstructionsComplete_;
+  /**
+   * <code>bool isDischargingInstructionsComplete = 16;</code>
+   *
+   * @return The isDischargingInstructionsComplete.
+   */
+  public boolean getIsDischargingInstructionsComplete() {
+    return isDischargingInstructionsComplete_;
+  }
+
+  public static final int ISDISCHARGINGSEQUENCEGENERATED_FIELD_NUMBER = 17;
+  private boolean isDischargingSequenceGenerated_;
+  /**
+   * <code>bool isDischargingSequenceGenerated = 17;</code>
+   *
+   * @return The isDischargingSequenceGenerated.
+   */
+  public boolean getIsDischargingSequenceGenerated() {
+    return isDischargingSequenceGenerated_;
+  }
+
+  public static final int ISDISCHARGINGPLANGENERATED_FIELD_NUMBER = 18;
+  private boolean isDischargingPlanGenerated_;
+  /**
+   * <code>bool isDischargingPlanGenerated = 18;</code>
+   *
+   * @return The isDischargingPlanGenerated.
+   */
+  public boolean getIsDischargingPlanGenerated() {
+    return isDischargingPlanGenerated_;
+  }
+
+  public static final int PORTID_FIELD_NUMBER = 19;
+  private long portId_;
+  /**
+   * <code>int64 portId = 19;</code>
+   *
+   * @return The portId.
+   */
+  public long getPortId() {
+    return portId_;
+  }
+
+  public static final int VESSELID_FIELD_NUMBER = 20;
+  private long vesselId_;
+  /**
+   * <code>int64 vesselId = 20;</code>
+   *
+   * @return The vesselId.
+   */
+  public long getVesselId() {
+    return vesselId_;
+  }
+
+  public static final int VOYAGEID_FIELD_NUMBER = 21;
+  private long voyageId_;
+  /**
+   * <code>int64 voyageId = 21;</code>
+   *
+   * @return The voyageId.
+   */
+  public long getVoyageId() {
+    return voyageId_;
+  }
+
+  public static final int PORTROTATIONID_FIELD_NUMBER = 22;
+  private long portRotationId_;
+  /**
+   * <code>int64 portRotationId = 22;</code>
+   *
+   * @return The portRotationId.
+   */
+  public long getPortRotationId() {
+    return portRotationId_;
+  }
+
+  public static final int DISCHARGESTUDYPROCESSID_FIELD_NUMBER = 23;
+  private volatile java.lang.Object dischargeStudyProcessId_;
+  /**
+   * <code>string dischargeStudyProcessId = 23;</code>
+   *
+   * @return The dischargeStudyProcessId.
+   */
+  public java.lang.String getDischargeStudyProcessId() {
+    java.lang.Object ref = dischargeStudyProcessId_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      dischargeStudyProcessId_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string dischargeStudyProcessId = 23;</code>
+   *
+   * @return The bytes for dischargeStudyProcessId.
+   */
+  public com.google.protobuf.ByteString getDischargeStudyProcessIdBytes() {
+    java.lang.Object ref = dischargeStudyProcessId_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      dischargeStudyProcessId_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int ISDISCHARGINGINFOCOMPLETE_FIELD_NUMBER = 24;
+  private boolean isDischargingInfoComplete_;
+  /**
+   * <code>bool isDischargingInfoComplete = 24;</code>
+   *
+   * @return The isDischargingInfoComplete.
+   */
+  public boolean getIsDischargingInfoComplete() {
+    return isDischargingInfoComplete_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -580,6 +815,45 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     if (cowPlan_ != null) {
       output.writeMessage(11, getCowPlan());
     }
+    if (dischargingInfoStatusId_ != 0L) {
+      output.writeInt64(12, dischargingInfoStatusId_);
+    }
+    if (dischargingPlanArrStatusId_ != 0L) {
+      output.writeInt64(13, dischargingPlanArrStatusId_);
+    }
+    if (dischargingPlanDepStatusId_ != 0L) {
+      output.writeInt64(14, dischargingPlanDepStatusId_);
+    }
+    if (dischargePatternId_ != 0L) {
+      output.writeInt64(15, dischargePatternId_);
+    }
+    if (isDischargingInstructionsComplete_ != false) {
+      output.writeBool(16, isDischargingInstructionsComplete_);
+    }
+    if (isDischargingSequenceGenerated_ != false) {
+      output.writeBool(17, isDischargingSequenceGenerated_);
+    }
+    if (isDischargingPlanGenerated_ != false) {
+      output.writeBool(18, isDischargingPlanGenerated_);
+    }
+    if (portId_ != 0L) {
+      output.writeInt64(19, portId_);
+    }
+    if (vesselId_ != 0L) {
+      output.writeInt64(20, vesselId_);
+    }
+    if (voyageId_ != 0L) {
+      output.writeInt64(21, voyageId_);
+    }
+    if (portRotationId_ != 0L) {
+      output.writeInt64(22, portRotationId_);
+    }
+    if (!getDischargeStudyProcessIdBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 23, dischargeStudyProcessId_);
+    }
+    if (isDischargingInfoComplete_ != false) {
+      output.writeBool(24, isDischargingInfoComplete_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -622,6 +896,53 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     }
     if (cowPlan_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(11, getCowPlan());
+    }
+    if (dischargingInfoStatusId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(12, dischargingInfoStatusId_);
+    }
+    if (dischargingPlanArrStatusId_ != 0L) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeInt64Size(13, dischargingPlanArrStatusId_);
+    }
+    if (dischargingPlanDepStatusId_ != 0L) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeInt64Size(14, dischargingPlanDepStatusId_);
+    }
+    if (dischargePatternId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(15, dischargePatternId_);
+    }
+    if (isDischargingInstructionsComplete_ != false) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeBoolSize(
+              16, isDischargingInstructionsComplete_);
+    }
+    if (isDischargingSequenceGenerated_ != false) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeBoolSize(
+              17, isDischargingSequenceGenerated_);
+    }
+    if (isDischargingPlanGenerated_ != false) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeBoolSize(18, isDischargingPlanGenerated_);
+    }
+    if (portId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(19, portId_);
+    }
+    if (vesselId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(20, vesselId_);
+    }
+    if (voyageId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(21, voyageId_);
+    }
+    if (portRotationId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(22, portRotationId_);
+    }
+    if (!getDischargeStudyProcessIdBytes().isEmpty()) {
+      size +=
+          com.google.protobuf.GeneratedMessageV3.computeStringSize(23, dischargeStudyProcessId_);
+    }
+    if (isDischargingInfoComplete_ != false) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(24, isDischargingInfoComplete_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -671,6 +992,21 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     if (hasPostDischargeStageTime()) {
       if (!getPostDischargeStageTime().equals(other.getPostDischargeStageTime())) return false;
     }
+    if (getDischargingInfoStatusId() != other.getDischargingInfoStatusId()) return false;
+    if (getDischargingPlanArrStatusId() != other.getDischargingPlanArrStatusId()) return false;
+    if (getDischargingPlanDepStatusId() != other.getDischargingPlanDepStatusId()) return false;
+    if (getDischargePatternId() != other.getDischargePatternId()) return false;
+    if (getIsDischargingInstructionsComplete() != other.getIsDischargingInstructionsComplete())
+      return false;
+    if (getIsDischargingSequenceGenerated() != other.getIsDischargingSequenceGenerated())
+      return false;
+    if (getIsDischargingPlanGenerated() != other.getIsDischargingPlanGenerated()) return false;
+    if (getPortId() != other.getPortId()) return false;
+    if (getVesselId() != other.getVesselId()) return false;
+    if (getVoyageId() != other.getVoyageId()) return false;
+    if (getPortRotationId() != other.getPortRotationId()) return false;
+    if (!getDischargeStudyProcessId().equals(other.getDischargeStudyProcessId())) return false;
+    if (getIsDischargingInfoComplete() != other.getIsDischargingInfoComplete()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -722,6 +1058,35 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       hash = (37 * hash) + POSTDISCHARGESTAGETIME_FIELD_NUMBER;
       hash = (53 * hash) + getPostDischargeStageTime().hashCode();
     }
+    hash = (37 * hash) + DISCHARGINGINFOSTATUSID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getDischargingInfoStatusId());
+    hash = (37 * hash) + DISCHARGINGPLANARRSTATUSID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getDischargingPlanArrStatusId());
+    hash = (37 * hash) + DISCHARGINGPLANDEPSTATUSID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getDischargingPlanDepStatusId());
+    hash = (37 * hash) + DISCHARGEPATTERNID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getDischargePatternId());
+    hash = (37 * hash) + ISDISCHARGINGINSTRUCTIONSCOMPLETE_FIELD_NUMBER;
+    hash =
+        (53 * hash)
+            + com.google.protobuf.Internal.hashBoolean(getIsDischargingInstructionsComplete());
+    hash = (37 * hash) + ISDISCHARGINGSEQUENCEGENERATED_FIELD_NUMBER;
+    hash =
+        (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsDischargingSequenceGenerated());
+    hash = (37 * hash) + ISDISCHARGINGPLANGENERATED_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsDischargingPlanGenerated());
+    hash = (37 * hash) + PORTID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortId());
+    hash = (37 * hash) + VESSELID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVesselId());
+    hash = (37 * hash) + VOYAGEID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVoyageId());
+    hash = (37 * hash) + PORTROTATIONID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortRotationId());
+    hash = (37 * hash) + DISCHARGESTUDYPROCESSID_FIELD_NUMBER;
+    hash = (53 * hash) + getDischargeStudyProcessId().hashCode();
+    hash = (37 * hash) + ISDISCHARGINGINFOCOMPLETE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsDischargingInfoComplete());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -921,6 +1286,32 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
         postDischargeStageTime_ = null;
         postDischargeStageTimeBuilder_ = null;
       }
+      dischargingInfoStatusId_ = 0L;
+
+      dischargingPlanArrStatusId_ = 0L;
+
+      dischargingPlanDepStatusId_ = 0L;
+
+      dischargePatternId_ = 0L;
+
+      isDischargingInstructionsComplete_ = false;
+
+      isDischargingSequenceGenerated_ = false;
+
+      isDischargingPlanGenerated_ = false;
+
+      portId_ = 0L;
+
+      vesselId_ = 0L;
+
+      voyageId_ = 0L;
+
+      portRotationId_ = 0L;
+
+      dischargeStudyProcessId_ = "";
+
+      isDischargingInfoComplete_ = false;
+
       return this;
     }
 
@@ -1005,6 +1396,19 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       } else {
         result.postDischargeStageTime_ = postDischargeStageTimeBuilder_.build();
       }
+      result.dischargingInfoStatusId_ = dischargingInfoStatusId_;
+      result.dischargingPlanArrStatusId_ = dischargingPlanArrStatusId_;
+      result.dischargingPlanDepStatusId_ = dischargingPlanDepStatusId_;
+      result.dischargePatternId_ = dischargePatternId_;
+      result.isDischargingInstructionsComplete_ = isDischargingInstructionsComplete_;
+      result.isDischargingSequenceGenerated_ = isDischargingSequenceGenerated_;
+      result.isDischargingPlanGenerated_ = isDischargingPlanGenerated_;
+      result.portId_ = portId_;
+      result.vesselId_ = vesselId_;
+      result.voyageId_ = voyageId_;
+      result.portRotationId_ = portRotationId_;
+      result.dischargeStudyProcessId_ = dischargeStudyProcessId_;
+      result.isDischargingInfoComplete_ = isDischargingInfoComplete_;
       onBuilt();
       return result;
     }
@@ -1136,6 +1540,46 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       }
       if (other.hasPostDischargeStageTime()) {
         mergePostDischargeStageTime(other.getPostDischargeStageTime());
+      }
+      if (other.getDischargingInfoStatusId() != 0L) {
+        setDischargingInfoStatusId(other.getDischargingInfoStatusId());
+      }
+      if (other.getDischargingPlanArrStatusId() != 0L) {
+        setDischargingPlanArrStatusId(other.getDischargingPlanArrStatusId());
+      }
+      if (other.getDischargingPlanDepStatusId() != 0L) {
+        setDischargingPlanDepStatusId(other.getDischargingPlanDepStatusId());
+      }
+      if (other.getDischargePatternId() != 0L) {
+        setDischargePatternId(other.getDischargePatternId());
+      }
+      if (other.getIsDischargingInstructionsComplete() != false) {
+        setIsDischargingInstructionsComplete(other.getIsDischargingInstructionsComplete());
+      }
+      if (other.getIsDischargingSequenceGenerated() != false) {
+        setIsDischargingSequenceGenerated(other.getIsDischargingSequenceGenerated());
+      }
+      if (other.getIsDischargingPlanGenerated() != false) {
+        setIsDischargingPlanGenerated(other.getIsDischargingPlanGenerated());
+      }
+      if (other.getPortId() != 0L) {
+        setPortId(other.getPortId());
+      }
+      if (other.getVesselId() != 0L) {
+        setVesselId(other.getVesselId());
+      }
+      if (other.getVoyageId() != 0L) {
+        setVoyageId(other.getVoyageId());
+      }
+      if (other.getPortRotationId() != 0L) {
+        setPortRotationId(other.getPortRotationId());
+      }
+      if (!other.getDischargeStudyProcessId().isEmpty()) {
+        dischargeStudyProcessId_ = other.dischargeStudyProcessId_;
+        onChanged();
+      }
+      if (other.getIsDischargingInfoComplete() != false) {
+        setIsDischargingInfoComplete(other.getIsDischargingInfoComplete());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -2621,6 +3065,478 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
         postDischargeStageTime_ = null;
       }
       return postDischargeStageTimeBuilder_;
+    }
+
+    private long dischargingInfoStatusId_;
+    /**
+     * <code>int64 dischargingInfoStatusId = 12;</code>
+     *
+     * @return The dischargingInfoStatusId.
+     */
+    public long getDischargingInfoStatusId() {
+      return dischargingInfoStatusId_;
+    }
+    /**
+     * <code>int64 dischargingInfoStatusId = 12;</code>
+     *
+     * @param value The dischargingInfoStatusId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargingInfoStatusId(long value) {
+
+      dischargingInfoStatusId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 dischargingInfoStatusId = 12;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDischargingInfoStatusId() {
+
+      dischargingInfoStatusId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private long dischargingPlanArrStatusId_;
+    /**
+     * <code>int64 dischargingPlanArrStatusId = 13;</code>
+     *
+     * @return The dischargingPlanArrStatusId.
+     */
+    public long getDischargingPlanArrStatusId() {
+      return dischargingPlanArrStatusId_;
+    }
+    /**
+     * <code>int64 dischargingPlanArrStatusId = 13;</code>
+     *
+     * @param value The dischargingPlanArrStatusId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargingPlanArrStatusId(long value) {
+
+      dischargingPlanArrStatusId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 dischargingPlanArrStatusId = 13;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDischargingPlanArrStatusId() {
+
+      dischargingPlanArrStatusId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private long dischargingPlanDepStatusId_;
+    /**
+     * <code>int64 dischargingPlanDepStatusId = 14;</code>
+     *
+     * @return The dischargingPlanDepStatusId.
+     */
+    public long getDischargingPlanDepStatusId() {
+      return dischargingPlanDepStatusId_;
+    }
+    /**
+     * <code>int64 dischargingPlanDepStatusId = 14;</code>
+     *
+     * @param value The dischargingPlanDepStatusId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargingPlanDepStatusId(long value) {
+
+      dischargingPlanDepStatusId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 dischargingPlanDepStatusId = 14;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDischargingPlanDepStatusId() {
+
+      dischargingPlanDepStatusId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private long dischargePatternId_;
+    /**
+     * <code>int64 dischargePatternId = 15;</code>
+     *
+     * @return The dischargePatternId.
+     */
+    public long getDischargePatternId() {
+      return dischargePatternId_;
+    }
+    /**
+     * <code>int64 dischargePatternId = 15;</code>
+     *
+     * @param value The dischargePatternId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargePatternId(long value) {
+
+      dischargePatternId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 dischargePatternId = 15;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDischargePatternId() {
+
+      dischargePatternId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private boolean isDischargingInstructionsComplete_;
+    /**
+     * <code>bool isDischargingInstructionsComplete = 16;</code>
+     *
+     * @return The isDischargingInstructionsComplete.
+     */
+    public boolean getIsDischargingInstructionsComplete() {
+      return isDischargingInstructionsComplete_;
+    }
+    /**
+     * <code>bool isDischargingInstructionsComplete = 16;</code>
+     *
+     * @param value The isDischargingInstructionsComplete to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIsDischargingInstructionsComplete(boolean value) {
+
+      isDischargingInstructionsComplete_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool isDischargingInstructionsComplete = 16;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearIsDischargingInstructionsComplete() {
+
+      isDischargingInstructionsComplete_ = false;
+      onChanged();
+      return this;
+    }
+
+    private boolean isDischargingSequenceGenerated_;
+    /**
+     * <code>bool isDischargingSequenceGenerated = 17;</code>
+     *
+     * @return The isDischargingSequenceGenerated.
+     */
+    public boolean getIsDischargingSequenceGenerated() {
+      return isDischargingSequenceGenerated_;
+    }
+    /**
+     * <code>bool isDischargingSequenceGenerated = 17;</code>
+     *
+     * @param value The isDischargingSequenceGenerated to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIsDischargingSequenceGenerated(boolean value) {
+
+      isDischargingSequenceGenerated_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool isDischargingSequenceGenerated = 17;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearIsDischargingSequenceGenerated() {
+
+      isDischargingSequenceGenerated_ = false;
+      onChanged();
+      return this;
+    }
+
+    private boolean isDischargingPlanGenerated_;
+    /**
+     * <code>bool isDischargingPlanGenerated = 18;</code>
+     *
+     * @return The isDischargingPlanGenerated.
+     */
+    public boolean getIsDischargingPlanGenerated() {
+      return isDischargingPlanGenerated_;
+    }
+    /**
+     * <code>bool isDischargingPlanGenerated = 18;</code>
+     *
+     * @param value The isDischargingPlanGenerated to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIsDischargingPlanGenerated(boolean value) {
+
+      isDischargingPlanGenerated_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool isDischargingPlanGenerated = 18;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearIsDischargingPlanGenerated() {
+
+      isDischargingPlanGenerated_ = false;
+      onChanged();
+      return this;
+    }
+
+    private long portId_;
+    /**
+     * <code>int64 portId = 19;</code>
+     *
+     * @return The portId.
+     */
+    public long getPortId() {
+      return portId_;
+    }
+    /**
+     * <code>int64 portId = 19;</code>
+     *
+     * @param value The portId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPortId(long value) {
+
+      portId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 portId = 19;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearPortId() {
+
+      portId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private long vesselId_;
+    /**
+     * <code>int64 vesselId = 20;</code>
+     *
+     * @return The vesselId.
+     */
+    public long getVesselId() {
+      return vesselId_;
+    }
+    /**
+     * <code>int64 vesselId = 20;</code>
+     *
+     * @param value The vesselId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setVesselId(long value) {
+
+      vesselId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 vesselId = 20;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearVesselId() {
+
+      vesselId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private long voyageId_;
+    /**
+     * <code>int64 voyageId = 21;</code>
+     *
+     * @return The voyageId.
+     */
+    public long getVoyageId() {
+      return voyageId_;
+    }
+    /**
+     * <code>int64 voyageId = 21;</code>
+     *
+     * @param value The voyageId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setVoyageId(long value) {
+
+      voyageId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 voyageId = 21;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearVoyageId() {
+
+      voyageId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private long portRotationId_;
+    /**
+     * <code>int64 portRotationId = 22;</code>
+     *
+     * @return The portRotationId.
+     */
+    public long getPortRotationId() {
+      return portRotationId_;
+    }
+    /**
+     * <code>int64 portRotationId = 22;</code>
+     *
+     * @param value The portRotationId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPortRotationId(long value) {
+
+      portRotationId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 portRotationId = 22;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearPortRotationId() {
+
+      portRotationId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object dischargeStudyProcessId_ = "";
+    /**
+     * <code>string dischargeStudyProcessId = 23;</code>
+     *
+     * @return The dischargeStudyProcessId.
+     */
+    public java.lang.String getDischargeStudyProcessId() {
+      java.lang.Object ref = dischargeStudyProcessId_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        dischargeStudyProcessId_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string dischargeStudyProcessId = 23;</code>
+     *
+     * @return The bytes for dischargeStudyProcessId.
+     */
+    public com.google.protobuf.ByteString getDischargeStudyProcessIdBytes() {
+      java.lang.Object ref = dischargeStudyProcessId_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        dischargeStudyProcessId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string dischargeStudyProcessId = 23;</code>
+     *
+     * @param value The dischargeStudyProcessId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargeStudyProcessId(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      dischargeStudyProcessId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string dischargeStudyProcessId = 23;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDischargeStudyProcessId() {
+
+      dischargeStudyProcessId_ = getDefaultInstance().getDischargeStudyProcessId();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string dischargeStudyProcessId = 23;</code>
+     *
+     * @param value The bytes for dischargeStudyProcessId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargeStudyProcessIdBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      dischargeStudyProcessId_ = value;
+      onChanged();
+      return this;
+    }
+
+    private boolean isDischargingInfoComplete_;
+    /**
+     * <code>bool isDischargingInfoComplete = 24;</code>
+     *
+     * @return The isDischargingInfoComplete.
+     */
+    public boolean getIsDischargingInfoComplete() {
+      return isDischargingInfoComplete_;
+    }
+    /**
+     * <code>bool isDischargingInfoComplete = 24;</code>
+     *
+     * @param value The isDischargingInfoComplete to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIsDischargingInfoComplete(boolean value) {
+
+      isDischargingInfoComplete_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool isDischargingInfoComplete = 24;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearIsDischargingInfoComplete() {
+
+      isDischargingInfoComplete_ = false;
+      onChanged();
+      return this;
     }
 
     @java.lang.Override

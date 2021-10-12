@@ -86,8 +86,29 @@ message DischargeInformation {
   DischargeDelay dischargeDelay = 6;
   CowPlan cowPlan = 11;
   PostDischargeStageTime postDischargeStageTime = 7;
+  
+  int64 dischargingInfoStatusId = 12;
+  int64 dischargingPlanArrStatusId = 13;
+  int64 dischargingPlanDepStatusId = 14;
+  int64 dischargePatternId = 15;
+  bool isDischargingInstructionsComplete = 16;
+  bool isDischargingSequenceGenerated = 17;
+  bool isDischargingPlanGenerated = 18;
+  int64 portId = 19;
+  int64 vesselId = 20;
+  int64 voyageId = 21;
+  int64 portRotationId = 22;
+  string dischargeStudyProcessId = 23;
+	bool isDischargingInfoComplete = 24;
 }
-
+message DischargingInfoSaveResponse {
+  int64 dischargingInfoId = 1;
+  int64 vesselId = 2;
+  int64 portRotationId = 3;
+  int64 synopticalTableId = 4;
+  int64 voyageId = 5;
+  ResponseStatus responseStatus = 6;
+}
 message DischargeDetails {
   int64 id = 1;
   string timeOfSunrise = 2;

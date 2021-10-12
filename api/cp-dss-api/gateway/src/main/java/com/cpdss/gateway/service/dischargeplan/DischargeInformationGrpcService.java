@@ -2,16 +2,25 @@
 package com.cpdss.gateway.service.dischargeplan;
 
 import static com.cpdss.gateway.common.GatewayConstants.DISCHARGING_RULE_MASTER_ID;
-import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.discharge_plan.*;
+import com.cpdss.common.generated.discharge_plan.DischargeInformation;
+import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
+import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
+import com.cpdss.common.generated.discharge_plan.DischargeRuleRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailStatusReply;
+import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.UploadTideDetailResponse;
+import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
+import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
 import com.cpdss.gateway.utility.RuleUtility;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
@@ -128,5 +137,11 @@ public class DischargeInformationGrpcService {
           HttpStatusCode.valueOf(statusReply.getResponseStatus().getHttpStatusCode()));
     }
     return statusReply.getData().toByteArray();
+  }
+
+  public LoadingInformationResponse saveDischargingInformation(
+      LoadingInformationRequest request, String correlationId) {
+
+    return null;
   }
 }

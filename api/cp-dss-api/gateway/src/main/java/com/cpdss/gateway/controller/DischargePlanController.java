@@ -1110,4 +1110,37 @@ public class DischargePlanController {
           e);
     }
   }
+
+  /**
+   * Save Discharging Information API
+   *
+   * @param request
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/discharging-info")
+  public LoadingInformationResponse saveDischargingInformation(
+      @RequestBody @Valid LoadingInformationRequest request,
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId)
+      throws CommonRestException {
+    try {
+      log.info("Save Loading Info, api for vessel {}, voyage {}", vesselId, voyageId);
+      return this.dischargeInformationGrpcService.saveDischargingInformation(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("Exception in Save Loading Information API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
 }
