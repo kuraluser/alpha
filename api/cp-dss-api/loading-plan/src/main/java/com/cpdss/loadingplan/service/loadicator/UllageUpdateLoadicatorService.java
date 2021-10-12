@@ -140,11 +140,11 @@ public class UllageUpdateLoadicatorService {
       buildUllageEditLoadicatorAlgoRequest(
           loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
       saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
-      //      checkStabilityWithAlgo(
-      //          loadingInfoOpt.get(),
-      //          algoRequest,
-      //          processId,
-      //          request.getUpdateUllage(0).getArrivalDepartutre());
+      checkStabilityWithAlgo(
+          loadingInfoOpt.get(),
+          algoRequest,
+          processId,
+          request.getUpdateUllage(0).getArrivalDepartutre());
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
@@ -255,6 +255,9 @@ public class UllageUpdateLoadicatorService {
       int conditionType)
       throws GenericServiceException, NumberFormatException, IllegalAccessException,
           InvocationTargetException {
+    if (algoRequest.getStages().isEmpty()) {
+    	algoRequest.setStages(null);
+    }
     LoadicatorAlgoResponse algoResponse =
         restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
     saveLoadicatorResponseJson(algoResponse, loadingInformation.getId());
@@ -271,7 +274,7 @@ public class UllageUpdateLoadicatorService {
       if (algoResponse.getLoadicatorResults().get(0).getErrorDetails().size() > 0) {
         Optional<LoadingInformationStatus> validationFailedStatusOpt =
             loadingPlanAlgoService.getLoadingInformationStatus(
-                LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+                LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID);
         loadingPlanService.updateLoadingPlanStatus(
             loadingInformation, validationFailedStatusOpt.get(), conditionType);
         loadingPlanAlgoService.updateLoadingInfoAlgoStatus(

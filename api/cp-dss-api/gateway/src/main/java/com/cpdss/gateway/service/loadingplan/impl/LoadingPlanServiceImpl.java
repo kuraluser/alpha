@@ -1452,6 +1452,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     LoadingPlanModels.BillOfLandingRemove.Builder updateBillRemoveBuilder =
         LoadingPlanModels.BillOfLandingRemove.newBuilder();
 
+    LoadingPlanModels.CommingleUpdate.Builder updateCommingleBuilder =
+        LoadingPlanModels.CommingleUpdate.newBuilder();
+
     builder.setIsValidate(inputData.getIsValidate());
 
     UllageBillReply replays = new UllageBillReply();
@@ -1726,7 +1729,56 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                     .build();
                 builder.addRobUpdate(updateRobBuilder.build());
               });
-
+      inputData
+          .getCommingleUpdateList()
+          .forEach(
+              commingle -> {
+                updateCommingleBuilder
+                    .setLoadingInformationId(
+                        commingle.getLoadingInformationId() == null
+                            ? 0
+                            : commingle.getLoadingInformationId().longValue())
+                    .setTankId(
+                        commingle.getTankId() == null ? 0 : commingle.getTankId().longValue())
+                    .setTemperature(
+                        commingle.getTemperature() == null
+                            ? "0"
+                            : commingle.getTemperature().toString())
+                    .setQuantityMT(
+                        commingle.getQuantityMT() == null
+                            ? ""
+                            : String.valueOf(commingle.getQuantityMT()))
+                    .setFillingPercentage(
+                        commingle.getFillingPercentage() == null
+                            ? "0"
+                            : commingle.getFillingPercentage().toString())
+                    .setApi(commingle.getApi() == null ? "0" : commingle.getApi().toString())
+                    .setCargoNomination1Id(
+                        commingle.getCargoNomination1Id() == null
+                            ? 0
+                            : commingle.getCargoNomination1Id().longValue())
+                    .setCargoNomination2Id(
+                        commingle.getCargoNomination2Id() == null
+                            ? 0
+                            : commingle.getCargoNomination2Id().longValue())
+                    .setUllage(
+                        commingle.getUllage() == null ? "" : String.valueOf(commingle.getUllage()))
+                    .setArrivalDeparture(
+                        commingle.getArrival_departutre() == null
+                            ? 0
+                            : commingle.getArrival_departutre().intValue())
+                    .setActualPlanned(
+                        commingle.getActual_planned() == null
+                            ? 0
+                            : commingle.getActual_planned().intValue())
+                    .setIsUpdate(commingle.getIsUpdate())
+                    .setAbbreviation(
+                        commingle.getAbbreviation() == null ? "" : commingle.getAbbreviation())
+                    .setCargo1Id(commingle.getCargo1Id() == null ? 0 : commingle.getCargo1Id())
+                    .setCargo2Id(commingle.getCargo2Id() == null ? 0 : commingle.getCargo2Id())
+                    .build();
+                builder.addCommingleUpdate(updateCommingleBuilder.build());
+              });
     } catch (Exception e) {
       log.error("GenericServiceException when update LoadableStudy", e);
       throw new GenericServiceException(
