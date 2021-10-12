@@ -256,7 +256,9 @@ public class UllageUpdateLoadicatorService {
     LoadicatorAlgoResponse algoResponse =
         restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
     saveLoadicatorResponseJson(algoResponse, loadingInformation.getId());
-    if (algoResponse.getLoadicatorResults().get(0).getErrorDetails().size() > 0) {
+
+    algoResponse.getLoadicatorResults().get(0).getJudgement().removeIf(error -> error.isEmpty());
+    if (algoResponse.getLoadicatorResults().get(0).getJudgement().size() > 0) {
       Optional<LoadingInformationStatus> validationFailedStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID);
@@ -264,6 +266,10 @@ public class UllageUpdateLoadicatorService {
           loadingInformation, validationFailedStatusOpt.get(), conditionType);
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInformation, processId, validationFailedStatusOpt.get());
+      saveLoadingPlanAlgoErrors(
+          algoResponse.getLoadicatorResults().get(0).getJudgement(),
+          loadingInformation,
+          conditionType);
     } else {
       saveLoadingPlanStabilityParameters(
           loadingInformation,
@@ -475,10 +481,12 @@ public class UllageUpdateLoadicatorService {
         restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
     saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
 
+    algoResponse.getLoadicatorResults().get(0).getErrorDetails().removeIf(error -> error.isEmpty());
+
     if (algoResponse.getLoadicatorResults().get(0).getErrorDetails().size() > 0) {
       Optional<LoadingInformationStatus> validationFailedStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID);
       loadingPlanService.updateLoadingPlanStatus(
           loadingInfoOpt.get(), validationFailedStatusOpt.get(), request.getConditionType());
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
@@ -537,7 +545,7 @@ public class UllageUpdateLoadicatorService {
   }
 
   private void saveLoadingPlanAlgoErrors(
-      List<String> errorDetails, LoadingInformation loadingInformation, int conditionType) {
+      List<String> judgement, LoadingInformation loadingInformation, int conditionType) {
 
     algoErrorHeadingRepository.deleteByLoadingInformationAndConditionType(
         loadingInformation, conditionType);
@@ -550,7 +558,7 @@ public class UllageUpdateLoadicatorService {
     algoErrorHeading.setConditionType(conditionType);
     algoErrorHeading.setIsActive(true);
     algoErrorHeadingRepository.save(algoErrorHeading);
-    errorDetails.forEach(
+    judgement.forEach(
         error -> {
           AlgoErrors algoErrors = new AlgoErrors();
           algoErrors.setAlgoErrorHeading(algoErrorHeading);
