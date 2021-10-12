@@ -4,6 +4,7 @@ import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/da
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { ICargoDetails } from '../models/cargo.model';
+import { IPermissionContext , PERMISSION_ACTION } from '../../../shared/models/common.model';
 import { IDataStateChange } from '../models/user-role-permission.model';
 import { CargoMasterTransformationService } from '../services/cargo-master-transformation.service';
 
@@ -34,6 +35,7 @@ export class CargoMasterComponent implements OnInit {
   currentPage: number;
   first: number;
   pageState: IDataStateChange;
+  addCargoBtnPermissionContext: IPermissionContext;
 
   private _cargos: ICargoDetails[];
 
@@ -44,6 +46,7 @@ export class CargoMasterComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.addCargoBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoMasterComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };;
     const permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoMasterComponent']);
     this.columns = this.cargoMasterTransformationService.getCargosDatatableColumns(permission);
     this.cargos = [{
