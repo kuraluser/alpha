@@ -82,8 +82,9 @@ export class RulesComponent implements OnInit {
  */
   triggerSaveChanges() {
     this.rulesService.save.next();
-    if (this.rulesTable.rulesForm.status === 'VALID')
+    if(this.rulesTable.rulesForm.valid){
       this.onClose();
+    }
   }
 
 

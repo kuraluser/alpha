@@ -582,42 +582,42 @@ public class DischargeInformationService {
   public void uploadPortTideDetails(DischargingUploadTideDetailRequest request)
       throws GenericServiceException {
 
-	    ByteString tideDetaildata = request.getTideDetaildata();
-	    InputStream bin = new ByteArrayInputStream(tideDetaildata.toByteArray());
-	    try (Workbook workbook = WorkbookFactory.create(bin)) {
-	      Sheet sheetAt = workbook.getSheet(SHEET);
-	      fileSheetIsCorrect(sheetAt);
-	      Iterator<Row> rowIterator = sheetAt.iterator();
-	      checkIsTheFileTitleFormat(rowIterator);
-	      if (!rowIterator.hasNext()) {
-	        throw new IllegalStateException(CommonErrorCodes.E_CPDSS_EMPTY_EXCEL_FILE);
-	      }
-	      List<PortTideDetail> tideDetails = new ArrayList<>();
-	      while (rowIterator.hasNext()) {
-	        PortTideDetail tideDetail = new PortTideDetail();
-	        tideDetail.setDischargingXid(request.getLoadingId());
-	        tideDetail.setIsActive(true);
-	        Row row = rowIterator.next();
-	        checkIsFileContentBlankOrNot(row);
-	        Iterator<Cell> cellIterator = row.cellIterator();
-	        for (int rowCell = 0; rowCell <= 3; rowCell++) {
-	          Cell cell = cellIterator.next();
-	          CellType cellType = cell.getCellType();
-	          fetchCellValues(
-	              rowCell, cellType, tideDetail, cell, request.getPortName(), request.getPortId());
-	        }
-	        tideDetails.add(tideDetail);
-	      }
-	      portTideDetailsRepository.updatePortDetailActiveState(request.getLoadingId());
-	      portTideDetailsRepository.saveAll(tideDetails);
-	    } catch (IllegalStateException e) {
-	      throw new GenericServiceException(e.getMessage(), e.getMessage(), HttpStatusCode.BAD_REQUEST);
-	    } catch (Exception e) {
-	      throw new GenericServiceException(
-	          e.getMessage(),
-	          CommonErrorCodes.E_HTTP_INTERNAL_SERVER_ERROR,
-	          HttpStatusCode.INTERNAL_SERVER_ERROR);
-	    }
+    ByteString tideDetaildata = request.getTideDetaildata();
+    InputStream bin = new ByteArrayInputStream(tideDetaildata.toByteArray());
+    try (Workbook workbook = WorkbookFactory.create(bin)) {
+      Sheet sheetAt = workbook.getSheet(SHEET);
+      fileSheetIsCorrect(sheetAt);
+      Iterator<Row> rowIterator = sheetAt.iterator();
+      checkIsTheFileTitleFormat(rowIterator);
+      if (!rowIterator.hasNext()) {
+        throw new IllegalStateException(CommonErrorCodes.E_CPDSS_EMPTY_EXCEL_FILE);
+      }
+      List<PortTideDetail> tideDetails = new ArrayList<>();
+      while (rowIterator.hasNext()) {
+        PortTideDetail tideDetail = new PortTideDetail();
+        tideDetail.setDischargingXid(request.getLoadingId());
+        tideDetail.setIsActive(true);
+        Row row = rowIterator.next();
+        checkIsFileContentBlankOrNot(row);
+        Iterator<Cell> cellIterator = row.cellIterator();
+        for (int rowCell = 0; rowCell <= 3; rowCell++) {
+          Cell cell = cellIterator.next();
+          CellType cellType = cell.getCellType();
+          fetchCellValues(
+              rowCell, cellType, tideDetail, cell, request.getPortName(), request.getPortId());
+        }
+        tideDetails.add(tideDetail);
+      }
+      portTideDetailsRepository.updatePortDetailActiveState(request.getLoadingId());
+      portTideDetailsRepository.saveAll(tideDetails);
+    } catch (IllegalStateException e) {
+      throw new GenericServiceException(e.getMessage(), e.getMessage(), HttpStatusCode.BAD_REQUEST);
+    } catch (Exception e) {
+      throw new GenericServiceException(
+          e.getMessage(),
+          CommonErrorCodes.E_HTTP_INTERNAL_SERVER_ERROR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
   }
 
   /**

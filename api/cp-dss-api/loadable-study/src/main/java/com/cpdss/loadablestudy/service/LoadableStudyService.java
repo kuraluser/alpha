@@ -1976,9 +1976,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
       } else {
         log.info("Inside getLoadablePatternStatus");
-        Optional<LoadablePatternAlgoStatus> loadablePatternAlgoStatusOpt =
+        Optional<LoadablePatternAlgoStatus> loadablePatternAlgoStatusOpt = null;
+        Optional<LoadablePatternAlgoStatus> loadablePatternAlgoStatusOptWithProcessId =
             loadablePatternAlgoStatusRepository.findByLoadablePatternIdAndProcessIdAndIsActive(
                 request.getLoadablePatternId(), request.getProcessId(), true);
+        if (!loadablePatternAlgoStatusOptWithProcessId.isPresent()) {
+          Optional<LoadablePatternAlgoStatus> loadablePatternAlgoStatusOptWithMsdId =
+              loadablePatternAlgoStatusRepository.findByLoadablePatternIdAndMessageIdAndIsActive(
+                  request.getLoadablePatternId(), request.getProcessId(), true);
+          loadablePatternAlgoStatusOpt = loadablePatternAlgoStatusOptWithMsdId;
+        } else {
+          loadablePatternAlgoStatusOpt = loadablePatternAlgoStatusOptWithProcessId;
+        }
         if (!loadablePatternAlgoStatusOpt.isPresent()) {
           log.info("Invalid loadable pattern Id");
           replyBuilder.setResponseStatus(
