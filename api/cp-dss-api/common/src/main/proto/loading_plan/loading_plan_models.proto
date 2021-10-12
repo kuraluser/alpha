@@ -892,7 +892,6 @@ message BallastUpdate{
   int64 port_xid = 16;
   int64 port_rotation_xid = 17;
   int64 dischargingInformationId =18;
-  
 }
 
 message RobUpdate{
@@ -912,16 +911,41 @@ message RobUpdate{
   int64 port_xid = 14;
   int64 port_rotation_xid = 15;
   int64 dischargingInformationId =16;
-  
 }
 
+message CommingleUpdate {
+	int64 id = 1;
+	string tankName = 2;
+    int64 tankId = 3;
+    string quantityMT = 4;
+    string quantityM3 = 5;
+    string api = 6;
+    string temperature = 7;
+    string ullage = 8;
+    int64 cargoNomination1Id = 9;
+    int64 cargoNomination2Id = 10;
+    int64 cargo1Id = 11;
+    int64 cargo2Id = 12;
+    string colorCode = 13;
+    string abbreviation = 14;
+    int32 arrivalDeparture = 15;
+    int32 actualPlanned = 16;
+    bool isUpdate = 17;
+  	int64 port_xid = 18;
+  	int64 port_rotation_xid = 19;
+  	string correctedUllage =20;
+  	string correctionFactor =21;
+  	string fillingPercentage = 22;
+  	int64 loadingInformationId = 23;
+}
 message UllageBillRequest{
   repeated BillOfLanding billOfLanding = 1;
   repeated BillOfLandingRemove billOfLandingRemove = 2;
   repeated BallastUpdate BallastUpdate = 3;
   repeated UpdateUllage updateUllage = 4;
   repeated RobUpdate robUpdate = 5;
-  string isValidate =6;
+  repeated CommingleUpdate commingleUpdate = 6;
+  string isValidate =7;
 }
 
 
