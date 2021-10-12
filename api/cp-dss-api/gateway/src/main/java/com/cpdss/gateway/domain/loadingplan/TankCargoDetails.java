@@ -1,8 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +17,6 @@ public class TankCargoDetails {
   private Double quantity;
   private String api;
   private String temperature;
-  private Long fillingRatio;
+  private String fillingRatio;
   private String ullage;
 }

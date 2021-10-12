@@ -50,6 +50,8 @@ import com.cpdss.gateway.service.loadingplan.impl.LoadingInformationServiceImpl;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingInstructionService;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingPlanServiceImpl;
 import com.cpdss.gateway.utility.ExcelExportUtility;
+import com.cpdss.gateway.utility.UnitConversionUtility;
+import com.cpdss.gateway.utility.UnitTypes;
 
 import java.awt.Color;
 import java.io.FileInputStream;
@@ -198,53 +200,149 @@ public class GenerateLoadingPlanExcelReportService {
 
 	/**
 	 * Add style in excel
-	 * 
-	 * @param workbook
-	 * 
-	 * @param resultFileStream
-	 * @param loadinPlanExcelDetails
-	 * @throws EncryptedDocumentException
-	 * @throws IOException
 	 */
-	private void setCellStyle(XSSFWorkbook workbook, LoadingPlanExcelDetails data)
-			throws EncryptedDocumentException, IOException {
+	private void setCellStyle(XSSFWorkbook workbook, LoadingPlanExcelDetails data) {
+		XSSFSheet sheet1 = workbook.getSheet(SHEET_NAMES[0]);
+		XSSFSheet sheet3 = workbook.getSheet(SHEET_NAMES[2]);
+		styleSheetOne(workbook, sheet1, data.getSheetOne());
+		styleSheetThree(workbook, sheet3, data.getSheetThree());
 
-		XSSFSheet sheet = workbook.getSheet(SHEET_NAMES[0]);
+	}
+
+	/**
+	 * Set color in sheet three tanks and sequence cells
+	 */
+	private void styleSheetThree(XSSFWorkbook workbook, XSSFSheet sheet, LoadingPlanExcelLoadingSequenceDetails data) {
 		XSSFCell cell = null;
-		for (int row = START_ROW; row <= END_ROW; row++) {
-			for (int col = 1; col <= END_COLUMN; col++) {
+		int row = 0;
+		int col = 0;
+		// Cargo name column color
+		for (row = 6; row <= 39; row++) {
+			col = 1;
+			cell = sheet.getRow(row).getCell(col);
+			setCargoColor(workbook, sheet, cell, null, null, data.getCargoTanks());
+		}
+		// Sequence diagram color cargo
+		for (row = 6; row <= 70; row++) {
+			for (col = 4; col <= 4 + (data.getTickPoints().size() * 2); col++) {
+				cell = sheet.getRow(row).getCell(col);
+				setCargoColor(workbook, sheet, cell, null, null, null);
+			}
+		}
+	}
+
+	/**
+	 * Set color in sheet one tanks and cargo cells
+	 */
+	private void styleSheetOne(XSSFWorkbook workbook, XSSFSheet sheet, LoadingPlanExcelLoadingPlanDetails data) {
+		XSSFCell cell = null;
+		int row = 0;
+		int col = 0;
+		// Tank layout color
+		for (row = START_ROW; row <= END_ROW; row++) {
+			for (col = 1; col <= END_COLUMN; col++) {
 				cell = sheet.getRow(row).getCell(col);
 				if (row >= 14 && row < 29) {
-					setCargoColor(workbook, sheet, cell,
-							data.getSheetOne().getArrivalCondition().getCargoCenterTanks().getTank(), null);
-					setCargoColor(workbook, sheet, cell,
-							data.getSheetOne().getArrivalCondition().getCargoTopTanks().getTank(),
-							data.getSheetOne().getArrivalCondition().getBallastTopTanks().getTank());
-					setCargoColor(workbook, sheet, cell,
-							data.getSheetOne().getArrivalCondition().getCargoBottomTanks().getTank(),
-							data.getSheetOne().getArrivalCondition().getBallastBottomTanks().getTank());
+					setTankColor(workbook, sheet, cell, data.getArrivalCondition().getCargoCenterTanks().getTank(),
+							null);
+					setTankColor(workbook, sheet, cell, data.getArrivalCondition().getCargoTopTanks().getTank(),
+							data.getArrivalCondition().getBallastTopTanks().getTank());
+					setTankColor(workbook, sheet, cell, data.getArrivalCondition().getCargoBottomTanks().getTank(),
+							data.getArrivalCondition().getBallastBottomTanks().getTank());
 				} else if (row >= 32 && row < 46) {
-					setCargoColor(workbook, sheet, cell,
-							data.getSheetOne().getDeparcherCondition().getCargoCenterTanks().getTank(), null);
-					setCargoColor(workbook, sheet, cell,
-							data.getSheetOne().getDeparcherCondition().getCargoTopTanks().getTank(),
-							data.getSheetOne().getDeparcherCondition().getBallastTopTanks().getTank());
-					setCargoColor(workbook, sheet, cell,
-							data.getSheetOne().getDeparcherCondition().getCargoBottomTanks().getTank(),
-							data.getSheetOne().getDeparcherCondition().getBallastBottomTanks().getTank());
+					setTankColor(workbook, sheet, cell, data.getDeparcherCondition().getCargoCenterTanks().getTank(),
+							null);
+					setTankColor(workbook, sheet, cell, data.getDeparcherCondition().getCargoTopTanks().getTank(),
+							data.getDeparcherCondition().getBallastTopTanks().getTank());
+					setTankColor(workbook, sheet, cell, data.getDeparcherCondition().getCargoBottomTanks().getTank(),
+							data.getDeparcherCondition().getBallastBottomTanks().getTank());
+				}
+			}
+		}
+		// List of cargo oil area color
+		for (row = 15; row <= 39; row++) {
+			col = 19;
+			cell = sheet.getRow(row).getCell(col);
+			if (row <= 22) {
+				setCargoColor(workbook, sheet, cell, data.getArrivalCondition().getCargoDetails(), null, null);
+			} else if (row <= 39) {
+				setCargoColor(workbook, sheet, cell, data.getDeparcherCondition().getCargoDetails(), null, null);
+			}
+		}
+		// Cargo to be loaded area color
+		for (col = 5; col <= 5 + data.getCargoTobeLoaded().size(); col++) {
+			row = 61;
+			cell = sheet.getRow(row).getCell(col);
+			setCargoColor(workbook, sheet, cell, null, data.getCargoTobeLoaded(), null);
+		}
+	}
+
+	/**
+	 * Color cargo name cells
+	 */
+	private void setCargoColor(XSSFWorkbook workbook, XSSFSheet sheet1, XSSFCell cell, List<CargoQuantity> cargoDetails,
+			List<CargoTobeLoaded> cargoTobeLoaded, List<TankCategoryForSequence> cargoListSequence) {
+		String cellValue = getCellValue(cell);
+		if (cellValue != null && !cellValue.isBlank()) {
+			if (cargoDetails != null) {
+				Optional<CargoQuantity> opt = cargoDetails.stream()
+						.filter(item -> item.getCargoName().equals(cellValue)).findFirst();
+				if (opt.isPresent()) {
+					fillColor(workbook, cell, opt.get().getColorCode());
+				}
+			} else if (cargoTobeLoaded != null) {
+				Optional<CargoTobeLoaded> opt = cargoTobeLoaded.stream()
+						.filter(item -> item.getCargoName().equals(cellValue)).findFirst();
+				if (opt.isPresent()) {
+					fillColor(workbook, cell, opt.get().getColorCode());
+				}
+			} else if (cargoListSequence != null) {
+				Optional<TankCategoryForSequence> opt = cargoListSequence.stream()
+						.filter(item -> item.getCargoName().equals(cellValue)).findFirst();
+				if (opt.isPresent()) {
+					fillColor(workbook, cell, opt.get().getColorCode());
+				}
+			} else {
+				if (cellValue.contains("#")) {
+					fillColor(workbook, cell, cellValue);
+					cell.setCellValue("");
 				}
 			}
 		}
 	}
 
 	/**
+	 * Fills color in provided cell using color code
+	 */
+	private void fillColor(XSSFWorkbook workbook, XSSFCell cell, String colorCode) {
+		XSSFCellStyle newCellStyle = workbook.createCellStyle();
+		XSSFCellStyle cellStyle = cell.getCellStyle();
+		newCellStyle.setDataFormat(cellStyle.getDataFormat());
+		newCellStyle.setFont(workbook.getFontAt(cellStyle.getFontIndex()));
+		newCellStyle.setAlignment(cellStyle.getAlignment());
+		newCellStyle.setVerticalAlignment(cellStyle.getVerticalAlignment());
+		newCellStyle.setBorderBottom(cellStyle.getBorderBottom());
+		newCellStyle.setBorderTop(cellStyle.getBorderTop());
+		newCellStyle.setBorderLeft(cellStyle.getBorderLeft());
+		newCellStyle.setBorderRight(cellStyle.getBorderRight());
+
+		XSSFColor color = new XSSFColor(workbook.getStylesSource().getIndexedColors());
+		color.setARGBHex(colorCode.substring(1));
+		newCellStyle.setFillForegroundColor(color);
+		newCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		cell.setCellStyle(newCellStyle);
+	}
+
+	/**
+	 * Dynamically add colours in tank layout
+	 * 
 	 * @param workbook
 	 * @param sheet
 	 * @param cell
 	 * @param cargoTanks
 	 * @param ballastTanks
 	 */
-	private void setCargoColor(XSSFWorkbook workbook, XSSFSheet sheet, XSSFCell cell, List<TankCargoDetails> cargoTanks,
+	private void setTankColor(XSSFWorkbook workbook, XSSFSheet sheet, XSSFCell cell, List<TankCargoDetails> cargoTanks,
 			List<TankCargoDetails> ballastTanks) {
 		int row = 0;
 		int col = 0;
@@ -289,27 +387,12 @@ public class GenerateLoadingPlanExcelReportService {
 	private void setTankCellsColors(XSSFWorkbook workbook, XSSFSheet sheet, int row, int col,
 			TankCargoDetails tankFromFile) {
 		XSSFCell cell = sheet.getRow(row).getCell(col);
-		XSSFCellStyle cellStyle = null;
-		XSSFCellStyle newCellStyle = workbook.createCellStyle();
 		if (cell != null) {
-			cellStyle = cell.getCellStyle();
-			newCellStyle.setDataFormat(cellStyle.getDataFormat());
-			newCellStyle.setFont(workbook.getFontAt(cellStyle.getFontIndex()));
-			newCellStyle.setAlignment(cellStyle.getAlignment());
-			newCellStyle.setVerticalAlignment(cellStyle.getVerticalAlignment());
-			newCellStyle.setBorderBottom(cellStyle.getBorderBottom());
-			newCellStyle.setBorderTop(cellStyle.getBorderTop());
-			newCellStyle.setBorderLeft(cellStyle.getBorderLeft());
-			newCellStyle.setBorderRight(cellStyle.getBorderRight());
+			fillColor(workbook, cell, tankFromFile.getColorCode());
 		} else {
 			cell = sheet.getRow(row).createCell(col);
+			fillColor(workbook, cell, tankFromFile.getColorCode());
 		}
-		XSSFColor color = new XSSFColor(workbook.getStylesSource().getIndexedColors());
-		color.setARGBHex(tankFromFile.getColorCode().substring(1));
-//		newCellStyle.setFillBackgroundColor(color);
-		newCellStyle.setFillForegroundColor(color);
-		newCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		cell.setCellStyle(newCellStyle);
 	}
 
 	/**
@@ -334,6 +417,8 @@ public class GenerateLoadingPlanExcelReportService {
 		if (cell != null) {
 			if (cell.getCellType().equals(CellType.NUMERIC)) {
 				return ((Double) cell.getNumericCellValue()).toString();
+			} else if (cell.getCellType().equals(CellType.BOOLEAN)) {
+				return cell.getBooleanCellValue() ? "TRUE" : "FALSE";
 			} else {
 				return cell.getStringCellValue();
 			}
@@ -739,8 +824,7 @@ public class GenerateLoadingPlanExcelReportService {
 		QuantityLoadingStatus ballastStatus = new QuantityLoadingStatus();
 		if (ballastMatch.isPresent()) {
 			ullages.add(ballastMatch.get().getSounding().toString());
-			if (ballastMatch.get().getQuantity().compareTo(BigDecimal.ZERO) > 0
-					&& ballastMatch.get().getColor() != null) {
+			if (ballastMatch.get().getColor() != null) {
 				ballastStatus.setPresent(true);
 				ballastStatus.setColorCode(ballastMatch.get().getColor());
 			} else {
@@ -1219,7 +1303,7 @@ public class GenerateLoadingPlanExcelReportService {
 		}
 		tankCargoDetails.setCargoName("");
 		tankCargoDetails.setUllage("0");
-		tankCargoDetails.setFillingRatio(0L);
+		tankCargoDetails.setFillingRatio("0");
 	}
 
 	/**
@@ -1248,7 +1332,8 @@ public class GenerateLoadingPlanExcelReportService {
 				tankCargoDetails.setTankName(item.getShortName());
 				tankCargoDetails.setId(item.getId());
 				// Adding cargo details in this tank
-				setCargoTankValues(loadingPlanStowageDetails, loadableQuantityCargoDetailsList, tankCargoDetails);
+				setCargoTankValues(loadingPlanStowageDetails, loadableQuantityCargoDetailsList, tankCargoDetails,
+						item.getFullCapacityCubm());
 				tankCargoDetailsList.add(tankCargoDetails);
 			});
 		}
@@ -1265,12 +1350,10 @@ public class GenerateLoadingPlanExcelReportService {
 	/**
 	 * Populates cargo values in to each tank
 	 * 
-	 * @param tankCargoDetailsList
-	 * @param loadingPlanStowageDetails
-	 * @param loadableQuantityCargoDetailsList
 	 */
 	private void setCargoTankValues(Optional<LoadingPlanStowageDetails> loadingPlanStowageDetails,
-			List<LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList, TankCargoDetails tankCargoDetails) {
+			List<LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList, TankCargoDetails tankCargoDetails,
+			String tankFullCapacity) {
 
 		if (loadingPlanStowageDetails.isPresent()) {
 			Optional.ofNullable(loadingPlanStowageDetails.get().getQuantityMT())
@@ -1279,25 +1362,58 @@ public class GenerateLoadingPlanExcelReportService {
 			Optional.ofNullable(loadingPlanStowageDetails.get().getTemperature())
 					.ifPresent(tankCargoDetails::setTemperature);
 			Optional.ofNullable(loadingPlanStowageDetails.get().getUllage()).ifPresent(tankCargoDetails::setUllage);
-			// TODO filling ratio
-			tankCargoDetails.setFillingRatio(0L);
-			Optional<LoadableQuantityCargoDetails> loadableQuantityCargoDetails = loadableQuantityCargoDetailsList
-					.stream().filter(i -> i.getCargoNominationId()
-							.equals(loadingPlanStowageDetails.get().getCargoNominationId()))
-					.findFirst();
-			if (loadableQuantityCargoDetails.isPresent()) {
-				Optional.ofNullable(loadableQuantityCargoDetails.get().getColorCode())
-						.ifPresent(tankCargoDetails::setColorCode);
-				Optional.ofNullable(loadableQuantityCargoDetails.get().getCargoAbbreviation())
-						.ifPresent(tankCargoDetails::setCargoName);
+
+			if (tankCargoDetails.getQuantity() > 0 && tankCargoDetails.getTemperature() != null
+					&& !tankCargoDetails.getTemperature().isBlank() && tankCargoDetails.getApi() != null
+					&& !tankCargoDetails.getApi().isBlank()) {
+				tankCargoDetails.setFillingRatio(getFillingRatio(tankCargoDetails.getQuantity(),
+						tankCargoDetails.getApi(), tankCargoDetails.getTemperature(), tankFullCapacity));
+			} else {
+				tankCargoDetails.setFillingRatio("0");
 			}
+			if (!loadingPlanStowageDetails.get().getColorCode().isEmpty()
+					&& !loadingPlanStowageDetails.get().getAbbreviation().isEmpty()) {
+				Optional.ofNullable(loadingPlanStowageDetails.get().getColorCode())
+						.ifPresent(tankCargoDetails::setColorCode);
+				Optional.ofNullable(loadingPlanStowageDetails.get().getAbbreviation())
+						.ifPresent(tankCargoDetails::setCargoName);
+			} else {
+				Optional<LoadableQuantityCargoDetails> loadableQuantityCargoDetails = loadableQuantityCargoDetailsList
+						.stream().filter(i -> i.getCargoNominationId()
+								.equals(loadingPlanStowageDetails.get().getCargoNominationId()))
+						.findFirst();
+				if (loadableQuantityCargoDetails.isPresent()) {
+					Optional.ofNullable(loadableQuantityCargoDetails.get().getColorCode())
+							.ifPresent(tankCargoDetails::setColorCode);
+					Optional.ofNullable(loadableQuantityCargoDetails.get().getCargoAbbreviation())
+							.ifPresent(tankCargoDetails::setCargoName);
+				}
+			}
+
 		} else {
 			tankCargoDetails.setQuantity(0.0);
 			tankCargoDetails.setCargoName("");
 			tankCargoDetails.setColorCode("");
 			tankCargoDetails.setUllage("0");
-			tankCargoDetails.setFillingRatio(0L);
+			tankCargoDetails.setFillingRatio("0");
 		}
+	}
+
+	/**
+	 * Calculate filling ratio Convert MT to BBLS first then Convert it to OBSKL
+	 * Divide quantity in OBSKL with Maximum tank capacity to find ratio
+	 * 
+	 * @param tankFullCapacity
+	 */
+	private String getFillingRatio(Double quantityMT, String api, String temperature, String tankFullCapacity) {
+		if (Double.parseDouble(api) > 0 && Double.parseDouble(temperature) > 0) {
+			Double quantityBBLS = UnitConversionUtility.convertToBBLS(UnitTypes.MT, Double.parseDouble(api),
+					Double.parseDouble(temperature), quantityMT);
+			Double quantityOBSKL = UnitConversionUtility.convertFromBBLS(UnitTypes.OBSKL, Double.parseDouble(api),
+					Double.parseDouble(temperature), quantityBBLS);
+			return String.format("%.2f",(quantityOBSKL / Double.parseDouble(tankFullCapacity)) * 100);
+		}
+		return "0";
 	}
 
 	/**
