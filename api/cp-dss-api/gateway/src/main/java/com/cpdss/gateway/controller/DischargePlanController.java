@@ -708,16 +708,18 @@ public class DischargePlanController {
       value = "/discharging/{dischargingId}/upload/port-tide-details",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public UploadTideDetailResponse UploadTideDetails(
+  public UploadTideDetailResponse uploadTideDetails(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long dischargingId,
       @RequestHeader HttpHeaders headers,
-      @RequestParam(name = "file", required = true) MultipartFile file)
+      @RequestParam(name = "file", required = true) MultipartFile file,
+      @RequestParam(name = "portName", required = true) String portName,
+      @RequestParam(name = "portId", required = true) Long portId)
       throws CommonRestException {
     try {
       log.debug("inside controller");
       return this.dischargeInformationGrpcService.dischargeUploadLoadingTideDetails(
-          dischargingId, file, headers.getFirst(CORRELATION_ID_HEADER));
+          dischargingId, file, headers.getFirst(CORRELATION_ID_HEADER), portName, portId);
 
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when upload tide details", e);

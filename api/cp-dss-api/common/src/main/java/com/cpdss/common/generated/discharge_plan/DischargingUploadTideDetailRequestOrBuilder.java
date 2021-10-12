@@ -34,4 +34,24 @@ public interface DischargingUploadTideDetailRequestOrBuilder
    * @return The loadingId.
    */
   long getLoadingId();
+
+  /**
+   * <code>string portName = 4;</code>
+   *
+   * @return The portName.
+   */
+  java.lang.String getPortName();
+  /**
+   * <code>string portName = 4;</code>
+   *
+   * @return The bytes for portName.
+   */
+  com.google.protobuf.ByteString getPortNameBytes();
+
+  /**
+   * <code>int64 portId = 5;</code>
+   *
+   * @return The portId.
+   */
+  long getPortId();
 }

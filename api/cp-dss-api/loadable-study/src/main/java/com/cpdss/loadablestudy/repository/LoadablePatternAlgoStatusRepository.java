@@ -21,9 +21,19 @@ public interface LoadablePatternAlgoStatusRepository
   public void updateLoadablePatternAlgoStatus(
       Long loadableStudyStatusId, String processId, Boolean isActive);
 
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE LoadablePatternAlgoStatus SET loadableStudyStatus.id = ?1 WHERE  messageId = ?2 and isActive = ?3")
+  public void updateLoadablePatternAlgoStatusByMessageId(
+      Long loadableStudyStatusId, String messageId, Boolean isActive);
+
   public Optional<LoadablePatternAlgoStatus> findByLoadablePatternIdAndProcessIdAndIsActive(
       Long loadablePatternId, String processId, Boolean isActive);
 
   public List<LoadablePatternAlgoStatus> findByLoadablePatternAndIsActive(
       LoadablePattern loadablePattern, Boolean isActive);
+
+  public Optional<LoadablePatternAlgoStatus> findByLoadablePatternIdAndMessageIdAndIsActive(
+      Long loadablePatternId, String messageId, Boolean isActive);
 }

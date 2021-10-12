@@ -392,6 +392,7 @@
   "UNIT_CHANGE_API_ERROR": "Error",
   "UNIT_CHANGE_API_ERROR_DETAILS": "Cannot change unit without valid api and temperature",
   "TOTAL_QUANTITY_ERROR": "Error",
+  "TOTAL_QUANTITY_WARNING": "Warning",
   "TOTAL_QUANTITY_INFO": "Info",
   "TOTAL_QUANTITY_ERROR_DETAILS": "Total quantity should not be greater than loadable quantity",
   "LOADABLE_QUANTITY_WARNING": "Warning",

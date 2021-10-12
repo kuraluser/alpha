@@ -23,6 +23,9 @@ services:
       retries: 3
       start_period: 60s
     deploy:
+      resources:
+        limits:   
+          memory: 150M
       update_config:
         order: start-first
         failure_action: rollback

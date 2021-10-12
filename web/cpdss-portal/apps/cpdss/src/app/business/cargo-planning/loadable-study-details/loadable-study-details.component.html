@@ -75,7 +75,7 @@
         <div class="pr-15 text-right">
             <button id="pattern_history" class="btn btn-main mr-10" (click)="navigateToPatternHistory('0')"
                 [disabled]="!loadableStudies?.length || !loadablePatternHistoryPermission?.view">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL' | translate}}</button>
-                <button id="generate_pattern" class="btn btn-main mr-10" (click)="onGenerateLoadablePattern()"
+            <button id="generate_pattern" class="btn btn-main mr-10" (click)="onGenerateLoadablePattern()"
                 [disabled]="(!loadableStudies?.length || isServiceWorkerCallActive || !cargoNominationComplete || !portsComplete || !ohqComplete || !obqComplete  || isGenerateClicked || isPatternGenerated || isPatternOpenOrNoplan ||[VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId) || !(generateBtnPermissionContext?.view))" *ngIf="showGenerateBtn">{{'LOADABLE_PATTERN_GENERATE_BUTTON_LABEL'
                 | translate}}</button>
             <button id="view_pattern" class="btn btn-main" (click)="navigateToPatternHistory('1')"

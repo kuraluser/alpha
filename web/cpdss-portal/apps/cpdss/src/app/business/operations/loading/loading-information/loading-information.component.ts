@@ -387,8 +387,6 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
         this.loadingInformationPostData.isLoadingInfoComplete = true
         const result: ILoadingInformationSaveResponse = await this.loadingDischargingInformationApiService.saveLoadingInformation(this.vesselId, this.voyageId, this.loadingInformationPostData).toPromise();
         if (result?.responseStatus?.status === '200') {
-          this.loadingInformationData = result?.loadingInformation;
-          await this.updateGetData();
           this.hasUnSavedData = false;
           this.loadingDischargingTransformationService.setLoadingInformationValidity(true)
           this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INFORMATION_SAVE_SUCCESS'], detail: translationKeys['LOADING_INFORMATION_SAVED_SUCCESSFULLY'] });

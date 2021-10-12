@@ -16,4 +16,5 @@ public class PatternDetails {
   private List<LoadablePatternCargoDetailsDto> loadablePatternCargoDetailsList;
   private List<LoadablePlanStowageBallastDetailsDto> loadablePlanStowageBallastDetailsList;
   private List<SynopticalTableLoadicatorDataDto> synopticalTableLoadicatorData;
+  private List<SynopticalTableDto> synopticalTableDtoList;
 }

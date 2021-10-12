@@ -94,6 +94,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.StabilityParameterRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -872,6 +873,14 @@ public class LoadablePatternService {
     //
     // objectMapper.writeValueAsString(loadablePatternAlgoRequest));
     if (!env.equals("ship") && enableCommunication && !request.getHasLodicator()) {
+      Optional<LoadableStudyCommunicationStatus> patternValidateCommunicationStatus =
+          this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
+              loadablePatternOpt.get().getId(), MessageTypes.VALIDATEPLAN.getMessageType());
+      log.info(
+          " ------message Id in shore : "
+              + patternValidateCommunicationStatus.get().getMessageUUID());
+      loadablePatternAlgoRequest.setMessageId(
+          patternValidateCommunicationStatus.get().getMessageUUID());
       EnvoyWriter.WriterReply ewReply =
           communicationService.passRequestPayloadToEnvoyWriter(
               objectMapper.writeValueAsString(loadablePatternAlgoRequest),
@@ -888,7 +897,7 @@ public class LoadablePatternService {
           lsCommunicationStatus.setCommunicationStatus(
               CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
         }
-        lsCommunicationStatus.setReferenceId(loadablePatternOpt.get().getLoadableStudy().getId());
+        lsCommunicationStatus.setReferenceId(loadablePatternOpt.get().getId());
         lsCommunicationStatus.setMessageType(MessageTypes.PATTERNDETAIL.getMessageType());
         lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
         LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
@@ -903,6 +912,8 @@ public class LoadablePatternService {
         .build();
     return builder;
   }
+
+  @Autowired private SynopticalTableRepository synopticalTableRepository;
 
   public void fetchSavedPatternFromDB(
       PatternDetails patternDetails, LoadablePattern loadablePattern) {
@@ -986,6 +997,12 @@ public class LoadablePatternService {
             modelMapper.map(
                 synopticalTableLoadicatorData, SynopticalTableLoadicatorDataDto[].class));
     patternDetails.setSynopticalTableLoadicatorData(synopticalTableLoadicatorDataDtoList);
+    List<com.cpdss.loadablestudy.entity.SynopticalTable> synopticalTableList =
+        synopticalTableRepository.findByLoadableStudyXIdAndIsActive(
+            loadablePattern.getLoadableStudy().getId(), true);
+    List<SynopticalTableDto> synopticalTableDtoList =
+        Arrays.asList(modelMapper.map(synopticalTableList, SynopticalTableDto[].class));
+    patternDetails.setSynopticalTableDtoList(synopticalTableDtoList);
   }
 
   /**

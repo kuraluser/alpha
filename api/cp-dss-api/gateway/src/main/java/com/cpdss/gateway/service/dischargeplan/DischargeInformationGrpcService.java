@@ -84,7 +84,7 @@ public class DischargeInformationGrpcService {
   }
 
   public UploadTideDetailResponse dischargeUploadLoadingTideDetails(
-      Long loadingId, MultipartFile file, String correlationId)
+      Long loadingId, MultipartFile file, String correlationId, String portName, Long portId)
       throws IOException, GenericServiceException {
     String originalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
     if (!(originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())
@@ -98,6 +98,8 @@ public class DischargeInformationGrpcService {
         DischargingUploadTideDetailRequest.newBuilder();
     builder.setTideDetaildata(ByteString.copyFrom(file.getBytes()));
     builder.setLoadingId(loadingId);
+    builder.setPortId(portId);
+    builder.setPortName(portName);
     DischargingUploadTideDetailStatusReply statusReply =
         dischargeInfoServiceStub.dischargingUploadPortTideDetails(builder.build());
     if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {

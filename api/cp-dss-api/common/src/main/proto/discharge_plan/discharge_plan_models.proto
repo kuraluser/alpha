@@ -226,6 +226,8 @@ message DischargingUploadTideDetailRequest {
 	bytes tideDetaildata = 1;
 	ResponseStatus responseStatus = 2;
 	int64 loadingId = 3;
+	string portName = 4;
+	int64 portId = 5;
 }
 
 message DischargingUploadTideDetailStatusReply {
