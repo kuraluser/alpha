@@ -876,4 +876,6 @@ public class DischargeInformationService {
     }
     return portsMap;
   }
+
+  public void updateIsDischargingInfoCompeteStatus(Long id, boolean isDischargingInfoComplete) {}
 }

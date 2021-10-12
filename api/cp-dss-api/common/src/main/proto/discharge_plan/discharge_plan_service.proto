@@ -14,10 +14,10 @@ service DischargeInformationService {
   rpc DischargingUploadPortTideDetails(DischargingUploadTideDetailRequest) returns (DischargingUploadTideDetailStatusReply){} 
   rpc DischargingDownloadPortTideDetails(DischargingDownloadTideDetailRequest) returns (stream DischargingDownloadTideDetailStatusReply) {}
   rpc GetDischargingPlan(DischargeInformationRequest) returns (DischargingPlanReply) {}
-  // Case 1, Loading Details
+  // Case 1, Discharging Details
   rpc SaveDischargingInformation(DischargeInformation) returns (DischargingInfoSaveResponse) {}
 
-  // Case 2, Only Loading Rate data
+  // Case 2, Only Discharging Rate data
   rpc SaveDischargingInfoRates(DischargeInformation) returns (DischargingInfoSaveResponse) {}
 
   // Case 3, Adding Or Removing Berth Data

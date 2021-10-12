@@ -21,14 +21,9 @@ import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.UploadTideDetailResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
 import com.cpdss.gateway.utility.RuleUtility;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
-
-import javax.validation.Valid;
-
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.http.HttpStatus;
@@ -145,7 +140,7 @@ public class DischargeInformationGrpcService {
   }
 
   public DischargingInformationResponse saveDischargingInformation(
-       DischargingInformationRequest request, String correlationId)throws GenericServiceException {
+      DischargingInformationRequest request, String correlationId) throws GenericServiceException {
 
     return null;
   }

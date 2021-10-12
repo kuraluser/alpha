@@ -124,6 +124,16 @@ message DischargeRates {
   string minBallastRate = 3;
   string maxBallastRate = 4;
   int64 id = 5;
+  string reducedDischargingRate = 6;
+    string minDeBallastingRate = 7;
+    string maxDeBallastingRate = 8;
+    string noticeTimeRateReduction = 9;
+    string noticeTimeStopDischarging = 10;
+    string lineContentRemaining = 11; 
+    string minDischargingRate = 12; 
+    string shoreDischargingRate = 13;
+  
+  
 }
 
 message DischargeBerths {
