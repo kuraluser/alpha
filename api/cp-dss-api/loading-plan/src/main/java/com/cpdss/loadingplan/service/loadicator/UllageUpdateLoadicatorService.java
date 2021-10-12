@@ -140,14 +140,9 @@ public class UllageUpdateLoadicatorService {
       buildUllageEditLoadicatorAlgoRequest(
           loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
       saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
-      checkStabilityWithAlgo(
-          loadingInfoOpt.get(),
-          algoRequest,
-          processId,
-          request.getUpdateUllage(0).getArrivalDepartutre());
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
       loadingPlanService.updateLoadingPlanStatus(
           loadingInfoOpt.get(),
           loadingInfoStatusOpt.get(),
@@ -157,11 +152,11 @@ public class UllageUpdateLoadicatorService {
           processId,
           loadingInfoStatusOpt.get(),
           request.getUpdateUllage(0).getArrivalDepartutre());
-      loadingPlanService.saveUpdatedLoadingPlanDetails(
-          loadingInfoOpt.get(), request.getUpdateUllage(0).getArrivalDepartutre());
-      log.info(
-          "Saved updated loading plan details of loading information {}",
-          loadingInfoOpt.get().getId());
+      checkStabilityWithAlgo(
+          loadingInfoOpt.get(),
+          algoRequest,
+          processId,
+          request.getUpdateUllage(0).getArrivalDepartutre());
       return processId;
     }
     List<PortLoadingPlanStowageTempDetails> tempStowageDetails =
@@ -256,44 +251,33 @@ public class UllageUpdateLoadicatorService {
       throws GenericServiceException, NumberFormatException, IllegalAccessException,
           InvocationTargetException {
     if (algoRequest.getStages().isEmpty()) {
-    	algoRequest.setStages(null);
+      algoRequest.setStages(null);
     }
     LoadicatorAlgoResponse algoResponse =
         restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
     saveLoadicatorResponseJson(algoResponse, loadingInformation.getId());
-
-    if (algoResponse.getLoadicatorResults().isEmpty()) {
+    if (algoResponse.getLoadicatorResults().get(0).getErrorDetails().size() > 0) {
       Optional<LoadingInformationStatus> validationFailedStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID);
       loadingPlanService.updateLoadingPlanStatus(
           loadingInformation, validationFailedStatusOpt.get(), conditionType);
       loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
           loadingInformation, processId, validationFailedStatusOpt.get());
     } else {
-      if (algoResponse.getLoadicatorResults().get(0).getErrorDetails().size() > 0) {
-        Optional<LoadingInformationStatus> validationFailedStatusOpt =
-            loadingPlanAlgoService.getLoadingInformationStatus(
-                LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID);
-        loadingPlanService.updateLoadingPlanStatus(
-            loadingInformation, validationFailedStatusOpt.get(), conditionType);
-        loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
-            loadingInformation, processId, validationFailedStatusOpt.get());
-      } else {
-        saveLoadingPlanStabilityParameters(
-            loadingInformation,
-            algoResponse,
-            conditionType,
-            LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
-        Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-            loadingPlanAlgoService.getLoadingInformationStatus(
-                LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
-        loadingPlanService.updateLoadingPlanStatus(
-            loadingInformation, loadingInfoStatusOpt.get(), conditionType);
-        loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
-            loadingInformation, processId, loadingInfoStatusOpt.get());
-        loadingPlanService.saveUpdatedLoadingPlanDetails(loadingInformation, conditionType);
-      }
+      saveLoadingPlanStabilityParameters(
+          loadingInformation,
+          algoResponse,
+          conditionType,
+          LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          loadingPlanAlgoService.getLoadingInformationStatus(
+              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+      loadingPlanService.updateLoadingPlanStatus(
+          loadingInformation, loadingInfoStatusOpt.get(), conditionType);
+      loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+          loadingInformation, processId, loadingInfoStatusOpt.get());
+      loadingPlanService.saveUpdatedLoadingPlanDetails(loadingInformation, conditionType);
     }
   }
 
@@ -538,6 +522,30 @@ public class UllageUpdateLoadicatorService {
 
     AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
     algoErrorHeading.setErrorHeading("Loadicator Errors");
+    algoErrorHeading.setLoadingInformation(loadingInformation);
+    algoErrorHeading.setConditionType(conditionType);
+    algoErrorHeading.setIsActive(true);
+    algoErrorHeadingRepository.save(algoErrorHeading);
+    errorDetails.forEach(
+        error -> {
+          AlgoErrors algoErrors = new AlgoErrors();
+          algoErrors.setAlgoErrorHeading(algoErrorHeading);
+          algoErrors.setErrorMessage(error);
+          algoErrors.setIsActive(true);
+          algoErrorsRepository.save(algoErrors);
+        });
+  }
+
+  private void saveLoadingPlanAlgoErrors(
+      List<String> errorDetails, LoadingInformation loadingInformation, int conditionType) {
+
+    algoErrorHeadingRepository.deleteByLoadingInformationAndConditionType(
+        loadingInformation, conditionType);
+    algoErrorsRepository.deleteByLoadingInformationAndConditionType(
+        loadingInformation, conditionType);
+
+    AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+    algoErrorHeading.setErrorHeading("ALGO Errors");
     algoErrorHeading.setLoadingInformation(loadingInformation);
     algoErrorHeading.setConditionType(conditionType);
     algoErrorHeading.setIsActive(true);
