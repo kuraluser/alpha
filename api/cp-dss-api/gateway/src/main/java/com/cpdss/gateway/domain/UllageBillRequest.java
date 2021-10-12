@@ -13,5 +13,6 @@ public class UllageBillRequest {
   List<UllageUpdateDetails> ullageUpdList;
   List<BallastDetail> ballastUpdateList;
   List<RobDetail> robUpdateList;
+  List<CommingleDetail> commingleUpdateList;
   String isValidate;
 }

@@ -75,6 +75,9 @@ public class LoadingPlanService {
 
   @Autowired LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
 
+  @Autowired
+  PortLoadingPlanCommingleTempDetailsRepository portLoadingPlanCommingleTempDetailsRepository;
+
   @Autowired BillOfLandingRepository billOfLandingRepository;
 
   @Autowired PortLoadingPlanStowageTempDetailsRepository loadingPlanStowageDetailsTempRepository;
@@ -585,6 +588,8 @@ public class LoadingPlanService {
                       new BigDecimal(ullageInsert.getQuantity()),
                       new BigDecimal(ullageInsert.getSounding()),
                       new BigDecimal(ullageInsert.getQuantity()),
+                      new BigDecimal(ullageInsert.getFillingPercentage()),
+                      new BigDecimal(ullageInsert.getCorrectionFactor()),
                       Long.valueOf(ullageInsert.getTankId()),
                       Long.valueOf(ullageInsert.getLoadingInformationId()),
                       Long.valueOf(ullageInsert.getArrivalDepartutre()));
@@ -651,6 +656,9 @@ public class LoadingPlanService {
                           new BigDecimal(ullageInsert.getQuantity()),
                           new BigDecimal(ullageInsert.getApi()),
                           new BigDecimal(ullageInsert.getTemperature()),
+                          new BigDecimal(ullageInsert.getCorrectedUllage()),
+                          new BigDecimal(ullageInsert.getFillingPercentage()),
+                          new BigDecimal(ullageInsert.getCorrectionFactor()),
                           Long.valueOf(ullageInsert.getTankId()),
                           Long.valueOf(ullageInsert.getLoadingInformationId()),
                           Long.valueOf(ullageInsert.getArrivalDepartutre()));
@@ -741,6 +749,51 @@ public class LoadingPlanService {
                           ? null
                           : new BigDecimal(ullageInsert.getDensity()));
                   loadingPlanRobDetailsRepository.save(robDet);
+                }
+              });
+      Integer tempCommingleCount =
+          portLoadingPlanCommingleTempDetailsRepository
+              .findByLoadingInformationAndConditionTypeAndIsActive(
+                  request.getUpdateUllage(0).getLoadingInformationId(),
+                  request.getUpdateUllage(0).getArrivalDepartutre(),
+                  true)
+              .size();
+
+      request
+          .getCommingleUpdateList()
+          .forEach(
+              ullageInsert -> {
+                if ((ullageInsert.getIsUpdate() && tempCommingleCount > 0)
+                    || tempCommingleCount > 0) {
+                  portLoadingPlanCommingleTempDetailsRepository.updateLoadingPlanCommingleDetails(
+                      ullageInsert.getApi(),
+                      ullageInsert.getFillingPercentage(),
+                      ullageInsert.getQuantityMT(),
+                      ullageInsert.getQuantityM3(),
+                      ullageInsert.getTemperature(),
+                      ullageInsert.getUllage(),
+                      ullageInsert.getTankId(),
+                      ullageInsert.getLoadingInformationId(),
+                      ullageInsert.getArrivalDeparture());
+                } else {
+                  PortLoadingPlanCommingleTempDetails tempData =
+                      new PortLoadingPlanCommingleTempDetails();
+                  tempData.setLoadingInformation(ullageInsert.getLoadingInformationId());
+                  tempData.setTankId(ullageInsert.getTankId());
+                  tempData.setTemperature(ullageInsert.getTemperature());
+                  tempData.setQuantity(ullageInsert.getQuantityMT());
+                  tempData.setFillingRatio(ullageInsert.getFillingPercentage());
+                  tempData.setApi(ullageInsert.getApi());
+                  tempData.setCargoNomination1XId(ullageInsert.getCargoNomination1Id());
+                  tempData.setCargoNomination2XId(ullageInsert.getCargoNomination2Id());
+                  tempData.setCargo1XId(ullageInsert.getCargo1Id());
+                  tempData.setCargo2XId(ullageInsert.getCargo2Id());
+                  tempData.setValueType(ullageInsert.getActualPlanned());
+                  tempData.setConditionType(ullageInsert.getArrivalDeparture());
+                  tempData.setIsActive(true);
+                  tempData.setUllage(ullageInsert.getUllage());
+                  tempData.setGrade(ullageInsert.getAbbreviation());
+                  portLoadingPlanCommingleTempDetailsRepository.save(tempData);
                 }
               });
       if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
