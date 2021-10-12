@@ -1431,7 +1431,8 @@ public class LoadableStudyServiceShore {
       log.info("Stowage Edit update LS --- id : " + loadableStudy.getId());
       loadableStudyEntity =
           saveOrUpdateLoadableStudyInShore(loadableStudy, voyage, loadableStudyEntityOpt.get());
-      updateCommunicationStatus(messageId, loadableStudyEntity);
+      updateCommunicationStatus(
+          messageId, loadableStudyEntity, loadabalePatternValidateRequest.getLoadablePatternId());
       saveOrUpdateLoadableStudyDataInShore(loadableStudyEntity, loadableStudy, modelMapper);
       // saveLoadablePlanStowageTempDetailsInShore(loadabalePatternValidateRequest);
       savePatternDetailsInShoreSide(loadabalePatternValidateRequest, loadableStudyEntity);
@@ -1440,7 +1441,8 @@ public class LoadableStudyServiceShore {
       LoadableStudy entity = new LoadableStudy();
       entity.setId(loadableStudy.getId());
       loadableStudyEntity = saveOrUpdateLoadableStudyInShore(loadableStudy, voyage, entity);
-      updateCommunicationStatus(messageId, loadableStudyEntity);
+      updateCommunicationStatus(
+          messageId, loadableStudyEntity, loadabalePatternValidateRequest.getLoadablePatternId());
       saveOrUpdateLoadableStudyDataInShore(loadableStudyEntity, loadableStudy, modelMapper);
       // saveLoadablePlanStowageTempDetailsInShore(loadabalePatternValidateRequest);
       savePatternDetailsInShoreSide(loadabalePatternValidateRequest, loadableStudyEntity);
@@ -1628,12 +1630,13 @@ public class LoadableStudyServiceShore {
     return entity;
   }
 
-  private void updateCommunicationStatus(String messageId, LoadableStudy loadableStudyEntity) {
+  private void updateCommunicationStatus(
+      String messageId, LoadableStudy loadableStudyEntity, Long loadablePatternId) {
     LoadableStudyCommunicationStatus lsCommunicationStatus = new LoadableStudyCommunicationStatus();
     lsCommunicationStatus.setMessageUUID(messageId);
     lsCommunicationStatus.setCommunicationStatus(
         CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId());
-    lsCommunicationStatus.setReferenceId(loadableStudyEntity.getId());
+    lsCommunicationStatus.setReferenceId(loadablePatternId);
     lsCommunicationStatus.setMessageType(MessageTypes.VALIDATEPLAN.getMessageType());
     lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
     this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);

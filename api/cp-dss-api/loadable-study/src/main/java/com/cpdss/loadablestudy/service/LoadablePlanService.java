@@ -2641,7 +2641,7 @@ public class LoadablePlanService {
             lsCommunicationStatus.setCommunicationStatus(
                 CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
           }
-          lsCommunicationStatus.setReferenceId(loadablePatternOpt.get().getLoadableStudy().getId());
+          lsCommunicationStatus.setReferenceId(loadablePatternOpt.get().getId());
           lsCommunicationStatus.setMessageType(MessageTypes.VALIDATEPLAN.getMessageType());
           lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
           LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
@@ -2652,7 +2652,11 @@ public class LoadablePlanService {
                   + "Pattern validation communicated to shore process id: "
                   + ewReply.getMessageId());
           updateProcessIdForLoadablePattern(
-              "", loadablePatternOpt.get(), PATTERN_COMMUNICATED_TO_SHORE);
+              "",
+              loadablePatternOpt.get(),
+              PATTERN_COMMUNICATED_TO_SHORE,
+              ewReply.getMessageId(),
+              true);
           replyBuilder
               .setProcesssId(ewReply.getMessageId())
               .setResponseStatus(
@@ -2669,7 +2673,9 @@ public class LoadablePlanService {
         updateProcessIdForLoadablePattern(
             algoResponse.getProcessId(),
             loadablePatternOpt.get(),
-            LOADABLE_PATTERN_VALIDATION_STARTED_ID);
+            LOADABLE_PATTERN_VALIDATION_STARTED_ID,
+            "",
+            false);
         log.info("------- Algo Response  : " + algoResponse.toString());
         replyBuilder
             .setProcesssId(algoResponse.getProcessId())
@@ -2946,7 +2952,11 @@ public class LoadablePlanService {
    * @param loadablePatternProcessingStartedId void
    */
   public void updateProcessIdForLoadablePattern(
-      String processId, LoadablePattern loadablePattern, Long loadablePatternProcessingStartedId) {
+      String processId,
+      LoadablePattern loadablePattern,
+      Long loadablePatternProcessingStartedId,
+      String messageId,
+      Boolean generateFromShore) {
     LoadablePatternAlgoStatus status = new LoadablePatternAlgoStatus();
     status.setLoadablePattern(loadablePattern);
     status.setIsActive(true);
@@ -2954,6 +2964,8 @@ public class LoadablePlanService {
         loadableStudyStatusRepository.getOne(loadablePatternProcessingStartedId));
     status.setProcessId(processId);
     status.setVesselxid(loadablePattern.getLoadableStudy().getVesselXId());
+    status.setMessageId(messageId);
+    status.setGenerateFromShore(generateFromShore);
     loadablePatternAlgoStatusRepository.save(status);
   }
 

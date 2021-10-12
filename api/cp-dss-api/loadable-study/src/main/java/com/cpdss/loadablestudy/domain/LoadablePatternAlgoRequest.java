@@ -18,4 +18,5 @@ public class LoadablePatternAlgoRequest {
   private List<AlgoErrors> algoError;
   private Long loadablePatternId;
   private Integer feedBackLoopCount;
+  private String messageId;
 }
