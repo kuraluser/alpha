@@ -9,6 +9,7 @@ public class ToppingOffSequence {
 
   private Long id;
   private Long loadingInfoId;
+  private Long dischargingInfoId;
   private Integer orderNumber;
   private Long tankId;
   private Long cargoId;
