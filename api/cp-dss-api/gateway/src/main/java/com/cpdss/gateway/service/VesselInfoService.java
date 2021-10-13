@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -370,6 +371,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
    * @param correlationId
    * @return VesselDetailsResponse
    */
+  @Cacheable(value = "vesselDetails", key = "{#vesselId, #enableValveSeq}")
   public VesselDetailsResponse getVesselsDetails(
       Long vesselId, String correlationId, boolean enableValveSeq) throws GenericServiceException {
     VesselDetailsResponse vesselDetailsResponse = new VesselDetailsResponse();
@@ -466,7 +468,6 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
                 bottomLine.setComponentTypeName(type.get().getTypeName());
               }
             });
-
     return vesselDetailsResponse;
   }
 

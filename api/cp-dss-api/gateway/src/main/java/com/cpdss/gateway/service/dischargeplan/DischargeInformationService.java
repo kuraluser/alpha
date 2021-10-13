@@ -8,6 +8,7 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -24,6 +25,8 @@ import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
 import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInformationResponse;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
@@ -34,6 +37,7 @@ import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
 import com.cpdss.gateway.domain.loadingplan.LoadingStages;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
+import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
@@ -67,6 +71,7 @@ public class DischargeInformationService {
   @Autowired LoadingPlanService loadingPlanService;
 
   @Autowired VesselInfoService vesselInfoService;
+  @Autowired LoadableStudyService loadableStudyService;
 
   @GrpcClient("dischargeInformationService")
   private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
@@ -102,12 +107,18 @@ public class DischargeInformationService {
         this.dischargeInformationGrpcService.getDischargeInfoRpc(vesselId, voyageId, portRoId);
 
     DischargeInformation dischargeInformation = new DischargeInformation();
+
+    // Common Fields
     if (activeVoyage.getActiveDs() != null) {
       dischargeInformation.setDischargeInfoId(disRpcReplay.getDischargeInfoId());
       dischargeInformation.setSynopticTableId(disRpcReplay.getSynopticTableId());
       dischargeInformation.setDischargeStudyId(activeVoyage.getActiveDs().getId());
       dischargeInformation.setDischargeStudyName(activeVoyage.getActiveDs().getName());
     }
+    dischargeInformation.setDischargeSlopTanksFirst(disRpcReplay.getDischargeSlopTanksFirst());
+    dischargeInformation.setDischargeCommingledCargoSeparately(
+        disRpcReplay.getDischargeCommingledCargoSeparately());
+    dischargeInformation.setIsDischargeInfoComplete(disRpcReplay.getIsDischargeInfoComplete());
 
     // RPC call to vessel info, Get Rules (default value for Discharge Info)
     RuleResponse ruleResponse =
@@ -156,6 +167,10 @@ public class DischargeInformationService {
     CowPlan cowPlan =
         this.infoBuilderService.buildDischargeCowPlan(disRpcReplay.getCowPlan(), extract);
 
+    // Post discharge rate
+    this.infoBuilderService.buildPostDischargeRates(
+        disRpcReplay.getPostDischargeStageTime(), extract, dischargeInformation);
+
     // Call 1 to DS for cargo details
     CargoVesselTankDetails vesselTankDetails =
         this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
@@ -177,12 +192,6 @@ public class DischargeInformationService {
             portRotation.get().getId(),
             portRotation.get().getPortId()));
 
-    vesselTankDetails.setDischargeSlopTanksFirst(disRpcReplay.getDischargeSlopTanksFirst());
-    vesselTankDetails.setDischargeCommingledCargoSeparately(
-        disRpcReplay.getDischargeCommingledCargoSeparately());
-
-    dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
-
     dischargeInformation.setDischargeDetails(dischargeDetails);
     dischargeInformation.setDischargeRates(dischargeRates);
     dischargeInformation.setBerthDetails(new LoadingBerthDetails(availableBerths, selectedBerths));
@@ -191,6 +200,8 @@ public class DischargeInformationService {
     dischargeInformation.setDischargeStages(dischargeStages);
     dischargeInformation.setDischargeSequences(dischargeSequences);
     dischargeInformation.setCowPlan(cowPlan);
+
+    dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
     return dischargeInformation;
   }
 
@@ -418,5 +429,51 @@ public class DischargeInformationService {
       throws GenericServiceException {
 
     return loadingPlanService.getLoadableStudyShoreTwo(correlationId, request, true);
+  }
+
+  public DischargingInformationResponse saveDischargingInformation(
+      DischargingInformationRequest request, String correlationId) throws GenericServiceException {
+    try {
+      log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
+      DischargingInfoSaveResponse response = infoBuilderService.saveDataAsync(request);
+      if (request.getDischargingDetails() != null) {
+        // Updating synoptic table (time)
+        log.info(
+            "Saving Loading info Times details at Synoptic Table - id {}",
+            request.getSynopticalTableId());
+        this.loadableStudyService.saveLoadingInfoToSynopticalTable(
+            request.getSynopticalTableId(),
+            request.getDischargingDetails().getTimeOfSunrise(),
+            request.getDischargingDetails().getTimeOfSunset());
+      }
+      if (response == null) {
+        throw new GenericServiceException(
+            "Failed to save Loading Information",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      return buildDischargingInformationResponse(response, correlationId);
+    } catch (Exception e) {
+      log.error("Failed to save LoadingInformation {}", request.getDischargingInfoId());
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "Failed to save Loading Information",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  DischargingInformationResponse buildDischargingInformationResponse(
+      DischargingInfoSaveResponse response2, String correlationId) {
+    DischargingInformationResponse response = new DischargingInformationResponse();
+    CommonSuccessResponse successResponse =
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId);
+    response.setResponseStatus(successResponse);
+    response.setDischargingInfoId(response2.getDischargingInfoId());
+    response.setPortRotationId(response2.getPortRotationId());
+    response.setSynopticalTableId(response2.getSynopticalTableId());
+    response.setVesseld(response2.getVesselId());
+    response.setVoyageId(response2.getVoyageId());
+    return response;
   }
 }

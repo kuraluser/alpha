@@ -642,6 +642,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     if (selectedTab === TANKTYPE.BUNKER) {
       this.checkBunkerTankError();
     }
+    if(selectedTab === TANKTYPE.CARGO) {
+      this.validateBlFigTable();
+    }
   }
 
 
@@ -1280,6 +1283,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           item.quantity.value = result.quantityMt;
           item.sounding.value = event.data.sounding.value;
           item.percentageFilled = result.fillingRatio;
+          item.correctedUllage =  result.correctedUllage;
         }
       });
       const formControl = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get('quantity');
@@ -1526,6 +1530,17 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       });
     });
 
+    const cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+    data.ullageUpdList?.map(item => {
+      cargoTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            item.fillingPercentage = Number(tank?.commodity?.percentageFilled);
+          }
+        });
+      });
+    });
+
     this.ballastQuantities.map(item => {
       data.ballastUpdateList.push({
         tankId: item.tankId?.toString(),
@@ -1549,6 +1564,29 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
       });
     });
+    data.ballastUpdateList?.map(item => {
+      this.rearBallastTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            item.filling_percentage = tank.percentageFilled;
+          }
+        });
+      });
+      this.frontBallastTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            item.filling_percentage = tank.percentageFilled;
+          }
+        });
+      });
+      this.centerBallastTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            item.filling_percentage = tank.percentageFilled;
+          }
+        });
+      });
+    });
 
     this.bunkerTanksList.map(item => {
       data.robUpdateList.push({
@@ -1568,6 +1606,23 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         correctionFactor: '',
         fillingRatio: '',
         ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
+      });
+    });
+
+    data.robUpdateList?.map(item => {
+      this.bunkerTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            item.fillingRatio = this.getRobFillingRatio(tank.commodity.quantity, tank)
+          }
+        });
+      });
+      this.rearBunkerTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            item.fillingRatio = this.getRobFillingRatio(tank.commodity.quantity, tank)
+          }
+        });
       });
     });
 

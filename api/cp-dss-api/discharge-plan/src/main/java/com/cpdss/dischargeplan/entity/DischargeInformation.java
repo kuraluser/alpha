@@ -3,8 +3,8 @@ package com.cpdss.dischargeplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalTime;
 import java.util.Set;
 import javax.persistence.*;
 import lombok.Getter;
@@ -50,7 +50,7 @@ public class DischargeInformation extends EntityDoc {
   private BigDecimal freshOilWashing;
 
   @Column(name = "initial_discharging_rate")
-  private Long initialDischargingRate;
+  private BigDecimal initialDischargingRate;
 
   @Column(name = "initial_trim")
   private BigDecimal initialTrim;
@@ -58,8 +58,8 @@ public class DischargeInformation extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
-  @Column(name = "is_loading_information_complete")
-  private Boolean isLoadingInformationComplete = false;
+  @Column(name = "is_discharging_information_complete")
+  private Boolean isDischargeInformationComplete = false;
 
   @Column(name = "is_track_grade_switching")
   private Boolean isTrackGradeSwitching = true;
@@ -95,7 +95,7 @@ public class DischargeInformation extends EntityDoc {
   private BigDecimal reducedDischargingRate;
 
   @Column(name = "start_time")
-  private Time startTime;
+  private LocalTime startTime;
 
   @Column(name = "sunrise_time")
   private Timestamp sunriseTime;
@@ -111,6 +111,12 @@ public class DischargeInformation extends EntityDoc {
 
   @Column(name = "time_for_slop_discharging")
   private BigDecimal timeForSlopDischarging;
+
+  @Column(name = "discharge_slop_tank_first")
+  private Boolean dischargeSlopTankFirst = false; // default unchecked
+
+  @Column(name = "discharge_comingle_cargo_seperately")
+  private Boolean dischargeCommingleCargoSeparately = false; // default unchecked
 
   // bi-directional many-to-one association to DischargingInformationStatus
   @ManyToOne
@@ -135,6 +141,14 @@ public class DischargeInformation extends EntityDoc {
   @OneToMany(mappedBy = "dischargingInformation", fetch = FetchType.EAGER)
   private Set<DischargingMachineryInUse> dischargingMachineryInUses;
 
+  @Column(name = "min_deballast_rate")
+  private BigDecimal minDeBallastRate;
+
+  @Column(name = "max_deballast_rate")
+  private BigDecimal maxDeBallastRate;
+
+  @Column(name = "shore_discharging_rate")
+  private BigDecimal shoreDischargingRate;
   /*   // bi-directional many-to-one association to DischargingBerthDetail
   @OneToMany(mappedBy = "dischargingInformation", cascade = CascadeType.ALL)
   private List<DischargingBerthDetail> dischargingBerthDetails;

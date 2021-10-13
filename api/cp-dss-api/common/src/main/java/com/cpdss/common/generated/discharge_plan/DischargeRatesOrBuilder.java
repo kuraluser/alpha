@@ -64,4 +64,108 @@ public interface DischargeRatesOrBuilder
    * @return The id.
    */
   long getId();
+
+  /**
+   * <code>string reducedDischargingRate = 6;</code>
+   *
+   * @return The reducedDischargingRate.
+   */
+  java.lang.String getReducedDischargingRate();
+  /**
+   * <code>string reducedDischargingRate = 6;</code>
+   *
+   * @return The bytes for reducedDischargingRate.
+   */
+  com.google.protobuf.ByteString getReducedDischargingRateBytes();
+
+  /**
+   * <code>string minDeBallastingRate = 7;</code>
+   *
+   * @return The minDeBallastingRate.
+   */
+  java.lang.String getMinDeBallastingRate();
+  /**
+   * <code>string minDeBallastingRate = 7;</code>
+   *
+   * @return The bytes for minDeBallastingRate.
+   */
+  com.google.protobuf.ByteString getMinDeBallastingRateBytes();
+
+  /**
+   * <code>string maxDeBallastingRate = 8;</code>
+   *
+   * @return The maxDeBallastingRate.
+   */
+  java.lang.String getMaxDeBallastingRate();
+  /**
+   * <code>string maxDeBallastingRate = 8;</code>
+   *
+   * @return The bytes for maxDeBallastingRate.
+   */
+  com.google.protobuf.ByteString getMaxDeBallastingRateBytes();
+
+  /**
+   * <code>string noticeTimeRateReduction = 9;</code>
+   *
+   * @return The noticeTimeRateReduction.
+   */
+  java.lang.String getNoticeTimeRateReduction();
+  /**
+   * <code>string noticeTimeRateReduction = 9;</code>
+   *
+   * @return The bytes for noticeTimeRateReduction.
+   */
+  com.google.protobuf.ByteString getNoticeTimeRateReductionBytes();
+
+  /**
+   * <code>string noticeTimeStopDischarging = 10;</code>
+   *
+   * @return The noticeTimeStopDischarging.
+   */
+  java.lang.String getNoticeTimeStopDischarging();
+  /**
+   * <code>string noticeTimeStopDischarging = 10;</code>
+   *
+   * @return The bytes for noticeTimeStopDischarging.
+   */
+  com.google.protobuf.ByteString getNoticeTimeStopDischargingBytes();
+
+  /**
+   * <code>string lineContentRemaining = 11;</code>
+   *
+   * @return The lineContentRemaining.
+   */
+  java.lang.String getLineContentRemaining();
+  /**
+   * <code>string lineContentRemaining = 11;</code>
+   *
+   * @return The bytes for lineContentRemaining.
+   */
+  com.google.protobuf.ByteString getLineContentRemainingBytes();
+
+  /**
+   * <code>string minDischargingRate = 12;</code>
+   *
+   * @return The minDischargingRate.
+   */
+  java.lang.String getMinDischargingRate();
+  /**
+   * <code>string minDischargingRate = 12;</code>
+   *
+   * @return The bytes for minDischargingRate.
+   */
+  com.google.protobuf.ByteString getMinDischargingRateBytes();
+
+  /**
+   * <code>string shoreDischargingRate = 13;</code>
+   *
+   * @return The shoreDischargingRate.
+   */
+  java.lang.String getShoreDischargingRate();
+  /**
+   * <code>string shoreDischargingRate = 13;</code>
+   *
+   * @return The bytes for shoreDischargingRate.
+   */
+  com.google.protobuf.ByteString getShoreDischargingRateBytes();
 }
