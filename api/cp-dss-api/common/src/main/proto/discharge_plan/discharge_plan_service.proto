@@ -31,6 +31,10 @@ service DischargeInformationService {
 
   // Case 6, Stages and track status
   rpc SaveDischargingInfoStages(DischargeInformation) returns (DischargingInfoSaveResponse) {}
+  
+  // Case 7, Cow plan
+  rpc saveCowPlan(DischargeInformation) returns (DischargingInfoSaveResponse) {}
+  
 }
 
 service DischargePlanService{

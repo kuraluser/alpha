@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service;
 
+import static java.nio.file.StandardOpenOption.WRITE;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -27,8 +29,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import static java.nio.file.StandardOpenOption.WRITE;
 
 @Slf4j
 @Service
@@ -203,7 +203,7 @@ public class FileRepoService {
       String filePath = folderLocation + fileName + '.' + extension;
       Path path = Paths.get(this.rootFolder + filePath);
       Files.createFile(path);
-      Files.write(path, file.getBytes(),WRITE);
+      Files.write(path, file.getBytes(), WRITE);
 
       repo.setVoyageNumber(voyageNo);
       repo.setFileName(originalFileName);

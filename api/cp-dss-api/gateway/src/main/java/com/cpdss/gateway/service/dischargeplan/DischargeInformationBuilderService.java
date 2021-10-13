@@ -545,7 +545,6 @@ public class DischargeInformationBuilderService {
   private CowPlan buildDischargeCowDetails(
       com.cpdss.gateway.domain.dischargeplan.CowPlan cowPlan, Long dischargingId) {
     CowPlan.Builder builder = CowPlan.newBuilder();
-    // need null check, also confirm data will insert from DS
 
     builder.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(cowPlan.getCowOption()));
 
