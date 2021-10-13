@@ -37,11 +37,11 @@
         <div class="col text-right">
             <div class="">
 
-                    <button class="btn btn-main mr-10" id="generate_plan"
+                    <button class="btn btn-main mr-10" id="generate_plan" 
                     [disabled]="selectedDischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED || !confirmPlanPermission || planConfirmed || VOYAGE_STATUS.ACTIVE !== selectedVoyage?.statusId"
                     [ngClass]="{'confirmed': selectedDischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED}"
-                    *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE"
-                    (click)="onConfirmPlanClick()">
+                    *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE && isPlanGenerated"
+                    (click)="confirmPlan()">
                     <span class="pi pi-check check-rounded" *ngIf="loadableStudyStatus"></span>
                     {{ selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED ? ('DISCHARGE_PLAN_CONFIRMED_PLAN_BUTTON_LABEL' |translate) :
                     ('DISCHARGE_STUDY_VIEW_CONFIRM_PLAN' |translate)}}

@@ -26,7 +26,7 @@ public class DischargeInformation {
   private String dischargeStudyName;
   private Long dischargeStudyId;
   private Long synopticTableId;
-  private Boolean isDischargingInfoComplete;
+  private Boolean isDischargeInfoComplete = false; // default unchecked
 
   // reusing common class from discharging
   private LoadingDetails dischargeDetails;
@@ -51,4 +51,11 @@ public class DischargeInformation {
   private Boolean isDischargeInstructionsComplete = false;
   private Boolean isDischargeSequenceGenerated = false;
   private Boolean isDischargePlanGenerated = false;
+
+  // For Discharge Information
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private Boolean dischargeSlopTanksFirst = false; // default unchecked;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private Boolean dischargeCommingledCargoSeparately = false; // default unchecked
 }

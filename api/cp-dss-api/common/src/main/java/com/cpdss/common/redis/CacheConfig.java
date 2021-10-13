@@ -1,7 +1,7 @@
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.common.redis;
 
 import java.time.Duration;
-
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,13 +14,13 @@ import org.springframework.data.redis.serializer.RedisSerializationContext.Seria
 @Configuration
 @DependsOn("redisTemplate")
 public class CacheConfig {
-	
-	@Bean
-	public RedisCacheConfiguration cacheConfiguration() {
-	    return RedisCacheConfiguration.defaultCacheConfig()
-	      .entryTtl(Duration.ofMinutes(-1))
-	      .disableCachingNullValues()
-	      .serializeValuesWith(SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
-	}
 
+  @Bean
+  public RedisCacheConfiguration cacheConfiguration() {
+    return RedisCacheConfiguration.defaultCacheConfig()
+        .entryTtl(Duration.ofMinutes(-1))
+        .disableCachingNullValues()
+        .serializeValuesWith(
+            SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+  }
 }

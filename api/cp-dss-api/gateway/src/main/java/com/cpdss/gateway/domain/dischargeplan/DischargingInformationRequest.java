@@ -34,5 +34,5 @@ public class DischargingInformationRequest {
 
   // re using the loading module
   private LoadingStagesRequest dischargingStages;
-  private Boolean isDischargingInfoComplete; // validation logic at Front-end
+  private Boolean isDischargeInfoComplete; // validation logic at Front-end
 }

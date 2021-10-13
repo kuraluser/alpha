@@ -295,4 +295,11 @@ public interface DischargeInformationOrBuilder
    * @return The dischargeCommingledCargoSeparately.
    */
   boolean getDischargeCommingledCargoSeparately();
+
+  /**
+   * <code>bool isDischargeInfoComplete = 27;</code>
+   *
+   * @return The isDischargeInfoComplete.
+   */
+  boolean getIsDischargeInfoComplete();
 }

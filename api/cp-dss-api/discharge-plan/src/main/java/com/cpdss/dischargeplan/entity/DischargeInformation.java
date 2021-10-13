@@ -59,7 +59,7 @@ public class DischargeInformation extends EntityDoc {
   private Boolean isActive;
 
   @Column(name = "is_discharging_information_complete")
-  private Boolean isDischargingInfoComplete = false;
+  private Boolean isDischargeInformationComplete = false;
 
   @Column(name = "is_track_grade_switching")
   private Boolean isTrackGradeSwitching = true;
@@ -111,6 +111,12 @@ public class DischargeInformation extends EntityDoc {
 
   @Column(name = "time_for_slop_discharging")
   private BigDecimal timeForSlopDischarging;
+
+  @Column(name = "discharge_slop_tank_first")
+  private Boolean dischargeSlopTankFirst = false; // default unchecked
+
+  @Column(name = "discharge_comingle_cargo_seperately")
+  private Boolean dischargeCommingleCargoSeparately = false; // default unchecked
 
   // bi-directional many-to-one association to DischargingInformationStatus
   @ManyToOne

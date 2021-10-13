@@ -19,8 +19,6 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.UploadTideDetailResponse;
-import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
-import com.cpdss.gateway.domain.dischargeplan.DischargingInformationResponse;
 import com.cpdss.gateway.utility.RuleUtility;
 import com.google.protobuf.ByteString;
 import java.io.IOException;

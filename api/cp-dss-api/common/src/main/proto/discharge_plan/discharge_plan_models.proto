@@ -102,6 +102,7 @@ message DischargeInformation {
 	 // Cargo Section
   bool dischargeSlopTanksFirst = 25;
   bool dischargeCommingledCargoSeparately = 26;
+  bool isDischargeInfoComplete = 27;
 }
 message DischargingInfoSaveResponse {
   int64 dischargingInfoId = 1;
@@ -110,7 +111,6 @@ message DischargingInfoSaveResponse {
   int64 synopticalTableId = 4;
   int64 voyageId = 5;
   ResponseStatus responseStatus = 6;
- 
 }
 message DischargeDetails {
   int64 id = 1;

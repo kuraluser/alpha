@@ -172,6 +172,11 @@ public class DischargeInformationService {
     // Set Cow Details
     this.informationBuilderService.buildCowPlanMessageFromEntity(disEntity, builder);
 
+    // Set General Items
+    builder.setIsDischargeInfoComplete(disEntity.getIsDischargeInformationComplete());
+    builder.setDischargeSlopTanksFirst(disEntity.getDischargeSlopTankFirst());
+    builder.setDischargeCommingledCargoSeparately(disEntity.getDischargeCommingleCargoSeparately());
+
     builder.setResponseStatus(
         Common.ResponseStatus.newBuilder()
             .setHttpStatusCode(HttpStatus.OK.value())

@@ -6,12 +6,17 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
-import com.cpdss.common.generated.discharge_plan.*;
+import com.cpdss.common.generated.discharge_plan.CowPlan;
+import com.cpdss.common.generated.discharge_plan.CowTankDetails;
+import com.cpdss.common.generated.discharge_plan.DischargeBerths;
+import com.cpdss.common.generated.discharge_plan.DischargeDelay;
+import com.cpdss.common.generated.discharge_plan.DischargeDelays;
+import com.cpdss.common.generated.discharge_plan.DischargeDetails;
+import com.cpdss.common.generated.discharge_plan.DischargeInformation;
+import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse;
+import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingBerths;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRates;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets;
 import com.cpdss.gateway.common.GatewayConstants;
@@ -19,7 +24,16 @@ import com.cpdss.gateway.domain.dischargeplan.CargoForCowDetails;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
 import com.cpdss.gateway.domain.dischargeplan.DischargingDelays;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
-import com.cpdss.gateway.domain.loadingplan.*;
+import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
+import com.cpdss.gateway.domain.loadingplan.BerthDetails;
+import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
+import com.cpdss.gateway.domain.loadingplan.LoadingDelays;
+import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingMachinesInUse;
+import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
+import com.cpdss.gateway.domain.loadingplan.ReasonForDelay;
+import com.cpdss.gateway.domain.loadingplan.TrimAllowed;
+import com.cpdss.gateway.domain.loadingplan.VesselComponent;
 import com.cpdss.gateway.domain.vessel.PumpType;
 import com.cpdss.gateway.domain.vessel.VesselPump;
 import com.cpdss.gateway.service.VesselInfoService;
@@ -41,7 +55,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,6 +66,7 @@ public class DischargeInformationBuilderService {
   @Autowired VesselInfoService vesselInfoService;
 
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
+
   @GrpcClient("dischargeInformationService")
   DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub dischargeInfoServiceStub;
 
@@ -408,20 +422,22 @@ public class DischargeInformationBuilderService {
     return var1;
   }
 
-public DischargingInfoSaveResponse saveDataAsync(DischargingInformationRequest request) throws InterruptedException, ExecutionException {
+  public DischargingInfoSaveResponse saveDataAsync(DischargingInformationRequest request)
+      throws InterruptedException, ExecutionException {
 
     DischargeInformation.Builder builder = DischargeInformation.newBuilder();
     List<Callable<DischargingInfoSaveResponse>> callableTasks = new ArrayList<>();
     builder.setDischargeInfoId(request.getDischargingInfoId());
     builder.setSynopticTableId(request.getSynopticalTableId());
-    builder.setIsDischargingInfoComplete(request.getIsDischargingInfoComplete());
+    builder.setIsDischargingInfoComplete(request.getIsDischargeInfoComplete());
 
     // Discharging Info Case 1 - Details
     if (request.getDischargingDetails() != null) {
       Callable<DischargingInfoSaveResponse> t1 =
           () -> {
             builder.setDischargeDetails(
-            		buildDischargingDetails(request.getDischargingDetails(), request.getDischargingInfoId()));
+                buildDischargingDetails(
+                    request.getDischargingDetails(), request.getDischargingInfoId()));
             return dischargeInfoServiceStub.saveDischargingInformation(builder.build());
           };
       callableTasks.add(t1);
@@ -442,7 +458,8 @@ public DischargingInfoSaveResponse saveDataAsync(DischargingInformationRequest r
       Callable<DischargingInfoSaveResponse> t3 =
           () -> {
             builder.setDischargeRate(
-                buildDischargingRates(request.getDischargingRates(), request.getDischargingInfoId()));
+                buildDischargingRates(
+                    request.getDischargingRates(), request.getDischargingInfoId()));
             return dischargeInfoServiceStub.saveDischargingInfoRates(builder.build());
           };
       callableTasks.add(t3);
@@ -453,7 +470,8 @@ public DischargingInfoSaveResponse saveDataAsync(DischargingInformationRequest r
       Callable<DischargingInfoSaveResponse> t4 =
           () -> {
             builder.addAllBerthDetails(
-                buildDischargingBerths(request.getDischargingBerths(), request.getDischargingInfoId()));
+                buildDischargingBerths(
+                    request.getDischargingBerths(), request.getDischargingInfoId()));
             return dischargeInfoServiceStub.saveDischargingInfoBerths(builder.build());
           };
       callableTasks.add(t4);
@@ -463,9 +481,10 @@ public DischargingInfoSaveResponse saveDataAsync(DischargingInformationRequest r
     if (request.getDischargingDelays() != null) {
       Callable<DischargingInfoSaveResponse> t5 =
           () -> {
-        	  DischargeDelay.Builder dischargingDelayBuilder = DischargeDelay.newBuilder();
-        	  dischargingDelayBuilder.addAllDelays(
-                buildDischargingDelays(request.getDischargingDelays(), request.getDischargingInfoId()));
+            DischargeDelay.Builder dischargingDelayBuilder = DischargeDelay.newBuilder();
+            dischargingDelayBuilder.addAllDelays(
+                buildDischargingDelays(
+                    request.getDischargingDelays(), request.getDischargingInfoId()));
             builder.setDischargeDelay(dischargingDelayBuilder.build());
             return dischargeInfoServiceStub.saveDischargingInfoDelays(builder.build());
           };
@@ -486,8 +505,7 @@ public DischargingInfoSaveResponse saveDataAsync(DischargingInformationRequest r
 
     ExecutorService executorService =
         new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
-    List<Future<DischargingInfoSaveResponse>> futures =
-        executorService.invokeAll(callableTasks);
+    List<Future<DischargingInfoSaveResponse>> futures = executorService.invokeAll(callableTasks);
 
     List<Future<DischargingInfoSaveResponse>> data =
         futures.stream()
@@ -513,12 +531,12 @@ public DischargingInfoSaveResponse saveDataAsync(DischargingInformationRequest r
     return data.isEmpty() ? null : data.stream().findFirst().get().get();
   }
 
-private List<DischargeDelays> buildDischargingDelays(List<DischargingDelays> dischargingDelays,
-		Long dischargingInfoId) {
+  private List<DischargeDelays> buildDischargingDelays(
+      List<DischargingDelays> dischargingDelays, Long dischargingInfoId) {
     List<DischargeDelays> delayList = new ArrayList<>();
     dischargingDelays.forEach(
         delay -> {
-        	DischargeDelays.Builder builder = DischargeDelays.newBuilder();
+          DischargeDelays.Builder builder = DischargeDelays.newBuilder();
           Optional.ofNullable(delay.getCargoId()).ifPresent(builder::setCargoId);
           Optional.ofNullable(delay.getDuration())
               .ifPresent(duration -> builder.setDuration(String.valueOf(duration)));
@@ -535,11 +553,12 @@ private List<DischargeDelays> buildDischargingDelays(List<DischargingDelays> dis
     return delayList;
   }
 
-private List<DischargeBerths> buildDischargingBerths(List<BerthDetails> dischargingBerths, Long dischargingInfoId) {
+  private List<DischargeBerths> buildDischargingBerths(
+      List<BerthDetails> dischargingBerths, Long dischargingInfoId) {
     List<DischargeBerths> berthList = new ArrayList<>();
     dischargingBerths.forEach(
         berth -> {
-        	DischargeBerths.Builder builder = DischargeBerths.newBuilder();
+          DischargeBerths.Builder builder = DischargeBerths.newBuilder();
           Optional.ofNullable(berth.getAirDraftLimitation())
               .ifPresent(airDraft -> builder.setAirDraftLimitation(String.valueOf(airDraft)));
           Optional.ofNullable(berth.getHoseConnections())
@@ -570,9 +589,10 @@ private List<DischargeBerths> buildDischargingBerths(List<BerthDetails> discharg
     return berthList;
   }
 
-private com.cpdss.common.generated.discharge_plan.DischargeRates buildDischargingRates(DischargeRates dischargingRates,
-		Long dischargingInfoId) {
-	com.cpdss.common.generated.discharge_plan.DischargeRates.Builder builder = com.cpdss.common.generated.discharge_plan.DischargeRates.newBuilder();
+  private com.cpdss.common.generated.discharge_plan.DischargeRates buildDischargingRates(
+      DischargeRates dischargingRates, Long dischargingInfoId) {
+    com.cpdss.common.generated.discharge_plan.DischargeRates.Builder builder =
+        com.cpdss.common.generated.discharge_plan.DischargeRates.newBuilder();
     Optional.ofNullable(dischargingInfoId).ifPresent(builder::setId);
     Optional.ofNullable(dischargingRates.getLineContentRemaining())
         .ifPresent(lineContent -> builder.setLineContentRemaining(String.valueOf(lineContent)));
@@ -597,13 +617,15 @@ private com.cpdss.common.generated.discharge_plan.DischargeRates buildDischargin
     return builder.build();
   }
 
-private List<LoadingPlanModels.LoadingMachinesInUse> buildDischargingMachineries(
-		List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse> dischargingMachineries,
-		Long dischargingInfoId) {
+  private List<LoadingPlanModels.LoadingMachinesInUse> buildDischargingMachineries(
+      List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
+          dischargingMachineries,
+      Long dischargingInfoId) {
     List<LoadingPlanModels.LoadingMachinesInUse> machineries = new ArrayList<>();
     dischargingMachineries.forEach(
         machine -> {
-        	LoadingPlanModels.LoadingMachinesInUse.Builder builder = LoadingPlanModels.LoadingMachinesInUse.newBuilder();
+          LoadingPlanModels.LoadingMachinesInUse.Builder builder =
+              LoadingPlanModels.LoadingMachinesInUse.newBuilder();
           Optional.ofNullable(machine.getCapacity())
               .ifPresent(capacity -> builder.setCapacity(String.valueOf(capacity)));
           Optional.ofNullable(machine.getId()).ifPresent(builder::setId);
@@ -618,27 +640,29 @@ private List<LoadingPlanModels.LoadingMachinesInUse> buildDischargingMachineries
     return machineries;
   }
 
-public DischargeDetails buildDischargingDetails(
-	      com.cpdss.gateway.domain.loadingplan.LoadingDetails dischargingDetails, Long dischargingInfoId) {
-	DischargeDetails.Builder builder = DischargeDetails.newBuilder();
-	    Optional.ofNullable(dischargingInfoId).ifPresent(builder::setId);
-	    Optional.ofNullable(dischargingDetails.getStartTime()).ifPresent(builder::setStartTime);
-	    Optional.ofNullable(dischargingDetails.getTimeOfSunrise()).ifPresent(builder::setTimeOfSunrise);
-	    Optional.ofNullable(dischargingDetails.getTimeOfSunset()).ifPresent(builder::setTimeOfSunset);
-	    com.cpdss.common.generated.loading_plan.LoadingPlanModels.TrimAllowed.Builder trimBuilder = com.cpdss.common.generated.loading_plan.LoadingPlanModels.TrimAllowed.newBuilder();
-	    if (!Optional.ofNullable(dischargingDetails.getTrimAllowed()).isEmpty()) {
-	      Optional.ofNullable(dischargingDetails.getTrimAllowed().getFinalTrim())
-	          .ifPresent(finalTrim -> trimBuilder.setFinalTrim(String.valueOf(finalTrim)));
-	      Optional.ofNullable(dischargingDetails.getTrimAllowed().getInitialTrim())
-	          .ifPresent(initialTrim -> trimBuilder.setInitialTrim(String.valueOf(initialTrim)));
-	      Optional.ofNullable(dischargingDetails.getTrimAllowed().getMaximumTrim())
-	          .ifPresent(maxTrim -> trimBuilder.setMaximumTrim(String.valueOf(maxTrim)));
-	    }
-	    builder.setTrimAllowed(trimBuilder.build());
-	    return builder.build();
-	  }
+  public DischargeDetails buildDischargingDetails(
+      com.cpdss.gateway.domain.loadingplan.LoadingDetails dischargingDetails,
+      Long dischargingInfoId) {
+    DischargeDetails.Builder builder = DischargeDetails.newBuilder();
+    Optional.ofNullable(dischargingInfoId).ifPresent(builder::setId);
+    Optional.ofNullable(dischargingDetails.getStartTime()).ifPresent(builder::setStartTime);
+    Optional.ofNullable(dischargingDetails.getTimeOfSunrise()).ifPresent(builder::setTimeOfSunrise);
+    Optional.ofNullable(dischargingDetails.getTimeOfSunset()).ifPresent(builder::setTimeOfSunset);
+    com.cpdss.common.generated.loading_plan.LoadingPlanModels.TrimAllowed.Builder trimBuilder =
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.TrimAllowed.newBuilder();
+    if (!Optional.ofNullable(dischargingDetails.getTrimAllowed()).isEmpty()) {
+      Optional.ofNullable(dischargingDetails.getTrimAllowed().getFinalTrim())
+          .ifPresent(finalTrim -> trimBuilder.setFinalTrim(String.valueOf(finalTrim)));
+      Optional.ofNullable(dischargingDetails.getTrimAllowed().getInitialTrim())
+          .ifPresent(initialTrim -> trimBuilder.setInitialTrim(String.valueOf(initialTrim)));
+      Optional.ofNullable(dischargingDetails.getTrimAllowed().getMaximumTrim())
+          .ifPresent(maxTrim -> trimBuilder.setMaximumTrim(String.valueOf(maxTrim)));
+    }
+    builder.setTrimAllowed(trimBuilder.build());
+    return builder.build();
+  }
 
-public LoadingStages buildDischargingStage(DischargingInformationRequest request) {
+  public LoadingStages buildDischargingStage(DischargingInformationRequest request) {
     LoadingStages.Builder builder = LoadingStages.newBuilder();
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.Builder
         durationBuilder =
@@ -665,5 +689,43 @@ public LoadingStages buildDischargingStage(DischargingInformationRequest request
     builder.setDuration(durationBuilder.build());
     builder.setOffset(offsetBuilder.build());
     return builder.build();
+  }
+
+  public void buildPostDischargeRates(
+      PostDischargeStageTime var1Rpc,
+      AdminRuleValueExtract extract,
+      com.cpdss.gateway.domain.dischargeplan.DischargeInformation var2Entity) {
+
+    // All 4 fields need to get From Admin Rule
+    PostDischargeStage ds = new PostDischargeStage();
+    if (var1Rpc.getTimeForDryCheck().isEmpty()) {
+      var val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_TIME_FOR_DRY_CHECK);
+      ds.setDryCheckTime(new BigDecimal(val));
+    } else {
+      ds.setDryCheckTime(new BigDecimal(var1Rpc.getTimeForDryCheck()));
+    }
+
+    if (var1Rpc.getSlopDischarging().isEmpty()) {
+      var val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_SLOP_DISCHARGE);
+      ds.setSlopDischargingTime(new BigDecimal(val));
+    } else {
+      ds.setSlopDischargingTime(new BigDecimal(var1Rpc.getSlopDischarging()));
+    }
+
+    if (var1Rpc.getFinalStripping().isEmpty()) {
+      var val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_FINAL_STRIPPING);
+      ds.setFinalStrippingTime(new BigDecimal(val));
+    } else {
+      ds.setFinalStrippingTime(new BigDecimal(var1Rpc.getFinalStripping()));
+    }
+
+    if (var1Rpc.getFreshOilWashing().isEmpty()) {
+      var val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_FRESH_OIL_WASHING);
+      ds.setFreshOilWashingTime(new BigDecimal(val));
+    } else {
+      ds.setFreshOilWashingTime(new BigDecimal(var1Rpc.getFreshOilWashing()));
+    }
+
+    var2Entity.setPostDischargeStageTime(ds);
   }
 }

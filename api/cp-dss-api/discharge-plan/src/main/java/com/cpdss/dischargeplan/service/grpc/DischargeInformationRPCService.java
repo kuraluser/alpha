@@ -5,15 +5,6 @@ import static com.cpdss.dischargeplan.common.DischargePlanConstants.FAILED;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIME_FORMATTER;
 
-import java.math.BigDecimal;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
@@ -56,10 +47,16 @@ import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.cpdss.dischargeplan.service.DischargingBerthService;
 import com.cpdss.dischargeplan.service.DischargingDelayService;
 import com.cpdss.dischargeplan.service.DischargingMachineryInUseService;
-
 import io.grpc.stub.StreamObserver;
+import java.math.BigDecimal;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @GrpcService
@@ -587,7 +584,7 @@ public class DischargeInformationRPCService
       if (Optional.of(dischargeStage.getOffset().getId()).isPresent()
           && dischargeStage.getOffset().getId() != 0) {
         Optional<DischargingStagesMinAmount> stageOffsetOpt =
-        		minAmountRepository.findByIdAndIsActiveTrue(dischargeStage.getOffset().getId());
+            minAmountRepository.findByIdAndIsActiveTrue(dischargeStage.getOffset().getId());
         if (stageOffsetOpt.isPresent()) {
           dischargingInformation.setDischargingStagesMinAmount(stageOffsetOpt.get());
         } else {
