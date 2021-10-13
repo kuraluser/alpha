@@ -2057,6 +2057,7 @@
   "DISCHARGE_PLAN_CONFIRM_STATUS_ERROR": "Cannot confirm pattern of the selected discharge study",
   "DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY": "Total backloading cargo quantity should be less than loadable study",
   "RULES_SELECT_OPTION_PLACEHOLDER":"Select the value",
-  "FILE_UPLOADING_TIDE_DETAILS": "If a new file is uploaded the existing data will get updated."
+  "FILE_UPLOADING_TIDE_DETAILS": "If a new file is uploaded the existing data will get updated.",
+  "UPDATE_ULLAGE":"UPDATE ULLAGE"
 }
 
