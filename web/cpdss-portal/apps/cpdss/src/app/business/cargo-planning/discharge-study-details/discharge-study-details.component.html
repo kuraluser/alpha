@@ -78,7 +78,7 @@
                 translate}}</button>
 
             <button id="view_plan" class="btn btn-main"
-            [disabled]="!dischargeStudies?.length || !dischargeStudyViewPlanPermission?.view" (click)="dischargeStudyView()">{{'DISCHARGE_STUDY_VIEW_PLAN' | translate
+            [disabled]="!dischargeStudies?.length || !dischargeStudyViewPlanPermission?.view" (click)="dischargeStudyView()" *ngIf="isPlanGenerated">{{'DISCHARGE_STUDY_VIEW_PLAN' | translate
                 }}</button>
         </div>
     </div>

@@ -48,7 +48,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
 
   set selectedDischargeStudy(selectedDischargeStudy: IDischargeStudy) {
     this._selectedDischargeStudy = selectedDischargeStudy;
-    this.isPlanGenerated = (this._selectedDischargeStudy?.statusId === 3 || this._selectedDischargeStudy?.statusId === 2) ? true : false;
+    this.isPlanGenerated = (this._selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_GENERATED || this._selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED ) ? true : false;
     this.isPlanOpenOrNo = (this._selectedDischargeStudy?.statusId === 1 || this._selectedDischargeStudy?.statusId === 6) ? false : this.inProcessing();
     this.dischargeStudyId = selectedDischargeStudy ? selectedDischargeStudy?.id : this.dischargeStudies?.length ? this.dischargeStudies[0]?.id : 0;
   }
