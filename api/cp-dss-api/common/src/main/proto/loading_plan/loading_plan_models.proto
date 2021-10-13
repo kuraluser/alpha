@@ -465,6 +465,7 @@ message LoadingSequence {
   string cargoLoadingRate1 = 13;
   string cargoLoadingRate2 = 14;
   repeated PumpOperation ballastOperations = 15;
+  EductorOperation eductorOperation = 16;
 }
 
 message LoadingPlanPortWiseDetails {
@@ -538,6 +539,14 @@ message PumpOperation {
   string rate = 4;
   int32 startTime = 5;
   string quantityM3 = 6;
+}
+
+message EductorOperation {
+  int64 id = 1;
+  int32 endTime = 2;
+  string tanksUsed = 3;
+  string pumpsUsed = 4;
+  int32 startTime = 5;
 }
 
 message LoadingPlanSaveResponse {

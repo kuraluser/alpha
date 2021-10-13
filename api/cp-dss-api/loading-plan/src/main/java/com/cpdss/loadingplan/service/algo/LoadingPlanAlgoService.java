@@ -7,6 +7,7 @@ import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.EductorOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply.Builder;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
@@ -31,6 +32,7 @@ import com.cpdss.loadingplan.entity.BallastValve;
 import com.cpdss.loadingplan.entity.CargoLoadingRate;
 import com.cpdss.loadingplan.entity.CargoValve;
 import com.cpdss.loadingplan.entity.DeballastingRate;
+import com.cpdss.loadingplan.entity.EductionOperation;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.LoadingInformationAlgoStatus;
 import com.cpdss.loadingplan.entity.LoadingInformationStatus;
@@ -49,6 +51,7 @@ import com.cpdss.loadingplan.repository.BallastValveRepository;
 import com.cpdss.loadingplan.repository.CargoLoadingRateRepository;
 import com.cpdss.loadingplan.repository.CargoValveRepository;
 import com.cpdss.loadingplan.repository.DeballastingRateRepository;
+import com.cpdss.loadingplan.repository.EductionOperationRepository;
 import com.cpdss.loadingplan.repository.LoadingInformationAlgoStatusRepository;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.LoadingInformationStatusRepository;
@@ -127,6 +130,7 @@ public class LoadingPlanAlgoService {
 
   @Autowired LoadingPlanCommingleDetailsRepository loadingPlanCommingleDetailsRepository;
   @Autowired PortLoadingPlanCommingleDetailsRepository portLoadingPlanCommingleDetailsRepository;
+  @Autowired EductionOperationRepository eductionOperationRepository;
 
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
@@ -457,6 +461,7 @@ public class LoadingPlanAlgoService {
           cargoLoadingRateRepository.deleteByLoadingSequence(loadingSequence);
           deballastingRateRepository.deleteByLoadingSequence(loadingSequence);
           deleteLoadingPlanPortWiseDetailsByLoadingSequence(loadingSequence);
+          eductionOperationRepository.deleteByLoadingSequence(loadingSequence);
         });
   }
 
@@ -611,6 +616,25 @@ public class LoadingPlanAlgoService {
         savedLoadingSequence, sequence.getLoadingPlanPortWiseDetailsList());
     saveCargoLoadingRates(savedLoadingSequence, sequence.getLoadingRatesList());
     saveBallastPumps(savedLoadingSequence, sequence.getBallastOperationsList());
+    saveEductorOperations(savedLoadingSequence, sequence.getEductorOperation());
+  }
+
+  /**
+   * @param savedLoadingSequence
+   * @param eductorOperation
+   */
+  private void saveEductorOperations(
+      com.cpdss.loadingplan.entity.LoadingSequence loadingSequence,
+      EductorOperation eductorOperation) {
+    log.info("Saving Eductor Operation for Loading Sequence {}", loadingSequence.getId());
+    EductionOperation eductionOperation = new EductionOperation();
+    eductionOperation.setEductorsUsed(eductorOperation.getPumpsUsed());
+    eductionOperation.setEndTime(eductorOperation.getEndTime());
+    eductionOperation.setIsActive(true);
+    eductionOperation.setLoadingSequence(loadingSequence);
+    eductionOperation.setStartTime(eductorOperation.getStartTime());
+    eductionOperation.setTanksUsed(eductorOperation.getTanksUsed());
+    eductionOperationRepository.save(eductionOperation);
   }
 
   private void saveBallastPumps(
