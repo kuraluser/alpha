@@ -5,6 +5,15 @@ import static com.cpdss.dischargeplan.common.DischargePlanConstants.FAILED;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIME_FORMATTER;
 
+import java.math.BigDecimal;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
@@ -27,12 +36,12 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
+import com.cpdss.dischargeplan.entity.DischargingStagesDuration;
+import com.cpdss.dischargeplan.entity.DischargingStagesMinAmount;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStabilityParameters;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
-import com.cpdss.dischargeplan.entity.StageDuration;
-import com.cpdss.dischargeplan.entity.StageOffset;
 import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeStageDurationRepository;
 import com.cpdss.dischargeplan.repository.DischargeStageMinAmountRepository;
@@ -42,23 +51,15 @@ import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastDetailsRepos
 import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
-import com.cpdss.dischargeplan.repository.StageDurationRepository;
-import com.cpdss.dischargeplan.repository.StageOffsetRepository;
 import com.cpdss.dischargeplan.service.DischargeInformationBuilderService;
 import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.cpdss.dischargeplan.service.DischargingBerthService;
 import com.cpdss.dischargeplan.service.DischargingDelayService;
 import com.cpdss.dischargeplan.service.DischargingMachineryInUseService;
+
 import io.grpc.stub.StreamObserver;
-import java.math.BigDecimal;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 
 @Slf4j
 @GrpcService
@@ -79,8 +80,8 @@ public class DischargeInformationRPCService
   @Autowired DischargingBerthService dischargingBerthService;
   @Autowired DischargingDelayService dischargingDelayService;
   @Autowired DischargingMachineryInUseService dischargingMachineryInUseService;
-  @Autowired StageDurationRepository stageDurationRepository;
-  @Autowired StageOffsetRepository stageOffsetRepository;
+  @Autowired DischargeStageDurationRepository stageDurationRepository;
+  @Autowired DischargeStageMinAmountRepository minAmountRepository;
 
   @Override
   public void getDischargeInformation(
@@ -575,20 +576,20 @@ public class DischargeInformationRPCService
       dischargingInformation.setIsTrackGradeSwitching(dischargeStage.getTrackGradeSwitch());
       if (Optional.ofNullable(dischargeStage.getDuration().getId()).isPresent()
           && dischargeStage.getDuration().getId() != 0) {
-        Optional<StageDuration> stageDurationOpt =
+        Optional<DischargingStagesDuration> stageDurationOpt =
             stageDurationRepository.findByIdAndIsActiveTrue(dischargeStage.getDuration().getId());
         if (stageDurationOpt.isPresent()) {
-          dischargingInformation.setStageDuration(stageDurationOpt.get());
+          dischargingInformation.setDischargingStagesDuration(stageDurationOpt.get());
         } else {
           log.error("Duration not found id {}", dischargeStage.getDuration().getId());
         }
       }
       if (Optional.of(dischargeStage.getOffset().getId()).isPresent()
           && dischargeStage.getOffset().getId() != 0) {
-        Optional<StageOffset> stageOffsetOpt =
-            stageOffsetRepository.findByIdAndIsActiveTrue(dischargeStage.getOffset().getId());
+        Optional<DischargingStagesMinAmount> stageOffsetOpt =
+        		minAmountRepository.findByIdAndIsActiveTrue(dischargeStage.getOffset().getId());
         if (stageOffsetOpt.isPresent()) {
-          dischargingInformation.setStageOffset(stageOffsetOpt.get());
+          dischargingInformation.setDischargingStagesMinAmount(stageOffsetOpt.get());
         } else {
           log.info("Offset Not found Id {}", dischargeStage.getOffset().getId());
         }

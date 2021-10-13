@@ -58,8 +58,8 @@ public class DischargeInformation extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
-  @Column(name = "is_loading_information_complete")
-  private Boolean isLoadingInformationComplete = false;
+  @Column(name = "is_discharging_information_complete")
+  private Boolean isDischargingInfoComplete = false;
 
   @Column(name = "is_track_grade_switching")
   private Boolean isTrackGradeSwitching = true;
@@ -134,14 +134,6 @@ public class DischargeInformation extends EntityDoc {
   // bi-directional many-to-one association to DischargingMachineryInUse
   @OneToMany(mappedBy = "dischargingInformation", fetch = FetchType.EAGER)
   private Set<DischargingMachineryInUse> dischargingMachineryInUses;
-
-  @ManyToOne
-  @JoinColumn(name = "stages_min_amount_xid")
-  private StageOffset stageOffset;
-
-  @ManyToOne
-  @JoinColumn(name = "stages_duration_xid")
-  private StageDuration stageDuration;
 
   @Column(name = "min_deballast_rate")
   private BigDecimal minDeBallastRate;

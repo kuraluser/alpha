@@ -26,7 +26,7 @@ public class DischargeInformation {
   private String dischargeStudyName;
   private Long dischargeStudyId;
   private Long synopticTableId;
-  private Boolean isDischargeInfoComplete;
+  private Boolean isDischargingInfoComplete;
 
   // reusing common class from discharging
   private LoadingDetails dischargeDetails;

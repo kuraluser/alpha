@@ -8,10 +8,13 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.dischargeplan.CargoForCowDetails;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
 import com.cpdss.gateway.domain.dischargeplan.DischargingDelays;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.vessel.PumpType;
 import com.cpdss.gateway.domain.vessel.VesselPump;
@@ -24,8 +27,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +49,8 @@ public class DischargeInformationBuilderService {
   @Autowired VesselInfoService vesselInfoService;
 
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
+  @GrpcClient("dischargeInformationService")
+  DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub dischargeInfoServiceStub;
 
   public LoadingDetails buildDischargeDetailFromMessage(
       DischargeDetails var1, Long portId, Long portRId, AdminRuleValueExtract extract)
@@ -388,5 +402,110 @@ public class DischargeInformationBuilderService {
       e.printStackTrace();
     }
     return var1;
+  }
+
+public DischargingInfoSaveResponse saveDataAsync(DischargingInformationRequest request) {
+
+    DischargeInformation.Builder builder = DischargeInformation.newBuilder();
+    List<Callable<DischargingInfoSaveResponse>> callableTasks = new ArrayList<>();
+    builder.setDischargeInfoId(request.getDischargingInfoId());
+    builder.setSynopticTableId(request.getSynopticalTableId());
+    builder.setIsDischargingInfoComplete(request.getIsDischargingInfoComplete());
+
+    // Loading Info Case 1 - Details
+    if (request.getDischargingDetails() != null) {
+      Callable<DischargingInfoSaveResponse> t1 =
+          () -> {
+            builder.setLoadingDetail(
+                buildDischargingDetails(request.getDischargingDetails(), request.getDischargingInfoId()));
+            return dischargeInfoServiceStub.saveDischargingInformation(builder.build());
+          };
+      callableTasks.add(t1);
+    }
+
+    // Loading Info Case 2 - Stages
+    if (request.getDischargingStages() != null) {
+      Callable<DischargingInfoSaveResponse> t2 =
+          () -> {
+            builder.setLoadingStage(buildLoadingStage(request));
+            return dischargeInfoServiceStub.saveDischargingInfoStages(builder.build());
+          };
+      callableTasks.add(t2);
+    }
+
+    // Loading Info Case 3 - Rates
+    if (request.getDischargingRates() != null) {
+      Callable<DischargingInfoSaveResponse> t3 =
+          () -> {
+            builder.setLoadingRate(
+                buildLoadingRates(request.getDischargingRates(), request.getDischargingInfoId()));
+            return dischargeInfoServiceStub.saveDischargingInfoRates(builder.build());
+          };
+      callableTasks.add(t3);
+    }
+
+    // Loading Info Case 4 - Berths
+    if (request.getDischargingBerths() != null) {
+      Callable<DischargingInfoSaveResponse> t4 =
+          () -> {
+            builder.addAllLoadingBerths(
+                buildLoadingBerths(request.getDischargingBerths(), request.getDischargingInfoId()));
+            return dischargeInfoServiceStub.saveDischargingInfoBerths(builder.build());
+          };
+      callableTasks.add(t4);
+    }
+
+    // Loading Info Case 5 - Delays
+    if (request.getDischargingDelays() != null) {
+      Callable<DischargingInfoSaveResponse> t5 =
+          () -> {
+        	  DischargeDelay.Builder dischargingDelayBuilder = DischargeDelay.newBuilder();
+        	  dischargingDelayBuilder.addAllDelays(
+                buildLoadingDelays(request.getDischargingDelays(), request.getDischargingInfoId()));
+            builder.setDischargeDelay(dischargingDelayBuilder.build());
+            return dischargeInfoServiceStub.saveDischargingInfoDelays(builder.build());
+          };
+      callableTasks.add(t5);
+    }
+
+    // Loading Info Case 6 - Machines
+    if (request.getDischargingMachineries() != null) {
+      Callable<DischargingInfoSaveResponse> t6 =
+          () -> {
+            builder.addAllLoadingMachines(
+                buildLoadingMachineries(
+                    request.getDischargingMachineries(), request.getDischargingInfoId()));
+            return dischargeInfoServiceStub.saveDischargingInfoMachinery(builder.build());
+          };
+      callableTasks.add(t6);
+    }
+
+    ExecutorService executorService =
+        new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+    List<Future<DischargingInfoSaveResponse>> futures =
+        executorService.invokeAll(callableTasks);
+
+    List<Future<DischargingInfoSaveResponse>> data =
+        futures.stream()
+            .filter(
+                v -> {
+                  try {
+                    if (v.get().getDischargingInfoId() > 0) {
+                      return true;
+                    }
+                    log.error("Failed to save Thread {}", v.get());
+                  } catch (InterruptedException e) {
+                    e.printStackTrace();
+                  } catch (ExecutionException e) {
+                    e.printStackTrace();
+                  }
+                  return false;
+                })
+            .collect(Collectors.toList());
+    log.info(
+        "Save Loading info, Save Request Count - {}, Response Count {}",
+        callableTasks.size(),
+        data.size());
+    return data.isEmpty() ? null : data.stream().findFirst().get().get();
   }
 }

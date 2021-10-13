@@ -138,10 +138,4 @@ public class DischargeInformationGrpcService {
     }
     return statusReply.getData().toByteArray();
   }
-
-  public DischargingInformationResponse saveDischargingInformation(
-      DischargingInformationRequest request, String correlationId) throws GenericServiceException {
-
-    return null;
-  }
 }

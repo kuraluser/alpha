@@ -1132,7 +1132,7 @@ public class DischargePlanController {
       throws CommonRestException {
     try {
       log.info("Save Loading Info, api for vessel {}, voyage {}", vesselId, voyageId);
-      return this.dischargeInformationGrpcService.saveDischargingInformation(
+      return this.dischargeInformationService.saveDischargingInformation(
           request, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("Exception in Save Loading Information API");

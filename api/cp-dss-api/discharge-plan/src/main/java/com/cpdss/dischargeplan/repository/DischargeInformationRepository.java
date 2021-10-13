@@ -33,6 +33,6 @@ public interface DischargeInformationRepository
 
   @Transactional
   @Modifying
-  @Query("UPDATE DischargeInformation li SET li.isLoadingInfoComplete = ?2 WHERE id = ?1")
+  @Query("UPDATE DischargeInformation li SET li.isDischargingInfoComplete = ?2 WHERE id = ?1")
   void updateDischargeInformationCompleteStatus(Long id, boolean status);
 }
