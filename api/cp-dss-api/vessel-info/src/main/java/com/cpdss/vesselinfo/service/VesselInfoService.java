@@ -175,6 +175,12 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         Optional.ofNullable(entity.getHasLoadicator()).ifPresent(builder::setHasLoadicator);
         Optional.ofNullable(entity.getKeelToMastHeight())
             .ifPresent(height -> builder.setKeelToMastHeight(height.toString()));
+        Optional.ofNullable(entity.getMaxLoadRate())
+                .ifPresent(height -> builder.setMaxLoadRate(height.toString()));
+        Optional.ofNullable(entity.getMastRiser())
+                .ifPresent(height -> builder.setMastRiser(height.toString()));
+        Optional.ofNullable(entity.getHeightOfManifoldAboveDeck())
+                .ifPresent(height -> builder.setHeightOfManifoldAboveDeck(height.toString()));
         Set<VesselDraftCondition> draftConditions = entity.getVesselDraftConditionCollection();
 
         TreeMap<Long, TreeSet<BigDecimal>> map = new TreeMap<>();
@@ -1442,6 +1448,22 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
 
     Optional.ofNullable(vessel.getHasLoadicator())
         .ifPresent(hasLoadicator -> vesselDetailBuilder.setHasLoadicator(hasLoadicator));
+
+    Optional.ofNullable(vessel.getMaxLoadRate())
+            .ifPresent(
+                    value ->
+                            vesselDetailBuilder.setMaxLoadRate(String.valueOf(value)));
+
+    Optional.ofNullable(vessel.getMastRiser())
+            .ifPresent(
+                    value ->
+                            vesselDetailBuilder.setMastRiser(String.valueOf(value)));
+
+    Optional.ofNullable(vessel.getHeightOfManifoldAboveDeck())
+            .ifPresent(
+                    value ->
+                            vesselDetailBuilder.setHeightOfManifoldAboveDeck(String.valueOf(value)));
+
 
     return vesselDetailBuilder.build();
   }
