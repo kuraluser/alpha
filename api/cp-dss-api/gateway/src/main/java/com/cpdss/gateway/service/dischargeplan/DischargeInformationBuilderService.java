@@ -6,6 +6,7 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.discharge_plan.CargoForCow;
 import com.cpdss.common.generated.discharge_plan.CowPlan;
 import com.cpdss.common.generated.discharge_plan.CowTankDetails;
 import com.cpdss.common.generated.discharge_plan.DischargeBerths;
@@ -502,6 +503,16 @@ public class DischargeInformationBuilderService {
           };
       callableTasks.add(t6);
     }
+    // Discharging Info Case 6 - Machines
+    if (request.getCowPlan() != null) {
+      Callable<DischargingInfoSaveResponse> t6 =
+          () -> {
+            builder.setCowPlan(
+                buildDischargeCowDetails(request.getCowPlan(), request.getDischargingInfoId()));
+            return dischargeInfoServiceStub.saveDischargingInfoMachinery(builder.build());
+          };
+      callableTasks.add(t6);
+    }
 
     ExecutorService executorService =
         new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
@@ -529,6 +540,59 @@ public class DischargeInformationBuilderService {
         callableTasks.size(),
         data.size());
     return data.isEmpty() ? null : data.stream().findFirst().get().get();
+  }
+
+  private CowPlan buildDischargeCowDetails(
+      com.cpdss.gateway.domain.dischargeplan.CowPlan cowPlan, Long dischargingId) {
+    CowPlan.Builder builder = CowPlan.newBuilder();
+    // need null check, also confirm data will insert from DS
+
+    builder.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(cowPlan.getCowOption()));
+
+    if (!cowPlan.getAllCow().isEmpty()) {
+      CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
+      cowTankBuilder.setCowType(Common.COW_TYPE.ALL_COW);
+      cowTankBuilder.addAllTankIds(cowPlan.getAllCow());
+      builder.addCowTankDetails(cowTankBuilder);
+    }
+    if (!cowPlan.getBottomCow().isEmpty()) {
+      CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
+      cowTankBuilder.setCowType(Common.COW_TYPE.BOTTOM_COW);
+      cowTankBuilder.addAllTankIds(cowPlan.getBottomCow());
+      builder.addCowTankDetails(cowTankBuilder);
+    }
+    if (!cowPlan.getTopCow().isEmpty()) {
+      CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
+      cowTankBuilder.setCowType(Common.COW_TYPE.TOP_COW);
+      cowTankBuilder.addAllTankIds(cowPlan.getTopCow());
+      builder.addCowTankDetails(cowTankBuilder);
+    }
+    if (!cowPlan.getCargoCow().isEmpty()) {
+      CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
+      cowTankBuilder.setCowType(Common.COW_TYPE.CARGO);
+      cowPlan.getCargoCow().stream()
+          .forEach(
+              cargo -> {
+                CargoForCow.Builder cargoCow = CargoForCow.newBuilder();
+                cargoCow.setCargoId(cargo.getCargoId());
+                cargoCow.setCargoNominationId(cargo.getCargoNominationId());
+                cargoCow.setWashingCargoId(cargo.getWashingCargoId());
+                cargoCow.setWashingCargoNominationId(cargo.getWashingCargoNominationId());
+                cargoCow.addAllTankIds(cargo.getTankIds());
+                cowTankBuilder.addCargoForCow(cargoCow);
+              });
+      builder.addCowTankDetails(cowTankBuilder);
+    }
+    builder.setEstCowDuration(cowPlan.getCowDuration());
+    builder.setCowEndTime(cowPlan.getCowEnd());
+    builder.setCowTankPercent(cowPlan.getCowPercentage());
+    builder.setCowStartTime(cowPlan.getCowStart());
+    builder.setTrimCowMax(cowPlan.getCowTrimMax());
+    builder.setTrimCowMin(cowPlan.getCowTrimMin());
+    builder.setNeedFreshCrudeStorage(cowPlan.getNeedFreshCrudeStorage());
+    builder.setNeedFlushingOil(cowPlan.getNeedFlushingOil());
+    builder.setCowWithCargoEnable(cowPlan.getWashTanksWithDifferentCargo());
+    return builder.build();
   }
 
   private List<DischargeDelays> buildDischargingDelays(
@@ -594,26 +658,18 @@ public class DischargeInformationBuilderService {
     com.cpdss.common.generated.discharge_plan.DischargeRates.Builder builder =
         com.cpdss.common.generated.discharge_plan.DischargeRates.newBuilder();
     Optional.ofNullable(dischargingInfoId).ifPresent(builder::setId);
-    Optional.ofNullable(dischargingRates.getLineContentRemaining())
-        .ifPresent(lineContent -> builder.setLineContentRemaining(String.valueOf(lineContent)));
-    Optional.ofNullable(dischargingRates.getMaxDeBallastingRate())
-        .ifPresent(maxDeBallast -> builder.setMaxDeBallastingRate(String.valueOf(maxDeBallast)));
+
+    Optional.ofNullable(dischargingRates.getMaxBallastRate())
+        .ifPresent(maxDeBallast -> builder.setMaxBallastRate(String.valueOf(maxDeBallast)));
+
     Optional.ofNullable(dischargingRates.getMaxDischargingRate())
         .ifPresent(maxLoadingRate -> builder.setMaxDischargeRate(String.valueOf(maxLoadingRate)));
-    Optional.ofNullable(dischargingRates.getMinDeBallastingRate())
-        .ifPresent(minDeBallast -> builder.setMinDeBallastingRate(String.valueOf(minDeBallast)));
-    Optional.ofNullable(dischargingRates.getMinDischargingRate())
-        .ifPresent(minLoadingRate -> builder.setMinDischargingRate(String.valueOf(minLoadingRate)));
-    Optional.ofNullable(dischargingRates.getNoticeTimeForRateReduction())
-        .ifPresent(
-            noticeTimeRate -> builder.setNoticeTimeRateReduction(String.valueOf(noticeTimeRate)));
-    Optional.ofNullable(dischargingRates.getNoticeTimeForStopDischarging())
-        .ifPresent(
-            noticeTimeStop -> builder.setNoticeTimeStopDischarging(String.valueOf(noticeTimeStop)));
-    Optional.ofNullable(dischargingRates.getReducedDischargingRate())
-        .ifPresent(reducedRate -> builder.setReducedDischargingRate(String.valueOf(reducedRate)));
-    Optional.ofNullable(dischargingRates.getShoreDischargingRate())
-        .ifPresent(v -> builder.setShoreDischargingRate(v.toString()));
+
+    Optional.ofNullable(dischargingRates.getMinBallastRate())
+        .ifPresent(minDeBallast -> builder.setMinBallastRate(String.valueOf(minDeBallast)));
+
+    Optional.ofNullable(dischargingRates.getInitialDischargingRate())
+        .ifPresent(v -> builder.setInitialDischargeRate(v.toString()));
     return builder.build();
   }
 

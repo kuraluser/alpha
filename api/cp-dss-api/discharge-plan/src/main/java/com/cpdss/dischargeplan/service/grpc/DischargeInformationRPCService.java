@@ -56,7 +56,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 
 @Slf4j
 @GrpcService
@@ -417,39 +416,18 @@ public class DischargeInformationRPCService
         dischargeInformationService.getDischargeInformation(source.getId());
     if (var1 != null) {
       log.info("Save Loading Info, Set Loading Rates");
-      if (!source.getLineContentRemaining().isEmpty())
-        var1.setLineContentRemaining(new BigDecimal(source.getLineContentRemaining()));
-
-      if (!source.getMaxDeBallastingRate().isEmpty())
-        var1.setMaxDeBallastRate(new BigDecimal(source.getMaxDeBallastingRate()));
 
       if (!source.getMaxDischargeRate().isEmpty())
         var1.setMaxDischargingRate(new BigDecimal(source.getMaxDischargeRate()));
 
-      if (!source.getMinDeBallastingRate().isEmpty())
-        var1.setMinDeBallastRate(new BigDecimal(source.getMinDeBallastingRate()));
-
-      if (!source.getReducedDischargingRate().isEmpty())
-        var1.setReducedDischargingRate(new BigDecimal(source.getReducedDischargingRate()));
-
-      if (!source.getMinDischargingRate().isEmpty())
-        var1.setMinDischargingRate(new BigDecimal(source.getMinDischargingRate()));
-
       if (!source.getInitialDischargeRate().isEmpty())
         var1.setInitialDischargingRate(new BigDecimal(source.getInitialDischargeRate()));
 
-      if (!source.getNoticeTimeRateReduction().isEmpty())
-        var1.setNoticeTimeForRateReduction(Integer.valueOf(source.getNoticeTimeRateReduction()));
+      if (!source.getMaxBallastRate().isEmpty())
+        var1.setMaxBallastRate(new BigDecimal(source.getMaxBallastRate()));
 
-      if (!source.getNoticeTimeStopDischarging().isEmpty())
-        var1.setNoticeTimeForStopDischarging(
-            Integer.valueOf(source.getNoticeTimeStopDischarging()));
-
-      var1.setShoreDischargingRate(
-          StringUtils.isEmpty(source.getShoreDischargingRate())
-              ? null
-              : new BigDecimal(source.getShoreDischargingRate()));
-
+      if (!source.getMinBallastRate().isEmpty())
+        var1.setMinBallastRate(new BigDecimal(source.getMinBallastRate()));
       dischargeInformationService.save(var1);
     }
   }
