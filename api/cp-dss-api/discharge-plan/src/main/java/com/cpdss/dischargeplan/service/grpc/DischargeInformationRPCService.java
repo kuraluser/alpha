@@ -3,6 +3,7 @@ package com.cpdss.dischargeplan.service.grpc;
 
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.FAILED;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIME_FORMATTER;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
@@ -45,6 +46,7 @@ import com.cpdss.dischargeplan.service.DischargingDelayService;
 import com.cpdss.dischargeplan.service.DischargingMachineryInUseService;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -416,36 +418,111 @@ public class DischargeInformationRPCService
       if (!source.getMaxDeBallastingRate().isEmpty())
         var1.setMaxDeBallastRate(new BigDecimal(source.getMaxDeBallastingRate()));
 
-      if (!source.getMaxLoadingRate().isEmpty())
-        var1.setMaxLoadingRate(new BigDecimal(source.getMaxLoadingRate()));
+      if (!source.getMaxDischargeRate().isEmpty())
+        var1.setMaxDischargingRate(new BigDecimal(source.getMaxDischargeRate()));
 
       if (!source.getMinDeBallastingRate().isEmpty())
         var1.setMinDeBallastRate(new BigDecimal(source.getMinDeBallastingRate()));
 
-      if (!source.getReducedLoadingRate().isEmpty())
-        var1.setReducedLoadingRate(new BigDecimal(source.getReducedLoadingRate()));
+      if (!source.getReducedDischargingRate().isEmpty())
+        var1.setReducedDischargingRate(new BigDecimal(source.getReducedDischargingRate()));
 
-      if (!source.getMinLoadingRate().isEmpty())
-        var1.setMinLoadingRate(new BigDecimal(source.getMinLoadingRate()));
+      if (!source.getMinDischargingRate().isEmpty())
+        var1.setMinDischargingRate(new BigDecimal(source.getMinDischargingRate()));
 
-      if (!source.getInitialLoadingRate().isEmpty())
-        var1.setInitialLoadingRate(new BigDecimal(source.getInitialLoadingRate()));
+      if (!source.getInitialDischargeRate().isEmpty())
+        var1.setInitialDischargingRate(new BigDecimal(source.getInitialDischargeRate()));
 
       if (!source.getNoticeTimeRateReduction().isEmpty())
         var1.setNoticeTimeForRateReduction(Integer.valueOf(source.getNoticeTimeRateReduction()));
 
-      if (!source.getNoticeTimeStopLoading().isEmpty())
-        var1.setNoticeTimeForStopLoading(Integer.valueOf(source.getNoticeTimeStopLoading()));
+      if (!source.getNoticeTimeStopDischarging().isEmpty())
+        var1.setNoticeTimeForStopDischarging(
+            Integer.valueOf(source.getNoticeTimeStopDischarging()));
 
       var1.setShoreLoadingRate(
-          StringUtils.isEmpty(source.getShoreLoadingRate())
+          StringUtils.isEmpty(source.getShoreDischargingRate())
               ? null
-              : new BigDecimal(source.getShoreLoadingRate()));
+              : new BigDecimal(source.getShoreDischargingRate()));
 
-      loadingInformationRepository.save(var1);
-      return var1;
+      dischargeInformationService.save(var1);
     }
-    return null;
+  }
+
+  @Override
+  public void saveDischargingInformation(
+      DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
+    DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
+    try {
+      log.info("Request payload {}", Utils.toJson(request));
+      com.cpdss.dischargeplan.entity.DischargeInformation response =
+          saveDischargingInformation(request);
+      buildDischargingInfoSaveResponse(builder, response);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saved Discharging information")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+      log.info("Save Discharging Info, Details Id {}", request.getDischargeInfoId());
+    } catch (Exception e) {
+      log.error(
+          "Exception occured while saving Discharging Information for id {}",
+          request.getDischargeDetails().getId());
+      e.printStackTrace();
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                  .setMessage(e.getMessage())
+                  .setStatus(FAILED)
+                  .build())
+          .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  public com.cpdss.dischargeplan.entity.DischargeInformation saveDischargingInformation(
+      DischargeInformation request) throws Exception {
+    com.cpdss.dischargeplan.entity.DischargeInformation dischargeInformation =
+        dischargeInformationService.getDischargeInformation(request.getDischargeDetails().getId());
+    if (dischargeInformation != null) {
+      buildDischargingInfoFromRpcMessage(request, dischargeInformation);
+      dischargeInformationService.save(dischargeInformation);
+      dischargeInformationService.updateIsDischargingInfoCompeteStatus(
+          dischargeInformation.getId(), request.getIsDischargingInfoComplete());
+      return dischargeInformation;
+    } else {
+      throw new Exception(
+          "Cannot find discharging information with id " + request.getDischargeDetails().getId());
+    }
+  }
+
+  public com.cpdss.dischargeplan.entity.DischargeInformation buildDischargingInfoFromRpcMessage(
+      DischargeInformation source, com.cpdss.dischargeplan.entity.DischargeInformation target) {
+    // Set discharging Details
+    if (source.getDischargeDetails() != null) {
+      log.info("Save discharging info, Set discharging Details");
+      if (!source.getDischargeDetails().getStartTime().isEmpty())
+        target.setStartTime(
+            LocalTime.from(TIME_FORMATTER.parse(source.getDischargeDetails().getStartTime())));
+
+      if (!source.getDischargeDetails().getTrimAllowed().getFinalTrim().isEmpty())
+        target.setFinalTrim(
+            new BigDecimal(source.getDischargeDetails().getTrimAllowed().getFinalTrim()));
+
+      if (!source.getDischargeDetails().getTrimAllowed().getInitialTrim().isEmpty())
+        target.setInitialTrim(
+            new BigDecimal(source.getDischargeDetails().getTrimAllowed().getInitialTrim()));
+
+      if (!source.getDischargeDetails().getTrimAllowed().getMaximumTrim().isEmpty())
+        target.setMaximumTrim(
+            new BigDecimal(source.getDischargeDetails().getTrimAllowed().getMaximumTrim()));
+    }
+    return target;
   }
 
   private void buildDischargingInfoSaveResponse(

@@ -3,8 +3,8 @@ package com.cpdss.dischargeplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalTime;
 import java.util.Set;
 import javax.persistence.*;
 import lombok.Getter;
@@ -50,7 +50,7 @@ public class DischargeInformation extends EntityDoc {
   private BigDecimal freshOilWashing;
 
   @Column(name = "initial_discharging_rate")
-  private Long initialDischargingRate;
+  private BigDecimal initialDischargingRate;
 
   @Column(name = "initial_trim")
   private BigDecimal initialTrim;
@@ -95,7 +95,7 @@ public class DischargeInformation extends EntityDoc {
   private BigDecimal reducedDischargingRate;
 
   @Column(name = "start_time")
-  private Time startTime;
+  private LocalTime startTime;
 
   @Column(name = "sunrise_time")
   private Timestamp sunriseTime;
