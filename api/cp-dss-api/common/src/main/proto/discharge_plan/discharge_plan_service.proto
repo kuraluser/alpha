@@ -30,7 +30,7 @@ service DischargeInformationService {
   rpc SaveDischargingInfoDelays(DischargeInformation) returns (DischargingInfoSaveResponse) {}
 
   // Case 6, Stages and track status
-  rpc SaveDischargingInfoStages(DischargeInformation) returns (LoadingInfoSaveResponse) {}
+  rpc SaveDischargingInfoStages(DischargeInformation) returns (DischargingInfoSaveResponse) {}
 }
 
 service DischargePlanService{

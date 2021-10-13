@@ -553,22 +553,21 @@ public final class DischargeInformationServiceGrpc {
 
   private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.discharge_plan.DischargeInformation,
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+          com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
       getSaveDischargingInfoStagesMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "SaveDischargingInfoStages",
       requestType = com.cpdss.common.generated.discharge_plan.DischargeInformation.class,
-      responseType =
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse.class,
+      responseType = com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<
           com.cpdss.common.generated.discharge_plan.DischargeInformation,
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+          com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
       getSaveDischargingInfoStagesMethod() {
     io.grpc.MethodDescriptor<
             com.cpdss.common.generated.discharge_plan.DischargeInformation,
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
         getSaveDischargingInfoStagesMethod;
     if ((getSaveDischargingInfoStagesMethod =
             DischargeInformationServiceGrpc.getSaveDischargingInfoStagesMethod)
@@ -581,8 +580,7 @@ public final class DischargeInformationServiceGrpc {
               getSaveDischargingInfoStagesMethod =
                   io.grpc.MethodDescriptor
                       .<com.cpdss.common.generated.discharge_plan.DischargeInformation,
-                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                              .LoadingInfoSaveResponse>
+                          com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
                           newBuilder()
                       .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
                       .setFullMethodName(
@@ -594,8 +592,8 @@ public final class DischargeInformationServiceGrpc {
                                   .getDefaultInstance()))
                       .setResponseMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                                  .LoadingInfoSaveResponse.getDefaultInstance()))
+                              com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse
+                                  .getDefaultInstance()))
                       .setSchemaDescriptor(
                           new DischargeInformationServiceMethodDescriptorSupplier(
                               "SaveDischargingInfoStages"))
@@ -788,7 +786,7 @@ public final class DischargeInformationServiceGrpc {
     public void saveDischargingInfoStages(
         com.cpdss.common.generated.discharge_plan.DischargeInformation request,
         io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+                com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
             responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
           getSaveDischargingInfoStagesMethod(), responseObserver);
@@ -875,8 +873,8 @@ public final class DischargeInformationServiceGrpc {
               io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
                       com.cpdss.common.generated.discharge_plan.DischargeInformation,
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                          .LoadingInfoSaveResponse>(this, METHODID_SAVE_DISCHARGING_INFO_STAGES)))
+                      com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>(
+                      this, METHODID_SAVE_DISCHARGING_INFO_STAGES)))
           .build();
     }
   }
@@ -1052,7 +1050,7 @@ public final class DischargeInformationServiceGrpc {
     public void saveDischargingInfoStages(
         com.cpdss.common.generated.discharge_plan.DischargeInformation request,
         io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+                com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
             responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveDischargingInfoStagesMethod(), getCallOptions()),
@@ -1192,7 +1190,7 @@ public final class DischargeInformationServiceGrpc {
      * Case 6, Stages and track status
      * </pre>
      */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse
+    public com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse
         saveDischargingInfoStages(
             com.cpdss.common.generated.discharge_plan.DischargeInformation request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -1334,7 +1332,7 @@ public final class DischargeInformationServiceGrpc {
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
         saveDischargingInfoStages(
             com.cpdss.common.generated.discharge_plan.DischargeInformation request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
@@ -1449,8 +1447,7 @@ public final class DischargeInformationServiceGrpc {
           serviceImpl.saveDischargingInfoStages(
               (com.cpdss.common.generated.discharge_plan.DischargeInformation) request,
               (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                          .LoadingInfoSaveResponse>)
+                      com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>)
                   responseObserver);
           break;
         default:
