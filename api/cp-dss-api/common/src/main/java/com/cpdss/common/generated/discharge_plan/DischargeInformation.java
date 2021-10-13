@@ -218,6 +218,11 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
               dischargeCommingledCargoSeparately_ = input.readBool();
               break;
             }
+          case 112:
+            {
+              isDischargeInfoComplete_ = input.readBool();
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -571,6 +576,17 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     return dischargeCommingledCargoSeparately_;
   }
 
+  public static final int ISDISCHARGEINFOCOMPLETE_FIELD_NUMBER = 14;
+  private boolean isDischargeInfoComplete_;
+  /**
+   * <code>bool isDischargeInfoComplete = 14;</code>
+   *
+   * @return The isDischargeInfoComplete.
+   */
+  public boolean getIsDischargeInfoComplete() {
+    return isDischargeInfoComplete_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -624,6 +640,9 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     if (dischargeCommingledCargoSeparately_ != false) {
       output.writeBool(13, dischargeCommingledCargoSeparately_);
     }
+    if (isDischargeInfoComplete_ != false) {
+      output.writeBool(14, isDischargeInfoComplete_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -674,6 +693,9 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       size +=
           com.google.protobuf.CodedOutputStream.computeBoolSize(
               13, dischargeCommingledCargoSeparately_);
+    }
+    if (isDischargeInfoComplete_ != false) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(14, isDischargeInfoComplete_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -726,6 +748,7 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     if (getDischargeSlopTanksFirst() != other.getDischargeSlopTanksFirst()) return false;
     if (getDischargeCommingledCargoSeparately() != other.getDischargeCommingledCargoSeparately())
       return false;
+    if (getIsDischargeInfoComplete() != other.getIsDischargeInfoComplete()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -783,6 +806,8 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     hash =
         (53 * hash)
             + com.google.protobuf.Internal.hashBoolean(getDischargeCommingledCargoSeparately());
+    hash = (37 * hash) + ISDISCHARGEINFOCOMPLETE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsDischargeInfoComplete());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -986,6 +1011,8 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
 
       dischargeCommingledCargoSeparately_ = false;
 
+      isDischargeInfoComplete_ = false;
+
       return this;
     }
 
@@ -1072,6 +1099,7 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       }
       result.dischargeSlopTanksFirst_ = dischargeSlopTanksFirst_;
       result.dischargeCommingledCargoSeparately_ = dischargeCommingledCargoSeparately_;
+      result.isDischargeInfoComplete_ = isDischargeInfoComplete_;
       onBuilt();
       return result;
     }
@@ -1209,6 +1237,9 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       }
       if (other.getDischargeCommingledCargoSeparately() != false) {
         setDischargeCommingledCargoSeparately(other.getDischargeCommingledCargoSeparately());
+      }
+      if (other.getIsDischargeInfoComplete() != false) {
+        setIsDischargeInfoComplete(other.getIsDischargeInfoComplete());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -2776,6 +2807,39 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     public Builder clearDischargeCommingledCargoSeparately() {
 
       dischargeCommingledCargoSeparately_ = false;
+      onChanged();
+      return this;
+    }
+
+    private boolean isDischargeInfoComplete_;
+    /**
+     * <code>bool isDischargeInfoComplete = 14;</code>
+     *
+     * @return The isDischargeInfoComplete.
+     */
+    public boolean getIsDischargeInfoComplete() {
+      return isDischargeInfoComplete_;
+    }
+    /**
+     * <code>bool isDischargeInfoComplete = 14;</code>
+     *
+     * @param value The isDischargeInfoComplete to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIsDischargeInfoComplete(boolean value) {
+
+      isDischargeInfoComplete_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool isDischargeInfoComplete = 14;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearIsDischargeInfoComplete() {
+
+      isDischargeInfoComplete_ = false;
       onChanged();
       return this;
     }

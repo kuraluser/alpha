@@ -102,12 +102,18 @@ public class DischargeInformationService {
         this.dischargeInformationGrpcService.getDischargeInfoRpc(vesselId, voyageId, portRoId);
 
     DischargeInformation dischargeInformation = new DischargeInformation();
+
+    // Common Fields
     if (activeVoyage.getActiveDs() != null) {
       dischargeInformation.setDischargeInfoId(disRpcReplay.getDischargeInfoId());
       dischargeInformation.setSynopticTableId(disRpcReplay.getSynopticTableId());
       dischargeInformation.setDischargeStudyId(activeVoyage.getActiveDs().getId());
       dischargeInformation.setDischargeStudyName(activeVoyage.getActiveDs().getName());
     }
+    dischargeInformation.setDischargeSlopTanksFirst(disRpcReplay.getDischargeSlopTanksFirst());
+    dischargeInformation.setDischargeCommingledCargoSeparately(
+        disRpcReplay.getDischargeCommingledCargoSeparately());
+    dischargeInformation.setIsDischargeInfoComplete(disRpcReplay.getIsDischargeInfoComplete());
 
     // RPC call to vessel info, Get Rules (default value for Discharge Info)
     RuleResponse ruleResponse =
@@ -156,6 +162,10 @@ public class DischargeInformationService {
     CowPlan cowPlan =
         this.infoBuilderService.buildDischargeCowPlan(disRpcReplay.getCowPlan(), extract);
 
+    // Post discharge rate
+    this.infoBuilderService.buildPostDischargeRates(
+        disRpcReplay.getPostDischargeStageTime(), extract, dischargeInformation);
+
     // Call 1 to DS for cargo details
     CargoVesselTankDetails vesselTankDetails =
         this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
@@ -177,12 +187,6 @@ public class DischargeInformationService {
             portRotation.get().getId(),
             portRotation.get().getPortId()));
 
-    vesselTankDetails.setDischargeSlopTanksFirst(disRpcReplay.getDischargeSlopTanksFirst());
-    vesselTankDetails.setDischargeCommingledCargoSeparately(
-        disRpcReplay.getDischargeCommingledCargoSeparately());
-
-    dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
-
     dischargeInformation.setDischargeDetails(dischargeDetails);
     dischargeInformation.setDischargeRates(dischargeRates);
     dischargeInformation.setBerthDetails(new LoadingBerthDetails(availableBerths, selectedBerths));
@@ -191,6 +195,8 @@ public class DischargeInformationService {
     dischargeInformation.setDischargeStages(dischargeStages);
     dischargeInformation.setDischargeSequences(dischargeSequences);
     dischargeInformation.setCowPlan(cowPlan);
+
+    dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
     return dischargeInformation;
   }
 

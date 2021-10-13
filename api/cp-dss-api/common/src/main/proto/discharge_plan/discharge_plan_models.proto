@@ -90,6 +90,7 @@ message DischargeInformation {
   // Cargo Section
   bool dischargeSlopTanksFirst = 12;
   bool dischargeCommingledCargoSeparately = 13;
+  bool isDischargeInfoComplete = 14;
 }
 
 message DischargeDetails {

@@ -12,6 +12,7 @@ import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.dischargeplan.CargoForCowDetails;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
 import com.cpdss.gateway.domain.dischargeplan.DischargingDelays;
+import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.vessel.PumpType;
 import com.cpdss.gateway.domain.vessel.VesselPump;
@@ -388,5 +389,43 @@ public class DischargeInformationBuilderService {
       e.printStackTrace();
     }
     return var1;
+  }
+
+  public void buildPostDischargeRates(
+      PostDischargeStageTime var1Rpc,
+      AdminRuleValueExtract extract,
+      com.cpdss.gateway.domain.dischargeplan.DischargeInformation var2Entity) {
+
+    // All 4 fields need to get From Admin Rule
+    PostDischargeStage ds = new PostDischargeStage();
+    if (var1Rpc.getTimeForDryCheck().isEmpty()) {
+      var val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_TIME_FOR_DRY_CHECK);
+      ds.setDryCheckTime(new BigDecimal(val));
+    } else {
+      ds.setDryCheckTime(new BigDecimal(var1Rpc.getTimeForDryCheck()));
+    }
+
+    if (var1Rpc.getSlopDischarging().isEmpty()) {
+      var val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_SLOP_DISCHARGE);
+      ds.setSlopDischargingTime(new BigDecimal(val));
+    } else {
+      ds.setSlopDischargingTime(new BigDecimal(var1Rpc.getSlopDischarging()));
+    }
+
+    if (var1Rpc.getFinalStripping().isEmpty()) {
+      var val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_FINAL_STRIPPING);
+      ds.setFinalStrippingTime(new BigDecimal(val));
+    } else {
+      ds.setFinalStrippingTime(new BigDecimal(var1Rpc.getFinalStripping()));
+    }
+
+    if (var1Rpc.getFreshOilWashing().isEmpty()) {
+      var val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_FRESH_OIL_WASHING);
+      ds.setFreshOilWashingTime(new BigDecimal(val));
+    } else {
+      ds.setFreshOilWashingTime(new BigDecimal(var1Rpc.getFreshOilWashing()));
+    }
+
+    var2Entity.setPostDischargeStageTime(ds);
   }
 }

@@ -747,6 +747,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
         cargoDetails.setBlFigure(new BigDecimal(lqcd.getCargoNominationQuantity()));
       }
+      cargoDetails.setDischargeCargoNominationId(lqcd.getDscargoNominationId());
 
       // these are not needed now informed by ui team. if it is needed in future can un comment this
       // code
