@@ -8,8 +8,12 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingBerths;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRates;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets;
 import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.dischargeplan.CargoForCowDetails;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
@@ -404,7 +408,7 @@ public class DischargeInformationBuilderService {
     return var1;
   }
 
-public DischargingInfoSaveResponse saveDataAsync(DischargingInformationRequest request) {
+public DischargingInfoSaveResponse saveDataAsync(DischargingInformationRequest request) throws InterruptedException, ExecutionException {
 
     DischargeInformation.Builder builder = DischargeInformation.newBuilder();
     List<Callable<DischargingInfoSaveResponse>> callableTasks = new ArrayList<>();
@@ -412,68 +416,68 @@ public DischargingInfoSaveResponse saveDataAsync(DischargingInformationRequest r
     builder.setSynopticTableId(request.getSynopticalTableId());
     builder.setIsDischargingInfoComplete(request.getIsDischargingInfoComplete());
 
-    // Loading Info Case 1 - Details
+    // Discharging Info Case 1 - Details
     if (request.getDischargingDetails() != null) {
       Callable<DischargingInfoSaveResponse> t1 =
           () -> {
-            builder.setLoadingDetail(
-                buildDischargingDetails(request.getDischargingDetails(), request.getDischargingInfoId()));
+            builder.setDischargeDetails(
+            		buildDischargingDetails(request.getDischargingDetails(), request.getDischargingInfoId()));
             return dischargeInfoServiceStub.saveDischargingInformation(builder.build());
           };
       callableTasks.add(t1);
     }
 
-    // Loading Info Case 2 - Stages
+    // Discharging Info Case 2 - Stages
     if (request.getDischargingStages() != null) {
       Callable<DischargingInfoSaveResponse> t2 =
           () -> {
-            builder.setLoadingStage(buildLoadingStage(request));
+            builder.setDischargeStage(buildDischargingStage(request));
             return dischargeInfoServiceStub.saveDischargingInfoStages(builder.build());
           };
       callableTasks.add(t2);
     }
 
-    // Loading Info Case 3 - Rates
+    // Discharging Info Case 3 - Rates
     if (request.getDischargingRates() != null) {
       Callable<DischargingInfoSaveResponse> t3 =
           () -> {
-            builder.setLoadingRate(
-                buildLoadingRates(request.getDischargingRates(), request.getDischargingInfoId()));
+            builder.setDischargeRate(
+                buildDischargingRates(request.getDischargingRates(), request.getDischargingInfoId()));
             return dischargeInfoServiceStub.saveDischargingInfoRates(builder.build());
           };
       callableTasks.add(t3);
     }
 
-    // Loading Info Case 4 - Berths
+    // Discharging Info Case 4 - Berths
     if (request.getDischargingBerths() != null) {
       Callable<DischargingInfoSaveResponse> t4 =
           () -> {
-            builder.addAllLoadingBerths(
-                buildLoadingBerths(request.getDischargingBerths(), request.getDischargingInfoId()));
+            builder.addAllBerthDetails(
+                buildDischargingBerths(request.getDischargingBerths(), request.getDischargingInfoId()));
             return dischargeInfoServiceStub.saveDischargingInfoBerths(builder.build());
           };
       callableTasks.add(t4);
     }
 
-    // Loading Info Case 5 - Delays
+    // Discharging Info Case 5 - Delays
     if (request.getDischargingDelays() != null) {
       Callable<DischargingInfoSaveResponse> t5 =
           () -> {
         	  DischargeDelay.Builder dischargingDelayBuilder = DischargeDelay.newBuilder();
         	  dischargingDelayBuilder.addAllDelays(
-                buildLoadingDelays(request.getDischargingDelays(), request.getDischargingInfoId()));
+                buildDischargingDelays(request.getDischargingDelays(), request.getDischargingInfoId()));
             builder.setDischargeDelay(dischargingDelayBuilder.build());
             return dischargeInfoServiceStub.saveDischargingInfoDelays(builder.build());
           };
       callableTasks.add(t5);
     }
 
-    // Loading Info Case 6 - Machines
+    // Discharging Info Case 6 - Machines
     if (request.getDischargingMachineries() != null) {
       Callable<DischargingInfoSaveResponse> t6 =
           () -> {
-            builder.addAllLoadingMachines(
-                buildLoadingMachineries(
+            builder.addAllMachineInUse(
+                buildDischargingMachineries(
                     request.getDischargingMachineries(), request.getDischargingInfoId()));
             return dischargeInfoServiceStub.saveDischargingInfoMachinery(builder.build());
           };
@@ -507,5 +511,159 @@ public DischargingInfoSaveResponse saveDataAsync(DischargingInformationRequest r
         callableTasks.size(),
         data.size());
     return data.isEmpty() ? null : data.stream().findFirst().get().get();
+  }
+
+private List<DischargeDelays> buildDischargingDelays(List<DischargingDelays> dischargingDelays,
+		Long dischargingInfoId) {
+    List<DischargeDelays> delayList = new ArrayList<>();
+    dischargingDelays.forEach(
+        delay -> {
+        	DischargeDelays.Builder builder = DischargeDelays.newBuilder();
+          Optional.ofNullable(delay.getCargoId()).ifPresent(builder::setCargoId);
+          Optional.ofNullable(delay.getDuration())
+              .ifPresent(duration -> builder.setDuration(String.valueOf(duration)));
+          Optional.ofNullable(delay.getId()).ifPresent(builder::setId);
+          Optional.ofNullable(dischargingInfoId).ifPresent(builder::setDischargeInfoId);
+          Optional.ofNullable(delay.getQuantity())
+              .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
+          Optional.ofNullable(delay.getReasonForDelayIds())
+              .ifPresent(v -> v.forEach(s -> builder.addReasonForDelayIds(s)));
+          Optional.ofNullable(delay.getCargoNominationId())
+              .ifPresent(builder::setCargoNominationId);
+          delayList.add(builder.build());
+        });
+    return delayList;
+  }
+
+private List<DischargeBerths> buildDischargingBerths(List<BerthDetails> dischargingBerths, Long dischargingInfoId) {
+    List<DischargeBerths> berthList = new ArrayList<>();
+    dischargingBerths.forEach(
+        berth -> {
+        	DischargeBerths.Builder builder = DischargeBerths.newBuilder();
+          Optional.ofNullable(berth.getAirDraftLimitation())
+              .ifPresent(airDraft -> builder.setAirDraftLimitation(String.valueOf(airDraft)));
+          Optional.ofNullable(berth.getHoseConnections())
+              .ifPresent(hoseConnection -> builder.setHoseConnections(hoseConnection));
+          Optional.ofNullable(berth.getBerthId()).ifPresent(builder::setBerthId);
+          Optional.ofNullable(berth.getLoadingBerthId()).ifPresent(builder::setId);
+          Optional.ofNullable(dischargingInfoId).ifPresent(builder::setDischargeInfoId);
+          // missing depth, itemsToBeAgreedWith added to domain
+          Optional.ofNullable(berth.getMaxManifoldHeight())
+              .ifPresent(
+                  maxManifoldHeight ->
+                      builder.setMaxManifoldHeight(String.valueOf(maxManifoldHeight)));
+          Optional.ofNullable(berth.getRegulationAndRestriction())
+              .ifPresent(
+                  restriction ->
+                      builder.setSpecialRegulationRestriction(String.valueOf(restriction)));
+          Optional.ofNullable(berth.getSeaDraftLimitation())
+              .ifPresent(seaDraft -> builder.setSeaDraftLimitation(String.valueOf(seaDraft)));
+          Optional.ofNullable(berth.getItemsToBeAgreedWith())
+              .ifPresent(builder::setItemsToBeAgreedWith);
+          // maxShipDepth is taken as depth in LoadingBerthDetails table
+          Optional.ofNullable(berth.getMaxShipDepth())
+              .ifPresent(depth -> builder.setDepth(String.valueOf(depth)));
+          Optional.ofNullable(berth.getLineDisplacement())
+              .ifPresent(v -> builder.setLineDisplacement(v));
+          berthList.add(builder.build());
+        });
+    return berthList;
+  }
+
+private com.cpdss.common.generated.discharge_plan.DischargeRates buildDischargingRates(DischargeRates dischargingRates,
+		Long dischargingInfoId) {
+	com.cpdss.common.generated.discharge_plan.DischargeRates.Builder builder = com.cpdss.common.generated.discharge_plan.DischargeRates.newBuilder();
+    Optional.ofNullable(dischargingInfoId).ifPresent(builder::setId);
+    Optional.ofNullable(dischargingRates.getLineContentRemaining())
+        .ifPresent(lineContent -> builder.setLineContentRemaining(String.valueOf(lineContent)));
+    Optional.ofNullable(dischargingRates.getMaxDeBallastingRate())
+        .ifPresent(maxDeBallast -> builder.setMaxDeBallastingRate(String.valueOf(maxDeBallast)));
+    Optional.ofNullable(dischargingRates.getMaxDischargingRate())
+        .ifPresent(maxLoadingRate -> builder.setMaxDischargeRate(String.valueOf(maxLoadingRate)));
+    Optional.ofNullable(dischargingRates.getMinDeBallastingRate())
+        .ifPresent(minDeBallast -> builder.setMinDeBallastingRate(String.valueOf(minDeBallast)));
+    Optional.ofNullable(dischargingRates.getMinDischargingRate())
+        .ifPresent(minLoadingRate -> builder.setMinDischargingRate(String.valueOf(minLoadingRate)));
+    Optional.ofNullable(dischargingRates.getNoticeTimeForRateReduction())
+        .ifPresent(
+            noticeTimeRate -> builder.setNoticeTimeRateReduction(String.valueOf(noticeTimeRate)));
+    Optional.ofNullable(dischargingRates.getNoticeTimeForStopDischarging())
+        .ifPresent(
+            noticeTimeStop -> builder.setNoticeTimeStopDischarging(String.valueOf(noticeTimeStop)));
+    Optional.ofNullable(dischargingRates.getReducedDischargingRate())
+        .ifPresent(reducedRate -> builder.setReducedDischargingRate(String.valueOf(reducedRate)));
+    Optional.ofNullable(dischargingRates.getShoreDischargingRate())
+        .ifPresent(v -> builder.setShoreDischargingRate(v.toString()));
+    return builder.build();
+  }
+
+private List<LoadingPlanModels.LoadingMachinesInUse> buildDischargingMachineries(
+		List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse> dischargingMachineries,
+		Long dischargingInfoId) {
+    List<LoadingPlanModels.LoadingMachinesInUse> machineries = new ArrayList<>();
+    dischargingMachineries.forEach(
+        machine -> {
+        	LoadingPlanModels.LoadingMachinesInUse.Builder builder = LoadingPlanModels.LoadingMachinesInUse.newBuilder();
+          Optional.ofNullable(machine.getCapacity())
+              .ifPresent(capacity -> builder.setCapacity(String.valueOf(capacity)));
+          Optional.ofNullable(machine.getId()).ifPresent(builder::setId);
+          Optional.ofNullable(dischargingInfoId).ifPresent(builder::setLoadingInfoId);
+          Optional.ofNullable(machine.getMachineId()).ifPresent(builder::setMachineId);
+          Optional.ofNullable(machine.getMachineTypeValue())
+              .ifPresent(v -> builder.setMachineTypeValue(v));
+          // isUsing missing added to domain
+          Optional.ofNullable(machine.getIsUsing()).ifPresent(builder::setIsUsing);
+          machineries.add(builder.build());
+        });
+    return machineries;
+  }
+
+public DischargeDetails buildDischargingDetails(
+	      com.cpdss.gateway.domain.loadingplan.LoadingDetails dischargingDetails, Long dischargingInfoId) {
+	DischargeDetails.Builder builder = DischargeDetails.newBuilder();
+	    Optional.ofNullable(dischargingInfoId).ifPresent(builder::setId);
+	    Optional.ofNullable(dischargingDetails.getStartTime()).ifPresent(builder::setStartTime);
+	    Optional.ofNullable(dischargingDetails.getTimeOfSunrise()).ifPresent(builder::setTimeOfSunrise);
+	    Optional.ofNullable(dischargingDetails.getTimeOfSunset()).ifPresent(builder::setTimeOfSunset);
+	    com.cpdss.common.generated.loading_plan.LoadingPlanModels.TrimAllowed.Builder trimBuilder = com.cpdss.common.generated.loading_plan.LoadingPlanModels.TrimAllowed.newBuilder();
+	    if (!Optional.ofNullable(dischargingDetails.getTrimAllowed()).isEmpty()) {
+	      Optional.ofNullable(dischargingDetails.getTrimAllowed().getFinalTrim())
+	          .ifPresent(finalTrim -> trimBuilder.setFinalTrim(String.valueOf(finalTrim)));
+	      Optional.ofNullable(dischargingDetails.getTrimAllowed().getInitialTrim())
+	          .ifPresent(initialTrim -> trimBuilder.setInitialTrim(String.valueOf(initialTrim)));
+	      Optional.ofNullable(dischargingDetails.getTrimAllowed().getMaximumTrim())
+	          .ifPresent(maxTrim -> trimBuilder.setMaximumTrim(String.valueOf(maxTrim)));
+	    }
+	    builder.setTrimAllowed(trimBuilder.build());
+	    return builder.build();
+	  }
+
+public LoadingStages buildDischargingStage(DischargingInformationRequest request) {
+    LoadingStages.Builder builder = LoadingStages.newBuilder();
+    com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.Builder
+        durationBuilder =
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.newBuilder();
+    StageOffsets.Builder offsetBuilder = StageOffsets.newBuilder();
+    if (request.getDischargingStages() != null) {
+      if (request.getDischargingStages().getStageDuration() != null) {
+        Optional.ofNullable(request.getDischargingStages().getStageDuration().getId())
+            .ifPresent(durationBuilder::setId);
+        Optional.ofNullable(request.getDischargingStages().getStageDuration().getDuration())
+            .ifPresent(durationBuilder::setDuration);
+      }
+      if (request.getDischargingStages().getStageOffset() != null) {
+        Optional.ofNullable(request.getDischargingStages().getStageOffset().getId())
+            .ifPresent(offsetBuilder::setId);
+        Optional.ofNullable(request.getDischargingStages().getStageOffset().getStageOffsetVal())
+            .ifPresent(offsetBuilder::setStageOffsetVal);
+      }
+      Optional.ofNullable(request.getDischargingStages().getTrackGradeSwitch())
+          .ifPresent(builder::setTrackGradeSwitch);
+      Optional.ofNullable(request.getDischargingStages().getTrackStartEndStage())
+          .ifPresent(builder::setTrackStartEndStage);
+    }
+    builder.setDuration(durationBuilder.build());
+    builder.setOffset(offsetBuilder.build());
+    return builder.build();
   }
 }
