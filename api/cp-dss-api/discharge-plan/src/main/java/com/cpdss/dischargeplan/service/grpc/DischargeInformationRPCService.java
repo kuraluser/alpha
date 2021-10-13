@@ -1,25 +1,34 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service.grpc;
 
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.FAILED;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIME_FORMATTER;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.discharge_plan.DischargeInformation;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargeRates;
 import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
 import com.cpdss.common.generated.discharge_plan.DischargeRuleRequest;
 import com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest;
 import com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailStatusReply;
 import com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailStatusReply.Builder;
+import com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
 import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest;
 import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
+import com.cpdss.dischargeplan.entity.DischargingStagesDuration;
+import com.cpdss.dischargeplan.entity.DischargingStagesMinAmount;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStabilityParameters;
@@ -35,12 +44,19 @@ import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParameters
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
 import com.cpdss.dischargeplan.service.DischargeInformationBuilderService;
 import com.cpdss.dischargeplan.service.DischargeInformationService;
+import com.cpdss.dischargeplan.service.DischargingBerthService;
+import com.cpdss.dischargeplan.service.DischargingDelayService;
+import com.cpdss.dischargeplan.service.DischargingMachineryInUseService;
 import io.grpc.stub.StreamObserver;
+import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @GrpcService
@@ -58,6 +74,11 @@ public class DischargeInformationRPCService
   @Autowired PortDischargingPlanStowageDetailsRepository pdpStowageDetailsRepository;
   @Autowired PortDischargingPlanRobDetailsRepository pdpRobDetailsRepository;
   @Autowired PortDischargingPlanStabilityParametersRepository pdpStabilityParametersRepository;
+  @Autowired DischargingBerthService dischargingBerthService;
+  @Autowired DischargingDelayService dischargingDelayService;
+  @Autowired DischargingMachineryInUseService dischargingMachineryInUseService;
+  @Autowired DischargeStageDurationRepository stageDurationRepository;
+  @Autowired DischargeStageMinAmountRepository minAmountRepository;
 
   @Override
   public void getDischargeInformation(
@@ -248,5 +269,339 @@ public class DischargeInformationRPCService
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  @Override
+  public void saveDischargingInfoBerths(
+      DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
+    DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
+    try {
+      log.info("Request payload {}", Utils.toJson(request));
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
+          dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+      log.info("Save Loading Info, Berths Id {}", request.getDischargeInfoId());
+      if (dischargingInformation != null) {
+        dischargingBerthService.saveDischargingBerthList(
+            request.getBerthDetailsList(), dischargingInformation);
+        // TODO confirm the field
+        this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
+            dischargingInformation.getId(), request.getIsDischargingInfoComplete());
+      }
+      buildDischargingInfoSaveResponse(builder, dischargingInformation);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saved Loading information Berths")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build())
+          .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveDischargingInfoDelays(
+      DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
+    DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
+    try {
+      log.info("Request payload {}", Utils.toJson(request));
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
+          dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+      log.info("Save Loading Info, Delays Id {}", request.getDischargeInfoId());
+      if (dischargingInformation != null) {
+        dischargingDelayService.saveDischargingDelayList(
+            request.getDischargeDelay(), dischargingInformation);
+        this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
+            dischargingInformation.getId(), request.getIsDischargingInfoComplete());
+      }
+      buildDischargingInfoSaveResponse(builder, dischargingInformation);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saved Loading information Delays")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build())
+          .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveDischargingInfoMachinery(
+      DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
+    DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
+    try {
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
+          dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+      log.info("Save Loading Info, Machines Id {}", request.getDischargeInfoId());
+      log.info("Request payload {}", Utils.toJson(request));
+      if (dischargingInformation != null) {
+        dischargingMachineryInUseService.saveDischargingMachineryList(
+            request.getMachineInUseList(), dischargingInformation);
+        this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
+            dischargingInformation.getId(), request.getIsDischargingInfoComplete());
+      }
+      buildDischargingInfoSaveResponse(builder, dischargingInformation);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saved Loading information Machinery")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build())
+          .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveDischargingInfoRates(
+      DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
+    DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
+    try {
+      log.info("Request payload {}", Utils.toJson(request));
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
+          dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+      log.info("Save Loading Info, Rates Id {}", request.getDischargeInfoId());
+      if (dischargingInformation != null) {
+        saveDischargingInfoRates(request.getDischargeRate(), builder);
+        this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
+            dischargingInformation.getId(), request.getIsDischargingInfoComplete());
+      }
+      buildDischargingInfoSaveResponse(builder, dischargingInformation);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saved Loading information Rates")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build())
+          .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void saveDischargingInfoRates(
+      DischargeRates source, DischargingInfoSaveResponse.Builder response) {
+    com.cpdss.dischargeplan.entity.DischargeInformation var1 =
+        dischargeInformationService.getDischargeInformation(source.getId());
+    if (var1 != null) {
+      log.info("Save Loading Info, Set Loading Rates");
+      if (!source.getLineContentRemaining().isEmpty())
+        var1.setLineContentRemaining(new BigDecimal(source.getLineContentRemaining()));
+
+      if (!source.getMaxDeBallastingRate().isEmpty())
+        var1.setMaxDeBallastRate(new BigDecimal(source.getMaxDeBallastingRate()));
+
+      if (!source.getMaxDischargeRate().isEmpty())
+        var1.setMaxDischargingRate(new BigDecimal(source.getMaxDischargeRate()));
+
+      if (!source.getMinDeBallastingRate().isEmpty())
+        var1.setMinDeBallastRate(new BigDecimal(source.getMinDeBallastingRate()));
+
+      if (!source.getReducedDischargingRate().isEmpty())
+        var1.setReducedDischargingRate(new BigDecimal(source.getReducedDischargingRate()));
+
+      if (!source.getMinDischargingRate().isEmpty())
+        var1.setMinDischargingRate(new BigDecimal(source.getMinDischargingRate()));
+
+      if (!source.getInitialDischargeRate().isEmpty())
+        var1.setInitialDischargingRate(new BigDecimal(source.getInitialDischargeRate()));
+
+      if (!source.getNoticeTimeRateReduction().isEmpty())
+        var1.setNoticeTimeForRateReduction(Integer.valueOf(source.getNoticeTimeRateReduction()));
+
+      if (!source.getNoticeTimeStopDischarging().isEmpty())
+        var1.setNoticeTimeForStopDischarging(
+            Integer.valueOf(source.getNoticeTimeStopDischarging()));
+
+      var1.setShoreDischargingRate(
+          StringUtils.isEmpty(source.getShoreDischargingRate())
+              ? null
+              : new BigDecimal(source.getShoreDischargingRate()));
+
+      dischargeInformationService.save(var1);
+    }
+  }
+
+  @Override
+  public void saveDischargingInformation(
+      DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
+    DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
+    try {
+      log.info("Request payload {}", Utils.toJson(request));
+      com.cpdss.dischargeplan.entity.DischargeInformation response =
+          saveDischargingInformation(request);
+      buildDischargingInfoSaveResponse(builder, response);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saved Discharging information")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+      log.info("Save Discharging Info, Details Id {}", request.getDischargeInfoId());
+    } catch (Exception e) {
+      log.error(
+          "Exception occured while saving Discharging Information for id {}",
+          request.getDischargeDetails().getId());
+      e.printStackTrace();
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                  .setMessage(e.getMessage())
+                  .setStatus(FAILED)
+                  .build())
+          .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  public com.cpdss.dischargeplan.entity.DischargeInformation saveDischargingInformation(
+      DischargeInformation request) throws Exception {
+    com.cpdss.dischargeplan.entity.DischargeInformation dischargeInformation =
+        dischargeInformationService.getDischargeInformation(request.getDischargeDetails().getId());
+    if (dischargeInformation != null) {
+      buildDischargingInfoFromRpcMessage(request, dischargeInformation);
+      dischargeInformationService.save(dischargeInformation);
+      dischargeInformationService.updateIsDischargingInfoCompeteStatus(
+          dischargeInformation.getId(), request.getIsDischargingInfoComplete());
+      return dischargeInformation;
+    } else {
+      throw new Exception(
+          "Cannot find discharging information with id " + request.getDischargeDetails().getId());
+    }
+  }
+
+  public com.cpdss.dischargeplan.entity.DischargeInformation buildDischargingInfoFromRpcMessage(
+      DischargeInformation source, com.cpdss.dischargeplan.entity.DischargeInformation target) {
+    // Set discharging Details
+    if (source.getDischargeDetails() != null) {
+      log.info("Save discharging info, Set discharging Details");
+      if (!source.getDischargeDetails().getStartTime().isEmpty())
+        target.setStartTime(
+            LocalTime.from(TIME_FORMATTER.parse(source.getDischargeDetails().getStartTime())));
+
+      if (!source.getDischargeDetails().getTrimAllowed().getFinalTrim().isEmpty())
+        target.setFinalTrim(
+            new BigDecimal(source.getDischargeDetails().getTrimAllowed().getFinalTrim()));
+
+      if (!source.getDischargeDetails().getTrimAllowed().getInitialTrim().isEmpty())
+        target.setInitialTrim(
+            new BigDecimal(source.getDischargeDetails().getTrimAllowed().getInitialTrim()));
+
+      if (!source.getDischargeDetails().getTrimAllowed().getMaximumTrim().isEmpty())
+        target.setMaximumTrim(
+            new BigDecimal(source.getDischargeDetails().getTrimAllowed().getMaximumTrim()));
+    }
+    return target;
+  }
+
+  @Override
+  public void saveDischargingInfoStages(
+      DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
+    DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
+    try {
+      log.info("Request payload {}", Utils.toJson(request));
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
+          dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+      log.info("Save Loading Info, Stages Id {}", request.getDischargeInfoId());
+      if (dischargingInformation != null) {
+        saveDischargingStages(request.getDischargeStage(), dischargingInformation);
+        this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
+            dischargingInformation.getId(), request.getIsDischargingInfoComplete());
+      }
+      buildDischargingInfoSaveResponse(builder, dischargingInformation);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saved Loading information Stages")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build())
+          .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void saveDischargingStages(
+      LoadingStages dischargeStage,
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation) {
+
+    if (dischargeStage != null) {
+      dischargingInformation.setIsTrackStartEndStage(dischargeStage.getTrackStartEndStage());
+      dischargingInformation.setIsTrackGradeSwitching(dischargeStage.getTrackGradeSwitch());
+      if (Optional.ofNullable(dischargeStage.getDuration().getId()).isPresent()
+          && dischargeStage.getDuration().getId() != 0) {
+        Optional<DischargingStagesDuration> stageDurationOpt =
+            stageDurationRepository.findByIdAndIsActiveTrue(dischargeStage.getDuration().getId());
+        if (stageDurationOpt.isPresent()) {
+          dischargingInformation.setDischargingStagesDuration(stageDurationOpt.get());
+        } else {
+          log.error("Duration not found id {}", dischargeStage.getDuration().getId());
+        }
+      }
+      if (Optional.of(dischargeStage.getOffset().getId()).isPresent()
+          && dischargeStage.getOffset().getId() != 0) {
+        Optional<DischargingStagesMinAmount> stageOffsetOpt =
+            minAmountRepository.findByIdAndIsActiveTrue(dischargeStage.getOffset().getId());
+        if (stageOffsetOpt.isPresent()) {
+          dischargingInformation.setDischargingStagesMinAmount(stageOffsetOpt.get());
+        } else {
+          log.info("Offset Not found Id {}", dischargeStage.getOffset().getId());
+        }
+      }
+      dischargeInformationService.save(dischargingInformation);
+    }
+  }
+
+  private void buildDischargingInfoSaveResponse(
+      com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse.Builder builder,
+      com.cpdss.dischargeplan.entity.DischargeInformation response) {
+    Optional.ofNullable(response.getId()).ifPresent(builder::setDischargingInfoId);
+    Optional.ofNullable(response.getPortRotationXid()).ifPresent(builder::setPortRotationId);
+    Optional.ofNullable(response.getSynopticTableXid()).ifPresent(builder::setSynopticalTableId);
+    Optional.ofNullable(response.getVesselXid()).ifPresent(builder::setVesselId);
+    Optional.ofNullable(response.getVoyageXid()).ifPresent(builder::setVoyageId);
   }
 }

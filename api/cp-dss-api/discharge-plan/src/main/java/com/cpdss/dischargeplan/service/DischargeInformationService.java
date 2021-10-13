@@ -881,4 +881,10 @@ public class DischargeInformationService {
     }
     return portsMap;
   }
+
+  public void updateIsDischargingInfoCompeteStatus(Long id, boolean isDischargingInfoComplete) {}
+
+  public void save(DischargeInformation entity) {
+    dischargeInformationRepository.save(entity);
+  }
 }

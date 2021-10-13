@@ -34,7 +34,6 @@ import com.cpdss.gateway.repository.UserStatusRepository;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.service.vesselinfo.VesselValveService;
 import com.cpdss.gateway.utility.RuleUtility;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +46,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -73,7 +71,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
   @Autowired private UserCachingService userCachingService;
   @Autowired private KeycloakService keycloakService;
   @Autowired private UserStatusRepository userStatusRepository;
-  
+
   private static final String SUCCESS = "SUCCESS";
   private static final String SHIP_URL_PREFIX = "/api/ship";
 
