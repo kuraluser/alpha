@@ -21,6 +21,7 @@ import com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
 import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest;
 import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.Utils;
@@ -30,6 +31,8 @@ import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStabilityParameters;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
+import com.cpdss.dischargeplan.entity.StageDuration;
+import com.cpdss.dischargeplan.entity.StageOffset;
 import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeStageDurationRepository;
 import com.cpdss.dischargeplan.repository.DischargeStageMinAmountRepository;
@@ -39,6 +42,8 @@ import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastDetailsRepos
 import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
+import com.cpdss.dischargeplan.repository.StageDurationRepository;
+import com.cpdss.dischargeplan.repository.StageOffsetRepository;
 import com.cpdss.dischargeplan.service.DischargeInformationBuilderService;
 import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.cpdss.dischargeplan.service.DischargingBerthService;
@@ -74,6 +79,8 @@ public class DischargeInformationRPCService
   @Autowired DischargingBerthService dischargingBerthService;
   @Autowired DischargingDelayService dischargingDelayService;
   @Autowired DischargingMachineryInUseService dischargingMachineryInUseService;
+  @Autowired StageDurationRepository stageDurationRepository;
+  @Autowired StageOffsetRepository stageOffsetRepository;
 
   @Override
   public void getDischargeInformation(
@@ -440,7 +447,7 @@ public class DischargeInformationRPCService
         var1.setNoticeTimeForStopDischarging(
             Integer.valueOf(source.getNoticeTimeStopDischarging()));
 
-      var1.setShoreLoadingRate(
+      var1.setShoreDischargingRate(
           StringUtils.isEmpty(source.getShoreDischargingRate())
               ? null
               : new BigDecimal(source.getShoreDischargingRate()));
@@ -523,6 +530,71 @@ public class DischargeInformationRPCService
             new BigDecimal(source.getDischargeDetails().getTrimAllowed().getMaximumTrim()));
     }
     return target;
+  }
+
+  @Override
+  public void saveDischargingInfoStages(
+      DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
+    DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
+    try {
+      log.info("Request payload {}", Utils.toJson(request));
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
+          dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+      log.info("Save Loading Info, Stages Id {}", request.getDischargeInfoId());
+      if (dischargingInformation != null) {
+        saveDischargingStages(request.getDischargeStage(), dischargingInformation);
+        this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
+            dischargingInformation.getId(), request.getIsDischargingInfoComplete());
+      }
+      buildDischargingInfoSaveResponse(builder, dischargingInformation);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saved Loading information Stages")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build())
+          .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void saveDischargingStages(
+      LoadingStages dischargeStage,
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation) {
+
+    if (dischargeStage != null) {
+      dischargingInformation.setIsTrackStartEndStage(dischargeStage.getTrackStartEndStage());
+      dischargingInformation.setIsTrackGradeSwitching(dischargeStage.getTrackGradeSwitch());
+      if (Optional.ofNullable(dischargeStage.getDuration().getId()).isPresent()
+          && dischargeStage.getDuration().getId() != 0) {
+        Optional<StageDuration> stageDurationOpt =
+            stageDurationRepository.findByIdAndIsActiveTrue(dischargeStage.getDuration().getId());
+        if (stageDurationOpt.isPresent()) {
+          dischargingInformation.setStageDuration(stageDurationOpt.get());
+        } else {
+          log.error("Duration not found id {}", dischargeStage.getDuration().getId());
+        }
+      }
+      if (Optional.of(dischargeStage.getOffset().getId()).isPresent()
+          && dischargeStage.getOffset().getId() != 0) {
+        Optional<StageOffset> stageOffsetOpt =
+            stageOffsetRepository.findByIdAndIsActiveTrue(dischargeStage.getOffset().getId());
+        if (stageOffsetOpt.isPresent()) {
+          dischargingInformation.setStageOffset(stageOffsetOpt.get());
+        } else {
+          log.info("Offset Not found Id {}", dischargeStage.getOffset().getId());
+        }
+      }
+      dischargeInformationService.save(dischargingInformation);
+    }
   }
 
   private void buildDischargingInfoSaveResponse(
