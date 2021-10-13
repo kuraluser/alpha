@@ -13,5 +13,5 @@ import lombok.Data;
 public class TrimAllowed {
   private BigDecimal initialTrim;
   private BigDecimal maximumTrim;
-  private BigDecimal finalTrim;
+  private BigDecimal finalTrim; // topping off
 }

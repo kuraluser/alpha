@@ -59,6 +59,9 @@ public class DischargeQuantityCargoDetails {
   @JsonInclude(Include.NON_NULL)
   private List<String> dischargingPorts;
 
+  @JsonInclude(Include.NON_NULL)
+  private List<String> loadingPorts;
+
   private List<CargoToppingOffSequence> toppingSequence;
   private String cargoNominationTemperature;
 

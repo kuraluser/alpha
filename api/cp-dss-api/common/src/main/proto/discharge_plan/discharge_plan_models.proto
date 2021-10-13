@@ -85,8 +85,7 @@ message DischargeInformation {
   LoadingStages dischargeStage = 5; // reusing
   DischargeDelay dischargeDelay = 6;
   CowPlan cowPlan = 11;
-  PostDischargeStageTime postDischargeStageTime = 7;
-  
+  PostDischargeStageTime postDischargeStageTime = 7;  
   int64 dischargingInfoStatusId = 12;
   int64 dischargingPlanArrStatusId = 13;
   int64 dischargingPlanDepStatusId = 14;
@@ -100,6 +99,9 @@ message DischargeInformation {
   int64 portRotationId = 22;
   string dischargeStudyProcessId = 23;
 	bool isDischargingInfoComplete = 24;
+	 // Cargo Section
+  bool dischargeSlopTanksFirst = 25;
+  bool dischargeCommingledCargoSeparately = 26;
 }
 message DischargingInfoSaveResponse {
   int64 dischargingInfoId = 1;
@@ -108,6 +110,7 @@ message DischargingInfoSaveResponse {
   int64 synopticalTableId = 4;
   int64 voyageId = 5;
   ResponseStatus responseStatus = 6;
+ 
 }
 message DischargeDetails {
   int64 id = 1;
@@ -194,6 +197,7 @@ message CowPlan {
   string trimCowMax = 7;
   bool needFreshCrudeStorage = 8;
   bool needFlushingOil = 9;
+  bool cowWithCargoEnable = 11; // update in table
   repeated CowTankDetails cowTankDetails = 10;
 }
 

@@ -275,4 +275,24 @@ public interface DischargeInformationOrBuilder
    * @return The isDischargingInfoComplete.
    */
   boolean getIsDischargingInfoComplete();
+
+  /**
+   *
+   *
+   * <pre>
+   * Cargo Section
+   * </pre>
+   *
+   * <code>bool dischargeSlopTanksFirst = 25;</code>
+   *
+   * @return The dischargeSlopTanksFirst.
+   */
+  boolean getDischargeSlopTanksFirst();
+
+  /**
+   * <code>bool dischargeCommingledCargoSeparately = 26;</code>
+   *
+   * @return The dischargeCommingledCargoSeparately.
+   */
+  boolean getDischargeCommingledCargoSeparately();
 }

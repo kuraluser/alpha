@@ -276,6 +276,16 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
               isDischargingInfoComplete_ = input.readBool();
               break;
             }
+          case 200:
+            {
+              dischargeSlopTanksFirst_ = input.readBool();
+              break;
+            }
+          case 208:
+            {
+              dischargeCommingledCargoSeparately_ = input.readBool();
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -768,6 +778,34 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     return isDischargingInfoComplete_;
   }
 
+  public static final int DISCHARGESLOPTANKSFIRST_FIELD_NUMBER = 25;
+  private boolean dischargeSlopTanksFirst_;
+  /**
+   *
+   *
+   * <pre>
+   * Cargo Section
+   * </pre>
+   *
+   * <code>bool dischargeSlopTanksFirst = 25;</code>
+   *
+   * @return The dischargeSlopTanksFirst.
+   */
+  public boolean getDischargeSlopTanksFirst() {
+    return dischargeSlopTanksFirst_;
+  }
+
+  public static final int DISCHARGECOMMINGLEDCARGOSEPARATELY_FIELD_NUMBER = 26;
+  private boolean dischargeCommingledCargoSeparately_;
+  /**
+   * <code>bool dischargeCommingledCargoSeparately = 26;</code>
+   *
+   * @return The dischargeCommingledCargoSeparately.
+   */
+  public boolean getDischargeCommingledCargoSeparately() {
+    return dischargeCommingledCargoSeparately_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -853,6 +891,12 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     }
     if (isDischargingInfoComplete_ != false) {
       output.writeBool(24, isDischargingInfoComplete_);
+    }
+    if (dischargeSlopTanksFirst_ != false) {
+      output.writeBool(25, dischargeSlopTanksFirst_);
+    }
+    if (dischargeCommingledCargoSeparately_ != false) {
+      output.writeBool(26, dischargeCommingledCargoSeparately_);
     }
     unknownFields.writeTo(output);
   }
@@ -944,6 +988,14 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     if (isDischargingInfoComplete_ != false) {
       size += com.google.protobuf.CodedOutputStream.computeBoolSize(24, isDischargingInfoComplete_);
     }
+    if (dischargeSlopTanksFirst_ != false) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(25, dischargeSlopTanksFirst_);
+    }
+    if (dischargeCommingledCargoSeparately_ != false) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeBoolSize(
+              26, dischargeCommingledCargoSeparately_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -1007,6 +1059,9 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     if (getPortRotationId() != other.getPortRotationId()) return false;
     if (!getDischargeStudyProcessId().equals(other.getDischargeStudyProcessId())) return false;
     if (getIsDischargingInfoComplete() != other.getIsDischargingInfoComplete()) return false;
+    if (getDischargeSlopTanksFirst() != other.getDischargeSlopTanksFirst()) return false;
+    if (getDischargeCommingledCargoSeparately() != other.getDischargeCommingledCargoSeparately())
+      return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -1087,6 +1142,12 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     hash = (53 * hash) + getDischargeStudyProcessId().hashCode();
     hash = (37 * hash) + ISDISCHARGINGINFOCOMPLETE_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsDischargingInfoComplete());
+    hash = (37 * hash) + DISCHARGESLOPTANKSFIRST_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getDischargeSlopTanksFirst());
+    hash = (37 * hash) + DISCHARGECOMMINGLEDCARGOSEPARATELY_FIELD_NUMBER;
+    hash =
+        (53 * hash)
+            + com.google.protobuf.Internal.hashBoolean(getDischargeCommingledCargoSeparately());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -1312,6 +1373,10 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
 
       isDischargingInfoComplete_ = false;
 
+      dischargeSlopTanksFirst_ = false;
+
+      dischargeCommingledCargoSeparately_ = false;
+
       return this;
     }
 
@@ -1409,6 +1474,8 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       result.portRotationId_ = portRotationId_;
       result.dischargeStudyProcessId_ = dischargeStudyProcessId_;
       result.isDischargingInfoComplete_ = isDischargingInfoComplete_;
+      result.dischargeSlopTanksFirst_ = dischargeSlopTanksFirst_;
+      result.dischargeCommingledCargoSeparately_ = dischargeCommingledCargoSeparately_;
       onBuilt();
       return result;
     }
@@ -1580,6 +1647,12 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       }
       if (other.getIsDischargingInfoComplete() != false) {
         setIsDischargingInfoComplete(other.getIsDischargingInfoComplete());
+      }
+      if (other.getDischargeSlopTanksFirst() != false) {
+        setDischargeSlopTanksFirst(other.getDischargeSlopTanksFirst());
+      }
+      if (other.getDischargeCommingledCargoSeparately() != false) {
+        setDischargeCommingledCargoSeparately(other.getDischargeCommingledCargoSeparately());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -3535,6 +3608,90 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     public Builder clearIsDischargingInfoComplete() {
 
       isDischargingInfoComplete_ = false;
+      onChanged();
+      return this;
+    }
+
+    private boolean dischargeSlopTanksFirst_;
+    /**
+     *
+     *
+     * <pre>
+     * Cargo Section
+     * </pre>
+     *
+     * <code>bool dischargeSlopTanksFirst = 25;</code>
+     *
+     * @return The dischargeSlopTanksFirst.
+     */
+    public boolean getDischargeSlopTanksFirst() {
+      return dischargeSlopTanksFirst_;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Cargo Section
+     * </pre>
+     *
+     * <code>bool dischargeSlopTanksFirst = 25;</code>
+     *
+     * @param value The dischargeSlopTanksFirst to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargeSlopTanksFirst(boolean value) {
+
+      dischargeSlopTanksFirst_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Cargo Section
+     * </pre>
+     *
+     * <code>bool dischargeSlopTanksFirst = 25;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDischargeSlopTanksFirst() {
+
+      dischargeSlopTanksFirst_ = false;
+      onChanged();
+      return this;
+    }
+
+    private boolean dischargeCommingledCargoSeparately_;
+    /**
+     * <code>bool dischargeCommingledCargoSeparately = 26;</code>
+     *
+     * @return The dischargeCommingledCargoSeparately.
+     */
+    public boolean getDischargeCommingledCargoSeparately() {
+      return dischargeCommingledCargoSeparately_;
+    }
+    /**
+     * <code>bool dischargeCommingledCargoSeparately = 26;</code>
+     *
+     * @param value The dischargeCommingledCargoSeparately to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargeCommingledCargoSeparately(boolean value) {
+
+      dischargeCommingledCargoSeparately_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool dischargeCommingledCargoSeparately = 26;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDischargeCommingledCargoSeparately() {
+
+      dischargeCommingledCargoSeparately_ = false;
       onChanged();
       return this;
     }

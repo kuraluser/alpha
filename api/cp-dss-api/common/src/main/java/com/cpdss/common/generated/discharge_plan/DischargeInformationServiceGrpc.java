@@ -702,7 +702,7 @@ public final class DischargeInformationServiceGrpc {
      *
      *
      * <pre>
-     * Case 1, Loading Details
+     * Case 1, Discharging Details
      * </pre>
      */
     public void saveDischargingInformation(
@@ -718,7 +718,7 @@ public final class DischargeInformationServiceGrpc {
      *
      *
      * <pre>
-     * Case 2, Only Loading Rate data
+     * Case 2, Only Discharging Rate data
      * </pre>
      */
     public void saveDischargingInfoRates(
@@ -956,7 +956,7 @@ public final class DischargeInformationServiceGrpc {
      *
      *
      * <pre>
-     * Case 1, Loading Details
+     * Case 1, Discharging Details
      * </pre>
      */
     public void saveDischargingInformation(
@@ -974,7 +974,7 @@ public final class DischargeInformationServiceGrpc {
      *
      *
      * <pre>
-     * Case 2, Only Loading Rate data
+     * Case 2, Only Discharging Rate data
      * </pre>
      */
     public void saveDischargingInfoRates(
@@ -1119,7 +1119,7 @@ public final class DischargeInformationServiceGrpc {
      *
      *
      * <pre>
-     * Case 1, Loading Details
+     * Case 1, Discharging Details
      * </pre>
      */
     public com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse
@@ -1133,7 +1133,7 @@ public final class DischargeInformationServiceGrpc {
      *
      *
      * <pre>
-     * Case 2, Only Loading Rate data
+     * Case 2, Only Discharging Rate data
      * </pre>
      */
     public com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse
@@ -1255,7 +1255,7 @@ public final class DischargeInformationServiceGrpc {
      *
      *
      * <pre>
-     * Case 1, Loading Details
+     * Case 1, Discharging Details
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<
@@ -1270,7 +1270,7 @@ public final class DischargeInformationServiceGrpc {
      *
      *
      * <pre>
-     * Case 2, Only Loading Rate data
+     * Case 2, Only Discharging Rate data
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<

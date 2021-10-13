@@ -264,7 +264,7 @@ public class DischargeInformationBuilderService {
         list2.add(var2);
       }
       log.info("Loading plan machine in use added, Size {}", var1.size());
-      machineryInUse.setLoadingMachinesInUses(list2);
+      // machineryInUse.setLoadingMachinesInUses(list2);
       machineryInUse.setDischargeMachinesInUses(list2);
     }
     return machineryInUse;
@@ -298,7 +298,7 @@ public class DischargeInformationBuilderService {
       loadingDelays.add(val1);
     }
     loadingSequences.setReasonForDelays(reasonForDelays);
-    loadingSequences.setLoadingDelays(loadingDelays);
+    // loadingSequences.setLoadingDelays(loadingDelays);
     loadingSequences.setDischargingDelays(copy(loadingDelays));
     log.info(
         "manage sequence data added from  loading plan, Size {}", dischargeDelay.getDelaysCount());
@@ -331,6 +331,7 @@ public class DischargeInformationBuilderService {
       var1.setCowStart(cowPlan.getCowStartTime());
       var1.setCowEnd(cowPlan.getCowEndTime());
       var1.setCowDuration(cowPlan.getEstCowDuration());
+      var1.setWashTanksWithDifferentCargo(cowPlan.getCowWithCargoEnable());
 
       // If no value in discharge-plan DB, set admin Rule Value
       if (cowPlan.getTrimCowMin().isEmpty()) {

@@ -25,6 +25,7 @@ public class CowPlan {
   private Boolean needFreshCrudeStorage;
   private Boolean needFlushingOil;
 
+  private Boolean washTanksWithDifferentCargo; //
   private List<Long> topCow;
   private List<Long> bottomCow;
   private List<Long> allCow;

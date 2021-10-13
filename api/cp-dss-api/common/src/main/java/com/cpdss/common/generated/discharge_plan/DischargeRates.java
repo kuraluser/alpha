@@ -17,6 +17,14 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
     maxDischargeRate_ = "";
     minBallastRate_ = "";
     maxBallastRate_ = "";
+    reducedDischargingRate_ = "";
+    minDeBallastingRate_ = "";
+    maxDeBallastingRate_ = "";
+    noticeTimeRateReduction_ = "";
+    noticeTimeStopDischarging_ = "";
+    lineContentRemaining_ = "";
+    minDischargingRate_ = "";
+    shoreDischargingRate_ = "";
   }
 
   @java.lang.Override
@@ -79,6 +87,62 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
           case 40:
             {
               id_ = input.readInt64();
+              break;
+            }
+          case 50:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              reducedDischargingRate_ = s;
+              break;
+            }
+          case 58:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              minDeBallastingRate_ = s;
+              break;
+            }
+          case 66:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              maxDeBallastingRate_ = s;
+              break;
+            }
+          case 74:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              noticeTimeRateReduction_ = s;
+              break;
+            }
+          case 82:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              noticeTimeStopDischarging_ = s;
+              break;
+            }
+          case 90:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              lineContentRemaining_ = s;
+              break;
+            }
+          case 98:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              minDischargingRate_ = s;
+              break;
+            }
+          case 106:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              shoreDischargingRate_ = s;
               break;
             }
           default:
@@ -266,6 +330,286 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
     return id_;
   }
 
+  public static final int REDUCEDDISCHARGINGRATE_FIELD_NUMBER = 6;
+  private volatile java.lang.Object reducedDischargingRate_;
+  /**
+   * <code>string reducedDischargingRate = 6;</code>
+   *
+   * @return The reducedDischargingRate.
+   */
+  public java.lang.String getReducedDischargingRate() {
+    java.lang.Object ref = reducedDischargingRate_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      reducedDischargingRate_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string reducedDischargingRate = 6;</code>
+   *
+   * @return The bytes for reducedDischargingRate.
+   */
+  public com.google.protobuf.ByteString getReducedDischargingRateBytes() {
+    java.lang.Object ref = reducedDischargingRate_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      reducedDischargingRate_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int MINDEBALLASTINGRATE_FIELD_NUMBER = 7;
+  private volatile java.lang.Object minDeBallastingRate_;
+  /**
+   * <code>string minDeBallastingRate = 7;</code>
+   *
+   * @return The minDeBallastingRate.
+   */
+  public java.lang.String getMinDeBallastingRate() {
+    java.lang.Object ref = minDeBallastingRate_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      minDeBallastingRate_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string minDeBallastingRate = 7;</code>
+   *
+   * @return The bytes for minDeBallastingRate.
+   */
+  public com.google.protobuf.ByteString getMinDeBallastingRateBytes() {
+    java.lang.Object ref = minDeBallastingRate_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      minDeBallastingRate_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int MAXDEBALLASTINGRATE_FIELD_NUMBER = 8;
+  private volatile java.lang.Object maxDeBallastingRate_;
+  /**
+   * <code>string maxDeBallastingRate = 8;</code>
+   *
+   * @return The maxDeBallastingRate.
+   */
+  public java.lang.String getMaxDeBallastingRate() {
+    java.lang.Object ref = maxDeBallastingRate_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      maxDeBallastingRate_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string maxDeBallastingRate = 8;</code>
+   *
+   * @return The bytes for maxDeBallastingRate.
+   */
+  public com.google.protobuf.ByteString getMaxDeBallastingRateBytes() {
+    java.lang.Object ref = maxDeBallastingRate_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      maxDeBallastingRate_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int NOTICETIMERATEREDUCTION_FIELD_NUMBER = 9;
+  private volatile java.lang.Object noticeTimeRateReduction_;
+  /**
+   * <code>string noticeTimeRateReduction = 9;</code>
+   *
+   * @return The noticeTimeRateReduction.
+   */
+  public java.lang.String getNoticeTimeRateReduction() {
+    java.lang.Object ref = noticeTimeRateReduction_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      noticeTimeRateReduction_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string noticeTimeRateReduction = 9;</code>
+   *
+   * @return The bytes for noticeTimeRateReduction.
+   */
+  public com.google.protobuf.ByteString getNoticeTimeRateReductionBytes() {
+    java.lang.Object ref = noticeTimeRateReduction_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      noticeTimeRateReduction_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int NOTICETIMESTOPDISCHARGING_FIELD_NUMBER = 10;
+  private volatile java.lang.Object noticeTimeStopDischarging_;
+  /**
+   * <code>string noticeTimeStopDischarging = 10;</code>
+   *
+   * @return The noticeTimeStopDischarging.
+   */
+  public java.lang.String getNoticeTimeStopDischarging() {
+    java.lang.Object ref = noticeTimeStopDischarging_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      noticeTimeStopDischarging_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string noticeTimeStopDischarging = 10;</code>
+   *
+   * @return The bytes for noticeTimeStopDischarging.
+   */
+  public com.google.protobuf.ByteString getNoticeTimeStopDischargingBytes() {
+    java.lang.Object ref = noticeTimeStopDischarging_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      noticeTimeStopDischarging_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int LINECONTENTREMAINING_FIELD_NUMBER = 11;
+  private volatile java.lang.Object lineContentRemaining_;
+  /**
+   * <code>string lineContentRemaining = 11;</code>
+   *
+   * @return The lineContentRemaining.
+   */
+  public java.lang.String getLineContentRemaining() {
+    java.lang.Object ref = lineContentRemaining_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      lineContentRemaining_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string lineContentRemaining = 11;</code>
+   *
+   * @return The bytes for lineContentRemaining.
+   */
+  public com.google.protobuf.ByteString getLineContentRemainingBytes() {
+    java.lang.Object ref = lineContentRemaining_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      lineContentRemaining_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int MINDISCHARGINGRATE_FIELD_NUMBER = 12;
+  private volatile java.lang.Object minDischargingRate_;
+  /**
+   * <code>string minDischargingRate = 12;</code>
+   *
+   * @return The minDischargingRate.
+   */
+  public java.lang.String getMinDischargingRate() {
+    java.lang.Object ref = minDischargingRate_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      minDischargingRate_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string minDischargingRate = 12;</code>
+   *
+   * @return The bytes for minDischargingRate.
+   */
+  public com.google.protobuf.ByteString getMinDischargingRateBytes() {
+    java.lang.Object ref = minDischargingRate_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      minDischargingRate_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int SHOREDISCHARGINGRATE_FIELD_NUMBER = 13;
+  private volatile java.lang.Object shoreDischargingRate_;
+  /**
+   * <code>string shoreDischargingRate = 13;</code>
+   *
+   * @return The shoreDischargingRate.
+   */
+  public java.lang.String getShoreDischargingRate() {
+    java.lang.Object ref = shoreDischargingRate_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      shoreDischargingRate_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string shoreDischargingRate = 13;</code>
+   *
+   * @return The bytes for shoreDischargingRate.
+   */
+  public com.google.protobuf.ByteString getShoreDischargingRateBytes() {
+    java.lang.Object ref = shoreDischargingRate_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      shoreDischargingRate_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -295,6 +639,30 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
     if (id_ != 0L) {
       output.writeInt64(5, id_);
     }
+    if (!getReducedDischargingRateBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, reducedDischargingRate_);
+    }
+    if (!getMinDeBallastingRateBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 7, minDeBallastingRate_);
+    }
+    if (!getMaxDeBallastingRateBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 8, maxDeBallastingRate_);
+    }
+    if (!getNoticeTimeRateReductionBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 9, noticeTimeRateReduction_);
+    }
+    if (!getNoticeTimeStopDischargingBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 10, noticeTimeStopDischarging_);
+    }
+    if (!getLineContentRemainingBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 11, lineContentRemaining_);
+    }
+    if (!getMinDischargingRateBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 12, minDischargingRate_);
+    }
+    if (!getShoreDischargingRateBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 13, shoreDischargingRate_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -319,6 +687,31 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
     if (id_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, id_);
     }
+    if (!getReducedDischargingRateBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, reducedDischargingRate_);
+    }
+    if (!getMinDeBallastingRateBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, minDeBallastingRate_);
+    }
+    if (!getMaxDeBallastingRateBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, maxDeBallastingRate_);
+    }
+    if (!getNoticeTimeRateReductionBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, noticeTimeRateReduction_);
+    }
+    if (!getNoticeTimeStopDischargingBytes().isEmpty()) {
+      size +=
+          com.google.protobuf.GeneratedMessageV3.computeStringSize(10, noticeTimeStopDischarging_);
+    }
+    if (!getLineContentRemainingBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, lineContentRemaining_);
+    }
+    if (!getMinDischargingRateBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, minDischargingRate_);
+    }
+    if (!getShoreDischargingRateBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, shoreDischargingRate_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -340,6 +733,14 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
     if (!getMinBallastRate().equals(other.getMinBallastRate())) return false;
     if (!getMaxBallastRate().equals(other.getMaxBallastRate())) return false;
     if (getId() != other.getId()) return false;
+    if (!getReducedDischargingRate().equals(other.getReducedDischargingRate())) return false;
+    if (!getMinDeBallastingRate().equals(other.getMinDeBallastingRate())) return false;
+    if (!getMaxDeBallastingRate().equals(other.getMaxDeBallastingRate())) return false;
+    if (!getNoticeTimeRateReduction().equals(other.getNoticeTimeRateReduction())) return false;
+    if (!getNoticeTimeStopDischarging().equals(other.getNoticeTimeStopDischarging())) return false;
+    if (!getLineContentRemaining().equals(other.getLineContentRemaining())) return false;
+    if (!getMinDischargingRate().equals(other.getMinDischargingRate())) return false;
+    if (!getShoreDischargingRate().equals(other.getShoreDischargingRate())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -361,6 +762,22 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
     hash = (53 * hash) + getMaxBallastRate().hashCode();
     hash = (37 * hash) + ID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getId());
+    hash = (37 * hash) + REDUCEDDISCHARGINGRATE_FIELD_NUMBER;
+    hash = (53 * hash) + getReducedDischargingRate().hashCode();
+    hash = (37 * hash) + MINDEBALLASTINGRATE_FIELD_NUMBER;
+    hash = (53 * hash) + getMinDeBallastingRate().hashCode();
+    hash = (37 * hash) + MAXDEBALLASTINGRATE_FIELD_NUMBER;
+    hash = (53 * hash) + getMaxDeBallastingRate().hashCode();
+    hash = (37 * hash) + NOTICETIMERATEREDUCTION_FIELD_NUMBER;
+    hash = (53 * hash) + getNoticeTimeRateReduction().hashCode();
+    hash = (37 * hash) + NOTICETIMESTOPDISCHARGING_FIELD_NUMBER;
+    hash = (53 * hash) + getNoticeTimeStopDischarging().hashCode();
+    hash = (37 * hash) + LINECONTENTREMAINING_FIELD_NUMBER;
+    hash = (53 * hash) + getLineContentRemaining().hashCode();
+    hash = (37 * hash) + MINDISCHARGINGRATE_FIELD_NUMBER;
+    hash = (53 * hash) + getMinDischargingRate().hashCode();
+    hash = (37 * hash) + SHOREDISCHARGINGRATE_FIELD_NUMBER;
+    hash = (53 * hash) + getShoreDischargingRate().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -509,6 +926,22 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
 
       id_ = 0L;
 
+      reducedDischargingRate_ = "";
+
+      minDeBallastingRate_ = "";
+
+      maxDeBallastingRate_ = "";
+
+      noticeTimeRateReduction_ = "";
+
+      noticeTimeStopDischarging_ = "";
+
+      lineContentRemaining_ = "";
+
+      minDischargingRate_ = "";
+
+      shoreDischargingRate_ = "";
+
       return this;
     }
 
@@ -541,6 +974,14 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
       result.minBallastRate_ = minBallastRate_;
       result.maxBallastRate_ = maxBallastRate_;
       result.id_ = id_;
+      result.reducedDischargingRate_ = reducedDischargingRate_;
+      result.minDeBallastingRate_ = minDeBallastingRate_;
+      result.maxDeBallastingRate_ = maxDeBallastingRate_;
+      result.noticeTimeRateReduction_ = noticeTimeRateReduction_;
+      result.noticeTimeStopDischarging_ = noticeTimeStopDischarging_;
+      result.lineContentRemaining_ = lineContentRemaining_;
+      result.minDischargingRate_ = minDischargingRate_;
+      result.shoreDischargingRate_ = shoreDischargingRate_;
       onBuilt();
       return result;
     }
@@ -609,6 +1050,38 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
       }
       if (other.getId() != 0L) {
         setId(other.getId());
+      }
+      if (!other.getReducedDischargingRate().isEmpty()) {
+        reducedDischargingRate_ = other.reducedDischargingRate_;
+        onChanged();
+      }
+      if (!other.getMinDeBallastingRate().isEmpty()) {
+        minDeBallastingRate_ = other.minDeBallastingRate_;
+        onChanged();
+      }
+      if (!other.getMaxDeBallastingRate().isEmpty()) {
+        maxDeBallastingRate_ = other.maxDeBallastingRate_;
+        onChanged();
+      }
+      if (!other.getNoticeTimeRateReduction().isEmpty()) {
+        noticeTimeRateReduction_ = other.noticeTimeRateReduction_;
+        onChanged();
+      }
+      if (!other.getNoticeTimeStopDischarging().isEmpty()) {
+        noticeTimeStopDischarging_ = other.noticeTimeStopDischarging_;
+        onChanged();
+      }
+      if (!other.getLineContentRemaining().isEmpty()) {
+        lineContentRemaining_ = other.lineContentRemaining_;
+        onChanged();
+      }
+      if (!other.getMinDischargingRate().isEmpty()) {
+        minDischargingRate_ = other.minDischargingRate_;
+        onChanged();
+      }
+      if (!other.getShoreDischargingRate().isEmpty()) {
+        shoreDischargingRate_ = other.shoreDischargingRate_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -973,6 +1446,614 @@ public final class DischargeRates extends com.google.protobuf.GeneratedMessageV3
     public Builder clearId() {
 
       id_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object reducedDischargingRate_ = "";
+    /**
+     * <code>string reducedDischargingRate = 6;</code>
+     *
+     * @return The reducedDischargingRate.
+     */
+    public java.lang.String getReducedDischargingRate() {
+      java.lang.Object ref = reducedDischargingRate_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        reducedDischargingRate_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string reducedDischargingRate = 6;</code>
+     *
+     * @return The bytes for reducedDischargingRate.
+     */
+    public com.google.protobuf.ByteString getReducedDischargingRateBytes() {
+      java.lang.Object ref = reducedDischargingRate_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        reducedDischargingRate_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string reducedDischargingRate = 6;</code>
+     *
+     * @param value The reducedDischargingRate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setReducedDischargingRate(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      reducedDischargingRate_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string reducedDischargingRate = 6;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearReducedDischargingRate() {
+
+      reducedDischargingRate_ = getDefaultInstance().getReducedDischargingRate();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string reducedDischargingRate = 6;</code>
+     *
+     * @param value The bytes for reducedDischargingRate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setReducedDischargingRateBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      reducedDischargingRate_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object minDeBallastingRate_ = "";
+    /**
+     * <code>string minDeBallastingRate = 7;</code>
+     *
+     * @return The minDeBallastingRate.
+     */
+    public java.lang.String getMinDeBallastingRate() {
+      java.lang.Object ref = minDeBallastingRate_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        minDeBallastingRate_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string minDeBallastingRate = 7;</code>
+     *
+     * @return The bytes for minDeBallastingRate.
+     */
+    public com.google.protobuf.ByteString getMinDeBallastingRateBytes() {
+      java.lang.Object ref = minDeBallastingRate_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        minDeBallastingRate_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string minDeBallastingRate = 7;</code>
+     *
+     * @param value The minDeBallastingRate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMinDeBallastingRate(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      minDeBallastingRate_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string minDeBallastingRate = 7;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearMinDeBallastingRate() {
+
+      minDeBallastingRate_ = getDefaultInstance().getMinDeBallastingRate();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string minDeBallastingRate = 7;</code>
+     *
+     * @param value The bytes for minDeBallastingRate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMinDeBallastingRateBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      minDeBallastingRate_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object maxDeBallastingRate_ = "";
+    /**
+     * <code>string maxDeBallastingRate = 8;</code>
+     *
+     * @return The maxDeBallastingRate.
+     */
+    public java.lang.String getMaxDeBallastingRate() {
+      java.lang.Object ref = maxDeBallastingRate_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxDeBallastingRate_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string maxDeBallastingRate = 8;</code>
+     *
+     * @return The bytes for maxDeBallastingRate.
+     */
+    public com.google.protobuf.ByteString getMaxDeBallastingRateBytes() {
+      java.lang.Object ref = maxDeBallastingRate_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxDeBallastingRate_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string maxDeBallastingRate = 8;</code>
+     *
+     * @param value The maxDeBallastingRate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMaxDeBallastingRate(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      maxDeBallastingRate_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string maxDeBallastingRate = 8;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearMaxDeBallastingRate() {
+
+      maxDeBallastingRate_ = getDefaultInstance().getMaxDeBallastingRate();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string maxDeBallastingRate = 8;</code>
+     *
+     * @param value The bytes for maxDeBallastingRate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMaxDeBallastingRateBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      maxDeBallastingRate_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object noticeTimeRateReduction_ = "";
+    /**
+     * <code>string noticeTimeRateReduction = 9;</code>
+     *
+     * @return The noticeTimeRateReduction.
+     */
+    public java.lang.String getNoticeTimeRateReduction() {
+      java.lang.Object ref = noticeTimeRateReduction_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        noticeTimeRateReduction_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string noticeTimeRateReduction = 9;</code>
+     *
+     * @return The bytes for noticeTimeRateReduction.
+     */
+    public com.google.protobuf.ByteString getNoticeTimeRateReductionBytes() {
+      java.lang.Object ref = noticeTimeRateReduction_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        noticeTimeRateReduction_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string noticeTimeRateReduction = 9;</code>
+     *
+     * @param value The noticeTimeRateReduction to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNoticeTimeRateReduction(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      noticeTimeRateReduction_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string noticeTimeRateReduction = 9;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearNoticeTimeRateReduction() {
+
+      noticeTimeRateReduction_ = getDefaultInstance().getNoticeTimeRateReduction();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string noticeTimeRateReduction = 9;</code>
+     *
+     * @param value The bytes for noticeTimeRateReduction to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNoticeTimeRateReductionBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      noticeTimeRateReduction_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object noticeTimeStopDischarging_ = "";
+    /**
+     * <code>string noticeTimeStopDischarging = 10;</code>
+     *
+     * @return The noticeTimeStopDischarging.
+     */
+    public java.lang.String getNoticeTimeStopDischarging() {
+      java.lang.Object ref = noticeTimeStopDischarging_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        noticeTimeStopDischarging_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string noticeTimeStopDischarging = 10;</code>
+     *
+     * @return The bytes for noticeTimeStopDischarging.
+     */
+    public com.google.protobuf.ByteString getNoticeTimeStopDischargingBytes() {
+      java.lang.Object ref = noticeTimeStopDischarging_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        noticeTimeStopDischarging_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string noticeTimeStopDischarging = 10;</code>
+     *
+     * @param value The noticeTimeStopDischarging to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNoticeTimeStopDischarging(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      noticeTimeStopDischarging_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string noticeTimeStopDischarging = 10;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearNoticeTimeStopDischarging() {
+
+      noticeTimeStopDischarging_ = getDefaultInstance().getNoticeTimeStopDischarging();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string noticeTimeStopDischarging = 10;</code>
+     *
+     * @param value The bytes for noticeTimeStopDischarging to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNoticeTimeStopDischargingBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      noticeTimeStopDischarging_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object lineContentRemaining_ = "";
+    /**
+     * <code>string lineContentRemaining = 11;</code>
+     *
+     * @return The lineContentRemaining.
+     */
+    public java.lang.String getLineContentRemaining() {
+      java.lang.Object ref = lineContentRemaining_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        lineContentRemaining_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string lineContentRemaining = 11;</code>
+     *
+     * @return The bytes for lineContentRemaining.
+     */
+    public com.google.protobuf.ByteString getLineContentRemainingBytes() {
+      java.lang.Object ref = lineContentRemaining_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        lineContentRemaining_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string lineContentRemaining = 11;</code>
+     *
+     * @param value The lineContentRemaining to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLineContentRemaining(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      lineContentRemaining_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string lineContentRemaining = 11;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearLineContentRemaining() {
+
+      lineContentRemaining_ = getDefaultInstance().getLineContentRemaining();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string lineContentRemaining = 11;</code>
+     *
+     * @param value The bytes for lineContentRemaining to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLineContentRemainingBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      lineContentRemaining_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object minDischargingRate_ = "";
+    /**
+     * <code>string minDischargingRate = 12;</code>
+     *
+     * @return The minDischargingRate.
+     */
+    public java.lang.String getMinDischargingRate() {
+      java.lang.Object ref = minDischargingRate_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        minDischargingRate_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string minDischargingRate = 12;</code>
+     *
+     * @return The bytes for minDischargingRate.
+     */
+    public com.google.protobuf.ByteString getMinDischargingRateBytes() {
+      java.lang.Object ref = minDischargingRate_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        minDischargingRate_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string minDischargingRate = 12;</code>
+     *
+     * @param value The minDischargingRate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMinDischargingRate(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      minDischargingRate_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string minDischargingRate = 12;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearMinDischargingRate() {
+
+      minDischargingRate_ = getDefaultInstance().getMinDischargingRate();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string minDischargingRate = 12;</code>
+     *
+     * @param value The bytes for minDischargingRate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMinDischargingRateBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      minDischargingRate_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object shoreDischargingRate_ = "";
+    /**
+     * <code>string shoreDischargingRate = 13;</code>
+     *
+     * @return The shoreDischargingRate.
+     */
+    public java.lang.String getShoreDischargingRate() {
+      java.lang.Object ref = shoreDischargingRate_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        shoreDischargingRate_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string shoreDischargingRate = 13;</code>
+     *
+     * @return The bytes for shoreDischargingRate.
+     */
+    public com.google.protobuf.ByteString getShoreDischargingRateBytes() {
+      java.lang.Object ref = shoreDischargingRate_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        shoreDischargingRate_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string shoreDischargingRate = 13;</code>
+     *
+     * @param value The shoreDischargingRate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setShoreDischargingRate(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      shoreDischargingRate_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string shoreDischargingRate = 13;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearShoreDischargingRate() {
+
+      shoreDischargingRate_ = getDefaultInstance().getShoreDischargingRate();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string shoreDischargingRate = 13;</code>
+     *
+     * @param value The bytes for shoreDischargingRate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setShoreDischargingRateBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      shoreDischargingRate_ = value;
       onChanged();
       return this;
     }

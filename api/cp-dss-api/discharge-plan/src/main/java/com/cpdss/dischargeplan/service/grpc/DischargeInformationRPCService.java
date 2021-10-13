@@ -3,8 +3,6 @@ package com.cpdss.dischargeplan.service.grpc;
 
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.FAILED;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
-import static com.cpdss.loadingplan.common.LoadingPlanConstants.FAILED;
-import static com.cpdss.loadingplan.common.LoadingPlanConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
