@@ -192,7 +192,21 @@ public class ExcelExportUtility {
 	}
 
 	
-
+	 /**
+	   * Method to get contrast color for a given background color
+	   *
+	   * @param backgroundColor Color value of background
+	   * @return Contrast Color object
+	   */
+	  public Color getContrastColor(Color backgroundColor) {
+	    double lumaValue =
+	        ((0.299 * backgroundColor.getRed())
+	                + (0.587 * backgroundColor.getGreen())
+	                + (0.114 * backgroundColor.getBlue()))
+	            / 255;
+	    //    Threshold set to 0.5 for lumaValue
+	    return lumaValue > 0.5 ? Color.BLACK : Color.WHITE;
+	  }
 
 	/**
 	 * Set dynamic styling on template
