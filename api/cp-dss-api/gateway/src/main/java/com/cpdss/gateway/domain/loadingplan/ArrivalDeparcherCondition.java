@@ -24,4 +24,7 @@ public class ArrivalDeparcherCondition {
   private TankRow cargoCenterTanks;
   private TankCargoDetails apt;
   private TankCargoDetails fpt;
+  private TankCargoDetails lfpt;
+  private TankCargoDetails ufpt;
+  private boolean fptTankMerged;
 }

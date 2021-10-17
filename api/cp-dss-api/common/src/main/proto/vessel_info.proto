@@ -70,6 +70,7 @@ message VesselParticulars {
 	string highVelocityVentingVaccum = 18;
 	string pvBreakerVentingPressure = 19;
 	string pvBreakerVentingVaccum = 20;
+	int64 vesselTypeId = 21;
 }
 
 // Mapped to pump_type Table in vessel DB

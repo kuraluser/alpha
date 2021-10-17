@@ -7,6 +7,7 @@ import lombok.Data;
 public class VesselParticularsForExcel {
 
   private Long vesselId;
+  private Long vesselTypeId;
   private String shipMaxLoadingRate;
   private String shipMaxFlowRate;
   private String shipMaxFlowRatePerTank;

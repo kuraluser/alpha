@@ -1093,6 +1093,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
 					HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
 		}
 		vesselParticulars.setVesselId(vesselId);
+		Optional.ofNullable(reply.getVesselTypeId()).ifPresent(vesselParticulars::setVesselTypeId);
 		Optional.ofNullable(reply.getShipMaxLoadingRate()).ifPresent(vesselParticulars::setShipMaxLoadingRate);
 		Optional.ofNullable(reply.getShipMaxFlowRate()).ifPresent(vesselParticulars::setShipMaxFlowRate);
 		Optional.ofNullable(reply.getShipMaxFlowRatePerTank()).ifPresent(vesselParticulars::setShipMaxFlowRatePerTank);

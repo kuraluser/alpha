@@ -82,6 +82,8 @@ public class VesselParticularService {
 			throw new GenericServiceException("Vessel with given id does not exist",
 					CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
 		}
+		
+		builder.setVesselTypeId(vessel.getVesselTypeXid());
 		builder.setShipMaxLoadingRate(String.valueOf(vessel.getMaxLoadRate()));
 		getTankWiseLoadingRate(vessel, builder);
 		getBallastPumpDetails(vessel, builder);
