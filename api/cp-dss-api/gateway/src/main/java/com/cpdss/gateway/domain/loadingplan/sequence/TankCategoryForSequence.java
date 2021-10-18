@@ -15,7 +15,7 @@ public class TankCategoryForSequence {
   private BigDecimal quantity;
   private BigDecimal ullage;
   private String cargoName;
-  private Integer displayOrder; 
-  private String colorCode; 
+  private Integer displayOrder;
+  private String colorCode;
   private TankWithSequenceDetails cargoTankUllage;
 }

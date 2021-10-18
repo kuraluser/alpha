@@ -8,5 +8,5 @@ import java.util.List;
 
 /** @Author arun.j */
 public interface VesselFlowRateRepository extends CommonCrudRepository<VesselFlowRate, Long> {
-	public List<VesselFlowRate> findByVessel(Vessel vessel);
+  public List<VesselFlowRate> findByVessel(Vessel vessel);
 }

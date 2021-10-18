@@ -2,7 +2,6 @@
 package com.cpdss.gateway.domain.loadingplan.sequence;
 
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
