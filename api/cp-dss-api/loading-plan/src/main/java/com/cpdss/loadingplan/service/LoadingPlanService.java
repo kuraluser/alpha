@@ -151,44 +151,6 @@ public class LoadingPlanService {
               .setMessage("Successfully saved loading information in database")
               .setStatus(LoadingPlanConstants.SUCCESS)
               .build());
-      log.info("Before Loadingplan envoywriter call");
-      if (enableCommunication && env.equals("ship")) {
-        JsonArray jsonArray =
-            loadingPlanStagingService.getCommunicationData(
-                Arrays.asList(
-                    "loading_information",
-                    "cargo_topping_off_sequence",
-                    "loading_berth_details",
-                    "loading_delay",
-                    "loading_machinary_in_use"),
-                UUID.randomUUID().toString(),
-                "loading-plan-service",
-                savedLoadingInformation.getId());
-
-        log.info("Json Array in Loading plan service: " + jsonArray.toString());
-        EnvoyWriter.WriterReply ewReply =
-            communicationService.passRequestPayloadToEnvoyWriter(
-                jsonArray.toString(),
-                savedLoadingInformation.getVesselXId(),
-                MessageTypes.LOADINGPLAN.getMessageType());
-
-        if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-          log.info("------- Envoy writer has called successfully : " + ewReply.toString());
-          LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
-              new LoadingPlanCommunicationStatus();
-          if (ewReply.getMessageId() != null) {
-            loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-            loadingPlanCommunicationStatus.setCommunicationStatus(
-                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
-          }
-          loadingPlanCommunicationStatus.setReferenceId(savedLoadingInformation.getId());
-          loadingPlanCommunicationStatus.setMessageType(MessageTypes.LOADINGPLAN.getMessageType());
-          loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-          LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
-              this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
-          log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
-        }
-      }
     } catch (Exception e) {
       log.info(
           "Failed to save LoadingInformation on port "
