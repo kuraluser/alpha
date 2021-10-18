@@ -30,16 +30,7 @@ import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.entity.CargoNomination;
-import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
-import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
-import com.cpdss.loadablestudy.entity.LoadablePattern;
-import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
-import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
-import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.entity.OnBoardQuantity;
-import com.cpdss.loadablestudy.entity.OnHandQuantity;
-import com.cpdss.loadablestudy.entity.SynopticalTable;
+import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
@@ -124,6 +115,8 @@ public class SynopticServiceUtils {
   @Autowired SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
   @Autowired DischargePatternQuantityCargoPortwiseRepository disCargoQuantityRepository;
+
+  @Autowired LoadablePlanCommingleDetailsPortwiseRepository commingleDetailsPortWiseRepository;
   /**
    * Save synoptical ballast data
    *
@@ -734,6 +727,40 @@ public class SynopticServiceUtils {
             request.getOperationType(),
             request.getPortRotationId(),
             request.getPortId());
+
+    try {
+      // Commingle cargo also list along in Cargo To Be Loaded Grid
+      List<LoadablePlanComminglePortwiseDetails> comCargoNomiId =
+          this.commingleDetailsPortWiseRepository
+              .findCargoNominationIdsByPatternPortAndOperationType(
+                  request.getPatternId(), request.getPortRotationId(), request.getOperationType());
+      if (!comCargoNomiId.isEmpty()) {
+        log.info(
+            "Commingle cargo found for Pattern Id {}, Port-R Id {}, Op-Type {}",
+            request.getPatternId(),
+            request.getPortRotationId(),
+            request.getOperationType());
+        for (LoadablePlanComminglePortwiseDetails ccN : comCargoNomiId) {
+          System.out.println(ccN.getId() + "-" + ccN.getCargo2NominationId());
+          List<LoadablePlanQuantity> lpQList =
+              this.loadablePlanQuantityRepository.findByPatternIdAndCargoNominationId(
+                  request.getPatternId(), ccN.getCargo2NominationId());
+          if (!lpQList.isEmpty()) {
+            log.info(
+                "Commingle cargo - quantity details for Cargo Nomination - {}",
+                ccN.getCargo2NominationId());
+            var lpQ = lpQList.stream().findFirst();
+            if (!list.stream()
+                .anyMatch(
+                    v -> v.getId().equals(lpQ.get().getId()))) { // Check if already in this list
+              list.add(lpQ.get());
+            }
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     // Above list provide all cargo details at this port,
     // we don't need this data (only need what loading/discharge at that port) by nomination
