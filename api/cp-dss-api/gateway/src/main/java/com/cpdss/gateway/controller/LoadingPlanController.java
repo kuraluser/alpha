@@ -10,6 +10,7 @@ import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
+import com.cpdss.gateway.service.loadingplan.GenerateLoadingPlanExcelReportService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
@@ -45,6 +46,8 @@ public class LoadingPlanController {
   @Autowired private LoadingInformationBuilderService loadingInformationBuilderService;
 
   @Autowired LoadingPlanGrpcService loadingPlanGrpcService;
+
+  @Autowired GenerateLoadingPlanExcelReportService generateLoadingPlanExcelReportService;
 
   private static final String LOADING_PORT_TIDE_DETAIL_FILE_NAME = "Loading_port_tide_details.xlsx";
 
@@ -889,6 +892,59 @@ public class LoadingPlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception in downloadLoadingPortTideDetails method", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * API to download loading plan report
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @param portRotationId
+   * @param requestPayload
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/port-rotation/{portRotationId}/report",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public HttpEntity<ByteArrayResource> getLoadingReport(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @RequestBody(required = false) LoadingPlanResponse requestPayload)
+      throws CommonRestException {
+
+    try {
+      // Set file download headers
+      HttpHeaders header = new HttpHeaders();
+      header.setContentType(new MediaType("application", "force-download"));
+      header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename= Loading_Plan.xlsx");
+
+      // Send file
+      return new HttpEntity<ByteArrayResource>(
+          new ByteArrayResource(
+              generateLoadingPlanExcelReportService.generateLoadingPlanExcel(
+                  requestPayload, vesselId, voyageId, infoId, portRotationId, true)),
+          header);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in generateLoadingPlanExcel method", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception in generateLoadingPlanExcel method", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
