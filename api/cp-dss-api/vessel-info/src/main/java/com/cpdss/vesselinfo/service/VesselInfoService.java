@@ -44,14 +44,19 @@ import com.cpdss.common.generated.VesselInfo.VesselTankOrder;
 import com.cpdss.common.generated.VesselInfo.VesselTankRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankResponse;
 import com.cpdss.common.generated.VesselInfo.VesselTankTCG;
+import com.cpdss.common.generated.VesselInfo.VesselsInfoRequest;
+import com.cpdss.common.generated.VesselInfo.VesselsInformation;
+import com.cpdss.common.generated.VesselInfo.VesselsInformationReply;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.vesselinfo.domain.CargoTankMaster;
 import com.cpdss.vesselinfo.domain.RuleMasterData;
+import com.cpdss.vesselinfo.domain.SearchCriteria;
 import com.cpdss.vesselinfo.domain.TypeValue;
 import com.cpdss.vesselinfo.domain.VesselDetails;
 import com.cpdss.vesselinfo.domain.VesselInfo;
+import com.cpdss.vesselinfo.domain.VesselInfoSpecification;
 import com.cpdss.vesselinfo.domain.VesselRule;
 import com.cpdss.vesselinfo.domain.VesselTankDetails;
 import com.cpdss.vesselinfo.entity.CalculationSheetTankgroup;
@@ -79,9 +84,12 @@ import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +101,11 @@ import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
@@ -2613,5 +2626,100 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                       });
             });
     ruleVesselMappingRepository.saveAll(ruleVesselMappingList);
+  }
+  
+  /**
+   * Get all vessel information by requested parameters.
+   * request - VesselsInfoRequest
+   */
+  @Override
+	public void getVesselsInformation(VesselsInfoRequest request,
+			StreamObserver<VesselsInformationReply> responseObserver) {
+	    log.info("inside grpc service: getVesselsInformation");
+    	com.cpdss.common.generated.VesselInfo.VesselsInformationReply.Builder replyBuilder = 
+    			VesselsInformationReply.newBuilder();
+	    try {
+	    	
+	        // Paging and sorting while filtering is handled separately
+	        Pageable pageable = null;
+	        if (request.getSortBy().length() > 0 && request.getOrderBy().length() > 0) {
+	          pageable =
+	              PageRequest.of(
+	            		  (int)request.getPageNo(),
+	            		  (int)request.getPageSize(),
+	                  Sort.by(
+	                      Sort.Direction.valueOf(request.getOrderBy().toUpperCase()), request.getSortBy()));
+	        } else {
+	          pageable = PageRequest.of((int)request.getPageNo(), (int)request.getPageSize());
+	        }
+	        Page<Vessel> page = null;
+	        if (request.getVesselName().isEmpty() && request.getVesselType().isEmpty() && 
+	        		request.getBuilder().isEmpty() && request.getDateOfLaunch().isEmpty()) {
+	        	page = vesselRepository.findByIsActive(true, pageable);
+	        }else {	        	
+	        	page = createCriteriaQuery(request, pageable);	        	
+	        }
+	    	
+	    	List<Vessel> vessels = page.getContent();
+	    	for (Vessel vessel : vessels) {
+	    		com.cpdss.common.generated.VesselInfo.VesselsInformation.Builder vesselInfo = 
+	    				VesselsInformation.newBuilder();
+	    		vesselInfo.setVesselId(vessel.getId());
+	    		vesselInfo.setVesselName(vessel.getName());
+	    		vesselInfo.setBuilder(vessel.getBuilder());
+	    		vesselInfo.setOfficialNumber(vessel.getOfficialNumber());
+	    		vesselInfo.setSignalLetter(vessel.getSignalLetter());
+	    		vesselInfo.setVesselType(vessel.getTypeOfShip());
+	    		vesselInfo.setDateOfLaunch(new SimpleDateFormat("dd-MM-yyyy").format(vessel.getDateOfLaunching()));
+	    		replyBuilder.addVesselsInformation(vesselInfo.build());
+			}
+	    	replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+	    	replyBuilder.setTotalElement(page.getTotalElements());
+	    	
+	    }catch(Exception e) {
+	    	 log.error("Exception when fetching all vessel information", e);
+	         replyBuilder.setResponseStatus(
+	             ResponseStatus.newBuilder()
+	                 .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+	                 .setMessage(null != e.getMessage() ? e.getMessage() : "")
+	                 .setStatus(FAILED)
+	                 .build());
+	    }finally {
+	        responseObserver.onNext(replyBuilder.build());
+	        responseObserver.onCompleted();
+	     }  
+	}
+  
+  /**
+   * Create search criteria by filter parameters
+   * @param request
+   * @param pageable
+   * @return Page of vessels
+   * @throws ParseException
+   */
+  private Page<Vessel> createCriteriaQuery(VesselsInfoRequest request, Pageable pageable) throws ParseException {
+	  
+  	Specification<Vessel> specification =
+            Specification.where(
+                new VesselInfoSpecification(new SearchCriteria("isActive", "EQUALS", true)));
+	if(!request.getVesselName().isEmpty()) {
+		specification = specification.and(
+                new VesselInfoSpecification(new SearchCriteria("name", "LIKE", request.getVesselName())));
+	}
+	if(!request.getVesselType().isEmpty()) {
+		specification = specification.and(
+                new VesselInfoSpecification(new SearchCriteria("typeOfShip", "LIKE", request.getVesselType())));
+	}
+	if(!request.getBuilder().isEmpty()) {
+		specification = specification.and(
+                new VesselInfoSpecification(new SearchCriteria("builder", "LIKE", request.getBuilder())));
+	}
+	if(!request.getDateOfLaunch().isEmpty()) {
+		Date date=new SimpleDateFormat("dd-MM-yyyy").parse(request.getDateOfLaunch());
+		specification = specification.and(
+                new VesselInfoSpecification(new SearchCriteria("dateOfLaunching", "EQUALS", date)));
+	}
+	return vesselRepository.findAll(specification, pageable);
+	  
   }
 }

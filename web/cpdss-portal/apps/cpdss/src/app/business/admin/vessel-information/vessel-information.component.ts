@@ -4,54 +4,11 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 import { VesselInformationTransformationService } from './../services/vessel-information-transformation.service';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { VesselInformationApiService } from './../services/vessel-information-api.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
-import { IVesselMasterInfo } from './../models/vessel-info.model';
 import { IDateTimeFormatOptions } from '../../../shared/models/common.model';
-
-// code will remove once actual data available
-const tempVesselInfoData: IVesselMasterInfo[] = [
-  {
-    vesselId: 1,
-    vesselName: 'Kazusa',
-    owner: 'Mitsui O.S.K Lines, LTD',
-    vesselType: 'Cargo oil tanker',
-    builder: 'Mitsui engineering & shipbuilding',
-    dateOfLaunch: '02-07-2020'
-  },
-  {
-    vesselId: 2,
-    vesselName: 'Shizukisan',
-    owner: 'Mitsui O.S.K Lines, LTD',
-    vesselType: 'Cargo oil tanker',
-    builder: 'Mitsui engineering & shipbuilding',
-    dateOfLaunch: '10-07-2020'
-  },
-  {
-    vesselId: 3,
-    vesselName: 'Kazusa',
-    owner: 'Mitsui O.S.K Lines, LTD',
-    vesselType: 'Cargo oil tanker',
-    builder: 'Mitsui engineering & shipbuilding',
-    dateOfLaunch: '12-07-2020'
-  },
-  {
-    vesselId: 4,
-    vesselName: 'Shizukisan',
-    owner: 'Mitsui O.S.K Lines, LTD',
-    vesselType: 'Cargo oil tanker',
-    builder: 'Mitsui engineering & shipbuilding',
-    dateOfLaunch: '15-07-2020'
-  },
-  {
-    vesselId: 5,
-    vesselName: 'Kazusa',
-    owner: 'Mitsui O.S.K Lines, LTD',
-    vesselType: 'Cargo oil tanker',
-    builder: 'Mitsui engineering & shipbuilding',
-    dateOfLaunch: '29-07-2020'
-  }
-];
+import { IVesselList, IVesselListResponse } from '../models/vessel-info.model';
 
 /**
  * Component for vessel information page
@@ -72,18 +29,18 @@ export class VesselInformationComponent implements OnInit {
   totalRecords: number;
   currentPage: number;
   first: number;
-  vesselInfoData: IVesselMasterInfo[];
+  vesselList: IVesselList[];
 
   constructor(
     private vesselInformationTransformationService: VesselInformationTransformationService,
     private timeZoneTransformationService: TimeZoneTransformationService,
+    private vesselInformationApiService: VesselInformationApiService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private ngxSpinnerService: NgxSpinnerService
   ) { }
 
   ngOnInit(): void {
-    this.ngxSpinnerService.show();
     this.columns = this.vesselInformationTransformationService.getVesselInfoTableColumns();
     this.getVesselMasterInformation();
   }
@@ -92,16 +49,20 @@ export class VesselInformationComponent implements OnInit {
    * function to get Vessel master details
    * @memberof VesselInformationComponent
    */
-  getVesselMasterInformation(): void {
-    const formatOptions: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat.split(' ')[0] };
+  async getVesselMasterInformation() {
     this.first = 0;
     this.currentPage = 0;
-    this.vesselInfoData = [...tempVesselInfoData].map(vessel => {
-      vessel.dateOfLaunch = this.timeZoneTransformationService.formatDateTime(vessel.dateOfLaunch, formatOptions);
-      return vessel;
-    });
-    this.totalRecords = tempVesselInfoData.length;
-    this.loading = false;
+    this.ngxSpinnerService.show();
+    const formatOptions: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat.split(' ')[0] };
+    const vesselListDetails: IVesselListResponse = await this.vesselInformationApiService.getVesselList().toPromise();
+    if (vesselListDetails.responseStatus.status === '200') {
+      this.vesselList = [...vesselListDetails.vesselList].map(vessel => {
+        vessel.dateOfLaunch = vessel?.dateOfLaunch && this.timeZoneTransformationService.formatDateTime(vessel?.dateOfLaunch, formatOptions);
+        return vessel;
+      });
+      this.totalRecords = this.vesselList.length;
+      this.loading = false;
+    }
     this.ngxSpinnerService.hide();
   }
 
@@ -112,6 +73,15 @@ export class VesselInformationComponent implements OnInit {
    */
   onRowClick(event): void {
     this.router.navigate(['vessel', event?.data?.vesselId], { relativeTo: this.activatedRoute });
+  }
+
+  /**
+   * function to get values on state change like search, sort, pagination
+   * @param {*} event
+   * @memberof CargoHistoryComponent
+   */
+  onDataStateChange(event: any): void {
+    // this.loading = true;
   }
 
 }

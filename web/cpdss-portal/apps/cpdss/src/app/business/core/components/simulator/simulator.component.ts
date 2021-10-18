@@ -9,6 +9,13 @@ import { VesselsApiService } from '../../services/vessels-api.service';
 import { IVessel } from '../../models/vessel-details.model';
 import { ISimulatorResponse } from '../../models/common.model';
 
+/**
+ * Component for launch Simulator
+ *
+ * @export
+ * @class SimulatorComponent
+ * @implements {OnInit}
+ */
 @Component({
   selector: 'cpdss-portal-simulator',
   templateUrl: './simulator.component.html',

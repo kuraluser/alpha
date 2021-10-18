@@ -16,6 +16,10 @@ import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
 import com.cpdss.common.generated.VesselInfo.VesselRuleRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
+import com.cpdss.common.generated.VesselInfo.VesselsInfoRequest;
+import com.cpdss.common.generated.VesselInfo.VesselsInfoRequest.Builder;
+import com.cpdss.common.generated.VesselInfo.VesselsInformation;
+import com.cpdss.common.generated.VesselInfo.VesselsInformationReply;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.redis.CommonKeyValueStore;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -35,6 +39,8 @@ import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.service.vesselinfo.VesselValveService;
 import com.cpdss.gateway.utility.RuleUtility;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,6 +56,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -1243,5 +1250,51 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
               bottomLineList.add(bottomLine);
             });
     return bottomLineList;
+  }
+  
+  public VesselsInfoResponse getAllVesselsInormation(int pageSize,int pageNo,String sortBy,
+		  String orderBy, String vesselName,String vesselType,String builder,String dateOfLaunch, 
+		  String correlationId)throws GenericServiceException {
+	  Builder newBuilder = VesselsInfoRequest.newBuilder();
+	  if(dateOfLaunch!=null)
+		  newBuilder.setDateOfLaunch(dateOfLaunch);
+	  if(orderBy!=null)
+		  newBuilder.setOrderBy(orderBy);
+	  if(sortBy!=null)
+		  newBuilder.setSortBy(sortBy);
+	  if(vesselName!=null)
+		  newBuilder.setVesselName(vesselName);
+	  if(vesselType!=null)
+		  newBuilder.setVesselType(vesselType);
+	  if(builder!=null)
+		  newBuilder.setBuilder(builder);
+
+	  newBuilder.setPageNo(pageNo);
+	  newBuilder.setPageSize(pageSize);
+	  VesselsInformationReply vesselsInformationReply = vesselInfoGrpcService.getVesselsInformation(newBuilder.build());
+	  if (!SUCCESS.equals(vesselsInformationReply.getResponseStatus().getStatus())) {
+	      throw new GenericServiceException(
+	          "failed to get all vessel information ",
+	          vesselsInformationReply.getResponseStatus().getCode(),
+	          HttpStatusCode.valueOf(Integer.valueOf(vesselsInformationReply.getResponseStatus().getCode())));
+	  }
+	  List<VesselInformation> vesselInfoList = new ArrayList<>();
+	  VesselsInfoResponse response = new VesselsInfoResponse();
+	  response.setResponseStatus( new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+	  List<VesselsInformation> vesselsInformationList = vesselsInformationReply.getVesselsInformationList();
+	  vesselsInformationList.forEach(item -> {
+		  VesselInformation info = new VesselInformation();
+		  info.setBuilder(item.getBuilder());
+		  info.setDateOfLaunch(item.getDateOfLaunch());
+		  info.setOfficialNumber(item.getOfficialNumber());
+		  info.setSignalLetter(item.getSignalLetter());
+		  info.setVesselId(item.getVesselId());
+		  info.setVesselName(item.getVesselName());
+		  info.setVesselType(item.getVesselType());
+		  vesselInfoList.add(info);
+	  });
+	  response.setVesselsInfo(vesselInfoList);
+	  response.setTotalElements(vesselsInformationReply.getTotalElement());
+	  return response;
   }
 }

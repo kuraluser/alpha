@@ -44,6 +44,8 @@ service VesselInfoService {
 	rpc GetVesselValveSequence(VesselRequest) returns (VesselValveSequenceReply) {}
 	
 	rpc GetLoadingInfoRules(LoadingInfoRulesRequest) returns (LoadingInfoRulesReply) {}
+	
+	rpc GetVesselsInformation(VesselsInfoRequest) returns (VesselsInformationReply) {}
 }
 
 // Mapped to pump_type Table in vessel DB
@@ -621,4 +623,35 @@ message BendingMomentType1 {
 	  string ruleType = 2;
 	}
 	
+	message VesselsInfoRequest{
+		int64 pageSize = 1;
+		int64 pageNo = 2;
+		string sortBy = 3;
+      	string orderBy = 4;
+		string vesselName = 5;
+		string vesselType = 6;
+		string owner = 7;
+		string builder = 8;
+		string dateOfLaunch = 9;
+		string signalLetter = 10;
+		string officialNumber = 11;	
+	}
+	
+	message VesselsInformation{
+		int64 vesselId = 1;
+		string vesselName = 2;
+		string vesselType = 3;
+		string owner = 4;
+		string builder = 5;
+		string dateOfLaunch = 6;
+		string signalLetter = 7;
+		string officialNumber = 8;
+	
+	}
+	
+	message VesselsInformationReply{
+		repeated VesselsInformation vesselsInformation = 1;
+		ResponseStatus responseStatus = 2;
+		int64 totalElement = 3;
+	}
 	
