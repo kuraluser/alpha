@@ -503,15 +503,15 @@ public class DischargeInformationBuilderService {
           };
       callableTasks.add(t6);
     }
-    // Discharging Info Case 6 - Machines
+    // Discharging Info Case 7 - cow plan
     if (request.getCowPlan() != null) {
-      Callable<DischargingInfoSaveResponse> t6 =
+      Callable<DischargingInfoSaveResponse> t7 =
           () -> {
             builder.setCowPlan(
                 buildDischargeCowDetails(request.getCowPlan(), request.getDischargingInfoId()));
-            return dischargeInfoServiceStub.saveDischargingInfoMachinery(builder.build());
+            return dischargeInfoServiceStub.saveCowPlan(builder.build());
           };
-      callableTasks.add(t6);
+      callableTasks.add(t7);
     }
 
     ExecutorService executorService =
@@ -547,7 +547,7 @@ public class DischargeInformationBuilderService {
     CowPlan.Builder builder = CowPlan.newBuilder();
 
     builder.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(cowPlan.getCowOption()));
-
+    builder.setDischargingInfoId(dischargingId);
     if (!cowPlan.getAllCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.ALL_COW);
