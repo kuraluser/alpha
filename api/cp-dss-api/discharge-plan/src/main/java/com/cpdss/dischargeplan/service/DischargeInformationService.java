@@ -883,7 +883,8 @@ public class DischargeInformationService {
   }
 
   public void updateIsDischargingInfoCompeteStatus(Long id, boolean isDischargingInfoComplete) {
-	  dischargeInformationRepository.updateDischargeInformationCompleteStatus(id, isDischargingInfoComplete);
+    dischargeInformationRepository.updateDischargeInformationCompleteStatus(
+        id, isDischargingInfoComplete);
   }
 
   public void save(DischargeInformation entity) {

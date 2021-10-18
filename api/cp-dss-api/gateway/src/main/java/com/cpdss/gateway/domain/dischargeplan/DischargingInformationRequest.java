@@ -36,5 +36,4 @@ public class DischargingInformationRequest {
   private CowPlan cowPlan;
   private PostDischargeStage postDischargeStage;
   private PlannedCargo plannedCargo;
-
 }

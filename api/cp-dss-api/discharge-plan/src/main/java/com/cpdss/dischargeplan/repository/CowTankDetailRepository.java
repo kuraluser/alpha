@@ -4,7 +4,6 @@ package com.cpdss.dischargeplan.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.dischargeplan.entity.CowPlanDetail;
 import com.cpdss.dischargeplan.entity.CowTankDetail;
-
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 

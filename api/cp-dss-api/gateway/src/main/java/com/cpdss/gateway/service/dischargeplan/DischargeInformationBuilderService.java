@@ -608,9 +608,11 @@ public class DischargeInformationBuilderService {
     Optional.ofNullable(cowPlan.getCowStart()).ifPresent(builder::setCowStartTime);
     Optional.ofNullable(cowPlan.getCowTrimMax()).ifPresent(builder::setTrimCowMax);
     Optional.ofNullable(cowPlan.getCowTrimMin()).ifPresent(builder::setTrimCowMin);
-    Optional.ofNullable(cowPlan.getNeedFreshCrudeStorage()).ifPresent(builder::setNeedFreshCrudeStorage);
+    Optional.ofNullable(cowPlan.getNeedFreshCrudeStorage())
+        .ifPresent(builder::setNeedFreshCrudeStorage);
     Optional.ofNullable(cowPlan.getNeedFlushingOil()).ifPresent(builder::setNeedFlushingOil);
-    Optional.ofNullable(cowPlan.getWashTanksWithDifferentCargo()).ifPresent(builder::setCowWithCargoEnable);
+    Optional.ofNullable(cowPlan.getWashTanksWithDifferentCargo())
+        .ifPresent(builder::setCowWithCargoEnable);
 
     return builder.build();
   }
