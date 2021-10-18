@@ -30,7 +30,6 @@ public interface LoadingPlanStowageDetailsRepository
       List<Long> portWiseDetailIds, Boolean isActive);
 
   @Query(
-          "SELECT LPSD FROM LoadingPlanStowageDetails LPSD WHERE LPSD.loadingPlanPortWiseDetails.id IN ?1")
-  public List<LoadingPlanStowageDetails> findByPortWiseDetailIds(
-          List<Long> portWiseDetailIds);
+      "SELECT LPSD FROM LoadingPlanStowageDetails LPSD WHERE LPSD.loadingPlanPortWiseDetails.id IN ?1")
+  public List<LoadingPlanStowageDetails> findByPortWiseDetailIds(List<Long> portWiseDetailIds);
 }

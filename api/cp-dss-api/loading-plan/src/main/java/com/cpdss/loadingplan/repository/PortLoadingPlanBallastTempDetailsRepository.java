@@ -85,6 +85,5 @@ public interface PortLoadingPlanBallastTempDetailsRepository
       @Param("colour_code") String colour_code,
       @Param("sg") Long sg);
 
-  public List<PortLoadingPlanBallastTempDetails> findByLoadingInformation(
-          Long loadingInfoId);
+  public List<PortLoadingPlanBallastTempDetails> findByLoadingInformation(Long loadingInfoId);
 }

@@ -7,10 +7,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.StagingStatus;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,26 +43,27 @@ public class StagingService {
    * @param jsonResult - the json string
    * @return DataTransferStage - object
    */
-  public DataTransferStage save(String jsonResult) throws GenericServiceException {
+  public void save(String jsonResult) throws GenericServiceException {
     try {
       log.info("Json string get in save method: " + jsonResult);
-      DataTransferStage dataTransferStage = null;
+      DataTransferStage dataTransferStageobj = null;
       if (!StringUtils.isEmpty(jsonResult)) {
         JsonArray jsonArrayObj = new Gson().fromJson(jsonResult, JsonArray.class);
         for (JsonElement jsonElement : jsonArrayObj) {
           final JsonObject obj = jsonElement.getAsJsonObject();
           final JsonArray data = obj.getAsJsonArray(DATA);
           final JsonObject metaData = obj.getAsJsonObject(META_DATA);
-          dataTransferStage = new Gson().fromJson(metaData, DataTransferStage.class);
+          DataTransferStage dataTransferStage = new Gson().fromJson(metaData, DataTransferStage.class);
+          //Gson gson = new GsonBuilder().setPrettyPrinting().create();
+          //dataTransferStage.setData(gson.toJson(data));
           dataTransferStage.setData(data.toString());
           dataTransferStage.setStatus(STATUS);
           dataTransferStage.setProcessType(PROCESS_TYPE);
           dataTransferStage.setCreatedBy(CREATED_OR_UPDATED_BY);
           dataTransferStage.setLastModifiedBy(CREATED_OR_UPDATED_BY);
-          stagingRepository.save(dataTransferStage);
+          dataTransferStageobj=stagingRepository.save(dataTransferStage);
         }
-       this.updateStatusForProcessId(dataTransferStage.getProcessId(), StagingStatus.READY_TO_PROCESS.getStatus());
-        return dataTransferStage;
+       this.updateStatusForProcessId(dataTransferStageobj.getProcessId(), StagingStatus.READY_TO_PROCESS.getStatus());
       }
     } catch (ResourceAccessException e) {
       log.info("Error when saving into DB ", e);
@@ -80,7 +78,6 @@ public class StagingService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    return null;
   }
   /**
    * Method getByProcessId used to all entries corresponding to processId.
@@ -151,6 +148,10 @@ public class StagingService {
 
   public void updateStatusAndStatusDescriptionForId(Long id, String status, String statusDescription, LocalDateTime modifiedDateTime) {
     stagingRepository.updateStatusAndStatusDescriptionForId(id,status,statusDescription,modifiedDateTime);
+  }
+
+  public void updateStatusCompletedForProcessId(String processId, String status) {
+    stagingRepository.updateStatusCompletedForProcessId(processId, status);
   }
 
 }

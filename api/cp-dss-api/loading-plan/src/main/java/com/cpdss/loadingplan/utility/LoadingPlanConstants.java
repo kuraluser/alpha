@@ -1,3 +1,4 @@
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.utility;
 
 import java.util.Arrays;
@@ -39,7 +40,6 @@ public class LoadingPlanConstants {
     LOADING_INFORMATION_ARRIVAL_STATUS("loading_information_arrival_status"),
     LOADING_INFORMATION_DEPARTURE_STATUS("loading_information_departure_status");
 
-        public final String table;
-    }
-
+    public final String table;
+  }
 }

@@ -64,6 +64,5 @@ public interface PortLoadingPlanBallastDetailsRepository
   public void deleteExistingByLoadingInfoAndConditionTypeAndValueType(
       Long loadingInfoId, Integer conditionType, Integer valueType);
 
-  public List<PortLoadingPlanBallastDetails> findByLoadingInformationId(
-          Long Id);
+  public List<PortLoadingPlanBallastDetails> findByLoadingInformationId(Long Id);
 }

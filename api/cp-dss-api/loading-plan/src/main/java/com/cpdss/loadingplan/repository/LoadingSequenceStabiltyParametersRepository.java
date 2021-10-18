@@ -31,6 +31,5 @@ public interface LoadingSequenceStabiltyParametersRepository
       "UPDATE LoadingSequenceStabilityParameters SET isActive = false WHERE loadingInformation.id = ?1")
   public void deleteByLoadingInformationId(Long loadingInfoId);
 
-  public List<LoadingSequenceStabilityParameters> findByLoadingInformation(
-          Long loadingInformation);
+  public List<LoadingSequenceStabilityParameters> findByLoadingInformation(Long loadingInformation);
 }

@@ -24,6 +24,5 @@ public enum ProcessIdentifiers {
   stages_duration,
   loading_information_status,
   loading_information_arrival_status,
-  loading_information_departure_status
-  ;
+  loading_information_departure_status;
 }

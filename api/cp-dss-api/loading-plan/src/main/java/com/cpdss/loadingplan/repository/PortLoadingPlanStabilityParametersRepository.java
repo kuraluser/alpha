@@ -29,5 +29,5 @@ public interface PortLoadingPlanStabilityParametersRepository
   public void deleteByLoadingInformationId(Long loadingInfoId);
 
   public List<PortLoadingPlanStabilityParameters> findByLoadingInformationId(
-          Long loadingInformationId);
+      Long loadingInformationId);
 }

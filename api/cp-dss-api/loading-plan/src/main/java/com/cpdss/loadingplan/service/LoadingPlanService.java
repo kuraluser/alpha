@@ -27,13 +27,12 @@ import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.loadingplan.utility.LoadingPlanUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import com.google.gson.JsonArray;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
@@ -99,7 +98,7 @@ public class LoadingPlanService {
 
   @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
   @Autowired private LoadingPlanAlgoService loadingPlanAlgoService;
-  @Autowired private CommunicationService communicationService;
+  @Autowired private LoadingPlanCommunicationService communicationService;
   @Autowired private LoadingPlanStagingService loadingPlanStagingService;
 
   @Autowired
@@ -149,29 +148,41 @@ public class LoadingPlanService {
               .setMessage("Successfully saved loading information in database")
               .setStatus(LoadingPlanConstants.SUCCESS)
               .build());
+      log.info("Before Loadingplan envoywriter call");
       if (enableCommunication && env.equals("ship")) {
-        JsonArray jsonArray= loadingPlanStagingService.getCommunicationData
-                (Arrays.asList("loading_information","cargo_topping_off_sequence","loading_berth_details","loading_delay","loading_machinary_in_use"), UUID.randomUUID().toString(),"loading-plan-service",loadingInformation.getVesselXId());
+        JsonArray jsonArray =
+            loadingPlanStagingService.getCommunicationData(
+                Arrays.asList(
+                    "loading_information",
+                    "cargo_topping_off_sequence",
+                    "loading_berth_details",
+                    "loading_delay",
+                    "loading_machinary_in_use"),
+                UUID.randomUUID().toString(),
+                "loading-plan-service",
+                savedLoadingInformation.getId());
+
+        log.info("Json Array in Loading plan service: " + jsonArray.toString());
         EnvoyWriter.WriterReply ewReply =
-                communicationService.passRequestPayloadToEnvoyWriter(
-                        jsonArray.toString(),
-                        loadingInformation.getVesselXId(),
-                        MessageTypes.LOADINGPLAN.getMessageType());
+            communicationService.passRequestPayloadToEnvoyWriter(
+                jsonArray.toString(),
+                savedLoadingInformation.getVesselXId(),
+                MessageTypes.LOADINGPLAN.getMessageType());
 
         if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
           log.info("------- Envoy writer has called successfully : " + ewReply.toString());
           LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
-                  new LoadingPlanCommunicationStatus();
+              new LoadingPlanCommunicationStatus();
           if (ewReply.getMessageId() != null) {
             loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
             loadingPlanCommunicationStatus.setCommunicationStatus(
-                    CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
           }
-          loadingPlanCommunicationStatus.setReferenceId(loadingInformation.getId());
+          loadingPlanCommunicationStatus.setReferenceId(savedLoadingInformation.getId());
           loadingPlanCommunicationStatus.setMessageType(MessageTypes.LOADINGPLAN.getMessageType());
           loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
           LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
-                  this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
+              this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
           log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
         }
       }

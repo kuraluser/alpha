@@ -4,7 +4,6 @@ package com.cpdss.loadingplan.entity;
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import javax.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,6 +53,5 @@ public class LoadingPlanStabilityParameters extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
-  @Transient
-  private Long CommunicationPortWiseId;
+  @Transient private Long CommunicationPortWiseId;
 }

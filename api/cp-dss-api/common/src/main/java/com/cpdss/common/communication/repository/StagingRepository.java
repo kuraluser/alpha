@@ -30,6 +30,7 @@ public interface StagingRepository extends CommonCrudRepository<DataTransferStag
   @Query("select staging from DataTransferStage staging where staging.status =?1")
   public List<DataTransferStage> getAllWithStatus(String status);
 
+  @Transactional
   @Modifying
   @Query("UPDATE DataTransferStage staging SET staging.status = ?2 where staging.processId = ?1")
   public void updateStatusForProcessId(String processId, String status);
@@ -37,11 +38,18 @@ public interface StagingRepository extends CommonCrudRepository<DataTransferStag
   @Query("select staging from DataTransferStage staging where staging.status =?1 and staging.lastModifiedDateTime=?2")
   public List<DataTransferStage> getAllWithStatusAndTime(String status, LocalDateTime dateTime);
 
+  @Transactional
   @Modifying
   @Query("UPDATE DataTransferStage staging SET staging.status = ?2, staging.lastModifiedDateTime=?3 where staging.processId = ?1")
    public void updateStatusAndModifiedDateTimeForProcessId(String processId, String status, LocalDateTime modifiedDateTime);
 
+  @Transactional
   @Modifying
   @Query("UPDATE DataTransferStage staging SET staging.status = ?2, staging.statusDescription =?3, staging.lastModifiedDateTime=?4 where staging.id = ?1")
   public  void updateStatusAndStatusDescriptionForId(Long id, String status, String statusDescription, LocalDateTime modifiedDateTime);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE DataTransferStage staging SET staging.status = ?2 where staging.processId = ?1 and staging.status ='in_progress'")
+  public void updateStatusCompletedForProcessId(String processId, String status);
 }

@@ -3,15 +3,14 @@ package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.loadingplan.domain.CommunicationStatus;
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.time.LocalDateTime;
 
 /** author:Selvy Thomas */
 @Entity

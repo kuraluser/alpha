@@ -34,6 +34,5 @@ public interface LoadingSequenceRepository extends CommonCrudRepository<LoadingS
   public List<Long> findToBeLoadedCargoNominationIdByLoadingInformationAndIsActive(
       LoadingInformation loadingInformation, Boolean isActive);
 
-  public List<LoadingSequence> findByLoadingInformationId(
-          Long loadingInformationId);
+  public List<LoadingSequence> findByLoadingInformationId(Long loadingInformationId);
 }

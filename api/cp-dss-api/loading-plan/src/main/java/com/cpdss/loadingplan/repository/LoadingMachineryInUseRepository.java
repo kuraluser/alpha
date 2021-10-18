@@ -34,6 +34,5 @@ public interface LoadingMachineryInUseRepository
   @Query("UPDATE LoadingMachineryInUse SET isActive = false WHERE id = ?1")
   public void deleteById(Long id);
 
-  List<LoadingMachineryInUse> findByLoadingInformationId(
-          Long loadingInformationId);
+  List<LoadingMachineryInUse> findByLoadingInformationId(Long loadingInformationId);
 }

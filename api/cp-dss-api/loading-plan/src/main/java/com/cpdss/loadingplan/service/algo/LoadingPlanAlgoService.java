@@ -25,19 +25,20 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
+import com.cpdss.loadingplan.domain.CommunicationStatus;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoRequest;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoResponse;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
-import com.cpdss.loadingplan.service.CommunicationService;
+import com.cpdss.loadingplan.service.LoadingPlanCommunicationService;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
-
-import com.google.gson.JsonArray;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,10 +101,10 @@ public class LoadingPlanAlgoService {
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
   @Autowired LoadicatorService loadicatorService;
-  @Autowired private CommunicationService communicationService;
-  @Autowired private LoadingPlanStagingService loadingPlanStagingService;
-  @Autowired
-  private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
+  @Autowired LoadingPlanCommunicationService loadingPlancommunicationService;
+  @Autowired LoadingPlanStagingService loadingPlanStagingService;
+  @Autowired LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
+  @Autowired private LoadingPlanCommunicationService communicationService;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceBlockingStub loadableStudyService;
@@ -128,35 +129,74 @@ public class LoadingPlanAlgoService {
           HttpStatusCode.BAD_REQUEST);
     }
 
-    // Create JSON To Algo
-    LoadingInformationAlgoRequest algoRequest =
-        loadingInfoAlgoRequestBuilderService.createAlgoRequest(request);
+    if (enableCommunication && env.equals("ship")) {
+      JsonArray jsonArray =
+          loadingPlanStagingService.getCommunicationData(
+              Arrays.asList(
+                  "loading_information",
+                  "cargo_topping_off_sequence",
+                  "loading_berth_details",
+                  "loading_delay",
+                  "loading_machinary_in_use"),
+              UUID.randomUUID().toString(),
+              "loading-plan-service",
+              loadingInfoOpt.get().getId());
 
-    // Save Above JSON In LS json data Table
-    saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
+      log.info("Json Array in Loading plan service: " + jsonArray.toString());
+      EnvoyWriter.WriterReply ewReply =
+          communicationService.passRequestPayloadToEnvoyWriter(
+              jsonArray.toString(),
+              loadingInfoOpt.get().getVesselXId(),
+              MessageTypes.LOADINGPLAN.getMessageType());
 
-    // Call To Algo End Point for Loading
-    LoadingInformationAlgoResponse response =
-        restTemplate.postForObject(
-            planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
+      if (LoadingPlanConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+        log.info("------- Envoy writer has called successfully : " + ewReply.toString());
+        LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
+            new LoadingPlanCommunicationStatus();
+        if (ewReply.getMessageId() != null) {
+          loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+          loadingPlanCommunicationStatus.setCommunicationStatus(
+              CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+        }
+        loadingPlanCommunicationStatus.setReferenceId(loadingInfoOpt.get().getId());
+        loadingPlanCommunicationStatus.setMessageType(MessageTypes.LOADINGPLAN.getMessageType());
+        loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+        LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
+            this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
+        log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
+      }
+    } else {
+      // Create JSON To Algo
+      LoadingInformationAlgoRequest algoRequest =
+          loadingInfoAlgoRequestBuilderService.createAlgoRequest(request);
 
-    // Set Loading Status
-    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-        getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID);
-    loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
-    loadingInfoOpt.get().setIsLoadingSequenceGenerated(false);
-    loadingInfoOpt.get().setIsLoadingPlanGenerated(false);
-    loadingInformationRepository.save(loadingInfoOpt.get());
-    createLoadingInformationAlgoStatus(
-        loadingInfoOpt.get(), response.getProcessId(), loadingInfoStatusOpt.get(), null);
-    builder.setLoadingInfoId(loadingInfoOpt.get().getId());
-    builder.setProcessId(response.getProcessId());
+      // Save Above JSON In LS json data Table
+      saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
+      log.info("Call To Algo End Point for Loading");
+      // Call To Algo End Point for Loading
+      LoadingInformationAlgoResponse response =
+          restTemplate.postForObject(
+              planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
+      log.info("LoadingInformationAlgoResponse:" + response);
+      // Set Loading Status
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          getLoadingInformationStatus(
+              LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID);
+      loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
+      loadingInfoOpt.get().setIsLoadingSequenceGenerated(false);
+      loadingInfoOpt.get().setIsLoadingPlanGenerated(false);
+      loadingInformationRepository.save(loadingInfoOpt.get());
+      createLoadingInformationAlgoStatus(
+          loadingInfoOpt.get(), response.getProcessId(), loadingInfoStatusOpt.get(), null);
+      builder.setLoadingInfoId(loadingInfoOpt.get().getId());
+      builder.setProcessId(response.getProcessId());
+    }
   }
 
   /**
    * Fetches Loading Information Status based on status ID.
    *
-   * @param loadingInformationProcessingStartedId
+   * @param
    * @return
    * @throws GenericServiceException
    */
@@ -310,23 +350,30 @@ public class LoadingPlanAlgoService {
       saveLoadingPlan(request, loadingInfoOpt.get());
       if (enableCommunication && !env.equals("ship")) {
         JsonArray jsonArray =
-                loadingPlanStagingService.getCommunicationData(
-                        Arrays.asList("loading_information","loading_sequence","loading_plan_portwise_details",
-                                "port_loading_plan_stability_parameters","port_loading_plan_rob_details",
-                                "loading_plan_ballast_details","loading_plan_rob_details",
-                                "port_loading_plan_stowage_ballast_details","port_loading_plan_stowage_ballast_details_temp",
-                                "port_loading_plan_stowage_details",
-                                "port_loading_plan_stowage_details_temp","loading_plan_stowage_details",
-                                "loading_sequence_stability_parameters","loading_plan_stability_parameters"
-                                ),
-                        UUID.randomUUID().toString(),
-                        "loading-plan-pattern-generation-service",
-                        loadingInfoOpt.get().getId());
+            loadingPlanStagingService.getCommunicationData(
+                Arrays.asList(
+                    "loading_information",
+                    "loading_sequence",
+                    "loading_plan_portwise_details",
+                    "port_loading_plan_stability_parameters",
+                    "port_loading_plan_rob_details",
+                    "loading_plan_ballast_details",
+                    "loading_plan_rob_details",
+                    "port_loading_plan_stowage_ballast_details",
+                    "port_loading_plan_stowage_ballast_details_temp",
+                    "port_loading_plan_stowage_details",
+                    "port_loading_plan_stowage_details_temp",
+                    "loading_plan_stowage_details",
+                    "loading_sequence_stability_parameters",
+                    "loading_plan_stability_parameters"),
+                UUID.randomUUID().toString(),
+                "loading-plan-pattern-generation-service",
+                loadingInfoOpt.get().getId());
         EnvoyWriter.WriterReply ewReply =
-                communicationService.passRequestPayloadToEnvoyWriter(
-                        jsonArray.toString(),
-                        loadingInfoOpt.get().getVesselXId(),
-                        MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
+            loadingPlancommunicationService.passRequestPayloadToEnvoyWriter(
+                jsonArray.toString(),
+                loadingInfoOpt.get().getVesselXId(),
+                MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
       }
       if (request.getHasLoadicator()) {
         log.info("Passing Loading Sequence to Loadicator");
@@ -351,7 +398,6 @@ public class LoadingPlanAlgoService {
         loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
             loadingInfoOpt.get().getId(), true);
       }
-
     }
   }
 
@@ -664,7 +710,7 @@ public class LoadingPlanAlgoService {
   }
 
   /**
-   * @param savedPortWiseDetails
+   * @param
    * @param loadingPlanCommingleDetailsList
    */
   private void saveLoadingPlanCommingleDetails(

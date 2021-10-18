@@ -85,6 +85,5 @@ public interface PortLoadingPlanStowageTempDetailsRepository
       @Param("arrival_departutre") Long arrival_departutre,
       @Param("correction_factor") Long correction_factor);
 
-  public List<PortLoadingPlanStowageTempDetails> findByLoadingInformation(
-          Long loadingInfoId);
+  public List<PortLoadingPlanStowageTempDetails> findByLoadingInformation(Long loadingInfoId);
 }

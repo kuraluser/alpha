@@ -2,7 +2,6 @@
 package com.cpdss.loadingplan.communication;
 
 import com.cpdss.common.communication.StagingService;
-import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.utility.ProcessIdentifiers;
@@ -14,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,12 +61,12 @@ public class LoadingPlanStagingService extends StagingService {
   @Autowired private LoadingMachineryInUseRepository loadingMachineryInUseRepository;
 
   public LoadingPlanStagingService(
-          @Autowired LoadingPlanStagingRepository loadingPlanStagingRepository) {
+      @Autowired LoadingPlanStagingRepository loadingPlanStagingRepository) {
     super(loadingPlanStagingRepository);
   }
 
   LoadingInformation loadingInformation = null;
-  List<Long> loadingPlanPortWiseDetailsIds=null;
+  List<Long> loadingPlanPortWiseDetailsIds = null;
 
   /**
    * getCommunicationData method for get JsonArray from processIdentifierList
@@ -80,8 +78,8 @@ public class LoadingPlanStagingService extends StagingService {
    * @return JsonArray
    */
   public JsonArray getCommunicationData(
-          List<String> processIdentifierList, String processId, String processGroupId, Long Id)
-          throws GenericServiceException {
+      List<String> processIdentifierList, String processId, String processGroupId, Long Id) {
+    log.info("LoadingPlanStaging Service processidentifier list:" + processIdentifierList);
     JsonArray array = new JsonArray();
     List<String> processedList = new ArrayList<>();
     for (String processIdentifier : processIdentifierList) {
@@ -93,242 +91,308 @@ public class LoadingPlanStagingService extends StagingService {
       List<Object> object = new ArrayList<Object>();
       switch (ProcessIdentifiers.valueOf(processIdentifier)) {
         case loading_information:
-        {
-          getLoadingInformation(
-                  array, Id, processIdentifier, processId, processGroupId, processedList,object);
-          break;
-        }
+          {
+            getLoadingInformation(
+                array, Id, processIdentifier, processId, processGroupId, processedList, object);
+            break;
+          }
         case cargo_topping_off_sequence:
-        {
-          List<CargoToppingOffSequence> cargoToppingOffSequences =
-                  cargoToppingOffSequenceRepository.findByLoadingInformationId(loadingInformation.getId());
-          if (cargoToppingOffSequences!= null && !cargoToppingOffSequences.isEmpty()) {
-            //set each loading info obj to null
-            cargoToppingOffSequences.stream().forEach(cargoToppingOffSequence -> cargoToppingOffSequence.
-                    setLoadingInformation(null));
-            object.addAll(cargoToppingOffSequences);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<CargoToppingOffSequence> cargoToppingOffSequences =
+                cargoToppingOffSequenceRepository.findByLoadingInformationId(
+                    loadingInformation.getId());
+            if (cargoToppingOffSequences != null && !cargoToppingOffSequences.isEmpty()) {
+              // set each loading info obj to null
+              cargoToppingOffSequences.stream()
+                  .forEach(
+                      cargoToppingOffSequence ->
+                          cargoToppingOffSequence.setLoadingInformation(null));
+              object.addAll(cargoToppingOffSequences);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
         case loading_berth_details:
-        {
-          List<LoadingBerthDetail> loadingBerthDetails =
-                  loadingBerthDetailsRepository.findByLoadingInformationId(loadingInformation.getId());
-          if (loadingBerthDetails != null && !loadingBerthDetails.isEmpty()) {
-            //set each loading info obj to null
-            loadingBerthDetails.stream().forEach(loadingBerthDetail -> loadingBerthDetail.
-                    setLoadingInformation(null));
-            object.addAll(loadingBerthDetails);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<LoadingBerthDetail> loadingBerthDetails =
+                loadingBerthDetailsRepository.findByLoadingInformationId(
+                    loadingInformation.getId());
+            if (loadingBerthDetails != null && !loadingBerthDetails.isEmpty()) {
+              // set each loading info obj to null
+              loadingBerthDetails.stream()
+                  .forEach(loadingBerthDetail -> loadingBerthDetail.setLoadingInformation(null));
+              object.addAll(loadingBerthDetails);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
         case loading_delay:
-        {
-          List<LoadingDelay> loadingDelayList = loadingDelayRepository.findByLoadingInformationId(loadingInformation.getId());
-          if (loadingDelayList!= null && !loadingDelayList.isEmpty()) {
-            //set each loading info and LoadingDelayReasons to null
-            loadingDelayList.stream().forEach(loadingDelay -> {
-              loadingDelay.
-                      setLoadingInformation(null);
-              loadingDelay.setLoadingDelayReasons(null);
-            });
-            object.addAll(loadingDelayList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<LoadingDelay> loadingDelayList =
+                loadingDelayRepository.findByLoadingInformationId(loadingInformation.getId());
+            if (loadingDelayList != null && !loadingDelayList.isEmpty()) {
+              // set each loading info and LoadingDelayReasons to null
+              loadingDelayList.stream()
+                  .forEach(
+                      loadingDelay -> {
+                        loadingDelay.setLoadingInformation(null);
+                        loadingDelay.setLoadingDelayReasons(null);
+                      });
+              object.addAll(loadingDelayList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
         case loading_machinary_in_use:
-        {
-          List<LoadingMachineryInUse> loadingMachineryInUseList =
-                  loadingMachineryInUseRepository.findByLoadingInformationId(loadingInformation.getId());
-          if (loadingMachineryInUseList!= null && !loadingMachineryInUseList.isEmpty()) {
-            //set each loading info obj to null
-            loadingMachineryInUseList.stream().forEach(loadingMachineryInUse -> loadingMachineryInUse.
-                    setLoadingInformation(null));
-            object.addAll(loadingMachineryInUseList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<LoadingMachineryInUse> loadingMachineryInUseList =
+                loadingMachineryInUseRepository.findByLoadingInformationId(
+                    loadingInformation.getId());
+            if (loadingMachineryInUseList != null && !loadingMachineryInUseList.isEmpty()) {
+              // set each loading info obj to null
+              loadingMachineryInUseList.stream()
+                  .forEach(
+                      loadingMachineryInUse -> loadingMachineryInUse.setLoadingInformation(null));
+              object.addAll(loadingMachineryInUseList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
         case loading_sequence:
-        {
-          List<LoadingSequence> loadingSequenceList = loadingSequenceRepository.findByLoadingInformationId(Id);
-          if (loadingSequenceList!= null && !loadingSequenceList.isEmpty()) {
-            loadingSequenceList.stream().forEach(loadingSequence -> {
-              loadingSequence.setLoadingPlanPortWiseDetails(null);
-              loadingSequence.setCargoLoadingRates(null);
-              loadingSequence.setCargoValves(null);
-              loadingSequence.setBallastValves(null);
-              loadingSequence.setDeballastingRates(null);
-              loadingSequence.setBallastOperations(null);
-              loadingSequence.setLoadingInformation(null);
-            });
-            object.addAll(loadingSequenceList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<LoadingSequence> loadingSequenceList =
+                loadingSequenceRepository.findByLoadingInformationId(Id);
+            if (loadingSequenceList != null && !loadingSequenceList.isEmpty()) {
+              loadingSequenceList.stream()
+                  .forEach(
+                      loadingSequence -> {
+                        loadingSequence.setLoadingPlanPortWiseDetails(null);
+                        loadingSequence.setCargoLoadingRates(null);
+                        loadingSequence.setCargoValves(null);
+                        loadingSequence.setBallastValves(null);
+                        loadingSequence.setDeballastingRates(null);
+                        loadingSequence.setBallastOperations(null);
+                        loadingSequence.setLoadingInformation(null);
+                      });
+              object.addAll(loadingSequenceList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
         case loading_plan_portwise_details:
-        {
-          getLoadingPlanPortWiseDetails(
-                  array, Id, processIdentifier, processId, processGroupId, processedList, object);
-          break;
-        }
-        case port_loading_plan_stability_parameters:
-        {
-          List<PortLoadingPlanStabilityParameters> portLoadingPlanStabilityParamList =
-                  portLoadingPlanStabilityParametersRepository.findByLoadingInformationId(Id);
-          if (portLoadingPlanStabilityParamList!=null && !portLoadingPlanStabilityParamList.isEmpty()) {
-            portLoadingPlanStabilityParamList.stream().forEach(portLoadingPlanStabilityParam ->
-                    portLoadingPlanStabilityParam.setLoadingInformation(null));
-            object.addAll(portLoadingPlanStabilityParamList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            getLoadingPlanPortWiseDetails(
+                array, Id, processIdentifier, processId, processGroupId, processedList, object);
+            break;
           }
-          break;
-        }
+        case port_loading_plan_stability_parameters:
+          {
+            List<PortLoadingPlanStabilityParameters> portLoadingPlanStabilityParamList =
+                portLoadingPlanStabilityParametersRepository.findByLoadingInformationId(Id);
+            if (portLoadingPlanStabilityParamList != null
+                && !portLoadingPlanStabilityParamList.isEmpty()) {
+              portLoadingPlanStabilityParamList.stream()
+                  .forEach(
+                      portLoadingPlanStabilityParam ->
+                          portLoadingPlanStabilityParam.setLoadingInformation(null));
+              object.addAll(portLoadingPlanStabilityParamList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
+          }
 
         case port_loading_plan_rob_details:
-        {
-          List<PortLoadingPlanRobDetails> portLoadingPlanRobDetailsList =
-                  portLoadingPlanRobDetailsRepository.findByLoadingInformation(Id);
-          if (portLoadingPlanRobDetailsList != null && !portLoadingPlanRobDetailsList.isEmpty()) {
-            object.addAll(portLoadingPlanRobDetailsList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<PortLoadingPlanRobDetails> portLoadingPlanRobDetailsList =
+                portLoadingPlanRobDetailsRepository.findByLoadingInformation(Id);
+            if (portLoadingPlanRobDetailsList != null && !portLoadingPlanRobDetailsList.isEmpty()) {
+              object.addAll(portLoadingPlanRobDetailsList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
         case loading_plan_ballast_details:
-        {
-          List<LoadingPlanBallastDetails> loadingPlanBallastDetailsList =
-                  loadingPlanBallastDetailsRepository.findByLoadingPlanPortWiseDetailIds(loadingPlanPortWiseDetailsIds);
-          if (loadingPlanBallastDetailsList!=null && !loadingPlanBallastDetailsList.isEmpty()) {
-            loadingPlanBallastDetailsList.stream().forEach(portLoadingPlanStabilityParam ->{
-              portLoadingPlanStabilityParam.setCommunicationPortWiseId(portLoadingPlanStabilityParam.getLoadingPlanPortWiseDetails().getId());
-              portLoadingPlanStabilityParam.setLoadingPlanPortWiseDetails(null);});
-            object.addAll(loadingPlanBallastDetailsList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<LoadingPlanBallastDetails> loadingPlanBallastDetailsList =
+                loadingPlanBallastDetailsRepository.findByLoadingPlanPortWiseDetailIds(
+                    loadingPlanPortWiseDetailsIds);
+            if (loadingPlanBallastDetailsList != null && !loadingPlanBallastDetailsList.isEmpty()) {
+              loadingPlanBallastDetailsList.stream()
+                  .forEach(
+                      portLoadingPlanStabilityParam -> {
+                        portLoadingPlanStabilityParam.setCommunicationPortWiseId(
+                            portLoadingPlanStabilityParam.getLoadingPlanPortWiseDetails().getId());
+                        portLoadingPlanStabilityParam.setLoadingPlanPortWiseDetails(null);
+                      });
+              object.addAll(loadingPlanBallastDetailsList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
         case loading_plan_rob_details:
-        {
-          List<LoadingPlanRobDetails> loadingPlanRobDetailsList =
-                  loadingPlanRobDetailsRepository.findByPortWiseDetailIds(loadingPlanPortWiseDetailsIds);
-          if (loadingPlanRobDetailsList!=null && !loadingPlanRobDetailsList.isEmpty()) {
-            loadingPlanRobDetailsList.stream().forEach(loadingPlanRobDetails ->{
-              loadingPlanRobDetails.setCommunicationPortWiseId(loadingPlanRobDetails.getLoadingPlanPortWiseDetails().getId());
-              loadingPlanRobDetails.setLoadingPlanPortWiseDetails(null);});
-            object.addAll(loadingPlanRobDetailsList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<LoadingPlanRobDetails> loadingPlanRobDetailsList =
+                loadingPlanRobDetailsRepository.findByPortWiseDetailIds(
+                    loadingPlanPortWiseDetailsIds);
+            if (loadingPlanRobDetailsList != null && !loadingPlanRobDetailsList.isEmpty()) {
+              loadingPlanRobDetailsList.stream()
+                  .forEach(
+                      loadingPlanRobDetails -> {
+                        loadingPlanRobDetails.setCommunicationPortWiseId(
+                            loadingPlanRobDetails.getLoadingPlanPortWiseDetails().getId());
+                        loadingPlanRobDetails.setLoadingPlanPortWiseDetails(null);
+                      });
+              object.addAll(loadingPlanRobDetailsList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
 
         case port_loading_plan_stowage_ballast_details:
-        {
-          List<PortLoadingPlanBallastDetails> portLoadingPlanBallastDetailsList =
-                  portLoadingPlanBallastDetailsRepository.findByLoadingInformationId(Id);
-          if (portLoadingPlanBallastDetailsList!=null && !portLoadingPlanBallastDetailsList.isEmpty()) {
-            portLoadingPlanBallastDetailsList.stream().forEach(portLoadingPlanBallastDetails ->
-                    portLoadingPlanBallastDetails.setLoadingInformation(null));
-            object.addAll(portLoadingPlanBallastDetailsList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<PortLoadingPlanBallastDetails> portLoadingPlanBallastDetailsList =
+                portLoadingPlanBallastDetailsRepository.findByLoadingInformationId(Id);
+            if (portLoadingPlanBallastDetailsList != null
+                && !portLoadingPlanBallastDetailsList.isEmpty()) {
+              portLoadingPlanBallastDetailsList.stream()
+                  .forEach(
+                      portLoadingPlanBallastDetails ->
+                          portLoadingPlanBallastDetails.setLoadingInformation(null));
+              object.addAll(portLoadingPlanBallastDetailsList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
         case port_loading_plan_stowage_ballast_details_temp:
-        {
-          List<PortLoadingPlanBallastTempDetails> portLoadingPlanBallastTempDetailsList =
-                  portLoadingPlanBallastTempDetailsRepository.findByLoadingInformation(Id);
-          if (portLoadingPlanBallastTempDetailsList!=null && !portLoadingPlanBallastTempDetailsList.isEmpty()) {
-            object.addAll(portLoadingPlanBallastTempDetailsList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<PortLoadingPlanBallastTempDetails> portLoadingPlanBallastTempDetailsList =
+                portLoadingPlanBallastTempDetailsRepository.findByLoadingInformation(Id);
+            if (portLoadingPlanBallastTempDetailsList != null
+                && !portLoadingPlanBallastTempDetailsList.isEmpty()) {
+              object.addAll(portLoadingPlanBallastTempDetailsList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
         case port_loading_plan_stowage_details:
-        {
-          List<PortLoadingPlanStowageDetails> portLoadingPlanStowageDetailsList =
-                  portLoadingPlanStowageDetailsRepository.findByLoadingInformation(Id);
-          if (portLoadingPlanStowageDetailsList!=null && !portLoadingPlanStowageDetailsList.isEmpty()) {
-            portLoadingPlanStowageDetailsList.stream().forEach(portLoadingPlanStowageDetails ->
-                    portLoadingPlanStowageDetails.setLoadingInformation(null));
-            object.addAll(portLoadingPlanStowageDetailsList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<PortLoadingPlanStowageDetails> portLoadingPlanStowageDetailsList =
+                portLoadingPlanStowageDetailsRepository.findByLoadingInformation(Id);
+            if (portLoadingPlanStowageDetailsList != null
+                && !portLoadingPlanStowageDetailsList.isEmpty()) {
+              portLoadingPlanStowageDetailsList.stream()
+                  .forEach(
+                      portLoadingPlanStowageDetails ->
+                          portLoadingPlanStowageDetails.setLoadingInformation(null));
+              object.addAll(portLoadingPlanStowageDetailsList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
         case port_loading_plan_stowage_details_temp:
-        {
-          List<PortLoadingPlanStowageTempDetails> portLoadingPlanStowageTempDetailsList =
-                  portLoadingPlanStowageTempDetailsRepository.findByLoadingInformation(Id);
-          if (portLoadingPlanStowageTempDetailsList != null && !portLoadingPlanStowageTempDetailsList.isEmpty()) {
-            object.addAll(portLoadingPlanStowageTempDetailsList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<PortLoadingPlanStowageTempDetails> portLoadingPlanStowageTempDetailsList =
+                portLoadingPlanStowageTempDetailsRepository.findByLoadingInformation(Id);
+            if (portLoadingPlanStowageTempDetailsList != null
+                && !portLoadingPlanStowageTempDetailsList.isEmpty()) {
+              object.addAll(portLoadingPlanStowageTempDetailsList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
 
         case loading_plan_stowage_details:
-        {
-          List<LoadingPlanStowageDetails> loadingPlanStowageDetailsList =
-                  loadingPlanStowageDetailsRepository.findByPortWiseDetailIds(loadingPlanPortWiseDetailsIds);
-          if (loadingPlanStowageDetailsList!=null && !loadingPlanStowageDetailsList.isEmpty()) {
-            loadingPlanStowageDetailsList.stream().forEach(loadingPlanStowageDetails ->{
-              loadingPlanStowageDetails.setCommunicationPortWiseId(loadingPlanStowageDetails.getLoadingPlanPortWiseDetails().getId());
-              loadingPlanStowageDetails.setLoadingPlanPortWiseDetails(null);});
-            object.addAll(loadingPlanStowageDetailsList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<LoadingPlanStowageDetails> loadingPlanStowageDetailsList =
+                loadingPlanStowageDetailsRepository.findByPortWiseDetailIds(
+                    loadingPlanPortWiseDetailsIds);
+            if (loadingPlanStowageDetailsList != null && !loadingPlanStowageDetailsList.isEmpty()) {
+              loadingPlanStowageDetailsList.stream()
+                  .forEach(
+                      loadingPlanStowageDetails -> {
+                        loadingPlanStowageDetails.setCommunicationPortWiseId(
+                            loadingPlanStowageDetails.getLoadingPlanPortWiseDetails().getId());
+                        loadingPlanStowageDetails.setLoadingPlanPortWiseDetails(null);
+                      });
+              object.addAll(loadingPlanStowageDetailsList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
         case loading_sequence_stability_parameters:
-        {
-          List<LoadingSequenceStabilityParameters> loadingSequenceStabilityParametersList =
-                  loadingSequenceStabiltyParametersRepository.findByLoadingInformation(Id);
-          if (loadingSequenceStabilityParametersList!=null && !loadingSequenceStabilityParametersList.isEmpty()) {
-            loadingSequenceStabilityParametersList.stream().forEach(loadingSequenceStabilityParameters ->
-                    loadingSequenceStabilityParameters.setLoadingInformation(null));
-            object.addAll(loadingSequenceStabilityParametersList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<LoadingSequenceStabilityParameters> loadingSequenceStabilityParametersList =
+                loadingSequenceStabiltyParametersRepository.findByLoadingInformation(Id);
+            if (loadingSequenceStabilityParametersList != null
+                && !loadingSequenceStabilityParametersList.isEmpty()) {
+              loadingSequenceStabilityParametersList.stream()
+                  .forEach(
+                      loadingSequenceStabilityParameters ->
+                          loadingSequenceStabilityParameters.setLoadingInformation(null));
+              object.addAll(loadingSequenceStabilityParametersList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
         case loading_plan_stability_parameters:
-        {
-          List<LoadingPlanStabilityParameters> loadingPlanStabilityParametersList =
-                  loadingPlanStabilityParametersRepository.findByLoadingPlanPortWiseDetailIds(loadingPlanPortWiseDetailsIds);
-          if (loadingPlanStabilityParametersList!=null && !loadingPlanStabilityParametersList.isEmpty()) {
-            loadingPlanStabilityParametersList.stream().forEach(loadingPlanStabilityParameters ->{
-              loadingPlanStabilityParameters.setCommunicationPortWiseId(loadingPlanStabilityParameters.getLoadingPlanPortWiseDetails().getId());
-              loadingPlanStabilityParameters.setLoadingPlanPortWiseDetails(null);});
-            object.addAll(loadingPlanStabilityParametersList);
-            addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+          {
+            List<LoadingPlanStabilityParameters> loadingPlanStabilityParametersList =
+                loadingPlanStabilityParametersRepository.findByLoadingPlanPortWiseDetailIds(
+                    loadingPlanPortWiseDetailsIds);
+            if (loadingPlanStabilityParametersList != null
+                && !loadingPlanStabilityParametersList.isEmpty()) {
+              loadingPlanStabilityParametersList.stream()
+                  .forEach(
+                      loadingPlanStabilityParameters -> {
+                        loadingPlanStabilityParameters.setCommunicationPortWiseId(
+                            loadingPlanStabilityParameters.getLoadingPlanPortWiseDetails().getId());
+                        loadingPlanStabilityParameters.setLoadingPlanPortWiseDetails(null);
+                      });
+              object.addAll(loadingPlanStabilityParametersList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
           }
-          break;
-        }
       }
     }
     return array;
   }
 
-  private void addIntoProcessedList(JsonArray array, List<Object> object, String processIdentifier, String processId, String processGroupId, List<String> processedList) {
-    array.add(
-            createJsonObject(
-                    object, processIdentifier, processId, processGroupId));
+  private void addIntoProcessedList(
+      JsonArray array,
+      List<Object> object,
+      String processIdentifier,
+      String processId,
+      String processGroupId,
+      List<String> processedList) {
+    array.add(createJsonObject(object, processIdentifier, processId, processGroupId));
     processedList.add(processIdentifier);
   }
 
   private void getLoadingInformation(
-          JsonArray array,
-          Long id,
-          String processIdentifier,
-          String processId,
-          String processGroupId,
-          List<String> processedList, List<Object> object)
-          throws GenericServiceException {
+      JsonArray array,
+      Long id,
+      String processIdentifier,
+      String processId,
+      String processGroupId,
+      List<String> processedList,
+      List<Object> object) {
     Optional<LoadingInformation> loadingInformationObj = loadingInformationRepository.findById(id);
     if (!loadingInformationObj.isEmpty()) {
 
@@ -337,160 +401,176 @@ public class LoadingPlanStagingService extends StagingService {
       loadingInformation.setCargoToppingOfSequences(null);
       loadingInformation.setLoadingDelays(null);
       loadingInformation.setLoadingMachineriesInUse(null);
-      getStageOffset(
-              array,
-              loadingInformation.getStageOffset().getId(),
-              "stages_min_amount",
-              processId,
-              processGroupId,
-              processedList);
-      getStageDuration(
-              array,
-              loadingInformation.getStageDuration().getId(),
-              "stages_duration",
-              processId,
-              processGroupId,
-              processedList);
+      if (loadingInformation.getStageOffset() != null) {
+        getStageOffset(
+            array,
+            loadingInformation.getStageOffset().getId(),
+            "stages_min_amount",
+            processId,
+            processGroupId,
+            processedList);
+        loadingInformation.setStageOffset(null);
+      }
+      if (loadingInformation.getStageDuration() != null) {
+        getStageDuration(
+            array,
+            loadingInformation.getStageDuration().getId(),
+            "stages_duration",
+            processId,
+            processGroupId,
+            processedList);
+      }
+      loadingInformation.setStageDuration(null);
       if (loadingInformation.getLoadingInformationStatus() != null) {
         getLoadingInformationStatus(
-                array,
-                loadingInformation.getLoadingInformationStatus().getId(),
-                "loading_information_status",
-                processId,
-                processGroupId,
-                processedList);
+            array,
+            loadingInformation.getLoadingInformationStatus().getId(),
+            "loading_information_status",
+            processId,
+            processGroupId,
+            processedList);
       }
+      loadingInformation.setLoadingInformationStatus(null);
       if (loadingInformation.getArrivalStatus() != null) {
         getArrivalStatus(
-                array,
-                loadingInformation.getArrivalStatus().getId(),
-                "loading_information_arrival_status",
-                processId,
-                processGroupId,
-                processedList);
+            array,
+            loadingInformation.getArrivalStatus().getId(),
+            "loading_information_arrival_status",
+            processId,
+            processGroupId,
+            processedList);
       }
+      loadingInformation.setArrivalStatus(null);
       if (loadingInformation.getDepartureStatus() != null) {
         getDepartureStatus(
-                array,
-                loadingInformation.getDepartureStatus().getId(),
-                "loading_information_departure_status",
-                processId,
-                processGroupId,
-                processedList);
+            array,
+            loadingInformation.getDepartureStatus().getId(),
+            "loading_information_departure_status",
+            processId,
+            processGroupId,
+            processedList);
       }
+      loadingInformation.setDepartureStatus(null);
       object.addAll(Arrays.asList(loadingInformation));
-      addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+      addIntoProcessedList(
+          array, object, processIdentifier, processId, processGroupId, processedList);
     }
   }
 
   private void getStageOffset(
-          JsonArray array,
-          Long id,
-          String processIdentifier,
-          String processId,
-          String processGroupId,
-          List<String> processedList)
-          throws GenericServiceException {
+      JsonArray array,
+      Long id,
+      String processIdentifier,
+      String processId,
+      String processGroupId,
+      List<String> processedList) {
     Optional<StageOffset> stageOffsetObj = stageOffsetRepository.findById(id);
     if (!stageOffsetObj.isEmpty()) {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(stageOffsetObj.get()));
-      addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+      addIntoProcessedList(
+          array, object, processIdentifier, processId, processGroupId, processedList);
     }
   }
 
   private void getStageDuration(
-          JsonArray array,
-          Long id,
-          String processIdentifier,
-          String processId,
-          String processGroupId,
-          List<String> processedList)
-          throws GenericServiceException {
+      JsonArray array,
+      Long id,
+      String processIdentifier,
+      String processId,
+      String processGroupId,
+      List<String> processedList) {
     Optional<StageDuration> stageDurationObj = stageDurationRepository.findById(id);
     if (!stageDurationObj.isEmpty()) {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(stageDurationObj.get()));
-      addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+      addIntoProcessedList(
+          array, object, processIdentifier, processId, processGroupId, processedList);
     }
   }
 
   private void getLoadingInformationStatus(
-          JsonArray array,
-          Long id,
-          String processIdentifier,
-          String processId,
-          String processGroupId,
-          List<String> processedList)
-          throws GenericServiceException {
+      JsonArray array,
+      Long id,
+      String processIdentifier,
+      String processId,
+      String processGroupId,
+      List<String> processedList) {
     Optional<LoadingInformationStatus> loadingInformationStatusObj =
-            loadingInformationStatusRepository.findById(id);
+        loadingInformationStatusRepository.findById(id);
     if (!loadingInformationStatusObj.isEmpty()) {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(loadingInformationStatusObj.get()));
-      addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+      addIntoProcessedList(
+          array, object, processIdentifier, processId, processGroupId, processedList);
     }
   }
 
   private void getArrivalStatus(
-          JsonArray array,
-          Long id,
-          String processIdentifier,
-          String processId,
-          String processGroupId,
-          List<String> processedList)
-          throws GenericServiceException {
+      JsonArray array,
+      Long id,
+      String processIdentifier,
+      String processId,
+      String processGroupId,
+      List<String> processedList) {
     Optional<LoadingInformationStatus> arrivalStatusObj =
-            loadingInformationStatusRepository.findById(id);
+        loadingInformationStatusRepository.findById(id);
     if (!arrivalStatusObj.isEmpty()) {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(arrivalStatusObj.get()));
-      addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+      addIntoProcessedList(
+          array, object, processIdentifier, processId, processGroupId, processedList);
     }
   }
 
   private void getDepartureStatus(
-          JsonArray array,
-          Long id,
-          String processIdentifier,
-          String processId,
-          String processGroupId,
-          List<String> processedList)
-          throws GenericServiceException {
+      JsonArray array,
+      Long id,
+      String processIdentifier,
+      String processId,
+      String processGroupId,
+      List<String> processedList) {
     Optional<LoadingInformationStatus> departureStatusObj =
-            loadingInformationStatusRepository.findById(id);
+        loadingInformationStatusRepository.findById(id);
     if (!departureStatusObj.isEmpty()) {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(departureStatusObj.get()));
-      addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
+      addIntoProcessedList(
+          array, object, processIdentifier, processId, processGroupId, processedList);
     }
   }
 
   private void getLoadingPlanPortWiseDetails(
-          JsonArray array,
-          Long id,
-          String processIdentifier,
-          String processId,
-          String processGroupId,
-          List<String> processedList, List<Object> object)
-          throws GenericServiceException {
+      JsonArray array,
+      Long id,
+      String processIdentifier,
+      String processId,
+      String processGroupId,
+      List<String> processedList,
+      List<Object> object) {
     List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailsList =
-            loadingPlanPortWiseDetailsRepository.findByLoadingInformationId(id);
-    if (loadingPlanPortWiseDetailsList!=null && !loadingPlanPortWiseDetailsList.isEmpty()) {
-      loadingPlanPortWiseDetailsList.stream().forEach(loadingPlanPortWiseDetails ->
-      {
-        loadingPlanPortWiseDetails.setLoadingPlanStowageDetails(null);
-        loadingPlanPortWiseDetails.setLoadingPlanBallastDetails(null);
-        loadingPlanPortWiseDetails.setLoadingPlanRobDetails(null);
-        loadingPlanPortWiseDetails.setLoadingPlanStabilityParameters(null);
-        loadingPlanPortWiseDetails.setDeballastingRates(null);
-        loadingPlanPortWiseDetails.setCommunicationSequenceId(loadingPlanPortWiseDetails.getLoadingSequence().getId());
-        loadingPlanPortWiseDetails.setLoadingSequence(null);
-      });
+        loadingPlanPortWiseDetailsRepository.findByLoadingInformationId(id);
+    if (loadingPlanPortWiseDetailsList != null && !loadingPlanPortWiseDetailsList.isEmpty()) {
+      loadingPlanPortWiseDetailsList.stream()
+          .forEach(
+              loadingPlanPortWiseDetails -> {
+                loadingPlanPortWiseDetails.setLoadingPlanStowageDetails(null);
+                loadingPlanPortWiseDetails.setLoadingPlanBallastDetails(null);
+                loadingPlanPortWiseDetails.setLoadingPlanRobDetails(null);
+                loadingPlanPortWiseDetails.setLoadingPlanStabilityParameters(null);
+                loadingPlanPortWiseDetails.setDeballastingRates(null);
+                loadingPlanPortWiseDetails.setCommunicationSequenceId(
+                    loadingPlanPortWiseDetails.getLoadingSequence().getId());
+                loadingPlanPortWiseDetails.setLoadingSequence(null);
+              });
 
       object.addAll(loadingPlanPortWiseDetailsList);
-      addIntoProcessedList(array, object, processIdentifier, processId, processGroupId, processedList);
-      loadingPlanPortWiseDetailsIds = loadingPlanPortWiseDetailsList.stream().map(LoadingPlanPortWiseDetails::getId).collect(Collectors.toList());
+      addIntoProcessedList(
+          array, object, processIdentifier, processId, processGroupId, processedList);
+      loadingPlanPortWiseDetailsIds =
+          loadingPlanPortWiseDetailsList.stream()
+              .map(LoadingPlanPortWiseDetails::getId)
+              .collect(Collectors.toList());
     }
   }
   /**
@@ -503,7 +583,8 @@ public class LoadingPlanStagingService extends StagingService {
    * @return JsonObject
    */
   public JsonObject createJsonObject(
-          List<Object> list, String processIdentifier, String processId, String processGroupId) {
+      List<Object> list, String processIdentifier, String processId, String processGroupId) {
+
     JsonObject jsonObject = new JsonObject();
     JsonObject metaData = new JsonObject();
     metaData.addProperty("processIdentifier", processIdentifier);
@@ -511,7 +592,7 @@ public class LoadingPlanStagingService extends StagingService {
     metaData.addProperty("processGroupId", processGroupId);
     jsonObject.add("meta_data", metaData);
     JsonArray array = new JsonArray();
-    for (Object obj: list) {
+    for (Object obj : list) {
       array.add(new Gson().toJson(obj));
     }
     jsonObject.add("data", array);

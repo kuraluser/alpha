@@ -69,6 +69,5 @@ public interface PortLoadingPlanStowageDetailsRepository
   public void deleteExistingByLoadingInfoAndConditionTypeAndValueType(
       Long loadingInfoId, Integer conditionType, Integer valueType);
 
-  public List<PortLoadingPlanStowageDetails> findByLoadingInformation(
-          Long loadingInformationId);
+  public List<PortLoadingPlanStowageDetails> findByLoadingInformation(Long loadingInformationId);
 }
