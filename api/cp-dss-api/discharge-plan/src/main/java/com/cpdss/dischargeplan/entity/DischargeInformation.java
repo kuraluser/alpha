@@ -140,15 +140,6 @@ public class DischargeInformation extends EntityDoc {
   // bi-directional many-to-one association to DischargingMachineryInUse
   @OneToMany(mappedBy = "dischargingInformation", fetch = FetchType.EAGER)
   private Set<DischargingMachineryInUse> dischargingMachineryInUses;
-
-  @Column(name = "min_deballast_rate")
-  private BigDecimal minDeBallastRate;
-
-  @Column(name = "max_deballast_rate")
-  private BigDecimal maxDeBallastRate;
-
-  @Column(name = "shore_discharging_rate")
-  private BigDecimal shoreDischargingRate;
   /*   // bi-directional many-to-one association to DischargingBerthDetail
   @OneToMany(mappedBy = "dischargingInformation", cascade = CascadeType.ALL)
   private List<DischargingBerthDetail> dischargingBerthDetails;

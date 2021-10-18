@@ -604,6 +604,53 @@ public final class DischargeInformationServiceGrpc {
     return getSaveDischargingInfoStagesMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargeInformation,
+          com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+      getSaveCowPlanMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "saveCowPlan",
+      requestType = com.cpdss.common.generated.discharge_plan.DischargeInformation.class,
+      responseType = com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargeInformation,
+          com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+      getSaveCowPlanMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.discharge_plan.DischargeInformation,
+            com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+        getSaveCowPlanMethod;
+    if ((getSaveCowPlanMethod = DischargeInformationServiceGrpc.getSaveCowPlanMethod) == null) {
+      synchronized (DischargeInformationServiceGrpc.class) {
+        if ((getSaveCowPlanMethod = DischargeInformationServiceGrpc.getSaveCowPlanMethod) == null) {
+          DischargeInformationServiceGrpc.getSaveCowPlanMethod =
+              getSaveCowPlanMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.discharge_plan.DischargeInformation,
+                          com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "saveCowPlan"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargeInformation
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeInformationServiceMethodDescriptorSupplier("saveCowPlan"))
+                      .build();
+        }
+      }
+    }
+    return getSaveCowPlanMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeInformationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceStub> factory =
@@ -792,6 +839,22 @@ public final class DischargeInformationServiceGrpc {
           getSaveDischargingInfoStagesMethod(), responseObserver);
     }
 
+    /**
+     *
+     *
+     * <pre>
+     * Case 7, Cow plan
+     * </pre>
+     */
+    public void saveCowPlan(
+        com.cpdss.common.generated.discharge_plan.DischargeInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveCowPlanMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -875,6 +938,13 @@ public final class DischargeInformationServiceGrpc {
                       com.cpdss.common.generated.discharge_plan.DischargeInformation,
                       com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>(
                       this, METHODID_SAVE_DISCHARGING_INFO_STAGES)))
+          .addMethod(
+              getSaveCowPlanMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.discharge_plan.DischargeInformation,
+                      com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>(
+                      this, METHODID_SAVE_COW_PLAN)))
           .build();
     }
   }
@@ -1057,6 +1127,24 @@ public final class DischargeInformationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 7, Cow plan
+     * </pre>
+     */
+    public void saveCowPlan(
+        com.cpdss.common.generated.discharge_plan.DischargeInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveCowPlanMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1195,6 +1283,19 @@ public final class DischargeInformationServiceGrpc {
             com.cpdss.common.generated.discharge_plan.DischargeInformation request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveDischargingInfoStagesMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 7, Cow plan
+     * </pre>
+     */
+    public com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse saveCowPlan(
+        com.cpdss.common.generated.discharge_plan.DischargeInformation request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveCowPlanMethod(), getCallOptions(), request);
     }
   }
 
@@ -1338,6 +1439,20 @@ public final class DischargeInformationServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveDischargingInfoStagesMethod(), getCallOptions()), request);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 7, Cow plan
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+        saveCowPlan(com.cpdss.common.generated.discharge_plan.DischargeInformation request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveCowPlanMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_DISCHARGE_INFORMATION = 0;
@@ -1351,6 +1466,7 @@ public final class DischargeInformationServiceGrpc {
   private static final int METHODID_SAVE_DISCHARGING_INFO_MACHINERY = 8;
   private static final int METHODID_SAVE_DISCHARGING_INFO_DELAYS = 9;
   private static final int METHODID_SAVE_DISCHARGING_INFO_STAGES = 10;
+  private static final int METHODID_SAVE_COW_PLAN = 11;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1450,6 +1566,13 @@ public final class DischargeInformationServiceGrpc {
                       com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>)
                   responseObserver);
           break;
+        case METHODID_SAVE_COW_PLAN:
+          serviceImpl.saveCowPlan(
+              (com.cpdss.common.generated.discharge_plan.DischargeInformation) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1526,6 +1649,7 @@ public final class DischargeInformationServiceGrpc {
                       .addMethod(getSaveDischargingInfoMachineryMethod())
                       .addMethod(getSaveDischargingInfoDelaysMethod())
                       .addMethod(getSaveDischargingInfoStagesMethod())
+                      .addMethod(getSaveCowPlanMethod())
                       .build();
         }
       }

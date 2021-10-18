@@ -202,7 +202,6 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
       vessel.setHasLoadicator(grpcReply.getHasLoadicator());
       vessel.setKeelToMastHeight(grpcReply.getKeelToMastHeight());
 
-
       if (this.isShip()) {
         Optional<Users> userOpt =
             userList.stream().filter(item -> item.getId().equals(vessel.getCaptainId())).findAny();
@@ -1090,7 +1089,8 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     vessel.setBmSfModelType(vesselAlgoReply.getVesselDetail().getBmSfModelType());
     vessel.setMaxLoadRate(vesselAlgoReply.getVesselDetail().getMaxLoadRate());
     vessel.setMastRiser(vesselAlgoReply.getVesselDetail().getMastRiser());
-    vessel.setHeightOfManifoldAboveDeck(vesselAlgoReply.getVesselDetail().getHeightOfManifoldAboveDeck());
+    vessel.setHeightOfManifoldAboveDeck(
+        vesselAlgoReply.getVesselDetail().getHeightOfManifoldAboveDeck());
     return vessel;
   }
 

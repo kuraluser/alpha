@@ -452,7 +452,14 @@ public class DischargeInformationService {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-      return buildDischargingInformationResponse(response, correlationId);
+      DischargingInformationResponse dischargingInformationResponse =
+          buildDischargingInformationResponse(response, correlationId);
+      dischargingInformationResponse.setDischargingInformation(
+          this.getDischargeInformation(
+              dischargingInformationResponse.getVesseld(),
+              dischargingInformationResponse.getVoyageId(),
+              response.getPortRotationId()));
+      return dischargingInformationResponse;
     } catch (Exception e) {
       log.error("Failed to save LoadingInformation {}", request.getDischargingInfoId());
       e.printStackTrace();

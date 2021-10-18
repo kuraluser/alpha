@@ -136,4 +136,11 @@ public interface CowPlanOrBuilder
   /** <code>repeated .CowTankDetails cowTankDetails = 10;</code> */
   com.cpdss.common.generated.discharge_plan.CowTankDetailsOrBuilder getCowTankDetailsOrBuilder(
       int index);
+
+  /**
+   * <code>int64 dischargingInfoId = 12;</code>
+   *
+   * @return The dischargingInfoId.
+   */
+  long getDischargingInfoId();
 }
