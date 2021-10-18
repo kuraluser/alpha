@@ -1,4 +1,4 @@
-<p-dialog id="dialog_newLoadableStudyPopup" header="{{'UPDATE ULLAGE' | translate}}" [visible]="true" *ngIf="display"
+<p-dialog id="dialog_newLoadableStudyPopup" header="{{'UPDATE_ULLAGE' | translate}}" [visible]="true" *ngIf="display"
     [modal]="true" styleClass="arrival-condition-pop-up" [draggable]="false" [responsive]="true" [minY]="70"
     [closable]="false">
 
@@ -110,11 +110,11 @@
                                 <div class="col">
                                     <ul class="list-inline tank-order mb-5">
                                         <li class="pt-5 list-inline-item"
-                                            *ngFor="let cargoDetail of ullageResponseData?.billOfLaddingList; let i = index;">
+                                            *ngFor="let cargoDetail of gradeDropdown; let i = index;">
                                             <span class="badge-custom mr-5" class="badge-custom"
                                                 [ngClass]="cargoDetail?.isCommingle ? 'commingle' : ''"
                                                 [ngStyle]="!cargoDetail?.isCommingle && {'background': cargoDetail.cargoColor}">
-                                                {{cargoDetail.cargoAbbrevation}} </span> <span *ngIf="i !== (ullageResponseData?.billOfLaddingList?.length - 1)"
+                                                {{cargoDetail.cargoAbbrevation}} </span> <span *ngIf="i !== (gradeDropdown?.length - 1)"
                                                 class="ml-5 mr-5">></span>
                                         </li>
                                     </ul>
@@ -183,7 +183,7 @@
             <div class="col">
                 <form>
                     <ng-container>
-                        <p-table [value]="blFigure.items" [columns]="blFigureColumns" dataKey="cargoName">
+                        <p-table [value]="blFigure.items" [columns]="blFigureColumns" styleClass="body-header-row-span-table" dataKey="cargoName">
                             <ng-template pTemplate="header" let-columns>
                                 <tr>
                                     <th *ngFor="let col of columns">{{col?.header | translate}}</th>
@@ -266,7 +266,7 @@
                                             <i class="pi pi-minus-circle" *ngIf="index !== 0"
                                                 (click)="deleteConfirm(rowIndex,index)"></i>
                                             <i class="pi pi-plus-circle" *ngIf="index === 0"
-                                                (click)="newCargo(rowIndex,index)"></i>
+                                                (click)="newCargo(rowIndex,index, rowData)"></i>
                                         </ng-container>
 
 
@@ -303,7 +303,7 @@
         </div>
         <div *ngIf="selectedTab === tankType.CARGO && status === ULLAGE_STATUS.DEPARTURE" class="row">
             <div class="col-md-12 pt-20">
-                <p-table [value]="cargoQuantityList">
+                <p-table [value]="cargoQuantityList" styleClass="body-header-row-span-table">
                     <ng-template pTemplate="header">
                         <tr>
                             <th rowspan="2">{{'LOADABLE_PLAN_CARGO_GRADE_NAME' | translate}}</th>
@@ -326,7 +326,7 @@
                             <td class="text-right">{{row.plan.bbl | quantityDecimalFormat : QUANTITY_UNIT.BBLS}}</td>
                             <td class="text-right">{{row.plan.lt | quantityDecimalFormat : QUANTITY_UNIT.LT}}</td>
                             <td class="text-right">{{row.plan.mt | quantityDecimalFormat : QUANTITY_UNIT.MT}}</td>
-                            <td class="text-right">{{row.plan.kl | quantityDecimalFormat : QUANTITY_UNIT.KT}}</td>
+                            <td class="text-right">{{row.plan.kl | quantityDecimalFormat : QUANTITY_UNIT.KL}}</td>
                             <td class="text-right">{{row.plan.api?.toFixed(2)}}</td>
                             <td class="text-right">{{row.plan.temp?.toFixed(2)}}</td>
                         </tr>
@@ -379,11 +379,11 @@
                 <button type="button" class="btn btn-main" (click)="closeDialog()" id="new-loadable-study-popup-cancel"
                     focusTrap>{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
                 <button (click)="saveUllage(false)" class="btn btn-main" id="new-loadable-study-popup-save"
-                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted || !permission?.view">{{'SAVE' |
+                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted || !permission?.edit">{{'SAVE' |
                     translate}}</button>
                 <button (click)="saveUllage(true)" class="btn btn-main" id="new-loadable-study-popup-save"
                     form="fg_newLoadableStudy" autofocus focusTrap
-                    [disabled]="isDischargeStarted || !permission?.view">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
+                    [disabled]="isDischargeStarted || !permission?.edit">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
                     translate}}</button>
             </div>
         </div>

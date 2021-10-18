@@ -74,11 +74,21 @@ export class FleetMapComponent implements OnInit {
    */
   async initLoadVesselCards() {
     this.ngxSpinnerService.show();
+    const formatOptions: IDateTimeFormatOptions = { stringToDate: true };
     const vesselDetailsResponse: IFleetVesselResponse = await this.fleetApiService.getVesselDaetails().toPromise();
     if (vesselDetailsResponse.responseStatus.status === '200') {
       this.vessels = vesselDetailsResponse.shoreList.length ? vesselDetailsResponse.shoreList : null;
       if (this.vessels) {
         this.vessels.forEach(vessel => {
+          vessel.voyagePorts.map(port => {
+            port.vesselName = vessel.vesselName;
+            port.portTypeIconUrl = this.fleetTansformationService.setPortTypePopupIcon(port.portType.toLowerCase());
+            port.eta = (port.eta !== '' && port.eta !== null) ? this.timeZoneTransformationService.formatDateTime(port?.eta, formatOptions) : null;
+            port.etd = (port.etd !== '' && port.etd !== null) ? this.timeZoneTransformationService.formatDateTime(port?.etd, formatOptions) : null;
+            port.ata = (port.ata !== '' && port.ata !== null) ? this.timeZoneTransformationService.formatDateTime(port?.ata, formatOptions) : null;
+            port.atd = (port.atd !== '' && port.atd !== null) ? this.timeZoneTransformationService.formatDateTime(port?.atd, formatOptions) : null;
+            return port;
+          });
           return vessel.voyagePorts && this.fleetTansformationService.mapIconsOnVoyagePort(vessel.voyagePorts);
         });
         await this.initMap(this.vessels[0]?.id);
@@ -95,17 +105,8 @@ export class FleetMapComponent implements OnInit {
    */
   initMap(vesselId: number): void {
     this.ngxSpinnerService.show();
-    const formatOptions: IDateTimeFormatOptions = { stringToDate: true };
     this.selectedVessel = this.vessels.find(vessel => (vessel.id === vesselId));
-    this.voyagePorts = [...this.selectedVessel.voyagePorts].map((port, index) => {
-      port.vesselName = this.selectedVessel.vesselName;
-      port.portTypeIconUrl = this.fleetTansformationService.setPortTypePopupIcon(port.portType.toLowerCase());
-      port.eta = (port.eta !== '' && port.eta !== null) ? this.timeZoneTransformationService.formatDateTime(port?.eta, formatOptions) : null;
-      port.etd = (port.etd !== '' && port.etd !== null) ? this.timeZoneTransformationService.formatDateTime(port?.etd, formatOptions) : null;
-      port.ata = (port.ata !== '' && port.ata !== null) ? this.timeZoneTransformationService.formatDateTime(port?.ata, formatOptions) : null;
-      port.atd = (port.atd !== '' && port.atd !== null) ? this.timeZoneTransformationService.formatDateTime(port?.atd, formatOptions) : null;
-      return port;
-    });
+    this.voyagePorts = this.selectedVessel.voyagePorts;
 
     document.getElementById("fleetMap").innerHTML = "";
     this.view = new View({

@@ -140,7 +140,7 @@ export class VoyageStatusComponent implements OnInit {
   async getVoyageInfo(vesselId: number) {
     const voyages = await this.voyageService.getVoyagesByVesselId(vesselId).toPromise();
     this.voyageInfo = this.getSelectedVoyages(voyages);
-    const voyageId = localStorage.getItem("voyageId");
+    const voyageId = this.selectedVoyage?.id ? this.selectedVoyage?.id?.toString() : localStorage.getItem("voyageId");
     if (voyageId) {
       const checkVoyage = this.voyageInfo.find(voyage => voyage.id === Number(voyageId));
       if (checkVoyage) {

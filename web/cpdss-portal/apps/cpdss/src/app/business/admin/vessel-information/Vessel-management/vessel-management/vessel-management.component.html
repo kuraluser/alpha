@@ -8,14 +8,14 @@
   <div class="row mt-10">
     <div class="col-4">
       <div class="vessel-master-info heading-border">
-        <div><img [src]="vesselDetails.countryFlagUrl" alt="Flag Url"></div>
+        <div><img [src]="vesselDetails?.countryFlagUrl" alt="Flag Url"></div>
         <div class="mb-5">
-          <h5 class="text-uppercase mb-0"> {{vesselDetails.vesselName}}</h5>
-          <div>{{'VESSEL_INFO_IMO' | translate }} {{vesselDetails.imoNumber}}</div>
+          <h5 class="text-uppercase mb-0"> {{vesselDetails?.vesselName}}</h5>
+          <div>{{'VESSEL_INFO_IMO' | translate }} {{vesselDetails?.imoNumber}}</div>
         </div>
       </div>
       <div class="vessel-master-info-wrapper mt-10">
-        <img [src]="vesselDetails.vesselImageUrl" width="240" height="120">
+        <img [src]="vesselDetails?.vesselImageUrl" width="240" height="120">
       </div>
     </div>
 
@@ -25,64 +25,79 @@
       </div>
       <div class="row">
         <div class="col vessel-master">
-          <div class="row form-group">
+          <!-- TODO: may be will use in future -->
+          <!-- <div class="row form-group">
             <label for="vessel_info_owner"
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_OWNER' | translate}}</label>
             <div class="col text-right pt-10">
-              <label id="vessel_info_owner" class="text-uppercase">{{vesselDetails.generalInfo.owner}}</label>
+              <label id="vessel_info_owner" class="text-uppercase">{{vesselDetails?.generalInfo?.owner}}</label>
             </div>
-          </div>
+          </div> -->
           <div class="row form-group">
             <label for="vessel_info_kind_of_ship"
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_VESSEL_TYPE' | translate}}</label>
             <div class="col text-right pt-10">
               <label id="vessel_info_kind_of_ship"
-                class="text-uppercase">{{vesselDetails.generalInfo.vesselType}}</label>
+                class="text-uppercase">{{vesselDetails?.generalInfo?.vesselType}}</label>
             </div>
           </div>
           <div class="row form-group">
             <label for="vessel_info_builder"
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_BUILDER' | translate}}</label>
             <div class="col text-right pt-10">
-              <label id="vessel_info_builder" class="">{{vesselDetails.generalInfo.builder}}</label>
+              <label id="vessel_info_builder" class="">{{vesselDetails?.generalInfo?.builder}}</label>
             </div>
           </div>
           <div class="row form-group">
-            <label for="vessel_info_date_of_keel_laid"
-              class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_DATE_OF_KEEL_LAID' | translate}}</label>
+            <label for="vessel_info_officialNumber"
+              class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_OFFICIAL_NUMBER' | translate}}</label>
             <div class="col text-right pt-10">
-              <label id="vessel_info_date_of_keel_laid" class="">{{vesselDetails.generalInfo.dateOfKeelLaid}}</label>
+              <label id="vessel_info_officialNumber" class="">{{vesselDetails?.generalInfo?.officialNumber}}</label>
+            </div>
+          </div>
+          <div class="row form-group">
+            <label for="vessel_info_signalLetter"
+              class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_SIGNAL_LETTER' | translate}}</label>
+            <div class="col text-right pt-10">
+              <label id="vessel_info_signalLetter" class="">{{vesselDetails?.generalInfo?.signalLetter}}</label>
             </div>
           </div>
         </div>
 
         <div class="col vessel-master">
           <div class="row form-group">
+            <label for="vessel_info_date_of_keel_laid"
+              class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_DATE_OF_KEEL_LAID' | translate}}</label>
+            <div class="col text-right pt-10">
+              <label id="vessel_info_date_of_keel_laid" class="">{{vesselDetails?.generalInfo?.dateOfKeelLaid}}</label>
+            </div>
+          </div>
+          <div class="row form-group">
             <label for="vessel_info_date_of_launch"
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_DATE_OF_LAUNCH' | translate}}</label>
             <div class="col text-right pt-10">
-              <label id="vessel_info_date_of_launch" class="">{{vesselDetails.generalInfo.dateOfLaunch}}</label>
+              <label id="vessel_info_date_of_launch" class="">{{vesselDetails?.generalInfo?.dateOfLaunch}}</label>
             </div>
           </div>
           <div class="row form-group">
             <label for="vessel_info_date_of_delivery"
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_DATE_OF_DELIVERY' | translate}}</label>
             <div class="col text-right pt-10">
-              <label id="vessel_info_date_of_delivery" class="">{{vesselDetails.generalInfo.dateOfDelivery}}</label>
+              <label id="vessel_info_date_of_delivery" class="">{{vesselDetails?.generalInfo?.dateOfDelivery}}</label>
             </div>
           </div>
           <div class="row form-group">
             <label for="vessel_info_navigation_area"
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_NAVIGATION_AREA' | translate}}</label>
             <div class="col text-right pt-10">
-              <label id="vessel_info_navigation_area" class="">{{vesselDetails.generalInfo.navigationArea}}</label>
+              <label id="vessel_info_navigation_area" class="">{{vesselDetails?.generalInfo?.navigationArea}}</label>
             </div>
           </div>
           <div class="row form-group">
             <label for="vessel_info_class"
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_CLASS' | translate}}</label>
             <div class="col text-right pt-10">
-              <label id="vessel_info_class" class="text-uppercase">{{vesselDetails.generalInfo.class}}</label>
+              <label id="vessel_info_class" class="text-uppercase">{{vesselDetails?.generalInfo?.class}}</label>
             </div>
           </div>
         </div>
@@ -102,7 +117,7 @@
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_REGISTER_LENGTH' | translate}}</label>
             <div class="col text-right pt-10">
               <label id="vessel_info_register_length"
-                class="text-uppercase">{{vesselDetails.vesselDimesnsions.registerLength}}</label>
+                class="text-uppercase">{{vesselDetails?.vesselDimesnsions?.registerLength}}</label>
             </div>
           </div>
           <div class="row form-group">
@@ -110,7 +125,7 @@
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_LENGTH_OVERALL' | translate}}</label>
             <div class="col text-right pt-10">
               <label id="vessel_info_length_overall"
-                class="text-uppercase">{{vesselDetails.vesselDimesnsions.lengthOverall}}</label>
+                class="text-uppercase">{{vesselDetails?.vesselDimesnsions?.lengthOverall}}</label>
             </div>
           </div>
           <div class="row form-group">
@@ -118,18 +133,18 @@
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_DRAFT_FULL_LOAD' | translate}}</label>
             <div class="col text-right pt-10">
               <label id="vessel_info_draft_full_load"
-                class="text-uppercase">{{vesselDetails.vesselDimesnsions.draftFullLoad}}
+                class="text-uppercase">{{vesselDetails?.vesselDimesnsions?.draftFullLoad}}
                 {{'VESSEL_MASTER_INFORMATION_UNIT_M' | translate}}
-                ({{vesselDetails.vesselDimesnsions.draftFullLoadInFt}}
+                ({{vesselDetails?.vesselDimesnsions?.draftFullLoadInFt}}
                 {{'VESSEL_MASTER_INFORMATION_UNIT_FT' | translate}})</label>
             </div>
           </div>
           <div class="row form-group">
-            <label for="vessel_info_breadth_molded"
-              class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_BREADTH_MOLDED' | translate}}</label>
+            <label for="vessel_info_breadth_moulded"
+              class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_BREADTH_MOULDED' | translate}}</label>
             <div class="col text-right pt-10">
-              <label id="vessel_info_breadth_molded"
-                class="text-uppercase">{{vesselDetails.vesselDimesnsions.breadthMolded}}</label>
+              <label id="vessel_info_breadth_moulded"
+                class="text-uppercase">{{vesselDetails?.vesselDimesnsions?.breadthMoulded}}</label>
             </div>
           </div>
         </div>
@@ -140,7 +155,7 @@
               class="col-8 pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_LENGTH_BW_PERPENDICULARS' | translate}}</label>
             <div class="col-4 text-right pt-10">
               <label id="vessel_info_len_perpendicular"
-                class="text-uppercase">{{vesselDetails.vesselDimesnsions.lengthBetweenPerpendiculars}}</label>
+                class="text-uppercase">{{vesselDetails?.vesselDimesnsions?.lengthBetweenPerpendiculars}}</label>
             </div>
           </div>
           <div class="row form-group">
@@ -148,7 +163,7 @@
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_DEPTH_MOULDED' | translate}}</label>
             <div class="col text-right pt-10">
               <label id="vessel_info_depth_moulded"
-                class="text-uppercase">{{vesselDetails.vesselDimesnsions.depthMoulded}}</label>
+                class="text-uppercase">{{vesselDetails?.vesselDimesnsions?.depthMoulded}}</label>
             </div>
           </div>
           <div class="row form-group">
@@ -156,7 +171,7 @@
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_DESIGNED_LOAD_DRAFT' | translate}}</label>
             <div class="col text-right pt-10">
               <label id="vessel_info_designed_load_draft"
-                class="text-uppercase">{{vesselDetails.vesselDimesnsions.designedLoadDraft}}
+                class="text-uppercase">{{vesselDetails?.vesselDimesnsions?.designedLoadDraft}}
                 {{'VESSEL_MASTER_INFORMATION_UNIT_M' | translate }}</label>
             </div>
           </div>
@@ -175,7 +190,7 @@
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_DEPTH_MOULDED' | translate}}</label>
             <div class="col text-right pt-10">
               <label id="vessel_info_depth_moulded"
-                class="text-uppercase">{{vesselDetails.draftDisplacementDeadweight.depthMolded}}</label>
+                class="text-uppercase">{{vesselDetails?.draftDisplacementDeadweight?.depthMoulded}}</label>
             </div>
           </div>
           <div class="row form-group">
@@ -183,7 +198,7 @@
               class="col-8 pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_THICKNESS_OF_UPPER_DECK_STRINGER_PLATE' | translate}}</label>
             <div class="col-4 text-right pt-10">
               <label id="vessel_info_thickness_upper_deck"
-                class="text-uppercase">{{vesselDetails.draftDisplacementDeadweight.thicknessOfUpperDeck}}</label>
+                class="text-uppercase">{{vesselDetails?.draftDisplacementDeadweight?.thicknessOfUpperDeck}}</label>
             </div>
           </div>
           <div class="row form-group">
@@ -191,7 +206,7 @@
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_THICKNESS_OF_KEEL_PLATE' | translate}}</label>
             <div class="col text-right pt-10">
               <label id="vessel_info_thickness_keel_plate"
-                class="">{{vesselDetails.draftDisplacementDeadweight.thicknessOfKeelPlate}}</label>
+                class="">{{vesselDetails?.draftDisplacementDeadweight?.thicknessOfKeelPlate}}</label>
             </div>
           </div>
           <div class="row form-group">
@@ -199,9 +214,46 @@
               class="col pt-10 text-uppercase">{{'VESSEL_MASTER_INFORMATION_TOTAL_WEIGHT' | translate}}</label>
             <div class="col text-right pt-10">
               <label id="vessel_info_total_depth"
-                class="">{{vesselDetails.draftDisplacementDeadweight.totalDepth}}</label>
+                class="">{{vesselDetails?.draftDisplacementDeadweight?.totalDepth}}</label>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-20">
+    <div class="col">
+      <div class="row pt-15">
+        <div class="col text-center">
+          <a class="tab-btn tab-btn-default tab-landing tank-icon"
+            [ngClass]="{'active': selectedTab === tankType.CARGO}" pTooltip="{{'CARGO' | translate}}"
+            tooltipPosition="top" id="vessel_master_cargo_tab" (click)="onTabClick(tankType.CARGO)">
+          </a>
+          <a class="tab-btn tab-btn-default tab-landing ballast-icon"
+            [ngClass]="{'active': selectedTab === tankType.BALLAST}" pTooltip="{{'BALLAST' | translate}}"
+            tooltipPosition="top" id="vessel_master_ballast_tab" (click)="onTabClick(tankType.BALLAST)">
+          </a>
+          <a class="tab-btn tab-btn-default tab-landing bunker-icon"
+            [ngClass]="{'active': selectedTab === tankType.BUNKER}" pTooltip="{{'BUNKER' | translate}}"
+            tooltipPosition="top" id="vessel_master_bunker_tab" (click)="onTabClick(tankType.BUNKER)">
+          </a>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 loading-discharging-tank-layout m-auto" *ngIf="selectedTab === tankType.CARGO">
+          <cpdss-portal-cargo-tank-layout [tanks]="cargoTanks" [options]="tankOptions">
+          </cpdss-portal-cargo-tank-layout>
+        </div>
+        <div class="col-md-6 m-auto loading-discharging-tank-layout loadable-plan-ballast"
+          *ngIf="selectedTab === tankType.BALLAST">
+          <cpdss-portal-ballast-layout [tanks]="centerBallastTanks" [rearTanks]="rearBallastTanks"
+            [frontTanks]="frontBallastTanks" [options]="tankOptions"></cpdss-portal-ballast-layout>
+        </div>
+        <div class="col col-6 m-auto loading-discharging-tank-layout" *ngIf="selectedTab === tankType.BUNKER">
+          <cpdss-portal-bunkering-layout [tanks]="bunkerTanks" [rearTanks]="rearBunkerTanks" [options]="tankOptions">
+          </cpdss-portal-bunkering-layout>
         </div>
       </div>
     </div>

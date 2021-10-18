@@ -36,13 +36,12 @@ public class JsonDataService {
     }
   }
 
-  public Optional<JsonData> getJsonData(Long id, Long typeId) {
-    Optional<JsonData> patternJson = Optional.empty();
+  public JsonData getJsonData(Long id, Long typeId) {
+    JsonData patternJson = null;
     Optional<JsonType> type = this.jsonTypeRepository.findByIdAndIsActive(typeId, true);
-    System.out.println(type.isPresent());
-    System.out.println(id);
     if (type.isPresent()) {
-      patternJson = this.jsonDataRepository.findByJsonTypeXIdAndReferenceXId(type.get(), id);
+      patternJson =
+          this.jsonDataRepository.findTopByReferenceXIdAndJsonTypeXIdOrderByIdDesc(id, type.get());
     }
     return patternJson;
   }

@@ -122,6 +122,7 @@ public class LoadableStudiesConstants {
   public static final Long LOADABLE_PATTERN_VALIDATION_STARTED_ID = 14L;
   public static final Long LOADABLE_PATTERN_VALIDATION_SUCCESS_ID = 12L;
   public static final Long LOADABLE_PATTERN_VALIDATION_FAILED_ID = 13L;
+  public static final Long LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID = 6L;
   public static final List<Long> VALIDATED_CONDITIONS =
       Arrays.asList(
           LOADABLE_PATTERN_VALIDATION_STARTED_ID,
@@ -145,6 +146,7 @@ public class LoadableStudiesConstants {
   public static final Long LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID = 6L;
   public static final Long LOADABLE_STUDY_COMMUNICATED_TO_SHORE = 21L;
   public static final Long PROCESSING_WITH_SHIP_SIDE_ALGO = 22L;
+  public static final Long PATTERN_COMMUNICATED_TO_SHORE = 23L;
   public static final String ERRO_CALLING_ALGO = "ERROR_CALLING_ALGO";
   public static final int CASE_1 = 1;
   public static final int CASE_2 = 2;

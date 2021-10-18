@@ -59,6 +59,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   loadingInstructionTabPermission: IPermission;
   loadingSequenceTabPermission: IPermission;
   loadingPlanTabPermission: IPermission;
+  generatePlanPermission: IPermission;
 
 
 
@@ -135,6 +136,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   * @memberof LoadingComponent
   */
   setPagePermission() {
+    this.generatePlanPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationLoadingGeneratePlan'], false);
     this.loadingInfoTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationLoadingInformation'], false);
     this.loadingInstructionTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationLoadingInstruction'], false);
     this.loadingSequenceTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationLoadingSequence'], false);

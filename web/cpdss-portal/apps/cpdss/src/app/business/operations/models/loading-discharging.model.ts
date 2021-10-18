@@ -746,6 +746,31 @@ export interface ILoadingPlanDetails {
   ballastRearTanks: IShipBallastTank[][];
   bunkerRearTanks: IShipBunkerTank[][];
   bunkerTanks: IShipBunkerTank[][];
+  planCommingleDetails: IPlanCommingleCargo[];
+}
+
+/**
+* Interface for commingle cargo
+*
+* @export
+* @interface IPlanBallastAndRob
+*/
+
+export interface IPlanCommingleCargo {
+  abbreviation: string;
+  api: number;
+  cargo1Id?: number;
+  cargo2Id?: number;
+  cargoNomination1Id?: number;
+  cargoNomination2Id?: number;
+  colorCode: string;
+  id: number;
+  quantityM3: number;
+  quantityMT: number;
+  tankId: number;
+  temperature: number;
+  ullage: number;
+  conditionType?: number;
 }
 
 /**
@@ -783,16 +808,18 @@ export interface IPlanStabilityParams {
 }
 
 export interface IPlanStowageDetails {
-  api: string;
+  api: string | number;
   cargoNominationId: number;
   conditionType: number;
   quantityM3: string;
-  quantityMT: string;
+  quantityMT: string | number;
   tankId: string;
   tankName: string;
-  temperature: string;
+  temperature: string | number;
   ullage: string;
   valueType: number;
+  isCommingleCargo?: boolean;
+  abbreviation?: string;
 }
 
 /**
@@ -903,6 +930,7 @@ export interface IUllageSaveDetails {
 */
 export interface IBillOfLandingList {
   loadingId?: number | string;
+  dischargingId?: number | string;
   portId: number;
   cargoId: number;
   blRefNumber: string;
@@ -925,7 +953,8 @@ export interface IBillOfLandingList {
 * @interface IUllageUpdList
 */
 export interface IUllageUpdList {
-  loadingInformationId: number | string;
+  loadingInformationId?: number | string;
+  dischargingInformationId?: number | string;
   tankId: number;
   temperature: number;
   correctedUllage: number;
@@ -954,7 +983,8 @@ export interface IUllageUpdList {
 * @interface IBallastUpdateList
 */
 export interface IBallastUpdateList {
-  loadingInformationId: number | string;
+  loadingInformationId?: number | string;
+  dischargingInformationId?: number | string;
   tankId: number | string;
   temperature: number | string;
   quantity: number | string;
@@ -983,7 +1013,8 @@ export interface IBallastUpdateList {
 * @interface IRobUpdateList
 */
 export interface IRobUpdateList {
-  loadingInformationId: number | string;
+  loadingInformationId?: number | string;
+  dischargingInformationId?: number | string;
   tankId: number;
   quantity: number;
   isUpdate?: boolean;

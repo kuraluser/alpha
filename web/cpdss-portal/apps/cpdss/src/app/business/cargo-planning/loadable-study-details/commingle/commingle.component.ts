@@ -137,8 +137,6 @@ export class CommingleComponent implements OnInit {
         purpose: this.purposeOfCommingle[0]
       });
       this.cargoNominationsCargo = this.commingleData.cargoNominations?.map((itm, index) => {
-        const cargoDetails = this.loadableStudyDetailsApiService.cargoNominations.find(cargo => cargo.id === itm.id)
-        itm.loadingPorts = cargoDetails?.loadingPorts.value
         return {
           ...this.cargos.find((item) => (item.id === itm.cargoId) && item),
           ...itm
@@ -739,7 +737,7 @@ export class CommingleComponent implements OnInit {
       unitTo = this.loadableStudyDetailsApiService.baseUnit;
     } else {
       unitFrom = this.loadableStudyDetailsApiService.baseUnit;
-      unitTo = localStorage.getItem('unit')
+      unitTo = localStorage.getItem('unit');
     }
     const api1 = Number(row.cargo1.value.api)
     const api2 = Number(row.cargo2.value.api)

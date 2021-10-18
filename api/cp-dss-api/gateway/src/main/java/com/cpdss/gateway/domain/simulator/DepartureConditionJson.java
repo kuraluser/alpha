@@ -12,5 +12,6 @@ public class DepartureConditionJson {
   private List<LoadablePlanStowageDetailsJson> loadablePlanStowageDetails;
   private List<LoadableQuantityCargoDetailsJson> loadableQuantityCargoDetails;
   private List<LoadableQuantityCommingleCargoDetailsJson> loadableQuantityCommingleCargoDetails;
+  private List<LoadablePlanRobDetails> loadablePlanRoBDetails;
   private StabilityParametersJson stabilityParameters;
 }

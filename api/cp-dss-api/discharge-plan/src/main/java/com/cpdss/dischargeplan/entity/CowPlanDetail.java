@@ -47,6 +47,9 @@ public class CowPlanDetail extends EntityDoc {
   @Column(name = "need_fresh_crude_storage")
   private Boolean needFreshCrudeStorage;
 
+  @Column(name = "wash_tank_with_different_cargo")
+  private Boolean washTankWithDifferentCargo; // radio button for enable/disable CWC section
+
   // bi-directional many-to-one association to CowTankDetail
   @OneToMany(mappedBy = "cowPlanDetail", fetch = FetchType.EAGER)
   private Set<CowTankDetail> cowTankDetails;

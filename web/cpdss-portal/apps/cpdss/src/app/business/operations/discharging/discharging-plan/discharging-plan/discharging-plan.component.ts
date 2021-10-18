@@ -10,9 +10,11 @@ import { AppConfigurationService } from '../../../../../shared/services/app-conf
 import { LoadingDischargingTransformationService } from '../../../services/loading-discharging-transformation.service';
 import { DischargingPlanApiService } from './../../../services/discharging-plan-api.service';
 
-import { ICargo, ILoadableQuantityCargo, OPERATIONS } from '../../../../core/models/common.model';
+import { IAlgoError, IAlgoResponse, ICargo, ILoadableQuantityCargo, OPERATIONS } from '../../../../core/models/common.model';
 import { QUANTITY_UNIT } from '../../../../../shared/models/common.model';
-import { IDischargeOperationListData, IDischargingInformation, IDischargingPlanDetailsResponse } from '../../../models/loading-discharging.model';
+import { IDischargeOperationListData, IDischargingInformation, IDischargingPlanDetailsResponse, ULLAGE_STATUS_VALUE } from '../../../models/loading-discharging.model';
+import { LoadingPlanApiService } from '../../../services/loading-plan-api.service';
+import { LoadingApiService } from '../../../services/loading-api.service';
 
 /**
  * below dummy data will remove once the actual API implemented
@@ -2535,6 +2537,8 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
   readonly OPERATIONS = OPERATIONS;
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   dischargingPlanForm: FormGroup;
+  errorMessage: IAlgoError[];
+  errorPopUp = false;
   listData: IDischargeOperationListData = {
     protestedOptions: [{ name: 'Yes', id: 1 }, { name: 'No', id: 2 }],
     cowOptions: [{ name: 'Auto', id: 1 }, { name: 'Manual', id: 2 }],
@@ -2556,6 +2560,9 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    // TODO : will remove below id once actual API data available.
+    this.dischargeInfoId = 136;
+
     this.initSubscriptions();
   }
 
@@ -2574,6 +2581,21 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
     this.loadingDischargingTransformationService.unitChange$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+    });
+
+    this.loadingDischargingTransformationService.showUllageErrorPopup$.subscribe((res) => {
+      this.getAlgoErrorMessage(res);
+    });
+
+    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.subscribe((value) => {
+      if (value === ULLAGE_STATUS_VALUE.SUCCESS) {
+        this.getDischargingPlanDetails();
+      }
+    });
+    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value) => {
+      if (value === ULLAGE_STATUS_VALUE.SUCCESS) {
+        this.getDischargingPlanDetails();
+      }
     });
   }
 
@@ -2604,6 +2626,31 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
       });
     }
     this.ngxSpinnerService.hide();
+  }
+
+
+  async getAlgoErrorMessage(status) {
+    const translationKeys = await this.translateService.get(['DSICHARGING_PLAN_ALGO_ERROR', 'DSICHARGING_PLAN_ALGO_NO_PLAN']).toPromise();
+
+    // TODO: replace discharge plan generation's get algo error details API with below
+    // const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.dischargeInfoId, status.status).toPromise();
+    const algoError: IAlgoResponse = <IAlgoResponse>{};
+
+    if (algoError.responseStatus.status === 'SUCCESS') {
+      this.errorMessage = algoError.algoErrors;
+      this.errorPopUp = status.value;
+    }
+    this.messageService.add({ severity: 'error', summary: translationKeys['DSICHARGING_PLAN_ALGO_ERROR'], detail: translationKeys["DSICHARGING_PLAN_ALGO_NO_PLAN"] });
+  }
+
+  /**
+   * function to display ALGO error popup
+   *
+   * @param {*} status
+   * @memberof DischargingPlanComponent
+   */
+  viewError(status) {
+    this.errorPopUp = status;
   }
 
 }

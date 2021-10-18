@@ -16,6 +16,7 @@ public class LoadablePlanStowageDetailsJson {
   private Double maxTankVolume;
   private Double onboard;
   private Double quantityMT;
+  private Double quantityM3;
   private Double rdgUllage;
   private Long tankId;
   private String tankName;

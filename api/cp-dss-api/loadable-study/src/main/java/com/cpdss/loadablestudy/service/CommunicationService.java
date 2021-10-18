@@ -51,6 +51,7 @@ public class CommunicationService {
   @Autowired private LoadablePatternRepository loadablePatternRepository;
   @Autowired private LoadablePlanService loadablePlanService;
   @Autowired private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
+  @Autowired private LoadicatorService loadicatorService;
 
   @Autowired
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
@@ -129,10 +130,14 @@ public class CommunicationService {
   private void savePatternInShipSide(EnvoyReader.EnvoyReaderResultReply erReply)
       throws GenericServiceException {
     String jsonResult = erReply.getPatternResultJson();
+
     // log.info("------Pattern details payload : " + jsonResult);
     LoadablePatternAlgoRequest loadablePatternAlgoRequest =
         new Gson()
             .fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadablePatternAlgoRequest.class);
+    log.info(
+        "Pattern has reached in ship side from shore side : "
+            + loadablePatternAlgoRequest.getLoadablePatternId());
     Optional<LoadablePattern> loadablePatternOpt =
         this.loadablePatternRepository.findByIdAndIsActive(
             loadablePatternAlgoRequest.getLoadablePatternId(), true);
@@ -163,19 +168,34 @@ public class CommunicationService {
                   algoErrorsRepository.save(algoErrors);
                 });
       }
+      loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatusByMessageId(
+          LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, loadablePatternAlgoRequest.getMessageId(), true);
     } else {
+      loadablePatternService.deleteExistingPlanDetails(loadablePatternOpt.get());
       if (loadablePatternAlgoRequest.getPatternDetails() != null) {
-        loadablePatternService.deleteExistingPlanDetails(loadablePatternOpt.get());
         loadableStudyServiceShore.savePatternInShipSide(
             loadablePatternAlgoRequest.getPatternDetails(), loadablePatternOpt.get());
-        if (!loadablePatternAlgoRequest.getHasLoadicator()) {
-          loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
-              LOADABLE_PATTERN_VALIDATION_SUCCESS_ID,
-              loadablePatternAlgoRequest.getProcessId(),
-              true);
-        }
       }
+      if (!loadablePatternAlgoRequest.getHasLoadicator()) {
+        log.info(
+            "----pattern persisted in ship without loadicator : "
+                + loadablePatternAlgoRequest.getMessageId());
+      } else {
+        loadicatorService.updateFeedbackLoopParameters(
+            loadablePatternAlgoRequest.getLoadablePatternId(),
+            true,
+            false,
+            loadablePatternAlgoRequest.getFeedBackLoopCount(),
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
+
+        log.info(
+            "----pattern persisted in ship with loadicator : "
+                + loadablePatternAlgoRequest.getMessageId());
+      }
+      loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatusByMessageId(
+          LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, loadablePatternAlgoRequest.getMessageId(), true);
     }
+    log.info("Pattern has successfully updated in ship");
   }
 
   private void saveValidatePlanRequestShore(EnvoyReader.EnvoyReaderResultReply erReply) {
@@ -281,23 +301,24 @@ public class CommunicationService {
     jsonDataService.saveJsonToDatabase(
         lPValidateRequest.getLoadablePatternId(),
         LOADABLE_PATTERN_EDIT_REQUEST,
-        objectMapper.writeValueAsString(loadabalePatternValidateRequest));
+        objectMapper.writeValueAsString(lPValidateRequest));
     objectMapper.writeValue(
         new File(
             this.rootFolder
                 + "/json/loadablePattern_request_"
                 + loadablePatternOpt.get().getId()
                 + ".json"),
-        loadabalePatternValidateRequest);
+        lPValidateRequest);
     AlgoResponse algoResponse =
-        restTemplate.postForObject(
-            loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
+        restTemplate.postForObject(loadableStudyUrl, lPValidateRequest, AlgoResponse.class);
 
     loadablePlanService.updateProcessIdForLoadablePattern(
         algoResponse.getProcessId(),
         loadablePatternOpt.get(),
-        LOADABLE_PATTERN_VALIDATION_STARTED_ID);
-    log.info("Algo response : " + algoResponse.toString());
+        LOADABLE_PATTERN_VALIDATION_STARTED_ID,
+        "",
+        true);
+    log.info("Algo response in shore side (Stowage Edit): " + algoResponse.toString());
   }
 
   private void processAlgoFromShore(LoadableStudy loadableStudyEntity)
@@ -427,6 +448,7 @@ public class CommunicationService {
       EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
           EnvoyWriter.EnvoyWriterRequest.newBuilder();
       writerRequest.setJsonPayload(jsonPayload);
+      // writerRequest.setClientId("KAZUSA_VINOTH");
       writerRequest.setClientId(vesselReply.getName());
       writerRequest.setImoNumber(vesselReply.getImoNumber());
       writerRequest.setMessageType(MessageTypes.ALGORESULT.getMessageType());
@@ -461,6 +483,7 @@ public class CommunicationService {
     EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
         EnvoyWriter.EnvoyWriterRequest.newBuilder();
     writerRequest.setJsonPayload(requestJson);
+    // writerRequest.setClientId("KAZUSA_VINOTH");
     writerRequest.setClientId(vesselReply.getName());
     writerRequest.setMessageType(messageType);
     writerRequest.setImoNumber(vesselReply.getImoNumber());

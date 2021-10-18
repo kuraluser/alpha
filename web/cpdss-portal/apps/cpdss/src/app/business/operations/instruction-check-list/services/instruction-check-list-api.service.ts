@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { CommonApiService } from '../../../../shared/services/common/common-api.service';
 import { IInstructionDetails, IDeleteData, ISaveStatusData } from './../models/instruction-check-list.model';
 import { IResponse } from "../../../../shared/models/common.model";
+import { OPERATIONS } from '../../../core/models/common.model';
 
 /**
  * Api Service for loading instruction check list
@@ -24,8 +25,8 @@ export class InstructionCheckListApiService {
     * @param {number} portRotationId
     * @param {IInstructionDetails} data
    */
-  saveInstruction(vesselId: number, loadingInfoId: number, portRotationId: number, data: IInstructionDetails): Observable<IResponse> {
-    return this.commonApiService.post<IInstructionDetails, IResponse>(`new-instruction/vessels/${vesselId}/loading-info/${loadingInfoId}/port-rotation/${portRotationId}`, data);
+  saveInstruction(vesselId: number, loadingDischargingInfoId: number, portRotationId: number, data: IInstructionDetails, operation: OPERATIONS): Observable<IResponse> {
+    return this.commonApiService.post<IInstructionDetails, IResponse>(`new-instruction/vessels/${vesselId}/${operation === OPERATIONS.LOADING ? 'loading-info' : 'discharging-info'}/${loadingDischargingInfoId}/port-rotation/${portRotationId}`, data);
   }
 
   /**
@@ -35,8 +36,8 @@ export class InstructionCheckListApiService {
     * @param {number} portRotationId
     * @param {IDeleteData} data
    */
-  deleteInstruction(vesselId: number, loadingInfoId: number, portRotationId: number, data: IDeleteData): Observable<IResponse> {
-    return this.commonApiService.post<IDeleteData, IResponse>(`delete-instruction/vessels/${vesselId}/loading-info/${loadingInfoId}/port-rotation/${portRotationId}`, data);
+  deleteInstruction(vesselId: number, loadingDischargingInfoId: number, portRotationId: number, data: IDeleteData, operation: OPERATIONS): Observable<IResponse> {
+    return this.commonApiService.post<IDeleteData, IResponse>(`delete-instruction/vessels/${vesselId}/${operation === OPERATIONS.LOADING ? 'loading-info' : 'discharging-info'}/${loadingDischargingInfoId}/port-rotation/${portRotationId}`, data);
   }
 
   /**
@@ -46,8 +47,8 @@ export class InstructionCheckListApiService {
     * @param {number} portRotationId
     * @param {ISaveStatusData} data
    */
-  updateCheckListStatus(vesselId: number, loadingInfoId: number, portRotationId: number, data: ISaveStatusData): Observable<IResponse> {
-    return this.commonApiService.post<ISaveStatusData, IResponse>(`update-instruction/vessels/${vesselId}/loading-info/${loadingInfoId}/port-rotation/${portRotationId}`, data);
+  updateCheckListStatus(vesselId: number, loadingDischargingInfoId: number, portRotationId: number, data: ISaveStatusData, operation: OPERATIONS): Observable<IResponse> {
+    return this.commonApiService.post<ISaveStatusData, IResponse>(`update-instruction/vessels/${vesselId}/${operation === OPERATIONS.LOADING ? 'loading-info' : 'discharging-info'}/${loadingDischargingInfoId}/port-rotation/${portRotationId}`, data);
   }
 
   /**
@@ -57,7 +58,7 @@ export class InstructionCheckListApiService {
     * @param {number} portRotationId
     * @param {IInstructionDetails} data
    */
-  updateInstruction(vesselId: number, loadingInfoId: number, portRotationId: number, data: IInstructionDetails): Observable<IResponse> {
-    return this.commonApiService.post<IInstructionDetails, IResponse>(`edit-instruction/vessels/${vesselId}/loading-info/${loadingInfoId}/port-rotation/${portRotationId}`, data);
+  updateInstruction(vesselId: number, loadingDischargingInfoId: number, portRotationId: number, data: IInstructionDetails, operation: OPERATIONS): Observable<IResponse> {
+    return this.commonApiService.post<IInstructionDetails, IResponse>(`edit-instruction/vessels/${vesselId}/${operation === OPERATIONS.LOADING ? 'loading-info' : 'discharging-info'}/${loadingDischargingInfoId}/port-rotation/${portRotationId}`, data);
   }
 }

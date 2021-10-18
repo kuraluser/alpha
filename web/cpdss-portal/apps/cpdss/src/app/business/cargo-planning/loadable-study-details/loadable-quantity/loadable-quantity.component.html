@@ -53,6 +53,7 @@
                                 '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column"></div>
                     </div>
 
                     <div class="row form-group" >
@@ -62,6 +63,7 @@
                             <label id="loadable_quantity_lwt">{{getControlLabel('lwt')| number : '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column"></div>
                     </div>
 
                     <div class="row form-group no-border mb-5 sub-heading-size strong">
@@ -374,8 +376,7 @@
                         <label id="loadable_quantity_totalQuantity_label" class="col pt-5">{{getControlLabel('totalQuantity') |
                             number : '1.2-2'}}</label>
                         <div class="col unit-column ">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column">
-                        </div>
+                        <div class="col error-column"></div>
                     </div>
 
                     <div class="row" *ngIf="caseNo !== 1">

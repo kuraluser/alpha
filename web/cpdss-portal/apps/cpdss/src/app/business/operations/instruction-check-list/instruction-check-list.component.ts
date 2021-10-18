@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter , OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, ValidationErrors } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -25,7 +25,7 @@ import { IPermission } from '../../../shared/models/user-profile.model';
  * @class InstructionCheckListComponent
  * @implements {OnInit}
  */
-export class InstructionCheckListComponent implements OnInit , OnDestroy{
+export class InstructionCheckListComponent implements OnInit, OnDestroy {
 
   @ViewChild('editField') editElement: ElementRef;
   @Input() operation: OPERATIONS;
@@ -156,8 +156,9 @@ export class InstructionCheckListComponent implements OnInit , OnDestroy{
         data: { ...item },
         children: [],
       });
-      if (item?.loadingInstructionsList?.length) {
-        item.loadingInstructionsList.map(subList => {
+      const instructionsList = this.operation === OPERATIONS.LOADING ? item?.loadingInstructionsList : item?.dischargingInstructionsList;
+      if (instructionsList?.length) {
+        instructionsList.map(subList => {
           list[list.length - 1].children.push({
             label: subList.instruction,
             data: { ...subList },
@@ -233,7 +234,7 @@ export class InstructionCheckListComponent implements OnInit , OnDestroy{
         }
       }
       this.ngxSpinnerService.show();
-      const result = await this.instructionCheckListApiService.saveInstruction(this.vesselId, this.loadingDischargingInfoId, this.portRotationId, data).toPromise();
+      const result = await this.instructionCheckListApiService.saveInstruction(this.vesselId, this.loadingDischargingInfoId, this.portRotationId, data, this.operation).toPromise();
       this.ngxSpinnerService.hide();
       if (result?.responseStatus?.status === 'SUCCESS') {
         this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: event.level === 1 || event?.node?.data?.isSingleHeader ? translationKeys['LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_MESSAGE'] : translationKeys['LOADING_INSTRUCTION_SUCCESS_SUBHEADER_MESSAGE'] });
@@ -251,7 +252,7 @@ export class InstructionCheckListComponent implements OnInit , OnDestroy{
       };
 
       this.ngxSpinnerService.show();
-      const result = await this.instructionCheckListApiService.updateInstruction(this.vesselId, this.loadingDischargingInfoId, this.portRotationId, data).toPromise();
+      const result = await this.instructionCheckListApiService.updateInstruction(this.vesselId, this.loadingDischargingInfoId, this.portRotationId, data, this.operation).toPromise();
       this.ngxSpinnerService.hide();
       if (result?.responseStatus?.status === 'SUCCESS') {
         this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: event.level === 1 || event?.node?.data?.isSingleHeader ? translationKeys['LOADING_INSTRUCTION_SUCCESS_INSTRUCTION_UPDATE_MESSAGE'] : translationKeys['LOADING_INSTRUCTION_SUCCESS_SUBHEADER_UPDATE_MESSAGE'] });
@@ -329,7 +330,10 @@ export class InstructionCheckListComponent implements OnInit , OnDestroy{
     }
     this.instructionListData = [...this.instructionListData];
     setTimeout(() => {
-      this.editElement.nativeElement.scrollIntoView();
+      const isElementInViewport = this.isElementInViewPort(this.editElement.nativeElement);
+      if(!isElementInViewport) {
+        this.editElement.nativeElement.scrollIntoView();
+      }
     });
   }
 
@@ -358,7 +362,10 @@ export class InstructionCheckListComponent implements OnInit , OnDestroy{
     this.textFieldLength = 250;
     this.instructionListData = [...this.instructionListData];
     setTimeout(() => {
-      this.editElement.nativeElement.scrollIntoView();
+      const isElementInViewport = this.isElementInViewPort(this.editElement.nativeElement);
+      if(!isElementInViewport) {
+        this.editElement.nativeElement.scrollIntoView();
+      }
     });
   }
 
@@ -387,7 +394,10 @@ export class InstructionCheckListComponent implements OnInit , OnDestroy{
     this.textFieldLength = 500;
     this.instructionListData = [...this.instructionListData];
     setTimeout(() => {
-      this.editElement.nativeElement.scrollIntoView();
+      const isElementInViewport = this.isElementInViewPort(this.editElement.nativeElement);
+      if(!isElementInViewport) {
+        this.editElement.nativeElement.scrollIntoView();
+      }
     });
   }
 
@@ -412,7 +422,7 @@ export class InstructionCheckListComponent implements OnInit , OnDestroy{
    * @memberof InstructionCheckListComponent
    */
   deleteConfirm(data) {
-    if(this.disableSaveButton) { return; }
+    if (this.disableSaveButton) { return; }
     const translationKeys = this.translateService.instant(['LOADING_INSTRUCTION_DELETE_SUMMARY', 'LOADING_INSTRUCTION_DELETE_DETAILS', 'LOADING_INSTRUCTION_DELETE_CONFIRM_LABEL', 'LOADING_INSTRUCTION_DELETE_REJECT_LABEL']);
 
     this.confirmationService.confirm({
@@ -445,7 +455,7 @@ export class InstructionCheckListComponent implements OnInit , OnDestroy{
       instructionId: data.level === 1 ? data?.node?.data?.instructionId : data?.node?.data?.subHeaderId
     };
     this.ngxSpinnerService.show();
-    const result = await this.instructionCheckListApiService.deleteInstruction(this.vesselId, this.loadingDischargingInfoId, this.portRotationId, payload).toPromise();
+    const result = await this.instructionCheckListApiService.deleteInstruction(this.vesselId, this.loadingDischargingInfoId, this.portRotationId, payload, this.operation).toPromise();
     this.ngxSpinnerService.hide();
     if (result?.responseStatus?.status === 'SUCCESS') {
       this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INSTRUCTION_SUCCESS'], detail: translationKeys['LOADING_INSTRUCTION_DELETE_MESSAGE'] });
@@ -549,7 +559,7 @@ export class InstructionCheckListComponent implements OnInit , OnDestroy{
       }
     });
     this.ngxSpinnerService.show();
-    const result = await this.instructionCheckListApiService.updateCheckListStatus(this.vesselId, this.loadingDischargingInfoId, this.portRotationId, data).toPromise();
+    const result = await this.instructionCheckListApiService.updateCheckListStatus(this.vesselId, this.loadingDischargingInfoId, this.portRotationId, data, this.operation).toPromise();
     this.ngxSpinnerService.hide();
     if (result?.responseStatus?.status === 'SUCCESS') {
       this.tabStatus.emit(true);
@@ -586,6 +596,19 @@ export class InstructionCheckListComponent implements OnInit , OnDestroy{
   field(formControlName: string): FormControl {
     const formControl = <FormControl>this.instructionForm.get(formControlName);
     return formControl;
+  }
+
+  /**
+  * Method to check is element at view port
+  * @returns {*} element
+  * @memberof InstructionCheckListComponent
+  */
+  isElementInViewPort(el: any) {
+    const rect = el.getBoundingClientRect();
+    return rect.bottom > 0 &&
+        rect.right > 0 &&
+        rect.left < (window.innerWidth || document.documentElement.clientWidth) &&
+        rect.top < ((window.innerHeight - 53) || (document.documentElement.clientHeight - 53));
   }
 
 }

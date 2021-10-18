@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { DepartureConditionPanelComponent } from './departure-condition-panel.component';
+import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
 
 /**
  * Module for Departure condition panel
@@ -15,7 +16,8 @@ import { DepartureConditionPanelComponent } from './departure-condition-panel.co
   declarations: [DepartureConditionPanelComponent],
   imports: [
     CommonModule,
-    TranslateModule
+    TranslateModule,
+    QuantityDecimalFormatPipeModule
   ],
   exports: [DepartureConditionPanelComponent]
 })

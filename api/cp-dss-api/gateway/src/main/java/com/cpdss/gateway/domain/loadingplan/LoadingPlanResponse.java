@@ -23,6 +23,7 @@ public class LoadingPlanResponse {
   private List<LoadingPlanBallastDetails> planBallastDetails;
   private List<LoadingPlanRobDetails> planRobDetails;
   private List<LoadingPlanStabilityParam> planStabilityParams;
+  private List<LoadingPlanCommingleDetails> planCommingleDetails;
   private LoadingInformation loadingInformation;
   private List<List<VesselTank>> bunkerRearTanks;
   private List<List<VesselTank>> bunkerTanks;

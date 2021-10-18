@@ -404,7 +404,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       const differenecPercentage = item.diffPercentage.mt;
       this.cargoTanks.map(tank => {
         tank.map(elem => {
-          if (elem?.commodity && elem?.commodity['cargoNominationId'] === item.cargoNominationId && !item.cargoLoaded && item.blFigure.mt) {
+          if (elem?.commodity && elem?.commodity['cargoNominationId'] === item.cargoNominationId && (!item.cargoLoaded || !item.cargoDischarged) && item.blFigure.mt) {
             const changeInQty = (differenecPercentage / 100) * Number(elem.commodity.quantity);
             elem.commodity.quantity = differenecPercentage >= 0 ? Number(elem.commodity.quantity) + changeInQty : Number(elem.commodity.quantity) - changeInQty;
             elem.commodity.actualWeight = elem.commodity.quantity;
@@ -569,9 +569,10 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       tankName: this.fb.control(tank.tankName.value),
       ullage: this.fb.control(tank.ullage.value, [Validators.required, numberValidator(6, 3, false), tankCapacityValidator(null, null, 'ullage', 'fillingPercentage')]),
       temperature: this.fb.control(tank.temperature.value, [Validators.required, Validators.min(0), Validators.max(160), numberValidator(2, 3, false), tankCapacityValidator(null, null, 'temperature', 'fillingPercentage'), apiTemperatureMinValidator('temperature')]),
-      api: this.fb.control(tank.api.value, [Validators.required, Validators.min(0), Validators.max(99.99), numberValidator(2, 2, false), tankCapacityValidator(null, null, 'api', 'fillingPercentage'), apiTemperatureMinValidator('api')]),
+      api: this.fb.control(tank.api.value, [Validators.required, Validators.min(0), numberValidator(2, 2, false), tankCapacityValidator(null, null, 'api', 'fillingPercentage'), apiTemperatureMinValidator('api')]),
       quantity: this.fb.control(tank.quantity.value),
       fillingPercentage: this.fb.control(tank.fillingPercentage.value),
+      tankId: this.fb.control(tank.tankId)
     });
   }
 
@@ -640,6 +641,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     this.percentageFilled = null;
     if (selectedTab === TANKTYPE.BUNKER) {
       this.checkBunkerTankError();
+    }
+    if(selectedTab === TANKTYPE.CARGO) {
+      this.validateBlFigTable();
     }
   }
 
@@ -729,7 +733,26 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     this.selectedCargo = data.value;
     this.setCargoQuantities();
     this.getCargoTankFormGroup();
+    this.checkFillingError();
+  }
 
+  /**
+   * Method to assign and check for filling errors while changing grade or file upload.
+   * @memberof UllageUpdatePopupComponent
+  */
+  checkFillingError() {
+    const items: any = this.cargoTankForm.get('dataTable') as FormArray;
+    const cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+    items?.controls?.map(item => {
+      cargoTanks?.map(el => {
+        el?.map(tank => {
+          if (tank.id === item.controls?.tankId.value) {
+            item.controls.fillingPercentage.setValue(tank?.commodity?.percentageFilled);
+            item.controls.ullage.updateValueAndValidity();
+          }
+        });
+      });
+    });
   }
 
   /**
@@ -881,16 +904,24 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
    * @param {number} colIndex
    * @memberof UllageUpdatePopupComponent
   */
-  newCargo(rowIndex: number, colIndex: number) {
+  newCargo(rowIndex: number, colIndex: number, rowData) {
     if (this.getCargoItems(rowIndex).disabled) { return; }
-
-    this.blFigure.items[rowIndex].push({ cargo: this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{ portId: this.portId }, this.ullageResponseData?.billOfLaddingList[rowIndex], true, true) });
-    this.getCargoItems(rowIndex).push(this.initCargoDetails(this.blFigure.items[rowIndex][this.blFigure.items[rowIndex].length - 1].cargo));
-    setTimeout(() => {
-      this.validateBlFigTable();
-    });
+    const getBlFigure = this.ullageResponseData?.billOfLaddingList.filter((item) => item.cargoNominationId === rowData.cargoNominationId);
+    if (getBlFigure?.length) {
+      this.blFigure.items[rowIndex].push({ cargo: this.ullageUpdatePopupTransformationService.getFormatedCargoDetails(<ICargoDetail>{ portId: this.portId }, getBlFigure[0], true, true) });
+      this.getCargoItems(rowIndex).push(this.initCargoDetails(this.blFigure.items[rowIndex][this.blFigure.items[rowIndex].length - 1].cargo));
+      setTimeout(() => {
+        this.validateBlFigTable();
+      });
+    }
   }
 
+  /**
+   * Delete confirmation functoin
+   * @param {number} rowIndex
+   * @param {number} colIndex
+   * @memberof UllageUpdatePopupComponent
+  */
   deleteConfirm(rowIndex: number, colIndex: number) {
     const translationKeys = this.translateService.instant(['ULLAGE_UPDATE_DELETE_SUMMARY', 'ULLAGE_UPDATE_DELETE_DELETE_DETAILS', 'ULLAGE_UPDATE_DELETE_CONFIRM_LABEL', 'ULLAGE_UPDATE_DELETE_REJECT_LABEL']);
 
@@ -975,7 +1006,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       lt: this.fb.control(cargo.lt.value, [Validators.min(0), numberValidator(2, 7, false)]),
       mt: this.fb.control(cargo.mt.value, [Validators.min(0), numberValidator(2, 7, false)]),
       kl: this.fb.control(cargo.kl.value, [Validators.min(0), numberValidator(3, 7, false)]),
-      api: this.fb.control(cargo.api.value, [Validators.max(99.99), numberValidator(2, 2, false), apiTemperatureBlfigValidator('api')]),
+      api: this.fb.control(cargo.api.value, [numberValidator(2, 2, false), apiTemperatureBlfigValidator('api')]),
       temp: this.fb.control(cargo.temp.value, [Validators.max(160), numberValidator(2, 3, false), apiTemperatureBlfigValidator('temperature')]),
       cargoNominationId: this.fb.control(cargo.cargoNominationId),
     });
@@ -1115,26 +1146,30 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     });
     switch (key) {
       case 'mt':
-        if ((mtQty > ((Number(cargoQuantityData?.actual?.mt) * 0.1) + Number(cargoQuantityData?.actual?.mt)))
-          || (mtQty < (Number(cargoQuantityData?.actual?.mt) - (Number(cargoQuantityData?.actual?.mt) * 0.1)))) {
+        const maximumMt = (Number(cargoQuantityData?.actual?.mt) * 0.01) + Number(cargoQuantityData?.actual?.mt);
+        const minimumMt = Number(cargoQuantityData?.actual?.mt) - (Number(cargoQuantityData?.actual?.mt) * 0.01);
+        if ((mtQty > Number(maximumMt.toFixed(2))) || (mtQty < Number(minimumMt.toFixed(2)))) {
           hasError = true;
         }
         break;
       case 'bbl':
-        if ((bblQty > ((Number(cargoQuantityData?.actual?.bbl) * 0.1) + Number(cargoQuantityData?.actual?.bbl)))
-          || (bblQty < (Number(cargoQuantityData?.actual?.bbl) - (Number(cargoQuantityData?.actual?.bbl) * 0.1)))) {
+        const maximumBbl = (Number(cargoQuantityData?.actual?.bbl) * 0.01) + Number(cargoQuantityData?.actual?.bbl);
+        const minimumBbl = Number(cargoQuantityData?.actual?.bbl) - (Number(cargoQuantityData?.actual?.bbl) * 0.01);
+        if ((bblQty > Number(maximumBbl.toFixed(0))) || (bblQty < Number(minimumBbl.toFixed(2)))) {
           hasError = true;
         }
         break;
       case 'kl':
-        if ((klQty > ((Number(cargoQuantityData?.actual?.kl) * 0.1) + Number(cargoQuantityData?.actual?.kl)))
-          || (klQty < (Number(cargoQuantityData?.actual?.kl) - (Number(cargoQuantityData?.actual?.kl) * 0.1)))) {
+        const maximumKl = (Number(cargoQuantityData?.actual?.kl) * 0.01) + Number(cargoQuantityData?.actual?.kl);
+        const minimumKl = Number(cargoQuantityData?.actual?.kl) - (Number(cargoQuantityData?.actual?.kl) * 0.01);
+        if ((klQty > Number(maximumKl.toFixed(3))) || (klQty < Number(minimumKl.toFixed(3)))) {
           hasError = true;
         }
         break;
       case 'lt':
-        if ((ltQty > ((Number(cargoQuantityData?.actual?.lt) * 0.1) + Number(cargoQuantityData?.actual?.lt)))
-          || (ltQty < (Number(cargoQuantityData?.actual?.lt) - (Number(cargoQuantityData?.actual?.lt) * 0.1)))) {
+        const maximumLt = (Number(cargoQuantityData?.actual?.lt) * 0.01) + Number(cargoQuantityData?.actual?.lt);
+        const minimumLt = Number(cargoQuantityData?.actual?.lt) - (Number(cargoQuantityData?.actual?.lt) * 0.01);
+        if ((ltQty > Number(maximumLt.toFixed(2))) || (ltQty < Number(minimumLt.toFixed(2)))) {
           hasError = true;
         }
         break;
@@ -1185,6 +1220,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.cargoQuantities[event.index].quantity.value = result.quantityMt;
       this.cargoQuantities[event.index].fillingPercentage.value = result.fillingRatio;
       const formControls = <FormControl>(<FormArray>this.cargoTankForm.get('dataTable')).at(event.index);
+      formControls['controls'][event.field].setErrors(null);
       formControls['controls'].quantity.setValue(result.quantityMt);
       formControls['controls'].fillingPercentage.setValue(result.fillingRatio ? result.fillingRatio : 100);
       formControls['controls'].quantity.updateValueAndValidity();
@@ -1209,7 +1245,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     } else if (result.responseStatus.status === '325') {
       const formControls = <FormControl>(<FormArray>this.cargoTankForm.get('dataTable')).at(event.index);
       formControls['controls'].fillingPercentage.setValue(100);
-      formControls['controls'][event.field].setErrors({ maxLimit: true });
+      formControls['controls'][event.field].setErrors({ invalidUllage: true });
     }
     this.enableDisableBLFigure();
     setTimeout(() => {
@@ -1245,8 +1281,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.ballastQuantities?.map(item => {
         if (item.tankId === event.data.tankId) {
           item.quantity.value = result.quantityMt;
-          item.sounding.value = result.correctedUllage;
+          item.sounding.value = event.data.sounding.value;
           item.percentageFilled = result.fillingRatio;
+          item.correctedUllage =  result.correctedUllage;
         }
       });
       const formControl = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get('quantity');
@@ -1283,7 +1320,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       formControlFilling.updateValueAndValidity();
       formControlFilling.updateValueAndValidity();
       const formControl = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get(event.field);
-      formControl.setErrors({ maxLimit: true });
+      formControl.setErrors({ invalidSounding: true });
 
     }
   }
@@ -1430,53 +1467,47 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     if (this.status === ULLAGE_STATUS.DEPARTURE) {
       this.blFigure.items.map(item => {
         item.map(row => {
-          data.billOfLandingList.push(
-            {
-              loadingId: this.infoId ? this.infoId?.toString() : '',
-              portId: row.cargo.portId ? row.cargo.portId?.toString() : '',
-              cargoId: row.cargo.cargoNominationId ? row.cargo.cargoNominationId?.toString() : '',
-              blRefNumber: row.cargo.blRefNo.value ? row.cargo.blRefNo.value?.toString() : '',
-              bblAt60f: row.cargo.bbl.value ? row.cargo.bbl.value?.toString() : '',
-              quantityLt: row.cargo.lt.value ? row.cargo.lt.value?.toString() : '',
-              quantityMt: row.cargo.mt.value ? row.cargo.mt.value?.toString() : '',
-              klAt15c: row.cargo.kl.value ? row.cargo.kl.value?.toString() : '',
-              api: row.cargo.api.value ? Number(row.cargo.api.value) : '',
-              temperature: row.cargo.temp.value ? row.cargo.temp.value : '',
-              isUpdate: row.cargo.isNewRow ? false : true,
-              id: row.cargo.id ? row.cargo.id.toString() : '',
-              isActive: '',
-              version: ''
-            }
-          )
+          data.billOfLandingList.push({
+            portId: row.cargo.portId ? row.cargo.portId?.toString() : '',
+            cargoId: row.cargo.cargoNominationId ? row.cargo.cargoNominationId?.toString() : '',
+            blRefNumber: row.cargo.blRefNo.value ? row.cargo.blRefNo.value?.toString() : '',
+            bblAt60f: row.cargo.bbl.value ? row.cargo.bbl.value?.toString() : '',
+            quantityLt: row.cargo.lt.value ? row.cargo.lt.value?.toString() : '',
+            quantityMt: row.cargo.mt.value ? row.cargo.mt.value?.toString() : '',
+            klAt15c: row.cargo.kl.value ? row.cargo.kl.value?.toString() : '',
+            api: row.cargo.api.value ? Number(row.cargo.api.value) : '',
+            temperature: row.cargo.temp.value ? row.cargo.temp.value : '',
+            isUpdate: row.cargo.isNewRow ? false : true,
+            id: row.cargo.id ? row.cargo.id.toString() : '',
+            isActive: '',
+            version: '',
+            ...(this.operation === OPERATIONS.LOADING ? { loadingId: this.infoId?.toString() } : { dischargingId: this.infoId?.toString() })
+          });
         });
       });
 
       this.billOfLaddingRemovedList.map(item => {
-        data.billOfLandingListRemove.push(
-          {
-            loadingId: this.infoId ? this.infoId?.toString() : '',
-            portId: item.cargo.portId ? item.cargo.portId?.toString() : '',
-            cargoId: item.cargo.cargoNominationId ? item.cargo.cargoNominationId?.toString() : '',
-            blRefNumber: item.cargo.blRefNo.value ? item.cargo.blRefNo.value?.toString() : '',
-            bblAt60f: item.cargo.bbl.value ? item.cargo.bbl.value?.toString() : '',
-            quantityLt: item.cargo.lt.value ? item.cargo.lt.value?.toString() : '',
-            quantityMt: item.cargo.mt.value ? item.cargo.mt.value?.toString() : '',
-            klAt15c: item.cargo.kl.value ? item.cargo.kl.value?.toString() : '',
-            api: item.cargo.api.value ? Number(item.cargo.api.value) : '',
-            temperature: item.cargo.temp.value ? item.cargo.temp.value : '',
-            id: item.cargo.id ? item.cargo.id.toString() : '',
-            isUpdate: true,
-            isActive: '',
-            version: ''
-          }
-        )
+        data.billOfLandingListRemove.push({
+          portId: item.cargo.portId ? item.cargo.portId?.toString() : '',
+          cargoId: item.cargo.cargoNominationId ? item.cargo.cargoNominationId?.toString() : '',
+          blRefNumber: item.cargo.blRefNo.value ? item.cargo.blRefNo.value?.toString() : '',
+          bblAt60f: item.cargo.bbl.value ? item.cargo.bbl.value?.toString() : '',
+          quantityLt: item.cargo.lt.value ? item.cargo.lt.value?.toString() : '',
+          quantityMt: item.cargo.mt.value ? item.cargo.mt.value?.toString() : '',
+          klAt15c: item.cargo.kl.value ? item.cargo.kl.value?.toString() : '',
+          api: item.cargo.api.value ? Number(item.cargo.api.value) : '',
+          temperature: item.cargo.temp.value ? item.cargo.temp.value : '',
+          id: item.cargo.id ? item.cargo.id.toString() : '',
+          isUpdate: true,
+          isActive: '',
+          version: '',
+          ...(this.operation === OPERATIONS.LOADING ? { loadingId: this.infoId?.toString() } : { dischargingId: this.infoId?.toString() })
+        });
       });
-
     }
 
     this.ullageResponseData?.portPlanStowageDetails.map(item => {
       data.ullageUpdList.push({
-        loadingInformationId: this.infoId?.toString(),
         tankId: item.tankId?.toString(),
         temperature: item.temperature?.toString(),
         correctedUllage: item.correctedUllage?.toString(),
@@ -1495,13 +1526,23 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         color_code: item.colorCode,
         abbreviation: item.abbreviation,
         cargoId: item.cargoId,
+        ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
+      });
+    });
 
-      })
+    const cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+    data.ullageUpdList?.map(item => {
+      cargoTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            item.fillingPercentage = Number(tank?.commodity?.percentageFilled);
+          }
+        });
+      });
     });
 
     this.ballastQuantities.map(item => {
       data.ballastUpdateList.push({
-        loadingInformationId: this.infoId?.toString(),
         tankId: item.tankId?.toString(),
         temperature: item.temperature.value?.toString(),
         quantity: item.quantity.value?.toString(),
@@ -1520,12 +1561,35 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         portRotationXId: this.portRotationId,
         isValidate: '',
         isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
+        ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
+      });
+    });
+    data.ballastUpdateList?.map(item => {
+      this.rearBallastTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            item.filling_percentage = tank.percentageFilled;
+          }
+        });
+      });
+      this.frontBallastTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            item.filling_percentage = tank.percentageFilled;
+          }
+        });
+      });
+      this.centerBallastTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            item.filling_percentage = tank.percentageFilled;
+          }
+        });
       });
     });
 
     this.bunkerTanksList.map(item => {
       data.robUpdateList.push({
-        loadingInformationId: this.infoId?.toString(),
         tankId: item.tankId?.toString(),
         quantity: item.quantity.value?.toString(),
         isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
@@ -1541,11 +1605,35 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         ullage: '',
         correctionFactor: '',
         fillingRatio: '',
-      })
+        ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
+      });
     });
+
+    data.robUpdateList?.map(item => {
+      this.bunkerTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            item.fillingRatio = this.getRobFillingRatio(tank.commodity.quantity, tank)
+          }
+        });
+      });
+      this.rearBunkerTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            item.fillingRatio = this.getRobFillingRatio(tank.commodity.quantity, tank)
+          }
+        });
+      });
+    });
+
     try {
       this.ngxSpinnerService.show();
-      const result = await this.ullageUpdateApiService.updateUllage(data).toPromise();
+      let result;
+      if (this.operation === OPERATIONS.LOADING) {
+        result = await this.ullageUpdateApiService.updateUllage(data).toPromise();
+      } else {
+        result = await this.ullageUpdateApiService.dischargePlanUpdateUllage(data).toPromise();
+      }
       if (result.responseStatus.status === '200') {
         const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_SUCCESS_LABEL', 'ULLAGE_UPDATE_SUCCESS_MESSAGE']).toPromise();
         this.messageService.add({ severity: 'success', summary: translationKeys['ULLAGE_UPDATE_SUCCESS_LABEL'], detail: translationKeys['ULLAGE_UPDATE_SUCCESS_MESSAGE'] });
@@ -1623,6 +1711,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         this.validateBlFigTable();
         this.enableDisableBLFigure();
         this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+        this.checkFillingError();
       }
     } catch (err) {
       this.ngxSpinnerService.hide();

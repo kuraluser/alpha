@@ -85,9 +85,33 @@ message DischargeInformation {
   LoadingStages dischargeStage = 5; // reusing
   DischargeDelay dischargeDelay = 6;
   CowPlan cowPlan = 11;
-  PostDischargeStageTime postDischargeStageTime = 7;
+  PostDischargeStageTime postDischargeStageTime = 7;  
+  int64 dischargingInfoStatusId = 12;
+  int64 dischargingPlanArrStatusId = 13;
+  int64 dischargingPlanDepStatusId = 14;
+  int64 dischargePatternId = 15;
+  bool isDischargingInstructionsComplete = 16;
+  bool isDischargingSequenceGenerated = 17;
+  bool isDischargingPlanGenerated = 18;
+  int64 portId = 19;
+  int64 vesselId = 20;
+  int64 voyageId = 21;
+  int64 portRotationId = 22;
+  string dischargeStudyProcessId = 23;
+	bool isDischargingInfoComplete = 24;
+	 // Cargo Section
+  bool dischargeSlopTanksFirst = 25;
+  bool dischargeCommingledCargoSeparately = 26;
+  bool isDischargeInfoComplete = 27;
 }
-
+message DischargingInfoSaveResponse {
+  int64 dischargingInfoId = 1;
+  int64 vesselId = 2;
+  int64 portRotationId = 3;
+  int64 synopticalTableId = 4;
+  int64 voyageId = 5;
+  ResponseStatus responseStatus = 6;
+}
 message DischargeDetails {
   int64 id = 1;
   string timeOfSunrise = 2;
@@ -103,6 +127,16 @@ message DischargeRates {
   string minBallastRate = 3;
   string maxBallastRate = 4;
   int64 id = 5;
+  string reducedDischargingRate = 6;
+    string minDeBallastingRate = 7;
+    string maxDeBallastingRate = 8;
+    string noticeTimeRateReduction = 9;
+    string noticeTimeStopDischarging = 10;
+    string lineContentRemaining = 11; 
+    string minDischargingRate = 12; 
+    string shoreDischargingRate = 13;
+  
+  
 }
 
 message DischargeBerths {
@@ -163,7 +197,9 @@ message CowPlan {
   string trimCowMax = 7;
   bool needFreshCrudeStorage = 8;
   bool needFlushingOil = 9;
+  bool cowWithCargoEnable = 11; // update in table
   repeated CowTankDetails cowTankDetails = 10;
+  int64 dischargingInfoId = 12;
 }
 
 message CowTankDetails {
@@ -219,6 +255,8 @@ message DischargingUploadTideDetailRequest {
 	bytes tideDetaildata = 1;
 	ResponseStatus responseStatus = 2;
 	int64 loadingId = 3;
+	string portName = 4;
+	int64 portId = 5;
 }
 
 message DischargingUploadTideDetailStatusReply {

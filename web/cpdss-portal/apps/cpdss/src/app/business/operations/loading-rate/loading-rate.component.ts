@@ -125,7 +125,7 @@ export class LoadingRateComponent implements OnInit {
       noticeTimeStopLoading: this.fb.control(this.loadingRates.noticeTimeStopLoading, [Validators.required, numberValidator(0, 3), Validators.min(30), Validators.max(60)])
     })
  
-
+    
     for (let key in this.actualValues) {
       this.actualValues[key].defaultValue = this.loadingRates[key];
       if(this.loadingRates[key] !== "" && this.loadingRates[key] !== null)
@@ -134,7 +134,8 @@ export class LoadingRateComponent implements OnInit {
       this.loadingRatesFormGroup.value[key] =   this.loadingRates[key];
     }   
    
-  
+    this.loadingRatesFormGroup.markAllAsTouched();
+    this.loadingRatesFormGroup.markAsTouched();
 }
 
 
@@ -180,16 +181,18 @@ export class LoadingRateComponent implements OnInit {
   onChange(field) {
    
     const loadingRates = {...this.loadingRatesFormGroup.value};
-    if (this.selectedConversion.id == 2) {
-      this.actualValues[field].defaultValue = this.loadingRatesFormGroup?.value[field];
+    const keys = Object.keys(this.actualValues);
+    if(keys.includes(field))
+    {
+    this.actualValues[field].defaultValue = this.loadingRatesFormGroup?.value[field];
+    if (this.selectedConversion.id == 2) {    
       this.actualValues[field].lastEditedUnit = 'BBLS';
     }
     else {
-      this.actualValues[field].defaultValue = this.loadingRatesFormGroup?.value[field];
       this.actualValues[field].lastEditedUnit = 'M3';
     }
-    for (let key in this.actualValues) {
-     
+    this.loadingRates [field]  = this.loadingRatesFormGroup?.value[field];
+    for (let key in this.actualValues) {     
       if (this.actualValues[key].lastEditedUnit == 'BBLS') {
         if(this.actualValues[key]?.defaultValue !== "" && this.actualValues[key]?.defaultValue !== null)
         loadingRates[key] = this.actualValues[key]?.defaultValue / this.conversionFactor;
@@ -198,6 +201,11 @@ export class LoadingRateComponent implements OnInit {
         loadingRates[key] = this.actualValues[key]?.defaultValue;
       }
     }
+   }
+   else{
+    this.loadingRates [field]  = this.loadingRatesFormGroup?.value[field];
+
+   }
     this.loadingRateChange.emit(loadingRates);
   }
   
@@ -220,40 +228,40 @@ export class LoadingRateComponent implements OnInit {
       for (let key in this.actualValues) {
         if (this.loadingRatesFormGroup?.value[key] !== "" && this.loadingRatesFormGroup?.value[key] != null) {
           this.loadingRatesFormGroup?.patchValue({
-            [key]: (this.actualValues[key].lastEditedUnit == 'BBLS') ? (this.actualValues[key].defaultValue) : Math.round(Number(this.loadingRatesFormGroup?.value[key] * this.conversionFactor)),
+            [key]: (this.actualValues[key].lastEditedUnit == 'BBLS') ? (this.actualValues[key].defaultValue) : Math.round(Number(this.loadingRates[key]* this.conversionFactor)),
 
           })
         }
       };
-      this.loadingRatesFormGroup?.controls['maxLoadingRate'].setValidators([numberValidator(0, 6),compareNumberValidator('minLoadingRate', '<'), Validators.min(Math.round(4000 * this.conversionFactor)), Validators.max(Math.round(21000 * this.conversionFactor))]);
+      this.loadingRatesFormGroup?.controls['maxLoadingRate'].setValidators([numberValidator(0, 6),Validators.required,compareNumberValidator('minLoadingRate', '<'), Validators.min(Math.round(4000 * this.conversionFactor)), Validators.max(Math.round(21000 * this.conversionFactor))]);
       this.loadingRatesFormGroup?.controls['maxLoadingRate'].updateValueAndValidity();
-      this.loadingRatesFormGroup?.controls['shoreLoadingRate'].setValidators([numberValidator(0, 6), Validators.min(Math.round(1000 * this.conversionFactor)), Validators.max(Math.round(20000 *this.conversionFactor))]);
+      this.loadingRatesFormGroup?.controls['shoreLoadingRate'].setValidators([numberValidator(0, 6),Validators.min(Math.round(1000 * this.conversionFactor)), Validators.max(Math.round(20000 *this.conversionFactor))]);
       this.loadingRatesFormGroup?.controls['shoreLoadingRate'].updateValueAndValidity();
-      this.loadingRatesFormGroup?.controls['minLoadingRate'].setValidators([numberValidator(0, 5),compareNumberValidator('maxLoadingrate', '>'), Validators.min(Math.round(1000 * this.conversionFactor)), Validators.max(Math.round(3000 * this.conversionFactor))]);
+      this.loadingRatesFormGroup?.controls['minLoadingRate'].setValidators([numberValidator(0, 5),Validators.required,compareNumberValidator('maxLoadingrate', '>'), Validators.min(Math.round(1000 * this.conversionFactor)), Validators.max(Math.round(3000 * this.conversionFactor))]);
       this.loadingRatesFormGroup?.controls['minLoadingRate'].updateValueAndValidity();
-      this.loadingRatesFormGroup?.controls['minDeBallastingRate'].setValidators([numberValidator(0, 5), Validators.min(Math.round(2500 * this.conversionFactor)), Validators.max(Math.round(4000 * this.conversionFactor))]);
+      this.loadingRatesFormGroup?.controls['minDeBallastingRate'].setValidators([numberValidator(0, 5),Validators.required,Validators.min(Math.round(2500 * this.conversionFactor)), Validators.max(Math.round(4000 * this.conversionFactor))]);
       this.loadingRatesFormGroup?.controls['minDeBallastingRate'].updateValueAndValidity();
-      this.loadingRatesFormGroup?.controls['maxDeBallastingRate'].setValidators([numberValidator(0, 5), Validators.min(Math.round(6000 * this.conversionFactor)), Validators.max(Math.round(7500 * this.conversionFactor))]);
+      this.loadingRatesFormGroup?.controls['maxDeBallastingRate'].setValidators([numberValidator(0, 5),Validators.required, Validators.min(Math.round(6000 * this.conversionFactor)), Validators.max(Math.round(7500 * this.conversionFactor))]);
       this.loadingRatesFormGroup?.controls['maxDeBallastingRate'].updateValueAndValidity();
      
     } else {     
       for (let key in this.actualValues) {
         if (this.loadingRatesFormGroup?.value[key] !== "" && this.loadingRatesFormGroup?.value[key] != null) {
           this.loadingRatesFormGroup?.patchValue({
-            [key]: (this.actualValues[key].lastEditedUnit == 'M3') ? (this.actualValues[key].defaultValue) : Math.round(Number(this.loadingRatesFormGroup?.value[key] / this.conversionFactor)),
+            [key]: (this.actualValues[key].lastEditedUnit == 'M3') ? (this.actualValues[key].defaultValue) : Math.round(Number(this.loadingRates[key]/ this.conversionFactor)),
 
           })
         }
       };
-      this.loadingRatesFormGroup?.controls['maxLoadingRate'].setValidators([numberValidator(0, 6), compareNumberValidator('minLoadingRate', '<'), Validators.min(4000), Validators.max(21000)]);
+      this.loadingRatesFormGroup?.controls['maxLoadingRate'].setValidators([numberValidator(0, 6),Validators.required, compareNumberValidator('minLoadingRate', '<'), Validators.min(4000), Validators.max(21000)]);
       this.loadingRatesFormGroup?.controls['maxLoadingRate'].updateValueAndValidity();
       this.loadingRatesFormGroup?.controls['shoreLoadingRate'].setValidators([numberValidator(0, 5), Validators.min(1000), Validators.max(20000)]);
       this.loadingRatesFormGroup?.controls['shoreLoadingRate'].updateValueAndValidity();
-      this.loadingRatesFormGroup?.controls['minLoadingRate'].setValidators([numberValidator(0, 4), compareNumberValidator('maxLoadingrate', '>'), Validators.min(1000), Validators.max(3000)]);
+      this.loadingRatesFormGroup?.controls['minLoadingRate'].setValidators([numberValidator(0, 4),Validators.required, compareNumberValidator('maxLoadingrate', '>'), Validators.min(1000), Validators.max(3000)]);
       this.loadingRatesFormGroup?.controls['minLoadingRate'].updateValueAndValidity();
-      this.loadingRatesFormGroup?.controls['minDeBallastingRate'].setValidators([numberValidator(0, 4), Validators.min(2500), Validators.max(4000)]);
+      this.loadingRatesFormGroup?.controls['minDeBallastingRate'].setValidators([numberValidator(0, 4), Validators.required,Validators.min(2500), Validators.max(4000)]);
       this.loadingRatesFormGroup?.controls['minDeBallastingRate'].updateValueAndValidity();
-      this.loadingRatesFormGroup?.controls['maxDeBallastingRate'].setValidators([numberValidator(0, 4), Validators.min(6000), Validators.max(7500)]);
+      this.loadingRatesFormGroup?.controls['maxDeBallastingRate'].setValidators([numberValidator(0, 4), Validators.required,Validators.min(6000), Validators.max(7500)]);
       this.loadingRatesFormGroup?.controls['maxDeBallastingRate'].updateValueAndValidity();
     }
     this.errorMesages = this.loadingDischargingTransformationService.setValidationMessageForLoadingRate(this.selectedConversion.unit);

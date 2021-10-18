@@ -37,9 +37,6 @@ export class LoadablePatternHistoryComponent implements OnInit {
   set selectedLoadableStudy(selectedLoadableStudy: LoadableStudy) {
     this._selectedLoadableStudy = selectedLoadableStudy;
     this.loadableStudyId = selectedLoadableStudy?.id;
-    if (this.loadableStudyId) {
-      this.router.navigate([`/business/cargo-planning/loadable-pattern-history/0/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
-    }
   }
 
   private _selectedLoadableStudy: LoadableStudy;
@@ -79,6 +76,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   showPortRotationPopup = false;
   selectedLoadablePatternId: number;
   readonly VALIDATION_AND_SAVE_STATUS = VALIDATION_AND_SAVE_STATUS;
+  enableBackLoading: boolean;
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -103,6 +101,8 @@ export class LoadablePatternHistoryComponent implements OnInit {
     const permission = await this.getPagePermission();
     this.activatedRoute.paramMap.subscribe(async params => {
       if (permission.view) {
+        this.ngxSpinnerService.show();
+        this.enableBackLoading = false;
         this.isViewPattern = Number(params.get('isViewPattern')) === 0 ? true : false;
         this.vesselId = Number(params.get('vesselId'));
         this.voyageId = Number(params.get('voyageId'));
@@ -113,10 +113,14 @@ export class LoadablePatternHistoryComponent implements OnInit {
         localStorage.removeItem("loadablePatternId")
         localStorage.removeItem("dischargeStudyId")
         if (this.isViewPattern) {
-          this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+          await this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+        } else {
+          this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
         }
-        this.getCargos();
-        this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
+        await this.getCargos();
+        await this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
+        this.enableBackLoading = true;
+        this.ngxSpinnerService.hide();
       }
     });
   }
@@ -153,7 +157,9 @@ export class LoadablePatternHistoryComponent implements OnInit {
      * @memberof LoadablePatternHistoryComponent
      */
   async getLoadableStudies(vesselId: number, voyageId: number, loadableStudyId: number) {
-    this.ngxSpinnerService.show();
+    const res = await this.vesselsApiService.getVesselsInfo().toPromise();
+    this.vesselInfo = res[0] ?? <IVessel>{};
+    this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     if (this.loadableStudies.length) {
@@ -173,7 +179,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   setProcessingLoadableStudyActions(loadableStudyId: number, statusId: number) {
     const loadableStudies = this.loadableStudies.map(loadableStudy => {
       if (loadableStudyId === loadableStudy?.id) {
-        if ([4, 5].includes(statusId) && this.router.url.includes('loadable-pattern-history')) {
+        if ([LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING, LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE].includes(statusId) && this.router.url.includes('loadable-pattern-history')) {
           loadableStudy.isActionsEnabled = false;
         }
         else if ([2, 3].includes(statusId)) {
@@ -185,7 +191,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
           loadableStudy.isActionsEnabled = true;
         }
       } else if (!loadableStudyId && !statusId) {
-        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE , LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) ? false : true;
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) || ([VOYAGE_STATUS.ACTIVE].includes(this.selectedVoyage?.statusId) && [LOADABLE_STUDY_STATUS.PLAN_CONFIRMED, LOADABLE_STUDY_STATUS.PLAN_GENERATED].includes(loadableStudy?.statusId)) ? false : true;
         loadableStudy.isEditable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
         loadableStudy.isDeletable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
       }
@@ -236,9 +242,6 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   async getLoadablePatterns(vesselId: number, voyageId: number, loadableStudyId: number) {
-    const res = await this.vesselsApiService.getVesselsInfo().toPromise();
-    this.vesselInfo = res[0] ?? <IVessel>{};
-    this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
     this.loadablePatternResponse = await this.loadablePatternApiService.getLoadablePatterns(vesselId, voyageId, loadableStudyId).toPromise();
     if (this.loadablePatternResponse.responseStatus.status === '200') {
       this.loadablePatterns = this.loadablePatternResponse.loadablePatterns;
@@ -252,7 +255,6 @@ export class LoadablePatternHistoryComponent implements OnInit {
       this.loadableStudyName = this.loadablePatternResponse.loadableStudyName;
       this.patternLoaded = true;
     }
-    this.ngxSpinnerService.hide();
   }
 
   /**
@@ -285,8 +287,10 @@ export class LoadablePatternHistoryComponent implements OnInit {
    * @memberof LoadablePatternHistoryComponent
    */
   onLoadableStudyChange(event) {
-    this.loadableStudyId = event;
-    this.selectedLoadableStudy = this.loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === this.loadableStudyId) : this.loadableStudies[0];
+    if (this.loadableStudyId !== event) { 
+      this.loadableStudyId = event;
+      this.router.navigate([`/business/cargo-planning/loadable-pattern-history/0/${this.vesselId}/${this.voyageId}/${this.loadableStudyId}`]);
+    }
   }
 
   /**
@@ -390,13 +394,16 @@ export class LoadablePatternHistoryComponent implements OnInit {
       rejectButtonStyleClass: 'btn btn-main',
       accept: async () => {
         try {
+          this.ngxSpinnerService.show();
           const confirmResult = await this.loadablePatternApiService.confirm(this.vesselId, this.voyageId, this.loadableStudyId, loadablePatternId).toPromise();
           if (confirmResult.responseStatus.status === '200') {
             this.patternLoaded = false;
-            this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
-            this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
+            await this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
+            await this.getLoadablePatterns(this.vesselId, this.voyageId, this.loadableStudyId);
           }
+          this.ngxSpinnerService.hide();
         } catch (errorResponse) {
+          this.ngxSpinnerService.hide();
           if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
             this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_STATUS_ERROR'], life: 10000 });
           } else if(errorResponse?.error?.errorCode === 'ERR-RICO-152') {

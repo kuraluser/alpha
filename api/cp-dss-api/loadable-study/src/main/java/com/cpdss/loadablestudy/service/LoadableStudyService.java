@@ -1976,9 +1976,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         }
       } else {
         log.info("Inside getLoadablePatternStatus");
-        Optional<LoadablePatternAlgoStatus> loadablePatternAlgoStatusOpt =
+        Optional<LoadablePatternAlgoStatus> loadablePatternAlgoStatusOpt = null;
+        Optional<LoadablePatternAlgoStatus> loadablePatternAlgoStatusOptWithProcessId =
             loadablePatternAlgoStatusRepository.findByLoadablePatternIdAndProcessIdAndIsActive(
                 request.getLoadablePatternId(), request.getProcessId(), true);
+        if (!loadablePatternAlgoStatusOptWithProcessId.isPresent()) {
+          Optional<LoadablePatternAlgoStatus> loadablePatternAlgoStatusOptWithMsdId =
+              loadablePatternAlgoStatusRepository.findByLoadablePatternIdAndMessageIdAndIsActive(
+                  request.getLoadablePatternId(), request.getProcessId(), true);
+          loadablePatternAlgoStatusOpt = loadablePatternAlgoStatusOptWithMsdId;
+        } else {
+          loadablePatternAlgoStatusOpt = loadablePatternAlgoStatusOptWithProcessId;
+        }
         if (!loadablePatternAlgoStatusOpt.isPresent()) {
           log.info("Invalid loadable pattern Id");
           replyBuilder.setResponseStatus(
@@ -2899,10 +2908,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       ArrivalDepartureConditionJson departureCondition = new ArrivalDepartureConditionJson();
-      Optional<JsonData> jsonData =
+      JsonData jsonData =
           this.jsonDataService.getJsonData(request.getLoadableStudyId(), Long.valueOf(2));
-      if (jsonData.isPresent()) {
-        String algoJsonString = jsonData.get().getJsonData();
+      if (jsonData != null) {
+        String algoJsonString = jsonData.getJsonData();
         LoadableStudyAlgoJson algoJson =
             new ObjectMapper().readValue(algoJsonString, LoadableStudyAlgoJson.class);
         Optional<LoadablePlanDetailsAlgoJson> loadablePlanDetails =
@@ -2937,6 +2946,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                           portWiseDetails
                               .getDepartureCondition()
                               .getLoadableQuantityCommingleCargoDetails());
+                      departureCondition.setLoadablePlanRoBDetails(
+                          portWiseDetails.getDepartureCondition().getLoadablePlanRoBDetails());
                       departureCondition.setStabilityParameters(
                           portWiseDetails.getDepartureCondition().getStabilityParameters());
                       departureCondition.setConfirmPlanEligibility(
@@ -2967,9 +2978,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       log.error("GenericServiceException in get ullage", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
-              .setCode(CommonErrorCodes.E_CPDSS_ULLAGE_UPDATE_INVALID_VALUE)
-              .setMessage(LoadableStudiesConstants.INVALID_ULLAGE_OR_SOUNDING_VALUE)
-              .setStatus(SUCCESS)
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
               .build());
     } catch (Exception e) {
       log.error("Exception in update ullage", e);

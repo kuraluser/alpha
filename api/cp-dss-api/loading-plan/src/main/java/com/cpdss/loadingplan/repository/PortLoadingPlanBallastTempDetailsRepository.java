@@ -19,7 +19,7 @@ public interface PortLoadingPlanBallastTempDetailsRepository
       Long loadingInfoId, Boolean isActive);
 
   @Query(
-      "FROM PortLoadingPlanBallastTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3 ORDER BY PL.id")
+      "FROM PortLoadingPlanBallastTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3 AND LI.isActive = ?3 ORDER BY PL.id")
   public List<PortLoadingPlanBallastTempDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
 
@@ -37,8 +37,8 @@ public interface PortLoadingPlanBallastTempDetailsRepository
   @Transactional
   @Modifying
   @Query(
-      "Update PortLoadingPlanBallastTempDetails set sg =?1, corrected_ullage =?2, color_code =?3, quantity = ?4, sounding = ?5, quantityM3 = ?6"
-          + " where tankXId = ?7 and loading_information_xid =?8 and arrival_departutre =?9")
+      "Update PortLoadingPlanBallastTempDetails set sg =?1, corrected_ullage =?2, color_code =?3, quantity = ?4, sounding = ?5, quantityM3 = ?6, fillingPercentage = ?7, correctionFactor = ?8"
+          + " where tankXId = ?9 and loading_information_xid =?10 and arrival_departutre =?11")
   public void updateLoadingPlanBallastDetailsRepository(
       @Param("sg") BigDecimal sg,
       @Param("corrected_ullage") BigDecimal corrected_ullage,
@@ -46,6 +46,8 @@ public interface PortLoadingPlanBallastTempDetailsRepository
       @Param("quantity") BigDecimal quantity,
       @Param("sounding") BigDecimal sounding,
       @Param("quantity_m3") BigDecimal quantityM3,
+      @Param("fillingPercentage") BigDecimal fillingPercentage,
+      @Param("correctionFactor") BigDecimal correctionFactor,
       @Param("tank_xid") Long tankXId,
       @Param("loading_information_xid") Long loadingId,
       @Param("arrival_departutre") Long arrivalDepartutre);

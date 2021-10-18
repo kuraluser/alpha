@@ -531,6 +531,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     loadingPlanResponse.setPlanStabilityParams(
         loadingPlanBuilderService.buildLoadingPlanStabilityParamFromRpc(
             planReply.getPortLoadingPlanStabilityParametersList()));
+    loadingPlanResponse.setPlanCommingleDetails(
+        loadingPlanBuilderService.buildLoadingPlanCommingleFromRpc(
+            planReply.getPortLoadingPlanCommingleDetailsList()));
     loadingPlanResponse.setCurrentPortCargos(
         this.loadingInformationService.getLoadablePlanCargoDetailsByPortUnfiltered(
             vesselId,
@@ -1449,14 +1452,16 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     LoadingPlanModels.BillOfLandingRemove.Builder updateBillRemoveBuilder =
         LoadingPlanModels.BillOfLandingRemove.newBuilder();
 
+    LoadingPlanModels.CommingleUpdate.Builder updateCommingleBuilder =
+        LoadingPlanModels.CommingleUpdate.newBuilder();
+
     builder.setIsValidate(inputData.getIsValidate());
 
     UllageBillReply replays = new UllageBillReply();
 
     try {
 
-      if (inputData.getBillOfLandingList().isEmpty()
-          || inputData.getUllageUpdList().isEmpty()
+      if (inputData.getUllageUpdList().isEmpty()
           || inputData.getBallastUpdateList().isEmpty()
           || inputData.getRobUpdateList().isEmpty()) {
         throw new GenericServiceException(
@@ -1724,7 +1729,60 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                     .build();
                 builder.addRobUpdate(updateRobBuilder.build());
               });
-
+      if (inputData.getCommingleUpdateList() != null) {
+        inputData
+            .getCommingleUpdateList()
+            .forEach(
+                commingle -> {
+                  updateCommingleBuilder
+                      .setLoadingInformationId(
+                          commingle.getLoadingInformationId() == null
+                              ? 0
+                              : commingle.getLoadingInformationId().longValue())
+                      .setTankId(
+                          commingle.getTankId() == null ? 0 : commingle.getTankId().longValue())
+                      .setTemperature(
+                          commingle.getTemperature() == null
+                              ? "0"
+                              : commingle.getTemperature().toString())
+                      .setQuantityMT(
+                          commingle.getQuantityMT() == null
+                              ? ""
+                              : String.valueOf(commingle.getQuantityMT()))
+                      .setFillingPercentage(
+                          commingle.getFillingPercentage() == null
+                              ? "0"
+                              : commingle.getFillingPercentage().toString())
+                      .setApi(commingle.getApi() == null ? "0" : commingle.getApi().toString())
+                      .setCargoNomination1Id(
+                          commingle.getCargoNomination1Id() == null
+                              ? 0
+                              : commingle.getCargoNomination1Id().longValue())
+                      .setCargoNomination2Id(
+                          commingle.getCargoNomination2Id() == null
+                              ? 0
+                              : commingle.getCargoNomination2Id().longValue())
+                      .setUllage(
+                          commingle.getUllage() == null
+                              ? ""
+                              : String.valueOf(commingle.getUllage()))
+                      .setArrivalDeparture(
+                          commingle.getArrival_departutre() == null
+                              ? 0
+                              : commingle.getArrival_departutre().intValue())
+                      .setActualPlanned(
+                          commingle.getActual_planned() == null
+                              ? 0
+                              : commingle.getActual_planned().intValue())
+                      .setIsUpdate(commingle.getIsUpdate())
+                      .setAbbreviation(
+                          commingle.getAbbreviation() == null ? "" : commingle.getAbbreviation())
+                      .setCargo1Id(commingle.getCargo1Id() == null ? 0 : commingle.getCargo1Id())
+                      .setCargo2Id(commingle.getCargo2Id() == null ? 0 : commingle.getCargo2Id())
+                      .build();
+                  builder.addCommingleUpdate(updateCommingleBuilder.build());
+                });
+      }
     } catch (Exception e) {
       log.error("GenericServiceException when update LoadableStudy", e);
       throw new GenericServiceException(
@@ -1769,113 +1827,117 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       String arrivalDeparture,
       List<VesselInfo.VesselTankDetail> sortedTankList) {
     List<LoadablePlanCommingleDetails> loadablePlanCommingleDetailsList = new ArrayList<>();
-    if (response.getLoadablePlanCommingleDetailsCount() > 0) {
-      response.getLoadablePlanCommingleDetailsList().stream()
+    List<LoadingPlanModels.LoadablePlanCommingleDetails> commingleDetails = response.getLoadablePlanCommingleTempDetailsList();
+    if(commingleDetails.size() <= 0){
+      commingleDetails = response.getLoadablePlanCommingleDetailsList();
+    }
+    if (commingleDetails.size() > 0) {
+      commingleDetails.stream()
           .forEach(
-              commingleDetails -> {
+                  commingleDetail -> {
                 LoadablePlanCommingleDetails commingle = new LoadablePlanCommingleDetails();
-                commingle.setId(commingleDetails.getId());
-                commingle.setLoadablePatternId(commingleDetails.getLoadablePatternId());
-                commingle.setDischargePatternId(commingleDetails.getLoadablePatternId());
-                commingle.setTankId(commingleDetails.getTankId());
+                commingle.setId(commingleDetail.getId());
+                commingle.setLoadablePatternId(commingleDetail.getLoadablePatternId());
+                commingle.setDischargePatternId(commingleDetail.getLoadablePatternId());
+                commingle.setTankId(commingleDetail.getTankId());
                 commingle.setQuantity(
-                    commingleDetails.getQuantity().isEmpty()
+                    commingleDetail.getQuantity().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getQuantity()));
+                        : Double.parseDouble(commingleDetail.getQuantity()));
                 commingle.setLoadingInformationId(commingle.getLoadingInformationId());
                 commingle.setDischargeInformationId(commingle.getLoadingInformationId());
-                commingle.setGrade(commingleDetails.getGrade());
-                commingle.setTankName(commingleDetails.getTankName());
+                commingle.setGrade(commingleDetail.getGrade());
+                commingle.setTankName(commingleDetail.getTankName());
                 commingle.setQuantity(
-                    commingleDetails.getQuantity().isEmpty()
+                    commingleDetail.getQuantity().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getQuantity()));
+                        : Double.parseDouble(commingleDetail.getQuantity()));
                 commingle.setApi(
-                    commingleDetails.getApi().isEmpty()
+                    commingleDetail.getApi().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getApi()));
+                        : Double.parseDouble(commingleDetail.getApi()));
                 commingle.setTemperature(
-                    commingleDetails.getTemperature().isEmpty()
+                    commingleDetail.getTemperature().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getTemperature()));
-                commingle.setCargo1Abbreviation(commingleDetails.getCargo1Abbreviation());
-                commingle.setCargo2Abbreviation(commingleDetails.getCargo2Abbreviation());
+                        : Double.parseDouble(commingleDetail.getTemperature()));
+                commingle.setCargo1Abbreviation(commingleDetail.getCargo1Abbreviation());
+                commingle.setCargo2Abbreviation(commingleDetail.getCargo2Abbreviation());
                 commingle.setCargo1Percentage(
-                    commingleDetails.getCargo1Percentage().isEmpty()
+                    commingleDetail.getCargo1Percentage().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getCargo1Percentage()));
+                        : Double.parseDouble(commingleDetail.getCargo1Percentage()));
                 commingle.setCargo2Percentage(
-                    commingleDetails.getCargo2Percentage().isEmpty()
+                    commingleDetail.getCargo2Percentage().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getCargo2Percentage()));
+                        : Double.parseDouble(commingleDetail.getCargo2Percentage()));
                 commingle.setCargo1BblsDbs(
-                    commingleDetails.getCargo1BblsDbs().isEmpty()
+                    commingleDetail.getCargo1BblsDbs().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getCargo1BblsDbs()));
+                        : Double.parseDouble(commingleDetail.getCargo1BblsDbs()));
                 commingle.setCargo2BblsDbs(
-                    commingleDetails.getCargo2BblsDbs().isEmpty()
+                    commingleDetail.getCargo2BblsDbs().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getCargo2BblsDbs()));
+                        : Double.parseDouble(commingleDetail.getCargo2BblsDbs()));
                 commingle.setCargo1Lt(
-                    commingleDetails.getCargo1Lt().isEmpty()
+                    commingleDetail.getCargo1Lt().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getCargo1Lt()));
+                        : Double.parseDouble(commingleDetail.getCargo1Lt()));
                 commingle.setCargo2Lt(
-                    commingleDetails.getCargo2Lt().isEmpty()
+                    commingleDetail.getCargo2Lt().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getCargo2Lt()));
+                        : Double.parseDouble(commingleDetail.getCargo2Lt()));
                 commingle.setCargo1Mt(
-                    commingleDetails.getCargo1Mt().isEmpty()
+                    commingleDetail.getCargo1Mt().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getCargo1Mt()));
+                        : Double.parseDouble(commingleDetail.getCargo1Mt()));
                 commingle.setCargo2Mt(
-                    commingleDetails.getCargo2Mt().isEmpty()
+                    commingleDetail.getCargo2Mt().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getCargo2Mt()));
+                        : Double.parseDouble(commingleDetail.getCargo2Mt()));
                 commingle.setCargo1Kl(
-                    commingleDetails.getCargo1Kl().isEmpty()
+                    commingleDetail.getCargo1Kl().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getCargo1Kl()));
+                        : Double.parseDouble(commingleDetail.getCargo1Kl()));
                 commingle.setCargo2Kl(
-                    commingleDetails.getCargo2Kl().isEmpty()
+                    commingleDetail.getCargo2Kl().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getCargo2Kl()));
-                commingle.setPriority(commingleDetails.getPriority());
+                        : Double.parseDouble(commingleDetail.getCargo2Kl()));
+                commingle.setPriority(commingleDetail.getPriority());
                 commingle.setOrderQuantity(
-                    commingleDetails.getOrderQuantity().isEmpty()
+                    commingleDetail.getOrderQuantity().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getOrderQuantity()));
-                commingle.setLoadingOrder(commingleDetails.getLoadingOrder());
-                commingle.setTankId(commingleDetails.getTankId());
+                        : Double.parseDouble(commingleDetail.getOrderQuantity()));
+                commingle.setLoadingOrder(commingleDetail.getLoadingOrder());
+                commingle.setTankId(commingleDetail.getTankId());
                 commingle.setFillingRatio(
-                    commingleDetails.getFillingRatio().isEmpty()
+                    commingleDetail.getFillingRatio().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getFillingRatio()));
+                        : Double.parseDouble(commingleDetail.getFillingRatio()));
                 commingle.setCorrectedUllage(
-                    commingleDetails.getCorrectedUllage().isEmpty()
+                    commingleDetail.getCorrectedUllage().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getCorrectedUllage()));
+                        : Double.parseDouble(commingleDetail.getCorrectedUllage()));
                 commingle.setCorrectionFactor(
-                    commingleDetails.getCorrectionFactor().isEmpty()
+                    commingleDetail.getCorrectionFactor().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getCorrectionFactor()));
+                        : Double.parseDouble(commingleDetail.getCorrectionFactor()));
                 commingle.setRdgUllage(
-                    commingleDetails.getRdgUllage().isEmpty()
+                    commingleDetail.getRdgUllage().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getRdgUllage()));
+                        : Double.parseDouble(commingleDetail.getRdgUllage()));
                 commingle.setSlopQuantity(
-                    commingleDetails.getSlopQuantity().isEmpty()
+                    commingleDetail.getSlopQuantity().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getSlopQuantity()));
+                        : Double.parseDouble(commingleDetail.getSlopQuantity()));
                 commingle.setTimeRequiredForLoading(
-                    commingleDetails.getTimeRequiredForLoading().isEmpty()
+                    commingleDetail.getTimeRequiredForLoading().isEmpty()
                         ? null
-                        : Double.parseDouble(commingleDetails.getTimeRequiredForLoading()));
+                        : Double.parseDouble(commingleDetail.getTimeRequiredForLoading()));
                 Optional<VesselInfo.VesselTankDetail> tankDetail =
                     sortedTankList.stream()
                         .filter(
                             vesselTankDetail ->
-                                vesselTankDetail.getTankId() == commingleDetails.getTankId())
+                                vesselTankDetail.getTankId() == commingleDetail.getTankId())
                         .findFirst();
                 if (tankDetail.isPresent()) {
                   commingle.setTankName(tankDetail.get().getTankName());

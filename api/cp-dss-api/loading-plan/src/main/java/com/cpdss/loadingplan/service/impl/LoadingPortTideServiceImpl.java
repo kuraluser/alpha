@@ -16,9 +16,14 @@ public class LoadingPortTideServiceImpl implements LoadingPortTideService {
 
   @Autowired PortTideDetailsRepository portTideDetailsRepository;
 
-  PageRequest defaultPage = PageRequest.of(0, 50);
+  PageRequest defaultPage = PageRequest.of(0, 1);
 
   public List<PortTideAlgo> findAllByPortIdAndPageable(Long portId) {
+    return this.portTideDetailsRepository
+        .findAllByPortXidAndIsActiveTrueOrderByTideDateDescTideTimeDesc(portId, defaultPage);
+  }
+
+  public List<PortTideAlgo> findAllByPortIdLoadingInfoId(Long portId, Long infoId) {
     return this.portTideDetailsRepository
         .findAllByPortXidAndIsActiveTrueOrderByTideDateDescTideTimeDesc(portId, defaultPage);
   }
@@ -28,5 +33,14 @@ public class LoadingPortTideServiceImpl implements LoadingPortTideService {
     List<PortTideAlgo> portTideAlgo = this.findAllByPortIdAndPageable(id);
     log.info("Fetch Tide Details for port {}, Size {}", id, portTideAlgo.size());
     return portTideAlgo;
+  }
+
+  @Override
+  public List<PortTideAlgo> findRecentTideDetailsByPortIdAndLoadingInfoId(
+      Long portId, Long infoId) {
+    List<PortTideAlgo> data =
+        this.portTideDetailsRepository.findByLoadingXidAndPortXidAndIsActiveTrue(infoId, portId);
+    log.info("Fetch Tide Details for port {}, Info Id {}, Size {}", portId, infoId, data.size());
+    return data;
   }
 }

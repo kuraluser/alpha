@@ -195,4 +195,10 @@ public class Vessel extends EntityDoc {
 
   @Column(name = "bm_sf_model_type")
   private Integer bm_sf_model_type;
+
+  @Column(name = "mast_riser")
+  private BigDecimal mastRiser;
+
+  @Column(name = "height_of_manifold_above_deck")
+  private BigDecimal heightOfManifoldAboveDeck;
 }

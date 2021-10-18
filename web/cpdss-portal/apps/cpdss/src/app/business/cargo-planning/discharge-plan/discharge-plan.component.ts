@@ -41,6 +41,7 @@ export class DischargePlanComponent implements OnInit {
 
   set selectedDischargeStudy(selectedDischargeStudy: IDischargeStudy) {
     this._selectedDischargeStudy = selectedDischargeStudy;
+    this.isPlanGenerated = (this._selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_GENERATED) ? true : false;
     this.dischargeStudyId = selectedDischargeStudy ? selectedDischargeStudy?.id : this.dischargeStudies?.length ? this.dischargeStudies[0]?.id : 0;
   }
 
@@ -57,6 +58,7 @@ export class DischargePlanComponent implements OnInit {
   dischargeStudyPlanDetails: IDischargeStudyPortListDetails[];
   confirmPlanPermission: boolean;
   planConfirmed: boolean;
+  isPlanGenerated: boolean;
   readonly DISCHARGE_STUDY_STATUS = DISCHARGE_STUDY_STATUS;
   readonly VOYAGE_STATUS = VOYAGE_STATUS;
 
@@ -154,7 +156,7 @@ export class DischargePlanComponent implements OnInit {
       this.dischargeStudies = dischargeStudies;
       this.selectedDischargeStudy = dischargeStudyId ? this.dischargeStudies.find(dischargeStudy => dischargeStudy.id === dischargeStudyId) : this.dischargeStudies[0];
     }
-    const confirmed = this.dischargeStudies.find(dischargeStudy => dischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED);
+    const confirmed = this.dischargeStudies.findIndex(dischargeStudy => dischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED);
     if(confirmed !== -1) {
       this.planConfirmed = true;
     }
@@ -220,7 +222,6 @@ export class DischargePlanComponent implements OnInit {
    * @memberof DischargePlanComponent
   */
   async confirmPlan() {
-    this.ngxSpinnerService.show();
     const translationKeys = await this.translateService.get(['DISCHARGE_PLAN_CONFIRM_STATUS_ERROR',
       'DISCHARGE_PLAN_CONFIRM_REJECT_LABEL', 'DISCHARGE_PLAN_CONFIRM_CONFIRM_LABEL', 'DISCHARGE_PLAN_CONFIRM_SUMMARY', 'DISCHARGE_PLAN_CONFIRM_ERROR', 'DISCHARGE_PLAN_CONFIRM_DETAILS_NOT_CONFIRM', 'DISCHARGE_PLAN_CONFIRM_DETAILS_CONFIRM']).toPromise();
 
@@ -238,11 +239,14 @@ export class DischargePlanComponent implements OnInit {
       rejectButtonStyleClass: 'btn btn-main',
       accept: async () => {
         try {
+          this.ngxSpinnerService.show();
           const confirmResult = await this.dischargePlanApiService.confirm(this.vesselId, this.voyageId, this.dischargeStudyId, this.dischargePatternId).toPromise();
           if (confirmResult.responseStatus.status === '200') {
             this.selectedDischargeStudy.statusId = DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED;
           }
+          this.ngxSpinnerService.hide();
         } catch (errorResponse) {
+          this.ngxSpinnerService.hide();
           if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
             this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_PLAN_CONFIRM_ERROR'], detail: translationKeys['DISCHARGE_PLAN_CONFIRM_STATUS_ERROR'], life: 10000 });
           }

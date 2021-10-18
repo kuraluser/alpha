@@ -125,7 +125,7 @@ export class BallastStowageComponent implements OnInit {
     this.loadablePlanTransformationService.editBallastStatus$.subscribe((value: any) => {
       this.buttonStatus = value.buttonStatus !== undefined ? value.buttonStatus : this.buttonStatus;
       this.editMode = value.editMode !== undefined ? value.editMode : this.editMode;
-      this.validateAndSaveProcessing = value.validateAndSaveProcessing !== undefined ? value.validateAndSaveProcessing : this.validateAndSaveProcessing
+      this.validateAndSaveProcessing = value?.validateAndSaveProcessing !== undefined ? value.validateAndSaveProcessing : this.validateAndSaveProcessing
     })
   }
 

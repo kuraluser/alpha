@@ -14,17 +14,18 @@ public class CowPlan {
   @JsonIgnore private Common.COW_OPTION_TYPE cow_option_type;
 
   private String cowOptionType;
-  private Integer cowOptionTypeValue;
+  private Integer cowOption;
 
-  private String cowTankPercent;
-  private String cowStartTime;
-  private String cowEndTime;
-  private String estCowDuration;
-  private String trimCowMin;
-  private String trimCowMax;
+  private String cowPercentage;
+  private String cowStart; // numeric
+  private String cowEnd; // numeric
+  private String cowDuration;
+  private String cowTrimMin;
+  private String cowTrimMax;
   private Boolean needFreshCrudeStorage;
   private Boolean needFlushingOil;
 
+  private Boolean washTanksWithDifferentCargo; //
   private List<Long> topCow;
   private List<Long> bottomCow;
   private List<Long> allCow;

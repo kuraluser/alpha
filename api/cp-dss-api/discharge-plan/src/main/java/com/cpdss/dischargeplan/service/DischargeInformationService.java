@@ -49,7 +49,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -78,12 +78,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(propagation = Propagation.REQUIRED, rollbackFor = GenericServiceException.class)
 public class DischargeInformationService {
 
   @Autowired DischargeInformationRepository dischargeInformationRepository;
@@ -170,6 +171,11 @@ public class DischargeInformationService {
 
     // Set Cow Details
     this.informationBuilderService.buildCowPlanMessageFromEntity(disEntity, builder);
+
+    // Set General Items
+    builder.setIsDischargeInfoComplete(disEntity.getIsDischargeInformationComplete());
+    builder.setDischargeSlopTanksFirst(disEntity.getDischargeSlopTankFirst());
+    builder.setDischargeCommingledCargoSeparately(disEntity.getDischargeCommingleCargoSeparately());
 
     builder.setResponseStatus(
         Common.ResponseStatus.newBuilder()
@@ -581,15 +587,15 @@ public class DischargeInformationService {
   public void uploadPortTideDetails(DischargingUploadTideDetailRequest request)
       throws GenericServiceException {
 
-    try {
-      ByteString tideDetaildata = request.getTideDetaildata();
-      Map<Long, String> portDetails = getPortDetailsFromPortService();
-      InputStream bin = new ByteArrayInputStream(tideDetaildata.toByteArray());
-      Workbook workbook = WorkbookFactory.create(bin);
-      Sheet sheetAt = workbook.getSheet(DischargePlanConstants.SHEET);
+    ByteString tideDetaildata = request.getTideDetaildata();
+    InputStream bin = new ByteArrayInputStream(tideDetaildata.toByteArray());
+    try (Workbook workbook = WorkbookFactory.create(bin)) {
+      Sheet sheetAt = workbook.getSheet(SHEET);
+      fileSheetIsCorrect(sheetAt);
       Iterator<Row> rowIterator = sheetAt.iterator();
-      if (rowIterator.hasNext()) {
-        rowIterator.next();
+      checkIsTheFileTitleFormat(rowIterator);
+      if (!rowIterator.hasNext()) {
+        throw new IllegalStateException(CommonErrorCodes.E_CPDSS_EMPTY_EXCEL_FILE);
       }
       List<PortTideDetail> tideDetails = new ArrayList<>();
       while (rowIterator.hasNext()) {
@@ -597,72 +603,13 @@ public class DischargeInformationService {
         tideDetail.setDischargingXid(request.getLoadingId());
         tideDetail.setIsActive(true);
         Row row = rowIterator.next();
+        checkIsFileContentBlankOrNot(row);
         Iterator<Cell> cellIterator = row.cellIterator();
         for (int rowCell = 0; rowCell <= 3; rowCell++) {
           Cell cell = cellIterator.next();
           CellType cellType = cell.getCellType();
-          // fetch String value from excel
-          if (rowCell == 0) {
-            if (!cellType.equals(CellType.STRING)) {
-              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_PORT_NAME_INVALID);
-            }
-            Optional<Long> findFirst =
-                portDetails.entrySet().stream()
-                    .filter(e -> cell.getStringCellValue().equalsIgnoreCase(e.getValue()))
-                    .map(Map.Entry::getKey)
-                    .findFirst();
-            if (!findFirst.isPresent()) {
-              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_PORT_NAME_INVALID);
-            }
-            tideDetail.setPortXid(findFirst.get());
-          }
-          // fetch Date value from excel
-          if (rowCell == 1) {
-            if (cellType.equals(CellType.NUMERIC)) {
-              double numberValue = cell.getNumericCellValue();
-              if (DateUtil.isCellDateFormatted(cell)) {
-                tideDetail.setTideDate(DateUtil.getJavaDate(numberValue));
-              } else {
-                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
-              }
-            } else if (cellType.equals(CellType.STRING)) {
-              if (!cell.getStringCellValue().matches("([0-9]{2})-([0-9]{2})-([0-9]{4})")) {
-                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
-              }
-              tideDetail.setTideDate(
-                  new SimpleDateFormat(DATE_FORMAT).parse(cell.getStringCellValue()));
-            } else {
-              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
-            }
-          }
-          // fetch Time value from excel
-          if (rowCell == 2) {
-            if (cellType.equals(CellType.NUMERIC)) {
-              if (DateUtil.isCellDateFormatted(cell)) {
-                if (cell.getLocalDateTimeCellValue().toLocalTime().equals(LocalTime.of(0, 0))) {
-                  throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
-                }
-                tideDetail.setTideTime(cell.getLocalDateTimeCellValue().toLocalTime());
-              } else {
-                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
-              }
-            } else if (cellType.equals(CellType.STRING)) {
-              if (!cell.getStringCellValue().matches("([0-9]{2}):([0-9]{2})")) {
-                throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
-              }
-              tideDetail.setTideTime(LocalTime.parse(cell.getStringCellValue()));
-            } else {
-              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
-            }
-          }
-          // fetch Double value from excel
-          if (rowCell == 3) {
-            if (!cellType.equals(CellType.NUMERIC)) {
-              throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_HEIGHT_INVALID);
-            }
-            tideDetail.setTideHeight(
-                new BigDecimal(cell.getNumericCellValue(), MathContext.DECIMAL64));
-          }
+          fetchCellValues(
+              rowCell, cellType, tideDetail, cell, request.getPortName(), request.getPortId());
         }
         tideDetails.add(tideDetail);
       }
@@ -678,6 +625,164 @@ public class DischargeInformationService {
     }
   }
 
+  /**
+   * fetch each cell values from workbook
+   *
+   * @param rowCell
+   * @param cellType
+   * @param tideDetail
+   * @param cell
+   * @throws ParseException
+   */
+  private void fetchCellValues(
+      int rowCell,
+      CellType cellType,
+      PortTideDetail tideDetail,
+      Cell cell,
+      String portName,
+      Long portId)
+      throws ParseException {
+    // fetch String value from excel
+    if (rowCell == 0) {
+      fetchPortCellValue(cellType, tideDetail, cell, portName, portId);
+    }
+    // fetch Date value from excel
+    if (rowCell == 1) {
+      fetchTideDateCellValue(cellType, tideDetail, cell);
+    }
+    // fetch Time value from excel
+    if (rowCell == 2) {
+      fetchTideTimeCellValue(cellType, tideDetail, cell);
+    }
+    // fetch Double value from excel
+    if (rowCell == 3) {
+      if (!cellType.equals(CellType.NUMERIC)) {
+        throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_HEIGHT_INVALID);
+      }
+      tideDetail.setTideHeight(BigDecimal.valueOf(cell.getNumericCellValue()));
+    }
+  }
+
+  /**
+   * fetch port cell values
+   *
+   * @param cellType
+   * @param tideDetail
+   * @param cell
+   */
+  private void fetchPortCellValue(
+      CellType cellType, PortTideDetail tideDetail, Cell cell, String portName, Long portId) {
+
+    if (!cellType.equals(CellType.STRING)
+        || !cell.getStringCellValue().trim().equalsIgnoreCase(portName.trim())) {
+      throw new IllegalStateException(CommonErrorCodes.E_CPDSS_PORT_NAME_INVALID);
+    }
+    tideDetail.setPortXid(portId);
+  }
+
+  /**
+   * fetch tide date cell value
+   *
+   * @param cellType
+   * @param tideDetail
+   * @param cell
+   * @throws ParseException
+   */
+  private void fetchTideDateCellValue(CellType cellType, PortTideDetail tideDetail, Cell cell)
+      throws ParseException {
+    if (cellType.equals(CellType.NUMERIC)) {
+      double numberValue = cell.getNumericCellValue();
+      if (DateUtil.isCellDateFormatted(cell)) {
+        tideDetail.setTideDate(DateUtil.getJavaDate(numberValue));
+      } else {
+        throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
+      }
+    } else if (cellType.equals(CellType.STRING)) {
+      if (!cell.getStringCellValue().matches("([0-9]{2})-([0-9]{2})-([0-9]{4})")) {
+        throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
+      }
+      tideDetail.setTideDate(new SimpleDateFormat(DATE_FORMAT).parse(cell.getStringCellValue()));
+    } else {
+      throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_DATE_INVALID);
+    }
+  }
+
+  /**
+   * fetch tide time cell value
+   *
+   * @param cellType
+   * @param tideDetail
+   * @param cell
+   */
+  private void fetchTideTimeCellValue(CellType cellType, PortTideDetail tideDetail, Cell cell) {
+    if (cellType.equals(CellType.NUMERIC)) {
+      if (DateUtil.isCellDateFormatted(cell)) {
+        if (cell.getLocalDateTimeCellValue().toLocalTime().equals(LocalTime.of(0, 0))) {
+          throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+        }
+        tideDetail.setTideTime(cell.getLocalDateTimeCellValue().toLocalTime());
+      } else {
+        throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+      }
+    } else if (cellType.equals(CellType.STRING)) {
+      if (!cell.getStringCellValue().matches("([0-9]{2}):([0-9]{2})")) {
+        throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+      }
+      tideDetail.setTideTime(LocalTime.parse(cell.getStringCellValue()));
+    } else {
+      throw new IllegalStateException(CommonErrorCodes.E_CPDSS_TIDE_TIME_INVALID);
+    }
+  }
+
+  /**
+   * Validate is file title contents format is expected
+   *
+   * @param rowIterator
+   */
+  private void checkIsTheFileTitleFormat(Iterator<Row> rowIterator) {
+    Row row = rowIterator.next();
+    Iterator<Cell> cellIterator = row.cellIterator();
+    for (int columnNo = 0; columnNo < PORT_EXCEL_TEMPLATE_TITLES.size(); columnNo++) {
+      Cell cell = cellIterator.next();
+      if (cell.getCellType().equals(CellType.BLANK)) {
+        throw new IllegalStateException(CommonErrorCodes.E_CPDSS_INVALID_CONTENT);
+      } else {
+        try {
+          if (!cell.getStringCellValue()
+              .equalsIgnoreCase(PORT_EXCEL_TEMPLATE_TITLES.get(columnNo))) {
+            throw new IllegalStateException(CommonErrorCodes.E_CPDSS_INVALID_CONTENT);
+          }
+        } catch (Exception e) {
+          throw new IllegalStateException(CommonErrorCodes.E_CPDSS_INVALID_CONTENT);
+        }
+      }
+    }
+  }
+
+  /**
+   * check if the file content is blank or not
+   *
+   * @param row
+   */
+  private void checkIsFileContentBlankOrNot(Row row) {
+    Iterator<Cell> secondCellIterator = row.cellIterator();
+    Cell cell = secondCellIterator.next();
+    if (cell.getCellType().equals(CellType.BLANK)) {
+      throw new IllegalStateException(CommonErrorCodes.E_CPDSS_EMPTY_EXCEL_FILE);
+    }
+  }
+
+  /**
+   * Check if the file sheet is correct
+   *
+   * @param sheet
+   */
+  private void fileSheetIsCorrect(Sheet sheet) {
+
+    if (sheet == null) {
+      throw new IllegalStateException(CommonErrorCodes.E_CPDSS_INVALID_CONTENT);
+    }
+  }
   /**
    * download Port Tide Details template
    *
@@ -775,5 +880,11 @@ public class DischargeInformationService {
           portsList.stream().collect(Collectors.toMap(map -> map.getId(), map -> map.getName()));
     }
     return portsMap;
+  }
+
+  public void updateIsDischargingInfoCompeteStatus(Long id, boolean isDischargingInfoComplete) {}
+
+  public void save(DischargeInformation entity) {
+    dischargeInformationRepository.save(entity);
   }
 }

@@ -34,6 +34,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   @ViewChild('machineryRef') machineryRef: LoadingDischargingCargoMachineryComponent;
   @ViewChild('dischargeDetails') dischargeDetails;
   @ViewChild('loadingRate') loadingRate;
+  @ViewChild('cargoMachinery')cargoMachineryRef;
 
   @Input() voyageId: number;
   @Input() vesselId: number;
@@ -309,6 +310,11 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
 
     this.dischargeBerth.berthDetailsForm.markAsDirty();
     this.dischargeBerth.berthDetailsForm.updateValueAndValidity();
+
+    this.cargoMachineryRef.machineryForm.markAsDirty();
+    this.cargoMachineryRef.machineryForm.markAllAsTouched();
+
+
     setTimeout(() => {
       this.saveLoadingInformationData();
       this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((status)=>{
@@ -351,7 +357,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_INVALID_DATA','LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY', 'LOADING_INFORMATION_NO_BERTHS']).toPromise();
     
     if(this.loadingRate?.loadingRatesFormGroup?.invalid || this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid ||
-      this.dischargeDetails.loadingDischargingDetailsForm.invalid || this.loadingRate.loadingRatesFormGroup.invalid) {
+      this.dischargeDetails.loadingDischargingDetailsForm.invalid || this.loadingRate.loadingRatesFormGroup.invalid || this.cargoMachineryRef.machineryForm.invalid) {
    
 
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_INVALID_DATA'] });
@@ -381,8 +387,6 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
         this.loadingInformationPostData.isLoadingInfoComplete = true
         const result: ILoadingInformationSaveResponse = await this.loadingDischargingInformationApiService.saveLoadingInformation(this.vesselId, this.voyageId, this.loadingInformationPostData).toPromise();
         if (result?.responseStatus?.status === '200') {
-          this.loadingInformationData = result?.loadingInformation;
-          await this.updateGetData();
           this.hasUnSavedData = false;
           this.loadingDischargingTransformationService.setLoadingInformationValidity(true)
           this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INFORMATION_SAVE_SUCCESS'], detail: translationKeys['LOADING_INFORMATION_SAVED_SUCCESSFULLY'] });

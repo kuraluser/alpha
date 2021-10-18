@@ -79,6 +79,7 @@ export class LoadingPlanComponent implements OnInit {
     try {
       this.ngxSpinnerService.show();
       this.loadingPlanDetails = await this.loadingPlanApiService.getLoadingPlanDetails(this.vesselId, this.voyageId, this.loadingInfoId, this.portRotationId).toPromise();
+      this.setCommingleCargo();
       this.toppingOffSequence = this.loadingPlanDetails?.loadingInformation?.toppingOffSequence;
       this.loadableQuantityCargoDetails = this.loadingPlanDetails?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails;
       this.loadingSequences = this.loadingPlanDetails?.loadingInformation?.loadingSequences;
@@ -87,6 +88,29 @@ export class LoadingPlanComponent implements OnInit {
       this.ngxSpinnerService.hide();
     } catch (e) {
       this.ngxSpinnerService.hide();
+    }
+  }
+
+  /**
+  * Set commingle cargo flag
+  *
+  * @private
+  * @memberof LoadingInformationComponent
+  */
+  setCommingleCargo() {
+    if (this.loadingPlanDetails?.planCommingleDetails?.length && this.loadingPlanDetails?.planStowageDetails?.length) {
+      this.loadingPlanDetails?.planCommingleDetails.map(item => {
+        this.loadingPlanDetails?.planStowageDetails.map(plan => {
+          if (Number(item.tankId) === Number(plan.tankId) && item.conditionType === plan.conditionType) {
+            plan.isCommingleCargo = true;
+            plan.quantityMT = item.quantityMT;
+            plan.api = item.api;
+            plan.temperature = item.temperature;
+            plan.abbreviation = item.abbreviation;
+            plan.cargoNominationId = null;
+          }
+        });
+      });
     }
   }
 
@@ -102,17 +126,17 @@ export class LoadingPlanComponent implements OnInit {
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
     });
 
-    this.loadingDischargingTransformationService.showUllageErrorPopup$.subscribe((res)=>{
+    this.loadingDischargingTransformationService.showUllageErrorPopup$.subscribe((res) => {
       this.getAlgoErrorMessage(res);
     });
 
-    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.subscribe((value)=>{
-      if(value === ULLAGE_STATUS_VALUE.SUCCESS){
+    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.subscribe((value) => {
+      if (value.status === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.getLoadingPlanDetails();
       }
     });
-    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value)=>{
-      if(value === ULLAGE_STATUS_VALUE.SUCCESS){
+    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value) => {
+      if (value.status === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.getLoadingPlanDetails();
       }
     });
@@ -123,7 +147,7 @@ export class LoadingPlanComponent implements OnInit {
    *
    * @memberof LoadingComponent
    */
-   async getAlgoErrorMessage(status) {
+  async getAlgoErrorMessage(status) {
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PLAN_ERROR_OCCURED', 'GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE']).toPromise();
     const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId, status.status).toPromise();
     if (algoError.responseStatus.status === 'SUCCESS') {
@@ -138,7 +162,7 @@ export class LoadingPlanComponent implements OnInit {
    *
    * @memberof LoadingComponent
    */
-   viewError(status) {
+  viewError(status) {
     this.errorPopUp = status;
   }
 

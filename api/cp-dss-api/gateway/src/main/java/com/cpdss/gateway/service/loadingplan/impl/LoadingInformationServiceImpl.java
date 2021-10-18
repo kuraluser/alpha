@@ -730,6 +730,25 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
       cargoDetails.setTimeRequiredForDischarging(lqcd.getTimeRequiredForLoading());
 
+      // Set Loading port Names in Cargo To Be Discharge
+      if (!lqcd.getLoadingPortsList().isEmpty()) {
+        cargoDetails.setLoadingPorts(
+            lqcd.getLoadingPortsList().stream()
+                .map(LoadableStudy.LoadingPortDetail::getName)
+                .collect(Collectors.toList()));
+        log.info("Loading Port names are - {}", cargoDetails.getLoadingPorts());
+      }
+
+      if (!lqcd.getDischargeMT().isEmpty()) {
+        cargoDetails.setShipFigure(new BigDecimal(lqcd.getDischargeMT()));
+      }
+
+      if (!lqcd.getCargoNominationQuantity().isEmpty()) {
+        cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
+        cargoDetails.setBlFigure(new BigDecimal(lqcd.getCargoNominationQuantity()));
+      }
+      cargoDetails.setDischargeCargoNominationId(lqcd.getDscargoNominationId());
+
       // these are not needed now informed by ui team. if it is needed in future can un comment this
       // code
       /*
@@ -768,13 +787,12 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
    * @return Max Loading Rate
    */
   private String getLoadingRateFromVesselService(Long vesselId) {
-    VesselInfo.VesselPumpsResponse grpcReply =
-        vesselInfoService.getVesselPumpsFromVesselInfo(vesselId);
-    if (grpcReply.getResponseStatus().getStatus().equals("SUCCESS")) {
+    VesselInfo.VesselDetail grpcReply = vesselInfoService.getVesselInfoByVesselId(vesselId);
+    if (grpcReply != null) {
       log.info(
           "Vessel Max Loading Rate found for LoadablePlanQuantity- {}",
-          grpcReply.getVesselDetails().getHomogeneousLoadingRate());
-      String maxLoadingRate = grpcReply.getVesselDetails().getHomogeneousLoadingRate();
+          grpcReply.getMaxLoadingRate());
+      String maxLoadingRate = grpcReply.getMaxLoadingRate();
       if (!maxLoadingRate.isEmpty()) {
         return maxLoadingRate;
       }

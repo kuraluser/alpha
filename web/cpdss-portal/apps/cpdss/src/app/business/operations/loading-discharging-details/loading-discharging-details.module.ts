@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
 import { LoadingDischargingDetailsComponent } from './loading-discharging-details.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -22,6 +23,7 @@ import { ValidationErrorModule } from '../../../shared/components/validation-err
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
+    TooltipModule,
     DropdownModule,
     FileUploadModule,
     NumberDirectiveModule,

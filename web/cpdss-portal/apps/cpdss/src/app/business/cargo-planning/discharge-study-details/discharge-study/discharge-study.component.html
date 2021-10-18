@@ -1,7 +1,7 @@
 
     <form [formGroup]="dischargeStudyForm">
         <div class="row">
-            <div class="col text-right btn-position"><button (click)="saveDischargeStudy()" [disabled]="!editMode" class="btn btn-main btn-primary">{{'DISCHARGE_STUDY_SAVE'  | translate}}</button></div>
+            <div class="col text-right btn-position"><button (click)="saveDischargeStudy()" [disabled]="!editMode" class="btn btn-main">{{'DISCHARGE_STUDY_SAVE'  | translate}}</button></div>
         </div>
         
         <div formArrayName="portDetails">
@@ -51,7 +51,7 @@
                     <div>
                     <p-multiSelect id="tank_dropdown" styleClass="form-control" [options]="tank" appendTo="body"
                         formControlName="tank"  optionLabel="name"
-                        resetFilterOnHide="true"  defaultLabel="DISCHARGE_STUDY_TANK_PLACEHOLDER | translate" [readonly]="!editMode" [filter]="true"
+                        resetFilterOnHide="true"  defaultLabel="{{'DISCHARGE_STUDY_TANK_PLACEHOLDER' | translate}}" [readonly]="!editMode" [filter]="true"
                         (onChange)="onChange($event,'tank',portIndex)"></p-multiSelect>
                     </div>
                     <cpdss-portal-validation-error

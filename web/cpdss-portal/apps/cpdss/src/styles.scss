@@ -1334,6 +1334,7 @@ td.sl div{
   text-align: center;
   display: inline-block;
   cursor: pointer;
+  font-style: initial;
 }
 .no-border{
   border: 0!important;
@@ -2742,8 +2743,9 @@ textarea{
     position: absolute;
     bottom: 5px;
     right: 5px;
-    left: 2px;
+    left: 2px!important;
     overflow: hidden;
+    text-align: right;
     text-overflow: ellipsis;
   }
   .tank-commodity-weight{
@@ -3059,6 +3061,11 @@ textarea{
 
 .sequence-chart path.highcharts-axis-line {
     stroke-width: 0;
+}
+
+.sequence-cargo-group {
+  display: flex;
+  flex-direction: column;
 }
 
 .stabilityparams-chart {

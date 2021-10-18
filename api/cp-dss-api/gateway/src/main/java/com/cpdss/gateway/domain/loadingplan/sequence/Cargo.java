@@ -22,4 +22,5 @@ public class Cargo {
   private Long cargoNominationId;
   private Long cargoId;
   private BigDecimal api;
+  private Boolean isCommingle;
 }

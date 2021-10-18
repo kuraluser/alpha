@@ -72,7 +72,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   portsTabPermissionContext: IPermissionContext;
   addCargoBtnPermissionContext: IPermissionContext;
   addPortBtnPermissionContext: IPermissionContext;
-  displayLoadableQuntity: boolean;
+  displayLoadableQuantity: boolean;
   loadableQuantityNew: string;
   loadableQuantityModel: LoadableQuantityModel;
   cargoNominationTabPermission: IPermission;
@@ -110,6 +110,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   isServiceWorkerCallActive = false;
   isRuleModalVisible: boolean = false;
   dischargingPortData: any = [];
+  loadLineChange: boolean;
 
   constructor(public loadableStudyDetailsApiService: LoadableStudyDetailsApiService,
     private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
@@ -243,6 +244,8 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.ports = await this.getPorts();
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     const loadableStudies = result?.loadableStudies ?? [];
+    this.displayLoadableQuantity = this.loadLineChange;
+    this.loadLineChange = false;
     if (loadableStudies.length) {
       this.setProcessingLoadableStudyActions(0, 0, loadableStudies);
       this.selectedLoadableStudy = loadableStudyId ? this.loadableStudies.find(loadableStudy => loadableStudy.id === loadableStudyId) : this.loadableStudies[0];
@@ -274,7 +277,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   async getLoadableStudyDetails(vesselId: number, voyageId: number, loadableStudyId: number) {
-    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_INFO', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
+    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_WARNING', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
     this.ngxSpinnerService.show();
     if (this.selectedLoadableStudy?.dischargingCargoId) {
       this.selectedDischargeCargo = { id: this.selectedLoadableStudy?.dischargingCargoId }
@@ -304,7 +307,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : loadableQuantityResult.loadableQuantity.totalQuantity;
         if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
           this.messageService.clear();
-          this.messageService.add({ severity: 'info', summary: translationKeys['TOTAL_QUANTITY_INFO'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
+          this.messageService.add({ severity: 'warn', summary: translationKeys['TOTAL_QUANTITY_WARNING'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
         }
         this.loadableQuantityModel = loadableQuantityResult;
       }
@@ -382,7 +385,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       }
     });
     this.loadableStudyDetailsTransformationService.loadLineChange$.subscribe((res) => {
-      this.displayLoadableQuntity = res;
+      this.loadLineChange = res;
     });
     this.loadableStudyDetailsTransformationService.loadablePatternBtnDisable$.subscribe(value => {
       this.isServiceWorkerCallActive = value;
@@ -556,7 +559,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           default:
             break;
         }
-        if ([4, 5, 7].includes(statusId) && this.router.url.includes('loadable-study-details')) {
+        if ([LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING, LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE].includes(statusId) && this.router.url.includes('loadable-study-details')) {
           loadableStudy.isActionsEnabled = false;
         }
         else if ([2, 3].includes(statusId)) {
@@ -706,14 +709,14 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (!this.loadableStudies?.length) {
       return;
     }
-    this.displayLoadableQuntity = true;
+    this.displayLoadableQuantity = true;
   }
 
   /**
    * Value from Loadable Quantity Popup
    */
   displayPopUpTab(displayNew_: boolean) {
-    this.displayLoadableQuntity = displayNew_;
+    this.displayLoadableQuantity = displayNew_;
   }
 
 
@@ -722,9 +725,9 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    */
   async loadableQuantity(newloadableQuantity: string) {
     this.loadableQuantityNew = newloadableQuantity;
-    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_INFO', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
+    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_WARNING', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
     if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
-      this.messageService.add({ severity: 'info', summary: translationKeys['TOTAL_QUANTITY_INFO'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
+      this.messageService.add({ severity: 'warn', summary: translationKeys['TOTAL_QUANTITY_WARNING'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
     }
   }
 
@@ -749,13 +752,12 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.showCommingleButton = event.value;
     // Show alert if total quantity exceeds loadable quantity
     if (event.error) {
-      const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_INFO', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
+      const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_WARNING', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
       if (Number(this.loadableQuantityNew) && Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
         this.messageService.clear();
-        this.messageService.add({ severity: 'info', summary: translationKeys['TOTAL_QUANTITY_INFO'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
+        this.messageService.add({ severity: 'warn', summary: translationKeys['TOTAL_QUANTITY_WARNING'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'] });
       }
     }
-
   }
 
 
@@ -800,7 +802,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   async onLoadableStudyChange(event) {
-    if (event) {
+    if (event !== this.loadableStudyId) {
       this.ngxSpinnerService.show();
       this.loadableStudyId = event;
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
@@ -976,6 +978,13 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 */
   async onGenerateLoadablePattern() {
     this.ngxSpinnerService.show();
+    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_WARNING', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
+    if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
+      this.messageService.add({ severity: 'warn', summary: translationKeys['TOTAL_QUANTITY_WARNING'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'],sticky: true });
+      this.ngxSpinnerService.hide();
+      return false;
+    }
+
     const isLQvalueNotChanged = await this.checkLoadableQuntityChangeInPopup();
     if (isLQvalueNotChanged) {
       this.generateLoadablePattern(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedVoyage.voyageNo, this.selectedLoadableStudy.name);
@@ -990,7 +999,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   async checkLoadableQuntityChangeInPopup(): Promise<boolean> {
-    let isEqual: boolean;
+    let isEqual = false;
     const translationKeys = await this.translateService.get(['LOADABLE_QUANTITY_WARNING', 'LOADABLE_QUANTITY_WARNING_MISMATCH']).toPromise();
     const portsData = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
     const portRotationId = (portsData.portList && portsData?.lastModifiedPortId) ?? portsData?.lastModifiedPortId;
@@ -998,10 +1007,14 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (loadableQuantityResult.responseStatus.status === "200") {
       let calculatedTotQty = this.sliceToTwoDecimalPoint(this.getSubTotal(loadableQuantityResult), 2);
       let databaseTotQty = this.sliceToTwoDecimalPoint(loadableQuantityResult.loadableQuantity.totalQuantity, 2);
+
+      if (loadableQuantityResult.caseNo === 1) {
+        calculatedTotQty = loadableQuantityResult.loadableQuantity.foConInSZ === '' ? '0' : calculatedTotQty;
+      }
+
       if (Number(calculatedTotQty) === Number(databaseTotQty)) {
         isEqual = true;
       } else {
-        isEqual = false;
         this.ngxSpinnerService.hide();
         this.messageService.clear();
         this.messageService.add({ severity: 'warn', summary: translationKeys['LOADABLE_QUANTITY_WARNING'], detail: translationKeys['LOADABLE_QUANTITY_WARNING_MISMATCH'] });

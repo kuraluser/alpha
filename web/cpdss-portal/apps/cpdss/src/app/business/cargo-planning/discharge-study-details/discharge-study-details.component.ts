@@ -48,7 +48,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
 
   set selectedDischargeStudy(selectedDischargeStudy: IDischargeStudy) {
     this._selectedDischargeStudy = selectedDischargeStudy;
-    this.isPlanGenerated = (this._selectedDischargeStudy?.statusId === 3 || this._selectedDischargeStudy?.statusId === 2) ? true : false;
+    this.isPlanGenerated = (this._selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_GENERATED || this._selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED ) ? true : false;
     this.isPlanOpenOrNo = (this._selectedDischargeStudy?.statusId === 1 || this._selectedDischargeStudy?.statusId === 6) ? false : this.inProcessing();
     this.dischargeStudyId = selectedDischargeStudy ? selectedDischargeStudy?.id : this.dischargeStudies?.length ? this.dischargeStudies[0]?.id : 0;
   }
@@ -90,6 +90,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
   isGenerateClicked: boolean;
   errorPopup: boolean;
   errorMessage: IAlgoError[];
+  isPlanConfirmed: IDischargeStudy;
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
@@ -393,6 +394,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       this.selectedDischargeStudy = null;
       this.dischargeStudies = [];
     }
+    this.isPlanConfirmed = this.dischargeStudies.find(dischargeStudy => DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED === dischargeStudy.statusId);
     this.ports = await this.getPorts();
     const cargos = await this.dischargeStudyDetailsApiService.getCargoDetails().toPromise();
     this.cargos = cargos.cargos;
