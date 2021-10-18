@@ -612,10 +612,10 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                     }
                   });
                   cargos?.forEach(cargo => {
-                    cargosLabel += `<span><span class="badge-custom mx-1" style="background-color: ${cargo?.color}">${cargo?.abbreviation}</span></span>`;
+                    cargosLabel += `<span class="badge-custom m-1" style="background-color: ${cargo?.color}">${cargo?.abbreviation}</span>`;
                   });
 
-                  const categoryLabel = cargosLabel;
+                  const categoryLabel = `<div class="sequence-cargo-group">${cargosLabel}</div>`;
 
                   return categoryLabel;
                 },
@@ -922,7 +922,10 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             <table>
               <tr>
                 <th>${pumpName}</th>
-                <td>${seriesName} <span>${rate?.toFixed()}</span></td>
+              </tr>
+              <tr>
+                <th>${seriesName}</th>
+                <td><span>${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</span></td>
               </tr>
             </table>`;
 
@@ -1197,7 +1200,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                 </tr>
                 <tr>
                   <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_SOUNDING']}</th>
-                  <td>${sounding}</td>
+                  <td>${sounding} ${AppConfigurationService?.settings?.ullageUnit}</td>
                 </tr>
               </table>`;
           return tooltipContent;
@@ -1424,7 +1427,10 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             <table>
               <tr>
                 <th>${pumpName}</th>
-                <td>${seriesName} <span>${rate?.toFixed()}</span></td>
+              </tr>
+              <tr>
+                <th>${seriesName}</th>
+                <td><span>${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</span></td>
               </tr>
             </table>`;
 
@@ -1610,7 +1616,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         borderColor: '#bebebe',
         borderWidth: 1,
         borderRadius: 20,
-        followPointer: true
+        followPointer: true,
+        valueSuffix: ` ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}`
       },
       series: this.flowRateChartSeries
     };
