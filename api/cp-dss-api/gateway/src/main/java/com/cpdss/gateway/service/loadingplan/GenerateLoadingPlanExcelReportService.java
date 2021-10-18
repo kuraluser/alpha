@@ -95,6 +95,8 @@ import org.springframework.stereotype.Service;
 public class GenerateLoadingPlanExcelReportService {
 	public static final String SUCCESS = "SUCCESS";
 	public static final String FAILED = "FAILED";
+	public static final String YES = "Yes";
+	public static final String NO = "No";
 
 	public String TEMPLATES_FILE_LOCATION = "/reports/Vessel_{type}_Loading_Plan_Template.xlsx";
 //	public String TEMPLATES_FILE_LOCATION = "/reports/Vessel_1_Loading_Plan_Template.xlsx";
@@ -108,9 +110,13 @@ public class GenerateLoadingPlanExcelReportService {
 	public Long INSTRUCTION_ORDER[] = { 1L, 17L, 13L, 15L, 2L, 14L, 11L, 4L };
 	public List<TankCargoDetails> cargoTanks = null;
 	public List<TankCargoDetails> ballastTanks = null;
+	public CargoMachineryInUse cargoMachinery = null;
 	public String cargoNames = null;
 	public final String UFPT = "UFPT";
 	public final String LFPT = "LFPT";
+	public final Long GS_PUMP_ID = 3L;
+	public final Long IGS_PUMP_ID = 4L;
+	public final Long BALLAST_PUMP_ID = 2L;
 
 	@Value("${gateway.attachement.rootFolder}")
 	private String rootFolder;
@@ -186,8 +192,7 @@ public class GenerateLoadingPlanExcelReportService {
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.info("Applying style in excel failed");
-				throw new GenericServiceException(
-						"Generating excel failed ,Styling cells encountereed an exception",
+				throw new GenericServiceException("Generating excel failed ,Styling cells encountereed an exception",
 						CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
 			} finally {
 				outFile.close();
@@ -244,19 +249,88 @@ public class GenerateLoadingPlanExcelReportService {
 			for (col = 1; col <= END_COLUMN; col++) {
 				cell = sheet.getRow(row).getCell(col);
 				if (row >= 14 && row < 29) {
-					setTankColor(workbook, sheet, cell, data.getArrivalCondition().getCargoCenterTanks().getTank(),
-							null);
-					setTankColor(workbook, sheet, cell, data.getArrivalCondition().getCargoTopTanks().getTank(),
-							data.getArrivalCondition().getBallastTopTanks().getTank());
-					setTankColor(workbook, sheet, cell, data.getArrivalCondition().getCargoBottomTanks().getTank(),
-							data.getArrivalCondition().getBallastBottomTanks().getTank());
+					if (setTankColor(workbook, sheet, cell, data.getArrivalCondition().getCargoCenterTanks().getTank(),
+							null)) {
+						continue;
+					}
+					if (setTankColor(workbook, sheet, cell, data.getArrivalCondition().getCargoTopTanks().getTank(),
+							null)) {
+						continue;
+					}
+					if (setTankColor(workbook, sheet, cell, data.getArrivalCondition().getCargoBottomTanks().getTank(),
+							null)) {
+						continue;
+					}
+					if (setTankColor(workbook, sheet, cell, null,
+							data.getArrivalCondition().getBallastTopTanks().getTank())) {
+						continue;
+					}
+					if (setTankColor(workbook, sheet, cell, null,
+							data.getArrivalCondition().getBallastBottomTanks().getTank())) {
+						continue;
+					}
+					// APT FPT
+					if (setAPTFPTTankColor(workbook, sheet, cell, data.getArrivalCondition().getApt(), null, null,
+							null)) {
+						continue;
+					}
+					if (data.getArrivalCondition().getFpt() != null) {
+						if (setAPTFPTTankColor(workbook, sheet, cell, null, data.getArrivalCondition().getFpt(), null,
+								null)) {
+							continue;
+						}
+					} else {
+						if (setAPTFPTTankColor(workbook, sheet, cell, null, null, data.getArrivalCondition().getLfpt(),
+								null)) {
+							continue;
+						}
+						if (setAPTFPTTankColor(workbook, sheet, cell, null, null, null,
+								data.getArrivalCondition().getUfpt())) {
+							continue;
+						}
+					}
+
 				} else if (row >= 32 && row < 46) {
-					setTankColor(workbook, sheet, cell, data.getDeparcherCondition().getCargoCenterTanks().getTank(),
-							null);
-					setTankColor(workbook, sheet, cell, data.getDeparcherCondition().getCargoTopTanks().getTank(),
-							data.getDeparcherCondition().getBallastTopTanks().getTank());
-					setTankColor(workbook, sheet, cell, data.getDeparcherCondition().getCargoBottomTanks().getTank(),
-							data.getDeparcherCondition().getBallastBottomTanks().getTank());
+					if (setTankColor(workbook, sheet, cell,
+							data.getDeparcherCondition().getCargoCenterTanks().getTank(), null)) {
+						continue;
+					}
+					if (setTankColor(workbook, sheet, cell, data.getDeparcherCondition().getCargoTopTanks().getTank(),
+							null)) {
+						continue;
+					}
+					if (setTankColor(workbook, sheet, cell,
+							data.getDeparcherCondition().getCargoBottomTanks().getTank(), null)) {
+						continue;
+					}
+					if (setTankColor(workbook, sheet, cell, null,
+							data.getDeparcherCondition().getBallastTopTanks().getTank())) {
+						continue;
+					}
+					if (setTankColor(workbook, sheet, cell, null,
+							data.getDeparcherCondition().getBallastBottomTanks().getTank())) {
+						continue;
+					}
+					// APT FPT
+					if (setAPTFPTTankColor(workbook, sheet, cell, data.getDeparcherCondition().getApt(), null, null,
+							null)) {
+						continue;
+					}
+					if (data.getDeparcherCondition().getFpt() != null) {
+						if (setAPTFPTTankColor(workbook, sheet, cell, null, data.getDeparcherCondition().getFpt(), null,
+								null)) {
+							continue;
+						}
+					} else {
+						if (setAPTFPTTankColor(workbook, sheet, cell, null, null,
+								data.getDeparcherCondition().getLfpt(), null)) {
+							continue;
+						}
+						if (setAPTFPTTankColor(workbook, sheet, cell, null, null, null,
+								data.getDeparcherCondition().getUfpt())) {
+							continue;
+						}
+					}
 				}
 			}
 		}
@@ -287,19 +361,19 @@ public class GenerateLoadingPlanExcelReportService {
 		if (cellValue != null && !cellValue.isBlank()) {
 			if (cargoDetails != null) {
 				Optional<CargoQuantity> opt = cargoDetails.stream()
-						.filter(item -> item.getCargoName().equals(cellValue)).findFirst();
+						.filter(item -> cellValue.equals(item.getCargoName())).findFirst();
 				if (opt.isPresent()) {
 					fillColor(workbook, cell, opt.get().getColorCode());
 				}
 			} else if (cargoTobeLoaded != null) {
 				Optional<CargoTobeLoaded> opt = cargoTobeLoaded.stream()
-						.filter(item -> item.getCargoName().equals(cellValue)).findFirst();
+						.filter(item -> cellValue.equals(item.getCargoName())).findFirst();
 				if (opt.isPresent()) {
 					fillColor(workbook, cell, opt.get().getColorCode());
 				}
 			} else if (cargoListSequence != null) {
 				Optional<TankCategoryForSequence> opt = cargoListSequence.stream()
-						.filter(item -> item.getCargoName().equals(cellValue)).findFirst();
+						.filter(item -> cellValue.equals(item.getCargoName())).findFirst();
 				if (opt.isPresent()) {
 					fillColor(workbook, cell, opt.get().getColorCode());
 				}
@@ -350,21 +424,25 @@ public class GenerateLoadingPlanExcelReportService {
 	}
 
 	/**
-	 * Dynamically add colours in tank layout
+	 * Dynamically add colours in ballast end tanks
 	 * 
-	 * @param workbook
-	 * @param sheet
-	 * @param cell
-	 * @param cargoTanks
-	 * @param ballastTanks
 	 */
-	private void setTankColor(XSSFWorkbook workbook, XSSFSheet sheet, XSSFCell cell, List<TankCargoDetails> cargoTanks,
-			List<TankCargoDetails> ballastTanks) {
+	private boolean setAPTFPTTankColor(XSSFWorkbook workbook, XSSFSheet sheet, XSSFCell cell, TankCargoDetails apt,
+			TankCargoDetails fpt, TankCargoDetails lfpt, TankCargoDetails ufpt) {
 		int row = 0;
 		int col = 0;
 		String cellValue = getCellValue(cell);
 		if (cellValue != null && !cellValue.isBlank()) {
-			TankCargoDetails tankFromFile = getTank(cellValue, cargoTanks);
+			TankCargoDetails tankFromFile = null;
+			if (apt != null) {
+				tankFromFile = getTank(cellValue, Arrays.asList(apt));
+			} else if (fpt != null) {
+				tankFromFile = getTank(cellValue, Arrays.asList(fpt));
+			} else if (ufpt != null) {
+				tankFromFile = getTank(cellValue, Arrays.asList(ufpt));
+			} else if (lfpt != null) {
+				tankFromFile = getTank(cellValue, Arrays.asList(lfpt));
+			}
 			if (tankFromFile != null) {
 				if (tankFromFile.getColorCode() != null && !tankFromFile.getColorCode().isBlank()
 						&& tankFromFile.getQuantity() != null && tankFromFile.getQuantity() > 0) {
@@ -372,10 +450,40 @@ public class GenerateLoadingPlanExcelReportService {
 					row = address.getRow();
 					col = address.getColumn();
 					setTankCellsColors(workbook, sheet, row, col, tankFromFile);
-					setTankCellsColors(workbook, sheet, row, col + 1, tankFromFile);
 					setTankCellsColors(workbook, sheet, row + 1, col, tankFromFile);
-					setTankCellsColors(workbook, sheet, row + 2, col, tankFromFile);
-					setTankCellsColors(workbook, sheet, row + 2, col + 1, tankFromFile);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Dynamically add colours in tank layout
+	 * 
+	 */
+	private Boolean setTankColor(XSSFWorkbook workbook, XSSFSheet sheet, XSSFCell cell,
+			List<TankCargoDetails> cargoTanks, List<TankCargoDetails> ballastTanks) {
+		int row = 0;
+		int col = 0;
+		String cellValue = getCellValue(cell);
+		if (cellValue != null && !cellValue.isBlank()) {
+			TankCargoDetails tankFromFile = null;
+			if (cargoTanks != null) {
+				tankFromFile = getTank(cellValue, cargoTanks);
+				if (tankFromFile != null) {
+					if (tankFromFile.getColorCode() != null && !tankFromFile.getColorCode().isBlank()
+							&& tankFromFile.getQuantity() != null && tankFromFile.getQuantity() > 0) {
+						CellAddress address = cell.getAddress();
+						row = address.getRow();
+						col = address.getColumn();
+						setTankCellsColors(workbook, sheet, row, col, tankFromFile);
+						setTankCellsColors(workbook, sheet, row, col + 1, tankFromFile);
+						setTankCellsColors(workbook, sheet, row + 1, col, tankFromFile);
+						setTankCellsColors(workbook, sheet, row + 2, col, tankFromFile);
+						setTankCellsColors(workbook, sheet, row + 2, col + 1, tankFromFile);
+						return true;
+					}
 				}
 			} else if (ballastTanks != null) {
 				tankFromFile = getTank(cellValue, ballastTanks);
@@ -388,10 +496,12 @@ public class GenerateLoadingPlanExcelReportService {
 						setTankCellsColors(workbook, sheet, row, col, tankFromFile);
 						setTankCellsColors(workbook, sheet, row, col + 1, tankFromFile);
 						setTankCellsColors(workbook, sheet, row + 1, col, tankFromFile);
+						return true;
 					}
 				}
 			}
 		}
+		return false;
 	}
 
 	/**
@@ -484,6 +594,16 @@ public class GenerateLoadingPlanExcelReportService {
 		// threadPool.submit(callable);
 		LoadingPlanExcelDetails excelData = new LoadingPlanExcelDetails();
 		// excelData.setSheetOne(future.get());
+		if (requestPayload == null) {
+			// Calling loading plan get plan details service
+			requestPayload = loadingPlanServiceImpl.getLoadingPlan(vesselId, voyageId, infoId, portRotationId);
+		}
+		// Get a list of all ballast tanks for sheet3
+		getAllBallastTanks(requestPayload.getBallastFrontTanks(), requestPayload.getBallastCenterTanks(),
+				requestPayload.getBallastRearTanks());
+		// Get machinery in use for sheet 2
+		cargoMachinery = requestPayload.getLoadingInformation().getMachineryInUses();
+
 		excelData.setSheetOne(buildSheetOne(requestPayload, vesselId, voyageId, infoId, portRotationId));
 		excelData.setSheetTwo(buildSheetTwo(vesselId, voyageId, infoId, portRotationId));
 		excelData.setSheetThree(buildSheetThree(vesselId, voyageId, infoId, portRotationId));
@@ -504,16 +624,19 @@ public class GenerateLoadingPlanExcelReportService {
 		LoadingPlanExcelLoadingInstructionDetails sheetTwo = new LoadingPlanExcelLoadingInstructionDetails();
 		sheetTwo.setInstructions(getInstructions(loadingSequenceResponse));
 		sheetTwo.setVesselPurticulars(getVesselPurticulars(vesselId));
-		sheetTwo.setCargoMachineryInUse(getCargoMachineryInUse(vesselId));
+		if (cargoMachinery != null) {
+			sheetTwo.setManifoldNames(cargoMachinery.getVesselManifold().stream().map(item -> item.getComponentCode())
+					.collect(Collectors.joining(",")));
+			sheetTwo.setBallastPump(cargoMachinery.getVesselPumps().stream()
+					.anyMatch(item -> item.getPumpTypeId().equals(BALLAST_PUMP_ID)) ? YES : NO);
+			sheetTwo.setGsPump(cargoMachinery.getVesselPumps().stream()
+					.anyMatch(item -> item.getPumpTypeId().equals(GS_PUMP_ID)) ? YES : NO);
+			sheetTwo.setIgsPump(cargoMachinery.getVesselPumps().stream()
+					.anyMatch(item -> item.getPumpTypeId().equals(IGS_PUMP_ID)) ? YES : NO);
+		}
 		sheetTwo.setCargoNames(cargoNames);
 		log.info("Building sheet 2 : Completed");
 		return sheetTwo;
-	}
-
-	private CargoMachineryInUse getCargoMachineryInUse(Long vesselId) {
-		CargoMachineryInUse cargoMachineryInUse = loadingInformationService
-				.getCargoMachinesInUserFromVessel(new ArrayList<>(), vesselId);
-		return cargoMachineryInUse;
 	}
 
 	/**
@@ -592,6 +715,11 @@ public class GenerateLoadingPlanExcelReportService {
 					instructionObj.setHeading("   " + heading);
 				}
 				instructionObj.setInstruction("-**No instructions available under this section**-");
+				if (group == 0) {
+					instructionObj.setCargoLoadingVisible(true);
+				} else if (group == 5) {
+					instructionObj.setMachineryInuseVisible(true);
+				}
 				instructionsList.add(instructionObj);
 			}
 			if (continuityList.contains(group)) {
@@ -663,7 +791,7 @@ public class GenerateLoadingPlanExcelReportService {
 				infoId);
 
 		LoadingPlanExcelLoadingSequenceDetails sheetThree = new LoadingPlanExcelLoadingSequenceDetails();
-		// Calculating no of stages in sequence
+		// Calculating no:of stages in sequence
 		sheetThree.setTickPoints(getTickPoints(loadingSequenceResponse.getMinXAxisValue(),
 				loadingSequenceResponse.getStageTickPositions()));
 		log.info("Sequence identified with {} Sections ", sheetThree.getTickPoints().size());
@@ -678,6 +806,7 @@ public class GenerateLoadingPlanExcelReportService {
 						loadingSequenceResponse.getCargos(), sheetThree.getCargoTanks());
 				sheetThree.setLoadingRates(getLoadingRate(loadingSequenceResponse.getCargoLoadingRates(),
 						loadingSequenceResponse.getStageTickPositions()));
+				sheetThree.setInitialLoadingRate(sheetThree.getLoadingRates().get(0).getRate().split("/")[0]);
 			}
 			sheetThree.setBallastTanks(getBallastTanks(loadingSequenceResponse.getBallastTankCategories(),
 					loadingSequenceResponse.getBallasts()));
@@ -900,6 +1029,8 @@ public class GenerateLoadingPlanExcelReportService {
 					if (cargoOpt.isPresent()) {
 						tankCategoryObj.setCargoName(cargoOpt.get().getAbbreviation());
 						tankCategoryObj.setColorCode(cargoOpt.get().getColor());
+					} else {
+						tankCategoryObj.setCargoName("");
 					}
 				}
 			});
@@ -932,7 +1063,7 @@ public class GenerateLoadingPlanExcelReportService {
 		return tankList;
 	}
 
-	/**
+	/** Finding loading rate
 	 * @param cargoLoadingRates
 	 * @param stageTickPositions
 	 * @return
@@ -1041,15 +1172,6 @@ public class GenerateLoadingPlanExcelReportService {
 	private LoadingPlanExcelLoadingPlanDetails buildSheetOne(LoadingPlanResponse requestPayload, Long vesselId,
 			Long voyageId, Long infoId, Long portRotationId) throws GenericServiceException {
 		log.info("Building sheet 1 : Loading plan diagram");
-		if (requestPayload == null) {
-			// Calling loading plan get plan details service
-			requestPayload = loadingPlanServiceImpl.getLoadingPlan(vesselId, voyageId, infoId, portRotationId);
-		}
-
-		// Get a list of all ballast tanks for sheet3
-		getAllBallastTanks(requestPayload.getBallastFrontTanks(), requestPayload.getBallastCenterTanks(),
-				requestPayload.getBallastRearTanks());
-
 		LoadingPlanExcelLoadingPlanDetails sheetOne = new LoadingPlanExcelLoadingPlanDetails();
 		getBasicVesselDetails(sheetOne, vesselId, voyageId, infoId, portRotationId);
 		// Condition type 1 is arrival
@@ -1100,7 +1222,7 @@ public class GenerateLoadingPlanExcelReportService {
 			}
 		}
 		if (activeVoyage.getActiveLs() != null) {
-			Optional<LoadLine> loadLine = vessel.getLoadlines().stream() //TODO loadline xid always coming as zero 
+			Optional<LoadLine> loadLine = vessel.getLoadlines().stream() // TODO loadline xid always coming as zero
 					.filter(item -> item.getId().equals(activeVoyage.getActiveLs().getLoadLineXId())).findFirst();
 			loadLine.ifPresent(item -> sheetOne.setLoadLineZone(item.getName()));
 			if (activeVoyage.getActiveLs().getDraftRestriction() != null) {

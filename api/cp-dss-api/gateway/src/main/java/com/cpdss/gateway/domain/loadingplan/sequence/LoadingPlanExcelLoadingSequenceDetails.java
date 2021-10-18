@@ -18,4 +18,5 @@ public class LoadingPlanExcelLoadingSequenceDetails {
   private List<LoadingRateForSequence> loadingRates;
   private List<String> tickPoints;
   private List<TankWithSequenceDetails> ballastTankUllage;
+  private String initialLoadingRate;
 }

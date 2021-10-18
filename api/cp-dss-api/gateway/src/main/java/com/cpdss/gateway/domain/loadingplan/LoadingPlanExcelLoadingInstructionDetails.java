@@ -17,6 +17,9 @@ public class LoadingPlanExcelLoadingInstructionDetails {
 
   private List<LoadingInstructionForExcel> instructions;
   private VesselParticularsForExcel vesselPurticulars;
-  private CargoMachineryInUse cargoMachineryInUse;
+  private String manifoldNames;
+  private String gsPump;
+  private String igsPump;
+  private String ballastPump;
   private String cargoNames;
 }

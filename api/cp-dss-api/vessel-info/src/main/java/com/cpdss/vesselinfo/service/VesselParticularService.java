@@ -125,9 +125,8 @@ public class VesselParticularService {
 			BigDecimal sum = tanks.stream()
 					.filter(item -> item.getTankCategory().getId().equals(CARGO_TANK_CATEGORY_ID))
 					.map(item -> item.getFullCapacityCubm()).reduce(BigDecimal.ZERO, BigDecimal::add);
-			builder.setCargoTankCapacity(String.valueOf(sum.multiply(new BigDecimal(PERCENTAGE / 100))));
+			builder.setCargoTankCapacity(sum.multiply(new BigDecimal(PERCENTAGE)).divide(new BigDecimal(100)).toString());
 		}
-
 	}
 
 	/**
@@ -189,7 +188,7 @@ public class VesselParticularService {
 			builder.setBallastPumpCount(streamSupplier.get().count());
 			Optional.ofNullable(
 					streamSupplier.get().max(Comparator.comparing(VesselPumps::getCapacity)).get().getCapacity())
-					.ifPresent(builder::setBallastPumpCount);
+					.ifPresent(builder::setCapacityPerPump);
 		}
 
 	}

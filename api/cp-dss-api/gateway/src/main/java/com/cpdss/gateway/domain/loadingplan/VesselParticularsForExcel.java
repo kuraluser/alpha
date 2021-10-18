@@ -17,8 +17,9 @@ public class VesselParticularsForExcel {
   private Long capacityPerPump;
   private Long shipManifold;
   private String summerDraft;
+  private String averageLoadingRate;
   private String tropicalDraft;
-  private String freshMLD;
+  private String freshWaterDraft;
   private String summerDeadweight;
   private String summerDisplacement;
   private String cargoTankCapacity;
