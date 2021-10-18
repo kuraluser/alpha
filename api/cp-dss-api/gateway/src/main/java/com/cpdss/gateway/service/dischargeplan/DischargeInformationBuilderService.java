@@ -514,6 +514,16 @@ public class DischargeInformationBuilderService {
       callableTasks.add(t7);
     }
 
+    // Discharging Info Case 7 - cow plan
+    if (request.getCowPlan() != null) {
+      Callable<DischargingInfoSaveResponse> t7 =
+          () -> {
+            builder.setPostDischargeStageTime(
+                buildPostDischargeStageDetails(request.getPostDischargeStage()));
+            return dischargeInfoServiceStub.saveCowPlan(builder.build());
+          };
+      callableTasks.add(t7);
+    }
     ExecutorService executorService =
         new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
     List<Future<DischargingInfoSaveResponse>> futures = executorService.invokeAll(callableTasks);
@@ -540,6 +550,16 @@ public class DischargeInformationBuilderService {
         callableTasks.size(),
         data.size());
     return data.isEmpty() ? null : data.stream().findFirst().get().get();
+  }
+
+  private PostDischargeStageTime buildPostDischargeStageDetails(
+      PostDischargeStage postDischargeStage) {
+    PostDischargeStageTime.Builder builder = PostDischargeStageTime.newBuilder();
+    builder.setFinalStripping(postDischargeStage.getFinalStrippingTime().toString());
+    builder.setFreshOilWashing(postDischargeStage.getFreshOilWashingTime().toString());
+    builder.setSlopDischarging(postDischargeStage.getSlopDischargingTime().toString());
+    builder.setTimeForDryCheck(postDischargeStage.getDryCheckTime().toString());
+    return builder.build();
   }
 
   private CowPlan buildDischargeCowDetails(
@@ -624,8 +644,7 @@ public class DischargeInformationBuilderService {
           DischargeBerths.Builder builder = DischargeBerths.newBuilder();
           Optional.ofNullable(berth.getAirDraftLimitation())
               .ifPresent(airDraft -> builder.setAirDraftLimitation(String.valueOf(airDraft)));
-          Optional.ofNullable(berth.getHoseConnections())
-              .ifPresent(hoseConnection -> builder.setHoseConnections(hoseConnection));
+          Optional.ofNullable(berth.getHoseConnections()).ifPresent(builder::setHoseConnections);
           Optional.ofNullable(berth.getBerthId()).ifPresent(builder::setBerthId);
           Optional.ofNullable(berth.getLoadingBerthId()).ifPresent(builder::setId);
           Optional.ofNullable(dischargingInfoId).ifPresent(builder::setDischargeInfoId);
@@ -645,8 +664,9 @@ public class DischargeInformationBuilderService {
           // maxShipDepth is taken as depth in LoadingBerthDetails table
           Optional.ofNullable(berth.getMaxShipDepth())
               .ifPresent(depth -> builder.setDepth(String.valueOf(depth)));
-          Optional.ofNullable(berth.getLineDisplacement())
-              .ifPresent(v -> builder.setLineDisplacement(v));
+          Optional.ofNullable(berth.getLineDisplacement()).ifPresent(builder::setLineDisplacement);
+          Optional.ofNullable(berth.getAirPurge()).ifPresent(builder::setAirPurge);
+          Optional.ofNullable(berth.getCargoCirculation()).ifPresent(builder::setCargoCirculation);
           berthList.add(builder.build());
         });
     return berthList;

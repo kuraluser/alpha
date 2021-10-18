@@ -24,6 +24,7 @@ import com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
 import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest;
 import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply;
+import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -457,6 +458,54 @@ public class DischargeInformationRPCService
     }
   }
 
+  @Override
+  public void savePostDischargeStage(
+      DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
+    DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
+    try {
+      log.info("Request payload {}", Utils.toJson(request));
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
+          dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+      log.info("Save post discharge rate, Id {}", request.getDischargeInfoId());
+      if (dischargingInformation != null) {
+        savePostDischargeRate(request.getPostDischargeStageTime(), dischargingInformation);
+        this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
+            dischargingInformation.getId(), request.getIsDischargingInfoComplete());
+      }
+      buildDischargingInfoSaveResponse(builder, dischargingInformation);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saved Loading information Rates")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build())
+          .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void savePostDischargeRate(
+      PostDischargeStageTime postDischargeStageTime,
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation) {
+    dischargingInformation.setTimeForFinalStripping(
+        new BigDecimal(postDischargeStageTime.getFinalStripping()));
+    dischargingInformation.setFreshOilWashing(
+        new BigDecimal(postDischargeStageTime.getFreshOilWashing()));
+    dischargingInformation.setTimeForSlopDischarging(
+        new BigDecimal(postDischargeStageTime.getSlopDischarging()));
+    dischargingInformation.setTimeForDryCheck(
+        new BigDecimal(postDischargeStageTime.getTimeForDryCheck()));
+    dischargeInformationService.save(dischargingInformation);
+  }
+
   private void saveCowPlanDetails(CowPlan cowPlan) {
     Optional<CowPlanDetail> var1 =
         cowPlanDetailRepository.findByDischargingId(cowPlan.getDischargingInfoId());
@@ -493,99 +542,102 @@ public class DischargeInformationRPCService
       if (!cowPlan.getTrimCowMin().isEmpty()) {
         cowPlanDetail.setCowMinTrim(new BigDecimal(cowPlan.getTrimCowMin()));
       }
-      if (!cowPlan.getCowTankDetailsList().isEmpty()) {
-        cowPlan.getCowTankDetailsList().stream()
-            .forEach(
-                plan -> {
-                  if (COW_TYPE.CARGO.equals(plan.getCowType())) {
-                    List<CargoForCow> cargoForCowList = plan.getCargoForCowList();
-                    List<Long> tanksIdsToSave =
-                        cargoForCowList.stream()
-                            .flatMap(cargo -> cargo.getTankIdsList().stream())
-                            .collect(Collectors.toList());
-                    Set<CowWithDifferentCargo> cowWithDifferentCargos =
-                        cowPlanDetail.getCowWithDifferentCargos();
-                    // method to create new cargo Wash
-                    createCaroCowWash(cargoForCowList, cowPlanDetail);
-                    // to disable existing cargo wash
-                    if (!cowWithDifferentCargos.isEmpty()) {
-                      cowWithDifferentCargos.forEach(
-                          cargoCow -> {
-                            if (!tanksIdsToSave.contains(cargoCow.getTankXid())) {
-                              cargoCow.setIsActive(false);
-                            }
-                          });
-                    }
+      updateTanksDetails(cowPlan, cowPlanDetail);
+    }
+  }
 
-                  } else {
-                    List<Long> tanksIdsToSave = plan.getTankIdsList();
-                    List<CowTankDetail> existingTanks =
-                        cowPlanDetail.getCowTankDetails().stream()
-                            .filter(
-                                tank -> tank.getCowTypeXid().equals(plan.getCowType().getNumber()))
-                            .collect(Collectors.toList());
-                    // if the values are not in the current list set it as false
-                    existingTanks.stream()
-                        .forEach(
-                            tank -> {
-                              if (!tanksIdsToSave.contains(tank.getTankXid())) {
-                                tank.setIsActive(false);
-                              }
-                            });
-                    // adding new objects
-                    List<Long> existingTankIds =
-                        cowPlanDetail.getCowTankDetails().stream()
-                            .map(CowTankDetail::getTankXid)
-                            .collect(Collectors.toList());
-                    tanksIdsToSave.removeAll(existingTankIds);
-                    if (tanksIdsToSave != null || !tanksIdsToSave.isEmpty()) {
-                      tanksIdsToSave.forEach(
-                          newCowTankId -> {
-                            CowTankDetail newTank = new CowTankDetail();
-                            newTank.setCowPlanDetail(cowPlanDetail);
-                            newTank.setCowTypeXid(plan.getCowType().getNumber());
-                            newTank.setDischargingXid(cowPlan.getDischargingInfoId());
-                            newTank.setIsActive(true);
-                            newTank.setTankXid(newCowTankId);
-                            if (cowPlanDetail.getCowTankDetails() == null) {
-                              cowPlanDetail.setCowTankDetails(
-                                  new HashSet<>(Arrays.asList(newTank)));
-                            } else {
-                              cowPlanDetail.getCowTankDetails().add(newTank);
+  private void updateTanksDetails(CowPlan cowPlan, CowPlanDetail cowPlanDetail) {
+    if (!cowPlan.getCowTankDetailsList().isEmpty()) {
+      cowPlan.getCowTankDetailsList().stream()
+          .forEach(
+              plan -> {
+                if (COW_TYPE.CARGO.equals(plan.getCowType())) {
+                  List<CargoForCow> cargoForCowList = plan.getCargoForCowList();
+                  List<Long> tanksIdsToSave =
+                      cargoForCowList.stream()
+                          .flatMap(cargo -> cargo.getTankIdsList().stream())
+                          .collect(Collectors.toList());
+                  Set<CowWithDifferentCargo> cowWithDifferentCargos =
+                      cowPlanDetail.getCowWithDifferentCargos();
+                  // method to create new cargo Wash
+                  createCaroCowWash(cargoForCowList, cowPlanDetail);
+                  // to disable existing cargo wash
+                  if (!cowWithDifferentCargos.isEmpty()) {
+                    cowWithDifferentCargos.forEach(
+                        cargoCow -> {
+                          if (!tanksIdsToSave.contains(cargoCow.getTankXid())) {
+                            cargoCow.setIsActive(false);
+                          }
+                        });
+                  }
+
+                } else {
+                  List<Long> tanksIdsToSave = plan.getTankIdsList();
+                  List<CowTankDetail> existingTanks =
+                      cowPlanDetail.getCowTankDetails().stream()
+                          .filter(
+                              tank -> tank.getCowTypeXid().equals(plan.getCowType().getNumber()))
+                          .collect(Collectors.toList());
+                  // if the values are not in the current list set it as false
+                  existingTanks.stream()
+                      .forEach(
+                          tank -> {
+                            if (!tanksIdsToSave.contains(tank.getTankXid())) {
+                              tank.setIsActive(false);
                             }
                           });
-                    }
+                  // adding new objects
+                  List<Long> existingTankIds =
+                      cowPlanDetail.getCowTankDetails().stream()
+                          .map(CowTankDetail::getTankXid)
+                          .collect(Collectors.toList());
+                  tanksIdsToSave.removeAll(existingTankIds);
+                  if (tanksIdsToSave != null || !tanksIdsToSave.isEmpty()) {
+                    tanksIdsToSave.forEach(
+                        newCowTankId -> {
+                          CowTankDetail newTank = new CowTankDetail();
+                          newTank.setCowPlanDetail(cowPlanDetail);
+                          newTank.setCowTypeXid(plan.getCowType().getNumber());
+                          newTank.setDischargingXid(cowPlan.getDischargingInfoId());
+                          newTank.setIsActive(true);
+                          newTank.setTankXid(newCowTankId);
+                          if (cowPlanDetail.getCowTankDetails() == null) {
+                            cowPlanDetail.setCowTankDetails(new HashSet<>(Arrays.asList(newTank)));
+                          } else {
+                            cowPlanDetail.getCowTankDetails().add(newTank);
+                          }
+                        });
                   }
-                });
-      }
+                }
+              });
     }
   }
 
   private void createCaroCowWash(List<CargoForCow> cargoForCowList, CowPlanDetail cowPlanDetail) {
-	  //if the list is empty create all the values in the request list
+    // if the list is empty create all the values in the request list
     if (cowPlanDetail.getCowWithDifferentCargos().isEmpty()) {
       cargoForCowList.forEach(
           newCargoWash ->
               updateCargoCowWash(cowPlanDetail, newCargoWash, newCargoWash.getTankIdsList()));
     } else {
-    	//groups the CowWithDifferentCargo by cargo nomination ids
+      // groups the CowWithDifferentCargo by cargo nomination ids
       Map<Long, List<CowWithDifferentCargo>> cargoNominationWiseWashCargos =
           cowPlanDetail.getCowWithDifferentCargos().stream()
               .collect(Collectors.groupingBy(CowWithDifferentCargo::getCargoNominationXid));
       cargoForCowList.forEach(
           newCargoWash -> {
-        	  //get the equivalent tanks for the cargo nomination ids
-        	  List<CowWithDifferentCargo> nominationWiseWashCargoEntities =
+            // get the equivalent tanks for the cargo nomination ids
+            List<CowWithDifferentCargo> nominationWiseWashCargoEntities =
                 cargoNominationWiseWashCargos.get(newCargoWash.getCargoNominationId());
-            //finds the tanks ids
-        	  List<Long> savedTanks =
+            // finds the tanks ids
+            List<Long> savedTanks =
                 nominationWiseWashCargoEntities.stream()
                     .map(CowWithDifferentCargo::getTankXid)
                     .collect(Collectors.toList());
-        	  //remove the already existing ids in the db
+            // remove the already existing ids in the db
             List<Long> tankIdsToSave = newCargoWash.getTankIdsList();
             tankIdsToSave.removeAll(savedTanks);
-            //create the new ones
+            // create the new ones
             updateCargoCowWash(cowPlanDetail, newCargoWash, tankIdsToSave);
           });
     }

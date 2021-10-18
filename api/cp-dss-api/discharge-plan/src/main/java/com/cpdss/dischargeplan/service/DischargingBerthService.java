@@ -94,6 +94,10 @@ public class DischargingBerthService {
         berth.getLineDisplacement().isEmpty()
             ? BigDecimal.ZERO
             : new BigDecimal(berth.getLineDisplacement()));
+    Optional.ofNullable(berth.getAirPurge()).ifPresent(dischargingBerthDetail::setIsAirPurge);
+    Optional.ofNullable(berth.getCargoCirculation())
+        .ifPresent(dischargingBerthDetail::setIsCargoCirculation);
+
     dischargingBerthDetail.setIsActive(true);
   }
 }

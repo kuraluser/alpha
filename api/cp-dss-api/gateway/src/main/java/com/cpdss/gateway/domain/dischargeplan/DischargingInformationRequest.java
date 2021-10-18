@@ -36,4 +36,5 @@ public class DischargingInformationRequest {
   private LoadingStagesRequest dischargingStages;
   private Boolean isDischargeInfoComplete; // validation logic at Front-end
   private CowPlan cowPlan;
+  private PostDischargeStage postDischargeStage;
 }
