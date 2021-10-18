@@ -514,13 +514,13 @@ public class DischargeInformationBuilderService {
       callableTasks.add(t7);
     }
 
-    // Discharging Info Case 7 - cow plan
-    if (request.getCowPlan() != null) {
+    // Discharging Info Case 8 - post discharge stage
+    if (request.getPostDischargeStage() != null) {
       Callable<DischargingInfoSaveResponse> t7 =
           () -> {
             builder.setPostDischargeStageTime(
                 buildPostDischargeStageDetails(request.getPostDischargeStage()));
-            return dischargeInfoServiceStub.saveCowPlan(builder.build());
+            return dischargeInfoServiceStub.savePostDischargeStage(builder.build());
           };
       callableTasks.add(t7);
     }
@@ -602,15 +602,16 @@ public class DischargeInformationBuilderService {
               });
       builder.addCowTankDetails(cowTankBuilder);
     }
-    builder.setEstCowDuration(cowPlan.getCowDuration());
-    builder.setCowEndTime(cowPlan.getCowEnd());
-    builder.setCowTankPercent(cowPlan.getCowPercentage());
-    builder.setCowStartTime(cowPlan.getCowStart());
-    builder.setTrimCowMax(cowPlan.getCowTrimMax());
-    builder.setTrimCowMin(cowPlan.getCowTrimMin());
-    builder.setNeedFreshCrudeStorage(cowPlan.getNeedFreshCrudeStorage());
-    builder.setNeedFlushingOil(cowPlan.getNeedFlushingOil());
-    builder.setCowWithCargoEnable(cowPlan.getWashTanksWithDifferentCargo());
+    Optional.ofNullable(cowPlan.getCowDuration()).ifPresent(builder::setEstCowDuration);
+    Optional.ofNullable(cowPlan.getCowEnd()).ifPresent(builder::setCowEndTime);
+    Optional.ofNullable(cowPlan.getCowPercentage()).ifPresent(builder::setCowEndTime);
+    Optional.ofNullable(cowPlan.getCowStart()).ifPresent(builder::setCowStartTime);
+    Optional.ofNullable(cowPlan.getCowTrimMax()).ifPresent(builder::setTrimCowMax);
+    Optional.ofNullable(cowPlan.getCowTrimMin()).ifPresent(builder::setTrimCowMin);
+    Optional.ofNullable(cowPlan.getNeedFreshCrudeStorage()).ifPresent(builder::setNeedFreshCrudeStorage);
+    Optional.ofNullable(cowPlan.getNeedFlushingOil()).ifPresent(builder::setNeedFlushingOil);
+    Optional.ofNullable(cowPlan.getWashTanksWithDifferentCargo()).ifPresent(builder::setCowWithCargoEnable);
+
     return builder.build();
   }
 
@@ -647,6 +648,7 @@ public class DischargeInformationBuilderService {
           Optional.ofNullable(berth.getHoseConnections()).ifPresent(builder::setHoseConnections);
           Optional.ofNullable(berth.getBerthId()).ifPresent(builder::setBerthId);
           Optional.ofNullable(berth.getLoadingBerthId()).ifPresent(builder::setId);
+          Optional.ofNullable(berth.getDischargingBerthId()).ifPresent(builder::setId);
           Optional.ofNullable(dischargingInfoId).ifPresent(builder::setDischargeInfoId);
           // missing depth, itemsToBeAgreedWith added to domain
           Optional.ofNullable(berth.getMaxManifoldHeight())

@@ -35,4 +35,6 @@ public class DischargingInformationRequest {
   private Boolean isDischargeInfoComplete; // validation logic at Front-end
   private CowPlan cowPlan;
   private PostDischargeStage postDischargeStage;
+  private PlannedCargo plannedCargo;
+
 }

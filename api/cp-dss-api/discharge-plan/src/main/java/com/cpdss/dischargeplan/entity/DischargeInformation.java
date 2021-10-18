@@ -124,12 +124,12 @@ public class DischargeInformation extends EntityDoc {
   private DischargingInformationStatus dischargingInformationStatus;
 
   // bi-directional many-to-one association to DischargingStagesMinAmount
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "stages_min_amount_xid")
   private DischargingStagesMinAmount dischargingStagesMinAmount;
 
   // bi-directional many-to-one association to DischargingStagesDuration
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "stages_duration_xid")
   private DischargingStagesDuration dischargingStagesDuration;
 

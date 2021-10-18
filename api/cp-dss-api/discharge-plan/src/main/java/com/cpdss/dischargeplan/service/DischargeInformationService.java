@@ -189,7 +189,7 @@ public class DischargeInformationService {
       throws GenericServiceException {
     if (!RuleMasterSection.Discharging.getId().equals(request.getSectionId())) {
       throw new GenericServiceException(
-          "fetch rule for discharging study rule only not for loading or planning module",
+          "fetch rule for discharging study rule only not for discharging or planning module",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
@@ -882,7 +882,9 @@ public class DischargeInformationService {
     return portsMap;
   }
 
-  public void updateIsDischargingInfoCompeteStatus(Long id, boolean isDischargingInfoComplete) {}
+  public void updateIsDischargingInfoCompeteStatus(Long id, boolean isDischargingInfoComplete) {
+	  dischargeInformationRepository.updateDischargeInformationCompleteStatus(id, isDischargingInfoComplete);
+  }
 
   public void save(DischargeInformation entity) {
     dischargeInformationRepository.save(entity);

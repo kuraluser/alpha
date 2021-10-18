@@ -455,11 +455,11 @@ public class DischargeInformationService {
       }
       DischargingInformationResponse dischargingInformationResponse =
           buildDischargingInformationResponse(response, correlationId);
-      dischargingInformationResponse.setDischargingInformation(
-          this.getDischargeInformation(
-              dischargingInformationResponse.getVesseld(),
-              dischargingInformationResponse.getVoyageId(),
-              response.getPortRotationId()));
+//      dischargingInformationResponse.setDischargingInformation(
+//          this.getDischargeInformation(
+//              dischargingInformationResponse.getVesseld(),
+//              dischargingInformationResponse.getVoyageId(),
+//              response.getPortRotationId()));
       return dischargingInformationResponse;
     } catch (Exception e) {
       log.error("Failed to save LoadingInformation {}", request.getDischargingInfoId());
