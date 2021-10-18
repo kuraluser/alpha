@@ -181,6 +181,9 @@ export class LoadingRateComponent implements OnInit {
   onChange(field) {
    
     const loadingRates = {...this.loadingRatesFormGroup.value};
+    const keys = Object.keys(this.actualValues);
+    if(keys.includes(field))
+    {
     this.actualValues[field].defaultValue = this.loadingRatesFormGroup?.value[field];
     if (this.selectedConversion.id == 2) {    
       this.actualValues[field].lastEditedUnit = 'BBLS';
@@ -198,6 +201,11 @@ export class LoadingRateComponent implements OnInit {
         loadingRates[key] = this.actualValues[key]?.defaultValue;
       }
     }
+   }
+   else{
+    this.loadingRates [field]  = this.loadingRatesFormGroup?.value[field];
+
+   }
     this.loadingRateChange.emit(loadingRates);
   }
   
