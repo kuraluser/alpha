@@ -697,13 +697,11 @@ public class DischargeInformationRPCService
       com.cpdss.dischargeplan.entity.DischargeInformation response =
           saveDischargingInformation(request);
       buildDischargingInfoSaveResponse(builder, response);
-      builder
-          .setResponseStatus(
-              ResponseStatus.newBuilder()
-                  .setMessage("Successfully saved Discharging information")
-                  .setStatus(SUCCESS)
-                  .build())
-          .build();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setMessage("Successfully saved Discharging information")
+              .setStatus(SUCCESS)
+              .build());
       log.info("Save Discharging Info, Details Id {}", request.getDischargeInfoId());
     } catch (Exception e) {
       log.error(

@@ -693,9 +693,7 @@ public class DischargeInformationBuilderService {
   }
 
   private List<LoadingPlanModels.LoadingMachinesInUse> buildDischargingMachineries(
-      List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
-          dischargingMachineries,
-      Long dischargingInfoId) {
+      List<LoadingMachinesInUse> dischargingMachineries, Long dischargingInfoId) {
     List<LoadingPlanModels.LoadingMachinesInUse> machineries = new ArrayList<>();
     dischargingMachineries.forEach(
         machine -> {
@@ -706,8 +704,7 @@ public class DischargeInformationBuilderService {
           Optional.ofNullable(machine.getId()).ifPresent(builder::setId);
           Optional.ofNullable(dischargingInfoId).ifPresent(builder::setLoadingInfoId);
           Optional.ofNullable(machine.getMachineId()).ifPresent(builder::setMachineId);
-          Optional.ofNullable(machine.getMachineTypeValue())
-              .ifPresent(v -> builder.setMachineTypeValue(v));
+          Optional.ofNullable(machine.getMachineTypeId()).ifPresent(builder::setMachineTypeValue);
           // isUsing missing added to domain
           Optional.ofNullable(machine.getIsUsing()).ifPresent(builder::setIsUsing);
           machineries.add(builder.build());

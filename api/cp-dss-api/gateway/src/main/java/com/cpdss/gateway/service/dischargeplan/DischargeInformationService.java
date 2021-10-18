@@ -53,6 +53,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 @Slf4j
 @Service
@@ -448,7 +449,7 @@ public class DischargeInformationService {
       }
       if (response == null) {
         throw new GenericServiceException(
-            "Failed to save Loading Information",
+            "Failed to save Discharging Information",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
@@ -463,6 +464,7 @@ public class DischargeInformationService {
     } catch (Exception e) {
       log.error("Failed to save LoadingInformation {}", request.getDischargingInfoId());
       e.printStackTrace();
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       throw new GenericServiceException(
           "Failed to save Loading Information",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
