@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output , ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DATATABLE_FIELD_TYPE } from 'apps/cpdss/src/app/shared/components/datatable/datatable.model';
 import { CommonApiService } from 'apps/cpdss/src/app/shared/services/common/common-api.service';
@@ -6,6 +6,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { RULES_TABS, RULE_TYPES } from '../../../core/models/rules.model';
 import { RuleService } from '../../services/rule.service';
+import { RulesTableComponent } from '../../../core/components/rules-table/rules-table.component';
 /**
  * Component class for rules.
  *
@@ -21,7 +22,7 @@ import { RuleService } from '../../services/rule.service';
 
 
 export class RulesComponent implements OnInit {
-
+  @ViewChild('rulesTable') rulesTable: RulesTableComponent;
   @Input() visible = true;
   @Input() selectedLoadableStudyId;
  
@@ -153,9 +154,10 @@ export class RulesComponent implements OnInit {
    * @memberof RulesComponent
    */
   triggerSaveChanges() {
-    this.rulesService.save.next();   
-    this.onClose()
-    
+    this.rulesService.save.next(); 
+    if(this.rulesTable.rulesForm.valid){
+      this.onClose();
+    }
   }
 
  

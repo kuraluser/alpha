@@ -44,6 +44,8 @@ service VesselInfoService {
 	rpc GetVesselValveSequence(VesselRequest) returns (VesselValveSequenceReply) {}
 	
 	rpc GetLoadingInfoRules(LoadingInfoRulesRequest) returns (LoadingInfoRulesReply) {}
+	
+	rpc GetVesselsInformation(VesselsInfoRequest) returns (VesselsInformationReply) {}
 }
 
 // Mapped to pump_type Table in vessel DB
@@ -99,41 +101,44 @@ message VesselDetail {
 	string charterer = 7;
 	repeated LoadLineDetail loadLines = 8;
 	string code = 9;
-  string portOfRegistry = 10;
-  string builder = 11;
-  string officialNumber = 12;
-  string signalLetter = 13;
-  int64 navigationAreaId = 14;
-  string typeOfShip = 15;
-  string registerLength = 16;
-  string lengthOverall = 17;
-  string lengthBetweenPerpendiculars = 18;
-  string breadthMolded = 19;
-  string depthMolded = 20;
-  string designedLoaddraft = 21;
-  string draftFullLoadSummer = 22;
-  string thicknessOfUpperDeckStringerPlate = 23;
-  string thicknessOfKeelplate = 24;
-  string deadweight = 25;
-  string lightweight = 26;
-  string lcg = 27;
-  string keelToMastHeight = 28;
-  string deadweightConstant = 29;
-  string provisionalConstant = 30;
-  string deadweightConstantLcg = 31;
-  string provisionalConstantLcg = 32;
-  string grossTonnage = 33;
-  string netTonnage = 34;
-  string deadweightConstantTcg = 35;
-  string frameSpace3l = 36;
-  string frameSpace7l = 37;
-  bool hasLoadicator = 38;
-  string homogeneousLoadingRate = 39;
-  string wingTankLoadingRate = 40;
-  string centerTankLoadingRate = 41;
-  string maxLoadingRate = 42;
+    string portOfRegistry = 10;
+    string builder = 11;
+    string officialNumber = 12;
+    string signalLetter = 13;
+    int64 navigationAreaId = 14;
+    string typeOfShip = 15;
+    string registerLength = 16;
+    string lengthOverall = 17;
+    string lengthBetweenPerpendiculars = 18;
+    string breadthMolded = 19;
+    string depthMolded = 20;
+    string designedLoaddraft = 21;
+    string draftFullLoadSummer = 22;
+    string thicknessOfUpperDeckStringerPlate = 23;
+    string thicknessOfKeelplate = 24;
+    string deadweight = 25;
+    string lightweight = 26;
+    string lcg = 27;
+    string keelToMastHeight = 28;
+    string deadweightConstant = 29;
+    string provisionalConstant = 30;
+    string deadweightConstantLcg = 31;
+    string provisionalConstantLcg = 32;
+    string grossTonnage = 33;
+    string netTonnage = 34;
+    string deadweightConstantTcg = 35;
+    string frameSpace3l = 36;
+    string frameSpace7l = 37;
+    bool hasLoadicator = 38;
+    string homogeneousLoadingRate = 39;
+    string wingTankLoadingRate = 40;
+    string centerTankLoadingRate = 41;
+    string maxLoadingRate = 42;
 	string minLoadingRate = 43;
 	string bmSfModelType = 44;
+    string maxLoadRate = 45;
+    string mastRiser = 46;
+    string heightOfManifoldAboveDeck = 47;
 }
 
 message VesselLoadableQuantityDetails {
@@ -618,4 +623,35 @@ message BendingMomentType1 {
 	  string ruleType = 2;
 	}
 	
+	message VesselsInfoRequest{
+		int64 pageSize = 1;
+		int64 pageNo = 2;
+		string sortBy = 3;
+      	string orderBy = 4;
+		string vesselName = 5;
+		string vesselType = 6;
+		string owner = 7;
+		string builder = 8;
+		string dateOfLaunch = 9;
+		string signalLetter = 10;
+		string officialNumber = 11;	
+	}
+	
+	message VesselsInformation{
+		int64 vesselId = 1;
+		string vesselName = 2;
+		string vesselType = 3;
+		string owner = 4;
+		string builder = 5;
+		string dateOfLaunch = 6;
+		string signalLetter = 7;
+		string officialNumber = 8;
+	
+	}
+	
+	message VesselsInformationReply{
+		repeated VesselsInformation vesselsInformation = 1;
+		ResponseStatus responseStatus = 2;
+		int64 totalElement = 3;
+	}
 	

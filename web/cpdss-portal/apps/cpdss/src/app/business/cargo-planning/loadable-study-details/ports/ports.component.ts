@@ -264,7 +264,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       layCanArray.push(layCanFrom)
       layCanArray.push(layCanTo)
     }
-    const minAirDraft = this.loadableStudyDetailsTransformationService.getMinAirDraft();
+    const minAirDraft = Number(this.loadableStudyDetailsTransformationService.getMinAirDraft().toFixed(2));
     return this.fb.group({
       port: this.fb.control(ports.port.value, [Validators.required, portDuplicationValidator('port')]),
       portOrder: this.fb.control(ports.portOrder),

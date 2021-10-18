@@ -130,11 +130,14 @@ public class CommunicationService {
   private void savePatternInShipSide(EnvoyReader.EnvoyReaderResultReply erReply)
       throws GenericServiceException {
     String jsonResult = erReply.getPatternResultJson();
-    log.info("Pattern has reached in ship side from shore side");
+
     // log.info("------Pattern details payload : " + jsonResult);
     LoadablePatternAlgoRequest loadablePatternAlgoRequest =
         new Gson()
             .fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadablePatternAlgoRequest.class);
+    log.info(
+        "Pattern has reached in ship side from shore side : "
+            + loadablePatternAlgoRequest.getLoadablePatternId());
     Optional<LoadablePattern> loadablePatternOpt =
         this.loadablePatternRepository.findByIdAndIsActive(
             loadablePatternAlgoRequest.getLoadablePatternId(), true);
@@ -165,6 +168,8 @@ public class CommunicationService {
                   algoErrorsRepository.save(algoErrors);
                 });
       }
+      loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatusByMessageId(
+          LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, loadablePatternAlgoRequest.getMessageId(), true);
     } else {
       loadablePatternService.deleteExistingPlanDetails(loadablePatternOpt.get());
       if (loadablePatternAlgoRequest.getPatternDetails() != null) {
@@ -172,11 +177,9 @@ public class CommunicationService {
             loadablePatternAlgoRequest.getPatternDetails(), loadablePatternOpt.get());
       }
       if (!loadablePatternAlgoRequest.getHasLoadicator()) {
-        loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
-            LOADABLE_PATTERN_VALIDATION_SUCCESS_ID,
-            loadablePatternAlgoRequest.getProcessId(),
-            true);
-        log.info("----pattern persisted in ship without loadicator");
+        log.info(
+            "----pattern persisted in ship without loadicator : "
+                + loadablePatternAlgoRequest.getMessageId());
       } else {
         loadicatorService.updateFeedbackLoopParameters(
             loadablePatternAlgoRequest.getLoadablePatternId(),
@@ -184,12 +187,13 @@ public class CommunicationService {
             false,
             loadablePatternAlgoRequest.getFeedBackLoopCount(),
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
-        loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
-            LOADABLE_PATTERN_VALIDATION_SUCCESS_ID,
-            loadablePatternAlgoRequest.getProcessId(),
-            true);
-        log.info("----pattern persisted in ship with loadicator");
+
+        log.info(
+            "----pattern persisted in ship with loadicator : "
+                + loadablePatternAlgoRequest.getMessageId());
       }
+      loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatusByMessageId(
+          LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, loadablePatternAlgoRequest.getMessageId(), true);
     }
     log.info("Pattern has successfully updated in ship");
   }
@@ -311,8 +315,10 @@ public class CommunicationService {
     loadablePlanService.updateProcessIdForLoadablePattern(
         algoResponse.getProcessId(),
         loadablePatternOpt.get(),
-        LOADABLE_PATTERN_VALIDATION_STARTED_ID);
-    log.info("Algo response : " + algoResponse.toString());
+        LOADABLE_PATTERN_VALIDATION_STARTED_ID,
+        "",
+        true);
+    log.info("Algo response in shore side (Stowage Edit): " + algoResponse.toString());
   }
 
   private void processAlgoFromShore(LoadableStudy loadableStudyEntity)

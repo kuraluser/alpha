@@ -39,4 +39,10 @@ public class LoadablePatternAlgoStatus extends EntityDoc {
   @JoinColumn(name = "loadable_study_status", referencedColumnName = "id")
   @ManyToOne
   private LoadableStudyStatus loadableStudyStatus;
+
+  @Column(name = "message_id")
+  private String messageId;
+
+  @Column(name = "generated_from_shore")
+  private Boolean generateFromShore;
 }

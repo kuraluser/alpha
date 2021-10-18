@@ -126,6 +126,16 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
                       extensionRegistry));
               break;
             }
+          case 88:
+            {
+              cowWithCargoEnable_ = input.readBool();
+              break;
+            }
+          case 96:
+            {
+              dischargingInfoId_ = input.readInt64();
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -417,6 +427,23 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     return needFlushingOil_;
   }
 
+  public static final int COWWITHCARGOENABLE_FIELD_NUMBER = 11;
+  private boolean cowWithCargoEnable_;
+  /**
+   *
+   *
+   * <pre>
+   * update in table
+   * </pre>
+   *
+   * <code>bool cowWithCargoEnable = 11;</code>
+   *
+   * @return The cowWithCargoEnable.
+   */
+  public boolean getCowWithCargoEnable() {
+    return cowWithCargoEnable_;
+  }
+
   public static final int COWTANKDETAILS_FIELD_NUMBER = 10;
   private java.util.List<com.cpdss.common.generated.discharge_plan.CowTankDetails> cowTankDetails_;
   /** <code>repeated .CowTankDetails cowTankDetails = 10;</code> */
@@ -441,6 +468,17 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
   public com.cpdss.common.generated.discharge_plan.CowTankDetailsOrBuilder
       getCowTankDetailsOrBuilder(int index) {
     return cowTankDetails_.get(index);
+  }
+
+  public static final int DISCHARGINGINFOID_FIELD_NUMBER = 12;
+  private long dischargingInfoId_;
+  /**
+   * <code>int64 dischargingInfoId = 12;</code>
+   *
+   * @return The dischargingInfoId.
+   */
+  public long getDischargingInfoId() {
+    return dischargingInfoId_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -488,6 +526,12 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     for (int i = 0; i < cowTankDetails_.size(); i++) {
       output.writeMessage(10, cowTankDetails_.get(i));
     }
+    if (cowWithCargoEnable_ != false) {
+      output.writeBool(11, cowWithCargoEnable_);
+    }
+    if (dischargingInfoId_ != 0L) {
+      output.writeInt64(12, dischargingInfoId_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -528,6 +572,12 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     for (int i = 0; i < cowTankDetails_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(10, cowTankDetails_.get(i));
     }
+    if (cowWithCargoEnable_ != false) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(11, cowWithCargoEnable_);
+    }
+    if (dischargingInfoId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(12, dischargingInfoId_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -553,7 +603,9 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     if (!getTrimCowMax().equals(other.getTrimCowMax())) return false;
     if (getNeedFreshCrudeStorage() != other.getNeedFreshCrudeStorage()) return false;
     if (getNeedFlushingOil() != other.getNeedFlushingOil()) return false;
+    if (getCowWithCargoEnable() != other.getCowWithCargoEnable()) return false;
     if (!getCowTankDetailsList().equals(other.getCowTankDetailsList())) return false;
+    if (getDischargingInfoId() != other.getDischargingInfoId()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -583,10 +635,14 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getNeedFreshCrudeStorage());
     hash = (37 * hash) + NEEDFLUSHINGOIL_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getNeedFlushingOil());
+    hash = (37 * hash) + COWWITHCARGOENABLE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getCowWithCargoEnable());
     if (getCowTankDetailsCount() > 0) {
       hash = (37 * hash) + COWTANKDETAILS_FIELD_NUMBER;
       hash = (53 * hash) + getCowTankDetailsList().hashCode();
     }
+    hash = (37 * hash) + DISCHARGINGINFOID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getDischargingInfoId());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -744,12 +800,16 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
 
       needFlushingOil_ = false;
 
+      cowWithCargoEnable_ = false;
+
       if (cowTankDetailsBuilder_ == null) {
         cowTankDetails_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000001);
       } else {
         cowTankDetailsBuilder_.clear();
       }
+      dischargingInfoId_ = 0L;
+
       return this;
     }
 
@@ -787,6 +847,7 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
       result.trimCowMax_ = trimCowMax_;
       result.needFreshCrudeStorage_ = needFreshCrudeStorage_;
       result.needFlushingOil_ = needFlushingOil_;
+      result.cowWithCargoEnable_ = cowWithCargoEnable_;
       if (cowTankDetailsBuilder_ == null) {
         if (((bitField0_ & 0x00000001) != 0)) {
           cowTankDetails_ = java.util.Collections.unmodifiableList(cowTankDetails_);
@@ -796,6 +857,7 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
       } else {
         result.cowTankDetails_ = cowTankDetailsBuilder_.build();
       }
+      result.dischargingInfoId_ = dischargingInfoId_;
       onBuilt();
       return result;
     }
@@ -879,6 +941,9 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
       if (other.getNeedFlushingOil() != false) {
         setNeedFlushingOil(other.getNeedFlushingOil());
       }
+      if (other.getCowWithCargoEnable() != false) {
+        setCowWithCargoEnable(other.getCowWithCargoEnable());
+      }
       if (cowTankDetailsBuilder_ == null) {
         if (!other.cowTankDetails_.isEmpty()) {
           if (cowTankDetails_.isEmpty()) {
@@ -905,6 +970,9 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
             cowTankDetailsBuilder_.addAllMessages(other.cowTankDetails_);
           }
         }
+      }
+      if (other.getDischargingInfoId() != 0L) {
+        setDischargingInfoId(other.getDischargingInfoId());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1520,6 +1588,57 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
       return this;
     }
 
+    private boolean cowWithCargoEnable_;
+    /**
+     *
+     *
+     * <pre>
+     * update in table
+     * </pre>
+     *
+     * <code>bool cowWithCargoEnable = 11;</code>
+     *
+     * @return The cowWithCargoEnable.
+     */
+    public boolean getCowWithCargoEnable() {
+      return cowWithCargoEnable_;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * update in table
+     * </pre>
+     *
+     * <code>bool cowWithCargoEnable = 11;</code>
+     *
+     * @param value The cowWithCargoEnable to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCowWithCargoEnable(boolean value) {
+
+      cowWithCargoEnable_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * update in table
+     * </pre>
+     *
+     * <code>bool cowWithCargoEnable = 11;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearCowWithCargoEnable() {
+
+      cowWithCargoEnable_ = false;
+      onChanged();
+      return this;
+    }
+
     private java.util.List<com.cpdss.common.generated.discharge_plan.CowTankDetails>
         cowTankDetails_ = java.util.Collections.emptyList();
 
@@ -1743,6 +1862,39 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
         cowTankDetails_ = null;
       }
       return cowTankDetailsBuilder_;
+    }
+
+    private long dischargingInfoId_;
+    /**
+     * <code>int64 dischargingInfoId = 12;</code>
+     *
+     * @return The dischargingInfoId.
+     */
+    public long getDischargingInfoId() {
+      return dischargingInfoId_;
+    }
+    /**
+     * <code>int64 dischargingInfoId = 12;</code>
+     *
+     * @param value The dischargingInfoId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargingInfoId(long value) {
+
+      dischargingInfoId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 dischargingInfoId = 12;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDischargingInfoId() {
+
+      dischargingInfoId_ = 0L;
+      onChanged();
+      return this;
     }
 
     @java.lang.Override

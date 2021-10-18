@@ -26,7 +26,7 @@ public interface PortLoadingPlanRobDetailsRepository
           Long fkId, Integer conditionType, Integer valueType, Boolean isActive);
 
   @Query(
-      "FROM PortLoadingPlanRobDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3 ORDER BY PL.id")
+      "FROM PortLoadingPlanRobDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3 AND LI.isActive = ?3 ORDER BY PL.id")
   public List<PortLoadingPlanRobDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
 

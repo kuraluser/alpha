@@ -1058,6 +1058,9 @@ public class LoadicatorService {
           jsonDataRepository.findTopByReferenceXIdAndJsonTypeXIdOrderByIdDesc(
               loadablePatternId, type.get());
       if (jsonData != null && jsonData.getJsonData() != null) {
+        Optional<LoadableStudyCommunicationStatus> patternValidateCommunicationStatus =
+            this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
+                loadablePatternId, MessageTypes.VALIDATEPLAN.getMessageType());
         PatternValidateResultRequest patternValidateResultRequest =
             new Gson().fromJson(jsonData.getJsonData(), PatternValidateResultRequest.class);
         LoadablePatternAlgoRequest loadablePatternAlgoRequest = new LoadablePatternAlgoRequest();
@@ -1070,6 +1073,8 @@ public class LoadicatorService {
         Optional.ofNullable(processId).ifPresent(loadablePatternAlgoRequest::setProcessId);
         Optional.ofNullable(loadablePatternId)
             .ifPresent(loadablePatternAlgoRequest::setLoadablePatternId);
+        loadablePatternAlgoRequest.setMessageId(
+            patternValidateCommunicationStatus.get().getMessageUUID());
         PatternDetails patternDetails = new PatternDetails();
         loadablePatternService.fetchSavedPatternFromDB(patternDetails, loadablePatternOpt.get());
         loadablePatternAlgoRequest.setPatternDetails(patternDetails);
@@ -1097,7 +1102,7 @@ public class LoadicatorService {
             lsCommunicationStatus.setCommunicationStatus(
                 CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
           }
-          lsCommunicationStatus.setReferenceId(loadablePatternOpt.get().getLoadableStudy().getId());
+          lsCommunicationStatus.setReferenceId(loadablePatternOpt.get().getId());
           lsCommunicationStatus.setMessageType(MessageTypes.PATTERNDETAIL.getMessageType());
           lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
           LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =

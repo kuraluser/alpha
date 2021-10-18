@@ -19,7 +19,7 @@ public interface PortLoadingPlanStowageTempDetailsRepository
       Long loadingInfoId, Boolean isActive);
 
   @Query(
-      "FROM PortLoadingPlanStowageTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3 ORDER BY PL.id")
+      "FROM PortLoadingPlanStowageTempDetails PL INNER JOIN LoadingInformation LI ON PL.loadingInformation = LI.id AND LI.loadablePatternXId = ?1 AND PL.portRotationXId = ?2 AND PL.isActive = ?3 AND LI.isActive = ?3 ORDER BY PL.id")
   public List<PortLoadingPlanStowageTempDetails> findByPatternIdAndPortRotationIdAndIsActive(
       Long patternId, Long portRotationId, Boolean isActive);
 
@@ -37,14 +37,17 @@ public interface PortLoadingPlanStowageTempDetailsRepository
   @Transactional
   @Modifying
   @Query(
-      "Update PortLoadingPlanStowageTempDetails set quantity = ?1, ullage = ?2, quantityM3 = ?3, api = ?4, temperature = ?5"
-          + " where tankXId = ?6 and loading_information_xid =?7 and arrival_departutre =?8")
+      "Update PortLoadingPlanStowageTempDetails set quantity = ?1, ullage = ?2, quantityM3 = ?3, api = ?4, temperature = ?5, correctedUllage = ?6, fillingPercentage = ?7, correctionFactor = ?8"
+          + " where tankXId = ?9 and loading_information_xid =?10 and arrival_departutre =?11")
   public void updatePortLoadingPlanStowageDetailsRepository(
       @Param("quantity") BigDecimal quantity,
       @Param("ullage") BigDecimal ullage,
       @Param("quantity_m3") BigDecimal quantity_m3,
       @Param("api") BigDecimal api,
       @Param("temperature") BigDecimal temperature,
+      @Param("correctedUllage") BigDecimal correctedUllage,
+      @Param("fillingPercentage") BigDecimal fillingPercentage,
+      @Param("correctionFactor") BigDecimal correctionFactor,
       @Param("tank_xid") Long tankXId,
       @Param("loading_information_xid") Long loadingId,
       @Param("arrival_departutre") Long arrivalDepartutre);

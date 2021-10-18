@@ -8,6 +8,7 @@ import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.EductorOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply.Builder;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
@@ -28,9 +29,54 @@ import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
 import com.cpdss.loadingplan.domain.CommunicationStatus;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoRequest;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoResponse;
+import com.cpdss.loadingplan.entity.AlgoErrorHeading;
+import com.cpdss.loadingplan.entity.AlgoErrors;
+import com.cpdss.loadingplan.entity.BallastOperation;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.LoadingPlanCommunicationService;
+import com.cpdss.loadingplan.entity.BallastValve;
+import com.cpdss.loadingplan.entity.CargoLoadingRate;
+import com.cpdss.loadingplan.entity.CargoValve;
+import com.cpdss.loadingplan.entity.DeballastingRate;
+import com.cpdss.loadingplan.entity.EductionOperation;
+import com.cpdss.loadingplan.entity.LoadingInformation;
+import com.cpdss.loadingplan.entity.LoadingInformationAlgoStatus;
+import com.cpdss.loadingplan.entity.LoadingInformationStatus;
+import com.cpdss.loadingplan.entity.LoadingPlanBallastDetails;
+import com.cpdss.loadingplan.entity.LoadingPlanRobDetails;
+import com.cpdss.loadingplan.entity.LoadingSequenceStabilityParameters;
+import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
+import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
+import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
+import com.cpdss.loadingplan.repository.AlgoErrorHeadingRepository;
+import com.cpdss.loadingplan.repository.AlgoErrorsRepository;
+import com.cpdss.loadingplan.repository.BallastOperationRepository;
+import com.cpdss.loadingplan.repository.BallastValveRepository;
+import com.cpdss.loadingplan.repository.CargoLoadingRateRepository;
+import com.cpdss.loadingplan.repository.CargoValveRepository;
+import com.cpdss.loadingplan.repository.DeballastingRateRepository;
+import com.cpdss.loadingplan.repository.EductionOperationRepository;
+import com.cpdss.loadingplan.repository.LoadingInformationAlgoStatusRepository;
+import com.cpdss.loadingplan.repository.LoadingInformationRepository;
+import com.cpdss.loadingplan.repository.LoadingInformationStatusRepository;
+import com.cpdss.loadingplan.repository.LoadingPlanBallastDetailsRepository;
+import com.cpdss.loadingplan.repository.LoadingPlanCommingleDetailsRepository;
+import com.cpdss.loadingplan.repository.LoadingPlanPortWiseDetailsRepository;
+import com.cpdss.loadingplan.repository.LoadingPlanRobDetailsRepository;
+import com.cpdss.loadingplan.repository.LoadingPlanStabilityParametersRepository;
+import com.cpdss.loadingplan.repository.LoadingPlanStowageDetailsRepository;
+import com.cpdss.loadingplan.repository.LoadingSequenceRepository;
+import com.cpdss.loadingplan.repository.LoadingSequenceStabiltyParametersRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanBallastTempDetailsRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanCommingleDetailsRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanStowageTempDetailsRepository;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -97,6 +143,7 @@ public class LoadingPlanAlgoService {
 
   @Autowired LoadingPlanCommingleDetailsRepository loadingPlanCommingleDetailsRepository;
   @Autowired PortLoadingPlanCommingleDetailsRepository portLoadingPlanCommingleDetailsRepository;
+  @Autowired EductionOperationRepository eductionOperationRepository;
 
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
@@ -497,6 +544,7 @@ public class LoadingPlanAlgoService {
           cargoLoadingRateRepository.deleteByLoadingSequence(loadingSequence);
           deballastingRateRepository.deleteByLoadingSequence(loadingSequence);
           deleteLoadingPlanPortWiseDetailsByLoadingSequence(loadingSequence);
+          eductionOperationRepository.deleteByLoadingSequence(loadingSequence);
         });
   }
 
@@ -651,6 +699,25 @@ public class LoadingPlanAlgoService {
         savedLoadingSequence, sequence.getLoadingPlanPortWiseDetailsList());
     saveCargoLoadingRates(savedLoadingSequence, sequence.getLoadingRatesList());
     saveBallastPumps(savedLoadingSequence, sequence.getBallastOperationsList());
+    saveEductorOperations(savedLoadingSequence, sequence.getEductorOperation());
+  }
+
+  /**
+   * @param savedLoadingSequence
+   * @param eductorOperation
+   */
+  private void saveEductorOperations(
+      com.cpdss.loadingplan.entity.LoadingSequence loadingSequence,
+      EductorOperation eductorOperation) {
+    log.info("Saving Eductor Operation for Loading Sequence {}", loadingSequence.getId());
+    EductionOperation eductionOperation = new EductionOperation();
+    eductionOperation.setEductorsUsed(eductorOperation.getPumpsUsed());
+    eductionOperation.setEndTime(eductorOperation.getEndTime());
+    eductionOperation.setIsActive(true);
+    eductionOperation.setLoadingSequence(loadingSequence);
+    eductionOperation.setStartTime(eductorOperation.getStartTime());
+    eductionOperation.setTanksUsed(eductorOperation.getTanksUsed());
+    eductionOperationRepository.save(eductionOperation);
   }
 
   private void saveBallastPumps(
