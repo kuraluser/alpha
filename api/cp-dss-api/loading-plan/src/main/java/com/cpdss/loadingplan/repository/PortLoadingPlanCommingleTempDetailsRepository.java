@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
+import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleTempDetails;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
@@ -53,4 +54,7 @@ public interface PortLoadingPlanCommingleTempDetailsRepository
       "Update PortLoadingPlanCommingleTempDetails set isActive = false WHERE loadingInformation = ?1 and conditionType = ?2 and isActive = true")
   public void deleteExistingByLoadingInfoAndConditionType(
       Long loadingInfoId, Integer conditionType);
+
+  List<PortLoadingPlanCommingleTempDetails> findByLoadablePatternIdAndIsActiveTrue(
+          Long loadablePatternId);
 }
