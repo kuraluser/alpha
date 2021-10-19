@@ -1,12 +1,15 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service;
 
+import static java.nio.file.StandardOpenOption.WRITE;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.filerepo.FileRepoGetResponse;
 import com.cpdss.gateway.domain.filerepo.FileRepoReply;
+import com.cpdss.gateway.domain.filerepo.FileRepoResponse;
 import com.cpdss.gateway.entity.FileRepo;
 import com.cpdss.gateway.repository.FileRepoRepository;
 import java.io.File;
@@ -14,16 +17,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -39,7 +39,7 @@ public class FileRepoService {
 
   private static final int ATTACHEMENT_MAX_SIZE = 1 * 1024 * 1024;
   private static final List<String> ATTACHMENT_ALLOWED_EXTENSIONS =
-      Arrays.asList("docx", "pdf", "txt", "jpg", "png", "msg", "eml");
+      Arrays.asList("docx", "pdf", "txt", "csv", "xlsx");
 
   @Autowired FileRepoRepository fileRepoRepository;
 
@@ -58,10 +58,9 @@ public class FileRepoService {
     //         filtering each column
     List<FileRepo> list = this.getFilteredValues(filterParams, fileRepoPage.toList());
     log.info("Retrieved filtered repos : {}", list.size());
-    Page<FileRepo> page =
-        new PageImpl<FileRepo>(list, PageRequest.of(pageNo, pageSize), list.size());
-    response.setFileRepos(list);
-    response.setTotalElements(fileRepoPage.getTotalElements());
+    List<FileRepoResponse> formattedList = this.formatFileRepos(list);
+    response.setFileRepos(formattedList);
+    response.setTotalElements(Long.valueOf(list.size()));
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
@@ -197,13 +196,14 @@ public class FileRepoService {
     }
     String folderLocation = "/file-repo/" + voyageNo + "/";
     try {
+      System.out.println(this.rootFolder + folderLocation);
       Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
 
       String fileName = originalFileName.substring(0, originalFileName.lastIndexOf("."));
       String filePath = folderLocation + fileName + '.' + extension;
       Path path = Paths.get(this.rootFolder + filePath);
       Files.createFile(path);
-      Files.write(path, file.getBytes());
+      Files.write(path, file.getBytes(), WRITE);
 
       repo.setVoyageNumber(voyageNo);
       repo.setFileName(originalFileName);
@@ -225,5 +225,31 @@ public class FileRepoService {
           CommonErrorCodes.E_HTTP_INTERNAL_SERVER_ERROR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  private List<FileRepoResponse> formatFileRepos(List<FileRepo> list) {
+    List<FileRepoResponse> formattedList = new ArrayList<>();
+    if (list.size() > 0) {
+      list.forEach(
+          fileRepo -> {
+            FileRepoResponse formattedRepo = new FileRepoResponse();
+            formattedRepo.setId(fileRepo.getId());
+            formattedRepo.setCreatedBy(fileRepo.getCreatedBy());
+            formattedRepo.setCategory(fileRepo.getCategory());
+            formattedRepo.setCreatedDate(
+                fileRepo.getCreatedDate() != null
+                    ? fileRepo.getCreatedDate().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"))
+                    : "");
+            formattedRepo.setFileName(fileRepo.getFileName());
+            formattedRepo.setFileType(fileRepo.getFileType());
+            formattedRepo.setIsActive(fileRepo.getIsActive());
+            formattedRepo.setLastModifiedBy(fileRepo.getLastModifiedBy());
+            formattedRepo.setIsTransferred(fileRepo.getIsTransferred());
+            formattedRepo.setSection(fileRepo.getSection());
+            formattedRepo.setVoyageNumber(fileRepo.getVoyageNumber());
+            formattedList.add(formattedRepo);
+          });
+    }
+    return formattedList;
   }
 }

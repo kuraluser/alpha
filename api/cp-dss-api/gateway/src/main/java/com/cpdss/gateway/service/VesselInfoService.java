@@ -7,15 +7,21 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
+import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
 import com.cpdss.common.generated.VesselInfo.ParameterValue;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
+import com.cpdss.common.generated.VesselInfo.VesselParticulars;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
 import com.cpdss.common.generated.VesselInfo.VesselRuleRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
+import com.cpdss.common.generated.VesselInfo.VesselsInfoRequest;
+import com.cpdss.common.generated.VesselInfo.VesselsInfoRequest.Builder;
+import com.cpdss.common.generated.VesselInfo.VesselsInformation;
+import com.cpdss.common.generated.VesselInfo.VesselsInformationReply;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.redis.CommonKeyValueStore;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -23,6 +29,7 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
+import com.cpdss.gateway.domain.loadingplan.VesselParticularsForExcel;
 import com.cpdss.gateway.domain.user.UserStatusValue;
 import com.cpdss.gateway.domain.user.UserType;
 import com.cpdss.gateway.domain.vessel.*;
@@ -1087,6 +1094,10 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     vessel.setFrameSpace7l(vesselAlgoReply.getVesselDetail().getFrameSpace7L());
     vessel.setHasLoadicator(vesselAlgoReply.getVesselDetail().getHasLoadicator());
     vessel.setBmSfModelType(vesselAlgoReply.getVesselDetail().getBmSfModelType());
+    vessel.setMaxLoadRate(vesselAlgoReply.getVesselDetail().getMaxLoadRate());
+    vessel.setMastRiser(vesselAlgoReply.getVesselDetail().getMastRiser());
+    vessel.setHeightOfManifoldAboveDeck(
+        vesselAlgoReply.getVesselDetail().getHeightOfManifoldAboveDeck());
     return vessel;
   }
 
@@ -1239,5 +1250,108 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
               bottomLineList.add(bottomLine);
             });
     return bottomLineList;
+  }
+
+  public VesselsInfoResponse getAllVesselsInormation(
+      int pageSize,
+      int pageNo,
+      String sortBy,
+      String orderBy,
+      String vesselName,
+      String vesselType,
+      String builder,
+      String dateOfLaunch,
+      String correlationId)
+      throws GenericServiceException {
+    Builder newBuilder = VesselsInfoRequest.newBuilder();
+    if (dateOfLaunch != null) newBuilder.setDateOfLaunch(dateOfLaunch);
+    if (orderBy != null) newBuilder.setOrderBy(orderBy);
+    if (sortBy != null) newBuilder.setSortBy(sortBy);
+    if (vesselName != null) newBuilder.setVesselName(vesselName);
+    if (vesselType != null) newBuilder.setVesselType(vesselType);
+    if (builder != null) newBuilder.setBuilder(builder);
+
+    newBuilder.setPageNo(pageNo);
+    newBuilder.setPageSize(pageSize);
+    VesselsInformationReply vesselsInformationReply =
+        vesselInfoGrpcService.getVesselsInformation(newBuilder.build());
+    if (!SUCCESS.equals(vesselsInformationReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get all vessel information ",
+          vesselsInformationReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(vesselsInformationReply.getResponseStatus().getCode())));
+    }
+    List<VesselInformation> vesselInfoList = new ArrayList<>();
+    VesselsInfoResponse response = new VesselsInfoResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    List<VesselsInformation> vesselsInformationList =
+        vesselsInformationReply.getVesselsInformationList();
+    vesselsInformationList.forEach(
+        item -> {
+          VesselInformation info = new VesselInformation();
+          info.setBuilder(item.getBuilder());
+          info.setDateOfLaunch(item.getDateOfLaunch());
+          info.setOfficialNumber(item.getOfficialNumber());
+          info.setSignalLetter(item.getSignalLetter());
+          info.setVesselId(item.getVesselId());
+          info.setVesselName(item.getVesselName());
+          info.setVesselType(item.getVesselType());
+          vesselInfoList.add(info);
+        });
+    response.setVesselsInfo(vesselInfoList);
+    response.setTotalElements(vesselsInformationReply.getTotalElement());
+    return response;
+  }
+
+  public VesselParticularsForExcel getVesselParticulars(Long vesselId)
+      throws NumberFormatException, GenericServiceException {
+    log.info("Getting vessel particulars for vessel id : {}", vesselId);
+    VesselParticularsForExcel vesselParticulars = new VesselParticularsForExcel();
+    LoadingInfoRulesRequest.Builder request = LoadingInfoRulesRequest.newBuilder();
+    request.setVesselId(vesselId);
+    VesselParticulars reply = vesselInfoGrpcService.getVesselParticulars(request.build());
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "GRPC call failed to fetch vessels particulars",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+    }
+    vesselParticulars.setVesselId(vesselId);
+    Optional.ofNullable(reply.getVesselTypeId()).ifPresent(vesselParticulars::setVesselTypeId);
+    Optional.ofNullable(reply.getShipMaxLoadingRate())
+        .ifPresent(vesselParticulars::setShipMaxLoadingRate);
+    Optional.ofNullable(reply.getShipMaxFlowRate())
+        .ifPresent(vesselParticulars::setShipMaxFlowRate);
+    Optional.ofNullable(reply.getShipMaxFlowRatePerTank())
+        .ifPresent(vesselParticulars::setShipMaxFlowRatePerTank);
+    Optional.ofNullable(reply.getMaxLoadingRateSlopP())
+        .ifPresent(vesselParticulars::setMaxLoadingRateSlopP);
+    Optional.ofNullable(reply.getMaxLoadingRateSlopS())
+        .ifPresent(vesselParticulars::setMaxLoadingRateSlopS);
+    Optional.ofNullable(reply.getBallastPumpCount())
+        .ifPresent(vesselParticulars::setBallastPumpCount);
+    Optional.ofNullable(reply.getCapacityPerPump())
+        .ifPresent(vesselParticulars::setCapacityPerPump);
+    Optional.ofNullable(reply.getShipManifold()).ifPresent(vesselParticulars::setShipManifold);
+    Optional.ofNullable(reply.getSummerDraft()).ifPresent(vesselParticulars::setSummerDraft);
+    Optional.ofNullable(reply.getTropicalDraft()).ifPresent(vesselParticulars::setTropicalDraft);
+    Optional.ofNullable(reply.getSummerDeadweight())
+        .ifPresent(vesselParticulars::setSummerDeadweight);
+    Optional.ofNullable(reply.getSummerDisplacement())
+        .ifPresent(vesselParticulars::setSummerDisplacement);
+    Optional.ofNullable(reply.getCargoTankCapacity())
+        .ifPresent(vesselParticulars::setCargoTankCapacity);
+    Optional.ofNullable(reply.getHighVelocityVentingPressure())
+        .ifPresent(vesselParticulars::setHighVelocityVentingPressure);
+    Optional.ofNullable(reply.getHighVelocityVentingVaccum())
+        .ifPresent(vesselParticulars::setHighVelocityVentingVaccum);
+    Optional.ofNullable(reply.getPvBreakerVentingPressure())
+        .ifPresent(vesselParticulars::setPvBreakerVentingPressure);
+    Optional.ofNullable(reply.getPvBreakerVentingVaccum())
+        .ifPresent(vesselParticulars::setPvBreakerVentingVaccum);
+    log.info("vessel particulars fetched succesfully");
+    return vesselParticulars;
   }
 }

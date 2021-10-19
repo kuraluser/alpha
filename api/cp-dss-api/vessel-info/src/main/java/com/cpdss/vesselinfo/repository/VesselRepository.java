@@ -8,6 +8,9 @@ import com.cpdss.vesselinfo.domain.VesselRule;
 import com.cpdss.vesselinfo.entity.Vessel;
 import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,9 +19,12 @@ import org.springframework.data.repository.query.Param;
  *
  * @author suhail.k
  */
-public interface VesselRepository extends CommonCrudRepository<Vessel, Long> {
+public interface VesselRepository
+    extends CommonCrudRepository<Vessel, Long>, JpaSpecificationExecutor<Vessel> {
 
   public List<Vessel> findByIsActive(boolean isActive);
+
+  public Page<Vessel> findByIsActive(boolean isActive, Pageable pageable);
 
   public Vessel findByIdAndIsActive(Long vesselId, boolean isActive);
 

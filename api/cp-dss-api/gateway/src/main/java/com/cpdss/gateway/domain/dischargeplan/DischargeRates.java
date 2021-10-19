@@ -12,13 +12,5 @@ public class DischargeRates {
   private BigDecimal maxDischargingRate;
   private BigDecimal minBallastRate;
   private BigDecimal maxBallastRate;
-  private BigDecimal lineContentRemaining;
-  private BigDecimal minDeBallastingRate;
-  private BigDecimal maxDeBallastingRate;
-  private Integer noticeTimeForRateReduction;
-  private Integer noticeTimeForStopDischarging;
-  private BigDecimal minDischargingRate;
-  private BigDecimal reducedDischargingRate;
-  private BigDecimal shoreDischargingRate;
   private Long id;
 }

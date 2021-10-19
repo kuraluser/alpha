@@ -631,6 +631,7 @@ message UpdateUllageDetailsResponse{
   repeated PortLoadablePlanStowageDetail portLoadablePlanStowageTempDetails = 6;
   repeated PortLoadingPlanBallastDetails portLoadingPlanBallastTempDetails = 7;
   repeated LoadablePlanCommingleDetails loadablePlanCommingleDetails = 8;
+  repeated LoadablePlanCommingleDetails loadablePlanCommingleTempDetails = 9;
 }
 
 message UllageCargoQuantityDetail{

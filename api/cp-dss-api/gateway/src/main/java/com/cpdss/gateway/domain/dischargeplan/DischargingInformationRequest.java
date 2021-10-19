@@ -35,4 +35,5 @@ public class DischargingInformationRequest {
   // re using the loading module
   private LoadingStagesRequest dischargingStages;
   private Boolean isDischargeInfoComplete; // validation logic at Front-end
+  private CowPlan cowPlan;
 }

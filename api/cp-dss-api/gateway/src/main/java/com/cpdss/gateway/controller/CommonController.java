@@ -100,7 +100,8 @@ public class CommonController {
       throws CommonRestException {
     try {
       // Get filters
-      List<String> filterKeys = Arrays.asList("voyageNo", "fileName");
+      List<String> filterKeys =
+          Arrays.asList("voyageNo", "fileName", "fileType", "section", "category");
 
       Map<String, String> filterParams =
           params.entrySet().stream()

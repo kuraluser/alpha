@@ -3063,6 +3063,11 @@ textarea{
     stroke-width: 0;
 }
 
+.sequence-cargo-group {
+  display: flex;
+  flex-direction: column;
+}
+
 .stabilityparams-chart {
  .highcharts-br + tspan {
    display: none;
