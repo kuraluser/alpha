@@ -85,7 +85,7 @@ public class LoadingPlanCommunicationService {
 
   public void getDataFromCommunication(Map<String, String> taskReqParams, String messageType)
       throws GenericServiceException {
-    log.info("Inside getDataFromCommunication messageType " + messageType);
+    log.info("Inside getDataFromCommunication messageType : " + messageType);
     try {
       EnvoyReader.EnvoyReaderResultReply erReply =
           getResultFromEnvoyReaderShore(taskReqParams, messageType);
