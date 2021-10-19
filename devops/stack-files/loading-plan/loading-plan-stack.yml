@@ -15,6 +15,7 @@ services:
     - REST_PORT=8080
     - GRPC_PORT=8090
     - ALGO_BASE_URL=${ALGO_BASE_URL}
+    - ENABLE_COMM=${ENABLE_COMM}
     - ATTACHMENT_ROOT_PATH=/data
     dns: 8.8.8.8
     healthcheck:
