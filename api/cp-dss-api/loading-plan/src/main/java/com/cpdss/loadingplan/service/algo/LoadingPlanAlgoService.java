@@ -166,6 +166,7 @@ public class LoadingPlanAlgoService {
   public void generateLoadingPlan(LoadingInfoAlgoRequest request, Builder builder)
       throws GenericServiceException {
     log.info("Generating Loading Plan");
+
     Optional<LoadingInformation> loadingInfoOpt =
         loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingInfoId());
 
@@ -175,8 +176,12 @@ public class LoadingPlanAlgoService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-
+    String processId=null;
+    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+            getLoadingInformationStatus(
+                    LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID);
     if (enableCommunication && env.equals("ship")) {
+      processId = UUID.randomUUID().toString();
       JsonArray jsonArray =
           loadingPlanStagingService.getCommunicationData(
               Arrays.asList(
@@ -185,7 +190,7 @@ public class LoadingPlanAlgoService {
                   "loading_berth_details",
                   "loading_delay",
                   "loading_machinary_in_use"),
-              UUID.randomUUID().toString(),
+                  processId,
               "loading-plan-service",
               loadingInfoOpt.get().getId());
 
@@ -224,20 +229,18 @@ public class LoadingPlanAlgoService {
       LoadingInformationAlgoResponse response =
           restTemplate.postForObject(
               planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
+      processId=response.getProcessId();
       log.info("LoadingInformationAlgoResponse:" + response);
-      // Set Loading Status
-      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-          getLoadingInformationStatus(
-              LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID);
-      loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
-      loadingInfoOpt.get().setIsLoadingSequenceGenerated(false);
-      loadingInfoOpt.get().setIsLoadingPlanGenerated(false);
-      loadingInformationRepository.save(loadingInfoOpt.get());
-      createLoadingInformationAlgoStatus(
-          loadingInfoOpt.get(), response.getProcessId(), loadingInfoStatusOpt.get(), null);
-      builder.setLoadingInfoId(loadingInfoOpt.get().getId());
-      builder.setProcessId(response.getProcessId());
     }
+    // Set Loading Status
+    loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
+    loadingInfoOpt.get().setIsLoadingSequenceGenerated(false);
+    loadingInfoOpt.get().setIsLoadingPlanGenerated(false);
+    loadingInformationRepository.save(loadingInfoOpt.get());
+    createLoadingInformationAlgoStatus(
+            loadingInfoOpt.get(), processId, loadingInfoStatusOpt.get(), null);
+    builder.setLoadingInfoId(loadingInfoOpt.get().getId());
+    builder.setProcessId(processId);
   }
 
   /**
@@ -416,11 +419,13 @@ public class LoadingPlanAlgoService {
                 UUID.randomUUID().toString(),
                 "loading-plan-pattern-generation-service",
                 loadingInfoOpt.get().getId());
+        log.info("Json Array in After Algo call: " + jsonArray.toString());
         EnvoyWriter.WriterReply ewReply =
             loadingPlancommunicationService.passRequestPayloadToEnvoyWriter(
                 jsonArray.toString(),
                 loadingInfoOpt.get().getVesselXId(),
                 MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
+        log.info("------- Envoy writer has called successfully in shore: " + ewReply.toString());
       }
       if (request.getHasLoadicator()) {
         log.info("Passing Loading Sequence to Loadicator");
@@ -703,7 +708,7 @@ public class LoadingPlanAlgoService {
   }
 
   /**
-   * @param savedLoadingSequence
+   * @param
    * @param eductorOperation
    */
   private void saveEductorOperations(
