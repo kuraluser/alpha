@@ -193,6 +193,9 @@ public class DischargeInformationService {
             portRotation.get().getId(),
             portRotation.get().getPortId()));
 
+    // setting discharge cargo nomination id
+    this.setDischargeCargoNominationId(vesselTankDetails);
+
     dischargeInformation.setDischargeDetails(dischargeDetails);
     dischargeInformation.setDischargeRates(dischargeRates);
     dischargeInformation.setBerthDetails(new LoadingBerthDetails(availableBerths, selectedBerths));
@@ -204,6 +207,23 @@ public class DischargeInformationService {
 
     dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
     return dischargeInformation;
+  }
+
+  public void setDischargeCargoNominationId(CargoVesselTankDetails vesselTankDetails) {
+    try {
+      for (var cQnt : vesselTankDetails.getCargoQuantities()) {
+        Optional<Long> id =
+            vesselTankDetails.getDischargeQuantityCargoDetails().stream()
+                .filter(v -> v.getCargoNominationId().equals(cQnt.getCargoNominationId()))
+                .findFirst()
+                .map(DischargeQuantityCargoDetails::getDischargeCargoNominationId);
+        if (id.isPresent()) {
+          cQnt.setDischargeCargoNominationId(id.get());
+        }
+      }
+    } catch (Exception e) {
+      log.error("Failed to set discharge cargo nomination id - {}", e.getMessage());
+    }
   }
 
   public DischargePlanResponse getDischargingPlan(
