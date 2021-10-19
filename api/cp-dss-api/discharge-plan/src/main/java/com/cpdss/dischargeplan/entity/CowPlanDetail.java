@@ -51,11 +51,11 @@ public class CowPlanDetail extends EntityDoc {
   private Boolean washTankWithDifferentCargo; // radio button for enable/disable CWC section
 
   // bi-directional many-to-one association to CowTankDetail
-  @OneToMany(mappedBy = "cowPlanDetail", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "cowPlanDetail", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private Set<CowTankDetail> cowTankDetails;
 
   // bi-directional many-to-one association to CowWithDifferentCargo
-  @OneToMany(mappedBy = "cowPlanDetail", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "cowPlanDetail", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private Set<CowWithDifferentCargo> cowWithDifferentCargos;
 
   @OneToOne(cascade = CascadeType.ALL)
