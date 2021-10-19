@@ -845,210 +845,214 @@ public class LoadableStudyRuleService {
                   listOfLSRulesPlan.add(rulePlan);
                 });
       } else {
-        if (!CollectionUtils.isEmpty(vesselRuleReply.getRulePlanList())
-            && vesselRuleReply.getRulePlanList().size() > 0) {
-          log.info("Fetch default vessel rules");
-          buildVesselRule(vesselRuleReply, listOfLSRulesPlan);
-        }
+        //        if (!CollectionUtils.isEmpty(vesselRuleReply.getRulePlanList())
+        //            && vesselRuleReply.getRulePlanList().size() > 0) {
+        //          log.info("Fetch default vessel rules");
+        //          buildVesselRule(vesselRuleReply, listOfLSRulesPlan);
+        //        }
       }
       loadableStudy.setLoadableStudyRuleList(listOfLSRulesPlan);
     }
   }
 
-  private void buildVesselRule(
-      VesselInfo.VesselRuleReply vesselRuleReply, List<RulePlans> listOfLSRulesPlan) {
-    vesselRuleReply
-        .getRulePlanList()
-        .forEach(
-            rulePlans -> {
-              com.cpdss.loadablestudy.domain.RulePlans rulePlan =
-                  new com.cpdss.loadablestudy.domain.RulePlans();
-              Optional.ofNullable(rulePlans.getHeader())
-                  .ifPresent(item -> rulePlan.setHeader(item));
-              List<com.cpdss.loadablestudy.domain.Rules> rList = new ArrayList<>();
-              rulePlans
-                  .getRulesList()
-                  .forEach(
-                      rules -> {
-                        Optional<Boolean> isEnable = Optional.ofNullable(rules.getEnable());
-                        com.cpdss.loadablestudy.domain.Rules rule =
-                            new com.cpdss.loadablestudy.domain.Rules();
-                        Optional.ofNullable(rules.getId())
-                            .filter(item -> item.trim().length() != 0)
-                            .ifPresentOrElse(rule::setId, () -> rule.setId(null));
-                        Optional.ofNullable(rules.getEnable()).ifPresent(rule::setEnable);
-                        Optional.ofNullable(rules.getDisplayInSettings())
-                            .ifPresentOrElse(
-                                rule::setDisplayInSettings, () -> rule.setDisplayInSettings(false));
-                        Optional.ofNullable(rules.getId())
-                            .filter(item -> item.length() != 0)
-                            .ifPresent(rule::setId);
-                        Optional.ofNullable(rules.getRuleType())
-                            .filter(item -> item.length() != 0)
-                            .ifPresent(rule::setRuleType);
-                        Optional.ofNullable(rules.getIsHardRule())
-                            .ifPresentOrElse(rule::setIsHardRule, () -> rule.setIsHardRule(false));
-                        Optional.ofNullable(rules.getRuleTemplateId())
-                            .ifPresent(rule::setRuleTemplateId);
-                        Optional.ofNullable(rules.getNumericPrecision())
-                            .ifPresent(rule::setNumericPrecision);
-                        Optional.ofNullable(rules.getNumericScale())
-                            .ifPresent(rule::setNumericScale);
-                        List<com.cpdss.loadablestudy.domain.RulesInputs> rInputList =
-                            new ArrayList<>();
-                        rules
-                            .getInputsList()
-                            .forEach(
-                                inputs -> {
-                                  com.cpdss.loadablestudy.domain.RulesInputs ruleInput =
-                                      new com.cpdss.loadablestudy.domain.RulesInputs();
-                                  Optional.ofNullable(inputs.getId())
-                                      .filter(item -> item.trim().length() != 0)
-                                      .ifPresentOrElse(
-                                          ruleInput::setId, () -> ruleInput.setId(null));
-                                  Optional.ofNullable(inputs.getDefaultValue())
-                                      .filter(item -> item.trim().length() != 0)
-                                      .ifPresent(ruleInput::setDefaultValue);
-                                  Optional.ofNullable(inputs.getDefaultValue())
-                                      .filter(item -> item.trim().length() != 0)
-                                      .ifPresent(ruleInput::setValue);
-                                  Optional.ofNullable(inputs.getPrefix())
-                                      .filter(item -> item.trim().length() != 0)
-                                      .ifPresent(ruleInput::setPrefix);
-                                  Optional.ofNullable(inputs.getMin())
-                                      .filter(item -> item.trim().length() != 0)
-                                      .ifPresent(ruleInput::setMin);
-                                  Optional.ofNullable(inputs.getMax())
-                                      .filter(item -> item.trim().length() != 0)
-                                      .ifPresent(ruleInput::setMax);
-                                  Optional.ofNullable(inputs.getType())
-                                      .filter(item -> item.trim().length() != 0)
-                                      .ifPresent(ruleInput::setType);
-                                  Optional.ofNullable(inputs.getSuffix())
-                                      .filter(item -> item.trim().length() != 0)
-                                      .ifPresent(ruleInput::setSuffix);
-                                  Optional.ofNullable(inputs.getId())
-                                      .filter(item -> item.trim().length() != 0)
-                                      .ifPresent(ruleInput::setId);
-                                  Optional.ofNullable(inputs.getIsMandatory())
-                                      .ifPresentOrElse(
-                                          ruleInput::setIsMandatory,
-                                          () -> ruleInput.setIsMandatory(false));
-                                  Optional<String> isTypeBoolean =
-                                      Optional.ofNullable(inputs.getType())
-                                          .filter(
-                                              item ->
-                                                  item.trim().length() != 0
-                                                      && item.trim()
-                                                          .equalsIgnoreCase(
-                                                              com.cpdss.loadablestudy.domain
-                                                                  .TypeValue.BOOLEAN
-                                                                  .getType()));
-                                  if (isTypeBoolean.isPresent()) {
-                                    Optional.ofNullable(inputs.getDefaultValue())
-                                        .filter(
-                                            item ->
-                                                item.trim().length() != 0
-                                                    && item.trim().equalsIgnoreCase("true"))
-                                        .ifPresentOrElse(
-                                            ruleInput::setDefaultValue,
-                                            () -> ruleInput.setDefaultValue("false"));
-                                  }
-                                  Optional<String> isTypeDropDownOrMultiSelect =
-                                      Optional.ofNullable(inputs.getType())
-                                          .filter(
-                                              item ->
-                                                  item.trim().length() != 0
-                                                          && item.trim()
-                                                              .equalsIgnoreCase(
-                                                                  com.cpdss.loadablestudy.domain
-                                                                      .TypeValue.DROPDOWN
-                                                                      .getType())
-                                                      || item.trim()
-                                                          .equalsIgnoreCase(
-                                                              com.cpdss.loadablestudy.domain
-                                                                  .TypeValue.MULTISELECT
-                                                                  .getType()));
-                                  if (isTypeDropDownOrMultiSelect.isPresent()) {
-                                    Optional<String> isPrefixExist =
-                                        Optional.ofNullable(inputs.getPrefix())
-                                            .filter(
-                                                item ->
-                                                    item.trim().length() != 0
-                                                        && item.trim()
-                                                            .equalsIgnoreCase(
-                                                                com.cpdss.loadablestudy.domain
-                                                                    .RuleMasterData.CargoTank
-                                                                    .getPrefix()));
-                                    Optional<String> isSuffixExist =
-                                        Optional.ofNullable(inputs.getSuffix())
-                                            .filter(
-                                                item ->
-                                                    item.trim().length() != 0
-                                                        && item.trim()
-                                                            .equalsIgnoreCase(
-                                                                com.cpdss.loadablestudy.domain
-                                                                    .RuleMasterData.CargoTank
-                                                                    .getSuffix()));
-                                    List<com.cpdss.loadablestudy.domain.RuleDropDownMaster>
-                                        ruleDropDownMasterList = new ArrayList<>();
-                                    if (isSuffixExist.isPresent() && isPrefixExist.isPresent()) {
-                                      vesselRuleReply
-                                          .getCargoTankMasterList()
-                                          .forEach(
-                                              cargoTank -> {
-                                                com.cpdss.loadablestudy.domain.RuleDropDownMaster
-                                                    ruleDropDownMaster =
-                                                        new com.cpdss.loadablestudy.domain
-                                                            .RuleDropDownMaster();
-                                                Optional.ofNullable(cargoTank.getId())
-                                                    .ifPresent(ruleDropDownMaster::setId);
-                                                Optional.ofNullable(cargoTank.getShortName())
-                                                    .ifPresent(ruleDropDownMaster::setValue);
-                                                ruleDropDownMasterList.add(ruleDropDownMaster);
-                                              });
-                                      ruleInput.setRuleDropDownMaster(ruleDropDownMasterList);
-                                    } else {
-                                      Optional<Long> ruleTempId =
-                                          Optional.ofNullable(
-                                              Long.parseLong(rules.getRuleTemplateId()));
-                                      if (ruleTempId.isPresent()) {
-                                        List<VesselInfo.RuleDropDownValueMaster>
-                                            filterMasterByRule =
-                                                vesselRuleReply.getRuleDropDownValueMasterList()
-                                                    .stream()
-                                                    .filter(
-                                                        rDropDown ->
-                                                            rDropDown.getRuleTemplateId() != 0
-                                                                && ruleTempId.get() != null
-                                                                && rDropDown.getRuleTemplateId()
-                                                                    == ruleTempId.get())
-                                                    .collect(Collectors.toList());
-                                        filterMasterByRule.forEach(
-                                            masterDropDownRule -> {
-                                              com.cpdss.loadablestudy.domain.RuleDropDownMaster
-                                                  ruleDropDownMaster =
-                                                      new com.cpdss.loadablestudy.domain
-                                                          .RuleDropDownMaster();
-                                              Optional.ofNullable(masterDropDownRule.getId())
-                                                  .ifPresent(ruleDropDownMaster::setId);
-                                              Optional.ofNullable(masterDropDownRule.getValue())
-                                                  .ifPresent(ruleDropDownMaster::setValue);
-                                              ruleDropDownMasterList.add(ruleDropDownMaster);
-                                            });
-                                      }
-                                      ruleInput.setRuleDropDownMaster(ruleDropDownMasterList);
-                                    }
-                                  }
-                                  rInputList.add(ruleInput);
-                                });
-                        rule.setInputs(rInputList);
-                        rList.add(rule);
-                      });
-              rulePlan.setRules(rList);
-              listOfLSRulesPlan.add(rulePlan);
-            });
-  }
+  //  private void buildVesselRule(
+  //      VesselInfo.VesselRuleReply vesselRuleReply, List<RulePlans> listOfLSRulesPlan) {
+  //    vesselRuleReply
+  //        .getRulePlanList()
+  //        .forEach(
+  //            rulePlans -> {
+  //              com.cpdss.loadablestudy.domain.RulePlans rulePlan =
+  //                  new com.cpdss.loadablestudy.domain.RulePlans();
+  //              Optional.ofNullable(rulePlans.getHeader())
+  //                  .ifPresent(item -> rulePlan.setHeader(item));
+  //              List<com.cpdss.loadablestudy.domain.Rules> rList = new ArrayList<>();
+  //              rulePlans
+  //                  .getRulesList()
+  //                  .forEach(
+  //                      rules -> {
+  //                        Optional<Boolean> isEnable = Optional.ofNullable(rules.getEnable());
+  //                        com.cpdss.loadablestudy.domain.Rules rule =
+  //                            new com.cpdss.loadablestudy.domain.Rules();
+  //                        Optional.ofNullable(rules.getId())
+  //                            .filter(item -> item.trim().length() != 0)
+  //                            .ifPresentOrElse(rule::setId, () -> rule.setId(null));
+  //                        Optional.ofNullable(rules.getEnable()).ifPresent(rule::setEnable);
+  //                        Optional.ofNullable(rules.getDisplayInSettings())
+  //                            .ifPresentOrElse(
+  //                                rule::setDisplayInSettings, () ->
+  // rule.setDisplayInSettings(false));
+  //                        Optional.ofNullable(rules.getId())
+  //                            .filter(item -> item.length() != 0)
+  //                            .ifPresent(rule::setId);
+  //                        Optional.ofNullable(rules.getRuleType())
+  //                            .filter(item -> item.length() != 0)
+  //                            .ifPresent(rule::setRuleType);
+  //                        Optional.ofNullable(rules.getIsHardRule())
+  //                            .ifPresentOrElse(rule::setIsHardRule, () ->
+  // rule.setIsHardRule(false));
+  //                        Optional.ofNullable(rules.getRuleTemplateId())
+  //                            .ifPresent(rule::setRuleTemplateId);
+  //                        Optional.ofNullable(rules.getNumericPrecision())
+  //                            .ifPresent(rule::setNumericPrecision);
+  //                        Optional.ofNullable(rules.getNumericScale())
+  //                            .ifPresent(rule::setNumericScale);
+  //                        List<com.cpdss.loadablestudy.domain.RulesInputs> rInputList =
+  //                            new ArrayList<>();
+  //                        rules
+  //                            .getInputsList()
+  //                            .forEach(
+  //                                inputs -> {
+  //                                  com.cpdss.loadablestudy.domain.RulesInputs ruleInput =
+  //                                      new com.cpdss.loadablestudy.domain.RulesInputs();
+  //                                  Optional.ofNullable(inputs.getId())
+  //                                      .filter(item -> item.trim().length() != 0)
+  //                                      .ifPresentOrElse(
+  //                                          ruleInput::setId, () -> ruleInput.setId(null));
+  //                                  Optional.ofNullable(inputs.getDefaultValue())
+  //                                      .filter(item -> item.trim().length() != 0)
+  //                                      .ifPresent(ruleInput::setDefaultValue);
+  //                                  Optional.ofNullable(inputs.getDefaultValue())
+  //                                      .filter(item -> item.trim().length() != 0)
+  //                                      .ifPresent(ruleInput::setValue);
+  //                                  Optional.ofNullable(inputs.getPrefix())
+  //                                      .filter(item -> item.trim().length() != 0)
+  //                                      .ifPresent(ruleInput::setPrefix);
+  //                                  Optional.ofNullable(inputs.getMin())
+  //                                      .filter(item -> item.trim().length() != 0)
+  //                                      .ifPresent(ruleInput::setMin);
+  //                                  Optional.ofNullable(inputs.getMax())
+  //                                      .filter(item -> item.trim().length() != 0)
+  //                                      .ifPresent(ruleInput::setMax);
+  //                                  Optional.ofNullable(inputs.getType())
+  //                                      .filter(item -> item.trim().length() != 0)
+  //                                      .ifPresent(ruleInput::setType);
+  //                                  Optional.ofNullable(inputs.getSuffix())
+  //                                      .filter(item -> item.trim().length() != 0)
+  //                                      .ifPresent(ruleInput::setSuffix);
+  //                                  Optional.ofNullable(inputs.getId())
+  //                                      .filter(item -> item.trim().length() != 0)
+  //                                      .ifPresent(ruleInput::setId);
+  //                                  Optional.ofNullable(inputs.getIsMandatory())
+  //                                      .ifPresentOrElse(
+  //                                          ruleInput::setIsMandatory,
+  //                                          () -> ruleInput.setIsMandatory(false));
+  //                                  Optional<String> isTypeBoolean =
+  //                                      Optional.ofNullable(inputs.getType())
+  //                                          .filter(
+  //                                              item ->
+  //                                                  item.trim().length() != 0
+  //                                                      && item.trim()
+  //                                                          .equalsIgnoreCase(
+  //                                                              com.cpdss.loadablestudy.domain
+  //                                                                  .TypeValue.BOOLEAN
+  //                                                                  .getType()));
+  //                                  if (isTypeBoolean.isPresent()) {
+  //                                    Optional.ofNullable(inputs.getDefaultValue())
+  //                                        .filter(
+  //                                            item ->
+  //                                                item.trim().length() != 0
+  //                                                    && item.trim().equalsIgnoreCase("true"))
+  //                                        .ifPresentOrElse(
+  //                                            ruleInput::setDefaultValue,
+  //                                            () -> ruleInput.setDefaultValue("false"));
+  //                                  }
+  //                                  Optional<String> isTypeDropDownOrMultiSelect =
+  //                                      Optional.ofNullable(inputs.getType())
+  //                                          .filter(
+  //                                              item ->
+  //                                                  item.trim().length() != 0
+  //                                                          && item.trim()
+  //                                                              .equalsIgnoreCase(
+  //                                                                  com.cpdss.loadablestudy.domain
+  //                                                                      .TypeValue.DROPDOWN
+  //                                                                      .getType())
+  //                                                      || item.trim()
+  //                                                          .equalsIgnoreCase(
+  //                                                              com.cpdss.loadablestudy.domain
+  //                                                                  .TypeValue.MULTISELECT
+  //                                                                  .getType()));
+  //                                  if (isTypeDropDownOrMultiSelect.isPresent()) {
+  //                                    Optional<String> isPrefixExist =
+  //                                        Optional.ofNullable(inputs.getPrefix())
+  //                                            .filter(
+  //                                                item ->
+  //                                                    item.trim().length() != 0
+  //                                                        && item.trim()
+  //                                                            .equalsIgnoreCase(
+  //                                                                com.cpdss.loadablestudy.domain
+  //                                                                    .RuleMasterData.CargoTank
+  //                                                                    .getPrefix()));
+  //                                    Optional<String> isSuffixExist =
+  //                                        Optional.ofNullable(inputs.getSuffix())
+  //                                            .filter(
+  //                                                item ->
+  //                                                    item.trim().length() != 0
+  //                                                        && item.trim()
+  //                                                            .equalsIgnoreCase(
+  //                                                                com.cpdss.loadablestudy.domain
+  //                                                                    .RuleMasterData.CargoTank
+  //                                                                    .getSuffix()));
+  //                                    List<com.cpdss.loadablestudy.domain.RuleDropDownMaster>
+  //                                        ruleDropDownMasterList = new ArrayList<>();
+  //                                    if (isSuffixExist.isPresent() && isPrefixExist.isPresent())
+  // {
+  //                                      vesselRuleReply
+  //                                          .getCargoTankMasterList()
+  //                                          .forEach(
+  //                                              cargoTank -> {
+  //
+  // com.cpdss.loadablestudy.domain.RuleDropDownMaster
+  //                                                    ruleDropDownMaster =
+  //                                                        new com.cpdss.loadablestudy.domain
+  //                                                            .RuleDropDownMaster();
+  //                                                Optional.ofNullable(cargoTank.getId())
+  //                                                    .ifPresent(ruleDropDownMaster::setId);
+  //                                                Optional.ofNullable(cargoTank.getShortName())
+  //                                                    .ifPresent(ruleDropDownMaster::setValue);
+  //                                                ruleDropDownMasterList.add(ruleDropDownMaster);
+  //                                              });
+  //                                      ruleInput.setRuleDropDownMaster(ruleDropDownMasterList);
+  //                                    } else {
+  //                                      Optional<Long> ruleTempId =
+  //                                          Optional.ofNullable(
+  //                                              Long.parseLong(rules.getRuleTemplateId()));
+  //                                      if (ruleTempId.isPresent()) {
+  //                                        List<VesselInfo.RuleDropDownValueMaster>
+  //                                            filterMasterByRule =
+  //                                                vesselRuleReply.getRuleDropDownValueMasterList()
+  //                                                    .stream()
+  //                                                    .filter(
+  //                                                        rDropDown ->
+  //                                                            rDropDown.getRuleTemplateId() != 0
+  //                                                                && ruleTempId.get() != null
+  //                                                                && rDropDown.getRuleTemplateId()
+  //                                                                    == ruleTempId.get())
+  //                                                    .collect(Collectors.toList());
+  //                                        filterMasterByRule.forEach(
+  //                                            masterDropDownRule -> {
+  //                                              com.cpdss.loadablestudy.domain.RuleDropDownMaster
+  //                                                  ruleDropDownMaster =
+  //                                                      new com.cpdss.loadablestudy.domain
+  //                                                          .RuleDropDownMaster();
+  //                                              Optional.ofNullable(masterDropDownRule.getId())
+  //                                                  .ifPresent(ruleDropDownMaster::setId);
+  //                                              Optional.ofNullable(masterDropDownRule.getValue())
+  //                                                  .ifPresent(ruleDropDownMaster::setValue);
+  //                                              ruleDropDownMasterList.add(ruleDropDownMaster);
+  //                                            });
+  //                                      }
+  //                                      ruleInput.setRuleDropDownMaster(ruleDropDownMasterList);
+  //                                    }
+  //                                  }
+  //                                  rInputList.add(ruleInput);
+  //                                });
+  //                        rule.setInputs(rInputList);
+  //                        rList.add(rule);
+  //                      });
+  //              rulePlan.setRules(rList);
+  //              listOfLSRulesPlan.add(rulePlan);
+  //            });
+  //  }
 
   private void buildLoadableStudyRuleFromLS(
       List<LoadableStudyRules> lStudyRulesList,
@@ -1222,5 +1226,117 @@ public class LoadableStudyRuleService {
           }
         });
     rulePlan.setRules(ruleList);
+  }
+
+  /**
+   * To fetch default rules and save rules against LoadableStudy
+   *
+   * @param request
+   * @param currentLoadableStudy
+   * @throws GenericServiceException
+   */
+  void saveRulesAgainstLoadableStudy(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyDetail request,
+      LoadableStudy currentLoadableStudy)
+      throws GenericServiceException {
+    VesselInfo.VesselRuleRequest.Builder vesselRuleBuilder =
+        VesselInfo.VesselRuleRequest.newBuilder();
+    vesselRuleBuilder.setSectionId(RuleMasterSection.Plan.getId());
+    vesselRuleBuilder.setVesselId(request.getVesselId());
+    vesselRuleBuilder.setIsFetchEnabledRules(false);
+    vesselRuleBuilder.setIsNoDefaultRule(true);
+    VesselInfo.VesselRuleReply vesselRuleReply =
+        this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+    if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get loadable study rule Details ",
+          vesselRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.parseInt(vesselRuleReply.getResponseStatus().getCode())));
+    }
+    List<LoadableStudyRules> loadableStudyRulesList = new ArrayList<>();
+    vesselRuleReply.getRulePlanList().stream()
+        .forEach(
+            plan -> {
+              plan.getRulesList()
+                  .forEach(
+                      lsRules -> {
+                        LoadableStudyRules loadableStudyRules = new LoadableStudyRules();
+                        loadableStudyRules.setLoadableStudy(currentLoadableStudy);
+                        Optional.ofNullable(lsRules.getVesselRuleXId())
+                            .ifPresent(
+                                vesselRuleId ->
+                                    loadableStudyRules.setVesselRuleXId(
+                                        Long.parseLong(vesselRuleId)));
+                        Optional.ofNullable(request.getVesselId())
+                            .ifPresent(loadableStudyRules::setVesselXId);
+                        if (!CollectionUtils.isEmpty(vesselRuleReply.getRuleTypeMasterList())
+                            && lsRules.getRuleType() != null
+                            && lsRules.getRuleType().trim() != "") {
+                          Optional<VesselInfo.RuleTypeMaster> ruleType =
+                              vesselRuleReply.getRuleTypeMasterList().stream()
+                                  .filter(
+                                      rType ->
+                                          rType
+                                              .getRuleType()
+                                              .equalsIgnoreCase(lsRules.getRuleType()))
+                                  .findAny();
+                          ruleType.orElseThrow(RuntimeException::new);
+                          loadableStudyRules.setRuleTypeXId(ruleType.get().getId());
+                        }
+                        Optional.ofNullable(lsRules.getDisplayInSettings())
+                            .ifPresentOrElse(
+                                loadableStudyRules::setDisplayInSettings,
+                                () -> loadableStudyRules.setDisplayInSettings(false));
+                        Optional.ofNullable(lsRules.getEnable())
+                            .ifPresentOrElse(
+                                loadableStudyRules::setIsEnable,
+                                () -> loadableStudyRules.setIsEnable(false));
+                        Optional.ofNullable(lsRules.getIsHardRule())
+                            .ifPresentOrElse(
+                                loadableStudyRules::setIsHardRule,
+                                () -> loadableStudyRules.setIsHardRule(false));
+                        loadableStudyRules.setIsActive(true);
+                        Optional.ofNullable(lsRules.getNumericPrecision())
+                            .ifPresent(loadableStudyRules::setNumericPrecision);
+                        Optional.ofNullable(lsRules.getNumericScale())
+                            .ifPresent(loadableStudyRules::setNumericScale);
+                        Optional.ofNullable(lsRules.getRuleTemplateId())
+                            .ifPresent(
+                                item -> loadableStudyRules.setParentRuleXId(Long.parseLong(item)));
+                        List<LoadableStudyRuleInput> lisOfLsRulesInput = new ArrayList<>();
+                        lsRules
+                            .getInputsList()
+                            .forEach(
+                                lsRulesInput -> {
+                                  LoadableStudyRuleInput loadableStudyRuleInput =
+                                      new LoadableStudyRuleInput();
+                                  loadableStudyRuleInput.setLoadableStudyRuleXId(
+                                      loadableStudyRules);
+                                  Optional.ofNullable(lsRulesInput.getPrefix())
+                                      .ifPresent(loadableStudyRuleInput::setPrefix);
+                                  Optional.ofNullable(lsRulesInput.getDefaultValue())
+                                      .ifPresentOrElse(
+                                          loadableStudyRuleInput::setDefaultValue,
+                                          () -> loadableStudyRuleInput.setDefaultValue(null));
+                                  Optional.ofNullable(lsRulesInput.getType())
+                                      .ifPresent(loadableStudyRuleInput::setTypeValue);
+                                  Optional.ofNullable(lsRulesInput.getMax())
+                                      .ifPresent(loadableStudyRuleInput::setMaxValue);
+                                  Optional.ofNullable(lsRulesInput.getMin())
+                                      .ifPresent(loadableStudyRuleInput::setMinValue);
+                                  Optional.ofNullable(lsRulesInput.getSuffix())
+                                      .ifPresent(loadableStudyRuleInput::setSuffix);
+                                  loadableStudyRuleInput.setIsActive(true);
+                                  Optional.ofNullable(lsRulesInput.getIsMandatory())
+                                      .ifPresentOrElse(
+                                          loadableStudyRuleInput::setIsMandatory,
+                                          () -> loadableStudyRuleInput.setIsMandatory(false));
+                                  lisOfLsRulesInput.add(loadableStudyRuleInput);
+                                });
+                        loadableStudyRules.setLoadableStudyRuleInputs(lisOfLsRulesInput);
+                        loadableStudyRulesList.add(loadableStudyRules);
+                      });
+            });
+    loadableStudyRuleRepository.saveAll(loadableStudyRulesList);
   }
 }
