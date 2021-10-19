@@ -447,6 +447,13 @@ public class DischargeInformationService {
             request.getDischargingDetails().getTimeOfSunrise(),
             request.getDischargingDetails().getTimeOfSunset());
       }
+      // Discharging Info Case 10 - if protested, is commingled
+      if (request.getCargoToBeDischarged() != null
+          && request.getCargoToBeDischarged().getDischargeQuantityCargoDetails() != null
+          && !request.getCargoToBeDischarged().getDischargeQuantityCargoDetails().isEmpty()) {
+        this.loadingPlanGrpcService.updateDischargeQuantityCargoDetails(
+            request.getCargoToBeDischarged().getDischargeQuantityCargoDetails());
+      }
       if (response == null) {
         throw new GenericServiceException(
             "Failed to save Discharging Information",

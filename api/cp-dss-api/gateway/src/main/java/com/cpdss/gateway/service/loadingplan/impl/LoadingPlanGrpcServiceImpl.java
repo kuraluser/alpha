@@ -4,15 +4,22 @@ package com.cpdss.gateway.service.loadingplan.impl;
 import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.CargoInfoServiceGrpc;
+import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudyServiceGrpc;
+import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply;
@@ -29,9 +36,10 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
 import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.UllageBillReply;
 import com.cpdss.gateway.domain.VoyageStatusRequest;
 import com.cpdss.gateway.domain.VoyageStatusResponse;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
@@ -471,5 +479,26 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
       return response.getLoadablePlanBallastDetailsList();
     }
     return new ArrayList<>();
+  }
+
+  @Override
+  public ResponseStatus updateDischargeQuantityCargoDetails(
+      List<DischargeQuantityCargoDetails> dischargeQuantityCargoDetails) {
+    DischargeQuantityCargoDetailsRequest.Builder builder =
+        DischargeQuantityCargoDetailsRequest.newBuilder();
+    dischargeQuantityCargoDetails.stream()
+        .forEach(
+            cargo -> {
+              com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.Builder
+                  detailBuilder =
+                      com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails
+                          .newBuilder();
+              detailBuilder.setId(cargo.getId());
+              detailBuilder.setIfProtested(cargo.getProtested());
+              detailBuilder.setIsCommingled(cargo.getIsCommingledDischarge());
+              builder.addCargoDetails(detailBuilder);
+            });
+
+    return loadableStudyServiceBlockingStub.updateDischargeQuantityCargoDetails(builder.build());
   }
 }

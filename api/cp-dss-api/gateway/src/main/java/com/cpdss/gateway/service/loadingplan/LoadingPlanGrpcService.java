@@ -3,6 +3,7 @@ package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
@@ -19,6 +20,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSave
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest.Builder;
+import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
 import com.cpdss.gateway.domain.RuleResponse;
 import com.cpdss.gateway.domain.UllageBillReply;
 import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
@@ -102,4 +104,6 @@ public interface LoadingPlanGrpcService {
    * @return
    */
   AlgoErrorReply getLoadingInfoAlgoErrors(AlgoErrorRequest request);
+
+  ResponseStatus updateDischargeQuantityCargoDetails(List<DischargeQuantityCargoDetails> list);
 }
