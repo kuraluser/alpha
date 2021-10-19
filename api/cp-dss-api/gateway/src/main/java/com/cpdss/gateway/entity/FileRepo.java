@@ -46,4 +46,7 @@ public class FileRepo extends EntityDoc {
 
   @Column(name = "is_transferred")
   private Boolean isTransferred;
+
+  @Column(name = "is_system_generated")
+  private Boolean isSystemGenerated;
 }

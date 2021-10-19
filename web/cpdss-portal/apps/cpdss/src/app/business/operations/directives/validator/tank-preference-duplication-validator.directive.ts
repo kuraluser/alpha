@@ -20,14 +20,14 @@ export function tankPreferenceDuplicationValidator(cowType: string): ValidatorFn
 
     switch (cowType) {
       case 'top':
-        for (let index = 0; index < topCOWTanks.length; index++) {
-          for (let bIndex = 0; bIndex < bottomCOWTanks.length; bIndex++) {
+        for (let index = 0; index < topCOWTanks?.length; index++) {
+          for (let bIndex = 0; bIndex < bottomCOWTanks?.length; bIndex++) {
             if (topCOWTanks[index]?.id === bottomCOWTanks[bIndex]?.id) {
               duplicated = true;
               break;
             }
           }
-          for (let aIndex = 0; aIndex < allCOWTanks.length; aIndex++) {
+          for (let aIndex = 0; aIndex < allCOWTanks?.length; aIndex++) {
             if (topCOWTanks[index]?.id === allCOWTanks[aIndex]?.id) {
               duplicated = true;
               break;
@@ -39,14 +39,14 @@ export function tankPreferenceDuplicationValidator(cowType: string): ValidatorFn
         }
         break;
       case 'bottom':
-        for (let index = 0; index < bottomCOWTanks.length; index++) {
-          for (let tIndex = 0; tIndex < topCOWTanks.length; tIndex++) {
+        for (let index = 0; index < bottomCOWTanks?.length; index++) {
+          for (let tIndex = 0; tIndex < topCOWTanks?.length; tIndex++) {
             if (bottomCOWTanks[index]?.id === topCOWTanks[tIndex]?.id) {
               duplicated = true;
               break;
             }
           }
-          for (let aIndex = 0; aIndex < allCOWTanks.length; aIndex++) {
+          for (let aIndex = 0; aIndex < allCOWTanks?.length; aIndex++) {
             if (bottomCOWTanks[index]?.id === allCOWTanks[aIndex]?.id) {
               duplicated = true;
               break;
@@ -58,14 +58,14 @@ export function tankPreferenceDuplicationValidator(cowType: string): ValidatorFn
         }
         break;
       case 'all':
-        for (let index = 0; index < allCOWTanks.length; index++) {
-          for (let tIndex = 0; tIndex < topCOWTanks.length; tIndex++) {
+        for (let index = 0; index < allCOWTanks?.length; index++) {
+          for (let tIndex = 0; tIndex < topCOWTanks?.length; tIndex++) {
             if (allCOWTanks[index]?.id === topCOWTanks[tIndex]?.id) {
               duplicated = true;
               break;
             }
           }
-          for (let bIndex = 0; bIndex < bottomCOWTanks.length; bIndex++) {
+          for (let bIndex = 0; bIndex < bottomCOWTanks?.length; bIndex++) {
             if (allCOWTanks[index]?.id === bottomCOWTanks[bIndex]?.id) {
               duplicated = true;
               break;

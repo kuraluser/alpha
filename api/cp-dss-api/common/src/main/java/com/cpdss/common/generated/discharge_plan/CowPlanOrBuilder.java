@@ -111,6 +111,19 @@ public interface CowPlanOrBuilder
    */
   boolean getNeedFlushingOil();
 
+  /**
+   *
+   *
+   * <pre>
+   * update in table
+   * </pre>
+   *
+   * <code>bool cowWithCargoEnable = 11;</code>
+   *
+   * @return The cowWithCargoEnable.
+   */
+  boolean getCowWithCargoEnable();
+
   /** <code>repeated .CowTankDetails cowTankDetails = 10;</code> */
   java.util.List<com.cpdss.common.generated.discharge_plan.CowTankDetails> getCowTankDetailsList();
   /** <code>repeated .CowTankDetails cowTankDetails = 10;</code> */
@@ -123,4 +136,11 @@ public interface CowPlanOrBuilder
   /** <code>repeated .CowTankDetails cowTankDetails = 10;</code> */
   com.cpdss.common.generated.discharge_plan.CowTankDetailsOrBuilder getCowTankDetailsOrBuilder(
       int index);
+
+  /**
+   * <code>int64 dischargingInfoId = 12;</code>
+   *
+   * @return The dischargingInfoId.
+   */
+  long getDischargingInfoId();
 }

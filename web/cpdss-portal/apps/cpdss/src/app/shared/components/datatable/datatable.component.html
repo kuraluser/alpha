@@ -185,7 +185,7 @@
                                 <ng-container *ngSwitchCase="fieldType.TEXT">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <input type="text" class="form-control" [formControlName]="col.field"
-                                            [placeholder]="col.fieldPlaceholder| translate"
+                                            [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate"
                                             (change)="onChange($event, rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}"
                                             [readonly]="!rowData[col.field]?.isEditable">
@@ -202,7 +202,7 @@
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
                                             [formControlName]="col.field"
-                                            [placeholder]="col.fieldPlaceholder| translate"
+                                            [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate"
                                             (change)="onChange($event, rowData, rowIndex, col)"
                                             (keydown.enter)="onChange($event, rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}">
@@ -231,7 +231,7 @@
                                             [panelStyleClass]="col.fieldComponentClass ? col.fieldComponentClass : 'index-1'"
                                             [formControlName]="col.field" [filter]="col.listFilter"
                                             optionLabel="{{col.fieldOptionLabel}}"
-                                            [placeholder]="col.fieldPlaceholder| translate"
+                                            [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate"
                                             (onChange)="onChange($event, rowData, rowIndex, col)"
                                             resetFilterOnHide="true" (onFocus)="setDropDownFocus(dropDown2)"
                                             id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
@@ -269,7 +269,7 @@
                                             [formControlName]="col.field" [filter]="col.listFilter"
                                             [resetFilterOnHide]="col.listFilter ? true : false"
                                             optionLabel="{{col.fieldOptionLabel}}"
-                                            [defaultLabel]="col.fieldPlaceholder| translate"
+                                            [defaultLabel]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate"
                                             (onChange)="onChange($event, rowData, rowIndex, col)"
                                             (onPanelHide)="onMultiselectClose(rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
@@ -316,7 +316,7 @@
                                         <a class="btn btn-secondary"
                                             (click)="onCellValueClick($event, rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}">{{rowData[col.arrayLabelField] ?
-                                            rowData[col.arrayLabelField]: col.fieldPlaceholder| translate}}</a>
+                                            rowData[col.arrayLabelField]: (col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate}}</a>
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
                                             [errorMessages]="col.errorMessages">
                                         </cpdss-portal-validation-error>
@@ -324,7 +324,7 @@
                                     <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
                                         <a (click)="onCellValueClick($event, rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}">{{rowData[col.arrayLabelField] ?
-                                            rowData[col.arrayLabelField]: col.fieldPlaceholder| translate}}</a>
+                                            rowData[col.arrayLabelField]: (col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate}}</a>
                                     </ng-container>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATERANGE">
@@ -336,7 +336,7 @@
                                             (onClose)="onDateRangeSelect($event, rowIndex, col, rowData)"
                                             (onClearClick)="onClearDateRange($event, rowIndex, col.field, rowData)"
                                             [dateFormat]="col.dateFormat" selectionMode="range"
-                                            [placeholder]="col.fieldPlaceholder| translate" [minDate]="col.minDate"
+                                            [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate" [minDate]="col.minDate"
                                             id="{{col.field+'_'+rowIndex}}" [hideOnDateTimeSelect]="false"
                                             [formControlName]="col.field" #coldaterange>
                                         </p-calendar>
@@ -357,7 +357,7 @@
                                             [readonlyInput]="true"
                                             (onClose)="onDatePanelClosed($event,rowIndex, col.field,rowData)"
                                             [formControlName]="col.field"
-                                            [placeholder]="col.fieldPlaceholder| translate"
+                                            [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate"
                                             inputId="{{col.field+'_'+rowIndex + 'input'}}"
                                             id="{{col.field+'_'+rowIndex}}" [minDate]="col.minDate"
                                             [dateFormat]="col.dateFormat ? col.dateFormat : 'dd-mm-yy'"
@@ -386,7 +386,7 @@
                                 <ng-container *ngSwitchCase="fieldType.MASK">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <p-inputMask type="text" styleClass="form-control" [formControlName]="col.field"
-                                            [placeholder]="col.fieldPlaceholder| translate"
+                                            [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate"
                                             [mask]="col.maskFormat"
                                             (onComplete)="onChange($event, rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}"

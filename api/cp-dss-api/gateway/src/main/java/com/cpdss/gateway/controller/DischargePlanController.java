@@ -24,6 +24,8 @@ import com.cpdss.gateway.domain.UploadTideDetailResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInformationResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveResponse;
@@ -1108,6 +1110,39 @@ public class DischargePlanController {
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
           HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Save Discharging Information API
+   *
+   * @param request
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/discharging-info")
+  public DischargingInformationResponse saveDischargingInformation(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable Long vesselId,
+      @PathVariable Long voyageId,
+      @RequestBody DischargingInformationRequest request)
+      throws CommonRestException {
+    try {
+      log.info("Save Loading Info, api for vessel {}, voyage {}", vesselId, voyageId);
+      return this.dischargeInformationService.saveDischargingInformation(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("Exception in Save Loading Information API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
           e.getMessage(),
           e);
     }

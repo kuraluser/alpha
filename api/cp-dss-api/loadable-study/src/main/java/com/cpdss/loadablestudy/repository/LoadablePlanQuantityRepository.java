@@ -36,4 +36,8 @@ public interface LoadablePlanQuantityRepository
       Long patternId, String opType, Long portRotation, Long port);
 
   List<LoadingPlanQtyAndOrder> findByCargoNominationIdAndIsActiveTrue(Long fk);
+
+  @Query(
+      "From LoadablePlanQuantity lpq WHERE lpq.loadablePattern.id = ?1 AND lpq.cargoNominationId = ?2 AND lpq.isActive = true")
+  List<LoadablePlanQuantity> findByPatternIdAndCargoNominationId(Long pk, Long cnk);
 }

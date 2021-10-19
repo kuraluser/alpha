@@ -3,6 +3,7 @@ package com.cpdss.dischargeplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import javax.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "discharging_delay_reason")
 public class DischargingDelayReason extends EntityDoc {

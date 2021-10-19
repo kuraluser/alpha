@@ -96,4 +96,10 @@ public class Vessel {
   private Boolean hasLoadicator;
 
   private String bmSfModelType;
+
+  private String maxLoadRate;
+
+  private String mastRiser;
+
+  private String heightOfManifoldAboveDeck;
 }

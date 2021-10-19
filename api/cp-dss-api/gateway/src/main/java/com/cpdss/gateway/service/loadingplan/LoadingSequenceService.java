@@ -21,6 +21,7 @@ import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.EductorOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest.Builder;
@@ -39,6 +40,7 @@ import com.cpdss.gateway.domain.loadingplan.sequence.BallastPump;
 import com.cpdss.gateway.domain.loadingplan.sequence.Cargo;
 import com.cpdss.gateway.domain.loadingplan.sequence.CargoLoadingRate;
 import com.cpdss.gateway.domain.loadingplan.sequence.CargoStage;
+import com.cpdss.gateway.domain.loadingplan.sequence.Eduction;
 import com.cpdss.gateway.domain.loadingplan.sequence.Event;
 import com.cpdss.gateway.domain.loadingplan.sequence.FlowRate;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlan;
@@ -1219,6 +1221,7 @@ public class LoadingSequenceService {
               this.buildBallastOperations(sequence.getBallast(), pumps, sequenceBuilder);
               this.buildDeballastingRates(sequence.getDeballastingRates(), sequenceBuilder);
               this.buildLoadingRates(sequence.getTankWiseCargoLoadingRates(), sequenceBuilder);
+              this.buildEductorOperations(sequence.getEduction(), sequenceBuilder);
               if (sequence.getLoadablePlanPortWiseDetails() != null) {
                 this.buildLoadingPlanPortWiseDetails(
                     sequence.getLoadablePlanPortWiseDetails(), sequenceBuilder);
@@ -1236,6 +1239,33 @@ public class LoadingSequenceService {
                   .ifPresent(sequenceBuilder::setToLoadicator);
               builder.addLoadingSequences(sequenceBuilder.build());
             });
+  }
+
+  /**
+   * @param eduction
+   * @param sequenceBuilder
+   */
+  private void buildEductorOperations(
+      Eduction eduction,
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
+          sequenceBuilder) {
+    if (eduction != null) {
+      EductorOperation.Builder eductorBuilder = EductorOperation.newBuilder();
+      eductorBuilder.setEndTime(
+          StringUtils.isEmpty(eduction.getTimeEnd()) ? 0 : Integer.valueOf(eduction.getTimeEnd()));
+      if (eduction.getPumpSelected() != null) {
+        eductorBuilder.setPumpsUsed(
+            eduction.getPumpSelected().stream().collect(Collectors.joining(",")));
+      }
+      if (eduction.getTank() != null) {
+        eductorBuilder.setTanksUsed(eduction.getTank().stream().collect(Collectors.joining(",")));
+      }
+      eductorBuilder.setStartTime(
+          StringUtils.isEmpty(eduction.getTimeStart())
+              ? 0
+              : Integer.valueOf(eduction.getTimeStart()));
+      sequenceBuilder.setEductorOperation(eductorBuilder.build());
+    }
   }
 
   private void buildLoadingPlanPortWiseDetails(

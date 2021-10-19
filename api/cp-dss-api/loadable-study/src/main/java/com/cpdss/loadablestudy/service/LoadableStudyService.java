@@ -605,11 +605,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
       entity = this.loadableStudyRepository.save(entity);
       this.checkDuplicatedFromAndCloneEntity(request, entity);
-      final LoadableStudy currentLoableStudy = entity;
-      // save rules against saved loadable study(If duplicated LS)
-      if (request.getDuplicatedFromId() != 0) {
-        loadableStudyRuleService.saveDuplicateLoadableStudyRules(
-            listOfExistingLSRules, currentLoableStudy, request);
+      final LoadableStudy currentLoadableStudy = entity;
+
+      if (request.getId() == 0) {
+        if (request.getDuplicatedFromId() != 0) {
+          // save rules against saved loadable study(If duplicated LS)
+          log.info(" Duplicating rules against LS : " + currentLoadableStudy.getId());
+          loadableStudyRuleService.saveDuplicateLoadableStudyRules(
+              listOfExistingLSRules, currentLoadableStudy, request);
+        } else {
+          log.info(" Saving rules against LS from vessel rules : " + currentLoadableStudy.getId());
+          loadableStudyRuleService.saveRulesAgainstLoadableStudy(request, currentLoadableStudy);
+        }
       }
       replyBuilder
           .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())

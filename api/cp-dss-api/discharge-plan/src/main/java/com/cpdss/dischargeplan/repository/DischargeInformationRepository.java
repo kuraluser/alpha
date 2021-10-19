@@ -34,6 +34,11 @@ public interface DischargeInformationRepository
 
   @Transactional
   @Modifying
+  @Query("UPDATE DischargeInformation li SET li.isDischargeInformationComplete = ?2 WHERE id = ?1")
+  void updateDischargeInformationCompleteStatus(Long id, boolean status);
+
+  @Transactional
+  @Modifying
   @Query("UPDATE DischargeInformation SET dischargingPlanDetailsFromAlgo = ?2 WHERE id = ?1")
   public void updateDischargingPlanDetailsFromAlgo(Long id, String dischargingPlanDetailsFromAlgo);
 

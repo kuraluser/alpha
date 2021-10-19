@@ -34,6 +34,7 @@ public class Sequence {
   private List simDeballastingRateM3_Hr;
   private List simBallastingRateM3_Hr;
   private List simCargoLoadingRatePerTankM3_Hr;
+  private Eduction eduction;
 
   // for discharging
   private List<Long> cargoValves;

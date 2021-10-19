@@ -8,6 +8,7 @@ import lombok.Data;
 public class LoadingMachinesInUse {
   private Long id;
   private Long loadingInfoId;
+  private Long dischargingInfoId;
   private Long machineId;
   private BigDecimal capacity;
   private Boolean isUsing;

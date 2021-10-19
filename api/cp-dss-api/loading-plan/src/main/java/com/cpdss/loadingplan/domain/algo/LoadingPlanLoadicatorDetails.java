@@ -11,4 +11,5 @@ public class LoadingPlanLoadicatorDetails {
   List<LoadicatorStowageDetails> stowageDetails;
   List<LoadicatorBallastDetails> ballastDetails;
   List<LoadicatorRobDetails> robDetails;
+  List<LoadicatorCommingleDetails> commingleDetails;
 }

@@ -30,4 +30,13 @@ public interface LoadablePlanCommingleDetailsPortwiseRepository
   public List<LoadablePlanComminglePortwiseDetails> findByLoadablePatternIdInAndIsActive(
       @Param("loadablePatternIds") List<Long> loadablePatternIds,
       @Param("isActive") Boolean isActive);
+
+  /** Find cargo nomination id Only for get Loadable Quantity Table (loading module) */
+  @Query(
+      "FROM LoadablePlanComminglePortwiseDetails lpcdp WHERE lpcdp.loadablePattern.id = ?1 "
+          + "AND lpcdp.portRotationXid = ?2 "
+          + "AND lpcdp.operationType = ?3 "
+          + "AND lpcdp.isActive = true ")
+  List<LoadablePlanComminglePortwiseDetails> findCargoNominationIdsByPatternPortAndOperationType(
+      Long patternId, Long portRId, String opType);
 }

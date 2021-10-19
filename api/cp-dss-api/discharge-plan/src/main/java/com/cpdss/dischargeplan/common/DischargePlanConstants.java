@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.common;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,4 +37,5 @@ public class DischargePlanConstants {
   public static final Long DISCHARGING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID = 8L;
   public static final Long DISCHARGING_INFORMATION_ERROR_OCCURRED_ID = 7L;
   public static final Integer DISCHARGING_PLAN_PLANNED_TYPE_VALUE = 2;
+  public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 }

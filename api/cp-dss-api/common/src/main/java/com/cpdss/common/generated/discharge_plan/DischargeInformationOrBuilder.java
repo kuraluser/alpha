@@ -178,4 +178,128 @@ public interface DischargeInformationOrBuilder
   /** <code>.PostDischargeStageTime postDischargeStageTime = 7;</code> */
   com.cpdss.common.generated.discharge_plan.PostDischargeStageTimeOrBuilder
       getPostDischargeStageTimeOrBuilder();
+
+  /**
+   * <code>int64 dischargingInfoStatusId = 12;</code>
+   *
+   * @return The dischargingInfoStatusId.
+   */
+  long getDischargingInfoStatusId();
+
+  /**
+   * <code>int64 dischargingPlanArrStatusId = 13;</code>
+   *
+   * @return The dischargingPlanArrStatusId.
+   */
+  long getDischargingPlanArrStatusId();
+
+  /**
+   * <code>int64 dischargingPlanDepStatusId = 14;</code>
+   *
+   * @return The dischargingPlanDepStatusId.
+   */
+  long getDischargingPlanDepStatusId();
+
+  /**
+   * <code>int64 dischargePatternId = 15;</code>
+   *
+   * @return The dischargePatternId.
+   */
+  long getDischargePatternId();
+
+  /**
+   * <code>bool isDischargingInstructionsComplete = 16;</code>
+   *
+   * @return The isDischargingInstructionsComplete.
+   */
+  boolean getIsDischargingInstructionsComplete();
+
+  /**
+   * <code>bool isDischargingSequenceGenerated = 17;</code>
+   *
+   * @return The isDischargingSequenceGenerated.
+   */
+  boolean getIsDischargingSequenceGenerated();
+
+  /**
+   * <code>bool isDischargingPlanGenerated = 18;</code>
+   *
+   * @return The isDischargingPlanGenerated.
+   */
+  boolean getIsDischargingPlanGenerated();
+
+  /**
+   * <code>int64 portId = 19;</code>
+   *
+   * @return The portId.
+   */
+  long getPortId();
+
+  /**
+   * <code>int64 vesselId = 20;</code>
+   *
+   * @return The vesselId.
+   */
+  long getVesselId();
+
+  /**
+   * <code>int64 voyageId = 21;</code>
+   *
+   * @return The voyageId.
+   */
+  long getVoyageId();
+
+  /**
+   * <code>int64 portRotationId = 22;</code>
+   *
+   * @return The portRotationId.
+   */
+  long getPortRotationId();
+
+  /**
+   * <code>string dischargeStudyProcessId = 23;</code>
+   *
+   * @return The dischargeStudyProcessId.
+   */
+  java.lang.String getDischargeStudyProcessId();
+  /**
+   * <code>string dischargeStudyProcessId = 23;</code>
+   *
+   * @return The bytes for dischargeStudyProcessId.
+   */
+  com.google.protobuf.ByteString getDischargeStudyProcessIdBytes();
+
+  /**
+   * <code>bool isDischargingInfoComplete = 24;</code>
+   *
+   * @return The isDischargingInfoComplete.
+   */
+  boolean getIsDischargingInfoComplete();
+
+  /**
+   *
+   *
+   * <pre>
+   * Cargo Section
+   * </pre>
+   *
+   * <code>bool dischargeSlopTanksFirst = 25;</code>
+   *
+   * @return The dischargeSlopTanksFirst.
+   */
+  boolean getDischargeSlopTanksFirst();
+
+  /**
+   * <code>bool dischargeCommingledCargoSeparately = 26;</code>
+   *
+   * @return The dischargeCommingledCargoSeparately.
+   */
+  boolean getDischargeCommingledCargoSeparately();
+
+  /**
+   * <code>bool isDischargeInfoComplete = 27;</code>
+   *
+   * @return The isDischargeInfoComplete.
+   */
+  boolean getIsDischargeInfoComplete();
 }

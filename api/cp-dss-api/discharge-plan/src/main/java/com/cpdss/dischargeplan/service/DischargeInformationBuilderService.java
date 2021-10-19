@@ -701,6 +701,10 @@ public class DischargeInformationBuilderService {
             .ifPresent(builder1::setNeedFreshCrudeStorage);
         Optional.ofNullable(cpd.getNeedFlushingOil()).ifPresent(builder1::setNeedFlushingOil);
 
+        Optional.ofNullable(cpd.getWashTankWithDifferentCargo())
+            .ifPresent(
+                builder1::setCowWithCargoEnable); // radio button for enable/disable CWC section
+
         // tank wise details
         if (!cpd.getCowTankDetails().isEmpty()) {
           this.buildCowTankDetails(

@@ -100,14 +100,22 @@ public class CommonController {
       throws CommonRestException {
     try {
       // Get filters
-      List<String> filterKeys = Arrays.asList("voyageNo", "fileName");
+      List<String> filterKeys =
+          Arrays.asList(
+              "voyageNumber", "fileName", "fileType", "section", "category", "createdDate");
 
       Map<String, String> filterParams =
           params.entrySet().stream()
               .filter(e -> filterKeys.contains(e.getKey()))
               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
       return fileRepoService.getFileRepoDetails(
-          pageSize, pageNo, sortBy, orderBy, filterParams, headers.getFirst(CORRELATION_ID_HEADER));
+          pageSize,
+          pageNo,
+          sortBy,
+          orderBy,
+          filterParams,
+          headers.getFirst(CORRELATION_ID_HEADER),
+          filterKeys);
 
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when getting file repo details", e);
@@ -206,7 +214,7 @@ public class CommonController {
    * @return FileRepoResponse
    * @throws CommonRestException
    */
-  @GetMapping(value = "/file-repo/{repoId}")
+  @GetMapping(value = "/file-repo/{repoId}/download")
   public ResponseEntity<Resource> getFileRepoFile(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long repoId,
       @RequestHeader HttpHeaders headers)
@@ -263,10 +271,10 @@ public class CommonController {
   public FileRepoReply editFileRepo(
       @RequestHeader HttpHeaders headers,
       @PathVariable(name = "repoId", required = true) Long repoId,
-      @RequestParam(name = "file", required = true) MultipartFile file,
+      @RequestParam(name = "file", required = false) MultipartFile file,
       @RequestParam(name = "section", required = true) String section,
       @RequestParam(name = "category", required = true) String category,
-      @RequestParam(name = "hasFileChanged", required = false, defaultValue = "true")
+      @RequestParam(name = "hasFileChanged", required = true, defaultValue = "true")
           Boolean hasFileChanged)
       throws CommonRestException {
     try {

@@ -132,8 +132,8 @@ const mockJson = {
     },
     "dischargeRates": {
       "maxDischargingRate": 16200.0000,
-      "minBallastingRate": 5100.0000,
-      "maxBallastingRate": 6000.0000,
+      "minBallastRate": 5100.0000,
+      "maxBallastRate": 6000.0000,
       "initialDischargingRate": 1000.0000,
       "id": 136
     },

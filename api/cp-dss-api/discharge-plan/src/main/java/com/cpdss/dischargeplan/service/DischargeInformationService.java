@@ -173,6 +173,11 @@ public class DischargeInformationService {
     // Set Cow Details
     this.informationBuilderService.buildCowPlanMessageFromEntity(disEntity, builder);
 
+    // Set General Items
+    builder.setIsDischargeInfoComplete(disEntity.getIsDischargeInformationComplete());
+    builder.setDischargeSlopTanksFirst(disEntity.getDischargeSlopTankFirst());
+    builder.setDischargeCommingledCargoSeparately(disEntity.getDischargeCommingleCargoSeparately());
+
     builder.setResponseStatus(
         Common.ResponseStatus.newBuilder()
             .setHttpStatusCode(HttpStatus.OK.value())
@@ -185,7 +190,7 @@ public class DischargeInformationService {
       throws GenericServiceException {
     if (!RuleMasterSection.Discharging.getId().equals(request.getSectionId())) {
       throw new GenericServiceException(
-          "fetch rule for discharging study rule only not for loading or planning module",
+          "fetch rule for discharging study rule only not for discharging or planning module",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
@@ -876,6 +881,15 @@ public class DischargeInformationService {
           portsList.stream().collect(Collectors.toMap(map -> map.getId(), map -> map.getName()));
     }
     return portsMap;
+  }
+
+  public void updateIsDischargingInfoCompeteStatus(Long id, boolean isDischargingInfoComplete) {
+    dischargeInformationRepository.updateDischargeInformationCompleteStatus(
+        id, isDischargingInfoComplete);
+  }
+
+  public void save(DischargeInformation entity) {
+    dischargeInformationRepository.save(entity);
   }
 
   public void updateDischargingPlanDetailsFromAlgo(Long id, String dischargingPlanDetailsFromAlgo) {
