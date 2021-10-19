@@ -66,6 +66,9 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import javax.transaction.Transactional;
+
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.apache.commons.io.IOUtils;
@@ -801,7 +804,7 @@ public class GenerateLoadingPlanExcelReportService {
         } else {
           instructionObj.setHeading("   " + heading);
         }
-        instructionObj.setInstruction("-**No instructions available under this section**-");
+        instructionObj.setInstruction("**No instructions available under this section**");
         if (group == 0) {
           instructionObj.setCargoLoadingVisible(true);
         } else if (group == 5) {
@@ -893,9 +896,6 @@ public class GenerateLoadingPlanExcelReportService {
           getCargoTanks(
               loadingSequenceResponse.getCargoTankCategories(),
               loadingSequenceResponse.getCargos()));
-      log.info(
-          "Cargo list "
-              + sheetThree.getCargoTanks().size()); // TODO check tank number against template
       if (sheetThree.getCargoTanks().size() > 0) {
         // Getting ullage mapped against each tank if present
         getCargoTankUllageAndQuantity(
@@ -913,10 +913,6 @@ public class GenerateLoadingPlanExcelReportService {
           getBallastTanks(
               loadingSequenceResponse.getBallastTankCategories(),
               loadingSequenceResponse.getBallasts()));
-      log.info(
-          "BallastTanks list "
-              + sheetThree.getBallastTanks().size()); // TODO check tank number against
-      // template
       if (sheetThree.getBallastTanks().size() > 0) {
         getBallastTankUllageAndQuantity(
             loadingSequenceResponse.getStageTickPositions(),
@@ -1415,12 +1411,15 @@ public class GenerateLoadingPlanExcelReportService {
     List<BerthInformation> berthInfoList = new ArrayList<>();
     List<BerthDetails> berthDetailsList =
         requestPayload.getLoadingInformation().getBerthDetails().getSelectedBerths();
+    List<BerthDetails> allBerths =
+            requestPayload.getLoadingInformation().getBerthDetails().getAvailableBerths();
     String itemsAgreedWithTerminal = "";
     if (!berthDetailsList.isEmpty()) {
       berthDetailsList.forEach(
           item -> {
             BerthInformation berthInformation = new BerthInformation();
-            Optional.ofNullable(item.getBerthName()).ifPresent(berthInformation::setBerthName);
+            Optional<BerthDetails> opt = allBerths.stream().filter(berth -> berth.getBerthId().equals(item.getBerthId())).findAny();
+            Optional.ofNullable(opt.get().getBerthName()).ifPresent(berthInformation::setBerthName);
             Optional.ofNullable(item.getHoseConnections())
                 .ifPresent(berthInformation::setHoseConnection);
             Optional.ofNullable(item.getMaxManifoldPressure())
