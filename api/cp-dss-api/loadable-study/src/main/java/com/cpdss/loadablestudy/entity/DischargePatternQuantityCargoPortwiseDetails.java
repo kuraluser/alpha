@@ -91,6 +91,12 @@ public class DischargePatternQuantityCargoPortwiseDetails extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
+  @Column(name = "is_commingled")
+  private Boolean isCommingled;
+
+  @Column(name = "if_protested")
+  private Boolean ifProtested;
+
   @OneToMany(
       mappedBy = "dischargePatternQuantityCargoPortwiseDetails",
       cascade = CascadeType.ALL,

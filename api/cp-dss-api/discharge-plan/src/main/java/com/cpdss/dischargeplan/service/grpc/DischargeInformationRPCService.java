@@ -754,7 +754,7 @@ public class DischargeInformationRPCService
   public com.cpdss.dischargeplan.entity.DischargeInformation saveDischargingInformation(
       DischargeInformation request) throws Exception {
     com.cpdss.dischargeplan.entity.DischargeInformation dischargeInformation =
-        dischargeInformationService.getDischargeInformation(request.getDischargeDetails().getId());
+        dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
     if (dischargeInformation != null) {
       buildDischargingInfoFromRpcMessage(request, dischargeInformation);
       Optional.ofNullable(request.getDischargeCommingledCargoSeparately())

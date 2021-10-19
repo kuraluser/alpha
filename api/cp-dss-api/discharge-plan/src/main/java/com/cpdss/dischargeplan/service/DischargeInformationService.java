@@ -37,6 +37,7 @@ import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargePlanRuleInput;
 import com.cpdss.dischargeplan.entity.DischargePlanRules;
 import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
+import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import com.cpdss.dischargeplan.entity.PortTideDetail;
 import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
@@ -889,5 +890,33 @@ public class DischargeInformationService {
 
   public void save(DischargeInformation entity) {
     dischargeInformationRepository.save(entity);
+  }
+
+  public void updateDischargingPlanDetailsFromAlgo(Long id, String dischargingPlanDetailsFromAlgo) {
+    dischargeInformationRepository.updateDischargingPlanDetailsFromAlgo(
+        id, dischargingPlanDetailsFromAlgo);
+  }
+
+  public void updateDischargingInformationStatus(
+      DischargingInformationStatus dischargingInformationStatus, Long id) {
+    dischargeInformationRepository.updateDischargingInformationStatus(
+        dischargingInformationStatus, id);
+  }
+
+  public void updateDischargingInformationStatuses(
+      DischargingInformationStatus dischargingInformationStatus,
+      DischargingInformationStatus arrivalStatus,
+      DischargingInformationStatus departureStatus,
+      Long id) {
+    dischargeInformationRepository.updateDischargingInformationStatuses(
+        dischargingInformationStatus, arrivalStatus.getId(), departureStatus.getId(), id);
+  }
+
+  public void updateIsDischargingSequenceGeneratedStatus(Long id, boolean sequence) {
+    dischargeInformationRepository.updateIsDischargingSequenceGeneratedStatus(id, sequence);
+  }
+
+  public void updateIsDischargingPlanGeneratedStatus(Long id, boolean isPlanGenerated) {
+    dischargeInformationRepository.updateIsDischargingPlanGeneratedStatus(id, isPlanGenerated);
   }
 }

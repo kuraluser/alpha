@@ -148,6 +148,15 @@ public class DischargeInformation extends EntityDoc {
   @OneToMany(mappedBy = "dischargingInformation")
   private List<DischargingPump> dischargingPumps;*/
 
+  @Column(name = "is_discharging_sequence_generated")
+  private Boolean isDischargingSequenceGenerated;
+
+  @Column(name = "is_discharging_plan_generated")
+  private Boolean isDischargingPlanGenerated;
+
+  @Column(name = "discharging_plan_details_from_algo")
+  private String dischargingPlanDetailsFromAlgo;
+
   public DischargeInformation(Long pk) {
     this.setId(pk);
   }

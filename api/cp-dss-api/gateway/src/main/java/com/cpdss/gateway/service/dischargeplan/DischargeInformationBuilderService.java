@@ -516,13 +516,28 @@ public class DischargeInformationBuilderService {
 
     // Discharging Info Case 8 - post discharge stage
     if (request.getPostDischargeStage() != null) {
-      Callable<DischargingInfoSaveResponse> t7 =
+      Callable<DischargingInfoSaveResponse> t8 =
           () -> {
             builder.setPostDischargeStageTime(
                 buildPostDischargeStageDetails(request.getPostDischargeStage()));
             return dischargeInfoServiceStub.savePostDischargeStage(builder.build());
           };
-      callableTasks.add(t7);
+      callableTasks.add(t8);
+    }
+    // Discharging Info Case 9 -  DischargeCommingledCargoSeparately
+    if (request.getCargoToBeDischarged() != null
+        && (request.getCargoToBeDischarged().getDischargeCommingledCargoSeparately() != null
+            || request.getCargoToBeDischarged().getDischargeSlopTanksFirst() != null)) {
+      Callable<DischargingInfoSaveResponse> t9 =
+          () -> {
+            Optional.ofNullable(
+                    request.getCargoToBeDischarged().getDischargeCommingledCargoSeparately())
+                .ifPresent(builder::setDischargeCommingledCargoSeparately);
+            Optional.ofNullable(request.getCargoToBeDischarged().getDischargeSlopTanksFirst())
+                .ifPresent(builder::setDischargeSlopTanksFirst);
+            return dischargeInfoServiceStub.saveDischargingInformation(builder.build());
+          };
+      callableTasks.add(t9);
     }
     ExecutorService executorService =
         new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());

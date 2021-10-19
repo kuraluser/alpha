@@ -1,15 +1,23 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.dischargeplan;
 
+import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
+import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
+import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -27,6 +35,7 @@ import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
 import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
@@ -36,6 +45,7 @@ import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
 import com.cpdss.gateway.domain.loadingplan.LoadingStages;
+import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.VesselInfoService;
@@ -44,6 +54,10 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.utility.AdminRuleValueExtract;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +65,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -70,14 +85,22 @@ public class DischargeInformationService {
   @Autowired LoadingPlanBuilderService dischargingPlanBuilderService;
 
   @Autowired LoadingPlanService loadingPlanService;
-
+  @Autowired DischargingSequenceService dischargingSequenceService;
   @Autowired VesselInfoService vesselInfoService;
   @Autowired LoadableStudyService loadableStudyService;
+
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   @GrpcClient("dischargeInformationService")
   private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
       dischargeInfoServiceStub;
 
+  @GrpcClient("dischargeInformationService")
+  DischargePlanServiceGrpc.DischargePlanServiceBlockingStub dischargePlanServiceBlockingStub;
+
+  @Value("${gateway.attachement.rootFolder}")
+  private String rootFolder;
   /**
    * Get Discharge Information from discharge-plan and master tables
    *
@@ -467,6 +490,13 @@ public class DischargeInformationService {
             request.getDischargingDetails().getTimeOfSunrise(),
             request.getDischargingDetails().getTimeOfSunset());
       }
+      // Discharging Info Case 10 - if protested, is commingled
+      if (request.getCargoToBeDischarged() != null
+          && request.getCargoToBeDischarged().getDischargeQuantityCargoDetails() != null
+          && !request.getCargoToBeDischarged().getDischargeQuantityCargoDetails().isEmpty()) {
+        this.loadingPlanGrpcService.updateDischargeQuantityCargoDetails(
+            request.getCargoToBeDischarged().getDischargeQuantityCargoDetails());
+      }
       if (response == null) {
         throw new GenericServiceException(
             "Failed to save Discharging Information",
@@ -475,11 +505,11 @@ public class DischargeInformationService {
       }
       DischargingInformationResponse dischargingInformationResponse =
           buildDischargingInformationResponse(response, correlationId);
-      //      dischargingInformationResponse.setDischargingInformation(
-      //          this.getDischargeInformation(
-      //              dischargingInformationResponse.getVesseld(),
-      //              dischargingInformationResponse.getVoyageId(),
-      //              response.getPortRotationId()));
+            dischargingInformationResponse.setDischargingInformation(
+                this.getDischargeInformation(
+                    dischargingInformationResponse.getVesseld(),
+                    dischargingInformationResponse.getVoyageId(),
+                    response.getPortRotationId()));
       return dischargingInformationResponse;
     } catch (Exception e) {
       log.error("Failed to save LoadingInformation {}", request.getDischargingInfoId());
@@ -504,5 +534,64 @@ public class DischargeInformationService {
     response.setVesseld(response2.getVesselId());
     response.setVoyageId(response2.getVoyageId());
     return response;
+  }
+
+  public LoadingPlanAlgoResponse saveDischargingPlan(
+      Long vesselId,
+      Long voyageId,
+      Long infoId,
+      DischargingPlanAlgoRequest dischargingPlanAlgoRequest)
+      throws GenericServiceException {
+
+    LoadingPlanAlgoResponse algoResponse = new LoadingPlanAlgoResponse();
+    DischargingPlanSaveRequest.Builder builder = DischargingPlanSaveRequest.newBuilder();
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      objectMapper.writeValue(
+          new File(this.rootFolder + "/json/loadingInformationResult_" + infoId + ".json"),
+          dischargingPlanAlgoRequest);
+    } catch (IOException e) {
+      log.error("Exception encountered when saving Loading Information Response JSON");
+    }
+    try {
+      log.info("Saving Loading Information Response JSON");
+      StatusReply reply =
+          this.saveJson(
+              infoId,
+              GatewayConstants.LOADING_INFORMATION_RESPONSE_JSON_ID,
+              objectMapper.writeValueAsString(dischargingPlanAlgoRequest));
+      if (!GatewayConstants.SUCCESS.equals(reply.getStatus())) {
+        log.error("Error occured  in gateway while writing JSON to database.");
+      }
+    } catch (JsonProcessingException e) {
+      log.error("Exception encountered when processing Loading Information Response JSON");
+    }
+    dischargingSequenceService.buildDischargingPlanSaveRequest(
+        dischargingPlanAlgoRequest, vesselId, infoId, builder);
+    DischargingPlanSaveResponse response =
+        dischargePlanServiceBlockingStub.saveDischargingPlan(builder.build());
+    if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
+      log.error("Exception occured when saving loading plan");
+      throw new GenericServiceException(
+          "Unable to save loading plan for loading information " + infoId,
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    algoResponse.setProcessId(dischargingPlanAlgoRequest.getProcessId());
+    algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
+    return algoResponse;
+  }
+  /**
+   * @param referenceId
+   * @return StatusReply
+   */
+  public StatusReply saveJson(Long referenceId, Long jsonTypeId, String json) {
+    JsonRequest jsonRequest =
+        JsonRequest.newBuilder()
+            .setReferenceId(referenceId)
+            .setJsonTypeId(jsonTypeId)
+            .setJson(json)
+            .build();
+    return this.loadingPlanGrpcService.saveJson(jsonRequest);
   }
 }

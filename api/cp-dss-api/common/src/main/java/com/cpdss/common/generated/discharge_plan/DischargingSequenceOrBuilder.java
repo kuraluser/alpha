@@ -89,20 +89,19 @@ public interface DischargingSequenceOrBuilder
   com.cpdss.common.generated.loading_plan.LoadingPlanModels.ValveOrBuilder
       getBallastValvesOrBuilder(int index);
 
-  /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-  java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate>
-      getLoadingRatesList();
-  /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate getLoadingRates(int index);
-  /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-  int getLoadingRatesCount();
-  /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-  java.util.List<
-          ? extends com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRateOrBuilder>
-      getLoadingRatesOrBuilderList();
-  /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRateOrBuilder
-      getLoadingRatesOrBuilder(int index);
+  /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+  java.util.List<com.cpdss.common.generated.discharge_plan.DischargingRate>
+      getDischargingRatesList();
+  /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+  com.cpdss.common.generated.discharge_plan.DischargingRate getDischargingRates(int index);
+  /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+  int getDischargingRatesCount();
+  /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+  java.util.List<? extends com.cpdss.common.generated.discharge_plan.DischargingRateOrBuilder>
+      getDischargingRatesOrBuilderList();
+  /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+  com.cpdss.common.generated.discharge_plan.DischargingRateOrBuilder getDischargingRatesOrBuilder(
+      int index);
 
   /** <code>repeated .DeBallastingRate deBallastingRates = 11;</code> */
   java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate>
@@ -121,50 +120,50 @@ public interface DischargingSequenceOrBuilder
   com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRateOrBuilder
       getDeBallastingRatesOrBuilder(int index);
 
-  /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+  /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
   java.util.List<
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails>
-      getLoadingPlanPortWiseDetailsList();
-  /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+      getDischargingPlanPortWiseDetailsList();
+  /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
   com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails
-      getLoadingPlanPortWiseDetails(int index);
-  /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
-  int getLoadingPlanPortWiseDetailsCount();
-  /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+      getDischargingPlanPortWiseDetails(int index);
+  /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
+  int getDischargingPlanPortWiseDetailsCount();
+  /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
   java.util.List<
           ? extends
               com.cpdss.common.generated.loading_plan.LoadingPlanModels
                   .LoadingPlanPortWiseDetailsOrBuilder>
-      getLoadingPlanPortWiseDetailsOrBuilderList();
-  /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+      getDischargingPlanPortWiseDetailsOrBuilderList();
+  /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
   com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetailsOrBuilder
-      getLoadingPlanPortWiseDetailsOrBuilder(int index);
+      getDischargingPlanPortWiseDetailsOrBuilder(int index);
 
   /**
-   * <code>string cargoLoadingRate1 = 13;</code>
+   * <code>string cargoDischargingRate1 = 13;</code>
    *
-   * @return The cargoLoadingRate1.
+   * @return The cargoDischargingRate1.
    */
-  java.lang.String getCargoLoadingRate1();
+  java.lang.String getCargoDischargingRate1();
   /**
-   * <code>string cargoLoadingRate1 = 13;</code>
+   * <code>string cargoDischargingRate1 = 13;</code>
    *
-   * @return The bytes for cargoLoadingRate1.
+   * @return The bytes for cargoDischargingRate1.
    */
-  com.google.protobuf.ByteString getCargoLoadingRate1Bytes();
+  com.google.protobuf.ByteString getCargoDischargingRate1Bytes();
 
   /**
-   * <code>string cargoLoadingRate2 = 14;</code>
+   * <code>string cargoDischargingRate2 = 14;</code>
    *
-   * @return The cargoLoadingRate2.
+   * @return The cargoDischargingRate2.
    */
-  java.lang.String getCargoLoadingRate2();
+  java.lang.String getCargoDischargingRate2();
   /**
-   * <code>string cargoLoadingRate2 = 14;</code>
+   * <code>string cargoDischargingRate2 = 14;</code>
    *
-   * @return The bytes for cargoLoadingRate2.
+   * @return The bytes for cargoDischargingRate2.
    */
-  com.google.protobuf.ByteString getCargoLoadingRate2Bytes();
+  com.google.protobuf.ByteString getCargoDischargingRate2Bytes();
 
   /** <code>repeated .PumpOperation ballastOperations = 15;</code> */
   java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation>

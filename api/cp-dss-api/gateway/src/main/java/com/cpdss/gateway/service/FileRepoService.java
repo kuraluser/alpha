@@ -15,10 +15,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,8 +27,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import static java.nio.file.StandardOpenOption.WRITE;
 
 @Slf4j
 @Service
@@ -47,20 +43,21 @@ public class FileRepoService {
   @Autowired FileRepoRepository fileRepoRepository;
 
   public FileRepoGetResponse getFileRepoDetails(
-          int pageSize,
-          int pageNo,
-          String sortBy,
-          String orderBy,
-          Map<String, String> filterParams,
-          String correlationId, List<String> filterKeys)
+      int pageSize,
+      int pageNo,
+      String sortBy,
+      String orderBy,
+      Map<String, String> filterParams,
+      String correlationId,
+      List<String> filterKeys)
       throws GenericServiceException {
     FileRepoGetResponse response = new FileRepoGetResponse();
     Pageable pageRequest = PageRequest.of(pageNo, pageSize);
-    Specification<FileRepo> specification =this.getFileRepoSpecification(filterParams, filterKeys);
+    Specification<FileRepo> specification = this.getFileRepoSpecification(filterParams, filterKeys);
     Page<FileRepo> fileRepoPage = this.fileRepoRepository.findAll(specification, pageRequest);
     log.info("Retrieved file repos : {}", fileRepoPage.toList().size());
     List<FileRepo> list = fileRepoPage.toList();
-//    List<FileRepo> list = this.getFilteredValues(filterParams, fileRepoPage.toList());
+    //    List<FileRepo> list = this.getFilteredValues(filterParams, fileRepoPage.toList());
     log.info("Retrieved filtered repos : {}", list.size());
     List<FileRepoResponse> formattedList = this.formatFileRepos(list);
     response.setFileRepos(formattedList);
@@ -70,26 +67,26 @@ public class FileRepoService {
     return response;
   }
 
-  private Specification<FileRepo> getFileRepoSpecification(Map<String, String> filterParams, List<String> filterKeys) {
+  private Specification<FileRepo> getFileRepoSpecification(
+      Map<String, String> filterParams, List<String> filterKeys) {
     Specification<FileRepo> specification =
-            Specification.where(
-                    new FileRepoSpecification(
-                            new SearchCriteria("isActive", "EQUALS", Boolean.TRUE)));
-    for(int i = 0;i < filterKeys.size(); i ++){
-     String key = filterKeys.get(i);
-     if(key.equalsIgnoreCase("createdDate") && null != filterParams.get(key)) {
-       LocalDate date = LocalDate.parse(filterParams.get(key),DateTimeFormatter.ofPattern(DATE_FORMAT));
-       specification =
-               specification.and(
-                       new FileRepoSpecification(
-                               new SearchCriteria(key, "EQUALS", date)));
-     } else if (null != filterParams.get(key)) {
+        Specification.where(
+            new FileRepoSpecification(new SearchCriteria("isActive", "EQUALS", Boolean.TRUE)));
+    for (int i = 0; i < filterKeys.size(); i++) {
+      String key = filterKeys.get(i);
+      if (key.equalsIgnoreCase("createdDate") && null != filterParams.get(key)) {
+        LocalDate date =
+            LocalDate.parse(filterParams.get(key), DateTimeFormatter.ofPattern(DATE_FORMAT));
         specification =
-                specification.and(
-                        new FileRepoSpecification(
-                                new SearchCriteria(key, "EQUALS", filterParams.get(key))));
+            specification.and(new FileRepoSpecification(new SearchCriteria(key, "EQUALS", date)));
+      } else if (null != filterParams.get(key)) {
+        specification =
+            specification.and(
+                new FileRepoSpecification(
+                    new SearchCriteria(key, "EQUALS", filterParams.get(key))));
       }
-    };
+    }
+    ;
     return specification;
   }
 
@@ -104,7 +101,8 @@ public class FileRepoService {
       throws GenericServiceException {
     FileRepo repo = new FileRepo();
     FileRepoReply reply =
-        this.validateAndAddFile(file, repo, voyageNo, section, category, null, fileNameX, correlationId);
+        this.validateAndAddFile(
+            file, repo, voyageNo, section, category, null, fileNameX, correlationId);
     return reply;
   }
 
@@ -171,7 +169,7 @@ public class FileRepoService {
       repo = this.fileRepoRepository.save(repo);
       reply.setId(repo.getId());
       reply.setResponseStatus(
-              new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+          new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     }
     return reply;
   }
@@ -187,12 +185,12 @@ public class FileRepoService {
       String correlationId)
       throws GenericServiceException {
     FileRepoReply reply = new FileRepoReply();
-    if(file != null){
+    if (file != null) {
       originalFileName = file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
     }
     String extension =
-            originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase();
-    if(file != null){
+        originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase();
+    if (file != null) {
       if (file.getSize() > ATTACHEMENT_MAX_SIZE) {
         throw new GenericServiceException(
             "loadable study attachment size exceeds maximum allowed size",
@@ -201,11 +199,13 @@ public class FileRepoService {
       }
       if (!ATTACHMENT_ALLOWED_EXTENSIONS.contains(extension)) {
         throw new GenericServiceException(
-            "unsupported file type", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
+            "unsupported file type",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
       }
     }
     try {
-      if(filePath == null && file != null){
+      if (filePath == null && file != null) {
         String folderLocation = "/file-repo/" + voyageNo + "/";
         System.out.println(this.rootFolder + folderLocation);
         Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
@@ -213,7 +213,8 @@ public class FileRepoService {
         filePath = folderLocation + fileName + '.' + extension;
         Path path = Paths.get(this.rootFolder + filePath);
         Files.createFile(path);
-        Files.write(path, file.getBytes(),StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        Files.write(
+            path, file.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
       }
 
       repo.setVoyageNumber(voyageNo);
