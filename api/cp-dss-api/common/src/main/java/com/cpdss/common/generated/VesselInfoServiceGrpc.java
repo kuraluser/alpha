@@ -830,6 +830,56 @@ public final class VesselInfoServiceGrpc {
     return getGetVesselsInformationMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest,
+          com.cpdss.common.generated.VesselInfo.VesselParticulars>
+      getGetVesselParticularsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetVesselParticulars",
+      requestType = com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest.class,
+      responseType = com.cpdss.common.generated.VesselInfo.VesselParticulars.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest,
+          com.cpdss.common.generated.VesselInfo.VesselParticulars>
+      getGetVesselParticularsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest,
+            com.cpdss.common.generated.VesselInfo.VesselParticulars>
+        getGetVesselParticularsMethod;
+    if ((getGetVesselParticularsMethod = VesselInfoServiceGrpc.getGetVesselParticularsMethod)
+        == null) {
+      synchronized (VesselInfoServiceGrpc.class) {
+        if ((getGetVesselParticularsMethod = VesselInfoServiceGrpc.getGetVesselParticularsMethod)
+            == null) {
+          VesselInfoServiceGrpc.getGetVesselParticularsMethod =
+              getGetVesselParticularsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest,
+                          com.cpdss.common.generated.VesselInfo.VesselParticulars>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetVesselParticulars"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.VesselInfo.VesselParticulars
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new VesselInfoServiceMethodDescriptorSupplier("GetVesselParticulars"))
+                      .build();
+        }
+      }
+    }
+    return getGetVesselParticularsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static VesselInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<VesselInfoServiceStub> factory =
@@ -1018,6 +1068,15 @@ public final class VesselInfoServiceGrpc {
           getGetVesselsInformationMethod(), responseObserver);
     }
 
+    /** */
+    public void getVesselParticulars(
+        com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselParticulars>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetVesselParticularsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1133,6 +1192,13 @@ public final class VesselInfoServiceGrpc {
                       com.cpdss.common.generated.VesselInfo.VesselsInfoRequest,
                       com.cpdss.common.generated.VesselInfo.VesselsInformationReply>(
                       this, METHODID_GET_VESSELS_INFORMATION)))
+          .addMethod(
+              getGetVesselParticularsMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest,
+                      com.cpdss.common.generated.VesselInfo.VesselParticulars>(
+                      this, METHODID_GET_VESSEL_PARTICULARS)))
           .build();
     }
   }
@@ -1325,6 +1391,17 @@ public final class VesselInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getVesselParticulars(
+        com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselParticulars>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetVesselParticularsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1451,6 +1528,13 @@ public final class VesselInfoServiceGrpc {
         com.cpdss.common.generated.VesselInfo.VesselsInfoRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetVesselsInformationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.VesselInfo.VesselParticulars getVesselParticulars(
+        com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetVesselParticularsMethod(), getCallOptions(), request);
     }
   }
 
@@ -1599,6 +1683,15 @@ public final class VesselInfoServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetVesselsInformationMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.VesselInfo.VesselParticulars>
+        getVesselParticulars(
+            com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetVesselParticularsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_ALL_VESSELS_BY_COMPANY = 0;
@@ -1617,6 +1710,7 @@ public final class VesselInfoServiceGrpc {
   private static final int METHODID_GET_VESSEL_VALVE_SEQUENCE = 13;
   private static final int METHODID_GET_LOADING_INFO_RULES = 14;
   private static final int METHODID_GET_VESSELS_INFORMATION = 15;
+  private static final int METHODID_GET_VESSEL_PARTICULARS = 16;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1736,6 +1830,12 @@ public final class VesselInfoServiceGrpc {
                       com.cpdss.common.generated.VesselInfo.VesselsInformationReply>)
                   responseObserver);
           break;
+        case METHODID_GET_VESSEL_PARTICULARS:
+          serviceImpl.getVesselParticulars(
+              (com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselParticulars>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1816,6 +1916,7 @@ public final class VesselInfoServiceGrpc {
                       .addMethod(getGetVesselValveSequenceMethod())
                       .addMethod(getGetLoadingInfoRulesMethod())
                       .addMethod(getGetVesselsInformationMethod())
+                      .addMethod(getGetVesselParticularsMethod())
                       .build();
         }
       }

@@ -96,6 +96,7 @@ public class LoadingPlanService {
 
   @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
   @Autowired private LoadingPlanAlgoService loadingPlanAlgoService;
+  @Autowired private LoadingPlanRuleService loadingPlanRuleService;
 
   @GrpcClient("loadableStudyService")
   private SynopticalOperationServiceGrpc.SynopticalOperationServiceBlockingStub
@@ -125,6 +126,8 @@ public class LoadingPlanService {
       loadablePlanStowageDetailsService.saveLoadablePlanStowageDetailsList(
           request.getLoadablePlanDetailsReply().getLoadablePlanStowageDetailsList(),
           savedLoadingInformation);
+      loadingPlanRuleService.saveRulesAgainstLoadingInformation(savedLoadingInformation);
+      log.info(" Saved Loading Information Id : ", savedLoadingInformation.getId());
       log.info(
           "Saved LoadingInformation on port "
               + request.getLoadingInformationDetail().getPortId()
@@ -929,6 +932,38 @@ public class LoadingPlanService {
               conditionType,
               LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
       portLoadingPlanBallastDetailsRepository.saveAll(ballastEntityList);
+    }
+
+    List<PortLoadingPlanCommingleTempDetails> tempCommingleList =
+        portLoadingPlanCommingleTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInformation.getId(), conditionType, true);
+
+    List<PortLoadingPlanCommingleDetails> commingleEntityList =
+        new ArrayList<PortLoadingPlanCommingleDetails>();
+    if (!tempCommingleList.isEmpty()) {
+      log.info("Copying commingle details from temporary tables");
+      for (PortLoadingPlanCommingleTempDetails tempCommingleEntity : tempCommingleList) {
+        PortLoadingPlanCommingleDetails commingleEntity = new PortLoadingPlanCommingleDetails();
+        BeanUtils.copyProperties(tempCommingleEntity, commingleEntity);
+        commingleEntity.setId(null);
+        commingleEntity.setCreatedBy(null);
+        commingleEntity.setCreatedDate(null);
+        commingleEntity.setCreatedDateTime(null);
+        commingleEntity.setLastModifiedBy(null);
+        commingleEntity.setLastModifiedDate(null);
+        commingleEntity.setLastModifiedDateTime(null);
+        commingleEntity.setIsActive(true);
+        commingleEntity.setLoadingInformation(loadingInformation);
+        commingleEntityList.add(commingleEntity);
+      }
+      // Deleting existing entry from actual table before pushing new records
+      portLoadingPlanCommingleDetailsRepository
+          .deleteExistingByLoadingInfoAndConditionTypeAndValueType(
+              loadingInformation.getId(),
+              conditionType,
+              LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
+      portLoadingPlanCommingleDetailsRepository.saveAll(commingleEntityList);
     }
     /**
      * copying data to synoptical table. stowage quantity as cargo rob quantity as ohq ballas as

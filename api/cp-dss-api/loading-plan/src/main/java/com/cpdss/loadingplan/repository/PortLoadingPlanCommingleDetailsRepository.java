@@ -25,4 +25,11 @@ public interface PortLoadingPlanCommingleDetailsRepository
 
   public List<PortLoadingPlanCommingleDetails> findByLoadingInformationAndIsActive(
       LoadingInformation loadingInformation, Boolean isActive);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "Update PortLoadingPlanCommingleDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and valueType = ?3 and isActive = true")
+  public void deleteExistingByLoadingInfoAndConditionTypeAndValueType(
+      Long loadingInfoId, Integer conditionType, Integer valueType);
 }

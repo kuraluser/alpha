@@ -212,6 +212,9 @@ public class LoadablePatternService {
 
   @Autowired private CommingleCargoRepository commingleCargoRepository;
 
+  @Autowired
+  private LoadablePatternCargoToppingOffSequenceRepository cargoToppingOffSequenceRepository;
+
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
@@ -1449,6 +1452,7 @@ public class LoadablePatternService {
         false, loadablePattern.getId());
     synopticalTableLoadicatorDataRepository.deleteByLoadablePatternId(
         false, loadablePattern.getId());
+    cargoToppingOffSequenceRepository.deleteByLoadablePatternId(loadablePattern.getId());
   }
 
   public com.cpdss.common.generated.LoadableStudy.LoadablePatternReply.Builder

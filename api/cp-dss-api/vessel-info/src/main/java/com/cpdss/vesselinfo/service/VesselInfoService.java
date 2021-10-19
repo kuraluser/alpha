@@ -35,6 +35,7 @@ import com.cpdss.common.generated.VesselInfo.VesselDetail;
 import com.cpdss.common.generated.VesselInfo.VesselDetail.Builder;
 import com.cpdss.common.generated.VesselInfo.VesselIdResponse;
 import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
+import com.cpdss.common.generated.VesselInfo.VesselParticulars;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
@@ -157,6 +158,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired VesselValveEducationProcessRepository educationProcessRepository;
   @Autowired VesselValveAirPurgeSequenceRepository airPurgeSequenceRepository;
   @Autowired VesselValveStrippingSequenceRepository strippingSequenceRepository;
+  @Autowired private VesselParticularService vesselParticularService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -1197,17 +1199,10 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   }
 
   /*
-   * int64 id = 1;
-  string frameNumber = 2;
-  string trim_m1 = 3;
-  string trim_0 = 4;
-  string trim_1 = 5;
-  string trim_2 = 6;
-  string trim_3 = 7;
-  string trim_4 = 8;
-  string trim_5 = 9;
-  string isActive = 10;
-   * */
+   * int64 id = 1; string frameNumber = 2; string trim_m1 = 3; string trim_0 = 4;
+   * string trim_1 = 5; string trim_2 = 6; string trim_3 = 7; string trim_4 = 8;
+   * string trim_5 = 9; string isActive = 10;
+   */
 
   /**
    * @param vesselTankTcg
@@ -1842,7 +1837,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         } else {
           log.info("Fetch vessel rule for loadable study");
           // isDisplayId: false means primary key will be set null for all rules
-          // isDisplayVesselRuleXId: true  means primary key value set to foriegn key column for
+          // isDisplayVesselRuleXId: true means primary key value set to foriegn key
+          // column for
           // storing rules against loadable study
           buildResponseForVesselRules(
               builder,
@@ -2730,5 +2726,27 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               new VesselInfoSpecification(new SearchCriteria("dateOfLaunching", "EQUALS", date)));
     }
     return vesselRepository.findAll(specification, pageable);
+  }
+
+  @Override
+  public void getVesselParticulars(
+      LoadingInfoRulesRequest request, StreamObserver<VesselParticulars> responseObserver) {
+    log.info("Getting vessel particulars for vessel Id : {}", request.getVesselId());
+    VesselParticulars.Builder builder = VesselParticulars.newBuilder();
+    try {
+      vesselParticularService.getVesselParticulars(builder, request);
+    } catch (GenericServiceException e) {
+      log.info("Getting vessel particulars failed for vessel Id : {}", request.getVesselId());
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(null != e.getMessage() ? e.getMessage() : "")
+              .setStatus(FAILED)
+              .build());
+    }
+    builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    responseObserver.onNext(builder.build());
+    responseObserver.onCompleted();
   }
 }
