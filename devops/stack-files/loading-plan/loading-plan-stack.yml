@@ -16,6 +16,7 @@ services:
     - GRPC_PORT=8090
     - ALGO_BASE_URL=${ALGO_BASE_URL}
     - ENABLE_COMM=${ENABLE_COMM}
+    - CPDSS_BUILD_ENV=${CPDSS_BUILD_ENV}
     - ATTACHMENT_ROOT_PATH=/data
     dns: 8.8.8.8
     healthcheck:
