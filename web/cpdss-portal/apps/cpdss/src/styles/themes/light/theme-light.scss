@@ -660,6 +660,7 @@ a{
 
 .badge-custom{
   color: $active-color;
+  background-color: $text-area-bg;
   &.error{
     background:$red;
     color: $active-color;

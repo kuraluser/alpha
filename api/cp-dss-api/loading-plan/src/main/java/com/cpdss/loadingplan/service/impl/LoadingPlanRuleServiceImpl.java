@@ -688,4 +688,107 @@ public class LoadingPlanRuleServiceImpl implements LoadingPlanRuleService {
     }
     return builder.build();
   }
+
+  /**
+   * To fetch default loading rules and save rules against loading information
+   *
+   * @param loadingInformation
+   * @throws GenericServiceException
+   */
+  public void saveRulesAgainstLoadingInformation(LoadingInformation loadingInformation)
+      throws GenericServiceException {
+    VesselInfo.VesselRuleRequest.Builder vesselRuleBuilder =
+        VesselInfo.VesselRuleRequest.newBuilder();
+    vesselRuleBuilder.setSectionId(RuleMasterSection.Loading.getId());
+    vesselRuleBuilder.setVesselId(loadingInformation.getVesselXId());
+    vesselRuleBuilder.setIsFetchEnabledRules(false);
+    vesselRuleBuilder.setIsNoDefaultRule(true);
+    VesselInfo.VesselRuleReply vesselRuleReply =
+        this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+    if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get loadable study rule Details ",
+          vesselRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.parseInt(vesselRuleReply.getResponseStatus().getCode())));
+    }
+    List<LoadingRule> loadableRulesList = new ArrayList<>();
+    vesselRuleReply.getRulePlanList().stream()
+        .forEach(
+            plan -> {
+              plan.getRulesList()
+                  .forEach(
+                      loadingInfoRules -> {
+                        LoadingRule loadingRule = new LoadingRule();
+                        loadingRule.setLoadingXid(loadingInformation.getId());
+                        Optional.ofNullable(loadingInfoRules.getVesselRuleXId())
+                            .ifPresent(
+                                vesselRuleId ->
+                                    loadingRule.setVesselRuleXid(Long.parseLong(vesselRuleId)));
+                        Optional.ofNullable(loadingInformation.getVesselXId())
+                            .ifPresent(loadingRule::setVesselXid);
+                        if (!CollectionUtils.isEmpty(vesselRuleReply.getRuleTypeMasterList())
+                            && loadingInfoRules.getRuleType() != null
+                            && loadingInfoRules.getRuleType().trim() != "") {
+                          Optional<VesselInfo.RuleTypeMaster> ruleType =
+                              vesselRuleReply.getRuleTypeMasterList().stream()
+                                  .filter(
+                                      rType ->
+                                          rType
+                                              .getRuleType()
+                                              .equalsIgnoreCase(loadingInfoRules.getRuleType()))
+                                  .findAny();
+                          ruleType.orElseThrow(RuntimeException::new);
+                          loadingRule.setRuleTypeXid(ruleType.get().getId());
+                        }
+                        Optional.ofNullable(loadingInfoRules.getDisplayInSettings())
+                            .ifPresentOrElse(
+                                loadingRule::setDisplayInSettings,
+                                () -> loadingRule.setDisplayInSettings(false));
+                        Optional.ofNullable(loadingInfoRules.getEnable())
+                            .ifPresentOrElse(
+                                loadingRule::setIsEnable, () -> loadingRule.setIsEnable(false));
+                        Optional.ofNullable(loadingInfoRules.getIsHardRule())
+                            .ifPresentOrElse(
+                                loadingRule::setIsHardRule, () -> loadingRule.setIsHardRule(false));
+                        loadingRule.setIsActive(true);
+                        Optional.ofNullable(loadingInfoRules.getNumericPrecision())
+                            .ifPresent(loadingRule::setNumericPrecision);
+                        Optional.ofNullable(loadingInfoRules.getNumericScale())
+                            .ifPresent(loadingRule::setNumericScale);
+                        Optional.ofNullable(loadingInfoRules.getRuleTemplateId())
+                            .ifPresent(item -> loadingRule.setParentRuleXid(Long.parseLong(item)));
+                        List<LoadingRuleInput> lisOfLsRulesInput = new ArrayList<>();
+                        loadingInfoRules
+                            .getInputsList()
+                            .forEach(
+                                lodingInfoRulesInput -> {
+                                  LoadingRuleInput loadingRuleInput = new LoadingRuleInput();
+                                  loadingRuleInput.setLoadingRule(loadingRule);
+                                  Optional.ofNullable(lodingInfoRulesInput.getPrefix())
+                                      .ifPresent(loadingRuleInput::setPrefix);
+                                  Optional.ofNullable(lodingInfoRulesInput.getDefaultValue())
+                                      .ifPresentOrElse(
+                                          loadingRuleInput::setDefaultValue,
+                                          () -> loadingRuleInput.setDefaultValue(null));
+                                  Optional.ofNullable(lodingInfoRulesInput.getType())
+                                      .ifPresent(loadingRuleInput::setTypeValue);
+                                  Optional.ofNullable(lodingInfoRulesInput.getMax())
+                                      .ifPresent(loadingRuleInput::setMaxValue);
+                                  Optional.ofNullable(lodingInfoRulesInput.getMin())
+                                      .ifPresent(loadingRuleInput::setMinValue);
+                                  Optional.ofNullable(lodingInfoRulesInput.getSuffix())
+                                      .ifPresent(loadingRuleInput::setSuffix);
+                                  loadingRuleInput.setIsActive(true);
+                                  Optional.ofNullable(lodingInfoRulesInput.getIsMandatory())
+                                      .ifPresentOrElse(
+                                          loadingRuleInput::setIsMandatory,
+                                          () -> loadingRuleInput.setIsMandatory(false));
+                                  lisOfLsRulesInput.add(loadingRuleInput);
+                                });
+                        loadingRule.setLoadingRuleInputs(lisOfLsRulesInput);
+                        loadableRulesList.add(loadingRule);
+                      });
+            });
+    loadingRuleRepository.saveAll(loadableRulesList);
+  }
 }

@@ -11,6 +11,9 @@ import { OPERATIONS } from '../../core/models/common.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { ComponentCanDeactivate } from '../../../shared/models/common.model';
 import { DischargingInformationComponent } from './discharging-information/discharging-information.component';
+import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { IPermission } from '../../../shared/models/user-profile.model';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
 /**
  * Component for discharging module
@@ -41,6 +44,10 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   dischargingInformationComplete: boolean;
   cargos: ICargo[]
   dischargingInstructionComplete: boolean;
+  dischargingInfoTabPermission: IPermission;
+  dischargingInstructionTabPermission: IPermission;
+  dischargingSequenceTabPermission: IPermission;
+  dischargingPlanTabPermission: IPermission;
 
   private ngUnsubscribe: Subject<any> = new Subject();
   readonly OPERATIONS = OPERATIONS;
@@ -55,11 +62,13 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
     private operationsApiService: OperationsApiService,
     private unsavedChangesGuard: UnsavedChangesGuard,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
-    private ngxSpinnerService: NgxSpinnerService
-  ) {}
+    private ngxSpinnerService: NgxSpinnerService,
+    private permissionsService: PermissionsService
+  ) { }
 
   ngOnInit(): void {
     this.initSubsciptions();
+    this.setPagePermission();
     this.getCargos();
     this.activatedRoute.paramMap
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -71,8 +80,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
         localStorage.setItem("voyageId", this.voyageId.toString());
         localStorage.removeItem("loadableStudyId")
         this.selectedPortName = localStorage.getItem('selectedPortName');
-        this.currentTab = OPERATION_TAB.INFORMATION;
-        this.loadingDischargingTransformationService.setTabChange(OPERATION_TAB.INFORMATION);
+        this.tabPermission();
       });
   }
 
@@ -127,6 +135,36 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   */
   setDischargingInfoId(data) {
     this.dischargeInfoId = data;
+  }
+
+  /**
+  * Set page permission
+  *
+  * @memberof DischargingComponent
+  */
+  setPagePermission() {
+    this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingComponent']);
+    this.dischargingInfoTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingInformationComponent'], false);
+    this.dischargingInstructionTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingInstructionComponent'], false);
+    this.dischargingSequenceTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingSequenceComponent'], false);
+    this.dischargingPlanTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingPlanComponent'], false);
+  }
+
+  /**
+  * Select tab permission
+  * @memberof DischargingComponent
+  */
+  tabPermission() {
+    if (this.dischargingInfoTabPermission === undefined || this.dischargingInfoTabPermission?.view) {
+      this.currentTab = OPERATION_TAB.INFORMATION;
+    } else if (this.dischargingInstructionTabPermission?.view) {
+      this.currentTab = OPERATION_TAB.INSTRUCTION;
+    } else if (this.dischargingSequenceTabPermission?.view) {
+      this.currentTab = OPERATION_TAB.SEQUENCE;
+    } else if (this.dischargingPlanTabPermission?.view) {
+      this.currentTab = OPERATION_TAB.PLAN;
+    }
+    this.loadingDischargingTransformationService.setTabChange(this.currentTab);
   }
 
 }

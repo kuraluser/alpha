@@ -1,17 +1,15 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.dischargeplan;
 
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse;
-import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingMachinesInUse;
 import com.cpdss.gateway.domain.loadingplan.LoadingStagesRequest;
 import com.cpdss.gateway.domain.loadingplan.ToppingOffSequence;
 import java.util.List;
 import lombok.Data;
 
 @Data
-@CPDSSJsonParser
 public class DischargingInformationRequest {
 
   private Long dischargingInfoId;
@@ -36,4 +34,6 @@ public class DischargingInformationRequest {
   private LoadingStagesRequest dischargingStages;
   private Boolean isDischargeInfoComplete; // validation logic at Front-end
   private CowPlan cowPlan;
+  private PostDischargeStage postDischargeStage;
+  private PlannedCargo plannedCargo;
 }

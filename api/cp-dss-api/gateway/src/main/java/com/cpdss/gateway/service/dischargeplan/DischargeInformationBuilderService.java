@@ -514,6 +514,16 @@ public class DischargeInformationBuilderService {
       callableTasks.add(t7);
     }
 
+    // Discharging Info Case 8 - post discharge stage
+    if (request.getPostDischargeStage() != null) {
+      Callable<DischargingInfoSaveResponse> t7 =
+          () -> {
+            builder.setPostDischargeStageTime(
+                buildPostDischargeStageDetails(request.getPostDischargeStage()));
+            return dischargeInfoServiceStub.savePostDischargeStage(builder.build());
+          };
+      callableTasks.add(t7);
+    }
     ExecutorService executorService =
         new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
     List<Future<DischargingInfoSaveResponse>> futures = executorService.invokeAll(callableTasks);
@@ -540,6 +550,16 @@ public class DischargeInformationBuilderService {
         callableTasks.size(),
         data.size());
     return data.isEmpty() ? null : data.stream().findFirst().get().get();
+  }
+
+  private PostDischargeStageTime buildPostDischargeStageDetails(
+      PostDischargeStage postDischargeStage) {
+    PostDischargeStageTime.Builder builder = PostDischargeStageTime.newBuilder();
+    builder.setFinalStripping(postDischargeStage.getFinalStrippingTime().toString());
+    builder.setFreshOilWashing(postDischargeStage.getFreshOilWashingTime().toString());
+    builder.setSlopDischarging(postDischargeStage.getSlopDischargingTime().toString());
+    builder.setTimeForDryCheck(postDischargeStage.getDryCheckTime().toString());
+    return builder.build();
   }
 
   private CowPlan buildDischargeCowDetails(
@@ -582,15 +602,18 @@ public class DischargeInformationBuilderService {
               });
       builder.addCowTankDetails(cowTankBuilder);
     }
-    builder.setEstCowDuration(cowPlan.getCowDuration());
-    builder.setCowEndTime(cowPlan.getCowEnd());
-    builder.setCowTankPercent(cowPlan.getCowPercentage());
-    builder.setCowStartTime(cowPlan.getCowStart());
-    builder.setTrimCowMax(cowPlan.getCowTrimMax());
-    builder.setTrimCowMin(cowPlan.getCowTrimMin());
-    builder.setNeedFreshCrudeStorage(cowPlan.getNeedFreshCrudeStorage());
-    builder.setNeedFlushingOil(cowPlan.getNeedFlushingOil());
-    builder.setCowWithCargoEnable(cowPlan.getWashTanksWithDifferentCargo());
+    Optional.ofNullable(cowPlan.getCowDuration()).ifPresent(builder::setEstCowDuration);
+    Optional.ofNullable(cowPlan.getCowEnd()).ifPresent(builder::setCowEndTime);
+    Optional.ofNullable(cowPlan.getCowPercentage()).ifPresent(builder::setCowEndTime);
+    Optional.ofNullable(cowPlan.getCowStart()).ifPresent(builder::setCowStartTime);
+    Optional.ofNullable(cowPlan.getCowTrimMax()).ifPresent(builder::setTrimCowMax);
+    Optional.ofNullable(cowPlan.getCowTrimMin()).ifPresent(builder::setTrimCowMin);
+    Optional.ofNullable(cowPlan.getNeedFreshCrudeStorage())
+        .ifPresent(builder::setNeedFreshCrudeStorage);
+    Optional.ofNullable(cowPlan.getNeedFlushingOil()).ifPresent(builder::setNeedFlushingOil);
+    Optional.ofNullable(cowPlan.getWashTanksWithDifferentCargo())
+        .ifPresent(builder::setCowWithCargoEnable);
+
     return builder.build();
   }
 
@@ -624,10 +647,10 @@ public class DischargeInformationBuilderService {
           DischargeBerths.Builder builder = DischargeBerths.newBuilder();
           Optional.ofNullable(berth.getAirDraftLimitation())
               .ifPresent(airDraft -> builder.setAirDraftLimitation(String.valueOf(airDraft)));
-          Optional.ofNullable(berth.getHoseConnections())
-              .ifPresent(hoseConnection -> builder.setHoseConnections(hoseConnection));
+          Optional.ofNullable(berth.getHoseConnections()).ifPresent(builder::setHoseConnections);
           Optional.ofNullable(berth.getBerthId()).ifPresent(builder::setBerthId);
           Optional.ofNullable(berth.getLoadingBerthId()).ifPresent(builder::setId);
+          Optional.ofNullable(berth.getDischargingBerthId()).ifPresent(builder::setId);
           Optional.ofNullable(dischargingInfoId).ifPresent(builder::setDischargeInfoId);
           // missing depth, itemsToBeAgreedWith added to domain
           Optional.ofNullable(berth.getMaxManifoldHeight())
@@ -645,8 +668,9 @@ public class DischargeInformationBuilderService {
           // maxShipDepth is taken as depth in LoadingBerthDetails table
           Optional.ofNullable(berth.getMaxShipDepth())
               .ifPresent(depth -> builder.setDepth(String.valueOf(depth)));
-          Optional.ofNullable(berth.getLineDisplacement())
-              .ifPresent(v -> builder.setLineDisplacement(v));
+          Optional.ofNullable(berth.getLineDisplacement()).ifPresent(builder::setLineDisplacement);
+          Optional.ofNullable(berth.getAirPurge()).ifPresent(builder::setAirPurge);
+          Optional.ofNullable(berth.getCargoCirculation()).ifPresent(builder::setCargoCirculation);
           berthList.add(builder.build());
         });
     return berthList;
@@ -673,9 +697,7 @@ public class DischargeInformationBuilderService {
   }
 
   private List<LoadingPlanModels.LoadingMachinesInUse> buildDischargingMachineries(
-      List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse>
-          dischargingMachineries,
-      Long dischargingInfoId) {
+      List<LoadingMachinesInUse> dischargingMachineries, Long dischargingInfoId) {
     List<LoadingPlanModels.LoadingMachinesInUse> machineries = new ArrayList<>();
     dischargingMachineries.forEach(
         machine -> {
@@ -686,8 +708,7 @@ public class DischargeInformationBuilderService {
           Optional.ofNullable(machine.getId()).ifPresent(builder::setId);
           Optional.ofNullable(dischargingInfoId).ifPresent(builder::setLoadingInfoId);
           Optional.ofNullable(machine.getMachineId()).ifPresent(builder::setMachineId);
-          Optional.ofNullable(machine.getMachineTypeValue())
-              .ifPresent(v -> builder.setMachineTypeValue(v));
+          Optional.ofNullable(machine.getMachineTypeId()).ifPresent(builder::setMachineTypeValue);
           // isUsing missing added to domain
           Optional.ofNullable(machine.getIsUsing()).ifPresent(builder::setIsUsing);
           machineries.add(builder.build());

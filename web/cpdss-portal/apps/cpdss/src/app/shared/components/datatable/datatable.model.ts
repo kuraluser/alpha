@@ -260,5 +260,7 @@ export enum DATATABLE_BUTTON {
     START_VOYAGE = "Start",
     STOP_VOYAGE = "Stop",
     SAVE_BUTTON = 'Save',
-    DELETE_BUTTON = 'Delete'
+    DELETE_BUTTON = 'Delete',
+    VIEW_BUTTON = 'View',
+    EDIT_BUTTON = 'Edit'
 }

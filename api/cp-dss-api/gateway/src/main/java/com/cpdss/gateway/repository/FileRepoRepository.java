@@ -6,13 +6,16 @@ import com.cpdss.gateway.entity.FileRepo;
 import javax.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.lang.Nullable;
 
 /**
- * User repository - to interact with {@link FileRepo} table
+ * File repository - to interact with {@link FileRepo} table
  *
  * @author gokul.p
  */
 @Transactional
-public interface FileRepoRepository extends CommonCrudRepository<FileRepo, Long> {
-  public Page<FileRepo> findByIsActive(boolean isActive, Pageable page);
+public interface FileRepoRepository extends CommonCrudRepository<FileRepo, Long>, JpaSpecificationExecutor<FileRepo> {
+  Page<FileRepo> findAllByIsActiveTrueIgnoreCase(@Nullable Specification<FileRepo> spec, Pageable pageable);
 }

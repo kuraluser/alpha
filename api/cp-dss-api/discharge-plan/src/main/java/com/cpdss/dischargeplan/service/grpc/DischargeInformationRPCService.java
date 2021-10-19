@@ -11,6 +11,7 @@ import com.cpdss.common.generated.Common.COW_TYPE;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.discharge_plan.CargoForCow;
 import com.cpdss.common.generated.discharge_plan.CowPlan;
+import com.cpdss.common.generated.discharge_plan.CowTankDetails;
 import com.cpdss.common.generated.discharge_plan.DischargeInformation;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
@@ -24,6 +25,7 @@ import com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
 import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest;
 import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply;
+import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -40,6 +42,8 @@ import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStabilityParameters;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
 import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
+import com.cpdss.dischargeplan.repository.CowTankDetailRepository;
+import com.cpdss.dischargeplan.repository.CowWithDifferentCargoRepository;
 import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeStageDurationRepository;
 import com.cpdss.dischargeplan.repository.DischargeStageMinAmountRepository;
@@ -57,10 +61,8 @@ import com.cpdss.dischargeplan.service.DischargingMachineryInUseService;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -91,6 +93,8 @@ public class DischargeInformationRPCService
   @Autowired DischargeStageDurationRepository stageDurationRepository;
   @Autowired DischargeStageMinAmountRepository minAmountRepository;
   @Autowired CowPlanDetailRepository cowPlanDetailRepository;
+  @Autowired CowWithDifferentCargoRepository cowWithDifferentCargoRepository;
+  @Autowired CowTankDetailRepository cowTankDetailRepository;
 
   @Override
   public void getDischargeInformation(
@@ -291,11 +295,10 @@ public class DischargeInformationRPCService
       log.info("Request payload {}", Utils.toJson(request));
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
-      log.info("Save Loading Info, Berths Id {}", request.getDischargeInfoId());
+      log.info("Save Discharging Info, Berths Id {}", request.getDischargeInfoId());
       if (dischargingInformation != null) {
         dischargingBerthService.saveDischargingBerthList(
             request.getBerthDetailsList(), dischargingInformation);
-        // TODO confirm the field
         this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
             dischargingInformation.getId(), request.getIsDischargingInfoComplete());
       }
@@ -457,12 +460,61 @@ public class DischargeInformationRPCService
     }
   }
 
+  @Override
+  public void savePostDischargeStage(
+      DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
+    DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
+    try {
+      log.info("Request payload {}", Utils.toJson(request));
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
+          dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+      log.info("Save post discharge rate, Id {}", request.getDischargeInfoId());
+      if (dischargingInformation != null) {
+        savePostDischargeRate(request.getPostDischargeStageTime(), dischargingInformation);
+        this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
+            dischargingInformation.getId(), request.getIsDischargingInfoComplete());
+      }
+      buildDischargingInfoSaveResponse(builder, dischargingInformation);
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saved Loading information Rates")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build())
+          .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void savePostDischargeRate(
+      PostDischargeStageTime postDischargeStageTime,
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation) {
+    dischargingInformation.setTimeForFinalStripping(
+        new BigDecimal(postDischargeStageTime.getFinalStripping()));
+    dischargingInformation.setFreshOilWashing(
+        new BigDecimal(postDischargeStageTime.getFreshOilWashing()));
+    dischargingInformation.setTimeForSlopDischarging(
+        new BigDecimal(postDischargeStageTime.getSlopDischarging()));
+    dischargingInformation.setTimeForDryCheck(
+        new BigDecimal(postDischargeStageTime.getTimeForDryCheck()));
+    dischargeInformationService.save(dischargingInformation);
+  }
+
   private void saveCowPlanDetails(CowPlan cowPlan) {
     Optional<CowPlanDetail> var1 =
         cowPlanDetailRepository.findByDischargingId(cowPlan.getDischargingInfoId());
     if (var1.isPresent()) {
       log.info("Save cow plan, Set values");
       CowPlanDetail cowPlanDetail = var1.get();
+      cowPlanDetailRepository.save(cowPlanDetail);
 
       if (!cowPlan.getCowEndTime().isEmpty()) {
         cowPlanDetail.setCowEndTime(new BigDecimal(cowPlan.getCowEndTime()));
@@ -493,124 +545,153 @@ public class DischargeInformationRPCService
       if (!cowPlan.getTrimCowMin().isEmpty()) {
         cowPlanDetail.setCowMinTrim(new BigDecimal(cowPlan.getTrimCowMin()));
       }
-      if (!cowPlan.getCowTankDetailsList().isEmpty()) {
-        cowPlan.getCowTankDetailsList().stream()
-            .forEach(
-                plan -> {
-                  if (COW_TYPE.CARGO.equals(plan.getCowType())) {
-                    List<CargoForCow> cargoForCowList = plan.getCargoForCowList();
-                    List<Long> tanksIdsToSave =
-                        cargoForCowList.stream()
-                            .flatMap(cargo -> cargo.getTankIdsList().stream())
-                            .collect(Collectors.toList());
-                    Set<CowWithDifferentCargo> cowWithDifferentCargos =
-                        cowPlanDetail.getCowWithDifferentCargos();
-                    // method to create new cargo Wash
-                    createCaroCowWash(cargoForCowList, cowPlanDetail);
-                    // to disable existing cargo wash
-                    if (!cowWithDifferentCargos.isEmpty()) {
-                      cowWithDifferentCargos.forEach(
-                          cargoCow -> {
-                            if (!tanksIdsToSave.contains(cargoCow.getTankXid())) {
-                              cargoCow.setIsActive(false);
-                            }
-                          });
-                    }
-
-                  } else {
-                    List<Long> tanksIdsToSave = plan.getTankIdsList();
-                    List<CowTankDetail> existingTanks =
-                        cowPlanDetail.getCowTankDetails().stream()
-                            .filter(
-                                tank -> tank.getCowTypeXid().equals(plan.getCowType().getNumber()))
-                            .collect(Collectors.toList());
-                    // if the values are not in the current list set it as false
-                    existingTanks.stream()
-                        .forEach(
-                            tank -> {
-                              if (!tanksIdsToSave.contains(tank.getTankXid())) {
-                                tank.setIsActive(false);
-                              }
-                            });
-                    // adding new objects
-                    List<Long> existingTankIds =
-                        cowPlanDetail.getCowTankDetails().stream()
-                            .map(CowTankDetail::getTankXid)
-                            .collect(Collectors.toList());
-                    tanksIdsToSave.removeAll(existingTankIds);
-                    if (tanksIdsToSave != null || !tanksIdsToSave.isEmpty()) {
-                      tanksIdsToSave.forEach(
-                          newCowTankId -> {
-                            CowTankDetail newTank = new CowTankDetail();
-                            newTank.setCowPlanDetail(cowPlanDetail);
-                            newTank.setCowTypeXid(plan.getCowType().getNumber());
-                            newTank.setDischargingXid(cowPlan.getDischargingInfoId());
-                            newTank.setIsActive(true);
-                            newTank.setTankXid(newCowTankId);
-                            if (cowPlanDetail.getCowTankDetails() == null) {
-                              cowPlanDetail.setCowTankDetails(
-                                  new HashSet<>(Arrays.asList(newTank)));
-                            } else {
-                              cowPlanDetail.getCowTankDetails().add(newTank);
-                            }
-                          });
-                    }
-                  }
-                });
-      }
+      updateTanksDetails(cowPlan, cowPlanDetail);
+      cowPlanDetailRepository.save(cowPlanDetail);
     }
   }
 
-  private void createCaroCowWash(List<CargoForCow> cargoForCowList, CowPlanDetail cowPlanDetail) {
-	  //if the list is empty create all the values in the request list
-    if (cowPlanDetail.getCowWithDifferentCargos().isEmpty()) {
-      cargoForCowList.forEach(
-          newCargoWash ->
-              updateCargoCowWash(cowPlanDetail, newCargoWash, newCargoWash.getTankIdsList()));
-    } else {
-    	//groups the CowWithDifferentCargo by cargo nomination ids
-      Map<Long, List<CowWithDifferentCargo>> cargoNominationWiseWashCargos =
-          cowPlanDetail.getCowWithDifferentCargos().stream()
-              .collect(Collectors.groupingBy(CowWithDifferentCargo::getCargoNominationXid));
-      cargoForCowList.forEach(
-          newCargoWash -> {
-        	  //get the equivalent tanks for the cargo nomination ids
-        	  List<CowWithDifferentCargo> nominationWiseWashCargoEntities =
-                cargoNominationWiseWashCargos.get(newCargoWash.getCargoNominationId());
-            //finds the tanks ids
-        	  List<Long> savedTanks =
-                nominationWiseWashCargoEntities.stream()
-                    .map(CowWithDifferentCargo::getTankXid)
-                    .collect(Collectors.toList());
-        	  //remove the already existing ids in the db
-            List<Long> tankIdsToSave = newCargoWash.getTankIdsList();
-            tankIdsToSave.removeAll(savedTanks);
-            //create the new ones
-            updateCargoCowWash(cowPlanDetail, newCargoWash, tankIdsToSave);
+  private void updateTanksDetails(CowPlan cowPlan, CowPlanDetail cowPlanDetail) {
+    if (!cowPlan.getCowTankDetailsList().isEmpty()) {
+      cowPlan.getCowTankDetailsList().stream()
+          .forEach(
+              plan -> {
+                if (COW_TYPE.CARGO.equals(plan.getCowType())) {
+                  List<CargoForCow> cargoForCowList = plan.getCargoForCowList();
+
+                  Set<CowWithDifferentCargo> cowWithDifferentCargos =
+                      cowPlanDetail.getCowWithDifferentCargos();
+                  List<Long> tanksIdsToSave =
+                      cargoForCowList.stream()
+                          .flatMap(cargo -> cargo.getTankIdsList().stream())
+                          .collect(Collectors.toList());
+                  // to disable existing cargo wash
+                  if (!cowWithDifferentCargos.isEmpty()) {
+                    cowWithDifferentCargos.forEach(
+                        cargoCow -> {
+                          if (!tanksIdsToSave.contains(cargoCow.getTankXid())) {
+                            cargoCow.setIsActive(false);
+                          }
+                        });
+                  }
+                  // method to create new cargo Wash
+                  Set<CowWithDifferentCargo> caroCowWashTosave =
+                      createCaroCowWash(cargoForCowList, cowPlanDetail);
+                  if (!caroCowWashTosave.isEmpty()) {
+                    cowPlanDetail.setWashTankWithDifferentCargo(true);
+                  }
+                  if (cowPlanDetail.getCowWithDifferentCargos() == null) {
+                    cowPlanDetail.setCowWithDifferentCargos(new HashSet<>(caroCowWashTosave));
+                  } else {
+                    cowPlanDetail.getCowWithDifferentCargos().addAll(caroCowWashTosave);
+                  }
+
+                } else {
+                  List<Long> tanksIdsToSave = plan.getTankIdsList();
+                  List<CowTankDetail> existingTanks =
+                      cowPlanDetail.getCowTankDetails().stream()
+                          .filter(tank -> tank.getCowTypeXid().equals(plan.getCowTypeValue()))
+                          .collect(Collectors.toList());
+                  // if the values are not in the current list set it as false
+                  existingTanks.stream()
+                      .forEach(
+                          tank -> {
+                            if (!tanksIdsToSave.contains(tank.getTankXid())) {
+                              tank.setIsActive(false);
+                            }
+                          });
+                  HashSet<CowTankDetail> cowTanksToSave =
+                      createCowTankDetails(cowPlan, cowPlanDetail, plan, tanksIdsToSave);
+                  if (cowPlanDetail.getCowTankDetails() == null) {
+                    cowPlanDetail.setCowTankDetails(cowTanksToSave);
+                  } else {
+                    cowPlanDetail.getCowTankDetails().addAll(cowTanksToSave);
+                  }
+                }
+              });
+    }
+  }
+
+  private HashSet<CowTankDetail> createCowTankDetails(
+      CowPlan cowPlan,
+      CowPlanDetail cowPlanDetail,
+      CowTankDetails plan,
+      List<Long> tanksIdsToSave) {
+    // adding new objects
+    List<Long> existingTankIds =
+        cowPlanDetail.getCowTankDetails().stream()
+            .filter(
+                cowtank ->
+                    cowtank.getCowTypeXid().equals(plan.getCowTypeValue()) && cowtank.getIsActive())
+            .map(CowTankDetail::getTankXid)
+            .collect(Collectors.toList());
+    List<Long> newTanksTOSave =
+        tanksIdsToSave.stream()
+            .filter(tankId -> !existingTankIds.contains(tankId))
+            .collect(Collectors.toList());
+    HashSet<CowTankDetail> newCowTankDetails = new HashSet<>();
+    if (newTanksTOSave != null && !newTanksTOSave.isEmpty()) {
+      newTanksTOSave.forEach(
+          newCowTankId -> {
+            CowTankDetail newTank = new CowTankDetail();
+            newTank.setCowTypeXid(plan.getCowType().getNumber());
+            newTank.setCowPlanDetail(cowPlanDetail);
+            newTank.setDischargingXid(cowPlan.getDischargingInfoId());
+            newTank.setIsActive(true);
+            newTank.setTankXid(newCowTankId);
+            newCowTankDetails.add(newTank);
           });
     }
+    return newCowTankDetails;
+  }
+
+  private Set<CowWithDifferentCargo> createCaroCowWash(
+      List<CargoForCow> cargoForCowList, CowPlanDetail cowPlanDetail) {
+    Set<CowWithDifferentCargo> newCowWashCargo = new HashSet<>();
+    cargoForCowList.forEach(
+        newCargoWash -> {
+
+          // finds the tanks ids
+          List<Long> savedTanks =
+              cowPlanDetail.getCowWithDifferentCargos().stream()
+                  .filter(
+                      cargoWash ->
+                          cargoWash
+                                  .getCargoNominationXid()
+                                  .equals(newCargoWash.getCargoNominationId())
+                              && cargoWash.getIsActive())
+                  .map(CowWithDifferentCargo::getTankXid)
+                  .collect(Collectors.toList());
+          // remove the already existing ids in the db
+          List<Long> tankIdsToSave = newCargoWash.getTankIdsList();
+          List<Long> newTanksTOSave =
+              tankIdsToSave.stream()
+                  .filter(tankId -> !savedTanks.contains(tankId))
+                  .collect(Collectors.toList());
+          // create the new ones
+          updateCargoCowWash(cowPlanDetail, newCargoWash, newTanksTOSave, newCowWashCargo);
+        });
+
+    return newCowWashCargo;
   }
 
   private void updateCargoCowWash(
-      CowPlanDetail cowPlanDetail, CargoForCow newCargoWash, List<Long> tankIdsToSave) {
+      CowPlanDetail cowPlanDetail,
+      CargoForCow newCargoWash,
+      List<Long> tankIdsToSave,
+      Set<CowWithDifferentCargo> newCowWashCargo) {
     tankIdsToSave.forEach(
         tankId -> {
           CowWithDifferentCargo cowWithDifferentCargo = new CowWithDifferentCargo();
+          cowWithDifferentCargo.setCowPlanDetail(cowPlanDetail);
           cowWithDifferentCargo.setCargoNominationXid(newCargoWash.getCargoNominationId());
           cowWithDifferentCargo.setCargoXid(newCargoWash.getCargoId());
-          cowWithDifferentCargo.setCowPlanDetail(cowPlanDetail);
           cowWithDifferentCargo.setDischargingXid(cowPlanDetail.getDischargeInformation().getId());
           cowWithDifferentCargo.setIsActive(true);
           cowWithDifferentCargo.setWashingCargoXid(newCargoWash.getWashingCargoId());
           cowWithDifferentCargo.setWashingCargoNominationXid(
               newCargoWash.getWashingCargoNominationId());
           cowWithDifferentCargo.setTankXid(tankId);
-          if (cowPlanDetail.getCowWithDifferentCargos() == null) {
-            cowPlanDetail.setCowWithDifferentCargos(
-                new HashSet<>(Arrays.asList(cowWithDifferentCargo)));
-          } else {
-            cowPlanDetail.getCowWithDifferentCargos().add(cowWithDifferentCargo);
-          }
+          newCowWashCargo.add(cowWithDifferentCargo);
         });
   }
 
@@ -645,13 +726,11 @@ public class DischargeInformationRPCService
       com.cpdss.dischargeplan.entity.DischargeInformation response =
           saveDischargingInformation(request);
       buildDischargingInfoSaveResponse(builder, response);
-      builder
-          .setResponseStatus(
-              ResponseStatus.newBuilder()
-                  .setMessage("Successfully saved Discharging information")
-                  .setStatus(SUCCESS)
-                  .build())
-          .build();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setMessage("Successfully saved Discharging information")
+              .setStatus(SUCCESS)
+              .build());
       log.info("Save Discharging Info, Details Id {}", request.getDischargeInfoId());
     } catch (Exception e) {
       log.error(
@@ -678,6 +757,10 @@ public class DischargeInformationRPCService
         dischargeInformationService.getDischargeInformation(request.getDischargeDetails().getId());
     if (dischargeInformation != null) {
       buildDischargingInfoFromRpcMessage(request, dischargeInformation);
+      Optional.ofNullable(request.getDischargeCommingledCargoSeparately())
+          .ifPresent(dischargeInformation::setDischargeCommingleCargoSeparately);
+      Optional.ofNullable(request.getDischargeSlopTanksFirst())
+          .ifPresent(dischargeInformation::setDischargeSlopTankFirst);
       dischargeInformationService.save(dischargeInformation);
       dischargeInformationService.updateIsDischargingInfoCompeteStatus(
           dischargeInformation.getId(), request.getIsDischargingInfoComplete());

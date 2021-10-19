@@ -53,6 +53,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 @Slf4j
 @Service
@@ -192,6 +193,9 @@ public class DischargeInformationService {
             portRotation.get().getId(),
             portRotation.get().getPortId()));
 
+    // setting discharge cargo nomination id
+    this.setDischargeCargoNominationId(vesselTankDetails);
+
     dischargeInformation.setDischargeDetails(dischargeDetails);
     dischargeInformation.setDischargeRates(dischargeRates);
     dischargeInformation.setBerthDetails(new LoadingBerthDetails(availableBerths, selectedBerths));
@@ -203,6 +207,23 @@ public class DischargeInformationService {
 
     dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
     return dischargeInformation;
+  }
+
+  public void setDischargeCargoNominationId(CargoVesselTankDetails vesselTankDetails) {
+    try {
+      for (var cQnt : vesselTankDetails.getCargoQuantities()) {
+        Optional<Long> id =
+            vesselTankDetails.getDischargeQuantityCargoDetails().stream()
+                .filter(v -> v.getCargoNominationId().equals(cQnt.getCargoNominationId()))
+                .findFirst()
+                .map(DischargeQuantityCargoDetails::getDischargeCargoNominationId);
+        if (id.isPresent()) {
+          cQnt.setDischargeCargoNominationId(id.get());
+        }
+      }
+    } catch (Exception e) {
+      log.error("Failed to set discharge cargo nomination id - {}", e.getMessage());
+    }
   }
 
   public DischargePlanResponse getDischargingPlan(
@@ -448,21 +469,22 @@ public class DischargeInformationService {
       }
       if (response == null) {
         throw new GenericServiceException(
-            "Failed to save Loading Information",
+            "Failed to save Discharging Information",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
       DischargingInformationResponse dischargingInformationResponse =
           buildDischargingInformationResponse(response, correlationId);
-      dischargingInformationResponse.setDischargingInformation(
-          this.getDischargeInformation(
-              dischargingInformationResponse.getVesseld(),
-              dischargingInformationResponse.getVoyageId(),
-              response.getPortRotationId()));
+      //      dischargingInformationResponse.setDischargingInformation(
+      //          this.getDischargeInformation(
+      //              dischargingInformationResponse.getVesseld(),
+      //              dischargingInformationResponse.getVoyageId(),
+      //              response.getPortRotationId()));
       return dischargingInformationResponse;
     } catch (Exception e) {
       log.error("Failed to save LoadingInformation {}", request.getDischargingInfoId());
       e.printStackTrace();
+      TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       throw new GenericServiceException(
           "Failed to save Loading Information",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,

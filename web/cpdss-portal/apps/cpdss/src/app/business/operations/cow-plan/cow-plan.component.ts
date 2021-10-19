@@ -77,8 +77,9 @@ export class CowPlanComponent implements OnInit {
         washingCargo: this.fb.control(item?.washingCargo),
         tanks: this.fb.control(item?.tanks)
       })
-    });
-    this.maxDuration = this.cowDetails?.totalDuration.split(':');
+    }) ?? [];
+
+    this.maxDuration = this.cowDetails?.totalDuration?.split(':');
 
     this.form?.setControl('cowDetails', this.fb.group({
       washTanksWithDifferentCargo: this.fb.control(this.cowDetails?.washTanksWithDifferentCargo),
@@ -121,7 +122,7 @@ export class CowPlanComponent implements OnInit {
   joinDropOptionsToLabel(tanks: ITank[]): string {
     let tankShortNamesLabel: string;
     const tankShortNames: string[] = [];
-    tanks.forEach(selectedTanks => {
+    tanks?.forEach(selectedTanks => {
       tankShortNames.push(selectedTanks?.shortName);
     });
     tankShortNamesLabel = tankShortNames.join(', ');
@@ -170,7 +171,7 @@ export class CowPlanComponent implements OnInit {
    * @memberof CowPlanComponent
    */
   onWashWithDifferentCargoChange(event) {
-    this.enableDisableTanksWashWithDifferentCargoFields(event?.value);
+    this.enableDisableTanksWashWithDifferentCargoFields(event?.checked);
     this.updateCowPlan.emit(this.cowDetailsForm?.value);
   }
 
@@ -221,6 +222,17 @@ export class CowPlanComponent implements OnInit {
    * @memberof CowPlanComponent
    */
   onChange(event) {
+    this.updateCowPlan.emit(this.cowDetailsForm?.value);
+  }
+
+  /**
+   * Handler for input chnage event for washing cargo dropdown
+   *
+   * @param {*} event
+   * @memberof CowPlanComponent
+   */
+  onWashingCargoChange(event, index) {
+    this.cowDetails.tanksWashingWithDifferentCargo[index].washingCargo = this.cowDetailsForm?.value?.tanksWashingWithDifferentCargo[index]?.washingCargo;
     this.updateCowPlan.emit(this.cowDetailsForm?.value);
   }
 

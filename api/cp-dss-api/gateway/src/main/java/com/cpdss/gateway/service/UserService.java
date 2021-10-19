@@ -1135,7 +1135,8 @@ public class UserService {
       }
     }
     // Case 2: Ship api, find name from user's Table
-    if (users != null && users.getIsShipUser()) {
+    //    if (users != null && users.getIsShipUser()) {
+    if (users != null) { // users.getIsShipUser() is used for admin/default user
       log.info("Get User Name, from users DB username - {}", users.getUsername().trim());
       return users
           .getUsername()
