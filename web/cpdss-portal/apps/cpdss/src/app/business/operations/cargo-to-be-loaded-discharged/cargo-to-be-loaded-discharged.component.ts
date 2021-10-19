@@ -89,7 +89,6 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.cargoTobeLoadedDischargedColumns = this.operation === OPERATIONS.LOADING ? this.loadingDischargingTransformationService.getCargoToBeLoadedDatatableColumns(this.currentQuantitySelectedUnit) : this.loadingDischargingTransformationService.getCargoToBeDischargedDatatableColumns(this.currentQuantitySelectedUnit);
     this.prevQuantitySelectedUnit = AppConfigurationService.settings.baseUnit;
     this.updateCargoTobeLoadedDischargedData();
   }
@@ -105,6 +104,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   * @memberof LoadingDischargingCargoDetailsComponent
   */
   updateCargoTobeLoadedDischargedData() {
+    this.cargoTobeLoadedDischargedColumns = this.operation === OPERATIONS.LOADING ? this.loadingDischargingTransformationService.getCargoToBeLoadedDatatableColumns(this.currentQuantitySelectedUnit) : this.loadingDischargingTransformationService.getCargoToBeDischargedDatatableColumns(this.currentQuantitySelectedUnit);
     if (this.operation === OPERATIONS.LOADING) {
       this.updateCargoTobeLoadedData();
     } else {
@@ -155,17 +155,15 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
     this.cargoTobeLoadedDischarged = this.cargoVesselTankDetails.loadableQuantityCargoDetails?.map(cargo => {
       if (cargo) {
         cargo.grade = this.findCargo(cargo);
-        const blFigure = cargo?.blFigure ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.blFigure), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : null;
-        cargo.blFigure = this.quantityDecimalFormatPipe.transform(blFigure, this.currentQuantitySelectedUnit)?.toString().replace(/,/g, '');
+        const blFigure = Number(cargo?.blFigure) ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.blFigure), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
+        cargo.blFigure = blFigure.toString();
 
-        const shipFigure = cargo?.loadableMT ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : null;
-        cargo.shipFigure = this.quantityDecimalFormatPipe.transform(shipFigure, this.currentQuantitySelectedUnit)?.toString().replace(/,/g, '');
+        const shipFigure = Number(cargo?.loadableMT) ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
+        cargo.shipFigure = shipFigure.toString();
 
         const slopQuantityObj = (<ValueObject<number>>cargo?.slopQuantity);
         const slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(slopQuantityObj?.value?.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
         slopQuantityObj.value = slopQuantity;
-
-        cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
 
         if (this.isDischargePlanGenerated) {
           for (const key in cargo) {

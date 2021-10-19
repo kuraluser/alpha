@@ -1125,10 +1125,10 @@ public class DischargePlanController {
    */
   @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/discharging-info")
   public DischargingInformationResponse saveDischargingInformation(
-      @RequestBody @Valid DischargingInformationRequest request,
       @RequestHeader HttpHeaders headers,
-      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
-      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId)
+      @PathVariable Long vesselId,
+      @PathVariable Long voyageId,
+      @RequestBody DischargingInformationRequest request)
       throws CommonRestException {
     try {
       log.info("Save Loading Info, api for vessel {}, voyage {}", vesselId, voyageId);

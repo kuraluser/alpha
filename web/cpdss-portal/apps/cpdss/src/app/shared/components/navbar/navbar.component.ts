@@ -150,6 +150,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
         'permissionMapping': AppConfigurationService.settings.permissionMapping['OperationsComponent'],
         'subMenu': [],
         'isShoreActive': false
+      },
+      {
+        'menu': 'FILE REPOSITORY',
+        'menuIcon': '',
+        'menuLink': 'file-repository',
+        'routerLinkActive': 'file-repository',
+        'subMenu': [],
+        'isSubMenuOpen': false,
+        'permissionMapping': AppConfigurationService.settings.permissionMapping['FileRepositoryComponent'],
+        'isShoreActive': false
       }
     ];
 

@@ -136,6 +136,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   * @memberof LoadingComponent
   */
   setPagePermission() {
+    this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadingComponent']);
     this.generatePlanPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationLoadingGeneratePlan'], false);
     this.loadingInfoTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationLoadingInformation'], false);
     this.loadingInstructionTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationLoadingInstruction'], false);

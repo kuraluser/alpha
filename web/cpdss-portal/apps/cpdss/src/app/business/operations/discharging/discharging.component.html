@@ -66,18 +66,18 @@
 
   <cpdss-portal-discharging-information (dischargingInformationId)="setDischargingInfoId($event)" [cargos]="cargos"
     [vesselId]="vesselId" *ngIf="currentTab === OPERATION_TAB.INFORMATION" [voyageId]="voyageId"
-    [portRotationId]="portRotationId">
+    [portRotationId]="portRotationId" [permission]="dischargingInfoTabPermission">
   </cpdss-portal-discharging-information>
 
   <div class="row" *ngIf="currentTab === OPERATION_TAB.INSTRUCTION">
     <cpdss-portal-discharging-instruction #dischargingInstruction [vesselId]="vesselId" [voyageId]="voyageId"
-      [portRotationId]="portRotationId" [dischargeInfoId]="dischargeInfoId"></cpdss-portal-discharging-instruction>
+      [portRotationId]="portRotationId" [dischargeInfoId]="dischargeInfoId" [permission]="dischargingInstructionTabPermission"></cpdss-portal-discharging-instruction>
   </div>
 
   <div class="row" *ngIf="currentTab === OPERATION_TAB.SEQUENCE">
     <div class="col">
       <cpdss-portal-discharging-sequence [vesselId]="vesselId" [voyageId]="voyageId"
-        [dischargeInfoId]="dischargeInfoId" [operation]="OPERATIONS.DISCHARGING">
+        [dischargeInfoId]="dischargeInfoId" [operation]="OPERATIONS.DISCHARGING" [permission]="dischargingSequenceTabPermission">
       </cpdss-portal-discharging-sequence>
     </div>
   </div>
@@ -85,7 +85,7 @@
   <div class="row" *ngIf="currentTab === OPERATION_TAB.PLAN">
     <div class="col">
       <cpdss-portal-discharging-plan [cargos]="cargos" [vesselId]="vesselId" [voyageId]="voyageId"
-        [portRotationId]="portRotationId" [dischargeInfoId]="dischargeInfoId"></cpdss-portal-discharging-plan>
+        [portRotationId]="portRotationId" [dischargeInfoId]="dischargeInfoId" [permission]="dischargingPlanTabPermission"></cpdss-portal-discharging-plan>
     </div>
   </div>
 

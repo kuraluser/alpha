@@ -5,6 +5,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../shared/services/permissions/permissions.service';
 import { IVoyagePortDetails, Voyage, VOYAGE_STATUS, OPERATIONS } from '../core/models/common.model';
 import { IVessel } from '../core/models/vessel-details.model';
 import { PortRotationService } from '../core/services/port-rotation.service';
@@ -62,12 +64,14 @@ export class OperationsComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
-    private portRotationService: PortRotationService) { }
+    private portRotationService: PortRotationService,
+    private permissionsService: PermissionsService) { }
 
 
   ngOnInit(): void {
     this.getVesselInfo();
     this.initSubscriptions();
+    this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationsComponent']);
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd && event.url === '/business/operations') {
         this.onPortSelection(this.selectedPort);
