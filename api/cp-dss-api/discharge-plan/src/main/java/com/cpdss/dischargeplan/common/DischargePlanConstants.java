@@ -32,5 +32,10 @@ public class DischargePlanConstants {
   public static final Long LOADICATOR_TYPE_ID = 2L;
   public static final Long UPDATE_ULLAGE_VALIDATION_STARTED_ID = 12L;
   public static final Long UPDATE_ULLAGE_LOADICATOR_REQUEST_JSON_TYPE_ID = 15L;
+  public static final Long DISCHARGING_INFORMATION_NO_PLAN_AVAILABLE_ID = 6L;
+  public static final Long PLAN_GENERATED_ID = 5L;
+  public static final Long DISCHARGING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID = 8L;
+  public static final Long DISCHARGING_INFORMATION_ERROR_OCCURRED_ID = 7L;
+  public static final Integer DISCHARGING_PLAN_PLANNED_TYPE_VALUE = 2;
   public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 }

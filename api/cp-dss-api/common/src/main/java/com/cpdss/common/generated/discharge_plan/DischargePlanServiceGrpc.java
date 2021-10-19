@@ -233,6 +233,56 @@ public final class DischargePlanServiceGrpc {
     return getUpdateDischargeUllageDetailsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest,
+          com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse>
+      getSaveDischargingPlanMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "saveDischargingPlan",
+      requestType = com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest.class,
+      responseType = com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest,
+          com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse>
+      getSaveDischargingPlanMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest,
+            com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse>
+        getSaveDischargingPlanMethod;
+    if ((getSaveDischargingPlanMethod = DischargePlanServiceGrpc.getSaveDischargingPlanMethod)
+        == null) {
+      synchronized (DischargePlanServiceGrpc.class) {
+        if ((getSaveDischargingPlanMethod = DischargePlanServiceGrpc.getSaveDischargingPlanMethod)
+            == null) {
+          DischargePlanServiceGrpc.getSaveDischargingPlanMethod =
+              getSaveDischargingPlanMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest,
+                          com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "saveDischargingPlan"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargePlanServiceMethodDescriptorSupplier("saveDischargingPlan"))
+                      .build();
+        }
+      }
+    }
+    return getSaveDischargingPlanMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargePlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargePlanServiceStub> factory =
@@ -318,6 +368,16 @@ public final class DischargePlanServiceGrpc {
           getUpdateDischargeUllageDetailsMethod(), responseObserver);
     }
 
+    /** */
+    public void saveDischargingPlan(
+        com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveDischargingPlanMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -351,6 +411,13 @@ public final class DischargePlanServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest,
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>(
                       this, METHODID_UPDATE_DISCHARGE_ULLAGE_DETAILS)))
+          .addMethod(
+              getSaveDischargingPlanMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest,
+                      com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse>(
+                      this, METHODID_SAVE_DISCHARGING_PLAN)))
           .build();
     }
   }
@@ -416,6 +483,18 @@ public final class DischargePlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void saveDischargingPlan(
+        com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveDischargingPlanMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -461,6 +540,14 @@ public final class DischargePlanServiceGrpc {
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateDischargeUllageDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse
+        saveDischargingPlan(
+            com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveDischargingPlanMethod(), getCallOptions(), request);
     }
   }
 
@@ -515,12 +602,22 @@ public final class DischargePlanServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getUpdateDischargeUllageDetailsMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse>
+        saveDischargingPlan(
+            com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveDischargingPlanMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DISCHARGE_PLAN_SYNCHRONIZATION = 0;
   private static final int METHODID_GET_DISCHARGE_UPDATE_ULLAGE_DETAILS = 1;
   private static final int METHODID_GENERATE_DISCHARGE_PLAN = 2;
   private static final int METHODID_UPDATE_DISCHARGE_ULLAGE_DETAILS = 3;
+  private static final int METHODID_SAVE_DISCHARGING_PLAN = 4;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -566,6 +663,13 @@ public final class DischargePlanServiceGrpc {
               (com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_DISCHARGING_PLAN:
+          serviceImpl.saveDischargingPlan(
+              (com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse>)
                   responseObserver);
           break;
         default:
@@ -637,6 +741,7 @@ public final class DischargePlanServiceGrpc {
                       .addMethod(getGetDischargeUpdateUllageDetailsMethod())
                       .addMethod(getGenerateDischargePlanMethod())
                       .addMethod(getUpdateDischargeUllageDetailsMethod())
+                      .addMethod(getSaveDischargingPlanMethod())
                       .build();
         }
       }

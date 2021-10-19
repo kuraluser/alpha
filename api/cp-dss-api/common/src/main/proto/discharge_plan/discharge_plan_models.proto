@@ -6,6 +6,7 @@ option java_package = "com.cpdss.common.generated.discharge_plan";
 // import common definitions like ResponseStatus
 import "common.proto";
 import "loading_plan/loading_plan_models.proto";
+import "loadable_study.proto";
 
 // A generic request with Optional params
 message DischargeInformationRequest{
@@ -66,12 +67,18 @@ message DischargingSequence {
   bool toLoadicator = 7;
   repeated Valve cargoValves = 8;
   repeated Valve ballastValves = 9;
-  repeated LoadingRate loadingRates = 10;
+  repeated DischargingRate dischargingRates = 10;
   repeated DeBallastingRate deBallastingRates = 11;
-  repeated LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;
-  string cargoLoadingRate1 = 13;
-  string cargoLoadingRate2 = 14;
+  repeated LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;
+  string cargoDischargingRate1 = 13;
+  string cargoDischargingRate2 = 14;
   repeated PumpOperation ballastOperations = 15;
+}
+message DischargingRate {
+  string dischargingRate = 1;
+  int64 tankId = 2;
+  int32 startTime = 3;
+  int32 endTime = 4;
 }
 
 message DischargeInformation {
@@ -338,4 +345,22 @@ message DischargingInstructionStatus{
 message DischargePlanAlgoRequest {
   ResponseStatus responseStatus = 1;
   string requestAsJsonString = 2;
+}
+
+message DischargingPlanSaveRequest {
+  int64 dischargingInfoId = 1;
+  string processId = 2;
+  repeated DischargingSequence dischargingSequences = 3;
+  repeated LoadingPlanTankDetails portDischargingPlanStowageDetails = 4;
+  repeated LoadingPlanTankDetails portDischargingPlanBallastDetails = 5;
+  repeated LoadingPlanTankDetails portDischargingPlanRobDetails = 6;
+  repeated LoadingPlanStabilityParameters portDischargingPlanStabilityParameters = 7;
+  repeated LoadingPlanStabilityParameters dischargingSequenceStabilityParameters = 8;
+  repeated AlgoErrors algoErrors = 9;
+  bool hasLoadicator = 10;
+  string dischargingPlanDetailsFromAlgo = 11;
+  repeated LoadingPlanCommingleDetails portDischargingPlanCommingleDetails = 12;
+}
+message DischargingPlanSaveResponse {
+  ResponseStatus responseStatus = 1;
 }

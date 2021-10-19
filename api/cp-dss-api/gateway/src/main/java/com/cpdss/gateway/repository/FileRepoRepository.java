@@ -16,6 +16,8 @@ import org.springframework.lang.Nullable;
  * @author gokul.p
  */
 @Transactional
-public interface FileRepoRepository extends CommonCrudRepository<FileRepo, Long>, JpaSpecificationExecutor<FileRepo> {
-  Page<FileRepo> findAllByIsActiveTrueIgnoreCase(@Nullable Specification<FileRepo> spec, Pageable pageable);
+public interface FileRepoRepository
+    extends CommonCrudRepository<FileRepo, Long>, JpaSpecificationExecutor<FileRepo> {
+  Page<FileRepo> findAllByIsActiveTrueIgnoreCase(
+      @Nullable Specification<FileRepo> spec, Pageable pageable);
 }
