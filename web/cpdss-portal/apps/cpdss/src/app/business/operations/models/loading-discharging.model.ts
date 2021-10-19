@@ -48,7 +48,7 @@ export interface IDischargingInformationResponse {
   isDischargeInstructionsComplete: boolean,
   isDischargeSequenceGenerated: boolean,
   isDischargePlanGenerated: boolean
-  cowDetails: ICOWDetailsResponse;
+  cowPlan: ICOWDetailsResponse;
   postDischargeStageTime: IPostDischargeStageTime;
   loadedCargos: ICargo[];
   dischargeStudyName: string;
@@ -267,8 +267,8 @@ export interface IDischargingRates {
   id: number;
   initialDischargingRate: number;
   maxDischargingRate: number;
-  minBallastingRate: number;
-  maxBallastingRate: number;
+  minBallastRate: number;
+  maxBallastRate: number;
 }
 
 /**
@@ -443,7 +443,7 @@ export interface ICargoVesselTankDetailsResponse {
   cargoTanks: IShipCargoTank[][];
   cargoQuantities: ICargoQuantities[];
   loadableQuantityCargoDetails: ILoadedCargoResponse[];
-  dischargeQuantityCargoDetails?: any[];
+  dischargeQuantityCargoDetails?: ILoadedCargoResponse[];
 }
 
 /**
@@ -630,7 +630,7 @@ export interface ICOWDetailsResponse {
   topCOWTanks: ITank[];
   bottomCOWTanks: ITank[];
   allCOWTanks: ITank[];
-  tanksWashingWithDifferentCargo: ITanksWashingWithDifferentCargo[];
+  cargoCow: ITanksWashingWithDifferentCargoResponse[];
   cowStart: string;
   cowEnd: string;
   cowDuration: string;
@@ -640,6 +640,20 @@ export interface ICOWDetailsResponse {
   needFlushingOil: boolean;
   washTanksWithDifferentCargo: boolean;
   totalDuration: string;
+}
+
+/**
+ * Interface for selected tanks for washing with different cargo get response
+ *
+ * @export
+ * @interface ITanksWashingWithDifferentCargoResponse
+ */
+export interface ITanksWashingWithDifferentCargoResponse {
+  cargoId: number;
+  cargoNominationId: number;
+  tankIds: number[];
+  washingCargoId: number;
+  washingCargoNominationId: number;
 }
 
 /**
@@ -680,6 +694,7 @@ export interface ILoadedCargoResponse extends ILoadableQuantityCargo {
   isCommingledDischarge?: boolean;
   slopQuantity?: number;
   isCommingledCargo?: boolean;
+  dischargeCargoNominationId?: number;
 }
 
 /**

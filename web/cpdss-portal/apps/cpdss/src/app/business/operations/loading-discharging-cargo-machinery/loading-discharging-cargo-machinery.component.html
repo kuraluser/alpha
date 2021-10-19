@@ -50,10 +50,10 @@
                       </label>
                     </td>
                     <td>{{column[row.field]}}</td>
-                    <td class="error-icon-wrapper" *ngIf="key === 'pumpValues' && ![PUMP_TYPES.IG_PUMP, PUMP_TYPES.STRIP_EDUCTOR].includes(row.pumpTypeId)">
-                      <input type="text" cpdssPortalNumberDecimal  [decimal]="false" [negative]="false" class="form-control" formControlName="capacity"
+                    <td [ngClass]="{'error-icon-wrapper' : column.isUsing && operation === OPERATIONS.DISCHARGING}" *ngIf="key === 'pumpValues' && ![PUMP_TYPES.IG_PUMP, PUMP_TYPES.STRIP_EDUCTOR].includes(row.pumpTypeId)">
+                      <input type="text" cpdssPortalNumberDecimal [decimal]="false" [negative]="false" class="form-control" formControlName="capacity"
                         [attr.disabled]="column.isUsing ? null : true" (change)="onChange($event, column)">
-                        <cpdss-portal-validation-error  [errors]="fieldError(rowIndex+ i + (rowIndex * (machineries[key][rowIndex-1]?.columns?.length - 1)), 'capacity', 'pumps')" [errorMessages]="errorMessages?.capacity">
+                        <cpdss-portal-validation-error *ngIf="column.isUsing && operation === OPERATIONS.DISCHARGING" [errors]="fieldError(rowIndex+ i + (rowIndex * (machineries[key][rowIndex-1]?.columns?.length - 1)), 'capacity', 'pumps')" [errorMessages]="errorMessages?.capacity">
                         </cpdss-portal-validation-error>
                     </td>
                   </tr>

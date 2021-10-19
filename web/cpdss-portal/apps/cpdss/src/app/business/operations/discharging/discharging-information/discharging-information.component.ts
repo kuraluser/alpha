@@ -17,6 +17,7 @@ import { LoadingDischargingBerthComponent } from '../../loading-discharging-bert
 import { LoadingDischargingCargoMachineryComponent } from '../../loading-discharging-cargo-machinery/loading-discharging-cargo-machinery.component';
 import { LoadingDischargingDetailsComponent } from '../../loading-discharging-details/loading-discharging-details.component';
 import { DischargingRatesComponent } from '../../discharging-rates/discharging-rates.component';
+import { IPermission } from '../../../../shared/models/user-profile.model';
 
 /**
  * Component class for discharge information component
@@ -39,6 +40,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
 
   @Input() voyageId: number;
   @Input() vesselId: number;
+  @Input() permission: IPermission;
   @Input() get cargos(): ICargo[] {
     return this._cargos;
   }

@@ -56,5 +56,11 @@
     "OperationLoadingSequence": "OPERATIONS_LOADING_SEQUENCE",
     "OperationLoadingPlan": "OPERATIONS_LOADING_PLAN",
     "OperationLoadingInformation": "OPERATIONS_LOADING_INFO",
-    "OperationLoadingGeneratePlan": "OPERATIONS_LOADING_GENERATE_PLAN"
+    "OperationLoadingGeneratePlan": "OPERATIONS_LOADING_GENERATE_PLAN",
+    "DischargingInstructionComponent": "DISCHARGING_INSTRUCTION",
+    "DischargingSequenceComponent": "DISCHARGING_SEQUENCE",
+    "DischargingPlanComponent": "DISCHARGING_PLAN",
+    "DischargingInformationComponent": "DISCHARGING_INFO",
+    "DischargingInfoSunSet": "DISCHARGING_INFO_SUNSET",
+    "DischargingInfoSunRise": "DISCHARGING_INFO_SUNRISE"
 }
