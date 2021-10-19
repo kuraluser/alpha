@@ -40,7 +40,7 @@ public class UllageUpdateDetails {
 
   private Long grade;
 
-  private Long fillingPercentage;
+  private BigDecimal fillingPercentage;
 
   private Boolean isUpdate;
 

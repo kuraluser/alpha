@@ -46,7 +46,35 @@ service VesselInfoService {
 	rpc GetLoadingInfoRules(LoadingInfoRulesRequest) returns (LoadingInfoRulesReply) {}
 	
 	rpc GetVesselsInformation(VesselsInfoRequest) returns (VesselsInformationReply) {}
+	
+	rpc GetVesselParticulars(LoadingInfoRulesRequest) returns (VesselParticulars) {} //used for Loading plan excel 
 }
+
+
+message VesselParticulars {
+	int64 vesselId = 1;
+	string shipMaxLoadingRate = 2;
+	string shipMaxFlowRate = 3;
+	string shipMaxFlowRatePerTank = 4;
+	string maxLoadingRateSlopP = 5;
+	string maxLoadingRateSlopS = 6;
+	int64 ballastPumpCount = 7;
+	int64 capacityPerPump=8;
+	int64 shipManifold =9;
+	string summerDraft =10;
+	string tropicalDraft =11;
+	string freshMLD =12;
+	string summerDeadweight =13;
+	string summerDisplacement =14;
+	string cargoTankCapacity =15;
+	ResponseStatus responseStatus = 16;
+	string highVelocityVentingPressure = 17;
+	string highVelocityVentingVaccum = 18;
+	string pvBreakerVentingPressure = 19;
+	string pvBreakerVentingVaccum = 20;
+	int64 vesselTypeId = 21;
+}
+
 
 // Mapped to pump_type Table in vessel DB
 enum VesselPumpTypes {

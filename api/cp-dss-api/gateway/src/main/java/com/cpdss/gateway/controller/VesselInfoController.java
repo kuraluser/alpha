@@ -12,7 +12,6 @@ import com.cpdss.gateway.domain.VesselResponse;
 import com.cpdss.gateway.domain.VesselTankResponse;
 import com.cpdss.gateway.domain.VesselsInfoResponse;
 import com.cpdss.gateway.service.VesselInfoService;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.websocket.server.PathParam;
@@ -192,9 +191,10 @@ public class VesselInfoController {
           e);
     }
   }
-  
+
   /**
    * Get all vessel informations
+   *
    * @param headers
    * @param pageSize
    * @param pageNo
@@ -221,9 +221,17 @@ public class VesselInfoController {
       throws CommonRestException {
     try {
 
-    	log.info("inside fetching vessels");
-      return this.vesselInfoService.getAllVesselsInormation(pageSize, pageNo, sortBy, orderBy, 
-    		  vesselName, vesselType, builder, dateOfLaunch, headers.getFirst(CORRELATION_ID_HEADER));
+      log.info("inside fetching vessels");
+      return this.vesselInfoService.getAllVesselsInormation(
+          pageSize,
+          pageNo,
+          sortBy,
+          orderBy,
+          vesselName,
+          vesselType,
+          builder,
+          dateOfLaunch,
+          headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching all vessels", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

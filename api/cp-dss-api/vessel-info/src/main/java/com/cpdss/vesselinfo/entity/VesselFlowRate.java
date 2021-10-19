@@ -45,5 +45,5 @@ public class VesselFlowRate extends EntityDoc {
   private String vesselName;
 
   @Column(name = "isactive")
-  private Boolean isAstive;
+  private Boolean isActive;
 }

@@ -6,6 +6,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SimulatorComponent } from './simulator.component';
 import { SimulatorApiService } from '../../services/simulator-api.service';
 
+/**
+ * Module for simulator
+ *
+ * @export
+ * @class SimulatorModule
+ */
 @NgModule({
   declarations: [SimulatorComponent],
   imports: [

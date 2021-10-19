@@ -1827,14 +1827,15 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       String arrivalDeparture,
       List<VesselInfo.VesselTankDetail> sortedTankList) {
     List<LoadablePlanCommingleDetails> loadablePlanCommingleDetailsList = new ArrayList<>();
-    List<LoadingPlanModels.LoadablePlanCommingleDetails> commingleDetails = response.getLoadablePlanCommingleTempDetailsList();
-    if(commingleDetails.size() <= 0){
+    List<LoadingPlanModels.LoadablePlanCommingleDetails> commingleDetails =
+        response.getLoadablePlanCommingleTempDetailsList();
+    if (commingleDetails.size() <= 0) {
       commingleDetails = response.getLoadablePlanCommingleDetailsList();
     }
     if (commingleDetails.size() > 0) {
       commingleDetails.stream()
           .forEach(
-                  commingleDetail -> {
+              commingleDetail -> {
                 LoadablePlanCommingleDetails commingle = new LoadablePlanCommingleDetails();
                 commingle.setId(commingleDetail.getId());
                 commingle.setLoadablePatternId(commingleDetail.getLoadablePatternId());
