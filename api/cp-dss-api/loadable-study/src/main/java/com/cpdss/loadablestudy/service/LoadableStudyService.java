@@ -34,6 +34,8 @@ import com.cpdss.common.generated.LoadableStudy.CommingleCargoReply;
 import com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails;
+import com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.LatestCargoReply;
 import com.cpdss.common.generated.LoadableStudy.LatestCargoRequest;
@@ -104,6 +106,7 @@ import com.cpdss.loadablestudy.domain.LoadablePlanDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadableStudyAlgoJson;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
+import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
 import com.cpdss.loadablestudy.entity.JsonData;
 import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
@@ -121,6 +124,7 @@ import com.cpdss.loadablestudy.repository.BillOfLandingRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
 import com.cpdss.loadablestudy.repository.JsonDataRepository;
 import com.cpdss.loadablestudy.repository.JsonTypeRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
@@ -225,6 +229,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private CargoNominationService cargoNominationService;
   @Autowired private CargoService cargoService;
   @Autowired private BillOfLandingRepository billOfLandingRepository;
+
+  @Autowired
+  private DischargePatternQuantityCargoPortwiseRepository
+      dischargePatternQuantityCargoPortwiseRepository;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -2997,6 +3005,56 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setMessage(e.getMessage())
               .setStatus(FAILED)
               .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void updateDischargeQuantityCargoDetails(
+      DischargeQuantityCargoDetailsRequest request,
+      StreamObserver<ResponseStatus> responseObserver) {
+    log.info("Inside get getUllage in loadable study micro service");
+    ResponseStatus.Builder replyBuilder = ResponseStatus.newBuilder();
+    try {
+      List<Long> cargoIdsToUpdate =
+          request.getCargoDetailsList().stream()
+              .map(DischargeQuantityCargoDetails::getId)
+              .collect(Collectors.toList());
+      List<DischargePatternQuantityCargoPortwiseDetails> cargoDetailsToUpdate =
+          dischargePatternQuantityCargoPortwiseRepository.findByIdIn(cargoIdsToUpdate);
+      if (cargoDetailsToUpdate.isEmpty()) {
+        throw new GenericServiceException(
+            "cargo details ids are not coprrect",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      Map<Long, DischargePatternQuantityCargoPortwiseDetails> cargoDetails =
+          cargoDetailsToUpdate.stream()
+              .collect(
+                  Collectors.toMap(
+                      DischargePatternQuantityCargoPortwiseDetails::getId, detail -> detail));
+      request.getCargoDetailsList().stream()
+          .forEach(
+              dischargeCargo -> {
+                DischargePatternQuantityCargoPortwiseDetails dischargeCargoDetail =
+                    cargoDetails.get(dischargeCargo.getId());
+                dischargeCargoDetail.setIsCommingled(dischargeCargo.getIsCommingled());
+                dischargeCargoDetail.setIfProtested(dischargeCargo.getIfProtested());
+              });
+      dischargePatternQuantityCargoPortwiseRepository.saveAll(cargoDetailsToUpdate);
+
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in get ullage", e);
+      replyBuilder.setCode(e.getCode()).setMessage(e.getMessage()).setStatus(FAILED).build();
+    } catch (Exception e) {
+      log.error("Exception in update ullage", e);
+      replyBuilder
+          .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+          .setMessage(e.getMessage())
+          .setStatus(FAILED)
+          .build();
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();

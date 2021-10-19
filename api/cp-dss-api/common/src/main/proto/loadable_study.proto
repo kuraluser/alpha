@@ -205,6 +205,7 @@ service LoadableStudyService {
 
 	rpc GetLoadableStudySimulatorJsonData(SimulatorJsonRequest) returns (SimulatorJsonReply){}
 	
+	rpc updateDischargeQuantityCargoDetails(DischargeQuantityCargoDetailsRequest) returns (ResponseStatus){}
 }
 
 service SynopticalOperationService{
@@ -225,6 +226,15 @@ service DischargeStudyOperationService {
 
 service PortInstructionService {
     rpc getInstructions (EmptyRequest)  returns (InstructionReply){}
+}
+
+message DischargeQuantityCargoDetailsRequest {
+	repeated DischargeQuantityCargoDetails cargoDetails=1;
+}
+message DischargeQuantityCargoDetails {
+	bool isCommingled=1;
+	bool ifProtested=2;
+	int64 id=3;
 }
 
 message CowHistoryRequest {
