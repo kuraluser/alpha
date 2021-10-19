@@ -37,7 +37,7 @@ public class StagingServiceTest {
   public static void beforeAll() {
     dataTransferStage =
         new DataTransferStage(
-            "hsgdfgsdjgsdbgksgfskgiytu786q7ffef", "lodable_study", "user", "table", null, "draft");
+            "hsgdfgsdjgsdbgksgfskgiytu786q7ffef", "lodable_study", "user", "table", null, "draft","status description");
     dataTransferStage.setId((long) 1);
     dataTransferStage.setStatus("draft");
     dataTransferStage.setCreatedBy("communication");
@@ -51,7 +51,7 @@ public class StagingServiceTest {
 
     Mockito.when(this.stagingRepository.save(ArgumentMatchers.any(DataTransferStage.class)))
         .thenReturn(dataTransferStage);
-    DataTransferStage ds = stagingService.save(jsonResult);
+    stagingService.save(jsonResult);
     // assertEquals((long) 1, ds.getId());
   }
 
