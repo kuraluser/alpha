@@ -933,6 +933,38 @@ public class LoadingPlanService {
               LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
       portLoadingPlanBallastDetailsRepository.saveAll(ballastEntityList);
     }
+
+    List<PortLoadingPlanCommingleTempDetails> tempCommingleList =
+        portLoadingPlanCommingleTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInformation.getId(), conditionType, true);
+
+    List<PortLoadingPlanCommingleDetails> commingleEntityList =
+        new ArrayList<PortLoadingPlanCommingleDetails>();
+    if (!tempCommingleList.isEmpty()) {
+      log.info("Copying commingle details from temporary tables");
+      for (PortLoadingPlanCommingleTempDetails tempCommingleEntity : tempCommingleList) {
+        PortLoadingPlanCommingleDetails commingleEntity = new PortLoadingPlanCommingleDetails();
+        BeanUtils.copyProperties(tempCommingleEntity, commingleEntity);
+        commingleEntity.setId(null);
+        commingleEntity.setCreatedBy(null);
+        commingleEntity.setCreatedDate(null);
+        commingleEntity.setCreatedDateTime(null);
+        commingleEntity.setLastModifiedBy(null);
+        commingleEntity.setLastModifiedDate(null);
+        commingleEntity.setLastModifiedDateTime(null);
+        commingleEntity.setIsActive(true);
+        commingleEntity.setLoadingInformation(loadingInformation);
+        commingleEntityList.add(commingleEntity);
+      }
+      // Deleting existing entry from actual table before pushing new records
+      portLoadingPlanCommingleDetailsRepository
+          .deleteExistingByLoadingInfoAndConditionTypeAndValueType(
+              loadingInformation.getId(),
+              conditionType,
+              LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE);
+      portLoadingPlanCommingleDetailsRepository.saveAll(commingleEntityList);
+    }
     /**
      * copying data to synoptical table. stowage quantity as cargo rob quantity as ohq ballas as
      * ballast condition type is used to determine which records are need to be updated(arrival/
@@ -1246,133 +1278,133 @@ public class LoadingPlanService {
   }
 
   public void getPortWiseCommingleTempDetails(
-          LoadingPlanModels.UpdateUllageDetailsRequest request,
-          LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+      LoadingPlanModels.UpdateUllageDetailsRequest request,
+      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
     List<PortLoadingPlanCommingleTempDetails> portWiseRobDetails =
-            portLoadingPlanCommingleTempDetailsRepository.findByLoadablePatternIdAndIsActiveTrue(
-                    request.getPatternId());
+        portLoadingPlanCommingleTempDetailsRepository.findByLoadablePatternIdAndIsActiveTrue(
+            request.getPatternId());
 
     for (PortLoadingPlanCommingleTempDetails portWiseCommingleDetail : portWiseRobDetails) {
       LoadingPlanModels.LoadablePlanCommingleDetails.Builder newBuilder =
-              LoadingPlanModels.LoadablePlanCommingleDetails.newBuilder();
+          LoadingPlanModels.LoadablePlanCommingleDetails.newBuilder();
 
       newBuilder.setLoadablePatternId(request.getPatternId());
       newBuilder.setId(portWiseCommingleDetail.getId());
       newBuilder.setLoadingInformationId(portWiseCommingleDetail.getLoadingInformation());
       newBuilder.setLoadablePlanId(portWiseCommingleDetail.getLoadablePatternId());
       newBuilder.setGrade(
-              portWiseCommingleDetail.getGrade() == null ? "" : portWiseCommingleDetail.getGrade());
+          portWiseCommingleDetail.getGrade() == null ? "" : portWiseCommingleDetail.getGrade());
       newBuilder.setTankName(
-              portWiseCommingleDetail.getTankName() == null
-                      ? ""
-                      : portWiseCommingleDetail.getTankName());
+          portWiseCommingleDetail.getTankName() == null
+              ? ""
+              : portWiseCommingleDetail.getTankName());
       newBuilder.setQuantity(
-              portWiseCommingleDetail.getQuantity() == null
-                      ? ""
-                      : portWiseCommingleDetail.getQuantity());
+          portWiseCommingleDetail.getQuantity() == null
+              ? ""
+              : portWiseCommingleDetail.getQuantity());
       newBuilder.setApi(
-              portWiseCommingleDetail.getApi() == null ? "" : portWiseCommingleDetail.getApi());
+          portWiseCommingleDetail.getApi() == null ? "" : portWiseCommingleDetail.getApi());
       newBuilder.setTemperature(
-              portWiseCommingleDetail.getTemperature() == null
-                      ? ""
-                      : portWiseCommingleDetail.getTemperature());
+          portWiseCommingleDetail.getTemperature() == null
+              ? ""
+              : portWiseCommingleDetail.getTemperature());
       newBuilder.setCargo1Abbreviation(
-              portWiseCommingleDetail.getCargo1Abbreviation() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo1Abbreviation());
+          portWiseCommingleDetail.getCargo1Abbreviation() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1Abbreviation());
       newBuilder.setCargo2Abbreviation(
-              portWiseCommingleDetail.getCargo2Abbreviation() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo2Abbreviation());
+          portWiseCommingleDetail.getCargo2Abbreviation() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2Abbreviation());
       newBuilder.setCargo1Percentage(
-              portWiseCommingleDetail.getCargo1Percentage() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo1Percentage());
+          portWiseCommingleDetail.getCargo1Percentage() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1Percentage());
       newBuilder.setCargo2Percentage(
-              portWiseCommingleDetail.getCargo2Percentage() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo2Percentage());
+          portWiseCommingleDetail.getCargo2Percentage() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2Percentage());
       newBuilder.setCargo1BblsDbs(
-              portWiseCommingleDetail.getCargo1BblsDbs() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo1BblsDbs());
+          portWiseCommingleDetail.getCargo1BblsDbs() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1BblsDbs());
       newBuilder.setCargo2BblsDbs(
-              portWiseCommingleDetail.getCargo2BblsDbs() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo2BblsDbs());
+          portWiseCommingleDetail.getCargo2BblsDbs() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2BblsDbs());
       newBuilder.setCargo1Bbls60F(
-              portWiseCommingleDetail.getCargo1Bbls60f() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo1Bbls60f());
+          portWiseCommingleDetail.getCargo1Bbls60f() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1Bbls60f());
       newBuilder.setCargo2Bbls60F(
-              portWiseCommingleDetail.getCargo2Bbls60f() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo2Bbls60f());
+          portWiseCommingleDetail.getCargo2Bbls60f() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2Bbls60f());
       newBuilder.setCargo1Lt(
-              portWiseCommingleDetail.getCargo1Lt() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo1Lt());
+          portWiseCommingleDetail.getCargo1Lt() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1Lt());
       newBuilder.setCargo2Lt(
-              portWiseCommingleDetail.getCargo2Lt() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo2Lt());
+          portWiseCommingleDetail.getCargo2Lt() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2Lt());
       newBuilder.setCargo1Mt(
-              portWiseCommingleDetail.getCargo1Mt() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo1Mt());
+          portWiseCommingleDetail.getCargo1Mt() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1Mt());
       newBuilder.setCargo2Mt(
-              portWiseCommingleDetail.getCargo2Mt() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo2Mt());
+          portWiseCommingleDetail.getCargo2Mt() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2Mt());
       newBuilder.setCargo1Kl(
-              portWiseCommingleDetail.getCargo1Kl() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo1Kl());
+          portWiseCommingleDetail.getCargo1Kl() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo1Kl());
       newBuilder.setCargo2Kl(
-              portWiseCommingleDetail.getCargo2Kl() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCargo2Kl());
+          portWiseCommingleDetail.getCargo2Kl() == null
+              ? ""
+              : portWiseCommingleDetail.getCargo2Kl());
       newBuilder.setIsActive(portWiseCommingleDetail.getIsActive());
       newBuilder.setPriority(
-              portWiseCommingleDetail.getPriority() == null
-                      ? Long.valueOf(0)
-                      : portWiseCommingleDetail.getPriority().longValue());
+          portWiseCommingleDetail.getPriority() == null
+              ? Long.valueOf(0)
+              : portWiseCommingleDetail.getPriority().longValue());
       newBuilder.setOrderQuantity(
-              portWiseCommingleDetail.getOrderQuantity() == null
-                      ? ""
-                      : portWiseCommingleDetail.getOrderQuantity());
+          portWiseCommingleDetail.getOrderQuantity() == null
+              ? ""
+              : portWiseCommingleDetail.getOrderQuantity());
       newBuilder.setLoadingOrder(
-              portWiseCommingleDetail.getLoadingOrder() == null
-                      ? Long.valueOf(0)
-                      : portWiseCommingleDetail.getLoadingOrder().longValue());
+          portWiseCommingleDetail.getLoadingOrder() == null
+              ? Long.valueOf(0)
+              : portWiseCommingleDetail.getLoadingOrder().longValue());
       newBuilder.setTankId(
-              portWiseCommingleDetail.getTankId() == null
-                      ? Long.valueOf(0)
-                      : portWiseCommingleDetail.getTankId().longValue());
+          portWiseCommingleDetail.getTankId() == null
+              ? Long.valueOf(0)
+              : portWiseCommingleDetail.getTankId().longValue());
       newBuilder.setFillingRatio(
-              portWiseCommingleDetail.getFillingRatio() == null
-                      ? ""
-                      : portWiseCommingleDetail.getFillingRatio());
+          portWiseCommingleDetail.getFillingRatio() == null
+              ? ""
+              : portWiseCommingleDetail.getFillingRatio());
       newBuilder.setCorrectedUllage(
-              portWiseCommingleDetail.getCorrectedUllage() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCorrectedUllage().toString());
+          portWiseCommingleDetail.getCorrectedUllage() == null
+              ? ""
+              : portWiseCommingleDetail.getCorrectedUllage().toString());
       newBuilder.setCorrectionFactor(
-              portWiseCommingleDetail.getCorrectionFactor() == null
-                      ? ""
-                      : portWiseCommingleDetail.getCorrectionFactor());
+          portWiseCommingleDetail.getCorrectionFactor() == null
+              ? ""
+              : portWiseCommingleDetail.getCorrectionFactor());
       newBuilder.setRdgUllage(
-              portWiseCommingleDetail.getRdgUllage() == null
-                      ? ""
-                      : portWiseCommingleDetail.getRdgUllage());
+          portWiseCommingleDetail.getRdgUllage() == null
+              ? ""
+              : portWiseCommingleDetail.getRdgUllage());
       newBuilder.setSlopQuantity(
-              portWiseCommingleDetail.getSlopQuantity() == null
-                      ? ""
-                      : portWiseCommingleDetail.getSlopQuantity());
+          portWiseCommingleDetail.getSlopQuantity() == null
+              ? ""
+              : portWiseCommingleDetail.getSlopQuantity());
       newBuilder.setTimeRequiredForLoading(
-              portWiseCommingleDetail.getTimeRequiredForLoading() == null
-                      ? ""
-                      : portWiseCommingleDetail.getTimeRequiredForLoading());
+          portWiseCommingleDetail.getTimeRequiredForLoading() == null
+              ? ""
+              : portWiseCommingleDetail.getTimeRequiredForLoading());
       builder.addLoadablePlanCommingleTempDetails(newBuilder);
     }
   }
