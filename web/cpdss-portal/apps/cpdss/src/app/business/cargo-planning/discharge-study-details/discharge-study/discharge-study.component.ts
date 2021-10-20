@@ -137,13 +137,11 @@ export class DischargeStudyComponent implements OnInit {
       const portDetails = this.dischargeStudyForm.get('portDetails') as FormArray;
       const portList = result.portList;
       const portUniqueColorAbbrList = [];
-      this.portDetails = portList.map((portDetail, index) => {
-        if(portDetail.operationId === OPERATIONS.DISCHARGING) {
-          const isLastIndex = index + 1 === portList.length;
-          const portDetailAsValueObject = this.dischargeStudyDetailsTransformationService.getPortDetailAsValueObject(portDetail, this.listData, isLastIndex, false, portUniqueColorAbbrList);
-          portDetails.push(this.initDischargeStudyFormGroup(portDetailAsValueObject));
-          return portDetailAsValueObject;
-        }
+      this.portDetails = portList.filter(portDetail => portDetail.operationId === OPERATIONS.DISCHARGING).map((portDetail, index) => {
+        const isLastIndex = index + 1 === portList.length;
+        const portDetailAsValueObject = this.dischargeStudyDetailsTransformationService.getPortDetailAsValueObject(portDetail, this.listData, isLastIndex, false, portUniqueColorAbbrList);
+        portDetails.push(this.initDischargeStudyFormGroup(portDetailAsValueObject));
+        return portDetailAsValueObject;
       })
     }
     

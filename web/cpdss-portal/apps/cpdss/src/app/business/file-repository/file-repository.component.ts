@@ -13,6 +13,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { ConfirmationService } from 'primeng/api';
 import { saveAs } from 'file-saver';
 import { MessageService } from 'primeng/api';
+import { PermissionsService } from '../../shared/services/permissions/permissions.service';
+import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
 
 /**
  * Component class for file repositiry
@@ -30,7 +32,6 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
 
   vessel: IVessel;
   repositoryColumns: IDataTableColumn[];
-  fileRepoDetails: IFileRepositoryData[];
   voyages: any;
   showAddEdit = false;
   editMode: boolean;
@@ -47,9 +48,31 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     category: '',
     createdDate: '',
     createdBy: ''
-  }
+  };
+  fileIcons = {
+    'docx': 'docx-icon',
+    'pdf': 'pdf-icon',
+    'txt': 'text-icon',
+    'csv': 'csv-icon',
+    'xlsx': 'excel-icon'
+  };
   editData: any;
+  permission: any;
 
+  _fileRepoDetails: any;;
+
+  get fileRepoDetails() {
+    return this._fileRepoDetails;
+  }
+
+  set fileRepoDetails(value: IFileRepositoryData[]) {
+    if (value) {
+      value?.map(item => {
+        item.fileIcon = this.fileIcons[item.fileType];
+      })
+    }
+    this._fileRepoDetails = value ? value : [];
+  }
   private getFiles$ = new Subject<any>();
 
   constructor(
@@ -60,21 +83,24 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     private voyageService: VoyageService,
     private translateService: TranslateService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private permissionsService: PermissionsService
   ) { }
 
   ngOnInit(): void {
     this.repositoryColumns = this.fileRepositoryTransformationService.repositoryTableColumn();
-
+    this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['FileRepositoryComponent']);
     this.getVesselInfo();
     this.getFiles(false);
 
     this.getFiles$.pipe(
       debounceTime(1000),
       switchMap(() => {
+        this.ngxSpinnerService.show();
         return this.fileRepositoryApiService.getFiles(this.pageState);
       })
     ).subscribe((result: any) => {
+      this.ngxSpinnerService.hide();
       this.fileRepoDetails = result.fileRepos;
       this.totalRecords = result.totalElements;
     });
@@ -112,8 +138,8 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     }
     if (result.responseStatus.status === '200') {
       result.fileRepos?.map(item => {
-        item.delete = item.isSystemGenerated ? false : true;
-        item.edit = item.isSystemGenerated ? false : true;
+        item.delete = !item.isSystemGenerated && this.permission.delete ? true : false;
+        item.edit = !item.isSystemGenerated && this.permission.edit ? true : false;
       });
       this.fileRepoDetails = result.fileRepos;
       this.totalRecords = result.totalElements;
@@ -230,7 +256,7 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.show();
     const result = await this.fileRepositoryApiService.deleteFile(data.id, param).toPromise();
     this.ngxSpinnerService.hide();
-    if(result.responseStatus.status === '200'){
+    if (result.responseStatus.status === '200') {
       this.messageService.add({ severity: 'success', summary: translationKeys['FILE_REPOSITORY_SUCCESS_LABEL'], detail: translationKeys['FILE_REPOSITORY_DELETE_SUCCESS_LABEL'] });
       this.getFiles();
     }

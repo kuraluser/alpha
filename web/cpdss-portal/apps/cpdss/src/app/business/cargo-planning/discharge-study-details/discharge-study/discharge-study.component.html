@@ -10,7 +10,7 @@
 <div class="row align-items-center pb-10 pt-10">
 
     <div class="pl-15 pr-5">{{ 'DISCHARGE_STUDY_PORT_NAME' | translate }}{{portIndex+1}}</div>
-    <div class="sub-head-color  pr-15">{{portDetail.port?.name}}</div>
+    <div class="sub-head-color  pr-15">{{portDetail?.port?.name}}</div>
     <div class="pl-15 pr-5">{{ 'DISCHARGE_STUDY_INSTRUCTION' | translate }}</div>
     <div class="col-3">
         <p-dropdown id="instruction_dropdown" appendTo="body" styleClass="form-control" [options]="instructions"

@@ -51,6 +51,7 @@ export interface IFileRepositoryData {
     delete?: boolean;
     edit?: boolean;
     view?: boolean;
+    fileIcon?: string;
 }
 
 /**
