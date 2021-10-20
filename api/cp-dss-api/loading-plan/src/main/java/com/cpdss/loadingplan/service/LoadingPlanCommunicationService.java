@@ -440,39 +440,42 @@ public class LoadingPlanCommunicationService {
         LoadingInformation loadingInfo = null;
         if (loadingInformation != null) {
           try {
-            Optional<StageOffset> defaultOffsetOpt =
-                stageOffsetRepository.findByIdAndIsActiveTrue(stageOffset.getId());
-            Optional<StageDuration> defaultDurationOpt =
-                stageDurationRepository.findByIdAndIsActiveTrue(stageDuration.getId());
-            if (defaultOffsetOpt.isPresent()) {
-              loadingInformation.setStageOffset(defaultOffsetOpt.get());
+            if(stageOffset != null){
+              Optional<StageOffset> defaultOffsetOpt =
+                      stageOffsetRepository.findByIdAndIsActiveTrue(stageOffset.getId());
+              if (defaultOffsetOpt.isPresent()) {
+                loadingInformation.setStageOffset(defaultOffsetOpt.get());
+              }
             }
-            if (defaultDurationOpt.isPresent()) {
-              loadingInformation.setStageDuration(defaultDurationOpt.get());
-            }
-            Optional<LoadingInformationStatus> informationStatusOpt =
-                loadingInfoStatusRepository.findByIdAndIsActive(
-                    loadingInformationStatus.getId(), true);
+           if(stageDuration !=null){
+             Optional<StageDuration> defaultDurationOpt =
+                     stageDurationRepository.findByIdAndIsActiveTrue(stageDuration.getId());
+             if (defaultDurationOpt.isPresent()) {
+               loadingInformation.setStageDuration(defaultDurationOpt.get());
+             }
+           }
+           if(loadingInformationStatus !=null){
+             Optional<LoadingInformationStatus> informationStatusOpt =
+                     loadingInfoStatusRepository.findByIdAndIsActive(
+                             loadingInformationStatus.getId(), true);
+             if (informationStatusOpt.isPresent()) {
+               loadingInformation.setLoadingInformationStatus(informationStatusOpt.get());
+             }
+           }
+          if(arrivalStatus !=null){
             Optional<LoadingInformationStatus> arrivalStatusOpt =
-                loadingInfoStatusRepository.findByIdAndIsActive(arrivalStatus.getId(), true);
-            Optional<LoadingInformationStatus> departureStatusOpt =
-                loadingInfoStatusRepository.findByIdAndIsActive(departureStatus.getId(), true);
-            // loadingInformation.setStageOffset(stageOffset);
-            // loadingInformation.setStageDuration(stageDuration);
-            // loadingInformation.setLoadingInformationStatus(loadingInformationStatus);
-            // check arrival status
-            // loadingInformation.setArrivalStatus(loadingInformationStatus);
-            // check departure status
-            // loadingInformation.setDepartureStatus(loadingInformationStatus);
-            if (informationStatusOpt.isPresent()) {
-              loadingInformation.setLoadingInformationStatus(informationStatusOpt.get());
-            }
+                    loadingInfoStatusRepository.findByIdAndIsActive(arrivalStatus.getId(), true);
             if (arrivalStatusOpt.isPresent()) {
               loadingInformation.setArrivalStatus(arrivalStatusOpt.get());
             }
+          }
+          if(departureStatus !=null){
+            Optional<LoadingInformationStatus> departureStatusOpt =
+                    loadingInfoStatusRepository.findByIdAndIsActive(departureStatus.getId(), true);
             if (departureStatusOpt.isPresent()) {
               loadingInformation.setDepartureStatus(departureStatusOpt.get());
             }
+          }
             loadingInfo = loadingInformationRepository.save(loadingInformation);
             log.info("LoadingInformation saved with id:" + loadingInfo.getId());
           } catch (ResourceAccessException e) {
@@ -895,7 +898,7 @@ public class LoadingPlanCommunicationService {
         loadingPlanStagingService.updateStatusCompletedForProcessId(
             processId, StagingStatus.COMPLETED.getStatus());
         log.info("updated status to completed for processId:" + processId);
-        if (env.equals("cloud") && loadingInfo != null) {
+        if (!env.equals("ship") && loadingInfo != null) {
           log.info("Algo call started for LoadingPlan");
           LoadingPlanModels.LoadingInfoAlgoRequest.Builder builder =
               LoadingPlanModels.LoadingInfoAlgoRequest.newBuilder();
