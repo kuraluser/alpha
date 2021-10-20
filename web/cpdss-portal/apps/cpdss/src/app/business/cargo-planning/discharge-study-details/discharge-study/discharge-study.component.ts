@@ -10,7 +10,7 @@ import { IDischargeStudy, IDischargeStudyDropdownData  , IDischargeStudyBackLoad
 
 import { DATATABLE_EDITMODE, IDataTableColumn} from '../../../../shared/components/datatable/datatable.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { Voyage , IPort  , IInstruction , ITankDetails , VOYAGE_STATUS , ICargo , DISCHARGE_STUDY_STATUS } from '../../../core/models/common.model';
+import { Voyage , IPort  , IInstruction , ITankDetails , VOYAGE_STATUS , ICargo , DISCHARGE_STUDY_STATUS , OPERATIONS } from '../../../core/models/common.model';
 import { QUANTITY_UNIT , IPercentage , IMode  , IResponse } from '../../../../shared/models/common.model';
 
 import { DischargeStudyDetailsTransformationService } from '../../services/discharge-study-details-transformation.service';
@@ -75,6 +75,7 @@ export class DischargeStudyComponent implements OnInit {
   listData: IDischargeStudyDropdownData;
   portCargoList: IPortCargoDetails[];
   errorMessages: any;
+  readonly OPERATIONS = OPERATIONS;
   private _dischargeStudy: IDischargeStudy;
 
   constructor(
@@ -137,10 +138,12 @@ export class DischargeStudyComponent implements OnInit {
       const portList = result.portList;
       const portUniqueColorAbbrList = [];
       this.portDetails = portList.map((portDetail, index) => {
-        const isLastIndex = index + 1 === portList.length;
-        const portDetailAsValueObject = this.dischargeStudyDetailsTransformationService.getPortDetailAsValueObject(portDetail, this.listData, isLastIndex, false, portUniqueColorAbbrList);
-        portDetails.push(this.initDischargeStudyFormGroup(portDetailAsValueObject));
-        return portDetailAsValueObject;
+        if(portDetail.operationId === OPERATIONS.DISCHARGING) {
+          const isLastIndex = index + 1 === portList.length;
+          const portDetailAsValueObject = this.dischargeStudyDetailsTransformationService.getPortDetailAsValueObject(portDetail, this.listData, isLastIndex, false, portUniqueColorAbbrList);
+          portDetails.push(this.initDischargeStudyFormGroup(portDetailAsValueObject));
+          return portDetailAsValueObject;
+        }
       })
     }
     
@@ -204,6 +207,7 @@ export class DischargeStudyComponent implements OnInit {
     // const isTankRequired  = portDetail?.cow?.id === 2 ? [Validators.required] : [];
     return this.fb.group({
       port: this.fb.control(portDetail?.port),
+      operationId: this.fb.control(portDetail?.operationId),
       instruction: this.fb.control(portDetail?.instruction),
       maxDraft: this.fb.control(portDetail?.maxDraft, [Validators.required , Validators.min(0), numberValidator(2, 2)]),
       cargoDetail: this.fb.group({ dataTable: this.fb.array(this.dischargeCargoFormGroup(portDetail)) }),
@@ -484,8 +488,8 @@ export class DischargeStudyComponent implements OnInit {
         mt: this.quantityPipe.transform(selectedPortCargo['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value , -1),
         bbls: this.quantityPipe.transform(selectedPortCargo['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value , -1),
       }
-      selectedPortCargo['mt'].value = isNaN(unitConverted.mt) ? '0' : unitConverted.mt+'' ;
-      selectedPortCargo['bbls'].value = isNaN(unitConverted.bbls) ? '0' : unitConverted.bbls+'';
+      selectedPortCargo['mt'].value = isNaN(unitConverted.mt) || !unitConverted.mt ? '0' : unitConverted.mt+'' ;
+      selectedPortCargo['bbls'].value = isNaN(unitConverted.bbls) || !unitConverted.mt ? '0' : unitConverted.bbls+'';
       const formControl = backLoadingFormArray.at(event.index).get('kl');
       formControl.setValue(null);
       formControl.setValue(selectedPortCargo['kl'].value);
@@ -912,13 +916,14 @@ export class DischargeStudyComponent implements OnInit {
   */
   async saveDischargeStudy() {
     const translationKeys = await this.translateService.get(['DISCHARGE_STUDY_SAVE_ERROR','DISCHARGE_STUDY_SAVE_NO_DATA_ERROR','DISCHARGE_STUDY_SAVE_WARNING_SUMMERY','DISCHARGE_STUDY_SAVE_WARNING','DISCHARGE_STUDY_SUCCESS', 'DISCHARGE_STUDY_SUCCESS_SUMMERY' ]).toPromise();
-    if(!this.dischargeStudyForm.dirty) {
-      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_SAVE_ERROR'], detail: translationKeys['DISCHARGE_STUDY_SAVE_NO_DATA_ERROR'] });
-      return;
-    }
     this.checkFormFieldValidity();
     this.dischargeStudyForm.markAllAsTouched();
     this.dischargeStudyForm.markAsDirty();
+
+     if(!this.dischargeStudyForm.dirty && this.portDetails?.length !== 1) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_SAVE_ERROR'], detail: translationKeys['DISCHARGE_STUDY_SAVE_NO_DATA_ERROR'] });
+      return;
+    }
     if(this.dischargeStudyForm.valid) {
       let status;
       this.portDetails.forEach((portDetail , portIndex) => {
@@ -948,6 +953,7 @@ export class DischargeStudyComponent implements OnInit {
       const result: IResponse = await this.dischargeStudyDetailsApiService.saveDischargeStudy(obj).toPromise();
       if(result.responseStatus.status === '200') {
         this.isDischargeStudyValid(true);
+        this.dischargeStudyDetailsTransformationService.setDischargeStudyValidity(true);
         this.messageService.add({ severity: 'success', summary: translationKeys['DISCHARGE_STUDY_SUCCESS'], detail: translationKeys['DISCHARGE_STUDY_SUCCESS_SUMMERY'] });
         const value = this.dischargeStudyForm.value;
         this.dischargeStudyForm.reset(value);

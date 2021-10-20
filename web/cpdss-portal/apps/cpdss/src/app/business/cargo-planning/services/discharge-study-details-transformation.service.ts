@@ -1007,6 +1007,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       const _portDetail = <IPortDetailValueObject>{};
       _portDetail.id = portDetail.id;
       _portDetail.portTimezoneId = portDetail.portTimezoneId;
+      _portDetail.operationId  = portDetail.operationId;
       _portDetail.port = listData.portList.find((port) =>{
         if(port.id === portDetail.portId) {
           return port;

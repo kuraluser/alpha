@@ -324,6 +324,9 @@ export class PortsComponent implements OnInit, OnDestroy {
             this.dischargeStudyDetailsTransformationService.setOHQPortValidity(this.portsLists[index].id, false);
           }
           this.portsLists = [...this.portsLists];
+          if(this.portsLists?.length !== this.portsListSaved?.length) {
+            this.dischargeStudyDetailsTransformationService.setDischargeStudyValidity(false);
+          }
           this.portsListSaved = JSON.parse(JSON.stringify(this.portsLists));
         }
       }
