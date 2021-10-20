@@ -201,4 +201,7 @@ public class Vessel extends EntityDoc {
 
   @Column(name = "height_of_manifold_above_deck")
   private BigDecimal heightOfManifoldAboveDeck;
+  
+  @Column(name = "navigation_area")
+  private String navigationArea;
 }
