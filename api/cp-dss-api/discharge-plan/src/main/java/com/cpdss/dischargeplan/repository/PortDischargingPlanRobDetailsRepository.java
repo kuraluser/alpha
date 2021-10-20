@@ -4,8 +4,10 @@ package com.cpdss.dischargeplan.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import java.util.List;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface PortDischargingPlanRobDetailsRepository
@@ -26,4 +28,10 @@ public interface PortDischargingPlanRobDetailsRepository
   public List<PortDischargingPlanRobDetails>
       findByDischargingInformationAndConditionTypeAndValueTypeAndIsActive(
           Long fkId, Integer conditionType, Integer valueType, Boolean isActive);
+
+  @Modifying
+  @Transactional
+  @Query(
+      "UPDATE PortDischargingPlanRobDetails SET isActive = false WHERE dischargingInformation = ?1")
+  public void deleteByDischargingInformationId(Long dischargingInformation);
 }

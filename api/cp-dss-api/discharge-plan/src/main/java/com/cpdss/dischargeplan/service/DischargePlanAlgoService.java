@@ -13,6 +13,15 @@ import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingRate;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStabilityParameters;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.Valve;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
@@ -42,19 +51,61 @@ import com.cpdss.dischargeplan.domain.vessel.PumpTypes;
 import com.cpdss.dischargeplan.domain.vessel.VesselBottomLine;
 import com.cpdss.dischargeplan.domain.vessel.VesselManifold;
 import com.cpdss.dischargeplan.domain.vessel.VesselPump;
+import com.cpdss.dischargeplan.entity.AlgoErrorHeading;
+import com.cpdss.dischargeplan.entity.AlgoErrors;
+import com.cpdss.dischargeplan.entity.BallastValve;
+import com.cpdss.dischargeplan.entity.CargoDischargingRate;
+import com.cpdss.dischargeplan.entity.CargoValve;
 import com.cpdss.dischargeplan.entity.CowPlanDetail;
 import com.cpdss.dischargeplan.entity.CowTankDetail;
 import com.cpdss.dischargeplan.entity.CowWithDifferentCargo;
+import com.cpdss.dischargeplan.entity.DeballastingRate;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
 import com.cpdss.dischargeplan.entity.DischargingInformationAlgoStatus;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import com.cpdss.dischargeplan.entity.DischargingMachineryInUse;
+import com.cpdss.dischargeplan.entity.DischargingPlanBallastDetails;
+import com.cpdss.dischargeplan.entity.DischargingPlanCommingleDetails;
+import com.cpdss.dischargeplan.entity.DischargingPlanPortWiseDetails;
+import com.cpdss.dischargeplan.entity.DischargingPlanRobDetails;
+import com.cpdss.dischargeplan.entity.DischargingPlanStabilityParameters;
+import com.cpdss.dischargeplan.entity.DischargingPlanStowageDetails;
+import com.cpdss.dischargeplan.entity.DischargingSequence;
+import com.cpdss.dischargeplan.entity.DischargingSequenceStabilityParameters;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanCommingleDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanStabilityParameters;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
+import com.cpdss.dischargeplan.repository.AlgoErrorHeadingRepository;
+import com.cpdss.dischargeplan.repository.AlgoErrorsRepository;
+import com.cpdss.dischargeplan.repository.BallastOperationRepository;
+import com.cpdss.dischargeplan.repository.BallastValveRepository;
+import com.cpdss.dischargeplan.repository.CargoDischargingRateRepository;
+import com.cpdss.dischargeplan.repository.CargoValveRepository;
 import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
+import com.cpdss.dischargeplan.repository.DeballastingRateRepository;
 import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeInformationStatusRepository;
 import com.cpdss.dischargeplan.repository.DischargingInformationAlgoStatusRepository;
+import com.cpdss.dischargeplan.repository.DischargingPlanBallastDetailsRepository;
+import com.cpdss.dischargeplan.repository.DischargingPlanCommingleDetailsRepository;
+import com.cpdss.dischargeplan.repository.DischargingPlanPortWiseDetailsRepository;
+import com.cpdss.dischargeplan.repository.DischargingPlanRobDetailsRepository;
+import com.cpdss.dischargeplan.repository.DischargingPlanStabilityParametersRepository;
+import com.cpdss.dischargeplan.repository.DischargingPlanStowageDetailsRepository;
+import com.cpdss.dischargeplan.repository.DischargingSequenceRepository;
+import com.cpdss.dischargeplan.repository.DischargingSequenceStabiltyParametersRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastDetailsRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastTempDetailsRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanCommingleDetailsRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageTempDetailsRepository;
 import com.cpdss.dischargeplan.repository.ReasonForDelayRepository;
+import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
@@ -84,12 +135,62 @@ public class DischargePlanAlgoService {
   @Autowired CowPlanDetailRepository cowPlanDetailRepository;
 
   @Autowired private DischargeInformationStatusRepository dischargeInformationStatusRepository;
+  @Autowired private DischargingPlanBuilderService dischargingPlanBuilderService;
 
   @Autowired
   private DischargingInformationAlgoStatusRepository dischargingInformationAlgoStatusRepository;
 
+  @Autowired private DischargingSequenceRepository dischargingSequenceRepository;
+  @Autowired private LoadicatorService loadicatorService;
+  @Autowired BallastOperationRepository ballastOperationRepository;
+  @Autowired CargoDischargingRateRepository cargoDischargingRateRepository;
+  @Autowired DeballastingRateRepository deballastingRateRepository;
+
+  @Autowired
+  private DischargingSequenceStabiltyParametersRepository
+      dischargingSequenceStabiltyParametersRepository;
+
+  @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @Autowired private AlgoErrorsRepository algoErrorsRepository;
+  @Autowired private BallastValveRepository ballastValveRepository;
+  @Autowired private CargoValveRepository cargoValveRepository;
+
+  @Autowired
+  private DischargingPlanCommingleDetailsRepository dischargingPlanCommingleDetailsRepository;
+
+  @Autowired
+  private DischargingPlanStabilityParametersRepository dischargingPlanStabilityParametersRepository;
+
+  @Autowired private DischargingPlanRobDetailsRepository dischargingPlanRobDetailsRepository;
+
+  @Autowired
+  private DischargingPlanBallastDetailsRepository dischargingPlanBallastDetailsRepository;
+
+  @Autowired
+  private DischargingPlanStowageDetailsRepository dischargingPlanStowageDetailsRepository;
+
+  @Autowired
+  private DischargingPlanPortWiseDetailsRepository dischargingPlanPortWiseDetailsRepository;
+
+  @Autowired private PortDischargingPlanRobDetailsRepository portRobDetailsRepository;
+  @Autowired private PortDischargingPlanStabilityParametersRepository portStabilityParamsRepository;
+  @Autowired private PortDischargingPlanStowageDetailsRepository portStowageDetailsRepository;
+
+  @Autowired
+  private PortDischargingPlanCommingleDetailsRepository
+      portDischargingPlanCommingleDetailsRepository;
+
+  @Autowired
+  PortDischargingPlanStowageTempDetailsRepository portDischargingPlanStowageTempDetailsRepository;
+
+  @Autowired
+  PortDischargingPlanBallastTempDetailsRepository portDischargingPlanBallastTempDetailsRepository;
+
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub loadableStudyService;
+
+  @Autowired
+  private PortDischargingPlanBallastDetailsRepository portDischargingPlanBallastDetailsRepository;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoService;
@@ -777,7 +878,7 @@ public class DischargePlanAlgoService {
   /**
    * Fetches Loading Information Status based on status ID.
    *
-   * @param loadingInformationProcessingStartedId
+   * @param dischargingInformationProcessingStartedId
    * @return
    * @throws GenericServiceException
    */
@@ -814,29 +915,535 @@ public class DischargePlanAlgoService {
     algoStatus.setVesselXId(dischargeInformation.getVesselXid());
     dischargingInformationAlgoStatusRepository.save(algoStatus);
   }
-  /**
-   * Updates ALGO status of Loading Information
-   *
-   * @param loadingInformation
-   * @param processId
-   * @param status
-   */
-  public void createLoadingInformationAlgoStatus(
-      DischargeInformation dsischargeInformation,
-      String processId,
-      DischargingInformationStatus status,
-      Integer conditionType) {
+
+  public void saveDischargingSequenceAndPlan(DischargingPlanSaveRequest request)
+      throws GenericServiceException {
     log.info(
-        "Creating ALGO status for Loading Information {}, condition Type {}",
-        dsischargeInformation.getId(),
-        conditionType);
-    DischargingInformationAlgoStatus algoStatus = new DischargingInformationAlgoStatus();
-    algoStatus.setIsActive(true);
-    algoStatus.setDischargeInformation(dsischargeInformation);
-    algoStatus.setDischargingInformationStatus(status);
-    algoStatus.setConditionType(conditionType);
-    algoStatus.setProcessId(processId);
-    algoStatus.setVesselXId(dsischargeInformation.getVesselXid());
-    dischargingInformationAlgoStatusRepository.save(algoStatus);
+        "Saving Loading plan and sequence of loading information {}",
+        request.getDischargingInfoId());
+
+    DischargeInformation dischargingInfo =
+        dischargeInformationService.getDischargeInformation(request.getDischargingInfoId());
+    if (dischargingInfo == null) {
+      throw new GenericServiceException(
+          "Could not find discharging information " + request.getDischargingInfoId(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    dischargeInformationService.updateDischargingPlanDetailsFromAlgo(
+        dischargingInfo.getId(), request.getDischargingPlanDetailsFromAlgo());
+
+    if (request.getDischargingSequencesList().isEmpty()) {
+      log.info("No Plans Available for Loading Information {}", dischargingInfo.getId());
+      Optional<DischargingInformationStatus> noPlanAvailableStatusOpt =
+          getDischargingInformationStatus(
+              DischargePlanConstants.DISCHARGING_INFORMATION_NO_PLAN_AVAILABLE_ID);
+      dischargeInformationService.updateDischargingInformationStatus(
+          noPlanAvailableStatusOpt.get(), dischargingInfo.getId());
+      updateDischargingInfoAlgoStatus(
+          dischargingInfo, request.getProcessId(), noPlanAvailableStatusOpt.get());
+    }
+
+    if (!request.getAlgoErrorsList().isEmpty()) {
+      saveAlgoErrors(dischargingInfo, request);
+    }
+
+    if (!request.getDischargingSequencesList().isEmpty()) {
+      List<DischargingSequence> oldLoadingSequences =
+          dischargingSequenceRepository.findByDischargeInformationAndIsActive(
+              dischargingInfo, true);
+      // Saving Loading Sequence
+      request.getDischargingSequencesList().stream()
+          .forEach(
+              sequence -> {
+                saveDischargingSequence(sequence, dischargingInfo);
+              });
+      deleteDischargingSequences(dischargingInfo.getId(), oldLoadingSequences);
+      deleteDischargingSequenceStabilityParams(dischargingInfo.getId());
+      saveDischargingSequenceStabilityParams(request, dischargingInfo);
+
+      deleteDischargingPlan(dischargingInfo.getId());
+      saveDischargingPlan(request, dischargingInfo);
+      if (request.getHasLoadicator()) {
+        log.info("Passing Loading Sequence to Loadicator");
+        loadicatorService.saveLoadicatorInfo(dischargingInfo, request.getProcessId());
+        Optional<DischargingInformationStatus> loadicatorVerificationStatusOpt =
+            getDischargingInformationStatus(
+                DischargePlanConstants.DISCHARGING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID);
+        updateDischargingInfoAlgoStatus(
+            dischargingInfo, request.getProcessId(), loadicatorVerificationStatusOpt.get());
+      } else {
+        Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
+            getDischargingInformationStatus(DischargePlanConstants.PLAN_GENERATED_ID);
+        dischargeInformationService.updateDischargingInformationStatuses(
+            dischargingInfoStatusOpt.get(),
+            dischargingInfoStatusOpt.get(),
+            dischargingInfoStatusOpt.get(),
+            dischargingInfo.getId());
+        updateDischargingInfoAlgoStatus(
+            dischargingInfo, request.getProcessId(), dischargingInfoStatusOpt.get());
+        dischargeInformationService.updateIsDischargingSequenceGeneratedStatus(
+            dischargingInfo.getId(), true);
+        dischargeInformationService.updateIsDischargingPlanGeneratedStatus(
+            dischargingInfo.getId(), true);
+      }
+    }
+  }
+
+  private void saveDischargingPlan(
+      DischargingPlanSaveRequest request, DischargeInformation dischargingInfo) {
+
+    savePortBallastDetails(dischargingInfo, request.getPortDischargingPlanBallastDetailsList());
+    savePortRobDetails(dischargingInfo, request.getPortDischargingPlanRobDetailsList());
+    savePortStabilityParams(
+        dischargingInfo, request.getPortDischargingPlanStabilityParametersList());
+    savePortStowageDetails(dischargingInfo, request.getPortDischargingPlanStowageDetailsList());
+    savePortCommingleDetails(dischargingInfo, request.getPortDischargingPlanCommingleDetailsList());
+  }
+
+  private void savePortStowageDetails(
+      DischargeInformation dischargingInformation,
+      List<LoadingPlanTankDetails> portDischargingPlanStowageDetailsList) {
+    log.info(
+        "Saving Loading Plan Stowage Details for LoadingInformation {}, PortRotation",
+        dischargingInformation.getId(),
+        dischargingInformation.getPortRotationXid());
+    List<PortDischargingPlanStowageDetails> portLoadingPlanStowages = new ArrayList<>();
+    portDischargingPlanStowageDetailsList.forEach(
+        stowage -> {
+          PortDischargingPlanStowageDetails stowageDetails =
+              new PortDischargingPlanStowageDetails();
+          dischargingPlanBuilderService.buildPortStowage(
+              dischargingInformation, stowageDetails, stowage);
+          portLoadingPlanStowages.add(stowageDetails);
+        });
+    portStowageDetailsRepository.saveAll(portLoadingPlanStowages);
+  }
+
+  private void savePortBallastDetails(
+      DischargeInformation dischargingInformation,
+      List<LoadingPlanTankDetails> portLoadingPlanBallastDetailsList) {
+    log.info(
+        "Saving Loading Plan Ballast Details for LoadingInformation {}, PortRotation",
+        dischargingInformation.getId(),
+        dischargingInformation.getPortRotationXid());
+    List<PortDischargingPlanBallastDetails> portLoadingPlanBallastDetails = new ArrayList<>();
+    portLoadingPlanBallastDetailsList.forEach(
+        ballast -> {
+          PortDischargingPlanBallastDetails ballastDetails =
+              new PortDischargingPlanBallastDetails();
+          dischargingPlanBuilderService.buildPortBallast(
+              dischargingInformation, ballastDetails, ballast);
+          portLoadingPlanBallastDetails.add(ballastDetails);
+        });
+    portDischargingPlanBallastDetailsRepository.saveAll(portLoadingPlanBallastDetails);
+  }
+
+  private void savePortCommingleDetails(
+      DischargeInformation dischargingInformation,
+      List<LoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList) {
+    log.info(
+        "Saving Loading Plan Commingle Details for LoadingInformation {}, PortRotation",
+        dischargingInformation.getId(),
+        dischargingInformation.getPortRotationXid());
+    List<PortDischargingPlanCommingleDetails> portLoadingPlanCommingleDetails = new ArrayList<>();
+    portLoadingPlanCommingleDetailsList.forEach(
+        commingle -> {
+          PortDischargingPlanCommingleDetails commingleDetails =
+              new PortDischargingPlanCommingleDetails();
+          dischargingPlanBuilderService.buildPortCommingle(
+              dischargingInformation, commingleDetails, commingle);
+          portLoadingPlanCommingleDetails.add(commingleDetails);
+        });
+    portDischargingPlanCommingleDetailsRepository.saveAll(portLoadingPlanCommingleDetails);
+  }
+
+  private void deleteDischargingPlan(Long id) {
+
+    log.info("Deleting Old Loading Plan of LoadingInformation {}", id);
+    portDischargingPlanBallastDetailsRepository.deleteByDischargingInformationId(id);
+    portRobDetailsRepository.deleteByDischargingInformationId(id);
+    portStabilityParamsRepository.deleteByDischargingInformationId(id);
+    portStowageDetailsRepository.deleteByDischargingInformationId(id);
+    portDischargingPlanStowageTempDetailsRepository.deleteByDischargingInformationId(id);
+    portDischargingPlanBallastTempDetailsRepository.deleteByDischargingInformationId(id);
+    portDischargingPlanCommingleDetailsRepository.deleteByDischargingInformationId(id);
+  }
+
+  private void saveDischargingSequenceStabilityParams(
+      DischargingPlanSaveRequest request, DischargeInformation dischargingInfo) {
+
+    log.info(
+        "Saving Loading Sequence Stability Params for LoadingInformation {}, PortRotation",
+        dischargingInfo.getId(),
+        dischargingInfo.getPortRotationXid());
+    List<DischargingSequenceStabilityParameters> dischargingSequenceStabilityParams =
+        new ArrayList<>();
+    request
+        .getDischargingSequenceStabilityParametersList()
+        .forEach(
+            param -> {
+              DischargingSequenceStabilityParameters stabilityParameters =
+                  new DischargingSequenceStabilityParameters();
+              dischargingPlanBuilderService.buildDischargingSequenceStabilityParams(
+                  dischargingInfo, param, stabilityParameters);
+              dischargingSequenceStabilityParams.add(stabilityParameters);
+            });
+    dischargingSequenceStabiltyParametersRepository.saveAll(dischargingSequenceStabilityParams);
+  }
+
+  private void savePortStabilityParams(
+      DischargeInformation dischargingInformation,
+      List<LoadingPlanStabilityParameters> portLoadingPlanStabilityParametersList) {
+    log.info(
+        "Saving Loading Plan Stability Parameters for LoadingInformation {}, PortRotation",
+        dischargingInformation.getId(),
+        dischargingInformation.getPortRotationXid());
+    List<PortDischargingPlanStabilityParameters> portLoadingPlanStabilityParams = new ArrayList<>();
+    portLoadingPlanStabilityParametersList.forEach(
+        params -> {
+          PortDischargingPlanStabilityParameters stabilityParams =
+              new PortDischargingPlanStabilityParameters();
+          dischargingPlanBuilderService.buildPortStabilityParams(
+              dischargingInformation, stabilityParams, params);
+          portLoadingPlanStabilityParams.add(stabilityParams);
+        });
+    portStabilityParamsRepository.saveAll(portLoadingPlanStabilityParams);
+  }
+
+  private void deleteDischargingSequenceStabilityParams(Long id) {
+
+    log.info("Deleting Old Loading Sequence Stability Parameters of Loading Information {}", id);
+    dischargingSequenceStabiltyParametersRepository.deleteByDischargingInformationId(id);
+  }
+
+  private void saveDischargingSequence(
+      com.cpdss.common.generated.discharge_plan.DischargingSequence sequence,
+      DischargeInformation dischargingInfo) {
+
+    log.info("Saving Loading sequence of loading information {}", dischargingInfo.getId());
+    DischargingSequence dischargingSequence = new DischargingSequence();
+    dischargingPlanBuilderService.buildDischargingSequence(
+        dischargingSequence, sequence, dischargingInfo);
+    DischargingSequence savedDischargingSequence =
+        dischargingSequenceRepository.save(dischargingSequence);
+
+    saveBallastValves(savedDischargingSequence, sequence.getBallastValvesList());
+    saveCargoValves(savedDischargingSequence, sequence.getCargoValvesList());
+    saveDeBallastingRates(savedDischargingSequence, sequence.getDeBallastingRatesList());
+    saveDischargingPlanPortWiseDetails(
+        savedDischargingSequence, sequence.getDischargingPlanPortWiseDetailsList());
+    saveCargoDischargingRates(savedDischargingSequence, sequence.getDischargingRatesList());
+    saveBallastPumps(savedDischargingSequence, sequence.getBallastOperationsList());
+  }
+
+  private void saveCargoDischargingRates(
+      DischargingSequence loadingSequence, List<DischargingRate> dischargingRatesList) {
+    log.info("Saving Cargo Loading Rates for Loading Sequence {}", loadingSequence.getId());
+    List<CargoDischargingRate> cargoLoadingRates = new ArrayList<CargoDischargingRate>();
+    dischargingRatesList.forEach(
+        loadingRate -> {
+          CargoDischargingRate cargoLoadingRate = new CargoDischargingRate();
+          dischargingPlanBuilderService.buildCargoDischargingRate(
+              loadingSequence, cargoLoadingRate, loadingRate);
+          cargoLoadingRates.add(cargoLoadingRate);
+        });
+    cargoDischargingRateRepository.saveAll(cargoLoadingRates);
+  }
+
+  private void deleteDischargingSequences(
+      Long dischargingInfoId, List<DischargingSequence> oldDischargingSequences) {
+    log.info("Deleting Old Loading Sequences of DischargingInformation {}", dischargingInfoId);
+    oldDischargingSequences.forEach(
+        dischargingSequence -> {
+          dischargingSequenceRepository.deleteById(dischargingSequence.getId());
+          ballastOperationRepository.deleteByDischargingSequence(dischargingSequence);
+          cargoDischargingRateRepository.deleteByDischargingSequence(dischargingSequence);
+          deballastingRateRepository.deleteByDischargingSequence(dischargingSequence);
+          deleteDischargingPlanPortWiseDetailsByDischargingSequence(dischargingSequence);
+        });
+  }
+
+  private void deleteDischargingPlanPortWiseDetailsByDischargingSequence(
+      DischargingSequence dischargingSequence) {
+    List<DischargingPlanPortWiseDetails> oldPortWiseDetails =
+        dischargingPlanPortWiseDetailsRepository.findByDischargingSequenceAndIsActiveTrueOrderById(
+            dischargingSequence);
+    oldPortWiseDetails.forEach(
+        loadingPlanPortWiseDetails -> {
+          dischargingPlanPortWiseDetailsRepository.deleteById(loadingPlanPortWiseDetails.getId());
+          deballastingRateRepository.deleteByDischargingPlanPortWiseDetails(
+              loadingPlanPortWiseDetails);
+          dischargingPlanBallastDetailsRepository.deleteByDischargingPlanPortWiseDetails(
+              loadingPlanPortWiseDetails);
+          dischargingPlanRobDetailsRepository.deleteByDischargingPlanPortWiseDetails(
+              loadingPlanPortWiseDetails);
+          dischargingPlanStabilityParametersRepository.deleteByDischargingPlanPortWiseDetails(
+              loadingPlanPortWiseDetails);
+          dischargingPlanStowageDetailsRepository.deleteByDischargingPlanPortWiseDetails(
+              loadingPlanPortWiseDetails);
+          dischargingPlanCommingleDetailsRepository.deleteByDischargingPlanPortWiseDetails(
+              loadingPlanPortWiseDetails);
+        });
+  }
+
+  private void saveAlgoErrors(
+      DischargeInformation dischargeInformation, DischargingPlanSaveRequest request)
+      throws GenericServiceException {
+    log.info(
+        "ALGO returned errors while generating loading plan for loading information {}",
+        dischargeInformation.getId());
+
+    algoErrorHeadingRepository.deleteByDischargingInformation(dischargeInformation);
+    algoErrorsRepository.deleteByLoadingInformation(dischargeInformation);
+
+    request
+        .getAlgoErrorsList()
+        .forEach(
+            algoError -> {
+              AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+              algoErrorHeading.setErrorHeading(algoError.getErrorHeading());
+              algoErrorHeading.setDischargingInformation(dischargeInformation);
+              algoErrorHeading.setIsActive(true);
+              algoErrorHeadingRepository.save(algoErrorHeading);
+              algoError
+                  .getErrorMessagesList()
+                  .forEach(
+                      error -> {
+                        AlgoErrors algoErrors = new AlgoErrors();
+                        algoErrors.setAlgoErrorHeading(algoErrorHeading);
+                        algoErrors.setErrorMessage(error);
+                        algoErrors.setIsActive(true);
+                        algoErrorsRepository.save(algoErrors);
+                      });
+            });
+    Optional<DischargingInformationStatus> errorOccurredStatusOpt =
+        getDischargingInformationStatus(
+            DischargePlanConstants.DISCHARGING_INFORMATION_ERROR_OCCURRED_ID);
+    dischargeInformationService.updateDischargingInformationStatus(
+        errorOccurredStatusOpt.get(), dischargeInformation.getId());
+    updateDischargingInfoAlgoStatus(
+        dischargeInformation, request.getProcessId(), errorOccurredStatusOpt.get());
+  }
+
+  private void saveDischargingPlanPortWiseDetails(
+      DischargingSequence dischargingSequence,
+      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailsList) {
+    log.info(
+        "Saving Loading Plan PortWise Details for Loading Sequence {}",
+        dischargingSequence.getId());
+    loadingPlanPortWiseDetailsList.forEach(
+        details -> {
+          DischargingPlanPortWiseDetails portWiseDetails = new DischargingPlanPortWiseDetails();
+          dischargingPlanBuilderService.buildDischargingPlanPortWiseDetails(
+              dischargingSequence, portWiseDetails, details);
+          DischargingPlanPortWiseDetails savedPortWiseDetails =
+              dischargingPlanPortWiseDetailsRepository.save(portWiseDetails);
+          saveDeBallastingRates(savedPortWiseDetails, details.getDeballastingRatesList());
+          saveDischargingPlanBallastDetails(
+              savedPortWiseDetails, details.getLoadingPlanBallastDetailsList());
+          saveDischargingPlanRobDetails(
+              savedPortWiseDetails, details.getLoadingPlanRobDetailsList());
+          saveDischargingPlanStowageDetails(
+              savedPortWiseDetails, details.getLoadingPlanStowageDetailsList());
+          saveDischargingPlanStabilityParameters(
+              savedPortWiseDetails, details.getLoadingPlanStabilityParameters());
+          saveDischargingPlanCommingleDetails(
+              savedPortWiseDetails, details.getLoadingPlanCommingleDetailsList());
+        });
+  }
+
+  public void updateDischargingInfoAlgoStatus(
+      DischargeInformation dischargingInformation,
+      String processId,
+      DischargingInformationStatus dischargingInformationStatus) {
+
+    this.dischargingInformationAlgoStatusRepository.updateDischargingInformationAlgoStatus(
+        dischargingInformationStatus.getId(), dischargingInformation.getId(), processId);
+  }
+
+  private void saveBallastPumps(
+      DischargingSequence dischargingSequence, List<PumpOperation> ballastOperationsList) {
+    log.info("Saving Ballast Pumps for Loading Sequence {}", dischargingSequence.getId());
+    List<com.cpdss.dischargeplan.entity.BallastOperation> ballastOperations = new ArrayList<>();
+    ballastOperationsList.forEach(
+        pumpOperation -> {
+          com.cpdss.dischargeplan.entity.BallastOperation ballastOperation =
+              new com.cpdss.dischargeplan.entity.BallastOperation();
+          dischargingPlanBuilderService.buildBallastOperation(
+              dischargingSequence, ballastOperation, pumpOperation);
+          ballastOperations.add(ballastOperation);
+        });
+    ballastOperationRepository.saveAll(ballastOperations);
+  }
+  /**
+   * @param savedPortWiseDetails
+   * @param loadingPlanCommingleDetailsList
+   */
+  private void saveDischargingPlanCommingleDetails(
+      DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails,
+      List<LoadingPlanCommingleDetails> loadingPlanCommingleDetailsList) {
+    log.info(
+        "Saving Loading Plan Commingle Details for LoadingPlanPortWiseDetails {}",
+        dischargingPlanPortWiseDetails.getId());
+    List<DischargingPlanCommingleDetails> loadingPlanCommingleDetails = new ArrayList<>();
+    loadingPlanCommingleDetailsList.forEach(
+        commingle -> {
+          DischargingPlanCommingleDetails commingleDetails = new DischargingPlanCommingleDetails();
+          dischargingPlanBuilderService.buildDischargingPlanCommingleDetails(
+              dischargingPlanPortWiseDetails, commingleDetails, commingle);
+          loadingPlanCommingleDetails.add(commingleDetails);
+        });
+    dischargingPlanCommingleDetailsRepository.saveAll(loadingPlanCommingleDetails);
+  }
+
+  private void saveDischargingPlanStabilityParameters(
+      DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails,
+      LoadingPlanStabilityParameters loadingPlanStabilityParameters) {
+    log.info(
+        "Saving Stability Parameters for LoadingPlanPortWiseDetails {}",
+        dischargingPlanPortWiseDetails.getId());
+    DischargingPlanStabilityParameters parameters = new DischargingPlanStabilityParameters();
+    dischargingPlanBuilderService.buildStabilityParameters(
+        dischargingPlanPortWiseDetails, parameters, loadingPlanStabilityParameters);
+    dischargingPlanStabilityParametersRepository.save(parameters);
+  }
+
+  private void saveDischargingPlanStowageDetails(
+      DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails,
+      List<LoadingPlanTankDetails> loadingPlanStowageDetailsList) {
+    log.info(
+        "Saving Loading Plan Stowage Details for LoadingPlanPortWiseDetails {}",
+        dischargingPlanPortWiseDetails.getId());
+    List<DischargingPlanStowageDetails> loadingPlanStowageDetails = new ArrayList<>();
+    loadingPlanStowageDetailsList.forEach(
+        stowage -> {
+          DischargingPlanStowageDetails stowageDetails = new DischargingPlanStowageDetails();
+          dischargingPlanBuilderService.buildDischargingPlanStowageDetails(
+              dischargingPlanPortWiseDetails, stowageDetails, stowage);
+          loadingPlanStowageDetails.add(stowageDetails);
+        });
+    dischargingPlanStowageDetailsRepository.saveAll(loadingPlanStowageDetails);
+  }
+
+  private void saveDischargingPlanRobDetails(
+      DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails,
+      List<LoadingPlanTankDetails> loadingPlanRobDetailsList) {
+    log.info(
+        "Saving Loading Plan ROB Details for LoadingPlanPortWiseDetails {}",
+        dischargingPlanPortWiseDetails.getId());
+    List<DischargingPlanRobDetails> loadingPlanRobDetails = new ArrayList<>();
+    loadingPlanRobDetailsList.forEach(
+        rob -> {
+          DischargingPlanRobDetails robDetails = new DischargingPlanRobDetails();
+          dischargingPlanBuilderService.buildDischargingPlanRobDetails(
+              dischargingPlanPortWiseDetails, robDetails, rob);
+          loadingPlanRobDetails.add(robDetails);
+        });
+    dischargingPlanRobDetailsRepository.saveAll(loadingPlanRobDetails);
+  }
+
+  private void saveDischargingPlanBallastDetails(
+      DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails,
+      List<LoadingPlanTankDetails> loadingPlanBallastDetailsList) {
+    log.info(
+        "Saving Loading Plan Ballast Details for LoadingPlanPortWiseDetails {}",
+        dischargingPlanPortWiseDetails.getId());
+    List<DischargingPlanBallastDetails> loadingPlanBallastDetails =
+        new ArrayList<DischargingPlanBallastDetails>();
+    loadingPlanBallastDetailsList.forEach(
+        ballast -> {
+          DischargingPlanBallastDetails ballastDetails = new DischargingPlanBallastDetails();
+          dischargingPlanBuilderService.buildDischargingPlanBallastDetails(
+              dischargingPlanPortWiseDetails, ballastDetails, ballast);
+          loadingPlanBallastDetails.add(ballastDetails);
+        });
+    dischargingPlanBallastDetailsRepository.saveAll(loadingPlanBallastDetails);
+  }
+
+  private void savePortRobDetails(
+      DischargeInformation dischargingInformation,
+      List<LoadingPlanTankDetails> portLoadingPlanRobDetailsList) {
+    log.info(
+        "Saving Loading Plan ROB Details for LoadingInformation {}, PortRotation",
+        dischargingInformation.getId(),
+        dischargingInformation.getPortRotationXid());
+    List<PortDischargingPlanRobDetails> portLoadingPlanRobDetails = new ArrayList<>();
+    portLoadingPlanRobDetailsList.forEach(
+        rob -> {
+          PortDischargingPlanRobDetails robDetails = new PortDischargingPlanRobDetails();
+          dischargingPlanBuilderService.buildPortRob(dischargingInformation, robDetails, rob);
+          portLoadingPlanRobDetails.add(robDetails);
+        });
+    portRobDetailsRepository.saveAll(portLoadingPlanRobDetails);
+  }
+
+  private void saveDeBallastingRates(
+      DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails,
+      List<DeBallastingRate> deballastingRatesList) {
+    log.info(
+        "Saving DeBallastingRates for LoadingPlanPortWiseDetails {}",
+        dischargingPlanPortWiseDetails.getId());
+    List<DeballastingRate> deballastingRates = new ArrayList<DeballastingRate>();
+    deballastingRatesList.forEach(
+        rate -> {
+          DeballastingRate deballastingRate = new DeballastingRate();
+          dischargingPlanBuilderService.buildDeBallastingRate(
+              dischargingPlanPortWiseDetails, deballastingRate, rate);
+          deballastingRates.add(deballastingRate);
+        });
+    deballastingRateRepository.saveAll(deballastingRates);
+  }
+
+  private void saveDeBallastingRates(
+      DischargingSequence dischargingSequence, List<DeBallastingRate> deBallastingRatesList) {
+    log.info("Saving DeBallastingRates for LoadingSequence {}", dischargingSequence.getId());
+    List<DeballastingRate> deballastingRates = new ArrayList<DeballastingRate>();
+    deBallastingRatesList.forEach(
+        rate -> {
+          DeballastingRate deballastingRate = new DeballastingRate();
+          dischargingPlanBuilderService.buildDeBallastingRate(
+              dischargingSequence, deballastingRate, rate);
+          deballastingRates.add(deballastingRate);
+        });
+    deballastingRateRepository.saveAll(deballastingRates);
+  }
+
+  private void saveCargoValves(
+      DischargingSequence dischargingSequence, List<Valve> cargoValvesList) {
+    log.info("Saving CargoValves for LoadingSequence {}", dischargingSequence.getId());
+    List<CargoValve> cargoValves = new ArrayList<CargoValve>();
+    cargoValvesList.forEach(
+        valve -> {
+          CargoValve cargoValve = new CargoValve();
+          dischargingPlanBuilderService.buildCargoValve(dischargingSequence, cargoValve, valve);
+          cargoValves.add(cargoValve);
+        });
+    cargoValveRepository.saveAll(cargoValves);
+  }
+
+  private void saveBallastValves(
+      DischargingSequence dischargingSequence, List<Valve> ballastValvesList) {
+    log.info("Saving BallastValves for LoadingSequence {}", dischargingSequence.getId());
+    List<BallastValve> ballastValves = new ArrayList<BallastValve>();
+    ballastValvesList.forEach(
+        valve -> {
+          BallastValve ballastValve = new BallastValve();
+          buildBallastValve(dischargingSequence, ballastValve, valve);
+          ballastValves.add(ballastValve);
+        });
+    this.ballastValveRepository.saveAll(ballastValves);
+  }
+
+  public void buildBallastValve(
+      DischargingSequence dischargingSequence, BallastValve ballastValve, Valve valve) {
+    ballastValve.setIsActive(true);
+    ballastValve.setDischargingSequence(dischargingSequence);
+    ballastValve.setOperation(valve.getOperation());
+    ballastValve.setTime(valve.getTime());
+    ballastValve.setValveCode(valve.getValveCode());
+    ballastValve.setValveType(valve.getValveType());
+    ballastValve.setValveXId(valve.getValveId());
   }
 }

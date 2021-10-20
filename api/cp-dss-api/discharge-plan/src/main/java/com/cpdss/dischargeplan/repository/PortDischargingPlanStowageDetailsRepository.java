@@ -28,4 +28,10 @@ public interface PortDischargingPlanStowageDetailsRepository
       "Update PortDischargingPlanStowageDetails set isActive = false WHERE dischargingInformation.id = ?1 and conditionType = ?2 and valueType = ?3 and isActive = true")
   public void deleteExistingByDischargingInfoAndConditionTypeAndValueType(
       Long loadingInfoId, Integer conditionType, Integer valueType);
+
+  @Modifying
+  @Transactional
+  @Query(
+      "UPDATE PortDischargingPlanStowageDetails SET isActive = false WHERE dischargingInformation.id = ?1")
+  public void deleteByDischargingInformationId(Long loadingInfoId);
 }
