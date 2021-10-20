@@ -705,6 +705,14 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
       cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
       cargoDetails.setMaxLoadingRate(this.getLoadingRateFromVesselService(vesselId));
+      // Set Loading port Names in Cargo To Be Discharge
+      if (!lqcd.getLoadingPortsList().isEmpty()) {
+        cargoDetails.setLoadingPorts(
+            lqcd.getLoadingPortsList().stream()
+                .map(LoadableStudy.LoadingPortDetail::getName)
+                .collect(Collectors.toList()));
+        log.info("Loading Port names are - {}", cargoDetails.getLoadingPorts());
+      }
 
       response.add(cargoDetails);
     }
