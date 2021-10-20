@@ -162,7 +162,7 @@ public class GenerateLoadingPlanExcelReportService {
 		// Building data required for Loading plan Excel
 		LoadingPlanExcelDetails loadinPlanExcelDetails = getDataForExcel(requestPayload, vesselId, voyageId, infoId,
 				portRotationId);
-		
+
 		String actualFileName = getFileName(vesselId, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
 				loadinPlanExcelDetails.getSheetOne().getPortName());
 		// Setting file name of output file
@@ -190,7 +190,7 @@ public class GenerateLoadingPlanExcelReportService {
 				resultFileStream = new FileInputStream(outputLocation.toString());
 				// Putting entry in file repo
 				FileRepoService.addFileToRepo(null, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
-						actualFileName, "xlsx"," ", " ", null);
+						actualFileName, "xlsx", " ", " ", null);
 				if (downloadRequired && resultFileStream != null) {
 					log.info("Excel created.");
 					return IOUtils.toByteArray(resultFileStream);
@@ -345,7 +345,7 @@ public class GenerateLoadingPlanExcelReportService {
 			}
 		}
 		// Cargo to be loaded area color
-		for (col = 5; col <= 5 + data.getCargoTobeLoaded().size(); col++) {
+		for (col = 5; col <= 5 + (data.getCargoTobeLoaded().size() * 5); col += 5) {
 			row = 61;
 			cell = sheet.getRow(row).getCell(col);
 			setCargoColor(workbook, sheet, cell, null, data.getCargoTobeLoaded(), null);
@@ -572,14 +572,7 @@ public class GenerateLoadingPlanExcelReportService {
 	private LoadingPlanExcelDetails getDataForExcel(LoadingPlanResponse requestPayload, Long vesselId, Long voyageId,
 			Long infoId, Long portRotationId) throws GenericServiceException, InterruptedException, ExecutionException {
 		log.info("Getting details for excel sheetwise ");
-		// ExecutorService threadPool = Executors.newFixedThreadPool(3);
-		// Callable<LoadingPlanExcelLoadingPlanDetails> callable = () ->
-		// buildSheetOne(requestPayload, vesselId, voyageId,
-		// infoId, portRotationId);
-		// Future<LoadingPlanExcelLoadingPlanDetails> future =
-		// threadPool.submit(callable);
 		LoadingPlanExcelDetails excelData = new LoadingPlanExcelDetails();
-		// excelData.setSheetOne(future.get());
 		if (requestPayload == null) {
 			// Calling loading plan get plan details service
 			requestPayload = loadingPlanServiceImpl.getLoadingPlan(vesselId, voyageId, infoId, portRotationId);
@@ -593,7 +586,6 @@ public class GenerateLoadingPlanExcelReportService {
 		excelData.setSheetOne(buildSheetOne(requestPayload, vesselId, voyageId, infoId, portRotationId));
 		excelData.setSheetTwo(buildSheetTwo(vesselId, voyageId, infoId, portRotationId));
 		excelData.setSheetThree(buildSheetThree(vesselId, voyageId, infoId, portRotationId));
-		// threadPool.shutdown();
 		return excelData;
 	}
 
@@ -775,7 +767,6 @@ public class GenerateLoadingPlanExcelReportService {
 		// Calling loading plan get sequence details service
 		LoadingSequenceResponse loadingSequenceResponse = loadingPlanServiceImpl.getLoadingSequence(vesselId, voyageId,
 				infoId);
-
 		LoadingPlanExcelLoadingSequenceDetails sheetThree = new LoadingPlanExcelLoadingSequenceDetails();
 		// Calculating no:of stages in sequence
 		sheetThree.setTickPoints(getTickPoints(loadingSequenceResponse.getMinXAxisValue(),
@@ -977,13 +968,12 @@ public class GenerateLoadingPlanExcelReportService {
 	 * @return
 	 */
 	private List<String> getTickPoints(Long minXAxisValue, Set<Long> stageTickPositions) {
-		List<String> tickPoints = new ArrayList<>();
+		List<Double> tickPoints = new ArrayList<>();
 		for (Long xValue : stageTickPositions) {
 			Double hours = ((xValue.doubleValue() - minXAxisValue.doubleValue()) / 1000) / 3600;
-			tickPoints.add(String.format("%.2f", hours));
+			tickPoints.add(hours);
 		}
-		// tickPoints.remove(tickPoints.indexOf("0"));
-		return tickPoints;
+		return tickPoints.stream().sorted().map(i -> String.format("%.2f", i)).collect(Collectors.toList());
 	}
 
 	/**
