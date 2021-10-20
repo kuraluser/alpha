@@ -601,6 +601,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       const res = await this.dischargeStudyDetailsApiService.setPort(this.dischargeStudyDetailsTransformationService.getPortAsValue(this.portsLists[valueIndex]), this.vesselId, this.voyageId, this.dischargeStudyId, (this.portsForm.valid && !this.portOrderValidation()));
       if (res) {
         this.portsListSaved = JSON.parse(JSON.stringify(this.portsLists));
+        this.dischargeStudyDetailsTransformationService.setDischargeStudyValidity(false);
         this.dischargeStudyDetailsTransformationService.portUpdated();
         this.portsLists[valueIndex].isAdd = false;
 
@@ -708,6 +709,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       if (res) {
         this.portsLists.splice(event.index, 1);
         this.portsLists = [...this.portsLists];
+        this.dischargeStudyDetailsTransformationService.setDischargeStudyValidity(false);
         for (let i = 0; i < this.portsLists.length; i++) {
           this.portsLists[i].portOrder = i + 1;
           this.portsLists[i].slNo = i + 1;
