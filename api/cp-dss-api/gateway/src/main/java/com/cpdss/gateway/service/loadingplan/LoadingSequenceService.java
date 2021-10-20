@@ -1258,7 +1258,8 @@ public class LoadingSequenceService {
             eduction.getPumpSelected().stream().collect(Collectors.joining(",")));
       }
       if (eduction.getTank() != null) {
-        eductorBuilder.setTanksUsed(eduction.getTank().keySet().stream().collect(Collectors.joining(",")));
+        eductorBuilder.setTanksUsed(
+            eduction.getTank().keySet().stream().collect(Collectors.joining(",")));
       }
       eductorBuilder.setStartTime(
           StringUtils.isEmpty(eduction.getTimeStart())

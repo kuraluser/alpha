@@ -13,6 +13,7 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.Vessel;
 import com.cpdss.gateway.domain.VesselResponse;
 import com.cpdss.gateway.domain.VesselTank;
+import com.cpdss.gateway.domain.filerepo.FileRepoReply;
 import com.cpdss.gateway.domain.loadingplan.ArrivalDeparcherCondition;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.BerthInformation;
@@ -157,7 +158,7 @@ public class GenerateLoadingPlanExcelReportService {
       Boolean downloadRequired)
       throws Exception {
     log.info("Generating Loading plan excel for Vessel {}", vesselId);
-   
+
     // Setting file name of input file based on vessel type
     TEMPLATES_FILE_LOCATION = getLoadingPlanTemplateForVessel(vesselId);
 
@@ -170,18 +171,13 @@ public class GenerateLoadingPlanExcelReportService {
             vesselId,
             loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
             loadinPlanExcelDetails.getSheetOne().getPortName());
-    
+
     File theDir = new File(rootFolder + SUB_FOLDER_NAME);
-    if (!theDir.exists()){
-        theDir.mkdirs();
+    if (!theDir.exists()) {
+      theDir.mkdirs();
     }
     // Setting file name of output file
     StringBuilder outputLocation = new StringBuilder(rootFolder + actualFileName);
-    // Getting data mapped and calling excel builder utility
-    // FileInputStream resultFileStream = new FileInputStream(
-    // excelExportUtil.generateExcel(loadinPlanExcelDetails,
-    // TEMPLATES_FILE_LOCATION,
-    // OUTPUT_FILE_LOCATION));
 
     // Getting data mapped and calling excel builder utility
     FileInputStream resultFileStream =
@@ -198,17 +194,23 @@ public class GenerateLoadingPlanExcelReportService {
         setCellStyle(workbook, loadinPlanExcelDetails);
         workbook.write(outFile);
         resultFileStream.close();
+        // Putting entry in file repo
+        FileRepoReply reply =
+            FileRepoService.addFileToRepo(
+                null,
+                loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
+                actualFileName,
+                "xlsx",
+                "Loading",
+                "Process",
+                null);
+        if (reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+          log.info("Succesfully added entry in FileRepo : {}", reply.getId());
+        } else {
+          log.info("Data entry in file repo failed");
+        }
         // Returning Output file as byte array for local download
         resultFileStream = new FileInputStream(outputLocation.toString());
-        // Putting entry in file repo
-        FileRepoService.addFileToRepo(
-            null,
-            loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
-            actualFileName,
-            "xlsx",
-            "Loading",
-            "Process",
-            null);
         if (downloadRequired && resultFileStream != null) {
           log.info("Excel created.");
           return IOUtils.toByteArray(resultFileStream);
@@ -672,7 +674,7 @@ public class GenerateLoadingPlanExcelReportService {
       Long infoId,
       Long portRotationId)
       throws GenericServiceException, InterruptedException, ExecutionException, ParseException {
-    log.info("Getting details for excel sheetwise ");
+    log.info("Building details for excel sheetwise ");
     LoadingPlanExcelDetails excelData = new LoadingPlanExcelDetails();
     if (requestPayload == null) {
       // Calling loading plan get plan details service
@@ -1399,7 +1401,7 @@ public class GenerateLoadingPlanExcelReportService {
     }
     if (activeVoyage.getActiveLs() != null) {
       Optional<LoadLine> loadLine =
-          vessel.getLoadlines().stream() // TODO loadline xid always coming as zero
+          vessel.getLoadlines().stream()
               .filter(item -> item.getId().equals(activeVoyage.getActiveLs().getLoadLineXId()))
               .findFirst();
       loadLine.ifPresent(item -> sheetOne.setLoadLineZone(item.getName()));
@@ -1412,13 +1414,13 @@ public class GenerateLoadingPlanExcelReportService {
   }
 
   private String dateFormater(String eta) throws ParseException {
-      SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-      Date date = dt.parse(eta);
-      SimpleDateFormat dt1 = new SimpleDateFormat("dd MMMM yyyy");
-	return dt1.format(date);
-}
+    SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+    Date date = dt.parse(eta);
+    SimpleDateFormat dt1 = new SimpleDateFormat("dd MMMM yyyy");
+    return dt1.format(date);
+  }
 
-/**
+  /**
    * Berth information details
    *
    * @param sheetOne
@@ -1498,9 +1500,11 @@ public class GenerateLoadingPlanExcelReportService {
             Optional.ofNullable(item.getColorCode()).ifPresent(cargoTobeLoaded::setColorCode);
             Optional.ofNullable(item.getEstimatedAPI()).ifPresent(cargoTobeLoaded::setApi);
             Optional.ofNullable(item.getEstimatedTemp()).ifPresent(cargoTobeLoaded::setTemperature);
-            // TODO loading port coming as a list expected only a string
             Optional.ofNullable(item.getLoadingPorts())
-                .ifPresent(ports -> cargoTobeLoaded.setLoadingPort(ports.get(0)));
+                .ifPresent(
+                    ports ->
+                        cargoTobeLoaded.setLoadingPort(
+                            ports.stream().collect(Collectors.joining(","))));
             Optional.ofNullable(item.getCargoNominationQuantity())
                 .ifPresent(cargoTobeLoaded::setNomination);
             Optional.ofNullable(item.getLoadableMT()).ifPresent(cargoTobeLoaded::setShipLoadable);
