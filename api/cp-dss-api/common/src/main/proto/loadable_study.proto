@@ -863,6 +863,7 @@ message LoadingPortDetail{
 	string quantity = 2;
 	string name=3;
 	int64 mode = 4;
+	int64 operationId = 5;
 }
 
 message segregationDetail{

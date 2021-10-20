@@ -40,4 +40,7 @@ public class CargoNominationPortDetails extends EntityDoc {
 
   @Column(name = "mode_xid")
   private Long mode;
+
+  @Column(name = "operation_xid")
+  private Long operationId;
 }

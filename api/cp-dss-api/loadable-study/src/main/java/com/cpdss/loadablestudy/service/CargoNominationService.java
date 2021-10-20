@@ -1,13 +1,18 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGING_OPERATION_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.CargoInfo;
+import com.cpdss.common.generated.CargoInfoServiceGrpc;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails;
@@ -16,10 +21,29 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResp
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.entity.*;
-import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.entity.ApiTempHistory;
+import com.cpdss.loadablestudy.entity.CargoNomination;
+import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
+import com.cpdss.loadablestudy.entity.CargoNominationValveSegregation;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
+import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
+import com.cpdss.loadablestudy.repository.CargoNominationRepository;
+import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
+import com.cpdss.loadablestudy.repository.CargoOperationRepository;
+import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
+import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
@@ -102,7 +126,8 @@ public class CargoNominationService {
   }
 
   public List<CargoNomination> saveDsichargeStudyCargoNominations(
-      Long dischargeStudyId, Long loadableStudyId, Long portId) throws GenericServiceException {
+      Long dischargeStudyId, Long loadableStudyId, Long portId, Long operationId)
+      throws GenericServiceException {
     List<CargoNomination> cargos = getCargoNominationByLoadableStudyId(loadableStudyId);
     List<CargoNomination> dischargeStudycargos = new ArrayList<>();
     // Fetching max quantity from Bill of Ladding
@@ -111,14 +136,15 @@ public class CargoNominationService {
         .parallelStream()
         .forEach(
             cargo -> {
-              dischargeStudycargos.add(createDsCargoNomination(dischargeStudyId, cargo, portId));
+              dischargeStudycargos.add(
+                  createDsCargoNomination(dischargeStudyId, cargo, portId, operationId));
             });
 
     return cargoNominationRepository.saveAll(dischargeStudycargos);
   }
 
   public CargoNomination createDsCargoNomination(
-      Long dischargeStudyId, CargoNomination cargo, Long portId) {
+      Long dischargeStudyId, CargoNomination cargo, Long portId, Long operationId) {
     CargoNomination dischargeStudyCargo = new CargoNomination();
     dischargeStudyCargo.setAbbreviation(cargo.getAbbreviation());
     dischargeStudyCargo.setApi(cargo.getApi());
@@ -135,7 +161,7 @@ public class CargoNominationService {
     dischargeStudyCargo.setVersion(cargo.getVersion());
     dischargeStudyCargo.setLsCargoNominationId(cargo.getId());
     dischargeStudyCargo.setCargoNominationPortDetails(
-        createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId));
+        createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId, operationId));
     return dischargeStudyCargo;
   }
 
@@ -173,9 +199,10 @@ public class CargoNominationService {
   }
 
   public Set<CargoNominationPortDetails> createCargoNominationPortDetails(
-      CargoNomination dischargeStudyCargo, CargoNomination cargo, Long portId) {
+      CargoNomination dischargeStudyCargo, CargoNomination cargo, Long portId, Long operationId) {
     CargoNominationPortDetails portDetail = new CargoNominationPortDetails();
     portDetail.setPortId(portId);
+    portDetail.setOperationId(operationId);
     portDetail.setIsActive(true);
     portDetail.setCargoNomination(dischargeStudyCargo);
 
@@ -613,7 +640,9 @@ public class CargoNominationService {
                                       loadingPortDetailBuilder.setQuantity(
                                           String.valueOf(quantity)));
                           ofNullable(loadingPort.getMode())
-                              .ifPresent(mode -> loadingPortDetailBuilder.setMode(mode));
+                              .ifPresent(loadingPortDetailBuilder::setMode);
+                          ofNullable(loadingPort.getOperationId())
+                              .ifPresent(loadingPortDetailBuilder::setOperationId);
                           builder.addLoadingPortDetails(loadingPortDetailBuilder);
                         }
                       });
