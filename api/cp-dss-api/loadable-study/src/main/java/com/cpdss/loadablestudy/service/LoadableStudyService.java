@@ -462,6 +462,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               builder.setLastLoadingPortETD(
                   dateTimeFormatter.format(portRotationOpt.get().getEtd()));
             }
+            if (entity.getIsDischargeStudyComplete() == null) {
+              builder.setIsDischargeStudyComplete(false);
+            } else {
+              builder.setIsDischargeStudyComplete(entity.getIsDischargeStudyComplete());
+            }
           }
         }
         replyBuilder.addLoadableStudies(builder.build());

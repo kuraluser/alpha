@@ -791,6 +791,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       backLoadingService.saveAll(backLoadingToSave);
       cargoNominationService.saveAll(cargoNominationsToSave);
       loadableStudyPortRotationRepository.saveAll(portRotations);
+      LoadableStudy dsEntity = dischargeStudy.get();
+      dsEntity.setIsDischargeStudyComplete(true);
+      dischargeStudyRepository.save(dsEntity);
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       builder.setId(dischargestudyId);
     } catch (GenericServiceException e) {

@@ -617,6 +617,12 @@ public class LoadableStudyPortRotationService {
     this.loadableStudyRepository.updateLoadableStudyIsPortsComplete(
         loadableStudyOpt.get().getId(), request.getIsPortsComplete());
 
+    if (loadableStudyOpt.get().getPlanningTypeXId() == 2) {
+      LoadableStudy loadableStudy = loadableStudyOpt.get();
+      loadableStudy.setIsDischargeStudyComplete(false);
+      this.loadableStudyRepository.save(loadableStudy);
+    }
+
     // set port order after update
     // loadableStudyPortRotationService.setPortOrdering(loadableStudyOpt.get());
 
@@ -812,6 +818,10 @@ public class LoadableStudyPortRotationService {
     if (loadableStudy.getPlanningTypeXId() != null
         && loadableStudy.getPlanningTypeXId().equals(2)) {
       onHandQuantityService.deletePortRotationDetails(loadableStudy, entity);
+    }
+    if (loadableStudy.getPlanningTypeXId() == 2) {
+      loadableStudy.setIsDischargeStudyComplete(false);
+      this.loadableStudyRepository.save(loadableStudy);
     }
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;

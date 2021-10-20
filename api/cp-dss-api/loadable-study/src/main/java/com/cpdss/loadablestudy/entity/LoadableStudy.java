@@ -129,4 +129,7 @@ public class LoadableStudy extends EntityDoc {
 
   @Column(name = "confirmed_loadable_study_xid")
   private Long confirmedLoadableStudyId;
+
+  @Column(name = "is_discharge_study_complete")
+  private Boolean isDischargeStudyComplete;
 }
