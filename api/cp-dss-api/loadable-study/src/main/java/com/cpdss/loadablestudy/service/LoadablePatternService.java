@@ -99,6 +99,7 @@ import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import java.io.File;
@@ -363,8 +364,8 @@ public class LoadablePatternService {
   }
 
   public com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder saveLoadablePatterns(
-      com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
-      com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder builder)
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request,
+          com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder builder)
       throws GenericServiceException {
     log.info("saveLoadablePatternDetails - loadable study micro service");
     final String requestType =
