@@ -1141,6 +1141,8 @@ public class LoadingPlanService {
           portWiseBallastDetail.getSounding() != null
               ? portWiseBallastDetail.getSounding().toString()
               : "");
+      newBuilder.setSg(
+          portWiseBallastDetail.getSg() != null ? portWiseBallastDetail.getSg().toString() : "");
       builder.addPortLoadingPlanBallastTempDetails(newBuilder);
     }
   }
