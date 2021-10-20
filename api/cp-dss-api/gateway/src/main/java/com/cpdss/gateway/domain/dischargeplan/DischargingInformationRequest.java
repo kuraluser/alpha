@@ -12,9 +12,9 @@ import lombok.Data;
 @Data
 public class DischargingInformationRequest {
 
-  private Long dischargingInfoId;
+  private Long dischargeInfoId;
 
-  private Long synopticalTableId;
+  private Long synopticTableId;
 
   // re using loading object
   private LoadingDetails dischargingDetails;

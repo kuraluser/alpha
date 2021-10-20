@@ -484,9 +484,9 @@ public class DischargeInformationService {
         // Updating synoptic table (time)
         log.info(
             "Saving Loading info Times details at Synoptic Table - id {}",
-            request.getSynopticalTableId());
+            request.getSynopticTableId());
         this.loadableStudyService.saveLoadingInfoToSynopticalTable(
-            request.getSynopticalTableId(),
+            request.getSynopticTableId(),
             request.getDischargingDetails().getTimeOfSunrise(),
             request.getDischargingDetails().getTimeOfSunset());
       }
@@ -512,7 +512,7 @@ public class DischargeInformationService {
               response.getPortRotationId()));
       return dischargingInformationResponse;
     } catch (Exception e) {
-      log.error("Failed to save LoadingInformation {}", request.getDischargingInfoId());
+      log.error("Failed to save LoadingInformation {}", request.getDischargeInfoId());
       e.printStackTrace();
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       throw new GenericServiceException(
