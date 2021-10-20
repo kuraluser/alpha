@@ -3127,3 +3127,14 @@ textarea{
 .text-uppercase .p-dropdown-label{
   text-transform: uppercase!important;
 }
+.p-datatable.table-v-middle .p-datatable-tbody > tr > td{
+  vertical-align: sub;
+}
+.icon-file{
+  display: inline-block;
+  width: 24px;
+  height: 22px;
+}
+.add-edit-file-pop-up{
+  width: 400px;
+}

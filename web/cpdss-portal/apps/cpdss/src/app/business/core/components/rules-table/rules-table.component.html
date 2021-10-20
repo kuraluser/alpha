@@ -27,7 +27,7 @@
         <div class="pl-30">
             <div class="pl-10 table-rules pt-15" *ngIf="rulesJson ">
                 <p-table *ngIf="rules?.length && rulesJson[data].length>0" [columns]="columns" [value]="rules"
-                    dataKey="header" id="rules-table" styleClass="body-header-row-span-table">
+                    dataKey="header" id="rules-table" styleClass="body-header-row-span-table table-v-middle">
                     <ng-template pTemplate="colgroup">
                         <colgroup>
                             <col class="column-checkbox" *ngIf="displaySettings">

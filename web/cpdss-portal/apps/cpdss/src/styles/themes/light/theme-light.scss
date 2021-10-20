@@ -1561,3 +1561,21 @@ header{
   ry:5px;
   height: 6px;
 }
+
+.icon-file{
+  &.icon-file-word{
+    background: url($images-theme + 'file-word.png') no-repeat;
+  }
+  &.icon-file-pdf{
+    background: url($images-theme + 'file-pdf-icon.png') no-repeat;
+  }
+  &.icon-file-text{
+    background: url($images-theme + 'file.png') no-repeat;
+  }
+  &.icon-file-csv{
+    background: url($images-theme + 'file-csv.png') no-repeat;
+  }
+  &.icon-file-excel{
+    background: url($images-theme + 'file-excel-icon.png') no-repeat;
+  }
+}
