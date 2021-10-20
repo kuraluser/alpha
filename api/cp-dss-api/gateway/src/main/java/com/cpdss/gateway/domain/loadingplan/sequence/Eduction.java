@@ -3,7 +3,6 @@ package com.cpdss.gateway.domain.loadingplan.sequence;
 
 import java.util.List;
 import java.util.Map;
-
 import lombok.Data;
 
 /** @author pranav.k */

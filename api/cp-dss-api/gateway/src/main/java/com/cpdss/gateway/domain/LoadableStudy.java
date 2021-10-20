@@ -85,4 +85,6 @@ public class LoadableStudy {
   private String lastEdited;
 
   private String lastLoadingPortETD;
+
+  private Boolean isDischargeStudyComplete;
 }
