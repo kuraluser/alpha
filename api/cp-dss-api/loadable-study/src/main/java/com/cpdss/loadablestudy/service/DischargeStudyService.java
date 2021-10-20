@@ -200,7 +200,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       LoadableStudyPortRotation savedDischargeport =
           loadableStudyPortRotationRepository.save(dischargeStudyPortRotation);
       this.cargoNominationService.saveDsichargeStudyCargoNominations(
-          savedDischargeStudy.getId(), loadableStudy.getId(), savedDischargeport.getPortXId());
+          savedDischargeStudy.getId(),
+          loadableStudy.getId(),
+          savedDischargeport.getPortXId(),
+          savedDischargeport.getOperation().getId());
 
       this.synopticalTableRepository.saveAll(
           createDischargeSynoptical(synopticalData, savedDischargeport));
@@ -746,7 +749,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     cargoNomination.setIsActive(true);
                     cargoNomination.setCargoNominationPortDetails(
                         cargoNominationService.createCargoNominationPortDetails(
-                            cargoNomination, null, portId));
+                            cargoNomination, null, portId, dbPortRoation.getOperation().getId()));
                     cargoNomination.setIsBackloading(true);
                     updateCargoNominationToSave(
                         cargoRequest, cargoNomination, cargoNominationsToSave, portId);
@@ -1193,7 +1196,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             cargo -> {
               Set<CargoNominationPortDetails> newPortDetails =
                   cargoNominationService.createCargoNominationPortDetails(
-                      cargo, null, portRotations.get(portRotations.size() - 1).getPortXId());
+                      cargo,
+                      null,
+                      portRotations.get(portRotations.size() - 1).getPortXId(),
+                      portRotations.get(portRotations.size() - 1).getOperation().getId());
               if (cargo.getCargoNominationPortDetails() != null
                   && !cargo.getCargoNominationPortDetails().isEmpty()) {
                 cargo.getCargoNominationPortDetails().addAll(newPortDetails);
@@ -1226,7 +1232,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     cargoNominationService.createCargoNominationPortDetails(
                         cargoBackloading,
                         null,
-                        portRotations.get(portRotations.size() - 1).getPortXId()));
+                        portRotations.get(portRotations.size() - 1).getPortXId(),
+                        portRotations.get(portRotations.size() - 1).getOperation().getId()));
                 cargoBackloading.setPriority(1L);
                 cargos.add(cargoBackloading);
               });
