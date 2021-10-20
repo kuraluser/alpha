@@ -224,8 +224,8 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
     * @memberof LoadingDischargingDetailsComponent
     */
   getPagePermission() {
-    this.timeOfSunrisePermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadingInfoSunRise'], false);
-    this.timeOfSunsetPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['LoadingInfoSunSet'], false);
+    this.timeOfSunrisePermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping[this.operation === OPERATIONS.LOADING ? 'LoadingInfoSunRise' : 'DischargingInfoSunRise'], false);
+    this.timeOfSunsetPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping[this.operation === OPERATIONS.LOADING ? 'LoadingInfoSunSet' : 'DischargingInfoSunSet'], false);
   }
 
 

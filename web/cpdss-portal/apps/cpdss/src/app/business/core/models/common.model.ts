@@ -636,6 +636,7 @@ export interface ICargoQuantities {
     isCommingle?: boolean;
     isCommingleCargo?: boolean;
     temperature?: any;
+    cargoNominationId?: number;
 }
 
 /**
@@ -716,6 +717,7 @@ export interface ICargo {
     ports?: IPort[];
     temp?: string;
     colorCode?: string;
+    cargoNominationId?: number;
 }
 
 /**

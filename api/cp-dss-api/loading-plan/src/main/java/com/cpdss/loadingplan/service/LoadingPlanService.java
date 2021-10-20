@@ -96,6 +96,7 @@ public class LoadingPlanService {
 
   @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
   @Autowired private LoadingPlanAlgoService loadingPlanAlgoService;
+  @Autowired private LoadingPlanRuleService loadingPlanRuleService;
 
   @GrpcClient("loadableStudyService")
   private SynopticalOperationServiceGrpc.SynopticalOperationServiceBlockingStub
@@ -125,6 +126,8 @@ public class LoadingPlanService {
       loadablePlanStowageDetailsService.saveLoadablePlanStowageDetailsList(
           request.getLoadablePlanDetailsReply().getLoadablePlanStowageDetailsList(),
           savedLoadingInformation);
+      loadingPlanRuleService.saveRulesAgainstLoadingInformation(savedLoadingInformation);
+      log.info(" Saved Loading Information Id : ", savedLoadingInformation.getId());
       log.info(
           "Saved LoadingInformation on port "
               + request.getLoadingInformationDetail().getPortId()

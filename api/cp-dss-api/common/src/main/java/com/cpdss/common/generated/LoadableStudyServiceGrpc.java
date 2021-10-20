@@ -3520,6 +3520,62 @@ public final class LoadableStudyServiceGrpc {
     return getGetLoadableStudySimulatorJsonDataMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getUpdateDischargeQuantityCargoDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "updateDischargeQuantityCargoDetails",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest.class,
+      responseType = com.cpdss.common.generated.Common.ResponseStatus.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getUpdateDischargeQuantityCargoDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest,
+            com.cpdss.common.generated.Common.ResponseStatus>
+        getUpdateDischargeQuantityCargoDetailsMethod;
+    if ((getUpdateDischargeQuantityCargoDetailsMethod =
+            LoadableStudyServiceGrpc.getUpdateDischargeQuantityCargoDetailsMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getUpdateDischargeQuantityCargoDetailsMethod =
+                LoadableStudyServiceGrpc.getUpdateDischargeQuantityCargoDetailsMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getUpdateDischargeQuantityCargoDetailsMethod =
+              getUpdateDischargeQuantityCargoDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy
+                              .DischargeQuantityCargoDetailsRequest,
+                          com.cpdss.common.generated.Common.ResponseStatus>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "updateDischargeQuantityCargoDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .DischargeQuantityCargoDetailsRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.ResponseStatus
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "updateDischargeQuantityCargoDetails"))
+                      .build();
+        }
+      }
+    }
+    return getUpdateDischargeQuantityCargoDetailsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -4207,6 +4263,15 @@ public final class LoadableStudyServiceGrpc {
           getGetLoadableStudySimulatorJsonDataMethod(), responseObserver);
     }
 
+    /** */
+    public void updateDischargeQuantityCargoDetails(
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getUpdateDischargeQuantityCargoDetailsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -4695,6 +4760,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest,
                       com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply>(
                       this, METHODID_GET_LOADABLE_STUDY_SIMULATOR_JSON_DATA)))
+          .addMethod(
+              getUpdateDischargeQuantityCargoDetailsMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest,
+                      com.cpdss.common.generated.Common.ResponseStatus>(
+                      this, METHODID_UPDATE_DISCHARGE_QUANTITY_CARGO_DETAILS)))
           .build();
     }
   }
@@ -5489,6 +5561,17 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void updateDischargeQuantityCargoDetails(
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getUpdateDischargeQuantityCargoDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -6022,6 +6105,13 @@ public final class LoadableStudyServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadableStudySimulatorJsonDataMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.ResponseStatus updateDischargeQuantityCargoDetails(
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateDischargeQuantityCargoDetailsMethod(), getCallOptions(), request);
     }
   }
 
@@ -6649,6 +6739,16 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getGetLoadableStudySimulatorJsonDataMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.ResponseStatus>
+        updateDischargeQuantityCargoDetails(
+            com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getUpdateDischargeQuantityCargoDetailsMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -6720,6 +6820,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_STUDY_SHORE = 66;
   private static final int METHODID_GET_LOADABLE_STUDY_PORT_ROTATION_BY_PORT_ROTATION_ID = 67;
   private static final int METHODID_GET_LOADABLE_STUDY_SIMULATOR_JSON_DATA = 68;
+  private static final int METHODID_UPDATE_DISCHARGE_QUANTITY_CARGO_DETAILS = 69;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -7211,6 +7312,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply>)
                   responseObserver);
           break;
+        case METHODID_UPDATE_DISCHARGE_QUANTITY_CARGO_DETAILS:
+          serviceImpl.updateDischargeQuantityCargoDetails(
+              (com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -7344,6 +7452,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadableStudyShoreMethod())
                       .addMethod(getGetLoadableStudyPortRotationByPortRotationIdMethod())
                       .addMethod(getGetLoadableStudySimulatorJsonDataMethod())
+                      .addMethod(getUpdateDischargeQuantityCargoDetailsMethod())
                       .build();
         }
       }

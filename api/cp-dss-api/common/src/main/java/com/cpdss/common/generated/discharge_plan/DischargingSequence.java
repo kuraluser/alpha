@@ -16,11 +16,11 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     stageName_ = "";
     cargoValves_ = java.util.Collections.emptyList();
     ballastValves_ = java.util.Collections.emptyList();
-    loadingRates_ = java.util.Collections.emptyList();
+    dischargingRates_ = java.util.Collections.emptyList();
     deBallastingRates_ = java.util.Collections.emptyList();
-    loadingPlanPortWiseDetails_ = java.util.Collections.emptyList();
-    cargoLoadingRate1_ = "";
-    cargoLoadingRate2_ = "";
+    dischargingPlanPortWiseDetails_ = java.util.Collections.emptyList();
+    cargoDischargingRate1_ = "";
+    cargoDischargingRate2_ = "";
     ballastOperations_ = java.util.Collections.emptyList();
   }
 
@@ -122,15 +122,14 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
           case 82:
             {
               if (!((mutable_bitField0_ & 0x00000004) != 0)) {
-                loadingRates_ =
+                dischargingRates_ =
                     new java.util.ArrayList<
-                        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate>();
+                        com.cpdss.common.generated.discharge_plan.DischargingRate>();
                 mutable_bitField0_ |= 0x00000004;
               }
-              loadingRates_.add(
+              dischargingRates_.add(
                   input.readMessage(
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate
-                          .parser(),
+                      com.cpdss.common.generated.discharge_plan.DischargingRate.parser(),
                       extensionRegistry));
               break;
             }
@@ -153,13 +152,13 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
           case 98:
             {
               if (!((mutable_bitField0_ & 0x00000010) != 0)) {
-                loadingPlanPortWiseDetails_ =
+                dischargingPlanPortWiseDetails_ =
                     new java.util.ArrayList<
                         com.cpdss.common.generated.loading_plan.LoadingPlanModels
                             .LoadingPlanPortWiseDetails>();
                 mutable_bitField0_ |= 0x00000010;
               }
-              loadingPlanPortWiseDetails_.add(
+              dischargingPlanPortWiseDetails_.add(
                   input.readMessage(
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingPlanPortWiseDetails.parser(),
@@ -170,14 +169,14 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
             {
               java.lang.String s = input.readStringRequireUtf8();
 
-              cargoLoadingRate1_ = s;
+              cargoDischargingRate1_ = s;
               break;
             }
           case 114:
             {
               java.lang.String s = input.readStringRequireUtf8();
 
-              cargoLoadingRate2_ = s;
+              cargoDischargingRate2_ = s;
               break;
             }
           case 122:
@@ -216,14 +215,14 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
         ballastValves_ = java.util.Collections.unmodifiableList(ballastValves_);
       }
       if (((mutable_bitField0_ & 0x00000004) != 0)) {
-        loadingRates_ = java.util.Collections.unmodifiableList(loadingRates_);
+        dischargingRates_ = java.util.Collections.unmodifiableList(dischargingRates_);
       }
       if (((mutable_bitField0_ & 0x00000008) != 0)) {
         deBallastingRates_ = java.util.Collections.unmodifiableList(deBallastingRates_);
       }
       if (((mutable_bitField0_ & 0x00000010) != 0)) {
-        loadingPlanPortWiseDetails_ =
-            java.util.Collections.unmodifiableList(loadingPlanPortWiseDetails_);
+        dischargingPlanPortWiseDetails_ =
+            java.util.Collections.unmodifiableList(dischargingPlanPortWiseDetails_);
       }
       if (((mutable_bitField0_ & 0x00000020) != 0)) {
         ballastOperations_ = java.util.Collections.unmodifiableList(ballastOperations_);
@@ -406,33 +405,32 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     return ballastValves_.get(index);
   }
 
-  public static final int LOADINGRATES_FIELD_NUMBER = 10;
-  private java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate>
-      loadingRates_;
-  /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-  public java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate>
-      getLoadingRatesList() {
-    return loadingRates_;
+  public static final int DISCHARGINGRATES_FIELD_NUMBER = 10;
+  private java.util.List<com.cpdss.common.generated.discharge_plan.DischargingRate>
+      dischargingRates_;
+  /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+  public java.util.List<com.cpdss.common.generated.discharge_plan.DischargingRate>
+      getDischargingRatesList() {
+    return dischargingRates_;
   }
-  /** <code>repeated .LoadingRate loadingRates = 10;</code> */
+  /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
   public java.util.List<
-          ? extends com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRateOrBuilder>
-      getLoadingRatesOrBuilderList() {
-    return loadingRates_;
+          ? extends com.cpdss.common.generated.discharge_plan.DischargingRateOrBuilder>
+      getDischargingRatesOrBuilderList() {
+    return dischargingRates_;
   }
-  /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-  public int getLoadingRatesCount() {
-    return loadingRates_.size();
+  /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+  public int getDischargingRatesCount() {
+    return dischargingRates_.size();
   }
-  /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-  public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate getLoadingRates(
-      int index) {
-    return loadingRates_.get(index);
+  /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+  public com.cpdss.common.generated.discharge_plan.DischargingRate getDischargingRates(int index) {
+    return dischargingRates_.get(index);
   }
-  /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-  public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRateOrBuilder
-      getLoadingRatesOrBuilder(int index) {
-    return loadingRates_.get(index);
+  /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+  public com.cpdss.common.generated.discharge_plan.DischargingRateOrBuilder
+      getDischargingRatesOrBuilder(int index) {
+    return dischargingRates_.get(index);
   }
 
   public static final int DEBALLASTINGRATES_FIELD_NUMBER = 11;
@@ -465,104 +463,104 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     return deBallastingRates_.get(index);
   }
 
-  public static final int LOADINGPLANPORTWISEDETAILS_FIELD_NUMBER = 12;
+  public static final int DISCHARGINGPLANPORTWISEDETAILS_FIELD_NUMBER = 12;
   private java.util.List<
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails>
-      loadingPlanPortWiseDetails_;
-  /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+      dischargingPlanPortWiseDetails_;
+  /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
   public java.util.List<
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails>
-      getLoadingPlanPortWiseDetailsList() {
-    return loadingPlanPortWiseDetails_;
+      getDischargingPlanPortWiseDetailsList() {
+    return dischargingPlanPortWiseDetails_;
   }
-  /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+  /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
   public java.util.List<
           ? extends
               com.cpdss.common.generated.loading_plan.LoadingPlanModels
                   .LoadingPlanPortWiseDetailsOrBuilder>
-      getLoadingPlanPortWiseDetailsOrBuilderList() {
-    return loadingPlanPortWiseDetails_;
+      getDischargingPlanPortWiseDetailsOrBuilderList() {
+    return dischargingPlanPortWiseDetails_;
   }
-  /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
-  public int getLoadingPlanPortWiseDetailsCount() {
-    return loadingPlanPortWiseDetails_.size();
+  /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
+  public int getDischargingPlanPortWiseDetailsCount() {
+    return dischargingPlanPortWiseDetails_.size();
   }
-  /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+  /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
   public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails
-      getLoadingPlanPortWiseDetails(int index) {
-    return loadingPlanPortWiseDetails_.get(index);
+      getDischargingPlanPortWiseDetails(int index) {
+    return dischargingPlanPortWiseDetails_.get(index);
   }
-  /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+  /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
   public com.cpdss.common.generated.loading_plan.LoadingPlanModels
           .LoadingPlanPortWiseDetailsOrBuilder
-      getLoadingPlanPortWiseDetailsOrBuilder(int index) {
-    return loadingPlanPortWiseDetails_.get(index);
+      getDischargingPlanPortWiseDetailsOrBuilder(int index) {
+    return dischargingPlanPortWiseDetails_.get(index);
   }
 
-  public static final int CARGOLOADINGRATE1_FIELD_NUMBER = 13;
-  private volatile java.lang.Object cargoLoadingRate1_;
+  public static final int CARGODISCHARGINGRATE1_FIELD_NUMBER = 13;
+  private volatile java.lang.Object cargoDischargingRate1_;
   /**
-   * <code>string cargoLoadingRate1 = 13;</code>
+   * <code>string cargoDischargingRate1 = 13;</code>
    *
-   * @return The cargoLoadingRate1.
+   * @return The cargoDischargingRate1.
    */
-  public java.lang.String getCargoLoadingRate1() {
-    java.lang.Object ref = cargoLoadingRate1_;
+  public java.lang.String getCargoDischargingRate1() {
+    java.lang.Object ref = cargoDischargingRate1_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      cargoLoadingRate1_ = s;
+      cargoDischargingRate1_ = s;
       return s;
     }
   }
   /**
-   * <code>string cargoLoadingRate1 = 13;</code>
+   * <code>string cargoDischargingRate1 = 13;</code>
    *
-   * @return The bytes for cargoLoadingRate1.
+   * @return The bytes for cargoDischargingRate1.
    */
-  public com.google.protobuf.ByteString getCargoLoadingRate1Bytes() {
-    java.lang.Object ref = cargoLoadingRate1_;
+  public com.google.protobuf.ByteString getCargoDischargingRate1Bytes() {
+    java.lang.Object ref = cargoDischargingRate1_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      cargoLoadingRate1_ = b;
+      cargoDischargingRate1_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  public static final int CARGOLOADINGRATE2_FIELD_NUMBER = 14;
-  private volatile java.lang.Object cargoLoadingRate2_;
+  public static final int CARGODISCHARGINGRATE2_FIELD_NUMBER = 14;
+  private volatile java.lang.Object cargoDischargingRate2_;
   /**
-   * <code>string cargoLoadingRate2 = 14;</code>
+   * <code>string cargoDischargingRate2 = 14;</code>
    *
-   * @return The cargoLoadingRate2.
+   * @return The cargoDischargingRate2.
    */
-  public java.lang.String getCargoLoadingRate2() {
-    java.lang.Object ref = cargoLoadingRate2_;
+  public java.lang.String getCargoDischargingRate2() {
+    java.lang.Object ref = cargoDischargingRate2_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      cargoLoadingRate2_ = s;
+      cargoDischargingRate2_ = s;
       return s;
     }
   }
   /**
-   * <code>string cargoLoadingRate2 = 14;</code>
+   * <code>string cargoDischargingRate2 = 14;</code>
    *
-   * @return The bytes for cargoLoadingRate2.
+   * @return The bytes for cargoDischargingRate2.
    */
-  public com.google.protobuf.ByteString getCargoLoadingRate2Bytes() {
-    java.lang.Object ref = cargoLoadingRate2_;
+  public com.google.protobuf.ByteString getCargoDischargingRate2Bytes() {
+    java.lang.Object ref = cargoDischargingRate2_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      cargoLoadingRate2_ = b;
+      cargoDischargingRate2_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -640,20 +638,20 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     for (int i = 0; i < ballastValves_.size(); i++) {
       output.writeMessage(9, ballastValves_.get(i));
     }
-    for (int i = 0; i < loadingRates_.size(); i++) {
-      output.writeMessage(10, loadingRates_.get(i));
+    for (int i = 0; i < dischargingRates_.size(); i++) {
+      output.writeMessage(10, dischargingRates_.get(i));
     }
     for (int i = 0; i < deBallastingRates_.size(); i++) {
       output.writeMessage(11, deBallastingRates_.get(i));
     }
-    for (int i = 0; i < loadingPlanPortWiseDetails_.size(); i++) {
-      output.writeMessage(12, loadingPlanPortWiseDetails_.get(i));
+    for (int i = 0; i < dischargingPlanPortWiseDetails_.size(); i++) {
+      output.writeMessage(12, dischargingPlanPortWiseDetails_.get(i));
     }
-    if (!getCargoLoadingRate1Bytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 13, cargoLoadingRate1_);
+    if (!getCargoDischargingRate1Bytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 13, cargoDischargingRate1_);
     }
-    if (!getCargoLoadingRate2Bytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 14, cargoLoadingRate2_);
+    if (!getCargoDischargingRate2Bytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 14, cargoDischargingRate2_);
     }
     for (int i = 0; i < ballastOperations_.size(); i++) {
       output.writeMessage(15, ballastOperations_.get(i));
@@ -694,23 +692,24 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     for (int i = 0; i < ballastValves_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(9, ballastValves_.get(i));
     }
-    for (int i = 0; i < loadingRates_.size(); i++) {
-      size += com.google.protobuf.CodedOutputStream.computeMessageSize(10, loadingRates_.get(i));
+    for (int i = 0; i < dischargingRates_.size(); i++) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeMessageSize(10, dischargingRates_.get(i));
     }
     for (int i = 0; i < deBallastingRates_.size(); i++) {
       size +=
           com.google.protobuf.CodedOutputStream.computeMessageSize(11, deBallastingRates_.get(i));
     }
-    for (int i = 0; i < loadingPlanPortWiseDetails_.size(); i++) {
+    for (int i = 0; i < dischargingPlanPortWiseDetails_.size(); i++) {
       size +=
           com.google.protobuf.CodedOutputStream.computeMessageSize(
-              12, loadingPlanPortWiseDetails_.get(i));
+              12, dischargingPlanPortWiseDetails_.get(i));
     }
-    if (!getCargoLoadingRate1Bytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, cargoLoadingRate1_);
+    if (!getCargoDischargingRate1Bytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, cargoDischargingRate1_);
     }
-    if (!getCargoLoadingRate2Bytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, cargoLoadingRate2_);
+    if (!getCargoDischargingRate2Bytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, cargoDischargingRate2_);
     }
     for (int i = 0; i < ballastOperations_.size(); i++) {
       size +=
@@ -741,12 +740,12 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     if (getToLoadicator() != other.getToLoadicator()) return false;
     if (!getCargoValvesList().equals(other.getCargoValvesList())) return false;
     if (!getBallastValvesList().equals(other.getBallastValvesList())) return false;
-    if (!getLoadingRatesList().equals(other.getLoadingRatesList())) return false;
+    if (!getDischargingRatesList().equals(other.getDischargingRatesList())) return false;
     if (!getDeBallastingRatesList().equals(other.getDeBallastingRatesList())) return false;
-    if (!getLoadingPlanPortWiseDetailsList().equals(other.getLoadingPlanPortWiseDetailsList()))
-      return false;
-    if (!getCargoLoadingRate1().equals(other.getCargoLoadingRate1())) return false;
-    if (!getCargoLoadingRate2().equals(other.getCargoLoadingRate2())) return false;
+    if (!getDischargingPlanPortWiseDetailsList()
+        .equals(other.getDischargingPlanPortWiseDetailsList())) return false;
+    if (!getCargoDischargingRate1().equals(other.getCargoDischargingRate1())) return false;
+    if (!getCargoDischargingRate2().equals(other.getCargoDischargingRate2())) return false;
     if (!getBallastOperationsList().equals(other.getBallastOperationsList())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
@@ -781,22 +780,22 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
       hash = (37 * hash) + BALLASTVALVES_FIELD_NUMBER;
       hash = (53 * hash) + getBallastValvesList().hashCode();
     }
-    if (getLoadingRatesCount() > 0) {
-      hash = (37 * hash) + LOADINGRATES_FIELD_NUMBER;
-      hash = (53 * hash) + getLoadingRatesList().hashCode();
+    if (getDischargingRatesCount() > 0) {
+      hash = (37 * hash) + DISCHARGINGRATES_FIELD_NUMBER;
+      hash = (53 * hash) + getDischargingRatesList().hashCode();
     }
     if (getDeBallastingRatesCount() > 0) {
       hash = (37 * hash) + DEBALLASTINGRATES_FIELD_NUMBER;
       hash = (53 * hash) + getDeBallastingRatesList().hashCode();
     }
-    if (getLoadingPlanPortWiseDetailsCount() > 0) {
-      hash = (37 * hash) + LOADINGPLANPORTWISEDETAILS_FIELD_NUMBER;
-      hash = (53 * hash) + getLoadingPlanPortWiseDetailsList().hashCode();
+    if (getDischargingPlanPortWiseDetailsCount() > 0) {
+      hash = (37 * hash) + DISCHARGINGPLANPORTWISEDETAILS_FIELD_NUMBER;
+      hash = (53 * hash) + getDischargingPlanPortWiseDetailsList().hashCode();
     }
-    hash = (37 * hash) + CARGOLOADINGRATE1_FIELD_NUMBER;
-    hash = (53 * hash) + getCargoLoadingRate1().hashCode();
-    hash = (37 * hash) + CARGOLOADINGRATE2_FIELD_NUMBER;
-    hash = (53 * hash) + getCargoLoadingRate2().hashCode();
+    hash = (37 * hash) + CARGODISCHARGINGRATE1_FIELD_NUMBER;
+    hash = (53 * hash) + getCargoDischargingRate1().hashCode();
+    hash = (37 * hash) + CARGODISCHARGINGRATE2_FIELD_NUMBER;
+    hash = (53 * hash) + getCargoDischargingRate2().hashCode();
     if (getBallastOperationsCount() > 0) {
       hash = (37 * hash) + BALLASTOPERATIONS_FIELD_NUMBER;
       hash = (53 * hash) + getBallastOperationsList().hashCode();
@@ -936,9 +935,9 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
       if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
         getCargoValvesFieldBuilder();
         getBallastValvesFieldBuilder();
-        getLoadingRatesFieldBuilder();
+        getDischargingRatesFieldBuilder();
         getDeBallastingRatesFieldBuilder();
-        getLoadingPlanPortWiseDetailsFieldBuilder();
+        getDischargingPlanPortWiseDetailsFieldBuilder();
         getBallastOperationsFieldBuilder();
       }
     }
@@ -972,11 +971,11 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
       } else {
         ballastValvesBuilder_.clear();
       }
-      if (loadingRatesBuilder_ == null) {
-        loadingRates_ = java.util.Collections.emptyList();
+      if (dischargingRatesBuilder_ == null) {
+        dischargingRates_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000004);
       } else {
-        loadingRatesBuilder_.clear();
+        dischargingRatesBuilder_.clear();
       }
       if (deBallastingRatesBuilder_ == null) {
         deBallastingRates_ = java.util.Collections.emptyList();
@@ -984,15 +983,15 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
       } else {
         deBallastingRatesBuilder_.clear();
       }
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        loadingPlanPortWiseDetails_ = java.util.Collections.emptyList();
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        dischargingPlanPortWiseDetails_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
       } else {
-        loadingPlanPortWiseDetailsBuilder_.clear();
+        dischargingPlanPortWiseDetailsBuilder_.clear();
       }
-      cargoLoadingRate1_ = "";
+      cargoDischargingRate1_ = "";
 
-      cargoLoadingRate2_ = "";
+      cargoDischargingRate2_ = "";
 
       if (ballastOperationsBuilder_ == null) {
         ballastOperations_ = java.util.Collections.emptyList();
@@ -1054,14 +1053,14 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
       } else {
         result.ballastValves_ = ballastValvesBuilder_.build();
       }
-      if (loadingRatesBuilder_ == null) {
+      if (dischargingRatesBuilder_ == null) {
         if (((bitField0_ & 0x00000004) != 0)) {
-          loadingRates_ = java.util.Collections.unmodifiableList(loadingRates_);
+          dischargingRates_ = java.util.Collections.unmodifiableList(dischargingRates_);
           bitField0_ = (bitField0_ & ~0x00000004);
         }
-        result.loadingRates_ = loadingRates_;
+        result.dischargingRates_ = dischargingRates_;
       } else {
-        result.loadingRates_ = loadingRatesBuilder_.build();
+        result.dischargingRates_ = dischargingRatesBuilder_.build();
       }
       if (deBallastingRatesBuilder_ == null) {
         if (((bitField0_ & 0x00000008) != 0)) {
@@ -1072,18 +1071,18 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
       } else {
         result.deBallastingRates_ = deBallastingRatesBuilder_.build();
       }
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
         if (((bitField0_ & 0x00000010) != 0)) {
-          loadingPlanPortWiseDetails_ =
-              java.util.Collections.unmodifiableList(loadingPlanPortWiseDetails_);
+          dischargingPlanPortWiseDetails_ =
+              java.util.Collections.unmodifiableList(dischargingPlanPortWiseDetails_);
           bitField0_ = (bitField0_ & ~0x00000010);
         }
-        result.loadingPlanPortWiseDetails_ = loadingPlanPortWiseDetails_;
+        result.dischargingPlanPortWiseDetails_ = dischargingPlanPortWiseDetails_;
       } else {
-        result.loadingPlanPortWiseDetails_ = loadingPlanPortWiseDetailsBuilder_.build();
+        result.dischargingPlanPortWiseDetails_ = dischargingPlanPortWiseDetailsBuilder_.build();
       }
-      result.cargoLoadingRate1_ = cargoLoadingRate1_;
-      result.cargoLoadingRate2_ = cargoLoadingRate2_;
+      result.cargoDischargingRate1_ = cargoDischargingRate1_;
+      result.cargoDischargingRate2_ = cargoDischargingRate2_;
       if (ballastOperationsBuilder_ == null) {
         if (((bitField0_ & 0x00000020) != 0)) {
           ballastOperations_ = java.util.Collections.unmodifiableList(ballastOperations_);
@@ -1220,30 +1219,30 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
           }
         }
       }
-      if (loadingRatesBuilder_ == null) {
-        if (!other.loadingRates_.isEmpty()) {
-          if (loadingRates_.isEmpty()) {
-            loadingRates_ = other.loadingRates_;
+      if (dischargingRatesBuilder_ == null) {
+        if (!other.dischargingRates_.isEmpty()) {
+          if (dischargingRates_.isEmpty()) {
+            dischargingRates_ = other.dischargingRates_;
             bitField0_ = (bitField0_ & ~0x00000004);
           } else {
-            ensureLoadingRatesIsMutable();
-            loadingRates_.addAll(other.loadingRates_);
+            ensureDischargingRatesIsMutable();
+            dischargingRates_.addAll(other.dischargingRates_);
           }
           onChanged();
         }
       } else {
-        if (!other.loadingRates_.isEmpty()) {
-          if (loadingRatesBuilder_.isEmpty()) {
-            loadingRatesBuilder_.dispose();
-            loadingRatesBuilder_ = null;
-            loadingRates_ = other.loadingRates_;
+        if (!other.dischargingRates_.isEmpty()) {
+          if (dischargingRatesBuilder_.isEmpty()) {
+            dischargingRatesBuilder_.dispose();
+            dischargingRatesBuilder_ = null;
+            dischargingRates_ = other.dischargingRates_;
             bitField0_ = (bitField0_ & ~0x00000004);
-            loadingRatesBuilder_ =
+            dischargingRatesBuilder_ =
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
-                    ? getLoadingRatesFieldBuilder()
+                    ? getDischargingRatesFieldBuilder()
                     : null;
           } else {
-            loadingRatesBuilder_.addAllMessages(other.loadingRates_);
+            dischargingRatesBuilder_.addAllMessages(other.dischargingRates_);
           }
         }
       }
@@ -1274,39 +1273,40 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
           }
         }
       }
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        if (!other.loadingPlanPortWiseDetails_.isEmpty()) {
-          if (loadingPlanPortWiseDetails_.isEmpty()) {
-            loadingPlanPortWiseDetails_ = other.loadingPlanPortWiseDetails_;
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        if (!other.dischargingPlanPortWiseDetails_.isEmpty()) {
+          if (dischargingPlanPortWiseDetails_.isEmpty()) {
+            dischargingPlanPortWiseDetails_ = other.dischargingPlanPortWiseDetails_;
             bitField0_ = (bitField0_ & ~0x00000010);
           } else {
-            ensureLoadingPlanPortWiseDetailsIsMutable();
-            loadingPlanPortWiseDetails_.addAll(other.loadingPlanPortWiseDetails_);
+            ensureDischargingPlanPortWiseDetailsIsMutable();
+            dischargingPlanPortWiseDetails_.addAll(other.dischargingPlanPortWiseDetails_);
           }
           onChanged();
         }
       } else {
-        if (!other.loadingPlanPortWiseDetails_.isEmpty()) {
-          if (loadingPlanPortWiseDetailsBuilder_.isEmpty()) {
-            loadingPlanPortWiseDetailsBuilder_.dispose();
-            loadingPlanPortWiseDetailsBuilder_ = null;
-            loadingPlanPortWiseDetails_ = other.loadingPlanPortWiseDetails_;
+        if (!other.dischargingPlanPortWiseDetails_.isEmpty()) {
+          if (dischargingPlanPortWiseDetailsBuilder_.isEmpty()) {
+            dischargingPlanPortWiseDetailsBuilder_.dispose();
+            dischargingPlanPortWiseDetailsBuilder_ = null;
+            dischargingPlanPortWiseDetails_ = other.dischargingPlanPortWiseDetails_;
             bitField0_ = (bitField0_ & ~0x00000010);
-            loadingPlanPortWiseDetailsBuilder_ =
+            dischargingPlanPortWiseDetailsBuilder_ =
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
-                    ? getLoadingPlanPortWiseDetailsFieldBuilder()
+                    ? getDischargingPlanPortWiseDetailsFieldBuilder()
                     : null;
           } else {
-            loadingPlanPortWiseDetailsBuilder_.addAllMessages(other.loadingPlanPortWiseDetails_);
+            dischargingPlanPortWiseDetailsBuilder_.addAllMessages(
+                other.dischargingPlanPortWiseDetails_);
           }
         }
       }
-      if (!other.getCargoLoadingRate1().isEmpty()) {
-        cargoLoadingRate1_ = other.cargoLoadingRate1_;
+      if (!other.getCargoDischargingRate1().isEmpty()) {
+        cargoDischargingRate1_ = other.cargoDischargingRate1_;
         onChanged();
       }
-      if (!other.getCargoLoadingRate2().isEmpty()) {
-        cargoLoadingRate2_ = other.cargoLoadingRate2_;
+      if (!other.getCargoDischargingRate2().isEmpty()) {
+        cargoDischargingRate2_ = other.cargoDischargingRate2_;
         onChanged();
       }
       if (ballastOperationsBuilder_ == null) {
@@ -2096,237 +2096,231 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
       return ballastValvesBuilder_;
     }
 
-    private java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate>
-        loadingRates_ = java.util.Collections.emptyList();
+    private java.util.List<com.cpdss.common.generated.discharge_plan.DischargingRate>
+        dischargingRates_ = java.util.Collections.emptyList();
 
-    private void ensureLoadingRatesIsMutable() {
+    private void ensureDischargingRatesIsMutable() {
       if (!((bitField0_ & 0x00000004) != 0)) {
-        loadingRates_ =
-            new java.util.ArrayList<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate>(
-                loadingRates_);
+        dischargingRates_ =
+            new java.util.ArrayList<com.cpdss.common.generated.discharge_plan.DischargingRate>(
+                dischargingRates_);
         bitField0_ |= 0x00000004;
       }
     }
 
     private com.google.protobuf.RepeatedFieldBuilderV3<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate,
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate.Builder,
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRateOrBuilder>
-        loadingRatesBuilder_;
+            com.cpdss.common.generated.discharge_plan.DischargingRate,
+            com.cpdss.common.generated.discharge_plan.DischargingRate.Builder,
+            com.cpdss.common.generated.discharge_plan.DischargingRateOrBuilder>
+        dischargingRatesBuilder_;
 
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate>
-        getLoadingRatesList() {
-      if (loadingRatesBuilder_ == null) {
-        return java.util.Collections.unmodifiableList(loadingRates_);
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public java.util.List<com.cpdss.common.generated.discharge_plan.DischargingRate>
+        getDischargingRatesList() {
+      if (dischargingRatesBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(dischargingRates_);
       } else {
-        return loadingRatesBuilder_.getMessageList();
+        return dischargingRatesBuilder_.getMessageList();
       }
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public int getLoadingRatesCount() {
-      if (loadingRatesBuilder_ == null) {
-        return loadingRates_.size();
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public int getDischargingRatesCount() {
+      if (dischargingRatesBuilder_ == null) {
+        return dischargingRates_.size();
       } else {
-        return loadingRatesBuilder_.getCount();
+        return dischargingRatesBuilder_.getCount();
       }
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate getLoadingRates(
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public com.cpdss.common.generated.discharge_plan.DischargingRate getDischargingRates(
         int index) {
-      if (loadingRatesBuilder_ == null) {
-        return loadingRates_.get(index);
+      if (dischargingRatesBuilder_ == null) {
+        return dischargingRates_.get(index);
       } else {
-        return loadingRatesBuilder_.getMessage(index);
+        return dischargingRatesBuilder_.getMessage(index);
       }
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public Builder setLoadingRates(
-        int index, com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate value) {
-      if (loadingRatesBuilder_ == null) {
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public Builder setDischargingRates(
+        int index, com.cpdss.common.generated.discharge_plan.DischargingRate value) {
+      if (dischargingRatesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureLoadingRatesIsMutable();
-        loadingRates_.set(index, value);
+        ensureDischargingRatesIsMutable();
+        dischargingRates_.set(index, value);
         onChanged();
       } else {
-        loadingRatesBuilder_.setMessage(index, value);
+        dischargingRatesBuilder_.setMessage(index, value);
       }
       return this;
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public Builder setLoadingRates(
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public Builder setDischargingRates(
         int index,
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate.Builder
-            builderForValue) {
-      if (loadingRatesBuilder_ == null) {
-        ensureLoadingRatesIsMutable();
-        loadingRates_.set(index, builderForValue.build());
+        com.cpdss.common.generated.discharge_plan.DischargingRate.Builder builderForValue) {
+      if (dischargingRatesBuilder_ == null) {
+        ensureDischargingRatesIsMutable();
+        dischargingRates_.set(index, builderForValue.build());
         onChanged();
       } else {
-        loadingRatesBuilder_.setMessage(index, builderForValue.build());
+        dischargingRatesBuilder_.setMessage(index, builderForValue.build());
       }
       return this;
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public Builder addLoadingRates(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate value) {
-      if (loadingRatesBuilder_ == null) {
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public Builder addDischargingRates(
+        com.cpdss.common.generated.discharge_plan.DischargingRate value) {
+      if (dischargingRatesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureLoadingRatesIsMutable();
-        loadingRates_.add(value);
+        ensureDischargingRatesIsMutable();
+        dischargingRates_.add(value);
         onChanged();
       } else {
-        loadingRatesBuilder_.addMessage(value);
+        dischargingRatesBuilder_.addMessage(value);
       }
       return this;
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public Builder addLoadingRates(
-        int index, com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate value) {
-      if (loadingRatesBuilder_ == null) {
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public Builder addDischargingRates(
+        int index, com.cpdss.common.generated.discharge_plan.DischargingRate value) {
+      if (dischargingRatesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureLoadingRatesIsMutable();
-        loadingRates_.add(index, value);
+        ensureDischargingRatesIsMutable();
+        dischargingRates_.add(index, value);
         onChanged();
       } else {
-        loadingRatesBuilder_.addMessage(index, value);
+        dischargingRatesBuilder_.addMessage(index, value);
       }
       return this;
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public Builder addLoadingRates(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate.Builder
-            builderForValue) {
-      if (loadingRatesBuilder_ == null) {
-        ensureLoadingRatesIsMutable();
-        loadingRates_.add(builderForValue.build());
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public Builder addDischargingRates(
+        com.cpdss.common.generated.discharge_plan.DischargingRate.Builder builderForValue) {
+      if (dischargingRatesBuilder_ == null) {
+        ensureDischargingRatesIsMutable();
+        dischargingRates_.add(builderForValue.build());
         onChanged();
       } else {
-        loadingRatesBuilder_.addMessage(builderForValue.build());
+        dischargingRatesBuilder_.addMessage(builderForValue.build());
       }
       return this;
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public Builder addLoadingRates(
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public Builder addDischargingRates(
         int index,
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate.Builder
-            builderForValue) {
-      if (loadingRatesBuilder_ == null) {
-        ensureLoadingRatesIsMutable();
-        loadingRates_.add(index, builderForValue.build());
+        com.cpdss.common.generated.discharge_plan.DischargingRate.Builder builderForValue) {
+      if (dischargingRatesBuilder_ == null) {
+        ensureDischargingRatesIsMutable();
+        dischargingRates_.add(index, builderForValue.build());
         onChanged();
       } else {
-        loadingRatesBuilder_.addMessage(index, builderForValue.build());
+        dischargingRatesBuilder_.addMessage(index, builderForValue.build());
       }
       return this;
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public Builder addAllLoadingRates(
-        java.lang.Iterable<
-                ? extends com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate>
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public Builder addAllDischargingRates(
+        java.lang.Iterable<? extends com.cpdss.common.generated.discharge_plan.DischargingRate>
             values) {
-      if (loadingRatesBuilder_ == null) {
-        ensureLoadingRatesIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, loadingRates_);
+      if (dischargingRatesBuilder_ == null) {
+        ensureDischargingRatesIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, dischargingRates_);
         onChanged();
       } else {
-        loadingRatesBuilder_.addAllMessages(values);
+        dischargingRatesBuilder_.addAllMessages(values);
       }
       return this;
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public Builder clearLoadingRates() {
-      if (loadingRatesBuilder_ == null) {
-        loadingRates_ = java.util.Collections.emptyList();
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public Builder clearDischargingRates() {
+      if (dischargingRatesBuilder_ == null) {
+        dischargingRates_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
       } else {
-        loadingRatesBuilder_.clear();
+        dischargingRatesBuilder_.clear();
       }
       return this;
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public Builder removeLoadingRates(int index) {
-      if (loadingRatesBuilder_ == null) {
-        ensureLoadingRatesIsMutable();
-        loadingRates_.remove(index);
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public Builder removeDischargingRates(int index) {
+      if (dischargingRatesBuilder_ == null) {
+        ensureDischargingRatesIsMutable();
+        dischargingRates_.remove(index);
         onChanged();
       } else {
-        loadingRatesBuilder_.remove(index);
+        dischargingRatesBuilder_.remove(index);
       }
       return this;
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate.Builder
-        getLoadingRatesBuilder(int index) {
-      return getLoadingRatesFieldBuilder().getBuilder(index);
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public com.cpdss.common.generated.discharge_plan.DischargingRate.Builder
+        getDischargingRatesBuilder(int index) {
+      return getDischargingRatesFieldBuilder().getBuilder(index);
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRateOrBuilder
-        getLoadingRatesOrBuilder(int index) {
-      if (loadingRatesBuilder_ == null) {
-        return loadingRates_.get(index);
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public com.cpdss.common.generated.discharge_plan.DischargingRateOrBuilder
+        getDischargingRatesOrBuilder(int index) {
+      if (dischargingRatesBuilder_ == null) {
+        return dischargingRates_.get(index);
       } else {
-        return loadingRatesBuilder_.getMessageOrBuilder(index);
+        return dischargingRatesBuilder_.getMessageOrBuilder(index);
       }
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
     public java.util.List<
-            ? extends
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRateOrBuilder>
-        getLoadingRatesOrBuilderList() {
-      if (loadingRatesBuilder_ != null) {
-        return loadingRatesBuilder_.getMessageOrBuilderList();
+            ? extends com.cpdss.common.generated.discharge_plan.DischargingRateOrBuilder>
+        getDischargingRatesOrBuilderList() {
+      if (dischargingRatesBuilder_ != null) {
+        return dischargingRatesBuilder_.getMessageOrBuilderList();
       } else {
-        return java.util.Collections.unmodifiableList(loadingRates_);
+        return java.util.Collections.unmodifiableList(dischargingRates_);
       }
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate.Builder
-        addLoadingRatesBuilder() {
-      return getLoadingRatesFieldBuilder()
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public com.cpdss.common.generated.discharge_plan.DischargingRate.Builder
+        addDischargingRatesBuilder() {
+      return getDischargingRatesFieldBuilder()
           .addBuilder(
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate
-                  .getDefaultInstance());
+              com.cpdss.common.generated.discharge_plan.DischargingRate.getDefaultInstance());
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate.Builder
-        addLoadingRatesBuilder(int index) {
-      return getLoadingRatesFieldBuilder()
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public com.cpdss.common.generated.discharge_plan.DischargingRate.Builder
+        addDischargingRatesBuilder(int index) {
+      return getDischargingRatesFieldBuilder()
           .addBuilder(
               index,
-              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate
-                  .getDefaultInstance());
+              com.cpdss.common.generated.discharge_plan.DischargingRate.getDefaultInstance());
     }
-    /** <code>repeated .LoadingRate loadingRates = 10;</code> */
-    public java.util.List<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate.Builder>
-        getLoadingRatesBuilderList() {
-      return getLoadingRatesFieldBuilder().getBuilderList();
+    /** <code>repeated .DischargingRate dischargingRates = 10;</code> */
+    public java.util.List<com.cpdss.common.generated.discharge_plan.DischargingRate.Builder>
+        getDischargingRatesBuilderList() {
+      return getDischargingRatesFieldBuilder().getBuilderList();
     }
 
     private com.google.protobuf.RepeatedFieldBuilderV3<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate,
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate.Builder,
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRateOrBuilder>
-        getLoadingRatesFieldBuilder() {
-      if (loadingRatesBuilder_ == null) {
-        loadingRatesBuilder_ =
+            com.cpdss.common.generated.discharge_plan.DischargingRate,
+            com.cpdss.common.generated.discharge_plan.DischargingRate.Builder,
+            com.cpdss.common.generated.discharge_plan.DischargingRateOrBuilder>
+        getDischargingRatesFieldBuilder() {
+      if (dischargingRatesBuilder_ == null) {
+        dischargingRatesBuilder_ =
             new com.google.protobuf.RepeatedFieldBuilderV3<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate,
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate.Builder,
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRateOrBuilder>(
-                loadingRates_, ((bitField0_ & 0x00000004) != 0), getParentForChildren(), isClean());
-        loadingRates_ = null;
+                com.cpdss.common.generated.discharge_plan.DischargingRate,
+                com.cpdss.common.generated.discharge_plan.DischargingRate.Builder,
+                com.cpdss.common.generated.discharge_plan.DischargingRateOrBuilder>(
+                dischargingRates_,
+                ((bitField0_ & 0x00000004) != 0),
+                getParentForChildren(),
+                isClean());
+        dischargingRates_ = null;
       }
-      return loadingRatesBuilder_;
+      return dischargingRatesBuilder_;
     }
 
     private java.util.List<
@@ -2573,14 +2567,14 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
 
     private java.util.List<
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails>
-        loadingPlanPortWiseDetails_ = java.util.Collections.emptyList();
+        dischargingPlanPortWiseDetails_ = java.util.Collections.emptyList();
 
-    private void ensureLoadingPlanPortWiseDetailsIsMutable() {
+    private void ensureDischargingPlanPortWiseDetailsIsMutable() {
       if (!((bitField0_ & 0x00000010) != 0)) {
-        loadingPlanPortWiseDetails_ =
+        dischargingPlanPortWiseDetails_ =
             new java.util.ArrayList<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                    .LoadingPlanPortWiseDetails>(loadingPlanPortWiseDetails_);
+                    .LoadingPlanPortWiseDetails>(dischargingPlanPortWiseDetails_);
         bitField0_ |= 0x00000010;
       }
     }
@@ -2591,217 +2585,218 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
                 .Builder,
             com.cpdss.common.generated.loading_plan.LoadingPlanModels
                 .LoadingPlanPortWiseDetailsOrBuilder>
-        loadingPlanPortWiseDetailsBuilder_;
+        dischargingPlanPortWiseDetailsBuilder_;
 
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
     public java.util.List<
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails>
-        getLoadingPlanPortWiseDetailsList() {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        return java.util.Collections.unmodifiableList(loadingPlanPortWiseDetails_);
+        getDischargingPlanPortWiseDetailsList() {
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(dischargingPlanPortWiseDetails_);
       } else {
-        return loadingPlanPortWiseDetailsBuilder_.getMessageList();
+        return dischargingPlanPortWiseDetailsBuilder_.getMessageList();
       }
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
-    public int getLoadingPlanPortWiseDetailsCount() {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        return loadingPlanPortWiseDetails_.size();
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
+    public int getDischargingPlanPortWiseDetailsCount() {
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        return dischargingPlanPortWiseDetails_.size();
       } else {
-        return loadingPlanPortWiseDetailsBuilder_.getCount();
+        return dischargingPlanPortWiseDetailsBuilder_.getCount();
       }
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails
-        getLoadingPlanPortWiseDetails(int index) {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        return loadingPlanPortWiseDetails_.get(index);
+        getDischargingPlanPortWiseDetails(int index) {
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        return dischargingPlanPortWiseDetails_.get(index);
       } else {
-        return loadingPlanPortWiseDetailsBuilder_.getMessage(index);
+        return dischargingPlanPortWiseDetailsBuilder_.getMessage(index);
       }
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
-    public Builder setLoadingPlanPortWiseDetails(
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
+    public Builder setDischargingPlanPortWiseDetails(
         int index,
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails
             value) {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureLoadingPlanPortWiseDetailsIsMutable();
-        loadingPlanPortWiseDetails_.set(index, value);
+        ensureDischargingPlanPortWiseDetailsIsMutable();
+        dischargingPlanPortWiseDetails_.set(index, value);
         onChanged();
       } else {
-        loadingPlanPortWiseDetailsBuilder_.setMessage(index, value);
+        dischargingPlanPortWiseDetailsBuilder_.setMessage(index, value);
       }
       return this;
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
-    public Builder setLoadingPlanPortWiseDetails(
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
+    public Builder setDischargingPlanPortWiseDetails(
         int index,
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails.Builder
             builderForValue) {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        ensureLoadingPlanPortWiseDetailsIsMutable();
-        loadingPlanPortWiseDetails_.set(index, builderForValue.build());
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        ensureDischargingPlanPortWiseDetailsIsMutable();
+        dischargingPlanPortWiseDetails_.set(index, builderForValue.build());
         onChanged();
       } else {
-        loadingPlanPortWiseDetailsBuilder_.setMessage(index, builderForValue.build());
+        dischargingPlanPortWiseDetailsBuilder_.setMessage(index, builderForValue.build());
       }
       return this;
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
-    public Builder addLoadingPlanPortWiseDetails(
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
+    public Builder addDischargingPlanPortWiseDetails(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails
             value) {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureLoadingPlanPortWiseDetailsIsMutable();
-        loadingPlanPortWiseDetails_.add(value);
+        ensureDischargingPlanPortWiseDetailsIsMutable();
+        dischargingPlanPortWiseDetails_.add(value);
         onChanged();
       } else {
-        loadingPlanPortWiseDetailsBuilder_.addMessage(value);
+        dischargingPlanPortWiseDetailsBuilder_.addMessage(value);
       }
       return this;
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
-    public Builder addLoadingPlanPortWiseDetails(
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
+    public Builder addDischargingPlanPortWiseDetails(
         int index,
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails
             value) {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        ensureLoadingPlanPortWiseDetailsIsMutable();
-        loadingPlanPortWiseDetails_.add(index, value);
+        ensureDischargingPlanPortWiseDetailsIsMutable();
+        dischargingPlanPortWiseDetails_.add(index, value);
         onChanged();
       } else {
-        loadingPlanPortWiseDetailsBuilder_.addMessage(index, value);
+        dischargingPlanPortWiseDetailsBuilder_.addMessage(index, value);
       }
       return this;
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
-    public Builder addLoadingPlanPortWiseDetails(
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
+    public Builder addDischargingPlanPortWiseDetails(
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails.Builder
             builderForValue) {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        ensureLoadingPlanPortWiseDetailsIsMutable();
-        loadingPlanPortWiseDetails_.add(builderForValue.build());
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        ensureDischargingPlanPortWiseDetailsIsMutable();
+        dischargingPlanPortWiseDetails_.add(builderForValue.build());
         onChanged();
       } else {
-        loadingPlanPortWiseDetailsBuilder_.addMessage(builderForValue.build());
+        dischargingPlanPortWiseDetailsBuilder_.addMessage(builderForValue.build());
       }
       return this;
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
-    public Builder addLoadingPlanPortWiseDetails(
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
+    public Builder addDischargingPlanPortWiseDetails(
         int index,
         com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails.Builder
             builderForValue) {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        ensureLoadingPlanPortWiseDetailsIsMutable();
-        loadingPlanPortWiseDetails_.add(index, builderForValue.build());
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        ensureDischargingPlanPortWiseDetailsIsMutable();
+        dischargingPlanPortWiseDetails_.add(index, builderForValue.build());
         onChanged();
       } else {
-        loadingPlanPortWiseDetailsBuilder_.addMessage(index, builderForValue.build());
+        dischargingPlanPortWiseDetailsBuilder_.addMessage(index, builderForValue.build());
       }
       return this;
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
-    public Builder addAllLoadingPlanPortWiseDetails(
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
+    public Builder addAllDischargingPlanPortWiseDetails(
         java.lang.Iterable<
                 ? extends
                     com.cpdss.common.generated.loading_plan.LoadingPlanModels
                         .LoadingPlanPortWiseDetails>
             values) {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        ensureLoadingPlanPortWiseDetailsIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, loadingPlanPortWiseDetails_);
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        ensureDischargingPlanPortWiseDetailsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, dischargingPlanPortWiseDetails_);
         onChanged();
       } else {
-        loadingPlanPortWiseDetailsBuilder_.addAllMessages(values);
+        dischargingPlanPortWiseDetailsBuilder_.addAllMessages(values);
       }
       return this;
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
-    public Builder clearLoadingPlanPortWiseDetails() {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        loadingPlanPortWiseDetails_ = java.util.Collections.emptyList();
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
+    public Builder clearDischargingPlanPortWiseDetails() {
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        dischargingPlanPortWiseDetails_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
         onChanged();
       } else {
-        loadingPlanPortWiseDetailsBuilder_.clear();
+        dischargingPlanPortWiseDetailsBuilder_.clear();
       }
       return this;
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
-    public Builder removeLoadingPlanPortWiseDetails(int index) {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        ensureLoadingPlanPortWiseDetailsIsMutable();
-        loadingPlanPortWiseDetails_.remove(index);
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
+    public Builder removeDischargingPlanPortWiseDetails(int index) {
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        ensureDischargingPlanPortWiseDetailsIsMutable();
+        dischargingPlanPortWiseDetails_.remove(index);
         onChanged();
       } else {
-        loadingPlanPortWiseDetailsBuilder_.remove(index);
+        dischargingPlanPortWiseDetailsBuilder_.remove(index);
       }
       return this;
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails
             .Builder
-        getLoadingPlanPortWiseDetailsBuilder(int index) {
-      return getLoadingPlanPortWiseDetailsFieldBuilder().getBuilder(index);
+        getDischargingPlanPortWiseDetailsBuilder(int index) {
+      return getDischargingPlanPortWiseDetailsFieldBuilder().getBuilder(index);
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels
             .LoadingPlanPortWiseDetailsOrBuilder
-        getLoadingPlanPortWiseDetailsOrBuilder(int index) {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        return loadingPlanPortWiseDetails_.get(index);
+        getDischargingPlanPortWiseDetailsOrBuilder(int index) {
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        return dischargingPlanPortWiseDetails_.get(index);
       } else {
-        return loadingPlanPortWiseDetailsBuilder_.getMessageOrBuilder(index);
+        return dischargingPlanPortWiseDetailsBuilder_.getMessageOrBuilder(index);
       }
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
     public java.util.List<
             ? extends
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels
                     .LoadingPlanPortWiseDetailsOrBuilder>
-        getLoadingPlanPortWiseDetailsOrBuilderList() {
-      if (loadingPlanPortWiseDetailsBuilder_ != null) {
-        return loadingPlanPortWiseDetailsBuilder_.getMessageOrBuilderList();
+        getDischargingPlanPortWiseDetailsOrBuilderList() {
+      if (dischargingPlanPortWiseDetailsBuilder_ != null) {
+        return dischargingPlanPortWiseDetailsBuilder_.getMessageOrBuilderList();
       } else {
-        return java.util.Collections.unmodifiableList(loadingPlanPortWiseDetails_);
+        return java.util.Collections.unmodifiableList(dischargingPlanPortWiseDetails_);
       }
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails
             .Builder
-        addLoadingPlanPortWiseDetailsBuilder() {
-      return getLoadingPlanPortWiseDetailsFieldBuilder()
+        addDischargingPlanPortWiseDetailsBuilder() {
+      return getDischargingPlanPortWiseDetailsFieldBuilder()
           .addBuilder(
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails
                   .getDefaultInstance());
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails
             .Builder
-        addLoadingPlanPortWiseDetailsBuilder(int index) {
-      return getLoadingPlanPortWiseDetailsFieldBuilder()
+        addDischargingPlanPortWiseDetailsBuilder(int index) {
+      return getDischargingPlanPortWiseDetailsFieldBuilder()
           .addBuilder(
               index,
               com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails
                   .getDefaultInstance());
     }
-    /** <code>repeated .LoadingPlanPortWiseDetails loadingPlanPortWiseDetails = 12;</code> */
+    /** <code>repeated .LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;</code> */
     public java.util.List<
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails
                 .Builder>
-        getLoadingPlanPortWiseDetailsBuilderList() {
-      return getLoadingPlanPortWiseDetailsFieldBuilder().getBuilderList();
+        getDischargingPlanPortWiseDetailsBuilderList() {
+      return getDischargingPlanPortWiseDetailsFieldBuilder().getBuilderList();
     }
 
     private com.google.protobuf.RepeatedFieldBuilderV3<
@@ -2810,9 +2805,9 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
                 .Builder,
             com.cpdss.common.generated.loading_plan.LoadingPlanModels
                 .LoadingPlanPortWiseDetailsOrBuilder>
-        getLoadingPlanPortWiseDetailsFieldBuilder() {
-      if (loadingPlanPortWiseDetailsBuilder_ == null) {
-        loadingPlanPortWiseDetailsBuilder_ =
+        getDischargingPlanPortWiseDetailsFieldBuilder() {
+      if (dischargingPlanPortWiseDetailsBuilder_ == null) {
+        dischargingPlanPortWiseDetailsBuilder_ =
             new com.google.protobuf.RepeatedFieldBuilderV3<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels
                     .LoadingPlanPortWiseDetails,
@@ -2820,163 +2815,163 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
                     .Builder,
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels
                     .LoadingPlanPortWiseDetailsOrBuilder>(
-                loadingPlanPortWiseDetails_,
+                dischargingPlanPortWiseDetails_,
                 ((bitField0_ & 0x00000010) != 0),
                 getParentForChildren(),
                 isClean());
-        loadingPlanPortWiseDetails_ = null;
+        dischargingPlanPortWiseDetails_ = null;
       }
-      return loadingPlanPortWiseDetailsBuilder_;
+      return dischargingPlanPortWiseDetailsBuilder_;
     }
 
-    private java.lang.Object cargoLoadingRate1_ = "";
+    private java.lang.Object cargoDischargingRate1_ = "";
     /**
-     * <code>string cargoLoadingRate1 = 13;</code>
+     * <code>string cargoDischargingRate1 = 13;</code>
      *
-     * @return The cargoLoadingRate1.
+     * @return The cargoDischargingRate1.
      */
-    public java.lang.String getCargoLoadingRate1() {
-      java.lang.Object ref = cargoLoadingRate1_;
+    public java.lang.String getCargoDischargingRate1() {
+      java.lang.Object ref = cargoDischargingRate1_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        cargoLoadingRate1_ = s;
+        cargoDischargingRate1_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string cargoLoadingRate1 = 13;</code>
+     * <code>string cargoDischargingRate1 = 13;</code>
      *
-     * @return The bytes for cargoLoadingRate1.
+     * @return The bytes for cargoDischargingRate1.
      */
-    public com.google.protobuf.ByteString getCargoLoadingRate1Bytes() {
-      java.lang.Object ref = cargoLoadingRate1_;
+    public com.google.protobuf.ByteString getCargoDischargingRate1Bytes() {
+      java.lang.Object ref = cargoDischargingRate1_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        cargoLoadingRate1_ = b;
+        cargoDischargingRate1_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string cargoLoadingRate1 = 13;</code>
+     * <code>string cargoDischargingRate1 = 13;</code>
      *
-     * @param value The cargoLoadingRate1 to set.
+     * @param value The cargoDischargingRate1 to set.
      * @return This builder for chaining.
      */
-    public Builder setCargoLoadingRate1(java.lang.String value) {
+    public Builder setCargoDischargingRate1(java.lang.String value) {
       if (value == null) {
         throw new NullPointerException();
       }
 
-      cargoLoadingRate1_ = value;
+      cargoDischargingRate1_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string cargoLoadingRate1 = 13;</code>
+     * <code>string cargoDischargingRate1 = 13;</code>
      *
      * @return This builder for chaining.
      */
-    public Builder clearCargoLoadingRate1() {
+    public Builder clearCargoDischargingRate1() {
 
-      cargoLoadingRate1_ = getDefaultInstance().getCargoLoadingRate1();
+      cargoDischargingRate1_ = getDefaultInstance().getCargoDischargingRate1();
       onChanged();
       return this;
     }
     /**
-     * <code>string cargoLoadingRate1 = 13;</code>
+     * <code>string cargoDischargingRate1 = 13;</code>
      *
-     * @param value The bytes for cargoLoadingRate1 to set.
+     * @param value The bytes for cargoDischargingRate1 to set.
      * @return This builder for chaining.
      */
-    public Builder setCargoLoadingRate1Bytes(com.google.protobuf.ByteString value) {
+    public Builder setCargoDischargingRate1Bytes(com.google.protobuf.ByteString value) {
       if (value == null) {
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
 
-      cargoLoadingRate1_ = value;
+      cargoDischargingRate1_ = value;
       onChanged();
       return this;
     }
 
-    private java.lang.Object cargoLoadingRate2_ = "";
+    private java.lang.Object cargoDischargingRate2_ = "";
     /**
-     * <code>string cargoLoadingRate2 = 14;</code>
+     * <code>string cargoDischargingRate2 = 14;</code>
      *
-     * @return The cargoLoadingRate2.
+     * @return The cargoDischargingRate2.
      */
-    public java.lang.String getCargoLoadingRate2() {
-      java.lang.Object ref = cargoLoadingRate2_;
+    public java.lang.String getCargoDischargingRate2() {
+      java.lang.Object ref = cargoDischargingRate2_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        cargoLoadingRate2_ = s;
+        cargoDischargingRate2_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string cargoLoadingRate2 = 14;</code>
+     * <code>string cargoDischargingRate2 = 14;</code>
      *
-     * @return The bytes for cargoLoadingRate2.
+     * @return The bytes for cargoDischargingRate2.
      */
-    public com.google.protobuf.ByteString getCargoLoadingRate2Bytes() {
-      java.lang.Object ref = cargoLoadingRate2_;
+    public com.google.protobuf.ByteString getCargoDischargingRate2Bytes() {
+      java.lang.Object ref = cargoDischargingRate2_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        cargoLoadingRate2_ = b;
+        cargoDischargingRate2_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string cargoLoadingRate2 = 14;</code>
+     * <code>string cargoDischargingRate2 = 14;</code>
      *
-     * @param value The cargoLoadingRate2 to set.
+     * @param value The cargoDischargingRate2 to set.
      * @return This builder for chaining.
      */
-    public Builder setCargoLoadingRate2(java.lang.String value) {
+    public Builder setCargoDischargingRate2(java.lang.String value) {
       if (value == null) {
         throw new NullPointerException();
       }
 
-      cargoLoadingRate2_ = value;
+      cargoDischargingRate2_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string cargoLoadingRate2 = 14;</code>
+     * <code>string cargoDischargingRate2 = 14;</code>
      *
      * @return This builder for chaining.
      */
-    public Builder clearCargoLoadingRate2() {
+    public Builder clearCargoDischargingRate2() {
 
-      cargoLoadingRate2_ = getDefaultInstance().getCargoLoadingRate2();
+      cargoDischargingRate2_ = getDefaultInstance().getCargoDischargingRate2();
       onChanged();
       return this;
     }
     /**
-     * <code>string cargoLoadingRate2 = 14;</code>
+     * <code>string cargoDischargingRate2 = 14;</code>
      *
-     * @param value The bytes for cargoLoadingRate2 to set.
+     * @param value The bytes for cargoDischargingRate2 to set.
      * @return This builder for chaining.
      */
-    public Builder setCargoLoadingRate2Bytes(com.google.protobuf.ByteString value) {
+    public Builder setCargoDischargingRate2Bytes(com.google.protobuf.ByteString value) {
       if (value == null) {
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
 
-      cargoLoadingRate2_ = value;
+      cargoDischargingRate2_ = value;
       onChanged();
       return this;
     }

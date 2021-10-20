@@ -18,4 +18,5 @@ public class FileRepoResponse {
   private String category;
   private Boolean isActive;
   private Boolean isTransferred;
+  private Boolean isSystemGenerated;
 }

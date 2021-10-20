@@ -1,7 +1,10 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.math.BigDecimal;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -47,4 +50,7 @@ public class SynopticalCargoBallastRecord {
 
   private Long planQtyId;
   private Integer planQtyCargoOrder;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private Long dischargeCargoNominationId;
 }

@@ -10,6 +10,8 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest;
@@ -662,5 +664,29 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   private String validateAndSaveData(UllageBillRequest request)
       throws GenericServiceException, IllegalAccessException, InvocationTargetException {
     return ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(request);
+  }
+
+  @Override
+  public void saveDischargingPlan(
+      DischargingPlanSaveRequest request,
+      StreamObserver<DischargingPlanSaveResponse> responseObserver) {
+    log.info("Inside save Discharging Plan");
+    DischargingPlanSaveResponse.Builder builder = DischargingPlanSaveResponse.newBuilder();
+    try {
+      dischargePlanAlgoService.saveDischargingSequenceAndPlan(request);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder().setStatus(DischargePlanConstants.SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Exception when saveLoadingPlan microservice is called", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(DischargePlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

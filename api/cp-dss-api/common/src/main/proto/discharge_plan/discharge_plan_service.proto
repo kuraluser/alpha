@@ -35,6 +35,9 @@ service DischargeInformationService {
   // Case 7, Cow plan
   rpc saveCowPlan(DischargeInformation) returns (DischargingInfoSaveResponse) {}
   
+  // Case 7, post discharge stage
+  rpc savePostDischargeStage(DischargeInformation) returns (DischargingInfoSaveResponse) {}
+  
 }
 
 service DischargePlanService{
@@ -42,6 +45,7 @@ service DischargePlanService{
   rpc GetDischargeUpdateUllageDetails (UpdateUllageDetailsRequest) returns (UpdateUllageDetailsResponse) {}
   rpc generateDischargePlan(DischargeInformationRequest) returns (DischargePlanAlgoRequest) {}
   rpc updateDischargeUllageDetails(UllageBillRequest) returns (UllageBillReply){}
+    rpc saveDischargingPlan(DischargingPlanSaveRequest) returns (DischargingPlanSaveResponse) {}
   
 }
 
