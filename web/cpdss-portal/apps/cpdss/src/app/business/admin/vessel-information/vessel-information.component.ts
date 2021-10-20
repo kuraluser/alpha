@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Subject } from 'rxjs';
 
 import { VesselInformationTransformationService } from './../services/vessel-information-transformation.service';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
@@ -8,7 +9,8 @@ import { VesselInformationApiService } from './../services/vessel-information-ap
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
 import { IDateTimeFormatOptions } from '../../../shared/models/common.model';
-import { IVesselList, IVesselListResponse } from '../models/vessel-info.model';
+import { IVesselInfoDataStateChange, IVesselList, IVesselListResponse } from '../models/vessel-info.model';
+import { debounceTime, switchMap } from 'rxjs/operators';
 
 /**
  * Component for vessel information page
@@ -22,14 +24,17 @@ import { IVesselList, IVesselListResponse } from '../models/vessel-info.model';
   templateUrl: './vessel-information.component.html',
   styleUrls: ['./vessel-information.component.scss']
 })
-export class VesselInformationComponent implements OnInit {
+export class VesselInformationComponent implements OnInit, OnDestroy {
 
   columns: any[];
   loading: boolean;
   totalRecords: number;
   currentPage: number;
   first: number;
+  vesselListPageState: IVesselInfoDataStateChange;
   vesselList: IVesselList[];
+
+  private getVesselMasterList$ = new Subject<IVesselInfoDataStateChange>();
 
   constructor(
     private vesselInformationTransformationService: VesselInformationTransformationService,
@@ -41,29 +46,43 @@ export class VesselInformationComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.columns = this.vesselInformationTransformationService.getVesselInfoTableColumns();
     this.getVesselMasterInformation();
+    this.columns = this.vesselInformationTransformationService.getVesselInfoTableColumns();
   }
 
   /**
    * function to get Vessel master details
    * @memberof VesselInformationComponent
    */
-  async getVesselMasterInformation() {
+  getVesselMasterInformation(): void {
+    this.ngxSpinnerService.show();
     this.first = 0;
     this.currentPage = 0;
-    this.ngxSpinnerService.show();
     const formatOptions: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat.split(' ')[0] };
-    const vesselListDetails: IVesselListResponse = await this.vesselInformationApiService.getVesselList().toPromise();
-    if (vesselListDetails.responseStatus.status === '200') {
-      this.vesselList = [...vesselListDetails.vesselList].map(vessel => {
-        vessel.dateOfLaunch = vessel?.dateOfLaunch && this.timeZoneTransformationService.formatDateTime(vessel?.dateOfLaunch, formatOptions);
-        return vessel;
-      });
-      this.totalRecords = this.vesselList.length;
-      this.loading = false;
-    }
-    this.ngxSpinnerService.hide();
+    this.getVesselMasterList$.pipe(
+      debounceTime(1000),
+      switchMap(() => {
+        return this.vesselInformationApiService.getVesselList(this.vesselListPageState);
+      })
+    ).subscribe((vesselListDetails: IVesselListResponse) => {
+      this.ngxSpinnerService.hide();
+      if (vesselListDetails?.responseStatus.status === '200') {
+        const vesselInfo = vesselListDetails?.vesselsInfo ? [...vesselListDetails?.vesselsInfo] : [];
+        this.totalRecords = vesselListDetails?.totalElements;
+        if (this.totalRecords && !vesselInfo?.length) {
+          this.currentPage -= 1;
+          this.vesselListPageState['pageNo'] = this.currentPage;
+          this.getVesselMasterList$.next();
+        }
+        this.vesselList = vesselInfo?.map(vessel => {
+          vessel.dateOfLaunch = vessel?.dateOfLaunch && this.timeZoneTransformationService.formatDateTime(vessel?.dateOfLaunch, formatOptions);
+          return vessel;
+        });
+        this.loading = false;
+      }
+    });
+    this.vesselListPageState = <IVesselInfoDataStateChange>{};
+    this.getVesselMasterList$.next();
   }
 
   /**
@@ -77,11 +96,32 @@ export class VesselInformationComponent implements OnInit {
 
   /**
    * function to get values on state change like search, sort, pagination
+   *
    * @param {*} event
-   * @memberof CargoHistoryComponent
+   * @memberof VesselInformationComponent
    */
   onDataStateChange(event: any): void {
-    // this.loading = true;
+    this.vesselListPageState = {
+      pageNo: event.paginator.currentPage,
+      pageSize: event.paginator.rows,
+      sortBy: event.sort.sortField,
+      orderBy: event.sort.sortOrder.toUpperCase(),
+      vesselName: event.filter?.vesselName,
+      vesselType: event.filter?.vesselType,
+      builder: event.filter?.builder,
+      dateOfLaunch: event.filter?.dateOfLaunch
+    };
+    this.loading = true;
+    this.getVesselMasterList$.next();
+  }
+
+  /**
+   * function to stop subscription
+   *
+   * @memberof VesselInformationComponent
+   */
+  ngOnDestroy() {
+    this.getVesselMasterList$.unsubscribe();
   }
 
 }
