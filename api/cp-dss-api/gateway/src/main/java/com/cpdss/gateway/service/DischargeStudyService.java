@@ -466,6 +466,7 @@ public class DischargeStudyService {
                   (isEmpty(port.getMaxDraft()) || port.getMaxDraft().equals("null"))
                       ? null
                       : new BigDecimal(port.getMaxDraft()));
+              portRotation.setOperationId(port.getOperationId());
               portRotation.setIsBackLoadingEnabled(port.getIsBackLoadingEnabled());
               portRotation.setBackLoading(buildBackLoading(port.getBackLoadingList()));
               portRotation.setCowId(port.getCowId());
