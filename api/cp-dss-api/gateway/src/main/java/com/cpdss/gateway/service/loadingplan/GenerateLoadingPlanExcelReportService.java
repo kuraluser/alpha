@@ -54,6 +54,7 @@ import com.cpdss.gateway.utility.ExcelExportUtility;
 import com.cpdss.gateway.utility.UnitConversionUtility;
 import com.cpdss.gateway.utility.UnitTypes;
 import java.awt.Color;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -96,6 +97,7 @@ public class GenerateLoadingPlanExcelReportService {
   public static final String YES = "Yes";
   public static final String NO = "No";
 
+  public String SUB_FOLDER_NAME = "/reports";
   public String TEMPLATES_FILE_LOCATION = "/reports/Vessel_{type}_Loading_Plan_Template.xlsx";
   // public String TEMPLATES_FILE_LOCATION =
   // "/reports/Vessel_1_Loading_Plan_Template.xlsx";
@@ -155,6 +157,7 @@ public class GenerateLoadingPlanExcelReportService {
       Boolean downloadRequired)
       throws Exception {
     log.info("Generating Loading plan excel for Vessel {}", vesselId);
+   
     // Setting file name of input file based on vessel type
     TEMPLATES_FILE_LOCATION = getLoadingPlanTemplateForVessel(vesselId);
 
@@ -167,6 +170,11 @@ public class GenerateLoadingPlanExcelReportService {
             vesselId,
             loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
             loadinPlanExcelDetails.getSheetOne().getPortName());
+    
+    File theDir = new File(rootFolder + SUB_FOLDER_NAME);
+    if (!theDir.exists()){
+        theDir.mkdirs();
+    }
     // Setting file name of output file
     StringBuilder outputLocation = new StringBuilder(rootFolder + actualFileName);
     // Getting data mapped and calling excel builder utility
@@ -198,8 +206,8 @@ public class GenerateLoadingPlanExcelReportService {
             loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
             actualFileName,
             "xlsx",
-            " ",
-            " ",
+            "Loading",
+            "Process",
             null);
         if (downloadRequired && resultFileStream != null) {
           log.info("Excel created.");
@@ -1385,8 +1393,8 @@ public class GenerateLoadingPlanExcelReportService {
               .orElse(PortInfo.PortDetail.getDefaultInstance());
       if (portReply != null) {
         sheetOne.setPortName(portReply.getName());
-        sheetOne.setEta(portRotation.get().getEta());
-        sheetOne.setEtd(portRotation.get().getEtd());
+        sheetOne.setEta(dateFormater(portRotation.get().getEta()));
+        sheetOne.setEtd(dateFormater(portRotation.get().getEtd()));
       }
     }
     if (activeVoyage.getActiveLs() != null) {
@@ -1403,7 +1411,14 @@ public class GenerateLoadingPlanExcelReportService {
     }
   }
 
-  /**
+  private String dateFormater(String eta) throws ParseException {
+      SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+      Date date = dt.parse(eta);
+      SimpleDateFormat dt1 = new SimpleDateFormat("dd MMMM yyyy");
+	return dt1.format(date);
+}
+
+/**
    * Berth information details
    *
    * @param sheetOne
@@ -1452,7 +1467,7 @@ public class GenerateLoadingPlanExcelReportService {
   }
 
   /**
-   * Calling port GROC for getting Port name
+   * Calling port GRPC for getting Port name
    *
    * @param build
    * @return PortReply
@@ -1502,7 +1517,7 @@ public class GenerateLoadingPlanExcelReportService {
   }
 
   /**
-   * Build arrival tank params
+   * Build tank params
    *
    * @param excelData
    * @param requestPayload
