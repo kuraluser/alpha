@@ -455,32 +455,34 @@ public class DischargeStudyService {
                     cargoNomination -> cargoNomination.getValue().getPortId(),
                     Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
 
-    portRotationReply
-        .getPortsList()
-        .forEach(
-            port -> {
-              PortRotation portRotation = new PortRotation();
-              portRotation.setPortId(port.getPortId());
-              portRotation.setId(port.getId());
-              portRotation.setMaxDraft(
-                  (isEmpty(port.getMaxDraft()) || port.getMaxDraft().equals("null"))
-                      ? null
-                      : new BigDecimal(port.getMaxDraft()));
-              portRotation.setOperationId(port.getOperationId());
-              portRotation.setIsBackLoadingEnabled(port.getIsBackLoadingEnabled());
-              portRotation.setBackLoading(buildBackLoading(port.getBackLoadingList()));
-              portRotation.setCowId(port.getCowId());
-              portRotation.setPercentage(port.getPercentage());
-              portRotation.setTanks(port.getTanksList());
-              portRotation.setInstructionId(port.getInstructionIdList());
-              portRotation.setDischargeRate(new BigDecimal(0));
-              if (portIdsToCargoNominationMap.containsKey(port.getPortId())) {
-                List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =
-                    portIdsToCargoNominationMap.get(port.getPortId());
-                buildCargoNomination(cargoNominationDetailList, portRotation);
-              }
-              response.getPortList().add(portRotation);
-            });
+    List<PortRotationDetail> discharginPorts =
+        portRotationReply.getPortsList().stream()
+            .filter(port -> port.getOperationId() == 2)
+            .collect(Collectors.toList());
+    discharginPorts.forEach(
+        port -> {
+          PortRotation portRotation = new PortRotation();
+          portRotation.setPortId(port.getPortId());
+          portRotation.setId(port.getId());
+          portRotation.setMaxDraft(
+              (isEmpty(port.getMaxDraft()) || port.getMaxDraft().equals("null"))
+                  ? null
+                  : new BigDecimal(port.getMaxDraft()));
+          portRotation.setOperationId(port.getOperationId());
+          portRotation.setIsBackLoadingEnabled(port.getIsBackLoadingEnabled());
+          portRotation.setBackLoading(buildBackLoading(port.getBackLoadingList()));
+          portRotation.setCowId(port.getCowId());
+          portRotation.setPercentage(port.getPercentage());
+          portRotation.setTanks(port.getTanksList());
+          portRotation.setInstructionId(port.getInstructionIdList());
+          portRotation.setDischargeRate(new BigDecimal(0));
+          if (portIdsToCargoNominationMap.containsKey(port.getPortId())) {
+            List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =
+                portIdsToCargoNominationMap.get(port.getPortId());
+            buildCargoNomination(cargoNominationDetailList, portRotation);
+          }
+          response.getPortList().add(portRotation);
+        });
   }
 
   private List<BackLoading> buildBackLoading(

@@ -931,14 +931,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     PortRotationReply.Builder replyBuilder = PortRotationReply.newBuilder();
     try {
       loadableStudyPortRotationService.saveLoadableStudyPortRotation(request, replyBuilder);
-      if(request.getOperationId()==2) {
-    	  if (request.getId() == 0) {
-        dischargeStudyService.addCargoNominationForPortRotation(
-            replyBuilder.getPortRotationId(), request.getLoadableStudyId());
-      } else {
-        dischargeStudyService.resetCargoNominationQuantityAndBackLoading(
-            replyBuilder.getPortRotationId(), request.getLoadableStudyId());
-      }
+      if (request.getOperationId() == 2) {
+        if (request.getId() == 0) {
+          dischargeStudyService.addCargoNominationForPortRotation(
+              replyBuilder.getPortRotationId(), request.getLoadableStudyId());
+        } else {
+          dischargeStudyService.resetCargoNominationQuantityAndBackLoading(
+              replyBuilder.getPortRotationId(), request.getLoadableStudyId());
+        }
       }
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study - port data", e);

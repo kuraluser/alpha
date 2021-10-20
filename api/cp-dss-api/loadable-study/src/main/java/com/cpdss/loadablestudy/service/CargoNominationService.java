@@ -1,7 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGING_OPERATION_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static java.util.Optional.ofNullable;
