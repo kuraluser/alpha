@@ -90,10 +90,7 @@ public class LoadingPlanSchedulerService {
                       LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
                       ScheduledTaskProperties properties = new ScheduledTaskProperties();
                       properties.setTaskName(
-                          "LOADING_PLAN_STATUS_CHECK"
-                              + environment
-                              + "_"
-                              + vesssel.getVesselId());
+                          "LOADING_PLAN_STATUS_CHECK" + environment + "_" + vesssel.getVesselId());
                       properties.setTaskFrequency(60);
                       properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
                       properties.setTaskStartDate(dateTime.toLocalDate());

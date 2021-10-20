@@ -440,42 +440,42 @@ public class LoadingPlanCommunicationService {
         LoadingInformation loadingInfo = null;
         if (loadingInformation != null) {
           try {
-            if(stageOffset != null){
+            if (stageOffset != null) {
               Optional<StageOffset> defaultOffsetOpt =
-                      stageOffsetRepository.findByIdAndIsActiveTrue(stageOffset.getId());
+                  stageOffsetRepository.findByIdAndIsActiveTrue(stageOffset.getId());
               if (defaultOffsetOpt.isPresent()) {
                 loadingInformation.setStageOffset(defaultOffsetOpt.get());
               }
             }
-           if(stageDuration !=null){
-             Optional<StageDuration> defaultDurationOpt =
-                     stageDurationRepository.findByIdAndIsActiveTrue(stageDuration.getId());
-             if (defaultDurationOpt.isPresent()) {
-               loadingInformation.setStageDuration(defaultDurationOpt.get());
-             }
-           }
-           if(loadingInformationStatus !=null){
-             Optional<LoadingInformationStatus> informationStatusOpt =
-                     loadingInfoStatusRepository.findByIdAndIsActive(
-                             loadingInformationStatus.getId(), true);
-             if (informationStatusOpt.isPresent()) {
-               loadingInformation.setLoadingInformationStatus(informationStatusOpt.get());
-             }
-           }
-          if(arrivalStatus !=null){
-            Optional<LoadingInformationStatus> arrivalStatusOpt =
-                    loadingInfoStatusRepository.findByIdAndIsActive(arrivalStatus.getId(), true);
-            if (arrivalStatusOpt.isPresent()) {
-              loadingInformation.setArrivalStatus(arrivalStatusOpt.get());
+            if (stageDuration != null) {
+              Optional<StageDuration> defaultDurationOpt =
+                  stageDurationRepository.findByIdAndIsActiveTrue(stageDuration.getId());
+              if (defaultDurationOpt.isPresent()) {
+                loadingInformation.setStageDuration(defaultDurationOpt.get());
+              }
             }
-          }
-          if(departureStatus !=null){
-            Optional<LoadingInformationStatus> departureStatusOpt =
-                    loadingInfoStatusRepository.findByIdAndIsActive(departureStatus.getId(), true);
-            if (departureStatusOpt.isPresent()) {
-              loadingInformation.setDepartureStatus(departureStatusOpt.get());
+            if (loadingInformationStatus != null) {
+              Optional<LoadingInformationStatus> informationStatusOpt =
+                  loadingInfoStatusRepository.findByIdAndIsActive(
+                      loadingInformationStatus.getId(), true);
+              if (informationStatusOpt.isPresent()) {
+                loadingInformation.setLoadingInformationStatus(informationStatusOpt.get());
+              }
             }
-          }
+            if (arrivalStatus != null) {
+              Optional<LoadingInformationStatus> arrivalStatusOpt =
+                  loadingInfoStatusRepository.findByIdAndIsActive(arrivalStatus.getId(), true);
+              if (arrivalStatusOpt.isPresent()) {
+                loadingInformation.setArrivalStatus(arrivalStatusOpt.get());
+              }
+            }
+            if (departureStatus != null) {
+              Optional<LoadingInformationStatus> departureStatusOpt =
+                  loadingInfoStatusRepository.findByIdAndIsActive(departureStatus.getId(), true);
+              if (departureStatusOpt.isPresent()) {
+                loadingInformation.setDepartureStatus(departureStatusOpt.get());
+              }
+            }
             loadingInfo = loadingInformationRepository.save(loadingInformation);
             log.info("LoadingInformation saved with id:" + loadingInfo.getId());
           } catch (ResourceAccessException e) {
