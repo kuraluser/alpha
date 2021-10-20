@@ -428,8 +428,8 @@ public class DischargeInformationBuilderService {
 
     DischargeInformation.Builder builder = DischargeInformation.newBuilder();
     List<Callable<DischargingInfoSaveResponse>> callableTasks = new ArrayList<>();
-    builder.setDischargeInfoId(request.getDischargingInfoId());
-    builder.setSynopticTableId(request.getSynopticalTableId());
+    builder.setDischargeInfoId(request.getDischargeInfoId());
+    builder.setSynopticTableId(request.getSynopticTableId());
     builder.setIsDischargingInfoComplete(request.getIsDischargeInfoComplete());
 
     // Discharging Info Case 1 - Details
@@ -438,7 +438,7 @@ public class DischargeInformationBuilderService {
           () -> {
             builder.setDischargeDetails(
                 buildDischargingDetails(
-                    request.getDischargingDetails(), request.getDischargingInfoId()));
+                    request.getDischargingDetails(), request.getDischargeInfoId()));
             return dischargeInfoServiceStub.saveDischargingInformation(builder.build());
           };
       callableTasks.add(t1);
@@ -460,7 +460,7 @@ public class DischargeInformationBuilderService {
           () -> {
             builder.setDischargeRate(
                 buildDischargingRates(
-                    request.getDischargingRates(), request.getDischargingInfoId()));
+                    request.getDischargingRates(), request.getDischargeInfoId()));
             return dischargeInfoServiceStub.saveDischargingInfoRates(builder.build());
           };
       callableTasks.add(t3);
@@ -472,7 +472,7 @@ public class DischargeInformationBuilderService {
           () -> {
             builder.addAllBerthDetails(
                 buildDischargingBerths(
-                    request.getDischargingBerths(), request.getDischargingInfoId()));
+                    request.getDischargingBerths(), request.getDischargeInfoId()));
             return dischargeInfoServiceStub.saveDischargingInfoBerths(builder.build());
           };
       callableTasks.add(t4);
@@ -485,7 +485,7 @@ public class DischargeInformationBuilderService {
             DischargeDelay.Builder dischargingDelayBuilder = DischargeDelay.newBuilder();
             dischargingDelayBuilder.addAllDelays(
                 buildDischargingDelays(
-                    request.getDischargingDelays(), request.getDischargingInfoId()));
+                    request.getDischargingDelays(), request.getDischargeInfoId()));
             builder.setDischargeDelay(dischargingDelayBuilder.build());
             return dischargeInfoServiceStub.saveDischargingInfoDelays(builder.build());
           };
@@ -498,7 +498,7 @@ public class DischargeInformationBuilderService {
           () -> {
             builder.addAllMachineInUse(
                 buildDischargingMachineries(
-                    request.getDischargingMachineries(), request.getDischargingInfoId()));
+                    request.getDischargingMachineries(), request.getDischargeInfoId()));
             return dischargeInfoServiceStub.saveDischargingInfoMachinery(builder.build());
           };
       callableTasks.add(t6);
@@ -508,7 +508,7 @@ public class DischargeInformationBuilderService {
       Callable<DischargingInfoSaveResponse> t7 =
           () -> {
             builder.setCowPlan(
-                buildDischargeCowDetails(request.getCowPlan(), request.getDischargingInfoId()));
+                buildDischargeCowDetails(request.getCowPlan(), request.getDischargeInfoId()));
             return dischargeInfoServiceStub.saveCowPlan(builder.build());
           };
       callableTasks.add(t7);
