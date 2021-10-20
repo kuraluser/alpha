@@ -66,7 +66,7 @@ appConfig {
 }
 
 dependencies {
-    implementation project(':common')
+   implementation project(':common')
     testImplementation('net.devh:grpc-server-spring-boot-starter:2.10.1.RELEASE')
     implementation 'org.keycloak:keycloak-spring-security-adapter:12.0.3'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
@@ -74,8 +74,9 @@ dependencies {
     implementation 'org.apache.commons:commons-collections4:4.4'  
     testRuntime "org.junit.platform:junit-platform-runner:1.5.2"
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
-	implementation 'org.jxls:jxls:2.10.0'
-    implementation 'org.jxls:jxls-poi:2.10.0'
+    implementation('org.jxls:jxls-poi:2.10.0'){
+        exclude group: 'ch.qos.logback', module: 'logback-core'
+    }
     implementation 'org.apache.poi:poi:5.0.0'
     implementation 'org.apache.poi:poi-ooxml:5.0.0'
 }

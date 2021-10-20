@@ -46,8 +46,8 @@ import com.cpdss.gateway.domain.loadingplan.sequence.TankCategory;
 import com.cpdss.gateway.domain.loadingplan.sequence.TankCategoryForSequence;
 import com.cpdss.gateway.domain.loadingplan.sequence.TankWithSequenceDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
+import com.cpdss.gateway.service.FileRepoService;
 import com.cpdss.gateway.service.VesselInfoService;
-import com.cpdss.gateway.service.loadingplan.impl.LoadingInformationServiceImpl;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingInstructionService;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingPlanServiceImpl;
 import com.cpdss.gateway.utility.ExcelExportUtility;
@@ -58,8 +58,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -94,7 +97,8 @@ public class GenerateLoadingPlanExcelReportService {
   public static final String NO = "No";
 
   public String TEMPLATES_FILE_LOCATION = "/reports/Vessel_{type}_Loading_Plan_Template.xlsx";
-  //	public String TEMPLATES_FILE_LOCATION = "/reports/Vessel_1_Loading_Plan_Template.xlsx";
+  // public String TEMPLATES_FILE_LOCATION =
+  // "/reports/Vessel_1_Loading_Plan_Template.xlsx";
   public String OUTPUT_FILE_LOCATION = "/reports/Vessel_{id}_Loading_Plan_{voy}_{port}.xlsx";
   public String TEMP_LOCATION = "temp.xlsx";
   public final Integer START_ROW = 14;
@@ -120,8 +124,8 @@ public class GenerateLoadingPlanExcelReportService {
   @Autowired ExcelExportUtility excelExportUtil;
   @Autowired private VesselInfoService vesselInfoService;
   @Autowired private LoadingInstructionService loadingInstructionService;
-  @Autowired private LoadingInformationServiceImpl loadingInformationService;
   @Autowired private LoadingPlanServiceImpl loadingPlanServiceImpl;
+  @Autowired private FileRepoService FileRepoService;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -157,18 +161,18 @@ public class GenerateLoadingPlanExcelReportService {
     // Building data required for Loading plan Excel
     LoadingPlanExcelDetails loadinPlanExcelDetails =
         getDataForExcel(requestPayload, vesselId, voyageId, infoId, portRotationId);
-    // Setting file name of output file
-    StringBuilder outputLocation =
-        new StringBuilder(
-            rootFolder
-                + getFileName(
-                    vesselId,
-                    loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
-                    loadinPlanExcelDetails.getSheetOne().getPortName()));
 
+    String actualFileName =
+        getFileName(
+            vesselId,
+            loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
+            loadinPlanExcelDetails.getSheetOne().getPortName());
+    // Setting file name of output file
+    StringBuilder outputLocation = new StringBuilder(rootFolder + actualFileName);
     // Getting data mapped and calling excel builder utility
-    //		FileInputStream resultFileStream = new FileInputStream(
-    //				excelExportUtil.generateExcel(loadinPlanExcelDetails, TEMPLATES_FILE_LOCATION,
+    // FileInputStream resultFileStream = new FileInputStream(
+    // excelExportUtil.generateExcel(loadinPlanExcelDetails,
+    // TEMPLATES_FILE_LOCATION,
     // OUTPUT_FILE_LOCATION));
 
     // Getting data mapped and calling excel builder utility
@@ -178,7 +182,6 @@ public class GenerateLoadingPlanExcelReportService {
                 loadinPlanExcelDetails, TEMPLATES_FILE_LOCATION, TEMP_LOCATION));
 
     if (resultFileStream != null) {
-      // TODO put an entry in DB for Communication
       FileOutputStream outFile = new FileOutputStream(outputLocation.toString());
       log.info("Excel generated, setting color based on cargo in all sheets");
       XSSFWorkbook workbook;
@@ -189,6 +192,15 @@ public class GenerateLoadingPlanExcelReportService {
         resultFileStream.close();
         // Returning Output file as byte array for local download
         resultFileStream = new FileInputStream(outputLocation.toString());
+        // Putting entry in file repo
+        FileRepoService.addFileToRepo(
+            null,
+            loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
+            actualFileName,
+            "xlsx",
+            " ",
+            " ",
+            null);
         if (downloadRequired && resultFileStream != null) {
           log.info("Excel created.");
           return IOUtils.toByteArray(resultFileStream);
@@ -389,7 +401,7 @@ public class GenerateLoadingPlanExcelReportService {
       }
     }
     // Cargo to be loaded area color
-    for (col = 5; col <= 5 + data.getCargoTobeLoaded().size(); col++) {
+    for (col = 5; col <= 5 + (data.getCargoTobeLoaded().size() * 5); col += 5) {
       row = 61;
       cell = sheet.getRow(row).getCell(col);
       setCargoColor(workbook, sheet, cell, null, data.getCargoTobeLoaded(), null);
@@ -460,11 +472,11 @@ public class GenerateLoadingPlanExcelReportService {
     newFont.setFontName(font.getFontName());
     newFont.setFontHeight(font.getFontHeight());
     newFont.setItalic(font.getItalic());
-    //		if (Integer.parseInt(colorCode.substring(1), 16) > 0xffffff / 2) {
-    //			font.setColor(new XSSFColor(Color.BLACK));
-    //		} else {
-    //			font.setColor(new XSSFColor(Color.WHITE));
-    //		}
+    // if (Integer.parseInt(colorCode.substring(1), 16) > 0xffffff / 2) {
+    // font.setColor(new XSSFColor(Color.BLACK));
+    // } else {
+    // font.setColor(new XSSFColor(Color.WHITE));
+    // }
     Color tempColor = excelExportUtil.getContrastColor(color);
     newFont.setColor(new XSSFColor(tempColor, new DefaultIndexedColorMap()));
     newCellStyle.setFont(newFont);
@@ -651,16 +663,9 @@ public class GenerateLoadingPlanExcelReportService {
       Long voyageId,
       Long infoId,
       Long portRotationId)
-      throws GenericServiceException, InterruptedException, ExecutionException {
+      throws GenericServiceException, InterruptedException, ExecutionException, ParseException {
     log.info("Getting details for excel sheetwise ");
-    // ExecutorService threadPool = Executors.newFixedThreadPool(3);
-    // Callable<LoadingPlanExcelLoadingPlanDetails> callable = () ->
-    // buildSheetOne(requestPayload, vesselId, voyageId,
-    // infoId, portRotationId);
-    // Future<LoadingPlanExcelLoadingPlanDetails> future =
-    // threadPool.submit(callable);
     LoadingPlanExcelDetails excelData = new LoadingPlanExcelDetails();
-    // excelData.setSheetOne(future.get());
     if (requestPayload == null) {
       // Calling loading plan get plan details service
       requestPayload =
@@ -678,7 +683,6 @@ public class GenerateLoadingPlanExcelReportService {
         buildSheetOne(requestPayload, vesselId, voyageId, infoId, portRotationId));
     excelData.setSheetTwo(buildSheetTwo(vesselId, voyageId, infoId, portRotationId));
     excelData.setSheetThree(buildSheetThree(vesselId, voyageId, infoId, portRotationId));
-    //		threadPool.shutdown();
     return excelData;
   }
 
@@ -801,7 +805,7 @@ public class GenerateLoadingPlanExcelReportService {
         } else {
           instructionObj.setHeading("   " + heading);
         }
-        instructionObj.setInstruction("-**No instructions available under this section**-");
+        instructionObj.setInstruction("**No instructions available under this section**");
         if (group == 0) {
           instructionObj.setCargoLoadingVisible(true);
         } else if (group == 5) {
@@ -878,7 +882,6 @@ public class GenerateLoadingPlanExcelReportService {
     // Calling loading plan get sequence details service
     LoadingSequenceResponse loadingSequenceResponse =
         loadingPlanServiceImpl.getLoadingSequence(vesselId, voyageId, infoId);
-
     LoadingPlanExcelLoadingSequenceDetails sheetThree =
         new LoadingPlanExcelLoadingSequenceDetails();
     // Calculating no:of stages in sequence
@@ -893,9 +896,6 @@ public class GenerateLoadingPlanExcelReportService {
           getCargoTanks(
               loadingSequenceResponse.getCargoTankCategories(),
               loadingSequenceResponse.getCargos()));
-      log.info(
-          "Cargo list "
-              + sheetThree.getCargoTanks().size()); // TODO check tank number against template
       if (sheetThree.getCargoTanks().size() > 0) {
         // Getting ullage mapped against each tank if present
         getCargoTankUllageAndQuantity(
@@ -913,10 +913,6 @@ public class GenerateLoadingPlanExcelReportService {
           getBallastTanks(
               loadingSequenceResponse.getBallastTankCategories(),
               loadingSequenceResponse.getBallasts()));
-      log.info(
-          "BallastTanks list "
-              + sheetThree.getBallastTanks().size()); // TODO check tank number against
-      // template
       if (sheetThree.getBallastTanks().size() > 0) {
         getBallastTankUllageAndQuantity(
             loadingSequenceResponse.getStageTickPositions(),
@@ -1125,13 +1121,15 @@ public class GenerateLoadingPlanExcelReportService {
    * @return
    */
   private List<String> getTickPoints(Long minXAxisValue, Set<Long> stageTickPositions) {
-    List<String> tickPoints = new ArrayList<>();
+    List<Double> tickPoints = new ArrayList<>();
     for (Long xValue : stageTickPositions) {
       Double hours = ((xValue.doubleValue() - minXAxisValue.doubleValue()) / 1000) / 3600;
-      tickPoints.add(String.format("%.2f", hours));
+      tickPoints.add(hours);
     }
-    // tickPoints.remove(tickPoints.indexOf("0"));
-    return tickPoints;
+    return tickPoints.stream()
+        .sorted()
+        .map(i -> String.format("%.2f", i))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -1314,6 +1312,7 @@ public class GenerateLoadingPlanExcelReportService {
    *
    * @return sheet one
    * @throws GenericServiceException
+   * @throws ParseException
    */
   private LoadingPlanExcelLoadingPlanDetails buildSheetOne(
       LoadingPlanResponse requestPayload,
@@ -1321,7 +1320,7 @@ public class GenerateLoadingPlanExcelReportService {
       Long voyageId,
       Long infoId,
       Long portRotationId)
-      throws GenericServiceException {
+      throws GenericServiceException, ParseException {
     log.info("Building sheet 1 : Loading plan diagram");
     LoadingPlanExcelLoadingPlanDetails sheetOne = new LoadingPlanExcelLoadingPlanDetails();
     getBasicVesselDetails(sheetOne, vesselId, voyageId, infoId, portRotationId);
@@ -1344,6 +1343,7 @@ public class GenerateLoadingPlanExcelReportService {
    * @param infoId
    * @param portRotationId
    * @throws GenericServiceException
+   * @throws ParseException
    */
   private void getBasicVesselDetails(
       LoadingPlanExcelLoadingPlanDetails sheetOne,
@@ -1351,7 +1351,7 @@ public class GenerateLoadingPlanExcelReportService {
       Long voyageId,
       Long infoId,
       Long portRotationId)
-      throws GenericServiceException {
+      throws GenericServiceException, ParseException {
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     Optional<PortRotation> portRotation =
         activeVoyage.getPortRotations().stream()
@@ -1415,12 +1415,18 @@ public class GenerateLoadingPlanExcelReportService {
     List<BerthInformation> berthInfoList = new ArrayList<>();
     List<BerthDetails> berthDetailsList =
         requestPayload.getLoadingInformation().getBerthDetails().getSelectedBerths();
+    List<BerthDetails> allBerths =
+        requestPayload.getLoadingInformation().getBerthDetails().getAvailableBerths();
     String itemsAgreedWithTerminal = "";
     if (!berthDetailsList.isEmpty()) {
       berthDetailsList.forEach(
           item -> {
             BerthInformation berthInformation = new BerthInformation();
-            Optional.ofNullable(item.getBerthName()).ifPresent(berthInformation::setBerthName);
+            Optional<BerthDetails> opt =
+                allBerths.stream()
+                    .filter(berth -> berth.getBerthId().equals(item.getBerthId()))
+                    .findAny();
+            Optional.ofNullable(opt.get().getBerthName()).ifPresent(berthInformation::setBerthName);
             Optional.ofNullable(item.getHoseConnections())
                 .ifPresent(berthInformation::setHoseConnection);
             Optional.ofNullable(item.getMaxManifoldPressure())
@@ -1477,7 +1483,7 @@ public class GenerateLoadingPlanExcelReportService {
             Optional.ofNullable(item.getColorCode()).ifPresent(cargoTobeLoaded::setColorCode);
             Optional.ofNullable(item.getEstimatedAPI()).ifPresent(cargoTobeLoaded::setApi);
             Optional.ofNullable(item.getEstimatedTemp()).ifPresent(cargoTobeLoaded::setTemperature);
-            //				TODO loading port coming as a list expected only a string
+            // TODO loading port coming as a list expected only a string
             Optional.ofNullable(item.getLoadingPorts())
                 .ifPresent(ports -> cargoTobeLoaded.setLoadingPort(ports.get(0)));
             Optional.ofNullable(item.getCargoNominationQuantity())

@@ -100,13 +100,6 @@ public class ExcelExportUtility {
     // object to a map
     @SuppressWarnings("unchecked")
     Map<String, Object> dataMap = mapper.convertValue(dataObj, Map.class);
-
-    dataMap
-        .entrySet()
-        .forEach(
-            entry -> {
-              log.info(entry.getKey() + " : " + entry.getValue()); // TODO remove
-            });
     // Creating JXLS context
     for (Entry<String, Object> element : dataMap.entrySet()) {
       context.putVar(element.getKey(), element.getValue());
