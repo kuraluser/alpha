@@ -28,11 +28,6 @@
                         (onChange)="onDischargeStudyChange($event)" resetFilterOnHide="true"></p-dropdown>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-12"  *ngIf="!dischargeStudies?.length && voyages">
-                    <p class="text-uppercase text-center text-danger">{{'DISCHARGE_STUDY_PORTS_VIEW_PLAN_NOT_AVAILABLE' | translate}}</p>
-                </div>
-            </div>
         </div>
         <div class="col text-right">
             <div class="">
@@ -54,11 +49,14 @@
         </div>
         
     </div>
-    <div *ngIf="dischargeStudies?.length && !dischargeStudyPlanDetails?.length">
-        {{'DISCHARGE_PLAN_VIEW_NO_PLAN_GENERATED' |translate}}
+    <div *ngIf="!dischargeStudies?.length && voyages">
+        <p class="text-uppercase text-center text-danger">{{'DISCHARGE_STUDY_PORTS_VIEW_PLAN_NOT_AVAILABLE' | translate}}</p>
+    </div>
+    <div *ngIf="dischargeStudies?.length && ![DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED,DISCHARGE_STUDY_STATUS.PLAN_GENERATED].includes(selectedDischargeStudy?.statusId)">
+        <p class="text-uppercase text-center text-danger">{{'DISCHARGE_PLAN_VIEW_NO_PLAN_GENERATED' |translate}}</p>
     </div>
   
-    <cpdss-portal-view-plan *ngIf="ports && cargos && selectedDischargeStudy" [cargos]="cargos" [ports]="ports" [vesselId]="vesselId" [voyageId]="voyageId" [voyage]="selectedVoyage"
+    <cpdss-portal-view-plan *ngIf="ports && cargos && selectedDischargeStudy && [DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED,DISCHARGE_STUDY_STATUS.PLAN_GENERATED].includes(selectedDischargeStudy?.statusId)" [cargos]="cargos" [ports]="ports" [vesselId]="vesselId" [voyageId]="voyageId" [voyage]="selectedVoyage"
         [dischargeStudyId]="dischargeStudyId" [dischargeStudy]="selectedDischargeStudy" (dischargeStudyPlan)="planDetails($event)" 
         [(dischargePatternId)]="dischargePatternId"></cpdss-portal-view-plan>
 

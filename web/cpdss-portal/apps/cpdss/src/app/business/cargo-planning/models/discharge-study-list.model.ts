@@ -197,6 +197,7 @@ export interface IPortDetailValueObject {
     port: IPort;
     instruction: IInstruction;
     portTimezoneId: number;
+    operationId: number;
     maxDraft: number;
     cargoDetail: IPortCargo[];
     cow: IMode;
@@ -337,6 +338,7 @@ export interface IDischargeStudyPortListDetails {
     isBackLoadingEnabled: boolean;
     backLoading: IDischargeStudyBackLoadingDetails[];
     tanks: number[];
+    operationId: number;
     cargoNominationList: IDischargeStudyCargoNominationList[];
 }
 

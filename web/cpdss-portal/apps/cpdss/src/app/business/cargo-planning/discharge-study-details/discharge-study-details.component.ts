@@ -11,6 +11,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { Voyage, IPort, VOYAGE_STATUS, DISCHARGE_STUDY_STATUS, ICargo, DISCHARGE_STUDY_STATUS_TEXT, IAlgoError, IAlgoResponse } from '../../core/models/common.model';
 
+import { DischargeStudyComponent } from './discharge-study/discharge-study.component'
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
@@ -40,7 +41,7 @@ import { SecurityService } from '../../../shared/services/security/security.serv
   styleUrls: ['./discharge-study-details.component.scss']
 })
 export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
-  @ViewChild('dischargeStudy') dischargeStudyRef;
+  @ViewChild('dischargeStudy') dischargeStudy: DischargeStudyComponent;
 
   get selectedDischargeStudy(): IDischargeStudy {
     return this._selectedDischargeStudy;
@@ -94,7 +95,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
-    return !(this.dischargeStudyRef?.dischargeStudyForm?.dirty);
+    return !(this.dischargeStudy?.dischargeStudyForm?.dirty);
   }
 
   constructor(
@@ -571,6 +572,18 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
     const value = await this.unsavedChangesGuard.canDeactivate(this);
     if (!value) { return };
     this.router.navigate([`business/cargo-planning/discharge-plan/${this.vesselId}/${this.voyageId}/${this.dischargeStudyId}`]);
+  }
+
+  /**
+    * Check if Discharge study is valid or not
+    * @memberof DischargeStudyDetailsComponent
+  */
+  isDischargeStudyValid() {
+    if(this.dischargeStudy?.dischargeStudyForm) {
+      return this.dischargeStudyComplete && !this.dischargeStudy?.dischargeStudyForm?.dirty && this.dischargeStudy?.dischargeStudyForm?.valid;
+    } else {
+      return this.dischargeStudyComplete;
+    }
   }
 
 }
