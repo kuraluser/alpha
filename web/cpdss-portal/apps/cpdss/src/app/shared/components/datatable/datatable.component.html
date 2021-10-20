@@ -164,6 +164,13 @@
                                             {{button.icons ? '' : button.label}}</a>
                                     </ng-container>
                                 </ng-container>
+                                <ng-container *ngSwitchCase="fieldType.FILEICONS">
+                                    <a type="button" [pTooltip]="col.showTooltip ? rowData[col.fieldValue] : null"
+                                    tooltipPosition="right"
+                                        id="{{tableId + 'button' + rowIndex + 'icon'}}"
+                                        class="{{rowData[col.iconField]}}">
+                                    </a>
+                                </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.ACTION">
                                     <div class="action-buttons"

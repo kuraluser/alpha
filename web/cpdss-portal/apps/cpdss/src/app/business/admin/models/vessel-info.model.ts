@@ -20,7 +20,8 @@ export interface IVesselList {
  */
 export interface IVesselListResponse {
     responseStatus: IResponseStatus;
-    vesselList: IVesselList[];
+    vesselsInfo: IVesselList[];
+    totalElements: number;
 }
 
 /**
@@ -89,4 +90,18 @@ export interface IVesselDetailsResponse {
     ballastCenterTanks: IShipBallastTank[][];
     ballastRearTanks: IShipBallastTank[][];
     cargoTanks: IShipCargoTank[][];
+}
+
+/**
+ * Interface vessel list GET API subscription params
+ */
+export interface IVesselInfoDataStateChange {
+    pageSize: number;
+    pageNo: number;
+    sortBy: string;
+    orderBy: string;
+    vesselName: string;
+    vesselType: string;
+    builder: string;
+    dateOfLaunch: string;
 }

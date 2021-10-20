@@ -34,14 +34,14 @@ export class FileRepositoryTransformationService {
   repositoryTableColumn() {
     const columns: IDataTableColumn[] = [
       {
-        header: 'SL. NO',
+        header: 'FILE_REPOSITORY_SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO
       },
       {
         field: 'voyageNumber',
-        header: 'Voyage Number',
+        header: 'FILE_REPOSITORY_VOY_NO',
         filter: true,
-        filterPlaceholder: 'Search Voyage Number',
+        filterPlaceholder: 'FILE_REPOSITORY_SEARCH_VOY',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'voyageNumber',
@@ -49,9 +49,9 @@ export class FileRepositoryTransformationService {
       },
       {
         field: 'fileName',
-        header: 'File Name',
+        header: 'FILE_REPOSITORY_FILE_NAME',
         filter: true,
-        filterPlaceholder: 'Search file name',
+        filterPlaceholder: 'FILE_REPOSITORY_SEARCH_FILE',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'fileName',
@@ -59,9 +59,11 @@ export class FileRepositoryTransformationService {
       },
       {
         field: 'fileType',
-        header: 'File Type',
+        header: 'FILE_REPOSITORY_FILE_TYPE',
+        fieldType: DATATABLE_FIELD_TYPE.FILEICONS,
+        iconField: 'fileIcon',
         filter: true,
-        filterPlaceholder: 'Search file type',
+        filterPlaceholder: 'FILE_REPOSITORY_SEARCH_TYPE',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'fileType',
@@ -69,9 +71,9 @@ export class FileRepositoryTransformationService {
       },
       {
         field: 'section',
-        header: 'Section',
+        header: 'FILE_REPOSITORY_FILE_SECTION',
         filter: true,
-        filterPlaceholder: 'Search Section',
+        filterPlaceholder: 'FILE_REPOSITORY_SEARCH_SECTION',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'section',
@@ -79,9 +81,9 @@ export class FileRepositoryTransformationService {
       },
       {
         field: 'category',
-        header: 'Category',
+        header: 'FILE_REPOSITORY_FILE_CATEGORY',
         filter: true,
-        filterPlaceholder: 'Search Category',
+        filterPlaceholder: 'FILE_REPOSITORY_SEARCH_CATEGORY',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'category',
@@ -89,9 +91,9 @@ export class FileRepositoryTransformationService {
       },
       {
         field: 'createdDate',
-        header: 'Date',
+        header: 'FILE_REPOSITORY_FILE_DATE',
         filter: true,
-        filterPlaceholder: 'Search Category',
+        filterPlaceholder: 'FILE_REPOSITORY_SEARCH_DATE',
         filterType: DATATABLE_FILTER_TYPE.DATE,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'createdDate',

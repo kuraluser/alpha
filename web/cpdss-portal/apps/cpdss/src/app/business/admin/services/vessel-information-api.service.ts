@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { AdminModule } from '../admin.module';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 
-import { IVesselListResponse } from '../models/vessel-info.model';
+import { IVesselInfoDataStateChange, IVesselListResponse } from '../models/vessel-info.model';
 
 /**
  * Service for Vessel information module
@@ -17,58 +17,32 @@ import { IVesselListResponse } from '../models/vessel-info.model';
 })
 export class VesselInformationApiService {
 
+  public pageNo: number = 0;
+  public pageSize: number = 10;
+
   constructor(
     private commonApiService: CommonApiService
-  ) {}
+  ) { }
 
   /**
    * API to get Vessel list
    *
+   * @param {IVesselInfoDataStateChange} params
+   * @return {*}  {Observable<IVesselListResponse>}
+   * @memberof VesselInformationApiService
+   */
+  getVesselList(params: IVesselInfoDataStateChange): Observable<IVesselListResponse> {
+    const requestParams = `pageNo=${params.pageNo ? params.pageNo : this.pageNo}&pageSize=${params.pageSize ? params.pageSize : this.pageSize}${params.orderBy ? '&orderBy=' + params.orderBy : ''}${params.sortBy ? '&sortBy=' + params.sortBy : ''}${params.vesselName ? '&vesselName=' + params.vesselName : ''}${params.vesselType ? '&vesselType=' + params.vesselType : ''}${params.builder ? '&builder=' + params.builder : ''}${params.dateOfLaunch ? '&dateOfLaunch=' + params.dateOfLaunch : ''}`;
+    return this.commonApiService.get<IVesselListResponse>(`all-vessels-info?${requestParams}`);
+  }
+
+  /**
+   * API to get particular Vessel's details
+   *
+   * @param {number} vesselId
    * @return {*}  {Observable<any>}
    * @memberof VesselInformationApiService
    */
-  getVesselList(): Observable<IVesselListResponse> {
-
-    // mock json will replace once actual API available
-    const vesselList: IVesselListResponse = {
-      "responseStatus": {
-        "status": "200"
-      },
-      "vesselList": [
-        {
-          "vesselId": 1,
-          "vesselName": "Kazusa",
-          "vesselType": "Cargo oil tanker",
-          "builder": "Mitsui engineering & shipbuilding",
-          "dateOfLaunch": "02-07-2021"
-        },
-        {
-          "vesselId": 2,
-          "vesselName": "Atlantic Pioneer",
-          "vesselType": "Cargo oil tanker",
-          "builder": "Mitsui engineering & shipbuilding",
-          "dateOfLaunch": "10-07-2021"
-        },
-        {
-          "vesselId": 3,
-          "vesselName": "Shizukisan",
-          "vesselType": "Cargo oil tanker",
-          "builder": "Mitsui engineering & shipbuilding",
-          "dateOfLaunch": "12-07-2021"
-        },
-        {
-          "vesselId": 4,
-          "vesselName": "Mitsui",
-          "vesselType": "Cargo oil tanker",
-          "builder": "Mitsui engineering & shipbuilding",
-          "dateOfLaunch": "15-07-2021"
-        }
-      ]
-    };
-
-    return of(vesselList);
-  }
-  
   getVesselDetails(vesselId: number): Observable<any> {
 
     // mock json will replace once actual API available
@@ -890,4 +864,5 @@ export class VesselInformationApiService {
     };
     return of(vesselDetails);
   }
+
 }

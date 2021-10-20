@@ -1,22 +1,23 @@
-/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
 import lombok.Data;
 
 @Data
 public class VesselInformation {
+	
+	  private Long vesselId;
 
-  private Long vesselId;
+	  private String name;
 
-  private String vesselName;
+	  private String typeOfShip;
 
-  private String vesselType;
+	  private String builder;
 
-  private String builder;
+	  private String dateOfLaunching;
 
-  private String dateOfLaunch;
+	  private String signalLetter;
 
-  private String signalLetter;
+	  private String officialNumber;
 
-  private String officialNumber;
+
 }

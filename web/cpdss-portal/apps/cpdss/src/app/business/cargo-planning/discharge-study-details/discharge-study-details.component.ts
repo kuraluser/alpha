@@ -379,7 +379,6 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
     const dischargeStudies = result?.dischargeStudies ?? [];
     this.cargoNominationComplete = true;
     if (dischargeStudies.length) {
-      this.dischargeStudyComplete = true;
       this.dischargeStudies = dischargeStudies;
       this.selectedDischargeStudy = dischargeStudyId ? this.dischargeStudies.find(dischargeStudy => dischargeStudy.id === dischargeStudyId) : this.dischargeStudies[0];
       this.dischargeStudyId = this.selectedDischargeStudy.id;
@@ -390,6 +389,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       }
       this.dischargeStudyDetailsTransformationService.setPortValidity(this.selectedDischargeStudy.isPortsComplete);
       this.dischargeStudyDetailsTransformationService.setOHQValidity(this.selectedDischargeStudy?.ohqPorts ?? []);
+      this.dischargeStudyDetailsTransformationService.setDischargeStudyValidity(this.selectedDischargeStudy?.isDischargeStudyComplete);
     } else {
       this.cargoNominationComplete = false;
       this.selectedDischargeStudy = null;
@@ -477,7 +477,6 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
   async onTabClick(selectedTab: string) {
     const value = await this.unsavedChangesGuard.canDeactivate(this);
     if (!value) { return };
-    this.dischargeStudyDetailsTransformationService.setDischargeStudyValidity(true);
     this.selectedTab = selectedTab;
   }
 

@@ -59,6 +59,7 @@ export interface IDataTableColumn {
     filterClass?: string;
     totalFieldClass?: string;
     maxSelectedLabels?: number;
+    iconField?: string;
 }
 
 /**
@@ -103,7 +104,8 @@ export enum DATATABLE_FIELD_TYPE {
   MASK = 'MASK',
   BADGE = 'BADGE',
   CHECKBOX = 'CHECKBOX',
-  MULTISELECT = 'MULTISELECT'
+  MULTISELECT = 'MULTISELECT',
+  FILEICONS = 'FILEICONS'
 }
 
 /**

@@ -152,8 +152,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
         'isShoreActive': false
       },
       {
-        'menu': 'FILE REPOSITORY',
-        'menuIcon': '',
+        'menu': 'FILE_REPOSITORY',
+        'menuIcon': 'files',
         'menuLink': 'file-repository',
         'routerLinkActive': 'file-repository',
         'subMenu': [],
