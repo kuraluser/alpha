@@ -95,15 +95,16 @@
                                             placeholder="{{'RULES_SELECT_OPTION_PLACEHOLDER' | translate}}"
                                             (onChange)="onChangeMultiSelect('inputs',rowIndex,inputIndex)">
                                         </p-multiSelect>
-                                        <cpdss-portal-validation-error *ngIf="input?.type"
-                                            [errors]="fieldError('inputs',rowIndex,inputIndex)"
-                                            [errorMessages]="errorMessages">
-                                        </cpdss-portal-validation-error>
                                         <p-dropdown *ngIf="input.type==='Dropdown'" [options]="input.ruleDropDownMaster"
                                             styleClass="form-control"  placeholder="{{'RULES_SELECT_OPTION_PLACEHOLDER' | translate}}"
                                             [formControl]="getControl('inputs',rowIndex,inputIndex)" optionLabel="value"
                                             resetFilterOnHide="true">
                                         </p-dropdown>
+                                        <cpdss-portal-validation-error *ngIf="input?.type"
+                                            [errors]="fieldError('inputs',rowIndex,inputIndex)"
+                                            [errorMessages]="errorMessages">
+                                        </cpdss-portal-validation-error>
+                                        
                                     </div>
                                     {{input.suffix}}
                                 </ng-container>
