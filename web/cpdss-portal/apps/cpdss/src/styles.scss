@@ -3144,3 +3144,20 @@ textarea{
 .break-all {
   word-break: break-all;
 }
+
+.ullage-column.p-editable-column > div{
+ padding-right: 0;
+ .form-control{
+   width: calc(100% - 30px);
+   display: inline-block!important;
+ }
+ .error-icon{
+   position: relative!important;
+   display: inline-block!important;
+   right: auto;
+   margin-left: 4px;
+ }
+}
+.column-class.column-port{
+  min-width: 165px!important;
+}
