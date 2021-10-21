@@ -11,12 +11,11 @@ import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyStatusResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.LoadableStudyService;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Min;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -179,14 +178,16 @@ public class DischargeStudyController {
       log.info(
           "saveDischargePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
       ObjectMapper objectMapper = new ObjectMapper();
-      LoadablePlanRequest dischargePlanRequest =    new ObjectMapper()
+      LoadablePlanRequest dischargePlanRequest =
+          new ObjectMapper()
               .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
               .readValue(requestJson.toString(), LoadablePlanRequest.class);
       return loadableStudyService.saveAlgoPatterns(
           dischargePlanRequest,
           dischargeStudiesId,
           DISCHARGE_STUDY_SAVE_REQUEST,
-          headers.getFirst(CORRELATION_ID_HEADER), requestJson);
+          headers.getFirst(CORRELATION_ID_HEADER),
+          requestJson);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in saveLoadablePatterns ", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

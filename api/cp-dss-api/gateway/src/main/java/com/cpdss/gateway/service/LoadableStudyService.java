@@ -114,7 +114,6 @@ import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ProtocolStringList;
@@ -3428,10 +3427,11 @@ public class LoadableStudyService {
    * @return AlgoPatternResponse
    */
   public AlgoPatternResponse saveAlgoPatterns(
-          LoadablePlanRequest loadablePlanRequest,
-          Long loadableStudiesId,
-          String requestType,
-          String correlationId, Object requestJson)
+      LoadablePlanRequest loadablePlanRequest,
+      Long loadableStudiesId,
+      String requestType,
+      String correlationId,
+      Object requestJson)
       throws GenericServiceException {
     log.info("Inside saveLoadablePatterns gateway service with correlationId : " + correlationId);
     ObjectMapper objectMapper = new ObjectMapper();
@@ -3448,9 +3448,7 @@ public class LoadableStudyService {
       String requestJsonString = objectMapper.writeValueAsString(requestJson);
       objectMapper.writeValue(
           new File(this.rootFolder + fileName + loadableStudiesId + ".json"), requestJsonString);
-      StatusReply reply =
-          this.saveJson(
-              loadableStudiesId, jsonTypeID, requestJsonString);
+      StatusReply reply = this.saveJson(loadableStudiesId, jsonTypeID, requestJsonString);
       if (!SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
       }
@@ -3477,29 +3475,30 @@ public class LoadableStudyService {
       throws GenericServiceException {
     log.info("Inside saveLoadablePatterns gateway service with correlationId : " + correlationId);
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
-//    LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
-//    request.setLoadableStudyId(loadableStudiesId);
-//    request.setHasLodicator(loadablePlanRequest.getHasLoadicator());
-//    if (requestType.equals(DISCHARGE_STUDY_SAVE_REQUEST)) {
-//      request.setRequestType(DICHARGE_STUDY);
-//      buildDischargePlanDetails(loadablePlanRequest, request);
-//    } else {
-//      request.setRequestType(LOADABLE_STUDY);
-//      buildLoadablePlanDetails(loadablePlanRequest, request);
-//    }
-//
-//    if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
-//      this.buildAlgoError(loadablePlanRequest.getErrors(), request);
-//    }
-//
-//    AlgoReply algoReply = this.saveLoadablePatterns(request);
-//
-//    if (!SUCCESS.equals(algoReply.getResponseStatus().getStatus())) {
-//      throw new GenericServiceException(
-//          "Failed to save loadable pattern",
-//          algoReply.getResponseStatus().getCode(),
-//          HttpStatusCode.valueOf(Integer.valueOf(algoReply.getResponseStatus().getCode())));
-//    }
+    //    LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
+    //    request.setLoadableStudyId(loadableStudiesId);
+    //    request.setHasLodicator(loadablePlanRequest.getHasLoadicator());
+    //    if (requestType.equals(DISCHARGE_STUDY_SAVE_REQUEST)) {
+    //      request.setRequestType(DICHARGE_STUDY);
+    //      buildDischargePlanDetails(loadablePlanRequest, request);
+    //    } else {
+    //      request.setRequestType(LOADABLE_STUDY);
+    //      buildLoadablePlanDetails(loadablePlanRequest, request);
+    //    }
+    //
+    //    if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty())
+    // {
+    //      this.buildAlgoError(loadablePlanRequest.getErrors(), request);
+    //    }
+    //
+    //    AlgoReply algoReply = this.saveLoadablePatterns(request);
+    //
+    //    if (!SUCCESS.equals(algoReply.getResponseStatus().getStatus())) {
+    //      throw new GenericServiceException(
+    //          "Failed to save loadable pattern",
+    //          algoReply.getResponseStatus().getCode(),
+    //          HttpStatusCode.valueOf(Integer.valueOf(algoReply.getResponseStatus().getCode())));
+    //    }
 
     algoPatternResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
