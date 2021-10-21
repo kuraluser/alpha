@@ -3414,9 +3414,9 @@ public class LoadableStudyService {
                         loadicatorResultsBuilder.setList(lrd.getList());
                         loadicatorResultsBuilder.setPortId(lrd.getPortId());
                         loadicatorResultsBuilder.setOperationId(lrd.getOperationId());
-                        builder.addLodicatorResultDetails(loadicatorResultsBuilder);
+                        builder.addLoadicatorResultDetails(loadicatorResultsBuilder);
                       });
-              request.addLoadicatorPatternDetailsResults(builder);
+              request.addLoadicatorResultsPatternWise(builder);
             });
   }
 
