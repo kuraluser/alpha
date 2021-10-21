@@ -433,12 +433,12 @@ public class DischargeInformationBuilderService {
     builder.setIsDischargingInfoComplete(request.getIsDischargeInfoComplete());
 
     // Discharging Info Case 1 - Details
-    if (request.getDischargingDetails() != null) {
+    if (request.getDischargeDetails() != null) {
       Callable<DischargingInfoSaveResponse> t1 =
           () -> {
             builder.setDischargeDetails(
                 buildDischargingDetails(
-                    request.getDischargingDetails(), request.getDischargeInfoId()));
+                    request.getDischargeDetails(), request.getDischargeInfoId()));
             return dischargeInfoServiceStub.saveDischargingInformation(builder.build());
           };
       callableTasks.add(t1);
@@ -455,11 +455,11 @@ public class DischargeInformationBuilderService {
     }
 
     // Discharging Info Case 3 - Rates
-    if (request.getDischargingRates() != null) {
+    if (request.getDischargeRates() != null) {
       Callable<DischargingInfoSaveResponse> t3 =
           () -> {
             builder.setDischargeRate(
-                buildDischargingRates(request.getDischargingRates(), request.getDischargeInfoId()));
+                buildDischargingRates(request.getDischargeRates(), request.getDischargeInfoId()));
             return dischargeInfoServiceStub.saveDischargingInfoRates(builder.build());
           };
       callableTasks.add(t3);
@@ -582,25 +582,25 @@ public class DischargeInformationBuilderService {
 
     builder.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(cowPlan.getCowOption()));
     builder.setDischargingInfoId(dischargingId);
-    if (!cowPlan.getAllCow().isEmpty()) {
+    if (cowPlan.getAllCow()!=null&&!cowPlan.getAllCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.ALL_COW);
       cowTankBuilder.addAllTankIds(cowPlan.getAllCow());
       builder.addCowTankDetails(cowTankBuilder);
     }
-    if (!cowPlan.getBottomCow().isEmpty()) {
+    if (cowPlan.getBottomCow()!=null&&!cowPlan.getBottomCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.BOTTOM_COW);
       cowTankBuilder.addAllTankIds(cowPlan.getBottomCow());
       builder.addCowTankDetails(cowTankBuilder);
     }
-    if (!cowPlan.getTopCow().isEmpty()) {
+    if (cowPlan.getTopCow()!=null&&!cowPlan.getTopCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.TOP_COW);
       cowTankBuilder.addAllTankIds(cowPlan.getTopCow());
       builder.addCowTankDetails(cowTankBuilder);
     }
-    if (!cowPlan.getCargoCow().isEmpty()) {
+    if (cowPlan.getCargoCow()!=null&&!cowPlan.getCargoCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.CARGO);
       cowPlan.getCargoCow().stream()

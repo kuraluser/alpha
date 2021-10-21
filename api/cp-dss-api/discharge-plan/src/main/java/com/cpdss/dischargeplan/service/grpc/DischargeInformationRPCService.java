@@ -514,8 +514,6 @@ public class DischargeInformationRPCService
     if (var1.isPresent()) {
       log.info("Save cow plan, Set values");
       CowPlanDetail cowPlanDetail = var1.get();
-      cowPlanDetailRepository.save(cowPlanDetail);
-
       if (!cowPlan.getCowEndTime().isEmpty()) {
         cowPlanDetail.setCowEndTime(new BigDecimal(cowPlan.getCowEndTime()));
       }
