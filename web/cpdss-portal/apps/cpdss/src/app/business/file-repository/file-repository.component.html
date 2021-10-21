@@ -15,7 +15,7 @@
         </div>
         <div class="row">
             <div class="col-12 files-listing-wrapper">
-                <cpdss-portal-datatable (buttonClick)="action($event)" (dataStateChange)="onDataStateChange($event)" [paginator]="true" [rows]="10" [totalRecords]="totalRecords"  [lazy]="true"
+                <cpdss-portal-datatable (editRow)="editFile($event)" (deleteRow)="deleteConfirm($event)" (viewRow)="downloadFile($event)" (dataStateChange)="onDataStateChange($event)" [paginator]="true" [rows]="10" [totalRecords]="totalRecords"  [lazy]="true"
                 [(currentPage)]="pageState.pageNo" [value]="fileRepoDetails" [filterable]="true" [tableId]="'file_repo'" [columns]="repositoryColumns">
                 </cpdss-portal-datatable>
             </div>

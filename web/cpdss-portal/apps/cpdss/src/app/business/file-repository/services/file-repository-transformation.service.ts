@@ -31,8 +31,8 @@ export class FileRepositoryTransformationService {
    * Method for getting table columns
    * @memberof FileRepositoryTransformationService
    */
-  repositoryTableColumn() {
-    const columns: IDataTableColumn[] = [
+  repositoryTableColumn(permission) {
+    let columns: IDataTableColumn[] = [
       {
         header: 'FILE_REPOSITORY_SL',
         fieldType: DATATABLE_FIELD_TYPE.SLNO
@@ -50,6 +50,7 @@ export class FileRepositoryTransformationService {
       {
         field: 'fileName',
         header: 'FILE_REPOSITORY_FILE_NAME',
+        fieldClass: 'break-all',
         filter: true,
         filterPlaceholder: 'FILE_REPOSITORY_SEARCH_FILE',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
@@ -62,7 +63,9 @@ export class FileRepositoryTransformationService {
         header: 'FILE_REPOSITORY_FILE_TYPE',
         fieldType: DATATABLE_FIELD_TYPE.FILEICONS,
         iconField: 'fileIcon',
+        fieldValue: 'fileType',
         filter: true,
+        showTooltip: true,
         filterPlaceholder: 'FILE_REPOSITORY_SEARCH_TYPE',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
@@ -98,21 +101,27 @@ export class FileRepositoryTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'createdDate',
         filterByServer: true
-      },
-      {
-        field: 'buttons',
-        header: '',
-        fieldClass: 'text-center',
-        fieldColumnClass: 'text-center',
-        fieldType: DATATABLE_FIELD_TYPE.BUTTON,
-        buttons: [
-          { type: DATATABLE_BUTTON.VIEW_BUTTON, field: 'download', class: 'view-icon' },
-          { type: DATATABLE_BUTTON.EDIT_BUTTON, field: 'edit', class: 'pencil-icon' },
-          { type: DATATABLE_BUTTON.DELETE_BUTTON, field: 'delete', class: 'delete-icon' },
-        ]
       }
-
     ];
+    if (permission) {
+      const actions: DATATABLE_ACTION[] = [];
+      if (permission?.edit) {
+        actions.push(DATATABLE_ACTION.EDIT);
+      }
+      if (permission?.delete) {
+        actions.push(DATATABLE_ACTION.DELETE);
+      }
+      if (permission?.view) {
+        actions.push(DATATABLE_ACTION.VIEW);
+      }
+      const action: IDataTableColumn = {
+        field: 'actions',
+        header: '',
+        fieldType: DATATABLE_FIELD_TYPE.ACTION,
+        actions: actions
+      };
+      columns = [...columns, action];
+    }
     return columns;
   }
 
