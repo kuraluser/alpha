@@ -33,9 +33,9 @@ export class CommonApiService {
   /**
    *  Common post request handler
    */
-  post<N, T>(apiUri: string, body: N): Observable<T> {
+  post<N, T>(apiUri: string, body: N, options?: any): Observable<T> {
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json')
-    return this.http.post<T>(this.apiGetter(apiUri), body,{headers:httpHeaders});
+    return this.http.post<T>(this.apiGetter(apiUri), body,{headers:httpHeaders, responseType: options?.responseType});
   }
 
   /**
