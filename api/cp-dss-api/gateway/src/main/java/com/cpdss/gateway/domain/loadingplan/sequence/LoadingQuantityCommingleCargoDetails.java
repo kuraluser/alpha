@@ -20,4 +20,10 @@ public class LoadingQuantityCommingleCargoDetails {
   private Long cargo2Id;
   private String colorCode;
   private String abbreviation;
+  private String quantity1MT;
+  private String quantity2MT;
+  private String quantity1M3;
+  private String quantity2M3;
+  private String ullage1;
+  private String ullage2;
 }

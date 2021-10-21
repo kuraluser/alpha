@@ -2225,14 +2225,14 @@ class LoadableStudyServiceTest {
   /** @return LoadicatorResultsRequest */
   private LoadicatorResultsRequest createLoadicatorResults() {
     LoadicatorResultsRequest.Builder builder = LoadicatorResultsRequest.newBuilder();
-    builder.addLoadicatorPatternDetailsResults(buildLoadicatorPatternDetailsResults());
+    builder.addLoadicatorResultsPatternWise(buildLoadicatorPatternDetailsResults());
     return builder.build();
   }
 
   /** @return LoadicatorPatternDetailsResults */
   private LoadicatorPatternDetailsResults buildLoadicatorPatternDetailsResults() {
     LoadicatorPatternDetailsResults.Builder builder = LoadicatorPatternDetailsResults.newBuilder();
-    builder.addLodicatorResultDetails(buildLodicatorResultDetails());
+    builder.addLoadicatorResultDetails(buildLodicatorResultDetails());
     return builder.build();
   }
 

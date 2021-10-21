@@ -215,10 +215,10 @@ public class VesselInfoController {
       @RequestParam(required = false, defaultValue = "0") int pageNo,
       @RequestParam(required = false) String sortBy,
       @RequestParam(required = false) String orderBy,
-      @RequestParam(required = false) String vesselName,
-      @RequestParam(required = false) String vesselType,
+      @RequestParam(required = false) String name,
+      @RequestParam(required = false) String typeOfShip,
       @RequestParam(required = false) String builder,
-      @RequestParam(required = false) String dateOfLaunch)
+      @RequestParam(required = false) String dateOfLaunching)
       throws CommonRestException {
     try {
 
@@ -228,10 +228,10 @@ public class VesselInfoController {
           pageNo,
           sortBy,
           orderBy,
-          vesselName,
-          vesselType,
+          name,
+          typeOfShip,
           builder,
-          dateOfLaunch,
+          dateOfLaunching,
           headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching all vessels", e);
@@ -246,9 +246,10 @@ public class VesselInfoController {
           e);
     }
   }
-  
+
   /**
    * Get all information for the request vessel.
+   *
    * @param vesselId
    * @param headers
    * @return VesselDetailedInfoResponse
@@ -260,8 +261,8 @@ public class VesselInfoController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-      return this.vesselInfoService.getVesselDetaildInformation(vesselId, 
-    		  headers.getFirst(CORRELATION_ID_HEADER));
+      return this.vesselInfoService.getVesselDetaildInformation(
+          vesselId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching vessels", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

@@ -1,4 +1,4 @@
-<div class="row pt-20">
+
     <div class="container-fluid">
         <div class="row">
             <div class="col vessel-info-wrapper">
@@ -6,20 +6,20 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-2">
-                <label class="pl-20">{{'FILE_REPOSITORY_FILE_LABEL' | translate}}</label>
+            <div class="col-md-8">
+                <h5 class="main-head pt-10">{{'FILE_REPOSITORY_FILE_LABEL' | translate}}</h5>
             </div>
-            <div class="col-md-9">
+            <div class="col-md-4 text-right">
                 <button (click)="addNewFile()" id="add-new-file-btn" class="btn btn-main pull-right">{{'FILE_REPOSITORY_ADD_NEW_LABEL' | translate}}</button>
             </div>
         </div>
         <div class="row">
-            <div class="container-fluid">
-                <cpdss-portal-datatable (buttonClick)="action($event)" (dataStateChange)="onDataStateChange($event)" [paginator]="true" [rows]="10" [totalRecords]="totalRecords"  [lazy]="true"
+            <div class="col-12 files-listing-wrapper">
+                <cpdss-portal-datatable (editRow)="editFile($event)" (deleteRow)="deleteConfirm($event)" (viewRow)="downloadFile($event)" (dataStateChange)="onDataStateChange($event)" [paginator]="true" [rows]="10" [totalRecords]="totalRecords"  [lazy]="true"
                 [(currentPage)]="pageState.pageNo" [value]="fileRepoDetails" [filterable]="true" [tableId]="'file_repo'" [columns]="repositoryColumns">
                 </cpdss-portal-datatable>
             </div>
         </div>
     </div>
-</div>
+
 <cpdss-portal-add-edit-file (updateData)="getFiles()" [data]="editData" *ngIf="showAddEdit" [editMode]="editMode" [voyages]="voyages" (closePopup)="closePopUp($event)"></cpdss-portal-add-edit-file>

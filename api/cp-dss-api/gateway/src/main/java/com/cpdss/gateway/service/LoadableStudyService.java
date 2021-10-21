@@ -107,7 +107,6 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyStatusResponse;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
-import com.cpdss.gateway.domain.simulator.DepartureConditionJson;
 import com.cpdss.gateway.entity.Users;
 import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
@@ -115,6 +114,7 @@ import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ProtocolStringList;
@@ -3414,23 +3414,24 @@ public class LoadableStudyService {
                         loadicatorResultsBuilder.setList(lrd.getList());
                         loadicatorResultsBuilder.setPortId(lrd.getPortId());
                         loadicatorResultsBuilder.setOperationId(lrd.getOperationId());
-                        builder.addLodicatorResultDetails(loadicatorResultsBuilder);
+                        builder.addLoadicatorResultDetails(loadicatorResultsBuilder);
                       });
-              request.addLoadicatorPatternDetailsResults(builder);
+              request.addLoadicatorResultsPatternWise(builder);
             });
   }
 
   /**
    * @param loadablePlanDetailsResponses
-   * @param loadableStudiesId
    * @param first
+   * @param loadableStudiesId
+   * @param requestJson
    * @return AlgoPatternResponse
    */
   public AlgoPatternResponse saveAlgoPatterns(
-      LoadablePlanRequest loadablePlanRequest,
-      Long loadableStudiesId,
-      String requestType,
-      String correlationId)
+          LoadablePlanRequest loadablePlanRequest,
+          Long loadableStudiesId,
+          String requestType,
+          String correlationId, Object requestJson)
       throws GenericServiceException {
     log.info("Inside saveLoadablePatterns gateway service with correlationId : " + correlationId);
     ObjectMapper objectMapper = new ObjectMapper();
@@ -3444,11 +3445,12 @@ public class LoadableStudyService {
       jsonTypeID = DISCHARGE_STUDY_RESULT_JSON_ID;
     }
     try {
+      String requestJsonString = objectMapper.writeValueAsString(requestJson);
       objectMapper.writeValue(
-          new File(this.rootFolder + fileName + loadableStudiesId + ".json"), loadablePlanRequest);
+          new File(this.rootFolder + fileName + loadableStudiesId + ".json"), requestJsonString);
       StatusReply reply =
           this.saveJson(
-              loadableStudiesId, jsonTypeID, objectMapper.writeValueAsString(loadablePlanRequest));
+              loadableStudiesId, jsonTypeID, requestJsonString);
       if (!SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
       }
@@ -6288,12 +6290,12 @@ public class LoadableStudyService {
     requestBuilder.setCaseNumber(caseNumber);
     com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply reply =
         loadableStudyServiceBlockingStub.getLoadableStudySimulatorJsonData(requestBuilder.build());
-    DepartureConditionJson departureConditionJson = null;
+    Object departureConditionJson = null;
     SimulatorJsonResponse jsonResponse = new SimulatorJsonResponse();
     departureConditionJson =
         new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .readValue(reply.getDepartureCondition(), DepartureConditionJson.class);
+            .readValue(reply.getDepartureCondition(), Object.class);
     jsonResponse.setDepartureCondition(departureConditionJson);
     jsonResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));

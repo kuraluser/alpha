@@ -48,8 +48,8 @@ export interface IFileRepositoryData {
     isSystemGenerated: boolean;
     section: string;
     voyageNumber: string;
-    delete?: boolean;
-    edit?: boolean;
+    isDeletable?: boolean;
+    isEditable?: boolean;
     view?: boolean;
     fileIcon?: string;
 }
@@ -58,7 +58,7 @@ export interface IFileRepositoryData {
  * Interface for delete file
  *
  * @export
- * @interface IFileRepositoryData
+ * @interface IDeleteResponse
  */
 export interface IDeleteResponse {
     responseStatus: IResponse;

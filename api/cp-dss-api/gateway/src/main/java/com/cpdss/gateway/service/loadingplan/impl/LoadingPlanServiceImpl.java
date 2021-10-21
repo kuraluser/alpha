@@ -1748,7 +1748,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                       .setQuantityMT(
                           commingle.getQuantityMT() == null
                               ? ""
-                              : String.valueOf(commingle.getQuantityMT()))
+                              : commingle.getQuantityMT().toString())
                       .setFillingPercentage(
                           commingle.getFillingPercentage() == null
                               ? "0"
@@ -1763,9 +1763,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               ? 0
                               : commingle.getCargoNomination2Id().longValue())
                       .setUllage(
-                          commingle.getUllage() == null
-                              ? ""
-                              : String.valueOf(commingle.getUllage()))
+                          commingle.getUllage() == null ? "" : commingle.getUllage().toString())
                       .setArrivalDeparture(
                           commingle.getArrival_departutre() == null
                               ? 0
@@ -1779,6 +1777,26 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           commingle.getAbbreviation() == null ? "" : commingle.getAbbreviation())
                       .setCargo1Id(commingle.getCargo1Id() == null ? 0 : commingle.getCargo1Id())
                       .setCargo2Id(commingle.getCargo2Id() == null ? 0 : commingle.getCargo2Id())
+                      .setQuantity1MT(
+                          commingle.getQuantity1MT() == null
+                              ? ""
+                              : commingle.getQuantity1MT().toString())
+                      .setQuantity2MT(
+                          commingle.getQuantity2MT() == null
+                              ? ""
+                              : commingle.getQuantity2MT().toString())
+                      .setQuantity1M3(
+                          commingle.getQuantity1M3() == null
+                              ? ""
+                              : commingle.getQuantity1M3().toString())
+                      .setQuantityMT(
+                          commingle.getQuantity2M3() == null
+                              ? ""
+                              : commingle.getQuantity2M3().toString())
+                      .setUllage1(
+                          commingle.getUllage1() == null ? "" : commingle.getUllage1().toString())
+                      .setUllage2(
+                          commingle.getUllage2() == null ? "" : commingle.getUllage2().toString())
                       .build();
                   builder.addCommingleUpdate(updateCommingleBuilder.build());
                 });

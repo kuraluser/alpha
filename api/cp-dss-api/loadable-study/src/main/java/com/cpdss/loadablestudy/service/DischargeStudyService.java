@@ -1094,11 +1094,11 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               .setHttpStatusCode(e.getStatus().value())
               .build());
     } catch (Exception e) {
-      log.error("Exception when deleting discharge study", e);
+      log.error("Exception  when getting powtise cargo details", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("Exception  when deleting discharge study")
+              .setMessage("Exception  when getting powtise cargo details")
               .setStatus(FAILED)
               .setHttpStatusCode(Integer.valueOf(CommonErrorCodes.E_GEN_INTERNAL_ERR))
               .build());

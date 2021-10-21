@@ -4,16 +4,13 @@ ext{
   dbName = System.getenv('DB_NAME') ?: ""
   dbUser = System.getenv('DB_USER') ?: ""
   dbPassword = System.getenv('DB_PASSWORD') ?: ""
+
   grpcPort = System.getenv('GRPC_PORT') ?: ""
 
-  algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
   hostRootPath = System.getenv('HOST_ROOT_PATH')?:""
-  enableComm = System.getenv('ENABLE_COMM') ?: ""
-  cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
-  commTimeLimit = System.getenv('COMM_TIME_LIMIT')?:""
-
   grpcPortHost = System.getenv('GRPC_PORT_HOST') ?: '9094'
   debugPortHost = System.getenv('DEBUG_PORT_HOST') ?: '5094'
+
   imageNameVal = System.getenv('IMAGE_NAME') ?: 'cpdss-loadicator-integration'
   containerNameVal = System.getenv('CONTAINER_NAME') ?: "loadicator-integration-container"
   serviceNameVal = System.getenv('SERVICE_NAME') ?: 'cpdss-network'
@@ -32,10 +29,6 @@ appConfig {
     imageName = imageNameVal
     containerName = containerNameVal
     networkName = 'cpdss-network'
-    hostVolumeMapping {
-      hostPath = hostRootPath
-      containerPath = "/data"
-    }
     hostPortMapping {
       hostGrpcPort = Integer.parseInt(grpcPortHost)
       hostDebugPort = Integer.parseInt(debugPortHost)

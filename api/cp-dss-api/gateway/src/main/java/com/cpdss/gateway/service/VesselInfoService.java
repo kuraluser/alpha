@@ -47,6 +47,8 @@ import com.cpdss.gateway.utility.RuleUtility;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1339,8 +1341,8 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
         .ifPresent(vesselParticulars::setCapacityPerPump);
     Optional.ofNullable(reply.getShipManifold()).ifPresent(vesselParticulars::setShipManifold);
     Optional.ofNullable(reply.getSummerDraft()).ifPresent(vesselParticulars::setSummerDraft);
-    Optional.ofNullable(reply.getTropicalDraft()).ifPresent(vesselParticulars::setTropicalDraft);
     Optional.ofNullable(reply.getFreshMLD()).ifPresent(vesselParticulars::setFreshWaterDraft);
+    Optional.ofNullable(reply.getTropicalDraft()).ifPresent(vesselParticulars::setTropicalDraft);
     Optional.ofNullable(reply.getSummerDeadweight())
         .ifPresent(vesselParticulars::setSummerDeadweight);
     Optional.ofNullable(reply.getSummerDisplacement())
@@ -1391,7 +1393,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     response.setVesselName(vesselDetaildInfoReply.getVesselName());
     response.setImoNumber(vesselDetaildInfoReply.getImoNumber());
     response.setCountryFlagUrl("assets/images/flags/japan.png");
-    response.setVesselImageUrl("assets/images/vessels/" + vesselName + "/" + vesselName + ".jpg");
+    response.setVesselImageUrl("assets/images/vessels/" + vesselName.toLowerCase() + "/" + vesselName.toLowerCase() + ".jpg");
     setGeneralVesselInformation(vesselDetaildInfoReply, response);
     setVesselDimensionInfo(vesselDetaildInfoReply, response);
     VesselDraftDisplacementResponse draftResponse = new VesselDraftDisplacementResponse();
@@ -1457,33 +1459,44 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
 
   /**
    * Set vessel bunker, ballast, cargo tank layout datas
-   *
-   * @param bunkerRearTanksList
+   * @param tanksList
    * @param response
    * @return
    */
-  private List<List<VesselTankInformation>> setVesselTankLayoutDetails(
-      List<VesselTankInfo> bunkerRearTanksList, VesselDetailedInfoResponse response) {
-
-    List<List<VesselTankInformation>> tanks = new ArrayList<>();
-    List<VesselTankInformation> tankGroup = new ArrayList<>();
-    for (VesselTankInfo bunkerRearTank : bunkerRearTanksList) {
-      VesselTankInformation tank = new VesselTankInformation();
-      tank.setCategoryId(bunkerRearTank.getTankCategoryId());
-      tank.setCategoryName(bunkerRearTank.getTankCategoryName());
-      tank.setDensity(bunkerRearTank.getDensity());
-      tank.setFrameNumberFrom(bunkerRearTank.getFrameNumberFrom());
-      tank.setFrameNumberTo(bunkerRearTank.getFrameNumberTo());
-      tank.setFullCapacityCubm(bunkerRearTank.getFullCapacityCubm());
-      tank.setGroup(bunkerRearTank.getTankGroup());
-      tank.setId(bunkerRearTank.getTankId());
-      tank.setName(bunkerRearTank.getTankName());
-      tank.setOrder(bunkerRearTank.getTankOrder());
-      tank.setShortName(bunkerRearTank.getShortName());
-      tank.setSlopTank(bunkerRearTank.getIsSlopTank());
-      tankGroup.add(tank);
-    }
-    tanks.add(tankGroup);
-    return tanks;
+  private List<List<VesselTankInformation>> setVesselTankLayoutDetails(List<VesselTankInfo> tanksList, VesselDetailedInfoResponse response) {
+	  
+	  List<List<VesselTankInformation>> tanks = new ArrayList<>();
+	  List<VesselTankInformation> tankGroup = null;
+	  Map<Integer, List<VesselTankInformation>> tankInfoMap = new HashMap<>();
+	  for(VesselTankInfo tankDetail:tanksList) {
+		  if(tankInfoMap.get(tankDetail.getTankGroup())==null) {
+			  tankGroup = new ArrayList<>();
+		  }else {
+			  tankGroup = tankInfoMap.get(tankDetail.getTankGroup());
+		  }
+		  VesselTankInformation tank = new VesselTankInformation();
+		  tank.setCategoryId(tankDetail.getTankCategoryId());
+		  tank.setCategoryName(tankDetail.getTankCategoryName());
+		  tank.setDensity(tankDetail.getDensity());
+		  tank.setFrameNumberFrom(tankDetail.getFrameNumberFrom());
+		  tank.setFrameNumberTo(tankDetail.getFrameNumberTo());
+		  tank.setFullCapacityCubm(tankDetail.getFullCapacityCubm());
+		  tank.setGroup(tankDetail.getTankGroup());
+		  tank.setId(tankDetail.getTankId());
+		  tank.setName(tankDetail.getTankName());
+		  tank.setOrder(tankDetail.getTankOrder());
+		  tank.setShortName(tankDetail.getShortName());
+		  tank.setSlopTank(tankDetail.getIsSlopTank());
+		  tankGroup.add(tank);
+		  tankInfoMap.put(tankDetail.getTankGroup(), tankGroup);
+	  }
+	  for (Map.Entry<Integer, List<VesselTankInformation>> entry : tankInfoMap.entrySet()) {
+		  
+		  List<VesselTankInformation> list = entry.getValue();
+		  Collections.sort(list, Comparator.comparing(VesselTankInformation::getOrder));
+		  tanks.add(list);
+	  }
+	  return tanks;
+	  
   }
 }

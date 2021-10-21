@@ -155,6 +155,14 @@ public final class DischargePlanModels {
       internal_static_DischargingPlanSaveResponse_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_DischargingPlanSaveResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargeInfoStatusRequest_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargeInfoStatusRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargeInfoStatusReply_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargeInfoStatusReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -365,9 +373,16 @@ public final class DischargePlanModels {
           + "mAlgo\030\013 \001(\t\022I\n#portDischargingPlanCommin"
           + "gleDetails\030\014 \003(\0132\034.LoadingPlanCommingleD"
           + "etails\"F\n\033DischargingPlanSaveResponse\022\'\n"
-          + "\016responseStatus\030\001 \001(\0132\017.ResponseStatusB-"
-          + "\n)com.cpdss.common.generated.discharge_p"
-          + "lanP\001b\006proto3"
+          + "\016responseStatus\030\001 \001(\0132\017.ResponseStatus\"_"
+          + "\n\032DischargeInfoStatusRequest\022\027\n\017discharg"
+          + "eInfoId\030\001 \001(\003\022\021\n\tprocessId\030\002 \001(\t\022\025\n\rcond"
+          + "itionType\030\003 \001(\005\"\250\001\n\030DischargeInfoStatusR"
+          + "eply\022\027\n\017dischargeInfoId\030\001 \001(\003\022\035\n\025dischar"
+          + "geInfoStatusId\030\002 \001(\003\022+\n#dischargeInfoSta"
+          + "tusLastModifiedTime\030\003 \001(\t\022\'\n\016responseSta"
+          + "tus\030\004 \001(\0132\017.ResponseStatusB-\n)com.cpdss."
+          + "common.generated.discharge_planP\001b\006proto"
+          + "3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -817,6 +832,24 @@ public final class DischargePlanModels {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingPlanSaveResponse_descriptor,
             new java.lang.String[] {
+              "ResponseStatus",
+            });
+    internal_static_DischargeInfoStatusRequest_descriptor =
+        getDescriptor().getMessageTypes().get(38);
+    internal_static_DischargeInfoStatusRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargeInfoStatusRequest_descriptor,
+            new java.lang.String[] {
+              "DischargeInfoId", "ProcessId", "ConditionType",
+            });
+    internal_static_DischargeInfoStatusReply_descriptor = getDescriptor().getMessageTypes().get(39);
+    internal_static_DischargeInfoStatusReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargeInfoStatusReply_descriptor,
+            new java.lang.String[] {
+              "DischargeInfoId",
+              "DischargeInfoStatusId",
+              "DischargeInfoStatusLastModifiedTime",
               "ResponseStatus",
             });
     com.cpdss.common.generated.Common.getDescriptor();
