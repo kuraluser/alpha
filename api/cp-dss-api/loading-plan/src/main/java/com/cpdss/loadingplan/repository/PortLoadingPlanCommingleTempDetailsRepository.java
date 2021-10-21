@@ -30,14 +30,20 @@ public interface PortLoadingPlanCommingleTempDetailsRepository
   @Transactional
   @Modifying
   @Query(
-      "Update PortLoadingPlanCommingleTempDetails set api = ?1, fillingRatio = ?2, quantity = ?3, quantityM3 = ?4, temperature = ?5,"
-          + " ullage = ?6 where tankXId = ?7 and loading_information_xid =?8 and arrival_departutre =?9")
+      "Update PortLoadingPlanCommingleTempDetails set api = ?1, fillingRatio = ?2, quantity = ?3, quantityM3 = ?4, temperature = ?5, quantity1MT = ?6, quantity2MT = ?7, quantity1M3 = ?8, quantity2M3 = ?9, ullage1 = ?10, ullage2 = ?11"
+          + " ullage = ?12 where tankXId = ?13 and loading_information_xid =?14 and arrival_departutre =?15 and isActive = true")
   public void updateLoadingPlanCommingleDetails(
       String api,
       String fillingRatio,
       String quantity,
       String quantityM3,
       String temperature,
+      String quantity1MT,
+      String quantity2MT,
+      String quantity1M3,
+      String quantity2M3,
+      String ullage1,
+      String ullage2,
       String ullage,
       Long tankXId,
       Long loadingId,

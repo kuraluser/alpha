@@ -27,6 +27,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.websocket.server.PathParam;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -720,18 +724,23 @@ public class LoadableStudyController {
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudiesId,
-      @RequestBody LoadablePlanRequest loadablePlanRequest,
+      @RequestBody Object requestJson,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
       log.info("saveLoadablePatterns : {}", getClientIp());
       log.info(
           "saveLoadablePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      String requestJsonString = new ObjectMapper().writeValueAsString(requestJson);
+      LoadablePlanRequest loadablePlanRequest =    new ObjectMapper()
+              .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+              .readValue(requestJsonString, LoadablePlanRequest.class);
       return loadableStudyService.saveAlgoPatterns(
           loadablePlanRequest,
           loadableStudiesId,
           LOADABLE_STUDY_SAVE_REQUEST,
-          headers.getFirst(CORRELATION_ID_HEADER));
+          headers.getFirst(CORRELATION_ID_HEADER),
+          requestJson);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in saveLoadablePatterns ", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

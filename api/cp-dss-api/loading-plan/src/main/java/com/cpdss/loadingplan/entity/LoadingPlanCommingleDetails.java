@@ -69,4 +69,22 @@ public class LoadingPlanCommingleDetails extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "quantity1_mt")
+  private BigDecimal quantity1MT;
+
+  @Column(name = "quantity2_mt")
+  private BigDecimal quantity2MT;
+
+  @Column(name = "quantity1_m3")
+  private BigDecimal quantity1M3;
+
+  @Column(name = "quantity2_m3")
+  private BigDecimal quantity2M3;
+
+  @Column(name = "ullage_1")
+  private BigDecimal ullage1;
+
+  @Column(name = "ullage_2")
+  private BigDecimal ullage2;
 }

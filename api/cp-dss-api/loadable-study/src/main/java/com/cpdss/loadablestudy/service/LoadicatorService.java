@@ -872,10 +872,10 @@ public class LoadicatorService {
   /** @param request void */
   public void saveLoadicatorResults(LoadableStudy.LoadicatorResultsRequest request) {
     request
-        .getLoadicatorPatternDetailsResultsList()
+        .getLoadicatorResultsPatternWiseList()
         .forEach(
             lrr -> {
-              lrr.getLodicatorResultDetailsList()
+              lrr.getLoadicatorResultDetailsList()
                   .forEach(
                       lrdl -> {
                         SynopticalTableLoadicatorData loadicatorData =
@@ -909,9 +909,24 @@ public class LoadicatorService {
                             !StringUtils.isEmpty(lrdl.getList())
                                 ? new BigDecimal(lrdl.getList())
                                 : null);
+                        loadicatorData.setShearingForce(
+                            !StringUtils.isEmpty(lrdl.getSF())
+                                ? new BigDecimal(lrdl.getSF())
+                                : null);
+                        loadicatorData.setBendingMoment(
+                            !StringUtils.isEmpty(lrdl.getBM())
+                                ? new BigDecimal(lrdl.getBM())
+                                : null);
                         loadicatorData.setPortId(lrdl.getPortId());
                         loadicatorData.setOperationId(lrdl.getOperationId());
                         loadicatorData.setLoadablePatternId(lrr.getLoadablePatternId());
+
+                        // Set synoptical table id
+                        SynopticalTable synopticalTable =
+                            synopticalTableRepository
+                                .findByIdAndIsActive(lrdl.getSynopticalId(), true)
+                                .orElse(new SynopticalTable());
+                        loadicatorData.setSynopticalTable(synopticalTable);
                         synopticalTableLoadicatorDataRepository.save(loadicatorData);
                       });
             });

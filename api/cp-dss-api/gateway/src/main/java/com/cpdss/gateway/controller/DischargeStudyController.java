@@ -11,6 +11,9 @@ import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyStatusResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.LoadableStudyService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
@@ -167,18 +170,24 @@ public class DischargeStudyController {
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long dischargeStudiesId,
-      @RequestBody LoadablePlanRequest dischargePlanRequest,
+      @RequestBody JSONPObject requestJson,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
       log.info("saveDischargePatterns : {}", getClientIp());
       log.info(
           "saveDischargePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      ObjectMapper objectMapper = new ObjectMapper();
+      LoadablePlanRequest dischargePlanRequest =
+          new ObjectMapper()
+              .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+              .readValue(requestJson.toString(), LoadablePlanRequest.class);
       return loadableStudyService.saveAlgoPatterns(
           dischargePlanRequest,
           dischargeStudiesId,
           DISCHARGE_STUDY_SAVE_REQUEST,
-          headers.getFirst(CORRELATION_ID_HEADER));
+          headers.getFirst(CORRELATION_ID_HEADER),
+          requestJson);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in saveLoadablePatterns ", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

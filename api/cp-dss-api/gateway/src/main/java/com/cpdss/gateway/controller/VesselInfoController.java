@@ -246,9 +246,10 @@ public class VesselInfoController {
           e);
     }
   }
-  
+
   /**
    * Get all information for the request vessel.
+   *
    * @param vesselId
    * @param headers
    * @return VesselDetailedInfoResponse
@@ -260,8 +261,8 @@ public class VesselInfoController {
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-      return this.vesselInfoService.getVesselDetaildInformation(vesselId, 
-    		  headers.getFirst(CORRELATION_ID_HEADER));
+      return this.vesselInfoService.getVesselDetaildInformation(
+          vesselId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching vessels", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

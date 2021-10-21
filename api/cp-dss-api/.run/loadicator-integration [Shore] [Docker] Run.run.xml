@@ -1,11 +1,15 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="loadicator-integration [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Lodicator">
+  <configuration default="false" name="loadicator-integration [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Lodicator Integration">
     <ExternalSystemSettings>
       <option name="env">
         <map>
           <entry key="CONTAINER_NAME" value="loadicator-integration-container-shore" />
-          <entry key="CPDSS_BUILD_ENV" value="cloud" />
+          <entry key="DB_HOST" value="cpdssdbqa.chdo37r0lkuo.ap-southeast-1.rds.amazonaws.com" />
+          <entry key="DB_NAME" value="dev_shore_loadicator_communication_vlcc" />
+          <entry key="DB_PASSWORD" value="9VC6D1C0B1eyatg7BeIa0MN4d9" />
+          <entry key="DB_USER" value="cpdssuser" />
           <entry key="DEBUG_PORT_HOST" value="5294" />
+          <entry key="GRPC_PORT" value="8090" />
           <entry key="GRPC_PORT_HOST" value="9294" />
           <entry key="IMAGE_NAME" value="loadicator-integration-shore" />
           <entry key="SERVICE_NAME" value="loadicator-integration-service-shore" />

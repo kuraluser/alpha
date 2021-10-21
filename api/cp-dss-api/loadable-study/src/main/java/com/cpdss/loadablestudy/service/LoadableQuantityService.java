@@ -627,8 +627,8 @@ public class LoadableQuantityService {
               loadablePlanQuantity.setIsActive(true);
               loadablePlanQuantity.setLoadableMt(lqcd.getLoadableMT());
               loadablePlanQuantity.setOrderQuantity(
-                  (lqcd.getOrderedMT() != null && !lqcd.getOrderedMT().isEmpty())
-                      ? new BigDecimal(lqcd.getOrderedMT())
+                  (!StringUtils.isEmpty(lqcd.getOrderedQuantity()))
+                      ? new BigDecimal(lqcd.getOrderedQuantity())
                       : new BigDecimal(0));
               loadablePlanQuantity.setLoadablePattern(loadablePattern);
               loadablePlanQuantity.setCargoAbbreviation(lqcd.getCargoAbbreviation());

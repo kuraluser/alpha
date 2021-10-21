@@ -150,4 +150,22 @@ public class PortLoadingPlanCommingleDetails extends EntityDoc {
 
   @Column(name = "actual_planned")
   private Integer valueType;
+
+  @Column(name = "quantity1_mt")
+  private String quantity1MT;
+
+  @Column(name = "quantity2_mt")
+  private String quantity2MT;
+
+  @Column(name = "quantity1_m3")
+  private String quantity1M3;
+
+  @Column(name = "quantity2_m3")
+  private String quantity2M3;
+
+  @Column(name = "ullage_1")
+  private String ullage1;
+
+  @Column(name = "ullage_2")
+  private String ullage2;
 }

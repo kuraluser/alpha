@@ -665,7 +665,7 @@ public class SynopticServiceUtils {
           Optional.ofNullable(var1.getOrderedQuantity())
               .ifPresent(
                   v -> {
-                    builder1.setOrderQuantity(v.toString());
+                    builder1.setOrderedQuantity(v.toString());
                   });
           Optional.ofNullable(this.getCargoNominationQuantity(var1.getDischargeCargoNominationId()))
               .ifPresent(
@@ -813,7 +813,7 @@ public class SynopticServiceUtils {
         Optional.ofNullable(var1.getOrderQuantity())
             .ifPresent(
                 v -> {
-                  builder1.setOrderQuantity(v.toString());
+                  builder1.setOrderedQuantity(v.toString());
                 });
         Optional.ofNullable(this.getCargoNominationQuantity(var1.getCargoNominationId()))
             .ifPresent(
@@ -824,7 +824,13 @@ public class SynopticServiceUtils {
         Optional.ofNullable(var1.getCargoNominationId()).ifPresent(builder1::setCargoNominationId);
         Optional.ofNullable(var1.getTimeRequiredForLoading())
             .ifPresent(builder1::setTimeRequiredForLoading);
-        // loading port details no need
+
+        try {
+          this.setLoadingPortNameFromCargoOperation(
+              var1.getCargoXId(), var1.getCargoNominationId(), builder1);
+        } catch (Exception e) {
+          log.error("Failed to set Loading port names");
+        }
         // cargo topping off no need
         builder.addLoadableQuantityCargoDetails(builder1.build());
       }

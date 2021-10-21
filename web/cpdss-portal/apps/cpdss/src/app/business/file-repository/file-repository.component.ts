@@ -50,16 +50,16 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     createdBy: ''
   };
   fileIcons = {
-    'docx': 'docx-icon',
-    'pdf': 'pdf-icon',
-    'txt': 'text-icon',
-    'csv': 'csv-icon',
-    'xlsx': 'excel-icon'
+    'docx': 'icon-file icon-file-word',
+    'pdf': 'icon-file icon-file-pdf',
+    'txt': 'icon-file icon-file-text',
+    'csv': 'icon-file icon-file-csv',
+    'xlsx': 'icon-file icon-file-excel'
   };
   editData: any;
   permission: any;
 
-  _fileRepoDetails: any;;
+  _fileRepoDetails: any = [];
 
   get fileRepoDetails() {
     return this._fileRepoDetails;
@@ -88,8 +88,8 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.repositoryColumns = this.fileRepositoryTransformationService.repositoryTableColumn();
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['FileRepositoryComponent']);
+    this.repositoryColumns = this.fileRepositoryTransformationService.repositoryTableColumn(this.permission);
     this.getVesselInfo();
     this.getFiles(false);
 
@@ -138,8 +138,8 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     }
     if (result.responseStatus.status === '200') {
       result.fileRepos?.map(item => {
-        item.delete = !item.isSystemGenerated && this.permission.delete ? true : false;
-        item.edit = !item.isSystemGenerated && this.permission.edit ? true : false;
+        item.isDeletable = !item.isSystemGenerated && this.permission.delete ? true : false;
+        item.isEditable = !item.isSystemGenerated && this.permission.edit ? true : false;
       });
       this.fileRepoDetails = result.fileRepos;
       this.totalRecords = result.totalElements;
@@ -184,28 +184,12 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Method for edit/delete/view 
-   *
-   * @memberof FileRepositoryComponent
-   */
-  action(event) {
-    if (event.field === 'edit') {
-      this.editFile(event.data);
-    }
-    if (event.field === 'delete') {
-      this.deleteConfirm(event.data);
-    }
-    if (event.field === 'download') {
-      this.downloadFile(event.data);
-    }
-  }
-
-  /**
    * Method for edit file
    *
    * @memberof FileRepositoryComponent
    */
-  editFile(data) {
+  editFile(event) {
+    const data = event.data;
     this.editData = JSON.parse(JSON.stringify(data));
     const section = this.fileRepositoryTransformationService.sectionList.filter(item => item.label === data.section);
     const category = this.fileRepositoryTransformationService.category.filter(item => item.label === data.category);
@@ -222,7 +206,7 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
    *
    * @memberof FileRepositoryComponent
    */
-  deleteConfirm(data) {
+  deleteConfirm(event) {
 
     const translationKeys = this.translateService.instant(['FILE_REPOSITORY_DELETE_SUMMARY', 'FILE_REPOSITORY_DELETE_DETAILS', 'FILE_REPOSITORY_DELETE_CONFIRM_LABEL', 'FILE_REPOSITORY_DELETE_REJECT_LABEL']);
     this.confirmationService.confirm({
@@ -238,7 +222,7 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
       rejectIcon: 'pi',
       rejectButtonStyleClass: 'btn btn-main',
       accept: async () => {
-        this.deleteFile(data);
+        this.deleteFile(event.data);
       }
     });
   }
@@ -266,7 +250,8 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
    * Method for download file
    * @memberof FileRepositoryComponent
    */
-  async downloadFile(data) {
+  async downloadFile(event) {
+    const data = event.data;
     this.ngxSpinnerService.show();
     const result = await this.fileRepositoryApiService.downloadFile(data.id).toPromise();
     const blob = new Blob([result], { type: result.type })

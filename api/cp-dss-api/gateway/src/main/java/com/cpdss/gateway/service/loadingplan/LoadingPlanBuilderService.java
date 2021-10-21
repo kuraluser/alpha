@@ -134,6 +134,34 @@ public class LoadingPlanBuilderService {
           StringUtils.isEmpty(commingle.getUllage())
               ? null
               : new BigDecimal(commingle.getUllage()));
+      commingleDetails.setQuantity1MT(
+          StringUtils.isEmpty(commingle.getQuantity1MT())
+              ? null
+              : new BigDecimal(commingle.getQuantity1MT()));
+
+      commingleDetails.setQuantity2MT(
+          StringUtils.isEmpty(commingle.getQuantity2MT())
+              ? null
+              : new BigDecimal(commingle.getQuantity2MT()));
+
+      commingleDetails.setQuantity1M3(
+          StringUtils.isEmpty(commingle.getQuantity1M3())
+              ? null
+              : new BigDecimal(commingle.getQuantity1M3()));
+
+      commingleDetails.setQuantity2M3(
+          StringUtils.isEmpty(commingle.getQuantity2M3())
+              ? null
+              : new BigDecimal(commingle.getQuantity2M3()));
+
+      commingleDetails.setUllage1(
+          StringUtils.isEmpty(commingle.getUllage1())
+              ? null
+              : new BigDecimal(commingle.getUllage1()));
+      commingleDetails.setUllage2(
+          StringUtils.isEmpty(commingle.getUllage2())
+              ? null
+              : new BigDecimal(commingle.getUllage2()));
       commingleDetails.setConditionType(commingle.getConditionType());
       commingleDetails.setValueType(commingle.getValueType());
       response.add(commingleDetails);

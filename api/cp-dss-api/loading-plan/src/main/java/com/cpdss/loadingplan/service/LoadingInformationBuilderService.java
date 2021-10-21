@@ -472,7 +472,14 @@ public class LoadingInformationBuilderService {
             Optional.ofNullable(commingle.getQuantityM3()).ifPresent(builder::setQuantityM3);
             Optional.ofNullable(commingle.getTankId()).ifPresent(builder::setTankId);
             Optional.ofNullable(commingle.getTemperature()).ifPresent(builder::setTemperature);
+            Optional.ofNullable(commingle.getQuantity1MT()).ifPresent(builder::setQuantity1MT);
+            Optional.ofNullable(commingle.getQuantity2MT()).ifPresent(builder::setQuantity2MT);
+            Optional.ofNullable(commingle.getQuantity1M3()).ifPresent(builder::setQuantity1M3);
+            Optional.ofNullable(commingle.getQuantity2M3()).ifPresent(builder::setQuantity2M3);
+            Optional.ofNullable(commingle.getUllage1()).ifPresent(builder::setUllage1);
+            Optional.ofNullable(commingle.getUllage2()).ifPresent(builder::setUllage2);
             Optional.ofNullable(commingle.getUllage()).ifPresent(builder::setUllage);
+
             Optional.ofNullable(commingle.getConditionType()).ifPresent(builder::setConditionType);
             Optional.ofNullable(commingle.getValueType()).ifPresent(builder::setValueType);
             portLoadingPlanCommingleDetails.add(builder.build());
