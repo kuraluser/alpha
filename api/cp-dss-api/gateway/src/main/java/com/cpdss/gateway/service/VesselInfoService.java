@@ -12,9 +12,9 @@ import com.cpdss.common.generated.VesselInfo.ParameterValue;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
-import com.cpdss.common.generated.VesselInfo.VesselParticulars;
 import com.cpdss.common.generated.VesselInfo.VesselDetaildInfoReply;
 import com.cpdss.common.generated.VesselInfo.VesselIdRequest;
+import com.cpdss.common.generated.VesselInfo.VesselParticulars;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
@@ -1340,6 +1340,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     Optional.ofNullable(reply.getShipManifold()).ifPresent(vesselParticulars::setShipManifold);
     Optional.ofNullable(reply.getSummerDraft()).ifPresent(vesselParticulars::setSummerDraft);
     Optional.ofNullable(reply.getTropicalDraft()).ifPresent(vesselParticulars::setTropicalDraft);
+    Optional.ofNullable(reply.getFreshMLD()).ifPresent(vesselParticulars::setFreshWaterDraft);
     Optional.ofNullable(reply.getSummerDeadweight())
         .ifPresent(vesselParticulars::setSummerDeadweight);
     Optional.ofNullable(reply.getSummerDisplacement())
@@ -1357,115 +1358,132 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     log.info("vessel particulars fetched succesfully");
     return vesselParticulars;
   }
-  
+
   /**
    * Get vessel detailed information
+   *
    * @param vesselId
    * @param correlationId
    * @return VesselDetailedInfoResponse
    * @throws GenericServiceException
    */
-  public VesselDetailedInfoResponse getVesselDetaildInformation(Long vesselId,String correlationId)throws GenericServiceException {
-	  
-	  com.cpdss.common.generated.VesselInfo.VesselIdRequest.Builder builder = VesselIdRequest.newBuilder();	  
-	  builder.setVesselId(vesselId);
-	  VesselDetaildInfoReply vesselDetaildInfoReply = vesselInfoGrpcService.getVesselDetaildInformation(builder.build());
-	  if (!SUCCESS.equals(vesselDetaildInfoReply.getResponseStatus().getStatus())) {
-	      throw new GenericServiceException(
-	          "failed to get vessel detailed information ",
-	          vesselDetaildInfoReply.getResponseStatus().getCode(),
-	          HttpStatusCode.valueOf(Integer.valueOf(vesselDetaildInfoReply.getResponseStatus().getCode())));
-	  }
-	  
-	  VesselDetailedInfoResponse response = new VesselDetailedInfoResponse();
-	  response.setResponseStatus( new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
-	  String vesselName = vesselDetaildInfoReply.getVesselName();
-	  response.setVesselId(vesselDetaildInfoReply.getVesselId());
-	  response.setVesselName(vesselDetaildInfoReply.getVesselName());
-	  response.setImoNumber(vesselDetaildInfoReply.getImoNumber());
-	  response.setCountryFlagUrl("assets/images/flags/japan.png");
-	  response.setVesselImageUrl("assets/images/vessels/"+vesselName+"/"+vesselName+".jpg");
-	  setGeneralVesselInformation(vesselDetaildInfoReply, response);
-	  setVesselDimensionInfo(vesselDetaildInfoReply, response);
-	  VesselDraftDisplacementResponse draftResponse = new VesselDraftDisplacementResponse();
-	  draftResponse.setThicknessOfKeelPlate(vesselDetaildInfoReply.getThicknessOfKeelPlate());
-	  draftResponse.setThicknessOfUpperDeck(vesselDetaildInfoReply.getThicknessOfUpperDeck());
-	  draftResponse.setTotalDepth(vesselDetaildInfoReply.getTotalDepth());
-	  draftResponse.setDepthMoulded(vesselDetaildInfoReply.getDepthMoulded());
-	  response.setDraftDisplacementDeadweight(draftResponse);
-	  response.setBunkerRearTanks(setVesselTankLayoutDetails(vesselDetaildInfoReply.getBunkerRearTanksList(), response));
-	  response.setBunkerTanks(setVesselTankLayoutDetails(vesselDetaildInfoReply.getBunkerTanksList(), response));
-	  response.setBallastFrontTanks(setVesselTankLayoutDetails(vesselDetaildInfoReply.getBallastFrontTanksList(), response));
-	  response.setBallastCenterTanks(setVesselTankLayoutDetails(vesselDetaildInfoReply.getBallastCenterTanksList(), response));
-	  response.setBallastRearTanks(setVesselTankLayoutDetails(vesselDetaildInfoReply.getBallastRearTanksList(), response));
-	  response.setCargoTanks(setVesselTankLayoutDetails(vesselDetaildInfoReply.getCargoTanksList(), response));
-	  return response;
+  public VesselDetailedInfoResponse getVesselDetaildInformation(Long vesselId, String correlationId)
+      throws GenericServiceException {
+
+    com.cpdss.common.generated.VesselInfo.VesselIdRequest.Builder builder =
+        VesselIdRequest.newBuilder();
+    builder.setVesselId(vesselId);
+    VesselDetaildInfoReply vesselDetaildInfoReply =
+        vesselInfoGrpcService.getVesselDetaildInformation(builder.build());
+    if (!SUCCESS.equals(vesselDetaildInfoReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get vessel detailed information ",
+          vesselDetaildInfoReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(vesselDetaildInfoReply.getResponseStatus().getCode())));
+    }
+
+    VesselDetailedInfoResponse response = new VesselDetailedInfoResponse();
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    String vesselName = vesselDetaildInfoReply.getVesselName();
+    response.setVesselId(vesselDetaildInfoReply.getVesselId());
+    response.setVesselName(vesselDetaildInfoReply.getVesselName());
+    response.setImoNumber(vesselDetaildInfoReply.getImoNumber());
+    response.setCountryFlagUrl("assets/images/flags/japan.png");
+    response.setVesselImageUrl("assets/images/vessels/" + vesselName + "/" + vesselName + ".jpg");
+    setGeneralVesselInformation(vesselDetaildInfoReply, response);
+    setVesselDimensionInfo(vesselDetaildInfoReply, response);
+    VesselDraftDisplacementResponse draftResponse = new VesselDraftDisplacementResponse();
+    draftResponse.setThicknessOfKeelPlate(vesselDetaildInfoReply.getThicknessOfKeelPlate());
+    draftResponse.setThicknessOfUpperDeck(vesselDetaildInfoReply.getThicknessOfUpperDeck());
+    draftResponse.setTotalDepth(vesselDetaildInfoReply.getTotalDepth());
+    draftResponse.setDepthMoulded(vesselDetaildInfoReply.getDepthMoulded());
+    response.setDraftDisplacementDeadweight(draftResponse);
+    response.setBunkerRearTanks(
+        setVesselTankLayoutDetails(vesselDetaildInfoReply.getBunkerRearTanksList(), response));
+    response.setBunkerTanks(
+        setVesselTankLayoutDetails(vesselDetaildInfoReply.getBunkerTanksList(), response));
+    response.setBallastFrontTanks(
+        setVesselTankLayoutDetails(vesselDetaildInfoReply.getBallastFrontTanksList(), response));
+    response.setBallastCenterTanks(
+        setVesselTankLayoutDetails(vesselDetaildInfoReply.getBallastCenterTanksList(), response));
+    response.setBallastRearTanks(
+        setVesselTankLayoutDetails(vesselDetaildInfoReply.getBallastRearTanksList(), response));
+    response.setCargoTanks(
+        setVesselTankLayoutDetails(vesselDetaildInfoReply.getCargoTanksList(), response));
+    return response;
   }
-  
+
   /**
    * Set general vessel information category
+   *
    * @param vesselDetaildInfoReply
    * @param response
    */
-  private void setGeneralVesselInformation(VesselDetaildInfoReply vesselDetaildInfoReply, VesselDetailedInfoResponse response) {
-	  VesselGeneralInfoResponse generalResponse = new VesselGeneralInfoResponse();
-	  generalResponse.setBuilder(vesselDetaildInfoReply.getBuilder());
-	  generalResponse.setDateOfDelivery(vesselDetaildInfoReply.getDateOfDelivery());
-	  generalResponse.setDateOfKeelLaid(vesselDetaildInfoReply.getDateOfKeelLaid());
-	  generalResponse.setDateOfLaunch(vesselDetaildInfoReply.getDateOfLaunch());
-	  generalResponse.setNavigationArea(vesselDetaildInfoReply.getNavigationArea());
-	  generalResponse.setOfficialNumber(vesselDetaildInfoReply.getOfficialNumber());
-	  generalResponse.setSignalLetter(vesselDetaildInfoReply.getSignalLetter());
-	  generalResponse.setVesselClass(vesselDetaildInfoReply.getClass_());
-	  generalResponse.setVesselType(vesselDetaildInfoReply.getVesselType());
-	  response.setGeneralInfo(generalResponse);
+  private void setGeneralVesselInformation(
+      VesselDetaildInfoReply vesselDetaildInfoReply, VesselDetailedInfoResponse response) {
+    VesselGeneralInfoResponse generalResponse = new VesselGeneralInfoResponse();
+    generalResponse.setBuilder(vesselDetaildInfoReply.getBuilder());
+    generalResponse.setDateOfDelivery(vesselDetaildInfoReply.getDateOfDelivery());
+    generalResponse.setDateOfKeelLaid(vesselDetaildInfoReply.getDateOfKeelLaid());
+    generalResponse.setDateOfLaunch(vesselDetaildInfoReply.getDateOfLaunch());
+    generalResponse.setNavigationArea(vesselDetaildInfoReply.getNavigationArea());
+    generalResponse.setOfficialNumber(vesselDetaildInfoReply.getOfficialNumber());
+    generalResponse.setSignalLetter(vesselDetaildInfoReply.getSignalLetter());
+    generalResponse.setVesselClass(vesselDetaildInfoReply.getClass_());
+    generalResponse.setVesselType(vesselDetaildInfoReply.getVesselType());
+    response.setGeneralInfo(generalResponse);
   }
-  
+
   /**
    * Set vessel dimension information category
+   *
    * @param vesselDetaildInfoReply
    * @param response
    */
-  private void setVesselDimensionInfo(VesselDetaildInfoReply vesselDetaildInfoReply, VesselDetailedInfoResponse response) {
-	  VesselDimensionResponse dimensionResponse = new VesselDimensionResponse();
-	  dimensionResponse.setBreadthMoulded(vesselDetaildInfoReply.getBreadthMoulded());
-	  dimensionResponse.setDesignedLoadDraft(vesselDetaildInfoReply.getDesignedLoadDraft());
-	  dimensionResponse.setDraftFullLoad(vesselDetaildInfoReply.getDraftFullLoad());
-	  dimensionResponse.setLengthBetweenPerpendiculars(vesselDetaildInfoReply.getLengthBetweenPerpendiculars());
-	  dimensionResponse.setLengthOverall(vesselDetaildInfoReply.getLengthOverall());
-	  dimensionResponse.setRegisterLength(vesselDetaildInfoReply.getRegisterLength());
-	  response.setVesselDimesnsions(dimensionResponse);
-
+  private void setVesselDimensionInfo(
+      VesselDetaildInfoReply vesselDetaildInfoReply, VesselDetailedInfoResponse response) {
+    VesselDimensionResponse dimensionResponse = new VesselDimensionResponse();
+    dimensionResponse.setBreadthMoulded(vesselDetaildInfoReply.getBreadthMoulded());
+    dimensionResponse.setDesignedLoadDraft(vesselDetaildInfoReply.getDesignedLoadDraft());
+    dimensionResponse.setDraftFullLoad(vesselDetaildInfoReply.getDraftFullLoad());
+    dimensionResponse.setLengthBetweenPerpendiculars(
+        vesselDetaildInfoReply.getLengthBetweenPerpendiculars());
+    dimensionResponse.setLengthOverall(vesselDetaildInfoReply.getLengthOverall());
+    dimensionResponse.setRegisterLength(vesselDetaildInfoReply.getRegisterLength());
+    response.setVesselDimesnsions(dimensionResponse);
   }
-  
+
   /**
    * Set vessel bunker, ballast, cargo tank layout datas
+   *
    * @param bunkerRearTanksList
    * @param response
    * @return
    */
-  private List<List<VesselTankInformation>> setVesselTankLayoutDetails(List<VesselTankInfo> bunkerRearTanksList, VesselDetailedInfoResponse response) {
-	  
-	  List<List<VesselTankInformation>> tanks = new ArrayList<>();
-	  List<VesselTankInformation> tankGroup = new ArrayList<>();
-	  for(VesselTankInfo bunkerRearTank:bunkerRearTanksList) {
-		  VesselTankInformation tank = new VesselTankInformation();
-		  tank.setCategoryId(bunkerRearTank.getTankCategoryId());
-		  tank.setCategoryName(bunkerRearTank.getTankCategoryName());
-		  tank.setDensity(bunkerRearTank.getDensity());
-		  tank.setFrameNumberFrom(bunkerRearTank.getFrameNumberFrom());
-		  tank.setFrameNumberTo(bunkerRearTank.getFrameNumberTo());
-		  tank.setFullCapacityCubm(bunkerRearTank.getFullCapacityCubm());
-		  tank.setGroup(bunkerRearTank.getTankGroup());
-		  tank.setId(bunkerRearTank.getTankId());
-		  tank.setName(bunkerRearTank.getTankName());
-		  tank.setOrder(bunkerRearTank.getTankOrder());
-		  tank.setShortName(bunkerRearTank.getShortName());
-		  tank.setSlopTank(bunkerRearTank.getIsSlopTank());
-		  tankGroup.add(tank);
-	  }
-	  tanks.add(tankGroup);
-	  return tanks;
-	  
+  private List<List<VesselTankInformation>> setVesselTankLayoutDetails(
+      List<VesselTankInfo> bunkerRearTanksList, VesselDetailedInfoResponse response) {
+
+    List<List<VesselTankInformation>> tanks = new ArrayList<>();
+    List<VesselTankInformation> tankGroup = new ArrayList<>();
+    for (VesselTankInfo bunkerRearTank : bunkerRearTanksList) {
+      VesselTankInformation tank = new VesselTankInformation();
+      tank.setCategoryId(bunkerRearTank.getTankCategoryId());
+      tank.setCategoryName(bunkerRearTank.getTankCategoryName());
+      tank.setDensity(bunkerRearTank.getDensity());
+      tank.setFrameNumberFrom(bunkerRearTank.getFrameNumberFrom());
+      tank.setFrameNumberTo(bunkerRearTank.getFrameNumberTo());
+      tank.setFullCapacityCubm(bunkerRearTank.getFullCapacityCubm());
+      tank.setGroup(bunkerRearTank.getTankGroup());
+      tank.setId(bunkerRearTank.getTankId());
+      tank.setName(bunkerRearTank.getTankName());
+      tank.setOrder(bunkerRearTank.getTankOrder());
+      tank.setShortName(bunkerRearTank.getShortName());
+      tank.setSlopTank(bunkerRearTank.getIsSlopTank());
+      tankGroup.add(tank);
+    }
+    tanks.add(tankGroup);
+    return tanks;
   }
 }

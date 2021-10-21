@@ -48,6 +48,7 @@ public class VesselParticularService {
   private static final Long BALLAST_PUMP_TYPE = 2L;
   private static final Long SUMMER = 1L;
   private static final Long TROPICAL = 2L;
+  private static final Long FRESH = 4L;
   private static final Long CARGO_TANK_CATEGORY_ID = 1L;
   private static final Integer PERCENTAGE = 98;
 
@@ -130,42 +131,40 @@ public class VesselParticularService {
   private void getVesselDraftCondition(Vessel vessel, VesselParticulars.Builder builder) {
     List<VesselDraftCondition> draftConditionList =
         vesselDraftConditionRepository.findByVesselAndIsActive(vessel, true);
+    Optional<VesselDraftCondition> opt = Optional.empty();
     if (draftConditionList != null && !draftConditionList.isEmpty()) {
       Supplier<Stream<VesselDraftCondition>> streamSupplier =
           () ->
               draftConditionList.stream()
                   .filter(item -> item.getDraftCondition().getId().equals(SUMMER));
-      Optional.ofNullable(
-              streamSupplier
-                  .get()
-                  .max(Comparator.comparing(VesselDraftCondition::getDraftExtreme))
-                  .get()
-                  .getDraftExtreme())
-          .ifPresent(value -> builder.setSummerDraft(String.valueOf(value)));
-
-      Optional.ofNullable(
-              streamSupplier
-                  .get()
-                  .max(Comparator.comparing(VesselDraftCondition::getDeadweight))
-                  .get()
-                  .getDeadweight())
-          .ifPresent(value -> builder.setSummerDeadweight(String.valueOf(value)));
-
-      Optional.ofNullable(
-              streamSupplier
-                  .get()
-                  .max(Comparator.comparing(VesselDraftCondition::getDisplacement))
-                  .get()
-                  .getDisplacement())
-          .ifPresent(value -> builder.setSummerDisplacement(String.valueOf(value)));
-
-      Optional.ofNullable(
-              draftConditionList.stream()
-                  .filter(item -> item.getDraftCondition().getId().equals(TROPICAL))
-                  .max(Comparator.comparing(VesselDraftCondition::getDraftExtreme))
-                  .get()
-                  .getDraftExtreme())
-          .ifPresent(value -> builder.setTropicalDraft(String.valueOf(value)));
+      if (!streamSupplier.get().equals(Stream.empty())) {
+        opt = streamSupplier.get().max(Comparator.comparing(VesselDraftCondition::getDraftExtreme));
+        if (opt.isPresent()) {
+          builder.setSummerDraft(String.valueOf(opt.get().getDraftExtreme()));
+        }
+        opt = streamSupplier.get().max(Comparator.comparing(VesselDraftCondition::getDeadweight));
+        if (opt.isPresent()) {
+          builder.setSummerDeadweight(String.valueOf(opt.get().getDeadweight()));
+        }
+        opt = streamSupplier.get().max(Comparator.comparing(VesselDraftCondition::getDisplacement));
+        if (opt.isPresent()) {
+          builder.setSummerDisplacement(String.valueOf(opt.get().getDisplacement()));
+        }
+      }
+      opt =
+          draftConditionList.stream()
+              .filter(item -> item.getDraftCondition().getId().equals(TROPICAL))
+              .max(Comparator.comparing(VesselDraftCondition::getDraftExtreme));
+      if (opt.isPresent()) {
+        builder.setTropicalDraft(String.valueOf(opt.get().getDraftExtreme()));
+      }
+      opt =
+          draftConditionList.stream()
+              .filter(item -> item.getDraftCondition().getId().equals(FRESH))
+              .max(Comparator.comparing(VesselDraftCondition::getDraftExtreme));
+      if (opt.isPresent()) {
+        builder.setFreshMLD(String.valueOf(opt.get().getDraftExtreme()));
+      }
     }
   }
 
