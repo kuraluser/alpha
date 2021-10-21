@@ -19,7 +19,7 @@ export function durationValidator(maxHour: number, maxMinute: number = null): Va
             const hour = Number(duration[0].replace('_', ''))
             const minute = Number(duration[1].replace('_', ''))
             if (hour && minute >= 0) {
-                if ((hour === maxHour && minute > 0) || (hour > maxHour && minute > maxMinute)) {
+                if ((maxHour * 60) + maxMinute < (hour * 60) + minute) {
                     return { invalidDuration: true };
                 }
                 else {
