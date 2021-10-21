@@ -463,15 +463,15 @@ public class DischargeInformationService {
     try {
       log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
       DischargingInfoSaveResponse response = infoBuilderService.saveDataAsync(request);
-      if (request.getDischargingDetails() != null) {
+      if (request.getDischargeDetails() != null) {
         // Updating synoptic table (time)
         log.info(
             "Saving Loading info Times details at Synoptic Table - id {}",
             request.getSynopticTableId());
         this.loadableStudyService.saveLoadingInfoToSynopticalTable(
             request.getSynopticTableId(),
-            request.getDischargingDetails().getTimeOfSunrise(),
-            request.getDischargingDetails().getTimeOfSunset());
+            request.getDischargeDetails().getTimeOfSunrise(),
+            request.getDischargeDetails().getTimeOfSunset());
       }
       // Discharging Info Case 10 - if protested, is commingled
       if (request.getCargoToBeDischarged() != null

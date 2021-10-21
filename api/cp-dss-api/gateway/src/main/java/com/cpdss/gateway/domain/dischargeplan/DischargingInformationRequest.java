@@ -17,9 +17,9 @@ public class DischargingInformationRequest {
   private Long synopticTableId;
 
   // re using loading object
-  private LoadingDetails dischargingDetails;
+  private LoadingDetails dischargeDetails;
 
-  private DischargeRates dischargingRates;
+  private DischargeRates dischargeRates;
 
   // re using berth details
   private List<BerthDetails> dischargingBerths;
