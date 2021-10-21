@@ -1152,31 +1152,33 @@ public class DischargePlanController {
     }
   }
 
-  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-info-status")
+  @PostMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-info-status")
   public LoadingInfoAlgoResponse dischargingPlanStatus(
-		  @RequestHeader HttpHeaders headers,
-	      @PathVariable Long vesselId,
-	      @PathVariable Long voyageId,
-	      @PathVariable Long infoId,
-	      @RequestBody AlgoStatusRequest request) throws CommonRestException {
-	  try {
-	      log.info("update discharging info status api for vessel {}", vesselId);
-	      return dischargeInformationService.saveDischargingInfoStatus(
-	          request, headers.getFirst(CORRELATION_ID_HEADER));
-	    } catch (GenericServiceException e) {
-	      log.error("GenericServiceException in dischargingInfoStatus ", e);
-	      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
-	    } catch (Exception e) {
-	      log.error("Error in dischargingInfoStatus ", e);
-	      throw new CommonRestException(
-	          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-	          headers,
-	          HttpStatusCode.SERVICE_UNAVAILABLE,
-	          e.getMessage(),
-	          e);
-	    }
+      @RequestHeader HttpHeaders headers,
+      @PathVariable Long vesselId,
+      @PathVariable Long voyageId,
+      @PathVariable Long infoId,
+      @RequestBody AlgoStatusRequest request)
+      throws CommonRestException {
+    try {
+      log.info("update discharging info status api for vessel {}", vesselId);
+      return dischargeInformationService.saveDischargingInfoStatus(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in dischargingInfoStatus ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in dischargingInfoStatus ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
   }
-  
+
   /**
    * Save discharging Sequence API
    *

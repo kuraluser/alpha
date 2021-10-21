@@ -604,29 +604,32 @@ public class DischargeInformationService {
 
   /**
    * Updates Discharging Information status
+   *
    * @param request
    * @param first
    * @return LoadingInfoAlgoResponse
-   * @throws GenericServiceException 
-   * @throws NumberFormatException 
+   * @throws GenericServiceException
+   * @throws NumberFormatException
    */
-  public LoadingInfoAlgoResponse saveDischargingInfoStatus(AlgoStatusRequest request, String correlationId) throws NumberFormatException, GenericServiceException {
-  	log.info("Inside update discharging info status api");
-      LoadingInfoAlgoResponse loadingInfoAlgoResponse = new LoadingInfoAlgoResponse();
-      com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.Builder requestBuilder =
-          com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.newBuilder();
-      requestBuilder.setLoadableStudystatusId(request.getDischargingInfoStatusId());
-      requestBuilder.setProcesssId(request.getProcessId());
-      AlgoStatusReply reply =
-          dischargePlanServiceBlockingStub.saveDischargingPlanAlgoStatus(requestBuilder.build());
-      if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-        throw new GenericServiceException(
-            "Failed to save DischargingInfoStatus",
-            reply.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
-      }
-      loadingInfoAlgoResponse.setResponseStatus(
-          new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
-      return loadingInfoAlgoResponse;
+  public LoadingInfoAlgoResponse saveDischargingInfoStatus(
+      AlgoStatusRequest request, String correlationId)
+      throws NumberFormatException, GenericServiceException {
+    log.info("Inside update discharging info status api");
+    LoadingInfoAlgoResponse loadingInfoAlgoResponse = new LoadingInfoAlgoResponse();
+    com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.Builder requestBuilder =
+        com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.newBuilder();
+    requestBuilder.setLoadableStudystatusId(request.getDischargingInfoStatusId());
+    requestBuilder.setProcesssId(request.getProcessId());
+    AlgoStatusReply reply =
+        dischargePlanServiceBlockingStub.saveDischargingPlanAlgoStatus(requestBuilder.build());
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to save DischargingInfoStatus",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+    }
+    loadingInfoAlgoResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return loadingInfoAlgoResponse;
   }
 }

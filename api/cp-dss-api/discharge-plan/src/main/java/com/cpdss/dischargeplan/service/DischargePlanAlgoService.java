@@ -1448,20 +1448,24 @@ public class DischargePlanAlgoService {
     ballastValve.setValveXId(valve.getValveId());
   }
 
-/**
- * Updates discharge plan ALGO status.
- * @param request
- * @throws GenericServiceException 
- */
-public void saveDischargingInfoAlgoStatus(AlgoStatusRequest request) throws GenericServiceException {
-	Optional<DischargingInformationAlgoStatus> dischargingInfoStatusOpt =
-	        dischargingInformationAlgoStatusRepository.findByProcessIdAndIsActiveTrue(request.getProcesssId());
-	    if (dischargingInfoStatusOpt.isEmpty()) {
-	      throw new GenericServiceException(
-	          "Could not find discharging information " + request.getProcesssId(),
-	          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-	          HttpStatusCode.BAD_REQUEST);
-	    }
-	dischargingInformationAlgoStatusRepository.updateDischargingInformationAlgoStatus(request.getLoadableStudystatusId(), request.getProcesssId());
-}
+  /**
+   * Updates discharge plan ALGO status.
+   *
+   * @param request
+   * @throws GenericServiceException
+   */
+  public void saveDischargingInfoAlgoStatus(AlgoStatusRequest request)
+      throws GenericServiceException {
+    Optional<DischargingInformationAlgoStatus> dischargingInfoStatusOpt =
+        dischargingInformationAlgoStatusRepository.findByProcessIdAndIsActiveTrue(
+            request.getProcesssId());
+    if (dischargingInfoStatusOpt.isEmpty()) {
+      throw new GenericServiceException(
+          "Could not find discharging information " + request.getProcesssId(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    dischargingInformationAlgoStatusRepository.updateDischargingInformationAlgoStatus(
+        request.getLoadableStudystatusId(), request.getProcesssId());
+  }
 }
