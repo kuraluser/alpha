@@ -615,7 +615,7 @@ public class LoadableStudyPortRotationService {
           entity, request.getOperationId(), request.getPortId());
     }
     LoadableStudy loadableStudy = loadableStudyOpt.get();
-    
+
     loadableStudy.setIsPortsComplete(request.getIsPortsComplete());
     if (loadableStudy.getPlanningTypeXId() == 2) {
       loadableStudy.setIsDischargeStudyComplete(false);

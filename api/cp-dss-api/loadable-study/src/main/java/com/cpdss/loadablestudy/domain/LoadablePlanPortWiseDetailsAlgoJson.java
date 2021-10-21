@@ -2,7 +2,6 @@
 package com.cpdss.loadablestudy.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import lombok.Data;
 
 /** @Author gokul.p */
