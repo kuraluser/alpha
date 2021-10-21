@@ -430,8 +430,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               port -> {
                 if (port.isActive()) {
                   ohqPortsBuilder.setId(port.getId());
-                  ohqPortsBuilder.setIsPortRotationOhqComplete(port.getIsPortRotationOhqComplete()==null?false:port.getIsPortRotationOhqComplete());
-                 List<OnHandQuantity> onHandQuantities =
+                  ohqPortsBuilder.setIsPortRotationOhqComplete(
+                      port.getIsPortRotationOhqComplete() == null
+                          ? false
+                          : port.getIsPortRotationOhqComplete());
+                  List<OnHandQuantity> onHandQuantities =
                       this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
                           entity, port.getPortXId(), true);
 
