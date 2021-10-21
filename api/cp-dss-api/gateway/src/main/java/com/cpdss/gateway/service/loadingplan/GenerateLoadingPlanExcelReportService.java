@@ -1463,8 +1463,8 @@ public class GenerateLoadingPlanExcelReportService {
             berthInfoList.add(berthInformation);
           });
     } else {
-    	//Adding an empty element for excel proper alignment
-    	berthInfoList.add(new BerthInformation());
+      // Adding an empty element for excel proper alignment
+      berthInfoList.add(new BerthInformation());
     }
 
     sheetOne.setBerthInformation(berthInfoList);
