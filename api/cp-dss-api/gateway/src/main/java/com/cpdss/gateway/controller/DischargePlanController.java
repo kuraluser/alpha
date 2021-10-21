@@ -32,6 +32,8 @@ import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveRespons
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsStatus;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsUpdateRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
+import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatus;
+import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatusRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
@@ -1180,6 +1182,34 @@ public class DischargePlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in Save discharging Plan API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/discharge-info/{infoId}/algo-status")
+  public LoadingInfoAlgoStatus getDischargeInfoStatus(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable Long vesselId,
+      @PathVariable Long voyageId,
+      @PathVariable Long infoId,
+      @RequestBody LoadingInfoAlgoStatusRequest request)
+      throws CommonRestException {
+    try {
+      var data =
+          dischargeInformationService.dischargeInfoStatusCheck(
+              vesselId, voyageId, infoId, request.getProcessId(), request.getConditionType());
+      log.info(
+          "Get Discharge Info Algo Status For - {}, Process - {}", infoId, request.getProcessId());
+      return data;
+    } catch (GenericServiceException e) {
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
       e.printStackTrace();
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
