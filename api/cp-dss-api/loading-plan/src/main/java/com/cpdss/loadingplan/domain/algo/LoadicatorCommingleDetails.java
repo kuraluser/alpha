@@ -23,4 +23,10 @@ public class LoadicatorCommingleDetails {
   private String abbreviation;
   private Integer conditionType;
   private Integer valueType;
+  private BigDecimal quantity1MT;
+  private BigDecimal quantity2MT;
+  private BigDecimal quantity1M3;
+  private BigDecimal quantity2M3;
+  private BigDecimal ullage1;
+  private BigDecimal ullage2;
 }

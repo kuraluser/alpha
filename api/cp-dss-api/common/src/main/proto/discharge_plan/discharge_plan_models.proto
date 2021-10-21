@@ -364,3 +364,16 @@ message DischargingPlanSaveRequest {
 message DischargingPlanSaveResponse {
   ResponseStatus responseStatus = 1;
 }
+
+message DischargeInfoStatusRequest {
+  int64 dischargeInfoId = 1;
+  string processId = 2;
+  int32 conditionType = 3;
+}
+
+message DischargeInfoStatusReply {
+  int64 dischargeInfoId = 1;
+  int64 dischargeInfoStatusId = 2;
+  string dischargeInfoStatusLastModifiedTime = 3;
+  ResponseStatus responseStatus = 4;
+}

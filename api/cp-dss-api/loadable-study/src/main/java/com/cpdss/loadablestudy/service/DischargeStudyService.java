@@ -200,7 +200,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       LoadableStudyPortRotation savedDischargeport =
           loadableStudyPortRotationRepository.save(dischargeStudyPortRotation);
       this.cargoNominationService.saveDsichargeStudyCargoNominations(
-          savedDischargeStudy.getId(), loadableStudy.getId(), savedDischargeport.getPortXId());
+          savedDischargeStudy.getId(),
+          loadableStudy.getId(),
+          savedDischargeport.getPortXId(),
+          savedDischargeport.getOperation().getId());
 
       this.synopticalTableRepository.saveAll(
           createDischargeSynoptical(synopticalData, savedDischargeport));
@@ -746,7 +749,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     cargoNomination.setIsActive(true);
                     cargoNomination.setCargoNominationPortDetails(
                         cargoNominationService.createCargoNominationPortDetails(
-                            cargoNomination, null, portId));
+                            cargoNomination, null, portId, dbPortRoation.getOperation().getId()));
                     cargoNomination.setIsBackloading(true);
                     updateCargoNominationToSave(
                         cargoRequest, cargoNomination, cargoNominationsToSave, portId);
@@ -791,6 +794,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       backLoadingService.saveAll(backLoadingToSave);
       cargoNominationService.saveAll(cargoNominationsToSave);
       loadableStudyPortRotationRepository.saveAll(portRotations);
+      LoadableStudy dsEntity = dischargeStudy.get();
+      dsEntity.setIsDischargeStudyComplete(true);
+      dischargeStudyRepository.save(dsEntity);
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       builder.setId(dischargestudyId);
     } catch (GenericServiceException e) {
@@ -1088,11 +1094,11 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               .setHttpStatusCode(e.getStatus().value())
               .build());
     } catch (Exception e) {
-      log.error("Exception when deleting discharge study", e);
+      log.error("Exception  when getting powtise cargo details", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-              .setMessage("Exception  when deleting discharge study")
+              .setMessage("Exception  when getting powtise cargo details")
               .setStatus(FAILED)
               .setHttpStatusCode(Integer.valueOf(CommonErrorCodes.E_GEN_INTERNAL_ERR))
               .build());
@@ -1190,7 +1196,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             cargo -> {
               Set<CargoNominationPortDetails> newPortDetails =
                   cargoNominationService.createCargoNominationPortDetails(
-                      cargo, null, portRotations.get(portRotations.size() - 1).getPortXId());
+                      cargo,
+                      null,
+                      portRotations.get(portRotations.size() - 1).getPortXId(),
+                      portRotations.get(portRotations.size() - 1).getOperation().getId());
               if (cargo.getCargoNominationPortDetails() != null
                   && !cargo.getCargoNominationPortDetails().isEmpty()) {
                 cargo.getCargoNominationPortDetails().addAll(newPortDetails);
@@ -1223,7 +1232,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     cargoNominationService.createCargoNominationPortDetails(
                         cargoBackloading,
                         null,
-                        portRotations.get(portRotations.size() - 1).getPortXId()));
+                        portRotations.get(portRotations.size() - 1).getPortXId(),
+                        portRotations.get(portRotations.size() - 1).getOperation().getId()));
                 cargoBackloading.setPriority(1L);
                 cargos.add(cargoBackloading);
               });

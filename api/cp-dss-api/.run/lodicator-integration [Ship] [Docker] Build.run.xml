@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="lodicator_integration [Ship] [Docker] Build" type="GradleRunConfiguration" factoryName="Gradle" folderName="Lodicator">
+  <configuration default="false" name="lodicator-integration [Ship] [Docker] Build" type="GradleRunConfiguration" factoryName="Gradle" folderName="Lodicator Integration">
     <ExternalSystemSettings>
       <option name="env">
         <map>

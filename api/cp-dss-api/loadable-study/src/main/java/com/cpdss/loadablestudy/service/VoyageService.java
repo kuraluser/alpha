@@ -272,6 +272,7 @@ public class VoyageService {
         .ifPresent(v -> builder.setDraftMark(String.valueOf(v)));
     Optional.ofNullable(entity.getCreatedDateTime())
         .ifPresent(v -> builder.setCreatedDate(formatter.format(v)));
+    Optional.ofNullable(entity.getLoadLineXId()).ifPresent(builder::setLoadLineXId);
   }
 
   // Few data added for now
@@ -284,6 +285,8 @@ public class VoyageService {
     Optional.ofNullable(entity.getOperation().getId()).ifPresent(builder::setOperationId);
     Optional.ofNullable(entity.getSeaWaterDensity())
         .ifPresent(v -> builder.setSeaWaterDensity(String.valueOf(v)));
+    Optional.ofNullable(entity.getEta()).ifPresent(eta -> builder.setEta(eta.toString()));
+    Optional.ofNullable(entity.getEtd()).ifPresent(etd -> builder.setEtd(etd.toString()));
   }
 
   public void checkIfVoyageClosed(Long voyageId) throws GenericServiceException {

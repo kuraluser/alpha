@@ -19,7 +19,7 @@ public class LoadingPlanExcelLoadingPlanDetails {
   private String eta;
   private String etd;
   private String vesselCompliance;
-  private String LoadLineZone;
+  private String loadLineZone;
   private ArrivalDeparcherCondition arrivalCondition;
   private ArrivalDeparcherCondition deparcherCondition;
   private List<CargoTobeLoaded> cargoTobeLoaded;

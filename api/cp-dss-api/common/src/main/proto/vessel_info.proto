@@ -48,6 +48,8 @@ service VesselInfoService {
 	rpc GetVesselsInformation(VesselsInfoRequest) returns (VesselsInformationReply) {}
 	
 	rpc GetVesselParticulars(LoadingInfoRulesRequest) returns (VesselParticulars) {} //used for Loading plan excel 
+	
+	rpc GetVesselDetaildInformation(VesselIdRequest) returns (VesselDetaildInfoReply){}
 }
 
 
@@ -681,5 +683,55 @@ message BendingMomentType1 {
 		repeated VesselsInformation vesselsInformation = 1;
 		ResponseStatus responseStatus = 2;
 		int64 totalElement = 3;
+	}
+	
+	message VesselTankInfo{
+		int64 tankId = 1;
+		int64 tankCategoryId = 2;
+		string tankCategoryName = 3;
+		string tankName = 4;
+		string frameNumberFrom = 5;
+		string frameNumberTo = 6;
+		string shortName = 7;
+		double fullCapacityCubm = 8;
+		double density = 9;
+		bool isSlopTank = 10;
+		int32 tankOrder = 11;
+		int32 tankGroup = 12;
+		
+	}
+	
+	message VesselDetaildInfoReply{
+		int64 vesselId = 1;
+		string vesselName = 2;
+		string vesselType = 3;
+		string imoNumber = 4;
+		string builder = 5;
+		string dateOfLaunch = 6;
+		string signalLetter = 7;
+		string officialNumber = 8;
+		string dateOfKeelLaid = 9;
+		string dateOfDelivery = 10;
+		string class = 11;
+		string navigationArea = 12;
+		int64 registerLength = 13;
+		int64 lengthOverall = 14;
+		double draftFullLoad = 15;
+		int64 breadthMoulded = 16;
+		int64 lengthBetweenPerpendiculars = 17;
+		double depthMoulded = 18;
+		double designedLoadDraft = 19;
+		double thicknessOfUpperDeck = 20;
+		double thicknessOfKeelPlate = 21;
+		double totalDepth = 22;
+		repeated VesselTankInfo bunkerRearTanks = 23;
+		repeated VesselTankInfo bunkerTanks = 24;
+		repeated VesselTankInfo ballastFrontTanks = 25;
+		repeated VesselTankInfo ballastCenterTanks = 26;
+		repeated VesselTankInfo ballastRearTanks = 27;
+		repeated VesselTankInfo cargoTanks = 28;
+		ResponseStatus responseStatus = 29;
+		
+		
 	}
 	

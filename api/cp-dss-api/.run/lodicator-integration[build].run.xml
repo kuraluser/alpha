@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="lodicator-integration[build]" type="GradleRunConfiguration" factoryName="Gradle" folderName="Lodicator">
+  <configuration default="false" name="lodicator-integration[build]" type="GradleRunConfiguration" factoryName="Gradle" folderName="Lodicator Integration">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$/loadicator-integration" />

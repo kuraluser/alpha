@@ -302,12 +302,12 @@ message UpdateUllageReply {
 message LoadicatorResultsRequest {
 	string processId = 1;
 	int64 loadableStudyId = 2;
-	repeated LoadicatorPatternDetailsResults loadicatorPatternDetailsResults = 3;
+	repeated LoadicatorPatternDetailsResults loadicatorResultsPatternWise = 3;
 }
 
 message LoadicatorPatternDetailsResults {
 	int64 loadablePatternId = 1;
-	repeated LodicatorResultDetails lodicatorResultDetails = 2;
+	repeated LodicatorResultDetails loadicatorResultDetails = 2;
 }
 
 message LodicatorResultDetails {
@@ -320,6 +320,9 @@ message LodicatorResultDetails {
 	string blindSector = 7;
 	string list = 8;
 	int64 operationId = 9;
+	int64 synopticalId = 10;
+	string BM = 11;
+	string SF = 12;
 }
 
 message LoadicatorDataRequest {
@@ -451,6 +454,7 @@ message LoadablePlanDetails {
 	repeated LoadablePlanPortWiseDetails loadablePlanPortWiseDetails = 2;
 	repeated string constraints = 3;
 	StabilityParameter stabilityParameters = 4;
+	int64 loadablePatternId = 5;
 }
 
 message StabilityParameter {
@@ -573,6 +577,7 @@ message LoadablePlanStowageDetails {
   string cargoNominationTemperature = 27;
   string onboard = 28; //DS field
   string maxTankVolume = 29; //DS field
+	string quantityMT = 30;
  }
 
 
@@ -643,7 +648,7 @@ message LoadableQuantityCargoDetails {
 	 repeated CargoToppingOffSequenceDetails toppingOffSequences = 26;
 	 string cargoNominationTemperature = 27;
 	 string cargoNominationQuantity = 28;
-	 string orderQuantity = 29;
+	 string orderedQuantity = 29;
 	 string dischargeMT = 30;
 	 string dischargingRate = 31;
 	 string timeRequiredForDischarging = 32;
@@ -848,6 +853,8 @@ message LoadableStudyDetail{
 	repeated OhqPorts ohqPorts=29;
 	string lastEdited = 30;
 	string lastLoadingPortETD = 31;
+	bool isDischargeStudyComplete=32;
+	
 }
 
 message LoadableStudyReply{
@@ -861,6 +868,7 @@ message LoadingPortDetail{
 	string quantity = 2;
 	string name=3;
 	int64 mode = 4;
+	int64 operationId = 5;
 }
 
 message segregationDetail{

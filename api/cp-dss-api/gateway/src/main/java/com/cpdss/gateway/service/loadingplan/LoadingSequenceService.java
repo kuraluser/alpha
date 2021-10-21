@@ -1108,6 +1108,16 @@ public class LoadingSequenceService {
                 Optional.ofNullable(commingle.getTemperature())
                     .ifPresent(commingleBuilder::setTemperature);
                 Optional.ofNullable(commingle.getUllage()).ifPresent(commingleBuilder::setUllage);
+                Optional.ofNullable(commingle.getQuantity1MT())
+                    .ifPresent(commingleBuilder::setQuantity1MT);
+                Optional.ofNullable(commingle.getQuantity2MT())
+                    .ifPresent(commingleBuilder::setQuantity2MT);
+                Optional.ofNullable(commingle.getQuantity1M3())
+                    .ifPresent(commingleBuilder::setQuantity1M3);
+                Optional.ofNullable(commingle.getQuantity2M3())
+                    .ifPresent(commingleBuilder::setQuantity2M3);
+                Optional.ofNullable(commingle.getUllage1()).ifPresent(commingleBuilder::setUllage1);
+                Optional.ofNullable(commingle.getUllage2()).ifPresent(commingleBuilder::setUllage2);
                 commingleBuilder.setConditionType(conditionType);
                 builder.addPortLoadingPlanCommingleDetails(commingleBuilder.build());
               });
@@ -1258,7 +1268,8 @@ public class LoadingSequenceService {
             eduction.getPumpSelected().stream().collect(Collectors.joining(",")));
       }
       if (eduction.getTank() != null) {
-        eductorBuilder.setTanksUsed(eduction.getTank().stream().collect(Collectors.joining(",")));
+        eductorBuilder.setTanksUsed(
+            eduction.getTank().keySet().stream().collect(Collectors.joining(",")));
       }
       eductorBuilder.setStartTime(
           StringUtils.isEmpty(eduction.getTimeStart())
@@ -1327,6 +1338,16 @@ public class LoadingSequenceService {
                 Optional.ofNullable(commingle.getTemperature())
                     .ifPresent(commingleBuilder::setTemperature);
                 Optional.ofNullable(commingle.getUllage()).ifPresent(commingleBuilder::setUllage);
+                Optional.ofNullable(commingle.getQuantity1MT())
+                    .ifPresent(commingleBuilder::setQuantity1MT);
+                Optional.ofNullable(commingle.getQuantity2MT())
+                    .ifPresent(commingleBuilder::setQuantity2MT);
+                Optional.ofNullable(commingle.getQuantity1M3())
+                    .ifPresent(commingleBuilder::setQuantity1M3);
+                Optional.ofNullable(commingle.getQuantity2M3())
+                    .ifPresent(commingleBuilder::setQuantity2M3);
+                Optional.ofNullable(commingle.getUllage1()).ifPresent(commingleBuilder::setUllage1);
+                Optional.ofNullable(commingle.getUllage2()).ifPresent(commingleBuilder::setUllage2);
                 builder.addLoadingPlanCommingleDetails(commingleBuilder.build());
               });
     }

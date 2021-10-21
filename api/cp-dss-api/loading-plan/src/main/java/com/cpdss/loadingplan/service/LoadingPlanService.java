@@ -785,6 +785,12 @@ public class LoadingPlanService {
                       ullageInsert.getQuantityMT(),
                       ullageInsert.getQuantityM3(),
                       ullageInsert.getTemperature(),
+                      ullageInsert.getQuantity1MT(),
+                      ullageInsert.getQuantity2MT(),
+                      ullageInsert.getQuantity1M3(),
+                      ullageInsert.getQuantity2M3(),
+                      ullageInsert.getUllage1(),
+                      ullageInsert.getUllage2(),
                       ullageInsert.getUllage(),
                       ullageInsert.getTankId(),
                       ullageInsert.getLoadingInformationId(),
@@ -806,6 +812,12 @@ public class LoadingPlanService {
                   tempData.setConditionType(ullageInsert.getArrivalDeparture());
                   tempData.setIsActive(true);
                   tempData.setUllage(ullageInsert.getUllage());
+                  tempData.setQuantity1MT(ullageInsert.getQuantity1MT());
+                  tempData.setQuantity2MT(ullageInsert.getQuantity2MT());
+                  tempData.setQuantity1M3(ullageInsert.getQuantity1M3());
+                  tempData.setQuantity2M3(ullageInsert.getQuantity2M3());
+                  tempData.setUllage1(ullageInsert.getUllage1());
+                  tempData.setUllage2(ullageInsert.getUllage2());
                   tempData.setGrade(ullageInsert.getAbbreviation());
                   portLoadingPlanCommingleTempDetailsRepository.save(tempData);
                 }
@@ -1152,6 +1164,8 @@ public class LoadingPlanService {
           portWiseBallastDetail.getSounding() != null
               ? portWiseBallastDetail.getSounding().toString()
               : "");
+      newBuilder.setSg(
+          portWiseBallastDetail.getSg() != null ? portWiseBallastDetail.getSg().toString() : "");
       builder.addPortLoadingPlanBallastTempDetails(newBuilder);
     }
   }

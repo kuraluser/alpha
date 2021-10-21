@@ -283,6 +283,59 @@ public final class DischargePlanServiceGrpc {
     return getSaveDischargingPlanMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest,
+          com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply>
+      getDischargeInfoStatusCheckMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "dischargeInfoStatusCheck",
+      requestType = com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest.class,
+      responseType = com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest,
+          com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply>
+      getDischargeInfoStatusCheckMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest,
+            com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply>
+        getDischargeInfoStatusCheckMethod;
+    if ((getDischargeInfoStatusCheckMethod =
+            DischargePlanServiceGrpc.getDischargeInfoStatusCheckMethod)
+        == null) {
+      synchronized (DischargePlanServiceGrpc.class) {
+        if ((getDischargeInfoStatusCheckMethod =
+                DischargePlanServiceGrpc.getDischargeInfoStatusCheckMethod)
+            == null) {
+          DischargePlanServiceGrpc.getDischargeInfoStatusCheckMethod =
+              getDischargeInfoStatusCheckMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest,
+                          com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "dischargeInfoStatusCheck"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargePlanServiceMethodDescriptorSupplier(
+                              "dischargeInfoStatusCheck"))
+                      .build();
+        }
+      }
+    }
+    return getDischargeInfoStatusCheckMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargePlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargePlanServiceStub> factory =
@@ -378,6 +431,16 @@ public final class DischargePlanServiceGrpc {
           getSaveDischargingPlanMethod(), responseObserver);
     }
 
+    /** */
+    public void dischargeInfoStatusCheck(
+        com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getDischargeInfoStatusCheckMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -418,6 +481,13 @@ public final class DischargePlanServiceGrpc {
                       com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest,
                       com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse>(
                       this, METHODID_SAVE_DISCHARGING_PLAN)))
+          .addMethod(
+              getDischargeInfoStatusCheckMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest,
+                      com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply>(
+                      this, METHODID_DISCHARGE_INFO_STATUS_CHECK)))
           .build();
     }
   }
@@ -495,6 +565,18 @@ public final class DischargePlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void dischargeInfoStatusCheck(
+        com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDischargeInfoStatusCheckMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -548,6 +630,14 @@ public final class DischargePlanServiceGrpc {
             com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveDischargingPlanMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply
+        dischargeInfoStatusCheck(
+            com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDischargeInfoStatusCheckMethod(), getCallOptions(), request);
     }
   }
 
@@ -611,6 +701,15 @@ public final class DischargePlanServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveDischargingPlanMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply>
+        dischargeInfoStatusCheck(
+            com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDischargeInfoStatusCheckMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DISCHARGE_PLAN_SYNCHRONIZATION = 0;
@@ -618,6 +717,7 @@ public final class DischargePlanServiceGrpc {
   private static final int METHODID_GENERATE_DISCHARGE_PLAN = 2;
   private static final int METHODID_UPDATE_DISCHARGE_ULLAGE_DETAILS = 3;
   private static final int METHODID_SAVE_DISCHARGING_PLAN = 4;
+  private static final int METHODID_DISCHARGE_INFO_STATUS_CHECK = 5;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -670,6 +770,13 @@ public final class DischargePlanServiceGrpc {
               (com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse>)
+                  responseObserver);
+          break;
+        case METHODID_DISCHARGE_INFO_STATUS_CHECK:
+          serviceImpl.dischargeInfoStatusCheck(
+              (com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply>)
                   responseObserver);
           break;
         default:
@@ -742,6 +849,7 @@ public final class DischargePlanServiceGrpc {
                       .addMethod(getGenerateDischargePlanMethod())
                       .addMethod(getUpdateDischargeUllageDetailsMethod())
                       .addMethod(getSaveDischargingPlanMethod())
+                      .addMethod(getDischargeInfoStatusCheckMethod())
                       .build();
         }
       }

@@ -103,6 +103,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.loadablestudy.domain.ArrivalDepartureConditionJson;
 import com.cpdss.loadablestudy.domain.LoadablePlanDetailsAlgoJson;
+import com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadableStudyAlgoJson;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
@@ -143,7 +144,9 @@ import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
 import java.io.IOException;
@@ -461,6 +464,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             if (portRotationOpt.isPresent()) {
               builder.setLastLoadingPortETD(
                   dateTimeFormatter.format(portRotationOpt.get().getEtd()));
+            }
+            if (entity.getIsDischargeStudyComplete() == null) {
+              builder.setIsDischargeStudyComplete(false);
+            } else {
+              builder.setIsDischargeStudyComplete(entity.getIsDischargeStudyComplete());
             }
           }
         }
@@ -926,12 +934,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     PortRotationReply.Builder replyBuilder = PortRotationReply.newBuilder();
     try {
       loadableStudyPortRotationService.saveLoadableStudyPortRotation(request, replyBuilder);
-      if (request.getId() == 0) {
-        dischargeStudyService.addCargoNominationForPortRotation(
-            replyBuilder.getPortRotationId(), request.getLoadableStudyId());
-      } else {
-        dischargeStudyService.resetCargoNominationQuantityAndBackLoading(
-            replyBuilder.getPortRotationId(), request.getLoadableStudyId());
+      if (request.getOperationId() == 2) {
+        if (request.getId() == 0) {
+          dischargeStudyService.addCargoNominationForPortRotation(
+              replyBuilder.getPortRotationId(), request.getLoadableStudyId());
+        } else {
+          dischargeStudyService.resetCargoNominationQuantityAndBackLoading(
+              replyBuilder.getPortRotationId(), request.getLoadableStudyId());
+        }
       }
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving loadable study - port data", e);
@@ -1229,7 +1239,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   /** Get list of patterns for a loadable study */
   @Override
   public void saveLoadablePatterns(
-      LoadablePatternAlgoRequest request, StreamObserver<AlgoReply> responseObserver) {
+          LoadablePatternAlgoRequest request,
+           StreamObserver<AlgoReply> responseObserver) {
     AlgoReply.Builder builder = AlgoReply.newBuilder();
     try {
       loadablePatternService.saveLoadablePatterns(request, builder);
@@ -2922,13 +2933,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply.newBuilder();
     try {
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-      ArrivalDepartureConditionJson departureCondition = new ArrivalDepartureConditionJson();
+      Object departureCondition = null;
       JsonData jsonData =
           this.jsonDataService.getJsonData(request.getLoadableStudyId(), Long.valueOf(2));
       if (jsonData != null) {
         String algoJsonString = jsonData.getJsonData();
         LoadableStudyAlgoJson algoJson =
-            new ObjectMapper().readValue(algoJsonString, LoadableStudyAlgoJson.class);
+            new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .readValue(algoJsonString, LoadableStudyAlgoJson.class);
         Optional<LoadablePlanDetailsAlgoJson> loadablePlanDetails =
             algoJson.getLoadablePlanDetails().stream()
                 .filter(
@@ -2936,9 +2949,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         loadablePlanDetailsAlgoJson.getCaseNumber().equals(request.getCaseNumber()))
                 .findFirst();
         if (loadablePlanDetails.isPresent()) {
-          loadablePlanDetails.get().getLoadablePlanPortWiseDetails().stream()
-              .forEach(
-                  portWiseDetails -> {
+          for( LoadablePlanPortWiseDetailsAlgoJson portWiseDetails:loadablePlanDetails.get().getLoadablePlanPortWiseDetails()){
                     Optional<com.cpdss.loadablestudy.entity.LoadableStudyPortRotation>
                         portRotationDetail =
                             this.loadableStudyPortRotationRepository.findById(
@@ -2949,29 +2960,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                             .getOperation()
                             .getId()
                             .equals(LOADING_OPERATION_ID)) {
-                      departureCondition.setLoadablePlanStowageDetails(
-                          portWiseDetails.getDepartureCondition().getLoadablePlanStowageDetails());
-                      departureCondition.setLoadablePlanBallastDetails(
-                          portWiseDetails.getDepartureCondition().getLoadablePlanBallastDetails());
-                      departureCondition.setLoadableQuantityCargoDetails(
-                          portWiseDetails
-                              .getDepartureCondition()
-                              .getLoadableQuantityCargoDetails());
-                      departureCondition.setLoadableQuantityCommingleCargoDetails(
-                          portWiseDetails
-                              .getDepartureCondition()
-                              .getLoadableQuantityCommingleCargoDetails());
-                      departureCondition.setLoadablePlanRoBDetails(
-                          portWiseDetails.getDepartureCondition().getLoadablePlanRoBDetails());
-                      departureCondition.setStabilityParameters(
-                          portWiseDetails.getDepartureCondition().getStabilityParameters());
-                      departureCondition.setConfirmPlanEligibility(
-                          portWiseDetails.getDepartureCondition().getConfirmPlanEligibility());
+                      departureCondition = portWiseDetails.getDepartureCondition();
                     }
-                  });
+                  }
         }
       }
-      String departureConditionString = new ObjectMapper().writeValueAsString(departureCondition);
+      ObjectMapper mapper = new ObjectMapper();
+      String departureConditionString = mapper.writeValueAsString(departureCondition);
       builder.setDepartureCondition(departureConditionString);
     } catch (Exception e) {
       e.printStackTrace();

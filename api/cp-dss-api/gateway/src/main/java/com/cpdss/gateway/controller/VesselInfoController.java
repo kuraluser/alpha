@@ -7,6 +7,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.RuleRequest;
 import com.cpdss.gateway.domain.RuleResponse;
+import com.cpdss.gateway.domain.VesselDetailedInfoResponse;
 import com.cpdss.gateway.domain.VesselDetailsResponse;
 import com.cpdss.gateway.domain.VesselResponse;
 import com.cpdss.gateway.domain.VesselTankResponse;
@@ -214,10 +215,10 @@ public class VesselInfoController {
       @RequestParam(required = false, defaultValue = "0") int pageNo,
       @RequestParam(required = false) String sortBy,
       @RequestParam(required = false) String orderBy,
-      @RequestParam(required = false) String vesselName,
-      @RequestParam(required = false) String vesselType,
+      @RequestParam(required = false) String name,
+      @RequestParam(required = false) String typeOfShip,
       @RequestParam(required = false) String builder,
-      @RequestParam(required = false) String dateOfLaunch)
+      @RequestParam(required = false) String dateOfLaunching)
       throws CommonRestException {
     try {
 
@@ -227,16 +228,46 @@ public class VesselInfoController {
           pageNo,
           sortBy,
           orderBy,
-          vesselName,
-          vesselType,
+          name,
+          typeOfShip,
           builder,
-          dateOfLaunch,
+          dateOfLaunching,
           headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching all vessels", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when fetching all vessels", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Get all information for the request vessel.
+   *
+   * @param vesselId
+   * @param headers
+   * @return VesselDetailedInfoResponse
+   * @throws CommonRestException
+   */
+  @GetMapping(value = "/vessel-information/{vesselId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public VesselDetailedInfoResponse getVesselInformation(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.vesselInfoService.getVesselDetaildInformation(
+          vesselId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching vessels", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when fetching vessels", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

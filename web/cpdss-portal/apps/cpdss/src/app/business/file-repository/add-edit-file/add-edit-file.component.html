@@ -1,64 +1,58 @@
 <p-dialog id="dialog_file_repo"
     header="{{editMode ? ('FILE_REPOSITORY_EDIT_FILE_LABEL' | translate) : ('FILE_REPOSITORY_ADD_NEW_FILE_LABEL' | translate)}}"
-    [visible]="true" *ngIf="display" [modal]="true" [draggable]="false" [responsive]="true" [minY]="70"
+    [visible]="true" styleClass="add-edit-file-pop-up" *ngIf="display" [modal]="true" [draggable]="false" [responsive]="true"
     [closable]="false">
     <form [formGroup]="fileFormGroup" id="file-repository-add-edit" autocomplete="off">
-        <div class="container-fluid pr-0">
-                <div class="col">
-                    <div class="row form-group">
+        <div class="container-fluid">
+                <div class="row  pb-10">
+                    
                         <label for="max_loading_rate" class="col-5 no-left-padding">{{'FILE_REPOSITORY_VOYAGE_NO_LABEL' | translate}}</label>
-                        <div class="col">
-                            <p-dropdown styleClass="form-control" appendTo="body" [options]="voyages"
-                                placeholder="{{ 'FILE_REPOSITORY_VOYAGE_NO_LABEL' | translate }}" optionLabel="voyageNo"
-                                [disabled]="editMode" [filter]="true" id="voy-no-dropdown"
-                                formControlName="voyageNo" resetFilterOnHide="true" focusTrap>
-                            </p-dropdown>
-                        </div>
-                        <div class="col error-icon-wrapper text-right">
-                            <cpdss-portal-validation-error  [errors]="fieldError('voyageNo')"
-                                [errorMessages]="errorMessages?.voyageNo"></cpdss-portal-validation-error>
-                        </div>
-
+                   
+                    <div class="col error-icon-wrapper">
+                        <p-dropdown styleClass="form-control" appendTo="body" [options]="voyages"
+                            placeholder="{{ 'FILE_REPOSITORY_VOYAGE_NO_LABEL' | translate }}" optionLabel="voyageNo"
+                            [disabled]="editMode" [filter]="true" id="voy-no-dropdown"
+                            formControlName="voyageNo" resetFilterOnHide="true" focusTrap>
+                        </p-dropdown>
+                        <cpdss-portal-validation-error  [errors]="fieldError('voyageNo')"
+                            [errorMessages]="errorMessages?.voyageNo"></cpdss-portal-validation-error>
                     </div>
-                    <div class="row form-group">
+                </div>
+                    <div class="row pb-10">
                         <label for="reduced_loading_rate"
                             class="col-5 no-left-padding">{{'FILE_REPOSITORY_SECTION_LABEL' | translate}}</label>
-                        <div class="col">
+                        <div class="col error-icon-wrapper">
                             <p-dropdown styleClass="form-control" appendTo="body" [options]="sectionList"
                                 placeholder="{{ 'FILE_REPOSITORY_SECTION_LABEL' | translate }}" optionLabel="label"
                                 id="voy-no-dropdown"
                                 formControlName="section"  resetFilterOnHide="true" focusTrap>
                             </p-dropdown>
-                        </div>
-                        <div class="col error-icon-wrapper text-right">
-
                             <cpdss-portal-validation-error [errors]="fieldError('section')"
                                 [errorMessages]="errorMessages?.section"></cpdss-portal-validation-error>
                         </div>
+                        
 
                     </div>
 
-                    <div class="row form-group">
+                    <div class="row   pb-10">
                         <label for="reduced_loading_rate"
                             class="col-5 no-left-padding">{{'FILE_REPOSITORY_CATEGORY_LABEL' | translate}}</label>
-                        <div class="col">
+                        <div class="col error-icon-wrapper">
                             <p-dropdown styleClass="form-control" appendTo="body" [options]="categoryList"
                                 placeholder="{{ 'FILE_REPOSITORY_CATEGORY_LABEL' | translate }}" optionLabel="label"
                                 id="voy-no-dropdown"
                                 formControlName="category"  resetFilterOnHide="true" focusTrap>
                             </p-dropdown>
-                        </div>
-                        <div class="col error-icon-wrapper text-right">
-
                             <cpdss-portal-validation-error [errors]="fieldError('category')"
-                                [errorMessages]="errorMessages?.category"></cpdss-portal-validation-error>
+                            [errorMessages]="errorMessages?.category"></cpdss-portal-validation-error>
                         </div>
+                        
 
                     </div>
-                    <div class="row form-group">
+                    <div class="row ">
                         <label for="reduced_loading_rate"
-                            class="col-5 no-left-padding">{{'FILE_REPOSITORY_CHOOSE_FILE_LABEL' | translate}}</label>
-                        <div class="col error-icon-wrapper text-left">
+                            class="col-5 no-left-padding mb-0">{{'FILE_REPOSITORY_CHOOSE_FILE_LABEL' | translate}}</label>
+                        <div class="pl-15 error-icon-wrapper pr-20 browse-outer">
                             <div class="upload-file v-bottom">
                                 {{'FILE_REPOSITORY_BROWSE_LABEL' | translate}}
                                 <input type="file" name="fl_attachMail" #fileUpload title="No file selected" focusTrap
@@ -70,24 +64,26 @@
                                 <span>{{fileFormGroup.controls.fileName.value}}</span>
                             </div>
                         </div>
+                        <div class="col"></div>
 
                     </div>
-                </div>
+                
         </div>
-        <p-footer>
-            <div class="row">
-                <div class="col-sm-12 text-right">
-                    <button type="button" class="btn btn-main" (click)="closeDialog()"
-                        id="new-loadable-study-popup-cancel" focusTrap>{{'FILE_REPOSITORY_CANCEL_LABEL' |
-                        translate}}</button>
-                    <button *ngIf="!editMode" type="submit" class="btn btn-main" id="new-loadable-study-popup-save"
-                        form="fg_newLoadableStudy" (click)="upload()" autofocus focusTrap>{{'FILE_REPOSITORY_UPLOAD_LABEL' |
-                        translate}}</button>
-                        <button *ngIf="editMode" type="submit" class="btn btn-main" id="new-loadable-study-popup-save"
-                        form="fg_newLoadableStudy" (click)="updateFile()" autofocus focusTrap>{{'FILE_REPOSITORY_UPLOAD_LABEL' |
-                        translate}}</button>
-                </div>
-            </div>
-        </p-footer>
+        
     </form>
+    <p-footer>
+        <div class="row">
+            <div class="col-sm-12 text-right">
+                <button type="button" class="btn btn-main" (click)="closeDialog()"
+                    id="new-loadable-study-popup-cancel" focusTrap>{{'FILE_REPOSITORY_CANCEL_LABEL' |
+                    translate}}</button>
+                <button *ngIf="!editMode" type="submit" class="btn btn-main" id="new-loadable-study-popup-save"
+                    form="fg_newLoadableStudy" (click)="upload()" autofocus focusTrap>{{'FILE_REPOSITORY_UPLOAD_LABEL' |
+                    translate}}</button>
+                    <button *ngIf="editMode" type="submit" class="btn btn-main" id="new-loadable-study-popup-save"
+                    form="fg_newLoadableStudy" (click)="updateFile()" autofocus focusTrap>{{'FILE_REPOSITORY_UPLOAD_LABEL' |
+                    translate}}</button>
+            </div>
+        </div>
+    </p-footer>
 </p-dialog>

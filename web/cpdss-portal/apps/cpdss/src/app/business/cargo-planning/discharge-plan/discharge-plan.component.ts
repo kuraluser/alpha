@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -33,7 +33,7 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
   templateUrl: './discharge-plan.component.html',
   styleUrls: ['./discharge-plan.component.scss']
 })
-export class DischargePlanComponent implements OnInit {
+export class DischargePlanComponent implements OnInit , OnDestroy {
 
   get selectedDischargeStudy(): IDischargeStudy {
     return this._selectedDischargeStudy;
@@ -99,7 +99,16 @@ export class DischargePlanComponent implements OnInit {
         localStorage.setItem("dischargeStudyId", this.dischargeStudyId.toString());
         this.getDischargeStudies(this.vesselId, this.voyageId, this.dischargeStudyId);
       });
+  }
 
+  /**
+   * NgOnDestroy lifecycle hook
+   *
+   * @memberof DischargePlanComponent
+ */
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -152,14 +161,16 @@ export class DischargePlanComponent implements OnInit {
     this.voyages = voyages.filter(voy => voy.statusId === VOYAGE_STATUS.ACTIVE || voy.statusId === VOYAGE_STATUS.CLOSE);
     const result = await this.dischargePlanApiService.getDischargeStudies(vesselId, voyageId).toPromise();
     const dischargeStudies = result?.dischargeStudies ?? [];
+    this.planConfirmed = false;
     if (dischargeStudies.length) {
       this.dischargeStudies = dischargeStudies;
       this.selectedDischargeStudy = dischargeStudyId ? this.dischargeStudies.find(dischargeStudy => dischargeStudy.id === dischargeStudyId) : this.dischargeStudies[0];
+      const confirmed = this.dischargeStudies.findIndex(dischargeStudy => dischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED);
+      if(confirmed !== -1) {
+        this.planConfirmed = true;
+      }
     }
-    const confirmed = this.dischargeStudies.findIndex(dischargeStudy => dischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED);
-    if(confirmed !== -1) {
-      this.planConfirmed = true;
-    }
+    
     this.ngxSpinnerService.hide();
   }
 
@@ -196,7 +207,7 @@ export class DischargePlanComponent implements OnInit {
   */
   onDischargeStudyChange(event) {
     const dischargeStudyId = event.value.id;
-    this.selectedDischargeStudy = this.dischargeStudies.find(dischargeStudy => dischargeStudy.id === dischargeStudyId);
+    this.router.navigate([`business/cargo-planning/discharge-plan/${this.vesselId}/${this.voyageId}/${dischargeStudyId}`]);
   }
 
   /**

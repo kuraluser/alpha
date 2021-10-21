@@ -407,24 +407,28 @@ public class CommunicationService {
                       loadableStudyRepository.findByIdAndIsActive(
                           communicationStatusRow.getReferenceId(), true);
 
-                  if (!(statusReply.getEventDownloadStatus() != null
-                      && statusReply
-                          .getEventDownloadStatus()
-                          .equals(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId()))) {
-                  } else {
-                    loadableStudyCommunicationStatusRepository
-                        .updateLoadableStudyCommunicationStatus(
-                            statusReply.getEventDownloadStatus(), loadableStudy.get().getId());
-                  }
-                  long start =
-                      Timestamp.valueOf(communicationStatusRow.getCommunicationDateTime())
-                          .getTime();
-                  long end = start + timeLimit * 1000; // 60 seconds * 1000 ms/sec
-                  if (System.currentTimeMillis() > end) {
+                  // TODO Code to be checked and refactored. Current version modified to proceed
+                  // only when LS is present as errors were being thrown
+                  if (loadableStudy.isPresent()) {
+                    if (!(statusReply.getEventDownloadStatus() != null
+                        && statusReply
+                            .getEventDownloadStatus()
+                            .equals(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId()))) {
+                    } else {
+                      loadableStudyCommunicationStatusRepository
+                          .updateLoadableStudyCommunicationStatus(
+                              statusReply.getEventDownloadStatus(), loadableStudy.get().getId());
+                    }
+                    long start =
+                        Timestamp.valueOf(communicationStatusRow.getCommunicationDateTime())
+                            .getTime();
+                    long end = start + timeLimit * 1000; // 60 seconds * 1000 ms/sec
+                    if (System.currentTimeMillis() > end) {
 
-                    loadableStudyCommunicationStatusRepository
-                        .updateLoadableStudyCommunicationStatus(
-                            CommunicationStatus.TIME_OUT.getId(), loadableStudy.get().getId());
+                      loadableStudyCommunicationStatusRepository
+                          .updateLoadableStudyCommunicationStatus(
+                              CommunicationStatus.TIME_OUT.getId(), loadableStudy.get().getId());
+                    }
                   }
                 } catch (GenericServiceException e) {
                   e.printStackTrace();

@@ -11,23 +11,12 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
-import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
-import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
-import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
-import com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse;
-import com.cpdss.common.generated.discharge_plan.DischargingPlanReply;
-import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
-import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse;
+import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.common.GatewayConstants;
-import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
-import com.cpdss.gateway.domain.LoadingUpdateUllageResponse;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.RuleResponse;
-import com.cpdss.gateway.domain.UllageBillReply;
-import com.cpdss.gateway.domain.UllageBillRequest;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
@@ -37,14 +26,7 @@ import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
-import com.cpdss.gateway.domain.loadingplan.BerthDetails;
-import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
-import com.cpdss.gateway.domain.loadingplan.CargoVesselTankDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingBerthDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
-import com.cpdss.gateway.domain.loadingplan.LoadingStages;
+import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
@@ -484,9 +466,9 @@ public class DischargeInformationService {
         // Updating synoptic table (time)
         log.info(
             "Saving Loading info Times details at Synoptic Table - id {}",
-            request.getSynopticalTableId());
+            request.getSynopticTableId());
         this.loadableStudyService.saveLoadingInfoToSynopticalTable(
-            request.getSynopticalTableId(),
+            request.getSynopticTableId(),
             request.getDischargingDetails().getTimeOfSunrise(),
             request.getDischargingDetails().getTimeOfSunset());
       }
@@ -505,14 +487,14 @@ public class DischargeInformationService {
       }
       DischargingInformationResponse dischargingInformationResponse =
           buildDischargingInformationResponse(response, correlationId);
-            dischargingInformationResponse.setDischargingInformation(
-                this.getDischargeInformation(
-                    dischargingInformationResponse.getVesseld(),
-                    dischargingInformationResponse.getVoyageId(),
-                    response.getPortRotationId()));
+      dischargingInformationResponse.setDischargingInformation(
+          this.getDischargeInformation(
+              dischargingInformationResponse.getVesseld(),
+              dischargingInformationResponse.getVoyageId(),
+              response.getPortRotationId()));
       return dischargingInformationResponse;
     } catch (Exception e) {
-      log.error("Failed to save LoadingInformation {}", request.getDischargingInfoId());
+      log.error("Failed to save LoadingInformation {}", request.getDischargeInfoId());
       e.printStackTrace();
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       throw new GenericServiceException(
@@ -593,5 +575,29 @@ public class DischargeInformationService {
             .setJson(json)
             .build();
     return this.loadingPlanGrpcService.saveJson(jsonRequest);
+  }
+
+  public LoadingInfoAlgoStatus dischargeInfoStatusCheck(
+      Long vesselId, Long voyageId, Long infoId, String processId, Integer conditionType)
+      throws GenericServiceException {
+    DischargeInfoStatusRequest.Builder builder = DischargeInfoStatusRequest.newBuilder();
+    builder.setDischargeInfoId(infoId);
+    builder.setProcessId(processId);
+    builder.setConditionType(conditionType);
+
+    LoadingInfoAlgoStatus algoStatus = new LoadingInfoAlgoStatus();
+    var rpcRepay = dischargePlanServiceBlockingStub.dischargeInfoStatusCheck(builder.build());
+    if (!SUCCESS.equals(rpcRepay.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Could not find discharge info status in discharge information",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    algoStatus.setLoadingInfoStatusId(rpcRepay.getDischargeInfoStatusId());
+    algoStatus.setLoadingInfoStatusLastModifiedTime(
+        rpcRepay.getDischargeInfoStatusLastModifiedTime());
+    algoStatus.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
+    return algoStatus;
   }
 }

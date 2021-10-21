@@ -50,6 +50,7 @@ import com.cpdss.loadablestudy.entity.CommingleCargo;
 import com.cpdss.loadablestudy.entity.CowTypeMaster;
 import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
 import com.cpdss.loadablestudy.entity.DischargePlanCowDetailFromAlgo;
+import com.cpdss.loadablestudy.entity.JsonData;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
 import com.cpdss.loadablestudy.entity.LoadablePatternCargoToppingOffSequence;
@@ -74,6 +75,7 @@ import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
 import com.cpdss.loadablestudy.repository.CowTypeMasterRepository;
 import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
+import com.cpdss.loadablestudy.repository.JsonDataRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
@@ -97,6 +99,7 @@ import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepositor
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -158,6 +161,8 @@ public class LoadablePatternService {
   @Autowired private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
 
   @Autowired private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
+
+  @Autowired private JsonDataRepository jsonDataRepository;
 
   @Autowired
   private DischargePatternQuantityCargoPortwiseRepository
@@ -377,18 +382,7 @@ public class LoadablePatternService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    if (enableCommunication && !request.getHasLodicator() && !env.equals("ship")) {
-      Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
-          this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
-              request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
-      if (loadableStudyCommunicationStatus.get() != null) {
 
-        AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
-        algoRespComm.setLoadablePatternAlgoRequest(request);
-        algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
-        communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
-      }
-    }
     if (request.getLoadablePlanDetailsList().isEmpty()) {
       log.info("saveLoadablePatternDetails - loadable study micro service - no plans available");
       loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
@@ -400,6 +394,10 @@ public class LoadablePatternService {
       // Save pattern details shore
       List<LoadablePattern> loadablePatterns =
           savePatternDetails(request, loadableStudyOpt, requestType, false);
+
+      // Update pattern Ids
+      request = updatePatternIdAlgoObj(loadableStudyOpt.get().getId(), request, loadablePatterns);
+
       if (request.getHasLodicator()) {
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
             LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_ID, request.getProcesssId(), true);
@@ -423,11 +421,80 @@ public class LoadablePatternService {
           LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, request.getProcesssId(), true);
     }
 
+    if (enableCommunication && !request.getHasLodicator() && !env.equals("ship")) {
+      Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
+          this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
+              request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
+      if (loadableStudyCommunicationStatus.get() != null) {
+
+        AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
+        algoRespComm.setLoadablePatternAlgoRequest(request);
+        algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
+        communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
+      }
+    }
+
     builder
         .setResponseStatus(
             Common.ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))
         .build();
     return builder;
+  }
+
+  /**
+   * Method to update pattern Ids to algo object
+   *
+   * @param loadableStudyId loadableStudyId value
+   * @param algoCallBackRequestObj Algo Callback request object
+   * @param patterns list of saved patterns
+   * @return LoadablePatternAlgoRequest object
+   * @throws GenericServiceException Exception on JSON conversion failure
+   */
+  private com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest
+      updatePatternIdAlgoObj(
+          long loadableStudyId,
+          com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest
+              algoCallBackRequestObj,
+          List<LoadablePattern> patterns)
+          throws GenericServiceException {
+
+    List<LoadablePlanDetails> loadablePlanDetailsList = new ArrayList<>();
+    for (LoadablePlanDetails lpd : algoCallBackRequestObj.getLoadablePlanDetailsList()) {
+      LoadablePattern loadablePattern =
+          patterns.stream()
+              .filter(patternDetail -> patternDetail.getCaseNumber().equals(lpd.getCaseNumber()))
+              .findFirst()
+              .orElseThrow(RuntimeException::new);
+      loadablePlanDetailsList.add(
+          lpd.toBuilder().setLoadablePatternId(loadablePattern.getId()).build());
+    }
+
+    JsonData jsonData =
+        jsonDataService.getJsonData(
+            loadableStudyId, LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
+    // Update JSON data table with pattern id
+    try {
+      jsonData.setJsonData(
+          JsonFormat.printer().omittingInsignificantWhitespace().print(algoCallBackRequestObj));
+    } catch (InvalidProtocolBufferException e) {
+      log.error(
+          "Error converting object to JSON string. LS: {}, Object: {}",
+          loadableStudyId,
+          algoCallBackRequestObj,
+          e);
+      throw new GenericServiceException(
+          "Error converting object to JSON string. LS: " + loadableStudyId,
+          e.getMessage(),
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e);
+    }
+    jsonDataRepository.save(jsonData);
+
+    return algoCallBackRequestObj
+        .toBuilder()
+        .clearLoadablePlanDetails()
+        .addAllLoadablePlanDetails(loadablePlanDetailsList)
+        .build();
   }
 
   private List<LoadablePattern> savePatternDetails(
@@ -447,7 +514,8 @@ public class LoadablePatternService {
     for (LoadablePlanDetails lpd : request.getLoadablePlanDetailsList()) {
 
       LoadablePattern loadablePattern =
-          saveloadablePattern(lpd, loadableStudyOpt.get(), request.getHasLodicator(), isShip);
+          saveLoadablePattern(lpd, loadableStudyOpt.get(), request.getHasLodicator(), isShip);
+
       loadablePatterns.add(loadablePattern);
       saveConstrains(lpd, loadablePattern);
       if (requestType.equals(LOADABLE_STUDY)) {
@@ -565,7 +633,7 @@ public class LoadablePatternService {
     loadableQuantityCargoDetails.setDischargeMT(
         lpcd.getDischargeMT().isBlank() ? null : new BigDecimal(lpcd.getDischargeMT()));
     loadableQuantityCargoDetails.setOrderedQuantity(
-        lpcd.getOrderQuantity().isBlank() ? null : new BigDecimal(lpcd.getOrderQuantity()));
+        lpcd.getOrderedQuantity().isBlank() ? null : new BigDecimal(lpcd.getOrderedQuantity()));
     loadableQuantityCargoDetails.setSlopQuantity(
         lpcd.getSlopQuantity().isBlank() ? null : new BigDecimal(lpcd.getSlopQuantity()));
     loadableQuantityCargoDetails.setDifferencePercentage(
@@ -615,17 +683,36 @@ public class LoadablePatternService {
   }
 
   /**
-   * @param lpd void
-   * @param loadableStudy
-   * @param hasLoadicator
+   * Method to save loadable pattern to DB
+   *
+   * @param lpd loadable pattern details object
+   * @param loadableStudy loadableStudy object
+   * @param hasLoadicator hasLoadicator flag
+   * @param isShip isShip flag to identify env
    */
-  private LoadablePattern saveloadablePattern(
+  private LoadablePattern saveLoadablePattern(
       com.cpdss.common.generated.LoadableStudy.LoadablePlanDetails lpd,
       LoadableStudy loadableStudy,
       boolean hasLoadicator,
       boolean isShip) {
+
+    // Deactivate existing patterns for LS. Used for cases like feedback loop in loadicator case
+    Optional<LoadablePattern> lp =
+        loadablePatternRepository.findOneByLoadableStudyAndCaseNumberAndIsActiveTrue(
+            loadableStudy, lpd.getCaseNumber());
+    if (lp.isPresent()) {
+      log.info(
+          "Loadable Pattern deleted for LS Id {}, Case Number {}",
+          loadableStudy.getId(),
+          lpd.getCaseNumber());
+      loadablePatternRepository.deleteLoadablePattern(lp.get().getId());
+    }
+
+    // Create new loadable pattern
     LoadablePattern loadablePattern = new LoadablePattern();
-    loadablePattern.setCaseNumber(lpd.getCaseNumber());
+    // Change proto default value of int64 from 0 to null
+    // Ref: https://developers.google.com/protocol-buffers/docs/proto3#default
+    loadablePattern.setId((0 == lpd.getLoadablePatternId()) ? null : lpd.getLoadablePatternId());
 
     // Activate pattern in ship after communication without checking loadicator. On shore activate
     // based on loadicator status.
@@ -635,18 +722,10 @@ public class LoadablePatternService {
       loadablePattern.setIsActive(!hasLoadicator);
     }
 
+    loadablePattern.setCaseNumber(lpd.getCaseNumber());
     loadablePattern.setLoadableStudy(loadableStudy);
     loadablePattern.setLoadableStudyStatus(LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
-    Optional<LoadablePattern> lp =
-        loadablePatternRepository.findOneByLoadableStudyAndCaseNumberAndIsActiveTrue(
-            loadableStudy, lpd.getCaseNumber());
-    if (lp.isPresent()) { // Delete old one and add new pattern
-      log.info(
-          "Lodable Pattern delete for LS Id {}, Case Number {}",
-          loadableStudy.getId(),
-          lpd.getCaseNumber());
-      loadablePatternRepository.deleteLoadablePattern(lp.get().getId());
-    }
+
     loadablePatternRepository.save(loadablePattern);
     log.info(
         "Loadable Pattern Saved for LS Id {}, Case Number {}",
@@ -1026,7 +1105,8 @@ public class LoadablePatternService {
           loadablePlanStowageDetails.setRdgUllage(lpsd.getRdgUllage());
           loadablePlanStowageDetails.setTankId(lpsd.getTankId());
           loadablePlanStowageDetails.setTankname(lpsd.getTankName());
-          loadablePlanStowageDetails.setWeight(lpsd.getWeight());
+          loadablePlanStowageDetails.setWeight(
+              StringUtils.isEmpty(lpsd.getWeight()) ? lpsd.getQuantityMT() : lpsd.getWeight());
           loadablePlanStowageDetails.setTemperature(lpsd.getTemperature());
           loadablePlanStowageDetails.setIsActive(true);
           loadablePlanStowageDetails.setLoadablePattern(loadablePattern);

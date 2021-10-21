@@ -7,11 +7,7 @@ import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
-import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
-import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
-import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
-import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
-import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse;
+import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest;
@@ -35,10 +31,7 @@ import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepositor
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageTempDetailsRepository;
-import com.cpdss.dischargeplan.service.DischargeInformationService;
-import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
-import com.cpdss.dischargeplan.service.DischargePlanSynchronizeService;
-import com.cpdss.dischargeplan.service.DischargeUllageServiceUtils;
+import com.cpdss.dischargeplan.service.*;
 import com.cpdss.dischargeplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
@@ -73,6 +66,8 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
 
   @Autowired DischargePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @Autowired UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
+
+  @Autowired DischargeInfoStatusCheckService dischargeInfoStatusCheckService;
 
   @Override
   public void dischargePlanSynchronization(
@@ -678,6 +673,29 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
           ResponseStatus.newBuilder().setStatus(DischargePlanConstants.SUCCESS).build());
     } catch (Exception e) {
       log.error("Exception when saveLoadingPlan microservice is called", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(DischargePlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void dischargeInfoStatusCheck(
+      DischargeInfoStatusRequest request,
+      StreamObserver<DischargeInfoStatusReply> responseObserver) {
+    DischargeInfoStatusReply.Builder builder = DischargeInfoStatusReply.newBuilder();
+    try {
+      dischargeInfoStatusCheckService.checkStatus(request, builder);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder().setStatus(DischargePlanConstants.SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Exception when get status of discharge info", e);
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)

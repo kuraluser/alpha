@@ -8,13 +8,13 @@ public class VesselInformation {
 
   private Long vesselId;
 
-  private String vesselName;
+  private String name;
 
-  private String vesselType;
+  private String typeOfShip;
 
   private String builder;
 
-  private String dateOfLaunch;
+  private String dateOfLaunching;
 
   private String signalLetter;
 

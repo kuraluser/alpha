@@ -689,7 +689,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setMinTolerence(lqcd.getMinTolerence());
       cargoDetails.setOrderBbls60f(lqcd.getOrderBbls60F());
       cargoDetails.setOrderBblsdbs(lqcd.getOrderBblsdbs());
-      cargoDetails.setOrderedQuantity(lqcd.getOrderQuantity());
+      cargoDetails.setOrderedQuantity(lqcd.getOrderedQuantity());
 
       cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
       cargoDetails.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
@@ -701,10 +701,18 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setPriority(lqcd.getPriority());
       cargoDetails.setLoadingOrder(lqcd.getLoadingOrder());
 
-      cargoDetails.setOrderQuantity(lqcd.getOrderQuantity());
+      cargoDetails.setOrderQuantity(lqcd.getOrderedQuantity());
       cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
       cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
       cargoDetails.setMaxLoadingRate(this.getLoadingRateFromVesselService(vesselId));
+      // Set Loading port Names in Cargo To Be Discharge
+      if (!lqcd.getLoadingPortsList().isEmpty()) {
+        cargoDetails.setLoadingPorts(
+            lqcd.getLoadingPortsList().stream()
+                .map(LoadableStudy.LoadingPortDetail::getName)
+                .collect(Collectors.toList()));
+        log.info("Loading Port names are - {}", cargoDetails.getLoadingPorts());
+      }
 
       response.add(cargoDetails);
     }
