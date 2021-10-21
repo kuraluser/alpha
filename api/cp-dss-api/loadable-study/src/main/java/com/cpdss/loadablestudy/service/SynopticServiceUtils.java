@@ -665,7 +665,7 @@ public class SynopticServiceUtils {
           Optional.ofNullable(var1.getOrderedQuantity())
               .ifPresent(
                   v -> {
-                    builder1.setOrderQuantity(v.toString());
+                    builder1.setOrderedQuantity(v.toString());
                   });
           Optional.ofNullable(this.getCargoNominationQuantity(var1.getDischargeCargoNominationId()))
               .ifPresent(
@@ -813,7 +813,7 @@ public class SynopticServiceUtils {
         Optional.ofNullable(var1.getOrderQuantity())
             .ifPresent(
                 v -> {
-                  builder1.setOrderQuantity(v.toString());
+                  builder1.setOrderedQuantity(v.toString());
                 });
         Optional.ofNullable(this.getCargoNominationQuantity(var1.getCargoNominationId()))
             .ifPresent(

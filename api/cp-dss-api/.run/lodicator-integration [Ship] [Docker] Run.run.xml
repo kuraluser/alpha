@@ -1,10 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="lodicator-integration [Ship] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Lodicator">
+  <configuration default="false" name="lodicator-integration [Ship] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Lodicator Integration">
     <ExternalSystemSettings>
       <option name="env">
         <map>
           <entry key="CONTAINER_NAME" value="loadicator-integration-container-ship" />
-          <entry key="CPDSS_BUILD_ENV" value="ship" />
           <entry key="DEBUG_PORT_HOST" value="5094" />
           <entry key="GRPC_PORT_HOST" value="9094" />
           <entry key="IMAGE_NAME" value="loadicator-integration-ship" />
