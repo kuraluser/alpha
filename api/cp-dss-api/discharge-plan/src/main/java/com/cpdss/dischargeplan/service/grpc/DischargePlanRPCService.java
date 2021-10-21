@@ -7,6 +7,8 @@ import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply;
@@ -701,6 +703,40 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage(e.getMessage())
               .setStatus(DischargePlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveDischargingPlanAlgoStatus(
+      AlgoStatusRequest request, StreamObserver<AlgoStatusReply> responseObserver) {
+    AlgoStatusReply.Builder builder = AlgoStatusReply.newBuilder();
+    try {
+      dischargePlanAlgoService.saveDischargingInfoAlgoStatus(request);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setMessage("Successfully updated ALGO status")
+              .setStatus(DischargePlanConstants.SUCCESS)
+              .build());
+    } catch (GenericServiceException e) {
+      log.info("GenericServiceException in saveDischargePlanAlgoStatus at DP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.info("Exception in in saveDischargePlanAlgoStatus at DP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .build());
     } finally {
       responseObserver.onNext(builder.build());

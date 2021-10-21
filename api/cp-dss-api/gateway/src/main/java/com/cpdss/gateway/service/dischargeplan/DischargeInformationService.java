@@ -6,6 +6,7 @@ import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
@@ -599,5 +600,36 @@ public class DischargeInformationService {
         rpcRepay.getDischargeInfoStatusLastModifiedTime());
     algoStatus.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
     return algoStatus;
+  }
+
+  /**
+   * Updates Discharging Information status
+   *
+   * @param request
+   * @param first
+   * @return LoadingInfoAlgoResponse
+   * @throws GenericServiceException
+   * @throws NumberFormatException
+   */
+  public LoadingInfoAlgoResponse saveDischargingInfoStatus(
+      AlgoStatusRequest request, String correlationId)
+      throws NumberFormatException, GenericServiceException {
+    log.info("Inside update discharging info status api");
+    LoadingInfoAlgoResponse loadingInfoAlgoResponse = new LoadingInfoAlgoResponse();
+    com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.Builder requestBuilder =
+        com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest.newBuilder();
+    requestBuilder.setLoadableStudystatusId(request.getDischargingInfoStatusId());
+    requestBuilder.setProcesssId(request.getProcessId());
+    AlgoStatusReply reply =
+        dischargePlanServiceBlockingStub.saveDischargingPlanAlgoStatus(requestBuilder.build());
+    if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to save DischargingInfoStatus",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+    }
+    loadingInfoAlgoResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return loadingInfoAlgoResponse;
   }
 }
