@@ -1,9 +1,8 @@
-
+<ng-container *ngIf="portDetails?.length else noPortsAvailable">
     <form [formGroup]="dischargeStudyForm">
         <div class="row">
             <div class="col text-right btn-position"><button (click)="saveDischargeStudy()" [disabled]="!editMode" class="btn btn-main">{{'DISCHARGE_STUDY_SAVE'  | translate}}</button></div>
         </div>
-        
         <div formArrayName="portDetails">
         <div *ngFor="let portDetail of portDetails;let portIndex = index;let last = last" formGroupName="{{portIndex}}">
 
@@ -99,3 +98,7 @@
         </div>
     </div>
     </form>
+</ng-container>
+<ng-template #noPortsAvailable>
+    <p class="text-uppercase text-center text-danger">{{'DISCHARGE_STUDY_NO_PORTS_AVAILABLE' | translate}}</p>
+</ng-template>

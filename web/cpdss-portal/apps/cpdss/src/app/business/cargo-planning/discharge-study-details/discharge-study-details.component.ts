@@ -130,9 +130,9 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
         this.vesselId = Number(params.get('vesselId'));
         this.voyageId = Number(params.get('voyageId'));
         this.dischargeStudyId = Number(params.get('dischargeStudyId'));
-        localStorage.setItem("vesselId", this.vesselId.toString())
-        localStorage.setItem("voyageId", this.voyageId.toString())
-        localStorage.setItem("dischargeStudyId", this.dischargeStudyId.toString())
+        localStorage.setItem("vesselId", this.vesselId.toString());
+        localStorage.setItem("voyageId", this.voyageId.toString());
+        localStorage.setItem("dischargeStudyId", this.dischargeStudyId.toString());
 
         this.dischargeStudies = null;
 
@@ -373,6 +373,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.show();
     const res = await this.vesselsApiService.getVesselsInfo().toPromise();
     this.vesselInfo = res[0] ?? <IVessel>{};
+    this.dischargeStudyDetailsTransformationService.vesselInfo = this.vesselInfo;
     const voyages = await this.getVoyages(this.vesselId, this.voyageId);
     this.voyages = voyages.filter(voy => voy.statusId === VOYAGE_STATUS.ACTIVE || voy.statusId === VOYAGE_STATUS.CLOSE);
     const result = await this.dischargeStudyListApiService.getDischargeStudies(vesselId, voyageId).toPromise();
@@ -549,8 +550,11 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
     try {
       const res = await this.dischargeStudyDetailsApiService.generateDischargePattern(this.vesselId, this.voyageId, this.dischargeStudyId).toPromise();
       if (res.responseStatus.status === '200') {
-
-        this.selectedDischargeStudy.statusId = 4;
+        if (environment.name === 'shore') {
+          this.selectedDischargeStudy.statusId = DISCHARGE_STUDY_STATUS.PLAN_ALGO_PROCESSING;
+        } else {
+          this.selectedDischargeStudy.statusId = DISCHARGE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE;
+        }
         data.processId = res.processId;
         if (res.processId) {
           navigator.serviceWorker.controller.postMessage({ type: 'discharge-study-pattern-status', data });
@@ -578,7 +582,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
     * @memberof DischargeStudyDetailsComponent
   */
   isDischargeStudyValid() {
-    if(this.dischargeStudy?.dischargeStudyForm) {
+    if(this.dischargeStudy?.dischargeStudyForm && !this.dischargeStudy?.dischargeStudyForm.disabled) {
       return this.dischargeStudyComplete && !this.dischargeStudy?.dischargeStudyForm?.dirty && this.dischargeStudy?.dischargeStudyForm?.valid;
     } else {
       return this.dischargeStudyComplete;

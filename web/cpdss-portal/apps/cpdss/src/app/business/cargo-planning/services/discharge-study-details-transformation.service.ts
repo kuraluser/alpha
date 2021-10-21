@@ -7,7 +7,8 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 
 import { ValueObject } from '../../../shared/models/common.model';
 import { IPermission } from '../../../shared/models/user-profile.model';
-
+import { IVessel } from '../../core/models/vessel-details.model';
+import { TranslateService } from '@ngx-translate/core';
 
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
@@ -31,10 +32,11 @@ import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , 
 export class DischargeStudyDetailsTransformationService {
 
   constructor(
+    private translateService: TranslateService,
     private quantityDecimalFormatPipe: QuantityDecimalFormatPipe,
     private timeZoneTransformationService: TimeZoneTransformationService
   ) { }
-
+  
   private quantityPipe: QuantityPipe = new QuantityPipe();
   private _portValiditySource: Subject<boolean> = new Subject();
   private _ohqValiditySource: Subject<boolean> = new Subject();
@@ -42,7 +44,8 @@ export class DischargeStudyDetailsTransformationService {
   private _addPortSource = new Subject();
   private _portUpdate: Subject<any> = new Subject();
   private _loadablePatternBtnDisable: Subject<any> = new Subject();
-
+  
+  vesselInfo: IVessel;
   public baseUnit = AppConfigurationService.settings.baseUnit;
   portValidity$ = this._portValiditySource.asObservable();
   ohqValidity$ = this._ohqValiditySource.asObservable();
@@ -242,8 +245,10 @@ export class DischargeStudyDetailsTransformationService {
  * @returns {IDataTableColumn[]}
  * @memberof DischargeStudyDetailsTransformationService
  */
-  getPortDatatableColumns(permission: IPermission, portEtaEtdPermission: IPermission, dischargeStudyStatusId: any, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+  async getPortDatatableColumns(permission: IPermission, portEtaEtdPermission: IPermission, dischargeStudyStatusId: any, voyageStatusId: VOYAGE_STATUS): Promise<IDataTableColumn[]> {
     const minDate = new Date();
+    const translatedMessages = await this.translateService.get(['PORT_MAX_AIR_DRAFT_MIN_ERROR']).toPromise();
+    const minAirDraftMessage = translatedMessages['PORT_MAX_AIR_DRAFT_MIN_ERROR'] + this.getMinAirDraft().toFixed(2)
     let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
@@ -355,7 +360,7 @@ export class DischargeStudyDetailsTransformationService {
         numberFormat: '1.2-2',
         errorMessages: {
           'required': 'PORT_MAX_AIR_DRAFT_REQUIRED_ERROR',
-          'min': 'PORT_MAX_AIR_DRAFT_MIN_ERROR',
+          'min': minAirDraftMessage,
           'invalidNumber': 'PORT_VALUE_INVALID_ERROR'
         }
       },
@@ -1030,8 +1035,8 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       _portDetail.cow = listData.mode.find(modeDetails => modeDetails.id === portDetail.cowId);
       if(!_portDetail.cow) {
         _portDetail.cow = listData.mode[0];
-      }
-      if(portDetail.cowId === 1) {
+        _portDetail.percentage = { value: 25, name: '25%' };
+      } else if(portDetail.cowId === 1) {
         _portDetail.percentage = listData.percentageList.find((item) => {
           return item.value === portDetail.percentage;
         })
@@ -1321,5 +1326,22 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
     }
     return _backLoading;
   }
-
+/**
+   * function to get min air draft value
+   */
+ getMinAirDraft() {
+  let summerDraft = 0;
+  if (this.vesselInfo.loadlines && this.vesselInfo.loadlines.length) {
+    this.vesselInfo.loadlines[0].draftMarks.forEach((draftMark: any) => {
+      if (draftMark > summerDraft) {
+        summerDraft = draftMark
+      }
+    })
+  }
+  if(this.vesselInfo.keelToMastHeight){
+    return Number(this.vesselInfo.keelToMastHeight) - summerDraft;
+  } else {
+    return summerDraft;
+  }
+}
 }
