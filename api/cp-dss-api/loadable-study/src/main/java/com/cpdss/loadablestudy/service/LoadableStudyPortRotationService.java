@@ -614,14 +614,13 @@ public class LoadableStudyPortRotationService {
       synopticService.buildPortsInfoSynopticalTable(
           entity, request.getOperationId(), request.getPortId());
     }
-    this.loadableStudyRepository.updateLoadableStudyIsPortsComplete(
-        loadableStudyOpt.get().getId(), request.getIsPortsComplete());
-
-    if (loadableStudyOpt.get().getPlanningTypeXId() == 2) {
-      LoadableStudy loadableStudy = loadableStudyOpt.get();
+    LoadableStudy loadableStudy = loadableStudyOpt.get();
+    
+    loadableStudy.setIsPortsComplete(request.getIsPortsComplete());
+    if (loadableStudy.getPlanningTypeXId() == 2) {
       loadableStudy.setIsDischargeStudyComplete(false);
-      this.loadableStudyRepository.save(loadableStudy);
     }
+    this.loadableStudyRepository.save(loadableStudy);
 
     // set port order after update
     // loadableStudyPortRotationService.setPortOrdering(loadableStudyOpt.get());
