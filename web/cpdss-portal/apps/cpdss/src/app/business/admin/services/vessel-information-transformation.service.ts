@@ -36,16 +36,16 @@ export class VesselInformationTransformationService {
         fieldClass: 'sl'
       },
       {
-        field: 'vesselName',
+        field: 'name',
         header: 'VESSEL_MASTER_INFORMATION_VESSEL_NAME',
         filter: true,
         filterPlaceholder: 'VESSEL_MASTER_INFORMATION_VESSEL_NAME_PLACEHOLDER',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'vesselName',
+        filterField: 'name',
         filterByServer: true,
         sortable: true,
-        sortField: 'vesselName'
+        sortField: 'name'
       },
       // { TODO: may be use in future
       //   field: 'owner',
@@ -60,16 +60,16 @@ export class VesselInformationTransformationService {
       //   sortField: 'owner'
       // },
       {
-        field: 'vesselType',
+        field: 'typeOfShip',
         header: 'VESSEL_MASTER_INFORMATION_VESSEL_TYPE',
         filter: true,
         filterPlaceholder: 'VESSEL_MASTER_INFORMATION_VESSEL_TYPE_PLACEHOLDER',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'vesselType',
+        filterField: 'typeOfShip',
         filterByServer: true,
         sortable: true,
-        sortField: 'vesselType'
+        sortField: 'typeOfShip'
       },
       {
         field: 'builder',
@@ -84,17 +84,17 @@ export class VesselInformationTransformationService {
         sortField: 'builder'
       },
       {
-        field: 'dateOfLaunch',
+        field: 'dateOfLaunching',
         header: 'VESSEL_MASTER_INFORMATION_DATE_OF_LAUNCH',
         filter: true,
         filterPlaceholder: 'CARGO_HISTORY_TABLE_VESSEL_NAME_SEARCH_PLACEHOLDER',
         filterType: DATATABLE_FILTER_TYPE.DATE,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'dateOfLaunch',
+        filterField: 'dateOfLaunching',
         dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         filterByServer: true,
         sortable: true,
-        sortField: 'dateOfLaunch'
+        sortField: 'dateOfLaunching'
       }
     ];
     return columns;

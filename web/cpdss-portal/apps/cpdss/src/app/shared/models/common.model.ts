@@ -389,7 +389,10 @@ export interface IMonth {
  * @enum {number}
  */
  export enum LENGTH_UNIT {
-    M = "M"
+    M = "M",
+    FT = "FT",
+    KM = "KM",
+    NM = "NM"
 }
 
 /**
