@@ -44,14 +44,16 @@ public class VesselPumpService {
       Page<VesselPumps> vesselPumps =
           vesselPumpRepository.findAllByVesselAndIsActiveTrue(vessel, defaultPage);
       Page<TankType> tankTypes = tankTypeRepository.findAll(defaultPage);
-      Page<VesselManifold> vesselManifolds = vesselManifoldRepository.findAll(defaultPage);
-      Page<VesselBottomLine> vesselBottomLines = vesselBottomLineRepository.findAll(defaultPage);
+      List<VesselManifold> vesselManifolds =
+          vesselManifoldRepository.findByVesselXidAndIsActiveTrue(vesselId);
+      List<VesselBottomLine> vesselBottomLines =
+          vesselBottomLineRepository.findAllByVesselXidAndIsActiveTrue(vesselId);
       this.buildPumpTypeGrpcBuilder(pumpTypes.toList(), builder);
       this.buildVesselPumpGrpcBuilder(vesselPumps.toList(), builder);
       this.buildVesselDetails(vessel, builder);
       this.buildVesselTankDetails(tankTypes.toList(), builder);
-      this.buildVesselManifolds(vesselManifolds.toList(), builder);
-      this.buildVesselBottomLine(vesselBottomLines.toList(), builder);
+      this.buildVesselManifolds(vesselManifolds, builder);
+      this.buildVesselBottomLine(vesselBottomLines, builder);
       builder1.setStatus("SUCCESS");
       builder.setResponseStatus(builder1);
       log.info(

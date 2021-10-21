@@ -41,4 +41,11 @@ public interface DischargingInformationAlgoStatusRepository
       "UPDATE DischargingInformationAlgoStatus SET dischargingInformationStatus.id = ?1 WHERE dischargeInformation.id = ?2 AND processId = ?3")
   public void updateDischargingInformationAlgoStatus(
       Long dischargingInformationStatusId, Long dischargingInfoId, String processId);
+
+  Optional<DischargingInformationAlgoStatus>
+      findByProcessIdAndDischargeInformationIdAndIsActiveTrue(String pId, Long dId);
+
+  Optional<DischargingInformationAlgoStatus>
+      findByProcessIdAndDischargeInformationIdAndConditionTypeAndIsActiveTrue(
+          String pId, Long dId, Integer tId);
 }
