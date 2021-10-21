@@ -447,6 +447,12 @@ message LoadingPlanCommingleDetails {
     string abbreviation = 14;
     int32 conditionType = 15;
     int32 valueType = 16;
+    string quantity1MT = 17;
+    string quantity2MT = 18;
+    string quantity1M3 = 19;
+    string quantity2M3 = 20;
+    string ullage1 = 21;
+    string ullage2 = 22;
 }
 
 message LoadingSequence {
@@ -947,6 +953,12 @@ message CommingleUpdate {
   	string correctionFactor =21;
   	string fillingPercentage = 22;
   	int64 loadingInformationId = 23;
+  	string quantity1MT = 24;
+    string quantity2MT = 25;
+    string quantity1M3 = 26;
+    string quantity2M3 = 27;
+    string ullage1 = 28;
+    string ullage2 = 29;
 }
 message UllageBillRequest{
   repeated BillOfLanding billOfLanding = 1;

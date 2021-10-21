@@ -459,8 +459,7 @@ public class DischargeInformationBuilderService {
       Callable<DischargingInfoSaveResponse> t3 =
           () -> {
             builder.setDischargeRate(
-                buildDischargingRates(
-                    request.getDischargingRates(), request.getDischargeInfoId()));
+                buildDischargingRates(request.getDischargingRates(), request.getDischargeInfoId()));
             return dischargeInfoServiceStub.saveDischargingInfoRates(builder.build());
           };
       callableTasks.add(t3);

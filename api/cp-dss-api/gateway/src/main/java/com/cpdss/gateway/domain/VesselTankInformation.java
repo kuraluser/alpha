@@ -1,35 +1,34 @@
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import lombok.Data;
 
 @Data
 @JsonInclude(Include.NON_EMPTY)
 public class VesselTankInformation {
-	
-	  private Long id;
 
-	  private Long categoryId;
+  private Long id;
 
-	  private String categoryName;
+  private Long categoryId;
 
-	  private String name;
+  private String categoryName;
 
-	  private String frameNumberFrom;
+  private String name;
 
-	  private String frameNumberTo;
+  private String frameNumberFrom;
 
-	  private String shortName;
-	  
-	  private Double fullCapacityCubm;
-	  private Double density;
+  private String frameNumberTo;
 
-	  private Integer group;
+  private String shortName;
 
-	  private Integer order;
-	  
-	  private boolean slopTank;
+  private Double fullCapacityCubm;
+  private Double density;
 
+  private Integer group;
+
+  private Integer order;
+
+  private boolean slopTank;
 }
