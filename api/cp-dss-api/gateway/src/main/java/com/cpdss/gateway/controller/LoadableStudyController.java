@@ -12,8 +12,6 @@ import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.service.AlgoErrorService;
 import com.cpdss.gateway.service.LoadableStudyCargoService;
 import com.cpdss.gateway.service.LoadableStudyService;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,6 +27,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.websocket.server.PathParam;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -729,11 +731,10 @@ public class LoadableStudyController {
       log.info("saveLoadablePatterns : {}", getClientIp());
       log.info(
           "saveLoadablePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
-      LoadablePlanRequest loadablePlanRequest =
-          new ObjectMapper()
+      String requestJsonString = new ObjectMapper().writeValueAsString(requestJson);
+      LoadablePlanRequest loadablePlanRequest =    new ObjectMapper()
               .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-              .readValue(requestJson.toString(), LoadablePlanRequest.class);
-      System.out.println(requestJson);
+              .readValue(requestJsonString, LoadablePlanRequest.class);
       return loadableStudyService.saveAlgoPatterns(
           loadablePlanRequest,
           loadableStudiesId,
