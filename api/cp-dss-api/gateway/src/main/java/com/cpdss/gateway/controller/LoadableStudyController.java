@@ -731,10 +731,10 @@ public class LoadableStudyController {
       log.info("saveLoadablePatterns : {}", getClientIp());
       log.info(
           "saveLoadablePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
+      String requestJsonString = new ObjectMapper().writeValueAsString(requestJson);
       LoadablePlanRequest loadablePlanRequest =    new ObjectMapper()
               .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-              .readValue(requestJson.toString(), LoadablePlanRequest.class);
-      System.out.println(requestJson);
+              .readValue(requestJsonString, LoadablePlanRequest.class);
       return loadableStudyService.saveAlgoPatterns(
           loadablePlanRequest,
           loadableStudiesId,
