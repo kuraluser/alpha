@@ -7,6 +7,7 @@ option java_package = "com.cpdss.common.generated.discharge_plan";
 import "common.proto";
 import "discharge_plan/discharge_plan_models.proto";
 import "loading_plan/loading_plan_models.proto";
+import "loadable_study.proto";
 
 service DischargeInformationService {
   rpc getDischargeInformation(DischargeInformationRequest) returns (DischargeInformation) {}
@@ -47,6 +48,7 @@ service DischargePlanService{
   rpc updateDischargeUllageDetails(UllageBillRequest) returns (UllageBillReply){}
     rpc saveDischargingPlan(DischargingPlanSaveRequest) returns (DischargingPlanSaveResponse) {}
   rpc dischargeInfoStatusCheck(DischargeInfoStatusRequest) returns (DischargeInfoStatusReply) {}
+  rpc SaveDischargingPlanAlgoStatus(AlgoStatusRequest) returns (AlgoStatusReply) {}
 }
 
 service DischargingInstructionService {
