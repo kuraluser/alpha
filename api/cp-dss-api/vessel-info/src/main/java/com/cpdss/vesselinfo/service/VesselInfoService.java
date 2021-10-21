@@ -92,6 +92,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -2840,6 +2841,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
 	    List<VesselTank> vesselTanks =
 	            this.vesselTankRepository.findByVesselAndTankCategoryInAndIsActive(
 	                vessel, tankCategoryEntities, true);
+	    Collections.sort(
+	    		vesselTanks, Comparator.comparing(VesselTank::getTankOrder));
 	    for(VesselTank tank:vesselTanks) {
 	    	if(tank.getDensity()!=null)
 	    		tankInfoBuilder.setDensity(tank.getDensity().doubleValue());
