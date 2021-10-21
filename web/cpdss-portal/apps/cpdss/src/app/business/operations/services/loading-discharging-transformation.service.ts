@@ -7,7 +7,7 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ICargoQuantities, ILoadableQuantityCargo, IProtested, IShipCargoTank, ITank, OPERATIONS } from '../../core/models/common.model';
 import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
-import { ICOWDetails, IDischargeOperationListData, IDischargingInformation, IDischargingInformationResponse, ILoadedCargo, ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequenceValueObject, IReasonForDelays, IPostDischargeStageTime, ITanksWashingWithDifferentCargo, ITanksWashingWithDifferentCargoResponse } from '../models/loading-discharging.model';
+import { ICOWDetails, IDischargeOperationListData, IDischargingInformation, IDischargingInformationResponse, ILoadedCargo, ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequenceValueObject, IReasonForDelays, ITanksWashingWithDifferentCargo, ITanksWashingWithDifferentCargoResponse, ILoadedCargoResponse } from '../models/loading-discharging.model';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { OPERATION_TAB } from '../models/operations.model';
 import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
@@ -941,9 +941,8 @@ export class LoadingDischargingTransformationService {
     dischargingInformation.dischargeInfoId = dischargingInformationResponse?.dischargeInfoId;
     dischargingInformation.dischargeStudyName = dischargingInformationResponse?.dischargeStudyName;
     dischargingInformation.dischargeSlopTanksFirst = dischargingInformationResponse?.dischargeSlopTanksFirst;
-    dischargingInformation.dischargeCommingledCargoSeperately = dischargingInformationResponse?.dischargeCommingledCargoSeperately;
+    dischargingInformation.dischargeCommingledCargoSeparately = dischargingInformationResponse?.dischargeCommingledCargoSeparately;
     dischargingInformation.synopticalTableId = dischargingInformationResponse?.synopticTableId;
-    dischargingInformation.dischargeDetails = dischargingInformationResponse?.dischargeDetails;
     dischargingInformation.dischargeRates = dischargingInformationResponse?.dischargeRates;
     dischargingInformation.berthDetails = dischargingInformationResponse?.berthDetails;
     dischargingInformation.dischargeSequences = dischargingInformationResponse?.dischargeSequences;
@@ -962,6 +961,7 @@ export class LoadingDischargingTransformationService {
     };
 
     // Update discharging details
+    dischargingInformation.dischargeDetails = dischargingInformationResponse?.dischargeDetails;
     dischargingInformation.dischargeDetails.trimAllowed.topOffTrim = dischargingInformationResponse?.dischargeDetails?.trimAllowed?.finalTrim;
 
     //Update tank list
@@ -973,8 +973,87 @@ export class LoadingDischargingTransformationService {
     });
     dischargingInformation.cargoTanks = cargoTanks;
 
-    //Update cargon details
-    const loadableQuantityCargoDetails: ILoadedCargo[] = dischargingInformationResponse?.cargoVesselTankDetails?.dischargeQuantityCargoDetails?.map(cargo => {
+    //Update cargo to be discharged details
+    const loadableQuantityCargoDetails: ILoadedCargo[] = this.getCargoToBeDischargedAsValueObject(dischargingInformationResponse?.cargoVesselTankDetails?.dischargeQuantityCargoDetails, listData);
+
+    dischargingInformation.cargoVesselTankDetails = {
+      cargoConditions: dischargingInformationResponse?.cargoVesselTankDetails?.cargoConditions,
+      cargoQuantities: dischargingInformationResponse?.cargoVesselTankDetails?.cargoQuantities,
+      cargoTanks: dischargingInformationResponse?.cargoVesselTankDetails?.cargoTanks,
+      loadableQuantityCargoDetails
+    }
+
+    // Update all cargos now available in the vessel in  selected port
+    dischargingInformation.loadedCargos = [...new Map(dischargingInformationResponse?.cargoVesselTankDetails?.cargoQuantities?.map(item => [item['abbreviation'], { id: item?.cargoId, cargoNominationId: item.dischargeCargoNominationId, colorCode: item?.colorCode, abbreviation: item?.abbreviation }])).values()].filter(item => item?.abbreviation);
+
+    //Update cow details
+    dischargingInformation.cowDetails = this.setCowDetails(dischargingInformationResponse, listData, dischargingInformation);
+
+    //Update stage details
+    const stageDuration = dischargingInformationResponse?.dischargeStages.stageDurationList?.find(duration => duration.id === dischargingInformationResponse?.dischargeStages?.stageDuration);
+    const stageOffset = dischargingInformationResponse?.dischargeStages.stageOffsetList?.find(offset => offset.id === dischargingInformationResponse?.dischargeStages?.stageOffset);
+    dischargingInformation.dischargeStages = {
+      trackStartEndStage: dischargingInformationResponse?.dischargeStages?.trackGradeSwitch,
+      trackGradeSwitch: dischargingInformationResponse?.dischargeStages?.trackGradeSwitch,
+      stageDuration,
+      stageOffset,
+      stageDurationList: dischargingInformationResponse?.dischargeStages?.stageDurationList,
+      stageOffsetList: dischargingInformationResponse?.dischargeStages?.stageOffsetList
+    };
+
+    //Update machinery in use
+    dischargingInformation.machineryInUses = {
+      pumpTypes: dischargingInformationResponse?.machineryInUses?.pumpTypes,
+      vesselPumps: dischargingInformationResponse?.machineryInUses?.vesselPumps,
+      vesselManifold: dischargingInformationResponse?.machineryInUses?.vesselManifold,
+      vesselBottomLine: dischargingInformationResponse?.machineryInUses?.vesselBottomLine,
+      loadingDischargingMachinesInUses: dischargingInformationResponse?.machineryInUses?.dischargeMachinesInUses,
+      machineTypes: dischargingInformationResponse?.machineryInUses?.machineTypes,
+      tankTypes: dischargingInformationResponse?.machineryInUses?.tankTypes
+    };
+
+    return dischargingInformation;
+  }
+
+  /**
+   * Convert cargo to be discharge details value object to value
+   *
+   * @param {ILoadedCargo[]} dischargeQuantityCargoDetails
+   * @param {IDischargeOperationListData} listData
+   * @return {*}  {ILoadedCargoResponse[]}
+   * @memberof LoadingDischargingTransformationService
+   */
+  getCargoToBeDischargedAsValue(dischargeQuantityCargoDetails: ILoadedCargo[], listData: IDischargeOperationListData): ILoadedCargoResponse[] {
+    const _dischargeQuantityCargoDetails: ILoadedCargoResponse[] = dischargeQuantityCargoDetails?.map(cargo => {
+      const _cargo = <ILoadedCargoResponse>{};
+      for (const key in cargo) {
+        if (Object.prototype.hasOwnProperty.call(cargo, key)) {
+          if (key === 'protested') {
+            _cargo.protested = listData.protestedOptions.findIndex(item => item.id === cargo[key].value.id) === 0 ? true : false;
+          } else if (key === 'isCommingledDischarge') {
+            _cargo.isCommingledDischarge = cargo[key].value;
+          } else if (key === 'slopQuantity') {
+            _cargo.slopQuantity = (<ValueObject>cargo[key]).value;
+          } else {
+            _cargo[key] = cargo[key];
+          }
+        }
+      }
+      return _cargo;
+    });
+    return _dischargeQuantityCargoDetails;
+  }
+
+  /**
+   * Convert cargo to be discharged details to value object
+   *
+   * @param {ILoadedCargoResponse[]} dischargeQuantityCargoDetails
+   * @param {IDischargeOperationListData} listData
+   * @return {*}  {ILoadedCargo[]}
+   * @memberof LoadingDischargingTransformationService
+   */
+  getCargoToBeDischargedAsValueObject(dischargeQuantityCargoDetails: ILoadedCargoResponse[], listData: IDischargeOperationListData): ILoadedCargo[] {
+    const loadableQuantityCargoDetails: ILoadedCargo[] = dischargeQuantityCargoDetails?.map(cargo => {
       const _cargo = <ILoadedCargo>{};
       _cargo.isAdd = true;
       for (const key in cargo) {
@@ -1001,24 +1080,26 @@ export class LoadingDischargingTransformationService {
       }
       return _cargo;
     });
-    dischargingInformation.cargoVesselTankDetails = {
-      cargoConditions: dischargingInformationResponse?.cargoVesselTankDetails?.cargoConditions,
-      cargoQuantities: dischargingInformationResponse?.cargoVesselTankDetails?.cargoQuantities,
-      cargoTanks: dischargingInformationResponse?.cargoVesselTankDetails?.cargoTanks,
-      loadableQuantityCargoDetails
-    }
+    return loadableQuantityCargoDetails;
+  }
 
-    // Update all cargos now available in the vessel in  selected port
-    dischargingInformation.loadedCargos = [...new Map(dischargingInformationResponse?.cargoVesselTankDetails?.cargoConditions?.map(item => [item['abbreviation'], { id: item?.id, cargoNominationId: item.cargoNominationId, colorCode: item?.colorCode, abbreviation: item?.abbreviation }])).values()].filter(item => item?.abbreviation);
-
-    //Update cow details
+  /**
+   * Set cow plan details in discharge information
+   *
+   * @param {IDischargingInformationResponse} dischargingInformationResponse
+   * @param {IDischargeOperationListData} listData
+   * @param {IDischargingInformation} dischargingInformation
+   * @return {*}  {ICOWDetails}
+   * @memberof LoadingDischargingTransformationService
+   */
+  setCowDetails(dischargingInformationResponse: IDischargingInformationResponse, listData: IDischargeOperationListData, dischargingInformation: IDischargingInformation): ICOWDetails {
     const cowDetails = <ICOWDetails>{};
     cowDetails.cowOption = listData.cowOptions.find(option => option.id === dischargingInformationResponse?.cowPlan?.cowOption);
     cowDetails.cowPercentage = listData.cowPercentages.find(percentage => percentage.value === dischargingInformationResponse?.cowPlan?.cowPercentage);
 
-    cowDetails.allCOWTanks = dischargingInformationResponse?.cowPlan?.allCOWTanks?.map(tank => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tank.id));
-    cowDetails.topCOWTanks = dischargingInformationResponse?.cowPlan?.topCOWTanks?.map(tank => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tank.id));
-    cowDetails.bottomCOWTanks = dischargingInformationResponse?.cowPlan?.bottomCOWTanks?.map(tank => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tank.id));
+    cowDetails.allCOWTanks = dischargingInformationResponse?.cowPlan?.allCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
+    cowDetails.topCOWTanks = dischargingInformationResponse?.cowPlan?.topCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
+    cowDetails.bottomCOWTanks = dischargingInformationResponse?.cowPlan?.bottomCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
 
     cowDetails.cowEnd = moment.utc(Number(dischargingInformationResponse?.cowPlan?.cowEnd) * 60 * 1000).format("HH:mm") ?? null;
     cowDetails.cowStart = moment.utc(Number(dischargingInformationResponse?.cowPlan?.cowStart) * 60 * 1000).format("HH:mm") ?? null;
@@ -1039,7 +1120,7 @@ export class LoadingDischargingTransformationService {
     const tanksWashingWithDifferentCargo: ITanksWashingWithDifferentCargo[] = dischargingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(cargo => {
       const tanks: ITank[] = [];
       dischargingInformation?.cargoVesselTankDetails?.cargoQuantities?.forEach(tank => {
-        if (tank?.cargoNominationId === cargo?.cargoNominationId) {
+        if (tank?.dischargeCargoNominationId === cargo?.cargoNominationId) {
           tanks.push(dischargingInformation?.cargoTanks.find(tankObj => tankObj.id === tank?.tankId));
         }
       });
@@ -1072,32 +1153,7 @@ export class LoadingDischargingTransformationService {
       return cargoDetails;
     });
 
-    dischargingInformation.cowDetails = cowDetails;
-
-    //Update stage details
-    const stageDuration = dischargingInformationResponse?.dischargeStages.stageDurationList?.find(duration => duration.id === dischargingInformationResponse?.dischargeStages?.stageDuration);
-    const stageOffset = dischargingInformationResponse?.dischargeStages.stageOffsetList?.find(offset => offset.id === dischargingInformationResponse?.dischargeStages?.stageOffset);
-    dischargingInformation.dischargeStages = {
-      trackStartEndStage: dischargingInformationResponse?.dischargeStages?.trackGradeSwitch,
-      trackGradeSwitch: dischargingInformationResponse?.dischargeStages?.trackGradeSwitch,
-      stageDuration,
-      stageOffset,
-      stageDurationList: dischargingInformationResponse?.dischargeStages?.stageDurationList,
-      stageOffsetList: dischargingInformationResponse?.dischargeStages?.stageOffsetList
-    };
-
-    //Update machinery in use
-    dischargingInformation.machineryInUses = {
-      pumpTypes: dischargingInformationResponse?.machineryInUses?.pumpTypes,
-      vesselPumps: dischargingInformationResponse?.machineryInUses?.vesselPumps,
-      vesselManifold: dischargingInformationResponse?.machineryInUses?.vesselManifold,
-      vesselBottomLine: dischargingInformationResponse?.machineryInUses?.vesselBottomLine,
-      loadingDischargingMachinesInUses: dischargingInformationResponse?.machineryInUses?.dischargeMachinesInUses,
-      machineTypes: dischargingInformationResponse?.machineryInUses?.machineTypes,
-      tankTypes: dischargingInformationResponse?.machineryInUses?.tankTypes
-    };
-
-    return dischargingInformation;
+    return cowDetails;
   }
 
   /**

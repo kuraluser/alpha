@@ -637,6 +637,7 @@ export interface ICargoQuantities {
     isCommingleCargo?: boolean;
     temperature?: any;
     cargoNominationId?: number;
+    dischargeCargoNominationId?: number;
 }
 
 /**

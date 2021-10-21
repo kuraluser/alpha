@@ -4,7 +4,7 @@ import { IResponse } from './../../../shared/models/common.model';
 import { OPERATIONS } from '../../core/models/common.model';
 
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { IDischargingInformationResponse, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse } from '../models/loading-discharging.model';
+import { IDischargingInformationPostData, IDischargingInformationResponse, IDischargingInformationSaveResponse, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse } from '../models/loading-discharging.model';
 
 /**
  * Api Service for Loading & Discharging information tab
@@ -43,6 +43,19 @@ export class LoadingDischargingInformationApiService {
    */
   saveLoadingInformation(vesselId: number, voyageId: Number, loadingInformation: ILoadingInformation): Observable<ILoadingInformationSaveResponse> {
     return this.commonApiService.post<ILoadingInformation, ILoadingInformationSaveResponse>(`vessels/${vesselId}/voyages/${voyageId}/loading-info`, loadingInformation);
+  }
+
+  /**
+   * Method for Update discharging information
+   *
+   * @param {number} vesselId
+   * @param {Number} voyageId
+   * @param {IDischargingInformationPostData} dischargingInformation
+   * @return {*}  {Observable<IDischargingInformationSaveResponse>}
+   * @memberof LoadingDischargingInformationApiService
+   */
+  saveDischargingInformation(vesselId: number, voyageId: Number, dischargingInformation: IDischargingInformationPostData): Observable<IDischargingInformationSaveResponse> {
+    return this.commonApiService.post<IDischargingInformationPostData, IDischargingInformationSaveResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharging-info`, dischargingInformation);
   }
 
   /**
