@@ -129,6 +129,8 @@ public class LoadingSequenceService {
           Optional.ofNullable(param.getList())
               .ifPresent(list -> paramBuilder.setList(String.valueOf(list)));
           Optional.ofNullable(param.getTime()).ifPresent(paramBuilder::setTime);
+          Optional.ofNullable(param.getGomValue())
+              .ifPresent(value -> paramBuilder.setGomValue(value.toString()));
           builder.addLoadingSequenceStabilityParameters(paramBuilder.build());
         });
   }

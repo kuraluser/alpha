@@ -59,4 +59,7 @@ public class LoadingSequenceStabilityParameters extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "gom_value")
+  private BigDecimal gomValue;
 }
