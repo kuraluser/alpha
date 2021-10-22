@@ -37,6 +37,7 @@ import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatus;
 import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatusRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
+import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
@@ -1248,4 +1249,50 @@ public class DischargePlanController {
           e);
     }
   }
+  
+  /**
+   * Get Discharging Sequence API
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping("/vessels/{vesselId}/voyages/{voyageId}/discharge-info/{infoId}/discharging-sequence")
+  public LoadingSequenceResponse getDischargeSequence(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Get discharging Sequence api for vessel {}, voyage {}, loading information {}",
+          vesselId,
+          voyageId,
+          infoId);
+      return dischargeInformationService.getDischargingSequence(vesselId, voyageId, infoId);
+    } catch (GenericServiceException e) {
+      log.error("Exception in Get discharging Sequence API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          headers,
+          HttpStatusCode.BAD_REQUEST,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Get discharging Sequence API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
 }

@@ -377,3 +377,47 @@ message DischargeInfoStatusReply {
   string dischargeInfoStatusLastModifiedTime = 3;
   ResponseStatus responseStatus = 4;
 }
+
+message DischargeSequenceReply {
+  int64 vesselId = 1;
+  int64 voyageId = 2;
+  int64 dischargePatternId = 3;
+  int64 portId = 4;
+  string startDate = 5;
+  int32 interval = 6;
+  repeated DischargeSequence dischargeSequences = 7;
+  repeated LoadingPlanStabilityParameters dischargeSequenceStabilityParameters = 8;
+  ResponseStatus responseStatus = 9;
+  int64 portRotationId = 10;
+}
+
+message DischargeSequence {
+  int64 cargoNominationId = 1;
+  int32 startTime = 2;
+  int32 endTime = 3;
+  int64 portId = 4;
+  int32 sequenceNumber = 5;
+  string stageName = 6;
+  bool toLoadicator = 7;
+  repeated Valve cargoValves = 8;
+  repeated Valve ballastValves = 9;
+  repeated DischargingRate dischargingRates = 10;
+  repeated DeBallastingRate deBallastingRates = 11;
+  repeated DischargePlanPortWiseDetails dischargePlanPortWiseDetails = 12;
+  string cargoLoadingRate1 = 13;
+  string cargoLoadingRate2 = 14;
+  repeated PumpOperation ballastOperations = 15;
+  EductorOperation eductorOperation = 16;
+}
+
+message DischargePlanPortWiseDetails {
+  repeated DeBallastingRate deballastingRates = 1;
+  repeated LoadingPlanTankDetails dischargingPlanBallastDetails = 2;
+  repeated LoadingPlanTankDetails dischargingPlanRobDetails = 3;
+  LoadingPlanStabilityParameters dischargingPlanStabilityParameters = 4;
+  repeated LoadingPlanTankDetails dischargingPlanStowageDetails = 5;
+  int32 time = 6;
+  repeated LoadingPlanCommingleDetails dischargingPlanCommingleDetails = 7;
+}
+
+

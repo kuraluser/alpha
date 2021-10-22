@@ -19,6 +19,7 @@ public class LoadingSequenceResponse {
   private BallastPump gravity;
   private List<BallastPump> ballastPumps;
   private List<CargoLoadingRate> cargoLoadingRates;
+  private List<CargoLoadingRate> cargoDischargingRates;
   private List<FlowRate> flowRates;
   private List<TankCategory> cargoTankCategories;
   private List<TankCategory> ballastTankCategories;
