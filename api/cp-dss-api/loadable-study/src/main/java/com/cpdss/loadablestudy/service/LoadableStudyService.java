@@ -542,7 +542,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           entity.setIsCargoNominationComplete(false);
           entity.setIsPortsComplete(false);
           entity.setIsOhqComplete(false);
-          entity.setIsObqComplete(true);
+          entity.setIsObqComplete(false);
           entity.setIsDischargePortsComplete(false);
         } else {
           listOfExistingLSRules = loadableStudyRuleService.getLoadableStudyRules(request);

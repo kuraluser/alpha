@@ -582,25 +582,25 @@ public class DischargeInformationBuilderService {
 
     builder.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(cowPlan.getCowOption()));
     builder.setDischargingInfoId(dischargingId);
-    if (cowPlan.getAllCow()!=null&&!cowPlan.getAllCow().isEmpty()) {
+    if (cowPlan.getAllCow() != null && !cowPlan.getAllCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.ALL_COW);
       cowTankBuilder.addAllTankIds(cowPlan.getAllCow());
       builder.addCowTankDetails(cowTankBuilder);
     }
-    if (cowPlan.getBottomCow()!=null&&!cowPlan.getBottomCow().isEmpty()) {
+    if (cowPlan.getBottomCow() != null && !cowPlan.getBottomCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.BOTTOM_COW);
       cowTankBuilder.addAllTankIds(cowPlan.getBottomCow());
       builder.addCowTankDetails(cowTankBuilder);
     }
-    if (cowPlan.getTopCow()!=null&&!cowPlan.getTopCow().isEmpty()) {
+    if (cowPlan.getTopCow() != null && !cowPlan.getTopCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.TOP_COW);
       cowTankBuilder.addAllTankIds(cowPlan.getTopCow());
       builder.addCowTankDetails(cowTankBuilder);
     }
-    if (cowPlan.getCargoCow()!=null&&!cowPlan.getCargoCow().isEmpty()) {
+    if (cowPlan.getCargoCow() != null && !cowPlan.getCargoCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.CARGO);
       cowPlan.getCargoCow().stream()

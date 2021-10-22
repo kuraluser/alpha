@@ -72,4 +72,7 @@ public class OnBoardQuantity extends EntityDoc {
 
   @Column(name = "volume_in_m3")
   private String volumeInM3;
+
+  @Column(name = "temperature")
+  private BigDecimal temperature;
 }

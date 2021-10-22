@@ -49,6 +49,7 @@ service DischargePlanService{
     rpc saveDischargingPlan(DischargingPlanSaveRequest) returns (DischargingPlanSaveResponse) {}
   rpc dischargeInfoStatusCheck(DischargeInfoStatusRequest) returns (DischargeInfoStatusReply) {}
   rpc SaveDischargingPlanAlgoStatus(AlgoStatusRequest) returns (AlgoStatusReply) {}
+  rpc dischargePlanStowageDetails(DischargePlanStowageDetailsRequest) returns (DischargePlanStowageDetailsResponse){}
 }
 
 service DischargingInstructionService {

@@ -389,6 +389,63 @@ public final class DischargePlanServiceGrpc {
     return getSaveDischargingPlanAlgoStatusMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest,
+          com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse>
+      getDischargePlanStowageDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "dischargePlanStowageDetails",
+      requestType =
+          com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest.class,
+      responseType =
+          com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest,
+          com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse>
+      getDischargePlanStowageDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest,
+            com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse>
+        getDischargePlanStowageDetailsMethod;
+    if ((getDischargePlanStowageDetailsMethod =
+            DischargePlanServiceGrpc.getDischargePlanStowageDetailsMethod)
+        == null) {
+      synchronized (DischargePlanServiceGrpc.class) {
+        if ((getDischargePlanStowageDetailsMethod =
+                DischargePlanServiceGrpc.getDischargePlanStowageDetailsMethod)
+            == null) {
+          DischargePlanServiceGrpc.getDischargePlanStowageDetailsMethod =
+              getDischargePlanStowageDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.discharge_plan
+                              .DischargePlanStowageDetailsRequest,
+                          com.cpdss.common.generated.discharge_plan
+                              .DischargePlanStowageDetailsResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "dischargePlanStowageDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan
+                                  .DischargePlanStowageDetailsRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan
+                                  .DischargePlanStowageDetailsResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargePlanServiceMethodDescriptorSupplier(
+                              "dischargePlanStowageDetails"))
+                      .build();
+        }
+      }
+    }
+    return getDischargePlanStowageDetailsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargePlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargePlanServiceStub> factory =
@@ -503,6 +560,16 @@ public final class DischargePlanServiceGrpc {
           getSaveDischargingPlanAlgoStatusMethod(), responseObserver);
     }
 
+    /** */
+    public void dischargePlanStowageDetails(
+        com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getDischargePlanStowageDetailsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -557,6 +624,14 @@ public final class DischargePlanServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
                       com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>(
                       this, METHODID_SAVE_DISCHARGING_PLAN_ALGO_STATUS)))
+          .addMethod(
+              getDischargePlanStowageDetailsMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest,
+                      com.cpdss.common.generated.discharge_plan
+                          .DischargePlanStowageDetailsResponse>(
+                      this, METHODID_DISCHARGE_PLAN_STOWAGE_DETAILS)))
           .build();
     }
   }
@@ -657,6 +732,18 @@ public final class DischargePlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void dischargePlanStowageDetails(
+        com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDischargePlanStowageDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -725,6 +812,14 @@ public final class DischargePlanServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveDischargingPlanAlgoStatusMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse
+        dischargePlanStowageDetails(
+            com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDischargePlanStowageDetailsMethod(), getCallOptions(), request);
     }
   }
 
@@ -807,6 +902,15 @@ public final class DischargePlanServiceGrpc {
           getChannel().newCall(getSaveDischargingPlanAlgoStatusMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse>
+        dischargePlanStowageDetails(
+            com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDischargePlanStowageDetailsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DISCHARGE_PLAN_SYNCHRONIZATION = 0;
@@ -816,6 +920,7 @@ public final class DischargePlanServiceGrpc {
   private static final int METHODID_SAVE_DISCHARGING_PLAN = 4;
   private static final int METHODID_DISCHARGE_INFO_STATUS_CHECK = 5;
   private static final int METHODID_SAVE_DISCHARGING_PLAN_ALGO_STATUS = 6;
+  private static final int METHODID_DISCHARGE_PLAN_STOWAGE_DETAILS = 7;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -882,6 +987,15 @@ public final class DischargePlanServiceGrpc {
               (com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>)
+                  responseObserver);
+          break;
+        case METHODID_DISCHARGE_PLAN_STOWAGE_DETAILS:
+          serviceImpl.dischargePlanStowageDetails(
+              (com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.discharge_plan
+                          .DischargePlanStowageDetailsResponse>)
                   responseObserver);
           break;
         default:
@@ -956,6 +1070,7 @@ public final class DischargePlanServiceGrpc {
                       .addMethod(getSaveDischargingPlanMethod())
                       .addMethod(getDischargeInfoStatusCheckMethod())
                       .addMethod(getSaveDischargingPlanAlgoStatusMethod())
+                      .addMethod(getDischargePlanStowageDetailsMethod())
                       .build();
         }
       }

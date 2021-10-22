@@ -1,8 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service.grpc;
 
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.FAILED;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
@@ -70,6 +69,11 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   @Autowired UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
 
   @Autowired DischargeInfoStatusCheckService dischargeInfoStatusCheckService;
+
+  @Autowired
+  private PortDischargingPlanStowageDetailsRepository portDischargingPlanStowageDetailsRepository;
+
+  @Autowired private DischargeInformationBuilderService dischargeInformationBuilderService;
 
   @Override
   public void dischargePlanSynchronization(
@@ -737,6 +741,47 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
               .setStatus(FAILED)
               .setMessage(e.getMessage())
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Previous closed voyage's confirmed discharge study's 'PortDischargingPlanBallastDetails'
+   * details
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void dischargePlanStowageDetails(
+      DischargePlanStowageDetailsRequest request,
+      StreamObserver<DischargePlanStowageDetailsResponse> responseObserver) {
+    List<PortDischargingPlanStowageDetails> portDischargingPlanStowageDetails =
+        portDischargingPlanStowageDetailsRepository
+            .findByPortRotationXIdAndConditionTypeAndValueTypeAndIsActive(
+                request.getLastLoadingPortRotationId(),
+                DEPARTURE_CONDITION_VALUE,
+                ACTUAL_TYPE_VALUE,
+                true);
+    DischargePlanStowageDetailsResponse.Builder builder =
+        DischargePlanStowageDetailsResponse.newBuilder();
+    try {
+      log.info("dischargePlanStowageDetails method called");
+      List<LoadingPlanModels.LoadingPlanTankDetails> dischargePlanStowageBallastDetails =
+          dischargeInformationBuilderService.buildDischargingPlanTankStowageMessage(
+              portDischargingPlanStowageDetails);
+      builder.addAllDischargingPlanTankDetails(dischargePlanStowageBallastDetails);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(DischargePlanConstants.FAILED)
               .build());
     } finally {
       responseObserver.onNext(builder.build());

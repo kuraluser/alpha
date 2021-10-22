@@ -2616,7 +2616,12 @@ public class LoadableStudyService {
    * @throws GenericServiceException
    */
   public OnBoardQuantityResponse getOnBoardQuantites(
-      Long vesselId, Long voyageId, Long loadableStudyId, Long portId, String correlationId)
+      Long vesselId,
+      Long voyageId,
+      Long loadableStudyId,
+      Long portId,
+      Long planingTypeId,
+      String correlationId)
       throws GenericServiceException {
     log.info("LoadableStudyService - getOnBoardQuantites, correlationId:{}", correlationId);
     log.debug(
@@ -2630,6 +2635,7 @@ public class LoadableStudyService {
             .setLoadableStudyId(loadableStudyId)
             .setVesselId(vesselId)
             .setPortId(portId)
+            .setPlaningType(planingTypeId)
             .build();
     OnBoardQuantityReply grpcReply = this.getOnBoardQuantites(request);
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {

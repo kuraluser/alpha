@@ -1065,6 +1065,7 @@ message OnBoardQuantityRequest{
 	int64 portId = 4;
 	int64 voyageId = 5;
 	int64 portRotationId = 6;
+	int64 planingType = 7; //Loadable Study Or Discharge Study
 }
 
 message OnBoardQuantityDetail{
