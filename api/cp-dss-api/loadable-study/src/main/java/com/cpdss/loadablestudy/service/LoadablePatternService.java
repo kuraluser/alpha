@@ -421,7 +421,11 @@ public class LoadablePatternService {
           LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, request.getProcesssId(), true);
     }
 
-    if (enableCommunication && !request.getHasLodicator() && !env.equals("ship")) {
+    // Communicate data to ship
+    // cases : pattern generated without loadiator and any error
+    if (enableCommunication
+        && !env.equals("ship")
+        && (!request.getHasLodicator() || request.getAlgoErrorsCount() > 0)) {
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
               request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
