@@ -2092,7 +2092,7 @@
   "LOADING_DICHARGING_EXCEL_EXPORT_ERROR": "File uploaded failed",
   "LOADING_DISCHARGING_EXCEL_ERROR": "Error",
   "FILES": "Files",
-  "NEW_DISCHARGE_STUDY_POPUP_BILL_OF_LADDING": "Please add bill of ladding details to create discharge study",
+  "NEW_DISCHARGE_STUDY_POPUP_BILL_OF_LADDING": "Please add Actual and B/L figure details to create discharge study",
   "LOADING_DICHARGING_EXCEL_PORT_NAME_INVALID": "Please add a valid port in excel",
   "LOADING_DICHARGING_EXCEL_DATE_INVALID": "Invalid tide date in excel",
   "LOADING_DICHARGING_EXCEL_TIME_INVALID": "Invalid tide time in excel",
