@@ -35,7 +35,9 @@ public interface LoadingPlanPortWiseDetailsRepository
       Long loadingInfoId, Boolean toLoadicator, Boolean isActive);
 
   @Query(
-      "SELECT LPPWD FROM LoadingPlanPortWiseDetails LPPWD WHERE LPPWD.loadingSequence.id IN "
-          + "(SELECT LS.id FROM LoadingSequence LS WHERE LS.loadingInformation.id = ?1)")
+      value =
+          "SELECT lpw.* FROM loading_plan_portwise_details lpw inner join "
+              + "loading_sequence ls ON lpw.loading_sequences_xid =ls.id where ls.loading_information_xid =?1",
+      nativeQuery = true)
   public List<LoadingPlanPortWiseDetails> findByLoadingInformationId(Long loadingInfoId);
 }

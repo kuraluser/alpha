@@ -188,7 +188,9 @@ public class LoadingPlanAlgoService {
                   "cargo_topping_off_sequence",
                   "loading_berth_details",
                   "loading_delay",
-                  "loading_machinary_in_use"),
+                  "loading_machinary_in_use",
+                  "loading_sequence",
+                  "loading_plan_portwise_details"),
               processId,
               "loading-plan-service",
               loadingInfoOpt.get().getId());
@@ -425,30 +427,44 @@ public class LoadingPlanAlgoService {
                 loadingInfoOpt.get().getVesselXId(),
                 MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
         log.info("------- Envoy writer has called successfully in shore: " + ewReply.toString());
+        LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
+            new LoadingPlanCommunicationStatus();
+        if (ewReply.getMessageId() != null) {
+          loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+          loadingPlanCommunicationStatus.setCommunicationStatus(
+              CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId());
+        }
+        loadingPlanCommunicationStatus.setReferenceId(loadingInfoOpt.get().getId());
+        loadingPlanCommunicationStatus.setMessageType(
+            MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
+        loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+        LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
+            this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
+        log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
       }
-      if (request.getHasLoadicator()) {
-        log.info("Passing Loading Sequence to Loadicator");
-        loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
-        Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
-            getLoadingInformationStatus(
-                LoadingPlanConstants.LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID);
-        updateLoadingInfoAlgoStatus(
-            loadingInfoOpt.get(), request.getProcessId(), loadicatorVerificationStatusOpt.get());
-      } else {
-        Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-            getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID);
-        loadingInformationRepository.updateLoadingInformationStatuses(
-            loadingInfoStatusOpt.get(),
-            loadingInfoStatusOpt.get(),
-            loadingInfoStatusOpt.get(),
-            loadingInfoOpt.get().getId());
-        updateLoadingInfoAlgoStatus(
-            loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
-        loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
-            loadingInfoOpt.get().getId(), true);
-        loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
-            loadingInfoOpt.get().getId(), true);
-      }
+    }
+    if (request.getHasLoadicator()) {
+      log.info("Passing Loading Sequence to Loadicator");
+      loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
+      Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
+          getLoadingInformationStatus(
+              LoadingPlanConstants.LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID);
+      updateLoadingInfoAlgoStatus(
+          loadingInfoOpt.get(), request.getProcessId(), loadicatorVerificationStatusOpt.get());
+    } else {
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID);
+      loadingInformationRepository.updateLoadingInformationStatuses(
+          loadingInfoStatusOpt.get(),
+          loadingInfoStatusOpt.get(),
+          loadingInfoStatusOpt.get(),
+          loadingInfoOpt.get().getId());
+      updateLoadingInfoAlgoStatus(
+          loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+      loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
+          loadingInfoOpt.get().getId(), true);
+      loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
+          loadingInfoOpt.get().getId(), true);
     }
   }
 

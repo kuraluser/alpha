@@ -60,6 +60,15 @@ public class LoadingPlanStagingService extends StagingService {
   @Autowired private LoadingDelayRepository loadingDelayRepository;
   @Autowired private LoadingMachineryInUseRepository loadingMachineryInUseRepository;
 
+  @Autowired
+  private PortLoadingPlanCommingleTempDetailsRepository
+      portLoadingPlanCommingleTempDetailsRepository;
+
+  @Autowired
+  private PortLoadingPlanCommingleDetailsRepository portLoadingPlanCommingleDetailsRepository;
+
+  @Autowired private BillOfLandingRepository billOfLandingRepository;
+
   public LoadingPlanStagingService(
       @Autowired LoadingPlanStagingRepository loadingPlanStagingRepository) {
     super(loadingPlanStagingRepository);
@@ -288,7 +297,7 @@ public class LoadingPlanStagingService extends StagingService {
         case port_loading_plan_stowage_details:
           {
             List<PortLoadingPlanStowageDetails> portLoadingPlanStowageDetailsList =
-                portLoadingPlanStowageDetailsRepository.findByLoadingInformation(Id);
+                portLoadingPlanStowageDetailsRepository.findByLoadingInformationId(Id);
             if (portLoadingPlanStowageDetailsList != null
                 && !portLoadingPlanStowageDetailsList.isEmpty()) {
               portLoadingPlanStowageDetailsList.stream()
@@ -336,7 +345,7 @@ public class LoadingPlanStagingService extends StagingService {
         case loading_sequence_stability_parameters:
           {
             List<LoadingSequenceStabilityParameters> loadingSequenceStabilityParametersList =
-                loadingSequenceStabiltyParametersRepository.findByLoadingInformation(Id);
+                loadingSequenceStabiltyParametersRepository.findByLoadingInformationId(Id);
             if (loadingSequenceStabilityParametersList != null
                 && !loadingSequenceStabilityParametersList.isEmpty()) {
               loadingSequenceStabilityParametersList.stream()
@@ -364,6 +373,45 @@ public class LoadingPlanStagingService extends StagingService {
                         loadingPlanStabilityParameters.setLoadingPlanPortWiseDetails(null);
                       });
               object.addAll(loadingPlanStabilityParametersList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
+          }
+        case port_loadable_plan_commingle_details_temp:
+          {
+            List<PortLoadingPlanCommingleTempDetails> portLoadingPlanCommingleTempDetailsList =
+                portLoadingPlanCommingleTempDetailsRepository.findByLoadingInformation(Id);
+            if (portLoadingPlanCommingleTempDetailsList != null
+                && !portLoadingPlanCommingleTempDetailsList.isEmpty()) {
+              object.addAll(portLoadingPlanCommingleTempDetailsList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
+          }
+        case port_loadable_plan_commingle_details:
+          {
+            List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList =
+                portLoadingPlanCommingleDetailsRepository.findByLoadingInformationId(Id);
+            if (portLoadingPlanCommingleDetailsList != null
+                && !portLoadingPlanCommingleDetailsList.isEmpty()) {
+              // set each loading info obj to null
+              portLoadingPlanCommingleDetailsList.stream()
+                  .forEach(
+                      portLoadingPlanCommingleDetails ->
+                          portLoadingPlanCommingleDetails.setLoadingInformation(null));
+              object.addAll(portLoadingPlanCommingleDetailsList);
+              addIntoProcessedList(
+                  array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
+          }
+        case bill_of_ladding:
+          {
+            List<BillOfLanding> billOfLandingList = billOfLandingRepository.findByLoadingId(Id);
+            if (billOfLandingList != null && !billOfLandingList.isEmpty()) {
+              object.addAll(billOfLandingList);
               addIntoProcessedList(
                   array, object, processIdentifier, processId, processGroupId, processedList);
             }

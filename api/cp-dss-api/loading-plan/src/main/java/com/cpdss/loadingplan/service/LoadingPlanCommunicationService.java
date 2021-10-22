@@ -70,6 +70,15 @@ public class LoadingPlanCommunicationService {
   @Autowired
   private LoadingPlanStabilityParametersRepository loadingPlanStabilityParametersRepository;
 
+  @Autowired
+  private PortLoadingPlanCommingleTempDetailsRepository
+      portLoadingPlanCommingleTempDetailsRepository;
+
+  @Autowired
+  private PortLoadingPlanCommingleDetailsRepository portLoadingPlanCommingleDetailsRepository;
+
+  @Autowired private BillOfLandingRepository billOfLandingRepository;
+
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
@@ -208,6 +217,10 @@ public class LoadingPlanCommunicationService {
         List<LoadingPlanStowageDetails> loadingPlanStowageDetailsList = null;
         List<LoadingSequenceStabilityParameters> loadingSequenceStabilityParametersList = null;
         List<LoadingPlanStabilityParameters> loadingPlanStabilityParametersList = null;
+        // Ullage update tables
+        List<PortLoadingPlanCommingleTempDetails> portLoadingPlanCommingleTempDetailsList = null;
+        List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList = null;
+        List<BillOfLanding> billOfLandingList = null;
 
         loadingPlanStagingService.updateStatusForProcessId(
             processId, StagingStatus.IN_PROGRESS.getStatus());
@@ -435,6 +448,32 @@ public class LoadingPlanCommunicationService {
                     dataTransferStage.getId());
                 break;
               }
+            case port_loadable_plan_commingle_details_temp:
+              {
+                listType =
+                    new TypeToken<ArrayList<PortLoadingPlanCommingleTempDetails>>() {}.getType();
+                portLoadingPlanCommingleTempDetailsList = new Gson().fromJson(data, listType);
+                idMap.put(
+                    LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS_TEMP.getTable(),
+                    dataTransferStage.getId());
+                break;
+              }
+            case port_loadable_plan_commingle_details:
+              {
+                listType = new TypeToken<ArrayList<PortLoadingPlanCommingleDetails>>() {}.getType();
+                portLoadingPlanCommingleDetailsList = new Gson().fromJson(data, listType);
+                idMap.put(
+                    LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS.getTable(),
+                    dataTransferStage.getId());
+                break;
+              }
+            case bill_of_ladding:
+              {
+                listType = new TypeToken<ArrayList<BillOfLanding>>() {}.getType();
+                billOfLandingList = new Gson().fromJson(data, listType);
+                idMap.put(LoadingPlanTables.BILL_OF_LADDING.getTable(), dataTransferStage.getId());
+                break;
+              }
           }
         }
         LoadingInformation loadingInfo = null;
@@ -476,6 +515,13 @@ public class LoadingPlanCommunicationService {
                 loadingInformation.setDepartureStatus(departureStatusOpt.get());
               }
             }
+            Long version = null;
+            Optional<LoadingInformation> loadingInfoObj =
+                loadingInformationRepository.findById(loadingInformation.getId());
+            if (loadingInfoObj.isPresent()) {
+              version = loadingInfoObj.get().getVersion();
+            }
+            loadingInformation.setVersion(version);
             loadingInfo = loadingInformationRepository.save(loadingInformation);
             log.info("LoadingInformation saved with id:" + loadingInfo.getId());
           } catch (ResourceAccessException e) {
@@ -497,6 +543,13 @@ public class LoadingPlanCommunicationService {
           if (cargoToppingOffSequences != null) {
             try {
               for (CargoToppingOffSequence cargoToppingOffSequence : cargoToppingOffSequences) {
+                Long version = null;
+                Optional<CargoToppingOffSequence> cargoToppOffSeqObj =
+                    cargoToppingOffSequenceRepository.findById(cargoToppingOffSequence.getId());
+                if (cargoToppOffSeqObj.isPresent()) {
+                  version = cargoToppOffSeqObj.get().getVersion();
+                }
+                cargoToppingOffSequence.setVersion(version);
                 cargoToppingOffSequence.setLoadingInformation(loadingInfo);
               }
               cargoToppingOffSequenceRepository.saveAll(cargoToppingOffSequences);
@@ -518,6 +571,13 @@ public class LoadingPlanCommunicationService {
           if (loadingBerthDetails != null) {
             try {
               for (LoadingBerthDetail loadingBerthDetail : loadingBerthDetails) {
+                Long version = null;
+                Optional<LoadingBerthDetail> loadingBerthDetailObj =
+                    loadingBerthDetailsRepository.findById(loadingBerthDetail.getId());
+                if (loadingBerthDetailObj.isPresent()) {
+                  version = loadingBerthDetailObj.get().getVersion();
+                }
+                loadingBerthDetail.setVersion(version);
                 loadingBerthDetail.setLoadingInformation(loadingInfo);
               }
               loadingBerthDetailsRepository.saveAll(loadingBerthDetails);
@@ -539,6 +599,13 @@ public class LoadingPlanCommunicationService {
           if (loadingDelays != null) {
             try {
               for (LoadingDelay loadingDelay : loadingDelays) {
+                Long version = null;
+                Optional<LoadingDelay> loadingDelayObj =
+                    loadingDelayRepository.findById(loadingDelay.getId());
+                if (loadingDelayObj.isPresent()) {
+                  version = loadingDelayObj.get().getVersion();
+                }
+                loadingDelay.setVersion(version);
                 loadingDelay.setLoadingInformation(loadingInfo);
               }
               loadingDelayRepository.saveAll(loadingDelays);
@@ -560,6 +627,13 @@ public class LoadingPlanCommunicationService {
           if (loadingMachineryInUses != null) {
             try {
               for (LoadingMachineryInUse loadingMachineryInUse : loadingMachineryInUses) {
+                Long version = null;
+                Optional<LoadingMachineryInUse> loadingMachineryInUseObj =
+                    loadingMachineryInUseRepository.findById(loadingMachineryInUse.getId());
+                if (loadingMachineryInUseObj.isPresent()) {
+                  version = loadingMachineryInUseObj.get().getVersion();
+                }
+                loadingMachineryInUse.setVersion(version);
                 loadingMachineryInUse.setLoadingInformation(loadingInfo);
               }
               loadingMachineryInUseRepository.saveAll(loadingMachineryInUses);
@@ -578,12 +652,20 @@ public class LoadingPlanCommunicationService {
                   e.getMessage());
             }
           }
-          if (loadingSequencesList != null) {
+          if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
             try {
               for (LoadingSequence loadingSequence : loadingSequencesList) {
+                Long version = null;
+                Optional<LoadingSequence> loadingSequenceObj =
+                    loadingSequenceRepository.findById(loadingSequence.getId());
+                if (loadingSequenceObj.isPresent()) {
+                  version = loadingSequenceObj.get().getVersion();
+                }
+                loadingSequence.setVersion(version);
                 loadingSequence.setLoadingInformation(loadingInfo);
               }
               loadingSequenceRepository.saveAll(loadingSequencesList);
+              log.info("Saved LoadingSequence:" + loadingSequencesList);
             } catch (ResourceAccessException e) {
               updateStatusInExceptionCase(
                   idMap.get(LoadingPlanTables.LOADING_SEQUENCE.getTable()),
@@ -599,300 +681,536 @@ public class LoadingPlanCommunicationService {
             }
           }
         }
-        if (env.equals("ship")) {
-          if (loadingPlanPortWiseDetailsList != null) {
-            try {
+        if (loadingPlanPortWiseDetailsList != null && !loadingPlanPortWiseDetailsList.isEmpty()) {
+          try {
+            if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
               for (LoadingSequence loadingSequence : loadingSequencesList) {
                 for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails :
                     loadingPlanPortWiseDetailsList) {
+                  Long version = null;
                   if (loadingSequence
                       .getId()
                       .equals(loadingPlanPortWiseDetails.getCommunicationSequenceId())) {
+                    Optional<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailObj =
+                        loadingPlanPortWiseDetailsRepository.findById(
+                            loadingPlanPortWiseDetails.getId());
+                    if (loadingPlanPortWiseDetailObj.isPresent()) {
+                      version = loadingPlanPortWiseDetailObj.get().getVersion();
+                    }
+                    loadingPlanPortWiseDetails.setVersion(version);
                     loadingPlanPortWiseDetails.setLoadingSequence(loadingSequence);
                   }
                 }
               }
               loadingPlanPortWiseDetailsRepository.saveAll(loadingPlanPortWiseDetailsList);
-            } catch (ResourceAccessException e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.LOADING_PLAN_PORTWISE_DETAILS.getTable()),
-                  processId,
-                  retryStatus,
-                  e.getMessage());
-            } catch (Exception e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.LOADING_PLAN_PORTWISE_DETAILS.getTable()),
-                  processId,
-                  StagingStatus.FAILED.getStatus(),
-                  e.getMessage());
+              log.info("Saved LoadingPlanPortWiseDetails: " + loadingPlanPortWiseDetailsList);
             }
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_PLAN_PORTWISE_DETAILS.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_PLAN_PORTWISE_DETAILS.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
-          if (portLoadingPlanStabilityParamList != null) {
-            try {
-              for (PortLoadingPlanStabilityParameters portLoadingPlanStabilityParameters :
-                  portLoadingPlanStabilityParamList) {
-                portLoadingPlanStabilityParameters.setLoadingInformation(loadingInfo);
+        }
+
+        if (loadingInfo != null
+            && portLoadingPlanStabilityParamList != null
+            && !portLoadingPlanStabilityParamList.isEmpty()) {
+          try {
+            for (PortLoadingPlanStabilityParameters portLoadingPlanStabilityParameters :
+                portLoadingPlanStabilityParamList) {
+              Long version = null;
+              Optional<PortLoadingPlanStabilityParameters> portLoadingPlanStabilityParamObj =
+                  portLoadingPlanStabilityParametersRepository.findById(
+                      portLoadingPlanStabilityParameters.getId());
+              if (portLoadingPlanStabilityParamObj.isPresent()) {
+                version = portLoadingPlanStabilityParamObj.get().getVersion();
               }
-              portLoadingPlanStabilityParametersRepository.saveAll(
-                  portLoadingPlanStabilityParamList);
-            } catch (ResourceAccessException e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STABILITY_PARAMETERS.getTable()),
-                  processId,
-                  retryStatus,
-                  e.getMessage());
-            } catch (Exception e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STABILITY_PARAMETERS.getTable()),
-                  processId,
-                  StagingStatus.FAILED.getStatus(),
-                  e.getMessage());
+              portLoadingPlanStabilityParameters.setVersion(version);
+              portLoadingPlanStabilityParameters.setLoadingInformation(loadingInfo);
             }
+            portLoadingPlanStabilityParametersRepository.saveAll(portLoadingPlanStabilityParamList);
+            log.info(
+                "Saved PortLoadingPlanStabilityParameters: " + portLoadingPlanStabilityParamList);
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STABILITY_PARAMETERS.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STABILITY_PARAMETERS.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
-          if (portLoadingPlanRobDetailsList != null) {
-            try {
-              for (PortLoadingPlanRobDetails portLoadingPlanRobDetails :
-                  portLoadingPlanRobDetailsList) {
-                portLoadingPlanRobDetails.setLoadingInformation(loadingInfo.getId());
+        }
+        if (loadingInfo != null
+            && portLoadingPlanRobDetailsList != null
+            && !portLoadingPlanRobDetailsList.isEmpty()) {
+          try {
+            for (PortLoadingPlanRobDetails portLoadingPlanRobDetails :
+                portLoadingPlanRobDetailsList) {
+              Long version = null;
+              Optional<PortLoadingPlanRobDetails> portLoadingPlanRobDetaObj =
+                  portLoadingPlanRobDetailsRepository.findById(portLoadingPlanRobDetails.getId());
+              if (portLoadingPlanRobDetaObj.isPresent()) {
+                version = portLoadingPlanRobDetaObj.get().getVersion();
               }
-              portLoadingPlanRobDetailsRepository.saveAll(portLoadingPlanRobDetailsList);
-            } catch (ResourceAccessException e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_ROB_DETAILS.getTable()),
-                  processId,
-                  retryStatus,
-                  e.getMessage());
-            } catch (Exception e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_ROB_DETAILS.getTable()),
-                  processId,
-                  StagingStatus.FAILED.getStatus(),
-                  e.getMessage());
+              portLoadingPlanRobDetails.setVersion(version);
+              portLoadingPlanRobDetails.setLoadingInformation(loadingInfo.getId());
             }
+            portLoadingPlanRobDetailsRepository.saveAll(portLoadingPlanRobDetailsList);
+            log.info("Saved PortLoadingPlanRobDetails: " + portLoadingPlanRobDetailsList);
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_ROB_DETAILS.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_ROB_DETAILS.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
-          if (loadingPlanBallastDetailsList != null) {
-            try {
+        }
+        if (loadingPlanBallastDetailsList != null && !loadingPlanBallastDetailsList.isEmpty()) {
+          try {
+            if (loadingPlanPortWiseDetailsList != null
+                && !loadingPlanPortWiseDetailsList.isEmpty()) {
               for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails :
                   loadingPlanPortWiseDetailsList) {
                 for (LoadingPlanBallastDetails loadingPlanBallastDetails :
                     loadingPlanBallastDetailsList) {
+                  Long version = null;
                   if (loadingPlanPortWiseDetails
                       .getId()
                       .equals(loadingPlanBallastDetails.getCommunicationPortWiseId())) {
+                    Optional<LoadingPlanBallastDetails> loadingPlanBallastDetaObj =
+                        loadingPlanBallastDetailsRepository.findById(
+                            loadingPlanBallastDetails.getId());
+                    if (loadingPlanBallastDetaObj.isPresent()) {
+                      version = loadingPlanBallastDetaObj.get().getVersion();
+                    }
+                    loadingPlanBallastDetails.setVersion(version);
                     loadingPlanBallastDetails.setLoadingPlanPortWiseDetails(
                         loadingPlanPortWiseDetails);
                   }
                 }
               }
               loadingPlanBallastDetailsRepository.saveAll(loadingPlanBallastDetailsList);
-            } catch (ResourceAccessException e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.LOADING_PLAN_BALLAST_DETAILS.getTable()),
-                  processId,
-                  retryStatus,
-                  e.getMessage());
-            } catch (Exception e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.LOADING_PLAN_BALLAST_DETAILS.getTable()),
-                  processId,
-                  StagingStatus.FAILED.getStatus(),
-                  e.getMessage());
+              log.info("Saved LoadingPlanBallastDetails:" + loadingPlanBallastDetailsList);
             }
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_PLAN_BALLAST_DETAILS.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_PLAN_BALLAST_DETAILS.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
-          if (loadingPlanRobDetailsList != null) {
-            try {
+        }
+        if (loadingPlanRobDetailsList != null && !loadingPlanRobDetailsList.isEmpty()) {
+          try {
+            if (loadingPlanPortWiseDetailsList != null
+                && !loadingPlanPortWiseDetailsList.isEmpty()) {
               for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails :
                   loadingPlanPortWiseDetailsList) {
                 for (LoadingPlanRobDetails loadingPlanRobDetails : loadingPlanRobDetailsList) {
+                  Long version = null;
                   if (loadingPlanPortWiseDetails
                       .getId()
                       .equals(loadingPlanRobDetails.getCommunicationPortWiseId())) {
+                    Optional<LoadingPlanRobDetails> loadingPlanRobDetaObj =
+                        loadingPlanRobDetailsRepository.findById(loadingPlanRobDetails.getId());
+                    if (loadingPlanRobDetaObj.isPresent()) {
+                      version = loadingPlanRobDetaObj.get().getVersion();
+                    }
+                    loadingPlanRobDetails.setVersion(version);
                     loadingPlanRobDetails.setLoadingPlanPortWiseDetails(loadingPlanPortWiseDetails);
                   }
                 }
               }
               loadingPlanRobDetailsRepository.saveAll(loadingPlanRobDetailsList);
-            } catch (ResourceAccessException e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.LOADING_PLAN_ROB_DETAILS.getTable()),
-                  processId,
-                  retryStatus,
-                  e.getMessage());
-            } catch (Exception e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.LOADING_PLAN_ROB_DETAILS.getTable()),
-                  processId,
-                  StagingStatus.FAILED.getStatus(),
-                  e.getMessage());
+              log.info("Saved LoadingPlanRobDetails:" + loadingPlanRobDetailsList);
             }
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_PLAN_ROB_DETAILS.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_PLAN_ROB_DETAILS.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
-          if (portLoadingPlanBallastDetailsList != null) {
-            try {
-              for (PortLoadingPlanBallastDetails portLoadingPlanBallastDetails :
-                  portLoadingPlanBallastDetailsList) {
-                portLoadingPlanBallastDetails.setLoadingInformation(loadingInfo);
+        }
+        if (loadingInfo != null
+            && portLoadingPlanBallastDetailsList != null
+            && !portLoadingPlanBallastDetailsList.isEmpty()) {
+          try {
+            for (PortLoadingPlanBallastDetails portLoadingPlanBallastDetails :
+                portLoadingPlanBallastDetailsList) {
+              Long version = null;
+              Optional<PortLoadingPlanBallastDetails> portLoadingPlanBallastDetaObj =
+                  portLoadingPlanBallastDetailsRepository.findById(
+                      portLoadingPlanBallastDetails.getId());
+              if (portLoadingPlanBallastDetaObj.isPresent()) {
+                version = portLoadingPlanBallastDetaObj.get().getVersion();
               }
-              portLoadingPlanBallastDetailsRepository.saveAll(portLoadingPlanBallastDetailsList);
-            } catch (ResourceAccessException e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS.getTable()),
-                  processId,
-                  retryStatus,
-                  e.getMessage());
-            } catch (Exception e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS.getTable()),
-                  processId,
-                  StagingStatus.FAILED.getStatus(),
-                  e.getMessage());
+              portLoadingPlanBallastDetails.setVersion(version);
+              portLoadingPlanBallastDetails.setLoadingInformation(loadingInfo);
             }
+            portLoadingPlanBallastDetailsRepository.saveAll(portLoadingPlanBallastDetailsList);
+            log.info("Saved PortLoadingPlanBallastDetails:" + portLoadingPlanBallastDetailsList);
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
-          if (portLoadingPlanBallastTempDetailsList != null) {
-            try {
-              for (PortLoadingPlanBallastTempDetails portLoadingPlanBallastTempDetails :
-                  portLoadingPlanBallastTempDetailsList) {
-                portLoadingPlanBallastTempDetails.setLoadingInformation(loadingInfo.getId());
+        }
+        if (loadingInfo != null
+            && portLoadingPlanBallastTempDetailsList != null
+            && !portLoadingPlanBallastTempDetailsList.isEmpty()) {
+          try {
+            for (PortLoadingPlanBallastTempDetails portLoadingPlanBallastTempDetails :
+                portLoadingPlanBallastTempDetailsList) {
+              Long version = null;
+              Optional<PortLoadingPlanBallastTempDetails> portLoadingPlanBallastTempDetaObj =
+                  portLoadingPlanBallastTempDetailsRepository.findById(
+                      portLoadingPlanBallastTempDetails.getId());
+              if (portLoadingPlanBallastTempDetaObj.isPresent()) {
+                version = portLoadingPlanBallastTempDetaObj.get().getVersion();
               }
-              portLoadingPlanBallastTempDetailsRepository.saveAll(
-                  portLoadingPlanBallastTempDetailsList);
-            } catch (ResourceAccessException e) {
-              updateStatusInExceptionCase(
-                  idMap.get(
-                      LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP.getTable()),
-                  processId,
-                  retryStatus,
-                  e.getMessage());
-            } catch (Exception e) {
-              updateStatusInExceptionCase(
-                  idMap.get(
-                      LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP.getTable()),
-                  processId,
-                  StagingStatus.FAILED.getStatus(),
-                  e.getMessage());
+              portLoadingPlanBallastTempDetails.setVersion(version);
+              portLoadingPlanBallastTempDetails.setLoadingInformation(loadingInfo.getId());
             }
+            portLoadingPlanBallastTempDetailsRepository.saveAll(
+                portLoadingPlanBallastTempDetailsList);
+            log.info(
+                "Saved PortLoadingPlanBallastTempDetails: "
+                    + portLoadingPlanBallastTempDetailsList);
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(
+                    LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(
+                    LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
-          if (portLoadingPlanStowageDetailsList != null) {
-            try {
-              for (PortLoadingPlanStowageDetails portLoadingPlanStowageDetails :
-                  portLoadingPlanStowageDetailsList) {
-                portLoadingPlanStowageDetails.setLoadingInformation(loadingInfo);
+        }
+        if (loadingInfo != null
+            && portLoadingPlanStowageDetailsList != null
+            && !portLoadingPlanStowageDetailsList.isEmpty()) {
+          try {
+            for (PortLoadingPlanStowageDetails portLoadingPlanStowageDetails :
+                portLoadingPlanStowageDetailsList) {
+              Long version = null;
+              Optional<PortLoadingPlanStowageDetails> portLoadingPlanStowageDetaObj =
+                  portLoadingPlanStowageDetailsRepository.findById(
+                      portLoadingPlanStowageDetails.getId());
+              if (portLoadingPlanStowageDetaObj.isPresent()) {
+                version = portLoadingPlanStowageDetaObj.get().getVersion();
               }
-              portLoadingPlanStowageDetailsRepository.saveAll(portLoadingPlanStowageDetailsList);
-            } catch (ResourceAccessException e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS.getTable()),
-                  processId,
-                  retryStatus,
-                  e.getMessage());
-            } catch (Exception e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS.getTable()),
-                  processId,
-                  StagingStatus.FAILED.getStatus(),
-                  e.getMessage());
+              portLoadingPlanStowageDetails.setVersion(version);
+              portLoadingPlanStowageDetails.setLoadingInformation(loadingInfo);
             }
+            portLoadingPlanStowageDetailsRepository.saveAll(portLoadingPlanStowageDetailsList);
+            log.info("Saved PortLoadingPlanStowageDetails:" + portLoadingPlanStowageDetailsList);
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
-          if (portLoadingPlanStowageTempDetailsList != null) {
-            try {
-              for (PortLoadingPlanStowageTempDetails portLoadingPlanStowageTempDetails :
-                  portLoadingPlanStowageTempDetailsList) {
-                portLoadingPlanStowageTempDetails.setLoadingInformation(loadingInfo.getId());
+        }
+        if (loadingInfo != null
+            && portLoadingPlanStowageTempDetailsList != null
+            && !portLoadingPlanStowageTempDetailsList.isEmpty()) {
+          try {
+            for (PortLoadingPlanStowageTempDetails portLoadingPlanStowageTempDetails :
+                portLoadingPlanStowageTempDetailsList) {
+              Long version = null;
+              Optional<PortLoadingPlanStowageTempDetails> portLoadingPlanStowageTempDetaObj =
+                  portLoadingPlanStowageTempDetailsRepository.findById(
+                      portLoadingPlanStowageTempDetails.getId());
+              if (portLoadingPlanStowageTempDetaObj.isPresent()) {
+                version = portLoadingPlanStowageTempDetaObj.get().getVersion();
               }
-              portLoadingPlanStowageTempDetailsRepository.saveAll(
-                  portLoadingPlanStowageTempDetailsList);
-            } catch (ResourceAccessException e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS_TEMP.getTable()),
-                  processId,
-                  retryStatus,
-                  e.getMessage());
-            } catch (Exception e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS_TEMP.getTable()),
-                  processId,
-                  StagingStatus.FAILED.getStatus(),
-                  e.getMessage());
+              portLoadingPlanStowageTempDetails.setVersion(version);
+              portLoadingPlanStowageTempDetails.setLoadingInformation(loadingInfo.getId());
             }
+            portLoadingPlanStowageTempDetailsRepository.saveAll(
+                portLoadingPlanStowageTempDetailsList);
+            log.info(
+                "Saved PortLoadingPlanStowageTempDetails:" + portLoadingPlanStowageTempDetailsList);
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS_TEMP.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS_TEMP.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
-          if (loadingPlanStowageDetailsList != null) {
-            try {
+        }
+        if (loadingPlanStowageDetailsList != null && !loadingPlanStowageDetailsList.isEmpty()) {
+          try {
+            if (loadingPlanPortWiseDetailsList != null
+                && !loadingPlanPortWiseDetailsList.isEmpty()) {
               for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails :
                   loadingPlanPortWiseDetailsList) {
                 for (LoadingPlanStowageDetails loadingPlanStowageDetails :
                     loadingPlanStowageDetailsList) {
+                  Long version = null;
                   if (loadingPlanPortWiseDetails
                       .getId()
                       .equals(loadingPlanStowageDetails.getCommunicationPortWiseId())) {
+                    Optional<LoadingPlanStowageDetails> loadingPlanStowageDetaObj =
+                        loadingPlanStowageDetailsRepository.findById(
+                            loadingPlanStowageDetails.getId());
+                    if (loadingPlanStowageDetaObj.isPresent()) {
+                      version = loadingPlanStowageDetaObj.get().getVersion();
+                    }
+                    loadingPlanStowageDetails.setVersion(version);
                     loadingPlanStowageDetails.setLoadingPlanPortWiseDetails(
                         loadingPlanPortWiseDetails);
                   }
                 }
               }
               loadingPlanStowageDetailsRepository.saveAll(loadingPlanStowageDetailsList);
-            } catch (ResourceAccessException e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.LOADING_PLAN_STOWAGE_DETAILS.getTable()),
-                  processId,
-                  retryStatus,
-                  e.getMessage());
-            } catch (Exception e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.LOADING_PLAN_STOWAGE_DETAILS.getTable()),
-                  processId,
-                  StagingStatus.FAILED.getStatus(),
-                  e.getMessage());
+              log.info("Saved LoadingPlanStowageDetails:" + portLoadingPlanStowageTempDetailsList);
             }
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_PLAN_STOWAGE_DETAILS.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_PLAN_STOWAGE_DETAILS.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
-          if (loadingSequenceStabilityParametersList != null) {
-            try {
-              for (LoadingSequenceStabilityParameters loadingSequenceStabilityParameters :
-                  loadingSequenceStabilityParametersList) {
-                loadingSequenceStabilityParameters.setLoadingInformation(loadingInfo);
+        }
+        if (loadingInfo != null
+            && loadingSequenceStabilityParametersList != null
+            && !loadingSequenceStabilityParametersList.isEmpty()) {
+          try {
+            for (LoadingSequenceStabilityParameters loadingSequenceStabilityParameters :
+                loadingSequenceStabilityParametersList) {
+              Long version = null;
+              Optional<LoadingSequenceStabilityParameters> loadingSequenceStabilityParamObj =
+                  loadingSequenceStabiltyParametersRepository.findById(
+                      loadingSequenceStabilityParameters.getId());
+              if (loadingSequenceStabilityParamObj.isPresent()) {
+                version = loadingSequenceStabilityParamObj.get().getVersion();
               }
-              loadingSequenceStabiltyParametersRepository.saveAll(
-                  loadingSequenceStabilityParametersList);
-            } catch (ResourceAccessException e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.LOADING_SEQUENCE_STABILITY_PARAMETERS.getTable()),
-                  processId,
-                  retryStatus,
-                  e.getMessage());
-            } catch (Exception e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.LOADING_SEQUENCE_STABILITY_PARAMETERS.getTable()),
-                  processId,
-                  StagingStatus.FAILED.getStatus(),
-                  e.getMessage());
+              loadingSequenceStabilityParameters.setVersion(version);
+              loadingSequenceStabilityParameters.setLoadingInformation(loadingInfo);
             }
+            loadingSequenceStabiltyParametersRepository.saveAll(
+                loadingSequenceStabilityParametersList);
+            log.info(
+                "Saved LoadingSequenceStabilityParameters:"
+                    + portLoadingPlanStowageTempDetailsList);
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_SEQUENCE_STABILITY_PARAMETERS.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_SEQUENCE_STABILITY_PARAMETERS.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
-          if (loadingPlanStabilityParametersList != null) {
-            try {
+        }
+        if (loadingPlanStabilityParametersList != null
+            && !loadingPlanStabilityParametersList.isEmpty()) {
+          try {
+            if (loadingPlanPortWiseDetailsList != null
+                && !loadingPlanPortWiseDetailsList.isEmpty()) {
               for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails :
                   loadingPlanPortWiseDetailsList) {
                 for (LoadingPlanStabilityParameters loadingPlanStabilityParameters :
                     loadingPlanStabilityParametersList) {
+                  Long version = null;
                   if (loadingPlanPortWiseDetails
                       .getId()
                       .equals(loadingPlanStabilityParameters.getCommunicationPortWiseId())) {
+                    Optional<LoadingPlanStabilityParameters> loadingPlanStabilityParamObj =
+                        loadingPlanStabilityParametersRepository.findById(
+                            loadingPlanStabilityParameters.getId());
+                    if (loadingPlanStabilityParamObj.isPresent()) {
+                      version = loadingPlanStabilityParamObj.get().getVersion();
+                    }
+                    loadingPlanStabilityParameters.setVersion(version);
                     loadingPlanStabilityParameters.setLoadingPlanPortWiseDetails(
                         loadingPlanPortWiseDetails);
                   }
                 }
               }
               loadingPlanStabilityParametersRepository.saveAll(loadingPlanStabilityParametersList);
-            } catch (ResourceAccessException e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.LOADING_PLAN_STABILITY_PARAMETERS.getTable()),
-                  processId,
-                  retryStatus,
-                  e.getMessage());
-            } catch (Exception e) {
-              updateStatusInExceptionCase(
-                  idMap.get(LoadingPlanTables.LOADING_PLAN_STABILITY_PARAMETERS.getTable()),
-                  processId,
-                  StagingStatus.FAILED.getStatus(),
-                  e.getMessage());
+              log.info(
+                  "Saved LoadingPlanStabilityParameters:" + portLoadingPlanStowageTempDetailsList);
             }
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_PLAN_STABILITY_PARAMETERS.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_PLAN_STABILITY_PARAMETERS.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
+          }
+        }
+        if (loadingInfo != null
+            && portLoadingPlanCommingleTempDetailsList != null
+            && !portLoadingPlanCommingleTempDetailsList.isEmpty()) {
+          try {
+            for (PortLoadingPlanCommingleTempDetails portLoadingPlanCommingleTempDetails :
+                portLoadingPlanCommingleTempDetailsList) {
+              Long version = null;
+              Optional<PortLoadingPlanCommingleTempDetails> portLoadingPlanCommingleTempDetaObj =
+                  portLoadingPlanCommingleTempDetailsRepository.findById(
+                      portLoadingPlanCommingleTempDetails.getId());
+              if (portLoadingPlanCommingleTempDetaObj.isPresent()) {
+                version = portLoadingPlanCommingleTempDetaObj.get().getVersion();
+              }
+              portLoadingPlanCommingleTempDetails.setVersion(version);
+              portLoadingPlanCommingleTempDetails.setLoadingInformation(loadingInfo.getId());
+            }
+            portLoadingPlanCommingleTempDetailsRepository.saveAll(
+                portLoadingPlanCommingleTempDetailsList);
+            log.info(
+                "Saved PortLoadingPlanCommingleTempDetails:"
+                    + portLoadingPlanStowageTempDetailsList);
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS_TEMP.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS_TEMP.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
+          }
+        }
+        if (loadingInfo != null
+            && portLoadingPlanCommingleDetailsList != null
+            && !portLoadingPlanCommingleDetailsList.isEmpty()) {
+          try {
+            for (PortLoadingPlanCommingleDetails portLoadingPlanCommingleDetails :
+                portLoadingPlanCommingleDetailsList) {
+              Long version = null;
+              Optional<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetaObj =
+                  portLoadingPlanCommingleDetailsRepository.findById(
+                      portLoadingPlanCommingleDetails.getId());
+              if (portLoadingPlanCommingleDetaObj.isPresent()) {
+                version = portLoadingPlanCommingleDetaObj.get().getVersion();
+              }
+              portLoadingPlanCommingleDetails.setVersion(version);
+              portLoadingPlanCommingleDetails.setLoadingInformation(loadingInfo);
+            }
+            portLoadingPlanCommingleDetailsRepository.saveAll(portLoadingPlanCommingleDetailsList);
+            log.info(
+                "Saved PortLoadingPlanCommingleDetails:" + portLoadingPlanCommingleDetailsList);
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
+          }
+        }
+        if (loadingInfo != null && billOfLandingList != null && !billOfLandingList.isEmpty()) {
+          try {
+            for (BillOfLanding billOfLanding : billOfLandingList) {
+              Long version = null;
+              Optional<BillOfLanding> BillOfLandingObj =
+                  billOfLandingRepository.findById(billOfLanding.getId());
+              if (BillOfLandingObj.isPresent()) {
+                version = BillOfLandingObj.get().getVersion();
+              }
+              billOfLanding.setVersion(version);
+              billOfLanding.setLoadingId(loadingInfo.getId());
+            }
+            billOfLandingRepository.saveAll(billOfLandingList);
+            log.info("Saved BillOfLanding:" + billOfLandingList);
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.BILL_OF_LADDING.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.BILL_OF_LADDING.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
         }
         loadingPlanStagingService.updateStatusCompletedForProcessId(

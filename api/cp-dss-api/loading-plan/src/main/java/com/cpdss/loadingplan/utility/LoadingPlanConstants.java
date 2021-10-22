@@ -38,7 +38,10 @@ public class LoadingPlanConstants {
     STAGES_DURATION("stages_duration"),
     LOADING_INFORMATION_STATUS("loading_information_status"),
     LOADING_INFORMATION_ARRIVAL_STATUS("loading_information_arrival_status"),
-    LOADING_INFORMATION_DEPARTURE_STATUS("loading_information_departure_status");
+    LOADING_INFORMATION_DEPARTURE_STATUS("loading_information_departure_status"),
+    PORT_LOADABLE_PLAN_COMMINGLE_DETAILS_TEMP("port_loadable_plan_commingle_details_temp"),
+    PORT_LOADABLE_PLAN_COMMINGLE_DETAILS("port_loadable_plan_commingle_details"),
+    BILL_OF_LADDING("bill_of_ladding");
 
     public final String table;
   }

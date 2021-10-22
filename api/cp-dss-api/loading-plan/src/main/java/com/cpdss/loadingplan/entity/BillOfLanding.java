@@ -4,10 +4,7 @@ package com.cpdss.loadingplan.entity;
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import javax.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /** @author ravi.r */
 @Entity
@@ -16,6 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class BillOfLanding extends EntityDoc {
 
   @Id
