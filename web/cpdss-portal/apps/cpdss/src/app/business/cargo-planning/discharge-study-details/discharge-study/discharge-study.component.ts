@@ -531,7 +531,7 @@ export class DischargeStudyComponent implements OnInit {
                     field.markAsTouched();
                     field.markAsDirty();
                     const mode = this.getFormControl(portIndex, key, itemIndex, 'mode');
-                    if (this.getFormControl(portIndex, key, itemIndex, innerKey)?.valid || (mode.value?.id === 1 && innerKey === 'kl')) {
+                    if (this.getFormControl(portIndex, key, itemIndex, innerKey)?.valid || (mode?.value?.id === 1 && innerKey === 'kl')) {
                       item[innerKey].isEditMode = false;
                     } else {
                       item[innerKey].isEditMode = true;
@@ -928,33 +928,18 @@ export class DischargeStudyComponent implements OnInit {
       return;
     }
     if (this.dischargeStudyForm.valid) {
-      let status;
-      this.portDetails.forEach((portDetail, portIndex) => {
-        for (const key in portDetail) {
-          if (Object.prototype.hasOwnProperty.call(portDetail, key)) {
-            if (key === 'backLoadingDetails') {
-              portDetail[key]?.forEach((item) => {
-                if (item.isAdd && !status) {
-                  status = true;
-                  this.messageService.add({
-                    severity: 'warn', summary: translationKeys['DISCHARGE_STUDY_SAVE_WARNING'],
-                    detail: `${translationKeys['DISCHARGE_STUDY_SAVE_WARNING_SUMMERY']}`
-                  });
-                  return;
-                }
-              })
-            }
-          }
-        }
-      })
-      if (status) {
-        return;
-      }
       const isLoadableQuantityValid = this.validateLoadableQuantity();
-      if(isLoadableQuantityValid !== undefined) {
+      if (isLoadableQuantityValid.backLoadingIndex !== undefined) {
         this.messageService.add({
           severity: 'warn', summary: translationKeys['DISCHARGE_STUDY_SAVE_WARNING'],
-          detail: `${translationKeys['PORT']} ${isLoadableQuantityValid + 1} ${translationKeys['DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY']}`
+          detail: `${translationKeys['DISCHARGE_STUDY_SAVE_WARNING_SUMMERY'] } ${isLoadableQuantityValid.backLoadingIndex+1}`
+        });
+        return;
+      } else if (isLoadableQuantityValid.invalidPort?.length) {
+        const portId = isLoadableQuantityValid.invalidPort[0];
+        this.messageService.add({
+          severity: 'warn', summary: translationKeys['DISCHARGE_STUDY_SAVE_WARNING'],
+          detail: `${translationKeys['PORT']} ${portId+1} ${translationKeys['DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY']}`
         });
         return;
       }
@@ -972,6 +957,12 @@ export class DischargeStudyComponent implements OnInit {
         this.dischargeStudyForm.reset(value);
         this.ngxSpinnerService.hide();
       }
+    } else {
+      setTimeout(() => {
+        if(document.querySelector('.error-icon')) {
+          document.querySelector('.error-icon').scrollIntoView({ behavior: "smooth"});
+        }
+      })
     }
   }
 
@@ -981,35 +972,38 @@ export class DischargeStudyComponent implements OnInit {
    * @memberof DischargeStudyComponent
   */
   validateLoadableQuantity() {
-    let invalidPort;
+    const invalidPort = [];
+    let backLoadingIndex;
     this.portDetails.map((item, itemIndex) => {
-      let loadableQunatity = 0;
+      let loadableQuantity = 0;
       const backLoadingDetailsFormControls = item.backLoadingDetails;
       backLoadingDetailsFormControls.map((backLoadingItems) => {
+        if(backLoadingItems.isAdd) {
+          backLoadingIndex = itemIndex;
+        }
         if (backLoadingItems.mt) {
-          loadableQunatity += Number(backLoadingItems.mt.value);
+          loadableQuantity += Number(backLoadingItems.mt.value);
         }
       })
       const cargoDetails = item.cargoDetail;
       cargoDetails.map((cargoDetailsItems) => {
         const storedKey = cargoDetailsItems.storedKey.value;
-        // let parentData;
-        let maxQunatity;
+        let maxQuantity;
         for (let i = 0; i < this.portDetails.length; i++) {
-          if (maxQunatity === undefined) {
+          if (maxQuantity === undefined) {
             this.portDetails[i].cargoDetail.find((cargoDetailDetail, cargoIndex) => {
               if (cargoDetailDetail.storedKey.value === storedKey) {
-                maxQunatity = 0;
-                maxQunatity = this.quantityPipe.transform(cargoDetailDetail.maxKl.value,QUANTITY_UNIT.KL,QUANTITY_UNIT.MT,cargoDetailDetail.api.value,cargoDetailDetail.temp.value,-1);
-                maxQunatity -= cargoDetailDetail.mode['_value'].id === 2 ? Number(cargoDetailDetail.mt.value) : 0;
+                maxQuantity = 0;
+                maxQuantity = this.quantityPipe.transform(cargoDetailDetail.maxKl.value,QUANTITY_UNIT.KL,QUANTITY_UNIT.MT,cargoDetailDetail.api.value,cargoDetailDetail.temp.value,-1);
+                maxQuantity -= cargoDetailDetail.mode['_value'].id === 2 ? Number(cargoDetailDetail.mt.value) : 0;
                 return;
               }
             })
-            if (!maxQunatity) {
+            if (maxQuantity !== undefined) {
               this.portDetails[i].backLoadingDetails.find((backLoadingDetail, cargoIndex) => {
                 if (backLoadingDetail.storedKey.value === storedKey) {
-                  maxQunatity = 0;
-                  maxQunatity = backLoadingDetail.mt.value;
+                  maxQuantity = 0;
+                  maxQuantity = backLoadingDetail.mt.value;
                   return;
                 }
               })
@@ -1021,20 +1015,21 @@ export class DischargeStudyComponent implements OnInit {
               }
             })
             if(value) {
-              maxQunatity = maxQunatity - Number(value.mt.value);
+              const quantity = value.mode.value.id === 2 ? value.mt.value : 0;
+              maxQuantity = maxQuantity - Number(quantity);
             }
           }
           if(itemIndex === i) { 
-            loadableQunatity += maxQunatity;
+            loadableQuantity += maxQuantity;
             break;
           }
           }
         })
-        if(this.loadableQuantity < loadableQunatity) {
-          invalidPort = itemIndex;
+        if(this.loadableQuantity < loadableQuantity) {
+          invalidPort.push(itemIndex);
         }
     })
-    return invalidPort;
+    return {invalidPort: invalidPort , backLoadingIndex: backLoadingIndex};
   }
 
   /**
