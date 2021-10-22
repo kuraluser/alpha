@@ -163,6 +163,14 @@ public final class DischargePlanModels {
       internal_static_DischargeInfoStatusReply_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_DischargeInfoStatusReply_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargePlanStowageDetailsRequest_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargePlanStowageDetailsRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_DischargePlanStowageDetailsResponse_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_DischargePlanStowageDetailsResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -380,9 +388,14 @@ public final class DischargePlanModels {
           + "eply\022\027\n\017dischargeInfoId\030\001 \001(\003\022\035\n\025dischar"
           + "geInfoStatusId\030\002 \001(\003\022+\n#dischargeInfoSta"
           + "tusLastModifiedTime\030\003 \001(\t\022\'\n\016responseSta"
-          + "tus\030\004 \001(\0132\017.ResponseStatusB-\n)com.cpdss."
-          + "common.generated.discharge_planP\001b\006proto"
-          + "3"
+          + "tus\030\004 \001(\0132\017.ResponseStatus\"G\n\"DischargeP"
+          + "lanStowageDetailsRequest\022!\n\031lastLoadingP"
+          + "ortRotationId\030\001 \001(\003\"\213\001\n#DischargePlanSto"
+          + "wageDetailsResponse\022\'\n\016responseStatus\030\001 "
+          + "\001(\0132\017.ResponseStatus\022;\n\032dischargingPlanT"
+          + "ankDetails\030\002 \003(\0132\027.LoadingPlanTankDetail"
+          + "sB-\n)com.cpdss.common.generated.discharg"
+          + "e_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -851,6 +864,22 @@ public final class DischargePlanModels {
               "DischargeInfoStatusId",
               "DischargeInfoStatusLastModifiedTime",
               "ResponseStatus",
+            });
+    internal_static_DischargePlanStowageDetailsRequest_descriptor =
+        getDescriptor().getMessageTypes().get(40);
+    internal_static_DischargePlanStowageDetailsRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargePlanStowageDetailsRequest_descriptor,
+            new java.lang.String[] {
+              "LastLoadingPortRotationId",
+            });
+    internal_static_DischargePlanStowageDetailsResponse_descriptor =
+        getDescriptor().getMessageTypes().get(41);
+    internal_static_DischargePlanStowageDetailsResponse_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_DischargePlanStowageDetailsResponse_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus", "DischargingPlanTankDetails",
             });
     com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.getDescriptor();

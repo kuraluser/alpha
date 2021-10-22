@@ -193,7 +193,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
       })
     });
 
-    this.form?.controls?.dischargeCommingledCargoSeperately?.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
+    this.form?.controls?.dischargeCommingledCargoSeparately?.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       const dataTableForm = <FormArray>this.cargoTobeLoadedDischargedForm?.get('dataTable');
       dataTableForm?.controls?.forEach((formGroup) => {
         if (formGroup.value?.isCommingledCargo) {
@@ -232,7 +232,8 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
    */
   onEditComplete(event: IDataTableEvent) {
     if(this.operation === OPERATIONS.DISCHARGING) {
-      this.updateCargoToBeLoaded.emit(this.cargoTobeLoadedDischargedForm?.value());
+      this.cargoTobeLoadedDischarged[event?.index][event?.field].value = event?.data[event?.field]?.value;
+      this.updateCargoToBeLoaded.emit(this.cargoTobeLoadedDischarged);
     }
   }
 

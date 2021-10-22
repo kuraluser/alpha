@@ -1,17 +1,17 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormArray , FormGroup, ValidationErrors , Validators, FormBuilder } from '@angular/forms';
+import { FormArray, FormGroup, ValidationErrors, Validators, FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { v4 as uuid4 } from 'uuid';
 
 
-import { IDischargeStudy, IDischargeStudyDropdownData  , IDischargeStudyBackLoadingDetails , IPortCargoDetails , IPortDetailValueObject  } from '../../models/discharge-study-list.model';
+import { IDischargeStudy, IDischargeStudyDropdownData, IDischargeStudyBackLoadingDetails, IPortCargoDetails, IPortDetailValueObject } from '../../models/discharge-study-list.model';
 
-import { DATATABLE_EDITMODE, IDataTableColumn} from '../../../../shared/components/datatable/datatable.model';
+import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { Voyage , IPort  , IInstruction , ITankDetails , VOYAGE_STATUS , ICargo , DISCHARGE_STUDY_STATUS , OPERATIONS } from '../../../core/models/common.model';
-import { QUANTITY_UNIT , IPercentage , IMode  , IResponse } from '../../../../shared/models/common.model';
+import { Voyage, IPort, IInstruction, ITankDetails, VOYAGE_STATUS, ICargo, DISCHARGE_STUDY_STATUS, OPERATIONS } from '../../../core/models/common.model';
+import { QUANTITY_UNIT, IPercentage, IMode, IResponse } from '../../../../shared/models/common.model';
 
 import { DischargeStudyDetailsTransformationService } from '../../services/discharge-study-details-transformation.service';
 import { DischargeStudyDetailsApiService } from '../../services/discharge-study-details-api.service';
@@ -55,12 +55,12 @@ export class DischargeStudyComponent implements OnInit {
   }
   set dischargeStudy(value: IDischargeStudy) {
     this._dischargeStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit)  && [VOYAGE_STATUS.ACTIVE].includes(this.voyage?.statusId) 
-    && [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(this._dischargeStudy?.statusId) && !this.isPlanConfirmed? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [VOYAGE_STATUS.ACTIVE].includes(this.voyage?.statusId)
+      && [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(this._dischargeStudy?.statusId) && !this.isPlanConfirmed ? DATATABLE_EDITMODE.CELL : null;
     this.editMode ? this.dischargeStudyForm?.enable() : this.dischargeStudyForm?.disable();
-    this.backLoadingColumns = this.dischargeStudyDetailsTransformationService.getDischargeStudyBackLoadingDatatableColumns(this.permission, this.dischargeStudy?.statusId,this.voyage.statusId);
+    this.backLoadingColumns = this.dischargeStudyDetailsTransformationService.getDischargeStudyBackLoadingDatatableColumns(this.permission, this.dischargeStudy?.statusId, this.voyage.statusId);
   }
-  
+
   loadableQuantity: number;
   editMode: DATATABLE_EDITMODE;
   portDetails: IPortDetailValueObject[];
@@ -101,7 +101,7 @@ export class DischargeStudyComponent implements OnInit {
     })
     this.errorMessages = this.dischargeStudyDetailsTransformationService.setValidationMessageForDischargeStudy();
     this.columns = this.dischargeStudyDetailsTransformationService.getDischargeStudyCargoDatatableColumns();
-    
+
     this.getDischargeStudyDetails();
   }
 
@@ -131,20 +131,24 @@ export class DischargeStudyComponent implements OnInit {
       instructions: this.instructions,
       percentageList: this.percentageList
     }
-    const result = await this.dischargeStudyDetailsApiService.getDischargeStudyDetails(this.vesselId, this.voyageId,this.dischargeStudyId).toPromise();
-    if(result.responseStatus.status === '200') {
-      this.loadableQuantity = result.loadableQuantity;
-      const portDetails = this.dischargeStudyForm.get('portDetails') as FormArray;
-      const portList = result.portList;
-      const portUniqueColorAbbrList = [];
-      this.portDetails = portList.filter(portDetail => portDetail.operationId === OPERATIONS.DISCHARGING).map((portDetail, index) => {
-        const isLastIndex = index + 1 === portList.length;
-        const portDetailAsValueObject = this.dischargeStudyDetailsTransformationService.getPortDetailAsValueObject(portDetail, this.listData, isLastIndex, false, portUniqueColorAbbrList);
-        portDetails.push(this.initDischargeStudyFormGroup(portDetailAsValueObject));
-        return portDetailAsValueObject;
-      })
+    const result = await this.dischargeStudyDetailsApiService.getDischargeStudyDetails(this.vesselId, this.voyageId, this.dischargeStudyId).toPromise();
+    try {
+      if (result.responseStatus.status === '200') {
+        this.loadableQuantity = result.loadableQuantity;
+        const portDetails = this.dischargeStudyForm.get('portDetails') as FormArray;
+        const portList = result.portList ? result.portList : [];
+        const portUniqueColorAbbrList = [];
+        this.portDetails = portList.filter(portDetail => portDetail.operationId === OPERATIONS.DISCHARGING).map((portDetail, index) => {
+          const isLastIndex = index + 1 === portList.length;
+          const portDetailAsValueObject = this.dischargeStudyDetailsTransformationService.getPortDetailAsValueObject(portDetail, this.listData, isLastIndex, false, portUniqueColorAbbrList);
+          portDetails.push(this.initDischargeStudyFormGroup(portDetailAsValueObject));
+          return portDetailAsValueObject;
+        })
+      }
+    } catch (err) {
+      this.portDetails = [];
     }
-    
+
     this.ngxSpinnerService.hide();
   }
 
@@ -154,7 +158,7 @@ export class DischargeStudyComponent implements OnInit {
    * @private
    * @memberof DischargeStudyComponent
   */
-   getListData(id: number) {
+  getListData(id: number) {
     const cargoList = this.portCargoList.find((portcargo) => {
       return portcargo.portId === id;
     })
@@ -174,21 +178,22 @@ export class DischargeStudyComponent implements OnInit {
    * @private
    * @memberof DischargeStudyComponent
    */
-   private async setDropDownDetails() {
-    const translationKeys  = await this.translateService.get(['MANUAL','AUTO']).toPromise();
+  private async setDropDownDetails() {
+    const translationKeys = await this.translateService.get(['MANUAL', 'AUTO']).toPromise();
     this.mode = [
-      { name: translationKeys['AUTO'] , id: 1 },
-      { name: translationKeys['MANUAL'] , id: 2 }
+      { name: translationKeys['AUTO'], id: 1 },
+      { name: translationKeys['MANUAL'], id: 2 }
     ]
     this.cowList = [
-      { name: translationKeys['AUTO'] , id: 1 },
-      { name: translationKeys['MANUAL'] , id: 2 }
+      { name: translationKeys['AUTO'], id: 1 },
+      { name: translationKeys['MANUAL'], id: 2 }
     ];
     this.percentageList = [
+      { value: 0, name: '0%' },
       { value: 25, name: '25%' },
       { value: 50, name: '50%' },
       { value: 75, name: '75%' },
-      { value: 100, name: '100%' },
+      { value: 100, name: '100%' }
     ]
   }
 
@@ -207,7 +212,7 @@ export class DischargeStudyComponent implements OnInit {
       port: this.fb.control(portDetail?.port),
       operationId: this.fb.control(portDetail?.operationId),
       instruction: this.fb.control(portDetail?.instruction),
-      maxDraft: this.fb.control(portDetail?.maxDraft, [Validators.required , Validators.min(0), numberValidator(2, 2)]),
+      maxDraft: this.fb.control(portDetail?.maxDraft, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
       cargoDetail: this.fb.group({ dataTable: this.fb.array(this.dischargeCargoFormGroup(portDetail)) }),
       cow: this.fb.control(portDetail?.cow, [Validators.required]),
       percentage: this.fb.control(portDetail?.percentage),
@@ -240,16 +245,16 @@ export class DischargeStudyComponent implements OnInit {
   */
   backLoadingFormGroup(backLoading: any) {
     const quantityDecimal = this.quantityDecimalService.quantityDecimal(QUANTITY_UNIT.KL);
-    const min = quantityDecimal ? (1/Math.pow(10, quantityDecimal)) : 1;
+    const min = quantityDecimal ? (1 / Math.pow(10, quantityDecimal)) : 1;
     return this.fb.group({
       color: this.fb.control(backLoading.color?.value ? backLoading.color?.value : null, [Validators.required, dischargeStudyColorValidator]),
       abbreviation: this.fb.control(backLoading.abbreviation.value, [Validators.required, alphabetsOnlyValidator, Validators.maxLength(6), dischargeStudyAbbreviationValidator]),
       cargo: this.fb.control(backLoading?.cargo?.value ? backLoading.cargo?.value : null, [Validators.required]),
       bbls: this.fb.control(backLoading.bbls?.value ? backLoading.bbls?.value : null, []),
-      kl: this.fb.control(backLoading.kl?.value ? backLoading.kl?.value : null, [Validators.required, numberValidator(quantityDecimal,null,false) , Validators.min(min) , dischargeStudyLoadableQuantity(this.loadableQuantity)]),
+      kl: this.fb.control(backLoading.kl?.value ? backLoading.kl?.value : null, [Validators.required, numberValidator(quantityDecimal, null, false), Validators.min(min)]),
       mt: this.fb.control(backLoading.mt?.value ? backLoading.mt?.value : null, []),
       api: this.fb.control(backLoading.api?.value ? backLoading.api?.value : null, [Validators.required, Validators.min(0), numberValidator(2, 3)]),
-      temp: this.fb.control(backLoading.temp?.value ? backLoading.temp?.value : null, [Validators.required , numberValidator(2, 3)]),
+      temp: this.fb.control(backLoading.temp?.value ? backLoading.temp?.value : null, [Validators.required, numberValidator(2, 3)]),
       storedKey: this.fb.control(backLoading?.storedKey?.value)
     })
   }
@@ -277,9 +282,9 @@ export class DischargeStudyComponent implements OnInit {
   */
   initCargoFormGroup(cargo) {
     const quantityDecimal = this.quantityDecimalService.quantityDecimal(QUANTITY_UNIT.KL);
-    const min = quantityDecimal ? (1/Math.pow(10, quantityDecimal)) : 1;
-    const quantityValidator  = cargo.mt.value.id === 2 ? [Validators.required,  Validators.min(0) , dischargeStudyCargoQuantityValidator, numberValidator(quantityDecimal,null,false)] :
-      [Validators.required , dischargeStudyCargoQuantityValidator];
+    const min = quantityDecimal ? (1 / Math.pow(10, quantityDecimal)) : 1;
+    const quantityValidator = cargo.mt.value.id === 2 ? [Validators.required, Validators.min(0), dischargeStudyCargoQuantityValidator, numberValidator(quantityDecimal, null, false)] :
+      [Validators.required, dischargeStudyCargoQuantityValidator];
     return this.fb.group({
       maxKl: this.fb.control(cargo.maxKl.value, []),
       abbreviation: this.fb.control(cargo.abbreviation.value, []),
@@ -304,16 +309,16 @@ export class DischargeStudyComponent implements OnInit {
   async addBackLoading(index: number, formGroupName: string) {
     const storedKey = uuid4();
     const backLoadingDetails = <IDischargeStudyBackLoadingDetails>{};
-    const backLoadingDetailsValueAsObject = this.dischargeStudyDetailsTransformationService.getBackLoadingDetailAsValueObject(backLoadingDetails, this.listData, storedKey , true);
+    const backLoadingDetailsValueAsObject = this.dischargeStudyDetailsTransformationService.getBackLoadingDetailAsValueObject(backLoadingDetails, this.listData, storedKey, true);
     const portDetails = this.dischargeStudyForm.get('portDetails') as FormArray;
     const backLoading = portDetails.at(index).get(formGroupName).get('dataTable') as FormArray;
-    if(backLoading.length < 3) {
+    if (backLoading.length < 3) {
       backLoading.push(this.backLoadingFormGroup(backLoadingDetailsValueAsObject));
       this.dischargeStudyForm.updateValueAndValidity();
       this.portDetails[index]['backLoadingDetails'] = [...this.portDetails[index]['backLoadingDetails'], backLoadingDetailsValueAsObject];
       this.portDetails = [...this.portDetails];
     } else {
-      const translationKeys =  await this.translateService.get(['DISCHARGE_STUDY_BACK_LOADING_MAX_ERROR_SUMMERY', 'DISCHARGE_STUDY_BACK_LOADING_MAX_ERROR']).toPromise();
+      const translationKeys = await this.translateService.get(['DISCHARGE_STUDY_BACK_LOADING_MAX_ERROR_SUMMERY', 'DISCHARGE_STUDY_BACK_LOADING_MAX_ERROR']).toPromise();
       this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_BACK_LOADING_MAX_ERROR'], detail: translationKeys['DISCHARGE_STUDY_BACK_LOADING_MAX_ERROR_SUMMERY'] });
     }
     this.isDischargeStudyValid();
@@ -351,21 +356,21 @@ export class DischargeStudyComponent implements OnInit {
             const cargoToDeleteIndex = cargoDetails.findIndex((cargo, cargoIndex) => {
               if (event.data.storedKey.value === cargo.storedKey.value) {
                 return cargo;
-              } 
+              }
             });
-            if(cargoToDeleteIndex !== -1) {
+            if (cargoToDeleteIndex !== -1) {
               cargoDetailFormArray.removeAt(cargoToDeleteIndex);
-              initPortDetails[i]['cargoDetail'].splice(cargoToDeleteIndex,1);
+              initPortDetails[i]['cargoDetail'].splice(cargoToDeleteIndex, 1);
             }
             this.dischargeStudyForm.updateValueAndValidity();
           }
           initPortDetails[index]['backLoadingDetails'].splice(event.index, 1);
           const backLoading = portDetails.at(index).get(formGroupName).get('dataTable') as FormArray;
           backLoading.removeAt(event.index);
-          if(!backLoading.length) {
+          if (!backLoading.length) {
             const enableBackToLoadingControl = portDetails.at(index).get('enableBackToLoading');
             enableBackToLoadingControl.setValue(false);
-            this.onChange(event , 'enableBackToLoading', index);
+            this.onChange(event, 'enableBackToLoading', index);
             backLoading.reset();
           }
           this.portDetails = [...initPortDetails];
@@ -439,12 +444,12 @@ export class DischargeStudyComponent implements OnInit {
     const backLoadingFormArray = portDetailsFormArray.at(index).get('cargoDetail').get('dataTable') as FormArray;
     const quantityFeild = backLoadingFormArray.at(event.index).get('kl');
     const quantityDecimal = this.quantityDecimalService.quantityDecimal(QUANTITY_UNIT.KL);
-    const min = quantityDecimal ? (1/Math.pow(10, quantityDecimal)) : 1;
+    const min = quantityDecimal ? (1 / Math.pow(10, quantityDecimal)) : 1;
 
     if (event.field === 'mode') {
       if (event.data.mode?.value.id === 2) {
-       
-        quantityFeild.setValidators([Validators.required,  Validators.min(0) , dischargeStudyCargoQuantityValidator, numberValidator(quantityDecimal,null,false)]);
+
+        quantityFeild.setValidators([Validators.required, Validators.min(0), dischargeStudyCargoQuantityValidator, numberValidator(quantityDecimal, null, false)]);
         quantityFeild.updateValueAndValidity();
         selectedPortCargo['kl'].value = '0';
         selectedPortCargo['mt'].value = '0';
@@ -466,7 +471,7 @@ export class DischargeStudyComponent implements OnInit {
           selectedPortCargo['kl'].isEditMode = true;
         }
       } else {
-        quantityFeild.setValidators([Validators.required , dischargeStudyCargoQuantityValidator]);
+        quantityFeild.setValidators([Validators.required, dischargeStudyCargoQuantityValidator]);
         quantityFeild.updateValueAndValidity();
         selectedPortCargo['kl'].isEditable = false;
         selectedPortCargo['mt'].isEditable = false;
@@ -483,11 +488,11 @@ export class DischargeStudyComponent implements OnInit {
 
     } else if (event.field === 'kl') {
       const unitConverted = {
-        mt: this.quantityPipe.transform(selectedPortCargo['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value , -1),
-        bbls: this.quantityPipe.transform(selectedPortCargo['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value , -1),
+        mt: this.quantityPipe.transform(selectedPortCargo['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value, -1),
+        bbls: this.quantityPipe.transform(selectedPortCargo['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value, -1),
       }
-      selectedPortCargo['mt'].value = isNaN(unitConverted.mt) || !unitConverted.mt ? '0' : unitConverted.mt+'' ;
-      selectedPortCargo['bbls'].value = isNaN(unitConverted.bbls) || !unitConverted.mt ? '0' : unitConverted.bbls+'';
+      selectedPortCargo['mt'].value = isNaN(unitConverted.mt) || !unitConverted.mt ? '0' : unitConverted.mt + '';
+      selectedPortCargo['bbls'].value = isNaN(unitConverted.bbls) || !unitConverted.mt ? '0' : unitConverted.bbls + '';
       const formControl = backLoadingFormArray.at(event.index).get('kl');
       formControl.setValue(null);
       formControl.setValue(selectedPortCargo['kl'].value);
@@ -512,7 +517,7 @@ export class DischargeStudyComponent implements OnInit {
   * @param {*} event
   * @memberof DischargeStudyComponent
   */
-  checkFormFieldValidity(updateFieldValidity?:string) {
+  checkFormFieldValidity(updateFieldValidity?: string) {
     this.portDetails.forEach((portDetail, portIndex) => {
       for (const key in portDetail) {
         if (portDetail.hasOwnProperty(key)) {
@@ -526,7 +531,7 @@ export class DischargeStudyComponent implements OnInit {
                     field.markAsTouched();
                     field.markAsDirty();
                     const mode = this.getFormControl(portIndex, key, itemIndex, 'mode');
-                    if(this.getFormControl(portIndex, key, itemIndex, innerKey)?.valid || (mode.value?.id === 1 && innerKey === 'kl')) {
+                    if (this.getFormControl(portIndex, key, itemIndex, innerKey)?.valid || (mode?.value?.id === 1 && innerKey === 'kl')) {
                       item[innerKey].isEditMode = false;
                     } else {
                       item[innerKey].isEditMode = true;
@@ -586,7 +591,7 @@ export class DischargeStudyComponent implements OnInit {
           const dischargeCargoDetails = portDetails[i].cargoDetail[j];
           if (dischargeCargoDetails.storedKey.value === cargo.storedKey.value) {
             parentIndex = i;
-            if(dischargeCargoDetails.mode.value.id === 2) {
+            if (dischargeCargoDetails.mode.value.id === 2) {
               totalBackLoadingKlValue = Number(dischargeCargoDetails.maxKl.value) - Number(dischargeCargoDetails.kl.value);
             } else {
               totalBackLoadingKlValue = Number(dischargeCargoDetails.maxKl.value) - Number(0);
@@ -661,8 +666,8 @@ export class DischargeStudyComponent implements OnInit {
     const duplicateCargoDetails = cargo;
     duplicateCargoDetails.kl.value = klValue;
     const unitConverted = {
-      mt: this.quantityPipe.transform(duplicateCargoDetails['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value , -1),
-      bbls: this.quantityPipe.transform(duplicateCargoDetails['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value , -1),
+      mt: this.quantityPipe.transform(duplicateCargoDetails['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value, -1),
+      bbls: this.quantityPipe.transform(duplicateCargoDetails['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value, -1),
     }
     duplicateCargoDetails['mt'].value = unitConverted.mt;
     duplicateCargoDetails['bbls'].value = unitConverted.bbls;
@@ -691,8 +696,8 @@ export class DischargeStudyComponent implements OnInit {
     const duplicateCargoDetails = cargo;
     duplicateCargoDetails.kl.value = totalKlValue;
     const unitConverted = {
-      mt: this.quantityPipe.transform(duplicateCargoDetails['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value , -1),
-      bbls: this.quantityPipe.transform(duplicateCargoDetails['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value , -1),
+      mt: this.quantityPipe.transform(duplicateCargoDetails['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value, -1),
+      bbls: this.quantityPipe.transform(duplicateCargoDetails['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value, -1),
     }
     duplicateCargoDetails['mt'].value = unitConverted.mt;
     duplicateCargoDetails['bbls'].value = unitConverted.bbls;
@@ -716,23 +721,23 @@ export class DischargeStudyComponent implements OnInit {
     const feildIndex = event.index;
     let selectedPortCargo = portDetails[index].backLoadingDetails[event.index];
     if (event.field === 'cargo') {
-      const cargoDetails = await this.dischargeStudyDetailsApiService.getCargoHistoryDetails(this.vesselId , portDetails[index].port?.id ,data.cargo.value.id , ).toPromise();
+      const cargoDetails = await this.dischargeStudyDetailsApiService.getCargoHistoryDetails(this.vesselId, portDetails[index].port?.id, data.cargo.value.id,).toPromise();
 
       selectedPortCargo['abbreviation'].value = data.cargo.value.abbreviation;
-      selectedPortCargo['api'].value =  cargoDetails.api;
+      selectedPortCargo['api'].value = cargoDetails.api;
       selectedPortCargo['temp'].value = cargoDetails.temperature;
       this.updatebackLoadingDetails(feildIndex, index, 'abbreviation', selectedPortCargo['abbreviation'].value, 'backLoadingDetails');
       this.updatebackLoadingDetails(feildIndex, index, 'api', selectedPortCargo['api'].value, 'backLoadingDetails');
       this.updatebackLoadingDetails(feildIndex, index, 'temp', selectedPortCargo['temp'].value, 'backLoadingDetails');
-    } 
+    }
     const formGroup = this.getBackLoadingDetails(event.index, index, 'backLoadingDetails');
-    
+
     if (!event.data.isAdd && formGroup.get('kl').valid && formGroup.get('api').valid && formGroup.get('temp').valid && event.field === 'kl') {
       portDetails = this.onQuantityEditComplete(event, portDetails, selectedPortCargo);
-    } else if(!event.data.isAdd) {
-      this.updateDischargeCargoDetails(event,portDetails,event.field);
+    } else if (!event.data.isAdd) {
+      this.updateDischargeCargoDetails(event, portDetails, event.field);
     }
-    
+
     selectedPortCargo = this.unitConversion(selectedPortCargo, event, index, 'backLoadingDetails');
     this.checkFormFieldValidity();
     formGroup.get('kl').updateValueAndValidity();
@@ -747,32 +752,32 @@ export class DischargeStudyComponent implements OnInit {
   * @param {*} event
   * @memberof DischargeStudyComponent
   */
-  updateDischargeCargoDetails(event: any,portDetails: any,feild: string) {
-    for(let i=event.index+1;i<portDetails.length;i++) {
+  updateDischargeCargoDetails(event: any, portDetails: any, feild: string) {
+    for (let i = event.index + 1; i < portDetails.length; i++) {
       const findCardoIndex = portDetails[i].cargoDetail.findIndex((cargoDetails) => {
-        if(cargoDetails.storedKey.value === event.data.storedKey.value) {
+        if (cargoDetails.storedKey.value === event.data.storedKey.value) {
           return cargoDetails;
         }
       });
-      if(findCardoIndex !== -1) {
-        for(const key in event.data){
-          if(event.data.hasOwnProperty(key) && (key === 'color' || key === 'cargo' || key === 'abbreviation' || key === 'api' || key === 'temp')) {
-            if(key === 'api') {
+      if (findCardoIndex !== -1) {
+        for (const key in event.data) {
+          if (event.data.hasOwnProperty(key) && (key === 'color' || key === 'cargo' || key === 'abbreviation' || key === 'api' || key === 'temp')) {
+            if (key === 'api') {
               const unitConverted = {
-                mt: this.quantityPipe.transform(portDetails[i].cargoDetail[findCardoIndex]['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value , -1),
-                bbls: this.quantityPipe.transform(portDetails[i].cargoDetail[findCardoIndex]['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value , -1),
+                mt: this.quantityPipe.transform(portDetails[i].cargoDetail[findCardoIndex]['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value, -1),
+                bbls: this.quantityPipe.transform(portDetails[i].cargoDetail[findCardoIndex]['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value, -1),
               }
               portDetails[i].cargoDetail[findCardoIndex]['mt'].value = unitConverted.mt;
-              this.updatebackLoadingDetails(findCardoIndex,i,'mt',unitConverted.mt,'cargoDetail');
+              this.updatebackLoadingDetails(findCardoIndex, i, 'mt', unitConverted.mt, 'cargoDetail');
               portDetails[i].cargoDetail[findCardoIndex]['bbls'].value = unitConverted.bbls;
-              this.updatebackLoadingDetails(findCardoIndex,i,'bbls',unitConverted.bbls,'cargoDetail');
+              this.updatebackLoadingDetails(findCardoIndex, i, 'bbls', unitConverted.bbls, 'cargoDetail');
             } else {
               portDetails[i].cargoDetail[findCardoIndex][key].value = event.data[key].value;
-              this.updatebackLoadingDetails(findCardoIndex,i,key,event.data[key].value,'cargoDetail');
+              this.updatebackLoadingDetails(findCardoIndex, i, key, event.data[key].value, 'cargoDetail');
             }
           }
         }
-        this.unitConversion(portDetails[i].cargoDetail[findCardoIndex], event , i , 'cargoDetail');
+        this.unitConversion(portDetails[i].cargoDetail[findCardoIndex], event, i, 'cargoDetail');
       }
     }
   }
@@ -787,16 +792,16 @@ export class DischargeStudyComponent implements OnInit {
   * @memberof DischargeStudyComponent
   */
   unitConversion(selectedObject: any, event: any, index: number, formArrayName: string) {
-    const units = ['kl','bbls','mt'];
+    const units = ['kl', 'bbls', 'mt'];
     const unitConverted = {
-      mt: this.quantityPipe.transform(selectedObject['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value , -1),
-      bbls: this.quantityPipe.transform(selectedObject['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value , -1),
+      mt: this.quantityPipe.transform(selectedObject['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value, -1),
+      bbls: this.quantityPipe.transform(selectedObject['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value, -1),
     }
     selectedObject['mt'].value = !unitConverted.mt || isNaN(unitConverted.mt) ? 0 : unitConverted.mt;
     selectedObject['bbls'].value = !unitConverted.bbls || isNaN(unitConverted.bbls) ? 0 : unitConverted.bbls;
     const portDetailsFormArray = this.dischargeStudyForm.get('portDetails') as FormArray;
     const backLoadingFormArray = portDetailsFormArray.at(index).get(formArrayName).get('dataTable') as FormArray;
-    for(let i=0;i<units.length;i++) {
+    for (let i = 0; i < units.length; i++) {
       const formControl = backLoadingFormArray.at(event.index).get(units[i]);
       formControl.setValue(null);
       formControl.setValue(selectedObject[units[i]].value);
@@ -874,8 +879,8 @@ export class DischargeStudyComponent implements OnInit {
                   return cargoDetail;
                 }
               })
-              if(cargoIndex !== -1) {
-                cargoDetail.splice(cargoIndex,1);
+              if (cargoIndex !== -1) {
+                cargoDetail.splice(cargoIndex, 1);
                 const cargoDetailsFormArray = portDetailsFormArray.at(i).get('cargoDetail').get('dataTable') as FormArray;
                 cargoDetailsFormArray.removeAt(cargoIndex);
               }
@@ -890,7 +895,7 @@ export class DischargeStudyComponent implements OnInit {
       this.portDetails = [...initPortDetails];
       this.isDischargeStudyValid();
     } else {
-      this.addBackLoading(index,'backLoadingDetails');
+      this.addBackLoading(index, 'backLoadingDetails');
       this.isDischargeStudyValid();
     }
   }
@@ -913,43 +918,38 @@ export class DischargeStudyComponent implements OnInit {
    * @memberof DischargeStudyComponent
   */
   async saveDischargeStudy() {
-    const translationKeys = await this.translateService.get(['DISCHARGE_STUDY_SAVE_ERROR','DISCHARGE_STUDY_SAVE_NO_DATA_ERROR','DISCHARGE_STUDY_SAVE_WARNING_SUMMERY','DISCHARGE_STUDY_SAVE_WARNING','DISCHARGE_STUDY_SUCCESS', 'DISCHARGE_STUDY_SUCCESS_SUMMERY' ]).toPromise();
+    const translationKeys = await this.translateService.get(['PORT','DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY','DISCHARGE_STUDY_SAVE_ERROR', 'DISCHARGE_STUDY_SAVE_NO_DATA_ERROR', 'DISCHARGE_STUDY_SAVE_WARNING_SUMMERY', 'DISCHARGE_STUDY_SAVE_WARNING', 'DISCHARGE_STUDY_SUCCESS', 'DISCHARGE_STUDY_SUCCESS_SUMMERY']).toPromise();
     this.checkFormFieldValidity();
     this.dischargeStudyForm.markAllAsTouched();
     this.dischargeStudyForm.markAsDirty();
 
-     if(!this.dischargeStudyForm.dirty && this.portDetails?.length !== 1) {
+    if (!this.dischargeStudyForm.dirty && this.portDetails?.length !== 1) {
       this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_SAVE_ERROR'], detail: translationKeys['DISCHARGE_STUDY_SAVE_NO_DATA_ERROR'] });
       return;
     }
-    if(this.dischargeStudyForm.valid) {
-      let status;
-      this.portDetails.forEach((portDetail , portIndex) => {
-        for (const key in portDetail) {
-          if (Object.prototype.hasOwnProperty.call(portDetail , key)) {
-            if (key === 'backLoadingDetails') {
-              portDetail[key]?.forEach((item) => { 
-                if(item.isAdd && !status) {
-                  status = true;
-                  this.messageService.add({ severity: 'warn', summary: translationKeys['DISCHARGE_STUDY_SAVE_WARNING'], 
-                  detail: `${translationKeys['DISCHARGE_STUDY_SAVE_WARNING_SUMMERY']}${portIndex+1}`});
-                  return;
-                }
-              })
-            }
-          }
-        }
-      })
-      if(status) {
+    if (this.dischargeStudyForm.valid) {
+      const isLoadableQuantityValid = this.validateLoadableQuantity();
+      if (isLoadableQuantityValid.backLoadingIndex !== undefined) {
+        this.messageService.add({
+          severity: 'warn', summary: translationKeys['DISCHARGE_STUDY_SAVE_WARNING'],
+          detail: `${translationKeys['DISCHARGE_STUDY_SAVE_WARNING_SUMMERY'] } ${isLoadableQuantityValid.backLoadingIndex+1}`
+        });
+        return;
+      } else if (isLoadableQuantityValid.invalidPort?.length) {
+        const portId = isLoadableQuantityValid.invalidPort[0];
+        this.messageService.add({
+          severity: 'warn', summary: translationKeys['DISCHARGE_STUDY_SAVE_WARNING'],
+          detail: `${translationKeys['PORT']} ${portId+1} ${translationKeys['DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY']}`
+        });
         return;
       }
       this.ngxSpinnerService.show();
       const dichargeStudyDetails = this.portDetails.map((portItems) => {
-        return  this.dischargeStudyDetailsTransformationService.getDischargeStudyAsValue(portItems);
+        return this.dischargeStudyDetailsTransformationService.getDischargeStudyAsValue(portItems);
       })
-      const obj = { dischargeStudyId: this.dischargeStudyId , portList: dichargeStudyDetails};
+      const obj = { dischargeStudyId: this.dischargeStudyId, portList: dichargeStudyDetails };
       const result: IResponse = await this.dischargeStudyDetailsApiService.saveDischargeStudy(obj).toPromise();
-      if(result.responseStatus.status === '200') {
+      if (result.responseStatus.status === '200') {
         this.isDischargeStudyValid(true);
         this.dischargeStudyDetailsTransformationService.setDischargeStudyValidity(true);
         this.messageService.add({ severity: 'success', summary: translationKeys['DISCHARGE_STUDY_SUCCESS'], detail: translationKeys['DISCHARGE_STUDY_SUCCESS_SUMMERY'] });
@@ -957,7 +957,79 @@ export class DischargeStudyComponent implements OnInit {
         this.dischargeStudyForm.reset(value);
         this.ngxSpinnerService.hide();
       }
+    } else {
+      setTimeout(() => {
+        if(document.querySelector('.error-icon')) {
+          document.querySelector('.error-icon').scrollIntoView({ behavior: "smooth"});
+        }
+      })
     }
+  }
+
+  /**
+   * Method to validate loadable quantity
+   *
+   * @memberof DischargeStudyComponent
+  */
+  validateLoadableQuantity() {
+    const invalidPort = [];
+    let backLoadingIndex;
+    this.portDetails.map((item, itemIndex) => {
+      let loadableQuantity = 0;
+      const backLoadingDetailsFormControls = item.backLoadingDetails;
+      backLoadingDetailsFormControls.map((backLoadingItems) => {
+        if(backLoadingItems.isAdd) {
+          backLoadingIndex = itemIndex;
+        }
+        if (backLoadingItems.mt) {
+          loadableQuantity += Number(backLoadingItems.mt.value);
+        }
+      })
+      const cargoDetails = item.cargoDetail;
+      cargoDetails.map((cargoDetailsItems) => {
+        const storedKey = cargoDetailsItems.storedKey.value;
+        let maxQuantity;
+        for (let i = 0; i < this.portDetails.length; i++) {
+          if (maxQuantity === undefined) {
+            this.portDetails[i].cargoDetail.find((cargoDetailDetail, cargoIndex) => {
+              if (cargoDetailDetail.storedKey.value === storedKey) {
+                maxQuantity = 0;
+                maxQuantity = this.quantityPipe.transform(cargoDetailDetail.maxKl.value,QUANTITY_UNIT.KL,QUANTITY_UNIT.MT,cargoDetailDetail.api.value,cargoDetailDetail.temp.value,-1);
+                maxQuantity -= cargoDetailDetail.mode['_value'].id === 2 ? Number(cargoDetailDetail.mt.value) : 0;
+                return;
+              }
+            })
+            if (maxQuantity !== undefined) {
+              this.portDetails[i].backLoadingDetails.find((backLoadingDetail, cargoIndex) => {
+                if (backLoadingDetail.storedKey.value === storedKey) {
+                  maxQuantity = 0;
+                  maxQuantity = backLoadingDetail.mt.value;
+                  return;
+                }
+              })
+            }
+          } else {
+            const value = this.portDetails[i].cargoDetail.find((cargoDetailDetail, cargoIndex) => {
+              if (cargoDetailDetail.storedKey.value === storedKey) {
+                return;
+              }
+            })
+            if(value) {
+              const quantity = value.mode.value.id === 2 ? value.mt.value : 0;
+              maxQuantity = maxQuantity - Number(quantity);
+            }
+          }
+          if(itemIndex === i) { 
+            loadableQuantity += maxQuantity;
+            break;
+          }
+          }
+        })
+        if(this.loadableQuantity < loadableQuantity) {
+          invalidPort.push(itemIndex);
+        }
+    })
+    return {invalidPort: invalidPort , backLoadingIndex: backLoadingIndex};
   }
 
   /**
@@ -966,15 +1038,15 @@ export class DischargeStudyComponent implements OnInit {
    * @memberof DischargeStudyComponent
   */
   isDischargeStudyValid(isValid = false) {
-    let  isAdd;
+    let isAdd;
     this.portDetails.forEach((portDetail) => {
       for (const key in portDetail) {
-        if (Object.prototype.hasOwnProperty.call(portDetail , key)) {
+        if (Object.prototype.hasOwnProperty.call(portDetail, key)) {
           if (key === 'backLoadingDetails') {
-            portDetail[key]?.forEach((item) => { 
-              if(item.isNew && !isValid) {
+            portDetail[key]?.forEach((item) => {
+              if (item.isNew && !isValid) {
                 isAdd = true;
-              } else if(isValid) {
+              } else if (isValid) {
                 item.isNew = false;
               }
             })
@@ -982,7 +1054,7 @@ export class DischargeStudyComponent implements OnInit {
         }
       }
     })
-    if(this.dischargeStudyForm.valid && !isAdd) {
+    if (this.dischargeStudyForm.valid && !isAdd) {
       this.dischargeStudyDetailsTransformationService.setDischargeStudyValidity(true);
     } else {
       this.dischargeStudyDetailsTransformationService.setDischargeStudyValidity(false);
@@ -996,11 +1068,11 @@ export class DischargeStudyComponent implements OnInit {
    * @param {number} index
    * @memberof DischargeStudyComponent
   */
-  onChange(event: any, field: string , index: number) {
+  onChange(event: any, field: string, index: number) {
     const portDetails = [...this.portDetails];
-    if(field === 'cow') {
-      portDetails[index].cow =  event.value;
-      if(event.value.id === 1) {
+    if (field === 'cow') {
+      portDetails[index].cow = event.value;
+      if (event.value.id === 1) {
         portDetails[index].tank = [];
         const tankControl = this.getFeild(index, 'tank');
         tankControl.setValue(null);
@@ -1024,7 +1096,7 @@ export class DischargeStudyComponent implements OnInit {
     } else {
       const tankControl = this.getFeild(index, field);
       portDetails[index][field] = tankControl.value;
-    } 
+    }
     this.portDetails = [...portDetails];
     this.isDischargeStudyValid();
   }

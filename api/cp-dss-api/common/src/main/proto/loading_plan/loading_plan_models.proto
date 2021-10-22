@@ -496,6 +496,7 @@ message LoadingPlanStabilityParameters {
   int32 time = 9;
   string meanDraft = 10;
   string list = 11;
+  string gomValue = 12;
 }
 
 message LoadingPlanTankDetails {

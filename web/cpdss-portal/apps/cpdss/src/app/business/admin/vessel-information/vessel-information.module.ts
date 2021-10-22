@@ -7,6 +7,7 @@ import { TooltipModule } from 'primeng/tooltip';
 
 import { DatatableModule } from './../../../shared/components/datatable/datatable.module';
 import { PermissionDirectiveModule } from './../../../shared/directives/permission/permission-directive.module';
+import { LengthConverterModule } from './../../../shared/pipes/length-converter/length-converter.module';
 import { VesselInformationRoutingModule } from './vessel-information-routing.module';
 import { VesselInformationComponent } from './vessel-information.component';
 import { VesselManagementComponent } from './Vessel-management/vessel-management/vessel-management.component';
@@ -30,6 +31,7 @@ import { BunkeringLayoutModule } from '../../core/components/bunkering-layout/bu
     PermissionDirectiveModule,
     TableModule,
     TooltipModule,
+    LengthConverterModule,
     CargoTankLayoutModule,
     BallastLayoutModule,
     BunkeringLayoutModule,

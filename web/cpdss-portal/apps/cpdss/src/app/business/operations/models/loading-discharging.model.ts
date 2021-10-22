@@ -53,10 +53,49 @@ export interface IDischargingInformationResponse {
   loadedCargos: ICargo[];
   dischargeStudyName: string;
   dischargeSlopTanksFirst?: boolean;
-  dischargeCommingledCargoSeperately?: boolean;
+  dischargeCommingledCargoSeparately?: boolean;
 }
 
+  /**
+   * Interface for discharging info post data
+   *
+   * @export
+   * @interface IDischargingInformationPostData
+   */
+  export interface IDischargingInformationPostData {
+    dischargeDetails: ILoadingDischargingDetails;
+    dischargeRates: IDischargingRates;
+    dischargeStages: ILoadingDischargingStages;
+    cargoVesselTankDetails: ICargoVesselTankDetailsResponse;
+    dischargeInfoId: number;
+    synopticTableId: number;
+    isDischargeInfoComplete: boolean;
+    isDischargeInstructionsComplete: boolean,
+    isDischargeSequenceGenerated: boolean,
+    isDischargePlanGenerated: boolean
+    cowPlan: ICOWDetailsResponse;
+    postDischargeStageTime: IPostDischargeStageTime;
+    loadedCargos: ICargo[];
+    dischargeStudyName: string;
+    dischargeSlopTanksFirst?: boolean;
+    dischargeCommingledCargoSeparately?: boolean;
+    dischargingMachineries?: Array<IDischargingMachinesInUse>;
+    dischargingBerths: IBerth[];
+    dischargingDelays: ILoadingDischargingDelays[];
+    cargoToBeDischarged: ICargoToBeDischarged;
+  }
 
+  /**
+   * Interface for cargo to be discharged details
+   *
+   * @export
+   * @interface ICargoToBeDischarged
+   */
+  export interface ICargoToBeDischarged {
+    dischargeSlopTanksFirst?: boolean;
+    dischargeCommingledCargoSeparately?: boolean;
+    dischargeQuantityCargoDetails?: ILoadedCargoResponse[];
+  }
 
 
 /**
@@ -503,7 +542,7 @@ export interface IDischargingInformation {
   machineryInUses: IMachineryInUses;
   dischargeStudyName: string;
   dischargeSlopTanksFirst?: boolean;
-  dischargeCommingledCargoSeperately?: boolean;
+  dischargeCommingledCargoSeparately?: boolean;
 }
 
 /**
@@ -627,9 +666,9 @@ export interface ICOWDetails {
 export interface ICOWDetailsResponse {
   cowOption: number;
   cowPercentage: number;
-  topCOWTanks: ITank[];
-  bottomCOWTanks: ITank[];
-  allCOWTanks: ITank[];
+  topCow: number[];
+  bottomCow: number[];
+  allCow: number[];
   cargoCow: ITanksWashingWithDifferentCargoResponse[];
   cowStart: string;
   cowEnd: string;
@@ -639,7 +678,7 @@ export interface ICOWDetailsResponse {
   needFreshCrudeStorage: boolean;
   needFlushingOil: boolean;
   washTanksWithDifferentCargo: boolean;
-  totalDuration: string;
+  totalDuration?: string;
 }
 
 /**

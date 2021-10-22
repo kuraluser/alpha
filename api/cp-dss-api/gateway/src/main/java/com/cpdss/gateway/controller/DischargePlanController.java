@@ -5,6 +5,7 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
@@ -32,6 +33,7 @@ import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsSaveRespons
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsStatus;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsUpdateRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
+import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatus;
 import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatusRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
@@ -1145,6 +1147,33 @@ public class DischargePlanController {
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
           HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @PostMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-info-status")
+  public LoadingInfoAlgoResponse dischargingPlanStatus(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable Long vesselId,
+      @PathVariable Long voyageId,
+      @PathVariable Long infoId,
+      @RequestBody AlgoStatusRequest request)
+      throws CommonRestException {
+    try {
+      log.info("update discharging info status api for vessel {}", vesselId);
+      return dischargeInformationService.saveDischargingInfoStatus(
+          request, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in dischargingInfoStatus ", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in dischargingInfoStatus ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
           e.getMessage(),
           e);
     }

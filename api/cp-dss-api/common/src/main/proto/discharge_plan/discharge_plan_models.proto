@@ -377,3 +377,12 @@ message DischargeInfoStatusReply {
   string dischargeInfoStatusLastModifiedTime = 3;
   ResponseStatus responseStatus = 4;
 }
+
+message DischargePlanStowageDetailsRequest{
+  int64 lastLoadingPortRotationId = 1;
+}
+
+message DischargePlanStowageDetailsResponse {
+  ResponseStatus responseStatus = 1;
+  repeated LoadingPlanTankDetails dischargingPlanTankDetails = 2;
+}

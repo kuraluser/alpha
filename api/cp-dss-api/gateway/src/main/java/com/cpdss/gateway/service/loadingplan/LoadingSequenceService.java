@@ -557,7 +557,10 @@ public class LoadingSequenceService {
     StabilityParam sf = new StabilityParam();
     sf.setName("sf");
     sf.setData(new ArrayList<>());
-    stabilityParams.addAll(Arrays.asList(foreDraft, aftDraft, trim, ukc, gm, sf, bm));
+    StabilityParam gom = new StabilityParam();
+    gom.setName("gomValue");
+    gom.setData(new ArrayList<>());
+    stabilityParams.addAll(Arrays.asList(foreDraft, aftDraft, trim, ukc, gm, sf, bm, gom));
   }
 
   private void addCargoStage(
@@ -679,6 +682,14 @@ public class LoadingSequenceService {
                           .add(
                               Arrays.asList(
                                   portEta + (param.getTime() * 60 * 1000), param.getTrim())));
+          stabilityParams.stream()
+              .filter(stabilityParam -> stabilityParam.getName().equals("gomValue"))
+              .forEach(
+                  gom ->
+                      gom.getData()
+                          .add(
+                              Arrays.asList(
+                                  portEta + (param.getTime() * 60 * 1000), param.getGomValue())));
         });
   }
 

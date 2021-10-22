@@ -82,4 +82,9 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
 
   boolean existsByIdAndPlanningTypeXIdAndVoyageAndIsActive(
       long id, int planningTypeId, Voyage voyage, boolean b);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE LoadableStudy LS SET LS.isObqComplete = ?1 WHERE id = ?2")
+  public void updateOBQStatusById(Boolean isOBQCompleted, Long id);
 }

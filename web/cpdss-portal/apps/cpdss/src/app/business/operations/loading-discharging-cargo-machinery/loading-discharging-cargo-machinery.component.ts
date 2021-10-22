@@ -169,7 +169,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
       group?.columns?.forEach(pump => {
         _pumps.push(this.fb.group({
           isUsing: this.fb.control(pump?.isUsing),
-          capacity: this.fb.control(pump?.capacity, [Validators.required, Validators.min(1), Validators.max(pump?.pumpCapacity)])
+          capacity: this.fb.control({ value: pump?.capacity, disabled: !pump?.isUsing }, [Validators.required, Validators.min(1), Validators.max(pump?.pumpCapacity)])
         }));
       });
     });
@@ -221,8 +221,10 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   *
   * @memberof LoadingDischargingCargoMachineryComponent
   */
-  onUse(event, column) {
+  onUse(event, column, key: string, typeIndex: number, index: number) {
     column.isUsing = event.target.checked;
+    const formControl = this.field(this.getFormGroupName(key, typeIndex, index), 'capacity', key);
+
     if (column?.isUsing) {
       const info = this.operation === OPERATIONS.LOADING ? { loadingInfoId: this.loadingInfoId } : { dischargeInfoId: this.dichargingInfoId };
       const machineInUse: ILoadingMachinesInUse | IDischargingMachinesInUse = {
@@ -234,8 +236,8 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
         pumpTypeId: column?.pumpTypeId !== undefined ? column?.pumpTypeId : '',
         ...info
       }
-      this.machineryInUses.loadingDischargingMachinesInUses.push(machineInUse)
-      this.updatemachineryInUses.emit(this.machineryInUses.loadingDischargingMachinesInUses);
+      this.machineryInUses.loadingDischargingMachinesInUses.push(machineInUse);
+      formControl.enable();
     } else {
       const machineTypeId = column?.machineType ?? column?.machineTypeId;
       this.machineryInUses?.loadingDischargingMachinesInUses?.map(machineUse => {
@@ -243,8 +245,9 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
           machineUse.isUsing = false;
         }
       });
-      this.updatemachineryInUses.emit(this.machineryInUses.loadingDischargingMachinesInUses);
+      formControl.disable();
     }
+    this.updatemachineryInUses.emit(this.machineryInUses.loadingDischargingMachinesInUses);
     this.isMachineryValid(false);
   }
 
@@ -257,7 +260,13 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
     let bottomLine;
     let manifold;
     let vesselPump;
-    let cargoPump, ballastPump, strippingPump, gsPump;
+
+    const hasCargoPump = this.machineryInUses?.vesselPumps?.some(pump => Number(pump.pumpTypeId) === PUMP_TYPES.CARGO_PUMP);
+    const hasBallastPump = this.machineryInUses?.vesselPumps?.some(pump => Number(pump.pumpTypeId) === PUMP_TYPES.BALLAST_PUMP);
+    const hasStrippingPump = this.machineryInUses?.vesselPumps?.some(pump => Number(pump.pumpTypeId) === PUMP_TYPES.STRIPPING_PUMP);
+    const hasGsPump = this.machineryInUses?.vesselPumps?.some(pump => Number(pump.pumpTypeId) === PUMP_TYPES.GS_PUMP);
+
+    let { cargoPump, ballastPump, strippingPump, gsPump } = { cargoPump: !hasCargoPump, ballastPump: !hasBallastPump, strippingPump: !hasStrippingPump, gsPump: !hasGsPump };
 
     for (let index = 0; index < this.machineryInUses?.loadingDischargingMachinesInUses?.length; index++) {
       const machineUse = this.machineryInUses?.loadingDischargingMachinesInUses[index];
@@ -361,7 +370,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
    */
   fieldError(formGroupIndex: number, formControlName: string, formArrayName: string): ValidationErrors {
     const formControl = this.field(formGroupIndex, formControlName, formArrayName);
-    return formControl?.invalid && (formControl?.dirty || formControl?.touched) ? formControl?.errors : null;
+    return formControl?.invalid ? formControl?.errors : null;
   }
 
   /**
@@ -375,5 +384,15 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
     return formControl;
   }
 
+  /**
+   * Method to get formgroup index
+   * @param {string} formControlName
+   * @return {FormControl}
+   * @memberof LoadingDischargingCargoMachineryComponent
+  */
+  getFormGroupName(key: string, typeIndex: number, index: number) {
+    const totalRowsAbove = this.machineries[key].reduce((sum, item, i) => sum += i < typeIndex ? item?.columns?.length : 0, 0);
+    return index + totalRowsAbove;
+  }
 
 }

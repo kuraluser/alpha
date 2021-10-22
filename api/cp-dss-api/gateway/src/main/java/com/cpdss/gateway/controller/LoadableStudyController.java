@@ -12,6 +12,8 @@ import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.service.AlgoErrorService;
 import com.cpdss.gateway.service.LoadableStudyCargoService;
 import com.cpdss.gateway.service.LoadableStudyService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,10 +29,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.websocket.server.PathParam;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -732,7 +730,8 @@ public class LoadableStudyController {
       log.info(
           "saveLoadablePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
       String requestJsonString = new ObjectMapper().writeValueAsString(requestJson);
-      LoadablePlanRequest loadablePlanRequest =    new ObjectMapper()
+      LoadablePlanRequest loadablePlanRequest =
+          new ObjectMapper()
               .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
               .readValue(requestJsonString, LoadablePlanRequest.class);
       return loadableStudyService.saveAlgoPatterns(
@@ -1144,13 +1143,16 @@ public class LoadableStudyController {
 
   @GetMapping(
       value =
-          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/on-board-quantities")
+          "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/"
+              + "planingType/{planingTypeId}/on-board-quantities")
   public OnBoardQuantityResponse getOnBoardQuantites(
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudyId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long planingTypeId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
@@ -1164,7 +1166,12 @@ public class LoadableStudyController {
           loadableStudyId,
           portId);
       return this.loadableStudyService.getOnBoardQuantites(
-          vesselId, voyageId, loadableStudyId, portId, headers.getFirst(CORRELATION_ID_HEADER));
+          vesselId,
+          voyageId,
+          loadableStudyId,
+          portId,
+          planingTypeId,
+          headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching on board quantities", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

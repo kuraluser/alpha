@@ -94,8 +94,8 @@ export class FleetMapComponent implements OnInit {
         await this.initMap(this.vessels[0]?.id);
         await this.initPortPopupOnMap();
       }
-      this.ngxSpinnerService.hide();
     }
+    this.ngxSpinnerService.hide();
   }
 
   /**

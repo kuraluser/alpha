@@ -421,7 +421,11 @@ public class LoadablePatternService {
           LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, request.getProcesssId(), true);
     }
 
-    if (enableCommunication && !request.getHasLodicator() && !env.equals("ship")) {
+    // Communicate data to ship
+    // cases : pattern generated without loadiator and any error
+    if (enableCommunication
+        && !env.equals("ship")
+        && (!request.getHasLodicator() || request.getAlgoErrorsCount() > 0)) {
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
               request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
@@ -469,6 +473,14 @@ public class LoadablePatternService {
           lpd.toBuilder().setLoadablePatternId(loadablePattern.getId()).build());
     }
 
+    // Refresh Algo object
+    algoCallBackRequestObj =
+        algoCallBackRequestObj
+            .toBuilder()
+            .clearLoadablePlanDetails()
+            .addAllLoadablePlanDetails(loadablePlanDetailsList)
+            .build();
+
     JsonData jsonData =
         jsonDataService.getJsonData(
             loadableStudyId, LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
@@ -490,11 +502,7 @@ public class LoadablePatternService {
     }
     jsonDataRepository.save(jsonData);
 
-    return algoCallBackRequestObj
-        .toBuilder()
-        .clearLoadablePlanDetails()
-        .addAllLoadablePlanDetails(loadablePlanDetailsList)
-        .build();
+    return algoCallBackRequestObj;
   }
 
   private List<LoadablePattern> savePatternDetails(

@@ -2841,6 +2841,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
 	    List<VesselTank> vesselTanks =
 	            this.vesselTankRepository.findByVesselAndTankCategoryInAndIsActive(
 	                vessel, tankCategoryEntities, true);
+	    vesselTanks.forEach(vesselTank -> vesselTank.setTankOrder(Optional.ofNullable(vesselTank.getTankOrder()).orElse(0)));
 	    Collections.sort(
 	    		vesselTanks, Comparator.comparing(VesselTank::getTankOrder));
 	    for(VesselTank tank:vesselTanks) {

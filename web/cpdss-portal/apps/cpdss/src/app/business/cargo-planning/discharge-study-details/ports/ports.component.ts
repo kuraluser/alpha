@@ -110,7 +110,7 @@ export class PortsComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     await this.getTimeZoneList();
     this.portEtaEtdPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargeStudyPortETAETD'], false);
-    this.columns = this.dischargeStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.portEtaEtdPermission, this.dischargeStudy?.statusId, this.voyage?.statusId);
+    this.columns = await this.dischargeStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.portEtaEtdPermission, this.dischargeStudy?.statusId, this.voyage?.statusId);
     this.initSubscriptions();
     this.getPortDetails();
   }
@@ -262,6 +262,7 @@ export class PortsComponent implements OnInit, OnDestroy {
   private initPortsFormGroup(ports: IDischargeStudyPortsValueObject, index: number) {
     const required = this.dischargeStudyDetailsTransformationService.isEtaEtdViewable(this.portEtaEtdPermission, ports.isAdd);
 
+    const minAirDraft = Number(this.dischargeStudyDetailsTransformationService.getMinAirDraft().toFixed(2));
     return this.fb.group({
       port: this.fb.control(ports.port.value, [Validators.required, portDuplicationValidator('port')]),
       portOrder: this.fb.control(ports.portOrder),
@@ -269,7 +270,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       operation: this.fb.control(ports.operation.value, [Validators.required, portDuplicationValidator('operation')]),
       seaWaterDensity: this.fb.control(ports.seaWaterDensity.value, [Validators.required, Validators.min(0), numberValidator(4, 1), seaWaterDensityRangeValidator()]),
       maxDraft: this.fb.control(ports.maxDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
-      maxAirDraft: this.fb.control(ports.maxAirDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
+      maxAirDraft: this.fb.control(ports.maxAirDraft.value, [Validators.required, Validators.min(minAirDraft), numberValidator(2, 2)]),
       eta: this.fb.control({ value: this.dateStringToDate(ports.eta.value), disabled: !required }, this.getValidators('eta', index, required)),
       etd: this.fb.control({ value: this.dateStringToDate(ports.etd.value), disabled: !required }, this.getValidators('etd', index, required))
     });

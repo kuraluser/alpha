@@ -74,7 +74,7 @@
               </label>
               <label class="checkbox-custom pr-20">{{'DISCHARGING_DISCHARGE_COMMINGLED_SEPARATELY'
                 | translate}}
-                <input type="checkbox" formControlName="dischargeCommingledCargoSeperately"
+                <input type="checkbox" formControlName="dischargeCommingledCargoSeparately"
                   (change)="onCommingledSeperatelyCheckboxChange($event)">
                 <span class="checkmark"></span>
               </label>
@@ -153,7 +153,7 @@
         [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
         [loadableQuantityCargo]="dischargingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails"
         [loadingDischargingSequences]="dischargingInformationData?.dischargeSequences"
-        [dischargeInfoId]="dischargeInfoId" (updateLoadingDelays)="onUpdateDischargingDelays($event)">
+        [dischargeInfoId]="dischargeInfoId" (updateLoadingDischargingDelays)="onUpdateDischargingDelays($event)">
       </cpdss-portal-loading-discharging-manage-sequence>
       <div class="row">
         <div class="col">

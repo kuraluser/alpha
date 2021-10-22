@@ -381,6 +381,8 @@ public class LoadingPlanBuilderService {
     stabilityParameters.setList(
         StringUtils.isEmpty(param.getList()) ? null : new BigDecimal(param.getList()));
     stabilityParameters.setTime(param.getTime());
+    stabilityParameters.setGomValue(
+        param.getGomValue().isEmpty() ? null : new BigDecimal(param.getGomValue()));
   }
 
   /**

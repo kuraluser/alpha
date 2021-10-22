@@ -27,4 +27,6 @@ public class LoadingSequenceStabilityParam {
 
   @JsonAlias("SF")
   private String shearForce;
+
+  private String gomValue;
 }

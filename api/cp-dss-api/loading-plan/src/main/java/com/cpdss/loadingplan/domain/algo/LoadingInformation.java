@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.domain.algo;
 
 import com.cpdss.common.jsonbuilder.CPDSSJsonParser;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 import lombok.Data;
 
@@ -23,6 +24,7 @@ import lombok.Data;
 
 @Data
 @CPDSSJsonParser
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoadingInformation {
 
   private Long loadingInfoId;

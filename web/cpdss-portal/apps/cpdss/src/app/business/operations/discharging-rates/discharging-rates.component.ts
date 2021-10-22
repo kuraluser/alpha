@@ -111,7 +111,7 @@ export class DischargingRatesComponent implements OnInit {
    */
   fieldError(formControlName: string): ValidationErrors {
     const formControl = this.field(formControlName);
-    return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
+    return formControl?.invalid ? formControl.errors : null;
   }
 
 

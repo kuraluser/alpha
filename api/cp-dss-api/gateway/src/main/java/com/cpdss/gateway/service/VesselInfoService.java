@@ -1341,6 +1341,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
         .ifPresent(vesselParticulars::setCapacityPerPump);
     Optional.ofNullable(reply.getShipManifold()).ifPresent(vesselParticulars::setShipManifold);
     Optional.ofNullable(reply.getSummerDraft()).ifPresent(vesselParticulars::setSummerDraft);
+    Optional.ofNullable(reply.getFreshMLD()).ifPresent(vesselParticulars::setFreshWaterDraft);
     Optional.ofNullable(reply.getTropicalDraft()).ifPresent(vesselParticulars::setTropicalDraft);
     Optional.ofNullable(reply.getSummerDeadweight())
         .ifPresent(vesselParticulars::setSummerDeadweight);

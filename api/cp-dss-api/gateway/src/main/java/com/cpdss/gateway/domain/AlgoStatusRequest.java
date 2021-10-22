@@ -9,4 +9,5 @@ public class AlgoStatusRequest {
   private String processId;
   private Long loadableStudyStatusId;
   private Long loadingInfoStatusId;
+  private Long dischargingInfoStatusId;
 }

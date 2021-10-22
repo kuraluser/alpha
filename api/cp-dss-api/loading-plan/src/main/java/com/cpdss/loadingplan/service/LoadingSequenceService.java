@@ -89,7 +89,7 @@ public class LoadingSequenceService {
 
     String startDate = this.getStartDate(loadingInfoOpt.get().getPortRotationXId());
     builder.setStartDate(startDate);
-    builder.setInterval(loadingInfoOpt.get().getStageOffset().getStageOffsetVal());
+    builder.setInterval(loadingInfoOpt.get().getStageDuration().getDuration());
     builder.setVesselId(loadingInfoOpt.get().getVesselXId());
     builder.setVoyageId(loadingInfoOpt.get().getVoyageId());
     builder.setPortId(loadingInfoOpt.get().getPortXId());
@@ -129,6 +129,8 @@ public class LoadingSequenceService {
           Optional.ofNullable(param.getList())
               .ifPresent(list -> paramBuilder.setList(String.valueOf(list)));
           Optional.ofNullable(param.getTime()).ifPresent(paramBuilder::setTime);
+          Optional.ofNullable(param.getGomValue())
+              .ifPresent(value -> paramBuilder.setGomValue(value.toString()));
           builder.addLoadingSequenceStabilityParameters(paramBuilder.build());
         });
   }

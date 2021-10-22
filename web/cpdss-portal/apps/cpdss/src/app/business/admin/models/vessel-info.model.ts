@@ -6,13 +6,13 @@ import { IShipBallastTank, IShipBunkerTank, IShipCargoTank } from "../../core/mo
  */
 export interface IVesselList {
     vesselId: number;
-    vesselName: string;
+    name: string;
     owner?: string;
     signalLetter?: string;
     officialNumber?: string;
-    vesselType: string;
+    typeOfShip: string;
     builder: string;
-    dateOfLaunch: string;
+    dateOfLaunching: string;
 }
 
 /**
@@ -22,20 +22,6 @@ export interface IVesselListResponse {
     responseStatus: IResponseStatus;
     vesselsInfo: IVesselList[];
     totalElements: number;
-}
-
-/**
- * Interface for Vessel details
- */
-export interface IVesselDetails {
-    vesselId: number;
-    vesselName: string;
-    vesselImageUrl: string;
-    countryFlagUrl: string;
-    imoNumber: number;
-    generalInfo: IVesselGeneral;
-    vesselDimesnsions: IVesselDimensions;
-    draftDisplacementDeadweight: IVesselDraftDisplacementDeadweight;
 }
 
 /**
@@ -51,7 +37,7 @@ export interface IVesselGeneral {
     dateOfLaunch: string;
     dateOfDelivery: string;
     navigationArea: string;
-    class: string;
+    vesselClass: string;
 }
 
 /**
@@ -83,7 +69,14 @@ export interface IVesselDraftDisplacementDeadweight {
  */
 export interface IVesselDetailsResponse {
     responseStatus: IResponseStatus;
-    vesselDetails: IVesselDetails;
+    vesselId: number;
+    vesselName: string;
+    vesselImageUrl: string;
+    countryFlagUrl: string;
+    imoNumber: number;
+    generalInfo: IVesselGeneral;
+    vesselDimesnsions: IVesselDimensions;
+    draftDisplacementDeadweight: IVesselDraftDisplacementDeadweight;
     bunkerRearTanks: IShipBunkerTank[][];
     bunkerTanks: IShipBunkerTank[][];
     ballastFrontTanks: IShipBallastTank[][];
@@ -100,8 +93,8 @@ export interface IVesselInfoDataStateChange {
     pageNo: number;
     sortBy: string;
     orderBy: string;
-    vesselName: string;
-    vesselType: string;
+    name: string;
+    typeOfShip: string;
     builder: string;
-    dateOfLaunch: string;
+    dateOfLaunching: string;
 }

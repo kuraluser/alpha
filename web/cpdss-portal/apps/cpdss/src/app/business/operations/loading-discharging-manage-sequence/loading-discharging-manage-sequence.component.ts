@@ -246,7 +246,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     const formGroup =  this.fb.group({
       id: loadingDischargingDelay.id,
       reasonForDelay: this.fb.control(loadingDischargingDelay.reasonForDelay.value, initialDelay ? [Validators.required] : []),
-      duration: this.fb.control(loadingDischargingDelay.duration.value, [Validators.required, durationValidator(24, 59)]),
+      duration: this.fb.control(loadingDischargingDelay.duration.value, [Validators.required, durationValidator(24, 0)]),
       cargo: this.fb.control(loadingDischargingDelay.cargo.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required] : [Validators.required, loadingCargoDuplicateValidator()]),
       quantity: this.fb.control(loadingDischargingDelay.quantity?.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required, Validators.min(min), cargoQuantityValidator(), numberValidator(quantityDecimal, 7, false)] : [Validators.required]),
       colorCode: this.fb.control(loadingDischargingDelay.colorCode)
@@ -293,6 +293,8 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       this.updateField(index, 'quantity', this.loadingDischargingDelays[index]['quantity'].value);
       this.updateField(index, 'colorCode', event.data.cargo.value.colorCode);
       this.updateFormValidity();
+    } else {
+      this.loadingDischargingDelays[index][event.field].value = event.data[event.field].value;
     }
     if (form.valid) {
       const loadingDischargingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargeInfoId, this.operation  , this.listData);
@@ -435,8 +437,8 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     this.loadingDischargingSequenceForm.updateValueAndValidity();
     if (event.index === 0) {
       this.addInitialDelay = false;
-      if (this.operation === OPERATIONS.DISCHARGING) {
-        dataTableControl.at(0).get('sequenceNo').setValue(1);
+      if (this.operation === OPERATIONS.DISCHARGING && this.loadingDischargingDelays?.length) {
+        dataTableControl?.at(0)?.get('sequenceNo')?.setValue(1);
         this.loadingDischargingDelays[0].sequenceNo.value = 1;
       }
     }
@@ -495,10 +497,12 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       }
       return false;
     } else if(this.operation === OPERATIONS.DISCHARGING) {
-      const totalQuantitySequence = dataTableControl?.value?.reduce((total, sequence) => total + Number(sequence.quantity),0);
-      const totalLoadedQuantity = this.loadableQuantityCargo?.reduce((total, cargo) => total + Number(cargo.shipFigure) ,0);
+      const totalQuantitySequence = dataTableControl?.value?.reduce((total, sequence) => total + Number(sequence.quantity), 0);
+      const totalLoadedQuantity = this.loadableQuantityCargo?.reduce((total, cargo) => total + Number(this.quantityPipe.transform(cargo.shipFigure, this.currentQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo.estimatedAPI, cargo.estimatedTemp)), 0);
       if(totalLoadedQuantity !== totalQuantitySequence && showToaster) {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_ERROR'], detail: translationKeys['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_QUANTITY_SUMMERY'] });
+      } else {
+        return true;
       }
     } else {
       this.loadingDischargingTransformationService.isCargoAdded = true;

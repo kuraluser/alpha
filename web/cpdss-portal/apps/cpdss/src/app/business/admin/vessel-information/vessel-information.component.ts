@@ -75,7 +75,7 @@ export class VesselInformationComponent implements OnInit, OnDestroy {
           this.getVesselMasterList$.next();
         }
         this.vesselList = vesselInfo?.map(vessel => {
-          vessel.dateOfLaunch = vessel?.dateOfLaunch && this.timeZoneTransformationService.formatDateTime(vessel?.dateOfLaunch, formatOptions);
+          vessel.dateOfLaunching = vessel?.dateOfLaunching && this.timeZoneTransformationService.formatDateTime(vessel?.dateOfLaunching, formatOptions);
           return vessel;
         });
         this.loading = false;
@@ -106,10 +106,10 @@ export class VesselInformationComponent implements OnInit, OnDestroy {
       pageSize: event.paginator.rows,
       sortBy: event.sort.sortField,
       orderBy: event.sort.sortOrder.toUpperCase(),
-      vesselName: event.filter?.vesselName,
-      vesselType: event.filter?.vesselType,
+      name: event.filter?.name,
+      typeOfShip: event.filter?.typeOfShip,
       builder: event.filter?.builder,
-      dateOfLaunch: event.filter?.dateOfLaunch
+      dateOfLaunching: event.filter?.dateOfLaunching
     };
     this.loading = true;
     this.getVesselMasterList$.next();

@@ -369,6 +369,7 @@ export class LoadablePlanTransformationService {
       },
       {
         field: 'rdgUllage',
+        fieldClass: 'ullage-column',
         header: 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG',
         fieldPlaceholder: 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_PLACEHOLDER',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,

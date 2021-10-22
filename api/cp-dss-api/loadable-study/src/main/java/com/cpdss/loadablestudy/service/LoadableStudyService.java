@@ -101,7 +101,6 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockin
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.Utils;
-import com.cpdss.loadablestudy.domain.ArrivalDepartureConditionJson;
 import com.cpdss.loadablestudy.domain.LoadablePlanDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadableStudyAlgoJson;
@@ -146,7 +145,6 @@ import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
 import java.io.IOException;
@@ -432,8 +430,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               port -> {
                 if (port.isActive()) {
                   ohqPortsBuilder.setId(port.getId());
-                  Optional.ofNullable(port.getIsPortRotationOhqComplete())
-                      .ifPresent(ohqPortsBuilder::setIsPortRotationOhqComplete);
+                  ohqPortsBuilder.setIsPortRotationOhqComplete(
+                      port.getIsPortRotationOhqComplete() == null
+                          ? false
+                          : port.getIsPortRotationOhqComplete());
                   List<OnHandQuantity> onHandQuantities =
                       this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
                           entity, port.getPortXId(), true);
@@ -542,7 +542,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           entity.setIsCargoNominationComplete(false);
           entity.setIsPortsComplete(false);
           entity.setIsOhqComplete(false);
-          entity.setIsObqComplete(true);
+          entity.setIsObqComplete(false);
           entity.setIsDischargePortsComplete(false);
         } else {
           listOfExistingLSRules = loadableStudyRuleService.getLoadableStudyRules(request);
@@ -1239,8 +1239,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   /** Get list of patterns for a loadable study */
   @Override
   public void saveLoadablePatterns(
-          LoadablePatternAlgoRequest request,
-           StreamObserver<AlgoReply> responseObserver) {
+      LoadablePatternAlgoRequest request, StreamObserver<AlgoReply> responseObserver) {
     AlgoReply.Builder builder = AlgoReply.newBuilder();
     try {
       loadablePatternService.saveLoadablePatterns(request, builder);
@@ -2940,8 +2939,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         String algoJsonString = jsonData.getJsonData();
         LoadableStudyAlgoJson algoJson =
             new ObjectMapper()
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .readValue(algoJsonString, LoadableStudyAlgoJson.class);
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .readValue(algoJsonString, LoadableStudyAlgoJson.class);
         Optional<LoadablePlanDetailsAlgoJson> loadablePlanDetails =
             algoJson.getLoadablePlanDetails().stream()
                 .filter(
@@ -2949,20 +2948,16 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         loadablePlanDetailsAlgoJson.getCaseNumber().equals(request.getCaseNumber()))
                 .findFirst();
         if (loadablePlanDetails.isPresent()) {
-          for( LoadablePlanPortWiseDetailsAlgoJson portWiseDetails:loadablePlanDetails.get().getLoadablePlanPortWiseDetails()){
-                    Optional<com.cpdss.loadablestudy.entity.LoadableStudyPortRotation>
-                        portRotationDetail =
-                            this.loadableStudyPortRotationRepository.findById(
-                                portWiseDetails.getPortRotationId());
-                    if (portRotationDetail.isPresent()
-                        && portRotationDetail
-                            .get()
-                            .getOperation()
-                            .getId()
-                            .equals(LOADING_OPERATION_ID)) {
-                      departureCondition = portWiseDetails.getDepartureCondition();
-                    }
-                  }
+          for (LoadablePlanPortWiseDetailsAlgoJson portWiseDetails :
+              loadablePlanDetails.get().getLoadablePlanPortWiseDetails()) {
+            Optional<com.cpdss.loadablestudy.entity.LoadableStudyPortRotation> portRotationDetail =
+                this.loadableStudyPortRotationRepository.findById(
+                    portWiseDetails.getPortRotationId());
+            if (portRotationDetail.isPresent()
+                && portRotationDetail.get().getOperation().getId().equals(LOADING_OPERATION_ID)) {
+              departureCondition = portWiseDetails.getDepartureCondition();
+            }
+          }
         }
       }
       ObjectMapper mapper = new ObjectMapper();
