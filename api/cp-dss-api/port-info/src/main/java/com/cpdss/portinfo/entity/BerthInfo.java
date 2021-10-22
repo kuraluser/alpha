@@ -61,4 +61,10 @@ public class BerthInfo extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "port_xid")
   private PortInfo portInfo;
+  
+  @Column(name = "under_keel_clearence")
+  private String underKeelClearance;
+  
+  @Column(name = "berth_chart_datum_depth")
+  private BigDecimal berthDatumDepth;
 }

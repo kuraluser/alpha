@@ -100,6 +100,10 @@ message PortDetail {
 	string underKeelClearance = 25;
 	string lat = 26;
 	string lon = 27;
+	repeated BerthDetail berthDetails = 28;
+	string tideHeightFrom = 29;
+	string tideHeightTo = 30;
+	string maxPermissibleDraft = 31;
 }
 
 message PortReply {
@@ -157,5 +161,8 @@ message BerthDetail{
 	string maxDraft = 11;
 	string lineDisplacement = 13;
 	string hoseConnection = 14;
+	string maxDwt = 15;
+	string ukc = 16;
+	string berthDatumDepth = 17;
 }
 // <------ end loading plan, by john -------->

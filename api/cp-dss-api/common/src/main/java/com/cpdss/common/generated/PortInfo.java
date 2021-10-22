@@ -5670,6 +5670,57 @@ public final class PortInfo {
      * @return The bytes for lon.
      */
     com.google.protobuf.ByteString getLonBytes();
+
+    /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+    java.util.List<com.cpdss.common.generated.PortInfo.BerthDetail> getBerthDetailsList();
+    /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+    com.cpdss.common.generated.PortInfo.BerthDetail getBerthDetails(int index);
+    /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+    int getBerthDetailsCount();
+    /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+    java.util.List<? extends com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder>
+        getBerthDetailsOrBuilderList();
+    /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+    com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder getBerthDetailsOrBuilder(int index);
+
+    /**
+     * <code>string tideHeightFrom = 29;</code>
+     *
+     * @return The tideHeightFrom.
+     */
+    java.lang.String getTideHeightFrom();
+    /**
+     * <code>string tideHeightFrom = 29;</code>
+     *
+     * @return The bytes for tideHeightFrom.
+     */
+    com.google.protobuf.ByteString getTideHeightFromBytes();
+
+    /**
+     * <code>string tideHeightTo = 30;</code>
+     *
+     * @return The tideHeightTo.
+     */
+    java.lang.String getTideHeightTo();
+    /**
+     * <code>string tideHeightTo = 30;</code>
+     *
+     * @return The bytes for tideHeightTo.
+     */
+    com.google.protobuf.ByteString getTideHeightToBytes();
+
+    /**
+     * <code>string maxPermissibleDraft = 31;</code>
+     *
+     * @return The maxPermissibleDraft.
+     */
+    java.lang.String getMaxPermissibleDraft();
+    /**
+     * <code>string maxPermissibleDraft = 31;</code>
+     *
+     * @return The bytes for maxPermissibleDraft.
+     */
+    com.google.protobuf.ByteString getMaxPermissibleDraftBytes();
   }
   /** Protobuf type {@code PortDetail} */
   public static final class PortDetail extends com.google.protobuf.GeneratedMessageV3
@@ -5708,6 +5759,10 @@ public final class PortInfo {
       underKeelClearance_ = "";
       lat_ = "";
       lon_ = "";
+      berthDetails_ = java.util.Collections.emptyList();
+      tideHeightFrom_ = "";
+      tideHeightTo_ = "";
+      maxPermissibleDraft_ = "";
     }
 
     @java.lang.Override
@@ -5729,6 +5784,7 @@ public final class PortInfo {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -5924,6 +5980,40 @@ public final class PortInfo {
                 lon_ = s;
                 break;
               }
+            case 226:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  berthDetails_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.PortInfo.BerthDetail>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                berthDetails_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.PortInfo.BerthDetail.parser(),
+                        extensionRegistry));
+                break;
+              }
+            case 234:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                tideHeightFrom_ = s;
+                break;
+              }
+            case 242:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                tideHeightTo_ = s;
+                break;
+              }
+            case 250:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxPermissibleDraft_ = s;
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -5938,6 +6028,9 @@ public final class PortInfo {
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          berthDetails_ = java.util.Collections.unmodifiableList(berthDetails_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -6853,6 +6946,136 @@ public final class PortInfo {
       }
     }
 
+    public static final int BERTHDETAILS_FIELD_NUMBER = 28;
+    private java.util.List<com.cpdss.common.generated.PortInfo.BerthDetail> berthDetails_;
+    /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+    public java.util.List<com.cpdss.common.generated.PortInfo.BerthDetail> getBerthDetailsList() {
+      return berthDetails_;
+    }
+    /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder>
+        getBerthDetailsOrBuilderList() {
+      return berthDetails_;
+    }
+    /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+    public int getBerthDetailsCount() {
+      return berthDetails_.size();
+    }
+    /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+    public com.cpdss.common.generated.PortInfo.BerthDetail getBerthDetails(int index) {
+      return berthDetails_.get(index);
+    }
+    /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+    public com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder getBerthDetailsOrBuilder(
+        int index) {
+      return berthDetails_.get(index);
+    }
+
+    public static final int TIDEHEIGHTFROM_FIELD_NUMBER = 29;
+    private volatile java.lang.Object tideHeightFrom_;
+    /**
+     * <code>string tideHeightFrom = 29;</code>
+     *
+     * @return The tideHeightFrom.
+     */
+    public java.lang.String getTideHeightFrom() {
+      java.lang.Object ref = tideHeightFrom_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        tideHeightFrom_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string tideHeightFrom = 29;</code>
+     *
+     * @return The bytes for tideHeightFrom.
+     */
+    public com.google.protobuf.ByteString getTideHeightFromBytes() {
+      java.lang.Object ref = tideHeightFrom_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        tideHeightFrom_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TIDEHEIGHTTO_FIELD_NUMBER = 30;
+    private volatile java.lang.Object tideHeightTo_;
+    /**
+     * <code>string tideHeightTo = 30;</code>
+     *
+     * @return The tideHeightTo.
+     */
+    public java.lang.String getTideHeightTo() {
+      java.lang.Object ref = tideHeightTo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        tideHeightTo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string tideHeightTo = 30;</code>
+     *
+     * @return The bytes for tideHeightTo.
+     */
+    public com.google.protobuf.ByteString getTideHeightToBytes() {
+      java.lang.Object ref = tideHeightTo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        tideHeightTo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MAXPERMISSIBLEDRAFT_FIELD_NUMBER = 31;
+    private volatile java.lang.Object maxPermissibleDraft_;
+    /**
+     * <code>string maxPermissibleDraft = 31;</code>
+     *
+     * @return The maxPermissibleDraft.
+     */
+    public java.lang.String getMaxPermissibleDraft() {
+      java.lang.Object ref = maxPermissibleDraft_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxPermissibleDraft_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxPermissibleDraft = 31;</code>
+     *
+     * @return The bytes for maxPermissibleDraft.
+     */
+    public com.google.protobuf.ByteString getMaxPermissibleDraftBytes() {
+      java.lang.Object ref = maxPermissibleDraft_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxPermissibleDraft_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -6948,6 +7171,18 @@ public final class PortInfo {
       if (!getLonBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 27, lon_);
       }
+      for (int i = 0; i < berthDetails_.size(); i++) {
+        output.writeMessage(28, berthDetails_.get(i));
+      }
+      if (!getTideHeightFromBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 29, tideHeightFrom_);
+      }
+      if (!getTideHeightToBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 30, tideHeightTo_);
+      }
+      if (!getMaxPermissibleDraftBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 31, maxPermissibleDraft_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -7038,6 +7273,18 @@ public final class PortInfo {
       if (!getLonBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(27, lon_);
       }
+      for (int i = 0; i < berthDetails_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(28, berthDetails_.get(i));
+      }
+      if (!getTideHeightFromBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(29, tideHeightFrom_);
+      }
+      if (!getTideHeightToBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(30, tideHeightTo_);
+      }
+      if (!getMaxPermissibleDraftBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(31, maxPermissibleDraft_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -7081,6 +7328,10 @@ public final class PortInfo {
       if (!getUnderKeelClearance().equals(other.getUnderKeelClearance())) return false;
       if (!getLat().equals(other.getLat())) return false;
       if (!getLon().equals(other.getLon())) return false;
+      if (!getBerthDetailsList().equals(other.getBerthDetailsList())) return false;
+      if (!getTideHeightFrom().equals(other.getTideHeightFrom())) return false;
+      if (!getTideHeightTo().equals(other.getTideHeightTo())) return false;
+      if (!getMaxPermissibleDraft().equals(other.getMaxPermissibleDraft())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -7146,6 +7397,16 @@ public final class PortInfo {
       hash = (53 * hash) + getLat().hashCode();
       hash = (37 * hash) + LON_FIELD_NUMBER;
       hash = (53 * hash) + getLon().hashCode();
+      if (getBerthDetailsCount() > 0) {
+        hash = (37 * hash) + BERTHDETAILS_FIELD_NUMBER;
+        hash = (53 * hash) + getBerthDetailsList().hashCode();
+      }
+      hash = (37 * hash) + TIDEHEIGHTFROM_FIELD_NUMBER;
+      hash = (53 * hash) + getTideHeightFrom().hashCode();
+      hash = (37 * hash) + TIDEHEIGHTTO_FIELD_NUMBER;
+      hash = (53 * hash) + getTideHeightTo().hashCode();
+      hash = (37 * hash) + MAXPERMISSIBLEDRAFT_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxPermissibleDraft().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -7277,7 +7538,9 @@ public final class PortInfo {
       }
 
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getBerthDetailsFieldBuilder();
+        }
       }
 
       @java.lang.Override
@@ -7337,6 +7600,18 @@ public final class PortInfo {
 
         lon_ = "";
 
+        if (berthDetailsBuilder_ == null) {
+          berthDetails_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          berthDetailsBuilder_.clear();
+        }
+        tideHeightFrom_ = "";
+
+        tideHeightTo_ = "";
+
+        maxPermissibleDraft_ = "";
+
         return this;
       }
 
@@ -7363,6 +7638,7 @@ public final class PortInfo {
       public com.cpdss.common.generated.PortInfo.PortDetail buildPartial() {
         com.cpdss.common.generated.PortInfo.PortDetail result =
             new com.cpdss.common.generated.PortInfo.PortDetail(this);
+        int from_bitField0_ = bitField0_;
         result.id_ = id_;
         result.name_ = name_;
         result.code_ = code_;
@@ -7390,6 +7666,18 @@ public final class PortInfo {
         result.underKeelClearance_ = underKeelClearance_;
         result.lat_ = lat_;
         result.lon_ = lon_;
+        if (berthDetailsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            berthDetails_ = java.util.Collections.unmodifiableList(berthDetails_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.berthDetails_ = berthDetails_;
+        } else {
+          result.berthDetails_ = berthDetailsBuilder_.build();
+        }
+        result.tideHeightFrom_ = tideHeightFrom_;
+        result.tideHeightTo_ = tideHeightTo_;
+        result.maxPermissibleDraft_ = maxPermissibleDraft_;
         onBuilt();
         return result;
       }
@@ -7548,6 +7836,45 @@ public final class PortInfo {
           lon_ = other.lon_;
           onChanged();
         }
+        if (berthDetailsBuilder_ == null) {
+          if (!other.berthDetails_.isEmpty()) {
+            if (berthDetails_.isEmpty()) {
+              berthDetails_ = other.berthDetails_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureBerthDetailsIsMutable();
+              berthDetails_.addAll(other.berthDetails_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.berthDetails_.isEmpty()) {
+            if (berthDetailsBuilder_.isEmpty()) {
+              berthDetailsBuilder_.dispose();
+              berthDetailsBuilder_ = null;
+              berthDetails_ = other.berthDetails_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              berthDetailsBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getBerthDetailsFieldBuilder()
+                      : null;
+            } else {
+              berthDetailsBuilder_.addAllMessages(other.berthDetails_);
+            }
+          }
+        }
+        if (!other.getTideHeightFrom().isEmpty()) {
+          tideHeightFrom_ = other.tideHeightFrom_;
+          onChanged();
+        }
+        if (!other.getTideHeightTo().isEmpty()) {
+          tideHeightTo_ = other.tideHeightTo_;
+          onChanged();
+        }
+        if (!other.getMaxPermissibleDraft().isEmpty()) {
+          maxPermissibleDraft_ = other.maxPermissibleDraft_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -7576,6 +7903,8 @@ public final class PortInfo {
         }
         return this;
       }
+
+      private int bitField0_;
 
       private long id_;
       /**
@@ -9539,6 +9868,451 @@ public final class PortInfo {
         checkByteStringIsUtf8(value);
 
         lon_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<com.cpdss.common.generated.PortInfo.BerthDetail> berthDetails_ =
+          java.util.Collections.emptyList();
+
+      private void ensureBerthDetailsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          berthDetails_ =
+              new java.util.ArrayList<com.cpdss.common.generated.PortInfo.BerthDetail>(
+                  berthDetails_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.PortInfo.BerthDetail,
+              com.cpdss.common.generated.PortInfo.BerthDetail.Builder,
+              com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder>
+          berthDetailsBuilder_;
+
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public java.util.List<com.cpdss.common.generated.PortInfo.BerthDetail> getBerthDetailsList() {
+        if (berthDetailsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(berthDetails_);
+        } else {
+          return berthDetailsBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public int getBerthDetailsCount() {
+        if (berthDetailsBuilder_ == null) {
+          return berthDetails_.size();
+        } else {
+          return berthDetailsBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public com.cpdss.common.generated.PortInfo.BerthDetail getBerthDetails(int index) {
+        if (berthDetailsBuilder_ == null) {
+          return berthDetails_.get(index);
+        } else {
+          return berthDetailsBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public Builder setBerthDetails(
+          int index, com.cpdss.common.generated.PortInfo.BerthDetail value) {
+        if (berthDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBerthDetailsIsMutable();
+          berthDetails_.set(index, value);
+          onChanged();
+        } else {
+          berthDetailsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public Builder setBerthDetails(
+          int index, com.cpdss.common.generated.PortInfo.BerthDetail.Builder builderForValue) {
+        if (berthDetailsBuilder_ == null) {
+          ensureBerthDetailsIsMutable();
+          berthDetails_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          berthDetailsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public Builder addBerthDetails(com.cpdss.common.generated.PortInfo.BerthDetail value) {
+        if (berthDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBerthDetailsIsMutable();
+          berthDetails_.add(value);
+          onChanged();
+        } else {
+          berthDetailsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public Builder addBerthDetails(
+          int index, com.cpdss.common.generated.PortInfo.BerthDetail value) {
+        if (berthDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureBerthDetailsIsMutable();
+          berthDetails_.add(index, value);
+          onChanged();
+        } else {
+          berthDetailsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public Builder addBerthDetails(
+          com.cpdss.common.generated.PortInfo.BerthDetail.Builder builderForValue) {
+        if (berthDetailsBuilder_ == null) {
+          ensureBerthDetailsIsMutable();
+          berthDetails_.add(builderForValue.build());
+          onChanged();
+        } else {
+          berthDetailsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public Builder addBerthDetails(
+          int index, com.cpdss.common.generated.PortInfo.BerthDetail.Builder builderForValue) {
+        if (berthDetailsBuilder_ == null) {
+          ensureBerthDetailsIsMutable();
+          berthDetails_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          berthDetailsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public Builder addAllBerthDetails(
+          java.lang.Iterable<? extends com.cpdss.common.generated.PortInfo.BerthDetail> values) {
+        if (berthDetailsBuilder_ == null) {
+          ensureBerthDetailsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, berthDetails_);
+          onChanged();
+        } else {
+          berthDetailsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public Builder clearBerthDetails() {
+        if (berthDetailsBuilder_ == null) {
+          berthDetails_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          berthDetailsBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public Builder removeBerthDetails(int index) {
+        if (berthDetailsBuilder_ == null) {
+          ensureBerthDetailsIsMutable();
+          berthDetails_.remove(index);
+          onChanged();
+        } else {
+          berthDetailsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public com.cpdss.common.generated.PortInfo.BerthDetail.Builder getBerthDetailsBuilder(
+          int index) {
+        return getBerthDetailsFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder getBerthDetailsOrBuilder(
+          int index) {
+        if (berthDetailsBuilder_ == null) {
+          return berthDetails_.get(index);
+        } else {
+          return berthDetailsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder>
+          getBerthDetailsOrBuilderList() {
+        if (berthDetailsBuilder_ != null) {
+          return berthDetailsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(berthDetails_);
+        }
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public com.cpdss.common.generated.PortInfo.BerthDetail.Builder addBerthDetailsBuilder() {
+        return getBerthDetailsFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.PortInfo.BerthDetail.getDefaultInstance());
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public com.cpdss.common.generated.PortInfo.BerthDetail.Builder addBerthDetailsBuilder(
+          int index) {
+        return getBerthDetailsFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.PortInfo.BerthDetail.getDefaultInstance());
+      }
+      /** <code>repeated .BerthDetail berthDetails = 28;</code> */
+      public java.util.List<com.cpdss.common.generated.PortInfo.BerthDetail.Builder>
+          getBerthDetailsBuilderList() {
+        return getBerthDetailsFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.PortInfo.BerthDetail,
+              com.cpdss.common.generated.PortInfo.BerthDetail.Builder,
+              com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder>
+          getBerthDetailsFieldBuilder() {
+        if (berthDetailsBuilder_ == null) {
+          berthDetailsBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.PortInfo.BerthDetail,
+                  com.cpdss.common.generated.PortInfo.BerthDetail.Builder,
+                  com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder>(
+                  berthDetails_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          berthDetails_ = null;
+        }
+        return berthDetailsBuilder_;
+      }
+
+      private java.lang.Object tideHeightFrom_ = "";
+      /**
+       * <code>string tideHeightFrom = 29;</code>
+       *
+       * @return The tideHeightFrom.
+       */
+      public java.lang.String getTideHeightFrom() {
+        java.lang.Object ref = tideHeightFrom_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          tideHeightFrom_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string tideHeightFrom = 29;</code>
+       *
+       * @return The bytes for tideHeightFrom.
+       */
+      public com.google.protobuf.ByteString getTideHeightFromBytes() {
+        java.lang.Object ref = tideHeightFrom_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          tideHeightFrom_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string tideHeightFrom = 29;</code>
+       *
+       * @param value The tideHeightFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTideHeightFrom(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        tideHeightFrom_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tideHeightFrom = 29;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTideHeightFrom() {
+
+        tideHeightFrom_ = getDefaultInstance().getTideHeightFrom();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tideHeightFrom = 29;</code>
+       *
+       * @param value The bytes for tideHeightFrom to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTideHeightFromBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        tideHeightFrom_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object tideHeightTo_ = "";
+      /**
+       * <code>string tideHeightTo = 30;</code>
+       *
+       * @return The tideHeightTo.
+       */
+      public java.lang.String getTideHeightTo() {
+        java.lang.Object ref = tideHeightTo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          tideHeightTo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string tideHeightTo = 30;</code>
+       *
+       * @return The bytes for tideHeightTo.
+       */
+      public com.google.protobuf.ByteString getTideHeightToBytes() {
+        java.lang.Object ref = tideHeightTo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          tideHeightTo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string tideHeightTo = 30;</code>
+       *
+       * @param value The tideHeightTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTideHeightTo(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        tideHeightTo_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tideHeightTo = 30;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTideHeightTo() {
+
+        tideHeightTo_ = getDefaultInstance().getTideHeightTo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string tideHeightTo = 30;</code>
+       *
+       * @param value The bytes for tideHeightTo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTideHeightToBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        tideHeightTo_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object maxPermissibleDraft_ = "";
+      /**
+       * <code>string maxPermissibleDraft = 31;</code>
+       *
+       * @return The maxPermissibleDraft.
+       */
+      public java.lang.String getMaxPermissibleDraft() {
+        java.lang.Object ref = maxPermissibleDraft_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxPermissibleDraft_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxPermissibleDraft = 31;</code>
+       *
+       * @return The bytes for maxPermissibleDraft.
+       */
+      public com.google.protobuf.ByteString getMaxPermissibleDraftBytes() {
+        java.lang.Object ref = maxPermissibleDraft_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          maxPermissibleDraft_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxPermissibleDraft = 31;</code>
+       *
+       * @param value The maxPermissibleDraft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxPermissibleDraft(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        maxPermissibleDraft_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxPermissibleDraft = 31;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxPermissibleDraft() {
+
+        maxPermissibleDraft_ = getDefaultInstance().getMaxPermissibleDraft();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxPermissibleDraft = 31;</code>
+       *
+       * @param value The bytes for maxPermissibleDraft to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxPermissibleDraftBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        maxPermissibleDraft_ = value;
         onChanged();
         return this;
       }
@@ -15957,6 +16731,45 @@ public final class PortInfo {
      * @return The bytes for hoseConnection.
      */
     com.google.protobuf.ByteString getHoseConnectionBytes();
+
+    /**
+     * <code>string maxDwt = 15;</code>
+     *
+     * @return The maxDwt.
+     */
+    java.lang.String getMaxDwt();
+    /**
+     * <code>string maxDwt = 15;</code>
+     *
+     * @return The bytes for maxDwt.
+     */
+    com.google.protobuf.ByteString getMaxDwtBytes();
+
+    /**
+     * <code>string ukc = 16;</code>
+     *
+     * @return The ukc.
+     */
+    java.lang.String getUkc();
+    /**
+     * <code>string ukc = 16;</code>
+     *
+     * @return The bytes for ukc.
+     */
+    com.google.protobuf.ByteString getUkcBytes();
+
+    /**
+     * <code>string berthDatumDepth = 17;</code>
+     *
+     * @return The berthDatumDepth.
+     */
+    java.lang.String getBerthDatumDepth();
+    /**
+     * <code>string berthDatumDepth = 17;</code>
+     *
+     * @return The bytes for berthDatumDepth.
+     */
+    com.google.protobuf.ByteString getBerthDatumDepthBytes();
   }
   /** Protobuf type {@code BerthDetail} */
   public static final class BerthDetail extends com.google.protobuf.GeneratedMessageV3
@@ -15981,6 +16794,9 @@ public final class PortInfo {
       maxDraft_ = "";
       lineDisplacement_ = "";
       hoseConnection_ = "";
+      maxDwt_ = "";
+      ukc_ = "";
+      berthDatumDepth_ = "";
     }
 
     @java.lang.Override
@@ -16102,6 +16918,27 @@ public final class PortInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 hoseConnection_ = s;
+                break;
+              }
+            case 122:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxDwt_ = s;
+                break;
+              }
+            case 130:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                ukc_ = s;
+                break;
+              }
+            case 138:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                berthDatumDepth_ = s;
                 break;
               }
             default:
@@ -16554,6 +17391,111 @@ public final class PortInfo {
       }
     }
 
+    public static final int MAXDWT_FIELD_NUMBER = 15;
+    private volatile java.lang.Object maxDwt_;
+    /**
+     * <code>string maxDwt = 15;</code>
+     *
+     * @return The maxDwt.
+     */
+    public java.lang.String getMaxDwt() {
+      java.lang.Object ref = maxDwt_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxDwt_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxDwt = 15;</code>
+     *
+     * @return The bytes for maxDwt.
+     */
+    public com.google.protobuf.ByteString getMaxDwtBytes() {
+      java.lang.Object ref = maxDwt_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxDwt_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int UKC_FIELD_NUMBER = 16;
+    private volatile java.lang.Object ukc_;
+    /**
+     * <code>string ukc = 16;</code>
+     *
+     * @return The ukc.
+     */
+    public java.lang.String getUkc() {
+      java.lang.Object ref = ukc_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        ukc_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string ukc = 16;</code>
+     *
+     * @return The bytes for ukc.
+     */
+    public com.google.protobuf.ByteString getUkcBytes() {
+      java.lang.Object ref = ukc_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        ukc_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int BERTHDATUMDEPTH_FIELD_NUMBER = 17;
+    private volatile java.lang.Object berthDatumDepth_;
+    /**
+     * <code>string berthDatumDepth = 17;</code>
+     *
+     * @return The berthDatumDepth.
+     */
+    public java.lang.String getBerthDatumDepth() {
+      java.lang.Object ref = berthDatumDepth_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        berthDatumDepth_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string berthDatumDepth = 17;</code>
+     *
+     * @return The bytes for berthDatumDepth.
+     */
+    public com.google.protobuf.ByteString getBerthDatumDepthBytes() {
+      java.lang.Object ref = berthDatumDepth_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        berthDatumDepth_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -16610,6 +17552,15 @@ public final class PortInfo {
       if (!getHoseConnectionBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 14, hoseConnection_);
       }
+      if (!getMaxDwtBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 15, maxDwt_);
+      }
+      if (!getUkcBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 16, ukc_);
+      }
+      if (!getBerthDatumDepthBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 17, berthDatumDepth_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -16662,6 +17613,15 @@ public final class PortInfo {
       if (!getHoseConnectionBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, hoseConnection_);
       }
+      if (!getMaxDwtBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, maxDwt_);
+      }
+      if (!getUkcBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(16, ukc_);
+      }
+      if (!getBerthDatumDepthBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(17, berthDatumDepth_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -16692,6 +17652,9 @@ public final class PortInfo {
       if (!getMaxDraft().equals(other.getMaxDraft())) return false;
       if (!getLineDisplacement().equals(other.getLineDisplacement())) return false;
       if (!getHoseConnection().equals(other.getHoseConnection())) return false;
+      if (!getMaxDwt().equals(other.getMaxDwt())) return false;
+      if (!getUkc().equals(other.getUkc())) return false;
+      if (!getBerthDatumDepth().equals(other.getBerthDatumDepth())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -16731,6 +17694,12 @@ public final class PortInfo {
       hash = (53 * hash) + getLineDisplacement().hashCode();
       hash = (37 * hash) + HOSECONNECTION_FIELD_NUMBER;
       hash = (53 * hash) + getHoseConnection().hashCode();
+      hash = (37 * hash) + MAXDWT_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxDwt().hashCode();
+      hash = (37 * hash) + UKC_FIELD_NUMBER;
+      hash = (53 * hash) + getUkc().hashCode();
+      hash = (37 * hash) + BERTHDATUMDEPTH_FIELD_NUMBER;
+      hash = (53 * hash) + getBerthDatumDepth().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -16896,6 +17865,12 @@ public final class PortInfo {
 
         hoseConnection_ = "";
 
+        maxDwt_ = "";
+
+        ukc_ = "";
+
+        berthDatumDepth_ = "";
+
         return this;
       }
 
@@ -16936,6 +17911,9 @@ public final class PortInfo {
         result.maxDraft_ = maxDraft_;
         result.lineDisplacement_ = lineDisplacement_;
         result.hoseConnection_ = hoseConnection_;
+        result.maxDwt_ = maxDwt_;
+        result.ukc_ = ukc_;
+        result.berthDatumDepth_ = berthDatumDepth_;
         onBuilt();
         return result;
       }
@@ -17039,6 +18017,18 @@ public final class PortInfo {
         }
         if (!other.getHoseConnection().isEmpty()) {
           hoseConnection_ = other.hoseConnection_;
+          onChanged();
+        }
+        if (!other.getMaxDwt().isEmpty()) {
+          maxDwt_ = other.maxDwt_;
+          onChanged();
+        }
+        if (!other.getUkc().isEmpty()) {
+          ukc_ = other.ukc_;
+          onChanged();
+        }
+        if (!other.getBerthDatumDepth().isEmpty()) {
+          berthDatumDepth_ = other.berthDatumDepth_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -18006,6 +18996,234 @@ public final class PortInfo {
         return this;
       }
 
+      private java.lang.Object maxDwt_ = "";
+      /**
+       * <code>string maxDwt = 15;</code>
+       *
+       * @return The maxDwt.
+       */
+      public java.lang.String getMaxDwt() {
+        java.lang.Object ref = maxDwt_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxDwt_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxDwt = 15;</code>
+       *
+       * @return The bytes for maxDwt.
+       */
+      public com.google.protobuf.ByteString getMaxDwtBytes() {
+        java.lang.Object ref = maxDwt_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          maxDwt_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxDwt = 15;</code>
+       *
+       * @param value The maxDwt to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxDwt(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        maxDwt_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxDwt = 15;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxDwt() {
+
+        maxDwt_ = getDefaultInstance().getMaxDwt();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxDwt = 15;</code>
+       *
+       * @param value The bytes for maxDwt to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxDwtBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        maxDwt_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object ukc_ = "";
+      /**
+       * <code>string ukc = 16;</code>
+       *
+       * @return The ukc.
+       */
+      public java.lang.String getUkc() {
+        java.lang.Object ref = ukc_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          ukc_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string ukc = 16;</code>
+       *
+       * @return The bytes for ukc.
+       */
+      public com.google.protobuf.ByteString getUkcBytes() {
+        java.lang.Object ref = ukc_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          ukc_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string ukc = 16;</code>
+       *
+       * @param value The ukc to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUkc(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        ukc_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ukc = 16;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearUkc() {
+
+        ukc_ = getDefaultInstance().getUkc();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string ukc = 16;</code>
+       *
+       * @param value The bytes for ukc to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUkcBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        ukc_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object berthDatumDepth_ = "";
+      /**
+       * <code>string berthDatumDepth = 17;</code>
+       *
+       * @return The berthDatumDepth.
+       */
+      public java.lang.String getBerthDatumDepth() {
+        java.lang.Object ref = berthDatumDepth_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          berthDatumDepth_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string berthDatumDepth = 17;</code>
+       *
+       * @return The bytes for berthDatumDepth.
+       */
+      public com.google.protobuf.ByteString getBerthDatumDepthBytes() {
+        java.lang.Object ref = berthDatumDepth_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          berthDatumDepth_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string berthDatumDepth = 17;</code>
+       *
+       * @param value The berthDatumDepth to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBerthDatumDepth(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        berthDatumDepth_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string berthDatumDepth = 17;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearBerthDatumDepth() {
+
+        berthDatumDepth_ = getDefaultInstance().getBerthDatumDepth();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string berthDatumDepth = 17;</code>
+       *
+       * @param value The bytes for berthDatumDepth to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBerthDatumDepthBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        berthDatumDepth_ = value;
+        onChanged();
+        return this;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -18149,7 +19367,7 @@ public final class PortInfo {
           + "PortRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010vessel"
           + "Id\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loadableSt"
           + "udyId\030\004 \001(\003\"6\n\025PortRequestWithPaging\022\016\n\006"
-          + "offset\030\001 \001(\003\022\r\n\005limit\030\002 \001(\003\"\265\004\n\nPortDeta"
+          + "offset\030\001 \001(\003\022\r\n\005limit\030\002 \001(\003\"\244\005\n\nPortDeta"
           + "il\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\014\n\004code\030\003 \001"
           + "(\t\022\024\n\014waterDensity\030\004 \001(\t\022\020\n\010maxDraft\030\005 \001"
           + "(\t\022\023\n\013maxAirDraft\030\006 \001(\t\022\031\n\021averageTideHe"
@@ -18163,46 +19381,50 @@ public final class PortInfo {
           + " \001(\t\022\022\n\ntimezoneId\030\025 \001(\003\022\034\n\024timezoneAbbr"
           + "eviation\030\026 \001(\t\022\023\n\013countryName\030\027 \001(\t\022\030\n\020c"
           + "ontrollingDepth\030\030 \001(\t\022\032\n\022underKeelCleara"
-          + "nce\030\031 \001(\t\022\013\n\003lat\030\032 \001(\t\022\013\n\003lon\030\033 \001(\t\"P\n\tP"
-          + "ortReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
-          + "nseStatus\022\032\n\005ports\030\002 \003(\0132\013.PortDetail\".\n"
-          + "\033GetPortInfoByCargoIdRequest\022\017\n\007cargoId\030"
-          + "\001 \001(\003\"`\n\031GetPortInfoByCargoIdReply\022\'\n\016re"
-          + "sponseStatus\030\001 \001(\0132\017.ResponseStatus\022\032\n\005p"
-          + "orts\030\002 \003(\0132\013.PortDetail\"\022\n\020PortEmptyRequ"
-          + "est\"S\n\010Timezone\022\n\n\002id\030\001 \001(\003\022\020\n\010timezone\030"
-          + "\002 \001(\t\022\023\n\013offsetValue\030\003 \001(\t\022\024\n\014abbreviati"
-          + "on\030\004 \001(\t\"Y\n\020TimezoneResponse\022\'\n\016response"
-          + "Status\030\001 \001(\0132\017.ResponseStatus\022\034\n\ttimezon"
-          + "es\030\002 \003(\0132\t.Timezone\"\037\n\rPortIdRequest\022\016\n\006"
-          + "portId\030\001 \001(\003\"Z\n\021BerthInfoResponse\022\'\n\016res"
-          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\006be"
-          + "rths\030\002 \003(\0132\014.BerthDetail\"\312\002\n\013BerthDetail"
-          + "\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\025\n\rloadingI"
-          + "nfoId\030\014 \001(\003\022\026\n\016maxShipChannel\030\003 \001(\t\022\021\n\tb"
-          + "erthName\030\004 \001(\t\022\024\n\014maxShipDepth\030\005 \001(\t\022\032\n\022"
-          + "seaDraftLimitation\030\006 \001(\t\022\032\n\022airDraftLimi"
-          + "tation\030\007 \001(\t\022\031\n\021maxManifoldHeight\030\010 \001(\t\022"
-          + " \n\030regulationAndRestriction\030\t \001(\t\022\016\n\006max"
-          + "Loa\030\n \001(\t\022\020\n\010maxDraft\030\013 \001(\t\022\030\n\020lineDispl"
-          + "acement\030\r \001(\t\022\026\n\016hoseConnection\030\016 \001(\t2\334\004"
-          + "\n\017PortInfoService\022)\n\013GetPortInfo\022\014.PortR"
-          + "equest\032\n.PortReply\"\000\022R\n\024GetPortInfoByCar"
-          + "goId\022\034.GetPortInfoByCargoIdRequest\032\032.Get"
-          + "PortInfoByCargoIdReply\"\000\022B\n\024GetPortInfoB"
-          + "yPortIds\022\034.GetPortInfoByPortIdsRequest\032\n"
-          + ".PortReply\"\000\022G\n\031GetPortInfoDetailsForAlg"
-          + "o\022\034.GetPortInfoByPortIdsRequest\032\n.PortRe"
-          + "ply\"\000\0225\n\013GetTimezone\022\021.PortEmptyRequest\032"
-          + "\021.TimezoneResponse\"\000\022;\n\023GetPortInfoByPag"
-          + "ing\022\026.PortRequestWithPaging\032\n.PortReply\""
-          + "\000\022?\n\027GetBerthDetailsByPortId\022\016.PortIdReq"
-          + "uest\032\022.BerthInfoResponse\"\000\022D\n\025GetCargoIn"
-          + "foByPortIds\022\034.GetPortInfoByPortIdsReques"
-          + "t\032\013.CargoInfos\"\000\022B\n\027GetLoadingPlanBerthD"
-          + "ata\022\020.BerthIdsRequest\032\025.LoadingAlgoBerth"
-          + "DataB\036\n\032com.cpdss.common.generatedP\000b\006pr"
-          + "oto3"
+          + "nce\030\031 \001(\t\022\013\n\003lat\030\032 \001(\t\022\013\n\003lon\030\033 \001(\t\022\"\n\014b"
+          + "erthDetails\030\034 \003(\0132\014.BerthDetail\022\026\n\016tideH"
+          + "eightFrom\030\035 \001(\t\022\024\n\014tideHeightTo\030\036 \001(\t\022\033\n"
+          + "\023maxPermissibleDraft\030\037 \001(\t\"P\n\tPortReply\022"
+          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
+          + "\022\032\n\005ports\030\002 \003(\0132\013.PortDetail\".\n\033GetPortI"
+          + "nfoByCargoIdRequest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031"
+          + "GetPortInfoByCargoIdReply\022\'\n\016responseSta"
+          + "tus\030\001 \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003("
+          + "\0132\013.PortDetail\"\022\n\020PortEmptyRequest\"S\n\010Ti"
+          + "mezone\022\n\n\002id\030\001 \001(\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013"
+          + "offsetValue\030\003 \001(\t\022\024\n\014abbreviation\030\004 \001(\t\""
+          + "Y\n\020TimezoneResponse\022\'\n\016responseStatus\030\001 "
+          + "\001(\0132\017.ResponseStatus\022\034\n\ttimezones\030\002 \003(\0132"
+          + "\t.Timezone\"\037\n\rPortIdRequest\022\016\n\006portId\030\001 "
+          + "\001(\003\"Z\n\021BerthInfoResponse\022\'\n\016responseStat"
+          + "us\030\001 \001(\0132\017.ResponseStatus\022\034\n\006berths\030\002 \003("
+          + "\0132\014.BerthDetail\"\200\003\n\013BerthDetail\022\n\n\002id\030\001 "
+          + "\001(\003\022\016\n\006portId\030\002 \001(\003\022\025\n\rloadingInfoId\030\014 \001"
+          + "(\003\022\026\n\016maxShipChannel\030\003 \001(\t\022\021\n\tberthName\030"
+          + "\004 \001(\t\022\024\n\014maxShipDepth\030\005 \001(\t\022\032\n\022seaDraftL"
+          + "imitation\030\006 \001(\t\022\032\n\022airDraftLimitation\030\007 "
+          + "\001(\t\022\031\n\021maxManifoldHeight\030\010 \001(\t\022 \n\030regula"
+          + "tionAndRestriction\030\t \001(\t\022\016\n\006maxLoa\030\n \001(\t"
+          + "\022\020\n\010maxDraft\030\013 \001(\t\022\030\n\020lineDisplacement\030\r"
+          + " \001(\t\022\026\n\016hoseConnection\030\016 \001(\t\022\016\n\006maxDwt\030\017"
+          + " \001(\t\022\013\n\003ukc\030\020 \001(\t\022\027\n\017berthDatumDepth\030\021 \001"
+          + "(\t2\334\004\n\017PortInfoService\022)\n\013GetPortInfo\022\014."
+          + "PortRequest\032\n.PortReply\"\000\022R\n\024GetPortInfo"
+          + "ByCargoId\022\034.GetPortInfoByCargoIdRequest\032"
+          + "\032.GetPortInfoByCargoIdReply\"\000\022B\n\024GetPort"
+          + "InfoByPortIds\022\034.GetPortInfoByPortIdsRequ"
+          + "est\032\n.PortReply\"\000\022G\n\031GetPortInfoDetailsF"
+          + "orAlgo\022\034.GetPortInfoByPortIdsRequest\032\n.P"
+          + "ortReply\"\000\0225\n\013GetTimezone\022\021.PortEmptyReq"
+          + "uest\032\021.TimezoneResponse\"\000\022;\n\023GetPortInfo"
+          + "ByPaging\022\026.PortRequestWithPaging\032\n.PortR"
+          + "eply\"\000\022?\n\027GetBerthDetailsByPortId\022\016.Port"
+          + "IdRequest\032\022.BerthInfoResponse\"\000\022D\n\025GetCa"
+          + "rgoInfoByPortIds\022\034.GetPortInfoByPortIdsR"
+          + "equest\032\013.CargoInfos\"\000\022B\n\027GetLoadingPlanB"
+          + "erthData\022\020.BerthIdsRequest\032\025.LoadingAlgo"
+          + "BerthDataB\036\n\032com.cpdss.common.generatedP"
+          + "\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -18297,6 +19519,10 @@ public final class PortInfo {
               "UnderKeelClearance",
               "Lat",
               "Lon",
+              "BerthDetails",
+              "TideHeightFrom",
+              "TideHeightTo",
+              "MaxPermissibleDraft",
             });
     internal_static_PortReply_descriptor = getDescriptor().getMessageTypes().get(8);
     internal_static_PortReply_fieldAccessorTable =
@@ -18372,6 +19598,9 @@ public final class PortInfo {
               "MaxDraft",
               "LineDisplacement",
               "HoseConnection",
+              "MaxDwt",
+              "Ukc",
+              "BerthDatumDepth",
             });
     com.cpdss.common.generated.Common.getDescriptor();
   }
