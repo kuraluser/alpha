@@ -66,6 +66,7 @@ import com.cpdss.loadingplan.repository.LoadingSequenceStabiltyParametersReposit
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanBallastTempDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanCommingleDetailsRepository;
+import com.cpdss.loadingplan.repository.PortLoadingPlanCommingleTempDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
@@ -130,6 +131,10 @@ public class LoadingPlanAlgoService {
 
   @Autowired LoadingPlanCommingleDetailsRepository loadingPlanCommingleDetailsRepository;
   @Autowired PortLoadingPlanCommingleDetailsRepository portLoadingPlanCommingleDetailsRepository;
+
+  @Autowired
+  PortLoadingPlanCommingleTempDetailsRepository portLoadingPlanCommingleTempDetailsRepository;
+
   @Autowired EductionOperationRepository eductionOperationRepository;
 
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
@@ -449,6 +454,7 @@ public class LoadingPlanAlgoService {
     portLoadingPlanStowageTempDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
     portLoadingPlanBallastTempDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
     portLoadingPlanCommingleDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
+    portLoadingPlanCommingleTempDetailsRepository.deleteByLoadingInformationId(loadingInfoId);
   }
 
   private void deleteLoadingSequences(
