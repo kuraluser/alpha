@@ -1,10 +1,12 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.domain.algo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BerthDetails {
 
   private Long id; // Primary key for Berth Info Master table
