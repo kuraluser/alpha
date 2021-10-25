@@ -206,10 +206,7 @@ public class CargoNominationService {
     portDetail.setCargoNomination(dischargeStudyCargo);
 
     if (cargo != null) {
-      portDetail.setQuantity(
-          cargo.getCargoNominationPortDetails().stream()
-              .map(CargoNominationPortDetails::getQuantity)
-              .reduce(BigDecimal.ZERO, BigDecimal::add));
+      portDetail.setQuantity(cargo.getQuantity());
       portDetail.setMode(2L);
     } else {
       portDetail.setQuantity(new BigDecimal(0));
