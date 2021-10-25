@@ -315,22 +315,24 @@ public class LoadingSequenceService {
   private void buildEduction(
       LoadingSequence loadingSequence, Long portEta, List<EductionOperation> ballastEductions) {
     EductorOperation eductorOperation = loadingSequence.getEductorOperation();
-    EductionOperation ballastEduction = new EductionOperation();
-    if (!eductorOperation.getPumpsUsed().isEmpty()) {
-      ballastEduction.setPumpSelected(
-          List.of(eductorOperation.getPumpsUsed().split(",")).stream()
-              .map(pumpId -> Long.valueOf(pumpId))
-              .collect(Collectors.toList()));
+    if (eductorOperation.getEndTime() != 0) {
+      EductionOperation ballastEduction = new EductionOperation();
+      if (!eductorOperation.getPumpsUsed().isEmpty()) {
+        ballastEduction.setPumpSelected(
+            List.of(eductorOperation.getPumpsUsed().split(",")).stream()
+                .map(pumpId -> Long.valueOf(pumpId))
+                .collect(Collectors.toList()));
+      }
+      if (!eductorOperation.getTanksUsed().isEmpty()) {
+        ballastEduction.setTanks(
+            List.of(eductorOperation.getTanksUsed().split(",")).stream()
+                .map(tankId -> Long.valueOf(tankId))
+                .collect(Collectors.toList()));
+      }
+      ballastEduction.setTimeEnd(portEta + (eductorOperation.getEndTime() * 60 * 1000));
+      ballastEduction.setTimeStart(portEta + (eductorOperation.getStartTime() * 60 * 1000));
+      ballastEductions.add(ballastEduction);
     }
-    if (!eductorOperation.getTanksUsed().isEmpty()) {
-      ballastEduction.setTanks(
-          List.of(eductorOperation.getTanksUsed().split(",")).stream()
-              .map(tankId -> Long.valueOf(tankId))
-              .collect(Collectors.toList()));
-    }
-    ballastEduction.setTimeEnd(portEta + (eductorOperation.getEndTime() * 60 * 1000));
-    ballastEduction.setTimeStart(portEta + (eductorOperation.getStartTime() * 60 * 1000));
-    ballastEductions.add(ballastEduction);
   }
 
   /**
