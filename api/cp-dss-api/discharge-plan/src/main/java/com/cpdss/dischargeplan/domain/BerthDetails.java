@@ -3,6 +3,7 @@ package com.cpdss.dischargeplan.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -29,4 +30,5 @@ public class BerthDetails {
   private BigDecimal maxManifoldPressure;
   private Boolean airPurge;
   private Boolean cargoCirculation;
+  private List<String> ukcData;
 }
