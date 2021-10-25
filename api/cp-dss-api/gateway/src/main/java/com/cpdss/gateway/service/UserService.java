@@ -513,29 +513,31 @@ public class UserService {
         KeycloakUser[] keycloakUsersList = keycloakService.getUsers();
         List<String> keyCloakIds =
             Arrays.stream(keycloakUsersList).map(KeycloakUser::getId).collect(Collectors.toList());
-        users = this.usersRepository.findByKeycloakIdInAndIsActiveTrueOrderById(keyCloakIds);
+        users = this.usersRepository.findByKeycloakIdInOrderById(keyCloakIds);
         users.forEach(
             userEntity -> {
-              KeycloakUser keycloakUser = null;
-              try {
-                keycloakUser = userCachingService.getUser(userEntity.getKeycloakId());
-              } catch (GenericServiceException e) {
-                e.printStackTrace();
-              }
-              User user = new User();
-              user.setId(userEntity.getId());
-              user.setKeycloakId(keycloakUser.getId());
-              user.setFirstName(keycloakUser.getFirstName());
-              user.setLastName(keycloakUser.getLastName());
-              user.setUsername(keycloakUser.getUsername());
-              user.setDesignation(userEntity.getDesignation());
-              List<RoleUserMapping> mapping =
-                  this.roleUserMappingRepository.findByUsersAndIsActive(userEntity, true);
-              if (!mapping.isEmpty()) {
-                user.setRole(mapping.get(0).getRoles().getName());
-              }
-              user.setDefaultUser(userEntity.getIsShipUser());
-              userList.add(user);
+            	if(userEntity.isActive() || userEntity.getStatus().getId().equals(UserStatusValue.REQUESTED.getId())) {
+	              KeycloakUser keycloakUser = null;
+	              try {
+	                keycloakUser = userCachingService.getUser(userEntity.getKeycloakId());
+	              } catch (GenericServiceException e) {
+	                e.printStackTrace();
+	              }
+	              User user = new User();
+	              user.setId(userEntity.getId());
+	              user.setKeycloakId(keycloakUser.getId());
+	              user.setFirstName(keycloakUser.getFirstName());
+	              user.setLastName(keycloakUser.getLastName());
+	              user.setUsername(keycloakUser.getUsername());
+	              user.setDesignation(userEntity.getDesignation());
+	              List<RoleUserMapping> mapping =
+	                  this.roleUserMappingRepository.findByUsersAndIsActive(userEntity, true);
+	              if (!mapping.isEmpty()) {
+	                user.setRole(mapping.get(0).getRoles().getName());
+	              }
+	              user.setDefaultUser(userEntity.getIsShipUser());
+	              userList.add(user);
+            	}
             });
         break;
       default:
