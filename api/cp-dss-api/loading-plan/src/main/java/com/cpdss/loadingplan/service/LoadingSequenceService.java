@@ -196,7 +196,9 @@ public class LoadingSequenceService {
           buildLoadingPlanPortWiseDetails(sequenceBuilder, loadingPlanPortWiseDetails);
           EductionOperation eductionOperation =
               eductionOperationRepository.findByLoadingSequenceAndIsActiveTrue(loadingSequence);
-          buildEductionOperations(sequenceBuilder, eductionOperation);
+          if (eductionOperation != null) {
+            buildEductionOperations(sequenceBuilder, eductionOperation);
+          }
           builder.addLoadingSequences(sequenceBuilder.build());
         });
   }
