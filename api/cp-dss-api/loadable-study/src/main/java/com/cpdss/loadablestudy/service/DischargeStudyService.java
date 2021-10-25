@@ -1321,6 +1321,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 operation.setMode(1L);
               } else {
                 operation.setQuantity(operation.getCargoNomination().getQuantity());
+                operation.setMode(2L);
               }
             });
     cargos.stream()
