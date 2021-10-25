@@ -667,7 +667,7 @@ public class DischargePlanAlgoService {
                         var.getDischargingInformation().getPortXid(), var.getBerthXid(), dto);
 
                     // Call 2 to Port info, set value from port table
-                    if (dto.getUkcData() == null || dto.getUkcData().isEmpty()) {
+                    if (dto.getUkc() == null) {
                       this.getPortInfoIntoBerthData(var.getBerthXid(), dto);
                     }
                     return dto;
@@ -694,7 +694,7 @@ public class DischargePlanAlgoService {
       if (berthData.isPresent()) {
         bd.setBerthName(berthData.get().getBerthName());
         if (!berthData.get().getUkc().isEmpty()) {
-          bd.setUkcData(Arrays.asList(berthData.get().getUkc()));
+          bd.setUkc(berthData.get().getUkc());
         }
       }
     } catch (Exception e) {
@@ -1485,7 +1485,7 @@ public class DischargePlanAlgoService {
             PortInfo.BerthIdsRequest.newBuilder().addBerthIds(berthId).build());
     if (portReply != null && portReply.getResponseStatus().getStatus().equals("SUCCESS")) {
       if (!portReply.getPortUKC().isEmpty()) { // If berth UKC not available
-        berthDetails.setUkcData(Arrays.asList(portReply.getPortUKC()));
+        berthDetails.setUkc(portReply.getPortUKC());
         log.info("Setting UKC from port Info Table");
       } else {
         log.error("Setting UKC from port Info Table - Failed, Data - {}", portReply);
