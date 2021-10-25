@@ -1139,8 +1139,7 @@ public class LoadablePatternService {
             lppwd -> {
               Long portRotationid = lppwd.getPortRotationId();
               LoadableStudyPortRotation portRotation =
-                  loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
-                      loadablePattern.getLoadableStudy(), lppwd.getPortId(), true);
+                  loadableStudyPortRotationRepository.findByIdAndIsActive(portRotationid, true);
               if (!Objects.isNull(portRotation)) portRotationid = portRotation.getId();
 
               Long finalPortRotationid = portRotationid;
@@ -1211,8 +1210,7 @@ public class LoadablePatternService {
             lppwd -> {
               Long portRotationid = lppwd.getPortRotationId();
               LoadableStudyPortRotation portRotation =
-                  loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
-                      loadablePattern.getLoadableStudy(), lppwd.getPortId(), true);
+                  loadableStudyPortRotationRepository.findByIdAndIsActive(portRotationid, true);
               if (!Objects.isNull(portRotation)) portRotationid = portRotation.getId();
 
               Long finalPortRotationid = portRotationid;
@@ -1505,8 +1503,7 @@ public class LoadablePatternService {
 
         Long portRotationid = portWiseDetails.getPortRotationId();
         LoadableStudyPortRotation portRotation =
-            loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
-                loadablePattern.getLoadableStudy(), portWiseDetails.getPortId(), true);
+            loadableStudyPortRotationRepository.findByIdAndIsActive(portRotationid, true);
         if (!Objects.isNull(portRotation)) portRotationid = portRotation.getId();
         if (Optional.ofNullable(arrivalCondition).isPresent()) {
           loadicatorService.saveLodicatorDataForSynoptical(
