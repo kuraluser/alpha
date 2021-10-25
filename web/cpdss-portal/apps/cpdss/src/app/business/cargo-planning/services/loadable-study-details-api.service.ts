@@ -79,9 +79,9 @@ export class LoadableStudyDetailsApiService {
 
     /**
      * Get count of pending updates in cargo nomination db
-     * @param vesselId 
-     * @param voyageId 
-     * @param loadableStudyId 
+     * @param vesselId
+     * @param voyageId
+     * @param loadableStudyId
      */
     getCargoNominationPendingUpdatesCount(vesselId: number, voyageId: number, loadableStudyId: number): Promise<number> {
         return this._cargoNominationDb.cargoNominations.where({ 'vesselId': vesselId, 'voyageId': voyageId, 'loadableStudyId': loadableStudyId }).count();
@@ -245,8 +245,8 @@ export class LoadableStudyDetailsApiService {
     * @returns {Observable<IPortOBQResponse>}
     * @memberof LoadableStudyDetailsApiService
     */
-    getPortOBQDetails(vesselId: number, voyageId: number, loadableStudyId: number, portId: number): Observable<IPortOBQResponse> {
-        return this.commonApiService.get<IPortOBQResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports/${portId}/on-board-quantities`);
+  getPortOBQDetails(vesselId: number, voyageId: number, loadableStudyId: number, portId: number, planingType = 1): Observable<IPortOBQResponse> {
+    return this.commonApiService.get<IPortOBQResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/ports/${portId}/planingType/${planingType}/on-board-quantities`);
     }
 
     /**
@@ -318,7 +318,7 @@ export class LoadableStudyDetailsApiService {
         }
         return Number(newValue);
     }
-    
+
 
     /* Save load on top is enable or not for loadable study
     *
@@ -377,10 +377,10 @@ export class LoadableStudyDetailsApiService {
         return value
     }
     /**
-     * 
-     * @param {number} vesselId 
-     * @param {number} voyageId 
-     * @param {number} loadableStudyId 
+     *
+     * @param {number} vesselId
+     * @param {number} voyageId
+     * @param {number} loadableStudyId
      * Get api for algo error response
      */
     getAlgoErrorDetails(vesselId: number, voyageId: number, loadableStudyId: number): Observable<IAlgoResponse> {

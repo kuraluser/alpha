@@ -18,13 +18,13 @@ import { DischargeStudyDetailsApiService } from '../../services/discharge-study-
 
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 import { dischargeStudyColorValidator } from '../../directives/validator/discharge-study-color.directive';
-import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nomination-alphabets-only.directive';
+
 import { dischargeStudyCargoQuantityValidator } from '../../directives/validator/discharge-study-cargo-quantity.directive';
 import { dischargeStudyAbbreviationValidator } from '../../directives/validator/discharge-study-abbreviation.directive';
 import { numberValidator } from '../../../core/directives/number-validator.directive';
-import { dischargeStudyLoadableQuantity } from '../../directives/validator/discharge-study-loadable-quantity.directive'
 
 import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service';
+import { alphaNumericOnlyValidator } from '../../../core/directives/alpha-numeric-only-validator.directive';
 
 /**
  * Component class of discharge study screen
@@ -248,13 +248,13 @@ export class DischargeStudyComponent implements OnInit {
     const min = quantityDecimal ? (1 / Math.pow(10, quantityDecimal)) : 1;
     return this.fb.group({
       color: this.fb.control(backLoading.color?.value ? backLoading.color?.value : null, [Validators.required, dischargeStudyColorValidator]),
-      abbreviation: this.fb.control(backLoading.abbreviation.value, [Validators.required, alphabetsOnlyValidator, Validators.maxLength(6), dischargeStudyAbbreviationValidator]),
+      abbreviation: this.fb.control(backLoading.abbreviation.value, [Validators.required, alphaNumericOnlyValidator, dischargeStudyAbbreviationValidator, Validators.maxLength(6)]),
       cargo: this.fb.control(backLoading?.cargo?.value ? backLoading.cargo?.value : null, [Validators.required]),
       bbls: this.fb.control(backLoading.bbls?.value ? backLoading.bbls?.value : null, []),
       kl: this.fb.control(backLoading.kl?.value ? backLoading.kl?.value : null, [Validators.required, numberValidator(quantityDecimal, null, false), Validators.min(min)]),
       mt: this.fb.control(backLoading.mt?.value ? backLoading.mt?.value : null, []),
-      api: this.fb.control(backLoading.api?.value ? backLoading.api?.value : null, [Validators.required, Validators.min(0), numberValidator(2, 3)]),
-      temp: this.fb.control(backLoading.temp?.value ? backLoading.temp?.value : null, [Validators.required, numberValidator(2, 3)]),
+      api: this.fb.control(backLoading.api?.value ? backLoading.api?.value : null, [Validators.required, Validators.min(8), Validators.max(99.99), numberValidator(2, 2)]),
+      temp: this.fb.control(backLoading.temp?.value ? backLoading.temp?.value : null, [Validators.required, Validators.min(40), Validators.max(160), numberValidator(2, 3)]),
       storedKey: this.fb.control(backLoading?.storedKey?.value)
     })
   }
