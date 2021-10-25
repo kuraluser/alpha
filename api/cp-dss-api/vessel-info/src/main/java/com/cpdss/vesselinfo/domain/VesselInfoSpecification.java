@@ -16,29 +16,27 @@ import org.springframework.data.jpa.domain.Specification;
 @AllArgsConstructor
 public class VesselInfoSpecification implements Specification<Vessel> {
 
-	SearchCriteria criteria;
-	
-	@Override
-	public Predicate toPredicate(Root<Vessel> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-		List<Predicate> predicates = new ArrayList<>();
-		if (criteria.getOperation().equalsIgnoreCase("LIKE")) {
-		      predicates.add(
-		    		  criteriaBuilder.like(
-		    				  criteriaBuilder.upper(root.get(criteria.getKey()).as(String.class)),
-		              "%" + criteria.getValue().toString().toUpperCase() + "%"));
-		    }
-		
-		if (criteria.getOperation().equalsIgnoreCase("EQUALS")) {
-		      predicates.add(
-		    		  criteriaBuilder.equal(root.get(criteria.getKey()), 
-		    				  criteria.getValue()));
-		    }
-		
-		if (criteria.getOperation().equalsIgnoreCase("GREATER_THAN")) {
-		      predicates.add(
-		    		  criteriaBuilder.greaterThan(root.get(criteria.getKey()), criteria.getValue().toString()));
-		    }
-		return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-	}
+  SearchCriteria criteria;
 
+  @Override
+  public Predicate toPredicate(
+      Root<Vessel> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+    List<Predicate> predicates = new ArrayList<>();
+    if (criteria.getOperation().equalsIgnoreCase("LIKE")) {
+      predicates.add(
+          criteriaBuilder.like(
+              criteriaBuilder.upper(root.get(criteria.getKey()).as(String.class)),
+              "%" + criteria.getValue().toString().toUpperCase() + "%"));
+    }
+
+    if (criteria.getOperation().equalsIgnoreCase("EQUALS")) {
+      predicates.add(criteriaBuilder.equal(root.get(criteria.getKey()), criteria.getValue()));
+    }
+
+    if (criteria.getOperation().equalsIgnoreCase("GREATER_THAN")) {
+      predicates.add(
+          criteriaBuilder.greaterThan(root.get(criteria.getKey()), criteria.getValue().toString()));
+    }
+    return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+  }
 }

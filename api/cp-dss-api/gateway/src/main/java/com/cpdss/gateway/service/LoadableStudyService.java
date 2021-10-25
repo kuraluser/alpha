@@ -114,7 +114,6 @@ import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ProtocolStringList;
@@ -3434,10 +3433,11 @@ public class LoadableStudyService {
    * @return AlgoPatternResponse
    */
   public AlgoPatternResponse saveAlgoPatterns(
-          LoadablePlanRequest loadablePlanRequest,
-          Long loadableStudiesId,
-          String requestType,
-          String correlationId, Object requestJson)
+      LoadablePlanRequest loadablePlanRequest,
+      Long loadableStudiesId,
+      String requestType,
+      String correlationId,
+      Object requestJson)
       throws GenericServiceException {
     log.info("Inside saveLoadablePatterns gateway service with correlationId : " + correlationId);
     ObjectMapper objectMapper = new ObjectMapper();
@@ -3454,9 +3454,7 @@ public class LoadableStudyService {
       String requestJsonString = objectMapper.writeValueAsString(requestJson);
       objectMapper.writeValue(
           new File(this.rootFolder + fileName + loadableStudiesId + ".json"), requestJsonString);
-      StatusReply reply =
-          this.saveJson(
-              loadableStudiesId, jsonTypeID, requestJsonString);
+      StatusReply reply = this.saveJson(loadableStudiesId, jsonTypeID, requestJsonString);
       if (!SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
       }
