@@ -1176,38 +1176,28 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     if (portRotations == null) {
       return;
     }
-    if (portRotations.get(portRotations.size() - 1).getId() != portRotationId) {
+    LoadableStudyPortRotation newPort = portRotations.get(portRotations.size() - 1);
+
+    if (newPort.getId() != portRotationId) {
       throw new GenericServiceException(
           "port rotaion data mis match",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+    List<CargoNomination> cargos = createNewPortCargoNominations(loadableStudyId, newPort);
+    // there should be at least 2 ports needed for backloading
+    if (portRotations.size() >= 2) {
+      createBackLoadingIfAny(loadableStudyId, portRotations, cargos);
+    }
+    cargoNominationService.saveAll(cargos);
+  }
+
+  private void createBackLoadingIfAny(
+      long loadableStudyId,
+      List<LoadableStudyPortRotation> portRotations,
+      List<CargoNomination> cargos) {
     LoadableStudyPortRotation loadableStudyPortRotation =
         portRotations.get(portRotations.size() - 2);
-    List<CargoNomination> cargos = cargoNominationService.getCargoNominations(loadableStudyId);
-    Set<CargoNomination> previousPortCargos =
-        cargos.stream()
-            .flatMap(x -> x.getCargoNominationPortDetails().stream())
-            .filter(port -> port.getPortId().equals(loadableStudyPortRotation.getPortXId()))
-            .map(CargoNominationPortDetails::getCargoNomination)
-            .collect(Collectors.toSet());
-    previousPortCargos.stream()
-        .forEach(
-            cargo -> {
-              Set<CargoNominationPortDetails> newPortDetails =
-                  cargoNominationService.createCargoNominationPortDetails(
-                      cargo,
-                      null,
-                      portRotations.get(portRotations.size() - 1).getPortXId(),
-                      portRotations.get(portRotations.size() - 1).getOperation().getId());
-              if (cargo.getCargoNominationPortDetails() != null
-                  && !cargo.getCargoNominationPortDetails().isEmpty()) {
-                cargo.getCargoNominationPortDetails().addAll(newPortDetails);
-              } else {
-                cargo.setCargoNominationPortDetails(newPortDetails);
-              }
-            });
-
     Map<Long, List<BackLoading>> backloadingDataByportIds =
         backLoadingService.getBackloadingDataByportIds(
             loadableStudyId, Arrays.asList(loadableStudyPortRotation.getId()));
@@ -1238,7 +1228,30 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 cargos.add(cargoBackloading);
               });
     }
-    cargoNominationService.saveAll(cargos);
+  }
+
+  private List<CargoNomination> createNewPortCargoNominations(
+      long loadableStudyId, LoadableStudyPortRotation newPort) {
+    List<CargoNomination> cargos = cargoNominationService.getCargoNominations(loadableStudyId);
+    List<CargoNomination> newPortCargo =
+        cargos.stream()
+            .filter(
+                cargo -> cargo.getIsBackloading() == null || cargo.getIsBackloading().equals(false))
+            .collect(Collectors.toList());
+    newPortCargo.stream()
+        .forEach(
+            cargo -> {
+              Set<CargoNominationPortDetails> newPortDetails =
+                  cargoNominationService.createCargoNominationPortDetails(
+                      cargo, null, newPort.getPortXId(), newPort.getOperation().getId());
+              if (cargo.getCargoNominationPortDetails() != null
+                  && !cargo.getCargoNominationPortDetails().isEmpty()) {
+                cargo.getCargoNominationPortDetails().addAll(newPortDetails);
+              } else {
+                cargo.setCargoNominationPortDetails(newPortDetails);
+              }
+            });
+    return cargos;
   }
 
   private List<LoadableStudyPortRotation> getDischargeStudyPortRotations(Long loadableStudyId)
@@ -1266,14 +1279,32 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       return;
     }
     List<CargoNomination> cargos = cargoNominationService.getCargoNominations(loadableStudyId);
+    // finds the DS ports which is converted to DIsharging from another opertaion ID.
+    // These ports will be missing the cargo nomination records so adding cargo nominations.
+    Set<Long> nominationPortIds =
+        cargos.stream()
+            .flatMap(x -> x.getCargoNominationPortDetails().stream())
+            .map(CargoNominationPortDetails::getPortId)
+            .distinct()
+            .collect(Collectors.toSet());
+    List<LoadableStudyPortRotation> dischargingPorts =
+        dischargeStudyPortRotations.stream()
+            .filter(
+                port ->
+                    port.getOperation().getId().equals(DISCHARGING_OPERATION_ID)
+                        && !nominationPortIds.contains(port.getPortXId()))
+            .collect(Collectors.toList());
+    if (!dischargingPorts.isEmpty()) {
+      cargoNominationService.saveAll(
+          createNewPortCargoNominations(loadableStudyId, dischargingPorts.get(0)));
+    }
     LoadableStudyPortRotation dischargeStudyPortRotation = dischargeStudyPortRotations.get(0);
     Set<CargoNomination> firstPortCargos =
         cargos.stream()
-            .flatMap(x -> x.getCargoNominationPortDetails().stream())
-            .filter(port -> port.getPortId().equals(dischargeStudyPortRotation.getPortXId()))
-            .map(CargoNominationPortDetails::getCargoNomination)
-            .filter(cargo -> cargo.getIsBackloading() != false)
+            .filter(
+                cargo -> cargo.getIsBackloading() == null || cargo.getIsBackloading().equals(false))
             .collect(Collectors.toSet());
+
     List<Long> firstPortCargoIds =
         firstPortCargos.stream()
             .distinct()

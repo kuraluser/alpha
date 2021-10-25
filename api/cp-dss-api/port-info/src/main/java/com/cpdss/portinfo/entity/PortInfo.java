@@ -102,13 +102,13 @@ public class PortInfo extends EntityDoc {
 
   @Column(name = "longitude")
   private String longitude;
-  
+
   @Column(name = "tide_height_from")
   private BigDecimal tideHeightFrom;
-  
+
   @Column(name = "tide_height_to")
   private BigDecimal tideHeightTo;
-  
+
   @Column(name = "max_permissible_ships_draftat_channel")
   private BigDecimal maxPermissibleDraft;
 }

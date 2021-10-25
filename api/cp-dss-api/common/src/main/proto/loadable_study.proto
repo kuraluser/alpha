@@ -1267,6 +1267,7 @@ message SynopticalCargoRecord{
 	int64 lpCargoDetailId = 16; // loadable_pattern_cargo_detail ID
 	int64 planQtyId = 17; // loadable_plan_quantity ID OR discharge_quantity_cargo_details ID
 	int32 planQtyCargoOrder = 18; // loading or discharging order
+	string ullage = 19;
 }
 
 message SynopticalOhqRecord{

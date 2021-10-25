@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -215,17 +214,21 @@ public class PortInfoService extends PortInfoServiceImplBase {
               .ifPresent(item -> portDetail.setLat(String.valueOf(item)));
           Optional.ofNullable(port.getLongitude())
               .ifPresent(item -> portDetail.setLon(String.valueOf(item)));
-          //To set berth details for each port in the response
+          // To set berth details for each port in the response
           Optional.ofNullable(port.getTideHeightFrom())
-          .ifPresent(tideHeightFrom -> portDetail.setTideHeightFrom(String.valueOf(tideHeightFrom)));
+              .ifPresent(
+                  tideHeightFrom -> portDetail.setTideHeightFrom(String.valueOf(tideHeightFrom)));
           Optional.ofNullable(port.getTideHeightTo())
-          .ifPresent(tideHeightTo -> portDetail.setTideHeightTo(String.valueOf(tideHeightTo)));
+              .ifPresent(tideHeightTo -> portDetail.setTideHeightTo(String.valueOf(tideHeightTo)));
           Optional.ofNullable(port.getMaxPermissibleDraft())
-          .ifPresent(draft -> portDetail.setMaxPermissibleDraft(String.valueOf(draft)));
+              .ifPresent(draft -> portDetail.setMaxPermissibleDraft(String.valueOf(draft)));
           Set<BerthInfo> berthInfoSet = port.getBerthInfoSet();
-          List<BerthInfo> berthList = berthInfoSet.stream().filter(item -> item.getIsActive().equals(true)).collect(Collectors.toList());
+          List<BerthInfo> berthList =
+              berthInfoSet.stream()
+                  .filter(item -> item.getIsActive().equals(true))
+                  .collect(Collectors.toList());
           buildBerthInfoResponse(berthList, portDetail);
-          //##
+          // ##
           portReply.addPorts(portDetail);
         });
   }
@@ -471,40 +474,38 @@ public class PortInfoService extends PortInfoServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-  
-  private void buildBerthInfoResponse(
-	      List<BerthInfo> list, PortDetail.Builder portDetail) {
-	    for (BerthInfo bi : list) {
-	      com.cpdss.common.generated.PortInfo.BerthDetail.Builder builder2 =
-	          com.cpdss.common.generated.PortInfo.BerthDetail.newBuilder();
-	      Optional.ofNullable(bi.getId()).ifPresent(builder2::setId);
-	      Optional.ofNullable(bi.getPortInfo().getId()).ifPresent(builder2::setPortId);
-	      Optional.ofNullable(bi.getMaxShipChannel())
-	          .ifPresent(v -> builder2.setMaxShipChannel(String.valueOf(v)));
-	      Optional.ofNullable(bi.getBerthName()).ifPresent(v -> builder2.setBerthName(v));
-	      Optional.ofNullable(bi.getMaxShipDepth())
-	          .ifPresent(v -> builder2.setMaxShipDepth(String.valueOf(v)));
 
-	      Optional.ofNullable(bi.getMaximumDraft())
-	          .ifPresent(v -> builder2.setSeaDraftLimitation(String.valueOf(v)));
-	      builder2.setMaxManifoldHeight(this.getMaxManifoldHeight(bi).toString());
+  private void buildBerthInfoResponse(List<BerthInfo> list, PortDetail.Builder portDetail) {
+    for (BerthInfo bi : list) {
+      com.cpdss.common.generated.PortInfo.BerthDetail.Builder builder2 =
+          com.cpdss.common.generated.PortInfo.BerthDetail.newBuilder();
+      Optional.ofNullable(bi.getId()).ifPresent(builder2::setId);
+      Optional.ofNullable(bi.getPortInfo().getId()).ifPresent(builder2::setPortId);
+      Optional.ofNullable(bi.getMaxShipChannel())
+          .ifPresent(v -> builder2.setMaxShipChannel(String.valueOf(v)));
+      Optional.ofNullable(bi.getBerthName()).ifPresent(v -> builder2.setBerthName(v));
+      Optional.ofNullable(bi.getMaxShipDepth())
+          .ifPresent(v -> builder2.setMaxShipDepth(String.valueOf(v)));
 
-	      Optional.ofNullable(bi.getAirDraft())
-	          .ifPresent(v -> builder2.setAirDraftLimitation(String.valueOf(v)));
-	      Optional.ofNullable(bi.getMaximumLoa()).ifPresent(v -> builder2.setMaxLoa(String.valueOf(v)));
-	      Optional.ofNullable(bi.getMaximumDwt()).ifPresent(v -> builder2.setMaxDwt(String.valueOf(v)));
-	      Optional.ofNullable(bi.getMaximumDraft())
-	          .ifPresent(v -> builder2.setMaxDraft(String.valueOf(v)));
+      Optional.ofNullable(bi.getMaximumDraft())
+          .ifPresent(v -> builder2.setSeaDraftLimitation(String.valueOf(v)));
+      builder2.setMaxManifoldHeight(this.getMaxManifoldHeight(bi).toString());
 
-	      Optional.ofNullable(bi.getLineDisplacement())
-	          .ifPresent(v -> builder2.setLineDisplacement(String.valueOf(v)));
+      Optional.ofNullable(bi.getAirDraft())
+          .ifPresent(v -> builder2.setAirDraftLimitation(String.valueOf(v)));
+      Optional.ofNullable(bi.getMaximumLoa()).ifPresent(v -> builder2.setMaxLoa(String.valueOf(v)));
+      Optional.ofNullable(bi.getMaximumDwt()).ifPresent(v -> builder2.setMaxDwt(String.valueOf(v)));
+      Optional.ofNullable(bi.getMaximumDraft())
+          .ifPresent(v -> builder2.setMaxDraft(String.valueOf(v)));
 
-	      Optional.ofNullable(bi.getHoseConnection()).ifPresent(builder2::setHoseConnection);
-	      Optional.ofNullable(bi.getUnderKeelClearance())
-          .ifPresent(builder2::setUkc);
-	      Optional.ofNullable(bi.getBerthDatumDepth())
+      Optional.ofNullable(bi.getLineDisplacement())
+          .ifPresent(v -> builder2.setLineDisplacement(String.valueOf(v)));
+
+      Optional.ofNullable(bi.getHoseConnection()).ifPresent(builder2::setHoseConnection);
+      Optional.ofNullable(bi.getUnderKeelClearance()).ifPresent(builder2::setUkc);
+      Optional.ofNullable(bi.getBerthDatumDepth())
           .ifPresent(v -> builder2.setBerthDatumDepth(String.valueOf(v)));
-	      portDetail.addBerthDetails(builder2);
-	    }
-	  }
+      portDetail.addBerthDetails(builder2);
+    }
+  }
 }
