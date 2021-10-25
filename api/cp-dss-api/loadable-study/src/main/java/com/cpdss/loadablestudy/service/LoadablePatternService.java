@@ -427,8 +427,9 @@ public class LoadablePatternService {
         && !env.equals("ship")
         && (!request.getHasLodicator() || request.getAlgoErrorsCount() > 0)) {
       Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
-          this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
-              request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
+          this.loadableStudyCommunicationStatusRepository
+              .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
+                  request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
       if (loadableStudyCommunicationStatus.get() != null) {
 
         AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
@@ -964,8 +965,9 @@ public class LoadablePatternService {
     // objectMapper.writeValueAsString(loadablePatternAlgoRequest));
     if (!env.equals("ship") && enableCommunication && !request.getHasLodicator()) {
       Optional<LoadableStudyCommunicationStatus> patternValidateCommunicationStatus =
-          this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
-              loadablePatternOpt.get().getId(), MessageTypes.VALIDATEPLAN.getMessageType());
+          this.loadableStudyCommunicationStatusRepository
+              .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
+                  loadablePatternOpt.get().getId(), MessageTypes.VALIDATEPLAN.getMessageType());
       log.info(
           " ------message Id in shore : "
               + patternValidateCommunicationStatus.get().getMessageUUID());
