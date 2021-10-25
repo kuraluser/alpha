@@ -592,7 +592,8 @@ export class DischargeStudyComponent implements OnInit {
           if (dischargeCargoDetails.storedKey.value === cargo.storedKey.value) {
             parentIndex = i;
             if (dischargeCargoDetails.mode.value.id === 2) {
-              totalBackLoadingKlValue = Number(dischargeCargoDetails.maxKl.value) - Number(dischargeCargoDetails.kl.value);
+              const kl = Number(dischargeCargoDetails.maxKl.value) - Number(dischargeCargoDetails.kl.value);
+              totalBackLoadingKlValue = Number(kl?.toFixed(3));
             } else {
               totalBackLoadingKlValue = Number(dischargeCargoDetails.maxKl.value) - Number(0);
               isAutoModeAvailable = true;

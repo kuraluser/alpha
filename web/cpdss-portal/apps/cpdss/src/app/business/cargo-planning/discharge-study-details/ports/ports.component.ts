@@ -393,6 +393,8 @@ export class PortsComponent implements OnInit, OnDestroy {
     control.setValue(value);
     control.markAsDirty();
     control.markAsTouched();
+    this.portsLists[index].eta.isEditMode = true;
+    this.portsLists[index].etd.isEditMode = true;
   }
 
 
@@ -558,12 +560,8 @@ export class PortsComponent implements OnInit, OnDestroy {
       if (this.portsLists[i].operation?.value?.id === OPERATIONS.DISCHARGING) {
         dischargeFound = true;
       }
-      if (dischargeFound && this.portsLists[i].operation?.value?.id === OPERATIONS.LOADING) {
-        orderError = true;
-        break;
-      }
     }
-    if (this.portsLists[this.portsLists.length - 1].operation.value?.id !== OPERATIONS.DISCHARGING) {
+    if (!this.portsLists?.length || this.portsLists[this.portsLists.length - 1].operation.value?.id !== OPERATIONS.DISCHARGING) {
       orderError = true;
     }
     return orderError;
