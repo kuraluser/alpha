@@ -33,5 +33,5 @@ public class CommingleCargo {
 
   private Long cargoNomination2Id;
 
-  private String newCargoColour;
+  private String commingleColour;
 }

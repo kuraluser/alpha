@@ -252,7 +252,7 @@ public class CargoService {
               null != commingleCargo.getCargo2Pct()
                   ? commingleCargo.getCargo2Pct().toString()
                   : null);
-          commingleCargoDto.setNewCargoColour(commingleCargo.getNewCargoColour());
+          commingleCargoDto.setCommingleColour(commingleCargo.getCommingleColour());
           loadableStudy.getCommingleCargos().add(commingleCargoDto);
         });
   }
@@ -487,7 +487,7 @@ public class CargoService {
     commingleCargoEntity.setAbbreviation(abbreviation);
     Optional<CommingleColour> commingleColour =
         this.commingleColourRepository.findByAbbreviationAndIsActive(abbreviation, true);
-    commingleCargoEntity.setNewCargoColour(commingleColour.get().getCommingleColour());
+    commingleCargoEntity.setCommingleColour(commingleColour.get().getCommingleColour());
     return commingleCargoEntity;
   }
 
