@@ -376,7 +376,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
 
       Optional.ofNullable(bi.getHoseConnection()).ifPresent(builder2::setHoseConnection);
 
-      Optional.ofNullable(bi.getUkc()).ifPresent(builder2::setUkc);
+      Optional.ofNullable(bi.getUnderKeelClearance()).ifPresent(builder2::setUkc);
       builder.addBerths(builder2);
     }
   }
@@ -462,7 +462,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
                 .ifPresent(v -> builder.setPortSeawaterDensity(v.toString()));
           }
 
-          Optional.ofNullable(berthInfo.get().getUkc()).ifPresent(builder::setBerthUKC);
+          Optional.ofNullable(berthInfo.get().getUnderKeelClearance()).ifPresent(builder::setBerthUKC);
         }
         ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
         responseStatus.setStatus(SUCCESS);

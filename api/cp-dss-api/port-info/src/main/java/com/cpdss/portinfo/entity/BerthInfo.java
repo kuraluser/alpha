@@ -58,9 +58,6 @@ public class BerthInfo extends EntityDoc {
   @Column(name = "hose_connections")
   private String hoseConnection;
 
-  @Column(name = "under_keel_clearence")
-  private String ukc;
-
   @ManyToOne
   @JoinColumn(name = "port_xid")
   private PortInfo portInfo;
